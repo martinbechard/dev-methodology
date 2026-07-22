@@ -446,5 +446,6 @@ packs:
       - github-work-item-provider
       - provider-placeholder-matrix
       - file-work-item-no-mutation
+      - file-work-item-template-contract
     caseCoverageStatus: partial
     coverageStatus: declared

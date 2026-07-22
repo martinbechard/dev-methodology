@@ -385,7 +385,7 @@
 
     <section class="hero" aria-labelledby="page-title">
       <h1 id="page-title">Documentation Templates</h1>
-      <p class="lede">The development methodology ships seven source-backed templates for project configuration, wiki methodology, product behavior, system design, module design, and unit test planning. Each template supplies TODO instructions that are replaced with project evidence when an artifact is created.</p>
+      <p class="lede">The development methodology ships eight source-backed templates for project configuration, wiki methodology, product behavior, system design, module design, unit test planning, and file-backed work items. Each template supplies TODO instructions that are replaced with project evidence when an artifact is created.</p>
     </section>
 
     <section class="section" aria-labelledby="catalog-title">
@@ -468,6 +468,17 @@
           </ul>
           <a class="path-link" data-template-definition="unit-test-plan-template.md" data-template-title="Unit Test Plan" href="../skills/development-methodology/assets/templates/unit-test-plan-template.md">unit-test-plan-template.md</a>
         </article>
+
+        <article class="card product">
+          <h3>File-Backed Work Item</h3>
+          <p>Records one self-contained file-provider work package with canonical metadata, source evidence, requirements, acceptance criteria, dependencies, verification, technical questions, and any genuine user-action boundary.</p>
+          <ul>
+            <li>Scope: one independently dispatchable work item or series child</li>
+            <li>Creator: create-file-work-item</li>
+            <li>Verifier: documentation-page-verify</li>
+          </ul>
+          <a class="path-link" data-template-definition="file-work-item-template.md" data-template-title="File-Backed Work Item" href="../skills/development-methodology/assets/templates/file-work-item-template.md">file-work-item-template.md</a>
+        </article>
       </div>
     </section>
 
@@ -484,6 +495,11 @@
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td>What source-backed work package should enter the file-provider queue, and does a genuine user-owned answer block it?</td>
+              <td>File-Backed Work Item</td>
+              <td>Creates one dispatchable typed item, one deferred Holding item, or one User Action Required item without turning technical uncertainty into a user gate.</td>
+            </tr>
             <tr>
               <td>Which agents, skills, folder rules, and guidance files apply to this repository?</td>
               <td>Project Configuration</td>

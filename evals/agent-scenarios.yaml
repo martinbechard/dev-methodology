@@ -59,6 +59,7 @@ fixtureProfiles:
     executableCases:
       - backlog-lifecycle
       - file-work-item-no-mutation
+      - file-work-item-template-contract
     coverageStatus: fixture-backed
   - id: multi-contribution-integration
     purpose: Several committed and uncommitted worktrees with claims, dependency order, conflicts, and verification commands.
@@ -265,6 +266,7 @@ agents:
           modelRubric: workflow-quality
         executableCases:
           - github-work-item-provider
+          - file-work-item-template-contract
         coverageStatus: fixture-backed
       - id: dev-backlog-steward-boundary
         kind: boundary-failure

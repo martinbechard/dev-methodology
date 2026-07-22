@@ -28,6 +28,7 @@ Conceptual agent definitions contain required and conditional technology-agnosti
 - Use create-high-level-design when creating or substantially rewriting a high-level design artifact from the high-level design template.
 - Use create-module-design when creating or substantially rewriting a module design artifact from the module design template.
 - Use create-unit-test-plan when creating or substantially rewriting a durable unit test plan from the unit test plan template.
+- Use create-file-work-item when creating one file-backed work item from the file work-item template.
 - Use project-wiki-review before finishing project wiki pages or project-wiki-template artifacts.
 - Use review-functional-spec before finishing functional specification artifacts.
 - Use review-architecture before finishing architecture artifacts.
@@ -107,6 +108,7 @@ Template assets live under skills/development-methodology/assets/templates. Read
 - high-level-design-template.md defines subsystem and feature-family documentation.
 - module-design-template.md defines one-module design documentation.
 - unit-test-plan-template.md defines one-unit scenario, boundary, failure, and traceability planning.
+- file-work-item-template.md defines the canonical file-provider metadata, work-package sections, technical Open Questions, optional user-action gate, and series linkage for one file-backed work item.
 
 When a target project needs a local editable document, copy only the matching template into that project's chosen documentation location and replace every TODO instruction with source-backed content. Do not create a second reusable template distribution in the target repository unless the user asks for local project-owned templates.
 

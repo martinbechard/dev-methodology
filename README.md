@@ -21,7 +21,7 @@ Initial methodology generation chooses inline or by-reference core skill deliver
 
 Project Configurator also records every selected conceptual agent definition, ordered project-level skill extension, one verified claim transport, documentation mode, folder skillset, folder route, and root or nested AGENTS.md placement before rendering operational guidance. The project_skill_extensions list accepts bundled skill identifiers and explicit registered-skill mappings with availability and catalog evidence, rejects duplicates and definition-owned skills by normalized identifier, and renders its references in declared order at the end of root AGENTS.md only. Generated AGENTS.md guidance inlines only the selected claim adapter and names selected extensions and Persistence and Commit workflow skills without copying their procedures. Folder technology skills remain a separate delivery mechanism. A maintainer may edit PROJECT.yaml to request a correction; Project Configurator preserves valid edits and reports invalid identifiers or combinations instead of silently replacing them. Claude Code projects also receive a thin CLAUDE.md beside each applicable AGENTS.md so Claude imports the same project guidance without duplicating it.
 
-The core methodology keeps one shared wiki-compatible page contract and six document shapes. Each document shape has a focused creation skill, a reusable template asset, and an artifact review skill:
+The core methodology keeps one shared wiki-compatible page contract and six document shapes. Each document shape has a focused creation skill, a reusable template asset, and an artifact review skill. File-backed work items use a separate workflow template:
 
 1. Project wiki page: project-wiki-create, project-wiki-template.md, project-wiki-review
 2. Functional specification: create-functional-spec, functional-spec-template.md, review-functional-spec
@@ -29,10 +29,11 @@ The core methodology keeps one shared wiki-compatible page contract and six docu
 4. High-level design: create-high-level-design, high-level-design-template.md, review-high-level-design
 5. Module design: create-module-design, module-design-template.md, review-module-design
 6. Unit test plan: create-unit-test-plan, unit-test-plan-template.md, review-unit-test-plan
+7. File-backed work item: create-file-work-item, file-work-item-template.md, documentation-page-verify
 
 The shared page contract starts every durable page with Current Understanding, Authoritative Sources, Related Code, Related Tests, Related Backlog Items, Related Wiki Pages, Open Questions, and Maintenance Notes. Specialized documents keep those sections first, then add their own sections.
 
-The [Documentation Templates page](design/documentation-templates.html) describes all seven distributed template assets, their creation and review routes, and the project wiki repository and topic-page formats. The [Wiki Skills And Project Context page](design/wiki-skills-and-project-context.html) explains how the eight wiki-related skills turn the LLM-wiki pattern and an OKF-compatible representation into durable, source-governed project context, including the code-aware synchronization specialization.
+The [Documentation Templates page](design/documentation-templates.html) describes all eight distributed template assets, their creation and review routes, and the project wiki repository and topic-page formats. The [Wiki Skills And Project Context page](design/wiki-skills-and-project-context.html) explains how the eight wiki-related skills turn the LLM-wiki pattern and an OKF-compatible representation into durable, source-governed project context, including the code-aware synchronization specialization.
 
 Normal planned development proceeds top down from accepted functional specifications and architecture through create-high-level-design and review-high-level-design, then through create-module-design and review-module-design, and finally through ordinary implementation agents with the project-routed technology skills. The design skills use PLANNED_DEVELOPMENT mode, account for every applicable requirement, and block downstream work when a critical identity, security, public-response, state-ownership, validation, transaction, asynchronous, or failure-timing contract remains unresolved.
 

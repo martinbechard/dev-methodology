@@ -198,9 +198,10 @@ ARTIFACT_CREATION_SKILLS = (
         "review-unit-test-plan",
     ),
 )
-DOCUMENTATION_TEMPLATE_FILENAMES = (PROJECT_TEMPLATE,) + tuple(
-    template_name for _, template_name, _ in ARTIFACT_CREATION_SKILLS
-)
+DOCUMENTATION_TEMPLATE_FILENAMES = (
+    PROJECT_TEMPLATE,
+    "file-work-item-template.md",
+) + tuple(template_name for _, template_name, _ in ARTIFACT_CREATION_SKILLS)
 WIKI_ROLE_SKILLS = {
     "project-wiki",
     "project-wiki-query",
@@ -4399,6 +4400,147 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(required_guidance, manage_text)
         self.assertNotIn("set its active status according to project convention", manage_text)
 
+    def test_file_work_item_template_and_approval_boundary_are_complete(self) -> None:
+        """The real fixture enforces item shape and approval behavior."""
+        create_text = (SKILLS_ROOT / "create-file-work-item" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        methodology_text = (
+            SKILLS_ROOT / "development-methodology" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        template_name = "file-work-item-template.md"
+        template_path = (
+            SKILLS_ROOT
+            / "development-methodology"
+            / "assets"
+            / "templates"
+            / template_name
+        )
+        template_text = template_path.read_text(encoding="utf-8")
+
+        self.assertIn(template_name, DOCUMENTATION_TEMPLATE_FILENAMES)
+        self.assertIn(template_name, create_text)
+        self.assertIn(template_name, methodology_text)
+
+        ordered_markers = (
+            "Status: TODO Ready, User Action Required, or Holding",
+            "Type: TODO Defect, Feature, Analysis, Investigation, or Holding",
+            "Provider: file",
+            "Provider Reference: TODO canonical repository-relative backlog path",
+            "Completion: TODO direct-main, feature-branch, or UNSET",
+            "## Summary",
+            "## Context",
+            "## Source Evidence",
+            "## Requirements",
+            "## Acceptance Criteria",
+            "## Dependencies",
+            "## Verification",
+            "## Open Questions",
+            "## Notes",
+        )
+        positions = [template_text.index(marker) for marker in ordered_markers]
+        self.assertEqual(sorted(positions), positions)
+        for optional_comment in (
+            "<!-- OPTIONAL: Series child metadata",
+            "<!-- OPTIONAL: User Action Required",
+            "<!-- OPTIONAL: Governed definition pre-answer evidence",
+            "<!-- OPTIONAL: Notes",
+        ):
+            self.assertIn(optional_comment, template_text)
+        self.assertLess(
+            template_text.index("### Governed Canonical Sources"),
+            template_text.index("### Question for the User"),
+        )
+        self.assertLess(
+            template_text.index("### Allowed Dependent Artifacts"),
+            template_text.index("### Question for the User"),
+        )
+        self.assertNotIn("Open Decisions", template_text)
+        self.assertNotIn("Design Principles", template_text)
+
+        for required_contract in (
+            "Ready items",
+            "User Action Required items",
+            "Holding items",
+            "series children",
+            "See the conversation above",
+            "May I continue designing?",
+            "invalid User Action Required classification",
+            "exact canonical-path manifest",
+            "exact user-message provenance",
+            "derived operational evidence rather than approval authority",
+            "Keep change-control manifests out of Design Principles",
+        ):
+            with self.subTest(required_contract=required_contract):
+                self.assertIn(required_contract, create_text)
+
+        case_id = "file-work-item-template-contract"
+        probe_id = "probe-create-file-work-item"
+        cases = load_yaml_object(REPOSITORY_ROOT / "evals" / "cases.yaml")
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        scenarios = load_yaml_object(REPOSITORY_ROOT / "evals" / "agent-scenarios.yaml")
+        workflows = load_yaml_object(REPOSITORY_ROOT / "evals" / "workflow-packs.yaml")
+        case = next(entry for entry in cases["cases"] if entry["id"] == case_id)
+        probe = next(entry for entry in probes["probes"] if entry["id"] == probe_id)
+        steward = next(
+            entry for entry in scenarios["agents"] if entry["id"] == "dev-backlog-steward"
+        )
+        happy_scenario = next(
+            entry
+            for entry in steward["scenarios"]
+            if entry["id"] == "dev-backlog-steward-happy"
+        )
+        backlog_workflow = next(
+            entry for entry in workflows["packs"] if entry["id"] == "backlog"
+        )
+        backlog_fixture = next(
+            entry
+            for entry in scenarios["fixtureProfiles"]
+            if entry["id"] == "backlog-state-machine"
+        )
+
+        self.assertEqual("fixture-backed", probe["coverageStatus"])
+        self.assertEqual([case_id], probe["executableCases"])
+        self.assertEqual([probe_id], case["fixtureBackedProbeClaims"])
+        self.assertIn(probe_id, case["skillProbes"])
+        self.assertIn(case_id, happy_scenario["executableCases"])
+        self.assertIn(case_id, backlog_workflow["executableCases"])
+        self.assertIn(case_id, backlog_fixture["executableCases"])
+        self.assertEqual("artifact-contract", probe["evaluationKind"])
+        self.assertEqual("artifact-contract", case["judgePlan"]["modelRubric"])
+
+        fixture_root = REPOSITORY_ROOT / case["project"]
+        for fixture_name in (
+            "TASK.md",
+            "requests.md",
+            "verify.py",
+            "checker-approval.yaml",
+        ):
+            self.assertTrue((fixture_root / fixture_name).is_file())
+        verifier = subprocess.run(
+            [sys.executable, str(fixture_root / "verify.py"), "--self-test"],
+            cwd=fixture_root,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(0, verifier.returncode, verifier.stdout + verifier.stderr)
+
+        requests_text = (fixture_root / "requests.md").read_text(encoding="utf-8")
+        for governed_source in (
+            "skills/create-file-work-item/SKILL.md",
+            "agents/roles/dev-activities/dev-coder.role.yaml",
+            "agents/role-schema.yaml",
+            "agents/model-profiles.yaml",
+            "adapters/codex/model-profiles.yaml",
+            "skills/create-file-work-item/agents/openai.yaml",
+            "adapters/codex/skills/codex-harness-directives/SKILL.md",
+            "adapters/codex/skills/codex-harness-directives/agents/openai.yaml",
+        ):
+            with self.subTest(governed_source=governed_source):
+                self.assertIn(governed_source, requests_text)
+        self.assertIn("cannot create or widen approval", requests_text)
+        self.assertIn("checker-approval.yaml", requests_text)
+
     def test_file_work_item_skills_own_behavior_and_legacy_ids_are_migration_only(self) -> None:
         primary_root = resolve_primary_repository_root()
         canonical_contracts = {
@@ -6882,8 +7024,12 @@ class BundleContentTests(unittest.TestCase):
         probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
         probes_by_id = {probe["id"]: probe for probe in probes["probes"]}
         self.assertEqual(
-            "declared",
+            "fixture-backed",
             probes_by_id["probe-create-file-work-item"]["coverageStatus"],
+        )
+        self.assertEqual(
+            ["file-work-item-template-contract"],
+            probes_by_id["probe-create-file-work-item"]["executableCases"],
         )
         self.assertEqual(
             ["backlog-lifecycle"],

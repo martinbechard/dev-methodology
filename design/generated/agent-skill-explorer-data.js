@@ -3753,6 +3753,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "codex",
         "junie"
       ],
+      "id": "file-work-item-template-contract",
+      "kind": "evaluation-case",
+      "receiptPaths": [],
+      "sourcePath": "evals/cases.yaml",
+      "status": "declared"
+    },
+    {
+      "harnesses": [
+        "codex",
+        "junie"
+      ],
       "id": "github-work-item-provider",
       "kind": "evaluation-case",
       "receiptPaths": [],
@@ -3864,24 +3875,24 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
   "evidenceStatus": {
     "caseBackedAgentCount": 6,
     "caseBackedWorkflowPackCount": 5,
-    "codexRunnableCaseCount": 11,
+    "codexRunnableCaseCount": 12,
     "declaredScenarioCount": 61,
     "endToEndFixtureBackedWorkflowPackCount": 0,
-    "executableCaseCount": 11,
+    "executableCaseCount": 12,
     "executableFixtureAgentCount": 1,
     "executableFixtureSkillCount": 0,
     "executedAgentCount": 0,
     "executedRunCount": 0,
     "executedSkillCount": 0,
     "fixtureBackedAgentCount": 1,
-    "fixtureBackedCaseCount": 11,
+    "fixtureBackedCaseCount": 12,
     "fixtureBackedSkillCount": 0,
     "highRiskExternalCaseCount": 0,
     "judgeCalibrationStatusCounts": {},
     "judgePassedAgentCount": 0,
     "judgePassedRunCount": 0,
     "judgePassedSkillCount": 0,
-    "junieRunnableCaseCount": 11,
+    "junieRunnableCaseCount": 12,
     "modelJudgeCalibratedAgentCount": 0,
     "modelJudgeCalibratedSkillCount": 0,
     "modelJudgeNotRequiredAgentCount": 0,
@@ -3889,11 +3900,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "modelJudgePendingAgentCount": 27,
     "modelJudgePendingSkillCount": 103,
     "negativeCaseBackedSkillCount": 0,
-    "ordinaryLocalCaseCount": 11,
+    "ordinaryLocalCaseCount": 12,
     "pairedControlsExecutableSkillCount": 0,
     "partialScenarioBackedAgentCount": 5,
     "partialWorkflowPackCount": 5,
-    "positiveCaseBackedSkillCount": 26,
+    "positiveCaseBackedSkillCount": 27,
     "positiveExecutedSkillCount": 0,
     "positiveJudgePassedSkillCount": 0,
     "positiveSecurityContainedSkillCount": 0,
@@ -4365,6 +4376,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "caseBackedCases": [
           "backlog-lifecycle",
           "file-work-item-no-mutation",
+          "file-work-item-template-contract",
           "github-work-item-provider",
           "provider-placeholder-matrix"
         ],
@@ -4376,6 +4388,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "executableCases": [
           "backlog-lifecycle",
           "file-work-item-no-mutation",
+          "file-work-item-template-contract",
           "github-work-item-provider",
           "provider-placeholder-matrix"
         ],
@@ -4385,6 +4398,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBackedCases": [
           "backlog-lifecycle",
           "file-work-item-no-mutation",
+          "file-work-item-template-contract",
           "github-work-item-provider",
           "provider-placeholder-matrix"
         ],
@@ -4403,6 +4417,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-backlog-steward-happy": {
             "caseBacked": true,
             "executableCases": [
+              "file-work-item-template-contract",
               "github-work-item-provider"
             ],
             "executableFixture": true
@@ -4432,6 +4447,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [
         "backlog-lifecycle",
         "file-work-item-no-mutation",
+        "file-work-item-template-contract",
         "github-work-item-provider",
         "provider-placeholder-matrix"
       ],
@@ -8292,9 +8308,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "capabilities": [],
       "category": "development-practice",
       "coverage": {
-        "catalogFixtureBacked": false,
+        "catalogFixtureBacked": true,
         "evaluationCategory": "development-practice",
-        "executableCases": [],
+        "executableCases": [
+          "file-work-item-template-contract"
+        ],
         "executableFixture": false,
         "executedCases": [],
         "fixtureBacked": false,
@@ -8304,8 +8322,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
-        "positiveCaseBacked": false,
-        "positiveCaseBackedCases": [],
+        "positiveCaseBacked": true,
+        "positiveCaseBackedCases": [
+          "file-work-item-template-contract"
+        ],
         "positiveExecutedCases": [],
         "positiveJudgePassedCases": [],
         "positiveSecurityContainedCases": [],
@@ -8328,7 +8348,9 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "backlog"
         ]
       },
-      "declaredCases": [],
+      "declaredCases": [
+        "file-work-item-template-contract"
+      ],
       "detection": null,
       "detectionPath": null,
       "executedCases": [],
@@ -17195,6 +17217,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "caseBackedCases": [
         "backlog-lifecycle",
         "file-work-item-no-mutation",
+        "file-work-item-template-contract",
         "github-work-item-provider",
         "provider-placeholder-matrix"
       ],
@@ -17202,6 +17225,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "executableCases": [
         "backlog-lifecycle",
         "file-work-item-no-mutation",
+        "file-work-item-template-contract",
         "github-work-item-provider",
         "provider-placeholder-matrix"
       ],

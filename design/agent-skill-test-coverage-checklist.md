@@ -24,11 +24,11 @@ This page is generated from the live conceptual agent and skill inventories, all
 - [x] 27 agents are scenario-declared and 129 skills are probe-declared.
 - [x] 61 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
-- 11 cases are fixture-backed and 11 fixtures are structurally executable before harness readiness is considered.
-- 11 cases can run locally through Codex and 11 can run locally through Junie.
-- 11 cases use the ordinary local tier; 0 explicitly high-risk cases require the externally-contained tier.
+- 12 cases are fixture-backed and 12 fixtures are structurally executable before harness readiness is considered.
+- 12 cases can run locally through Codex and 12 can run locally through Junie.
+- 12 cases use the ordinary local tier; 0 explicitly high-risk cases require the externally-contained tier.
 - 6 agents have at least one case-backed scenario; 5 are partial and 1 have all declared scenarios backed.
-- 26 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
+- 27 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 1 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
 - 27 agents and 103 skills have pending Model Judge status.
@@ -57,7 +57,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | dev-artifact-reviewer | advanced | [x] | [x] dev-artifact-reviewer-boundary, dev-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-backlog-coordinator | advanced-long | [x] | [x] dev-backlog-coordinator-boundary, dev-backlog-coordinator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| dev-backlog-steward | default | [x] | [x] dev-backlog-steward-boundary, dev-backlog-steward-happy, dev-backlog-steward-provider-boundary | [x] dev-backlog-steward-boundary, dev-backlog-steward-happy, dev-backlog-steward-provider-boundary | [x] backlog-lifecycle, file-work-item-no-mutation, github-work-item-provider, provider-placeholder-matrix | [x] backlog-lifecycle, file-work-item-no-mutation, github-work-item-provider, provider-placeholder-matrix | pending | none | none | none | none |
+| dev-backlog-steward | default | [x] | [x] dev-backlog-steward-boundary, dev-backlog-steward-happy, dev-backlog-steward-provider-boundary | [x] dev-backlog-steward-boundary, dev-backlog-steward-happy, dev-backlog-steward-provider-boundary | [x] backlog-lifecycle, file-work-item-no-mutation, file-work-item-template-contract, github-work-item-provider, provider-placeholder-matrix | [x] backlog-lifecycle, file-work-item-no-mutation, file-work-item-template-contract, github-work-item-provider, provider-placeholder-matrix | pending | none | none | none | none |
 | dev-browser-operator | advanced | [x] | [x] dev-browser-operator-boundary, dev-browser-operator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-code-reviewer | advanced | [x] | [x] dev-code-reviewer-boundary, dev-code-reviewer-happy | [x] dev-code-reviewer-happy | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-coder | advanced | [x] | [x] dev-coder-boundary, dev-coder-happy | [x] dev-coder-happy | [ ] none | [ ] none | pending | none | none | none | none |
@@ -153,7 +153,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | complete-work-item-feature-branch | [x] | [x] probe-complete-work-item-feature-branch | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-azure-devops-work-item | [x] | [x] probe-create-azure-devops-work-item | [x] provider-placeholder-matrix | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-backlog | [x] | [x] probe-create-backlog | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
-| create-file-work-item | [x] | [x] probe-create-file-work-item | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| create-file-work-item | [x] | [x] probe-create-file-work-item | [x] file-work-item-template-contract | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | create-github-work-item | [x] | [x] probe-create-github-work-item | [x] github-work-item-provider | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-gitlab-work-item | [x] | [x] probe-create-gitlab-work-item | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-jira-work-item | [x] | [x] probe-create-jira-work-item | [x] provider-placeholder-matrix | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |

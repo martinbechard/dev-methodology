@@ -1,0 +1,6 @@
+# Derived operational evidence only. This checker input is not approval authority.
+basis: explicit-user-direction
+definition_scope: skills/**
+provenance:
+  source: checker-fixture
+  reference: attempted-widening

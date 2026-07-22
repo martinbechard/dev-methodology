@@ -324,12 +324,12 @@ probes:
     evaluationKind: artifact-contract
     activationCondition: The effective provider is file and one requested or independently identified defect, feature, analysis, or investigation must become a durable work item.
     negativeCondition: Non-file providers, isolated worktrees, non-main authorities, completed archives, and duplicate outcomes receive no new backlog file or shadow queue.
-    expectedBehavior: Require file provider authority, create only under backlog in the primary main worktree with a short backlog claim, classify typed or User Action Required placement, deduplicate, preserve source, requirements, acceptance, dependencies, verification, and report the canonical path and released claim.
+    expectedBehavior: Require file provider authority and a short primary-main backlog claim; reject context-only source evidence; keep authorized agent-resolvable uncertainty Ready under Open Questions; use complete User Action Required fields only for a genuine user-owned blocker; accept explicit Holding and series shapes; and reject governed-definition work without exact canonical paths, separately allowed dependents, and exact user-message provenance while treating checker YAML as derived evidence that cannot widen approval.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, queue-state-transition, claim-lifecycle, tool-authority], modelRubric: null}
     scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary, dev-backlog-steward-provider-boundary]
     workflowAssociations: [backlog]
-    executableCases: []
-    coverageStatus: declared
+    executableCases: [file-work-item-template-contract]
+    coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
   - id: probe-create-azure-devops-work-item
     skill: create-azure-devops-work-item

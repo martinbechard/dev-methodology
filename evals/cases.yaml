@@ -774,3 +774,41 @@ cases:
       manage-file-work-items: [SKILL.md]
       structured-explanation: [SKILL.md]
     requiredEvidence: [PROVIDER-MISMATCH, ISOLATED-WORKTREE, NON-MAIN-AUTHORITY, SHARED-CHECKOUT-REQUIRED, NO-SHADOW-WRITE]
+  - id: file-work-item-template-contract
+    coverageStatus: fixture-backed
+    executionStatus: runnable
+    project: evals/projects/file-work-item-template-contract
+    task: TASK.md
+    allowedWritePaths: [backlog, eval-result.md]
+    ephemeralWritePaths: []
+    install: null
+    verify: python3 verify.py
+    harnesses: [codex, junie]
+    risk: {level: ordinary, reasons: []}
+    executionTier: local
+    securityContainmentRequired: false
+    harnessExecutionStatus: {codex: runnable, junie: runnable}
+    requiredAgents: [dev-backlog-steward]
+    agentScenarios: [dev-backlog-steward-happy]
+    requiredSkills: [create-file-work-item, development-methodology, agent-claim, agent-claim-command, structured-explanation]
+    skillProbes: [probe-create-file-work-item, probe-development-methodology, probe-agent-claim, probe-agent-claim-command, probe-structured-explanation]
+    fixtureBackedProbeClaims: [probe-create-file-work-item]
+    workflowPack: backlog
+    sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
+    judgePlan:
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, artifact-structure, queue-state-transition, claim-lifecycle, allowed-paths-only, operation-coverage, readiness-consistency, snapshot-reset, local-execution-boundary]
+      modelRubric: artifact-contract
+    contextPack:
+      fixtureRoot: evals/projects/file-work-item-template-contract
+      include: [TASK.md, requests.md]
+      stagedSkillPackages: [create-file-work-item, development-methodology, agent-claim, agent-claim-command, structured-explanation]
+      wholeRepositoryAllowed: false
+      approvedSensitiveData: false
+    modelVisiblePaths: [TASK.md, requests.md]
+    skillResourceAllowlist:
+      create-file-work-item: [SKILL.md]
+      development-methodology: [SKILL.md, assets/templates/file-work-item-template.md]
+      agent-claim: [SKILL.md]
+      agent-claim-command: [SKILL.md, scripts/claim.py]
+      structured-explanation: [SKILL.md]
+    requiredEvidence: [READY-OPEN-QUESTIONS, CONTEXT-ONLY-REJECTED, GENUINE-USER-ACTION, HOLDING, SERIES-LINKAGE, GOVERNED-MANIFEST-REJECTED, EXACT-APPROVAL-ACCEPTED, OUT-OF-SCOPE-REJECTED, CHECKER-NOT-AUTHORITY]
