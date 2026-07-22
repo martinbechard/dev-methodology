@@ -1,28 +1,37 @@
 # Simplify Project Configuration Setup And Skill Routing
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/simplify-project-configuration-setup-and-skill-routing.md
+Provider Reference: backlog/completed-backlog/features/simplify-project-configuration-setup-and-skill-routing.md
 
 Completion: direct-main
 
 ## Current Execution
 
-- Owner: Dev Orchestrator
-- Claim: cold-start-backlog-reconcile-2-019f8b00 (backlog transition only; artifact claim pending)
+- Owner: Unowned after terminal backlog-claim release.
+- Claim: complete-simplify-project-config-019f8b05 during terminal provider update; release pending after the terminal commit.
 - Canonical task: 019f8b05-5922-7bc1-a5c9-dfc7f37e58d0
 - Worktree: /Users/martinbechard/.codex/worktrees/593b/dev-methodology
 - Branch: codex/simplify-project-configuration-setup-reconcile-019f8b05
 - Starting main: 351799b174362ca418cf167ecae6ef3a20dbebff
-- Phase: Project Bootstrapper example correction recovery.
+- Phase: Completed and archived after accepted integrated delivery.
 - Started: 2026-07-21
 - Running-record claim: start-simplify-project-config-019f86b1, acquired event 3d804405-ef17-42aa-b1f2-24d0b0edde33.
-- Open issues: The accepted Project Bootstrapper correction condition is now execution work; implementation must remain within the exact seven-path governed-definition scope below.
-- Accepted candidate: Pending.
+- Open issues: None for the accepted scope.
+- Accepted candidate: baff164e94557bff47a32b17fb64f3ecd4f6bf2a, accepted and integrated.
+
+## Completion Evidence — 2026-07-22
+
+- Accepted integrated delivery: baff164e94557bff47a32b17fb64f3ecd4f6bf2a.
+- Post-main verification: 188 focused tests passed, together with all affected generator freshness and skill-validation checks.
+- Integration claim: integrate-simplify-project-config-019f8b05 released.
+- Main observation: baff164e94557bff47a32b17fb64f3ecd4f6bf2a is present on main; main reached bbc04eb and is currently 2b26a28c03e16be53d4adaa1a52e50c8874dea5e, which retains that delivery.
+- Terminal backlog claim: complete-simplify-project-config-019f8b05, acquired event 86b30947-87fe-4998-a7d9-07c8bb2dbbbf; release follows this terminal commit.
+- Terminal task and worktree cleanup: next.
 
 ## Cold-Start Recovery Execution — 2026-07-22
 
