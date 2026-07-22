@@ -126,7 +126,7 @@ class _McpConfigPlan(NamedTuple):
     backup_path: Path
     rendered_content: str
     active_exists: bool
-    configured_server_count: int
+    other_server_count: int
     target_already_configured: bool
 
 
@@ -773,7 +773,7 @@ def _prepare_mcp_config(
             backup_path=active_path.with_suffix(active_path.suffix + ".bak"),
             rendered_content=active_content,
             active_exists=active_path.exists(),
-            configured_server_count=len(server_names),
+            other_server_count=len(server_names - {MCP_AGENT_OPS_SERVER_NAME}),
             target_already_configured=True,
         )
     workspace_roots = _mcp_workspace_roots(
@@ -819,7 +819,7 @@ def _prepare_mcp_config(
             backup_path=active_path.with_suffix(active_path.suffix + ".bak"),
             rendered_content=active_content,
             active_exists=active_path.exists(),
-            configured_server_count=len(server_names),
+            other_server_count=len(server_names - {MCP_AGENT_OPS_SERVER_NAME}),
             target_already_configured=True,
         )
     if adapter.name == CODEX_ADAPTER_NAME:
@@ -844,7 +844,7 @@ def _prepare_mcp_config(
         backup_path=active_path.with_suffix(active_path.suffix + ".bak"),
         rendered_content=rendered,
         active_exists=active_path.exists(),
-        configured_server_count=len(server_names),
+        other_server_count=len(server_names - {MCP_AGENT_OPS_SERVER_NAME}),
         target_already_configured=False,
     )
 
@@ -876,7 +876,7 @@ def _apply_mcp_config(plan: _McpConfigPlan, dry_run: bool) -> list[str]:
     if not plan.active_exists:
         _atomic_write_text(plan.active_path, plan.rendered_content)
         return [f"created MCP config {plan.active_path}"]
-    if plan.configured_server_count == 0:
+    if plan.other_server_count == 0:
         _backup_file(plan.active_path, plan.backup_path)
         _atomic_write_text(plan.active_path, plan.rendered_content)
         return [
