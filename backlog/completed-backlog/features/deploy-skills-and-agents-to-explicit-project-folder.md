@@ -1,12 +1,12 @@
 # Deploy Skills And Agents To An Explicit Project Folder
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/deploy-skills-and-agents-to-explicit-project-folder.md
+Provider Reference: backlog/completed-backlog/features/deploy-skills-and-agents-to-explicit-project-folder.md
 
 Completion: direct-main
 
@@ -14,17 +14,17 @@ Completion: direct-main
 
 - Owner: Dev Orchestrator
 - Canonical task: 019f8b05-525f-7b10-bb66-9c6a3abcbc47
-- Claim: cold-start-backlog-reconcile-2-019f8b00 (backlog transition only; artifact claim pending)
-- Branch: codex/deploy-explicit-project-resume-20260722
+- Claim: complete-deploy-explicit-project-019f8b05 (terminal provider transaction)
+- Branch: codex/deploy-explicit-project-integration-20260722
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/16de/dev-methodology
-- Phase: target-only noninteractive regression recovery.
+- Phase: Completed through direct-main integration and provider archival.
 - Starting main: af0a3fe63404a793f2bf7dcf40dd2a3de563109e
-- Accepted candidate: None; candidate chain preserved below.
+- Accepted candidate: 20894fa8d5e69fd643de7d37eb31b324a53228f6.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
-- Open issues: The accepted correction condition is now execution work; preserve the target-only regression boundary.
-- Next owner: Dev Orchestrator.
-- Delivery evidence: Preserved below; no integration or completion is authorized.
+- Open issues: None for the accepted scope. A reviewed low-severity empty parent-directory residual for failed creation of a brand-new MCP config is outside the stale-target-only unblock scope and was not expanded into this item.
+- Next owner: None.
+- Delivery evidence: Accepted source 20894fa8d5e69fd643de7d37eb31b324a53228f6 mapped byte-for-byte to main integration tip fa10176f8df7f76231c0ac46524e17aff384fc50; details follow.
 
 Creation Claim: create-explicit-project-deployment-item-20260721
 
@@ -35,6 +35,23 @@ Creation Claim: create-explicit-project-deployment-item-20260721
 - Backlog recovery claim: cold-start-backlog-reconcile-2-019f8b00, acquired event 66822334-e85a-41aa-b2ad-6a6c433b6798 from primary main.
 - Recovery phase: target-only noninteractive regression recovery.
 - The blocker, exact unblock condition, candidate chain, review evidence, and verification evidence below remain preserved.
+
+## Completion Evidence — 2026-07-22
+
+- Completion disposition: READY under direct-main; lifecycle persisted as Completed by this provider transaction.
+- Preserved original candidate chain: d38efccbb86791e28ebd4d4f3d7b2139a5d8eac0 to 3dfdb18c9cb3cc373c4057a75769ab784edf9a46 to fceeb9f206b868272bf034f29312f36163a5a895.
+- Current-main replay chain: b34a5ad to cf01e62 to 5b256c6 to fdcee57 to 6be4bf5 to accepted source 20894fa8d5e69fd643de7d37eb31b324a53228f6.
+- Accepted source branch and worktree: codex/deploy-explicit-project-resume-20260722 at /Users/martinbechard/.codex/worktrees/16de/dev-methodology; source worktree clean.
+- Fresh source review reproduced the exact blocker and prescribed target-only server counting. The first post-change review rejected incomplete managed-field matching and non-transactional MCP writes. The second review rejected contradictory success output. Final fresh review of 20894fa8d5e69fd643de7d37eb31b324a53228f6 passed with no material findings and confirmed no governed definition mutation.
+- Independent candidate verification: seven of seven exact stale-target, backup-conflict, injected-write rollback, and unrelated-server candidate tests passed; all 76 installer tests passed; installer help, Python compilation, and git diff checks passed.
+- Tier 3 verification: Python 3.11 ran 585 scripts tests. Eight failures were reproduced identically on exported lifecycle-start baseline 5d6a2e60b8382888c5c53bc35bed686749d71912 and were classified as unrelated claim-fixture, runtime-suite inventory, documentation phrase, line-wrapping, and lifecycle wording drift.
+- Integration claim: integrate-deploy-explicit-project-019f8b05 acquired on clean main 2fbab0c05f27505ac68f6c90e470d4611903b4a1, event 2dcae378-a1c6-4cbd-a17b-108c95d6b044, for README.md, scripts/install-skills.py, scripts/test_install-skills.py, and merge:integration:main.
+- Reconciliation branch: codex/deploy-explicit-project-integration-20260722, created from exact current main 2fbab0c05f27505ac68f6c90e470d4611903b4a1.
+- Integration mapping: the six selected commits were replayed with source hashes recorded; their three path contents were byte-identical to accepted source 20894fa8d5e69fd643de7d37eb31b324a53228f6. Main fast-forwarded to fa10176f8df7f76231c0ac46524e17aff384fc50, which contains the reconciliation tip as an ancestor.
+- Post-integration verification on main: seven of seven focused tests passed, all 76 installer tests passed, installer help passed, git diff checks passed, and the main worktree was clean.
+- Integration claim release: RELEASED at clean main fa10176f8df7f76231c0ac46524e17aff384fc50, event 759c1bfa-4b67-4662-89b9-e1365b6fbfc7.
+- Remote publication: not required by this local direct-main completion; origin/main was not changed.
+- Terminal provider claim: complete-deploy-explicit-project-019f8b05, acquired event 3977aa5b-b780-4606-90a2-0bbf0a8a466a for the active and completed provider paths; commit and release evidence are returned in the terminal handoff.
 
 ## Summary
 
