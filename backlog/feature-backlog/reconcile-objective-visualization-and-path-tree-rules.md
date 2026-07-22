@@ -1,12 +1,12 @@
 # Reconcile Objective Visualization and Repository Path-Tree Rules
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/reconcile-objective-visualization-and-path-tree-rules.md
+Provider Reference: backlog/feature-backlog/reconcile-objective-visualization-and-path-tree-rules.md
 
 Completion: direct-main
 
@@ -18,14 +18,14 @@ Completion: direct-main
 - Claim: None
 - Branch: codex/reconcile-objective-path-rules-019f817f
 - Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/objective-path-rules-019f817f-reconcile
-- Phase: Exact approval pending.
+- Phase: Exact approval recorded; Ready for fresh dispatch.
 - Starting main: af0a3fe63404a793f2bf7dcf40dd2a3de563109e
 - Accepted candidate: None.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
-- Open issues: Exact governed-scope approval is required before implementation.
-- Next owner: User.
-- Delivery evidence: Pending.
+- Open issues: None for lifecycle dispatch; implementation must remain within the recorded approval.
+- Next owner: Dev Backlog Coordinator.
+- Delivery evidence: Approval recorded; implementation and candidate remain pending.
 
 ## Read-Only Discovery
 
@@ -64,11 +64,24 @@ The completed read-only discovery identified the exact governed paths below. Rep
 
 ### Resolution
 
-Pending.
+Approved on 2026-07-22. The user answered "ok" directly after the exact eight-path Question For The User in the parent turn. Provenance: parent coordination conversation for /root/process_backlog/orch_objective_path_rules.
+
+The approval covers exactly these governed paths:
+
+- skills/create-architecture/SKILL.md
+- skills/create-functional-spec/SKILL.md
+- skills/create-high-level-design/SKILL.md
+- skills/create-module-design/SKILL.md
+- skills/development-methodology/SKILL.md
+- skills/review-architecture/SKILL.md
+- skills/review-functional-spec/SKILL.md
+- skills/review-module-design/SKILL.md
+
+The approval includes regeneration only of supported mirrors plus ordinary non-governed template, checklist, and focused-regression companions. It does not authorize changes to skills/review-high-level-design/SKILL.md or changes to reverse-engineering acceptance semantics.
 
 ### Unattended Work Boundary
 
-No artifact claim or mutation is authorized while this question is pending. The approval must not be inferred from prior Ready or Running state, and it must not change review-high-level-design or reverse-engineering acceptance semantics.
+The item is Ready for a fresh dispatch but is not Running. No artifact claim has been acquired. Work must stay within the exact approved governed paths, supported mirrors, and ordinary non-governed companions recorded in the Resolution. Changes to skills/review-high-level-design/SKILL.md and reverse-engineering acceptance semantics remain prohibited without separate approval.
 
 ## Summary
 
