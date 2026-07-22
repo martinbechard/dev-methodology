@@ -25,7 +25,7 @@ COMMAND_SCRIPT = ROOT / "skills" / "agent-claim-command" / "scripts" / "claim.py
 LEGACY_COMMAND_SCRIPT = ROOT / "skills" / "agent-claim" / "scripts" / "claim.py"
 CASES_PATH = ROOT / "evals" / "cases.yaml"
 PROJECT_CONFIGURATION_FIXTURE = ROOT / "evals" / "projects" / "project-configuration-routing"
-MCP_CLAIM_TOOLS = frozenset({
+LIVE_MCP_CLAIM_TOOLS = frozenset({
     "claim_status",
     "claim_acquire",
     "claim_extend",
@@ -34,6 +34,8 @@ MCP_CLAIM_TOOLS = frozenset({
     "claim_maintain_journal",
     "claim_report",
 })
+REQUIRED_FUTURE_MCP_CLAIM_TOOLS = LIVE_MCP_CLAIM_TOOLS | {"claim_extend_deadline"}
+MCP_DEADLINE_PARITY = "UNRESOLVED_EXTERNAL_PROVIDER"
 CANONICAL_ACQUIRE_OUTCOMES = frozenset({
     "SHARED_CHECKOUT_ACQUIRED",
     "ISOLATED_CHECKOUT_ACQUIRED",
@@ -58,7 +60,7 @@ class _SimulatedMcpTransport:
         self,
         *,
         available: bool = True,
-        tools: frozenset[str] = MCP_CLAIM_TOOLS,
+        tools: frozenset[str] = REQUIRED_FUTURE_MCP_CLAIM_TOOLS,
         result_schema_version: int = 2,
         acquire_result: dict[str, object] | None = None,
         ambiguous_acquire: bool = False,
@@ -77,6 +79,7 @@ class _SimulatedMcpTransport:
         self.ambiguous_acquire = ambiguous_acquire
         self.calls: list[str] = []
         self.claim_calls: list[tuple[str, str, tuple[str, ...]]] = []
+        self.deadline_calls: list[dict[str, object]] = []
         self.active_claim_id: str | None = None
 
     def verify_setup(self) -> None:
@@ -84,7 +87,7 @@ class _SimulatedMcpTransport:
 
         if not self.available:
             raise RuntimeError("CLAIM_TRANSPORT_UNAVAILABLE")
-        if self.tools != MCP_CLAIM_TOOLS:
+        if self.tools != REQUIRED_FUTURE_MCP_CLAIM_TOOLS:
             raise RuntimeError("CLAIM_TRANSPORT_INCOMPLETE")
         if self.result_schema_version != 2:
             raise RuntimeError("CLAIM_TRANSPORT_SCHEMA_UNSUPPORTED")
@@ -95,20 +98,49 @@ class _SimulatedMcpTransport:
         *,
         claim_id: str | None = None,
         resources: tuple[str, ...] = (),
+        resource_class: str | None = None,
+        resource_id: str | None = None,
+        expected_duration_seconds: int | None = None,
+        requested_hard_stop_duration_seconds: int | None = None,
+        extension_evidence: str | None = None,
     ) -> dict[str, object]:
         """Record one simulated MCP call and return its configured structured result."""
 
         if tool not in self.tools:
             raise AssertionError(f"unexpected MCP tool: {tool}")
         self.calls.append(tool)
-        if tool in {"claim_acquire", "claim_release"}:
+        if tool in {"claim_acquire", "claim_extend_deadline", "claim_release"}:
             if not claim_id:
                 raise AssertionError(f"{tool} requires claim_id")
             if tool == "claim_acquire" and not resources:
                 raise AssertionError("claim_acquire requires named resources")
+            if tool == "claim_acquire" and (
+                len(resources) != 1
+                or resource_class is None
+                or resource_id != resources[0]
+                or expected_duration_seconds is None
+                or requested_hard_stop_duration_seconds is None
+            ):
+                raise AssertionError("claim_acquire requires one complete timed resource request")
+            if tool == "claim_extend_deadline" and (
+                claim_id != self.active_claim_id
+                or requested_hard_stop_duration_seconds is None
+                or not extension_evidence
+            ):
+                raise AssertionError("claim_extend_deadline requires active ownership and extension evidence")
             if tool == "claim_release" and claim_id != self.active_claim_id:
                 raise AssertionError("claim_release must use the acquired claim_id")
             self.claim_calls.append((tool, claim_id, resources))
+            if tool in {"claim_acquire", "claim_extend_deadline"}:
+                self.deadline_calls.append({
+                    "tool": tool,
+                    "claim_id": claim_id,
+                    "resource_class": resource_class,
+                    "resource_id": resource_id,
+                    "expected_duration_seconds": expected_duration_seconds,
+                    "requested_hard_stop_duration_seconds": requested_hard_stop_duration_seconds,
+                    "extension_evidence": extension_evidence,
+                })
             if tool == "claim_acquire":
                 self.active_claim_id = claim_id
         if tool == "claim_acquire" and self.ambiguous_acquire:
@@ -123,6 +155,11 @@ class _SimulatedMcpTransport:
             return {
                 "exit_code": 0,
                 "result": {"schema_version": 2, "outcome": "CLAIM_RELEASED"},
+            }
+        if tool == "claim_extend_deadline":
+            return {
+                "exit_code": 0,
+                "result": {"schema_version": 2, "outcome": "DEADLINE_EXTENDED"},
             }
         return self.acquire_result
 
@@ -147,6 +184,10 @@ def _run_mcp_acquire(transport: _SimulatedMcpTransport) -> dict[str, object]:
             "claim_acquire",
             claim_id="mcp-acquire-test",
             resources=("database:test",),
+            resource_class="database-port",
+            resource_id="database:test",
+            expected_duration_seconds=300,
+            requested_hard_stop_duration_seconds=900,
         )
     except _AmbiguousDispatch:
         response = transport.call("claim_status")
@@ -191,9 +232,23 @@ def _run_selected_mcp_lifecycle(
         raise RuntimeError("CLAIM_TRANSPORT_BINDING_MISMATCH")
 
     transport.verify_setup()
-    acquired = _canonical_mcp_result(
-        transport.call("claim_acquire", claim_id=claim_id, resources=resources)
-    )
+    if len(resources) != 1:
+        raise ValueError("MCP lifecycle requires exactly one named resource")
+    acquired = _canonical_mcp_result(transport.call(
+        "claim_acquire",
+        claim_id=claim_id,
+        resources=resources,
+        resource_class="database-port",
+        resource_id=resources[0],
+        expected_duration_seconds=300,
+        requested_hard_stop_duration_seconds=900,
+    ))
+    extended = _canonical_mcp_result(transport.call(
+        "claim_extend_deadline",
+        claim_id=claim_id,
+        requested_hard_stop_duration_seconds=1200,
+        extension_evidence="future MCP deadline parity contract",
+    ))
     released = _canonical_mcp_result(
         transport.call("claim_release", claim_id=claim_id)
     )
@@ -203,6 +258,7 @@ def _run_selected_mcp_lifecycle(
         "claim_id": claim_id,
         "resources": list(resources),
         "acquire_outcome": acquired["outcome"],
+        "extend_deadline_outcome": extended["outcome"],
         "release_outcome": released["outcome"],
     }
 
@@ -236,8 +292,8 @@ def _run_command_resource_lifecycle(
         raise ValueError("agent_claim_transport is required")
     if transport_configuration.get("selected") != "command":
         raise RuntimeError("CLAIM_TRANSPORT_BINDING_MISMATCH")
-    if not resources:
-        raise ValueError("command lifecycle requires at least one named resource")
+    if len(resources) != 1:
+        raise ValueError("command lifecycle requires exactly one named resource")
 
     acquire_argv = [
         sys.executable,
@@ -256,6 +312,16 @@ def _run_command_resource_lifecycle(
     ]
     for resource in resources:
         acquire_argv.extend(("--resource", resource))
+    acquire_argv.extend((
+        "--resource-class",
+        "database-port",
+        "--resource-id",
+        resources[0],
+        "--expected-duration-seconds",
+        "300",
+        "--requested-hard-stop-duration-seconds",
+        "900",
+    ))
     release_argv = [
         sys.executable,
         str(COMMAND_SCRIPT),
@@ -434,6 +500,15 @@ class AgentClaimTransportTests(unittest.TestCase):
             }
         }
         cases.append((unknown_override, "resource_class must name a configured resource class"))
+        noncanonical_override = project_with_transport("command")
+        noncanonical_override["resource_coordination"]["deadline_policy"]["resource_overrides"] = {
+            " port:production ": {
+                "resource_class": "database-port",
+                "maximum_duration_seconds": 60,
+                "cleanup_grace_seconds": 10,
+            }
+        }
+        cases.append((noncanonical_override, "resource override ids must be canonical"))
 
         for project, message in cases:
             with self.subTest(message=message):
@@ -531,24 +606,37 @@ class AgentClaimTransportTests(unittest.TestCase):
             project_with_transport("mcp"),
             selected_transport,
             "resource-lifecycle-agent-claim",
-            ("database:integration", "browser-profile:primary"),
+            ("database:integration",),
         )
 
-        self.assertEqual(["claim_acquire", "claim_release"], selected_transport.calls)
+        self.assertEqual(
+            ["claim_acquire", "claim_extend_deadline", "claim_release"],
+            selected_transport.calls,
+        )
         self.assertEqual(
             [
                 (
                     "claim_acquire",
                     "resource-lifecycle-agent-claim",
-                    ("database:integration", "browser-profile:primary"),
+                    ("database:integration",),
                 ),
+                ("claim_extend_deadline", "resource-lifecycle-agent-claim", ()),
                 ("claim_release", "resource-lifecycle-agent-claim", ()),
             ],
             selected_transport.claim_calls,
         )
+        self.assertEqual("database-port", selected_transport.deadline_calls[0]["resource_class"])
+        self.assertEqual("database:integration", selected_transport.deadline_calls[0]["resource_id"])
+        self.assertEqual(300, selected_transport.deadline_calls[0]["expected_duration_seconds"])
+        self.assertEqual(900, selected_transport.deadline_calls[0]["requested_hard_stop_duration_seconds"])
+        self.assertEqual(
+            "future MCP deadline parity contract",
+            selected_transport.deadline_calls[1]["extension_evidence"],
+        )
         self.assertEqual("mcp", claim_evidence["transport"])
         self.assertEqual("resource-lifecycle-agent-claim", claim_evidence["claim_id"])
         self.assertEqual("SHARED_CHECKOUT_ACQUIRED", claim_evidence["acquire_outcome"])
+        self.assertEqual("DEADLINE_EXTENDED", claim_evidence["extend_deadline_outcome"])
         self.assertEqual("CLAIM_RELEASED", claim_evidence["release_outcome"])
 
         mismatched_transport = _SimulatedMcpTransport()
@@ -589,15 +677,26 @@ class AgentClaimTransportTests(unittest.TestCase):
                 text=True,
                 capture_output=True,
             )
+            project = project_with_transport("command")
+            (repository / "PROJECT.yaml").write_text(
+                yaml.safe_dump(project, sort_keys=False),
+                encoding="utf-8",
+            )
             subprocess.run(
-                ["git", "-C", str(repository), "commit", "--allow-empty", "-m", "baseline"],
+                ["git", "-C", str(repository), "add", "PROJECT.yaml"],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            subprocess.run(
+                ["git", "-C", str(repository), "commit", "-m", "baseline"],
                 check=True,
                 text=True,
                 capture_output=True,
             )
 
             evidence = _run_command_resource_lifecycle(
-                project_with_transport("command"),
+                project,
                 repository,
                 "resource-lifecycle-command",
                 ("database:integration",),
@@ -625,6 +724,9 @@ class AgentClaimTransportTests(unittest.TestCase):
         self.assertEqual("acquire", evidence["acquire_argv"][4])
         self.assertIn("--resource", evidence["acquire_argv"])
         self.assertIn("database:integration", evidence["acquire_argv"])
+        self.assertIn("--resource-class", evidence["acquire_argv"])
+        self.assertIn("--requested-hard-stop-duration-seconds", evidence["acquire_argv"])
+        self.assertNotIn("--configured-maximum-duration-seconds", evidence["acquire_argv"])
         self.assertEqual("resource-lifecycle-command", evidence["release_argv"][-2])
         self.assertEqual("--no-change", evidence["release_argv"][-1])
 
@@ -775,7 +877,7 @@ class AgentClaimTransportTests(unittest.TestCase):
         """Reject an incomplete tool surface or legacy result schema during setup."""
 
         incomplete = _SimulatedMcpTransport(
-            tools=MCP_CLAIM_TOOLS - {"claim_release"},
+            tools=REQUIRED_FUTURE_MCP_CLAIM_TOOLS - {"claim_release"},
         )
         legacy = _SimulatedMcpTransport(result_schema_version=1)
         with self.assertRaisesRegex(RuntimeError, "CLAIM_TRANSPORT_INCOMPLETE"):
@@ -839,7 +941,11 @@ class AgentClaimTransportTests(unittest.TestCase):
             "b4abdd4054a3b6181d2cc48d4c9de6b4fbbc29eb6fd256e0427d861e2ae1620d",
             contract["requiredRuntimeDigest"],
         )
-        self.assertTrue(MCP_CLAIM_TOOLS <= set(contract["enabledTools"]))
+        enabled_tools = set(contract["enabledTools"])
+        self.assertTrue(LIVE_MCP_CLAIM_TOOLS <= enabled_tools)
+        self.assertNotIn("claim_extend_deadline", enabled_tools)
+        self.assertFalse(REQUIRED_FUTURE_MCP_CLAIM_TOOLS <= enabled_tools)
+        self.assertEqual("UNRESOLVED_EXTERNAL_PROVIDER", MCP_DEADLINE_PARITY)
         self.assertEqual(
             ["SHARED_CHECKOUT_ACQUIRED"],
             contract["requiredToolOutcomes"]["claim_acquire"],

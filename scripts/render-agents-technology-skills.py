@@ -1107,8 +1107,15 @@ def _resource_deadline_policy(configuration: dict[str, object]) -> dict[str, obj
         raise ValueError("resource_coordination.deadline_policy.resource_overrides must be a mapping")
     normalized_overrides: dict[str, dict[str, object]] = {}
     for resource_id, override in overrides.items():
-        if not isinstance(resource_id, str) or not resource_id or len(resource_id) > 200:
-            raise ValueError("resource override ids must be non-empty strings of at most 200 characters")
+        if (
+            not isinstance(resource_id, str)
+            or not resource_id
+            or resource_id != resource_id.strip()
+            or len(resource_id) > 200
+        ):
+            raise ValueError(
+                "resource override ids must be canonical non-empty strings of at most 200 characters"
+            )
         context = f"resource_coordination.deadline_policy.resource_overrides.{resource_id}"
         if not isinstance(override, dict):
             raise ValueError(f"{context} must be a mapping")

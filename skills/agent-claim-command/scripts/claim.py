@@ -22,6 +22,8 @@ from statistics import median
 from typing import Any, Iterator, Sequence
 from uuid import uuid4
 
+import yaml
+
 
 SUCCESS = 0
 ERROR = 1
@@ -44,6 +46,13 @@ DEFAULT_HOT_DAYS = 2
 MAX_SCOPE_REASON_LENGTH = 200
 MAX_IDENTIFIER_LENGTH = 200
 MAX_EXTENSION_EVIDENCE_LENGTH = 1000
+_RESOURCE_DEADLINE_CLASS_IDS = (
+    "backlog-mutation",
+    "main-integration",
+    "browser-server",
+    "database-port",
+    "live-model-evaluation",
+)
 STALE_HEARTBEAT_HOURS = 24
 UTC_DAY_PATTERN = re.compile(r"^(\d{4}-\d{2}-\d{2})\.jsonl$")
 SINCE_PATTERN = re.compile(r"^(\d+)([dh])$")
@@ -218,36 +227,192 @@ def _parse_timestamp(value: str) -> datetime:
     return parsed.astimezone(timezone.utc)
 
 
-def _deadline_from_args(args: argparse.Namespace, acquired_at: str) -> dict[str, Any] | None:
+def _deadline_policy_seconds(
+    policy: dict[str, Any],
+    field: str,
+    context: str,
+    *,
+    allow_zero: bool = False,
+) -> int:
+    value = policy.get(field)
+    valid = isinstance(value, int) and not isinstance(value, bool)
+    valid = valid and (value >= 0 if allow_zero else value > 0)
+    if not valid:
+        qualifier = "non-negative" if allow_zero else "positive"
+        raise _DeadlineError(
+            f"{context}.{field} must be a {qualifier} integer.",
+            field,
+            "invalid_project_deadline_policy",
+        )
+    return value
+
+
+def _load_deadline_policy(repository: Path) -> dict[str, Any]:
+    project_path = repository / "PROJECT.yaml"
+    if not project_path.is_file():
+        raise _DeadlineError(
+            "PROJECT.yaml is required for named resource acquisition.",
+            "PROJECT.yaml",
+            "project_policy_missing",
+        )
+    try:
+        project = yaml.safe_load(project_path.read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError) as error:
+        raise _DeadlineError(
+            f"PROJECT.yaml resource deadline policy is unreadable or invalid: {error}.",
+            "PROJECT.yaml",
+            "project_policy_invalid",
+        ) from error
+    coordination = project.get("resource_coordination") if isinstance(project, dict) else None
+    if not isinstance(coordination, dict) or coordination.get("selected") != "agent-claim":
+        raise _DeadlineError(
+            "PROJECT.yaml resource_coordination must select agent-claim for named resource acquisition.",
+            "resource_coordination.selected",
+            "resource_coordination_not_selected",
+        )
+    policy = coordination.get("deadline_policy")
+    if not isinstance(policy, dict) or set(policy) != {"resource_classes", "resource_overrides"}:
+        raise _DeadlineError(
+            "resource_coordination.deadline_policy keys must be exactly: resource_classes, resource_overrides.",
+            "resource_coordination.deadline_policy",
+            "invalid_project_deadline_policy",
+        )
+    classes = policy.get("resource_classes")
+    if not isinstance(classes, dict) or set(classes) != set(_RESOURCE_DEADLINE_CLASS_IDS):
+        raise _DeadlineError(
+            "resource_coordination.deadline_policy.resource_classes keys must be exactly: "
+            + ", ".join(_RESOURCE_DEADLINE_CLASS_IDS)
+            + ".",
+            "resource_coordination.deadline_policy.resource_classes",
+            "invalid_project_deadline_policy",
+        )
+    normalized_classes: dict[str, dict[str, int]] = {}
+    for class_id in _RESOURCE_DEADLINE_CLASS_IDS:
+        class_policy = classes[class_id]
+        context = f"resource_coordination.deadline_policy.resource_classes.{class_id}"
+        if not isinstance(class_policy, dict) or set(class_policy) != {
+            "maximum_duration_seconds",
+            "cleanup_grace_seconds",
+        }:
+            raise _DeadlineError(
+                f"{context} keys must be exactly: maximum_duration_seconds, cleanup_grace_seconds.",
+                context,
+                "invalid_project_deadline_policy",
+            )
+        normalized_classes[class_id] = {
+            "maximum_duration_seconds": _deadline_policy_seconds(
+                class_policy,
+                "maximum_duration_seconds",
+                context,
+            ),
+            "cleanup_grace_seconds": _deadline_policy_seconds(
+                class_policy,
+                "cleanup_grace_seconds",
+                context,
+                allow_zero=True,
+            ),
+        }
+    overrides = policy.get("resource_overrides")
+    if not isinstance(overrides, dict):
+        raise _DeadlineError(
+            "resource_coordination.deadline_policy.resource_overrides must be a mapping.",
+            "resource_coordination.deadline_policy.resource_overrides",
+            "invalid_project_deadline_policy",
+        )
+    normalized_overrides: dict[str, dict[str, Any]] = {}
+    for raw_resource_id, override in overrides.items():
+        resource_id = raw_resource_id.strip() if isinstance(raw_resource_id, str) else ""
+        context = f"resource_coordination.deadline_policy.resource_overrides.{resource_id}"
+        if not resource_id or resource_id != raw_resource_id or len(resource_id) > MAX_IDENTIFIER_LENGTH:
+            raise _DeadlineError(
+                "resource override ids must be canonical non-empty strings of at most 200 characters.",
+                "resource_id",
+                "invalid_project_deadline_policy",
+            )
+        if not isinstance(override, dict) or set(override) != {
+            "resource_class",
+            "maximum_duration_seconds",
+            "cleanup_grace_seconds",
+        }:
+            raise _DeadlineError(
+                f"{context} keys must be exactly: resource_class, maximum_duration_seconds, cleanup_grace_seconds.",
+                context,
+                "invalid_project_deadline_policy",
+            )
+        resource_class = override.get("resource_class")
+        if resource_class not in normalized_classes:
+            raise _DeadlineError(
+                f"{context}.resource_class must name a configured resource class.",
+                "resource_class",
+                "invalid_project_deadline_policy",
+            )
+        normalized_overrides[resource_id] = {
+            "resource_class": resource_class,
+            "maximum_duration_seconds": _deadline_policy_seconds(
+                override,
+                "maximum_duration_seconds",
+                context,
+            ),
+            "cleanup_grace_seconds": _deadline_policy_seconds(
+                override,
+                "cleanup_grace_seconds",
+                context,
+                allow_zero=True,
+            ),
+        }
+    return {"resource_classes": normalized_classes, "resource_overrides": normalized_overrides}
+
+
+def _deadline_request_from_args(
+    args: argparse.Namespace,
+    resources: Sequence[str],
+    repository: Path,
+) -> dict[str, Any] | None:
     argument_names = (
         "resource_class",
         "resource_id",
         "expected_duration_seconds",
         "requested_hard_stop_duration_seconds",
-        "configured_maximum_duration_seconds",
-        "cleanup_grace_seconds",
     )
     values = {name: getattr(args, name, None) for name in argument_names}
     supplied = [name for name, value in values.items() if value is not None]
-    if not supplied:
+    if len(resources) > 1:
+        raise _DeadlineError(
+            "A claim may acquire exactly one named resource.",
+            "resource",
+            "multiple_resources_not_supported",
+        )
+    if not resources and not supplied:
         return None
+    if not resources:
+        raise _DeadlineError(
+            "Resource timing arguments require exactly one named --resource.",
+            "resource",
+            "timing_without_resource",
+        )
+    if not supplied:
+        raise _DeadlineError(
+            "Named resource acquisition requires complete timing evidence.",
+            "resource",
+            "resource_timing_required",
+        )
     if len(supplied) != len(argument_names):
         missing = sorted(set(argument_names) - set(supplied))
         raise _DeadlineError(
-            f"Timed resource deadline arguments must be supplied together; missing: {', '.join(missing)}.",
+            f"Resource timing arguments must be supplied together; missing: {', '.join(missing)}.",
             ",".join(missing),
             "incomplete_deadline_arguments",
         )
 
-    resource_class = values["resource_class"]
-    resource_id = values["resource_id"]
+    resource_class = values["resource_class"].strip() if isinstance(values["resource_class"], str) else None
+    resource_id = values["resource_id"].strip() if isinstance(values["resource_id"], str) else None
     if not isinstance(resource_class, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", resource_class):
         raise _DeadlineError(
             "resource class must be a stable lowercase identifier containing letters, digits, and hyphens.",
             "resource_class",
             "invalid_resource_class",
         )
-    if not isinstance(resource_id, str) or resource_id not in getattr(args, "resource", []):
+    if not isinstance(resource_id, str) or resource_id != resources[0]:
         raise _DeadlineError(
             "resource id must exactly match one acquired --resource value.",
             "resource_id",
@@ -256,12 +421,9 @@ def _deadline_from_args(args: argparse.Namespace, acquired_at: str) -> dict[str,
 
     expected = values["expected_duration_seconds"]
     hard_stop = values["requested_hard_stop_duration_seconds"]
-    maximum = values["configured_maximum_duration_seconds"]
-    cleanup_grace = values["cleanup_grace_seconds"]
     for field, value in (
         ("expected_duration_seconds", expected),
         ("requested_hard_stop_duration_seconds", hard_stop),
-        ("configured_maximum_duration_seconds", maximum),
     ):
         if not isinstance(value, int) or value <= 0:
             raise _DeadlineError(
@@ -269,18 +431,30 @@ def _deadline_from_args(args: argparse.Namespace, acquired_at: str) -> dict[str,
                 field,
                 "invalid_duration",
             )
-    if not isinstance(cleanup_grace, int) or cleanup_grace < 0:
-        raise _DeadlineError(
-            "cleanup grace seconds must be a non-negative integer.",
-            "cleanup_grace_seconds",
-            "invalid_cleanup_grace",
-        )
     if expected > hard_stop:
         raise _DeadlineError(
             "expected duration must not exceed requested hard stop.",
             "expected_duration_seconds",
             "expected_exceeds_hard_stop",
         )
+    policy = _load_deadline_policy(repository)
+    class_policy = policy["resource_classes"].get(resource_class)
+    if class_policy is None:
+        raise _DeadlineError(
+            "resource class must name a configured PROJECT.yaml resource class.",
+            "resource_class",
+            "resource_class_not_configured",
+        )
+    override = policy["resource_overrides"].get(resource_id)
+    if override is not None and override["resource_class"] != resource_class:
+        raise _DeadlineError(
+            f"resource id {resource_id} is configured for resource class {override['resource_class']}.",
+            "resource_class",
+            "resource_override_class_mismatch",
+        )
+    resolved = override or class_policy
+    maximum = resolved["maximum_duration_seconds"]
+    cleanup_grace = resolved["cleanup_grace_seconds"]
     if hard_stop > maximum:
         raise _DeadlineError(
             "requested hard stop must not exceed configured maximum.",
@@ -288,18 +462,27 @@ def _deadline_from_args(args: argparse.Namespace, acquired_at: str) -> dict[str,
             "hard_stop_exceeds_maximum",
         )
 
-    acquired = _parse_timestamp(acquired_at)
-    hard_stop_at = acquired + timedelta(seconds=hard_stop)
     return {
         "resource_class": resource_class,
         "resource_id": resource_id,
-        "acquired_at": acquired_at,
         "expected_duration_seconds": expected,
         "requested_hard_stop_duration_seconds": hard_stop,
         "configured_maximum_duration_seconds": maximum,
+        "cleanup_grace_seconds": cleanup_grace,
+    }
+
+
+def _deadline_from_request(request: dict[str, Any], acquired_at: str) -> dict[str, Any]:
+    acquired = _parse_timestamp(acquired_at)
+    hard_stop = request["requested_hard_stop_duration_seconds"]
+    cleanup_grace = request["cleanup_grace_seconds"]
+    expected = request["expected_duration_seconds"]
+    hard_stop_at = acquired + timedelta(seconds=hard_stop)
+    return {
+        **request,
+        "acquired_at": acquired_at,
         "expected_release_at": _format_timestamp(acquired + timedelta(seconds=expected)),
         "hard_stop_at": _format_timestamp(hard_stop_at),
-        "cleanup_grace_seconds": cleanup_grace,
         "cleanup_grace_ends_at": _format_timestamp(
             hard_stop_at + timedelta(seconds=cleanup_grace)
         ),
@@ -1237,9 +1420,12 @@ def _acquire(args: argparse.Namespace) -> int:
             requested_scope, scope_warnings = _scope_from_args(args, repository)
         except _ScopeError as error:
             return _invalid_scope_result(common_directory, "acquire", args, error)
-        acquired_at = _timestamp()
         try:
-            deadline = _deadline_from_args(args, acquired_at)
+            deadline_request = _deadline_request_from_args(
+                args,
+                requested_scope["resources"],
+                repository,
+            )
         except _DeadlineError as error:
             return _invalid_deadline_result(common_directory, "acquire", args, error)
         if not _claim_id_is_safe_worktree_component(args.claim_id):
@@ -1361,9 +1547,14 @@ def _acquire(args: argparse.Namespace) -> int:
             mode = "recovery" if initial_status else "primary"
             outcome = "RECOVER" if initial_status else "PRIMARY"
 
-        now = acquired_at
         baseline_snapshot = _status_snapshot(target_worktree)
         baseline_state = _status_state(target_worktree, baseline_snapshot)
+        now = _timestamp()
+        deadline = (
+            _deadline_from_request(deadline_request, now)
+            if deadline_request is not None
+            else None
+        )
         claim = {
             "agent": args.agent,
             "backlog": requested_scope["backlog"],
@@ -1431,6 +1622,31 @@ def _extend(args: argparse.Namespace) -> int:
             event = _event("extend", "CLAIM_NOT_FOUND", args, requested_scope=requested_scope)
             return _journaled_result(ERROR, common_directory, event, claim_id=args.claim_id)
 
+        current_resources = [str(resource) for resource in claim.get("resources", [])]
+        requested_resources = requested_scope["resources"]
+        if requested_resources and current_resources and requested_resources != current_resources:
+            error = _DeadlineError(
+                "A claim that owns one named resource cannot add a second named resource.",
+                "resource",
+                "second_resource_not_supported",
+            )
+            return _invalid_deadline_result(common_directory, "extend", args, error, claim)
+        try:
+            deadline_request = _deadline_request_from_args(
+                args,
+                requested_resources,
+                repository,
+            )
+        except _DeadlineError as error:
+            return _invalid_deadline_result(common_directory, "extend", args, error, claim)
+        if requested_resources and current_resources and not isinstance(claim.get("deadline"), dict):
+            error = _DeadlineError(
+                "The existing named resource has no complete timing evidence.",
+                "deadline",
+                "resource_timing_missing",
+            )
+            return _invalid_deadline_result(common_directory, "extend", args, error, claim)
+
         if claim.get("mode") == "isolated" and requested_scope.get("file_domain") in {
             "backlog",
             "all_files",
@@ -1488,6 +1704,10 @@ def _extend(args: argparse.Namespace) -> int:
 
         if _scope_has_values(added):
             _apply_scope(claim, added)
+            if added["resources"]:
+                if deadline_request is None:
+                    raise RuntimeError("Timed resource validation did not produce deadline evidence.")
+                claim["deadline"] = _deadline_from_request(deadline_request, _timestamp())
             _write_registry(registry_path, data)
         event = _event(
             "extend",
@@ -2140,6 +2360,13 @@ def _add_scope_arguments(parser: argparse.ArgumentParser) -> None:
         action="store_true",
         help="Claim every project file except the primary-only backlog and ignored operational state.",
     )
+
+
+def _add_resource_timing_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--resource-class")
+    parser.add_argument("--resource-id")
+    parser.add_argument("--expected-duration-seconds", type=int)
+    parser.add_argument("--requested-hard-stop-duration-seconds", type=int)
     parser.add_argument(
         "--backlog",
         action="store_true",
@@ -2181,17 +2408,13 @@ def _parser() -> argparse.ArgumentParser:
     )
     acquire.add_argument("--base", default="HEAD")
     acquire.add_argument("--allow-recovery", action="store_true")
-    acquire.add_argument("--resource-class")
-    acquire.add_argument("--resource-id")
-    acquire.add_argument("--expected-duration-seconds", type=int)
-    acquire.add_argument("--requested-hard-stop-duration-seconds", type=int)
-    acquire.add_argument("--configured-maximum-duration-seconds", type=int)
-    acquire.add_argument("--cleanup-grace-seconds", type=int)
+    _add_resource_timing_arguments(acquire)
     acquire.set_defaults(handler=_acquire)
 
     extend = subparsers.add_parser("extend", help="Atomically add files, trees, or resources to an active claim.")
     extend.add_argument("--claim-id", required=True)
     _add_scope_arguments(extend)
+    _add_resource_timing_arguments(extend)
     extend.set_defaults(handler=_extend)
 
     heartbeat = subparsers.add_parser("heartbeat", help="Refresh an active claim heartbeat.")

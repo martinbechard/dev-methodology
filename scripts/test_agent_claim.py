@@ -37,6 +37,7 @@ class AgentClaimTests(unittest.TestCase):
             "queued\n",
             encoding="utf-8",
         )
+        self.write_deadline_policy()
         self.git("init")
         self.git("config", "user.email", "test@example.invalid")
         self.git("config", "user.name", "Claim Test")
@@ -97,6 +98,9 @@ class AgentClaimTests(unittest.TestCase):
         self,
         resource: str = "port:3000",
         resource_class: str = "database-port",
+        resource_id: str | None = None,
+        expected_duration_seconds: int = 300,
+        requested_hard_stop_duration_seconds: int = 900,
     ) -> list[str]:
         """Build one complete deterministic deadline request for a named resource."""
         return [
@@ -105,16 +109,52 @@ class AgentClaimTests(unittest.TestCase):
             "--resource-class",
             resource_class,
             "--resource-id",
-            resource,
+            resource if resource_id is None else resource_id,
             "--expected-duration-seconds",
-            "300",
+            str(expected_duration_seconds),
             "--requested-hard-stop-duration-seconds",
-            "900",
-            "--configured-maximum-duration-seconds",
-            "1800",
-            "--cleanup-grace-seconds",
-            "300",
+            str(requested_hard_stop_duration_seconds),
         ]
+
+    def deadline_policy(self) -> dict[str, object]:
+        """Return the five configured class defaults used by command tests."""
+        return {
+            "resource_coordination": {
+                "selected": "agent-claim",
+                "deadline_policy": {
+                    "resource_classes": {
+                        "backlog-mutation": {
+                            "maximum_duration_seconds": 600,
+                            "cleanup_grace_seconds": 120,
+                        },
+                        "main-integration": {
+                            "maximum_duration_seconds": 2700,
+                            "cleanup_grace_seconds": 600,
+                        },
+                        "browser-server": {
+                            "maximum_duration_seconds": 3600,
+                            "cleanup_grace_seconds": 600,
+                        },
+                        "database-port": {
+                            "maximum_duration_seconds": 1800,
+                            "cleanup_grace_seconds": 300,
+                        },
+                        "live-model-evaluation": {
+                            "maximum_duration_seconds": 14400,
+                            "cleanup_grace_seconds": 1800,
+                        },
+                    },
+                    "resource_overrides": {},
+                },
+            }
+        }
+
+    def write_deadline_policy(self, policy: dict[str, object] | None = None) -> None:
+        """Write one YAML-compatible JSON project policy into the temporary repository."""
+        (self.repository / "PROJECT.yaml").write_text(
+            json.dumps(policy if policy is not None else self.deadline_policy(), indent=2) + "\n",
+            encoding="utf-8",
+        )
 
     def output(self, completed: subprocess.CompletedProcess[str]) -> dict[str, object]:
         """Decode one structured command result."""
@@ -206,8 +246,12 @@ class AgentClaimTests(unittest.TestCase):
     def test_timed_resource_acquisition_rejects_incomplete_or_invalid_ordering(self) -> None:
         cases = (
             (
+                ["--resource", "port:3000"],
+                "Named resource acquisition requires complete timing evidence",
+            ),
+            (
                 ["--resource", "port:3000", "--expected-duration-seconds", "300"],
-                "deadline arguments must be supplied together",
+                "timing arguments must be supplied together",
             ),
             (
                 [
@@ -240,6 +284,166 @@ class AgentClaimTests(unittest.TestCase):
 
         status = self.output(self.claim("status"))
         self.assertEqual([], status["claims"])
+
+    def test_timed_resource_rejects_missing_invalid_or_unselected_project_policy(self) -> None:
+        cases: tuple[tuple[dict[str, object] | None, str], ...] = (
+            (None, "PROJECT.yaml is required for named resource acquisition"),
+            ({}, "resource_coordination must select agent-claim"),
+            (
+                {"resource_coordination": {"selected": "none"}},
+                "resource_coordination must select agent-claim",
+            ),
+            (
+                {
+                    "resource_coordination": {
+                        "selected": "agent-claim",
+                        "deadline_policy": {"resource_classes": {}, "resource_overrides": {}},
+                    }
+                },
+                "resource_classes keys must be exactly",
+            ),
+        )
+
+        for index, (policy, message) in enumerate(cases):
+            with self.subTest(message=message):
+                if policy is None:
+                    (self.repository / "PROJECT.yaml").unlink()
+                else:
+                    self.write_deadline_policy(policy)
+                rejected = self.claim(
+                    *self.acquire_arguments(f"policy-{index}"),
+                    *self.timed_resource_arguments(),
+                )
+                self.assertEqual(1, rejected.returncode, rejected.stderr)
+                self.assertEqual("INVALID_DEADLINE_POLICY", self.output(rejected)["outcome"])
+                self.assertIn(message, self.output(rejected)["message"])
+                self.write_deadline_policy()
+
+    def test_exact_resource_override_replaces_class_default(self) -> None:
+        policy = self.deadline_policy()
+        policy["resource_coordination"]["deadline_policy"]["resource_overrides"] = {
+            "port:3000": {
+                "resource_class": "database-port",
+                "maximum_duration_seconds": 1200,
+                "cleanup_grace_seconds": 120,
+            }
+        }
+        self.write_deadline_policy(policy)
+        self.git("add", "PROJECT.yaml")
+        self.git("commit", "-m", "configure exact resource override")
+
+        acquired = self.claim(
+            *self.acquire_arguments("override"),
+            *self.timed_resource_arguments(requested_hard_stop_duration_seconds=1200),
+        )
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        deadline = self.output(acquired)["claim"]["deadline"]
+        self.assertEqual(1200, deadline["configured_maximum_duration_seconds"])
+        self.assertEqual(120, deadline["cleanup_grace_seconds"])
+
+    def test_resource_class_and_exact_override_binding_must_be_configured(self) -> None:
+        unknown_class = self.claim(
+            *self.acquire_arguments("unknown-class"),
+            *self.timed_resource_arguments(resource_class="unknown-class"),
+        )
+        self.assertEqual(1, unknown_class.returncode, unknown_class.stderr)
+        self.assertIn("must name a configured PROJECT.yaml resource class", self.output(unknown_class)["message"])
+
+        policy = self.deadline_policy()
+        policy["resource_coordination"]["deadline_policy"]["resource_overrides"] = {
+            "port:3000": {
+                "resource_class": "browser-server",
+                "maximum_duration_seconds": 1200,
+                "cleanup_grace_seconds": 120,
+            }
+        }
+        self.write_deadline_policy(policy)
+        mismatch = self.claim(
+            *self.acquire_arguments("override-mismatch"),
+            *self.timed_resource_arguments(resource_class="database-port"),
+        )
+
+        self.assertEqual(1, mismatch.returncode, mismatch.stderr)
+        self.assertIn("is configured for resource class browser-server", self.output(mismatch)["message"])
+
+    def test_resource_id_is_canonicalized_before_policy_resolution_and_storage(self) -> None:
+        acquired = self.claim(
+            *self.acquire_arguments("normalized"),
+            *self.timed_resource_arguments(
+                resource="  port:3000  ",
+                resource_id=" port:3000 ",
+            ),
+        )
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        claim = self.output(acquired)["claim"]
+        self.assertEqual(["port:3000"], claim["resources"])
+        self.assertEqual("port:3000", claim["deadline"]["resource_id"])
+
+    def test_resource_claim_rejects_multiple_resources_and_caller_asserted_policy(self) -> None:
+        multiple = self.claim(
+            *self.acquire_arguments("multiple"),
+            *self.timed_resource_arguments(),
+            "--resource",
+            "database:secondary",
+        )
+        caller_maximum = self.claim(
+            *self.acquire_arguments("caller-maximum"),
+            *self.timed_resource_arguments(),
+            "--configured-maximum-duration-seconds",
+            "999999",
+        )
+
+        self.assertEqual(1, multiple.returncode, multiple.stderr)
+        self.assertEqual("INVALID_DEADLINE_POLICY", self.output(multiple)["outcome"])
+        self.assertIn("exactly one named resource", self.output(multiple)["message"])
+        self.assertEqual(2, caller_maximum.returncode)
+        self.assertIn("unrecognized arguments", caller_maximum.stderr)
+
+    def test_file_claim_can_add_one_timed_resource_but_cannot_add_a_second(self) -> None:
+        acquired = self.claim(*self.acquire_arguments("extend-resource"), "--file", "README.md")
+        extended = self.claim(
+            "extend",
+            "--claim-id",
+            "extend-resource",
+            *self.timed_resource_arguments(),
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-22T11:00:00Z"},
+        )
+        registry_before_second = self.registry_path().read_bytes()
+        second = self.claim(
+            "extend",
+            "--claim-id",
+            "extend-resource",
+            *self.timed_resource_arguments(
+                resource="database:secondary",
+                resource_class="database-port",
+            ),
+        )
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(0, extended.returncode, extended.stderr)
+        deadline = self.output(extended)["claim"]["deadline"]
+        self.assertEqual("2026-07-22T11:00:00.000000Z", deadline["acquired_at"])
+        self.assertEqual(["port:3000"], self.output(extended)["claim"]["resources"])
+        self.assertEqual(1, second.returncode, second.stderr)
+        self.assertEqual("INVALID_DEADLINE_POLICY", self.output(second)["outcome"])
+        self.assertIn("cannot add a second named resource", self.output(second)["message"])
+        self.assertEqual(registry_before_second, self.registry_path().read_bytes())
+
+    def test_file_claim_rejects_untimed_resource_extension(self) -> None:
+        acquired = self.claim(*self.acquire_arguments("extend-untimed"), "--file", "README.md")
+        extended = self.claim(
+            "extend",
+            "--claim-id",
+            "extend-untimed",
+            "--resource",
+            "port:3000",
+        )
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(1, extended.returncode, extended.stderr)
+        self.assertEqual("INVALID_DEADLINE_POLICY", self.output(extended)["outcome"])
 
     def test_heartbeat_preserves_hard_stop_and_evidence_backed_extension_is_bounded(self) -> None:
         acquired = self.claim(
@@ -488,8 +692,10 @@ class AgentClaimTests(unittest.TestCase):
             *self.acquire_arguments("backlog"),
             "--file",
             "backlog/feature-backlog/queued.md",
-            "--resource",
-            "git-index:primary",
+            *self.timed_resource_arguments(
+                resource="git-index:primary",
+                resource_class="main-integration",
+            ),
         )
 
         self.assertEqual(0, released.returncode, released.stderr)
@@ -515,8 +721,10 @@ class AgentClaimTests(unittest.TestCase):
             "skills/codex-workitem-coordination/SKILL.md",
             "--file",
             "design/generated/skill-definitions.js",
-            "--resource",
-            "merge:integration:main",
+            *self.timed_resource_arguments(
+                resource="merge:integration:main",
+                resource_class="main-integration",
+            ),
         )
 
         self.assertEqual(0, completed.returncode, completed.stderr)
@@ -537,8 +745,10 @@ class AgentClaimTests(unittest.TestCase):
 
         completed = self.claim(
             *self.acquire_arguments("git-index"),
-            "--resource",
-            "git-index:primary",
+            *self.timed_resource_arguments(
+                resource="git-index:primary",
+                resource_class="main-integration",
+            ),
         )
 
         self.assertEqual(0, completed.returncode, completed.stderr)
@@ -563,8 +773,10 @@ class AgentClaimTests(unittest.TestCase):
             "skills/codex-workitem-coordination/SKILL.md",
             "--file",
             "design/generated/skill-definitions.js",
-            "--resource",
-            "merge:integration:main",
+            *self.timed_resource_arguments(
+                resource="merge:integration:main",
+                resource_class="main-integration",
+            ),
         )
 
         self.assertEqual(3, completed.returncode)
@@ -580,8 +792,10 @@ class AgentClaimTests(unittest.TestCase):
             *self.acquire_arguments("integration"),
             "--file",
             "design/generated/skill-definitions.js",
-            "--resource",
-            "merge:integration:main",
+            *self.timed_resource_arguments(
+                resource="merge:integration:main",
+                resource_class="main-integration",
+            ),
         )
 
         self.assertEqual(3, completed.returncode)
@@ -605,8 +819,10 @@ class AgentClaimTests(unittest.TestCase):
             *self.acquire_arguments("integration"),
             "--file",
             "design/generated/skill-definitions.js",
-            "--resource",
-            "merge:integration:main",
+            *self.timed_resource_arguments(
+                resource="merge:integration:main",
+                resource_class="main-integration",
+            ),
         )
 
         self.assertEqual(5, completed.returncode)
@@ -678,7 +894,10 @@ class AgentClaimTests(unittest.TestCase):
             "--scope-reason",
             "repository migration",
         )
-        blocked = self.claim(*self.acquire_arguments("other"), "--resource", "port:3000")
+        blocked = self.claim(
+            *self.acquire_arguments("other"),
+            *self.timed_resource_arguments(),
+        )
         exact = self.claim(*self.acquire_arguments("exact"), "--file", "docs/guide.md")
         self.assertEqual(0, all_files.returncode, all_files.stderr)
         self.assertEqual(4, blocked.returncode)
@@ -1134,8 +1353,10 @@ class AgentClaimTests(unittest.TestCase):
             "first",
             "--file",
             "future.py",
-            "--resource",
-            "generated:codegen",
+            *self.timed_resource_arguments(
+                resource="generated:codegen",
+                resource_class="live-model-evaluation",
+            ),
         )
         repeated = self.claim(
             "extend",
@@ -1143,8 +1364,10 @@ class AgentClaimTests(unittest.TestCase):
             "first",
             "--file",
             "future.py",
-            "--resource",
-            "generated:codegen",
+            *self.timed_resource_arguments(
+                resource="generated:codegen",
+                resource_class="live-model-evaluation",
+            ),
         )
 
         self.assertEqual(0, acquired.returncode, acquired.stderr)
@@ -1172,8 +1395,10 @@ class AgentClaimTests(unittest.TestCase):
     def test_isolated_extension_reports_primary_resource_overlap_before_location(self) -> None:
         self.claim(
             *self.acquire_arguments("first"),
-            "--resource",
-            "merge:integration:main",
+            *self.timed_resource_arguments(
+                resource="merge:integration:main",
+                resource_class="main-integration",
+            ),
         )
         isolated, _isolated_path = self.isolated_arguments("second")
         self.claim(*self.acquire_arguments("second"), "--file", "src/one.py", *isolated)
@@ -1183,8 +1408,10 @@ class AgentClaimTests(unittest.TestCase):
             "extend",
             "--claim-id",
             "second",
-            "--resource",
-            "merge:integration:main",
+            *self.timed_resource_arguments(
+                resource="merge:integration:main",
+                resource_class="main-integration",
+            ),
         )
 
         self.assertEqual(3, blocked.returncode)
@@ -1291,8 +1518,10 @@ class AgentClaimTests(unittest.TestCase):
             "extend",
             "--claim-id",
             "second",
-            "--resource",
-            "git-index:primary",
+            *self.timed_resource_arguments(
+                resource="git-index:primary",
+                resource_class="main-integration",
+            ),
             repo=isolated_path,
         )
 
@@ -1455,19 +1684,25 @@ class AgentClaimTests(unittest.TestCase):
     def test_integration_resources_conflict_per_target_branch(self) -> None:
         main = self.claim(
             *self.acquire_arguments("main"),
-            "--resource",
-            "merge:integration:main",
+            *self.timed_resource_arguments(
+                resource="merge:integration:main",
+                resource_class="main-integration",
+            ),
         )
         same_target = self.claim(
             *self.acquire_arguments("same"),
-            "--resource",
-            "merge:integration:main",
+            *self.timed_resource_arguments(
+                resource="merge:integration:main",
+                resource_class="main-integration",
+            ),
         )
         isolated, _isolated_path = self.isolated_arguments("release")
         other_target = self.claim(
             *self.acquire_arguments("release"),
-            "--resource",
-            "merge:integration:release",
+            *self.timed_resource_arguments(
+                resource="merge:integration:release",
+                resource_class="main-integration",
+            ),
             *isolated,
         )
 
