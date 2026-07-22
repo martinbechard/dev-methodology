@@ -1,6 +1,6 @@
 # Deploy Skills And Agents To An Explicit Project Folder
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -9,6 +9,22 @@ Provider: file
 Provider Reference: backlog/feature-backlog/deploy-skills-and-agents-to-explicit-project-folder.md
 
 Completion: direct-main
+
+## Execution / Ownership
+
+- Owner: Dev Orchestrator
+- Canonical task: /root/process_backlog/orch_deploy_explicit_project
+- Proposed artifact claim: deploy-explicit-project-20260722
+- Branch: codex/deploy-explicit-project-20260722
+- Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/deploy-explicit-project-20260722
+- Phase: Lifecycle Running committed; artifact claim pending ARTIFACT GO.
+- Starting main: af0a3fe63404a793f2bf7dcf40dd2a3de563109e
+- Accepted candidate: Pending.
+- Claim wait started at: None.
+- Claim wait attempts: 0.
+- Open issues: Artifact work must not begin until ARTIFACT GO is issued.
+- Next owner: Dev Orchestrator.
+- Delivery evidence: Pending.
 
 Creation Claim: create-explicit-project-deployment-item-20260721
 

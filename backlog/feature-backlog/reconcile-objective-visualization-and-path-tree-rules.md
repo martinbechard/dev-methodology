@@ -1,6 +1,6 @@
 # Reconcile Objective Visualization and Repository Path-Tree Rules
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -9,6 +9,22 @@ Provider: file
 Provider Reference: backlog/feature-backlog/reconcile-objective-visualization-and-path-tree-rules.md
 
 Completion: direct-main
+
+## Execution / Ownership
+
+- Owner: Dev Orchestrator
+- Canonical task: /root/process_backlog/orch_objective_path_rules
+- Proposed artifact claim: objective-path-rules-019f817f-reconcile
+- Branch: codex/reconcile-objective-path-rules-019f817f
+- Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/objective-path-rules-019f817f-reconcile
+- Phase: Lifecycle Running committed; artifact claim pending ARTIFACT GO.
+- Starting main: af0a3fe63404a793f2bf7dcf40dd2a3de563109e
+- Accepted candidate: Pending.
+- Claim wait started at: None.
+- Claim wait attempts: 0.
+- Open issues: Artifact work must not begin until ARTIFACT GO is issued.
+- Next owner: Dev Orchestrator.
+- Delivery evidence: Pending.
 
 ## Summary
 

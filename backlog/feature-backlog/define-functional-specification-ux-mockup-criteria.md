@@ -1,6 +1,6 @@
 # Define Functional Specification UX Mockup Criteria
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -9,6 +9,22 @@ Provider: file
 Provider Reference: backlog/feature-backlog/define-functional-specification-ux-mockup-criteria.md
 
 Completion: direct-main
+
+## Execution / Ownership
+
+- Owner: Dev Orchestrator
+- Canonical task: /root/process_backlog/orch_functional_spec_ux
+- Proposed artifact claim: define-functional-spec-ux-mockup-criteria
+- Branch: codex/define-functional-spec-ux-mockup-criteria
+- Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/define-functional-spec-ux-mockup-criteria
+- Phase: Lifecycle Running committed; artifact claim pending ARTIFACT GO.
+- Starting main: af0a3fe63404a793f2bf7dcf40dd2a3de563109e
+- Accepted candidate: Pending.
+- Claim wait started at: None.
+- Claim wait attempts: 0.
+- Open issues: Artifact work must not begin until ARTIFACT GO is issued.
+- Next owner: Dev Orchestrator.
+- Delivery evidence: Pending.
 
 ## Summary
 
