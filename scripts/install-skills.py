@@ -130,6 +130,11 @@ class _McpConfigPlan(NamedTuple):
     target_already_configured: bool
 
 
+class _FileSnapshot(NamedTuple):
+    path: Path
+    content: bytes | None
+
+
 class _InstallationRollbackError(OSError):
     def __init__(
         self,
@@ -626,6 +631,43 @@ def _codex_mcp_agent_ops_settings(content: str) -> tuple[str | None, dict[str, s
     return command, environment
 
 
+def _codex_mcp_agent_ops_matches(
+    content: str,
+    executable: str,
+    environment: dict[str, str],
+) -> bool:
+    if tomllib is None:
+        blocks = _codex_mcp_agent_ops_table_blocks(content)
+        if [kind for kind, _, _, _ in blocks] != ["server", "env"]:
+            return False
+        rendered_target = "".join(
+            content[start:end]
+            for _, start, end, _ in blocks
+        ).strip()
+        expected_target = _codex_mcp_server_block(
+            executable,
+            Path(environment["MCP_AGENT_OPS_SKILL_ROOTS"]),
+            Path(environment["MCP_AGENT_OPS_DETECTION_REGISTRY"]),
+            tuple(
+                Path(path)
+                for path in environment["MCP_AGENT_OPS_WORKSPACE_ROOTS"].split(os.pathsep)
+            ),
+        ).strip()
+        return rendered_target == expected_target
+    configuration = tomllib.loads(content)
+    servers = configuration.get("mcp_servers", {})
+    if not isinstance(servers, dict):
+        return False
+    return servers.get(MCP_AGENT_OPS_SERVER_NAME) == {
+        "enabled": True,
+        "required": False,
+        "command": executable,
+        "startup_timeout_sec": MCP_STARTUP_TIMEOUT_SECONDS,
+        "tool_timeout_sec": MCP_TOOL_TIMEOUT_SECONDS,
+        "env": environment,
+    }
+
+
 def _remove_codex_mcp_agent_ops_tables(content: str) -> str:
     blocks = _codex_mcp_agent_ops_table_blocks(content)
     if not blocks:
@@ -733,6 +775,24 @@ def _junie_mcp_agent_ops_settings(content: str) -> tuple[str | None, dict[str, s
     )
 
 
+def _junie_mcp_agent_ops_matches(
+    content: str,
+    executable: str,
+    environment: dict[str, str],
+) -> bool:
+    configuration = json.loads(content) if content else {}
+    if not isinstance(configuration, dict):
+        return False
+    servers = configuration.get("mcpServers", {})
+    if not isinstance(servers, dict):
+        return False
+    return servers.get(MCP_AGENT_OPS_SERVER_NAME) == {
+        "command": executable,
+        "args": [],
+        "env": environment,
+    }
+
+
 def _prepare_mcp_config(
     adapter: Adapter,
     scope: str | None,
@@ -792,24 +852,25 @@ def _prepare_mcp_config(
         workspace_roots,
     )
     if adapter.name == CODEX_ADAPTER_NAME:
-        current_command, current_environment = _codex_mcp_agent_ops_settings(
-            active_content
-        )
+        current_command, _ = _codex_mcp_agent_ops_settings(active_content)
     else:
-        current_command, current_environment = _junie_mcp_agent_ops_settings(
-            active_content
-        )
+        current_command, _ = _junie_mcp_agent_ops_settings(active_content)
     executable = (
         _mcp_executable_path(executable_path)
         if executable_path is not None or current_command is None
         else current_command
     )
-    target_matches = (
-        target_is_configured
-        and current_command == executable
-        and all(
-            current_environment.get(key) == value
-            for key, value in expected_environment.items()
+    target_matches = target_is_configured and (
+        _codex_mcp_agent_ops_matches(
+            active_content,
+            executable,
+            expected_environment,
+        )
+        if adapter.name == CODEX_ADAPTER_NAME
+        else _junie_mcp_agent_ops_matches(
+            active_content,
+            executable,
+            expected_environment,
         )
     )
     if target_matches:
@@ -861,6 +922,47 @@ def _atomic_write_text(path: Path, content: str) -> None:
     finally:
         if temporary_path is not None and temporary_path.exists():
             temporary_path.unlink()
+
+
+def _atomic_write_bytes(path: Path, content: bytes) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path: Path | None = None
+    try:
+        descriptor, temporary_name = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+        temporary_path = Path(temporary_name)
+        with os.fdopen(descriptor, "wb") as stream:
+            stream.write(content)
+        os.replace(temporary_path, path)
+    finally:
+        if temporary_path is not None and temporary_path.exists():
+            temporary_path.unlink()
+
+
+def _snapshot_mcp_config_files(plan: _McpConfigPlan) -> tuple[_FileSnapshot, ...]:
+    snapshots: list[_FileSnapshot] = []
+    for path in (plan.active_path, plan.candidate_path, plan.backup_path):
+        if path.is_symlink() or (path.exists() and not path.is_file()):
+            raise ValueError(f"MCP config transaction path must be a regular file: {path}")
+        snapshots.append(
+            _FileSnapshot(
+                path=path,
+                content=path.read_bytes() if path.exists() else None,
+            )
+        )
+    return tuple(snapshots)
+
+
+def _restore_mcp_config_files(snapshots: Sequence[_FileSnapshot]) -> None:
+    for snapshot in reversed(snapshots):
+        if snapshot.content is None:
+            if snapshot.path.is_symlink() or snapshot.path.is_file():
+                snapshot.path.unlink()
+            elif snapshot.path.exists():
+                raise OSError(
+                    f"MCP config rollback path is not a regular file: {snapshot.path}"
+                )
+        else:
+            _atomic_write_bytes(snapshot.path, snapshot.content)
 
 
 def _backup_file(source: Path, backup: Path) -> None:
@@ -1957,8 +2059,11 @@ def _run_install_transaction(
     adapter: Adapter,
     cleanup: bool,
     replace_customized: bool,
+    mcp_config_plan: _McpConfigPlan | None,
 ) -> list[str]:
     staged_destinations: list[_StagedDestination] = []
+    mcp_snapshots: tuple[_FileSnapshot, ...] = ()
+    mcp_mutation_started = False
     committed = False
     preserve_recovery_evidence = False
     try:
@@ -1995,11 +2100,37 @@ def _run_install_transaction(
                     plan=agent_plan,
                 )
             )
+        if mcp_config_plan is not None:
+            if not mcp_config_plan.target_already_configured:
+                mcp_snapshots = _snapshot_mcp_config_files(mcp_config_plan)
+                mcp_mutation_started = True
+            results.extend(_apply_mcp_config(mcp_config_plan, False))
         _commit_staged_destinations(staged_destinations)
         committed = True
         return results
-    except _InstallationRollbackError:
-        preserve_recovery_evidence = True
+    except BaseException as error:
+        mcp_rollback_errors: list[BaseException] = []
+        if mcp_mutation_started:
+            try:
+                _restore_mcp_config_files(mcp_snapshots)
+            except BaseException as rollback_error:
+                mcp_rollback_errors.append(rollback_error)
+        if isinstance(error, _InstallationRollbackError):
+            preserve_recovery_evidence = True
+        if mcp_rollback_errors:
+            preserve_recovery_evidence = True
+            recovery_roots = [
+                staged_destination.transaction_root
+                for staged_destination in staged_destinations
+            ]
+            recovery_roots.extend(
+                sorted({snapshot.path.parent for snapshot in mcp_snapshots})
+            )
+            raise _InstallationRollbackError(
+                error,
+                mcp_rollback_errors,
+                recovery_roots,
+            ) from error
         raise
     finally:
         if not preserve_recovery_evidence:
@@ -2164,8 +2295,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                     adapter=adapter,
                     cleanup=args.cleanup,
                     replace_customized=args.replace_customized,
+                    mcp_config_plan=mcp_config_plan,
                 )
-            if mcp_config_plan is not None:
+            if mcp_config_plan is not None and args.dry_run:
                 results.extend(_apply_mcp_config(mcp_config_plan, args.dry_run))
             elif args.configure_mcp and adapter.name in MCP_CONFIG_ADAPTERS:
                 results.append(

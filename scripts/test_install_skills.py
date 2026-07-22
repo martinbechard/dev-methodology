@@ -429,7 +429,12 @@ class InstallSkillsTests(unittest.TestCase):
                 skills_destination / installer.MCP_DETECTION_REGISTRY_RELATIVE_PATH
             ).resolve()
             original = (
-                '[mcp_servers.mcp-agent-ops]\ncommand = "/installed/server"\n\n'
+                '[mcp_servers.mcp-agent-ops]\n'
+                'enabled = true\n'
+                'required = false\n'
+                'command = "/installed/server"\n'
+                f'startup_timeout_sec = {installer.MCP_STARTUP_TIMEOUT_SECONDS}\n'
+                f'tool_timeout_sec = {installer.MCP_TOOL_TIMEOUT_SECONDS}\n\n'
                 '[mcp_servers.mcp-agent-ops.env]\n'
                 f'MCP_AGENT_OPS_SKILL_ROOTS = "{skills_destination}"\n'
                 f'MCP_AGENT_OPS_DETECTION_REGISTRY = "{detection_registry}"\n'
@@ -473,12 +478,21 @@ class InstallSkillsTests(unittest.TestCase):
             project.mkdir()
             self.create_skill(source, "alpha")
             config_path.parent.mkdir()
+            skills_destination = project / ".agents/skills"
+            detection_registry = (
+                skills_destination / installer.MCP_DETECTION_REGISTRY_RELATIVE_PATH
+            ).resolve()
             original = (
-                '[mcp_servers.mcp-agent-ops]\ncommand = "/installed/server"\n\n'
+                '[mcp_servers.mcp-agent-ops]\n'
+                'enabled = false\n'
+                'required = false\n'
+                'command = "/installed/server"\n'
+                f'startup_timeout_sec = {installer.MCP_STARTUP_TIMEOUT_SECONDS}\n'
+                f'tool_timeout_sec = {installer.MCP_TOOL_TIMEOUT_SECONDS}\n\n'
                 '[mcp_servers.mcp-agent-ops.env]\n'
-                'MCP_AGENT_OPS_SKILL_ROOTS = "/stale/.agents/skills"\n'
-                'MCP_AGENT_OPS_DETECTION_REGISTRY = "/stale/registry.yaml"\n'
-                'MCP_AGENT_OPS_WORKSPACE_ROOTS = "/stale"\n'
+                f'MCP_AGENT_OPS_SKILL_ROOTS = "{skills_destination.resolve()}"\n'
+                f'MCP_AGENT_OPS_DETECTION_REGISTRY = "{detection_registry}"\n'
+                f'MCP_AGENT_OPS_WORKSPACE_ROOTS = "{project.resolve()}"\n'
             )
             config_path.write_text(original, encoding="utf-8")
 
@@ -501,10 +515,6 @@ class InstallSkillsTests(unittest.TestCase):
                     ]
                 )
 
-            skills_destination = project / ".agents/skills"
-            detection_registry = (
-                skills_destination / installer.MCP_DETECTION_REGISTRY_RELATIVE_PATH
-            ).resolve()
             active = config_path.read_text(encoding="utf-8")
             self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
             self.assertEqual(
@@ -512,6 +522,7 @@ class InstallSkillsTests(unittest.TestCase):
                 config_path.with_suffix(".toml.bak").read_text(encoding="utf-8"),
             )
             self.assertEqual(1, active.count("[mcp_servers.mcp-agent-ops]"))
+            self.assertIn("enabled = true", active)
             self.assertIn('command = "/installed/server"', active)
             self.assertIn(
                 f'MCP_AGENT_OPS_SKILL_ROOTS = "{skills_destination.resolve()}"',
@@ -738,15 +749,19 @@ class InstallSkillsTests(unittest.TestCase):
             project.mkdir()
             self.create_skill(source, "alpha")
             config_path.parent.mkdir()
+            skills_destination = project / ".junie/skills"
+            detection_registry = (
+                skills_destination / installer.MCP_DETECTION_REGISTRY_RELATIVE_PATH
+            ).resolve()
             original_configuration = {
                 "mcpServers": {
                     "mcp-agent-ops": {
                         "command": "/installed/server",
-                        "args": [],
+                        "args": ["--stale-argument"],
                         "env": {
-                            "MCP_AGENT_OPS_SKILL_ROOTS": "/stale/.junie/skills",
-                            "MCP_AGENT_OPS_DETECTION_REGISTRY": "/stale/registry.yaml",
-                            "MCP_AGENT_OPS_WORKSPACE_ROOTS": "/stale",
+                            "MCP_AGENT_OPS_SKILL_ROOTS": str(skills_destination.resolve()),
+                            "MCP_AGENT_OPS_DETECTION_REGISTRY": str(detection_registry),
+                            "MCP_AGENT_OPS_WORKSPACE_ROOTS": str(project.resolve()),
                         },
                     }
                 }
@@ -773,10 +788,6 @@ class InstallSkillsTests(unittest.TestCase):
                     ]
                 )
 
-            skills_destination = project / ".junie/skills"
-            detection_registry = (
-                skills_destination / installer.MCP_DETECTION_REGISTRY_RELATIVE_PATH
-            ).resolve()
             active = json.loads(config_path.read_text(encoding="utf-8"))
             server = active["mcpServers"]["mcp-agent-ops"]
             self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
@@ -786,6 +797,7 @@ class InstallSkillsTests(unittest.TestCase):
             )
             self.assertEqual({"mcp-agent-ops"}, set(active["mcpServers"]))
             self.assertEqual("/installed/server", server["command"])
+            self.assertEqual([], server["args"])
             self.assertEqual(
                 str(skills_destination.resolve()),
                 server["env"]["MCP_AGENT_OPS_SKILL_ROOTS"],
@@ -799,6 +811,143 @@ class InstallSkillsTests(unittest.TestCase):
                 server["env"]["MCP_AGENT_OPS_WORKSPACE_ROOTS"],
             )
             self.assertFalse(config_path.with_name("mcp-agent-ops.json").exists())
+            self.assertEqual([], list(invocation.iterdir()))
+
+    def test_target_only_mcp_backup_conflict_fails_before_destination_mutation(self) -> None:
+        installer = load_installer()
+
+        for adapter_name in ("codex", "junie"):
+            with self.subTest(adapter=adapter_name), tempfile.TemporaryDirectory() as temp_dir:
+                root = Path(temp_dir)
+                invocation = root / "invocation"
+                project = root / "selected-project"
+                source = root / "source"
+                invocation.mkdir()
+                project.mkdir()
+                self.create_skill(source, "alpha")
+                if adapter_name == "codex":
+                    config_path = project / ".codex/config.toml"
+                    original = (
+                        '[mcp_servers.mcp-agent-ops]\ncommand = "/installed/server"\n\n'
+                        '[mcp_servers.mcp-agent-ops.env]\n'
+                        'MCP_AGENT_OPS_SKILL_ROOTS = "/stale/.agents/skills"\n'
+                        'MCP_AGENT_OPS_DETECTION_REGISTRY = "/stale/registry.yaml"\n'
+                        'MCP_AGENT_OPS_WORKSPACE_ROOTS = "/stale"\n'
+                    )
+                    skills_destination = project / ".agents/skills"
+                else:
+                    config_path = project / ".junie/mcp.json"
+                    original = json.dumps(
+                        {
+                            "mcpServers": {
+                                "mcp-agent-ops": {
+                                    "command": "/installed/server",
+                                    "args": [],
+                                    "env": {
+                                        "MCP_AGENT_OPS_SKILL_ROOTS": "/stale/.junie/skills",
+                                        "MCP_AGENT_OPS_DETECTION_REGISTRY": "/stale/registry.yaml",
+                                        "MCP_AGENT_OPS_WORKSPACE_ROOTS": "/stale",
+                                    },
+                                }
+                            }
+                        },
+                        indent=2,
+                    ) + "\n"
+                    skills_destination = project / ".junie/skills"
+                config_path.parent.mkdir()
+                config_path.write_text(original, encoding="utf-8")
+                backup_path = config_path.with_suffix(config_path.suffix + ".bak")
+                backup_path.mkdir()
+
+                with (
+                    patch.object(installer.Path, "cwd", return_value=invocation),
+                    patch.object(installer.shutil, "which", return_value=None),
+                    patch.object(installer.sys.stdin, "isatty", return_value=False),
+                    redirect_stdout(io.StringIO()),
+                    redirect_stderr(io.StringIO()),
+                ):
+                    exit_code = installer.main(
+                        [
+                            "--adapter",
+                            adapter_name,
+                            "--source",
+                            str(source),
+                            "--scope",
+                            "project",
+                            "--project-root",
+                            str(project),
+                        ]
+                    )
+
+                self.assertEqual(installer.ERROR_EXIT_CODE, exit_code)
+                self.assertEqual(original, config_path.read_text(encoding="utf-8"))
+                self.assertTrue(backup_path.is_dir())
+                self.assertFalse(skills_destination.exists())
+                self.assertFalse(
+                    config_path.with_name(
+                        installer.MCP_CONFIG_CANDIDATE_FILE_NAMES[adapter_name]
+                    ).exists()
+                )
+                self.assertEqual([], list(invocation.iterdir()))
+
+    def test_target_only_mcp_write_failure_rolls_back_destination_and_config(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            invocation = root / "invocation"
+            project = root / "selected-project"
+            source = root / "source"
+            config_path = project / ".codex/config.toml"
+            invocation.mkdir()
+            project.mkdir()
+            self.create_skill(source, "alpha")
+            config_path.parent.mkdir()
+            original = (
+                '[mcp_servers.mcp-agent-ops]\ncommand = "/installed/server"\n\n'
+                '[mcp_servers.mcp-agent-ops.env]\n'
+                'MCP_AGENT_OPS_SKILL_ROOTS = "/stale/.agents/skills"\n'
+                'MCP_AGENT_OPS_DETECTION_REGISTRY = "/stale/registry.yaml"\n'
+                'MCP_AGENT_OPS_WORKSPACE_ROOTS = "/stale"\n'
+            )
+            config_path.write_text(original, encoding="utf-8")
+            original_atomic_write = installer._atomic_write_text
+
+            def fail_active_write(path: Path, content: str) -> None:
+                if path == config_path.resolve():
+                    raise OSError("injected MCP active write failure")
+                original_atomic_write(path, content)
+
+            with (
+                patch.object(installer.Path, "cwd", return_value=invocation),
+                patch.object(installer.shutil, "which", return_value=None),
+                patch.object(installer.sys.stdin, "isatty", return_value=False),
+                patch.object(
+                    installer,
+                    "_atomic_write_text",
+                    side_effect=fail_active_write,
+                ),
+                redirect_stdout(io.StringIO()),
+                redirect_stderr(io.StringIO()),
+            ):
+                exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(source),
+                        "--scope",
+                        "project",
+                        "--project-root",
+                        str(project),
+                    ]
+                )
+
+            self.assertEqual(installer.ERROR_EXIT_CODE, exit_code)
+            self.assertEqual(original, config_path.read_text(encoding="utf-8"))
+            self.assertFalse(config_path.with_suffix(".toml.bak").exists())
+            self.assertFalse((project / ".agents/skills").exists())
+            self.assertFalse(config_path.with_name("config.mcp-agent-ops.toml").exists())
             self.assertEqual([], list(invocation.iterdir()))
 
     def test_junie_project_root_reconciles_stale_mcp_identity_through_candidate(
