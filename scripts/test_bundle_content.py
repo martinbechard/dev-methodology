@@ -2934,9 +2934,11 @@ class BundleContentTests(unittest.TestCase):
                 assert_terms(rule.lower(), ("diagram", "prose", "numbered list", "table"))
                 self.assertRegex(rule.lower(), r"must not carry|instead of leaving")
                 additive_rule = line_containing(text, "additive minimum")
-                assert_terms(
+                self.assertIn("shared development-methodology rule", additive_rule)
+                self.assertRegex(
                     additive_rule,
-                    ("shared development-methodology rule", "waive another shared trigger"),
+                    r"does not waive another shared trigger|"
+                    r"without using one satisfied section trigger to waive another shared trigger",
                 )
 
         functional_surfaces = {
@@ -2989,16 +2991,79 @@ class BundleContentTests(unittest.TestCase):
                 self.assertRegex(rule, r"only when.*\bno\b")
                 assert_terms(rule, module_disqualifiers)
 
-        complete_path_markers = {
-            "architecture-template.md": "complete repository-relative paths",
-            "functional-spec-template.md": "complete project paths",
-            "high-level-design-template.md": "complete planned or existing layout",
-            "module-design-template.md": "complete repository-relative folders and package segments",
-            "project-wiki-template.md": "complete wiki layout",
-            "unit-test-plan-template.md": "complete project paths",
-            "project-template.yaml": "project-root/",
+        path_tree_contracts = {
+            "architecture-template.md": {
+                "trigger": "repository placement of source code, tests, design documents",
+                "complete": "complete repository-relative paths",
+                "split": "named subsections by runtime unit or ownership area",
+                "metadata": "metadata immediately after the tree",
+                "deduplicate": (
+                    "Do not repeat shared prefixes",
+                    "do not repeat every full path",
+                ),
+            },
+            "functional-spec-template.md": {
+                "trigger": "three or more related paths share a prefix, or span two or more folders",
+                "complete": "complete project paths",
+                "split": "named subsections by surface",
+                "metadata": "metadata immediately after the tree",
+                "deduplicate": (
+                    "share a prefix",
+                    "instead of repeating full paths",
+                ),
+            },
+            "high-level-design-template.md": {
+                "trigger": "three or more paths share a prefix or span two or more folders",
+                "complete": "complete planned or existing layout",
+                "split": "named subsections by component or ownership area",
+                "metadata": "metadata immediately after the tree",
+                "deduplicate": (
+                    "do not repeat the same prefixes",
+                    "do not restate full paths in every row",
+                ),
+            },
+            "module-design-template.md": {
+                "trigger": "three or more paths share a prefix or span two or more folders",
+                "complete": "complete repository-relative folders and package segments",
+                "split": "named subsections by ownership area",
+                "metadata": "metadata immediately after the tree",
+                "deduplicate": (
+                    "do not abbreviate or repeat them in a long list",
+                    "do not repeat the full path in each row",
+                ),
+            },
+            "project-wiki-template.md": {
+                "trigger": "three or more paths share a prefix or span two or more folders",
+                "complete": "complete wiki layout",
+                "split": "named subsections by topic family",
+                "metadata": "metadata immediately after the tree",
+                "deduplicate": (
+                    "Do not repeat the docs/wiki prefix",
+                    "instead of repeating full paths",
+                ),
+            },
+            "unit-test-plan-template.md": {
+                "trigger": "three or more implementation, test, fixture, snapshot, or configuration paths share a prefix or span two or more folders",
+                "complete": "complete project paths",
+                "split": "named subsections by test group",
+                "metadata": "metadata immediately after the tree",
+                "deduplicate": (
+                    "rather than repeating full paths",
+                    "do not repeat the full common prefix for every test",
+                ),
+            },
+            "project-template.yaml": {
+                "trigger": "present repeated prefixes once as a tree",
+                "complete": "project-root/",
+                "split": "named subsections by ownership area",
+                "metadata": "nearby metadata",
+                "deduplicate": (
+                    "present repeated prefixes once",
+                    "rather than creating one row per full path",
+                ),
+            },
         }
-        for name, complete_path_marker in complete_path_markers.items():
+        for name, contract in path_tree_contracts.items():
             text = templates[name]
             contract_text = " ".join(text.split())
             if name == "project-template.yaml":
@@ -3008,28 +3073,19 @@ class BundleContentTests(unittest.TestCase):
                     if line.startswith("#")
                 )
             with self.subTest(path_tree_template=name):
-                if name == "architecture-template.md":
-                    self.assertIn("repository placement", contract_text)
-                elif name == "project-template.yaml":
-                    self.assertIn("present repeated prefixes once", contract_text)
-                else:
-                    assert_terms(
-                        contract_text,
-                        ("three or more", "share a prefix", "two or more folders"),
-                    )
                 assert_terms(
                     contract_text,
                     (
-                        complete_path_marker,
+                        contract["trigger"],
+                        contract["complete"],
                         "Path tree example",
                         "fenced text tree",
-                        "named subsections",
-                        "metadata",
-                        "prefix",
-                        "full path",
+                        contract["split"],
+                        contract["metadata"],
                         "Markdown table cells",
                     ),
                 )
+                assert_terms(contract_text, contract["deduplicate"])
                 self.assertNotRegex(text, r"<br\s*/?>")
                 if name != "project-template.yaml":
                     assert_terms(text, ("```text", "HTML breaks"))
@@ -3044,6 +3100,7 @@ class BundleContentTests(unittest.TestCase):
         ][0]["paths"]
         self.assertTrue(
             isinstance(configured_paths, list)
+            and bool(configured_paths)
             and all(isinstance(path, str) and path for path in configured_paths)
         )
 
