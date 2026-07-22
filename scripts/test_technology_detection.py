@@ -656,6 +656,9 @@ class TechnologyDetectionTests(unittest.TestCase):
             ("candidate conflict", lambda value: value["technology_confirmation"]["candidates"][0].__setitem__("conflicts", ["conflict\r## injected"])),
             ("confirmation evidence", lambda value: value["technology_confirmation"]["confirmation"].__setitem__("evidence", "reference\n## injected")),
             ("source evidence", lambda value: value["technology_skill_loadouts"][0]["sourceEvidence"][0]["evidence"].__setitem__(0, "fact\twith control")),
+            ("unicode next line", lambda value: value["technology_confirmation"]["candidates"][0]["evidence"].__setitem__(0, "fact\u0085## injected")),
+            ("unicode line separator", lambda value: value["technology_confirmation"]["candidates"][0]["evidence"].__setitem__(0, "fact\u2028## injected")),
+            ("unicode paragraph separator", lambda value: value["technology_confirmation"]["candidates"][0]["evidence"].__setitem__(0, "fact\u2029## injected")),
         )
         for surface, mutate in mutations:
             with self.subTest(surface=surface):

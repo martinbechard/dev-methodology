@@ -10,6 +10,7 @@ import fnmatch
 import json
 import re
 import sys
+import unicodedata
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 
@@ -126,7 +127,11 @@ def _single_line_rendered_text(value: object, field: str) -> str:
     if (
         not isinstance(value, str)
         or not value.strip()
-        or any(ord(character) < 32 or ord(character) == 127 for character in value)
+        or any(
+            unicodedata.category(character).startswith("C")
+            or unicodedata.category(character) in {"Zl", "Zp"}
+            for character in value
+        )
     ):
         raise ValueError(f"{field} must be non-empty single-line text without control characters")
     return value
