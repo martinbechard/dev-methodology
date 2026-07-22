@@ -1690,9 +1690,12 @@ class BundleContentTests(unittest.TestCase):
 
         for phrase in (
             "Apply or resume the effective Commit-selected skill to the accepted direct or combined commit only after independent review and source verification pass.",
+            "The effective Commit-selected skill returns the prepared terminal delivery handoff",
             "When it returns AWAITING_REVIEW, preserve the same delivery identity and return AWAITING_REVIEW without a Persistence mutation.",
             "Resume the same effective Commit-selected skill through review corrections, checks, dependency order, merge, and main observation until it returns READY or BLOCKED.",
-            "Only after the effective Commit-selected skill returns READY, ask dev-backlog-steward",
+            "Only after the effective Commit-selected skill returns READY, dispatch dev-backlog-steward exactly once",
+            "verify the selected manager's recorded closure before reporting READY",
+            "For provider none, do not dispatch dev-backlog-steward",
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, orchestrator_text)
@@ -1704,11 +1707,68 @@ class BundleContentTests(unittest.TestCase):
             "Apply or resume the effective Commit-selected skill to the accepted direct or combined commit"
         )
         persistence_index = workflow_text.index(
-            "Only after the effective Commit-selected skill returns READY, ask dev-backlog-steward"
+            "Only after the effective Commit-selected skill returns READY, dispatch dev-backlog-steward exactly once"
         )
         self.assertLess(candidate_index, review_index)
         self.assertLess(review_index, commit_index)
         self.assertLess(commit_index, persistence_index)
+
+        status_output = next(
+            entry["status"]["purpose"]
+            for entry in orchestrator["outputContract"]
+            if "status" in entry
+        )
+        for status in ("READY", "AWAITING_REVIEW", "BLOCKED"):
+            self.assertIn(status, status_output)
+
+        ready_examples = [
+            example["plausibleResponse"]
+            for example in orchestrator["examples"]
+            if "STATUS: READY" in example["plausibleResponse"]
+        ]
+        self.assertTrue(ready_examples)
+        self.assertTrue(any("provider none" in response for response in ready_examples))
+        for response in ready_examples:
+            with self.subTest(ready_example=response[:80]):
+                self.assertIn("Commit returned READY", response)
+                commit_ready_index = response.index("Commit returned READY")
+                if "provider none" in response:
+                    finalization_index = response.index("task-local COMPLETED finalization")
+                else:
+                    self.assertIn("dev-backlog-steward exactly once", response)
+                    self.assertIn("verified the selected manager's recorded closure", response)
+                    finalization_index = response.index("dev-backlog-steward exactly once")
+                self.assertLess(commit_ready_index, finalization_index)
+
+        provider_contract = (
+            REPOSITORY_ROOT / "design" / "work-item-provider-and-completion-contracts.md"
+        ).read_text(encoding="utf-8")
+        for phrase in (
+            "workflow_selection.persistence",
+            "workflow_selection.commit",
+            "Commit AWAITING_REVIEW",
+            "Commit READY",
+            "Persistence closure",
+            "GitHub pull request",
+            "GitLab merge request",
+        ):
+            with self.subTest(provider_contract=phrase):
+                self.assertIn(phrase, provider_contract)
+        self.assertNotIn("workflow_selection.provider", provider_contract)
+        self.assertNotIn("workflow_selection.completion", provider_contract)
+
+        lifecycle_text = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        ).read_text(encoding="utf-8")
+        for phrase in (
+            "Commit AWAITING_REVIEW",
+            "Commit READY",
+            "Persistence closure",
+            "pull request or GitLab merge request",
+            "exactly once",
+        ):
+            with self.subTest(lifecycle_contract=phrase):
+                self.assertIn(phrase, lifecycle_text)
 
         cases = load_yaml_object(REPOSITORY_ROOT / "evals" / "cases.yaml")["cases"]
         for case in cases:
@@ -6244,7 +6304,7 @@ class BundleContentTests(unittest.TestCase):
             "Merge Coordinator",
             "its own branch in its own worktree",
             "Direct-main delivery",
-            "Pull-request delivery",
+            "Feature-branch delivery",
             "temporary conflict-avoidance scratchpad",
             "not proof of review, verification, delivery, or work-item completion",
             "one cheapest representative first",
@@ -6278,7 +6338,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("overflow-x: auto", lifecycle_text)
 
     def test_lifecycle_routes_direct_main_and_pull_request_completion_paths(self) -> None:
-        """The lifecycle should distinguish direct-main and pull-request delivery."""
+        """The lifecycle should distinguish direct-main and feature-branch delivery."""
         lifecycle_path = (
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
         )
@@ -6289,15 +6349,15 @@ class BundleContentTests(unittest.TestCase):
             "fresh reconciliation branch from that exact commit",
             "Apply only the accepted paths",
             "exact shared integration paths",
-            "Pull-request delivery",
-            "authorized reviewer or merge owner",
-            "does not acquire a duplicate main-integration claim",
+            "Feature-branch delivery",
+            "GitHub pull request or GitLab merge request",
+            "Commit AWAITING_REVIEW without Persistence mutation",
+            "until Commit READY",
+            "dispatch Dev Backlog Steward exactly once for Persistence closure",
             "Conditional integration role",
             "nested Merge Coordinator",
             "inside the same work item",
             "Re-review reconciled content when integration changes meaning",
-            "separate short claim",
-            "record Completed",
             "delete the merged branch",
             "refill queue capacity",
         ):
@@ -6306,7 +6366,7 @@ class BundleContentTests(unittest.TestCase):
 
         direct_main = lifecycle_text[
             lifecycle_text.index(">Direct-main delivery<") :
-            lifecycle_text.index(">Pull-request delivery<")
+            lifecycle_text.index(">Feature-branch delivery<")
         ]
         direct_main_steps = (
             "Review and verify the private candidate",
@@ -7347,6 +7407,8 @@ class BundleContentTests(unittest.TestCase):
                             for scenario in scenarios["scenarios"]
                         },
                     )
+                elif entry["id"] == "dev-backlog-coordinator":
+                    self.assertEqual(4, len(scenarios["scenarios"]))
                 else:
                     self.assertEqual(3, len(scenarios["scenarios"]))
 

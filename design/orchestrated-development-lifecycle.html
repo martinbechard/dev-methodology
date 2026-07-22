@@ -542,7 +542,7 @@
         <div class="role-row"><span class="from">Work Orchestrator</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Producer</span><p>Choose the appropriate coder, documentation writer, organiser, or specialist for one bounded contribution.</p></div>
         <div class="role-row"><span class="from">Producer</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Independent Reviewer</span><p>Return a committed, clean contribution. Source, documentation, security, UX, and other surfaces go to the matching reviewer.</p></div>
         <div class="role-row"><span class="from">Independent Reviewer</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Verifier</span><p>After review acceptance, run the behavior and risk-based acceptance checks. Findings return to the original producer.</p></div>
-        <div class="role-row"><span class="from">Verifier</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Work Orchestrator</span><p>Hand back accepted evidence so the orchestrator can choose the configured delivery path and close the item.</p></div>
+        <div class="role-row"><span class="from">Verifier</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Work Orchestrator</span><p>Hand back accepted evidence so the orchestrator can apply the effective Commit skill and process its prepared delivery handoff.</p></div>
       </div>
       <aside class="optional-role"><strong>Conditional integration role:</strong> when several accepted contributions must be combined or integration conflicts require a dedicated owner, a nested Merge Coordinator reconciles them inside the same work item. It does not create a second queue item or independent delivery chain.</aside>
     </figure>
@@ -564,7 +564,7 @@
     </figure>
     <div class="delivery-paths">
       <article class="delivery-path"><h3>Direct-main delivery</h3><ol><li>Review and verify the private candidate.</li><li>Acquire exact shared integration paths and the integration resource.</li><li>Under that ownership, refresh current main and create a fresh reconciliation branch from that exact commit.</li><li>Apply only the accepted paths; do not import unrelated ancestry merely for provenance. Verify the integrated result, update main, then release.</li></ol></article>
-      <article class="delivery-path"><h3>Pull-request delivery</h3><ol><li>Review and verify the feature branch.</li><li>Push the branch and open a pull request with evidence.</li><li>The authorized reviewer or merge owner approves and merges it.</li><li>The implementation lane does not acquire a duplicate main-integration claim.</li></ol></article>
+      <article class="delivery-path"><h3>Feature-branch delivery</h3><ol><li>Review and verify the feature branch.</li><li>The Commit skill publishes a GitHub pull request or GitLab merge request and returns Commit AWAITING_REVIEW without Persistence mutation.</li><li>Resume the same delivery identity through provider-accurate review, checks, merge, and main observation until Commit READY.</li><li>Only then dispatch Dev Backlog Steward exactly once for Persistence closure; provider none uses task-local finalization.</li></ol></article>
     </div>
   </section>
 
@@ -596,14 +596,14 @@
       <div><h2 id="delivery-title">Review, Verification, And Delivery</h2><p>Production work is accepted in layers. Review asks whether the change is correct and maintainable; verification proves the required behavior; delivery integrates the accepted result through the configured path.</p></div>
     </div>
     <figure class="sequence-figure" aria-labelledby="delivery-sequence-title">
-      <figcaption id="delivery-sequence-title">Running to Done<span>Correction loops back to the original producer; backlog closeout begins only after delivery evidence exists.</span></figcaption>
+      <figcaption id="delivery-sequence-title">Running to Done<span>Correction loops back to the original producer; Persistence closure begins only after Commit READY.</span></figcaption>
       <ol class="sequence-list">
         <li><span class="number">1</span><span class="actor">Producer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Reviewer</span><p>Submit a committed, clean contribution with focused evidence.</p></li>
         <li><span class="number">2</span><span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Producer</span><p>Accept or return actionable findings. Corrected work receives a fresh review.</p></li>
         <li><span class="number">3</span><span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Verifier</span><p>After acceptance, run checks proportional to affected behavior and risk.</p></li>
         <li><span class="number">4</span><span class="actor">Verifier</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Orchestrator</span><p>Return the exact accepted candidate, checks, residual risks, and justified omissions.</p></li>
-        <li><span class="number">5</span><span class="actor">Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Main or PR</span><p>Follow the configured delivery path. Re-review reconciled content when integration changes meaning.</p></li>
-        <li><span class="number">6</span><span class="actor">Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Backlog Steward</span><p>After integration, use a separate short claim to record Completed, archive the item, and release.</p></li>
+        <li><span class="number">5</span><span class="actor">Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Commit</span><p>Apply Commit only after review and verification. Re-review reconciled content when integration changes meaning. Commit AWAITING_REVIEW preserves delivery without Persistence mutation; Commit READY returns the prepared terminal handoff.</p></li>
+        <li><span class="number">6</span><span class="actor">Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Backlog Steward</span><p>After Commit READY, dispatch exactly once and verify Persistence closure before reporting READY. Provider none verifies task-local COMPLETED finalization instead.</p></li>
         <li><span class="number">7</span><span class="actor">Coordinator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Cleanup</span><p>Verify the integration branch is merged, remove the clean worktree, delete the merged branch, prune metadata, and refill queue capacity.</p></li>
       </ol>
     </figure>

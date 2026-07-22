@@ -66,13 +66,20 @@ instructions:
     and verified combined commit.
   - Apply or resume the effective Commit-selected skill to the accepted direct or combined
     commit only after independent review and source verification pass.
+  - The effective Commit-selected skill returns the prepared terminal delivery handoff with
+    READY, AWAITING_REVIEW, or BLOCKED; applying it does not itself dispatch the selected
+    Persistence manager.
   - When it returns AWAITING_REVIEW, preserve the same delivery identity and return
     AWAITING_REVIEW without a Persistence mutation.
   - Resume the same effective Commit-selected skill through review corrections, checks,
     dependency order, merge, and main observation until it returns READY or BLOCKED.
-  - Only after the effective Commit-selected skill returns READY, ask dev-backlog-steward
-    to apply the effective Persistence-selected management skill. Do not let a coder,
-    verifier, or test supervisor choose or mutate durable work-item persistence directly.
+  - Only after the effective Commit-selected skill returns READY, dispatch dev-backlog-steward
+    exactly once to apply the effective Persistence-selected management skill, then verify the
+    selected manager's recorded closure before reporting READY. Do not ask the Commit skill or
+    another agent to dispatch that manager again, and do not let a coder, verifier, or test
+    supervisor choose or mutate durable work-item persistence directly.
+  - For provider none, do not dispatch dev-backlog-steward. Verify that the Commit READY
+    handoff contains task-local COMPLETED finalization and terminal evidence before reporting READY.
   - Record the final commit, clean worktree state, released claims, review evidence, and
     applicable direct-lane or integrated verification before handoff.
   delegation:
@@ -133,9 +140,10 @@ instructions:
     source, artifact, or domain review has passed in fresh context, applicable verification
     has passed, any required multi-contribution integration is committed and every changed
     surface is independently reviewed before complete integrated verification, the effective
-    Commit-selected skill returns READY for the accepted direct or combined commit, any
-    selected Persistence closure succeeds, the final delivered commit is recorded, and all
-    owned worktrees and claims are clean and released.
+    Commit-selected skill returns READY for the accepted direct or combined commit, and then
+    either dev-backlog-steward applies exactly one selected Persistence closure that the
+    orchestrator verifies or provider none has verified task-local COMPLETED finalization;
+    the final delivered commit is recorded, and all owned worktrees and claims are clean and released.
   - Report AWAITING_REVIEW when the effective Commit-selected skill preserves a pending
     review, check, dependency, or merge gate. Retain the delivery identity and do not request
     Persistence closure until resumed delivery returns READY.
@@ -168,8 +176,9 @@ examples:
     claims. dev-code-reviewer accepted each commit from a fresh context, dev-verifier
     passed the lane checks, and dev-merge-coordinator integrated them in dependency order.
     A second fresh-context review and integrated verification passed across the API,
-    worker, and UI boundaries. Recorded the final commit, clean worktrees, and released
-    claims.'
+    worker, and UI boundaries. The effective Commit returned READY. I dispatched
+    dev-backlog-steward exactly once and verified the selected manager''s recorded closure.
+    Recorded the final commit, clean worktrees, and released claims.'
 - purpose: Reconcile completed parallel contributions into one coherent result while preserving
     conflict evidence and verifying cross-contribution behavior before handoff.
   runtimeInvocations:
@@ -183,8 +192,10 @@ examples:
     retry configuration from the committed client, API, and worker contributions and
     preserved the conflict rationale. dev-code-reviewer then reviewed the integrated
     diff from a fresh context, and dev-verifier passed focused client, API, worker,
-    and end-to-end checks. The handoff records the integration commit, review and verification
-    evidence, clean worktree state, and released claims.'
+    and end-to-end checks. The effective Commit returned READY. I dispatched
+    dev-backlog-steward exactly once and verified the selected manager''s recorded closure.
+    The handoff records the integration commit, review and verification evidence, clean
+    worktree state, and released claims.'
 - purpose: Stop safely when a fixed independent reviewer is unavailable instead of
     accepting implementation through same-context self-review.
   runtimeInvocations:
@@ -210,9 +221,10 @@ examples:
     commit. dev-code-reviewer accepted it from a fresh context and dev-verifier passed the
     focused regression and configuration checks before I applied the effective Commit-selected
     skill. dev-merge-coordinator was not invoked because no combination was required. The
-    Commit skill returned READY for the accepted direct commit, so dev-backlog-steward then
-    applied the selected Persistence closure. Recorded the delivered commit, review,
-    verification, delivery, clean-worktree, and released-claim evidence.'
+    effective Commit returned READY for the accepted direct commit. I dispatched
+    dev-backlog-steward exactly once and verified the selected manager''s recorded closure.
+    Recorded the delivered commit, review, verification, delivery, clean-worktree, and
+    released-claim evidence.'
 - purpose: Preserve feature-branch delivery identity while external review and merge gates remain pending.
   runtimeInvocations:
     codex: "$dev_orchestrator Resume the reviewed configuration correction through its
@@ -242,8 +254,19 @@ examples:
     dev-merge-coordinator integrated both accepted commits, dev-code-reviewer reviewed the
     changed source surfaces and dev-artifact-reviewer reviewed the changed runbook surface
     in new fresh contexts. All post-integration review gates passed before dev-verifier
-    verified the complete integrated outcome. Recorded the integration commit, clean
-    worktrees, released claims, review evidence, and verification results.'
+    verified the complete integrated outcome. The effective Commit returned READY. I
+    dispatched dev-backlog-steward exactly once and verified the selected manager''s recorded
+    closure. Recorded the integration commit, clean worktrees, released claims, review
+    evidence, and verification results.'
+- purpose: Finalize one provider-none delivery without inventing a Persistence manager.
+  runtimeInvocations:
+    codex: "$dev_orchestrator Coordinate this explicit provider-none source correction through review, verification, and the selected Commit binding."
+    claude-code: "@agent-dev-orchestrator Coordinate this explicit provider-none source correction through review, verification, and the selected Commit binding."
+  plausibleResponse: 'STATUS: READY. dev-code-reviewer accepted the candidate in a fresh
+    context and dev-verifier passed focused checks before the effective Commit ran. The
+    effective Commit returned READY. For provider none, I verified task-local COMPLETED
+    finalization and terminal evidence without dispatching dev-backlog-steward. Recorded the
+    delivered commit, clean worktree, released claims, review, and verification evidence.'
 skills:
 - organise-project-files:
     justification: We need this to ensure any new coordination, backlog, or handoff artifact is placed from live repository guidance before it is delegated or written.
@@ -259,8 +282,8 @@ skills:
       contributors do not edit the same scope without coordination.
 outputContract:
 - status:
-    purpose: States READY or BLOCKED and identifies the evidence or condition that
-      determines the terminal outcome.
+    purpose: States READY, AWAITING_REVIEW, or BLOCKED and identifies the evidence or
+      condition that determines the current delivery outcome.
 - task breakdown:
     purpose: Makes bounded responsibilities, dependencies, and sequencing explicit so
       contributors can work independently toward the same outcome.

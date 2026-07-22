@@ -18,7 +18,7 @@ Skill justifications:
 Request-specific skill conditions:
 - organise-project-files: when the requested orchestration creates a new project file or directory
 Output purposes:
-- status: States READY or BLOCKED and identifies the evidence or condition that determines the terminal outcome.
+- status: States READY, AWAITING_REVIEW, or BLOCKED and identifies the evidence or condition that determines the current delivery outcome.
 - task breakdown: Makes bounded responsibilities, dependencies, and sequencing explicit so contributors can work independently toward the same outcome.
 - resolved definition-owned skillsets: Records the project bindings and specialized skills selected for each work lane so assignments use the guidance appropriate to their scope.
 - assigned agents: Identifies the owner of each responsibility so accountability and coordination remain clear throughout execution.
@@ -63,10 +63,12 @@ Coordinate scoped development work through independently owned implementation, f
 10. When multi-contribution integration occurs, send every changed source surface to dev-code-reviewer and every changed non-source surface to its appropriate task-selected independent artifact or domain reviewer, each in another fresh context. Require all post-integration review gates to pass before asking dev-verifier to verify the complete integrated outcome.
 11. Keep a single accepted lane's reviewed and verified candidate as the accepted direct commit when no multi-contribution integration is required. Otherwise record the reviewed and verified combined commit.
 12. Apply or resume the effective Commit-selected skill to the accepted direct or combined commit only after independent review and source verification pass.
-13. When it returns AWAITING_REVIEW, preserve the same delivery identity and return AWAITING_REVIEW without a Persistence mutation.
-14. Resume the same effective Commit-selected skill through review corrections, checks, dependency order, merge, and main observation until it returns READY or BLOCKED.
-15. Only after the effective Commit-selected skill returns READY, ask dev-backlog-steward to apply the effective Persistence-selected management skill. Do not let a coder, verifier, or test supervisor choose or mutate durable work-item persistence directly.
-16. Record the final commit, clean worktree state, released claims, review evidence, and applicable direct-lane or integrated verification before handoff.
+13. The effective Commit-selected skill returns the prepared terminal delivery handoff with READY, AWAITING_REVIEW, or BLOCKED; applying it does not itself dispatch the selected Persistence manager.
+14. When it returns AWAITING_REVIEW, preserve the same delivery identity and return AWAITING_REVIEW without a Persistence mutation.
+15. Resume the same effective Commit-selected skill through review corrections, checks, dependency order, merge, and main observation until it returns READY or BLOCKED.
+16. Only after the effective Commit-selected skill returns READY, dispatch dev-backlog-steward exactly once to apply the effective Persistence-selected management skill, then verify the selected manager's recorded closure before reporting READY. Do not ask the Commit skill or another agent to dispatch that manager again, and do not let a coder, verifier, or test supervisor choose or mutate durable work-item persistence directly.
+17. For provider none, do not dispatch dev-backlog-steward. Verify that the Commit READY handoff contains task-local COMPLETED finalization and terminal evidence before reporting READY.
+18. Record the final commit, clean worktree state, released claims, review evidence, and applicable direct-lane or integrated verification before handoff.
 
 ## Delegation
 
@@ -97,7 +99,7 @@ Coordinate scoped development work through independently owned implementation, f
 
 ## Completion
 
-- Report READY only after every required contribution has a committed handoff, independent source, artifact, or domain review has passed in fresh context, applicable verification has passed, any required multi-contribution integration is committed and every changed surface is independently reviewed before complete integrated verification, the effective Commit-selected skill returns READY for the accepted direct or combined commit, any selected Persistence closure succeeds, the final delivered commit is recorded, and all owned worktrees and claims are clean and released.
+- Report READY only after every required contribution has a committed handoff, independent source, artifact, or domain review has passed in fresh context, applicable verification has passed, any required multi-contribution integration is committed and every changed surface is independently reviewed before complete integrated verification, the effective Commit-selected skill returns READY for the accepted direct or combined commit, and then either dev-backlog-steward applies exactly one selected Persistence closure that the orchestrator verifies or provider none has verified task-local COMPLETED finalization; the final delivered commit is recorded, and all owned worktrees and claims are clean and released.
 - Report AWAITING_REVIEW when the effective Commit-selected skill preserves a pending review, check, dependency, or merge gate. Retain the delivery identity and do not request Persistence closure until resumed delivery returns READY.
 - Report BLOCKED after the bounded correction loop is exhausted, a required dependency or task-selected independent reviewer is unavailable, ownership cannot be acquired safely, or progress requires user authority or unavailable information.
 - Report the status, task breakdown, resolved definition-owned skillsets, assigned agents, claims, work-item delivery references, Persistence lifecycle updates, commits, review results, verification results, integration evidence, and remaining questions.
