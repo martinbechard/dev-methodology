@@ -1,12 +1,12 @@
 # Integrate Work-Item Routing Through Core-Only Agent Definitions
 
-Status: User Action Required
+Status: Running
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/integrate-work-item-routing-through-core-only-agent-definitions.md
+Provider Reference: backlog/feature-backlog/integrate-work-item-routing-through-core-only-agent-definitions.md
 
 Completion: direct-main
 
@@ -16,8 +16,8 @@ Completion: direct-main
 - Previous worktree: /Users/martinbechard/.codex/worktrees/2c00/dev-methodology.
 - Previous branch: codex/integrate-work-item-contracts-across-bundle.
 - Previous starting main commit: 2ddedf5a83ca8567ac3de93867a3f90624a2e28c.
-- Owner: Unowned.
-- Claim: None.
+- Owner: Dev Orchestrator.
+- Claim: approve-core-only-codex-metadata-019f8b4c, backlog transition only.
 - Phase: Blocked after approval resolution because the accepted core-only routing design depends on simplify-project-configuration-setup-and-skill-routing.
 - User approval: On 2026-07-21, in parent task 019f77f4-c4bd-7c91-b197-c987a7beb838, the user directed: "I approve the items in holding". The prior exact codex-workitem-coordination approval remains recorded below.
 - Unblock condition: backlog/feature-backlog/simplify-project-configuration-setup-and-skill-routing.md is integrated, verified, and archived as Completed on main.
@@ -33,15 +33,15 @@ Completion: direct-main
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology.
 - Branch: codex/integrate-work-item-routing-core-only-019f8b4c at c9b9a2d.
 - Starting main: 83135ebc590c2c244cf42283ae3f760521c55ed0.
-- Phase: exact one-path Codex metadata approval gate.
+- Phase: metadata correction then fresh focused checks and review.
 - Lifecycle transition: Blocked -> Ready after dependency reconciliation -> Running after fresh canonical task assignment and successful serialized backlog claim acquisition.
-- Accepted candidate: c9b9a2d with preserved uncommitted correction bytes in the private canonical worktree; not accepted or integrated.
+- Accepted candidate: Pending. Recovery evidence remains branch c9b9a2d with preserved uncommitted correction bytes in the private canonical worktree; not accepted or integrated.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: Approval is required for skills/codex-workitem-coordination/agents/openai.yaml before metadata mutation, re-review, or acceptance.
-- Next owner: Unowned pending user approval resolution.
+- Open issues: Apply the approved one-path metadata correction and complete fresh focused checks and review.
+- Next owner: Dev Orchestrator.
 
 ## Resumption Evidence — 2026-07-22
 
@@ -67,15 +67,23 @@ Repository policy requires exact scope-specific approval before this governed me
 
 ### Resolution
 
-Pending.
+- Date: 2026-07-22.
+- Answer: Approved.
+- User wording: "yes".
+- Provenance: direct response in parent coordinator thread 019f8b00-e6d7-7841-854a-40a50ca4e7f2 to the separately stated Codex metadata approval question.
+- Approved governed metadata scope: exactly skills/codex-workitem-coordination/agents/openai.yaml.
+- Exclusion: no other governed or metadata scope is authorized by this answer.
+- Separate boundary: this approval does not resolve the lifecycle and deadline ten-path question.
+- Disposition: User Action Required -> Ready -> Running under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
 
 ### Unattended Work Boundary
 
-Do not mutate skills/codex-workitem-coordination/agents/openai.yaml or widen any other governed or metadata scope until the parent records the user answer and sends approval resolution. Preserve all prior approvals and evidence.
+Mutate only the approved skills/codex-workitem-coordination/agents/openai.yaml metadata path within the preserved prior approvals and evidence. Do not widen any other governed or metadata scope. The lifecycle and deadline ten-path question remains unresolved and prohibited.
 
 ### Handoff Evidence
 
 - Backlog handoff claim: route-core-only-codex-metadata-019f8b4c, acquired event 803aa720-2333-4461-8514-555f70b17e51 from primary main.
+- Approval-resumption claim: approve-core-only-codex-metadata-019f8b4c, acquired event 618e04bf-56f1-4554-b290-e10e7880cb2b from primary main.
 
 ## Resolved Approval
 
