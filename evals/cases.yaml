@@ -51,7 +51,7 @@ cases:
     requiredSkills:
       - agent-claim
       - agent-claim-command
-      - execute-workitem
+      - complete-work-item-direct-main
       - careful-coding
       - code-comments
       - code-discovery
@@ -65,7 +65,7 @@ cases:
     skillProbes:
       - probe-agent-claim
       - probe-agent-claim-command
-      - probe-execute-workitem
+      - probe-complete-work-item-direct-main
       - probe-careful-coding
       - probe-code-comments
       - probe-code-discovery
@@ -89,14 +89,14 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/typescript-order-pricing
       include: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
-      stagedSkillPackages: [agent-claim, agent-claim-command, execute-workitem, careful-coding, code-comments, code-discovery, fix-explanation, structured-explanation, test-driven-development, typescript, typescript-strict, typescript-esm, code-review-evidence]
+      stagedSkillPackages: [agent-claim, agent-claim-command, complete-work-item-direct-main, careful-coding, code-comments, code-discovery, fix-explanation, structured-explanation, test-driven-development, typescript, typescript-strict, typescript-esm, code-review-evidence]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
     skillResourceAllowlist:
       agent-claim: [SKILL.md]
       agent-claim-command: [SKILL.md, scripts/claim.py]
-      execute-workitem: [SKILL.md, references/simple-workitem.md, references/feature-branch-workitem.md]
+      complete-work-item-direct-main: [SKILL.md]
       careful-coding: [SKILL.md]
       code-comments: [SKILL.md, references/review-checklist-code-comments.md]
       code-discovery: [SKILL.md]
@@ -134,7 +134,7 @@ cases:
     requiredSkills:
       - agent-claim
       - agent-claim-command
-      - execute-workitem
+      - complete-work-item-direct-main
       - careful-coding
       - code-comments
       - code-discovery
@@ -148,7 +148,7 @@ cases:
     skillProbes:
       - probe-agent-claim
       - probe-agent-claim-command
-      - probe-execute-workitem
+      - probe-complete-work-item-direct-main
       - probe-careful-coding
       - probe-code-comments
       - probe-code-discovery
@@ -172,14 +172,14 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/spring-boot-order-cancellation
       include: [.gitignore, TASK.md, pom.xml, src]
-      stagedSkillPackages: [agent-claim, agent-claim-command, execute-workitem, careful-coding, code-comments, code-discovery, fix-explanation, structured-explanation, test-driven-development, java, spring-boot, sql, code-review-evidence]
+      stagedSkillPackages: [agent-claim, agent-claim-command, complete-work-item-direct-main, careful-coding, code-comments, code-discovery, fix-explanation, structured-explanation, test-driven-development, java, spring-boot, sql, code-review-evidence]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [.gitignore, TASK.md, pom.xml, src]
     skillResourceAllowlist:
       agent-claim: [SKILL.md]
       agent-claim-command: [SKILL.md, scripts/claim.py]
-      execute-workitem: [SKILL.md, references/simple-workitem.md, references/feature-branch-workitem.md]
+      complete-work-item-direct-main: [SKILL.md]
       careful-coding: [SKILL.md]
       code-comments: [SKILL.md, references/review-checklist-code-comments.md]
       code-discovery: [SKILL.md]
@@ -217,7 +217,7 @@ cases:
     requiredSkills:
       - agent-claim
       - agent-claim-command
-      - execute-workitem
+      - complete-work-item-direct-main
       - careful-coding
       - code-comments
       - code-discovery
@@ -230,7 +230,7 @@ cases:
     skillProbes:
       - probe-agent-claim
       - probe-agent-claim-command
-      - probe-execute-workitem
+      - probe-complete-work-item-direct-main
       - probe-careful-coding
       - probe-code-comments
       - probe-code-discovery
@@ -250,14 +250,14 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/java-comment-placement
       include: [TASK.md, verify.py, src, negative-fixtures]
-      stagedSkillPackages: [agent-claim, agent-claim-command, execute-workitem, careful-coding, code-comments, code-discovery, fix-explanation, structured-explanation, test-driven-development, java, java-comment, code-review-evidence]
+      stagedSkillPackages: [agent-claim, agent-claim-command, complete-work-item-direct-main, careful-coding, code-comments, code-discovery, fix-explanation, structured-explanation, test-driven-development, java, java-comment, code-review-evidence]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md, verify.py, src, negative-fixtures]
     skillResourceAllowlist:
       agent-claim: [SKILL.md]
       agent-claim-command: [SKILL.md, scripts/claim.py]
-      execute-workitem: [SKILL.md, references/simple-workitem.md, references/feature-branch-workitem.md]
+      complete-work-item-direct-main: [SKILL.md]
       careful-coding: [SKILL.md]
       code-comments: [SKILL.md, references/review-checklist-code-comments.md]
       code-discovery: [SKILL.md]

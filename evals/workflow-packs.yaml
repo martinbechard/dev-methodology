@@ -57,7 +57,6 @@ packs:
       - probe-electron-main
       - probe-electron-preload
       - probe-end-to-end-verification
-      - probe-execute-workitem
       - probe-fastapi
       - probe-fix-explanation
       - probe-java
@@ -374,15 +373,11 @@ packs:
     skillProbes:
       - probe-agent-claim
       - probe-codex-workitem-coordination
-      - probe-create-backlog
       - probe-create-file-work-item
       - probe-create-github-work-item
       - probe-create-gitlab-work-item
       - probe-create-azure-devops-work-item
       - probe-create-jira-work-item
-      - probe-file-based-backlog
-      - probe-github-issues-backlog
-      - probe-manage-backlog
       - probe-manage-file-work-items
       - probe-manage-github-work-items
       - probe-manage-gitlab-work-items

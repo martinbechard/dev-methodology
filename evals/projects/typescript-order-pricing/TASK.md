@@ -2,7 +2,7 @@
 
 Add an asynchronous coupon boundary to the order-pricing module.
 
-Use the simple-workitem delivery process. Complete and commit the verified local change
+Use the configured direct-main Commit workflow. Complete and commit the verified local change
 without publishing a branch or pull request.
 
 Requirements:

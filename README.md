@@ -417,19 +417,14 @@ The development practice skills are:
 - organise-project-files
 - create-file-work-item
 - manage-file-work-items
-- create-backlog
-- manage-backlog
-- file-based-backlog
 - create-github-work-item
 - manage-github-work-items
-- github-issues-backlog
 - create-gitlab-work-item
 - manage-gitlab-work-items
 - create-azure-devops-work-item
 - manage-azure-devops-work-items
 - create-jira-work-item
 - manage-jira-work-items
-- execute-workitem
 - complete-work-item-direct-main
 - fix-explanation
 - structured-explanation
@@ -457,18 +452,9 @@ The development practice skills are:
 - traversal-patterns
 - interpreter-pattern
 
-create-github-work-item and manage-github-work-items are the canonical split GitHub provider skills. github-issues-backlog remains only as a transition route for existing callers until the separately governed selector and role migration removes those references.
+create-github-work-item and manage-github-work-items are the canonical split GitHub Persistence skills. They keep GitHub Issues authoritative and never create a shadow repository queue.
 
-create-file-work-item and manage-file-work-items are the canonical file-provider pair. They keep authoritative records only under backlog in the primary worktree on main, use short backlog claims for each mutation, and never mirror provider issues into repository files.
-
-create-backlog, manage-backlog, and file-based-backlog are migration-only bridges while separately governed callers still use the prototype identifiers. They contain no independent work-item procedure. Existing repositories migrate as follows:
-
-- Replace create-backlog with create-file-work-item.
-- Replace manage-backlog with manage-file-work-items.
-- Replace file-based-backlog selector values with provider file, then load the canonical create or manage skill for the operation.
-- Keep Persistence and Commit selection independent and preserve UNSET until the user decides.
-
-Remove the three bridge packages only after PROJECT.yaml files, generated guidance, conceptual agent definitions, evaluations, and other authorized callers use the canonical pair and generated-output checks pass without the legacy identifiers.
+create-file-work-item and manage-file-work-items are the canonical file Persistence pair. They keep authoritative records only under backlog in the primary worktree on main, use short backlog claims for each mutation, and never mirror provider issues into repository files. PROJECT.yaml selects Persistence and Commit independently, while AGENTS.md supplies only the corresponding skill references. Conceptual agent definitions remain neutral to both selectors.
 
 The stack and project-domain skill packs are:
 

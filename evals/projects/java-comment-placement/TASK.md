@@ -2,7 +2,7 @@
 
 Move the existing file-level metadata into valid Java Javadoc without changing its information.
 
-Use the simple-workitem delivery process. Complete and commit the verified local change without publishing a branch or pull request.
+Use the configured direct-main Commit workflow. Complete and commit the verified local change without publishing a branch or pull request.
 
 Requirements:
 

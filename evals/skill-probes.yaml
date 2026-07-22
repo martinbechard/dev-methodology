@@ -289,20 +289,6 @@ probes:
     executableCases: [typescript-code-review]
     coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-create-backlog
-    skill: create-backlog
-    source: skills/create-backlog/SKILL.md
-    evaluationCategory: development-practice
-    evaluationKind: migration-contract
-    activationCondition: An existing governed caller still invokes the retired create-backlog identifier during the bounded cross-bundle migration.
-    negativeCondition: New callers and already migrated file-provider creation requests load create-file-work-item directly and do not select this bridge.
-    expectedBehavior: Load create-file-work-item, contribute no independent creation or claim procedure, and direct caller migration before the bridge is removed.
-    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure], modelRubric: null}
-    scenarioAssociations: [dev-backlog-steward-happy]
-    workflowAssociations: [backlog]
-    executableCases: []
-    coverageStatus: declared
-    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
   - id: probe-create-architecture
     skill: create-architecture
     source: skills/create-architecture/SKILL.md
@@ -344,7 +330,7 @@ probes:
     workflowAssociations: [backlog]
     executableCases: [provider-placeholder-matrix]
     coverageStatus: fixture-backed
-    ablation: {omitTargetSkill: true, wrongSkillControl: create-backlog}
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-file-work-item}
   - id: probe-create-jira-work-item
     skill: create-jira-work-item
     source: skills/create-jira-work-item/SKILL.md
@@ -358,7 +344,7 @@ probes:
     workflowAssociations: [backlog]
     executableCases: [provider-placeholder-matrix]
     coverageStatus: fixture-backed
-    ablation: {omitTargetSkill: true, wrongSkillControl: create-backlog}
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-file-work-item}
   - id: probe-create-functional-spec
     skill: create-functional-spec
     source: skills/create-functional-spec/SKILL.md
@@ -597,20 +583,6 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-execute-workitem
-    skill: execute-workitem
-    source: skills/execute-workitem/SKILL.md
-    evaluationCategory: development-practice
-    evaluationKind: workflow-invariant
-    activationCondition: Dev Coder is asked to implement, resume, correct, or deliver an interactive, file-backed, or issue-backed work item.
-    negativeCondition: The skill does not infer a delivery process from hosting evidence, mix backlog persistence with delivery, publish a simple-workitem, or leave a completed feature-branch pull request in draft.
-    expectedBehavior: Normalize the work item, ask when no process is selected, load only the selected simple-workitem or feature-branch-workitem process, preserve claim and worktree boundaries, produce a verified local commit for simple delivery, or push and verify a pull request ready for review before reporting AWAITING_REVIEW for feature-branch delivery.
-    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, tool-authority, claim-lifecycle, readiness-consistency], modelRubric: workflow-quality}
-    scenarioAssociations: [dev-coder-happy, dev-coder-boundary]
-    workflowAssociations: [code-delivery]
-    executableCases: []
-    coverageStatus: declared
-    ablation: {omitTargetSkill: true, wrongSkillControl: manage-file-work-items}
   - id: probe-fastapi
     skill: fastapi
     source: skills/fastapi/SKILL.md
@@ -625,20 +597,6 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-file-based-backlog
-    skill: file-based-backlog
-    source: skills/file-based-backlog/SKILL.md
-    evaluationCategory: development-practice
-    evaluationKind: migration-contract
-    activationCondition: An existing governed caller still invokes the retired file-based-backlog selector during the bounded cross-bundle migration.
-    negativeCondition: New callers use provider file with create-file-work-item or manage-file-work-items and never load this bridge.
-    expectedBehavior: Route an already selected file operation to the matching canonical skill, contribute no provider selection or lifecycle procedure, and direct caller migration before removal.
-    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure], modelRubric: null}
-    scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary, dev-backlog-steward-provider-boundary]
-    workflowAssociations: [backlog]
-    executableCases: []
-    coverageStatus: declared
-    ablation: {omitTargetSkill: true, wrongSkillControl: github-issues-backlog}
   - id: probe-fix-explanation
     skill: fix-explanation
     source: skills/fix-explanation/SKILL.md
@@ -667,20 +625,6 @@ probes:
     executableCases: [github-work-item-provider]
     coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-github-issues-backlog
-    skill: github-issues-backlog
-    source: skills/github-issues-backlog/SKILL.md
-    evaluationCategory: development-practice
-    evaluationKind: workflow-invariant
-    activationCondition: Existing applicable guidance or an explicit request still names the legacy github-issues-backlog identifier.
-    negativeCondition: The compatibility route does not reproduce provider procedures, write the legacy identifier into new configuration, create shadow files, or treat pull-request publication as completion.
-    expectedBehavior: Route creation to create-github-work-item, route inventory and lifecycle operations to manage-github-work-items, preserve issue identity across a combined handoff, and return the canonical replacement result.
-    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, tool-authority, queue-state-transition], modelRubric: workflow-quality}
-    scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary]
-    workflowAssociations: [backlog]
-    executableCases: []
-    coverageStatus: declared
-    ablation: {omitTargetSkill: true, wrongSkillControl: file-based-backlog}
   - id: probe-manage-github-work-items
     skill: manage-github-work-items
     source: skills/manage-github-work-items/SKILL.md
@@ -1073,20 +1017,6 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
-  - id: probe-manage-backlog
-    skill: manage-backlog
-    source: skills/manage-backlog/SKILL.md
-    evaluationCategory: development-practice
-    evaluationKind: migration-contract
-    activationCondition: An existing governed caller still invokes the retired manage-backlog identifier during the bounded cross-bundle migration.
-    negativeCondition: New callers and already migrated file-provider management requests load manage-file-work-items directly and do not select this bridge.
-    expectedBehavior: Load manage-file-work-items, contribute no independent inventory or lifecycle procedure, and direct caller migration before the bridge is removed.
-    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure], modelRubric: null}
-    scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary]
-    workflowAssociations: [backlog]
-    executableCases: []
-    coverageStatus: declared
-    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
   - id: probe-manage-file-work-items
     skill: manage-file-work-items
     source: skills/manage-file-work-items/SKILL.md
@@ -1114,7 +1044,7 @@ probes:
     workflowAssociations: [backlog]
     executableCases: [provider-placeholder-matrix]
     coverageStatus: fixture-backed
-    ablation: {omitTargetSkill: true, wrongSkillControl: manage-backlog}
+    ablation: {omitTargetSkill: true, wrongSkillControl: manage-file-work-items}
   - id: probe-manage-jira-work-items
     skill: manage-jira-work-items
     source: skills/manage-jira-work-items/SKILL.md
@@ -1128,7 +1058,7 @@ probes:
     workflowAssociations: [backlog]
     executableCases: [provider-placeholder-matrix]
     coverageStatus: fixture-backed
-    ablation: {omitTargetSkill: true, wrongSkillControl: manage-backlog}
+    ablation: {omitTargetSkill: true, wrongSkillControl: manage-file-work-items}
   - id: probe-name-methodology-artifacts
     skill: name-methodology-artifacts
     source: skills/name-methodology-artifacts/SKILL.md

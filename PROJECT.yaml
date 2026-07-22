@@ -207,7 +207,6 @@ role_agent_set:
     hands_off:
       - "Primary backlog lifecycle mutations to dev-backlog-steward and active item delivery to dev-orchestrator."
     skills:
-      - manage-backlog
       - structured-explanation
       - codex-workitem-coordination
       - agent-claim
@@ -364,13 +363,13 @@ technology_skill_loadouts:
     notes: "Load both skills because fastapi explicitly composes with python."
 
 workflow_selection:
-  provider:
+  persistence:
     default: file
     folder_overrides: []
-  completion:
+  commit:
     default: direct-main
     folder_overrides: []
-  selection_policy: "The repository uses its file-backed backlog as the durable provider and verified direct-main completion. Provider and completion remain independent, explicit choices and are never inferred from repository or hosting evidence."
+  selection_policy: "The repository uses file Persistence and verified direct-main Commit delivery. Persistence and Commit remain independent, explicit choices and are never inferred from repository or hosting evidence."
 
 folder_routing:
   - pattern: scripts/**
@@ -484,7 +483,7 @@ validation_plan:
     - "Confirm python and fastapi are installed and every accepted skillset retains source evidence."
     - "Confirm AGENTS.md requires matching folder skills before acting and does not tell ordinary agents to rerun detection."
   workflow_selector_checks:
-    - "Confirm provider file selects create-file-work-item and manage-file-work-items while completion direct-main independently selects complete-work-item-direct-main."
+    - "Confirm Persistence file selects create-file-work-item and manage-file-work-items while Commit direct-main independently selects complete-work-item-direct-main."
     - "Confirm workflow skill names remain reference-only and folder technology skill bodies remain statically inlined under the separate Technology Skills section."
     - "Confirm legacy workitem and backlog selectors receive deterministic migration guidance and invalid values report their exact key and supported replacements."
   privacy_checks:

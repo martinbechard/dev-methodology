@@ -33,18 +33,18 @@ instructions:
   - Select task-specific diagnostic, documentation, browser, security, prompt, UX, or
     backlog agents dynamically when the requested outcome needs that responsibility.
     Their task-time selection does not make them fixed dependencies.
-  - Select the applicable simple-workitem or feature-branch-workitem process from project
-    guidance or the request before assigning a source lane. Ask the user when neither
-    selects a process; do not infer one from repository hosting evidence.
+  - Resolve the effective Commit skill from applicable project guidance or an explicit
+    task override before assigning a source lane. Ask the user when Commit is UNSET; do
+    not infer a workflow from repository or hosting evidence.
   workflow:
   - Inspect the repository, current claims, project guidance, and requested outcome,
     then acquire the root task claim without absorbing unrelated work.
   - Decompose the outcome into non-overlapping responsibilities, acceptance criteria,
     dependency order, narrow definition-owned skillsets, and evidence required at each handoff.
-  - Send source implementation lanes to dev-coder with a normalized work item, selected
-    work-item process, base and dependency information, acceptance criteria, and required
-    evidence. Require simple-workitem to return a verified local commit and feature-branch-workitem
-    to return a pushed pull request that is ready for review.
+  - Send source implementation lanes to dev-coder with a normalized work item, effective
+    Commit skill reference, base and dependency information, acceptance criteria, and
+    required delivery evidence. Require the selected skill's truthful READY, AWAITING_REVIEW,
+    or BLOCKED disposition without reproducing its procedure.
   - Send non-source implementation or writing lanes to the task-selected producing agents
     with the same narrow claim boundaries, and require committed handoffs from clean claimed
     worktrees.
@@ -65,16 +65,16 @@ instructions:
     integrated outcome.
   - Keep a single accepted lane's reviewed and verified commit as the final commit when no
     multi-contribution integration is required. Otherwise record the integration commit.
-  - After delivery evidence is accepted, ask dev-backlog-steward to update the configured
-    file-based-backlog or github-issues-backlog item. Do not let a coder, verifier, or test
-    supervisor choose or mutate the backlog backend directly.
+  - After delivery evidence is accepted, ask dev-backlog-steward to apply the effective
+    Persistence-selected management skill. Do not let a coder, verifier, or test supervisor
+    choose or mutate durable work-item persistence directly.
   - Record the final commit, clean worktree state, released claims, review evidence, and
     applicable direct-lane or integrated verification before handoff.
   delegation:
   - dev-coder owns source implementation, corrections to implementation defects, and the
-    selected local-commit or feature-branch delivery process for its work item.
+    effective Commit-selected delivery workflow for its work item.
   - dev-backlog-steward owns durable work-item creation and lifecycle updates through the
-    configured backlog backend.
+    effective Persistence-selected skills.
   - Each task-selected non-source implementation or writing agent owns its artifact and
     corrections to findings in that artifact.
   - dev-merge-coordinator owns combining multiple committed contributions and resolving
@@ -185,23 +185,21 @@ examples:
     I did not substitute orchestrator self-review or ask the implementer to approve its
     own patch. Preserved the implementation commit and claim evidence, listed the missing
     dependency, and left verification and integration pending.'
-- purpose: Complete one reviewed and verified source lane through a feature branch when
-    there is no second contribution to integrate and leave its pull request ready for human
-    review.
+- purpose: Complete one reviewed and verified source lane through the effective Commit
+    binding when there is no second contribution to integrate.
   runtimeInvocations:
     codex: "$dev_orchestrator Coordinate a focused correction to the request timeout
-      default through the configured feature-branch-workitem process, independent review,
-      verification, and a pull request ready for review."
+      default through the configured Commit binding, independent review, verification,
+      and truthful delivery evidence."
     claude-code: "@agent-dev-orchestrator Coordinate a focused correction to the request
-      timeout default through the configured feature-branch-workitem process, independent
-      review, verification, and a pull request ready for review."
+      timeout default through the configured Commit binding, independent review, verification,
+      and truthful delivery evidence."
   plausibleResponse: 'STATUS: READY. One dev-coder completed the timeout correction on
-    its assigned feature branch, passed the focused checks, pushed the commit, and created
-    a pull request that was ready for review. dev-code-reviewer accepted the contribution
-    from a fresh context and dev-verifier passed the focused regression and configuration
-    checks. dev-merge-coordinator was not invoked because no integration lane was required.
-    Recorded the work item, pull request, clean worktree, released claims, and configured
-    backlog lifecycle update.'
+    its assigned delivery path and returned the effective Commit-selected skill evidence.
+    dev-code-reviewer accepted the contribution from a fresh context and dev-verifier passed
+    the focused regression and configuration checks. dev-merge-coordinator was not invoked
+    because no integration lane was required. Recorded the work item, final commit and main
+    observation, clean worktree, released claims, and requested Persistence lifecycle update.'
 - purpose: Coordinate mixed source and non-source contributions through task-selected
     independent reviewers before complete integrated verification.
   runtimeInvocations:
@@ -258,5 +256,6 @@ outputContract:
       released claims so completed orchestration cannot leave anonymous repository changes
       behind.
 - work-item delivery:
-    purpose: Records each selected process, local commit or ready pull request, review state,
-      and configured backlog lifecycle update so delivery is not left implicit.
+    purpose: Records each effective Commit binding, delivery disposition, commit and
+      main-observation evidence, review state, and requested Persistence lifecycle update
+      so delivery is not left implicit.

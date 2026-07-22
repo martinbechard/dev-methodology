@@ -17,7 +17,7 @@ Use one Dev Backlog Coordinator as the parent dispatcher. Give each Running work
 - Codex task state and title are display and execution state, not lifecycle authority.
 - Dev Backlog Coordinator owns queue inventory, priority, dispatch, stalled-integration investigation, and terminal task cleanup.
 - Dev Orchestrator owns one work item from Running through delivery or a truthful terminal outcome. It may start Dev Coder, independent reviewer, and verifier subagents inside that task.
-- Dev Backlog Steward applies [manage-backlog](../manage-backlog/SKILL.md) when it performs a specialized backlog mutation. The parent coordinator follows this skill's bounded retry and queue rules.
+- Dev Backlog Steward applies the management skill selected by the effective Persistence binding when it performs a specialized work-item mutation. The parent coordinator follows this skill's bounded retry and queue rules.
 
 Do not create a separate parent ledger, baton registry, waiting-task registry, or task database. Do not copy this procedure into AGENTS.md or a Dev Orchestrator definition.
 

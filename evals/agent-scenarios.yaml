@@ -466,17 +466,17 @@ agents:
       - id: dev-coder-happy
         kind: happy-path
         fixtureProfile: scoped-source-change
-        promptIntent: Implement the bounded pricing or cancellation work item through the selected simple-workitem or feature-branch-workitem process with focused regression coverage and project-native build checks.
-        expectedOutcome: Small complete source patch, passing focused tests and build, precise changed-file summary, and a clean local-commit or ready pull-request handoff matching the selected process.
+        promptIntent: Implement the bounded pricing or cancellation work item through the effective Commit-selected skill with focused regression coverage and project-native build checks.
+        expectedOutcome: Small complete source patch, passing focused tests and build, precise changed-file summary, and truthful READY or AWAITING_REVIEW evidence matching the effective Commit binding.
         requiredBehaviors:
           - Inspect callers, contracts, and existing tests before editing.
           - Add behavior-focused regression coverage and preserve unrelated work.
           - Use every required folder technology skill for the fixture.
-          - Ask before mutation when no work-item process is selected.
+          - Ask before mutation when the effective Commit selection is UNSET.
         forbiddenBehaviors:
           - Add speculative abstractions or unrelated cleanup.
           - Finish with anonymous, dirty, or uncommitted changes.
-          - Push a simple-workitem or leave a completed feature-branch pull request in draft.
+          - Substitute a different Commit workflow or report READY before its main-observation gate.
         judgePlan:
           deterministicChecks:
             - required-command-outcome
