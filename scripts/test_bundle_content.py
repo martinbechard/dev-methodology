@@ -2860,11 +2860,23 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Select exactly one agent_claim_transport value", skill_text)
         self.assertIn("inline exactly the selected claim transport adapter", skill_text)
         self.assertIn("workflow_selection:", template_text)
+        self.assertIn("project_skill_extensions: []", template_text)
         self.assertIn("file, github, gitlab, azure-devops, jira, none, or UNSET", template_text)
         self.assertIn("direct-main, feature-branch, or UNSET", template_text)
         self.assertIn("simple-workitem to direct-main", skill_text)
         self.assertIn("file-based-backlog to file", skill_text)
         self.assertIn("selected create, manage, and completion skills as references only", skill_text)
+        for phrase in (
+            "Record project_skill_extensions as one ordered list",
+            "registration must be registered",
+            "availability must be AVAILABLE",
+            "normalized identifier for duplicate",
+            "Reject an extension that duplicates any fixed or conditional skill",
+            "at the end of root AGENTS.md",
+            "Do not copy the section to nested AGENTS.md files",
+        ):
+            with self.subTest(project_skill_extension_phrase=phrase):
+                self.assertIn(phrase, skill_text)
         self.assertIn("record explicit UNSET rather than omitting a deferred decision", skill_text)
         self.assertIn("one exact folder pattern may appear only once", skill_text)
         self.assertIn("one exact folder pattern may appear only once", template_text)
@@ -2874,6 +2886,9 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("intermediate, reviewable intent log", skill_text)
         self.assertIn("treat them as requested configuration intent", skill_text)
         self.assertIn("Project Configurator owns the setup process", modularization_text)
+        self.assertIn("Project-level extension selection", modularization_text)
+        self.assertIn("project_skill_extensions", modularization_text)
+        self.assertIn("Nested guidance does not inherit or repeat the section", modularization_text)
         self.assertIn("edit PROJECT.yaml to force a correction", modularization_text)
         self.assertIn("linked template", examples_text)
         self.assertNotIn("service/PROJECT.yaml", examples_text)
@@ -2893,6 +2908,13 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Record a coordination_overrides mapping only when", skill_text)
         self.assertIn("Keep workflow configuration selector-only", skill_text)
         self.assertIn("Do not infer either selector", skill_text)
+        development_methodology_text = (
+            SKILLS_ROOT / "development-methodology" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("ordered project-level skill extensions", development_methodology_text)
+        readme_text = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("ordered project_skill_extensions list", readme_text)
+        self.assertIn("final root-only section", readme_text)
         self.assertIn(
             "Treat a missing conceptual agent definition, skill, or command as BLOCKED",
             skill_text,

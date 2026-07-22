@@ -1879,6 +1879,159 @@ class TechnologyDetectionTests(unittest.TestCase):
         self.assertNotIn("# Create GitHub Work Item", rendered)
         self.assertNotIn("# Complete Work Item Feature Branch", rendered)
 
+    def test_project_skill_extensions_accept_empty_bundled_and_registered_entries_in_order(self) -> None:
+        renderer = load_renderer_module()
+
+        empty = renderer.render(with_unset_workflows({"project_skill_extensions": []}))
+        self.assertNotIn("## Project Skill Extensions", empty)
+
+        single = renderer.render(with_unset_workflows({
+            "project_skill_extensions": ["python"],
+        }))
+        self.assertEqual(1, single.count("## Project Skill Extensions"))
+        self.assertTrue(single.rstrip().endswith("- python"))
+
+        rendered = renderer.render(with_unset_workflows({
+            "project_skill_extensions": [
+                "sql",
+                {
+                    "skill": "project-local-review",
+                    "registration": "registered",
+                    "availability": "AVAILABLE",
+                    "catalog": "target runtime skill catalog",
+                },
+                "python",
+            ],
+            "technology_skill_loadouts": [],
+        }))
+
+        self.assertEqual(1, rendered.count("## Project Skill Extensions"))
+        self.assertNotIn("BEGIN INLINED PROJECT SKILL", rendered)
+        ordered_positions = [
+            rendered.index("- sql"),
+            rendered.index("- project-local-review"),
+            rendered.index("- python"),
+        ]
+        self.assertEqual(sorted(ordered_positions), ordered_positions)
+        self.assertGreater(
+            rendered.index("## Project Skill Extensions"),
+            rendered.index("## Technology Skills"),
+        )
+        self.assertTrue(rendered.rstrip().endswith("- python"))
+
+    def test_project_skill_extensions_reject_invalid_duplicate_unknown_and_unavailable_entries(self) -> None:
+        renderer = load_renderer_module()
+        invalid_projects = (
+            (
+                {"project_skill_extensions": "python"},
+                "project_skill_extensions must be a list; use [] when no project-level extension is selected",
+            ),
+            (
+                {"project_skill_extensions": [None]},
+                "project_skill_extensions[0] must be a bundled skill id string or a registered-skill mapping",
+            ),
+            (
+                {"project_skill_extensions": ["python", " Python "]},
+                "project_skill_extensions[1] skill id 'python' duplicates project_skill_extensions[0]; remove the duplicate entry",
+            ),
+            (
+                {"project_skill_extensions": ["not-a-bundled-skill"]},
+                "project_skill_extensions[0] unknown bundled skill id 'not-a-bundled-skill'; use a bundled skill id or a registered-skill mapping",
+            ),
+            (
+                {
+                    "project_skill_extensions": [{
+                        "skill": "project-local-review",
+                        "registration": "registered",
+                        "availability": "UNAVAILABLE",
+                        "catalog": "target runtime skill catalog",
+                    }],
+                },
+                "project_skill_extensions[0].availability is UNAVAILABLE for skill 'project-local-review'; install or expose the registered skill, then set project_skill_extensions[0].availability to AVAILABLE",
+            ),
+        )
+
+        for extension_config, expected in invalid_projects:
+            with self.subTest(expected=expected):
+                with self.assertRaisesRegex(ValueError, f"^{re.escape(expected)}$"):
+                    renderer.render(with_unset_workflows(extension_config))
+
+    def test_project_skill_extensions_validate_registered_mapping_fields(self) -> None:
+        renderer = load_renderer_module()
+        invalid_entries = (
+            (
+                {},
+                "project_skill_extensions[0] keys must be exactly: skill, registration, availability, catalog",
+            ),
+            (
+                {
+                    "skill": "project-local-review",
+                    "registration": "discovered",
+                    "availability": "AVAILABLE",
+                    "catalog": "target runtime skill catalog",
+                },
+                "project_skill_extensions[0].registration must be registered; use a bundled skill id string for bundled skills",
+            ),
+            (
+                {
+                    "skill": "Project Local Review",
+                    "registration": "registered",
+                    "availability": "AVAILABLE",
+                    "catalog": "target runtime skill catalog",
+                },
+                "project_skill_extensions[0].skill must normalize to a lowercase hyphenated skill id",
+            ),
+            (
+                {
+                    "skill": "project-local-review",
+                    "registration": "registered",
+                    "availability": "AVAILABLE",
+                    "catalog": "",
+                },
+                "project_skill_extensions[0].catalog must be a non-empty registered catalog identifier",
+            ),
+        )
+
+        for entry, expected in invalid_entries:
+            with self.subTest(expected=expected):
+                with self.assertRaisesRegex(ValueError, f"^{re.escape(expected)}$"):
+                    renderer.render(with_unset_workflows({"project_skill_extensions": [entry]}))
+
+    def test_project_skill_extensions_reject_definition_owned_duplicates_and_do_not_propagate_to_nested_guidance(self) -> None:
+        renderer = load_renderer_module()
+        project = with_unset_workflows({
+            "project_skill_extensions": ["python"],
+            "role_agent_set": [{
+                "role": "example-coder",
+                "skills": ["python"],
+                "conditional_skills": [{"skill": "sql", "condition": "when needed"}],
+            }],
+        })
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "^project_skill_extensions\\[0\\] skill id 'python' duplicates definition-owned skill role_agent_set\\[0\\].skills\\[0\\]; remove it from project_skill_extensions$",
+        ):
+            renderer.render(project)
+
+        project["project_skill_extensions"] = ["sql"]
+        with self.assertRaisesRegex(
+            ValueError,
+            "^project_skill_extensions\\[0\\] skill id 'sql' duplicates definition-owned skill role_agent_set\\[0\\].conditional_skills\\[0\\].skill; remove it from project_skill_extensions$",
+        ):
+            renderer.render(project)
+
+        nested = renderer.render(with_unset_workflows({
+            "project_skill_extensions": ["python"],
+            "nested_agents_files": [{
+                "path": "services/AGENTS.md",
+                "needed": True,
+            }],
+        }))
+        extension_section = nested.split("## Project Skill Extensions", maxsplit=1)[1]
+        self.assertNotIn("services/AGENTS.md", extension_section)
+        self.assertIn("root AGENTS.md", extension_section)
+
     def test_agents_section_rejects_invalid_workflow_values_and_combined_overrides(self) -> None:
         renderer = load_renderer_module()
         invalid_projects = (
