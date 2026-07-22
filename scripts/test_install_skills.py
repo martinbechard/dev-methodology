@@ -48,6 +48,13 @@ class InstallSkillsTests(unittest.TestCase):
         (skill / "SKILL.md").write_text(content, encoding="utf-8")
         return skill
 
+    def create_detection_skill(self, root: Path) -> Path:
+        skill = self.create_skill(root, "detect-technology-skills")
+        registry = skill / "references/technology-skill-detection-registry.yaml"
+        registry.parent.mkdir()
+        registry.write_text("schema: technology-skill-detection-registry\n", encoding="utf-8")
+        return skill
+
     def artifact_digest(self, path: Path) -> str:
         digest = hashlib.sha256()
         paths = (
@@ -724,6 +731,122 @@ class InstallSkillsTests(unittest.TestCase):
                 server["env"]["MCP_AGENT_OPS_WORKSPACE_ROOTS"],
             )
             self.assertFalse(config_path.with_name("mcp-agent-ops.json").exists())
+
+    def test_project_root_replace_configures_final_in_project_detection_registry(
+        self,
+    ) -> None:
+        installer = load_installer()
+
+        for adapter_name in ("codex", "junie"):
+            with self.subTest(adapter=adapter_name), tempfile.TemporaryDirectory() as temp_dir:
+                root = Path(temp_dir)
+                project = root / "selected-project"
+                source = root / "source"
+                outside_skill = root / "outside-detection-skill"
+                executable = root / "mcp-agent-ops"
+                project.mkdir()
+                self.create_detection_skill(source)
+                self.create_detection_skill(root / "outside-source")
+                (root / "outside-source/detect-technology-skills").rename(outside_skill)
+                executable.write_text("server", encoding="utf-8")
+                skills_destination, _ = installer.default_destinations(
+                    installer.ADAPTERS[adapter_name],
+                    "project",
+                    project_root=project,
+                )
+                skills_destination.mkdir(parents=True)
+                installed_skill = skills_destination / "detect-technology-skills"
+                installed_skill.symlink_to(outside_skill, target_is_directory=True)
+
+                exit_code = installer.main(
+                    [
+                        "--adapter",
+                        adapter_name,
+                        "--source",
+                        str(source),
+                        "--scope",
+                        "project",
+                        "--project-root",
+                        str(project),
+                        "--mcp-agent-ops-executable",
+                        str(executable),
+                        "--replace",
+                    ]
+                )
+
+                registry = (
+                    skills_destination / installer.MCP_DETECTION_REGISTRY_RELATIVE_PATH
+                )
+                config_path = project / installer.MCP_CONFIG_FILE_NAMES[adapter_name]
+                self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+                self.assertFalse(installed_skill.is_symlink())
+                self.assertTrue(registry.is_file())
+                self.assertIn(project.resolve(), registry.resolve().parents)
+                if adapter_name == "codex":
+                    config = config_path.read_text(encoding="utf-8")
+                    self.assertIn(
+                        f'MCP_AGENT_OPS_DETECTION_REGISTRY = "{registry.resolve()}"',
+                        config,
+                    )
+                else:
+                    config = json.loads(config_path.read_text(encoding="utf-8"))
+                    self.assertEqual(
+                        str(registry.resolve()),
+                        config["mcpServers"]["mcp-agent-ops"]["env"][
+                            "MCP_AGENT_OPS_DETECTION_REGISTRY"
+                        ],
+                    )
+
+    def test_project_root_external_detection_registry_requires_replace_before_mutation(
+        self,
+    ) -> None:
+        installer = load_installer()
+
+        for dry_run in (False, True):
+            with self.subTest(dry_run=dry_run), tempfile.TemporaryDirectory() as temp_dir:
+                root = Path(temp_dir)
+                project = root / "selected-project"
+                source = root / "source"
+                outside_skill = root / "outside-detection-skill"
+                executable = root / "mcp-agent-ops"
+                project.mkdir()
+                self.create_detection_skill(source)
+                self.create_detection_skill(root / "outside-source")
+                (root / "outside-source/detect-technology-skills").rename(outside_skill)
+                executable.write_text("server", encoding="utf-8")
+                skills_destination = project / ".agents/skills"
+                skills_destination.mkdir(parents=True)
+                installed_skill = skills_destination / "detect-technology-skills"
+                installed_skill.symlink_to(outside_skill, target_is_directory=True)
+                arguments = [
+                    "--adapter",
+                    "codex",
+                    "--source",
+                    str(source),
+                    "--scope",
+                    "project",
+                    "--project-root",
+                    str(project),
+                    "--mcp-agent-ops-executable",
+                    str(executable),
+                ]
+                if dry_run:
+                    arguments.append("--dry-run")
+
+                error_output = io.StringIO()
+                with redirect_stdout(io.StringIO()), redirect_stderr(error_output):
+                    exit_code = installer.main(arguments)
+
+                self.assertEqual(installer.ERROR_EXIT_CODE, exit_code)
+                self.assertIn(
+                    "external MCP detection registry requires --replace",
+                    error_output.getvalue(),
+                )
+                self.assertTrue(installed_skill.is_symlink())
+                self.assertFalse(
+                    (skills_destination / installer.INSTALL_MANIFEST_FILE_NAME).exists()
+                )
+                self.assertFalse((project / ".codex/config.toml").exists())
 
     def test_explicit_destinations_override_scope_defaults_in_main(self) -> None:
         installer = load_installer()

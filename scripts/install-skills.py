@@ -440,15 +440,68 @@ def _toml_string(value: str) -> str:
     return json.dumps(value, ensure_ascii=False)
 
 
+def _planned_mcp_detection_registry(
+    skills_destination: Path,
+    skill_plan: _SkillInstallPlan,
+    replace: bool,
+) -> Path:
+    destination_root = _resolve_destination_root(skills_destination, "skill")
+    detection_skill_name = MCP_DETECTION_REGISTRY_RELATIVE_PATH.parts[0]
+    installed_detection_skill = destination_root / detection_skill_name
+    detection_registry = destination_root / MCP_DETECTION_REGISTRY_RELATIVE_PATH
+    source_detection_skill = next(
+        (
+            source_skill
+            for source_skill in skill_plan.source_skills
+            if source_skill.name == detection_skill_name
+        ),
+        None,
+    )
+    installed_detection_exists = (
+        installed_detection_skill.exists() or installed_detection_skill.is_symlink()
+    )
+    installed_registry_target = detection_registry.resolve()
+    installed_registry_is_external = installed_detection_exists and (
+        installed_registry_target != destination_root
+        and destination_root not in installed_registry_target.parents
+    )
+
+    if installed_registry_is_external:
+        if not replace:
+            raise ValueError(
+                "external MCP detection registry requires --replace before installation"
+            )
+        if source_detection_skill is None:
+            raise ValueError(
+                "external MCP detection registry cannot be replaced because the skill source "
+                f"does not contain {detection_skill_name}"
+            )
+
+    source_will_be_installed = source_detection_skill is not None and (
+        replace or not installed_detection_exists
+    )
+    if source_will_be_installed:
+        source_registry = (
+            source_detection_skill
+            / Path(*MCP_DETECTION_REGISTRY_RELATIVE_PATH.parts[1:])
+        )
+        if not source_registry.is_file():
+            raise ValueError(
+                "MCP detection registry is missing from the planned skill installation: "
+                f"{source_registry}"
+            )
+
+    return detection_registry
+
+
 def _mcp_environment(
     skills_destination: Path,
+    detection_registry: Path,
     workspace_roots: Sequence[Path],
 ) -> dict[str, str]:
     return {
         "MCP_AGENT_OPS_SKILL_ROOTS": str(skills_destination.resolve()),
-        "MCP_AGENT_OPS_DETECTION_REGISTRY": str(
-            (skills_destination / MCP_DETECTION_REGISTRY_RELATIVE_PATH).resolve()
-        ),
+        "MCP_AGENT_OPS_DETECTION_REGISTRY": str(detection_registry),
         "MCP_AGENT_OPS_WORKSPACE_ROOTS": os.pathsep.join(
             str(path) for path in workspace_roots
         ),
@@ -458,9 +511,14 @@ def _mcp_environment(
 def _codex_mcp_server_block(
     executable: str,
     skills_destination: Path,
+    detection_registry: Path,
     workspace_roots: Sequence[Path],
 ) -> str:
-    environment = _mcp_environment(skills_destination, workspace_roots)
+    environment = _mcp_environment(
+        skills_destination,
+        detection_registry,
+        workspace_roots,
+    )
     lines = [
         f"[mcp_servers.{MCP_AGENT_OPS_SERVER_NAME}]",
         "enabled = true",
@@ -585,6 +643,7 @@ def _render_codex_mcp_config(
     active_content: str,
     executable: str,
     skills_destination: Path,
+    detection_registry: Path,
     workspace_roots: Sequence[Path],
 ) -> tuple[str, set[str]]:
     server_names = _codex_server_names(active_content)
@@ -593,7 +652,12 @@ def _render_codex_mcp_config(
     return (
         remaining_content
         + separator
-        + _codex_mcp_server_block(executable, skills_destination, workspace_roots),
+        + _codex_mcp_server_block(
+            executable,
+            skills_destination,
+            detection_registry,
+            workspace_roots,
+        ),
         server_names,
     )
 
@@ -602,6 +666,7 @@ def _render_junie_mcp_config(
     active_content: str,
     executable: str,
     skills_destination: Path,
+    detection_registry: Path,
     workspace_roots: Sequence[Path],
 ) -> tuple[str, set[str]]:
     if active_content:
@@ -620,7 +685,11 @@ def _render_junie_mcp_config(
     servers[MCP_AGENT_OPS_SERVER_NAME] = {
         "command": executable,
         "args": [],
-        "env": _mcp_environment(skills_destination, workspace_roots),
+        "env": _mcp_environment(
+            skills_destination,
+            detection_registry,
+            workspace_roots,
+        ),
     }
     return json.dumps(configuration, indent=2, ensure_ascii=False) + "\n", server_names
 
@@ -671,6 +740,8 @@ def _prepare_mcp_config(
     executable_path: Path | None,
     configured_workspace_roots: Sequence[Path] | None,
     skills_destination: Path,
+    skill_plan: _SkillInstallPlan,
+    replace: bool,
     project_root: Path | None,
 ) -> _McpConfigPlan | None:
     if adapter.name not in MCP_CONFIG_ADAPTERS:
@@ -710,7 +781,16 @@ def _prepare_mcp_config(
         configured_workspace_roots,
         project_root,
     )
-    expected_environment = _mcp_environment(skills_destination, workspace_roots)
+    detection_registry = _planned_mcp_detection_registry(
+        skills_destination,
+        skill_plan,
+        replace,
+    )
+    expected_environment = _mcp_environment(
+        skills_destination,
+        detection_registry,
+        workspace_roots,
+    )
     if adapter.name == CODEX_ADAPTER_NAME:
         current_command, current_environment = _codex_mcp_agent_ops_settings(
             active_content
@@ -747,6 +827,7 @@ def _prepare_mcp_config(
             active_content,
             executable,
             skills_destination,
+            detection_registry,
             workspace_roots,
         )
     else:
@@ -754,6 +835,7 @@ def _prepare_mcp_config(
             active_content,
             executable,
             skills_destination,
+            detection_registry,
             workspace_roots,
         )
     return _McpConfigPlan(
@@ -1968,16 +2050,6 @@ def main(argv: Sequence[str] | None = None) -> int:
             raise ValueError("--install-agents requires --agents-dest or --scope")
         if args.remove_owned and args.install_agents:
             raise ValueError("--remove-owned cannot be combined with --install-agents")
-        if not args.remove_owned and args.configure_mcp:
-            mcp_config_plan = _prepare_mcp_config(
-                adapter,
-                args.scope,
-                args.mcp_config,
-                args.mcp_agent_ops_executable,
-                args.mcp_workspace_root,
-                destination,
-                project_root,
-            )
         if args.remove_owned:
             skill_manifest = _prevalidate_owned_removal(
                 destination,
@@ -2022,6 +2094,18 @@ def main(argv: Sequence[str] | None = None) -> int:
                 adapter,
                 args.replace_customized,
             )
+            if args.configure_mcp:
+                mcp_config_plan = _prepare_mcp_config(
+                    adapter,
+                    args.scope,
+                    args.mcp_config,
+                    args.mcp_agent_ops_executable,
+                    args.mcp_workspace_root,
+                    destination,
+                    skill_plan,
+                    args.replace,
+                    project_root,
+                )
             agents_source = None
             agent_plan = None
             if args.install_agents:
