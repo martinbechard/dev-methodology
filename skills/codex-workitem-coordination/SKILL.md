@@ -186,6 +186,23 @@ Every fifteen minutes while queue work remains, Dev Backlog Coordinator reviews:
 
 Make a scheduling or recovery adjustment during the same review whenever delivery worsens, vacancies remain, or a wait exceeds its limit. The work items hold all durable follow-up facts; the review must not create a second registry.
 
+### Dedicated Read-Only Watchdog
+
+When the user requests background supervision for a sustained queue, the parent may create one dedicated watchdog task and schedule it to observe the fifteen-minute review checks. The watchdog never performs the parent review's scheduling or recovery adjustment. It is an observer, not a work-item owner, queue entry, Running slot, durable record, or substitute coordinator.
+
+On every cycle, the watchdog reads current work items, Git state, coordination-registry state, and task state. In addition to the parent-review checks above, it evaluates:
+
+- every Running phase against its published estimate, hard stop, and latest evidence-bearing progress
+- every Blocked item's exact blocker and unblock condition against current evidence
+- accepted work stranded before integration, integrated work awaiting provider closeout, and terminal work awaiting cleanup
+- stale, unsafe, or unnecessarily broad shared-resource ownership
+
+The watchdog must remain read-only. It does not mutate repository files or lifecycle state; acquire, extend, reset, release, or override coordination entries; dispatch work; change work-item or parent task state, branches, or worktrees; perform cleanup; or run expensive or live verification.
+
+Notify the parent only when an actionable condition exists. The alert identifies the affected item or task, the observed evidence, why attention is required now, and the smallest recommended parent action. Actionable conditions include a satisfied Blocked-item unblock condition, a Running vacancy with eligible Ready work, a phase overrun or evidence gap, a wait at or beyond thirty minutes, stranded accepted work, pending terminal closeout, unsafe coordination state, or a task-identity or cleanup anomaly.
+
+When no intervention is needed, the watchdog may emit its own concise no-action cycle result without messaging or interrupting the parent; this self-report is its only task-state exception. The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, integration, and cleanup decision. If the watchdog or its schedule is unavailable, the parent performs the review directly; it does not create a replacement ledger or duplicate watchdog.
+
 ## Post-Facto Efficiency Audit
 
 These audits improve the next equivalent operation. They are not pre-dispatch, claim-acquisition, review, verification, or integration gates.
