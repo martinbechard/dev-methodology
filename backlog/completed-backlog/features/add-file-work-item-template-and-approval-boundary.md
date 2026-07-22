@@ -1,25 +1,25 @@
 # Add File Work Item Template And Approval Boundary
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/add-file-work-item-template-and-approval-boundary.md
+Provider Reference: backlog/completed-backlog/features/add-file-work-item-template-and-approval-boundary.md
 
 Completion: direct-main
 
 ## Current Execution
 
 - Owner: Dev Orchestrator task 019f8b05-29c8-7a82-b962-1a12d0c9564f
-- Claim: Private-worktree delivery used no shared project-file claim. Retry-evidence backlog claim record-file-work-item-template-integration-ready was acquired for this transaction and is released immediately after its commit.
+- Claim: Delivery and integration claims are released. Terminal lifecycle claim complete-file-work-item-template-019f8b05 was acquired for the active item and completed-feature destination and is released immediately after the archive commit.
 - Canonical task: 019f8b05-29c8-7a82-b962-1a12d0c9564f
 - Parent task: 019f8b00-e6d7-7841-854a-40a50ca4e7f2
 - Worktree: /Users/martinbechard/.codex/worktrees/6e5b/dev-methodology
 - Branch: codex/file-work-item-template-structural-correction
 - Starting main: 1219af1d14871630b2b4973dc6584cb7c03e8821
-- Phase: Integrating the accepted correction from current main baff164e94557bff47a32b17fb64f3ecd4f6bf2a.
+- Phase: Completed and archived after accepted review, independent focused verification, fresh current-main reconciliation, and direct-main integration.
 - Started: 2026-07-22.
 - Running-record claim: start-file-work-item-template-019f8747, acquired event b8335ea5-8d24-42eb-b435-f495d97fce9a.
 - Open issues: None in the accepted candidate. Integration retry evidence is recorded below.
@@ -30,6 +30,18 @@ Completion: direct-main
 - Resumption evidence: the recorded exact two-skill approval and dependent scope satisfy the governed-definition authority boundary; the Unblock Condition supplies a bounded correction target. Serialized Blocked to Ready to Running transaction used backlog claim resume-file-work-item-template-019f8b05, acquired event 623d6b38-a6c2-4dc4-a6d2-97259ed80f58.
 - Integration wait: attempt count 2 before the current retry. Initial attempt at 2026-07-22T18:59:20Z returned CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED against integrate-evaluation-html-019f8b05, event d2b3753d-e4c5-4bea-8b81-9d4eaa6c3336. The five-minute boundary reconciled the same blocker at 2026-07-22T19:10:12Z; its required backlog claim returned SHARED_CHECKOUT_RELEASE_REQUIRED, event 4b589a25-4f07-4736-9147-d72209568326, so no integration retry occurred at that boundary. The next exact attempt at 2026-07-22T19:11:30Z returned CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED against integrate-simplify-project-config-019f8b05, event 164b83e2-9d2a-4f02-b457-13777ebd1fec. The next attempt was scheduled for direct release notification.
 - Integration releases: integrate-evaluation-html-019f8b05 released at event e56707ea-4432-4147-90bf-761b4944484b, main 32b3f7fdb5e5146eb785474a69db889e90028376. integrate-simplify-project-config-019f8b05 released at event 283339f1-1564-465e-9869-6bb3e822d19e, main baff164e94557bff47a32b17fb64f3ecd4f6bf2a. Exact integration retry is authorized immediately after this retry-evidence transaction.
+
+## Completion Evidence — 2026-07-22
+
+- Accepted source: e4f05fd9138261d994379968bacdb01c58743700 on codex/file-work-item-template-structural-correction. Earlier candidates d879ba1e3d48a22b1661255299ad5829ae93a6ef, 0e94e39595255fb86273e9fbf1d1123886be7169, and 662b03d19e6d7dad5dd1c34b01bbf42c9b973bd0 remain provenance evidence rather than integrated ancestry.
+- Independent review: The final accepted source review reported no material findings after adversarial correction of structural metadata, heading, manifest, fence, lifecycle, approval-evidence, User Action Required, optional Notes, and checker-widening boundaries. Fresh reconciliation review also accepted the current-main diff with no findings.
+- Independent verification: Governed-definition preflight for both exact approved skills, verifier self-test and compilation, the focused bundle regression, skill validation, build-skill-docs freshness, agent-skill hierarchy freshness, support-checklist freshness, git diff validation, clean-state, and exact governed-path checks all passed under Python 3.11 where required.
+- Reconciliation: Fresh branch codex/file-work-item-template-reconciliation-20260722 was created from 05e91b6bec95f8e92a103b54d328e1715d066388. Commit bbc04ebeb3a9ddb571fbf6e38fe885b77eaee76f replays the accepted content without importing cumulative source ancestry and rebuilds generated outputs from the reconciled sources.
+- Direct-main observation: main is clean at bbc04ebeb3a9ddb571fbf6e38fe885b77eaee76f; the reconciliation commit is the main tip and the accepted source-to-integration mapping is recorded in its commit message.
+- Integration claim: integrate-file-work-item-template-019f8b05 acquired event 36404775-f440-478f-ac60-1c612f3316b0 and released cleanly at event 614dcfc2-bd88-4f08-9197-5fed9f3876c7 after focused post-main verification.
+- Terminal lifecycle claim: complete-file-work-item-template-019f8b05 acquired event 3a3582d1-f394-40f0-b8ea-82c105154b5c for only the active item and completed-feature destination.
+- Archive: This record moved from backlog/feature-backlog/add-file-work-item-template-and-approval-boundary.md to backlog/completed-backlog/features/add-file-work-item-template-and-approval-boundary.md.
+- Cleanup eligibility: The reconciliation branch is fully merged into main and its checkout is the primary clean main worktree. The private accepted-source worktree is clean and preserved for parent cleanup after source mapping confirmation.
 
 ## Blocker
 
