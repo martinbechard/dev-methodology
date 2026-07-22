@@ -9,6 +9,7 @@ import importlib.util
 import io
 import json
 import re
+import sys
 import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
@@ -19,6 +20,9 @@ from unittest.mock import patch
 
 INSTALLER_PATH = Path(__file__).with_name("install-skills.py")
 README_PATH = INSTALLER_PATH.parents[1] / "README.md"
+BUILD_SKILL_DOCS_PATH = Path(__file__).with_name("build-skill-docs.py")
+BUILD_SKILL_DOCS_MODULE_NAME = "install_test_build_skill_docs"
+REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SKILL_FILE_CONTENT = "---\nname: alpha\ndescription: Alpha skill.\n---\n"
 UPDATED_SKILL_FILE_CONTENT = "---\nname: alpha\ndescription: Updated alpha skill.\n---\n"
 SECOND_SKILL_FILE_CONTENT = "---\nname: beta\ndescription: Beta skill.\n---\n"
@@ -38,6 +42,20 @@ def load_installer() -> ModuleType:
         raise RuntimeError("Unable to load install-skills.py")
 
     module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_build_skill_docs() -> ModuleType:
+    spec = importlib.util.spec_from_file_location(
+        BUILD_SKILL_DOCS_MODULE_NAME,
+        BUILD_SKILL_DOCS_PATH,
+    )
+    if spec is None or spec.loader is None:
+        raise RuntimeError("Unable to load build-skill-docs.py")
+
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[BUILD_SKILL_DOCS_MODULE_NAME] = module
     spec.loader.exec_module(module)
     return module
 
@@ -142,6 +160,7 @@ class InstallSkillsTests(unittest.TestCase):
         delivery: str = "by-reference",
         inline: bool | None = None,
         digest: str | None = None,
+        referenced_fixed_skills: tuple[str, ...] = (),
     ) -> Path:
         """Write generation metadata that owns every native agent in source."""
 
@@ -158,6 +177,7 @@ class InstallSkillsTests(unittest.TestCase):
                         {
                             "name": agent.stem,
                             "output": f"{adapter}/agents/{agent.name}",
+                            "referencedFixedSkills": list(referenced_fixed_skills),
                             "sha256": digest or hashlib.sha256(agent.read_bytes()).hexdigest(),
                         }
                         for agent in agents
@@ -169,6 +189,25 @@ class InstallSkillsTests(unittest.TestCase):
         manifest_path.parent.mkdir(parents=True, exist_ok=True)
         manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
         return manifest_path
+
+    def write_actual_codex_agent_generation_plan(self, root: Path) -> Path:
+        """Render the repository's current Codex role plan into an isolated fixture."""
+
+        build_skill_docs = load_build_skill_docs()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        outputs = build_skill_docs.expected_role_outputs(roles)
+        generated_root = root / "generated" / "adapters"
+        agents_source = generated_root / "codex" / "agents"
+        agents_source.mkdir(parents=True)
+        for output_path, content in outputs.items():
+            if output_path.parent == build_skill_docs.CODEX_AGENT_OUTPUT_ROOT:
+                (agents_source / output_path.name).write_text(content, encoding="utf-8")
+        (generated_root / "agent-generation-manifest.json").write_text(
+            outputs[build_skill_docs.AGENT_GENERATION_MANIFEST_PATH],
+            encoding="utf-8",
+        )
+        return agents_source
 
     def read_manifest_skill_names(self, destination: Path) -> list[str]:
         manifest = json.loads(
@@ -2028,6 +2067,115 @@ class InstallSkillsTests(unittest.TestCase):
             )
             self.assertFalse(destination.exists())
             self.assertFalse(agents_destination.exists())
+
+    def test_generated_by_reference_codex_plan_requires_complete_skill_sources(self) -> None:
+        """Reject native agents when custom skill sources omit fixed references."""
+
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            agents_source = self.write_actual_codex_agent_generation_plan(root)
+            adapter_skills_source = REPOSITORY_ROOT / "adapters" / "codex" / "skills"
+            incomplete_skills_destination = root / "incomplete-skills-destination"
+            incomplete_agents_destination = root / "incomplete-agents-destination"
+
+            error = io.StringIO()
+            with redirect_stdout(io.StringIO()), redirect_stderr(error):
+                incomplete_exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(adapter_skills_source),
+                        "--dest",
+                        str(incomplete_skills_destination),
+                        "--install-agents",
+                        "--agents-source",
+                        str(agents_source),
+                        "--agents-dest",
+                        str(incomplete_agents_destination),
+                        "--dry-run",
+                    ]
+                )
+
+            self.assertEqual(installer.ERROR_EXIT_CODE, incomplete_exit_code)
+            self.assertIn(
+                "by-reference agent installation requires referenced fixed skills "
+                "absent from planned skill sources:",
+                error.getvalue(),
+            )
+            self.assertIn("careful-coding", error.getvalue())
+            self.assertFalse(incomplete_skills_destination.exists())
+            self.assertFalse(incomplete_agents_destination.exists())
+
+            complete_output = io.StringIO()
+            with redirect_stdout(complete_output), redirect_stderr(io.StringIO()):
+                complete_exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(REPOSITORY_ROOT / "skills"),
+                        "--adapter-skills-source",
+                        str(adapter_skills_source),
+                        "--dest",
+                        str(root / "complete-skills-destination"),
+                        "--install-agents",
+                        "--agents-source",
+                        str(agents_source),
+                        "--agents-dest",
+                        str(root / "complete-agents-destination"),
+                        "--dry-run",
+                    ]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, complete_exit_code)
+            self.assertIn("would install agent dev-coder", complete_output.getvalue())
+
+    def test_inline_agent_plan_does_not_require_fixed_skill_sources(self) -> None:
+        """Keep inline delivery independent from the selected skill catalog."""
+
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "source"
+            destination = root / "skills-destination"
+            agents_source = root / "agents-source"
+            agents_destination = root / "agents-destination"
+            self.create_skill(source, "alpha")
+            agents_source.mkdir()
+            (agents_source / "reviewer.toml").write_text(
+                AGENT_FILE_CONTENT,
+                encoding="utf-8",
+            )
+            self.write_agent_generation_manifest(
+                agents_source,
+                "codex",
+                delivery="inline",
+                referenced_fixed_skills=("unavailable-fixed-skill",),
+            )
+
+            with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+                exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(source),
+                        "--dest",
+                        str(destination),
+                        "--install-agents",
+                        "--agents-source",
+                        str(agents_source),
+                        "--agents-dest",
+                        str(agents_destination),
+                    ]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            self.assertTrue((agents_destination / "reviewer.toml").is_file())
 
     def test_agent_install_does_not_relabel_skipped_destination_bytes(self) -> None:
         """Reject a destination byte mismatch before ownership metadata is written."""

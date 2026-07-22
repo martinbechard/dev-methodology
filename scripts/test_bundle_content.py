@@ -4687,12 +4687,13 @@ class BundleContentTests(unittest.TestCase):
         generation_manifest = json.loads(
             AGENT_GENERATION_MANIFEST_PATH.read_text(encoding="utf-8")
         )
-        self.assertEqual(3, generation_manifest["version"])
+        self.assertEqual(4, generation_manifest["version"])
         self.assertEqual(
             {"coreSkillDelivery": "by-reference", "inlineCoreSkills": False},
             generation_manifest["generationOptions"],
         )
         self.assertEqual(len(roles), generation_manifest["canonicalRoleCount"])
+        roles_by_name = {role.name: role for role in roles}
         for adapter_name, extension in (
             ("codex", ".toml"),
             ("claude", ".md"),
@@ -4728,6 +4729,14 @@ class BundleContentTests(unittest.TestCase):
                     self.assertEqual(
                         agent["sha256"],
                         hashlib.sha256(generated_agent_path.read_bytes()).hexdigest(),
+                    )
+                    self.assertEqual(
+                        list(build_skill_docs._referenced_fixed_role_skills(
+                            roles_by_name[agent["name"]],
+                            adapter_name,
+                            False,
+                        )),
+                        agent["referencedFixedSkills"],
                     )
 
         skill_names = set(skill_payload["skills"])
@@ -8069,14 +8078,11 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(phrase, configuration_text)
                 self.assertIn(phrase, bootstrap_text)
 
-        for phrase in (
-            "documentation_mode:",
-            "selected: \"hybrid-specifications-and-wiki\"",
-            "legacy_missing_field_policy:",
-            "unsupported_value_policy:",
-        ):
-            with self.subTest(project_template_phrase=phrase):
-                self.assertIn(phrase, project_template_text)
+        self.assertNotIn("\ndocumentation_mode:", project_template_text)
+        self.assertIn(
+            "Ordinary setup omits documentation_mode",
+            project_template_text,
+        )
 
         wiki_handoffs = (
             "project-wiki",

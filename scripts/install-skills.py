@@ -82,6 +82,7 @@ MCP_TOOL_TIMEOUT_SECONDS = 60.0
 MCP_DETECTION_REGISTRY_RELATIVE_PATH = Path(
     "detect-technology-skills/references/technology-skill-detection-registry.yaml"
 )
+GENERATION_AGENT_REFERENCED_FIXED_SKILLS_KEY = "referencedFixedSkills"
 
 
 class Adapter(NamedTuple):
@@ -111,6 +112,7 @@ class _AgentInstallPlan(NamedTuple):
     previous_manifest: Optional[dict[str, object]]
     core_skill_delivery: Optional[str]
     generation_agent_digests: Optional[dict[str, str]]
+    generation_agent_referenced_fixed_skills: Optional[dict[str, tuple[str, ...]]]
 
 
 class _StagedDestination(NamedTuple):
@@ -1889,8 +1891,8 @@ def write_agent_manifest(
 def _agent_source_generation_metadata(
     source: Path,
     adapter: Adapter,
-) -> tuple[str, dict[str, str]]:
-    """Return verified delivery mode and generated-agent digests for one adapter."""
+) -> tuple[str, dict[str, str], dict[str, tuple[str, ...]]]:
+    """Return verified delivery mode, agent digests, and fixed skill references."""
 
     resolved_source = source.expanduser().resolve()
     remediation = (
@@ -1948,6 +1950,7 @@ def _agent_source_generation_metadata(
             f"agent generation metadata has no {adapter.name} agent inventory; {remediation}"
         )
     expected: dict[str, str] = {}
+    referenced_fixed_skills: dict[str, tuple[str, ...]] = {}
     for item in agents:
         if (
             not isinstance(item, dict)
@@ -1957,7 +1960,23 @@ def _agent_source_generation_metadata(
             raise ValueError(
                 f"agent generation metadata has an invalid {adapter.name} agent inventory; {remediation}"
             )
-        expected[Path(item["output"]).name] = item["sha256"]
+        agent_name = Path(item["output"]).name
+        skill_references = item.get(GENERATION_AGENT_REFERENCED_FIXED_SKILLS_KEY, [])
+        if (
+            not isinstance(skill_references, list)
+            or any(not isinstance(skill, str) or not skill for skill in skill_references)
+            or len(skill_references) != len(set(skill_references))
+            or (
+                delivery == "by-reference"
+                and GENERATION_AGENT_REFERENCED_FIXED_SKILLS_KEY not in item
+            )
+        ):
+            raise ValueError(
+                f"agent generation metadata has invalid fixed skill references for "
+                f"{agent_name}; {remediation}"
+            )
+        expected[agent_name] = item["sha256"]
+        referenced_fixed_skills[agent_name] = tuple(skill_references)
     actual_names = {path.name for path in iter_agent_files(resolved_source, adapter.name)}
     if actual_names != set(expected):
         raise ValueError(
@@ -1969,13 +1988,13 @@ def _agent_source_generation_metadata(
             raise ValueError(
                 f"installed agent bytes disagree with generation metadata for {name}; {remediation}"
             )
-    return delivery, expected
+    return delivery, expected, referenced_fixed_skills
 
 
 def _agent_source_core_skill_delivery(source: Path, adapter: Adapter) -> str:
     """Return core-skill delivery from verified generation metadata and agent bytes."""
 
-    delivery, _ = _agent_source_generation_metadata(source, adapter)
+    delivery, _, _ = _agent_source_generation_metadata(source, adapter)
     return delivery
 
 
@@ -2045,7 +2064,32 @@ def _prepare_agent_install(
         previous_manifest=previous_manifest,
         core_skill_delivery=None,
         generation_agent_digests=None,
+        generation_agent_referenced_fixed_skills=None,
     )
+
+
+def _validate_by_reference_skill_catalog(
+    skill_plan: _SkillInstallPlan,
+    agent_plan: _AgentInstallPlan,
+) -> None:
+    """Require every dynamically referenced fixed skill in the planned sources."""
+
+    if agent_plan.core_skill_delivery != "by-reference":
+        return
+    if agent_plan.generation_agent_referenced_fixed_skills is None:
+        raise ValueError("agent fixed skill references were not prevalidated")
+    required_skills = {
+        skill_name
+        for agent_skills in agent_plan.generation_agent_referenced_fixed_skills.values()
+        for skill_name in agent_skills
+    }
+    missing_skills = sorted(required_skills - skill_plan.current_skill_names)
+    if missing_skills:
+        raise ValueError(
+            "by-reference agent installation requires referenced fixed skills "
+            "absent from planned skill sources: "
+            + ", ".join(missing_skills)
+        )
 
 
 def _validate_combined_install_paths(
@@ -2382,13 +2426,21 @@ def main(argv: Sequence[str] | None = None) -> int:
                     agent_plan,
                     agents_destination,
                 )
-                core_skill_delivery, generation_agent_digests = (
+                (
+                    core_skill_delivery,
+                    generation_agent_digests,
+                    generation_agent_referenced_fixed_skills,
+                ) = (
                     _agent_source_generation_metadata(agents_source, adapter)
                 )
                 agent_plan = agent_plan._replace(
                     core_skill_delivery=core_skill_delivery,
                     generation_agent_digests=generation_agent_digests,
+                    generation_agent_referenced_fixed_skills=(
+                        generation_agent_referenced_fixed_skills
+                    ),
                 )
+                _validate_by_reference_skill_catalog(skill_plan, agent_plan)
             if args.dry_run:
                 results = install_skills(
                     args.source,

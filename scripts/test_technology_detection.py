@@ -11,6 +11,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from copy import deepcopy
 from pathlib import Path
 
 import yaml
@@ -199,7 +200,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         """Keep Basic setup inspectable while hiding fixed decisions."""
 
         renderer = load_renderer_module()
-        rendered = renderer.render(with_claim_transport({
+        project = with_claim_transport({
             "project_setup": {
                 "mode": "basic",
                 "concurrent_tasking": False,
@@ -222,20 +223,34 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "pathPattern": "src/**",
                 "skills": ["python"],
             }],
-        }))
+        })
+        rendered = renderer.render(project)
 
         for expected in (
             "Setup mode: Basic",
             "Set: Concurrent tasking No",
             "Set: Persistence none",
             "Set: Commit direct-main",
-            "Documentation question: Create the Wiki? Default Yes",
+            "Documentation question: Create the Wiki? Yes (default Yes)",
             "Set: Core skill delivery by-reference",
             "Set: Technology skill delivery by-reference",
             "Technology confirmation: required",
         ):
             self.assertIn(expected, rendered)
         self.assertNotIn("Concurrent capacity", rendered)
+
+        no_wiki_project = {
+            **project,
+            "project_setup": {
+                **project["project_setup"],
+                "documentation": "none",
+            },
+        }
+        no_wiki_rendered = renderer.render(no_wiki_project)
+        self.assertIn(
+            "Documentation question: Create the Wiki? No (default Yes)",
+            no_wiki_rendered,
+        )
 
     def test_advanced_setup_requires_capacity_only_for_concurrent_tasking(self) -> None:
         """Expose Advanced concurrent capacity only after tasking is enabled."""
@@ -272,6 +287,19 @@ class TechnologyDetectionTests(unittest.TestCase):
         self.assertIn("Concurrent capacity: 3", rendered)
         self.assertIn("Technology skill delivery: inline", rendered)
         self.assertIn("BEGIN INLINED TECHNOLOGY SKILL: python", rendered)
+
+        no_documentation_project = {
+            **project,
+            "project_setup": {
+                **project["project_setup"],
+                "documentation": "none",
+            },
+        }
+        with self.assertRaisesRegex(
+            ValueError,
+            "project_setup.documentation must be wiki, specifications, or both in Advanced mode",
+        ):
+            renderer.render(no_documentation_project)
 
         with self.assertRaisesRegex(
             ValueError,
@@ -460,6 +488,137 @@ class TechnologyDetectionTests(unittest.TestCase):
         self.assertIn("Technology candidates: 1", rendered)
         self.assertIn("Accepted technology skills: python", rendered)
         self.assertIn("Confirmation evidence: user-message: confirmed python for src/**", rendered)
+
+    def test_technology_confirmation_binds_each_skill_to_its_confirmed_scope(self) -> None:
+        """Reject scope-swapped routing and allow the same skill on distinct confirmed scopes."""
+
+        renderer = load_renderer_module()
+        project = with_claim_transport({
+            "project_setup": {
+                "mode": "basic",
+                "concurrent_tasking": False,
+                "persistence": "none",
+                "commit": "direct-main",
+                "documentation": "wiki",
+                "core_skill_delivery": {
+                    "mode": "by-reference",
+                    "source": "installed-agent-metadata",
+                },
+                "technology_skill_delivery": "by-reference",
+                "technology_confirmation_required": True,
+            },
+            "workflow_selection": {
+                "persistence": {"default": "none"},
+                "commit": {"default": "direct-main"},
+            },
+            "technology_confirmation": confirmed_technology_selection(),
+            "technology_skill_loadouts": [{
+                "pathPattern": "tests/**",
+                "skills": ["python"],
+            }],
+        })
+        with self.assertRaisesRegex(
+            ValueError,
+            "accepted scope and skill bindings must match technology_skill_loadouts in order",
+        ):
+            renderer.render(project)
+
+        project["technology_confirmation"] = {
+            "candidates": [
+                {
+                    "scope": "src/**",
+                    "skill": "python",
+                    "evidence": ["Python source evidence: src/app.py"],
+                    "conflicts": [],
+                    "disposition": "accepted",
+                },
+                {
+                    "scope": "tests/**",
+                    "skill": "python",
+                    "evidence": ["Python test evidence: tests/test_app.py"],
+                    "conflicts": [],
+                    "disposition": "accepted",
+                },
+            ],
+            "accepted_skills": ["python", "python"],
+            "rejections": [],
+            "confirmation": {
+                "status": "confirmed",
+                "evidence": "project-review: python confirmed for source and tests",
+            },
+        }
+        project["technology_skill_loadouts"] = [
+            {"pathPattern": "src/**", "skills": ["python"]},
+            {"pathPattern": "tests/**", "skills": ["python"]},
+        ]
+        rendered = renderer.render(project)
+        self.assertIn("Accepted technology skills: python, python", rendered)
+
+    def test_technology_skill_ids_are_validated_before_by_reference_rendering(self) -> None:
+        """Reject instruction-shaped skill identifiers on every persisted routing surface."""
+
+        renderer = load_renderer_module()
+        project = with_claim_transport({
+            "project_setup": {
+                "mode": "basic",
+                "concurrent_tasking": False,
+                "persistence": "none",
+                "commit": "direct-main",
+                "documentation": "wiki",
+                "core_skill_delivery": {
+                    "mode": "by-reference",
+                    "source": "installed-agent-metadata",
+                },
+                "technology_skill_delivery": "by-reference",
+                "technology_confirmation_required": True,
+            },
+            "workflow_selection": {
+                "persistence": {"default": "none"},
+                "commit": {"default": "direct-main"},
+            },
+            "technology_confirmation": confirmed_technology_selection(),
+            "technology_skill_loadouts": [{
+                "pathPattern": "src/**",
+                "skills": ["python"],
+                "sourceEvidence": [{
+                    "skill": "python",
+                    "evidence": ["Python source evidence: src/app.py"],
+                }],
+            }],
+        })
+        mutations = (
+            ("accepted", lambda value: value["technology_confirmation"]["accepted_skills"].__setitem__(0, "python\n## injected")),
+            ("candidate", lambda value: value["technology_confirmation"]["candidates"][0].__setitem__("skill", "python\n## injected")),
+            ("evidence", lambda value: value["technology_skill_loadouts"][0]["sourceEvidence"][0].__setitem__("skill", "python\n## injected")),
+            ("loadout", lambda value: value["technology_skill_loadouts"][0]["skills"].__setitem__(0, "python\n## injected")),
+        )
+        for surface, mutate in mutations:
+            with self.subTest(surface=surface):
+                candidate = deepcopy(project)
+                mutate(candidate)
+                with self.assertRaisesRegex(ValueError, "lowercase hyphenated skill id"):
+                    renderer.render(candidate)
+
+        rejected = deepcopy(project)
+        rejected["technology_confirmation"] = {
+            "candidates": [{
+                "scope": "src/**",
+                "skill": "python",
+                "evidence": ["Python source evidence: src/app.py"],
+                "conflicts": ["not selected"],
+                "disposition": "rejected",
+            }],
+            "accepted_skills": [],
+            "rejections": [{"skill": "python\n## injected", "reason": "not selected"}],
+            "confirmation": {
+                "status": "confirmed",
+                "evidence": "user-message: no technology skills accepted",
+            },
+        }
+        rejected["technology_skill_loadouts"] = []
+        with self.assertRaisesRegex(ValueError, "lowercase hyphenated skill id"):
+            renderer.render(rejected)
+
     def test_explicit_activation_clause_requires_every_condition(self) -> None:
         for dependencies, expected in (([], False), (["example-framework"], True)):
             with self.subTest(dependencies=dependencies):
@@ -1776,11 +1935,11 @@ class TechnologyDetectionTests(unittest.TestCase):
             ({"sourceEvidence": ["python"]}, "technology_skill_loadouts[0].sourceEvidence[0] must be a mapping"),
             (
                 {"sourceEvidence": [{"evidence": ["worker/main.py"]}]},
-                "technology_skill_loadouts[0].sourceEvidence[0].skill must be a string",
+                "technology_skill_loadouts[0].sourceEvidence[0].skill must normalize to a lowercase hyphenated skill id",
             ),
             (
                 {"source_evidence": [{"skill": 42, "evidence": ["worker/main.py"]}]},
-                "technology_skill_loadouts[0].source_evidence[0].skill must be a string",
+                "technology_skill_loadouts[0].source_evidence[0].skill must normalize to a lowercase hyphenated skill id",
             ),
         )
 
@@ -1804,11 +1963,11 @@ class TechnologyDetectionTests(unittest.TestCase):
             ({"sourceEvidence": ["python"]}, "technology_skill_loadouts[0].sourceEvidence[0] must be a mapping"),
             (
                 {"sourceEvidence": [{"evidence": ["worker/main.py"]}]},
-                "technology_skill_loadouts[0].sourceEvidence[0].skill must be a string",
+                "technology_skill_loadouts[0].sourceEvidence[0].skill must normalize to a lowercase hyphenated skill id",
             ),
             (
                 {"source_evidence": [{"skill": 42, "evidence": ["worker/main.py"]}]},
-                "technology_skill_loadouts[0].source_evidence[0].skill must be a string",
+                "technology_skill_loadouts[0].source_evidence[0].skill must normalize to a lowercase hyphenated skill id",
             ),
         )
 
@@ -3437,7 +3596,10 @@ class TechnologyDetectionTests(unittest.TestCase):
                 text=True,
             )
             self.assertEqual(1, completed.returncode)
-            self.assertIn("Invalid technology skill name", completed.stderr)
+            self.assertIn(
+                "technology_skill_loadouts[0].skills[0] must normalize to a lowercase hyphenated skill id",
+                completed.stderr,
+            )
 
     def test_agents_section_preserves_no_variant_general_training_fallback(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

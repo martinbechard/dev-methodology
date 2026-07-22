@@ -59,7 +59,7 @@ instructions:
     source-derived documentation."
   - Require Project Configurator to persist Basic or Advanced mode, Persistence, Commit,
     installed core delivery, technology delivery, user-confirmed technologies, concurrent
-    tasking, and the selected wiki, specifications, or both roots. Never ask for the installed
+    tasking, and the selected none, wiki, specifications, or both root outcome. Never ask for the installed
     core delivery mode again.
   - "Ordinary setup terminal path: create only the selected empty documentation roots and
     required placeholders, run setup-specific validation, commit the bounded setup or record

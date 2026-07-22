@@ -42,7 +42,7 @@ COMPLETION_SKILLS = {
 }
 COMPLETION_VALUES = (*COMPLETION_SKILLS, "UNSET")
 SETUP_MODES = ("basic", "advanced")
-DOCUMENTATION_CHOICES = ("wiki", "specifications", "both")
+DOCUMENTATION_CHOICES = ("none", "wiki", "specifications", "both")
 SKILL_DELIVERY_MODES = ("by-reference", "inline")
 LEGACY_PROVIDER_VALUES = {
     "file-based-backlog": "file",
@@ -101,6 +101,22 @@ def _normalized_skill_id(value: object, field: str) -> str:
     normalized = value.strip().lower()
     if not SKILL_NAME_PATTERN.fullmatch(normalized):
         raise ValueError(f"{field} must normalize to a lowercase hyphenated skill id")
+    return normalized
+
+
+def _normalized_technology_scope(value: object, field: str) -> str:
+    """Return one canonical project-relative technology scope pattern."""
+
+    if not isinstance(value, str) or not value or "\n" in value or "\r" in value:
+        raise ValueError(f"{field} must be a normalized project-relative path pattern")
+    try:
+        normalized = _normalize_project_path(value)
+    except ValueError as error:
+        raise ValueError(
+            f"{field} must be a normalized project-relative path pattern"
+        ) from error
+    if normalized != value:
+        raise ValueError(f"{field} must be a normalized project-relative path pattern")
     return normalized
 
 
@@ -1102,16 +1118,20 @@ def technology_confirmation_lines(value: dict[str, object]) -> list[str]:
     rejections = confirmation["rejections"]
     if not isinstance(candidates, list):
         raise ValueError("technology_confirmation.candidates must be a list")
-    if not isinstance(accepted_skills, list) or not all(
-        isinstance(skill, str) and skill for skill in accepted_skills
-    ):
-        raise ValueError("technology_confirmation.accepted_skills must be a list of non-empty strings")
-    if len(set(accepted_skills)) != len(accepted_skills):
-        raise ValueError("technology_confirmation.accepted_skills must not contain duplicates")
+    if not isinstance(accepted_skills, list):
+        raise ValueError("technology_confirmation.accepted_skills must be a list")
+    normalized_accepted_skills = [
+        _normalized_skill_id(
+            skill,
+            f"technology_confirmation.accepted_skills[{index}]",
+        )
+        for index, skill in enumerate(accepted_skills)
+    ]
     if not isinstance(rejections, list):
         raise ValueError("technology_confirmation.rejections must be a list")
 
     accepted_candidates: list[str] = []
+    accepted_bindings: list[tuple[str, str]] = []
     rejected_candidates: list[str] = []
     candidate_lines: list[str] = []
     for index, candidate in enumerate(candidates):
@@ -1122,15 +1142,11 @@ def technology_confirmation_lines(value: dict[str, object]) -> list[str]:
             raise ValueError(
                 f"{prefix} keys must be exactly scope, skill, evidence, conflicts, and disposition"
             )
-        scope = candidate.get("scope")
-        skill = candidate.get("skill")
+        scope = _normalized_technology_scope(candidate.get("scope"), f"{prefix}.scope")
+        skill = _normalized_skill_id(candidate.get("skill"), f"{prefix}.skill")
         evidence = candidate.get("evidence")
         conflicts = candidate.get("conflicts")
         disposition = candidate.get("disposition")
-        if not isinstance(scope, str) or not scope:
-            raise ValueError(f"{prefix}.scope must be a non-empty string")
-        if not isinstance(skill, str) or not skill:
-            raise ValueError(f"{prefix}.skill must be a non-empty string")
         if not isinstance(evidence, list) or not evidence or not all(
             isinstance(fact, str) and fact for fact in evidence
         ):
@@ -1143,23 +1159,38 @@ def technology_confirmation_lines(value: dict[str, object]) -> list[str]:
             raise ValueError(f"{prefix}.disposition must be accepted or rejected")
         target = accepted_candidates if disposition == "accepted" else rejected_candidates
         target.append(skill)
+        if disposition == "accepted":
+            accepted_bindings.append((scope, skill))
         conflict_text = "; ".join(conflicts) if conflicts else "none"
         candidate_lines.append(
             f"- Candidate {skill} for {scope}: {disposition}; evidence: {'; '.join(evidence)}; conflicts: {conflict_text}"
         )
-    if accepted_skills != accepted_candidates:
+    if normalized_accepted_skills != accepted_candidates:
         raise ValueError(
             "technology_confirmation.accepted_skills must match accepted candidate dispositions in order"
         )
-    routed_skills = {
-        skill
-        for loadout in loadouts(value)
-        for skill in loadout.get("skills", loadout.get("required_skills", []))
-        if isinstance(skill, str)
-    }
-    if routed_skills != set(accepted_skills):
+    routed_bindings: list[tuple[str, str]] = []
+    for loadout_index, loadout in enumerate(loadouts(value)):
+        pattern = _normalized_technology_scope(
+            loadout.get("pathPattern", loadout.get("pattern")),
+            f"technology_skill_loadouts[{loadout_index}].pathPattern",
+        )
+        skills = loadout.get("skills", loadout.get("required_skills", []))
+        if not isinstance(skills, list):
+            raise ValueError(f"technology_skill_loadouts[{loadout_index}].skills must be a list")
+        for skill_index, skill in enumerate(skills):
+            routed_bindings.append(
+                (
+                    pattern,
+                    _normalized_skill_id(
+                        skill,
+                        f"technology_skill_loadouts[{loadout_index}].skills[{skill_index}]",
+                    ),
+                )
+            )
+    if routed_bindings != accepted_bindings:
         raise ValueError(
-            "technology_confirmation.accepted_skills must match the skills in technology_skill_loadouts"
+            "technology_confirmation accepted scope and skill bindings must match technology_skill_loadouts in order"
         )
 
     rejection_names: list[str] = []
@@ -1168,10 +1199,10 @@ def technology_confirmation_lines(value: dict[str, object]) -> list[str]:
         prefix = f"technology_confirmation.rejections[{index}]"
         if not isinstance(rejection, dict) or set(rejection) != {"skill", "reason"}:
             raise ValueError(f"{prefix} must contain exactly skill and reason")
-        skill = rejection.get("skill")
+        skill = _normalized_skill_id(rejection.get("skill"), f"{prefix}.skill")
         reason = rejection.get("reason")
-        if not isinstance(skill, str) or not skill or not isinstance(reason, str) or not reason:
-            raise ValueError(f"{prefix}.skill and {prefix}.reason must be non-empty strings")
+        if not isinstance(reason, str) or not reason:
+            raise ValueError(f"{prefix}.reason must be a non-empty string")
         rejection_names.append(skill)
         rejection_lines.append(f"- Rejected {skill}: {reason}")
     if rejection_names != rejected_candidates:
@@ -1193,7 +1224,7 @@ def technology_confirmation_lines(value: dict[str, object]) -> list[str]:
         raise ValueError(
             "technology_confirmation.confirmation.evidence must be a non-empty auditable reference"
         )
-    accepted_text = ", ".join(accepted_skills) if accepted_skills else "none"
+    accepted_text = ", ".join(normalized_accepted_skills) if normalized_accepted_skills else "none"
     lines = [
         f"- Technology candidates: {len(candidates)}",
         *candidate_lines,
@@ -1250,7 +1281,7 @@ def setup_lines(value: dict[str, object]) -> list[str]:
     if commit not in COMPLETION_VALUES:
         raise ValueError("project_setup.commit has an unsupported value")
     if documentation not in DOCUMENTATION_CHOICES:
-        raise ValueError("project_setup.documentation must be wiki, specifications, or both")
+        raise ValueError("project_setup.documentation must be none, wiki, specifications, or both")
     if technology_delivery not in SKILL_DELIVERY_MODES:
         raise ValueError("project_setup.technology_skill_delivery must be by-reference or inline")
     if setup.get("technology_confirmation_required") is not True:
@@ -1271,22 +1302,28 @@ def setup_lines(value: dict[str, object]) -> list[str]:
             "concurrent_tasking": False,
             "persistence": "none",
             "commit": "direct-main",
-            "documentation": "wiki",
             "technology_skill_delivery": "by-reference",
         }
         for key, expected in expected_basic.items():
             if setup.get(key) != expected:
                 raise ValueError(f"project_setup.{key} must be {expected!r} in Basic mode")
+        if documentation not in {"none", "wiki"}:
+            raise ValueError("project_setup.documentation must be none or wiki in Basic mode")
+        wiki_answer = "Yes" if documentation == "wiki" else "No"
         selections = [
             "- Setup mode: Basic",
             "- Set: Concurrent tasking No",
             "- Set: Persistence none",
             "- Set: Commit direct-main",
-            "- Documentation question: Create the Wiki? Default Yes",
+            f"- Documentation question: Create the Wiki? {wiki_answer} (default Yes)",
             f"- Set: Core skill delivery {core_delivery['mode']}",
             "- Set: Technology skill delivery by-reference",
         ]
     else:
+        if documentation == "none":
+            raise ValueError(
+                "project_setup.documentation must be wiki, specifications, or both in Advanced mode"
+            )
         selections = [
             "- Setup mode: Advanced",
             f"- Concurrent tasking: {'Yes' if concurrent else 'No'}",
@@ -1406,9 +1443,7 @@ def render(
             row_prefix = f"{evidence_prefix}[{evidence_index}]"
             if not isinstance(evidence, Mapping):
                 raise ValueError(f"{row_prefix} must be a mapping")
-            skill = evidence.get("skill")
-            if not isinstance(skill, str):
-                raise ValueError(f"{row_prefix}.skill must be a string")
+            skill = _normalized_skill_id(evidence.get("skill"), f"{row_prefix}.skill")
             facts = evidence.get("evidence")
             facts_prefix = f"{row_prefix}.evidence"
             if not isinstance(facts, list):
@@ -1418,11 +1453,21 @@ def render(
                     raise ValueError(f"{facts_prefix}[{fact_index}] must be a string")
             if facts:
                 evidence_lines.append(f"  - {skill} evidence: {'; '.join(facts)}")
-        pattern = item.get("pathPattern", item.get("pattern"))
+        pattern_value = item.get("pathPattern", item.get("pattern"))
         skills = item.get("skills", item.get("required_skills", []))
-        if not isinstance(pattern, str) or not isinstance(skills, list):
-            continue
-        names = [str(skill) for skill in skills if isinstance(skill, str)]
+        pattern = _normalized_technology_scope(
+            pattern_value,
+            f"technology_skill_loadouts[{loadout_index}].pathPattern",
+        )
+        if not isinstance(skills, list):
+            raise ValueError(f"technology_skill_loadouts[{loadout_index}].skills must be a list")
+        names = [
+            _normalized_skill_id(
+                skill,
+                f"technology_skill_loadouts[{loadout_index}].skills[{skill_index}]",
+            )
+            for skill_index, skill in enumerate(skills)
+        ]
         if not names:
             if item.get("status") != "NO_VARIANT":
                 continue

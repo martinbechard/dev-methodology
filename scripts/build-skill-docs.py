@@ -1163,6 +1163,21 @@ def conditional_role_skills(role: RoleDefinition) -> tuple[str, ...]:
     return tuple(skill for skill in role.skills if skill in role.skill_conditions)
 
 
+def _referenced_fixed_role_skills(
+    role: RoleDefinition,
+    adapter_name: str,
+    inline_core_skills: bool,
+) -> tuple[str, ...]:
+    """Return skill IDs one generated agent must resolve at runtime."""
+
+    if inline_core_skills:
+        return ()
+    referenced_skills = list(fixed_role_skills(role))
+    if adapter_name == CODEX_ADAPTER_NAME and role.repository_mutation != "never":
+        referenced_skills.append(CODEX_HARNESS_DIRECTIVES_SKILL_NAME)
+    return tuple(referenced_skills)
+
+
 def role_loading_instruction_text(
     role: RoleDefinition,
     fixed_skills_preloaded: bool = False,
@@ -1600,6 +1615,13 @@ def render_agent_generation_manifest(
                 {
                     "name": role.name,
                     "output": str(output_path.relative_to(REPOSITORY_ROOT)),
+                    "referencedFixedSkills": list(
+                        _referenced_fixed_role_skills(
+                            role,
+                            adapter_name,
+                            inline_core_skills,
+                        )
+                    ),
                     "sha256": hashlib.sha256(content.encode("utf-8")).hexdigest(),
                     "source": role.source_path,
                 }
@@ -1614,7 +1636,7 @@ def render_agent_generation_manifest(
 
     manifest = {
         "schema": "dev-methodology-agent-generation-manifest",
-        "version": 3,
+        "version": 4,
         "generator": GENERATOR_RELATIVE_PATH,
         "generationOptions": {
             "coreSkillDelivery": "inline" if inline_core_skills else "by-reference",
