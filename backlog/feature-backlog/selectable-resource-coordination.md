@@ -1,12 +1,12 @@
 # Select Resource Coordination Per Project
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/selectable-resource-coordination.md
+Provider Reference: backlog/feature-backlog/selectable-resource-coordination.md
 
 Completion: direct-main
 
@@ -28,7 +28,7 @@ Completion: direct-main
 - Artifact claim: None.
 - Branch: codex/selectable-resource-coordination-discovery-20260722
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/e483/dev-methodology
-- Phase: awaiting exact governed-definition approval.
+- Phase: approved and Ready for fresh canonical dispatch.
 - Starting main: 1560326152977581d2c62711e9fb861e7f2cf8f0
 - Lifecycle transition: Blocked eligibility was reconciled, the completed dependency made the item Ready, and fresh ownership then transitioned it to Running.
 - Candidate: Pending.
@@ -41,9 +41,9 @@ Completion: direct-main
 - Completion wait attempts: 0.
 - Dependency evidence: backlog/completed-backlog/features/configure-agent-claim-transport-adapters.md is Status Completed; integration commit 1b1b819fa051f9f0f1d572184b18f18c06d3cba0 is reachable from main; focused verification, archive, clean integration-claim release, and cleanup-eligibility evidence are recorded; Open issues is None.
 - Preserved dependency boundary: The completed transport-adapter contract remains the required input to this item.
-- Open issues: Exact scope-specific user approval is required before governed-definition mutation.
-- Delivery evidence: Dependency unblock and discovery evidence are preserved; implementation is prohibited pending approval.
-- Next owner: Unowned pending a user answer.
+- Open issues: None for approval routing; fresh canonical dispatch remains required before implementation.
+- Delivery evidence: Dependency unblock, discovery evidence, and exact approval are preserved; implementation has not started.
+- Next owner: Unowned pending fresh canonical dispatch.
 
 Creation Claim: draft-selectable-mutation-coordination
 
@@ -105,6 +105,16 @@ Do you approve changes to exactly the following 40 governed-definition paths for
 - agents/roles/wiki-activities/wiki-source-collector.role.yaml
 - agents/roles/wiki-activities/wiki-writer.role.yaml
 
+### Resolution
+
+- Date: 2026-07-22.
+- Answer: Approved.
+- User wording: "ok make sure it is clear in the workitem" followed immediately by "that was my approval" in parent task 019f8b00-e6d7-7841-854a-40a50ca4e7f2.
+- Approved governed scope: exactly the 40-path manifest above.
+- Approved dependent scope: supported generated mirrors plus PROJECT.yaml, AGENTS.md, README.md, project template, scripts/build-skill-docs.py, scripts/render-agents-technology-skills.py, focused role-policy/transport/renderer/bundle tests, relevant design pages, and supported generated role/skill/native-adapter/hierarchy/explorer/checklist/manifest outputs.
+- Exclusion: no other governed definition is authorized.
+- Disposition: Ready for fresh canonical dispatch. This approval does not create or assign a canonical task and does not authorize a transition to Running.
+
 ### Why User Input Is Required
 
 Repository policy requires exact scope-specific approval before these governed definition mutations.
@@ -119,7 +129,7 @@ PROJECT.yaml, AGENTS.md, README.md, project template, scripts/build-skill-docs.p
 
 ### Unattended Work Boundary
 
-Do not mutate any governed definition, supported generated mirror, or ordinary companion surface until the user explicitly approves the exact manifest above. The canonical discovery task 019f8b05-5251-7d73-9cc9-4057edfef9a0 remains preserved as discovery evidence; current ownership remains unowned.
+The user approved the exact governed manifest and dependent scope recorded in Resolution. Do not mutate any other governed definition. The canonical discovery task 019f8b05-5251-7d73-9cc9-4057edfef9a0 remains preserved as discovery evidence; current ownership remains unowned until fresh canonical dispatch.
 
 ## Summary
 
@@ -138,6 +148,16 @@ Work-item assignment is not operational resource ownership. GitHub, GitLab, and 
 - On 2026-07-21, the user corrected the original inventory by stating that shared browser and database use must not be recorded as GitHub assignment.
 - In the subsequent reviewed dialogue, the user selected resource-coordination as the neutral concept, none and agent-claim as the immediate choices, project-level AGENTS.md rendering, no folder overrides, and no compatibility window.
 - On 2026-07-21, the user explicitly requested creation of work items based on those conversations.
+- On 2026-07-22, the user asked for clarification of generic core workflow skills versus the project-selected resource-coordination implementation and directed that it be clear in this work item.
+
+## Core Workflow And Selected Implementation Boundary
+
+- Conceptual core role definitions do not directly list or load the project-selected resource-coordination implementation, including agent-claim.
+- Generic technology-agnostic workflow skills, such as codex-workitem-coordination, may remain core skills of roles that own those workflows. This change does not move every coordination-related workflow skill into AGENTS.md.
+- PROJECT.yaml independently selects resource coordination as none or agent-claim.
+- Generated project-level AGENTS.md guidance references the selected implementation by name and by reference only when it is enabled. Agents operating in that project apply that selected implementation together with their core role and workflow skills.
+- Selecting none renders no resource-coordination skill reference or procedure and requires no claim lifecycle or evidence.
+- Intended chain: core role -> generic workflow skills -> PROJECT.yaml resource-coordination selection -> generated AGENTS.md reference -> selected resource-coordination implementation.
 
 ## Design Principles
 
@@ -159,6 +179,8 @@ Work-item assignment is not operational resource ownership. GitHub, GitLab, and 
 - Support none and agent-claim initially.
 - Make Project Configurator validate the selection and render the resulting reference-only AGENTS.md guidance.
 - Remove the invariant that repositoryMutation directly determines agent-claim membership.
+- Keep generic workflow skills in conceptual core role definitions where their owners need them; do not directly list or load the project-selected resource-coordination implementation there.
+- Render the selected resource-coordination implementation from PROJECT.yaml into project-level AGENTS.md by name and reference only when enabled.
 - Make mutating roles and ordinary workflow skills consume the project-selected coordination policy rather than hard-code agent-claim.
 - Preserve agent-claim behavior when agent-claim is selected.
 - Ensure none produces no coordination procedure and no claim-specific evidence requirements.
@@ -170,6 +192,8 @@ Work-item assignment is not operational resource ownership. GitHub, GitLab, and 
 
 - The same mutating conceptual role can be configured for none or agent-claim without per-project edits to its canonical definition.
 - Generated AGENTS.md guidance references the selected coordination skill only when coordination is enabled.
+- Conceptual core role definitions retain generic workflow skills but do not directly list or load the selected resource-coordination implementation.
+- The generated loading chain is core role -> generic workflow skills -> PROJECT.yaml resource-coordination selection -> generated AGENTS.md reference -> selected resource-coordination implementation.
 - A project selecting none performs no claim discovery, acquisition, heartbeat, registry mutation, or release.
 - A project selecting agent-claim retains repository-path and named-resource contention, worktree, recovery, heartbeat, and release safety.
 - Browser, database, port, server, generated-output, repository-path, backlog, and integration scenarios use the selected coordination policy rather than a work-item provider record.
