@@ -1,6 +1,6 @@
 # Support Project-Level Skill Extensions
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -23,6 +23,24 @@ Completion: direct-main
 - Running-record claim: start-project-skill-extensions-019f85c8, acquired event 294844ff-d66c-4452-bb44-9d6d1be019de.
 - Open issues: No user-action issue remains. Implementation must stay within the approved exact scope.
 - Accepted candidate: Pending.
+
+## Delivery Execution / Ownership
+
+- Owner: Dev Orchestrator
+- Canonical task: /root/process_backlog/orch_project_skill_extensions
+- Artifact claim: project-skill-extensions-20260722
+- Branch: codex/project-skill-extensions-20260722
+- Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/project-skill-extensions-20260722
+- Starting main: 13ea3ffe92fe7a8352f33b4f618f39f212322ba3
+- Phase: Lifecycle Running committed; ARTIFACT GO pending.
+- Candidate: Pending.
+- Accepted commit: Pending.
+- Integration wait started at: None.
+- Integration wait attempts: 0.
+- Completion wait started at: None.
+- Completion wait attempts: 0.
+- Delivery evidence: Pending.
+- Claim pressure: README.md is currently owned by deploy-explicit-project-20260722. Start on proven non-overlapping scopes; serialize any later README.md or scripts/test_bundle_content.py extension rather than waiting idle or polling.
 
 ## User Action Required
 
