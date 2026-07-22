@@ -1,6 +1,6 @@
 # Add Lightweight Future Ideas Capture
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -26,14 +26,14 @@ Completion: direct-main
 
 ## Delivery Execution / Ownership
 
-- Owner: Dev Orchestrator
+- Owner: Unowned
 - Canonical task: /root/process_backlog/orch_future_ideas
-- Artifact claim: future-ideas-correction-1-current-main-20260722, pending ARTIFACT GO.
-- Branch: codex/future-ideas-correction-1-current-main-20260722
-- Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/future-ideas-correction-1-current-main-20260722
+- Artifact claim: None; all implementation and correction claims are released.
+- Branch: codex/future-ideas-correction-2-current-main-20260722
+- Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/future-ideas-correction-2-current-main-20260722, clean.
 - Starting main: e414fa04307d086321373e6bd090ae38a2d2177b
-- Phase: Lifecycle Running committed; ARTIFACT GO pending.
-- Candidate: 65b94bc05f8745e67c53fb6e7963b32c90e7a2fd, preserved.
+- Phase: Blocked after the correction cap was exhausted following two correction attempts.
+- Candidate: abbc76d03d3fdb8675de561c91342228cd22ea8a preserved; not accepted.
 - Accepted commit: Pending.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
@@ -41,22 +41,38 @@ Completion: direct-main
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: Initial artifact claims must remain non-overlapping; shared surfaces require explicit sequencing.
+- Open issues: Methodology review retains one recurring High provider-boundary contradiction and one new Medium output-contract coverage finding.
 - Shared-surface sequencing: Future Ideas has first priority on its candidate-to-current-main generated reconciliation and scripts/test_bundle_content.py.
-- Delivery evidence: Pending; candidate, correction findings, and expanded approval remain preserved below.
-- Next owner: Dev Orchestrator.
+- Delivery evidence: Candidate chain and clean released correction worktree preserved; no verifier, integration, or completion evidence exists.
+- Next owner: Unowned; a fresh authorized owner must complete the exact unblock work below.
 
 ## Phase Evidence Update — 2026-07-22
 
-- Current phase: Current-main replacement candidate preserved; fresh code and methodology reviews are active; acceptance remains pending.
+- Historical phase: The current-main replacement candidate was preserved while fresh code and methodology reviews were active; acceptance remained pending.
 - Current-main replacement candidate: e3b605bf6e285833ea3b51ed3f3a71217bf7d2eb on codex/future-ideas-correction-1-current-main-20260722.
 - Reconciliation basis: Semantic reconciliation from preserved candidate 65b94bc05f8745e67c53fb6e7963b32c90e7a2fd; no stale cherry-pick was used.
 - Candidate scope: 24 paths with four in-scope review corrections.
 - Focused verification: 40 focused tests, three skill validations, generator checks, freshness checks, live report checks, and git diff checks passed.
 - Implementation claim release: future-ideas-correction-1-current-main-20260722 released, event f28b01a6-ab26-4144-b4ca-39a12c177da5.
-- Review state: Fresh code and methodology reviews active.
+- Review state at that phase: Fresh code and methodology reviews were active.
 - Accepted commit: Pending.
-- Next owner: Dev Orchestrator.
+- Next owner at that phase: Dev Orchestrator.
+
+## Blocked Handoff — 2026-07-22
+
+- Blocked reason: The correction cap is exhausted after two correction attempts.
+- Preserved candidate chain: 65b94bc05f8745e67c53fb6e7963b32c90e7a2fd to e3b605bf6e285833ea3b51ed3f3a71217bf7d2eb to abbc76d03d3fdb8675de561c91342228cd22ea8a.
+- Final branch and worktree: codex/future-ideas-correction-2-current-main-20260722; its canonical worktree is clean.
+- Final correction claim release: future-ideas-correction-2-current-main-20260722 released, event cd474cfe-039f-4f51-9fb6-b0eaf2a500f2.
+- Code review disposition: APPROVED.
+- Methodology review disposition: FINDINGS.
+- Recurring High finding: The Dev Backlog Steward role description and objective still route typed work and lightweight ideas through the selected file or GitHub backend. This contradicts the lower file-only Future Ideas boundary and permits interpreting a GitHub idea issue as valid.
+- New Medium finding: The role output is "backlog item, Future Idea, or status update," while the steward suite and scenarios assert the retired "backlog item or status update" contract and do not test Future Idea output.
+- Verification state: No verifier was run; no integration or work-item completion occurred.
+- Exact unblock: Fresh explicit governed-definition authorization and a new owner must correct the role description and objective provider boundary, align the suite and scenario output contract, then repeat fresh independent review and focused verification before integration.
+- Owner: Unowned.
+- Artifact claim: None.
+- Accepted commit: Pending.
 
 ## User Action Required
 
