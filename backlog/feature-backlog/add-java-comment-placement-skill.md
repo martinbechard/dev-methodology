@@ -1,6 +1,6 @@
 # Add Java Comment Placement Skill
 
-Status: Blocked
+Status: Running
 
 Type: Feature
 
@@ -12,15 +12,15 @@ Completion: direct-main
 
 ## Current Execution
 
-- Owner: Unowned
-- Claim: None
+- Owner: Dev Orchestrator validation-contract recovery lane
+- Claim: java-validation-contract-20260722 acquired as ISOLATED_CHECKOUT_ACQUIRED at event 3cec62d4-0ec1-4847-8f4f-7c316168cb0b.
 - Canonical task: 019f77f4-c4bd-7c91-b197-c987a7beb838
-- Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/java-comment-recovery-20260722
-- Branch: codex/java-comment-placement-recovery-20260722
-- Starting main: 4a4a6195231fa9cbe351627bf0c42fa586e07b6c
-- Phase: Blocked after the fresh recovery exhausted two bounded correction attempts on the same Markdown evidence-parser criterion.
+- Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/java-validation-contract-20260722
+- Branch: codex/java-comment-validation-contract-20260722
+- Starting main: 6ffacb7dd9de75d351761577dff7d18ec9b36609; correction baseline: preserved recovery tip 90333e05922e712d1d4172ea067e52ae330eac13.
+- Phase: Replace renderer-oriented HTML rejection with the user-approved line-oriented evidence contract, record it in focused unit tests, then obtain fresh review and verification.
 - Started: 2026-07-21; resumed with a fresh owner on 2026-07-22.
-- Open issues: The evaluator still accepts standard raw-HTML block forms such as CDATA, processing instructions, and split-line tag openers as visible Markdown evidence. No product integration has occurred.
+- Open issues: None outside the bounded three-file validation-contract correction. No product integration has occurred.
 - Accepted candidate: Pending. Recovery tip 90333e05922e712d1d4172ea067e52ae330eac13 is preserved on codex/java-comment-placement-recovery-20260722 but failed final independent review and is not accepted for integration.
 
 ## Blocked Handoff
@@ -56,6 +56,15 @@ Completion: direct-main
 - Preserved branch/worktree: codex/java-comment-placement-recovery-20260722 at 90333e05922e712d1d4172ea067e52ae330eac13 in /Users/martinbechard/dev/dev-methodology/.worktrees/java-comment-recovery-20260722; clean and intentionally retained for a fresh dispatch.
 - Recovery implementation claim: java-comment-recovery-20260722 acquired event 27a73910-4a76-4c3b-84cb-8a1e9ef81656, heartbeat event 8609ac3a-4496-411d-ae49-772f01d72a1f, and released cleanly at event 74ec7ae4-b577-4ea3-9437-95f486b220e8.
 - Backlog blocker transaction: block-java-comment-recovery-20260722 acquired event c0a060f4-fa7d-45e8-8d5c-677b11e0e678 and releases immediately after this one-file commit.
+
+## Validation Contract Resolution
+
+- User direction: HTML is content, not evidence-heading syntax, and may be the correct verification content. It must not be rejected merely because it is HTML. Fenced code may also remain as content; it is ignored only while locating structural heading tokens.
+- Definition of good: the evaluator owns a small line-oriented evidence format rather than a complete rendered-Markdown, CommonMark, or HTML interpretation. The six exact `## NAME` lines delimit records outside fenced code. Each record contains exactly one non-empty `Affected path:` value and one non-empty `Verification result:` value. Affected paths use repository-relative POSIX syntax. Verification results may contain arbitrary non-empty text, including HTML. HTML is neither parsed nor globally rejected.
+- Required regression evidence: passing complete plain-text records; passing HTML verification content; passing unrelated HTML and fenced content without treating either as an error; rejection of bare labels, headings only, missing or blank fields, duplicate exact headings, malformed required heading tokens, headings found only inside fenced code, and non-repository affected paths.
+- Scope: only evals/projects/java-comment-placement/TASK.md, evals/projects/java-comment-placement/verify.py, and scripts/test_bundle_content.py. No governed definition or generated mirror changes are authorized or required by this correction.
+- Resumption claim: resume-java-validation-contract-20260722 acquired event 217dc06f-70f7-4e2f-b641-ec9f3912f232 and releases immediately after this one-file Running commit.
+- Implementation claim: java-validation-contract-20260722 acquired event 3cec62d4-0ec1-4847-8f4f-7c316168cb0b on codex/java-comment-validation-contract-20260722 from preserved recovery tip 90333e05922e712d1d4172ea067e52ae330eac13.
 
 ## User Action Required
 
