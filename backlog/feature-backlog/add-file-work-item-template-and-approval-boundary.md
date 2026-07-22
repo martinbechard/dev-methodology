@@ -1,12 +1,12 @@
 # Add File Work Item Template And Approval Boundary
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/add-file-work-item-template-and-approval-boundary.md
+Provider Reference: backlog/feature-backlog/add-file-work-item-template-and-approval-boundary.md
 
 Completion: direct-main
 
@@ -28,11 +28,18 @@ Bounded read-only discovery by canonical task 019f85c8-628f-75c3-87b6-65a140c3dd
 
 ### Resolution
 
-Pending.
+- Answer: Approved.
+- User wording: "approved".
+- Date: 2026-07-21.
+- Provenance: direct user response in parent backlog-coordination task 019f77f4-c4bd-7c91-b197-c987a7beb838 to the exact two-skill question recorded above.
+- Approved governed scope: skills/create-file-work-item/SKILL.md and skills/development-methodology/SKILL.md.
+- Approved dependent scope: only their supported generated mirrors and the directly related non-governed file-work-item template, template-catalog documentation, generated template data, and focused tests.
+- Exclusions: no other governed definition unless separately approved.
+- Disposition: Ready for a fresh canonical Dev Orchestrator task.
 
 ### Unattended Work Boundary
 
-No governed or project mutation is authorized while this question is pending. Preserve the read-only decision that removable HTML comments provide template guidance and that exact approval scope plus user-message provenance remain durably recorded in the work-item body, with any checker YAML treated as derived operational evidence.
+Implementation is authorized only within the exact resolved scope above. Preserve the read-only decision that removable HTML comments provide template guidance and that exact approval scope plus user-message provenance remain durably recorded in the work-item body, with any checker YAML treated as derived operational evidence.
 
 ### Discovery Evidence
 
@@ -95,8 +102,7 @@ None.
 
 ## Open Questions
 
-- Should the template include optional section comments that are removed during creation, or rely on a companion reference explaining each section?
-- Should exact governed-definition approval evidence live in the item body or in a linked approval record whose path is stored in the item?
+None. Bounded discovery selected removable optional-section comments and durable approval scope plus user-message provenance in the item body; checker-compatible YAML is derived operational evidence rather than the authority record.
 
 ## Notes
 
