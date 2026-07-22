@@ -1,30 +1,74 @@
 # Reconcile Objective Visualization and Repository Path-Tree Rules
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/reconcile-objective-visualization-and-path-tree-rules.md
+Provider Reference: backlog/user-action-required/reconcile-objective-visualization-and-path-tree-rules.md
 
 Completion: direct-main
 
 ## Execution / Ownership
 
-- Owner: Dev Orchestrator
+- Owner: Unowned
 - Canonical task: /root/process_backlog/orch_objective_path_rules
 - Proposed artifact claim: objective-path-rules-019f817f-reconcile
+- Claim: None
 - Branch: codex/reconcile-objective-path-rules-019f817f
 - Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/objective-path-rules-019f817f-reconcile
-- Phase: Lifecycle Running committed; artifact claim pending ARTIFACT GO.
+- Phase: Exact approval pending.
 - Starting main: af0a3fe63404a793f2bf7dcf40dd2a3de563109e
-- Accepted candidate: Pending.
+- Accepted candidate: None.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
-- Open issues: Artifact work must not begin until ARTIFACT GO is issued.
-- Next owner: Dev Orchestrator.
+- Open issues: Exact governed-scope approval is required before implementation.
+- Next owner: User.
 - Delivery evidence: Pending.
+
+## Read-Only Discovery
+
+- Completed: Current-main and preserved-branch evidence was inspected without artifact mutation.
+- Evidence branch: codex/objective-diagram-rules-019f817f at e9b31dbf961d32c1eccdc68becd5666f05497b73.
+- Artifact claim: None acquired.
+- Candidate: None accepted.
+- Artifact mutation: None performed.
+
+## User Action Required
+
+### Question For The User
+
+Do you explicitly approve changing exactly the eight governed paths listed above solely to reconcile objective diagram-trigger and repository path-tree rules against current main, together with regeneration of only their supported generated mirrors? Non-governed template, checklist, and focused regression changes remain ordinary implementation work; this approval does not authorize changing review-high-level-design or reverse-engineering acceptance semantics.
+
+### Why User Input Is Required
+
+The completed read-only discovery identified the exact governed paths below. Repository policy requires explicit scope-specific approval before their mutation.
+
+### Exact Governed Scope
+
+- skills/create-architecture/SKILL.md
+- skills/create-functional-spec/SKILL.md
+- skills/create-high-level-design/SKILL.md
+- skills/create-module-design/SKILL.md
+- skills/development-methodology/SKILL.md
+- skills/review-architecture/SKILL.md
+- skills/review-functional-spec/SKILL.md
+- skills/review-module-design/SKILL.md
+
+### Options And Tradeoffs
+
+- Approve the exact eight-path scope: permit governed-source reconciliation and supported mirror regeneration.
+- Narrow the scope: preserve excluded paths as unresolved work.
+- Defer: retain the discovery evidence without implementation.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+No artifact claim or mutation is authorized while this question is pending. The approval must not be inferred from prior Ready or Running state, and it must not change review-high-level-design or reverse-engineering acceptance semantics.
 
 ## Summary
 
