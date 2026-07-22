@@ -1,12 +1,12 @@
 # Add Lightweight Future Ideas Capture
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/add-lightweight-future-ideas-capture.md
+Provider Reference: backlog/feature-backlog/add-lightweight-future-ideas-capture.md
 
 Completion: direct-main
 
@@ -32,15 +32,15 @@ Completion: direct-main
 - Branch: codex/future-ideas-implementation-20260722
 - Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/future-ideas-implementation-20260722
 - Starting main: 13ea3ffe92fe7a8352f33b4f618f39f212322ba3
-- Phase: Authority expansion pending; correction not dispatched.
+- Phase: Exact expansion approval recorded; Ready for fresh correction dispatch.
 - Candidate: 65b94bc05f8745e67c53fb6e7963b32c90e7a2fd, preserved.
 - Accepted commit: Pending.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Delivery evidence: Candidate and review evidence preserved; no correction attempt dispatched.
-- Next owner: User.
+- Delivery evidence: Candidate, review evidence, and exact expansion approval preserved; no correction attempt dispatched.
+- Next owner: Dev Backlog Coordinator.
 
 ## User Action Required
 
@@ -59,11 +59,18 @@ Removing these two outputs leaves required role-skill views stale. The prior app
 
 ### Resolution
 
-Pending.
+Approved on 2026-07-22. The user answered "ok" directly after the exact generated-output expansion Question For The User in the parent turn. Provenance: parent coordination conversation for /root/process_backlog/orch_future_ideas.
+
+This expansion authorizes exactly these deterministic generated documentation outputs required by the already approved skill and role changes:
+
+- design/agent-skill-hierarchy.svg
+- design/generated/agent-skill-explorer-data.js
+
+The expansion does not authorize any other path. The complete original approved governed scope, its supported mirrors, ordinary related surfaces, candidate, review findings and corrections, claim events, branch and worktree evidence, and existing boundaries remain unchanged.
 
 ### Unattended Work Boundary
 
-Do not dispatch a correction or mutate either newly requested output until the user answers the exact question. Preserve candidate 65b94bc05f8745e67c53fb6e7963b32c90e7a2fd and the clean worktree without treating the candidate as accepted.
+The item is Ready for a fresh correction dispatch but is not Running. No artifact claim has been acquired for a correction. Preserve candidate 65b94bc05f8745e67c53fb6e7963b32c90e7a2fd and the clean worktree without treating the candidate as accepted. Correction authority is limited to the complete original approved scope and exactly the two added generated documentation outputs recorded in the Resolution.
 
 ## Candidate And Review Evidence
 
