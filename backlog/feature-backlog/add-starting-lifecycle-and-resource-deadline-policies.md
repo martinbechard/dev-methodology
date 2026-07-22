@@ -1,6 +1,6 @@
 # Add Starting Lifecycle And Resource Deadline Policies
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -9,6 +9,28 @@ Provider: file
 Provider Reference: backlog/feature-backlog/add-starting-lifecycle-and-resource-deadline-policies.md
 
 Completion: direct-main
+
+## Execution / Ownership
+
+- Owner: Dev Orchestrator.
+- Canonical thread: 019f8b51-f8ed-7c03-8193-9bbee1ccb7f2.
+- Claim: start-starting-lifecycle-resource-deadlines-019f8b51, backlog transition only.
+- Canonical worktree: /Users/martinbechard/.codex/worktrees/81ba/dev-methodology.
+- Starting main: 7d1ed4bd2f871329727206a1a1bfb4dc801b95f5.
+- Phase: bounded source discovery and exact governed canonical-path manifest determination before any governed mutation.
+- Lifecycle transition: Ready -> Running after fresh canonical Dev Orchestrator ownership and successful serialized backlog claim acquisition.
+- Accepted candidate: Pending.
+- Integration wait started at: None.
+- Integration wait attempts: 0.
+- Completion wait started at: None.
+- Completion wait attempts: 0.
+- Open issues: Exact path-specific user approval is required after discovery before governed changes.
+- Next owner: Dev Orchestrator.
+
+## Running Dispatch Evidence — 2026-07-22
+
+- Backlog transition claim: start-starting-lifecycle-resource-deadlines-019f8b51, acquired event d4fca16b-0c33-410d-bdbf-8e382d3f9f54 from primary main.
+- The full user-approved lifecycle, deadline, watchdog, terminology, and lifecycle-HTML behavior remains authoritative below.
 
 ## Summary
 
