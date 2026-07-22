@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Renders project authority, claim transport, workflow, folder technology, and project skill guidance.
+# Summary: Renders project setup, authority, claim transport, workflow, folder technology, and project skill guidance.
 
 from __future__ import annotations
 
@@ -41,6 +41,9 @@ COMPLETION_SKILLS = {
     "feature-branch": "complete-work-item-feature-branch",
 }
 COMPLETION_VALUES = (*COMPLETION_SKILLS, "UNSET")
+SETUP_MODES = ("basic", "advanced")
+DOCUMENTATION_CHOICES = ("wiki", "specifications", "both")
+SKILL_DELIVERY_MODES = ("by-reference", "inline")
 LEGACY_PROVIDER_VALUES = {
     "file-based-backlog": "file",
     "github-issues-backlog": "github",
@@ -935,6 +938,49 @@ def workflow_lines(value: dict[str, object]) -> list[str]:
         )
     if not isinstance(selection, dict):
         raise ValueError("workflow_selection must be a mapping")
+    canonical = "persistence" in selection or "commit" in selection
+    if canonical:
+        allowed_keys = {"persistence", "commit", "selection_policy"}
+        if set(selection) - allowed_keys:
+            raise ValueError(
+                "workflow_selection keys must be exactly persistence, commit, and optional selection_policy; "
+                "migrate legacy provider and completion fields without changing their selected values"
+            )
+        selection_policy = selection.get("selection_policy")
+        if selection_policy is not None and (
+            not isinstance(selection_policy, str) or not selection_policy
+        ):
+            raise ValueError("workflow_selection.selection_policy must be a non-empty string")
+        persistence, persistence_overrides = _workflow_configuration(
+            selection, "persistence", PROVIDER_VALUES
+        )
+        commit, commit_overrides = _workflow_configuration(
+            selection, "commit", COMPLETION_VALUES
+        )
+        lines = [
+            "## Work-Item Workflow Skill References",
+            "",
+            "Project Configurator owns the independent Persistence and Commit selectors. Persistence routes durable work-item storage; Commit routes delivery. Workflow skills are referenced by name only and technology skill routing remains separate.",
+            "",
+            _provider_reference("Default persistence", persistence).replace(" provider ", " ", 1),
+        ]
+        lines.extend(
+            _provider_reference(f"{pattern} persistence", selected).replace(" provider ", " ", 1)
+            for pattern, selected in persistence_overrides
+        )
+        lines.append(_completion_reference("Default commit", commit).replace(" completion ", " ", 1))
+        lines.extend(
+            _completion_reference(f"{pattern} commit", selected).replace(" completion ", " ", 1)
+            for pattern, selected in commit_overrides
+        )
+        lines.extend([
+            "",
+            "Most-specific matching folder pattern wins independently for Persistence and Commit overrides. A folder override changes only its own selector.",
+            "",
+            "When a selector is UNSET, the pertinent agent asks at the stated operation boundary and does not infer either value from repository or hosting evidence, files, remotes, templates, plugins, or available tools.",
+            "",
+        ])
+        return lines
     migration = _legacy_selector_migration(selection)
     if migration is not None:
         raise ValueError(migration)
@@ -1040,6 +1086,107 @@ def claim_transport_lines(value: dict[str, object]) -> list[str]:
     ]
 
 
+def setup_lines(value: dict[str, object]) -> list[str]:
+    """Validate and render persisted Basic or Advanced project setup selections."""
+
+    setup = value.get("project_setup")
+    if setup is None:
+        return []
+    if not isinstance(setup, dict):
+        raise ValueError("project_setup must be a mapping")
+    allowed_keys = {
+        "mode",
+        "concurrent_tasking",
+        "concurrent_capacity",
+        "persistence",
+        "commit",
+        "documentation",
+        "core_skill_delivery",
+        "technology_skill_delivery",
+        "technology_confirmation_required",
+    }
+    unsupported = set(setup) - allowed_keys
+    if unsupported:
+        raise ValueError("project_setup contains unsupported fields: " + ", ".join(sorted(unsupported)))
+    mode = setup.get("mode")
+    if mode not in SETUP_MODES:
+        raise ValueError("project_setup.mode must be basic or advanced")
+    concurrent = setup.get("concurrent_tasking")
+    if not isinstance(concurrent, bool):
+        raise ValueError("project_setup.concurrent_tasking must be true or false")
+    capacity = setup.get("concurrent_capacity")
+    if not concurrent and capacity is not None:
+        raise ValueError(
+            "project_setup.concurrent_capacity is allowed only when concurrent_tasking is true"
+        )
+    if concurrent and (not isinstance(capacity, int) or isinstance(capacity, bool) or capacity < 1):
+        raise ValueError(
+            "project_setup.concurrent_capacity must be a positive integer when concurrent_tasking is true"
+        )
+    persistence = setup.get("persistence")
+    commit = setup.get("commit")
+    documentation = setup.get("documentation")
+    technology_delivery = setup.get("technology_skill_delivery")
+    if persistence not in PROVIDER_VALUES:
+        raise ValueError("project_setup.persistence has an unsupported value")
+    if commit not in COMPLETION_VALUES:
+        raise ValueError("project_setup.commit has an unsupported value")
+    if documentation not in DOCUMENTATION_CHOICES:
+        raise ValueError("project_setup.documentation must be wiki, specifications, or both")
+    if technology_delivery not in SKILL_DELIVERY_MODES:
+        raise ValueError("project_setup.technology_skill_delivery must be by-reference or inline")
+    if setup.get("technology_confirmation_required") is not True:
+        raise ValueError("project_setup.technology_confirmation_required must be true")
+    core_delivery = setup.get("core_skill_delivery")
+    if not isinstance(core_delivery, dict):
+        raise ValueError("project_setup.core_skill_delivery must be a mapping")
+    if set(core_delivery) != {"mode", "source"}:
+        raise ValueError("project_setup.core_skill_delivery keys must be exactly mode and source")
+    if core_delivery.get("mode") not in SKILL_DELIVERY_MODES:
+        raise ValueError("project_setup.core_skill_delivery.mode must be by-reference or inline")
+    if core_delivery.get("source") != "installed-agent-metadata":
+        raise ValueError(
+            "project_setup.core_skill_delivery.source must be installed-agent-metadata; regenerate and install compatible native agents before changing the project value"
+        )
+    if mode == "basic":
+        expected_basic = {
+            "concurrent_tasking": False,
+            "persistence": "none",
+            "commit": "direct-main",
+            "documentation": "wiki",
+            "technology_skill_delivery": "by-reference",
+        }
+        for key, expected in expected_basic.items():
+            if setup.get(key) != expected:
+                raise ValueError(f"project_setup.{key} must be {expected!r} in Basic mode")
+        selections = [
+            "- Setup mode: Basic",
+            "- Set: Concurrent tasking No",
+            "- Set: Persistence none",
+            "- Set: Commit direct-main",
+            "- Documentation question: Create the Wiki? Default Yes",
+            f"- Set: Core skill delivery {core_delivery['mode']}",
+            "- Set: Technology skill delivery by-reference",
+        ]
+    else:
+        selections = [
+            "- Setup mode: Advanced",
+            f"- Concurrent tasking: {'Yes' if concurrent else 'No'}",
+            f"- Persistence: {persistence}",
+            f"- Commit: {commit}",
+            f"- Documentation: {documentation}",
+            f"- Set: Core skill delivery {core_delivery['mode']}",
+            f"- Technology skill delivery: {technology_delivery}",
+        ]
+        if concurrent:
+            selections.insert(2, f"- Concurrent capacity: {capacity}")
+    selections.extend([
+        "- Technology confirmation: required; show detected candidates, evidence, conflicts, and the user-confirmed selection.",
+        "",
+    ])
+    return ["## Project Setup Selections", "", *selections]
+
+
 def inlined_skill_body(skill_name: str) -> str:
     """Return one validated bundled technology skill body."""
 
@@ -1084,6 +1231,7 @@ def render(
     lines: list[str] = definition_change_authority_lines(value)
     workflow = workflow_lines(value)
     lines.extend(claim_transport_lines(value))
+    lines.extend(setup_lines(value))
     lines.extend(workflow)
     lines.extend([
         "## Technology Skills",
@@ -1213,9 +1361,9 @@ def main(arguments: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--inline-tech-skills",
         type=parse_boolean,
-        default=True,
+        default=False,
         metavar="true|false",
-        help="Statically embed discovered technology skills in AGENTS.md. Defaults to true.",
+        help="Statically embed discovered technology skills in AGENTS.md. Defaults to false.",
     )
     parser.add_argument(
         "--check-definition-change",

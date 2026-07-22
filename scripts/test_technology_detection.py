@@ -172,6 +172,80 @@ def run_detection(
 
 class TechnologyDetectionTests(unittest.TestCase):
     """Verify detector clauses, ownership isolation, generated mirrors, and routing output."""
+
+    def test_basic_setup_renders_resolved_values_without_hidden_controls(self) -> None:
+        """Keep Basic setup inspectable while hiding fixed decisions."""
+
+        renderer = load_renderer_module()
+        rendered = renderer.render({
+            "project_setup": {
+                "mode": "basic",
+                "concurrent_tasking": False,
+                "persistence": "none",
+                "commit": "direct-main",
+                "documentation": "wiki",
+                "core_skill_delivery": {
+                    "mode": "by-reference",
+                    "source": "installed-agent-metadata",
+                },
+                "technology_skill_delivery": "by-reference",
+                "technology_confirmation_required": True,
+            },
+            "workflow_selection": {
+                "persistence": {"default": "none"},
+                "commit": {"default": "direct-main"},
+            },
+        })
+
+        for expected in (
+            "Setup mode: Basic",
+            "Set: Concurrent tasking No",
+            "Set: Persistence none",
+            "Set: Commit direct-main",
+            "Documentation question: Create the Wiki? Default Yes",
+            "Set: Core skill delivery by-reference",
+            "Set: Technology skill delivery by-reference",
+            "Technology confirmation: required",
+        ):
+            self.assertIn(expected, rendered)
+        self.assertNotIn("Concurrent capacity", rendered)
+
+    def test_advanced_setup_requires_capacity_only_for_concurrent_tasking(self) -> None:
+        """Expose Advanced concurrent capacity only after tasking is enabled."""
+
+        renderer = load_renderer_module()
+        project = {
+            "project_setup": {
+                "mode": "advanced",
+                "concurrent_tasking": True,
+                "concurrent_capacity": 3,
+                "persistence": "file",
+                "commit": "direct-main",
+                "documentation": "both",
+                "core_skill_delivery": {
+                    "mode": "by-reference",
+                    "source": "installed-agent-metadata",
+                },
+                "technology_skill_delivery": "inline",
+                "technology_confirmation_required": True,
+            },
+            "workflow_selection": {
+                "persistence": {"default": "file"},
+                "commit": {"default": "direct-main"},
+            },
+        }
+
+        rendered = renderer.render(project, inline_tech_skills=True)
+        self.assertIn("Setup mode: Advanced", rendered)
+        self.assertIn("Concurrent capacity: 3", rendered)
+        self.assertIn("Technology skill delivery: inline", rendered)
+
+        project["project_setup"]["concurrent_tasking"] = False
+        with self.assertRaisesRegex(
+            ValueError,
+            "project_setup.concurrent_capacity is allowed only when concurrent_tasking is true",
+        ):
+            renderer.render(project)
     def test_explicit_activation_clause_requires_every_condition(self) -> None:
         for dependencies, expected in (([], False), (["example-framework"], True)):
             with self.subTest(dependencies=dependencies):
@@ -1435,7 +1509,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 }],
             })), encoding="utf-8")
             completed = subprocess.run(
-                [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
+                [sys.executable, str(RENDER_SCRIPT), "--project", str(plan), "--inline-tech-skills", "true"],
                 cwd=ROOT,
                 check=True,
                 capture_output=True,
@@ -2499,7 +2573,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         self.assertIn("create-gitlab-work-item", rendered)
         self.assertIn("complete-work-item-direct-main", rendered)
 
-    def test_agents_section_inlines_technology_skills_by_default_with_false_override(self) -> None:
+    def test_agents_section_references_technology_skills_by_default_with_inline_override(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             plan = Path(directory) / "PROJECT.yaml"
             plan.write_text(yaml.safe_dump(with_unset_workflows({
@@ -2509,8 +2583,25 @@ class TechnologyDetectionTests(unittest.TestCase):
                 }],
             })), encoding="utf-8")
 
-            inlined = subprocess.run(
+            dynamically_loaded = subprocess.run(
                 [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout
+            self.assertIn("src/**: load python before acting", dynamically_loaded)
+            self.assertNotIn("BEGIN INLINED TECHNOLOGY SKILL", dynamically_loaded)
+
+            inlined = subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDER_SCRIPT),
+                    "--project",
+                    str(plan),
+                    "--inline-tech-skills",
+                    "true",
+                ],
                 cwd=ROOT,
                 check=True,
                 capture_output=True,
@@ -2519,24 +2610,6 @@ class TechnologyDetectionTests(unittest.TestCase):
             self.assertIn("src/**: apply the inlined python skill instructions", inlined)
             self.assertIn("BEGIN INLINED TECHNOLOGY SKILL: python", inlined)
             self.assertIn("# Python", inlined)
-            self.assertNotIn("src/**: load python before acting", inlined)
-
-            dynamically_loaded = subprocess.run(
-                [
-                    sys.executable,
-                    str(RENDER_SCRIPT),
-                    "--project",
-                    str(plan),
-                    "--inline-tech-skills",
-                    "false",
-                ],
-                cwd=ROOT,
-                check=True,
-                capture_output=True,
-                text=True,
-            ).stdout
-            self.assertIn("src/**: load python before acting", dynamically_loaded)
-            self.assertNotIn("BEGIN INLINED TECHNOLOGY SKILL", dynamically_loaded)
 
             invalid = subprocess.run(
                 [
@@ -2575,6 +2648,8 @@ class TechnologyDetectionTests(unittest.TestCase):
                     str(plan),
                     "--output",
                     str(output),
+                    "--inline-tech-skills",
+                    "true",
                 ],
                 cwd=ROOT,
                 check=False,
@@ -2617,6 +2692,8 @@ class TechnologyDetectionTests(unittest.TestCase):
                     "--output",
                     str(output),
                     "--replace",
+                    "--inline-tech-skills",
+                    "true",
                 ],
                 cwd=ROOT,
                 check=False,
@@ -3211,7 +3288,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 }],
             })), encoding="utf-8")
             completed = subprocess.run(
-                [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
+                [sys.executable, str(RENDER_SCRIPT), "--project", str(plan), "--inline-tech-skills", "true"],
                 cwd=ROOT,
                 check=False,
                 capture_output=True,
@@ -3239,7 +3316,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 ],
             })), encoding="utf-8")
             completed = subprocess.run(
-                [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
+                [sys.executable, str(RENDER_SCRIPT), "--project", str(plan), "--inline-tech-skills", "true"],
                 cwd=ROOT,
                 check=True,
                 capture_output=True,

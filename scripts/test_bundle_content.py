@@ -1580,18 +1580,20 @@ class BundleContentTests(unittest.TestCase):
             / PROJECT_TEMPLATE
         ).read_text(encoding="utf-8")
         self.assertIn("workflow_selection:", project_template)
-        self.assertIn("provider:", project_template)
+        self.assertIn("persistence:", project_template)
         self.assertIn("file, github, gitlab, azure-devops, jira, none, or UNSET", project_template)
         self.assertIn(
-            'provider: "TODO: file, github, gitlab, azure-devops, jira, none, or UNSET."',
+            'persistence: "TODO: file, github, gitlab, azure-devops, jira, none, or UNSET."',
             project_template,
         )
-        self.assertIn("completion:", project_template)
+        self.assertIn("commit:", project_template)
         self.assertIn("direct-main, feature-branch, or UNSET", project_template)
         self.assertIn(
-            'completion: "TODO: direct-main, feature-branch, or UNSET."',
+            'commit: "TODO: direct-main, feature-branch, or UNSET."',
             project_template,
         )
+        self.assertNotIn("  provider:", project_template)
+        self.assertNotIn("  completion:", project_template)
         self.assertNotIn("  workitem:", project_template)
         self.assertNotIn("  backlog:", project_template)
 
@@ -3370,6 +3372,7 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(project_skill_extension_phrase=phrase):
                 self.assertIn(phrase, skill_text)
+        self.assertIn("Generated workflow guidance references selected skills by name", skill_text)
         self.assertIn("record explicit UNSET rather than omitting a deferred decision", skill_text)
         self.assertIn("one exact folder pattern may appear only once", skill_text)
         self.assertIn("one exact folder pattern may appear only once", template_text)
@@ -4345,16 +4348,9 @@ class BundleContentTests(unittest.TestCase):
         for adapter, adapter_path in adapter_paths.items():
             adapter_text = adapter_path.read_text(encoding="utf-8")
             with self.subTest(adapter=adapter):
-                self.assertIn(
-                    "BEGIN INLINED CORE SKILL: organise-project-files",
-                    adapter_text,
-                )
-                self.assertIn(filename_instruction, adapter_text)
-                self.assertIn(
-                    "BEGIN INLINED CORE SKILL: structured-design",
-                    adapter_text,
-                )
-                self.assertIn(response_only_instruction, adapter_text)
+                self.assertIn("organise-project-files", adapter_text)
+                self.assertIn("structured-design", adapter_text)
+                self.assertNotIn("BEGIN INLINED CORE SKILL", adapter_text)
                 self.assertIn(classification_instruction, adapter_text)
                 self.assertIn(approved_path_instruction, adapter_text)
                 self.assertIn(blocked_path_instruction, adapter_text)
@@ -4693,7 +4689,7 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertEqual(3, generation_manifest["version"])
         self.assertEqual(
-            {"inlineCoreSkills": True},
+            {"coreSkillDelivery": "by-reference", "inlineCoreSkills": False},
             generation_manifest["generationOptions"],
         )
         self.assertEqual(len(roles), generation_manifest["canonicalRoleCount"])
@@ -4841,15 +4837,16 @@ class BundleContentTests(unittest.TestCase):
                     build_skill_docs.codex_role_instruction_text(
                         role,
                         known_role_names=tuple(sorted(source_role_names)),
+                        inline_core_skills=False,
                     ),
                     tomllib.loads(codex_agent_text)["developer_instructions"],
                 )
-                self.assertNotIn(
+                self.assertIn(
                     "Before acting, load these definition-owned skills completely; they govern the work:",
                     codex_agent_text,
                 )
                 for skill in build_skill_docs.fixed_role_skills(role):
-                    self.assertIn(f"BEGIN INLINED CORE SKILL: {skill}", codex_agent_text)
+                    self.assertNotIn(f"BEGIN INLINED CORE SKILL: {skill}", codex_agent_text)
                 codex_payload = tomllib.loads(codex_agent_text)
                 configured_skills = codex_payload.get("skills", {}).get("config", [])
                 if role.repository_mutation == "never":
@@ -4859,16 +4856,16 @@ class BundleContentTests(unittest.TestCase):
                         [item.get("name") for item in configured_skills],
                     )
                 else:
+                    self.assertNotIn(f"BEGIN INLINED CORE SKILL: {CODEX_HARNESS_SKILL_NAME}", codex_agent_text)
+                    self.assertIn(CODEX_HARNESS_SKILL_NAME, [item.get("name") for item in configured_skills])
+                fixed_skills = list(build_skill_docs.fixed_role_skills(role))
+                if fixed_skills:
                     self.assertIn(
-                        f"BEGIN INLINED CORE SKILL: {CODEX_HARNESS_SKILL_NAME}",
+                        "Before acting, load these definition-owned skills completely; they govern the work: "
+                        + ", ".join(fixed_skills)
+                        + ".",
                         codex_agent_text,
                     )
-                    self.assertNotIn(
-                        CODEX_HARNESS_SKILL_NAME,
-                        [item.get("name") for item in configured_skills],
-                    )
-                if "skillAvailability" not in role.optional_fields:
-                    self.assertNotIn("[[skills.config]]", codex_agent_text)
                 self.assertTrue(
                     (GENERATED_ADAPTERS_ROOT / "claude" / "agents" / f"{role.filename}.md").is_file()
                 )
@@ -4879,10 +4876,10 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("Skill justifications:", claude_agent_text)
                 self.assertIn("Output purposes:", claude_agent_text)
                 claude_frontmatter = yaml.safe_load(claude_agent_text.split("---", 2)[1])
-                self.assertNotIn("skills", claude_frontmatter)
-                self.assertNotIn("These definition-owned skills are preloaded and govern the work", claude_agent_text)
+                self.assertEqual(list(build_skill_docs.fixed_role_skills(role)), claude_frontmatter["skills"])
+                self.assertIn("These definition-owned skills are preloaded and govern the work", claude_agent_text)
                 for skill in build_skill_docs.fixed_role_skills(role):
-                    self.assertIn(f"BEGIN INLINED CORE SKILL: {skill}", claude_agent_text)
+                    self.assertNotIn(f"BEGIN INLINED CORE SKILL: {skill}", claude_agent_text)
                 for skill, condition in role.skill_conditions.items():
                     self.assertIn(f"Use the {skill} skill {condition}.", claude_agent_text)
 
@@ -4897,9 +4894,9 @@ class BundleContentTests(unittest.TestCase):
                 self.assertEqual(role.description, gemini_frontmatter["description"])
                 self.assertEqual("local", gemini_frontmatter["kind"])
                 self.assertNotIn("skills", gemini_frontmatter)
-                self.assertNotIn("Before acting, load these definition-owned skills completely", gemini_agent_text)
+                self.assertIn("Before acting, load these definition-owned skills completely", gemini_agent_text)
                 for skill in build_skill_docs.fixed_role_skills(role):
-                    self.assertIn(f"BEGIN INLINED CORE SKILL: {skill}", gemini_agent_text)
+                    self.assertNotIn(f"BEGIN INLINED CORE SKILL: {skill}", gemini_agent_text)
                 for skill, condition in role.skill_conditions.items():
                     self.assertIn(f"Use the {skill} skill {condition}.", gemini_agent_text)
 
@@ -4912,11 +4909,11 @@ class BundleContentTests(unittest.TestCase):
                 junie_frontmatter = yaml.safe_load(junie_agent_text.split("---", 2)[1])
                 self.assertEqual(role.name, junie_frontmatter["name"])
                 self.assertEqual(role.description, junie_frontmatter["description"])
-                self.assertNotIn("skills", junie_frontmatter)
+                self.assertEqual(list(build_skill_docs.fixed_role_skills(role)), junie_frontmatter["skills"])
                 self.assertIn("reasoningLevel", junie_frontmatter)
-                self.assertNotIn("These definition-owned skills are preloaded and govern the work", junie_agent_text)
+                self.assertIn("These definition-owned skills are preloaded and govern the work", junie_agent_text)
                 for skill in build_skill_docs.fixed_role_skills(role):
-                    self.assertIn(f"BEGIN INLINED CORE SKILL: {skill}", junie_agent_text)
+                    self.assertNotIn(f"BEGIN INLINED CORE SKILL: {skill}", junie_agent_text)
                 for skill, condition in role.skill_conditions.items():
                     self.assertIn(f"Use the {skill} skill {condition}.", junie_agent_text)
 
@@ -5025,7 +5022,7 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertNotIn("BEGIN INLINED CORE SKILL", junie_dynamic)
 
-    def test_adapter_generator_cli_defaults_to_inlined_core_skills(self) -> None:
+    def test_adapter_generator_cli_defaults_to_referenced_core_skills(self) -> None:
         current = subprocess.run(
             [sys.executable, str(BUILD_SKILL_DOCS_PATH), "--check"],
             cwd=REPOSITORY_ROOT,
@@ -5035,21 +5032,21 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertEqual(0, current.returncode, current.stdout + current.stderr)
 
-        dynamic = subprocess.run(
+        inline = subprocess.run(
             [
                 sys.executable,
                 str(BUILD_SKILL_DOCS_PATH),
                 "--check",
                 "--inline-core-skills",
-                "false",
+                "true",
             ],
             cwd=REPOSITORY_ROOT,
             check=False,
             capture_output=True,
             text=True,
         )
-        self.assertEqual(1, dynamic.returncode)
-        self.assertIn("stale", dynamic.stdout)
+        self.assertEqual(1, inline.returncode)
+        self.assertIn("stale", inline.stdout)
 
         invalid = subprocess.run(
             [

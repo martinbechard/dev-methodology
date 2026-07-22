@@ -19,6 +19,19 @@
 schema: project
 schema_version: 1
 
+project_setup:
+  mode: "basic"
+  concurrent_tasking: false
+  concurrent_capacity: null
+  persistence: "none"
+  commit: "direct-main"
+  documentation: "wiki"
+  core_skill_delivery:
+    mode: "by-reference"
+    source: "installed-agent-metadata"
+  technology_skill_delivery: "by-reference"
+  technology_confirmation_required: true
+
 current_understanding:
   summary: "TODO: Summarize the project purpose, current development stage, and why explicit agent and skill setup is needed."
   development_stage: "TODO: Name the current project stage or say Not yet identified."
@@ -149,17 +162,17 @@ technology_skill_loadouts:
 folder_route_precedence: "Most-specific matching path pattern wins. Prefer non-overlapping routes and use this rule only when overlap is unavoidable."
 
 workflow_selection:
-  provider:
+  persistence:
     default: "TODO: file, github, gitlab, azure-devops, jira, none, or UNSET when the user has not selected a durable work-item provider."
     folder_overrides:
       - pattern: "TODO: Real repository-relative folder path or valid glob, or Not applicable."
-        provider: "TODO: file, github, gitlab, azure-devops, jira, none, or UNSET."
-  completion:
+        persistence: "TODO: file, github, gitlab, azure-devops, jira, none, or UNSET."
+  commit:
     default: "TODO: direct-main, feature-branch, or UNSET when the user has not selected a completion process."
     folder_overrides:
       - pattern: "TODO: Real repository-relative folder path or valid glob, or Not applicable."
-        completion: "TODO: direct-main, feature-branch, or UNSET."
-  selection_policy: "Always record provider and completion independently, using explicit UNSET when a decision is deferred. Within either selector, one exact folder pattern may appear only once. Do not infer either selector from repository files, remotes, hosting metadata, templates, installed plugins, or available tools. Azure DevOps and Jira remain selected as unsupported BLOCKED placeholders instead of falling back."
+        commit: "TODO: direct-main, feature-branch, or UNSET."
+  selection_policy: "Always record Persistence and Commit independently, using explicit UNSET when a decision is deferred. Within either selector, one exact folder pattern may appear only once. Do not infer either selector from repository files, remotes, hosting metadata, templates, installed plugins, or available tools. Azure DevOps and Jira remain selected as unsupported BLOCKED placeholders instead of falling back."
 
 folder_routing:
   - pattern: "TODO: Real repository-relative folder path or valid glob; never use a prose scope label."

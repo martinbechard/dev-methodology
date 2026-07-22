@@ -1258,6 +1258,36 @@ agents:
           modelRubric: source-faithfulness
         executableCases: []
         coverageStatus: declared
+      - id: project-configurator-basic-setup
+        kind: happy-path
+        fixtureProfile: project-setup-repository
+        promptIntent: Complete Basic setup with Wiki creation and user-confirmed technology candidates.
+        expectedOutcome: Only Setup mode, Wiki, and technology confirmation are controls; fixed concurrency, Persistence, Commit, installed core delivery, and technology delivery are displayed as Set values.
+        requiredBehaviors: [Never show Concurrent capacity, Create only the empty Wiki structure, Persist confirmed technology evidence]
+        forbiddenBehaviors: [Ask for specifications, Run reverse engineering, Infer installed core delivery]
+        judgePlan: {deterministicChecks: [artifact-structure, technology-detection-evidence], modelRubric: source-faithfulness}
+        executableCases: []
+        coverageStatus: declared
+      - id: project-configurator-advanced-setup
+        kind: state-transition
+        fixtureProfile: project-setup-repository
+        promptIntent: Complete Advanced setup with multiple detected technologies and concurrent tasking enabled.
+        expectedOutcome: Persistence, Commit, Documentation, technology confirmation, technology delivery, and capacity after concurrency Yes use their documented defaults and selections.
+        requiredBehaviors: [Show candidate evidence and rejections, Reveal capacity only after Yes, Keep core delivery Set from installation metadata]
+        forbiddenBehaviors: [Ask core delivery as an ordinary field, Add provider skills to Dev Coder]
+        judgePlan: {deterministicChecks: [artifact-structure, technology-detection-evidence], modelRubric: source-faithfulness}
+        executableCases: []
+        coverageStatus: declared
+      - id: project-configurator-documentation-roots
+        kind: parameterized
+        fixtureProfile: project-setup-repository
+        promptIntent: Exercise wiki-only, specifications-only, and both documentation setup selections.
+        expectedOutcome: Each selection creates only its empty requested roots and required placeholders.
+        requiredBehaviors: [Support exactly wiki specifications and both, Keep reverse engineering later]
+        forbiddenBehaviors: [Create source-derived documents, Invoke independent review during setup]
+        judgePlan: {deterministicChecks: [artifact-structure], modelRubric: source-faithfulness}
+        executableCases: []
+        coverageStatus: declared
     coverageStatus: fixture-backed
   - id: project-organiser
     source: agents/roles/project-setup/project-organiser.role.yaml

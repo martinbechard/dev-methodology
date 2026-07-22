@@ -10,6 +10,13 @@ instructions:
   objective: Leave the project configured, documented, independently reviewed, verified,
     committed, clean, and ready for development.
   decisions:
+  - Before Project Configurator setup, read the installed native-agent ownership metadata
+    and agent-generation manifest. Require both to agree with installed agent bytes on core
+    skill delivery. Block with exact regeneration and installation remediation when evidence
+    is missing, inconsistent, invalid, or unsupported; do not reconstruct it from chat or skill files.
+  - Treat ordinary project setup as configuration plus selected empty documentation roots.
+    Do not run documentation reverse engineering, source-derived documentation, or independent
+    review unless the user separately requests the later documentation workflow.
   - If PROJECT.yaml does not exist, ask project-configurator to inspect the repository,
     detect its technologies, create PROJECT.yaml, and create the required AGENTS.md files.
   - If PROJECT.yaml exists and passes validation, use it for ordinary setup work where reverse
@@ -47,6 +54,10 @@ instructions:
     scope, and acceptance evidence remain valid. Recreate and re-review stale artifacts.
   - Make sure PROJECT.yaml and the applicable AGENTS.md files pass validation before creating
     documentation.
+  - Require Project Configurator to persist Basic or Advanced mode, Persistence, Commit,
+    installed core delivery, technology delivery, user-confirmed technologies, concurrent
+    tasking, and the selected wiki, specifications, or both roots. Never ask for the installed
+    core delivery mode again.
   - Require dev-documentation-writer to create a documentation coverage manifest that maps
     every meaningful in-scope module and source area to its module document, related tests,
     and review status before higher-level documentation begins.

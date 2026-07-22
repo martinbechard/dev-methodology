@@ -9,6 +9,12 @@ metadata:
 
 Use this skill as the router for software project documentation work from this bundle. It keeps artifact selection, format selection, the shared page contract, and template asset policy in one place while delegating specialized workflows to focused skills.
 
+## Installation Skill Delivery
+
+Initial methodology generation chooses core skill delivery before installing native agents. Offer inline or by-reference, default to by-reference, and require generated agent bytes, agent-generation-manifest.json, and installed-agent ownership metadata to record the same mode. Project setup reads that installed mode rather than asking again. Core skill delivery and folder technology skill delivery are separate decisions; folder technology skills also default to by-reference.
+
+Conceptual agent definitions contain required and conditional technology-agnostic core skill identifiers only. Technology-specific skills are selected from repository evidence during Project Configurator setup, confirmed by the user, recorded in PROJECT.yaml, and referenced by the applicable root or nested AGENTS.md. Ordinary work consumes that guidance and does not rerun detection.
+
 ## Required Companion Skills
 
 - Use documentation-bootstrap for first-time setup in a target repository.

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Deploys bundle-owned skills and agents and configures their MCP operations server.
+# Summary: Deploys bundle-owned skills and agents, records delivery ownership, and configures their MCP operations server.
 
 from __future__ import annotations
 
@@ -1866,18 +1866,72 @@ def write_agent_manifest(
     adapter: Adapter,
     owned_agent_paths: dict[str, str],
 ) -> None:
+    """Write installed-agent ownership plus the verified core-skill delivery mode."""
+
+    core_skill_delivery = _agent_source_core_skill_delivery(source, adapter)
     manifest = {
         MANIFEST_SCHEMA_VERSION_KEY: MANIFEST_SCHEMA_VERSION,
         MANIFEST_BUNDLE_ID_KEY: BUNDLE_ID,
         MANIFEST_ADAPTER_KEY: adapter.name,
         MANIFEST_SOURCE_KEY: str(source.expanduser().resolve()),
         MANIFEST_UPDATED_AT_KEY: datetime.now(timezone.utc).isoformat(),
+        "core_skill_delivery": core_skill_delivery,
         MANIFEST_ARTIFACTS_KEY: [
             agent_artifact(agent_name, agent_path, destination)
             for agent_name, agent_path in sorted(owned_agent_paths.items())
         ],
     }
     _write_install_manifest_data(destination, manifest)
+
+
+def _agent_source_core_skill_delivery(source: Path, adapter: Adapter) -> str:
+    """Return core-skill delivery from a matching generation manifest when present."""
+
+    resolved_source = source.expanduser().resolve()
+    if len(resolved_source.parents) < 2:
+        return "by-reference"
+    generation_manifest_path = resolved_source.parents[1] / "agent-generation-manifest.json"
+    if not generation_manifest_path.is_file():
+        return "by-reference"
+    generation_manifest = json.loads(generation_manifest_path.read_text(encoding="utf-8"))
+    options = generation_manifest.get("generationOptions")
+    if not isinstance(options, dict):
+        raise ValueError(
+            f"agent generation metadata is missing generationOptions: {generation_manifest_path}; regenerate native agents"
+        )
+    delivery = options.get("coreSkillDelivery")
+    inline = options.get("inlineCoreSkills")
+    expected_inline = {"by-reference": False, "inline": True}.get(delivery)
+    if expected_inline is None or inline is not expected_inline:
+        raise ValueError(
+            f"agent generation metadata has inconsistent core skill delivery: {generation_manifest_path}; regenerate native agents"
+        )
+    adapters = generation_manifest.get("adapters")
+    adapter_manifest = adapters.get(adapter.name) if isinstance(adapters, dict) else None
+    agents = adapter_manifest.get("agents") if isinstance(adapter_manifest, dict) else None
+    if not isinstance(agents, list):
+        raise ValueError(
+            f"agent generation metadata has no {adapter.name} agent inventory: {generation_manifest_path}; regenerate native agents"
+        )
+    expected = {
+        Path(item["output"]).name: item["sha256"]
+        for item in agents
+        if isinstance(item, dict)
+        and isinstance(item.get("output"), str)
+        and isinstance(item.get("sha256"), str)
+    }
+    actual_names = {path.name for path in iter_agent_files(resolved_source, adapter.name)}
+    if actual_names != set(expected):
+        raise ValueError(
+            f"installed agent bytes do not match the {adapter.name} generation inventory: {generation_manifest_path}; regenerate native agents"
+        )
+    for name, expected_digest in expected.items():
+        actual_digest = hashlib.sha256((resolved_source / name).read_bytes()).hexdigest()
+        if actual_digest != expected_digest:
+            raise ValueError(
+                f"installed agent bytes disagree with generation metadata for {name}; regenerate native agents"
+            )
+    return delivery
 
 
 def prune_obsolete_owned_agents(

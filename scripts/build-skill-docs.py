@@ -1616,7 +1616,10 @@ def render_agent_generation_manifest(
         "schema": "dev-methodology-agent-generation-manifest",
         "version": 3,
         "generator": GENERATOR_RELATIVE_PATH,
-        "generationOptions": {"inlineCoreSkills": inline_core_skills},
+        "generationOptions": {
+            "coreSkillDelivery": "inline" if inline_core_skills else "by-reference",
+            "inlineCoreSkills": inline_core_skills,
+        },
         "canonicalRoleCount": len(roles),
         "adapters": adapters,
     }
@@ -1625,7 +1628,7 @@ def render_agent_generation_manifest(
 
 def expected_role_outputs(
     roles: Sequence[RoleDefinition],
-    inline_core_skills: bool = True,
+    inline_core_skills: bool = False,
 ) -> dict[Path, str]:
     codex_harness_skills = set(adapter_skill_names(CODEX_ADAPTER_NAME))
     if CODEX_HARNESS_DIRECTIVES_SKILL_NAME not in codex_harness_skills:
@@ -1679,7 +1682,7 @@ def stale_generated_adapter_paths(expected_paths: set[Path]) -> list[Path]:
 def write_role_outputs(
     roles: Sequence[RoleDefinition],
     check: bool,
-    inline_core_skills: bool = True,
+    inline_core_skills: bool = False,
 ) -> list[Path]:
     expected_outputs = expected_role_outputs(roles, inline_core_skills)
     changed_paths = [
@@ -1737,9 +1740,9 @@ def main(arguments: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--inline-core-skills",
         type=parse_boolean,
-        default=True,
+        default=False,
         metavar="true|false",
-        help="Statically append core skills to agent instructions instead of native skill properties. Defaults to true.",
+        help="Statically append core skills to agent instructions instead of native skill properties. Defaults to false.",
     )
     args = parser.parse_args(arguments)
 

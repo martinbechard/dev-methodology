@@ -1988,6 +1988,10 @@ class InstallSkillsTests(unittest.TestCase):
                 (agents_destination / "reviewer.toml").read_text(encoding="utf-8"),
             )
             self.assertEqual(["reviewer"], self.read_manifest_agent_names(agents_destination))
+            agent_manifest = json.loads(
+                (agents_destination / installer.INSTALL_MANIFEST_FILE_NAME).read_text(encoding="utf-8")
+            )
+            self.assertEqual("by-reference", agent_manifest["core_skill_delivery"])
             self.assertIn(
                 f"agents destination {agents_destination.resolve()}",
                 output.getvalue(),

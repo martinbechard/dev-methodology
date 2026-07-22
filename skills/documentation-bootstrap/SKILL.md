@@ -9,6 +9,10 @@ metadata:
 
 Use this skill for the first meaningful setup of the development methodology in a target repository. The output is a source-backed setup recommendation and a complete project-local documentation structure that agents and humans can maintain consistently.
 
+## Configuration Setup Boundary
+
+When Project Configurator invokes this skill during setup, create only the selected empty documentation roots and repository-required placeholders. The supported choices are wiki, specifications, and both. Basic setup asks only whether to create the Wiki and does not ask about specifications. Do not inspect source to create module designs, high-level designs, architecture, functional specifications, or wiki synthesis, and do not invoke documentation-reverse-engineer. Reverse engineering remains a later explicit workflow that consumes the accepted PROJECT.yaml.
+
 ## Full Project Documentation Default
 
 When bootstrap includes reverse engineering for a repository, application, or project, treat the entire codebase as in scope. Do not ask the user to select a documentation breadth or offer a representative, sampled, minimal, or tiered documentation set. Use documentation-reverse-engineer to inventory every meaningful module, create and review the module documents, group the complete module set into high-level designs, derive architecture from the complete high-level-design set, document all observable workflows, and integrate the result into README and wiki hubs.
@@ -46,8 +50,8 @@ Proceed directly when the user already specified these choices or the repository
 3. Confirm docs/wiki as the wiki root unless the project has a stronger established location.
 4. Select hybrid-specifications-and-wiki when bootstrap will keep structured module, high-level, architecture, and functional specifications authoritative while using README and docs/wiki for navigation and synthesis. Pass that exact selection to create-project-configuration so PROJECT.yaml persists it; later agents must not depend on conversational context.
 5. When a legacy PROJECT.yaml has no documentation_mode field, infer hybrid-specifications-and-wiki only when both structured specification roots and docs/wiki already exist or this bootstrap is establishing that full hierarchy. Otherwise obtain the project-owned selection and persist it before documentation work. Treat an unsupported documentation mode or a missing value without safe migration evidence as BLOCKED.
-6. Use development-methodology to select template assets for initial documents.
-7. Copy only template files that will become active project documents or project-owned templates.
+6. During configuration setup, create only the selected empty roots and required placeholders. During a later explicit documentation workflow, use development-methodology to select template assets for active documents.
+7. Copy template files only during that later document-creation workflow or when the user explicitly requests project-owned templates.
 8. Use project-wiki setup guidance for docs/wiki initialization, schema, topic index, glossary, open decisions, known defects, and maintenance log.
 9. Add or update AGENTS.md guidance so future agents check docs/wiki first, save unsynthesized wiki knowledge under raw/wiki-fragments, use project-wiki skills for wiki work, and commit wiki changes with the source or documentation changes that made them necessary.
 10. Keep runtime-specific commands in project guidance only when the project actually depends on that runtime.

@@ -477,6 +477,7 @@
 
   <section class="hero" aria-labelledby="page-title">
     <h1 id="page-title">Examples</h1>
+    <p class="callout">Current project examples use Persistence and Commit as independent selectors, by-reference core and technology delivery by default, and user-confirmed folder technology evidence. Legacy Provider and Completion fields migrate deterministically without changing recorded intent.</p>
     <p class="lede">
       This page owns three customer-safe configuration examples: a root-only tool, a multi-tier application with nested guidance, and a wiki repository with separate source and synthesis workflows.
     </p>
@@ -506,6 +507,16 @@
     <p class="note">A single TypeScript runtime and common test workflow do not justify nested AGENTS.md files.</p>
     <pre class="config-block"><code>schema: project
 schema_version: 1
+project_setup:
+  mode: basic
+  concurrent_tasking: false
+  persistence: none
+  commit: direct-main
+  documentation: wiki
+  core_skill_delivery:
+    mode: by-reference
+    source: installed-agent-metadata
+  technology_skill_delivery: by-reference
 project_taxonomy:
   family: local-developer-tooling
   primary_runtime: Node.js
@@ -521,9 +532,9 @@ technology_skill_loadouts:
     pathPattern: "{src,test,tests}/**"
     skills: [node-cli, typescript-esm, typescript-strict, vitest]
 workflow_selection:
-  provider:
-    default: file
-  completion:
+  persistence:
+    default: none
+  commit:
     default: direct-main
 validation_plan:
   commands:
