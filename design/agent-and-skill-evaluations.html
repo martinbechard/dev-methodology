@@ -129,7 +129,7 @@
       <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
       <div><dt>Documentation snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>a39447c25bd88f26e6676bf09747ae7e639bb0b1076f759e9ca079d6534dbda3</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source snapshot</dt><dd><code>7ed524ee6e2c13ecf33ee5f9287289b323579ff42bf2c8850e23caea41efc4aa</code>; regenerated and compared by the focused check</dd></div>
     </dl>
   </section>
 
@@ -355,12 +355,12 @@
     </article>
 
     <article class="evaluation-card agent-card" id="agent-project-bootstrapper"
-      data-kind="agent" data-status="historical-unknown" data-search="project-bootstrapper sets up a project for later development work. it creates or reuses the project configuration, produces the required documentation, sends each setup and documentation artifact for independent review, keeps exactly one accepted committed contribution as the final direct commit or integrates multiple accepted committed contributions, and verifies the completed project state. historical-unknown valid-configuration-direct-path missing-configuration-multi-contribution whole-project-reverse-engineering-steady-state invalid-configuration-no-authority pass 1, blocked 1, fail 1">
+      data-kind="agent" data-status="historical-unknown" data-search="project-bootstrapper sets up a project for later development work and separately coordinates explicitly requested documentation workflows. ordinary setup creates or reuses the project configuration and selected empty documentation roots, validates and commits that setup, then stops without entering reverse-engineering, design, or review gates. historical-unknown valid-configuration-direct-path missing-configuration-multi-contribution whole-project-reverse-engineering-steady-state invalid-configuration-no-authority pass 1, blocked 1, fail 1">
       <div class="card-heading">
         <div><span class="card-kicker">Conceptual agent</span><h3>project-bootstrapper</h3></div>
         <span class="status status--historical-unknown">Historical ID alignment; definition freshness unknown</span>
       </div>
-      <p>Sets up a project for later development work. It creates or reuses the project configuration, produces the required documentation, sends each setup and documentation artifact for independent review, keeps exactly one accepted committed contribution as the final direct commit or integrates multiple accepted committed contributions, and verifies the completed project state.</p>
+      <p>Sets up a project for later development work and separately coordinates explicitly requested documentation workflows. Ordinary setup creates or reuses the project configuration and selected empty documentation roots, validates and commits that setup, then stops without entering reverse-engineering, design, or review gates.</p>
       <p class="source-row">
         <a href="../agents/roles/project-setup/project-bootstrapper.role.yaml">Role source</a> &middot;
         <a href="../evals/agent-tests/project-bootstrapper/suite.yaml">Suite</a> &middot;
@@ -539,12 +539,12 @@
     </article>
 
     <article class="evaluation-card agent-card" id="agent-project-configurator"
-      data-kind="agent" data-status="historical-unknown" data-search="project-configurator creates or updates the single project-root project.yaml and validates one claim transport, conceptual agent definitions, work-item selectors, skillsets, folder routing, nested agents.md guidance, and claude bridges. historical-unknown valid-configuration-reuse technology-routing invalid-configuration pass 3, blocked 0, fail 0">
+      data-kind="agent" data-status="historical-unknown" data-search="project-configurator creates or updates the single project-root project.yaml through basic or advanced setup and validates installed core-skill delivery, one claim transport, persistence and commit, conceptual agents, project skill extensions, confirmed folder technology skillsets, nested guidance, documentation roots, and claude bridges. historical-unknown valid-configuration-reuse technology-routing invalid-configuration pass 3, blocked 0, fail 0">
       <div class="card-heading">
         <div><span class="card-kicker">Conceptual agent</span><h3>project-configurator</h3></div>
         <span class="status status--historical-unknown">Historical ID alignment; definition freshness unknown</span>
       </div>
-      <p>Creates or updates the single project-root PROJECT.yaml and validates one claim transport, conceptual agent definitions, work-item selectors, skillsets, folder routing, nested AGENTS.md guidance, and Claude bridges.</p>
+      <p>Creates or updates the single project-root PROJECT.yaml through Basic or Advanced setup and validates installed core-skill delivery, one claim transport, Persistence and Commit, conceptual agents, project skill extensions, confirmed folder technology skillsets, nested guidance, documentation roots, and Claude bridges.</p>
       <p class="source-row">
         <a href="../agents/roles/project-setup/project-configurator.role.yaml">Role source</a> &middot;
         <a href="../evals/agent-tests/project-configurator/suite.yaml">Suite</a> &middot;
@@ -2540,9 +2540,9 @@
 
         <dl class="compact-list">
           <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-create-file-work-item</a></dd></div>
-          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
           <div><dt>Kind</dt><dd>artifact-contract</dd></div>
-          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">file-work-item-template-contract</a></dd></div>
           <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-backlog-steward-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-steward-boundary</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-steward-provider-boundary</a></dd></div>
           <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
           <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, queue-state-transition, claim-lifecycle, tool-authority</dd></div>
@@ -2739,12 +2739,12 @@
     </article>
 
     <article class="evaluation-card skill-card" id="skill-create-project-configuration"
-      data-kind="skill" data-status="direct-probe" data-search="create-project-configuration use when creating or substantially rewriting the single root project.yaml project configuration, including one verified claim transport, conceptual agent definitions, workflow selectors, folder technology skillsets, nested guidance, and validation evidence. documentation-methodology probe-create-project-configuration linked agent-suite outcomes only: pass">
+      data-kind="skill" data-status="direct-probe" data-search="create-project-configuration use when creating or substantially rewriting the single root project.yaml project configuration, including setup mode, persistence and commit, installed core-skill delivery, one verified claim transport, conceptual agent definitions, project skill extensions, folder technology skillsets, generated guidance, and validation evidence. documentation-methodology probe-create-project-configuration linked agent-suite outcomes only: pass">
       <div class="card-heading">
         <div><span class="card-kicker">Skill</span><h3>create-project-configuration</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
       </div>
-      <p>Use when creating or substantially rewriting the single root PROJECT.yaml project configuration, including one verified claim transport, conceptual agent definitions, workflow selectors, folder technology skillsets, nested guidance, and validation evidence.</p>
+      <p>Use when creating or substantially rewriting the single root PROJECT.yaml project configuration, including setup mode, Persistence and Commit, installed core-skill delivery, one verified claim transport, conceptual agent definitions, project skill extensions, folder technology skillsets, generated guidance, and validation evidence.</p>
       <p class="source-row"><a href="../skills/create-project-configuration/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe</h4>
 
@@ -5732,7 +5732,7 @@ inspect.
   <section class="section" id="sources" aria-labelledby="sources-title">
     <div class="section-heading"><h2 id="sources-title">Authoritative sources and limits</h2><p>Tracked repository artifacts remain authoritative. Temporary retained-summary paths named in the historical campaign are context, not the only support for any statistic on this page.</p></div>
     <div class="grid">
-      <article class="method-card"><h3>Method and catalogs</h3><ul><li><a href="../evals/README.md">Evaluation methodology</a></li><li><a href="../evals/skill-probes.yaml">Skill probe catalog</a></li><li><a href="../evals/cases.yaml">Executable cases (11)</a></li><li><a href="../evals/agent-scenarios.yaml">Agent scenarios (55)</a></li><li><a href="../evals/workflow-packs.yaml">Workflow packs (5)</a></li><li><a href="../evals/agent-tests/suite-index.yaml">Agent suite index</a></li><li><a href="../evals/judges.yaml">Judge catalog and calibration policy</a></li></ul></article>
+      <article class="method-card"><h3>Method and catalogs</h3><ul><li><a href="../evals/README.md">Evaluation methodology</a></li><li><a href="../evals/skill-probes.yaml">Skill probe catalog</a></li><li><a href="../evals/cases.yaml">Executable cases (12)</a></li><li><a href="../evals/agent-scenarios.yaml">Agent scenarios (61)</a></li><li><a href="../evals/workflow-packs.yaml">Workflow packs (5)</a></li><li><a href="../evals/agent-tests/suite-index.yaml">Agent suite index</a></li><li><a href="../evals/judges.yaml">Judge catalog and calibration policy</a></li></ul></article>
       <article class="method-card"><h3>Results</h3><ul><li><a href="../evals/agent-tests/results/2026-07-17-complete-agent-suites.md">Selected complete agent-suite campaign</a></li><li><a href="../evals/results/2026-07-09-live-agent-evaluations.md">Older Manual observation report</a></li></ul><p>The older report is not merged into selected-campaign totals.</p></article>
     </div>
   </section>
