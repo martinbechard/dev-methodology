@@ -1,12 +1,12 @@
 # Reconcile Objective Visualization and Repository Path-Tree Rules
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/reconcile-objective-visualization-and-path-tree-rules.md
+Provider Reference: backlog/completed-backlog/features/reconcile-objective-visualization-and-path-tree-rules.md
 
 Completion: direct-main
 
@@ -14,23 +14,23 @@ Completion: direct-main
 
 - Owner: Dev Orchestrator
 - Canonical task: 019f8b05-5912-79b2-ba63-bf7cd38e50f7
-- Artifact claim: objective-path-rules-019f817f-reconcile, pending ARTIFACT GO.
+- Artifact claim: Released; final candidate release event df12af27-39d5-46a9-80de-f697c3a191d5.
 - Branch: codex/objective-path-rules-closeout-20260722
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/d2c9/dev-methodology
-- Phase: cold-start final-review and verification recovery.
+- Phase: Completed and archived after fresh final review and focused verification.
 - Starting main: e414fa04307d086321373e6bd090ae38a2d2177b
-- Candidate: Pending; preserved evidence commit e9b31dbf961d32c1eccdc68becd5666f05497b73 is not an accepted candidate.
-- Accepted commit: Pending.
+- Candidate: 16749fdf60725ae38eb14203142cea30a0788300; preserved evidence commit e9b31dbf961d32c1eccdc68becd5666f05497b73 remains source evidence rather than an accepted candidate.
+- Accepted commit: c1384ff3950d71931b51e8544272e62db228a189, with focused test corrections through 1219af1d14871630b2b4973dc6584cb7c03e8821.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: Initial artifact claims must remain non-overlapping; shared generated and test outputs are deferred.
-- Shared-surface sequencing: Start on the eight approved canonical skill sources and unique templates and checklists; defer shared generated and test outputs until wake-up.
-- Next owner: Dev Orchestrator.
-- Delivery evidence: Pending; e9b31db evidence, exclusions, and the exact eight-path approval remain preserved below.
+- Open issues: None. The original pre-mutation approval-check output was not retained in the work item; the exact approval, scope ordering, final scope audit, generated freshness, review, and verification evidence are durable.
+- Shared-surface sequencing: Completed. Generated outputs and focused tests were integrated under separate shared claims and released.
+- Next owner: None; terminal provider record.
+- Delivery evidence: Final source candidate 16749fdf60725ae38eb14203142cea30a0788300 maps blob-for-blob across its 21 paths to integration c1384ff3950d71931b51e8544272e62db228a189. Final test corrections are present through 1219af1d14871630b2b4973dc6584cb7c03e8821, and both commits are ancestors of observed clean main 399aa9bf28babc17b5eb51df79eeae4906423835.
 
 ## Cold-Start Recovery Execution — 2026-07-22
 
@@ -39,9 +39,27 @@ Completion: direct-main
 - Recovery phase: cold-start final-review and verification recovery.
 - Prior evidence, approval boundary, candidate history, and acceptance criteria remain preserved.
 
-## Phase Evidence Update — 2026-07-22
+## Terminal Completion — 2026-07-22
 
-- Current phase: Correction attempt 1 active; acceptance remains pending.
+- Completion disposition: READY under direct-main; provider lifecycle recorded as Completed.
+- Accepted source candidate: 16749fdf60725ae38eb14203142cea30a0788300.
+- Candidate provenance: stage-one candidate 3ff6e29499671cc37cf873024a16211b26a8e716, correction 1 commit 584205ea407a9ace3b2acadf20915f59dfe92b9c, and correction 2 commit 16749fdf60725ae38eb14203142cea30a0788300.
+- Content mapping: all 21 candidate source, template, and checklist blobs at 16749fdf60725ae38eb14203142cea30a0788300 equal their integrated blobs at c1384ff3950d71931b51e8544272e62db228a189.
+- Main integration: c1384ff3950d71931b51e8544272e62db228a189, released by event e45748d8-421e-4f86-9ffc-34dcec07df35.
+- Focused test corrections: 9af14e7181d1a134148ce138962905f13fc18b3f, 1045f61137736c99c6d1b8a8b09c2026f60290ea, and 1219af1d14871630b2b4973dc6584cb7c03e8821.
+- Test-correction releases: event 2069d346-d34b-4521-a45f-6c00600792e5 through 1045f61137736c99c6d1b8a8b09c2026f60290ea and event dc33dca0-e978-411c-a4eb-7d5b37e2d566 through 1219af1d14871630b2b4973dc6584cb7c03e8821.
+- Main observation: clean main 399aa9bf28babc17b5eb51df79eeae4906423835; c1384ff3950d71931b51e8544272e62db228a189 and 1219af1d14871630b2b4973dc6584cb7c03e8821 are ancestors. Main advances after 1219af1 changed backlog records only; the reviewed product, generated, template, checklist, and test bytes remained identical.
+- Fresh independent review: PASS with no material findings. The final scope contains exactly the eight approved governed skills, 13 ordinary template/checklist companions, supported generated outputs, and focused test changes. No unapproved governed path was attributed to this item.
+- Independent focused verification: PASS on final-main-equivalent bytes. Exact eight-source validation passed; the focused objective diagram and repository path-tree unittest passed under Python 3.11; scripts/build-skill-docs.py --check passed; git diff --check passed; the final main checkout was clean.
+- Interpreter note: an initial focused-test attempt under system Python 3.9 stopped before test collection because tomllib is unavailable. The same unchanged test passed under the repository-compatible installed Python 3.11, so this was an interpreter mismatch rather than a product failure.
+- Review contract preservation: the high-level-design ordered and dependent sequence-diagram contract and the intentionally absent later-artifact reverse-engineering semantics remain intact.
+- Approval evidence: commit 8416df260fad37d56d9142aad2ede5bdca05285a durably records the user's exact eight-path approval before governed mutation. The historical command output from the pre-mutation approval check is not retained; terminal review independently confirmed the final mutation scope and found no out-of-scope governed change.
+- Completion claim: objective-path-rules-provider-closeout-019f8b05, acquired event 366b5042-b8e6-4e7d-806f-5747e5e4359c for only the active and completed provider paths.
+- Completed archive path: backlog/completed-backlog/features/reconcile-objective-visualization-and-path-tree-rules.md.
+
+## Historical Phase Evidence Update — 2026-07-22
+
+- Phase recorded at that time: Correction attempt 1 active; acceptance remained pending.
 - Stage-one candidate: 3ff6e29499671cc37cf873024a16211b26a8e716.
 - Initial implementation claim release: Event 8f32f4cd-2083-476c-a1d1-d9c9cbca2eb1.
 - Fresh review disposition: CORRECTIONS REQUIRED.
@@ -59,7 +77,7 @@ Completion: direct-main
 - Candidate: None accepted.
 - Artifact mutation: None performed.
 
-## User Action Required
+## Historical User Approval Record
 
 ### Question For The User
 
@@ -103,7 +121,7 @@ The approval covers exactly these governed paths:
 
 The approval includes regeneration only of supported mirrors plus ordinary non-governed template, checklist, and focused-regression companions. It does not authorize changes to skills/review-high-level-design/SKILL.md or changes to reverse-engineering acceptance semantics.
 
-### Unattended Work Boundary
+### Historical Unattended Work Boundary At Approval Time
 
 The item is Ready for a fresh dispatch but is not Running. No artifact claim has been acquired. Work must stay within the exact approved governed paths, supported mirrors, and ordinary non-governed companions recorded in the Resolution. Changes to skills/review-high-level-design/SKILL.md and reverse-engineering acceptance semantics remain prohibited without separate approval.
 
@@ -153,6 +171,6 @@ None.
 - Run the applicable supported generator freshness check only when an approved canonical source requires regeneration.
 - Run git diff --check and obtain independent review of the exact change.
 
-## Notes
+## Historical Notes
 
 This item authorizes analysis and ready-state dispatch. It does not itself authorize governed definition mutations.
