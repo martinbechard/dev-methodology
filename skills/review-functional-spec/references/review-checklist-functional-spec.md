@@ -45,10 +45,14 @@ Do not mark pass without quoted evidence.
 - Question: Are exact actor-visible contracts free of `...`, Unicode ellipsis, wildcards, `TBD`, catch-all wording, unnamed variants, and omitted intermediate states?
 - Question: Do Parent Workflow And Entry Points identify where the workflow starts and how users reach it?
 - Question: Does Route Or Surface List cover relevant routes, screens, commands, APIs, notifications, or external surfaces?
+- Question: When Related Code or another placement section names three or more repository paths that share a prefix, or paths spanning two or more folders, does it present their placement in one or more fenced text trees with complete repository-relative root and package segments?
+- Question: When a path tree would become large or separate workflow surfaces need different metadata, is it split into named component or ownership subsections with one small fenced text tree and adjacent metadata in each, without multiline table cells, simulated HTML breaks, repeated common-prefix lists, or one row per full path?
 - Question: Does a primary and supporting operation inventory cover every route, API, command, event, job, notification, and supporting reference-data lookup directly invoked by the workflow, with actor and authentication source; authorization, ownership, tenancy, and data filtering; selector, request, paging, and sort; response projection, disclosure, status, and error; state or side effects; and verification?
 - Question: Do Scope And Non-Goals distinguish included behavior from excluded or deferred behavior?
 - Question: Do Concepts define terms the actor must understand without drifting into module design?
 - Question: Are Workflow Steps written from the actor's point of view and do they cover main, alternate, empty, error, and recovery paths?
+- Question: Does every workflow with two or more ordered actor actions, or any branch, permission gate, alternate path, recovery path, state transition, or external handoff, include an appropriate Mermaid sequence, state, or flow diagram instead of leaving the complete workflow only in prose, a numbered list, or a table?
+- Question: Does each workflow diagram use a sequence diagram for ordered actor-system exchanges, a state diagram for named states and transitions, or a flowchart for branches, decisions, or recovery paths, while treating verification-step lists as test procedures rather than workflow-diagram triggers?
 - Question: Do States, Rules, Permissions, And Edge Cases identify status values, permission gates, validation rules, limits, and failure behavior?
 - Question: Do Verification blocks name test type, test files, scenario, steps, assertions, and current status?
 - Question: Do Related Documents link architecture, high-level design, module design, tests, and wiki pages that support the workflow?
@@ -59,4 +63,4 @@ Do not mark pass without quoted evidence.
 
 ## Findings
 
-Report findings first. Treat missing actor goal, missing entry points, missing acceptance behavior, missing state or permission coverage, unlabeled or unjustified propositions, avoidable open questions, ambiguous shorthand, downstream behavior ambiguity, unsourced workflow claims, and missing verification as review findings.
+Report findings first. Treat missing actor goal, missing entry points, missing acceptance behavior, missing state or permission coverage, unlabeled or unjustified propositions, avoidable open questions, ambiguous shorthand, downstream behavior ambiguity, unsourced workflow claims, a missing or malformed required path tree, missing complete repository-relative tree segments, unsplit large trees, tree metadata separated from its owning tree, table-cell or HTML-simulated trees, duplicated full paths or common prefixes, a qualifying workflow left only in prose, a numbered list, or a table, an inappropriate diagram type, and missing verification as review findings.

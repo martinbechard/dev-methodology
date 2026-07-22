@@ -87,21 +87,46 @@ TODO: For each material technology choice, state the boundary need, approved ver
 
 TODO: Identify stack choices that are forbidden or should not be introduced without a new architecture decision.
 
-TODO: Add a Stack Association Diagram only when stack items form runtime groups, build groups, deployment groups, or forbidden boundary groups that are easier to review visually.
+TODO: Add a Stack Association Diagram when stack items form more than one runtime, build, deployment, or forbidden-boundary group and an item relationship crosses a group boundary, or when a dependency path spans three or more stack items.
 
 TODO: The Stack Association Diagram should group technologies by architectural role, not repeat every package name.
 
 ## File Organization
 
-TODO: List the top-level folders that own source code, tests, design documents, runtime data, scripts, configuration, and generated artifacts.
+TODO: Show the repository placement of source code, tests, design documents, runtime data, scripts, configuration, and generated artifacts as one fenced text tree. Do not repeat shared prefixes in a long list or table.
 
 TODO: Describe the ownership rule for each folder.
 
+TODO: Path tree example (replace every synthetic segment and file with complete repository-relative paths, and preserve all implementation-significant package segments):
+
+```text
+project-root/
+├── backend/
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/com/example/application/
+│   │   │   └── resources/db/changelog/
+│   │   └── test/java/com/example/application/
+│   └── var/
+├── frontend/
+│   ├── src/
+│   └── test/
+├── docs/
+│   ├── architecture/
+│   ├── high-level-designs/
+│   └── module-designs/
+└── scripts/
+```
+
+TODO: If ownership, generated status, runtime mutability, or another property needs a table, key its rows by short labels from the tree and do not repeat every full path.
+
+TODO: If the full repository tree would become a large blob, split it into named subsections by runtime unit or ownership area. Put one small fenced text tree in each subsection and its metadata immediately after the tree. Do not put multiline trees in Markdown table cells or simulate them with HTML breaks. Do not create one row per full path.
+
 TODO: State where new architecture, high-level design, and module design documents belong.
 
-TODO: Add an Ownership Tree Diagram when source folders, documentation folders, generated artifacts, tests, and configuration form a meaningful containment or ownership structure.
+TODO: Treat the fenced File Organization path tree as the ownership-containment diagram when logical ownership follows folder containment. Add a Mermaid Ownership Diagram only when logical ownership crosses or differs from the folder tree; do not duplicate the same containment in both forms.
 
-TODO: The Ownership Tree Diagram should show folder ownership and documentation homes. It should not replace the source links in Related Code.
+TODO: A separate Ownership Diagram should show only the cross-folder ownership relationships that the path tree cannot express. It should not replace the source links in Related Code.
 
 ## Architectural Layers
 
@@ -128,6 +153,12 @@ TODO: The Component Association Diagram should show the structural association b
 ## Diagram Authoring Rules
 
 TODO: Keep only the diagram sections that match real structural relationships in this architecture.
+
+TODO: Whenever any section describes two or more ordered actions or phases, or any handoff, data movement, lifecycle transition, branch, retry, recovery path, startup or shutdown dependency, or dependent implementation phase, add an appropriate Mermaid sequence, state, or flow diagram. Prose, numbered lists, and tables may add constraints but must not carry the complete sequence alone.
+
+TODO: Add a structural diagram when a section defines a non-tabular topology: one system-context, scope, ownership, layer, component, dependency, principle, risk, or verification node connects to two or more others; a dependency or ownership path spans three or more nodes; a cycle exists; containment spans two or more levels; or an edge crosses a system, trust, or runtime boundary.
+
+TODO: Treat the diagram triggers attached to individual architecture sections as additive minimums under the shared development-methodology rule. Satisfying one section-specific trigger does not waive another shared trigger.
 
 TODO: Prefer Mermaid flowchart for association, aggregation, dependency, ownership, and data-flow diagrams. Prefer Mermaid sequence diagrams for ordered actor handoffs. Prefer Mermaid state diagrams for lifecycle state machines.
 
@@ -171,7 +202,7 @@ TODO: List the principles this architecture requires. Each principle should be c
 
 TODO: Explain the practical consequence of each principle.
 
-TODO: Add a Principle Traceability Diagram only when principles map to layers, components, risks, or verification checks in a way prose cannot scan easily.
+TODO: Add a Principle Traceability Diagram when one principle governs two or more layers, components, risks, or verification checks; one governed item is constrained by two or more principles; or a principle-to-verification path spans three or more nodes.
 
 TODO: The Principle Traceability Diagram should show which architectural items each principle governs.
 

@@ -81,13 +81,32 @@ TODO: Provide the intended or existing source path for the primary implementatio
 
 TODO: If the module is a folder, name the entry point and the internal files that own meaningful responsibilities.
 
+TODO: Show the module's production, test, configuration, fixture, generated, and migration placement as a fenced text tree whenever three or more paths share a prefix or span two or more folders. The tree must contain complete repository-relative folders and package segments; do not abbreviate or repeat them in a long list.
+
+TODO: Path tree example (replace every synthetic segment, package, and file with the complete module layout):
+
+```text
+backend/
+└── src/
+    ├── main/java/com/example/feature/application/
+    │   ├── FeatureService.java
+    │   └── FeatureCommandPort.java
+    └── test/java/com/example/feature/application/
+        ├── FeatureServiceTest.java
+        └── RecordingFeatureCommandPort.java
+```
+
+TODO: If a symbol or responsibility ledger is needed, key rows by the tree leaf name and do not repeat the full path in each row.
+
+TODO: If production, test, and configuration ownership need separate metadata, split them into named subsections by ownership area. Put one small fenced text tree in each subsection and its metadata immediately after the tree. Do not put multiline trees in Markdown table cells or simulate them with HTML breaks.
+
 ## Parent Context
 
 TODO: Link the parent architecture or high-level design document.
 
 TODO: State how this module contributes to that parent design.
 
-TODO: Add a compact module context diagram when direct callers, dependencies, external interfaces, or ownership boundaries are difficult to understand from prose. Omit it when the topology is simple.
+TODO: Add a compact module context diagram when one caller, dependency, external interface, or ownership-boundary node connects to two or more others, a dependency path spans three or more nodes, a cycle exists, containment spans two or more levels, or an edge crosses a trust, process, or runtime boundary. Otherwise state that the context does not meet the structural-diagram trigger.
 
 ## Responsibilities
 
@@ -193,9 +212,11 @@ TODO: When an external or asynchronous effect exists, follow the accepted effect
 
 ## Processing Diagram
 
-TODO: Add a Mermaid diagram when conditional flow, retries, error handling, or state transitions are clearer visually.
+TODO: Add a Mermaid diagram whenever Processing Rules or External And Asynchronous Effect Phases contains two or more ordered actions or phases, or any branch, retry, error path, state transition, external handoff, or asynchronous phase transition. Do not leave the complete qualifying flow only in prose, a numbered list, or a phase table.
 
-TODO: If no diagram is needed, replace this section with a sentence saying no processing diagram is required.
+TODO: Use a sequence diagram for ordered exchanges across callers, modules, executors, or providers, a state diagram for named states and transitions, and a flowchart for branches, decisions, recovery paths, or ordered phases.
+
+TODO: If no processing flow meets the objective triggers, state that only a single atomic action or one-row synchronous effect exists, or that no processing sequence exists. The atomic-action or synchronous-ledger exception applies only when there is no branch, retry, error path, state transition, external handoff, or asynchronous phase transition. Do not use this exception merely because prose or a table already describes the sequence.
 
 ```mermaid
 flowchart TD

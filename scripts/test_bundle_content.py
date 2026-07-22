@@ -2724,6 +2724,182 @@ class BundleContentTests(unittest.TestCase):
         ):
             self.assertIn(phrase, checklist_text)
 
+    def test_objective_diagram_and_repository_path_tree_contracts(self) -> None:
+        """Keep objective diagram and path-tree rules aligned across the bundle."""
+
+        def skill_text(skill_name: str) -> str:
+            return (SKILLS_ROOT / skill_name / "SKILL.md").read_text(encoding="utf-8")
+
+        def template_text(template_name: str) -> str:
+            return (
+                SKILLS_ROOT
+                / "development-methodology"
+                / "assets"
+                / "templates"
+                / template_name
+            ).read_text(encoding="utf-8")
+
+        def checklist_text(skill_name: str, checklist_name: str) -> str:
+            return (
+                SKILLS_ROOT / skill_name / "references" / checklist_name
+            ).read_text(encoding="utf-8")
+
+        development_text = skill_text("development-methodology")
+        architecture_create = skill_text("create-architecture")
+        functional_create = skill_text("create-functional-spec")
+        hld_create = skill_text("create-high-level-design")
+        module_create = skill_text("create-module-design")
+        architecture_review = skill_text("review-architecture")
+        functional_review = skill_text("review-functional-spec")
+        hld_review = skill_text("review-high-level-design")
+        module_review = skill_text("review-module-design")
+
+        templates = {
+            name: template_text(name)
+            for name in (
+                "architecture-template.md",
+                "functional-spec-template.md",
+                "high-level-design-template.md",
+                "module-design-template.md",
+                "project-template.yaml",
+                "project-wiki-template.md",
+                "unit-test-plan-template.md",
+            )
+        }
+        checklists = {
+            "architecture": checklist_text(
+                "review-architecture", "review-checklist-architecture.md"
+            ),
+            "functional-spec": checklist_text(
+                "review-functional-spec", "review-checklist-functional-spec.md"
+            ),
+            "high-level-design": checklist_text(
+                "review-high-level-design", "review-checklist-high-level-design.md"
+            ),
+            "module-design": checklist_text(
+                "review-module-design", "review-checklist-module-design.md"
+            ),
+            "project-wiki": checklist_text(
+                "project-wiki-review", "review-checklist-project-wiki.md"
+            ),
+            "unit-test-plan": checklist_text(
+                "review-unit-test-plan", "review-checklist-unit-test-plan.md"
+            ),
+        }
+
+        ordered_trigger_surfaces = (
+            development_text,
+            architecture_create,
+            functional_create,
+            module_create,
+            templates["architecture-template.md"],
+            templates["functional-spec-template.md"],
+            templates["module-design-template.md"],
+            templates["project-wiki-template.md"],
+            checklists["architecture"],
+            checklists["functional-spec"],
+            checklists["module-design"],
+            checklists["project-wiki"],
+        )
+        for text in ordered_trigger_surfaces:
+            self.assertIn("two or more ordered", text)
+            self.assertRegex(text, r"two or more ordered[^.]+, or any")
+
+        for trigger in ("handoff", "branch", "retry", "recovery path", "state transition"):
+            with self.subTest(independent_diagram_trigger=trigger):
+                self.assertIn(trigger, development_text)
+                self.assertIn(trigger, templates["project-wiki-template.md"])
+                self.assertIn(trigger, checklists["project-wiki"])
+
+        structural_surfaces = (
+            development_text,
+            architecture_create,
+            hld_create,
+            templates["architecture-template.md"],
+            templates["high-level-design-template.md"],
+            templates["module-design-template.md"],
+            templates["project-wiki-template.md"],
+            checklists["architecture"],
+            checklists["high-level-design"],
+            checklists["module-design"],
+            checklists["project-wiki"],
+        )
+        for text in structural_surfaces:
+            self.assertIn("connects to two or more", text)
+            self.assertIn("spans three or more nodes", text)
+            self.assertIn("cycle exists", text)
+            self.assertIn("containment spans two or more levels", text)
+
+        module_diagram_surfaces = (
+            module_create,
+            module_review,
+            templates["module-design-template.md"],
+            checklists["module-design"],
+        )
+        for text in module_diagram_surfaces:
+            self.assertIn("one-row synchronous effect", text)
+            self.assertIn("external handoff", text)
+            self.assertRegex(text, r"only when[^.]+no branch, retry, error path")
+
+        for text in templates.values():
+            self.assertIn("Path tree example", text)
+            self.assertIn("tree", text)
+        for phrase in (
+            "three or more repository paths",
+            "fenced text tree",
+            "complete repository-relative root segments",
+            "split it into named subsections by component or ownership area",
+            "metadata immediately after the tree",
+            "Markdown table cells",
+            "common prefix",
+            "one table row per full path",
+            "Machine-readable configuration schemas keep their required path arrays",
+        ):
+            self.assertIn(phrase, development_text)
+        self.assertIn(
+            "Keep the schema-required path arrays below machine-readable",
+            templates["project-template.yaml"],
+        )
+
+        for name, text in checklists.items():
+            with self.subTest(path_tree_checklist=name):
+                for phrase in (
+                    "three or more repository paths that share a prefix",
+                    "fenced text trees",
+                    "complete repository-relative",
+                    "named component or ownership subsections",
+                    "adjacent metadata",
+                    "multiline table cells",
+                    "simulated HTML breaks",
+                    "repeated common-prefix lists",
+                    "one row per full path",
+                    "a missing or malformed required path tree",
+                    "duplicated full paths or common prefixes",
+                ):
+                    self.assertIn(phrase, text)
+
+        for text in (
+            architecture_create,
+            functional_create,
+            hld_create,
+            module_create,
+        ):
+            self.assertIn("intentionally created later", text)
+            self.assertIn("current reverse-engineering pass", text)
+
+        self.assertIn("dependent implementation steps", hld_create)
+        self.assertIn(
+            "ordered or dependent implementation actions or verification gates",
+            templates["high-level-design-template.md"],
+        )
+        self.assertIn("ordered sequence", hld_review)
+        self.assertIn("dependent implementation steps", checklists["high-level-design"])
+        self.assertIn("missing required structural diagram", checklists["high-level-design"])
+        self.assertIn("missing required context or structural diagram", checklists["module-design"])
+        self.assertIn("missing required structural diagram", checklists["project-wiki"])
+        self.assertIn("qualifying workflow", functional_review)
+        self.assertIn("qualifying ordered or structural relationship", architecture_review)
+
     def test_hld_data_anchors_are_actionable_for_downstream_design(self) -> None:
         """Keep HLD anchors concrete, owned, and reusable by later designs."""
         template_text = (

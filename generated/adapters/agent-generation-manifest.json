@@ -42,7 +42,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/claude/agents/dev-documentation-writer.md",
-          "sha256": "04f208871bfcec5b406b899d93f2347bfa6c9a8ed09469d4b93f318c99c56b9f",
+          "sha256": "0a18b2bf20d803299c349e1296b61a6ace5465058817118067b1ccfbd77c3302",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -90,25 +90,25 @@
         {
           "name": "methodology-artifact-reviewer",
           "output": "generated/adapters/claude/agents/methodology-artifact-reviewer.md",
-          "sha256": "4fe9da102f3f550472d9ad4b8b5ae073e2e7a06e845d797ec79b3b1cbdc862d0",
+          "sha256": "547a88edc6f3b1f5c24a56c352f7543a6c50521141b3f1981b43cf861c61153c",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
           "name": "methodology-maintainer",
           "output": "generated/adapters/claude/agents/methodology-maintainer.md",
-          "sha256": "3dd72d3766d14e5729e269a929d518288f92fb99fd8c6ffe76338f67b7280f41",
+          "sha256": "ca5886dd7611a4e724a2a8ac9cc0d25369ef09426dada593d1c2dd1b37f36337",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/claude/agents/project-bootstrapper.md",
-          "sha256": "620ab4bdebf05406fe4a07b9741bf5afa41462a406c4dc615a77d2335ccc18dc",
+          "sha256": "cc59b5bfd6ab8484d88b1860b54dc25a8c8b79f7c7f0d9e681357e224177ac7e",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
           "name": "project-configurator",
           "output": "generated/adapters/claude/agents/project-configurator.md",
-          "sha256": "e962d77020a422143fd9a6269d5f8bb57167488670caffd43b1199167bef95fc",
+          "sha256": "b6d538432e9f7ec0000bff1679a0913b966a906d84d0545614d2551cd7a7300b",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -212,7 +212,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/codex/agents/dev-documentation-writer.toml",
-          "sha256": "5c338a194f77c884db6f6e89d63cbdbe09635a7968f2a3a2b48a0202a3265927",
+          "sha256": "3d233faeeb70e9dd65baa40c8bf09cc983d8ce561fd7b25ef97577f5d9e9bc2a",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -260,25 +260,25 @@
         {
           "name": "methodology-artifact-reviewer",
           "output": "generated/adapters/codex/agents/methodology-artifact-reviewer.toml",
-          "sha256": "d81a0fc5b93c7b07b7c6ea57a059e2841cd27a484739e4e909c8b3f852f8ac47",
+          "sha256": "0aa1906cd7ef09ca40f9e9d6a04b79eb7b9825e491f3fe149dae621dd577d8ad",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
           "name": "methodology-maintainer",
           "output": "generated/adapters/codex/agents/methodology-maintainer.toml",
-          "sha256": "3b5df072a4e1e4700a06c748edf581fe7192f604e538442c01a8973fbb278094",
+          "sha256": "9d218a0395afd2c943a8173f49ee4117dd1e4e2d03e54c1e5e79e68f66253826",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/codex/agents/project-bootstrapper.toml",
-          "sha256": "fe6c37420fdcb05a761eceaaa0bea8717b626c9dff177db566a5d5532d3fd16a",
+          "sha256": "4d607f109ec80fee2b1aa6c651a974a5f9551cddaf3c668dd722529ae0e7c739",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
           "name": "project-configurator",
           "output": "generated/adapters/codex/agents/project-configurator.toml",
-          "sha256": "179ef2ab70d93065900e7a204962171ce8811294f0ae4afa4b47b3979feff912",
+          "sha256": "05cfbb1e23b0cebd3a3ebdc90186372c522edc440f558800e2e2dd1ceb0f226c",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -388,7 +388,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/gemini/agents/dev-documentation-writer.md",
-          "sha256": "f49da76908c86ae60f87f97b790b4c6efb1498330ac640f7b866f1271a6ff340",
+          "sha256": "d843091186a4143c572faf93a2b314c8857292a06f0924cd3b67ba902f721beb",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -436,25 +436,25 @@
         {
           "name": "methodology-artifact-reviewer",
           "output": "generated/adapters/gemini/agents/methodology-artifact-reviewer.md",
-          "sha256": "8e3b7d7059a2c907a790e432fbf9e8711d417dae8bed5cc2ab8483fa315d8d13",
+          "sha256": "ab4aab394d0b9cf1275ec78b541d4e0f4a13a8882634c49820efbae45656a341",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
           "name": "methodology-maintainer",
           "output": "generated/adapters/gemini/agents/methodology-maintainer.md",
-          "sha256": "bf2d2451aceda4f15614373d4c9673d0555d9147101a1ff7845e880cba8ddd50",
+          "sha256": "a76132cf3c18ce27bcaed266bee09a5369f2a7d61ad4c8fdf3e0fec7a87098f4",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/gemini/agents/project-bootstrapper.md",
-          "sha256": "05be8dc89851f83e79de4d5a8d67472e613dedf0d5485c87c5a3b4cd1636afb0",
+          "sha256": "b8659e1251d54be5ef362b022788912a7cba4a618140473e0c1ad3262545f17c",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
           "name": "project-configurator",
           "output": "generated/adapters/gemini/agents/project-configurator.md",
-          "sha256": "6b5b66f8f000df4323647cd29cfb88dbf1a8847921abccc84188e70060d4f0a3",
+          "sha256": "feff7ac0095d19c295d59355ede1c0d931f15d473cb861474fc9753729fdd9ce",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -558,7 +558,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/junie/agents/dev-documentation-writer.md",
-          "sha256": "f12abce4b07fe77d0b241130b8c2ddd921b4c162bef20925ee516f596011241b",
+          "sha256": "922b1e2cd9385510a66563ed16ab5301fe40e4696032bb2221498e30befde98f",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -606,25 +606,25 @@
         {
           "name": "methodology-artifact-reviewer",
           "output": "generated/adapters/junie/agents/methodology-artifact-reviewer.md",
-          "sha256": "495c98d921f917ca7e22e3a5b3f6c2c4227252fdee6202b57615eb92139299a0",
+          "sha256": "276eb7dfec0676a44beba0e58cccd3413715142dbd1e1fb6dc8812ca07e9dbe0",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
           "name": "methodology-maintainer",
           "output": "generated/adapters/junie/agents/methodology-maintainer.md",
-          "sha256": "c750b8d44f8467bca4bf3a37da18718d08207db1ac5e367b5b0361aec7ed3e8d",
+          "sha256": "a45f0d1c793affdaeaa661157a89a3f8dad8f333a5dfb7e15ad24aa214a4a16f",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/junie/agents/project-bootstrapper.md",
-          "sha256": "f78b03b599780ae2c92b6b79f316a0041ea86d8584b99464488bbf7a1ee56b8e",
+          "sha256": "736cc1aa5c32da161f4746a1b22425f1b3f8093ffe44392c80024a92df454cd2",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
           "name": "project-configurator",
           "output": "generated/adapters/junie/agents/project-configurator.md",
-          "sha256": "ed4a9ee7547dcf12d082c59b882d7ee6574d8c71c3e0738367fe6558e21001a2",
+          "sha256": "4f2b1ca2d1db781381a0a058610643902f0f0edeb0a45859287a7efb0ac6216e",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {

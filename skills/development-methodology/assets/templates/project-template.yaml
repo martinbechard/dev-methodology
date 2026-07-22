@@ -1,3 +1,21 @@
+# Path tree example for human-readable documents produced from this configuration:
+# project-root/
+# ├── backend/
+# │   ├── src/main/
+# │   └── src/test/
+# ├── frontend/
+# │   ├── src/
+# │   └── test/
+# └── docs/
+#     ├── architecture/
+#     ├── high-level-designs/
+#     └── module-designs/
+# Keep the schema-required path arrays below machine-readable. In generated prose,
+# present repeated prefixes once as a tree. When one tree would become a large blob,
+# split the human-readable document into named subsections by ownership area, each
+# with one small fenced text tree and nearby metadata, rather than creating one row
+# per full path or embedding multiline trees in Markdown table cells.
+
 schema: project
 schema_version: 1
 

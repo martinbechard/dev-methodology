@@ -31,7 +31,7 @@ Create one functional specification that defines:
 - Scope.
 - User-facing concepts.
 - Workflows.
-- Workflow diagram when useful.
+- Workflow diagrams for every workflow with two or more ordered actor actions, or with any branch, permission gate, alternate path, recovery path, state transition, or external handoff.
 - States and rules.
 - Edge cases.
 - Verification blocks.
@@ -57,9 +57,10 @@ Documentation acceptance asks whether the specification accurately records obser
 7. Write workflow steps from the actor's point of view.
 8. Include disabled states, error states, empty states, unavailable states, confirmation behavior, redirects, persistence outcomes, and important negative behavior when source evidence supports them.
 9. When scenario-heavy behavior is involved, map actors, entry points, states, permissions, main paths, alternate paths, and recovery paths to named scenarios. Keep diagrams, prose, tables, and machine-readable contracts consistent.
-10. Record the project-owned approval or acceptance authority when one exists. Do not invent a universal approval gate.
-11. Say Not yet identified for related code, tests, backlog items, or wiki pages that do not exist yet.
-12. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
+10. Add a Mermaid workflow diagram whenever a workflow has two or more ordered actor actions, or any branch, permission gate, alternate path, recovery path, state transition, or external handoff. Use a sequence diagram for ordered actor-system exchanges, a state diagram for named states and transitions, and a flowchart for branches, decisions, or recovery paths. Prose, numbered lists, and tables may explain details but must not carry the complete workflow alone. Verification-step lists are test procedures and do not independently trigger a workflow diagram.
+11. Record the project-owned approval or acceptance authority when one exists. Do not invent a universal approval gate.
+12. Say Not yet identified for related code, tests, backlog items, or wiki pages that do not exist yet.
+13. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
 
 ## Verification
 
@@ -75,5 +76,6 @@ Before finishing:
 8. Confirm Implementation Readiness begins with READY or BLOCKED as a separate downstream decision and preserves known defects, unimplemented behavior, open decisions, and current limitations.
 9. Confirm every undefined but resolvable actor-visible detail is covered by a justified functional proposition with basis, necessity, and decision owner rather than an avoidable open question.
 10. Confirm exact actors, operation identities, inputs, states, statuses, outcomes, and acceptance scenarios contain no ellipsis, wildcard, `TBD`, catch-all wording, unnamed variant, or omitted intermediate state that would force downstream invention.
+11. Confirm every workflow with two or more ordered actor actions, or any branch, permission gate, alternate path, recovery path, state transition, or external handoff, has an appropriate Mermaid diagram and is not left only in prose, a numbered list, or a table.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.

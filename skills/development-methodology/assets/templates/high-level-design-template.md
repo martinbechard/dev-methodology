@@ -123,6 +123,28 @@ TODO: For each item, describe its responsibility and link its module design docu
 
 TODO: Identify modules that need new module design documents.
 
+TODO: Show constituent source, test, configuration, resource, migration, fixture, and generated-artifact placement as a fenced text tree whenever three or more paths share a prefix or span two or more folders. The tree owns full path spelling; do not repeat the same prefixes in a component list or placement table.
+
+TODO: Path tree example (replace every synthetic segment, package, and file with the complete planned or existing layout):
+
+```text
+backend/
+└── src/
+    ├── main/
+    │   ├── java/com/example/feature/
+    │   │   ├── api/FeatureController.java
+    │   │   ├── application/FeatureService.java
+    │   │   └── persistence/FeatureRepositoryAdapter.java
+    │   └── resources/db/changelog/feature/
+    └── test/java/com/example/feature/
+        ├── application/FeatureServiceTest.java
+        └── persistence/FeatureRepositoryAdapterTest.java
+```
+
+TODO: Put responsibilities, symbols, or verification metadata beside short tree labels when needed; do not restate full paths in every row.
+
+TODO: When a single subsystem tree would become a large blob, split it into named subsections by component or ownership area. Put one small fenced text tree in each subsection and its package or ownership metadata immediately after the tree. Do not put multiline trees in Markdown table cells or simulate them with HTML breaks; never create one row per full path.
+
 TODO: Add a Mermaid component association diagram in this section when multiple modules, tasks, services, UI components, scripts, type groups, fixtures, or integrations collaborate inside the subsystem.
 
 TODO: The component association diagram should show only constituent items from this section unless the surrounding text explicitly names a mixed relationship. Data artifacts, evidence records, tests, and lifecycle states belong in their owning sections.
@@ -133,7 +155,7 @@ TODO: Describe how the constituent components collaborate from top to bottom.
 
 TODO: Include caller and callee relationships, event flow, state flow, persistence flow, and external service boundaries.
 
-TODO: Add a Mermaid interaction diagram in this section when component collaboration, dependency direction, event flow, state flow, persistence flow, or external handoff order is clearer visually.
+TODO: Add a Mermaid interaction diagram whenever this section describes ordered component collaboration, dependency handoffs, event flow, state flow, persistence flow, or external handoffs. Do not leave the complete interaction sequence only in prose, a numbered list, or a table. For non-sequential collaboration, add a structural diagram when one node connects to two or more others, a dependency path spans three or more nodes, a cycle exists, containment spans two or more levels, or an edge crosses a subsystem, trust, or runtime boundary.
 
 TODO: Use a sequence diagram by default for ordered handoffs, request and response order, and responsibility across actors. Use a flowchart only when branches, retries, or state decisions are the main relationship.
 

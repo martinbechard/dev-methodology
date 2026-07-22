@@ -25,6 +25,24 @@ TODO: Link the implementation boundary and direct collaborators, or say Not yet 
 
 TODO: Link existing unit, integration, and end-to-end coverage, or say Not yet identified.
 
+TODO: When three or more implementation, test, fixture, snapshot, or configuration paths share a prefix or span two or more folders, show them once as a fenced text tree rather than repeating full paths in scenario lists.
+
+TODO: Path tree example (replace every synthetic segment, package, and file with complete project paths):
+
+```text
+src/
+├── main/java/com/example/feature/
+│   └── FeatureService.java
+└── test/java/com/example/feature/
+    ├── FeatureServiceTest.java
+    ├── fixtures/FeatureFixtures.java
+    └── snapshots/feature-result.json
+```
+
+TODO: Refer to tree leaves by short label in scenarios and coverage rows; do not repeat the full common prefix for every test.
+
+TODO: When test groups need different boundary or fixture metadata, split them into named subsections by test group. Put one small fenced text tree in each subsection and its metadata immediately after the tree. Do not put multiline trees in Markdown table cells or simulate them with HTML breaks.
+
 ## Related Backlog Items
 
 TODO: Link related defects, features, or test work, or say Not yet identified.

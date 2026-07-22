@@ -29,6 +29,24 @@ TODO: Link source files, routes, components, services, scripts, migrations, or c
 
 TODO: Say Not yet identified when the functional specification exists before code.
 
+TODO: When three or more related paths share a prefix, or span two or more folders, show their placement once as a fenced text tree instead of repeating full paths in bullets or table rows. Add a separate link index only when clickable source evidence is required, using short leaf labels as the visible text.
+
+TODO: When separate workflow surfaces need different metadata, split them into named subsections by surface. Put one small fenced text tree in each subsection and its metadata immediately after the tree. Do not place multiline trees in Markdown table cells or simulate them with HTML breaks. Do not create one row per full path.
+
+TODO: Path tree example (replace every synthetic segment and file with complete project paths):
+
+```text
+frontend/
+└── src/
+    ├── pages/
+    │   ├── FeatureListPage.tsx
+    │   └── FeatureDetailPage.tsx
+    └── api/
+        └── featureClient.ts
+```
+
+TODO: For a larger layout, repeat the named-subsection pattern above with another small fenced tree; keep metadata outside the tree rather than embedding the tree in a table cell.
+
 ## Related Tests
 
 TODO: Link automated tests, manual test notes, fixtures, snapshots, or generated verification artifacts.
@@ -99,9 +117,11 @@ TODO: Include expected visible results, confirmation messages, disabled states, 
 
 ## Workflow Diagram
 
-TODO: Add a Mermaid diagram when actor paths, branching states, permission gates, or external handoffs are clearer visually.
+TODO: Add a Mermaid diagram whenever a workflow contains two or more ordered actor actions, or any branch, permission gate, alternate path, recovery path, state transition, or external handoff. Do not leave the complete workflow only in prose, a numbered list, or a table.
 
-TODO: If no diagram is needed, replace this section with a sentence saying no workflow diagram is required.
+TODO: Use a sequence diagram for ordered actor-system exchanges, a state diagram for named states and transitions, and a flowchart for branches, decisions, or recovery paths. Verification-step lists are test procedures and do not independently trigger a workflow diagram.
+
+TODO: If no workflow meets the objective triggers, state that no material workflow sequence exists. Do not use this exception merely because prose, a list, or a table already describes the sequence.
 
 ```mermaid
 flowchart TD

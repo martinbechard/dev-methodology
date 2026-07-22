@@ -63,6 +63,29 @@ TODO: Confirm that the wiki lives at docs/wiki, or explain the project-specific 
 
 TODO: List the required root pages, including README, schema, topic index, glossary, open decisions, known defects, and maintenance log.
 
+TODO: Show the wiki root, hubs, leaves, digests, raw inputs, and processed-source locations as a fenced text tree whenever three or more paths share a prefix or span two or more folders. Do not repeat the docs/wiki prefix in a long list.
+
+TODO: Path tree example (replace every synthetic page and folder with the project's complete wiki layout):
+
+```text
+docs/
+└── wiki/
+    ├── README.md
+    ├── schema.md
+    ├── topics/
+    │   ├── topic-index.md
+    │   └── feature/
+    │       ├── index.md
+    │       └── behavior.md
+    ├── digests/
+    └── raw/
+        └── processed/
+```
+
+TODO: Add a short annotation or link index only for facts the tree cannot express; use leaf labels as visible text instead of repeating full paths.
+
+TODO: When topic families need different owners or maintenance rules, split them into named subsections by topic family. Put one small fenced text tree in each subsection and its metadata immediately after the tree. Do not put multiline trees in Markdown table cells or simulate them with HTML breaks.
+
 ## Authority Order
 
 TODO: List the source authority order for this project.
@@ -89,7 +112,9 @@ TODO: State that the project wiki template does not list every specialized page 
 
 ## Diagram Policy
 
-TODO: State that wiki pages may include diagrams when control flow, ownership, dependency direction, lifecycle, state transitions, or data flow is clearer visually.
+TODO: State that wiki pages must include an appropriate Mermaid diagram whenever they describe two or more ordered actions or phases, or any handoff, branch, retry, recovery path, state transition, lifecycle transition, or data movement. Prose, numbered lists, and tables may add detail but must not carry the complete sequence alone.
+
+TODO: State that wiki pages include a structural diagram when an ownership, dependency, boundary, data, or verification node connects to two or more others, a path spans three or more nodes, a cycle exists, containment spans two or more levels, or an edge crosses a system, trust, or runtime boundary.
 
 TODO: State that Mermaid is the default editable diagram source.
 

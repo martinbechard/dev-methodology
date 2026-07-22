@@ -14,6 +14,8 @@ For every question record:
 - Question: Does the plan identify the unit boundary and authoritative behavior, design, code, defect, and existing-test sources?
 - Question: Are source conflicts recorded instead of silently resolved?
 - Question: Does the plan avoid claiming exhaustive coverage when runtime or dependency behavior is unknown?
+- Question: When source, test, fixture, snapshot, or configuration placement names three or more repository paths that share a prefix, or paths spanning two or more folders, does the plan present their placement in one or more fenced text trees with complete repository-relative root and package segments?
+- Question: When a path tree would become large or separate test groups need different metadata, is it split into named component or ownership subsections with one small fenced text tree and adjacent metadata in each, without multiline table cells, simulated HTML breaks, repeated common-prefix lists, or one row per full path?
 
 ## Scenario Quality
 
@@ -30,4 +32,4 @@ For every question record:
 
 ## Findings
 
-Report findings first. Treat missing authority, vague expected results, untraceable scenarios, unjustified doubles, and material coverage gaps as findings.
+Report findings first. Treat missing authority, vague expected results, untraceable scenarios, unjustified doubles, a missing or malformed required path tree, missing complete repository-relative tree segments, unsplit large trees, tree metadata separated from its owning tree, table-cell or HTML-simulated trees, duplicated full paths or common prefixes, and material coverage gaps as findings.

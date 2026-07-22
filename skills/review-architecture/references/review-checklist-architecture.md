@@ -44,6 +44,8 @@ Do not mark pass without quoted evidence.
 - Question: Do Runtime Assumptions identify technology stack, runtime environment, deployment assumptions, and key configuration?
 - Question: Does File Organization name complete repository-relative source, test, configuration, resource, migration, generated, script, runtime-data, and documentation roots plus their ownership boundaries?
 - Question: Are architecture-owned paths and names literal and directly usable, without `...`, Unicode ellipsis, wildcards, omitted intermediate directories, abbreviated names, `TBD`, or similar placeholders?
+- Question: When File Organization names three or more repository paths that share a prefix, or paths spanning two or more folders, does it present their placement in one or more fenced text trees with complete repository-relative root and package segments?
+- Question: When a path tree would become large or separate ownership areas need different metadata, is it split into named component or ownership subsections with one small fenced text tree and adjacent metadata in each, without multiline table cells, simulated HTML breaks, repeated common-prefix lists, or one row per full path?
 - Question: Do Major Layers And Dependency Direction explain which layers may call which other layers?
 - Question: Do Major Components And Ownership identify durable components and their responsibilities?
 - Question: Does Data Flow And Lifecycle explain data movement, persistence, state transitions, startup, shutdown, and external handoffs when applicable?
@@ -51,8 +53,11 @@ Do not mark pass without quoted evidence.
 - Question: Do Design Principles And Invariants state rules that should hold across modules or subsystems?
 - Question: Do Risks And Trade-Offs describe real risks without becoming a change log?
 - Question: Does Verification link tests, validation commands, or explicit gaps for architecture-level claims?
-- Question: Do diagrams clarify actual boundaries, context, ownership, layers, component associations, data movement, lifecycle, concern ownership, or coverage?
+- Question: Whenever a section describes two or more ordered actions or phases, or any handoff, data movement, lifecycle transition, branch, retry, recovery path, startup or shutdown dependency, or dependent implementation phase, does it include an appropriate Mermaid sequence, state, or flow diagram instead of leaving the complete sequence only in prose, a numbered list, or a table?
+- Question: Whenever a section defines a non-tabular topology in which one system-context, scope, ownership, layer, component, dependency, principle, risk, or verification node connects to two or more others, a path spans three or more nodes, a cycle exists, containment spans two or more levels, or an edge crosses a system, trust, or runtime boundary, does it include a structural diagram?
+- Question: Do ordered diagrams use a sequence diagram for exchanges across actors or components, a state diagram for named states and transitions, or a flowchart for branches, recovery paths, ordered phases, and structural associations?
+- Question: Are section-specific architecture diagram triggers treated as additive minimums under the shared development-methodology rule, without using one satisfied section trigger to waive another shared trigger?
 
 ## Findings
 
-Report findings first. Treat missing boundaries, unlabeled or unjustified propositions, avoidable open questions, conflicting system frames, incomplete or placeholder paths, unstable component vocabulary, unsourced stack claims, unclear dependency direction, missing ownership, unclear data or configuration authority, unsupported cross-cutting rules, HLD coordination ambiguity, and missing verification as review findings.
+Report findings first. Treat missing boundaries, unlabeled or unjustified propositions, avoidable open questions, conflicting system frames, incomplete or placeholder paths, a missing or malformed required path tree, missing complete repository-relative tree segments, unsplit large trees, tree metadata separated from its owning tree, table-cell or HTML-simulated trees, duplicated full paths or common prefixes, unstable component vocabulary, unsourced stack claims, unclear dependency direction, missing ownership, unclear data or configuration authority, unsupported cross-cutting rules, HLD coordination ambiguity, an ordered or structural relationship left only in prose, a numbered list, or a table, an inappropriate diagram type, a waived additive diagram trigger, and missing verification as review findings.

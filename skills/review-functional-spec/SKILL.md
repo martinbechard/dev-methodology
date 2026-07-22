@@ -13,6 +13,8 @@ For planned development, review the artifact as behavior design, not only as a t
 
 Review whether the specification prevents chaos in architecture and design by giving downstream authors one coherent actor-visible contract. Avoidable open questions, ambiguous shorthand, and gaps that force separate designers to invent actors, operations, inputs, states, errors, recovery, persistence outcomes, or acceptance behavior are findings.
 
+Require an appropriate Mermaid diagram whenever a workflow contains two or more ordered actor actions, or any branch, permission gate, alternate path, recovery path, state transition, or external handoff. Prose, numbered lists, and tables may provide supporting detail but must not carry the complete qualifying workflow alone. Treat a violation as a response-adequacy finding. Verification-step lists are test procedures and do not independently trigger a workflow diagram.
+
 ## Required Inputs
 
 - The functional specification under review.
@@ -28,11 +30,11 @@ For the functional-specification current reverse-engineering pass, accepted arch
 3. Complete every applicable checklist question with status, quoted evidence, and assessment.
 4. Save the completed review checklist next to the artifact using this form: artifact-name.review-checklist-functional-spec.md.
 5. Use documentation-page-verify with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
-6. Verify functional sections against the checklist, especially actor goal, entry points, workflow steps, states, permissions, edge cases, acceptance behavior, and verification blocks. Perform operation inventory reconciliation across every primary and supporting route, API, command, event, job, notification, and reference-data lookup named by the artifact or authoritative sources.
+6. Verify functional sections against the checklist, especially actor goal, entry points, workflow steps, workflow diagrams, states, permissions, edge cases, acceptance behavior, and verification blocks. Perform operation inventory reconciliation across every primary and supporting route, API, command, event, job, notification, and reference-data lookup named by the artifact or authoritative sources.
 7. Judge documentation acceptance against source evidence, accepted design prerequisites, and current reverse-engineering pass requirements. Do not fail the artifact solely because later wiki pages are intentionally absent, or because a known defect, unimplemented behavior, open decision, or limitation is recorded accurately.
 8. Judge implementation readiness separately. A review may accept the documentation while confirming BLOCKED implementation readiness; preserve the reason for downstream reconciliation and planning.
 9. Return findings first, ordered by severity, with file paths and section names. Derive each finding or pass assessment from the completed review checklist.
 
 ## Output
 
-When problems exist, lead with review findings. When no documentation-acceptance problems are found, say the artifact passes functional specification review, state its separate implementation-readiness result, and name any remaining behavior, source, decision, or test gaps.
+When problems exist, lead with review findings. When no documentation-acceptance problems are found, say the artifact passes functional specification review, state its separate implementation-readiness result, and name any remaining behavior, source, decision, or test gaps. A qualifying workflow left only in prose, a numbered list, or a table is a finding.
