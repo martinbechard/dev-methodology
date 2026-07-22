@@ -2506,7 +2506,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         renderer = load_renderer_module()
 
         self.assertIn("Optional definition authority", renderer.render.__doc__)
-        self.assertIn("workflow_selection is required", renderer.render.__doc__)
+        self.assertIn("agent_claim_transport and workflow_selection are required", renderer.render.__doc__)
         self.assertNotIn("Optional authority and workflow", renderer.render.__doc__)
 
     def test_agents_section_reports_deterministic_legacy_selector_migrations(self) -> None:
@@ -2527,12 +2527,12 @@ class TechnologyDetectionTests(unittest.TestCase):
                     if selector == "workitem"
                     else {"commit": {"default": "direct-main"}}
                 )
-                rendered = renderer.render({
+                rendered = renderer.render(with_claim_transport({
                     "workflow_selection": {
                         selector: {"default": legacy_value},
                         **other,
                     },
-                })
+                }))
                 canonical_key = "commit" if selector == "workitem" else "persistence"
                 self.assertIn(
                     f"Normalized workflow_selection.{selector} to workflow_selection.{canonical_key}",
