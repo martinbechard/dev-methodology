@@ -646,10 +646,15 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Beacon Knowledge Base: Workflow Separation",
     ),
     "orchestrated-development-lifecycle.html": (
-        "Orchestrated Development Loop",
-        "Claims, Worktrees, And Communication",
-        "Planned Design Progression",
-        "Execution Evidence",
+        "Start With The Backlog",
+        "The File-Backed Backlog",
+        "Agents And Handoffs",
+        "Private Branches And Worktrees",
+        "Coordinating Shared Resources",
+        "Review, Verification, And Delivery",
+        "User Decisions Stop Only The Affected Item",
+        "Evidence That Proves Delivery",
+        "Design And Documentation Work Uses The Same Loop",
     ),
     "documentation-templates.html": (
         "Documentation Templates",
@@ -721,13 +726,17 @@ DOCUMENT_REQUIRED_CONTENT_LINKS = {
         "../README.md#explicit-target-deployment",
     ),
     "orchestrated-development-lifecycle.html": (
+        "../skills/create-file-work-item/SKILL.md",
+        "../skills/manage-file-work-items/SKILL.md",
         "../skills/agent-claim/SKILL.md",
-        "../skills/agent-claim-mcp/SKILL.md",
-        "../skills/agent-claim-command/SKILL.md",
-        "../skills/agent-claim-command/scripts/claim.py",
+        "../skills/complete-work-item-direct-main/SKILL.md",
+        "../skills/complete-work-item-feature-branch/SKILL.md",
+        "../skills/create-pull-request/SKILL.md",
         "../scripts/test_agent_claim.py",
         "../README.md#agent-claims-and-worktrees",
         "agent-and-skill-definitions.html#dev-activities-title",
+        "documentation-templates.html",
+        "wiki-skills-and-project-context.html",
     ),
     "documentation-templates.html": (
         "../skills/development-methodology/assets/templates/project-template.yaml",
@@ -4465,12 +4474,15 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(required_contract, coordination_text)
 
         for required_contract in (
-            "create a fresh reconciliation branch from that exact commit",
-            "Do not import unrelated ancestry merely for provenance",
+            "fresh reconciliation branch from that exact commit",
+            "do not import unrelated ancestry merely for provenance",
             "It does not audit commit history or decide whether committed paths belong to the contribution",
             "Independent review and integration own committed-content, changed-path, and provenance decisions",
-            "reset only an inactive entry whose work is preserved",
-            "Reset only through a host-supported targeted atomic operation",
+            "Reset only an inactive coordination entry whose work is preserved",
+            "A reset changes temporary registry state only",
+            "Neither bundled coordination transport exposes reset",
+            "manual registry editing is forbidden",
+            "route the operation to an administrator",
             "Registry cleanup, Git integration, and backlog closeout are distinct operations",
             "this becomes the task integration and cleanup branch",
             "older candidate branch retained only as a non-ancestral content source is handled separately",
@@ -5058,81 +5070,82 @@ class BundleContentTests(unittest.TestCase):
                 )
 
     def test_lifecycle_documents_simplified_coordination_and_delivery_sequences(self) -> None:
-        """The lifecycle should separate durable delivery evidence from temporary coordination."""
+        """The lifecycle should teach concepts progressively without runtime-specific clutter."""
         lifecycle_path = (
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
         )
         lifecycle_text = lifecycle_path.read_text(encoding="utf-8")
-        lifecycle_prose = " ".join(visible_prose_blocks(lifecycle_path))
 
-        self.assertEqual(
-            1,
-            lifecycle_text.count(">Claims, Worktrees, And Communication<"),
+        ordered_headings = (
+            "Start With The Backlog",
+            "The File-Backed Backlog",
+            "Agents And Handoffs",
+            "Private Branches And Worktrees",
+            "Coordinating Shared Resources",
+            "Review, Verification, And Delivery",
+            "User Decisions Stop Only The Affected Item",
+            "Evidence That Proves Delivery",
+            "Design And Documentation Work Uses The Same Loop",
         )
-        self.assertEqual(1, lifecycle_text.count('class="protocol-figure"'))
-        self.assertEqual(3, lifecycle_text.count('class="sequence-figure"'))
-        self.assertEqual(3, lifecycle_text.count('class="sequence-messages"'))
-        self.assertEqual(
-            3,
-            lifecycle_text.count('class="sequence-messages" role="list"'),
+        heading_positions = tuple(
+            lifecycle_text.index(f">{heading}<") for heading in ordered_headings
         )
+        self.assertEqual(tuple(sorted(heading_positions)), heading_positions)
+
+        self.assertEqual(1, lifecycle_text.count('class="lifecycle-rail"'))
+        self.assertEqual(1, lifecycle_text.count('class="status-figure"'))
+        self.assertEqual(2, lifecycle_text.count('class="sequence-figure"'))
+        self.assertEqual(1, lifecycle_text.count('class="branch-figure"'))
+        self.assertEqual(1, lifecycle_text.count('class="resource-figure"'))
+        self.assertEqual(1, lifecycle_text.count('class="evidence-table"'))
+        self.assertEqual(1, lifecycle_text.count("<table"))
         self.assertGreater(lifecycle_text.count('aria-label="sends to"'), 0)
-        self.assertGreater(lifecycle_text.count('aria-label="exchanges with"'), 0)
-        for sequence_title in (
-            "Sequence 1: one work item from Running to Done",
-            "Sequence 2: bounded claim wait and recovery",
-            "Sequence 3: queue capacity and long-running supervision",
-        ):
-            with self.subTest(sequence_title=sequence_title):
-                self.assertEqual(1, lifecycle_text.count(sequence_title))
 
-        for structural_label in (
-            "Work item",
-            "Git",
-            "Coordination registry",
-            "Codex task",
-            "Private worktree",
-            "Main integration",
-            "Backlog closeout",
-            "Exclusive resources",
-            "Claim outcomes state ownership and required action",
-        ):
-            with self.subTest(structural_label=structural_label):
-                self.assertGreaterEqual(
-                    lifecycle_text.count(f">{structural_label}<"),
-                    1,
-                )
+        paragraphs = re.findall(r"<p(?:\s[^>]*)?>(.*?)</p>", lifecycle_text, re.DOTALL)
+        paragraph_word_counts = [
+            len(re.sub(r"<[^>]+>", " ", paragraph).split())
+            for paragraph in paragraphs
+        ]
+        self.assertTrue(paragraph_word_counts)
+        self.assertLessEqual(max(paragraph_word_counts), 60)
 
         for phrase in (
-            "only durable task record",
-            "Temporary shared-mutation protection",
+            "Feature",
+            "Defect",
+            "Analysis",
+            "Investigation",
+            "User Action Required",
+            "Holding",
+            "Blocked",
+            "Completed",
+            "Awaiting Review",
+            "Archive placement is not another lifecycle status",
+            "The work item is the only durable task record",
+            "Backlog Coordinator",
+            "Backlog Steward",
+            "Work Orchestrator",
+            "Independent Reviewer",
+            "Verifier",
+            "Merge Coordinator",
+            "its own branch in its own worktree",
+            "Direct-main delivery",
+            "Pull-request delivery",
+            "temporary conflict-avoidance scratchpad",
             "not proof of review, verification, delivery, or work-item completion",
+            "one cheapest representative first",
+            "A user answer resolves the decision gate",
+            "An agent runtime session is not another evidence record",
+        ):
+            with self.subTest(lifecycle_phrase=phrase):
+                self.assertIn(phrase, lifecycle_text)
+
+        for obsolete_phrase in (
+            "Codex task",
             "One user-visible Dev Orchestrator task",
-            "do not create placeholder tasks or predecessor chains",
             "ten are Running",
-            "Do not leave a reviewed commit for a separate integration task",
-            "separate short claim",
             "SHARED_CHECKOUT_RELEASE_REQUIRED",
             "ISOLATED_CHECKOUT_SETUP_REQUIRED",
             "DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED",
-            "five, ten, fifteen, twenty, twenty-five, and thirty minutes",
-            "Dev Backlog Steward attempts any completion or status claim",
-            "direct the steward to record the truthful non-Running state",
-            "one cheapest representative first",
-            "heartbeat proves ownership only",
-            "complete accepted agent catalog once",
-            "Dev Backlog Coordinator",
-            "Dev Backlog Steward",
-            "Dev Orchestrator",
-            "Independent reviewer and Dev Verifier",
-            "Dev Verifier",
-            "Coordination registry and event journal",
-            "File-backed work item",
-        ):
-            with self.subTest(lifecycle_phrase=phrase):
-                self.assertIn(phrase, lifecycle_prose)
-
-        for obsolete_phrase in (
             "parent ledger",
             "ARTIFACT GO",
             "ARTIFACT WAIT",
@@ -5140,122 +5153,87 @@ class BundleContentTests(unittest.TestCase):
             "LIFECYCLE START",
             ".agents/runs/",
             "claim engine",
+            '>Archived</div>',
         ):
             with self.subTest(obsolete_phrase=obsolete_phrase):
-                self.assertNotIn(obsolete_phrase, lifecycle_prose)
+                self.assertNotIn(obsolete_phrase, lifecycle_text)
 
-        normal_index = lifecycle_text.index("Sequence 1: one work item from Running to Done")
-        wait_index = lifecycle_text.index("Sequence 2: bounded claim wait and recovery")
-        parallel_index = lifecycle_text.index(
-            "Sequence 3: queue capacity and long-running supervision"
-        )
-        self.assertLess(normal_index, wait_index)
-        self.assertLess(wait_index, parallel_index)
         self.assertIn("@media (prefers-reduced-motion: reduce)", lifecycle_text)
         self.assertIn("@media (prefers-color-scheme: dark)", lifecycle_text)
+        self.assertIn("overflow-x: auto", lifecycle_text)
 
     def test_lifecycle_routes_direct_main_and_pull_request_completion_paths(self) -> None:
-        """The lifecycle should keep direct-main integration with the owning orchestrator."""
+        """The lifecycle should distinguish direct-main and pull-request delivery."""
         lifecycle_path = (
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
         )
-        prose_blocks = visible_prose_blocks(lifecycle_path)
+        lifecycle_text = lifecycle_path.read_text(encoding="utf-8")
 
-        def table_row(step_prefix: str) -> tuple[int, str]:
-            matching_steps = [
-                (index, block)
-                for index, block in enumerate(prose_blocks)
-                if block.startswith(step_prefix)
-            ]
-            self.assertEqual(
-                1,
-                len(matching_steps),
-                f"Expected one lifecycle step starting with {step_prefix!r}",
-            )
-            step_index, _ = matching_steps[0]
-            return step_index, " ".join(prose_blocks[step_index:step_index + 3])
-
-        _, review_row = table_row("Independent contribution review")
-        self.assertIn("fresh read-only context", review_row)
-        self.assertIn("original executor", review_row)
-        self.assertIn("Dev Code Reviewer for source changes", review_row)
-        self.assertIn("task-selected independent artifact or domain reviewers", review_row)
-        self.assertIn("non-source", review_row)
-        self.assertIn("Every changed surface", review_row)
-
-        _, verification_row = table_row("Contribution verification")
-        self.assertIn("Dev Verifier", verification_row)
-
-        _, path_row = table_row("Delivery-path decision")
         for phrase in (
-            "direct-main delivery",
-            "same Dev Orchestrator",
-            "nested dependency inside that same canonical task",
-            "not as a separate integration task or queue",
-            "pull-request delivery",
+            "Direct-main delivery",
+            "fresh reconciliation branch from that exact commit",
+            "Apply only the accepted paths",
+            "exact shared integration paths",
+            "Pull-request delivery",
             "authorized reviewer or merge owner",
             "does not acquire a duplicate main-integration claim",
-        ):
-            with self.subTest(path_phrase=phrase):
-                self.assertIn(phrase, path_row)
-
-        integration_index, integration_row = table_row("Direct-main integration")
-        self.assertIn("Dev Orchestrator", integration_row)
-        self.assertIn("exact claim for every main path", integration_row)
-        self.assertIn("smallest project-native checks", integration_row)
-        self.assertIn("Do not leave a reviewed commit for a separate integration task", integration_row)
-
-        reconciliation_index, reconciliation_row = table_row(
-            "Multi-contribution reconciliation"
-        )
-        for phrase in (
-            "nested Dev Merge Coordinator",
-            "same work item and canonical task",
-            "fresh independent review",
-            "complete integrated result",
-            "does not create another user-visible task",
-        ):
-            with self.subTest(reconciliation_phrase=phrase):
-                self.assertIn(phrase, reconciliation_row)
-        self.assertLess(integration_index, reconciliation_index)
-
-        integrated_verification_index, integrated_verification_row = table_row("Focused verification")
-        for phrase in (
-            "Dev Verifier",
-            "proportional to the affected surface and risk",
-            "changed-module and directly related regressions",
-            "complete agent catalog runs once",
-            "not once per work item",
-        ):
-            with self.subTest(integrated_verification_phrase=phrase):
-                self.assertIn(phrase, integrated_verification_row)
-        self.assertLess(reconciliation_index, integrated_verification_index)
-
-        _, completion_row = table_row("Completion")
-        for phrase in (
+            "Conditional integration role",
+            "nested Merge Coordinator",
+            "inside the same work item",
+            "Re-review reconciled content when integration changes meaning",
             "separate short claim",
-            "Status: Completed",
-            "safely deletes the merged branch",
-            "recounts Running items",
+            "record Completed",
+            "delete the merged branch",
+            "refill queue capacity",
         ):
-            with self.subTest(completion_phrase=phrase):
-                self.assertIn(phrase, completion_row)
+            with self.subTest(delivery_phrase=phrase):
+                self.assertIn(phrase, lifecycle_text)
+
+        direct_main = lifecycle_text[
+            lifecycle_text.index(">Direct-main delivery<") :
+            lifecycle_text.index(">Pull-request delivery<")
+        ]
+        direct_main_steps = (
+            "Review and verify the private candidate",
+            "Acquire exact shared integration paths",
+            "Under that ownership, refresh current main",
+            "Apply only the accepted paths",
+        )
+        direct_main_positions = tuple(
+            direct_main.index(step) for step in direct_main_steps
+        )
+        self.assertEqual(tuple(sorted(direct_main_positions)), direct_main_positions)
+
+        self.assertIn('table class="evidence-table" aria-labelledby=', lifecycle_text)
+        self.assertIn("<caption id=", lifecycle_text)
+        self.assertEqual(3, lifecycle_text.count('<th scope="col">'))
+        self.assertGreater(lifecycle_text.count('role="img" aria-label="sends to"'), 0)
+        self.assertIn("position: static; flex-wrap: wrap", lifecycle_text)
+
+        private_index = lifecycle_text.index(">Private Branches And Worktrees<")
+        coordination_index = lifecycle_text.index(">Coordinating Shared Resources<")
+        delivery_index = lifecycle_text.index(">Review, Verification, And Delivery<")
+        self.assertLess(private_index, coordination_index)
+        self.assertLess(coordination_index, delivery_index)
 
     def test_lifecycle_documents_planned_design_progression(self) -> None:
         lifecycle_text = (
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
         ).read_text(encoding="utf-8")
 
-        self.assertEqual(1, lifecycle_text.count(">Planned Design Progression<"))
+        self.assertEqual(
+            1,
+            lifecycle_text.count(">Design And Documentation Work Uses The Same Loop<"),
+        )
         ordered_stages = (
             "Functional intent",
+            "Architecture",
             "High-level design",
             "Module design",
             "Implementation",
-            "Verification and evaluation",
         )
         planned_text = lifecycle_text[
-            lifecycle_text.index(">Planned Design Progression<") :
+            lifecycle_text.index(">Design And Documentation Work Uses The Same Loop<") :
         ]
         stage_positions = tuple(
             planned_text.index(f">{stage}<") for stage in ordered_stages
@@ -5263,26 +5241,16 @@ class BundleContentTests(unittest.TestCase):
         self.assertEqual(tuple(sorted(stage_positions)), stage_positions)
 
         for phrase in (
-            "Accepted functional specifications and architecture",
-            "create-high-level-design",
-            "review-high-level-design",
-            "create-module-design",
-            "review-module-design",
-            "technology skills already routed",
+            "Accepted functional specifications and architecture are upstream authority",
+            "Create and review high-level and module designs",
             "unresolved high-impact",
-            "blocks downstream module design",
-            "hidden reference artifacts",
-            "evaluator rubrics",
-            "do not enter production generation",
-            "project-specific reconstruction instructions",
-            "primary and supporting operation inventory",
-            "exact ordered template-heading and decision-marker gate",
-            "Documentation Acceptance section that does not begin with ACCEPTED or BLOCKED",
-            "Implementation Readiness section that does not begin with READY or BLOCKED",
-            "installed documentation path",
-            "transient assembly or control files",
-            "boundary-edge inventory",
-            "Executor acceptance precedes executor-owned work",
+            "blocks downstream work",
+            "Documentation acceptance and implementation readiness are separate decisions",
+            "hybrid-specifications-and-wiki",
+            "top-down semantic reconciliation",
+            "Documentation Templates",
+            "Wiki Skills And Project Context",
+            "Agent And Skill Catalog",
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, lifecycle_text)

@@ -6,677 +6,406 @@
   <title>Orchestrated Development Lifecycle</title>
   <style>
     :root {
-      --color-ink: #172033;
-      --color-muted: #5b6678;
-      --color-page: #f6f8fb;
-      --color-panel: #ffffff;
-      --color-line: #d9e1ea;
-      --color-orchestrator: #2563eb;
-      --color-agent: #0f766e;
-      --color-skill: #b45309;
-      --color-reference: #7c3aed;
-      --color-folder: #be123c;
-      --color-soft-blue: #e8f0ff;
-      --color-soft-green: #e4f7f4;
-      --color-soft-amber: #fff1d8;
-      --color-soft-purple: #f0e8ff;
-      --color-soft-rose: #ffe5ec;
-      --color-soft-gray: #edf1f6;
-      --color-table-head: #f9fbfe;
-      --color-code-panel: #101827;
-      --color-code-ink: #eef4ff;
-      --shadow-panel: 0 14px 32px rgba(31, 41, 55, 0.08);
-      --space-2: 0.5rem;
-      --space-3: 0.75rem;
-      --space-4: 1rem;
-      --space-5: 1.25rem;
-      --space-6: 1.5rem;
-      --space-8: 2rem;
-      --space-10: 2.5rem;
-      --radius: 0.5rem;
-      --radius-small: 0.35rem;
-      --content-max: 1220px;
-      --font-sm: 0.92rem;
-      --font-xs: 0.78rem;
+      --ink: #14213d;
+      --muted: #536176;
+      --page: #eef4f6;
+      --panel: #ffffff;
+      --line: #c8d6dd;
+      --teal: #007f7b;
+      --teal-deep: #005b59;
+      --blue: #2f5ea8;
+      --amber: #b76a00;
+      --coral: #b93f52;
+      --violet: #674ea7;
+      --green: #277257;
+      --soft-teal: #dff4f2;
+      --soft-blue: #e6eefb;
+      --soft-amber: #fff0cf;
+      --soft-coral: #fbe4e8;
+      --soft-violet: #eee9f8;
+      --soft-slate: #e9eff2;
+      --shadow: 0 18px 44px rgba(29, 55, 74, 0.09);
+      --radius: 0.75rem;
+      --content: 1180px;
+      --display: "Avenir Next Condensed", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
+      --body: "Avenir Next", Inter, ui-sans-serif, system-ui, sans-serif;
+      --utility: "SFMono-Regular", Consolas, monospace;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      color: var(--color-ink);
+      color: var(--ink);
       background:
         linear-gradient(180deg, rgba(232, 240, 255, 0.9), rgba(246, 248, 251, 0) 340px),
-        var(--color-page);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.52;
+        linear-gradient(rgba(20, 33, 61, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20, 33, 61, 0.035) 1px, transparent 1px),
+        var(--page);
+      background-size: 32px 32px;
+      font-family: var(--body);
+      line-height: 1.58;
+      overflow-x: clip;
     }
 
-    main {
-      max-width: var(--content-max);
-      margin: 0 auto;
-      padding: var(--space-10) var(--space-6);
+    a { color: var(--teal-deep); }
+    a:focus-visible, summary:focus-visible {
+      outline: 3px solid var(--amber);
+      outline-offset: 3px;
     }
-
-    h1,
-    h2,
-    h3 {
-      margin: 0;
-      line-height: 1.15;
-      letter-spacing: 0;
-    }
-
-    h1 {
-      max-width: 900px;
-      font-size: clamp(2rem, 4vw, 3.7rem);
-    }
-
-    h2 {
-      margin-bottom: var(--space-4);
-      font-size: clamp(1.35rem, 2vw, 2rem);
-    }
-
-    h3 {
-      font-size: 1rem;
-    }
-
-    p {
-      margin: 0;
-      color: var(--color-muted);
-    }
-
     code {
-      padding: 0.1rem 0.24rem;
+      padding: 0.08rem 0.28rem;
       border-radius: 0.25rem;
-      background: var(--color-soft-gray);
-      font-size: 0.9em;
+      background: var(--soft-slate);
+      font-family: var(--utility);
+      font-size: 0.88em;
     }
-
-    .document-nav {
-      display: grid;
-      gap: var(--space-3);
-      margin-bottom: var(--space-6);
-    }
-
-    .document-sequence {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-3);
-    }
-
-    .document-nav a {
-      display: inline-flex;
-      width: max-content;
-      align-items: center;
-      gap: var(--space-2);
-      padding: 0.45rem 0.75rem;
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius);
-      background: var(--color-panel);
-      color: var(--color-muted);
-      font-size: var(--font-sm);
-      font-weight: 700;
-      text-decoration: none;
-      box-shadow: var(--shadow-panel);
-      transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
-    }
-
-    .document-nav a:hover,
-    .document-nav a:focus-visible {
-      transform: translateY(-1px);
-      border-color: var(--color-orchestrator);
-      color: var(--color-ink);
-      outline: none;
-    }
-
-    .hero {
-      display: grid;
-      gap: var(--space-6);
-      margin-bottom: var(--space-8);
-    }
-
-    .lede {
-      max-width: 900px;
-      font-size: 1.08rem;
-    }
-
-    .section {
-      margin-top: var(--space-8);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: var(--space-4);
-    }
-
-    .wide-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-      gap: var(--space-4);
-    }
-
-    .panel,
-    .card {
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius);
-      background: var(--color-panel);
-      box-shadow: var(--shadow-panel);
-    }
-
-    .panel {
-      padding: var(--space-5);
-    }
-
-    .card {
-      display: grid;
-      gap: var(--space-4);
-      padding: var(--space-5);
-      border-top: 0.35rem solid var(--color-line);
-    }
-
-    .card.orchestrator {
-      border-top-color: var(--color-orchestrator);
-    }
-
-    .card.agent {
-      border-top-color: var(--color-agent);
-    }
-
-    .card.skill {
-      border-top-color: var(--color-skill);
-    }
-
-    .card.reference {
-      border-top-color: var(--color-reference);
-    }
-
-    .card.folder {
-      border-top-color: var(--color-folder);
-    }
-
-    .panel h3,
-    .card h3 {
-      margin-bottom: var(--space-2);
-    }
-
-    .panel ul,
-    .card ul {
-      margin: var(--space-3) 0 0;
-      padding-left: var(--space-5);
-      color: var(--color-muted);
-    }
-
-    .panel li,
-    .card li {
-      margin-top: 0.35rem;
-    }
-
-    .tag-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-    }
-
-    .tag {
-      display: inline-flex;
-      padding: 0.25rem 0.48rem;
-      border-radius: var(--radius-small);
-      background: var(--color-soft-gray);
-      color: var(--color-ink);
-      font-size: var(--font-xs);
-      font-weight: 650;
-    }
-
-    .tag.orchestrator {
-      background: var(--color-soft-blue);
-      color: var(--color-orchestrator);
-    }
-
-    .tag.agent {
-      background: var(--color-soft-green);
-      color: var(--color-agent);
-    }
-
-    .tag.skill {
-      background: var(--color-soft-amber);
-      color: var(--color-skill);
-    }
-
-    .tag.reference {
-      background: var(--color-soft-purple);
-      color: var(--color-reference);
-    }
-
-    .tag.folder {
-      background: var(--color-soft-rose);
-      color: var(--color-folder);
-    }
-
-    .flow {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-      gap: var(--space-3);
-      align-items: stretch;
-    }
-
-    .flow-step {
-      padding: var(--space-4);
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius);
-      background: var(--color-panel);
-      min-height: 8rem;
-    }
-
-    .flow-step strong {
-      display: block;
-      margin-bottom: var(--space-2);
-    }
-
-    .matrix {
-      overflow-x: auto;
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius);
-      background: var(--color-panel);
-      box-shadow: var(--shadow-panel);
-    }
-
-    table {
-      width: 100%;
-      min-width: 860px;
-      border-collapse: collapse;
-    }
-
-    th,
-    td {
-      padding: var(--space-4);
-      border-bottom: 1px solid var(--color-line);
-      vertical-align: top;
-      text-align: left;
-    }
-
-    th {
-      background: var(--color-table-head);
-      color: var(--color-ink);
-      font-size: var(--font-xs);
-      text-transform: uppercase;
-    }
-
-    tr:last-child td {
-      border-bottom: 0;
-    }
-
-    td {
-      color: var(--color-muted);
-      font-size: var(--font-sm);
-    }
-
-    .name {
-      color: var(--color-ink);
-      font-weight: 780;
-    }
-
-    .config-block {
-      margin: var(--space-4) 0 0;
-      padding: var(--space-4);
-      overflow-x: auto;
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius-small);
-      background: var(--color-code-panel);
-      color: var(--color-code-ink);
-      font-size: var(--font-sm);
-      line-height: 1.45;
-    }
-
-    .config-block code {
-      padding: 0;
-      background: transparent;
-      color: inherit;
-      font-size: inherit;
-    }
-
-    .note {
-      padding: var(--space-4);
-      border-left: 0.3rem solid var(--color-reference);
-      border-radius: var(--radius-small);
-      background: var(--color-soft-purple);
-      color: var(--color-ink);
-    }
-
-    .protocol-figure {
-      margin: var(--space-5) 0 0;
-    }
-
-    .protocol-chain {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
-      gap: var(--space-3);
-      align-items: center;
-      margin-top: var(--space-5);
-    }
-
-    .protocol-node {
-      min-height: 8.5rem;
-      padding: var(--space-4);
-      border: 1px solid var(--color-line);
-      border-top: 0.3rem solid var(--color-reference);
-      border-radius: var(--radius-small);
-      background: var(--color-panel);
-    }
-
-    .protocol-node.policy {
-      border-top-color: var(--color-skill);
-    }
-
-    .protocol-node.interface {
-      border-top-color: var(--color-orchestrator);
-    }
-
-    .protocol-node.state {
-      border-top-color: var(--color-reference);
-    }
-
-    .protocol-node.workspace {
-      border-top-color: var(--color-agent);
-    }
-
-    .protocol-node strong,
-    .protocol-boundary strong {
-      display: block;
-      margin-bottom: var(--space-2);
-      color: var(--color-ink);
-    }
-
-    .protocol-boundary p {
-      color: var(--color-ink);
-    }
-
-    .protocol-boundary p + p {
-      margin-top: var(--space-3);
-    }
-
-    .protocol-arrow {
-      color: var(--color-muted);
-      font-size: 1.35rem;
-      font-weight: 700;
-    }
-
-    .protocol-workspaces {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--space-3);
-      margin-top: var(--space-3);
-    }
-
-    .protocol-boundary {
-      margin-top: var(--space-4);
-      padding: var(--space-4);
-      border-left: 0.3rem solid var(--color-folder);
-      background: var(--color-soft-rose);
-      color: var(--color-ink);
-    }
-
-    .sequence-stack {
-      display: grid;
-      gap: var(--space-8);
-      margin-top: var(--space-6);
-    }
-
-    .sequence-figure {
+    h1, h2, h3, h4 {
       margin: 0;
-      padding-top: var(--space-5);
-      border-top: 1px solid var(--color-line);
+      font-family: var(--display);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
     }
-
-    .sequence-figure:first-child {
-      padding-top: 0;
-      border-top: 0;
+    h1 { max-width: 820px; font-size: clamp(2.7rem, 7vw, 5.8rem); }
+    h2 { font-size: clamp(2rem, 4vw, 3.45rem); }
+    h3 { font-size: 1.35rem; }
+    p { margin: 0; color: var(--muted); }
+    ul, ol { color: var(--muted); }
+    .site-header, main, .site-footer {
+      width: min(100% - 2rem, var(--content));
+      margin-inline: auto;
     }
-
-    .sequence-figure figcaption {
-      margin-bottom: var(--space-4);
-      color: var(--color-ink);
-      font-weight: 700;
-    }
-
-    .sequence-figure figcaption span {
-      display: block;
-      margin-top: var(--space-2);
-      color: var(--color-muted);
-      font-size: var(--font-sm);
-      font-weight: 400;
-    }
-
-    .sequence-messages {
-      display: grid;
-      gap: var(--space-2);
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      counter-reset: sequence-message;
-    }
-
-    .sequence-messages li {
-      display: grid;
-      grid-template-columns: 2rem minmax(9rem, 0.8fr) 2rem minmax(9rem, 0.8fr) minmax(15rem, 1.8fr);
-      gap: var(--space-3);
-      align-items: center;
-      padding: var(--space-3) 0;
-      border-bottom: 1px solid var(--color-line);
-      counter-increment: sequence-message;
-    }
-
-    .sequence-messages li:last-child {
-      border-bottom: 0;
-    }
-
-    .sequence-number::before {
-      content: counter(sequence-message);
-      display: inline-grid;
-      width: 1.75rem;
-      height: 1.75rem;
-      place-items: center;
-      border-radius: 50%;
-      background: var(--color-soft-blue);
-      color: var(--color-orchestrator);
-      font-size: var(--font-xs);
-      font-weight: 700;
-    }
-
-    .sequence-sender,
-    .sequence-receiver {
-      color: var(--color-ink);
-      font-size: var(--font-sm);
-      font-weight: 700;
-    }
-
-    .sequence-direction {
-      color: var(--color-orchestrator);
-      font-size: 1.25rem;
-      text-align: center;
-    }
-
-    .sequence-payload {
-      color: var(--color-muted);
-      font-size: var(--font-sm);
-    }
-
-    .sequence-payload strong {
-      color: var(--color-ink);
-    }
-
-    .source-note {
-      margin-top: var(--space-5);
-      color: var(--color-muted);
-      font-size: var(--font-sm);
-    }
-
-    .source-note a {
-      color: var(--color-orchestrator);
-      font-weight: 700;
-    }
-
-    @media (max-width: 820px) {
-      main {
-        padding: var(--space-8) var(--space-4);
-      }
-
-      table {
-        min-width: 720px;
-      }
-
-      .protocol-chain {
-        grid-template-columns: 1fr;
-      }
-
-      .protocol-arrow {
-        transform: rotate(90deg);
-        text-align: center;
-      }
-
-      .sequence-messages li {
-        grid-template-columns: 2rem minmax(0, 1fr) 2rem minmax(0, 1fr);
-      }
-
-      .sequence-payload {
-        grid-column: 2 / -1;
-      }
-    }
-
-    body {
-      display: flex;
-      min-height: 100vh;
-      flex-direction: column;
-    }
-
-    main {
-      width: 100%;
-      flex: 1 0 auto;
-    }
-
-    .site-header,
-    .site-footer {
-      width: 100%;
-      max-width: var(--content-max);
-      margin: 0 auto;
-      padding-right: var(--space-6);
-      padding-left: var(--space-6);
-    }
-
-    .site-header {
-      padding-top: var(--space-4);
-    }
-
+    .site-header { padding-top: 1.2rem; }
     .site-brand {
       display: inline-flex;
       align-items: center;
-      gap: var(--space-3);
-      color: var(--color-ink);
-      font-size: clamp(0.88rem, 1.4vw, 0.95rem);
-      font-weight: 750;
-      line-height: 1.2;
+      gap: 0.75rem;
+      color: var(--ink);
+      font-weight: 800;
       text-decoration: none;
     }
-
-    .site-logo {
+    .site-logo { width: 2.35rem; height: 2.35rem; border-radius: 0.45rem; object-fit: cover; }
+    main { padding: 2rem 0 5rem; }
+    .document-nav { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem; margin-bottom: 3rem; }
+    .document-nav a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 0.8rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.72);
+      color: var(--muted);
+      font-size: 0.86rem;
+      font-weight: 750;
+      text-decoration: none;
+    }
+    .document-sequence { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(19rem, 0.75fr);
+      gap: clamp(2rem, 6vw, 5rem);
+      align-items: end;
+      padding: clamp(2rem, 6vw, 5rem) 0 2rem;
+    }
+    .eyebrow {
+      display: inline-flex;
+      margin-bottom: 1.1rem;
+      color: var(--teal-deep);
+      font-family: var(--utility);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .hero-copy { display: grid; gap: 1.4rem; }
+    .hero-copy p { max-width: 760px; font-size: clamp(1.05rem, 2vw, 1.28rem); }
+    .hero-principle {
+      padding: 1.5rem;
+      border-left: 0.42rem solid var(--teal);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+    .hero-principle strong { display: block; margin-bottom: 0.45rem; font-family: var(--display); font-size: 1.35rem; }
+    .chapter-nav {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      display: flex;
+      gap: 0.35rem;
+      margin: 1rem 0 4rem;
+      padding: 0.55rem;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 8px 24px rgba(29,55,74,0.08);
+      backdrop-filter: blur(12px);
+    }
+    .chapter-nav a {
+      flex: 0 0 auto;
+      padding: 0.55rem 0.8rem;
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .chapter-nav a:hover { background: var(--soft-teal); color: var(--teal-deep); }
+    .section { margin-top: clamp(4rem, 10vw, 8rem); scroll-margin-top: 6rem; }
+    .section-heading {
+      display: grid;
+      grid-template-columns: 7rem minmax(0, 1fr);
+      gap: 1rem;
+      align-items: start;
+      margin-bottom: 2.2rem;
+    }
+    .chapter-number {
+      padding-top: 0.4rem;
+      color: var(--teal-deep);
+      font-family: var(--utility);
+      font-size: 0.8rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .section-heading p { max-width: 760px; margin-top: 0.75rem; font-size: 1.06rem; }
+    .lifecycle-rail {
+      margin: 1.5rem 0 0;
+      padding: 1.6rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+    .lifecycle-rail ol {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .lifecycle-rail ol::before {
+      position: absolute;
+      top: 1.05rem;
+      right: 4%;
+      left: 4%;
+      height: 0.25rem;
+      background: linear-gradient(90deg, var(--teal), var(--blue), var(--violet), var(--amber), var(--green));
+      content: "";
+    }
+    .lifecycle-rail li { position: relative; display: grid; gap: 0.7rem; text-align: center; }
+    .station {
+      position: relative;
+      z-index: 1;
+      display: grid;
       width: 2.25rem;
       height: 2.25rem;
-      border-radius: var(--radius-small, 0.35rem);
-      object-fit: cover;
-      box-shadow: 0 4px 12px rgba(31, 41, 55, 0.14);
+      margin-inline: auto;
+      place-items: center;
+      border: 0.32rem solid var(--panel);
+      border-radius: 50%;
+      background: var(--teal);
+      color: white;
+      font-family: var(--utility);
+      font-size: 0.75rem;
+      font-weight: 900;
+      box-shadow: 0 0 0 2px var(--teal);
+    }
+    .lifecycle-rail li:nth-child(2) .station { background: var(--blue); box-shadow: 0 0 0 2px var(--blue); }
+    .lifecycle-rail li:nth-child(3) .station { background: var(--violet); box-shadow: 0 0 0 2px var(--violet); }
+    .lifecycle-rail li:nth-child(4) .station { background: var(--amber); box-shadow: 0 0 0 2px var(--amber); }
+    .lifecycle-rail li:nth-child(5) .station { background: var(--green); box-shadow: 0 0 0 2px var(--green); }
+    .lifecycle-rail li:nth-child(6) .station { background: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
+    .lifecycle-rail strong { font-size: 0.86rem; }
+    .lifecycle-rail small { color: var(--muted); font-size: 0.76rem; }
+    .two-column { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.5rem 3rem; }
+    .definition-list { margin: 0; border-top: 1px solid var(--line); }
+    .definition-list > div {
+      display: grid;
+      grid-template-columns: minmax(8rem, 0.35fr) minmax(0, 1fr);
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .definition-list dt { color: var(--ink); font-weight: 850; }
+    .definition-list dd { margin: 0; color: var(--muted); }
+    .status-figure, .branch-figure, .resource-figure, .sequence-figure {
+      margin: 2rem 0 0;
+      padding: clamp(1.2rem, 3vw, 2rem);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+    figcaption { margin-bottom: 1.4rem; color: var(--ink); font-family: var(--display); font-size: 1.25rem; font-weight: 850; }
+    figcaption span { display: block; margin-top: 0.35rem; color: var(--muted); font-family: var(--body); font-size: 0.88rem; font-weight: 500; }
+    .state-map {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(5rem, 1fr));
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .state-node { padding: 0.8rem; border: 1px solid var(--line); border-radius: 0.55rem; background: var(--soft-slate); text-align: center; font-weight: 850; }
+    .state-node.active { background: var(--soft-teal); color: var(--teal-deep); }
+    .state-node.pause { background: var(--soft-amber); color: #754300; }
+    .state-node.stop { background: var(--soft-coral); color: #7d2433; }
+    .state-arrow { color: var(--teal-deep); font-size: 1.35rem; font-weight: 900; text-align: center; }
+    .state-branches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem; }
+    .state-branches div { padding: 1rem; border-top: 0.28rem solid var(--amber); background: var(--soft-amber); }
+    .state-branches div:nth-child(2) { border-color: var(--coral); background: var(--soft-coral); }
+    .state-branches div:nth-child(3) { border-color: var(--violet); background: var(--soft-violet); }
+    .state-branches strong { display: block; margin-bottom: 0.3rem; }
+    .folder-tree {
+      margin: 0;
+      padding: 1.3rem;
+      overflow-x: auto;
+      border-radius: var(--radius);
+      background: #14213d;
+      color: #ecf5f6;
+      font-family: var(--utility);
+      font-size: 0.85rem;
+      line-height: 1.75;
+    }
+    .anatomy { display: grid; gap: 0; border-top: 1px solid var(--line); }
+    .anatomy div { display: grid; grid-template-columns: 2rem 11rem minmax(0, 1fr); gap: 0.8rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+    .anatomy b:first-child { color: var(--teal-deep); font-family: var(--utility); }
+    .role-score { border-top: 1px solid var(--line); }
+    .role-row {
+      display: grid;
+      grid-template-columns: 11rem 1.2rem 12rem minmax(0, 1fr);
+      gap: 1rem;
+      align-items: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .role-row .from, .role-row .to { color: var(--ink); font-weight: 850; }
+    .role-row .arrow { color: var(--teal); font-size: 1.3rem; font-weight: 900; }
+    .role-row p { font-size: 0.93rem; }
+    .optional-role { margin-top: 1rem; padding: 1rem 1.2rem; border-left: 0.3rem solid var(--violet); background: var(--soft-violet); }
+    .branch-map { position: relative; display: grid; grid-template-columns: 11rem minmax(0,1fr); gap: 0.8rem 1.2rem; align-items: center; }
+    .branch-map::before { position: absolute; top: 1rem; bottom: 1rem; left: 11.6rem; width: 0.22rem; background: var(--ink); content: ""; }
+    .branch-label { padding: 0.7rem; border-radius: 0.4rem; background: var(--ink); color: white; font-family: var(--utility); font-size: 0.78rem; font-weight: 800; text-align: center; }
+    .branch-line { position: relative; margin-left: 1rem; padding: 0.85rem 1rem 0.85rem 2.5rem; border-radius: 0.45rem; background: var(--soft-blue); }
+    .branch-line::before { position: absolute; top: 50%; left: -1.25rem; width: 2.5rem; height: 0.2rem; background: var(--blue); content: ""; }
+    .branch-line strong { display: block; color: var(--blue); }
+    .delivery-paths { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 2rem; }
+    .delivery-path { padding-top: 1.2rem; border-top: 0.35rem solid var(--teal); }
+    .delivery-path:last-child { border-color: var(--violet); }
+    .delivery-path ol { padding-left: 1.25rem; }
+    .delivery-path li + li { margin-top: 0.45rem; }
+    .resource-lanes { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center; }
+    .private-lanes { display: grid; gap: 0.65rem; }
+    .private-lane { padding: 0.75rem 1rem; border-left: 0.3rem solid var(--blue); background: var(--soft-blue); }
+    .gate { display: grid; width: 7rem; height: 7rem; place-items: center; border: 0.45rem solid var(--amber); border-radius: 50%; background: var(--soft-amber); color: #754300; font-family: var(--display); font-weight: 900; text-align: center; }
+    .shared-targets { display: grid; gap: 0.65rem; }
+    .shared-targets span { padding: 0.75rem 1rem; border: 1px solid var(--line); background: var(--panel); font-weight: 800; }
+    .resource-examples { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.2rem; }
+    .resource-examples span { padding: 0.35rem 0.65rem; border-radius: 999px; background: var(--soft-amber); color: #754300; font-family: var(--utility); font-size: 0.78rem; font-weight: 800; }
+    .sequence-list { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+    .sequence-list li { display: grid; grid-template-columns: 2.2rem 10rem 1.4rem 11rem minmax(0, 1fr); gap: 0.8rem; align-items: center; padding: 0.9rem 0; border-bottom: 1px solid var(--line); }
+    .sequence-list li:last-child { border-bottom: 0; }
+    .sequence-list .number { display: grid; width: 1.85rem; height: 1.85rem; place-items: center; border-radius: 50%; background: var(--teal); color: white; font-family: var(--utility); font-size: 0.75rem; font-weight: 900; }
+    .sequence-list .actor { color: var(--ink); font-size: 0.88rem; font-weight: 850; }
+    .sequence-list .direction { color: var(--teal); font-size: 1.2rem; font-weight: 900; text-align: center; }
+    .sequence-list p { font-size: 0.9rem; }
+    .decision-band { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 2rem; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+    .decision-band div { padding: 1.2rem; background: var(--panel); }
+    .decision-band div + div { border-left: 1px solid var(--line); }
+    .decision-band strong { display: block; margin-bottom: 0.35rem; color: var(--ink); }
+    .evidence-table { width: 100%; border-collapse: collapse; background: var(--panel); box-shadow: var(--shadow); }
+    .evidence-table caption { padding: 0 0 0.75rem; color: var(--ink); font-family: var(--display); font-size: 1.15rem; font-weight: 850; text-align: left; }
+    .evidence-table th, .evidence-table td { padding: 1rem; border: 1px solid var(--line); vertical-align: top; text-align: left; }
+    .evidence-table th { background: var(--ink); color: white; font-family: var(--utility); font-size: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase; }
+    .evidence-table td { color: var(--muted); }
+    .not-a-record { margin-top: 1.2rem; padding: 1rem 1.2rem; border-left: 0.35rem solid var(--coral); background: var(--soft-coral); color: #702331; }
+    .design-progression { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; margin-top: 2rem; }
+    .design-stage { position: relative; padding: 1rem; border-top: 0.3rem solid var(--teal); background: var(--panel); }
+    .design-stage:nth-child(2) { border-color: var(--blue); }
+    .design-stage:nth-child(3) { border-color: var(--violet); }
+    .design-stage:nth-child(4) { border-color: var(--amber); }
+    .design-stage:nth-child(5) { border-color: var(--green); }
+    .design-stage strong { display: block; margin-bottom: 0.35rem; }
+    details { margin-top: 1.2rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    summary { padding: 1rem 0; color: var(--ink); font-weight: 850; cursor: pointer; }
+    details > div { padding: 0 0 1.2rem; }
+    .source-note { margin-top: 1.5rem; font-size: 0.86rem; }
+    .site-footer { padding-bottom: 2rem; }
+    .site-footer p { padding-top: 1rem; border-top: 1px solid var(--line); font-size: 0.78rem; }
+
+    @media (max-width: 860px) {
+      .hero, .two-column { grid-template-columns: 1fr; }
+      .section-heading { grid-template-columns: 1fr; }
+      .lifecycle-rail ol { grid-template-columns: repeat(3, 1fr); gap: 1.5rem 0.8rem; }
+      .lifecycle-rail ol::before { display: none; }
+      .state-map { grid-template-columns: 1fr; }
+      .state-arrow { transform: rotate(90deg); }
+      .state-branches, .delivery-paths, .design-progression { grid-template-columns: 1fr; }
+      .role-row { grid-template-columns: 1fr 1.2rem 1fr; }
+      .role-row p { grid-column: 1 / -1; }
+      .sequence-list li { grid-template-columns: 2rem 1fr 1.2rem 1fr; }
+      .sequence-list p { grid-column: 2 / -1; }
+      .decision-band { grid-template-columns: repeat(2, 1fr); }
+      .decision-band div:nth-child(3) { border-left: 0; border-top: 1px solid var(--line); }
+      .decision-band div:nth-child(4) { border-top: 1px solid var(--line); }
+      .evidence-table { table-layout: fixed; }
+      .evidence-table th, .evidence-table td { overflow-wrap: anywhere; }
     }
 
-    .site-footer {
-      flex: 0 0 auto;
-      padding-bottom: var(--space-6);
-    }
-
-    .site-footer p {
-      padding-top: var(--space-4);
-      border-top: 1px solid var(--color-line);
-      color: var(--color-muted);
-      font-size: var(--font-xs);
-    }
-
-    .site-footer a {
-      color: inherit;
-      font-weight: 700;
-    }
-
-    @media (max-width: 680px) {
-      .site-header,
-      .site-footer {
-        padding-right: var(--space-4);
-        padding-left: var(--space-4);
-      }
-
-      .protocol-workspaces {
-        grid-template-columns: 1fr;
-      }
-
-      .sequence-messages li {
-        grid-template-columns: 1.75rem minmax(0, 1fr);
-        gap: var(--space-2) var(--space-3);
-      }
-
-      .sequence-number {
-        grid-row: 1 / span 3;
-      }
-
-      .sequence-sender,
-      .sequence-direction,
-      .sequence-receiver,
-      .sequence-payload {
-        grid-column: 2;
-      }
-
-      .sequence-direction {
-        text-align: left;
-      }
+    @media (max-width: 560px) {
+      html { scroll-behavior: auto; }
+      .hero { padding-top: 2rem; }
+      .chapter-nav { position: static; flex-wrap: wrap; border-radius: 0.7rem; }
+      .lifecycle-rail ol { grid-template-columns: repeat(2, 1fr); }
+      .definition-list > div, .anatomy div { grid-template-columns: 1fr; gap: 0.25rem; }
+      .role-row { grid-template-columns: 1fr; gap: 0.3rem; }
+      .role-row .arrow { transform: rotate(90deg); }
+      .branch-map { grid-template-columns: 4.5rem minmax(0, 1fr); }
+      .branch-map::before { left: 5.1rem; }
+      .branch-line { padding-left: 1.7rem; }
+      .resource-lanes { grid-template-columns: 1fr; }
+      .gate { margin-inline: auto; }
+      .sequence-list li { grid-template-columns: 2rem 1fr; }
+      .sequence-list .number { grid-row: 1 / span 4; }
+      .sequence-list .actor, .sequence-list .direction, .sequence-list p { grid-column: 2; }
+      .sequence-list .direction { text-align: left; transform: rotate(90deg); transform-origin: left center; }
+      .decision-band { grid-template-columns: 1fr; }
+      .decision-band div + div { border-top: 1px solid var(--line); border-left: 0; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .document-nav a {
-        transition: none;
-      }
-
-      .document-nav a:hover,
-      .document-nav a:focus-visible {
-        transform: none;
-      }
+      html { scroll-behavior: auto; }
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --color-ink: #eef4ff;
-        --color-muted: #c3ccda;
-        --color-page: #0f1728;
-        --color-panel: #172237;
-        --color-line: #46536a;
-        --color-orchestrator: #91b9ff;
-        --color-agent: #78ddd2;
-        --color-skill: #f7c47d;
-        --color-reference: #cab2ff;
-        --color-folder: #ff9bb4;
-        --color-soft-blue: #203b64;
-        --color-soft-green: #1b4542;
-        --color-soft-amber: #4b381d;
-        --color-soft-purple: #392a57;
-        --color-soft-rose: #512636;
-        --color-soft-gray: #29354a;
-        --color-table-head: #202c42;
-        --color-code-panel: #0a1120;
-        --color-code-ink: #eef4ff;
-        --shadow-panel: 0 14px 32px rgba(0, 0, 0, 0.32);
+        --ink: #edf5ff;
+        --muted: #bac8d8;
+        --page: #0d1727;
+        --panel: #15243a;
+        --line: #40526a;
+        --teal: #52c7c0;
+        --teal-deep: #83e0da;
+        --blue: #91b5f2;
+        --amber: #f3bc67;
+        --coral: #ff9cac;
+        --violet: #c1a8ff;
+        --green: #7fd7ae;
+        --soft-teal: #173f43;
+        --soft-blue: #203756;
+        --soft-amber: #4a3518;
+        --soft-coral: #49242e;
+        --soft-violet: #342b51;
+        --soft-slate: #25364b;
+        --shadow: 0 18px 44px rgba(0,0,0,0.25);
       }
-
-      body {
-        background:
-          linear-gradient(180deg, rgba(32, 59, 100, 0.72), rgba(15, 23, 40, 0) 340px),
-          var(--color-page);
-      }
+      body { background-color: var(--page); }
+      .chapter-nav, .document-nav a { background: rgba(21,36,58,0.92); }
+      .folder-tree, .evidence-table th { background: #08111f; }
+      .not-a-record { color: #ffc8d1; }
+      .gate, .resource-examples span { color: #ffe1a5; }
     }
   </style>
 </head>
@@ -696,313 +425,244 @@
     </div>
   </nav>
 
-  <section class="hero" aria-labelledby="page-title">
-    <h1 id="page-title">Orchestrated Development Lifecycle</h1>
-    <p class="lede">
-      This page describes the steady-state workflow for coordinating file-backed development work. One durable work item maps to one Dev Orchestrator task, private work proceeds without shared-file ownership, integration and backlog updates use short exact claims, and the parent keeps the Running queue full without creating wait-only tasks or a second task registry. The same lifecycle also connects project bootstrap, planned design, source-backed documentation, implementation, review, verification, and completion.
-    </p>
-  </section>
-
-  <section class="section" aria-labelledby="orchestration-title">
-    <h2 id="orchestration-title">Orchestrated Development Loop</h2>
-    <div class="matrix">
-      <table>
-        <thead>
-          <tr>
-            <th>Step</th>
-            <th>Owner</th>
-            <th>Transition or gate</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="name">Bootstrap, when requested</span></td>
-            <td>Project Bootstrapper</td>
-            <td>Reuse a valid project-root PROJECT.yaml. When it is absent, stale, or explicitly selected for reconfiguration, Project Configurator must create and validate it before documentation work begins. The persisted <code>hybrid-specifications-and-wiki</code> mode keeps structured specifications authoritative and routes README/wiki navigation and synthesis without relying on conversational state. Whole-project reverse engineering reconciles the exact path inventory, reviews every meaningful module, groups the complete set into reviewed high-level designs, derives reviewed architecture and functional specifications, and verifies README/wiki navigation. Each artifact is judged against source evidence, accepted prerequisites, and its current-pass requirements; documentation acceptance is separate from implementation readiness, so an accurate artifact can pass while a documented limitation blocks affected downstream work. After every bottom-up level exists, a supplemental top-down semantic reconciliation checks wiki and functional specifications through architecture, high-level designs, module designs, and source. Corrections belong to the lowest non-conforming documentation layer, propagate upward, and receive fresh review. The reconciliation supplements the bottom-up stop gates and completes reverse engineering without reversing the authoring order.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Intake</span></td>
-            <td>Dev Backlog Coordinator, Dev Backlog Steward, and Dev Orchestrator</td>
-            <td>Dev Backlog Coordinator counts file-backed <code>Running</code> items and dispatches eligible <code>Ready</code> work until ten are Running or no eligible item remains. Dev Backlog Steward uses a short backlog-only transaction to record the canonical task id, branch, worktree, and initial phase. One user-visible Dev Orchestrator task then owns the item through delivery or a truthful terminal outcome.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Private delivery</span></td>
-            <td>Dev Orchestrator and selected implementation or writing agents</td>
-            <td>Implementation, correction, read-only review, and focused local tests occur on the task-owned private branch and worktree. They need no project-file claim when they cannot mutate shared state. A claim is required only for main integration, backlog mutation, generated shared output, or a named exclusive resource such as a browser, port, database, or live test facility.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Placement, when needed</span></td>
-            <td>Project Organiser</td>
-            <td>A new artifact proceeds only after its repository path is approved.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Execution</span></td>
-            <td>Selected implementation or writing agent</td>
-            <td>The selected agent implements one bounded responsibility and returns a committed, clean handoff before independent review. The <a href="agent-and-skill-definitions.html">generated catalog</a> owns each conceptual agent definition's detailed inputs, skills, and output contract.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Independent contribution review</span></td>
-            <td>Dev Code Reviewer for source changes; task-selected independent artifact or domain reviewers for setup, documentation, and wiki changes</td>
-            <td>Every changed surface goes to its appropriate reviewer in a fresh read-only context. Source changes go to Dev Code Reviewer; non-source setup, documentation, and wiki artifacts go to their task-selected independent artifact or domain reviewers. A reviewer accepts the contribution or returns correctable findings to the original executor. A correction re-enters fresh review within the bounded correction loop; after all applicable contribution-review gates pass, the accepted lane advances to Dev Verifier.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Contribution verification</span></td>
-            <td>Dev Verifier</td>
-            <td>The acceptance checks required by the behavior and risk must pass without weakened gates. A failed behavior check returns to the original executor; an accepted lane advances to the path decision.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Delivery-path decision</span></td>
-            <td>Dev Orchestrator</td>
-            <td>For direct-main delivery, the same Dev Orchestrator that knows the accepted commit and affected paths owns integration and focused post-integration verification. A work item with several accepted committed contributions or an integration conflict uses Dev Merge Coordinator as a nested dependency inside that same canonical task, not as a separate integration task or queue. For pull-request delivery, the authorized reviewer or merge owner performs the merge and the Dev Orchestrator does not acquire a duplicate main-integration claim.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Direct-main integration</span></td>
-            <td>Dev Orchestrator</td>
-            <td>Acquire one exact claim for every main path the integration may modify, the target integration resource, and only the shared test resources needed for focused verification. Under that ownership, refresh current main and create a fresh reconciliation branch from that exact commit; this becomes the task integration and cleanup branch. Apply only accepted file content or explicitly selected in-scope commits, record prior candidate identifiers and paths durably as source provenance, integrate the bounded result, run focused checks, and release from clean main. Do not import unrelated ancestry merely for provenance or leave a reviewed commit for a separate integration task.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Multi-contribution reconciliation, when required</span></td>
-            <td>Dev Orchestrator and nested Dev Merge Coordinator</td>
-            <td>Within the same work item and canonical task, combine the accepted commits in dependency order, preserve each contribution's provenance, and resolve integration-only conflicts. Then send every changed surface through the applicable fresh independent review before Dev Verifier checks the complete integrated result. This conditional dependency does not create another user-visible task, queue, ledger, or ownership chain.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Focused verification</span></td>
-            <td>Dev Orchestrator and Dev Verifier</td>
-            <td>Per-item verification is proportional to the affected surface and risk. Start with changed-module and directly related regressions; add freshness, shared-resource, or integration checks only when those surfaces require them. Expand after a focused failure or evidence-backed cross-cutting risk. The complete agent catalog runs once against the final integrated campaign state, not once per work item.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Correction or blocker</span></td>
-            <td>Original executor and Dev Orchestrator</td>
-            <td>Findings return to the original executor and corrected work re-enters fresh review and focused verification. Expensive failures are classified from retained evidence before another live or broad run. After two failed correction attempts for the same criterion, a repeated failure signature, or an unavailable fixed dependency, Dev Orchestrator records the preserved commit and exact blocker instead of substituting self-review or another blind retry.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Completion and cleanup</span></td>
-            <td>Dev Orchestrator, Dev Backlog Steward, and Dev Backlog Coordinator</td>
-            <td>After integration ownership is released, use a separate short claim for exactly the active work-item path and completed destination. Record delivery evidence, set <code>Status: Completed</code>, archive the item, commit, and release. The parent verifies that the fresh task integration branch is fully merged, removes its clean worktree, safely deletes that merged branch, prunes metadata, sets <code>Done — item</code>, archives the task, recounts Running items, and fills the vacancy. Any older candidate branch retained only as a non-ancestral content source is handled separately under repository cleanup policy after its durable mapping and lack of unique work are confirmed.</td>
-          </tr>
-        </tbody>
-      </table>
+  <section class="hero">
+    <div class="hero-copy">
+      <div>
+        <span class="eyebrow">A practical operating model for many agents and one codebase</span>
+        <h1>Orchestrated Development Lifecycle</h1>
+      </div>
+      <p>Work moves through one visible queue, one private delivery lane per item, and short coordination gates only when agents must touch the same shared object. The process keeps decisions, implementation, review, integration, and completion understandable without tying the method to one agent runtime.</p>
     </div>
+    <aside class="hero-principle" aria-label="Core lifecycle principle">
+      <strong>One work item is the thread of continuity.</strong>
+      <p>Its status, decisions, owner, accepted change, verification, and delivery evidence travel together from intake to completion.</p>
+    </aside>
   </section>
 
-  <section class="section" aria-labelledby="claims-communication-title">
-    <h2 id="claims-communication-title">Claims, Worktrees, And Communication</h2>
-    <p class="lede">The durable work item, Git history, coordination registry, and Codex task each answer a different question. Keeping those responsibilities separate removes the need for baton ledgers, waiting-task registries, and separate integration queues.</p>
+  <figure class="lifecycle-rail" aria-labelledby="rail-title">
+    <figcaption id="rail-title">The lifecycle at a glance<span>Read left to right. Pauses and user decisions branch from the same item rather than creating shadow queues.</span></figcaption>
+    <ol>
+      <li><span class="station">01</span><strong>Capture</strong><small>Define the work</small></li>
+      <li><span class="station">02</span><strong>Select</strong><small>Choose eligible work</small></li>
+      <li><span class="station">03</span><strong>Work privately</strong><small>Branch and worktree</small></li>
+      <li><span class="station">04</span><strong>Review</strong><small>Independent evidence</small></li>
+      <li><span class="station">05</span><strong>Deliver</strong><small>Main or pull request</small></li>
+      <li><span class="station">06</span><strong>Close</strong><small>Archive and clean up</small></li>
+    </ol>
+  </figure>
 
-    <figure class="protocol-figure" aria-labelledby="ownership-topology-title">
-      <figcaption id="ownership-topology-title" class="name">Four records with four responsibilities</figcaption>
-      <div class="protocol-chain">
-        <div class="protocol-node policy">
-          <strong>Work item</strong>
-          <p>The only durable task record: lifecycle state, canonical task id, branch, worktree, phase, accepted commit, waits, open issues, and delivery evidence.</p>
-        </div>
-        <span class="protocol-arrow" aria-hidden="true">&rarr;</span>
-        <div class="protocol-node interface">
-          <strong>Git</strong>
-          <p>Branches, commits, integration, reachability, content-equivalence evidence, clean status, and branch-cleanup eligibility.</p>
-        </div>
-        <span class="protocol-arrow" aria-hidden="true">&rarr;</span>
-        <div class="protocol-node state">
-          <strong>Coordination registry</strong>
-          <p>Temporary shared-mutation protection for exact files and exclusive resources. It prevents concurrent conflicts; it is not proof of review, verification, delivery, or work-item completion.</p>
-        </div>
-        <span class="protocol-arrow" aria-hidden="true">&rarr;</span>
-        <div class="protocol-node workspace">
-          <strong>Codex task</strong>
-          <p>Execution and display state. A title, message, stopped state, or archive state does not replace work-item or Git evidence.</p>
-        </div>
+  <nav class="chapter-nav" aria-label="Lifecycle chapters">
+    <a href="#backlog">Backlog</a>
+    <a href="#file-provider">Files</a>
+    <a href="#agents">Agents</a>
+    <a href="#private-work">Branches</a>
+    <a href="#coordination">Shared resources</a>
+    <a href="#delivery">Delivery</a>
+    <a href="#decisions">User decisions</a>
+    <a href="#evidence">Evidence</a>
+    <a href="#design-work">Design work</a>
+  </nav>
+
+  <section class="section" id="backlog" aria-labelledby="backlog-title">
+    <div class="section-heading">
+      <span class="chapter-number">Chapter 01</span>
+      <div><h2 id="backlog-title">Start With The Backlog</h2><p>The backlog separates what the work is from where it happens. A work item is classified by outcome, then moved through a small set of explicit states.</p></div>
+    </div>
+    <div class="two-column">
+      <div>
+        <h3>Work-item types</h3>
+        <dl class="definition-list">
+          <div><dt>Feature</dt><dd>Add or expand a capability.</dd></div>
+          <div><dt>Defect</dt><dd>Correct broken or regressed behavior.</dd></div>
+          <div><dt>Analysis</dt><dd>Produce an evidence-backed answer or recommendation.</dd></div>
+          <div><dt>Investigation</dt><dd>Trace an unclear failure or risk until the next action is known.</dd></div>
+        </dl>
       </div>
-
-      <div class="protocol-workspaces">
-        <div class="protocol-node workspace">
-          <strong>Private worktree</strong>
-          <p>Implementation, correction, review, and focused local tests need no project-file claim when they cannot affect shared state.</p>
-        </div>
-        <div class="protocol-node workspace">
-          <strong>Main integration</strong>
-          <p>Claim the exact main paths that may change and only the shared test resources required for focused verification. Release after clean integrated evidence.</p>
-        </div>
-        <div class="protocol-node workspace">
-          <strong>Backlog closeout</strong>
-          <p>After integration release, claim only the active work-item path and completed destination, commit the terminal transition, and release immediately.</p>
-        </div>
-        <div class="protocol-node workspace">
-          <strong>Exclusive resources</strong>
-          <p>Claim a browser, port, database, generator output, or live-test facility only when equivalent work cannot safely run concurrently. A resource-only task should not occupy main integration unnecessarily.</p>
-        </div>
+      <div>
+        <h3>What makes an item runnable</h3>
+        <dl class="definition-list">
+          <div><dt>Clear outcome</dt><dd>Requirements and acceptance criteria are observable.</dd></div>
+          <div><dt>Known authority</dt><dd>Approvals and user-owned decisions are recorded.</dd></div>
+          <div><dt>Dependencies</dt><dd>Required predecessors are complete or explicitly absent.</dd></div>
+          <div><dt>Verification</dt><dd>The item says how completion will be demonstrated.</dd></div>
+        </dl>
       </div>
-
-      <div class="protocol-boundary">
-        <strong>Claim outcomes state ownership and required action</strong>
-        <p><code>SHARED_CHECKOUT_ACQUIRED</code>, <code>ISOLATED_CHECKOUT_ACQUIRED</code>, and <code>DIRTY_CHECKOUT_RECOVERY_ACQUIRED</code> mean ownership was acquired and identify where or how the work is protected. <code>CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED</code>, <code>SHARED_CHECKOUT_REQUIRED</code>, <code>SHARED_CHECKOUT_RELEASE_REQUIRED</code>, <code>ISOLATED_CHECKOUT_SETUP_REQUIRED</code>, and <code>DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED</code> mean ownership was not acquired and name the next coordination action. These outcomes describe coordination state, not work-item priority or delivery verdicts.</p>
-        <p>Result schema version 2 carries the canonical outcome and a legacy alias for each renamed state. Schema-version-1 journal events remain append-only with their original strings. Report readers normalize unambiguous aliases while retaining raw outcome counts as provenance; a historical PRIMARY_REQUIRED event without explicit shared-checkout context remains raw and produces a normalization gap.</p>
-        <p>The portable <a href="../skills/agent-claim/SKILL.md">agent-claim skill</a> defines transport-neutral acquisition, extension, heartbeat, contention, recovery, release, and cleanup semantics. Project Configurator verifies and renders exactly one <a href="../skills/agent-claim-mcp/SKILL.md">MCP adapter</a> or <a href="../skills/agent-claim-command/SKILL.md">command adapter</a>; runtime agents invoke that surface directly without probing or fallback. The <a href="../skills/agent-claim-command/scripts/claim.py">portable command implementation</a> is owned by the command adapter. Both adapters preserve the same structured outcomes, valid rejections, and same-transport ambiguous-dispatch reconciliation. Release checks live worktree and index state, then relinquishes recorded ownership and resources after the caller has stopped or handed off their actual use. It does not audit commit history or decide whether committed paths belong to the contribution. Independent review and integration own committed-content, changed-path, and provenance decisions. Before an administrative reset, inspect the task, processes, claimed worktrees, Git cleanliness, preserved commits, shared-resource use, registry peers, and journal. Retain a readable snapshot or journal reference and reset only an inactive entry whose work is preserved. Never remove protection for an active owner, dirty unpreserved worktree, or live shared resource. Reset only through a host-supported targeted atomic operation that locks and revalidates the registry and journals the outcome; if none exists, stop rather than editing the registry file manually.</p>
-        <p>Registry cleanup, Git integration, and backlog closeout are distinct operations. A reset changes only temporary coordination state; it does not rewrite Git, manufacture a release, or prove review, verification, delivery, or completion.</p>
+    </div>
+    <figure class="status-figure" aria-labelledby="status-title">
+      <figcaption id="status-title">Status answers “what may happen next?”<span>Type stays stable; status changes as authority, dependencies, execution, and delivery change.</span></figcaption>
+      <div class="state-map" role="img" aria-label="Ready moves to Running, then Awaiting Review, then Completed. User Action Required and Holding pause before Ready. Blocked can return Running work to Ready. Failed and Abandoned are terminal outcomes.">
+        <div class="state-node active">Ready</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Running</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Awaiting Review</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Completed</div>
       </div>
-
-      <div class="protocol-workspaces" aria-label="Codex task coordination boundaries">
-        <div class="protocol-node policy">
-          <strong>One task per Running item</strong>
-          <p>Reconcile active and archived tasks by parent id, backlog path, normalized objective, creation time, and status. Preserve one canonical id through correction, integration, and closeout.</p>
-        </div>
-        <div class="protocol-node interface">
-          <strong>Useful task titles</strong>
-          <p>Use a concise phase prefix such as <code>Implementing —</code>, <code>Reviewing —</code>, <code>Integrating —</code>, <code>Waiting for Claim —</code>, <code>Waiting for User —</code>, or <code>Done —</code>. Never use raw prompts, XML tags, error output, or task ids as titles.</p>
-        </div>
-        <div class="protocol-node state">
-          <strong>No wait-only tasks</strong>
-          <p>Dispatch only work that can start a bounded delivery phase. Approval, dependency, reviewer, claim, and integration waits remain in the existing work item and canonical task; they do not create placeholder tasks or predecessor chains.</p>
-        </div>
-        <div class="protocol-node workspace">
-          <strong>Compatible execution</strong>
-          <p>A Dev Orchestrator task must be able to run ordinary Git, shell, test, process, and coordination operations without user approval prompts. After runtime or configuration changes, prove the effective child environment with one disposable pilot before broad dispatch.</p>
-        </div>
-      </div>
-
-      <div class="protocol-boundary">
-        <strong>Long-running work is observed by evidence, not heartbeat alone</strong>
-        <p>Before a phase expected to exceed five minutes, publish the active unit, queued units, estimate, hard stop, retained evidence path, and distinct acceptance criterion. The parent observes phase start, first failure, timeout, and completion without serializing healthy work.</p>
-        <p>After an expensive failure, classify the signature from retained output, add the smallest offline replay or deterministic regression, and run one cheapest representative first. A second expensive representative starts only for a distinct unproved criterion. Two unproductive attempts or fifteen minutes beyond the estimate require parent investigation and a revised plan.</p>
-        <p>The fifteen-minute queue review measures Running capacity, phase age, claim pressure, accepted work awaiting integration, terminal closeout, task anomalies, and interval delivery. It writes no second ledger: durable facts remain in the work items.</p>
+      <p class="source-note">After completion, a file provider may move the item to its archive location. Archive placement is not another lifecycle status.</p>
+      <div class="state-branches">
+        <div><strong>User Action Required</strong><p>A concrete user-owned decision must be answered before work becomes Ready.</p></div>
+        <div><strong>Blocked</strong><p>A fixed dependency or exhausted correction boundary stops useful execution until its condition changes.</p></div>
+        <div><strong>Holding · Failed · Abandoned</strong><p>Holding defers real work. Failed and Abandoned are truthful terminal outcomes, not hidden retries.</p></div>
       </div>
     </figure>
-
-    <div class="sequence-stack" aria-label="Claim and worktree communication sequences">
-      <figure class="sequence-figure" aria-labelledby="normal-sequence-title">
-        <figcaption id="normal-sequence-title">Sequence 1: one work item from Running to Done
-          <span>The same Dev Orchestrator owns delivery through integration; backlog mutation remains a separate short transaction.</span>
-        </figcaption>
-        <ol class="sequence-messages" role="list">
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Backlog Steward</span><span class="sequence-payload">Select one eligible Ready item. Record <code>Running</code>, canonical task id, branch, worktree, and initial phase under a brief backlog-only claim.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Orchestrator</span><span class="sequence-payload">Assign the complete item. The task uses its private worktree for implementation, corrections, local tests, and fresh independent review.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Independent reviewer and Dev Verifier</span><span class="sequence-payload">Obtain acceptance of the exact candidate and focused evidence. Findings return to the original executor.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator</span><span class="sequence-direction" role="img" aria-label="exchanges with">&harr;</span><span class="sequence-receiver">Coordination registry</span><span class="sequence-payload">Acquire exact main paths and required shared test resources, integrate the accepted change, run focused post-integration checks, and release from clean main.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Backlog Steward</span><span class="sequence-payload">Use a separate short claim for the active and completed work-item paths. Persist <code>Completed</code> and the delivery evidence, move the item, commit, and release.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Backlog Coordinator</span><span class="sequence-payload">Return the integration commit, focused checks, both release events, branch, worktree, and cleanup eligibility.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Git and Codex task</span><span class="sequence-payload">Verify the fresh task integration branch is fully merged, remove its clean worktree, safely delete that merged branch, prune metadata, set <code>Done — item</code>, archive the task, recount Running items, and dispatch a replacement if capacity exists. Handle any older non-ancestral source branch separately under repository cleanup policy.</span></li>
-        </ol>
-      </figure>
-
-      <figure class="sequence-figure" aria-labelledby="wait-sequence-title">
-        <figcaption id="wait-sequence-title">Sequence 2: bounded claim wait and recovery
-          <span>The existing Dev Orchestrator owns the wait; no waiting task or baton chain is created.</span>
-        </figcaption>
-        <ol class="sequence-messages" role="list">
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator or Dev Backlog Steward</span><span class="sequence-direction" role="img" aria-label="exchanges with">&harr;</span><span class="sequence-receiver">Coordination registry</span><span class="sequence-payload">The Dev Orchestrator attempts the exact integration claim; Dev Backlog Steward attempts any completion or status claim. Record the outcome, blocking claim, wait start, attempt count, and next attempt in the work item.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Blocking owner</span><span class="sequence-payload">Request direct release notification. Retry at five, ten, fifteen, twenty, twenty-five, and thirty minutes, stopping as soon as ownership succeeds.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Blocking owner</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Orchestrator</span><span class="sequence-payload">After preserving work and cleaning the owned boundary, release and send the exact release event. The waiting task reconciles current main once and retries the same exact scope.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Orchestrator and blocking owner</span><span class="sequence-payload">At thirty minutes, investigate the owner and actual scope. Prompt safe release, narrow or split an unnecessarily broad claim, finish the blocking integration first, or record a truthful technical or user-decision blocker.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Backlog Steward</span><span class="sequence-payload">If unresolved, direct the steward to record the truthful non-Running state under a short exact backlog claim, then fill the vacancy with eligible Ready work. Never release protection for dirty or unpreserved work.</span></li>
-        </ol>
-      </figure>
-
-      <figure class="sequence-figure" aria-labelledby="parallel-sequence-title">
-        <figcaption id="parallel-sequence-title">Sequence 3: queue capacity and long-running supervision
-          <span>The parent maximizes useful parallelism while intervening early when a phase is expensive or stalled.</span>
-        </figcaption>
-        <ol class="sequence-messages" role="list">
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">File-backed queue</span><span class="sequence-payload">Count <code>Running</code>. Dispatch distinct eligible Ready items until ten are Running or every eligible item is active. Never create wait-only tasks to meet the target.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Parent and work item</span><span class="sequence-payload">Before a phase expected to exceed five minutes, expose the active and queued units, estimate, hard stop, evidence path, and distinct acceptance criterion.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Long-running task</span><span class="sequence-payload">Observe phase start, first failure, timeout, and completion. Inspect process state, elapsed time, latest evidence-bearing output, and remaining work; a heartbeat proves ownership only.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Focused correction</span><span class="sequence-payload">After failure, preserve evidence, reproduce the boundary offline, and run the cheapest representative. Do not automatically start later serial cases after a shared-boundary failure.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Queue and claims</span><span class="sequence-payload">Every fifteen minutes, review capacity, phase age, waits, claim scope, accepted work awaiting integration, closeout, anomalies, and interval delivery. Make a recovery or scheduling adjustment in the same review when delivery worsens.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Final campaign verifier</span><span class="sequence-payload">After all accepted work is integrated and terminal, run the complete accepted agent catalog once against the exact final commit and disposition every failure.</span></li>
-        </ol>
-      </figure>
-    </div>
-
-    <p class="source-note">Implementation sources: <a href="../skills/codex-workitem-coordination/SKILL.md">Codex Work-Item Coordination</a>, <a href="../skills/complete-work-item-direct-main/SKILL.md">Direct-Main Completion</a>, <a href="../skills/agent-claim/SKILL.md">Agent Claim semantics</a>, <a href="../skills/agent-claim-mcp/SKILL.md">MCP transport adapter</a>, <a href="../skills/agent-claim-command/SKILL.md">command transport adapter</a>, <a href="../skills/agent-claim-command/scripts/claim.py">portable claim command</a>, <a href="../scripts/test_agent_claim.py">focused claim tests</a>, <a href="../README.md#agent-claims-and-worktrees">operator guidance</a>, and the <a href="agent-and-skill-definitions.html#dev-activities-title">generated development-agent catalog</a>.</p>
   </section>
 
-  <section class="section" aria-labelledby="planned-design-title">
-    <h2 id="planned-design-title">Planned Design Progression</h2>
-    <p class="lede">Normal development uses the shared production skills from accepted functional intent down to verified code. Project-specific evaluation harnesses may compare frozen outputs afterward, but hidden reference artifacts, evaluator rubrics, and an original implementation do not enter production generation.</p>
-    <div class="matrix">
-      <table>
-        <thead>
-          <tr>
-            <th>Stage</th>
-            <th>Production input and owner</th>
-            <th>Acceptance gate</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="name">Functional intent</span></td>
-            <td>Accepted functional specifications and architecture define required outcomes, actors, permissions, workflows, constraints, and system boundaries.</td>
-            <td>Every applicable requirement has stable authority or is explicitly open before subsystem design begins. A primary and supporting operation inventory preserves every directly invoked route, API, command, event, job, notification, and reference-data lookup with its observable access, selector, paging, projection, response, error, state, and verification contract.</td>
-          </tr>
-          <tr>
-            <td><span class="name">High-level design</span></td>
-            <td>The standard <span class="tag" data-skill-definition="create-high-level-design">create-high-level-design</span> skill works in PLANNED_DEVELOPMENT mode; <span class="tag" data-skill-definition="review-high-level-design">review-high-level-design</span> independently checks the result.</td>
-            <td>Requirements coverage, critical trust and identity boundaries, and cross-module contracts pass review. A source-category inventory, operation-and-obligation inventory, and boundary-edge inventory close before prose so scheduled work, source open questions, caches, privileged tasks, and every producer-consumer edge remain visible. Each exact method, route variant, supporting UI action, command, event, or job identity remains one-to-one operation-level coverage; an abstract group cannot replace it. Each applicable anonymous, authenticated, administrator, service, or background actor receives an explicit boundary row, including denial or equivalent-role behavior. Local links resolve from the installed documentation path and never cite transient assembly or control files. An unresolved high-impact actor, authority, selector, disclosure, validation, state, transaction, asynchronous, or error-timing contract blocks downstream module design.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Module design</span></td>
-            <td>The standard <span class="tag" data-skill-definition="create-module-design">create-module-design</span> skill consumes the accepted functional and HLD inputs; <span class="tag" data-skill-definition="review-module-design">review-module-design</span> independently checks the result.</td>
-            <td>The candidate first passes an exact ordered template-heading and decision-marker gate; missing, renamed, duplicated, merged, or reordered mandatory sections, a Documentation Acceptance section that does not begin with ACCEPTED or BLOCKED, or an Implementation Readiness section that does not begin with READY or BLOCKED stops the candidate before semantic review. Local links resolve from the installed documentation path and never cite transient assembly or control files. A source-category inventory and owning-HLD open-question handoff close before prose. Every applicable requirement then maps to an implementable contract, rule, state, error path, and verification obligation. Scope-bearing qualifiers from the target assignment and owning-HLD component description remain explicit operation facets rather than being shortened to a generic module label. Compatible facts from accepted inputs are reconciled for the same exact operation without borrowing sibling contracts. Identity selectors, validation ownership, response disclosure, returned or emitted values, persistent state and cache mutations, side-effect phase ownership, failure timing, and sensitive logging are explicit and internally consistent. Executor acceptance precedes executor-owned work, while separately supported initiator precomputation and later sender or provider rejection remain distinct. Labels such as public do not substitute for operation-specific authentication evidence.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Implementation</span></td>
-            <td>Dev Orchestrator delegates the normalized work item and selected work-item process to Dev Coder. The coder implements the accepted design with the technology skills already routed for the affected project folders.</td>
-            <td>Implementation does not receive project-specific reconstruction instructions or evaluator guidance. It preserves accepted contracts and supplies tests for the named verification obligations. Direct-main delivery remains with the Dev Orchestrator through accepted integration and focused post-integration verification. Feature-branch delivery ends with a pushed pull request ready for its authorized reviewer or merge owner. Backlog completion is always a separate provider transaction after delivery evidence exists.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Verification and evaluation</span></td>
-            <td>Normal independent review and verification prove the implementation. A separate project-owned evaluation run may then compare frozen artifacts or observable behavior with hidden references through Deterministic Judges and, only where exact checks are insufficient, a Model Judge. Ordinary synthetic Codex and Junie cases run locally in disposable workspaces with controlled harness state, timeouts, cleanup, isolated evidence, and mutation auditing. Explicitly high-risk cases require the externally-contained tier.</td>
-            <td>Production acceptance remains distinct from comparative scoring. Executed, Judge-passed, Model Judge calibration, security-contained, and stale-by-digest are separate evaluation claims. Deterministic critical gates run first and stop semantic judging when they fail. A canonical Model Judge request binds the selected case, run, harness, candidate-output artifact, and governed evidence artifacts. Model Judge calibration promotion remains disabled until every calibration sample also binds trusted execution identity, independent Human Judge evidence, adjudication where required, and critical-dimension coverage. Hidden references, expected findings, Judge prompts, and calibration answers never enter production generation.</td>
-          </tr>
-        </tbody>
-      </table>
+  <section class="section" id="file-provider" aria-labelledby="file-provider-title">
+    <div class="section-heading">
+      <span class="chapter-number">Chapter 02</span>
+      <div><h2 id="file-provider-title">The File-Backed Backlog</h2><p>A file provider stores each work item as Markdown in the repository. The file is readable in review, versioned with the project, and sufficient for a future agent to continue without the original conversation.</p></div>
+    </div>
+    <div class="two-column">
+      <pre class="folder-tree" aria-label="Example file-backed backlog folders">backlog/
+├── feature-backlog/
+├── defect-backlog/
+├── analysis-backlog/
+├── investigation-backlog/
+├── user-action-required/
+├── holding/
+├── completed-backlog/
+└── failed-backlog/</pre>
+      <div class="anatomy" aria-label="Anatomy of a work item">
+        <div><b>01</b><strong>Identity</strong><p>Title, type, provider reference, and completion path.</p></div>
+        <div><b>02</b><strong>Intent</strong><p>Summary, context, source evidence, requirements, and acceptance criteria.</p></div>
+        <div><b>03</b><strong>Readiness</strong><p>Status, dependencies, open questions, approval evidence, and verification plan.</p></div>
+        <div><b>04</b><strong>Execution</strong><p>Current owner, branch, worktree, phase, accepted candidate, waits, and blockers.</p></div>
+        <div><b>05</b><strong>Closeout</strong><p>Review, verification, integration, release, completion, and cleanup evidence.</p></div>
+      </div>
+    </div>
+    <p class="source-note">The work item is the only durable task record. File-provider creation and lifecycle procedures are defined by <a href="../skills/create-file-work-item/SKILL.md">Create File Work Item</a> and <a href="../skills/manage-file-work-items/SKILL.md">Manage File Work Items</a>.</p>
+  </section>
+
+  <section class="section" id="agents" aria-labelledby="agents-title">
+    <div class="section-heading">
+      <span class="chapter-number">Chapter 03</span>
+      <div><h2 id="agents-title">Agents And Handoffs</h2><p>Each agent owns one kind of decision. The sequence prevents the producer from approving its own work and keeps queue updates separate from implementation.</p></div>
+    </div>
+    <figure class="sequence-figure" aria-labelledby="handoff-title">
+      <figcaption id="handoff-title">One work item, one delivery sequence<span>The same orchestration lane persists through corrections, integration, and closeout.</span></figcaption>
+      <div class="role-score">
+        <div class="role-row"><span class="from">Backlog Coordinator</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Backlog Steward</span><p>Select eligible Ready work; record Running, owner, branch, worktree, and starting phase.</p></div>
+        <div class="role-row"><span class="from">Backlog Steward</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Work Orchestrator</span><p>Hand off the complete item. The orchestrator owns delivery or a truthful terminal outcome.</p></div>
+        <div class="role-row"><span class="from">Work Orchestrator</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Producer</span><p>Choose the appropriate coder, documentation writer, organiser, or specialist for one bounded contribution.</p></div>
+        <div class="role-row"><span class="from">Producer</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Independent Reviewer</span><p>Return a committed, clean contribution. Source, documentation, security, UX, and other surfaces go to the matching reviewer.</p></div>
+        <div class="role-row"><span class="from">Independent Reviewer</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Verifier</span><p>After review acceptance, run the behavior and risk-based acceptance checks. Findings return to the original producer.</p></div>
+        <div class="role-row"><span class="from">Verifier</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Work Orchestrator</span><p>Hand back accepted evidence so the orchestrator can choose the configured delivery path and close the item.</p></div>
+      </div>
+      <aside class="optional-role"><strong>Conditional integration role:</strong> when several accepted contributions must be combined or integration conflicts require a dedicated owner, a nested Merge Coordinator reconciles them inside the same work item. It does not create a second queue item or independent delivery chain.</aside>
+    </figure>
+    <p class="source-note">The <a href="agent-and-skill-definitions.html#dev-activities-title">development-agent catalog</a> owns the complete definitions. <a href="../skills/codex-workitem-coordination/SKILL.md">Work-item coordination</a> owns this handoff model.</p>
+  </section>
+
+  <section class="section" id="private-work" aria-labelledby="private-work-title">
+    <div class="section-heading">
+      <span class="chapter-number">Chapter 04</span>
+      <div><h2 id="private-work-title">Private Branches And Worktrees</h2><p>Running items do not share a mutable checkout. Each item works on its own branch in its own worktree, so ordinary implementation, corrections, local tests, and read-only review can proceed independently.</p></div>
+    </div>
+    <figure class="branch-figure" aria-labelledby="branch-title">
+      <figcaption id="branch-title">Parallel work leaves the main branch stable<span>A worktree is a separate checkout. A branch records that item's commits.</span></figcaption>
+      <div class="branch-map" role="img" aria-label="The main branch supplies three independent worktrees and feature branches for separate work items.">
+        <span class="branch-label">main</span><div class="branch-line"><strong>Item A · branch A</strong><p>Implementation and focused tests in worktree A.</p></div>
+        <span class="branch-label">main</span><div class="branch-line"><strong>Item B · branch B</strong><p>Documentation and review in worktree B.</p></div>
+        <span class="branch-label">main</span><div class="branch-line"><strong>Item C · branch C</strong><p>Investigation and correction in worktree C.</p></div>
+      </div>
+    </figure>
+    <div class="delivery-paths">
+      <article class="delivery-path"><h3>Direct-main delivery</h3><ol><li>Review and verify the private candidate.</li><li>Acquire exact shared integration paths and the integration resource.</li><li>Under that ownership, refresh current main and create a fresh reconciliation branch from that exact commit.</li><li>Apply only the accepted paths; do not import unrelated ancestry merely for provenance. Verify the integrated result, update main, then release.</li></ol></article>
+      <article class="delivery-path"><h3>Pull-request delivery</h3><ol><li>Review and verify the feature branch.</li><li>Push the branch and open a pull request with evidence.</li><li>The authorized reviewer or merge owner approves and merges it.</li><li>The implementation lane does not acquire a duplicate main-integration claim.</li></ol></article>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="evidence-title">
-    <h2 id="evidence-title">Execution Evidence</h2>
-    <p class="lede">An orchestrated run leaves complementary records with deliberately separate responsibilities. No title, message, claim event, or branch label can substitute for the evidence owned by another record.</p>
-    <div class="matrix">
-      <table>
-        <thead>
-          <tr>
-            <th>Record</th>
-            <th>Owns</th>
-            <th>Does not own</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>File-backed work item</td>
-            <td>Lifecycle state, canonical task id, branch and worktree, current phase, waits, open issues, accepted commit, review, verification, integration, completion, and cleanup evidence.</td>
-            <td>Git reachability, live shared ownership, or task UI state.</td>
-          </tr>
-          <tr>
-            <td>Git</td>
-            <td>Source and integration commits, branch ancestry or recorded non-ancestral mapping, changed paths, clean status, and safe worktree or branch cleanup eligibility.</td>
-            <td>Review acceptance, test meaning, or work-item lifecycle.</td>
-          </tr>
-          <tr>
-            <td>Review and verification outputs</td>
-            <td>The exact candidate, findings or acceptance, checks run, retained reports, risks, cleanup observations, and justified omissions.</td>
-            <td>Shared mutation ownership or terminal backlog state.</td>
-          </tr>
-          <tr>
-            <td>Coordination registry and event journal</td>
-            <td>Current exact shared ownership, contention, heartbeat, release, and recovery observations.</td>
-            <td>Whether committed paths or product bytes were accepted, correctly integrated, delivered, or completed.</td>
-          </tr>
-          <tr>
-            <td>Codex task</td>
-            <td>Live execution, concise phase title, messages, and user-visible status.</td>
-            <td>Durable identity, work-item lifecycle, Git delivery, or claim authority.</td>
-          </tr>
-        </tbody>
-      </table>
+  <section class="section" id="coordination" aria-labelledby="coordination-title">
+    <div class="section-heading">
+      <span class="chapter-number">Chapter 05</span>
+      <div><h2 id="coordination-title">Coordinating Shared Resources</h2><p>Private work is parallel by default. A short coordination claim is needed only when two agents could mutate the same shared object. The registry is a temporary conflict-avoidance scratchpad, not a delivery authority.</p></div>
     </div>
+    <figure class="resource-figure" aria-labelledby="resource-title">
+      <figcaption id="resource-title">Many private lanes, one exact shared gate<span>Claim the smallest path or named resource, use it, preserve the result, and release it promptly.</span></figcaption>
+      <div class="resource-lanes">
+        <div class="private-lanes"><div class="private-lane">Worktree A remains private</div><div class="private-lane">Worktree B remains private</div><div class="private-lane">Worktree C remains private</div></div>
+        <div class="gate">exact shared gate</div>
+        <div class="shared-targets"><span>Main-branch paths</span><span>Backlog file movement</span><span>Exclusive runtime resource</span></div>
+      </div>
+      <div class="resource-examples" aria-label="Examples of exclusive resources"><span>browser</span><span>port</span><span>database</span><span>generated output</span><span>shared install</span><span>live test facility</span></div>
+    </figure>
+    <div class="two-column">
+      <div><h3>What a claim proves</h3><dl class="definition-list"><div><dt>Acquired</dt><dd>The named writer may use the recorded shared scope.</dd></div><div><dt>Wait required</dt><dd>Another live writer overlaps; coordinate release or narrow the requested scope.</dd></div><div><dt>Isolation required</dt><dd>Non-overlapping work needs its own branch and worktree.</dd></div><div><dt>Recovery authority required</dt><dd>Dirty unclaimed state must be preserved before another writer proceeds.</dd></div></dl></div>
+      <div><h3>What a claim does not prove</h3><dl class="definition-list"><div><dt>Quality</dt><dd>It is not proof of review, verification, delivery, or work-item completion.</dd></div><div><dt>Commit scope</dt><dd>It does not audit commit history or decide whether committed paths belong to the contribution.</dd></div><div><dt>Integration</dt><dd>Independent review and integration own committed-content, changed-path, and provenance decisions.</dd></div><div><dt>Lifecycle</dt><dd>Registry cleanup, Git integration, and backlog closeout are distinct operations.</dd></div></dl></div>
+    </div>
+    <details><summary>When a shared gate stays busy</summary><div><p>Keep the existing work item and delivery lane. Request direct release notification, retry only on the documented bounded schedule, and investigate the real owner and scope when the wait exceeds its limit. Never create a wait-only work item, release protection for dirty unpreserved work, or treat a heartbeat as proof of useful progress.</p></div></details>
+    <p class="source-note">The portable <a href="../skills/agent-claim/SKILL.md">Agent Claim</a> contract owns the exact outcomes, recovery, release, and administrative reset safeguards. <a href="../scripts/test_agent_claim.py">Focused claim tests</a> and <a href="../README.md#agent-claims-and-worktrees">operator guidance</a> provide executable and operational detail.</p>
+  </section>
+
+  <section class="section" id="delivery" aria-labelledby="delivery-title">
+    <div class="section-heading">
+      <span class="chapter-number">Chapter 06</span>
+      <div><h2 id="delivery-title">Review, Verification, And Delivery</h2><p>Production work is accepted in layers. Review asks whether the change is correct and maintainable; verification proves the required behavior; delivery integrates the accepted result through the configured path.</p></div>
+    </div>
+    <figure class="sequence-figure" aria-labelledby="delivery-sequence-title">
+      <figcaption id="delivery-sequence-title">Running to Done<span>Correction loops back to the original producer; backlog closeout begins only after delivery evidence exists.</span></figcaption>
+      <ol class="sequence-list">
+        <li><span class="number">1</span><span class="actor">Producer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Reviewer</span><p>Submit a committed, clean contribution with focused evidence.</p></li>
+        <li><span class="number">2</span><span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Producer</span><p>Accept or return actionable findings. Corrected work receives a fresh review.</p></li>
+        <li><span class="number">3</span><span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Verifier</span><p>After acceptance, run checks proportional to affected behavior and risk.</p></li>
+        <li><span class="number">4</span><span class="actor">Verifier</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Orchestrator</span><p>Return the exact accepted candidate, checks, residual risks, and justified omissions.</p></li>
+        <li><span class="number">5</span><span class="actor">Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Main or PR</span><p>Follow the configured delivery path. Re-review reconciled content when integration changes meaning.</p></li>
+        <li><span class="number">6</span><span class="actor">Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Backlog Steward</span><p>After integration, use a separate short claim to record Completed, archive the item, and release.</p></li>
+        <li><span class="number">7</span><span class="actor">Coordinator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Cleanup</span><p>Verify the integration branch is merged, remove the clean worktree, delete the merged branch, prune metadata, and refill queue capacity.</p></li>
+      </ol>
+    </figure>
+    <details><summary>Correction and long-running work safeguards</summary><div><p>Findings return to the original producer. After two failed correction attempts for the same criterion, a repeated failure signature, or an unavailable fixed dependency, preserve the candidate and record a truthful blocker.</p><p>Before a phase expected to exceed five minutes, publish the active unit, estimate, hard stop, retained evidence path, and distinct acceptance criterion. After an expensive failure, classify retained evidence, add the smallest offline regression, and run one cheapest representative first.</p></div></details>
+    <p class="source-note">Direct-main and pull-request details are defined by <a href="../skills/complete-work-item-direct-main/SKILL.md">Direct-Main Completion</a>, <a href="../skills/complete-work-item-feature-branch/SKILL.md">Feature-Branch Completion</a>, and <a href="../skills/create-pull-request/SKILL.md">Create Pull Request</a>.</p>
+  </section>
+
+  <section class="section" id="decisions" aria-labelledby="decisions-title">
+    <div class="section-heading">
+      <span class="chapter-number">Chapter 07</span>
+      <div><h2 id="decisions-title">User Decisions Stop Only The Affected Item</h2><p>Agents resolve technical questions from evidence. A work item moves to User Action Required only when the next safe step depends on authority, intent, risk acceptance, or information that belongs to the user.</p></div>
+    </div>
+    <div class="decision-band" aria-label="User decision lifecycle">
+      <div><strong>1 · Ask once</strong><p>Record one concrete question, why it is needed, and the exact unattended boundary.</p></div>
+      <div><strong>2 · Preserve context</strong><p>Keep the requirements, scope, options, and discovered evidence in the item.</p></div>
+      <div><strong>3 · Record the answer</strong><p>Store the exact answer, date, provenance, approved scope, and exclusions.</p></div>
+      <div><strong>4 · Route deterministically</strong><p>Approved work becomes Ready; deferred work moves to Holding; a declined request receives its truthful disposition.</p></div>
+    </div>
+    <p class="source-note">A user answer resolves the decision gate. It does not prove implementation, review, verification, or delivery.</p>
+  </section>
+
+  <section class="section" id="evidence" aria-labelledby="evidence-title">
+    <div class="section-heading">
+      <span class="chapter-number">Chapter 08</span>
+      <div><h2 id="evidence-title">Evidence That Proves Delivery</h2><p>Different records answer different questions. None can substitute for another.</p></div>
+    </div>
+    <table class="evidence-table" aria-labelledby="evidence-table-caption">
+      <caption id="evidence-table-caption">Evidence sources and their boundaries</caption>
+      <thead><tr><th scope="col">Evidence source</th><th scope="col">What it proves</th><th scope="col">What it does not prove</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Work item</strong></td><td>Status, authority, decisions, current owner, phase, accepted candidate, delivery evidence, and terminal outcome.</td><td>Git reachability or current shared-resource availability.</td></tr>
+        <tr><td><strong>Git</strong></td><td>File content, commits, ancestry, integration, clean state, and branch-cleanup eligibility.</td><td>Review quality, test meaning, or lifecycle status.</td></tr>
+        <tr><td><strong>Review and verification outputs</strong></td><td>The exact candidate assessed, findings or acceptance, checks run, retained evidence, and residual risk.</td><td>Shared mutation authority or backlog completion.</td></tr>
+        <tr><td><strong>Coordination registry</strong></td><td>Temporary shared-mutation protection, conflict, heartbeat, release, and recovery state.</td><td>Accepted content, successful integration, or completed work.</td></tr>
+      </tbody>
+    </table>
+    <aside class="not-a-record"><strong>An agent runtime session is not another evidence record.</strong> Its messages, title, and live state help people observe execution. Durable facts still belong in the work item, Git, review outputs, and coordination registry.</aside>
+    <details><summary>Administrative cleanup remains separate from delivery</summary><div><p>Reset only an inactive coordination entry whose work is preserved and whose resources are stopped or handed off. A reset changes temporary registry state only. It must not rewrite Git, edit project files, discard a worktree, manufacture a release event, or claim that delivery occurred.</p><p>Neither bundled coordination transport exposes reset, and manual registry editing is forbidden. If a host-supported targeted atomic reset is unavailable, stop and route the operation to an administrator.</p><p>Create a fresh reconciliation branch from current main for integration; this becomes the task integration and cleanup branch. An older candidate branch retained only as a non-ancestral content source is handled separately.</p></div></details>
+  </section>
+
+  <section class="section" id="design-work" aria-labelledby="design-work-title">
+    <div class="section-heading">
+      <span class="chapter-number">Chapter 09</span>
+      <div><h2 id="design-work-title">Design And Documentation Work Uses The Same Loop</h2><p>Design and documentation change the producer and reviewer, not the lifecycle. They still start from an authorized work item, proceed in a private lane, receive independent review, pass focused verification, and use the configured delivery path.</p></div>
+    </div>
+    <div class="design-progression" aria-label="Planned design progression">
+      <div class="design-stage"><strong>Functional intent</strong><p>Actors, outcomes, permissions, workflows, and constraints.</p></div>
+      <div class="design-stage"><strong>Architecture</strong><p>System boundaries, trust, dependencies, and cross-cutting decisions.</p></div>
+      <div class="design-stage"><strong>High-level design</strong><p>Feature families, modules, interactions, and implementation order.</p></div>
+      <div class="design-stage"><strong>Module design</strong><p>Implementable contracts, states, failure behavior, and verification obligations.</p></div>
+      <div class="design-stage"><strong>Implementation</strong><p>Code and tests preserve the accepted design through review and verification.</p></div>
+    </div>
+    <div class="two-column" style="margin-top: 2rem;">
+      <div><h3>Planned development</h3><p>Accepted functional specifications and architecture are upstream authority. Create and review high-level and module designs before dependent implementation. Documentation acceptance and implementation readiness are separate decisions: an accurate document may be accepted while an unresolved high-impact contract blocks downstream work.</p></div>
+      <div><h3>Whole-project reverse engineering</h3><p>The persisted hybrid-specifications-and-wiki mode keeps structured specifications authoritative. Work proceeds bottom-up from source and module evidence, then performs a final top-down semantic reconciliation through wiki, functional specifications, architecture, high-level designs, module designs, and source.</p></div>
+    </div>
+    <p class="source-note">See <a href="documentation-templates.html">Documentation Templates</a>, <a href="wiki-skills-and-project-context.html">Wiki Skills And Project Context</a>, and the generated <a href="agent-and-skill-definitions.html">Agent And Skill Catalog</a> for the detailed authoring and review contracts.</p>
   </section>
 </main>
-<footer class="site-footer">
-  <p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
-</footer>
+<footer class="site-footer"><p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p></footer>
 <script src="documentation-settings.js"></script>
 </body>
 </html>
