@@ -1,12 +1,12 @@
 # Support Project-Level Skill Extensions
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/support-project-level-skill-extensions.md
+Provider Reference: backlog/feature-backlog/support-project-level-skill-extensions.md
 
 Completion: direct-main
 
@@ -18,10 +18,10 @@ Completion: direct-main
 - Worktree: /Users/martinbechard/.codex/worktrees/9052/dev-methodology
 - Branch: codex/support-project-level-skill-extensions
 - Starting main: 2624b5b25ba6e5548051d7b9953933b1e57b3f87
-- Phase: Bounded schema, renderer, and exact governed-scope discovery completed; implementation is paused for path-specific approval.
+- Phase: Bounded schema, renderer, and exact governed-scope discovery completed; the recorded exact approval permits Ready-state dispatch within the stated scope.
 - Started: 2026-07-21
 - Running-record claim: start-project-skill-extensions-019f85c8, acquired event 294844ff-d66c-4452-bb44-9d6d1be019de.
-- Open issues: The exact two-skill governed-definition scope requires the user answer below.
+- Open issues: No user-action issue remains. Implementation must stay within the approved exact scope.
 - Accepted candidate: Pending.
 
 ## User Action Required
@@ -42,11 +42,11 @@ The evidence-backed design requires changes to two governed skill definitions. R
 
 ### Resolution
 
-Pending.
+Approved on 2026-07-22. The user answered "ok authorized" immediately after the exact Question For The User recorded above in the parent conversation. Provenance: parent coordination conversation for this backlog transition. The approval covers exactly skills/create-project-configuration/SKILL.md and skills/development-methodology/SKILL.md, their supported generated skill mirrors, and the directly related non-governed surfaces named in that question.
 
 ### Unattended Work Boundary
 
-No governed or project mutation is authorized while this question is pending. Preserve the resolved ordered-list schema and root-only reference rendering contract.
+Ready-state work may proceed only within the exact approved scope. Any governed path or related surface outside the recorded question requires separate scope-specific approval. Preserve the resolved ordered-list schema and root-only reference rendering contract.
 
 ### Discovery Evidence
 

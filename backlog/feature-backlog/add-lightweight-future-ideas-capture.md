@@ -1,12 +1,12 @@
 # Add Lightweight Future Ideas Capture
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/add-lightweight-future-ideas-capture.md
+Provider Reference: backlog/feature-backlog/add-lightweight-future-ideas-capture.md
 
 Completion: direct-main
 
@@ -18,10 +18,10 @@ Completion: direct-main
 - Worktree: /Users/martinbechard/.codex/worktrees/ceb0/dev-methodology
 - Branch: codex/add-lightweight-future-ideas-capture
 - Starting main: 2624b5b25ba6e5548051d7b9953933b1e57b3f87
-- Phase: Bounded storage, scanner, promotion, and exact governed-scope discovery completed; implementation is paused for path-specific approval.
+- Phase: Bounded storage, scanner, promotion, and exact governed-scope discovery completed; the recorded exact approval permits Ready-state dispatch within the stated scope.
 - Started: 2026-07-21
 - Running-record claim: start-future-ideas-019f85c8, acquired event e227f815-0a32-41f5-9753-606238d66788.
-- Open issues: The exact four-file governed-definition scope requires the user answer below.
+- Open issues: No user-action issue remains. Implementation must stay within the approved exact scope.
 - Accepted candidate: Pending.
 
 ## User Action Required
@@ -47,11 +47,11 @@ The evidence-backed Future Ideas design changes three governed skill definitions
 
 ### Resolution
 
-Pending.
+Approved on 2026-07-22. The user answered "ok authorized" immediately after the exact Question For The User recorded above in the parent conversation. Provenance: parent coordination conversation for this backlog transition. The approval covers exactly the four governed canonical files listed in that question and regeneration only of their supported mirrors.
 
 ### Unattended Work Boundary
 
-No governed or project mutation is authorized while this question is pending. Future Ideas remain outside normal backlog scans and dispatch.
+Ready-state work may proceed only within the exact approved scope. Any governed path or related surface outside the recorded question requires separate scope-specific approval. Future Ideas remain outside normal backlog scans and dispatch.
 
 ### Discovery Evidence
 
