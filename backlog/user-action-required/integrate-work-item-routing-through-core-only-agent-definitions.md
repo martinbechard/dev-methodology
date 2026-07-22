@@ -1,12 +1,12 @@
 # Integrate Work-Item Routing Through Core-Only Agent Definitions
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/integrate-work-item-routing-through-core-only-agent-definitions.md
+Provider Reference: backlog/user-action-required/integrate-work-item-routing-through-core-only-agent-definitions.md
 
 Completion: direct-main
 
@@ -27,21 +27,21 @@ Completion: direct-main
 
 ## Current Execution / Ownership
 
-- Owner: Dev Orchestrator.
+- Owner: Unowned.
 - Canonical task: 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
-- Claim: approve-core-only-codex-metadata-019f8b4c, backlog transition only.
-- Canonical worktree: /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology.
-- Branch: codex/integrate-work-item-routing-core-only-019f8b4c at c9b9a2d.
+- Claim: None.
+- Canonical worktree: /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology, clean.
+- Branch: codex/integrate-work-item-routing-core-only-019f8b4c at 1f7f1e5587bb63eef54202cd91bab501d5e68e37.
 - Starting main: 83135ebc590c2c244cf42283ae3f760521c55ed0.
-- Phase: metadata correction then fresh focused checks and review.
+- Phase: exact one-path conceptual role approval gate.
 - Lifecycle transition: Blocked -> Ready after dependency reconciliation -> Running after fresh canonical task assignment and successful serialized backlog claim acquisition.
-- Accepted candidate: Pending. Recovery evidence remains branch c9b9a2d with preserved uncommitted correction bytes in the private canonical worktree; not accepted or integrated.
+- Accepted candidate: 1f7f1e5587bb63eef54202cd91bab501d5e68e37, clean and unintegrated.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: Apply the approved one-path metadata correction and complete fresh focused checks and review.
-- Next owner: Dev Orchestrator.
+- Open issues: Approval is required for agents/roles/dev-activities/dev-backlog-coordinator.role.yaml before role mutation, re-review, or acceptance.
+- Next owner: Unowned pending user approval resolution.
 
 ## Resumption Evidence — 2026-07-22
 
@@ -49,6 +49,33 @@ Completion: direct-main
 - Prior claim attempt: resume-core-only-work-item-routing-019f8b4c returned CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, event 85cd9175-dfc1-460a-bf5a-fe828b0af090; it made no mutation.
 - Fresh backlog claim: resume-core-only-work-item-routing-019f8b4c-2, acquired event ba5ae47a-ff1b-43e9-b7e4-6aa66e67ca37 from primary main.
 - The exact prior approval remains authoritative.
+
+## Dev Backlog Coordinator Role Approval Gate
+
+- Canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163 received the prior metadata approval, passed its check, and committed clean correction 1f7f1e5587bb63eef54202cd91bab501d5e68e37.
+- Fresh review found exactly one further governed gap: agents/roles/dev-activities/dev-backlog-coordinator.role.yaml remains file-only while the coordination skill is provider-selected.
+- No mutation to this role has occurred.
+- Recovery evidence: branch codex/integrate-work-item-routing-core-only-019f8b4c at 1f7f1e5587bb63eef54202cd91bab501d5e68e37 and private worktree /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology are clean.
+
+### Question For The User
+
+Do you approve changing exactly agents/roles/dev-activities/dev-backlog-coordinator.role.yaml, together with only its supported generated mirrors and directly related tests and documentation, so Dev Backlog Coordinator supports the selected Persistence and Commit workflows instead of remaining file-only?
+
+### Why User Input Is Required
+
+Repository policy requires exact scope-specific approval before this conceptual role definition mutation.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+Do not mutate agents/roles/dev-activities/dev-backlog-coordinator.role.yaml or widen any other governed scope until the parent records the user answer and sends approval resolution. Preserve every prior approval and evidence.
+
+### Handoff Evidence
+
+- Backlog handoff claim: route-core-only-coordinator-role-019f8b4c, acquired event 62d7cd79-a256-47aa-9d7a-c648fc22f7b3 from primary main.
 
 ## Codex Metadata Approval Gate
 
