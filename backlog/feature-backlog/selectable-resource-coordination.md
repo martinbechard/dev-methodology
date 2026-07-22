@@ -1,18 +1,18 @@
 # Select Resource Coordination Per Project
 
-Status: User Action Required
+Status: Running
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/selectable-resource-coordination.md
+Provider Reference: backlog/feature-backlog/selectable-resource-coordination.md
 
 Completion: direct-main
 
 ## Historical Blocked State
 
-- Owner: Unowned
+- Owner: Dev Orchestrator
 - Claim: None
 - Blocker: The required Configure Agent Claim Transport Adapters work item has not yet completed and its accepted transport contract is an input to this item.
 - Unblock condition: backlog/feature-backlog/configure-agent-claim-transport-adapters.md is integrated, focused-verified, and archived as Completed on main.
@@ -24,17 +24,17 @@ Completion: direct-main
 
 - Owner: Unowned
 - Canonical task: 019f8b1d-5817-72f3-be99-ba471da716b9
-- Claim: None
-- Artifact claim: None
+- Claim: approve-selectable-execute-workitem-019f8b1d, backlog transition only
+- Artifact claim: Pending bounded correction claim.
 - Branch: codex/selectable-resource-coordination-implementation-20260722
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/3da9/dev-methodology
-- Phase: exact additional governed-scope approval gate.
+- Phase: approval reconciliation then bounded correction and re-review.
 - Starting main: f5534ec28fd8e1c75efb65970de61918406992a0
 - Lifecycle transition: Ready -> Running after exact approval, fresh canonical task assignment, and successful serialized backlog claim acquisition.
-- Candidate: b77bdb6, clean and unintegrated in canonical thread 019f8b1d-5817-72f3-be99-ba471da716b9.
+- Candidate: b77bdb6, pending correction and re-review in canonical thread 019f8b1d-5817-72f3-be99-ba471da716b9.
 - Accepted commit: Pending.
-- Review: Additional governed-scope approval required before post-b77 review and acceptance.
-- Verification: Preserved candidate evidence only; post-b77 verification is prohibited pending approval.
+- Review: Pending bounded correction and re-review.
+- Verification: Pending bounded correction verification.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
 - Integration wait started at: None.
@@ -43,9 +43,9 @@ Completion: direct-main
 - Completion wait attempts: 0.
 - Dependency evidence: backlog/completed-backlog/features/configure-agent-claim-transport-adapters.md is Status Completed; integration commit 1b1b819fa051f9f0f1d572184b18f18c06d3cba0 is reachable from main; focused verification, archive, clean integration-claim release, and cleanup-eligibility evidence are recorded; Open issues is None.
 - Preserved dependency boundary: The completed transport-adapter contract remains the required input to this item.
-- Open issues: Review and acceptance are blocked on approval for exactly one additional governed definition, skills/execute-workitem/SKILL.md.
-- Delivery evidence: The clean unintegrated b77bdb6 candidate, dependency unblock, discovery evidence, and original 40-path approval are preserved; no post-b77 governed mutation is authorized.
-- Next owner: Unowned pending user approval resolution.
+- Open issues: Implement the approved execute-workitem branch and already-authorized companion selector-bypass and test-fidelity corrections.
+- Delivery evidence: The b77bdb6 candidate, dependency unblock, discovery evidence, original 40-path approval, and additional execute-workitem approval are preserved; integration and acceptance remain pending.
+- Next owner: Dev Orchestrator.
 
 Creation Claim: draft-selectable-mutation-coordination
 
@@ -140,7 +140,7 @@ PROJECT.yaml, AGENTS.md, README.md, project template, scripts/build-skill-docs.p
 
 ### Unattended Work Boundary
 
-The user approved the exact governed manifest and dependent scope recorded in Resolution. Do not mutate any other governed definition. The canonical discovery task 019f8b05-5251-7d73-9cc9-4057edfef9a0 remains preserved as discovery evidence; current ownership remains unowned until fresh canonical dispatch.
+The user approved the exact governed manifest and dependent scope recorded in Resolution. Do not mutate any other governed definition. The canonical discovery task 019f8b05-5251-7d73-9cc9-4057edfef9a0 remains preserved as discovery evidence; current execution is recorded above.
 
 ## Additional Governed Scope Approval
 
@@ -198,11 +198,25 @@ Do you approve changing exactly skills/execute-workitem/SKILL.md, in addition to
 
 ### Resolution
 
-Pending.
+- Date: 2026-07-22.
+- Answer: Approved.
+- User wording: "ok approved".
+- Provenance: direct response in parent coordinator thread 019f8b00-e6d7-7841-854a-40a50ca4e7f2 to the separately stated additional execute-workitem question.
+- Approved governed scope: exactly skills/execute-workitem/SKILL.md, in addition to the separately preserved original 40-path approval.
+- Approved dependent scope: only the Ordinary Companion Scope and Supported Generated Mirrors listed in this additional approval section.
+- Exclusion: no other governed definition is authorized.
+- Separate boundary: this approval does not resolve the lifecycle and deadline ten-path question.
+- Disposition: Ready -> Running under the existing canonical Dev Orchestrator thread for bounded correction and re-review.
 
 ### Unattended Work Boundary
 
-No post-b77 governed mutation may occur until the parent records the user answer and sends approval resolution. The original 40-path approval and all prior evidence remain preserved.
+Execute only the approved skills/execute-workitem/SKILL.md branch, the separately preserved original 40-path scope, and listed companion or generated work. Do not mutate any other governed definition. The lifecycle and deadline ten-path question remains unresolved and prohibited.
+
+### Approval Resumption Evidence
+
+- Lifecycle transition: User Action Required -> Ready after approval reconciliation -> Running under existing canonical Dev Orchestrator ownership.
+- Backlog transition claim: approve-selectable-execute-workitem-019f8b1d, acquired event b4bda0e5-9203-4668-8af0-8b3244df4d17 from primary main.
+- Phase: approval reconciliation then bounded correction and re-review.
 
 ## Summary
 
