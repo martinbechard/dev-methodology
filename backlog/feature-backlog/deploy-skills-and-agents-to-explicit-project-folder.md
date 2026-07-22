@@ -1,6 +1,6 @@
 # Deploy Skills And Agents To An Explicit Project Folder
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -12,19 +12,19 @@ Completion: direct-main
 
 ## Execution / Ownership
 
-- Owner: Dev Orchestrator
+- Owner: Unowned
 - Canonical task: /root/process_backlog/orch_deploy_explicit_project
-- Proposed artifact claim: deploy-explicit-project-20260722
+- Claim: None
 - Branch: codex/deploy-explicit-project-20260722
 - Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/deploy-explicit-project-20260722
-- Phase: Lifecycle Running committed; artifact claim pending ARTIFACT GO.
+- Phase: Blocked handoff committed after the bounded correction loop was exhausted.
 - Starting main: af0a3fe63404a793f2bf7dcf40dd2a3de563109e
-- Accepted candidate: Pending.
+- Accepted candidate: None; candidate chain preserved below.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
-- Open issues: Artifact work must not begin until ARTIFACT GO is issued.
-- Next owner: Dev Orchestrator.
-- Delivery evidence: Pending.
+- Open issues: A fresh source review reproduced the one-project-identity defect after correction attempt 2.
+- Next owner: Freshly dispatched Dev Orchestrator.
+- Delivery evidence: Preserved below; no integration or completion is authorized.
 
 Creation Claim: create-explicit-project-deployment-item-20260721
 
@@ -98,8 +98,9 @@ None.
 - This item does not make project deployment the default and does not authorize automatic deployment during ordinary repository maintenance.
 - Project-scoped installation should remain an explicit caller action with a caller-supplied target.
 
-## Delivery Evidence Update — 2026-07-22
+## Historical Delivery Evidence Update — 2026-07-22
 
+- Superseded by the Blocked Handoff below.
 - Current phase: Candidate preserved; correction attempt 1 is active for review findings.
 - Candidate commit: d38efccbb86791e28ebd4d4f3d7b2139a5d8eac0, preserved.
 - Original artifact claim: Released.
@@ -114,3 +115,33 @@ None.
 - Exact conflict owner: project-skill-extensions-20260722 on README.md.
 - Wait behavior: No polling; the correction lane continues on its proven non-overlapping scripts scope.
 - Next owner: Dev Orchestrator.
+
+## Blocked Handoff — 2026-07-22
+
+- Canonical task: /root/process_backlog/orch_deploy_explicit_project.
+- Candidate chain: d38efccbb86791e28ebd4d4f3d7b2139a5d8eac0 to 3dfdb18c9cb3cc373c4057a75769ab784edf9a46 to fceeb9f206b868272bf034f29312f36163a5a895.
+- Original lane: codex/deploy-explicit-project-20260722 at /Users/martinbechard/dev/dev-methodology/.worktrees/deploy-explicit-project-20260722.
+- Correction attempt 1 lane: codex/deploy-explicit-project-correction-1-20260722 at /Users/martinbechard/dev/dev-methodology/.worktrees/deploy-explicit-project-correction-1-20260722.
+- Correction attempt 2 lane: codex/deploy-explicit-project-correction-2-20260722 at /Users/martinbechard/dev/dev-methodology/.worktrees/deploy-explicit-project-correction-2-20260722.
+- Original claim release: deploy-explicit-project-20260722 released at d38efccbb86791e28ebd4d4f3d7b2139a5d8eac0, event 5ebf5833-8f0c-40d9-a990-ee6599a15de9.
+- Correction attempt 1 claim release: deploy-explicit-project-correction-1-20260722 released at 3dfdb18c9cb3cc373c4057a75769ab784edf9a46, event 2aabb429-7d5a-4ee0-9241-af8f318c369c.
+- Correction attempt 2 claim release: deploy-explicit-project-correction-2-20260722 released at fceeb9f206b868272bf034f29312f36163a5a895, event 3f5379a8-4cd2-429e-9d46-b5f0b125c33d.
+- Final documentation review: PASS.
+- Final verification: 72 of 72 installer tests passed; installer help, Python compilation, and git diff checks passed.
+- Correction limit: The bounded two-attempt correction loop is exhausted.
+- Integration authorization: None.
+- Completion authorization: None.
+
+### Exact Blocker
+
+After correction attempt 2, fresh source review reproduced the medium same one-project-identity defect when stale mcp-agent-ops is the only configured server; configured_server_count includes it, so noninteractive Codex/Junie exits 0, leaves active config stale, writes candidate only, no backup; the suite misses the target-only case.
+
+### Exact Unblock Condition
+
+Fresh newly dispatched owner must add Codex+Junie target-only noninteractive regressions that require fail-before-mutation or deterministic active reconciliation consistent with acceptance criteria, correct behavior, fresh review and verification before integration.
+
+### Recovery And Resumption
+
+- Preserve the complete candidate chain, branches, worktrees, review findings, checks, and claim releases.
+- Do not integrate, complete, or archive this item from the current evidence.
+- Resume only through a new serialized backlog transaction after a fresh owner is dispatched and the exact unblock condition is accepted for execution.
