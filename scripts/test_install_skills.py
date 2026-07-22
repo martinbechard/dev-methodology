@@ -17,6 +17,7 @@ from unittest.mock import patch
 
 
 INSTALLER_PATH = Path(__file__).with_name("install-skills.py")
+README_PATH = INSTALLER_PATH.parents[1] / "README.md"
 SKILL_FILE_CONTENT = "---\nname: alpha\ndescription: Alpha skill.\n---\n"
 UPDATED_SKILL_FILE_CONTENT = "---\nname: alpha\ndescription: Updated alpha skill.\n---\n"
 SECOND_SKILL_FILE_CONTENT = "---\nname: beta\ndescription: Beta skill.\n---\n"
@@ -295,6 +296,7 @@ class InstallSkillsTests(unittest.TestCase):
                     base = case_root / "base"
                     source = case_root / "source"
                     agents_source = case_root / "agents-source"
+                    base.mkdir(parents=True)
                     self.create_skill(source, "alpha")
                     agents_source.mkdir(parents=True)
                     (agents_source / "reviewer.toml").write_text(
@@ -603,6 +605,392 @@ class InstallSkillsTests(unittest.TestCase):
             self.assertFalse((home / ".agents/skills").exists())
             self.assertFalse((home / ".codex/agents").exists())
 
+    def test_explicit_project_root_routes_adapter_defaults_without_mutating_dry_run(
+        self,
+    ) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            invocation = root / "invocation"
+            project = root / "selected-project"
+            source = root / "source"
+            invocation.mkdir()
+            project.mkdir()
+            self.create_skill(source, "alpha")
+            expected = {
+                "generic": (Path(".agents/skills"), None),
+                "codex": (Path(".agents/skills"), Path(".codex/agents")),
+                "claude": (Path(".claude/skills"), Path(".claude/agents")),
+                "gemini": (Path(".gemini/skills"), Path(".gemini/agents")),
+                "junie": (Path(".junie/skills"), Path(".junie/agents")),
+            }
+
+            for adapter_name, (skills_path, agents_path) in expected.items():
+                with self.subTest(adapter=adapter_name):
+                    arguments = [
+                        "--adapter",
+                        adapter_name,
+                        "--source",
+                        str(source),
+                        "--scope",
+                        "project",
+                        "--project-root",
+                        str(project),
+                        "--configure-mcp",
+                        "false",
+                        "--dry-run",
+                    ]
+                    if agents_path is not None:
+                        agents_source = root / f"{adapter_name}-agents-source"
+                        agents_source.mkdir()
+                        extension = installer.AGENT_FILE_EXTENSIONS[adapter_name]
+                        (agents_source / f"reviewer{extension}").write_text(
+                            AGENT_FILE_CONTENT,
+                            encoding="utf-8",
+                        )
+                        arguments.extend(
+                            [
+                                "--install-agents",
+                                "--agents-source",
+                                str(agents_source),
+                            ]
+                        )
+
+                    output = io.StringIO()
+                    with (
+                        patch.object(installer.Path, "cwd", return_value=invocation),
+                        redirect_stdout(output),
+                    ):
+                        exit_code = installer.main(arguments)
+
+                    self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+                    self.assertIn(
+                        f"destination {(project / skills_path).resolve()}",
+                        output.getvalue(),
+                    )
+                    if agents_path is not None:
+                        self.assertIn(
+                            f"agents destination {(project / agents_path).resolve()}",
+                            output.getvalue(),
+                        )
+
+            self.assertEqual([], list(project.iterdir()))
+            self.assertEqual([], list(invocation.iterdir()))
+
+    def test_project_root_help_and_readme_document_public_contract(self) -> None:
+        installer = load_installer()
+
+        help_output = io.StringIO()
+        with self.assertRaises(SystemExit) as raised, redirect_stdout(help_output):
+            installer.parse_args(["--help"])
+
+        self.assertEqual(0, raised.exception.code)
+        self.assertIn("--project-root PROJECT_ROOT", help_output.getvalue())
+        self.assertIn("Existing project directory used by --scope project", help_output.getvalue())
+        readme = README_PATH.read_text(encoding="utf-8")
+        self.assertIn("--project-root /absolute/path/to/another-project", readme)
+        self.assertIn(
+            "Relative project roots are resolved from the invocation directory.",
+            readme,
+        )
+
+    def test_absolute_project_root_installs_codex_bundle_and_mcp_configuration(
+        self,
+    ) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            invocation = root / "invocation"
+            project = root / "selected-project"
+            source = root / "source"
+            agents_source = root / "agents-source"
+            executable = root / "mcp-agent-ops"
+            invocation.mkdir()
+            project.mkdir()
+            self.create_skill(source, "alpha")
+            agents_source.mkdir()
+            (agents_source / "reviewer.toml").write_text(
+                AGENT_FILE_CONTENT,
+                encoding="utf-8",
+            )
+            executable.write_text("server", encoding="utf-8")
+
+            with patch.object(installer.Path, "cwd", return_value=invocation):
+                exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(source),
+                        "--scope",
+                        "project",
+                        "--project-root",
+                        str(project),
+                        "--install-agents",
+                        "--agents-source",
+                        str(agents_source),
+                        "--mcp-agent-ops-executable",
+                        str(executable),
+                    ]
+                )
+
+            skills_destination = project / ".agents/skills"
+            agents_destination = project / ".codex/agents"
+            config_path = project / ".codex/config.toml"
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            self.assertTrue((skills_destination / "alpha/SKILL.md").is_file())
+            self.assertTrue((agents_destination / "reviewer.toml").is_file())
+            skill_manifest = json.loads(
+                (skills_destination / installer.INSTALL_MANIFEST_FILE_NAME).read_text(
+                    encoding="utf-8"
+                )
+            )
+            self.assertEqual(str(source.resolve()), skill_manifest["source"])
+            config = config_path.read_text(encoding="utf-8")
+            detection_registry = (
+                skills_destination / installer.MCP_DETECTION_REGISTRY_RELATIVE_PATH
+            ).resolve()
+            self.assertIn(
+                f'MCP_AGENT_OPS_SKILL_ROOTS = "{skills_destination.resolve()}"',
+                config,
+            )
+            self.assertIn(
+                "MCP_AGENT_OPS_DETECTION_REGISTRY = "
+                f'"{detection_registry}"',
+                config,
+            )
+            self.assertIn(
+                f'MCP_AGENT_OPS_WORKSPACE_ROOTS = "{project.resolve()}"',
+                config,
+            )
+            self.assertEqual([], list(invocation.iterdir()))
+
+    def test_relative_project_root_installs_junie_bundle_and_mcp_configuration(
+        self,
+    ) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            invocation = root / "invocation"
+            project = invocation / "selected-project"
+            source = root / "source"
+            agents_source = root / "agents-source"
+            executable = root / "mcp-agent-ops"
+            invocation.mkdir()
+            project.mkdir()
+            self.create_skill(source, "alpha")
+            agents_source.mkdir()
+            (agents_source / "reviewer.md").write_text(
+                AGENT_FILE_CONTENT,
+                encoding="utf-8",
+            )
+            executable.write_text("server", encoding="utf-8")
+
+            with patch.object(installer.Path, "cwd", return_value=invocation):
+                exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "junie",
+                        "--source",
+                        str(source),
+                        "--scope",
+                        "project",
+                        "--project-root",
+                        "selected-project",
+                        "--install-agents",
+                        "--agents-source",
+                        str(agents_source),
+                        "--mcp-agent-ops-executable",
+                        str(executable),
+                    ]
+                )
+
+            skills_destination = project / ".junie/skills"
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            self.assertTrue((skills_destination / "alpha/SKILL.md").is_file())
+            self.assertTrue((project / ".junie/agents/reviewer.md").is_file())
+            config = json.loads(
+                (project / ".junie/mcp.json").read_text(encoding="utf-8")
+            )["mcpServers"]["mcp-agent-ops"]["env"]
+            self.assertEqual(
+                str(skills_destination.resolve()),
+                config["MCP_AGENT_OPS_SKILL_ROOTS"],
+            )
+            self.assertEqual(
+                str(
+                    (
+                        skills_destination
+                        / installer.MCP_DETECTION_REGISTRY_RELATIVE_PATH
+                    ).resolve()
+                ),
+                config["MCP_AGENT_OPS_DETECTION_REGISTRY"],
+            )
+            self.assertEqual(
+                str(project.resolve()),
+                config["MCP_AGENT_OPS_WORKSPACE_ROOTS"],
+            )
+
+    def test_project_root_rejects_non_project_scope_before_mutation(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            project = root / "selected-project"
+            source = root / "source"
+            user_home = root / "user-home"
+            explicit_destination = root / "explicit-destination"
+            project.mkdir()
+            self.create_skill(source, "alpha")
+            cases = (
+                [
+                    "--source",
+                    str(source),
+                    "--scope",
+                    "user",
+                    "--project-root",
+                    str(project),
+                    "--configure-mcp",
+                    "false",
+                ],
+                [
+                    "--source",
+                    str(source),
+                    "--dest",
+                    str(explicit_destination),
+                    "--project-root",
+                    str(project),
+                    "--configure-mcp",
+                    "false",
+                ],
+            )
+
+            for arguments in cases:
+                with self.subTest(arguments=arguments):
+                    error_output = io.StringIO()
+                    with (
+                        patch.object(installer.Path, "home", return_value=user_home),
+                        redirect_stdout(io.StringIO()),
+                        redirect_stderr(error_output),
+                    ):
+                        exit_code = installer.main(arguments)
+
+                    self.assertEqual(installer.ERROR_EXIT_CODE, exit_code)
+                    self.assertIn(
+                        "--project-root requires --scope project",
+                        error_output.getvalue(),
+                    )
+
+            self.assertEqual([], list(project.iterdir()))
+            self.assertFalse(user_home.exists())
+            self.assertFalse(explicit_destination.exists())
+
+    def test_project_root_must_exist_and_be_a_directory_before_mutation(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "source"
+            missing_project = root / "missing-project"
+            file_project = root / "project-file"
+            self.create_skill(source, "alpha")
+            file_project.write_text("not a directory", encoding="utf-8")
+
+            for project_root, expected_message in (
+                (missing_project, "project root does not exist"),
+                (file_project, "project root must be a directory"),
+            ):
+                with self.subTest(project_root=project_root):
+                    error_output = io.StringIO()
+                    with redirect_stdout(io.StringIO()), redirect_stderr(error_output):
+                        exit_code = installer.main(
+                            [
+                                "--source",
+                                str(source),
+                                "--scope",
+                                "project",
+                                "--project-root",
+                                str(project_root),
+                                "--configure-mcp",
+                                "false",
+                            ]
+                        )
+
+                    self.assertEqual(installer.ERROR_EXIT_CODE, exit_code)
+                    self.assertIn(expected_message, error_output.getvalue())
+
+            self.assertFalse(missing_project.exists())
+            self.assertEqual(
+                "not a directory",
+                file_project.read_text(encoding="utf-8"),
+            )
+
+    def test_project_root_preserves_explicit_destination_precedence(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            project = root / "selected-project"
+            source = root / "source"
+            agents_source = root / "agents-source"
+            skills_destination = root / "custom-skills"
+            agents_destination = root / "custom-agents"
+            config_path = root / "custom-config" / "config.toml"
+            executable = root / "mcp-agent-ops"
+            workspace_root = root / "explicit-workspace"
+            project.mkdir()
+            workspace_root.mkdir()
+            self.create_skill(source, "alpha")
+            agents_source.mkdir()
+            (agents_source / "reviewer.toml").write_text(
+                AGENT_FILE_CONTENT,
+                encoding="utf-8",
+            )
+            executable.write_text("server", encoding="utf-8")
+
+            exit_code = installer.main(
+                [
+                    "--adapter",
+                    "codex",
+                    "--source",
+                    str(source),
+                    "--scope",
+                    "project",
+                    "--project-root",
+                    str(project),
+                    "--dest",
+                    str(skills_destination),
+                    "--install-agents",
+                    "--agents-source",
+                    str(agents_source),
+                    "--agents-dest",
+                    str(agents_destination),
+                    "--mcp-config",
+                    str(config_path),
+                    "--mcp-agent-ops-executable",
+                    str(executable),
+                    "--mcp-workspace-root",
+                    str(workspace_root),
+                ]
+            )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            self.assertTrue((skills_destination / "alpha/SKILL.md").is_file())
+            self.assertTrue((agents_destination / "reviewer.toml").is_file())
+            config = config_path.read_text(encoding="utf-8")
+            self.assertIn(
+                f'MCP_AGENT_OPS_SKILL_ROOTS = "{skills_destination.resolve()}"',
+                config,
+            )
+            self.assertIn(
+                f'MCP_AGENT_OPS_WORKSPACE_ROOTS = "{workspace_root.resolve()}"',
+                config,
+            )
+            self.assertFalse((project / ".agents").exists())
+            self.assertFalse((project / ".codex").exists())
+
     def test_destination_or_scope_is_required(self) -> None:
         installer = load_installer()
 
@@ -854,10 +1242,12 @@ class InstallSkillsTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
+            project = root / "selected-project"
             source = root / "source"
-            destination = root / "skills-dest"
             agents_source = root / "agents-source"
-            agents_destination = root / "agents-dest"
+            destination = project / ".agents/skills"
+            agents_destination = project / ".codex/agents"
+            project.mkdir()
             self.create_skill(source, "alpha")
             agents_source.mkdir()
             (agents_source / "reviewer.toml").write_text(AGENT_FILE_CONTENT, encoding="utf-8")
@@ -870,13 +1260,15 @@ class InstallSkillsTests(unittest.TestCase):
                         "codex",
                         "--source",
                         str(source),
-                        "--dest",
-                        str(destination),
+                        "--scope",
+                        "project",
+                        "--project-root",
+                        str(project),
+                        "--configure-mcp",
+                        "false",
                         "--install-agents",
                         "--agents-source",
                         str(agents_source),
-                        "--agents-dest",
-                        str(agents_destination),
                     ]
                 )
 
@@ -886,7 +1278,10 @@ class InstallSkillsTests(unittest.TestCase):
                 (agents_destination / "reviewer.toml").read_text(encoding="utf-8"),
             )
             self.assertEqual(["reviewer"], self.read_manifest_agent_names(agents_destination))
-            self.assertIn(f"agents destination {agents_destination}", output.getvalue())
+            self.assertIn(
+                f"agents destination {agents_destination.resolve()}",
+                output.getvalue(),
+            )
 
     def test_installs_generated_markdown_agents_for_gemini_claude_and_junie(self) -> None:
         installer = load_installer()
@@ -957,10 +1352,12 @@ class InstallSkillsTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
+            project = root / "selected-project"
             source = root / "source"
-            destination = root / "skills-dest"
             agents_source = root / "agents-source"
-            agents_destination = root / "agents-dest"
+            destination = project / ".agents/skills"
+            agents_destination = project / ".codex/agents"
+            project.mkdir()
             self.create_skill(source, "alpha")
             agents_source.mkdir()
             (agents_source / "reviewer.toml").write_text(AGENT_FILE_CONTENT, encoding="utf-8")
@@ -972,13 +1369,15 @@ class InstallSkillsTests(unittest.TestCase):
                         "codex",
                         "--source",
                         str(source),
-                        "--dest",
-                        str(destination),
+                        "--scope",
+                        "project",
+                        "--project-root",
+                        str(project),
+                        "--configure-mcp",
+                        "false",
                         "--install-agents",
                         "--agents-source",
                         str(agents_source),
-                        "--agents-dest",
-                        str(agents_destination),
                     ]
                 )
             self.create_skill(destination, "local-only", SECOND_SKILL_FILE_CONTENT)
@@ -990,10 +1389,12 @@ class InstallSkillsTests(unittest.TestCase):
                     [
                         "--adapter",
                         "codex",
-                        "--dest",
-                        str(destination),
-                        "--agents-dest",
-                        str(agents_destination),
+                        "--scope",
+                        "project",
+                        "--project-root",
+                        str(project),
+                        "--configure-mcp",
+                        "false",
                         "--remove-owned",
                     ]
                 )
@@ -1040,8 +1441,10 @@ class InstallSkillsTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
+            project = root / "selected-project"
             source = root / "source"
-            destination = root / "dest"
+            destination = project / ".agents/skills"
+            project.mkdir()
             self.create_skill(source, "alpha")
             self.create_skill(destination, "alpha", UPDATED_SKILL_FILE_CONTENT)
             self.create_skill(destination, "obsolete", SECOND_SKILL_FILE_CONTENT)
@@ -1054,8 +1457,12 @@ class InstallSkillsTests(unittest.TestCase):
                     [
                         "--source",
                         str(source),
-                        "--dest",
-                        str(destination),
+                        "--scope",
+                        "project",
+                        "--project-root",
+                        str(project),
+                        "--configure-mcp",
+                        "false",
                         "--replace",
                     ]
                 )
@@ -2207,10 +2614,12 @@ class InstallSkillsTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
+            project = root / "selected-project"
             source = root / "source"
-            destination = root / "skills-dest"
             agents_source = root / "agents-source"
-            agents_destination = root / "agents-dest"
+            destination = project / ".agents/skills"
+            agents_destination = project / ".codex/agents"
+            project.mkdir()
             self.create_skill(source, "alpha")
             agents_source.mkdir()
             reviewer_source = agents_source / "reviewer.toml"
@@ -2220,13 +2629,15 @@ class InstallSkillsTests(unittest.TestCase):
                 "codex",
                 "--source",
                 str(source),
-                "--dest",
-                str(destination),
+                "--scope",
+                "project",
+                "--project-root",
+                str(project),
+                "--configure-mcp",
+                "false",
                 "--install-agents",
                 "--agents-source",
                 str(agents_source),
-                "--agents-dest",
-                str(agents_destination),
             ]
             with redirect_stdout(io.StringIO()):
                 first_exit_code = installer.main(install_args)

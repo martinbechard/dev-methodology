@@ -172,9 +172,9 @@ The report is read-only. It does not approve user-action items, mutate backlog f
 
 ## Scoped Target Deployment
 
-The build and maintenance workflow does not install skills or agents automatically. The installer acts only when explicitly invoked. Use --scope user to select the adapter's standard user directories or --scope project to select its standard directories under the current project. Explicit --dest and --agents-dest values override the corresponding scoped defaults.
+The build and maintenance workflow does not install skills or agents automatically. The installer acts only when explicitly invoked. Use --scope user to select the adapter's standard user directories or --scope project to select its standard directories under the current project. Add --project-root with project scope to select another existing project directory without changing the invocation directory. Relative project roots are resolved from the invocation directory. Explicit --dest and --agents-dest values override the corresponding scoped defaults while the selected project remains the identity for other project-scoped defaults.
 
-Scoped Codex and Junie deployments configure mcp-agent-ops by default. The installer locates the installed executable, binds the server to the deployed skill catalog and technology registry, and uses the scoped project or current working directory as the least-privilege workspace root. Repeat --mcp-workspace-root for every broader project root that the server should accept. Use --mcp-agent-ops-executable when the executable is not discoverable on PATH. Deployments that use only explicit destinations must also supply --mcp-config because a custom skill destination does not identify the host configuration location. Use --configure-mcp false when the host should remain unchanged.
+Scoped Codex and Junie deployments configure mcp-agent-ops by default. The installer locates the installed executable, binds the server to the deployed skill catalog and technology registry, and uses the selected project or current working directory as the least-privilege workspace root. Repeat --mcp-workspace-root for every broader project root that the server should accept. Use --mcp-agent-ops-executable when the executable is not discoverable on PATH. Deployments that use only explicit destinations must also supply --mcp-config because a custom skill destination does not identify the host configuration location. With project scope, an explicit --mcp-config overrides the project configuration path without changing the selected project used by the remaining defaults. Use --configure-mcp false when the host should remain unchanged.
 
 When the active host configuration is absent, the installer creates it. When the file exists but has no configured MCP servers, the installer adds mcp-agent-ops and saves the previous file with a .bak extension. When other MCP servers are already configured, the installer writes config.mcp-agent-ops.toml for Codex or mcp-agent-ops.json for Junie and asks whether to activate the candidate. Acceptance moves the previous active file to its .bak path; rejection leaves the active file unchanged and preserves the candidate for review. A noninteractive deployment never replaces an active configuration that already contains other servers.
 
@@ -230,6 +230,17 @@ Deploy the Codex bundle to the current project instead:
 python3 scripts/install-skills.py \
   --adapter codex \
   --scope project \
+  --install-agents \
+  --replace
+```
+
+Deploy the Codex bundle to another existing project without changing directories:
+
+```bash
+python3 scripts/install-skills.py \
+  --adapter codex \
+  --scope project \
+  --project-root /absolute/path/to/another-project \
   --install-agents \
   --replace
 ```

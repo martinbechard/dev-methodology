@@ -205,6 +205,15 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
         help="Default destinations to the current user or current project.",
     )
     parser.add_argument(
+        "--project-root",
+        type=Path,
+        default=None,
+        help=(
+            "Existing project directory used by --scope project. "
+            "Defaults to the current working directory."
+        ),
+    )
+    parser.add_argument(
         "--replace",
         action="store_true",
         help="Replace existing destination skill folders with the bundled versions.",
@@ -297,6 +306,29 @@ def default_agents_source(adapter_name: str) -> Path:
     )
 
 
+def _resolve_project_root(
+    scope: str | None,
+    explicit_project_root: Path | None,
+) -> Path | None:
+    if explicit_project_root is not None and scope != PROJECT_SCOPE:
+        raise ValueError("--project-root requires --scope project")
+    if scope != PROJECT_SCOPE:
+        return None
+
+    requested_root = (
+        Path.cwd()
+        if explicit_project_root is None
+        else explicit_project_root.expanduser()
+    )
+    if not requested_root.is_absolute():
+        requested_root = Path.cwd() / requested_root
+    if not requested_root.exists():
+        raise ValueError(f"project root does not exist: {requested_root}")
+    if not requested_root.is_dir():
+        raise ValueError(f"project root must be a directory: {requested_root}")
+    return requested_root.resolve()
+
+
 def default_destinations(
     adapter: Adapter,
     scope: str,
@@ -329,12 +361,20 @@ def _mcp_config_path(
     adapter_name: str,
     scope: str | None,
     explicit_path: Path | None,
+    project_root: Path | None,
 ) -> Path | None:
     if explicit_path is not None:
         return explicit_path.expanduser().resolve()
     if scope is None:
         return None
-    base = Path.home() if scope == USER_SCOPE else Path.cwd()
+    if scope == USER_SCOPE:
+        base = Path.home()
+    elif scope == PROJECT_SCOPE:
+        if project_root is None:
+            raise ValueError("project root is required for project-scoped MCP configuration")
+        base = project_root
+    else:
+        return None
     return (base / MCP_CONFIG_FILE_NAMES[adapter_name]).resolve()
 
 
@@ -356,11 +396,14 @@ def _mcp_executable_path(explicit_path: Path | None) -> str:
 def _mcp_workspace_roots(
     scope: str | None,
     configured_roots: Sequence[Path] | None,
+    project_root: Path | None,
 ) -> tuple[Path, ...]:
     if configured_roots:
         roots = tuple(path.expanduser().resolve() for path in configured_roots)
     elif scope == PROJECT_SCOPE:
-        roots = (Path.cwd().resolve(),)
+        if project_root is None:
+            raise ValueError("project root is required for project-scoped MCP configuration")
+        roots = (project_root,)
     else:
         roots = (Path.cwd().resolve(),)
     for root in roots:
@@ -496,12 +539,18 @@ def _prepare_mcp_config(
     executable_path: Path | None,
     configured_workspace_roots: Sequence[Path] | None,
     skills_destination: Path,
+    project_root: Path | None,
 ) -> _McpConfigPlan | None:
     if adapter.name not in MCP_CONFIG_ADAPTERS:
         if explicit_config is not None or executable_path is not None or configured_workspace_roots:
             raise ValueError("MCP configuration options require the codex or junie adapter")
         return None
-    active_path = _mcp_config_path(adapter.name, scope, explicit_config)
+    active_path = _mcp_config_path(
+        adapter.name,
+        scope,
+        explicit_config,
+        project_root,
+    )
     if active_path is None:
         return None
     if active_path.exists() and not active_path.is_file():
@@ -524,7 +573,11 @@ def _prepare_mcp_config(
             target_already_configured=True,
         )
     executable = _mcp_executable_path(executable_path)
-    workspace_roots = _mcp_workspace_roots(scope, configured_workspace_roots)
+    workspace_roots = _mcp_workspace_roots(
+        scope,
+        configured_workspace_roots,
+        project_root,
+    )
     if adapter.name == CODEX_ADAPTER_NAME:
         rendered, server_names = _render_codex_mcp_config(
             active_content,
@@ -1717,8 +1770,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     agents_destination: Optional[Path] = args.agents_dest
     mcp_config_plan: _McpConfigPlan | None = None
     try:
+        project_root = _resolve_project_root(args.scope, args.project_root)
         if args.scope is not None:
-            scoped_destination, scoped_agents_destination = default_destinations(adapter, args.scope)
+            scoped_destination, scoped_agents_destination = default_destinations(
+                adapter,
+                args.scope,
+                project_root=project_root,
+            )
             if destination is None:
                 destination = scoped_destination
             if agents_destination is None:
@@ -1739,6 +1797,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 args.mcp_agent_ops_executable,
                 args.mcp_workspace_root,
                 destination,
+                project_root,
             )
         if args.remove_owned:
             skill_manifest = _prevalidate_owned_removal(
