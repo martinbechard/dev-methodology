@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Verifies conditional coordination behavior in the watchdog and generated coordinator adapters.
+# Summary: Verifies Starting lifecycle and conditional watchdog behavior in coordination sources and generated adapters.
 
 from pathlib import Path
 import unittest
@@ -8,6 +8,16 @@ import unittest
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SKILL_PATH = REPOSITORY_ROOT / "skills" / "codex-workitem-coordination" / "SKILL.md"
+MANAGE_FILE_WORK_ITEMS_PATH = REPOSITORY_ROOT / "skills" / "manage-file-work-items" / "SKILL.md"
+COORDINATOR_ROLE_PATH = (
+    REPOSITORY_ROOT / "agents" / "roles" / "dev-activities" / "dev-backlog-coordinator.role.yaml"
+)
+ORCHESTRATOR_ROLE_PATH = (
+    REPOSITORY_ROOT / "agents" / "roles" / "dev-activities" / "dev-orchestrator.role.yaml"
+)
+STEWARD_ROLE_PATH = (
+    REPOSITORY_ROOT / "agents" / "roles" / "dev-activities" / "dev-backlog-steward.role.yaml"
+)
 _GENERATED_COORDINATOR_ADAPTERS = tuple(
     REPOSITORY_ROOT / "generated" / "adapters" / adapter / "agents" / filename
     for adapter, filename in (
@@ -108,6 +118,74 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
                     "reads current work items, Git state, coordination-registry state, and task state",
                     adapter,
                 )
+
+
+class StartingLifecycleContractTests(unittest.TestCase):
+    """Protect the durable startup bridge and mechanical watchdog boundaries."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.coordination = SKILL_PATH.read_text(encoding="utf-8")
+        cls.provider = MANAGE_FILE_WORK_ITEMS_PATH.read_text(encoding="utf-8")
+        cls.roles = "\n".join(
+            path.read_text(encoding="utf-8")
+            for path in (
+                COORDINATOR_ROLE_PATH,
+                ORCHESTRATOR_ROLE_PATH,
+                STEWARD_ROLE_PATH,
+            )
+        )
+        cls.contract = "\n".join((cls.coordination, cls.provider, cls.roles))
+
+    def test_starting_counts_against_capacity_and_prevents_duplicate_start(self) -> None:
+        required = (
+            "Ready -> Starting",
+            "Starting counts against capacity",
+            "canonical task id",
+            "must not create a duplicate",
+            "ambiguous startup",
+        )
+        for clause in required:
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.contract)
+
+    def test_start_acceptance_and_recovery_preserve_ownership_evidence(self) -> None:
+        required = (
+            "Starting -> Running",
+            "restore Ready",
+            "Blocked or User Action Required",
+            "branch, worktree, and claim evidence",
+            "root Dev Orchestrator",
+            "Dev Backlog Steward child",
+        )
+        for clause in required:
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.contract)
+
+    def test_watchdog_reports_mechanical_task_and_coordination_mismatches(self) -> None:
+        required = (
+            "stopped, failed, or missing canonical task",
+            "Starting or Running",
+            "stopped task that retains a live coordination entry",
+            "terminal item that retains a live coordination entry",
+            "no extra grace timeout",
+        )
+        for clause in required:
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.coordination)
+
+    def test_watchdog_keeps_quiet_active_tasks_healthy_and_never_decides_delivery(self) -> None:
+        required = (
+            "active quiet tasks",
+            "explicit deadline or hard stop",
+            "must not infer integration readiness",
+            "accepted delivery",
+            "completion readiness",
+            "must not mutate backlog, claims, or task state",
+        )
+        for clause in required:
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.coordination)
 
 
 if __name__ == "__main__":

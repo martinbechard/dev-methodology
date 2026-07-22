@@ -3387,6 +3387,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("one exact folder pattern may appear only once", skill_text)
         self.assertIn("one exact folder pattern may appear only once", template_text)
         self.assertNotIn("nested_project_files:", template_text)
+
         self.assertIn("Create exactly one PROJECT.yaml", skill_text)
         self.assertIn("Do not create nested PROJECT.yaml files", skill_text)
         self.assertIn("intermediate, reviewable intent log", skill_text)
@@ -3450,6 +3451,45 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn(PROJECT_CONFIGURATION_SKILL, development_methodology_text)
         self.assertIn(PROJECT_TEMPLATE, development_methodology_text)
         self.assertIn("documentation-page-verify", development_methodology_text)
+
+    def test_project_and_template_publish_initial_resource_deadline_defaults(self) -> None:
+        """Keep setup defaults observable and editable through the project policy path."""
+
+        expected = {
+            "backlog-mutation": {
+                "maximum_duration_seconds": 600,
+                "cleanup_grace_seconds": 120,
+            },
+            "main-integration": {
+                "maximum_duration_seconds": 2700,
+                "cleanup_grace_seconds": 600,
+            },
+            "browser-server": {
+                "maximum_duration_seconds": 3600,
+                "cleanup_grace_seconds": 600,
+            },
+            "database-port": {
+                "maximum_duration_seconds": 1800,
+                "cleanup_grace_seconds": 300,
+            },
+            "live-model-evaluation": {
+                "maximum_duration_seconds": 14400,
+                "cleanup_grace_seconds": 1800,
+            },
+        }
+        template_path = (
+            SKILLS_ROOT
+            / "development-methodology"
+            / "assets"
+            / "templates"
+            / PROJECT_TEMPLATE
+        )
+        for path in (REPOSITORY_ROOT / "PROJECT.yaml", template_path):
+            with self.subTest(path=path):
+                project = load_yaml_object(path)
+                policy = project["resource_coordination"]["deadline_policy"]
+                self.assertEqual(expected, policy["resource_classes"])
+                self.assertEqual({}, policy["resource_overrides"])
 
     def test_artifact_review_skills_have_checklists_and_metadata(self) -> None:
         development_methodology_text = (

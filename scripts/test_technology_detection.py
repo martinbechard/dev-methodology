@@ -144,7 +144,34 @@ def with_claim_transport(value: dict[str, object]) -> dict[str, object]:
     """Add one available command adapter selection to a renderer fixture."""
 
     return {
-        "resource_coordination": {"selected": "agent-claim"},
+        "resource_coordination": {
+            "selected": "agent-claim",
+            "deadline_policy": {
+                "resource_classes": {
+                    "backlog-mutation": {
+                        "maximum_duration_seconds": 600,
+                        "cleanup_grace_seconds": 120,
+                    },
+                    "main-integration": {
+                        "maximum_duration_seconds": 2700,
+                        "cleanup_grace_seconds": 600,
+                    },
+                    "browser-server": {
+                        "maximum_duration_seconds": 3600,
+                        "cleanup_grace_seconds": 600,
+                    },
+                    "database-port": {
+                        "maximum_duration_seconds": 1800,
+                        "cleanup_grace_seconds": 300,
+                    },
+                    "live-model-evaluation": {
+                        "maximum_duration_seconds": 14400,
+                        "cleanup_grace_seconds": 1800,
+                    },
+                },
+                "resource_overrides": {},
+            },
+        },
         "agent_claim_transport": {
             "selected": "command",
             "availability": "AVAILABLE",

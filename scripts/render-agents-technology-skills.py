@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Renders project setup, authority, resource coordination, workflows, folder technology, and project skill guidance.
+# Summary: Renders project setup, authority, deadline-aware coordination, workflows, folder technology, and project skill guidance.
 
 from __future__ import annotations
 
@@ -25,6 +25,13 @@ SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 AUTHORITY_HEADING = "## Agent And Skill Definition Approval"
 CLAIM_TRANSPORT_HEADING = "## Agent Claim Transport"
 RESOURCE_COORDINATION_HEADING = "## Resource Coordination Skill Reference"
+_RESOURCE_DEADLINE_CLASS_IDS = (
+    "backlog-mutation",
+    "main-integration",
+    "browser-server",
+    "database-port",
+    "live-model-evaluation",
+)
 PROJECT_SKILL_EXTENSIONS_HEADING = "## Project Skill Extensions"
 CLAIM_TRANSPORT_SKILLS = {
     "mcp": "agent-claim-mcp",
@@ -1039,14 +1046,112 @@ def workflow_lines(value: dict[str, object]) -> list[str]:
     return lines
 
 
+def _resource_deadline_seconds(
+    policy: dict[str, object],
+    field: str,
+    context: str,
+    *,
+    allow_zero: bool = False,
+) -> int:
+    value = policy.get(field)
+    valid = isinstance(value, int) and not isinstance(value, bool)
+    valid = valid and (value >= 0 if allow_zero else value > 0)
+    if not valid:
+        qualifier = "non-negative" if allow_zero else "positive"
+        raise ValueError(f"{context}.{field} must be a {qualifier} integer")
+    return value
+
+
+def _resource_deadline_policy(configuration: dict[str, object]) -> dict[str, object]:
+    policy = configuration.get("deadline_policy")
+    if not isinstance(policy, dict):
+        raise ValueError("resource_coordination.deadline_policy must be a mapping")
+    if set(policy) != {"resource_classes", "resource_overrides"}:
+        raise ValueError(
+            "resource_coordination.deadline_policy keys must be exactly: resource_classes, resource_overrides"
+        )
+    classes = policy.get("resource_classes")
+    if not isinstance(classes, dict):
+        raise ValueError("resource_coordination.deadline_policy.resource_classes must be a mapping")
+    if set(classes) != set(_RESOURCE_DEADLINE_CLASS_IDS):
+        raise ValueError(
+            "resource_coordination.deadline_policy.resource_classes keys must be exactly: "
+            + ", ".join(_RESOURCE_DEADLINE_CLASS_IDS)
+        )
+    normalized_classes: dict[str, dict[str, int]] = {}
+    for class_id in _RESOURCE_DEADLINE_CLASS_IDS:
+        class_policy = classes[class_id]
+        context = f"resource_coordination.deadline_policy.resource_classes.{class_id}"
+        if not isinstance(class_policy, dict):
+            raise ValueError(f"{context} must be a mapping")
+        if set(class_policy) != {"maximum_duration_seconds", "cleanup_grace_seconds"}:
+            raise ValueError(
+                f"{context} keys must be exactly: maximum_duration_seconds, cleanup_grace_seconds"
+            )
+        normalized_classes[class_id] = {
+            "maximum_duration_seconds": _resource_deadline_seconds(
+                class_policy,
+                "maximum_duration_seconds",
+                context,
+            ),
+            "cleanup_grace_seconds": _resource_deadline_seconds(
+                class_policy,
+                "cleanup_grace_seconds",
+                context,
+                allow_zero=True,
+            ),
+        }
+
+    overrides = policy.get("resource_overrides")
+    if not isinstance(overrides, dict):
+        raise ValueError("resource_coordination.deadline_policy.resource_overrides must be a mapping")
+    normalized_overrides: dict[str, dict[str, object]] = {}
+    for resource_id, override in overrides.items():
+        if not isinstance(resource_id, str) or not resource_id or len(resource_id) > 200:
+            raise ValueError("resource override ids must be non-empty strings of at most 200 characters")
+        context = f"resource_coordination.deadline_policy.resource_overrides.{resource_id}"
+        if not isinstance(override, dict):
+            raise ValueError(f"{context} must be a mapping")
+        if set(override) != {
+            "resource_class",
+            "maximum_duration_seconds",
+            "cleanup_grace_seconds",
+        }:
+            raise ValueError(
+                f"{context} keys must be exactly: resource_class, maximum_duration_seconds, cleanup_grace_seconds"
+            )
+        resource_class = override.get("resource_class")
+        if resource_class not in normalized_classes:
+            raise ValueError(f"{context}.resource_class must name a configured resource class")
+        normalized_overrides[resource_id] = {
+            "resource_class": resource_class,
+            "maximum_duration_seconds": _resource_deadline_seconds(
+                override,
+                "maximum_duration_seconds",
+                context,
+            ),
+            "cleanup_grace_seconds": _resource_deadline_seconds(
+                override,
+                "cleanup_grace_seconds",
+                context,
+                allow_zero=True,
+            ),
+        }
+    return {
+        "resource_classes": normalized_classes,
+        "resource_overrides": normalized_overrides,
+    }
+
+
 def resource_coordination_lines(value: dict[str, object]) -> list[str]:
     """Render the selected project-wide coordination skill as a reference.
 
-    resource_coordination is a required mapping containing only selected. The selected
-    value is none or agent-claim. none requires agent_claim_transport to be absent and
-    returns no guidance, while agent-claim returns a reference-only section and leaves the
-    implementation body in its bundled skill. Invalid or unsupported configuration raises
-    ValueError without a compatibility default.
+    value is one loaded project mapping. resource_coordination is required. none permits only selected, requires
+    agent_claim_transport to be absent, and returns no guidance. agent-claim also requires
+    deadline_policy with all five resource classes and an exact resource-id override map.
+    The returned Markdown lines render every validated integer-second value while leaving
+    procedure in the bundled skill; the function does not mutate value or write files.
+    Missing, unsupported, or internally inconsistent configuration raises ValueError.
     """
 
     configuration = value.get("resource_coordination")
@@ -1056,25 +1161,49 @@ def resource_coordination_lines(value: dict[str, object]) -> list[str]:
         )
     if not isinstance(configuration, dict):
         raise ValueError("resource_coordination must be a mapping")
-    if set(configuration) != {"selected"}:
-        raise ValueError("resource_coordination keys must be exactly: selected")
     selected = configuration.get("selected")
     if not isinstance(selected, str) or selected not in RESOURCE_COORDINATION_VALUES:
         raise ValueError("resource_coordination.selected must be none or agent-claim")
     if selected == "none":
+        if set(configuration) != {"selected"}:
+            raise ValueError("resource_coordination keys must be exactly: selected")
         if "agent_claim_transport" in value:
             raise ValueError(
                 "agent_claim_transport must be omitted when resource_coordination.selected is none"
             )
         return []
-    return [
+    if set(configuration) != {"selected", "deadline_policy"}:
+        raise ValueError(
+            "resource_coordination keys must be exactly: selected, deadline_policy when agent-claim is selected"
+        )
+    deadline_policy = _resource_deadline_policy(configuration)
+    lines = [
         RESOURCE_COORDINATION_HEADING,
         "",
         "Project Configurator selected resource-coordination skill agent-claim. Apply that bundled skill by reference before taking ownership of repository paths or exclusive runtime and integration resources.",
         "",
         "The selected skill owns its coordination procedure and evidence. Work-item providers own durable assignment and lifecycle records; they do not own operational resources.",
         "",
+        "Configured resource deadline policy:",
+        "",
     ]
+    for class_id in _RESOURCE_DEADLINE_CLASS_IDS:
+        class_policy = deadline_policy["resource_classes"][class_id]
+        lines.append(
+            f"- {class_id}: maximum {class_policy['maximum_duration_seconds']} seconds; cleanup grace {class_policy['cleanup_grace_seconds']} seconds"
+        )
+    lines.extend(["", "Exact resource-id overrides:", ""])
+    overrides = deadline_policy["resource_overrides"]
+    if not overrides:
+        lines.append("- None.")
+    else:
+        for resource_id in sorted(overrides):
+            override = overrides[resource_id]
+            lines.append(
+                f"- {resource_id}: class {override['resource_class']}; maximum {override['maximum_duration_seconds']} seconds; cleanup grace {override['cleanup_grace_seconds']} seconds"
+            )
+    lines.append("")
+    return lines
 
 
 def claim_transport_lines(value: dict[str, object]) -> list[str]:

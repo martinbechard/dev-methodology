@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Implements the command transport for repository claims, scope extension, journaling, isolation, recovery, and release.
+# Summary: Implements command-transport claims, resource deadlines, journaling, isolation, recovery, and release.
 
 from __future__ import annotations
 
@@ -43,6 +43,7 @@ REPORT_SCHEMA_VERSION = 2
 DEFAULT_HOT_DAYS = 2
 MAX_SCOPE_REASON_LENGTH = 200
 MAX_IDENTIFIER_LENGTH = 200
+MAX_EXTENSION_EVIDENCE_LENGTH = 1000
 STALE_HEARTBEAT_HOURS = 24
 UTC_DAY_PATTERN = re.compile(r"^(\d{4}-\d{2}-\d{2})\.jsonl$")
 SINCE_PATTERN = re.compile(r"^(\d+)([dh])$")
@@ -69,6 +70,13 @@ class _ScopeError(ValueError):
         super().__init__(message)
         self.offending_scope = offending_scope
         self.replacement = replacement
+        self.reason = reason
+
+
+class _DeadlineError(ValueError):
+    def __init__(self, message: str, field: str, reason: str) -> None:
+        super().__init__(message)
+        self.field = field
         self.reason = reason
 
 
@@ -208,6 +216,116 @@ def _parse_timestamp(value: str) -> datetime:
     if parsed.tzinfo is None:
         parsed = parsed.replace(tzinfo=timezone.utc)
     return parsed.astimezone(timezone.utc)
+
+
+def _deadline_from_args(args: argparse.Namespace, acquired_at: str) -> dict[str, Any] | None:
+    argument_names = (
+        "resource_class",
+        "resource_id",
+        "expected_duration_seconds",
+        "requested_hard_stop_duration_seconds",
+        "configured_maximum_duration_seconds",
+        "cleanup_grace_seconds",
+    )
+    values = {name: getattr(args, name, None) for name in argument_names}
+    supplied = [name for name, value in values.items() if value is not None]
+    if not supplied:
+        return None
+    if len(supplied) != len(argument_names):
+        missing = sorted(set(argument_names) - set(supplied))
+        raise _DeadlineError(
+            f"Timed resource deadline arguments must be supplied together; missing: {', '.join(missing)}.",
+            ",".join(missing),
+            "incomplete_deadline_arguments",
+        )
+
+    resource_class = values["resource_class"]
+    resource_id = values["resource_id"]
+    if not isinstance(resource_class, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", resource_class):
+        raise _DeadlineError(
+            "resource class must be a stable lowercase identifier containing letters, digits, and hyphens.",
+            "resource_class",
+            "invalid_resource_class",
+        )
+    if not isinstance(resource_id, str) or resource_id not in getattr(args, "resource", []):
+        raise _DeadlineError(
+            "resource id must exactly match one acquired --resource value.",
+            "resource_id",
+            "resource_id_not_acquired",
+        )
+
+    expected = values["expected_duration_seconds"]
+    hard_stop = values["requested_hard_stop_duration_seconds"]
+    maximum = values["configured_maximum_duration_seconds"]
+    cleanup_grace = values["cleanup_grace_seconds"]
+    for field, value in (
+        ("expected_duration_seconds", expected),
+        ("requested_hard_stop_duration_seconds", hard_stop),
+        ("configured_maximum_duration_seconds", maximum),
+    ):
+        if not isinstance(value, int) or value <= 0:
+            raise _DeadlineError(
+                f"{field.replace('_', ' ')} must be a positive integer.",
+                field,
+                "invalid_duration",
+            )
+    if not isinstance(cleanup_grace, int) or cleanup_grace < 0:
+        raise _DeadlineError(
+            "cleanup grace seconds must be a non-negative integer.",
+            "cleanup_grace_seconds",
+            "invalid_cleanup_grace",
+        )
+    if expected > hard_stop:
+        raise _DeadlineError(
+            "expected duration must not exceed requested hard stop.",
+            "expected_duration_seconds",
+            "expected_exceeds_hard_stop",
+        )
+    if hard_stop > maximum:
+        raise _DeadlineError(
+            "requested hard stop must not exceed configured maximum.",
+            "requested_hard_stop_duration_seconds",
+            "hard_stop_exceeds_maximum",
+        )
+
+    acquired = _parse_timestamp(acquired_at)
+    hard_stop_at = acquired + timedelta(seconds=hard_stop)
+    return {
+        "resource_class": resource_class,
+        "resource_id": resource_id,
+        "acquired_at": acquired_at,
+        "expected_duration_seconds": expected,
+        "requested_hard_stop_duration_seconds": hard_stop,
+        "configured_maximum_duration_seconds": maximum,
+        "expected_release_at": _format_timestamp(acquired + timedelta(seconds=expected)),
+        "hard_stop_at": _format_timestamp(hard_stop_at),
+        "cleanup_grace_seconds": cleanup_grace,
+        "cleanup_grace_ends_at": _format_timestamp(
+            hard_stop_at + timedelta(seconds=cleanup_grace)
+        ),
+        "extensions": [],
+    }
+
+
+def _deadline_status(deadline: dict[str, Any], evaluated_at: datetime) -> dict[str, Any]:
+    hard_stop_at = _parse_timestamp(str(deadline["hard_stop_at"]))
+    cleanup_grace_ends_at = _parse_timestamp(str(deadline["cleanup_grace_ends_at"]))
+    overdue = evaluated_at >= hard_stop_at
+    cleanup_elapsed = evaluated_at >= cleanup_grace_ends_at
+    return {
+        "evaluated_at": _format_timestamp(evaluated_at),
+        "overdue": overdue,
+        "cleanup_grace": {
+            "seconds": deadline["cleanup_grace_seconds"],
+            "ends_at": deadline["cleanup_grace_ends_at"],
+            "active": overdue and not cleanup_elapsed,
+            "elapsed": cleanup_elapsed,
+        },
+        "stopped_owner_actionability_inputs": {
+            "owner_stopped": None,
+            "immediately_actionable_when_stopped": True,
+        },
+    }
 
 
 def _path_domain(path: str) -> str:
@@ -556,7 +674,10 @@ def _legacy_file_domain(claim: dict[str, Any]) -> str:
     return "none"
 
 
-def _claim_for_output(claim: dict[str, Any]) -> dict[str, Any]:
+def _claim_for_output(
+    claim: dict[str, Any],
+    evaluated_at: datetime | None = None,
+) -> dict[str, Any]:
     rendered = dict(claim)
     if "file_domain" not in claim:
         rendered["file_domain"] = _legacy_file_domain(claim)
@@ -571,6 +692,9 @@ def _claim_for_output(claim: dict[str, Any]) -> dict[str, Any]:
             "missing_out_of_domain_baseline": True,
             "release_policy": "complete_worktree",
         }
+    deadline = claim.get("deadline")
+    if isinstance(deadline, dict) and evaluated_at is not None:
+        rendered["deadline_status"] = _deadline_status(deadline, evaluated_at)
     return rendered
 
 
@@ -834,6 +958,7 @@ def _event(
         "branch": claim.get("branch") if claim else None,
         "worktree_id": _worktree_identifier(claim) if claim else None,
         "baseline_commit": claim.get("baseline_commit") if claim else None,
+        "deadline": claim.get("deadline") if claim else None,
         "resulting_commit": extra.pop("resulting_commit", None),
         "command_warnings": extra.pop("command_warnings", []),
         "journal_warnings": [],
@@ -966,6 +1091,35 @@ def _invalid_scope_result(
     )
 
 
+def _invalid_deadline_result(
+    common_directory: Path,
+    action: str,
+    args: argparse.Namespace,
+    error: _DeadlineError,
+    claim: dict[str, Any] | None = None,
+) -> int:
+    outcome = "INVALID_DEADLINE_EXTENSION" if action == "extend-deadline" else "INVALID_DEADLINE_POLICY"
+    event = _event(
+        action,
+        outcome,
+        args,
+        claim=claim,
+        rejection={
+            "message": str(error),
+            "field": error.field,
+            "reason": error.reason,
+        },
+    )
+    return _journaled_result(
+        ERROR,
+        common_directory,
+        event,
+        message=str(error),
+        field=error.field,
+        rejection=event["rejection"],
+    )
+
+
 def _primary_required_result(
     common_directory: Path,
     action: str,
@@ -1083,6 +1237,11 @@ def _acquire(args: argparse.Namespace) -> int:
             requested_scope, scope_warnings = _scope_from_args(args, repository)
         except _ScopeError as error:
             return _invalid_scope_result(common_directory, "acquire", args, error)
+        acquired_at = _timestamp()
+        try:
+            deadline = _deadline_from_args(args, acquired_at)
+        except _DeadlineError as error:
+            return _invalid_deadline_result(common_directory, "acquire", args, error)
         if not _claim_id_is_safe_worktree_component(args.claim_id):
             return _invalid_identifier_result(common_directory, args)
 
@@ -1202,7 +1361,7 @@ def _acquire(args: argparse.Namespace) -> int:
             mode = "recovery" if initial_status else "primary"
             outcome = "RECOVER" if initial_status else "PRIMARY"
 
-        now = _timestamp()
+        now = acquired_at
         baseline_snapshot = _status_snapshot(target_worktree)
         baseline_state = _status_state(target_worktree, baseline_snapshot)
         claim = {
@@ -1235,6 +1394,8 @@ def _acquire(args: argparse.Namespace) -> int:
             "trees": requested_scope["trees"],
             "worktree": str(target_worktree),
         }
+        if deadline is not None:
+            claim["deadline"] = deadline
         claims.append(claim)
         _write_registry(registry_path, data)
         event = _event(
@@ -1363,6 +1524,90 @@ def _heartbeat(args: argparse.Namespace) -> int:
         return _journaled_result(ERROR, common_directory, event, claim_id=args.claim_id)
 
 
+def _extend_deadline(args: argparse.Namespace) -> int:
+    repository = _repository_root(Path(args.repo).resolve())
+    with _locked_registry(repository) as (registry_path, data):
+        common_directory = registry_path.parent
+        claim = next(
+            (item for item in data["claims"] if item.get("claim_id") == args.claim_id),
+            None,
+        )
+        if claim is None:
+            event = _event("extend-deadline", "CLAIM_NOT_FOUND", args)
+            return _journaled_result(ERROR, common_directory, event, claim_id=args.claim_id)
+        deadline = claim.get("deadline")
+        if not isinstance(deadline, dict):
+            error = _DeadlineError(
+                "claim has no configured resource deadline to extend.",
+                "claim_id",
+                "deadline_not_configured",
+            )
+            return _invalid_deadline_result(
+                common_directory,
+                "extend-deadline",
+                args,
+                error,
+                claim,
+            )
+
+        requested = args.requested_hard_stop_duration_seconds
+        current = deadline["requested_hard_stop_duration_seconds"]
+        maximum = deadline["configured_maximum_duration_seconds"]
+        evidence = args.extension_evidence.strip()
+        if requested <= current:
+            error = _DeadlineError(
+                "extended hard stop must be greater than the current requested hard stop.",
+                "requested_hard_stop_duration_seconds",
+                "hard_stop_not_extended",
+            )
+            return _invalid_deadline_result(common_directory, "extend-deadline", args, error, claim)
+        if requested > maximum:
+            error = _DeadlineError(
+                "extended hard stop must not exceed configured maximum.",
+                "requested_hard_stop_duration_seconds",
+                "hard_stop_exceeds_maximum",
+            )
+            return _invalid_deadline_result(common_directory, "extend-deadline", args, error, claim)
+        if not evidence or len(evidence) > MAX_EXTENSION_EVIDENCE_LENGTH:
+            error = _DeadlineError(
+                f"extension evidence must contain 1 to {MAX_EXTENSION_EVIDENCE_LENGTH} characters.",
+                "extension_evidence",
+                "invalid_extension_evidence",
+            )
+            return _invalid_deadline_result(common_directory, "extend-deadline", args, error, claim)
+
+        extended_at = _timestamp()
+        acquired_at = _parse_timestamp(str(deadline["acquired_at"]))
+        hard_stop_at = acquired_at + timedelta(seconds=requested)
+        extension = {
+            "extended_at": extended_at,
+            "previous_requested_hard_stop_duration_seconds": current,
+            "requested_hard_stop_duration_seconds": requested,
+            "evidence": evidence,
+        }
+        deadline["requested_hard_stop_duration_seconds"] = requested
+        deadline["hard_stop_at"] = _format_timestamp(hard_stop_at)
+        deadline["cleanup_grace_ends_at"] = _format_timestamp(
+            hard_stop_at + timedelta(seconds=deadline["cleanup_grace_seconds"])
+        )
+        deadline.setdefault("extensions", []).append(extension)
+        _write_registry(registry_path, data)
+        event = _event(
+            "extend-deadline",
+            "DEADLINE_EXTENDED",
+            args,
+            claim=claim,
+            deadline_extension=extension,
+        )
+        return _journaled_result(
+            SUCCESS,
+            common_directory,
+            event,
+            claim=claim,
+            deadline_extension=extension,
+        )
+
+
 def _release(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
     with _locked_registry(repository) as (registry_path, data):
@@ -1476,10 +1721,11 @@ def _release(args: argparse.Namespace) -> int:
 def _status_command(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
     with _locked_registry(repository) as (registry_path, data):
+        evaluated_at = _now()
         _print_result(
             "STATUS",
             registry=str(registry_path),
-            claims=[_claim_for_output(claim) for claim in data["claims"]],
+            claims=[_claim_for_output(claim, evaluated_at) for claim in data["claims"]],
         )
     return SUCCESS
 
@@ -1935,6 +2181,12 @@ def _parser() -> argparse.ArgumentParser:
     )
     acquire.add_argument("--base", default="HEAD")
     acquire.add_argument("--allow-recovery", action="store_true")
+    acquire.add_argument("--resource-class")
+    acquire.add_argument("--resource-id")
+    acquire.add_argument("--expected-duration-seconds", type=int)
+    acquire.add_argument("--requested-hard-stop-duration-seconds", type=int)
+    acquire.add_argument("--configured-maximum-duration-seconds", type=int)
+    acquire.add_argument("--cleanup-grace-seconds", type=int)
     acquire.set_defaults(handler=_acquire)
 
     extend = subparsers.add_parser("extend", help="Atomically add files, trees, or resources to an active claim.")
@@ -1945,6 +2197,19 @@ def _parser() -> argparse.ArgumentParser:
     heartbeat = subparsers.add_parser("heartbeat", help="Refresh an active claim heartbeat.")
     heartbeat.add_argument("--claim-id", required=True)
     heartbeat.set_defaults(handler=_heartbeat)
+
+    extend_deadline = subparsers.add_parser(
+        "extend-deadline",
+        help="Extend one configured resource hard stop with bounded evidence.",
+    )
+    extend_deadline.add_argument("--claim-id", required=True)
+    extend_deadline.add_argument(
+        "--requested-hard-stop-duration-seconds",
+        required=True,
+        type=int,
+    )
+    extend_deadline.add_argument("--extension-evidence", required=True)
+    extend_deadline.set_defaults(handler=_extend_deadline)
 
     release = subparsers.add_parser("release", help="Release a committed clean claim or a declared no-change claim.")
     release.add_argument("--claim-id", required=True)

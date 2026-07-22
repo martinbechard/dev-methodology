@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies deterministic claim-transport setup, rendering, invocation behavior, and evaluation staging.
+# Summary: Verifies deterministic claim transport, deadline-policy rendering, invocation behavior, and evaluation staging.
 
 from __future__ import annotations
 
@@ -312,7 +312,34 @@ def project_with_transport(selected: str, availability: str = "AVAILABLE") -> di
     """Return the smallest renderable project fixture with one verified claim transport."""
 
     return {
-        "resource_coordination": {"selected": "agent-claim"},
+        "resource_coordination": {
+            "selected": "agent-claim",
+            "deadline_policy": {
+                "resource_classes": {
+                    "backlog-mutation": {
+                        "maximum_duration_seconds": 600,
+                        "cleanup_grace_seconds": 120,
+                    },
+                    "main-integration": {
+                        "maximum_duration_seconds": 2700,
+                        "cleanup_grace_seconds": 600,
+                    },
+                    "browser-server": {
+                        "maximum_duration_seconds": 3600,
+                        "cleanup_grace_seconds": 600,
+                    },
+                    "database-port": {
+                        "maximum_duration_seconds": 1800,
+                        "cleanup_grace_seconds": 300,
+                    },
+                    "live-model-evaluation": {
+                        "maximum_duration_seconds": 14400,
+                        "cleanup_grace_seconds": 1800,
+                    },
+                },
+                "resource_overrides": {},
+            },
+        },
         "agent_claim_transport": {
             "selected": selected,
             "availability": availability,
@@ -349,6 +376,83 @@ class AgentClaimTransportTests(unittest.TestCase):
                 )
                 self.assertNotIn(excluded, rendered)
                 self.assertIn("does not probe or switch to another transport", rendered)
+
+    def test_renderer_validates_and_renders_deadline_classes_and_exact_id_overrides(self) -> None:
+        """Expose every configured deadline value without hidden class inference."""
+
+        renderer = load_renderer_module()
+        project = project_with_transport("command")
+        policy = project["resource_coordination"]["deadline_policy"]
+        policy["resource_overrides"] = {
+            "browser-profile:release": {
+                "resource_class": "browser-server",
+                "maximum_duration_seconds": 2400,
+                "cleanup_grace_seconds": 420,
+            }
+        }
+
+        rendered = renderer.render(project)
+
+        for resource_class, maximum, cleanup in (
+            ("backlog-mutation", 600, 120),
+            ("main-integration", 2700, 600),
+            ("browser-server", 3600, 600),
+            ("database-port", 1800, 300),
+            ("live-model-evaluation", 14400, 1800),
+        ):
+            with self.subTest(resource_class=resource_class):
+                self.assertIn(
+                    f"{resource_class}: maximum {maximum} seconds; cleanup grace {cleanup} seconds",
+                    rendered,
+                )
+        self.assertIn(
+            "browser-profile:release: class browser-server; maximum 2400 seconds; cleanup grace 420 seconds",
+            rendered,
+        )
+
+    def test_renderer_rejects_incomplete_or_invalid_deadline_policy(self) -> None:
+        """Reject missing classes, invalid seconds, and unknown override classes."""
+
+        renderer = load_renderer_module()
+        cases = []
+        missing_class = project_with_transport("command")
+        missing_class["resource_coordination"]["deadline_policy"]["resource_classes"].pop(
+            "database-port"
+        )
+        cases.append((missing_class, "resource_classes keys must be exactly"))
+        invalid_seconds = project_with_transport("command")
+        invalid_seconds["resource_coordination"]["deadline_policy"]["resource_classes"][
+            "database-port"
+        ]["maximum_duration_seconds"] = 0
+        cases.append((invalid_seconds, "maximum_duration_seconds must be a positive integer"))
+        unknown_override = project_with_transport("command")
+        unknown_override["resource_coordination"]["deadline_policy"]["resource_overrides"] = {
+            "port:production": {
+                "resource_class": "unknown",
+                "maximum_duration_seconds": 60,
+                "cleanup_grace_seconds": 10,
+            }
+        }
+        cases.append((unknown_override, "resource_class must name a configured resource class"))
+
+        for project, message in cases:
+            with self.subTest(message=message):
+                with self.assertRaisesRegex(ValueError, message):
+                    renderer.render(project)
+
+    def test_none_rejects_claim_deadline_policy(self) -> None:
+        """Keep disabled coordination free of stale claim-specific policy."""
+
+        renderer = load_renderer_module()
+        project = project_with_transport("command")
+        project["resource_coordination"]["selected"] = "none"
+        project.pop("agent_claim_transport")
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "resource_coordination keys must be exactly: selected",
+        ):
+            renderer.render(project)
 
     def test_renderer_rejects_missing_or_unsupported_resource_coordination(self) -> None:
         """Require one supported project-wide coordination selector without a fallback."""
@@ -537,8 +641,8 @@ class AgentClaimTransportTests(unittest.TestCase):
                     skill=skill,
                 ):
                     project = project_with_transport("mcp")
-                    project["resource_coordination"] = {"selected": coordination}
                     if coordination == "none":
+                        project["resource_coordination"] = {"selected": "none"}
                         project.pop("agent_claim_transport")
                     project["project_skill_extensions"] = [skill]
                     with self.assertRaisesRegex(
@@ -553,8 +657,8 @@ class AgentClaimTransportTests(unittest.TestCase):
                     skill=skill,
                 ):
                     project = project_with_transport("mcp")
-                    project["resource_coordination"] = {"selected": coordination}
                     if coordination == "none":
+                        project["resource_coordination"] = {"selected": "none"}
                         project.pop("agent_claim_transport")
                     project["technology_skill_loadouts"] = [
                         {

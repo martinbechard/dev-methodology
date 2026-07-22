@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies the command adapter's claim coordination, journaling, isolation, recovery, and release invariants.
+# Summary: Verifies command claims, resource deadlines, journaling, isolation, recovery, and release invariants.
 
 from __future__ import annotations
 
@@ -93,6 +93,29 @@ class AgentClaimTests(unittest.TestCase):
         isolated_path = (self.repository / ".worktrees" / (path_name or claim_id)).resolve()
         return ["--branch", f"codex/{claim_id}"], isolated_path
 
+    def timed_resource_arguments(
+        self,
+        resource: str = "port:3000",
+        resource_class: str = "database-port",
+    ) -> list[str]:
+        """Build one complete deterministic deadline request for a named resource."""
+        return [
+            "--resource",
+            resource,
+            "--resource-class",
+            resource_class,
+            "--resource-id",
+            resource,
+            "--expected-duration-seconds",
+            "300",
+            "--requested-hard-stop-duration-seconds",
+            "900",
+            "--configured-maximum-duration-seconds",
+            "1800",
+            "--cleanup-grace-seconds",
+            "300",
+        ]
+
     def output(self, completed: subprocess.CompletedProcess[str]) -> dict[str, object]:
         """Decode one structured command result."""
         return json.loads(completed.stdout)
@@ -156,6 +179,163 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("PRIMARY", result["legacy_outcome"])
         self.assertEqual(str(self.repository.resolve()), result["claim"]["worktree"])
         self.assertEqual("primary", result["target"]["mode"])
+
+    def test_timed_resource_acquisition_records_complete_deadline_evidence(self) -> None:
+        acquired = self.claim(
+            *self.acquire_arguments("timed"),
+            *self.timed_resource_arguments(),
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-22T10:00:00Z"},
+        )
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        result = self.output(acquired)
+        deadline = result["claim"]["deadline"]
+        self.assertEqual("database-port", deadline["resource_class"])
+        self.assertEqual("port:3000", deadline["resource_id"])
+        self.assertEqual(300, deadline["expected_duration_seconds"])
+        self.assertEqual(900, deadline["requested_hard_stop_duration_seconds"])
+        self.assertEqual(1800, deadline["configured_maximum_duration_seconds"])
+        self.assertEqual(300, deadline["cleanup_grace_seconds"])
+        self.assertEqual("2026-07-22T10:05:00.000000Z", deadline["expected_release_at"])
+        self.assertEqual("2026-07-22T10:15:00.000000Z", deadline["hard_stop_at"])
+        self.assertEqual("2026-07-22T10:20:00.000000Z", deadline["cleanup_grace_ends_at"])
+        self.assertEqual([], deadline["extensions"])
+        event = self.journal_events()[-1]
+        self.assertEqual(deadline, event["deadline"])
+
+    def test_timed_resource_acquisition_rejects_incomplete_or_invalid_ordering(self) -> None:
+        cases = (
+            (
+                ["--resource", "port:3000", "--expected-duration-seconds", "300"],
+                "deadline arguments must be supplied together",
+            ),
+            (
+                [
+                    *self.timed_resource_arguments(),
+                    "--expected-duration-seconds",
+                    "901",
+                ],
+                "expected duration must not exceed requested hard stop",
+            ),
+            (
+                [
+                    *self.timed_resource_arguments(),
+                    "--requested-hard-stop-duration-seconds",
+                    "1801",
+                ],
+                "requested hard stop must not exceed configured maximum",
+            ),
+        )
+
+        for index, (arguments, message) in enumerate(cases):
+            with self.subTest(message=message):
+                rejected = self.claim(
+                    *self.acquire_arguments(f"invalid-{index}"),
+                    *arguments,
+                )
+                self.assertEqual(1, rejected.returncode, rejected.stderr)
+                result = self.output(rejected)
+                self.assertEqual("INVALID_DEADLINE_POLICY", result["outcome"])
+                self.assertIn(message, result["message"])
+
+        status = self.output(self.claim("status"))
+        self.assertEqual([], status["claims"])
+
+    def test_heartbeat_preserves_hard_stop_and_evidence_backed_extension_is_bounded(self) -> None:
+        acquired = self.claim(
+            *self.acquire_arguments("timed"),
+            *self.timed_resource_arguments(),
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-22T10:00:00Z"},
+        )
+        extended = self.claim(
+            "extend-deadline",
+            "--claim-id",
+            "timed",
+            "--requested-hard-stop-duration-seconds",
+            "1200",
+            "--extension-evidence",
+            "browser fixture needs one final deterministic assertion",
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-22T10:10:00Z"},
+        )
+        heartbeat = self.claim(
+            "heartbeat",
+            "--claim-id",
+            "timed",
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-22T10:19:00Z"},
+        )
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(0, extended.returncode, extended.stderr)
+        self.assertEqual(0, heartbeat.returncode, heartbeat.stderr)
+        deadline = self.output(heartbeat)["claim"]["deadline"]
+        self.assertEqual("2026-07-22T10:20:00.000000Z", deadline["hard_stop_at"])
+        self.assertEqual(1200, deadline["requested_hard_stop_duration_seconds"])
+        self.assertEqual(1, len(deadline["extensions"]))
+        self.assertEqual(
+            "browser fixture needs one final deterministic assertion",
+            deadline["extensions"][0]["evidence"],
+        )
+        self.assertEqual("2026-07-22T10:19:00.000000Z", self.output(heartbeat)["claim"]["heartbeat"])
+        extension_event = next(
+            event
+            for event in self.journal_events()
+            if event["action"] == "extend-deadline" and event["outcome"] == "DEADLINE_EXTENDED"
+        )
+        self.assertEqual(900, extension_event["deadline_extension"]["previous_requested_hard_stop_duration_seconds"])
+        self.assertEqual(1200, extension_event["deadline_extension"]["requested_hard_stop_duration_seconds"])
+        self.assertEqual(1800, extension_event["deadline"]["configured_maximum_duration_seconds"])
+
+        registry_before_rejection = self.registry_path().read_bytes()
+        rejected = self.claim(
+            "extend-deadline",
+            "--claim-id",
+            "timed",
+            "--requested-hard-stop-duration-seconds",
+            "1801",
+            "--extension-evidence",
+            "unsupported extra time",
+        )
+        self.assertEqual(1, rejected.returncode, rejected.stderr)
+        self.assertEqual("INVALID_DEADLINE_EXTENSION", self.output(rejected)["outcome"])
+        self.assertEqual(registry_before_rejection, self.registry_path().read_bytes())
+
+    def test_status_keeps_overdue_claim_visible_without_delivery_inference_or_auto_release(self) -> None:
+        acquired = self.claim(
+            *self.acquire_arguments("timed"),
+            *self.timed_resource_arguments(),
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-22T10:00:00Z"},
+        )
+        registry_before_status = self.registry_path().read_bytes()
+        status = self.claim(
+            "status",
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-22T10:17:00Z"},
+        )
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(0, status.returncode, status.stderr)
+        claims = self.output(status)["claims"]
+        self.assertEqual(1, len(claims))
+        health = claims[0]["deadline_status"]
+        self.assertTrue(health["overdue"])
+        self.assertEqual(
+            {
+                "seconds": 300,
+                "ends_at": "2026-07-22T10:20:00.000000Z",
+                "active": True,
+                "elapsed": False,
+            },
+            health["cleanup_grace"],
+        )
+        self.assertEqual(
+            {
+                "owner_stopped": None,
+                "immediately_actionable_when_stopped": True,
+            },
+            health["stopped_owner_actionability_inputs"],
+        )
+        self.assertNotIn("delivery_status", health)
+        self.assertNotIn("completion_ready", health)
+        self.assertEqual(registry_before_status, self.registry_path().read_bytes())
 
     def test_second_independent_writer_gets_isolated_worktree(self) -> None:
         first = self.claim(*self.acquire_arguments("first"), "--file", "README.md")
