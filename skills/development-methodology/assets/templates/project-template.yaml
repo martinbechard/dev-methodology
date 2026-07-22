@@ -101,7 +101,7 @@ root_agents_reference:
   required_content:
     - "Repository-wide rules, privacy constraints, build and test commands, documentation locations, and taxonomy terms used during project setup."
     - "Ordered project-level skill references appended as the final root-only section without copying skill definitions."
-    - "Unconditional folder technology skillsets generated from this plan and their required-load failure policy."
+    - "User-confirmed folder technology skill references generated from this plan and their required-load failure policy."
     - "The .worktrees directory is ignored operational state immediately beneath the primary worktree; agent-claim derives its absolute location and agents never nest it below a linked checkout."
 
 technology_skill_detection:
@@ -113,6 +113,30 @@ technology_skill_detection:
   missing_variant_policy: "Record an explicit no-variant skillset and use general model training for that scope; do not skip it or invent a skill."
   required_but_unavailable_policy: "BLOCKED"
   runtime_policy: "The harness supplies ordinary agents with the technology skills routed for the active folder; ordinary agents do not rerun detection."
+
+technology_confirmation:
+  candidates:
+    - scope: "TODO: Repository-relative folder path or valid glob."
+      skill: "TODO: Detected technology skill id."
+      evidence:
+        - "TODO: Deterministic source, manifest, configuration, or runtime-catalog evidence shown to the user."
+      conflicts: []
+      disposition: "accepted"
+    - scope: "TODO: Repository-relative folder path or valid glob for a rejected candidate."
+      skill: "TODO: Rejected technology skill id."
+      evidence:
+        - "TODO: Deterministic evidence that produced the candidate."
+      conflicts:
+        - "TODO: Conflict or pertinence issue shown before confirmation."
+      disposition: "rejected"
+  accepted_skills:
+    - "TODO: Accepted technology skill id in candidate order."
+  rejections:
+    - skill: "TODO: Rejected technology skill id matching the rejected candidate."
+      reason: "TODO: User-confirmed rejection reason."
+  confirmation:
+    status: "confirmed"
+    evidence: "TODO: Durable user-confirmation reference; do not store raw private conversation content."
 
 claude_bridge_files:
   enabled: false

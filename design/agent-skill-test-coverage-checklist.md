@@ -22,7 +22,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 - [x] 27 conceptual agents and 129 bundled skills have structural coverage.
 - [x] 27 agents are scenario-declared and 129 skills are probe-declared.
-- [x] 55 agent scenarios and 5 workflow packs are declared.
+- [x] 61 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
 - 11 cases are fixture-backed and 11 fixtures are structurally executable before harness readiness is considered.
 - 11 cases can run locally through Codex and 11 can run locally through Junie.
@@ -72,7 +72,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | methodology-artifact-reviewer | advanced | [x] | [x] methodology-artifact-reviewer-boundary, methodology-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | methodology-maintainer | advanced | [x] | [x] methodology-maintainer-boundary, methodology-maintainer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | project-bootstrapper | advanced-long | [x] | [x] project-bootstrapper-boundary, project-bootstrapper-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| project-configurator | default | [x] | [x] project-configurator-boundary, project-configurator-happy | [x] project-configurator-happy | [ ] none | [ ] none | pending | none | none | none | none |
+| project-configurator | default | [x] | [x] project-configurator-advanced-setup, project-configurator-basic-setup, project-configurator-boundary, project-configurator-conceptual-role-technology-exclusion, project-configurator-dev-coder-provider-dependency-exclusion, project-configurator-documentation-roots, project-configurator-happy, project-configurator-persisted-technology-confirmation | [x] project-configurator-advanced-setup, project-configurator-basic-setup, project-configurator-conceptual-role-technology-exclusion, project-configurator-dev-coder-provider-dependency-exclusion, project-configurator-documentation-roots, project-configurator-happy, project-configurator-persisted-technology-confirmation | [ ] none | [ ] none | pending | none | none | none | none |
 | project-organiser | default | [x] | [x] project-organiser-boundary, project-organiser-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | wiki-architect | advanced | [x] | [x] wiki-architect-boundary, wiki-architect-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | wiki-artifact-reviewer | advanced | [x] | [x] wiki-artifact-reviewer-boundary, wiki-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |

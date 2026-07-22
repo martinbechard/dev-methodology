@@ -17,7 +17,7 @@ Run technology detection during project setup, not during ordinary coding, revie
 4. Review source evidence, missing required skills, exclusive conflicts, and explicit no-variant results. Reject a candidate when its evidence proves only that a dependency exists in an owning manifest but not that the analyzed folder owns the behavior or verification workflow covered by that skill.
 5. Record accepted skillsets and source evidence in PROJECT.yaml.
 6. Compare every detected candidate with the technology skills actually exposed by the target runtime, not only with skills present in the methodology source tree.
-7. Show every candidate, its evidence, and conflicts to the user; persist only the confirmed applicable set.
+7. Show every candidate, its evidence, and conflicts to the user. Persist every candidate disposition, the ordered accepted skill list, each rejection and reason, and a durable explicit user-confirmation reference. Reject missing, empty, or boolean-only confirmation evidence.
 8. Generate root or nested AGENTS.md sections that reference each confirmed skill under its applicable folder route. By-reference is the default; inline only when Advanced setup explicitly selects it.
 9. Verify every referenced or inlined skill exists in the accepted runtime catalog and is exposed to the setup process.
 10. Rerun only when project setup, technology boundaries, or the runtime's available-skill catalog changes.

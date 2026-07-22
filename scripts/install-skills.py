@@ -109,6 +109,7 @@ class _AgentInstallPlan(NamedTuple):
     source_agents: tuple[Path, ...]
     current_agent_names: set[str]
     previous_manifest: Optional[dict[str, object]]
+    core_skill_delivery: Optional[str]
 
 
 class _StagedDestination(NamedTuple):
@@ -1865,10 +1866,10 @@ def write_agent_manifest(
     source: Path,
     adapter: Adapter,
     owned_agent_paths: dict[str, str],
+    core_skill_delivery: str,
 ) -> None:
     """Write installed-agent ownership plus the verified core-skill delivery mode."""
 
-    core_skill_delivery = _agent_source_core_skill_delivery(source, adapter)
     manifest = {
         MANIFEST_SCHEMA_VERSION_KEY: MANIFEST_SCHEMA_VERSION,
         MANIFEST_BUNDLE_ID_KEY: BUNDLE_ID,
@@ -1885,51 +1886,84 @@ def write_agent_manifest(
 
 
 def _agent_source_core_skill_delivery(source: Path, adapter: Adapter) -> str:
-    """Return core-skill delivery from a matching generation manifest when present."""
+    """Return core-skill delivery from verified generation metadata and agent bytes."""
 
     resolved_source = source.expanduser().resolve()
-    if len(resolved_source.parents) < 2:
-        return "by-reference"
-    generation_manifest_path = resolved_source.parents[1] / "agent-generation-manifest.json"
-    if not generation_manifest_path.is_file():
-        return "by-reference"
-    generation_manifest = json.loads(generation_manifest_path.read_text(encoding="utf-8"))
+    remediation = (
+        f"run python3 scripts/build-skill-docs.py and reinstall from "
+        f"generated/adapters/{adapter.name}/agents"
+    )
+    candidates = [resolved_source.parent / "agent-generation-manifest.json"]
+    if (
+        len(resolved_source.parents) >= 2
+        and resolved_source.name == "agents"
+        and resolved_source.parent.name == adapter.name
+    ):
+        candidates.append(resolved_source.parents[1] / "agent-generation-manifest.json")
+    manifests = list(dict.fromkeys(path for path in candidates if path.is_file()))
+    if not manifests:
+        raise ValueError(
+            f"agent generation metadata is missing for {adapter.name}; {remediation}"
+        )
+    if len(manifests) != 1:
+        raise ValueError(
+            f"agent generation metadata is inconsistent for {adapter.name}; {remediation}"
+        )
+    generation_manifest_path = manifests[0]
+    try:
+        generation_manifest = json.loads(generation_manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        raise ValueError(
+            f"agent generation metadata is invalid JSON for {adapter.name}; {remediation}"
+        ) from error
+    if not isinstance(generation_manifest, dict):
+        raise ValueError(
+            f"agent generation metadata is invalid for {adapter.name}; {remediation}"
+        )
     options = generation_manifest.get("generationOptions")
     if not isinstance(options, dict):
         raise ValueError(
-            f"agent generation metadata is missing generationOptions: {generation_manifest_path}; regenerate native agents"
+            f"agent generation metadata is missing generationOptions for {adapter.name}; {remediation}"
         )
     delivery = options.get("coreSkillDelivery")
     inline = options.get("inlineCoreSkills")
-    expected_inline = {"by-reference": False, "inline": True}.get(delivery)
-    if expected_inline is None or inline is not expected_inline:
+    if delivery not in {"by-reference", "inline"}:
         raise ValueError(
-            f"agent generation metadata has inconsistent core skill delivery: {generation_manifest_path}; regenerate native agents"
+            f"agent generation metadata has unsupported core skill delivery for {adapter.name}; {remediation}"
+        )
+    expected_inline = {"by-reference": False, "inline": True}.get(delivery)
+    if inline is not expected_inline:
+        raise ValueError(
+            f"agent generation metadata has inconsistent core skill delivery for {adapter.name}; {remediation}"
         )
     adapters = generation_manifest.get("adapters")
     adapter_manifest = adapters.get(adapter.name) if isinstance(adapters, dict) else None
     agents = adapter_manifest.get("agents") if isinstance(adapter_manifest, dict) else None
     if not isinstance(agents, list):
         raise ValueError(
-            f"agent generation metadata has no {adapter.name} agent inventory: {generation_manifest_path}; regenerate native agents"
+            f"agent generation metadata has no {adapter.name} agent inventory; {remediation}"
         )
-    expected = {
-        Path(item["output"]).name: item["sha256"]
-        for item in agents
-        if isinstance(item, dict)
-        and isinstance(item.get("output"), str)
-        and isinstance(item.get("sha256"), str)
-    }
+    expected: dict[str, str] = {}
+    for item in agents:
+        if (
+            not isinstance(item, dict)
+            or not isinstance(item.get("output"), str)
+            or not isinstance(item.get("sha256"), str)
+        ):
+            raise ValueError(
+                f"agent generation metadata has an invalid {adapter.name} agent inventory; {remediation}"
+            )
+        expected[Path(item["output"]).name] = item["sha256"]
     actual_names = {path.name for path in iter_agent_files(resolved_source, adapter.name)}
     if actual_names != set(expected):
         raise ValueError(
-            f"installed agent bytes do not match the {adapter.name} generation inventory: {generation_manifest_path}; regenerate native agents"
+            f"installed agent bytes do not match the {adapter.name} generation inventory; {remediation}"
         )
     for name, expected_digest in expected.items():
         actual_digest = hashlib.sha256((resolved_source / name).read_bytes()).hexdigest()
         if actual_digest != expected_digest:
             raise ValueError(
-                f"installed agent bytes disagree with generation metadata for {name}; regenerate native agents"
+                f"installed agent bytes disagree with generation metadata for {name}; {remediation}"
             )
     return delivery
 
@@ -1998,6 +2032,7 @@ def _prepare_agent_install(
         source_agents=source_agents,
         current_agent_names=current_agent_names,
         previous_manifest=previous_manifest,
+        core_skill_delivery=None,
     )
 
 
@@ -2050,6 +2085,8 @@ def install_agents(
     current_agent_names = plan.current_agent_names
     destination = destination.expanduser()
     previous_manifest = plan.previous_manifest
+    if plan.core_skill_delivery is None:
+        raise ValueError("agent generation metadata was not prevalidated")
     if not dry_run:
         destination.mkdir(parents=True, exist_ok=True)
 
@@ -2095,7 +2132,13 @@ def install_agents(
             if not cleanup or agent_name in current_agent_names
         }
         owned_agent_paths = previously_owned_agents | newly_owned_agent_paths
-        write_agent_manifest(destination, resolved_source, adapter, owned_agent_paths)
+        write_agent_manifest(
+            destination,
+            resolved_source,
+            adapter,
+            owned_agent_paths,
+            plan.core_skill_delivery,
+        )
         results.append("wrote agent ownership manifest")
     return results
 
@@ -2310,6 +2353,12 @@ def main(argv: Sequence[str] | None = None) -> int:
                     destination,
                     agent_plan,
                     agents_destination,
+                )
+                agent_plan = agent_plan._replace(
+                    core_skill_delivery=_agent_source_core_skill_delivery(
+                        agents_source,
+                        adapter,
+                    )
                 )
             if args.dry_run:
                 results = install_skills(

@@ -8,6 +8,7 @@ import hashlib
 import importlib.util
 import io
 import json
+import re
 import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
@@ -132,6 +133,42 @@ class InstallSkillsTests(unittest.TestCase):
                 for agent_name in agent_names
             ],
         )
+
+    def write_agent_generation_manifest(
+        self,
+        source: Path,
+        adapter: str,
+        *,
+        delivery: str = "by-reference",
+        inline: bool | None = None,
+        digest: str | None = None,
+    ) -> Path:
+        """Write generation metadata that owns every native agent in source."""
+
+        extension = ".toml" if adapter == "codex" else ".md"
+        agents = sorted(source.glob(f"*{extension}"))
+        manifest = {
+            "generationOptions": {
+                "coreSkillDelivery": delivery,
+                "inlineCoreSkills": delivery == "inline" if inline is None else inline,
+            },
+            "adapters": {
+                adapter: {
+                    "agents": [
+                        {
+                            "name": agent.stem,
+                            "output": f"{adapter}/agents/{agent.name}",
+                            "sha256": digest or hashlib.sha256(agent.read_bytes()).hexdigest(),
+                        }
+                        for agent in agents
+                    ]
+                }
+            },
+        }
+        manifest_path = source.parent / "agent-generation-manifest.json"
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        return manifest_path
 
     def read_manifest_skill_names(self, destination: Path) -> list[str]:
         manifest = json.loads(
@@ -310,6 +347,7 @@ class InstallSkillsTests(unittest.TestCase):
                         AGENT_FILE_CONTENT,
                         encoding="utf-8",
                     )
+                    self.write_agent_generation_manifest(agents_source, "codex")
 
                     with patch.object(installer.Path, base_method, return_value=base):
                         exit_code = installer.main(
@@ -1163,6 +1201,7 @@ class InstallSkillsTests(unittest.TestCase):
                 AGENT_FILE_CONTENT,
                 encoding="utf-8",
             )
+            self.write_agent_generation_manifest(agents_source, "codex")
 
             with patch.object(installer.Path, "home", return_value=home):
                 exit_code = installer.main(
@@ -1947,7 +1986,7 @@ class InstallSkillsTests(unittest.TestCase):
             self.assertIn("would install alpha", output.getvalue())
             self.assertFalse(destination.exists())
 
-    def test_installs_generated_codex_agents_with_separate_ownership_manifest(self) -> None:
+    def test_agent_install_blocks_when_generation_manifest_is_missing(self) -> None:
         installer = load_installer()
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -1962,8 +2001,8 @@ class InstallSkillsTests(unittest.TestCase):
             agents_source.mkdir()
             (agents_source / "reviewer.toml").write_text(AGENT_FILE_CONTENT, encoding="utf-8")
 
-            output = io.StringIO()
-            with redirect_stdout(output):
+            error = io.StringIO()
+            with redirect_stdout(io.StringIO()), redirect_stderr(error):
                 exit_code = installer.main(
                     [
                         "--adapter",
@@ -1982,20 +2021,76 @@ class InstallSkillsTests(unittest.TestCase):
                     ]
                 )
 
-            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            self.assertEqual(installer.ERROR_EXIT_CODE, exit_code)
             self.assertEqual(
-                AGENT_FILE_CONTENT,
-                (agents_destination / "reviewer.toml").read_text(encoding="utf-8"),
+                "agent generation metadata is missing for codex; run python3 scripts/build-skill-docs.py and reinstall from generated/adapters/codex/agents\n",
+                error.getvalue(),
             )
-            self.assertEqual(["reviewer"], self.read_manifest_agent_names(agents_destination))
-            agent_manifest = json.loads(
-                (agents_destination / installer.INSTALL_MANIFEST_FILE_NAME).read_text(encoding="utf-8")
+            self.assertFalse(destination.exists())
+            self.assertFalse(agents_destination.exists())
+
+    def test_agent_generation_metadata_failures_use_exact_remediation(self) -> None:
+        """Block unsupported, inconsistent, and byte-mismatched generated agents."""
+
+        installer = load_installer()
+        remediation = (
+            "run python3 scripts/build-skill-docs.py and reinstall from "
+            "generated/adapters/codex/agents"
+        )
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            source = Path(temp_dir) / "generated" / "adapters" / "codex" / "agents"
+            source.mkdir(parents=True)
+            (source / "reviewer.toml").write_text(AGENT_FILE_CONTENT, encoding="utf-8")
+
+            manifest_path = self.write_agent_generation_manifest(
+                source,
+                "codex",
+                delivery="unsupported",
+                inline=False,
             )
-            self.assertEqual("by-reference", agent_manifest["core_skill_delivery"])
-            self.assertIn(
-                f"agents destination {agents_destination.resolve()}",
-                output.getvalue(),
+            cases = (
+                (
+                    "unsupported",
+                    "agent generation metadata has unsupported core skill delivery for codex; "
+                    + remediation,
+                ),
+                (
+                    "inconsistent",
+                    "agent generation metadata has inconsistent core skill delivery for codex; "
+                    + remediation,
+                ),
+                (
+                    "digest",
+                    "installed agent bytes disagree with generation metadata for reviewer.toml; "
+                    + remediation,
+                ),
             )
+            for case, expected in cases:
+                with self.subTest(case=case):
+                    if case == "unsupported":
+                        self.write_agent_generation_manifest(
+                            source,
+                            "codex",
+                            delivery="unsupported",
+                            inline=False,
+                        )
+                    elif case == "inconsistent":
+                        self.write_agent_generation_manifest(
+                            source,
+                            "codex",
+                            delivery="by-reference",
+                            inline=True,
+                        )
+                    else:
+                        self.write_agent_generation_manifest(
+                            source,
+                            "codex",
+                            digest="0" * 64,
+                        )
+                    with self.assertRaisesRegex(ValueError, f"^{re.escape(expected)}$"):
+                        installer._agent_source_core_skill_delivery(source, installer.ADAPTERS["codex"])
+            self.assertTrue(manifest_path.is_file())
 
     def test_installs_generated_markdown_agents_for_gemini_claude_and_junie(self) -> None:
         installer = load_installer()
@@ -2010,6 +2105,7 @@ class InstallSkillsTests(unittest.TestCase):
                 self.create_skill(source, "alpha")
                 agents_source.mkdir()
                 (agents_source / "reviewer.md").write_text(AGENT_FILE_CONTENT, encoding="utf-8")
+                self.write_agent_generation_manifest(agents_source, adapter_name)
 
                 exit_code = installer.main(
                     [
@@ -2075,6 +2171,7 @@ class InstallSkillsTests(unittest.TestCase):
             self.create_skill(source, "alpha")
             agents_source.mkdir()
             (agents_source / "reviewer.toml").write_text(AGENT_FILE_CONTENT, encoding="utf-8")
+            self.write_agent_generation_manifest(agents_source, "codex")
 
             with redirect_stdout(io.StringIO()):
                 install_exit_code = installer.main(
@@ -2708,6 +2805,7 @@ class InstallSkillsTests(unittest.TestCase):
                 AGENT_FILE_CONTENT,
                 encoding="utf-8",
             )
+            self.write_agent_generation_manifest(agents_source, "codex")
             for source_root in (source, agents_source):
                 (source_root / ".DS_Store").write_text("metadata", encoding="utf-8")
                 (source_root / "ignored.pyc").write_bytes(b"compiled")
@@ -3075,6 +3173,7 @@ class InstallSkillsTests(unittest.TestCase):
                         AGENT_FILE_CONTENT,
                         encoding="utf-8",
                     )
+                self.write_agent_generation_manifest(agents_source, "codex")
                 with redirect_stdout(io.StringIO()):
                     first_exit_code = installer.main(
                         [
@@ -3092,6 +3191,7 @@ class InstallSkillsTests(unittest.TestCase):
                         ]
                     )
                 (agents_source / "obsolete.toml").unlink()
+                self.write_agent_generation_manifest(agents_source, "codex")
                 second_args = [
                     "--adapter",
                     "codex",
@@ -3221,6 +3321,7 @@ class InstallSkillsTests(unittest.TestCase):
                 AGENT_FILE_CONTENT,
                 encoding="utf-8",
             )
+            self.write_agent_generation_manifest(agents_source, "codex")
             install_args = [
                 "--adapter",
                 "codex",
@@ -3247,6 +3348,7 @@ class InstallSkillsTests(unittest.TestCase):
                 encoding="utf-8",
             )
             (agents_source / "obsolete.toml").unlink()
+            self.write_agent_generation_manifest(agents_source, "codex")
             real_copy2 = installer.shutil.copy2
 
             def fail_source_agent_copy(
@@ -3338,6 +3440,7 @@ class InstallSkillsTests(unittest.TestCase):
             agents_source.mkdir()
             reviewer_source = agents_source / "reviewer.toml"
             reviewer_source.write_text(AGENT_FILE_CONTENT, encoding="utf-8")
+            self.write_agent_generation_manifest(agents_source, "codex")
             install_args = [
                 "--adapter",
                 "codex",
@@ -3365,6 +3468,7 @@ class InstallSkillsTests(unittest.TestCase):
                 AGENT_FILE_CONTENT.replace("Review.", "Updated review."),
                 encoding="utf-8",
             )
+            self.write_agent_generation_manifest(agents_source, "codex")
             real_replace = installer.os.replace
             swap_failed = False
 

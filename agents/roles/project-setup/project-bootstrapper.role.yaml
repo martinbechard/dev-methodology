@@ -1,14 +1,14 @@
 name: project-bootstrapper
 filename: project-bootstrapper
 repositoryMutation: required
-description: Sets up a project for later development work. It creates or reuses
-  the project configuration, produces the required documentation, sends each setup and
-  documentation artifact for independent review, keeps exactly one accepted committed
-  contribution as the final direct commit or integrates multiple accepted committed
-  contributions, and verifies the completed project state.
+description: Sets up a project for later development work and separately coordinates
+  explicitly requested documentation workflows. Ordinary setup creates or reuses the
+  project configuration and selected empty documentation roots, validates and commits
+  that setup, then stops without entering reverse-engineering, design, or review gates.
 instructions:
-  objective: Leave the project configured, documented, independently reviewed, verified,
-    committed, clean, and ready for development.
+  objective: Leave ordinary setup configured, validated, committed, clean, and ready for
+    development; when later documentation is explicitly requested, also complete its independent
+    review and verification gates.
   decisions:
   - Before Project Configurator setup, read the installed native-agent ownership metadata
     and agent-generation manifest. Require both to agree with installed agent bytes on core
@@ -58,9 +58,14 @@ instructions:
     installed core delivery, technology delivery, user-confirmed technologies, concurrent
     tasking, and the selected wiki, specifications, or both roots. Never ask for the installed
     core delivery mode again.
-  - Require dev-documentation-writer to create a documentation coverage manifest that maps
-    every meaningful in-scope module and source area to its module document, related tests,
-    and review status before higher-level documentation begins.
+  - "Ordinary setup terminal path: create only the selected empty documentation roots and
+    required placeholders, run setup-specific validation, commit the bounded setup or record
+    an explicit no-change result, confirm clean status, release the setup claim, report the
+    result, and stop."
+  - "Only for the later explicit reverse-engineering workflow: require dev-documentation-writer
+    to create a documentation coverage manifest that maps every meaningful in-scope module
+    and source area to its module document, related tests, and review status before higher-level
+    documentation begins."
   - Require a machine-checkable path coverage ledger from the exact source baseline. It must
     classify every tracked path and meaningful untracked source or configuration path, map each
     in-scope path to a manifest row, justify every generated, vendored, fixture-only, setup, or
@@ -175,6 +180,9 @@ instructions:
     unavailable dependency; do not substitute same-owner review or copy generic claim
     instructions into PROJECT.yaml or AGENTS.md.
   completion:
+  - On the ordinary setup terminal path, require only the accepted setup commit or explicit
+    no-change result, setup-specific validation evidence, clean worktree, and released claim.
+    Do not require documentation, design, independent review, integration, or dev-verifier gates.
   - Before reporting READY or BLOCKED, record the final direct commit, final integration
     commit, or explicit no-change result, confirm every owned worktree is clean, and release
     every owned claim.

@@ -553,7 +553,7 @@ GENERIC_AGENT_DEFINITIONS_REQUIRED_PHRASES = (
     "design/generated/role-definitions.js",
     "Harness-specific skill source",
     "adapters/&lt;harness-name&gt;/skills/&lt;skill-name&gt;/SKILL.md",
-    "Mutation-capable definitions inline <code>codex-harness-directives</code> by default",
+    "Mutation-capable definitions enable <code>codex-harness-directives</code> through <code>[[skills.config]]</code>",
 )
 AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "Agentic Configuration",
@@ -610,7 +610,7 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "&lt;folder-path&gt;/AGENTS.md</code> with a colocated <code>&lt;folder-path&gt;/CLAUDE.md",
     "same portable folder guidance as other harnesses",
     "Adapter-owned skill definitions use the same <code>SKILL.md</code> format",
-    "Codex-generated agents that may mutate the repository inline its instructions by default",
+    "Mutation-capable Codex agents reference it by default",
     "Read-only Codex agents and non-Codex adapters do not receive it.",
     "The Codex MCP skill root must match the selected installer destination.",
     "same fifteen MCP operations",
@@ -6237,6 +6237,66 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("complete integrated result", integration_tail.lower())
         self.assertIn("clean status", integrated_response.lower())
         self.assertIn("released claims", integrated_response.lower())
+
+    def test_project_bootstrapper_has_an_ordinary_setup_terminal_path(self) -> None:
+        """Keep empty-root setup separate from later documentation and review gates."""
+
+        role = load_yaml_object(
+            ROLES_ROOT / "project-setup" / "project-bootstrapper.role.yaml"
+        )
+        workflow = role["instructions"]["workflow"]
+        ordinary_steps = [
+            step for step in workflow if "ordinary setup terminal path" in step.lower()
+        ]
+        self.assertEqual(1, len(ordinary_steps))
+        ordinary_step = ordinary_steps[0]
+        for phrase in (
+            "selected empty documentation roots",
+            "setup-specific validation",
+            "commit",
+            "clean",
+            "release",
+            "stop",
+        ):
+            with self.subTest(ordinary_phrase=phrase):
+                self.assertIn(phrase, ordinary_step.lower())
+        for forbidden in (
+            "reverse engineering",
+            "module design",
+            "independent review",
+            "dev-verifier",
+        ):
+            with self.subTest(forbidden_ordinary_phrase=forbidden):
+                self.assertNotIn(forbidden, ordinary_step.lower())
+
+        later_steps = [
+            step for step in workflow if "later explicit reverse-engineering workflow" in step.lower()
+        ]
+        self.assertEqual(1, len(later_steps))
+        self.assertIn("coverage manifest", later_steps[0].lower())
+
+    def test_project_configurator_new_scenarios_link_executable_coverage(self) -> None:
+        """Keep simplified setup and role-exclusion scenarios tied to runnable evidence."""
+
+        catalog = load_yaml_object(REPOSITORY_ROOT / "evals" / "agent-scenarios.yaml")
+        configurator = next(entry for entry in catalog["agents"] if entry["id"] == "project-configurator")
+        scenarios = {scenario["id"]: scenario for scenario in configurator["scenarios"]}
+        required = {
+            "project-configurator-basic-setup",
+            "project-configurator-advanced-setup",
+            "project-configurator-documentation-roots",
+            "project-configurator-persisted-technology-confirmation",
+            "project-configurator-conceptual-role-technology-exclusion",
+            "project-configurator-dev-coder-provider-dependency-exclusion",
+        }
+        self.assertTrue(required.issubset(scenarios))
+        for scenario_id in required:
+            with self.subTest(scenario=scenario_id):
+                self.assertEqual(
+                    ["project-configuration-routing"],
+                    scenarios[scenario_id]["executableCases"],
+                )
+                self.assertEqual("fixture-backed", scenarios[scenario_id]["coverageStatus"])
 
     def test_project_bootstrapper_owns_complete_setup_and_review_loop(self) -> None:
         build_skill_docs = load_build_skill_docs_module()

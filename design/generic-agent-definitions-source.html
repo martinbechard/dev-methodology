@@ -408,7 +408,7 @@
         </div>
         <div class="flow-row">
           <div><span class="name">3. Render Each Harness Format</span></div>
-          <p><code>scripts/build-skill-docs.py</code> converts the conceptual values into native property names and file structures. For example, conceptual <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude Code, Gemini CLI, or Junie CLI agent. The generator statically appends unconditional core skill bodies by default and preserves conditional request-specific selection instructions. The Codex adapter also inlines <code>codex-harness-directives</code> when <code>repositoryMutation</code> is required or conditional. Passing <code>--inline-core-skills false</code> retains each adapter's native or instruction-driven core-skill delivery. The <a href="skills-modularization.html#skill-lifecycle-title">cross-harness skill lifecycle</a> owns the preload, dynamic invocation, content-read, application, and proof distinctions.</p>
+          <p><code>scripts/build-skill-docs.py</code> converts the conceptual values into native property names and file structures. For example, conceptual <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude Code, Gemini CLI, or Junie CLI agent. The generator emits native or instruction-driven core-skill references by default and preserves conditional request-specific selection instructions. The Codex adapter includes <code>codex-harness-directives</code> in that required core set when <code>repositoryMutation</code> is required or conditional. Passing <code>--inline-core-skills true</code> explicitly embeds required core skill bodies. The <a href="skills-modularization.html#skill-lifecycle-title">cross-harness skill lifecycle</a> owns the preload, dynamic invocation, content-read, application, and proof distinctions.</p>
         </div>
         <div class="flow-row">
           <div><span class="name">4. Use Generated Native Agent Definition Files</span></div>
@@ -646,7 +646,7 @@
             <tr>
               <td><span class="name">Codex</span></td>
               <td>One standalone TOML file per custom agent.</td>
-              <td>Codex discovers project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code>. This bundle generates <code>generated/adapters/codex/agents/*.toml</code>. Mutation-capable definitions inline <code>codex-harness-directives</code> by default; the false inlining mode enables its catalog entry through <code>[[skills.config]]</code> and adds a developer instruction to read it. Read-only definitions omit it. Enablement is not preloading or behavioral evidence.</td>
+              <td>Codex discovers project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code>. This bundle generates <code>generated/adapters/codex/agents/*.toml</code>. Mutation-capable definitions enable <code>codex-harness-directives</code> through <code>[[skills.config]]</code> and add a developer instruction to read it by default; explicit inline core delivery embeds it. Read-only definitions omit it. Enablement is not preloading or behavioral evidence.</td>
             </tr>
             <tr>
               <td><span class="name">Claude Code</span></td>
@@ -713,10 +713,10 @@
           </tr>
           <tr>
             <td><span class="name">skills</span></td>
-            <td>Append unconditional core skill bodies to <code>developer_instructions</code> by default. Keep request-specific conditions in the instructions. The false inlining mode emits core loading instructions.</td>
-            <td>Append unconditional core skill bodies to the Markdown body by default and omit <code>skills</code>. Keep request-specific conditions in the body. The false inlining mode maps core skills to <code>skills</code>.</td>
-            <td>Append unconditional core skill bodies to the Markdown body by default. Keep request-specific conditions in the body. The false inlining mode emits core loading instructions.</td>
-            <td>Append unconditional core skill bodies to the Markdown body by default and omit <code>skills</code>. Keep request-specific conditions in the body. The false inlining mode maps core skills to <code>skills</code>.</td>
+            <td>Emit core loading instructions by default. Keep request-specific conditions in the instructions. Explicit inline delivery appends unconditional core skill bodies to <code>developer_instructions</code>.</td>
+            <td>Map required core skills to <code>skills</code> by default. Keep request-specific conditions in the body. Explicit inline delivery appends core bodies and omits the native list.</td>
+            <td>Emit core loading instructions by default. Keep request-specific conditions in the body. Explicit inline delivery appends unconditional core skill bodies.</td>
+            <td>Map required core skills to <code>skills</code> by default. Keep request-specific conditions in the body. Explicit inline delivery appends core bodies and omits the native list.</td>
             <td>Append unconditional core skill bodies to the Markdown body by default. Keep request-specific conditions in the body and rely on Copilot-compatible skill folders for dynamic loading.</td>
           </tr>
           <tr>
@@ -769,7 +769,7 @@
           </tr>
           <tr>
             <td><span class="name">repositoryMutation</span></td>
-            <td>No native field. Generation validates <code>agent-claim</code> assignment and inlines <code>codex-harness-directives</code> for required or conditional mutation by default.</td>
+            <td>No native field. Generation validates <code>agent-claim</code> assignment and references <code>codex-harness-directives</code> for required or conditional mutation by default; explicit inline core delivery embeds it.</td>
             <td>No native field. Generation validates the portable <code>agent-claim</code> assignment.</td>
             <td>No native field. Generation validates the portable <code>agent-claim</code> assignment.</td>
             <td>No native field. Generation validates the portable <code>agent-claim</code> assignment.</td>

@@ -465,7 +465,7 @@ create-backlog, manage-backlog, and file-based-backlog are migration-only bridge
 - Replace create-backlog with create-file-work-item.
 - Replace manage-backlog with manage-file-work-items.
 - Replace file-based-backlog selector values with provider file, then load the canonical create or manage skill for the operation.
-- Keep provider and completion selection independent and preserve UNSET until the user decides.
+- Keep Persistence and Commit selection independent and preserve UNSET until the user decides.
 
 Remove the three bridge packages only after PROJECT.yaml files, generated guidance, conceptual agent definitions, evaluations, and other authorized callers use the canonical pair and generated-output checks pass without the legacy identifiers.
 

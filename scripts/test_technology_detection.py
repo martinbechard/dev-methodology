@@ -152,6 +152,28 @@ def with_claim_transport(value: dict[str, object]) -> dict[str, object]:
     }
 
 
+def confirmed_technology_selection() -> dict[str, object]:
+    """Return persisted candidate and explicit user-confirmation evidence."""
+
+    return {
+        "candidates": [
+            {
+                "scope": "src/**",
+                "skill": "python",
+                "evidence": ["Python source evidence: src/app.py"],
+                "conflicts": [],
+                "disposition": "accepted",
+            }
+        ],
+        "accepted_skills": ["python"],
+        "rejections": [],
+        "confirmation": {
+            "status": "confirmed",
+            "evidence": "user-message: confirmed python for src/**",
+        },
+    }
+
+
 def run_detection(
     project: Path,
     *scopes: str,
@@ -195,6 +217,11 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "persistence": {"default": "none"},
                 "commit": {"default": "direct-main"},
             },
+            "technology_confirmation": confirmed_technology_selection(),
+            "technology_skill_loadouts": [{
+                "pathPattern": "src/**",
+                "skills": ["python"],
+            }],
         })
 
         for expected in (
@@ -233,12 +260,24 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "persistence": {"default": "file"},
                 "commit": {"default": "direct-main"},
             },
+            "technology_confirmation": confirmed_technology_selection(),
+            "technology_skill_loadouts": [{
+                "pathPattern": "src/**",
+                "skills": ["python"],
+            }],
         }
 
-        rendered = renderer.render(project, inline_tech_skills=True)
+        rendered = renderer.render(project)
         self.assertIn("Setup mode: Advanced", rendered)
         self.assertIn("Concurrent capacity: 3", rendered)
         self.assertIn("Technology skill delivery: inline", rendered)
+        self.assertIn("BEGIN INLINED TECHNOLOGY SKILL: python", rendered)
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "explicit technology delivery by-reference conflicts with project_setup.technology_skill_delivery 'inline'",
+        ):
+            renderer.render(project, inline_tech_skills=False)
 
         project["project_setup"]["concurrent_tasking"] = False
         with self.assertRaisesRegex(
@@ -246,6 +285,113 @@ class TechnologyDetectionTests(unittest.TestCase):
             "project_setup.concurrent_capacity is allowed only when concurrent_tasking is true",
         ):
             renderer.render(project)
+
+    def test_setup_selectors_reconcile_with_canonical_and_legacy_workflow_paths(self) -> None:
+        """Reject selector divergence before setup text and workflow routing can disagree."""
+
+        renderer = load_renderer_module()
+        project = {
+            "project_setup": {
+                "mode": "basic",
+                "concurrent_tasking": False,
+                "persistence": "none",
+                "commit": "direct-main",
+                "documentation": "wiki",
+                "core_skill_delivery": {
+                    "mode": "by-reference",
+                    "source": "installed-agent-metadata",
+                },
+                "technology_skill_delivery": "by-reference",
+                "technology_confirmation_required": True,
+            },
+            "technology_confirmation": confirmed_technology_selection(),
+            "workflow_selection": {
+                "provider": {"default": "file"},
+                "completion": {"default": "feature-branch"},
+            },
+            "technology_skill_loadouts": [{
+                "pathPattern": "src/**",
+                "skills": ["python"],
+            }],
+        }
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "^project_setup.persistence 'none' conflicts with workflow_selection.provider.default 'file'$",
+        ):
+            renderer.render(project)
+
+        project["workflow_selection"] = {
+            "provider": {"default": "none"},
+            "completion": {"default": "direct-main"},
+        }
+        rendered = renderer.render(project)
+        self.assertIn("Set: Persistence none", rendered)
+        self.assertIn("Default provider none", rendered)
+        self.assertNotIn("feature-branch", rendered)
+
+    def test_setup_requires_structured_technology_confirmation_evidence(self) -> None:
+        """Reject missing, boolean-only, empty, or internally inconsistent confirmations."""
+
+        renderer = load_renderer_module()
+        project = {
+            "project_setup": {
+                "mode": "basic",
+                "concurrent_tasking": False,
+                "persistence": "none",
+                "commit": "direct-main",
+                "documentation": "wiki",
+                "core_skill_delivery": {
+                    "mode": "by-reference",
+                    "source": "installed-agent-metadata",
+                },
+                "technology_skill_delivery": "by-reference",
+                "technology_confirmation_required": True,
+            },
+            "workflow_selection": {
+                "persistence": {"default": "none"},
+                "commit": {"default": "direct-main"},
+            },
+            "technology_skill_loadouts": [{
+                "pathPattern": "src/**",
+                "skills": ["python"],
+            }],
+        }
+
+        invalid_values = (
+            (None, "technology_confirmation must be a mapping"),
+            (True, "technology_confirmation must be a mapping"),
+            ({}, "technology_confirmation keys must be exactly"),
+            (
+                {
+                    **confirmed_technology_selection(),
+                    "confirmation": True,
+                },
+                "technology_confirmation.confirmation must be a mapping",
+            ),
+            (
+                {
+                    **confirmed_technology_selection(),
+                    "confirmation": {"status": "confirmed", "evidence": ""},
+                },
+                "technology_confirmation.confirmation.evidence must be a non-empty string",
+            ),
+        )
+        for confirmation, expected in invalid_values:
+            candidate = dict(project)
+            if confirmation is not None:
+                candidate["technology_confirmation"] = confirmation
+            with self.subTest(expected=expected), self.assertRaisesRegex(
+                ValueError,
+                re.escape(expected),
+            ):
+                renderer.render(candidate)
+
+        project["technology_confirmation"] = confirmed_technology_selection()
+        rendered = renderer.render(project)
+        self.assertIn("Technology candidates: 1", rendered)
+        self.assertIn("Accepted technology skills: python", rendered)
+        self.assertIn("Confirmation evidence: user-message: confirmed python for src/**", rendered)
     def test_explicit_activation_clause_requires_every_condition(self) -> None:
         for dependencies, expected in (([], False), (["example-framework"], True)):
             with self.subTest(dependencies=dependencies):
@@ -1944,7 +2090,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "pathPattern": "services/**",
                 "skills": ["python"],
             }],
-        }))
+        }), inline_tech_skills=True)
 
         self.assertIn("Workflow skills are referenced by name only and are never inlined", rendered)
         self.assertIn("## Technology Skills", rendered)

@@ -1201,6 +1201,7 @@ agents:
       - technology detection skillsets
       - nested AGENTS.md recommendations
       - runtime capability validation
+      - setup selections
       - workflow selectors
       - AGENTS.md and CLAUDE.md routing
       - validation evidence
@@ -1266,28 +1267,58 @@ agents:
         requiredBehaviors: [Never show Concurrent capacity, Create only the empty Wiki structure, Persist confirmed technology evidence]
         forbiddenBehaviors: [Ask for specifications, Run reverse engineering, Infer installed core delivery]
         judgePlan: {deterministicChecks: [artifact-structure, technology-detection-evidence], modelRubric: source-faithfulness}
-        executableCases: []
-        coverageStatus: declared
+        executableCases: [project-configuration-routing]
+        coverageStatus: fixture-backed
       - id: project-configurator-advanced-setup
-        kind: state-transition
+        kind: happy-path
         fixtureProfile: project-setup-repository
         promptIntent: Complete Advanced setup with multiple detected technologies and concurrent tasking enabled.
         expectedOutcome: Persistence, Commit, Documentation, technology confirmation, technology delivery, and capacity after concurrency Yes use their documented defaults and selections.
         requiredBehaviors: [Show candidate evidence and rejections, Reveal capacity only after Yes, Keep core delivery Set from installation metadata]
         forbiddenBehaviors: [Ask core delivery as an ordinary field, Add provider skills to Dev Coder]
         judgePlan: {deterministicChecks: [artifact-structure, technology-detection-evidence], modelRubric: source-faithfulness}
-        executableCases: []
-        coverageStatus: declared
+        executableCases: [project-configuration-routing]
+        coverageStatus: fixture-backed
       - id: project-configurator-documentation-roots
-        kind: parameterized
+        kind: happy-path
         fixtureProfile: project-setup-repository
         promptIntent: Exercise wiki-only, specifications-only, and both documentation setup selections.
         expectedOutcome: Each selection creates only its empty requested roots and required placeholders.
         requiredBehaviors: [Support exactly wiki specifications and both, Keep reverse engineering later]
         forbiddenBehaviors: [Create source-derived documents, Invoke independent review during setup]
         judgePlan: {deterministicChecks: [artifact-structure], modelRubric: source-faithfulness}
-        executableCases: []
-        coverageStatus: declared
+        executableCases: [project-configuration-routing]
+        coverageStatus: fixture-backed
+      - id: project-configurator-persisted-technology-confirmation
+        kind: happy-path
+        fixtureProfile: project-setup-repository
+        promptIntent: Persist every detected technology candidate, its evidence and conflicts, accepted skills, rejections, and the explicit user-confirmation reference.
+        expectedOutcome: PROJECT.yaml contains structured candidate and confirmation evidence that the renderer validates before emitting folder technology guidance.
+        requiredBehaviors: [Reject missing or boolean-only confirmation, Keep accepted skills and rejections aligned with candidate dispositions]
+        forbiddenBehaviors: [Treat detection as confirmation, Store raw private conversation content]
+        judgePlan: {deterministicChecks: [artifact-structure, technology-detection-evidence], modelRubric: source-faithfulness}
+        executableCases: [project-configuration-routing]
+        coverageStatus: fixture-backed
+      - id: project-configurator-conceptual-role-technology-exclusion
+        kind: boundary-failure
+        fixtureProfile: project-setup-repository
+        promptIntent: Configure technology routing without copying detected technology skills into conceptual role definitions.
+        expectedOutcome: Technology skills remain folder guidance while conceptual role definitions retain only their technology-agnostic core skills.
+        requiredBehaviors: [Keep technology skills in folder loadouts, Preserve canonical conceptual role skill metadata]
+        forbiddenBehaviors: [Add detected technology skills to conceptual role definitions]
+        judgePlan: {deterministicChecks: [artifact-structure, technology-detection-evidence], modelRubric: source-faithfulness}
+        executableCases: [project-configuration-routing]
+        coverageStatus: fixture-backed
+      - id: project-configurator-dev-coder-provider-dependency-exclusion
+        kind: boundary-failure
+        fixtureProfile: project-setup-repository
+        promptIntent: Configure Persistence routing while preserving Dev Coder's provider-independent conceptual role dependencies.
+        expectedOutcome: Provider create and manage skills are referenced only through workflow routing and are not added to Dev Coder's governed role skills or dependencies.
+        requiredBehaviors: [Render provider workflow references, Keep Dev Coder provider-independent]
+        forbiddenBehaviors: [Edit Dev Coder role examples, Add provider skills or provider agents to Dev Coder]
+        judgePlan: {deterministicChecks: [artifact-structure, agent-dependency-routing], modelRubric: source-faithfulness}
+        executableCases: [project-configuration-routing]
+        coverageStatus: fixture-backed
     coverageStatus: fixture-backed
   - id: project-organiser
     source: agents/roles/project-setup/project-organiser.role.yaml

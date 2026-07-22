@@ -711,7 +711,7 @@
           <tr>
             <td><span class="name">Definition-owned core skill</span></td>
             <td>The conceptual agent definition declares an unconditional technology-agnostic skill.</td>
-            <td>The generator appends the complete body to every supported native agent definition by default. False core inlining uses each adapter's documented native or instruction-driven loading mechanism instead.</td>
+            <td>The generator emits each required core skill as a native or instruction-driven reference by default. Explicit inline core delivery appends the complete body to every supported native agent definition.</td>
           </tr>
           <tr>
             <td><span class="name">Request-specific core or tool skill</span></td>
@@ -721,7 +721,7 @@
           <tr>
             <td><span class="name">Detected-folder technology skill</span></td>
             <td>Project Configurator runs the setup detector against repository evidence, resolves companions and conflicts, and records the accepted folder loadout in <code>PROJECT.yaml</code>.</td>
-            <td>The guidance renderer embeds complete instructions in the applicable root or nested <code>AGENTS.md</code> by default. Claude Code receives the same guidance through a thin colocated <code>CLAUDE.md</code> import. The false technology-inlining mode emits explicit dynamic load-by-name guidance.</td>
+            <td>The guidance renderer emits explicit skill references in the applicable root or nested <code>AGENTS.md</code> by default. Claude Code receives the same guidance through a thin colocated <code>CLAUDE.md</code> import. Advanced setup may explicitly select inline technology delivery.</td>
           </tr>
           <tr>
             <td><span class="name">Unsupported technology</span></td>
@@ -920,13 +920,13 @@
           <tr>
             <td><span class="name">Agent-definition selection</span></td>
             <td>Required and optional technology-agnostic skills declared directly in the conceptual agent definition.</td>
-            <td>A required entry is statically inlined into generated agent instructions by default. An optional entry is selected when its human-readable condition applies to the request and available evidence. The harness-specific lifecycle above determines how selected content reaches context. The inline-core-skills false mode retains native or instruction-driven delivery.</td>
+            <td>A required entry is emitted through the adapter's native or instruction-driven reference mechanism by default. An optional entry is selected when its human-readable condition applies to the request and available evidence. The harness-specific lifecycle above determines how selected content reaches context. Explicit inline core delivery embeds required skill bodies.</td>
             <td>These skills describe stable responsibilities and methods that remain useful regardless of the project's technology stack.</td>
           </tr>
           <tr>
             <td><span class="name">Folder technology selection</span></td>
             <td>Available technology and domain skills with detection metadata, such as python, fastapi, the separate Java, Spring Boot, and Quarkus coding and design skills, or the focused JHipster skills.</td>
-            <td>Project Configurator detects matching repository evidence for each scope, records the intended loadout in PROJECT.yaml, and renders the complete skill instructions under the applicable AGENTS.md route by default. The inline-tech-skills false mode emits dynamic load-by-name guidance.</td>
+            <td>Project Configurator detects matching repository evidence for each scope, presents candidates and conflicts for user confirmation, records the complete decision evidence in PROJECT.yaml, and renders skill references under the applicable AGENTS.md route by default. Advanced setup may explicitly select inline technology delivery.</td>
             <td>The project and folder determine the applicable technologies, and the available technology catalog can grow independently of the generic agents.</td>
           </tr>
           <tr>

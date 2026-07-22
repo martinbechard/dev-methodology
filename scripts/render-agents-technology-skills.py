@@ -1086,6 +1086,155 @@ def claim_transport_lines(value: dict[str, object]) -> list[str]:
     ]
 
 
+def _reconcile_setup_workflow(value: dict[str, object]) -> None:
+    """Require persisted setup selectors to match canonical or compatible workflow paths."""
+
+    setup = value.get("project_setup")
+    if setup is None:
+        return
+    if not isinstance(setup, dict):
+        raise ValueError("project_setup must be a mapping")
+    selection = value.get("workflow_selection")
+    if not isinstance(selection, dict):
+        raise ValueError("workflow_selection must be a mapping")
+    if "persistence" in selection or "commit" in selection:
+        persistence_key = "persistence"
+        commit_key = "commit"
+    else:
+        persistence_key = "provider"
+        commit_key = "completion"
+    persistence, _ = _workflow_configuration(selection, persistence_key, PROVIDER_VALUES)
+    commit, _ = _workflow_configuration(selection, commit_key, COMPLETION_VALUES)
+    for setup_key, workflow_key, workflow_value in (
+        ("persistence", persistence_key, persistence),
+        ("commit", commit_key, commit),
+    ):
+        setup_value = setup.get(setup_key)
+        if setup_value != workflow_value:
+            raise ValueError(
+                f"project_setup.{setup_key} {setup_value!r} conflicts with "
+                f"workflow_selection.{workflow_key}.default {workflow_value!r}"
+            )
+
+
+def technology_confirmation_lines(value: dict[str, object]) -> list[str]:
+    """Validate and render persisted technology candidates and user confirmation evidence."""
+
+    confirmation = value.get("technology_confirmation")
+    if not isinstance(confirmation, dict):
+        raise ValueError("technology_confirmation must be a mapping")
+    required_keys = {"candidates", "accepted_skills", "rejections", "confirmation"}
+    if set(confirmation) != required_keys:
+        raise ValueError(
+            "technology_confirmation keys must be exactly candidates, accepted_skills, rejections, and confirmation"
+        )
+    candidates = confirmation["candidates"]
+    accepted_skills = confirmation["accepted_skills"]
+    rejections = confirmation["rejections"]
+    if not isinstance(candidates, list):
+        raise ValueError("technology_confirmation.candidates must be a list")
+    if not isinstance(accepted_skills, list) or not all(
+        isinstance(skill, str) and skill for skill in accepted_skills
+    ):
+        raise ValueError("technology_confirmation.accepted_skills must be a list of non-empty strings")
+    if len(set(accepted_skills)) != len(accepted_skills):
+        raise ValueError("technology_confirmation.accepted_skills must not contain duplicates")
+    if not isinstance(rejections, list):
+        raise ValueError("technology_confirmation.rejections must be a list")
+
+    accepted_candidates: list[str] = []
+    rejected_candidates: list[str] = []
+    candidate_lines: list[str] = []
+    for index, candidate in enumerate(candidates):
+        prefix = f"technology_confirmation.candidates[{index}]"
+        if not isinstance(candidate, dict):
+            raise ValueError(f"{prefix} must be a mapping")
+        if set(candidate) != {"scope", "skill", "evidence", "conflicts", "disposition"}:
+            raise ValueError(
+                f"{prefix} keys must be exactly scope, skill, evidence, conflicts, and disposition"
+            )
+        scope = candidate.get("scope")
+        skill = candidate.get("skill")
+        evidence = candidate.get("evidence")
+        conflicts = candidate.get("conflicts")
+        disposition = candidate.get("disposition")
+        if not isinstance(scope, str) or not scope:
+            raise ValueError(f"{prefix}.scope must be a non-empty string")
+        if not isinstance(skill, str) or not skill:
+            raise ValueError(f"{prefix}.skill must be a non-empty string")
+        if not isinstance(evidence, list) or not evidence or not all(
+            isinstance(fact, str) and fact for fact in evidence
+        ):
+            raise ValueError(f"{prefix}.evidence must be a non-empty list of strings")
+        if not isinstance(conflicts, list) or not all(
+            isinstance(conflict, str) and conflict for conflict in conflicts
+        ):
+            raise ValueError(f"{prefix}.conflicts must be a list of non-empty strings")
+        if disposition not in {"accepted", "rejected"}:
+            raise ValueError(f"{prefix}.disposition must be accepted or rejected")
+        target = accepted_candidates if disposition == "accepted" else rejected_candidates
+        target.append(skill)
+        conflict_text = "; ".join(conflicts) if conflicts else "none"
+        candidate_lines.append(
+            f"- Candidate {skill} for {scope}: {disposition}; evidence: {'; '.join(evidence)}; conflicts: {conflict_text}"
+        )
+    if accepted_skills != accepted_candidates:
+        raise ValueError(
+            "technology_confirmation.accepted_skills must match accepted candidate dispositions in order"
+        )
+    routed_skills = {
+        skill
+        for loadout in loadouts(value)
+        for skill in loadout.get("skills", loadout.get("required_skills", []))
+        if isinstance(skill, str)
+    }
+    if routed_skills != set(accepted_skills):
+        raise ValueError(
+            "technology_confirmation.accepted_skills must match the skills in technology_skill_loadouts"
+        )
+
+    rejection_names: list[str] = []
+    rejection_lines: list[str] = []
+    for index, rejection in enumerate(rejections):
+        prefix = f"technology_confirmation.rejections[{index}]"
+        if not isinstance(rejection, dict) or set(rejection) != {"skill", "reason"}:
+            raise ValueError(f"{prefix} must contain exactly skill and reason")
+        skill = rejection.get("skill")
+        reason = rejection.get("reason")
+        if not isinstance(skill, str) or not skill or not isinstance(reason, str) or not reason:
+            raise ValueError(f"{prefix}.skill and {prefix}.reason must be non-empty strings")
+        rejection_names.append(skill)
+        rejection_lines.append(f"- Rejected {skill}: {reason}")
+    if rejection_names != rejected_candidates:
+        raise ValueError(
+            "technology_confirmation.rejections must match rejected candidate dispositions in order"
+        )
+
+    user_confirmation = confirmation["confirmation"]
+    if not isinstance(user_confirmation, dict):
+        raise ValueError("technology_confirmation.confirmation must be a mapping")
+    if set(user_confirmation) != {"status", "evidence"}:
+        raise ValueError(
+            "technology_confirmation.confirmation keys must be exactly status and evidence"
+        )
+    if user_confirmation.get("status") != "confirmed":
+        raise ValueError("technology_confirmation.confirmation.status must be confirmed")
+    evidence_reference = user_confirmation.get("evidence")
+    if not isinstance(evidence_reference, str) or not evidence_reference:
+        raise ValueError(
+            "technology_confirmation.confirmation.evidence must be a non-empty string"
+        )
+    accepted_text = ", ".join(accepted_skills) if accepted_skills else "none"
+    lines = [
+        f"- Technology candidates: {len(candidates)}",
+        *candidate_lines,
+        f"- Accepted technology skills: {accepted_text}",
+        *(rejection_lines or ["- Technology rejections: none"]),
+        f"- Confirmation evidence: {evidence_reference}",
+    ]
+    return lines
+
+
 def setup_lines(value: dict[str, object]) -> list[str]:
     """Validate and render persisted Basic or Advanced project setup selections."""
 
@@ -1180,10 +1329,11 @@ def setup_lines(value: dict[str, object]) -> list[str]:
         ]
         if concurrent:
             selections.insert(2, f"- Concurrent capacity: {capacity}")
-    selections.extend([
-        "- Technology confirmation: required; show detected candidates, evidence, conflicts, and the user-confirmed selection.",
-        "",
-    ])
+    selections.append(
+        "- Technology confirmation: required; show detected candidates, evidence, conflicts, and the user-confirmed selection."
+    )
+    selections.extend(technology_confirmation_lines(value))
+    selections.append("")
     return ["## Project Setup Selections", "", *selections]
 
 
@@ -1206,21 +1356,44 @@ def inlined_skill_body(skill_name: str) -> str:
     return "\n".join(lines[closing_index + 1:]).strip()
 
 
+def _resolved_inline_technology_delivery(
+    value: dict[str, object],
+    requested: bool | None,
+) -> bool:
+    """Resolve default by-reference delivery against the persisted setup selection."""
+
+    setup = value.get("project_setup")
+    if not isinstance(setup, dict):
+        return False if requested is None else requested
+    configured = setup.get("technology_skill_delivery")
+    if configured not in SKILL_DELIVERY_MODES:
+        raise ValueError("project_setup.technology_skill_delivery must be by-reference or inline")
+    configured_inline = configured == "inline"
+    if requested is not None and requested is not configured_inline:
+        requested_label = "inline" if requested else "by-reference"
+        raise ValueError(
+            f"explicit technology delivery {requested_label} conflicts with "
+            f"project_setup.technology_skill_delivery {configured!r}"
+        )
+    return configured_inline
+
+
 def render(
     value: dict[str, object],
-    inline_tech_skills: bool = True,
+    inline_tech_skills: bool | None = None,
     include_project_skill_extensions: bool = True,
 ) -> str:
     """Render configured root AGENTS.md project authority and skill sections.
 
     value is the mapping loaded from PROJECT.yaml. Optional definition authority produces
-    its corresponding section. agent_claim_transport is required and workflow_selection is required.
+    its corresponding section. agent_claim_transport and workflow_selection are required.
     Technology guidance is always produced from the configured loadouts, and an optional
     project_skill_extensions list produces the final root-only reference section when
-    include_project_skill_extensions is true. The claim adapter is always embedded because
-    setup selected it as a project-wide transport. When inline_tech_skills is true, the
-    return value also embeds each referenced bundled technology skill body. When false, it
-    emits dynamic technology loading instructions.
+    include_project_skill_extensions is true. The optional inline_tech_skills request must
+    agree with project_setup.technology_skill_delivery when setup metadata exists. With no
+    setup metadata or explicit request, delivery defaults to by-reference. Inline delivery
+    embeds each referenced bundled skill body. The claim adapter is always embedded because
+    setup selected it as the project-wide transport.
 
     The return value is the complete generated Markdown text and ends with a newline.
     Rendering does not write an output file, but inlined rendering reads bundled SKILL.md
@@ -1228,6 +1401,8 @@ def render(
     unsafe skill names, and invalid skill frontmatter raise ValueError. Missing or unreadable
     skill files raise OSError, and malformed YAML may raise yaml.YAMLError.
     """
+    _reconcile_setup_workflow(value)
+    inline_tech_skills = _resolved_inline_technology_delivery(value, inline_tech_skills)
     lines: list[str] = definition_change_authority_lines(value)
     workflow = workflow_lines(value)
     lines.extend(claim_transport_lines(value))
@@ -1361,9 +1536,9 @@ def main(arguments: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--inline-tech-skills",
         type=parse_boolean,
-        default=False,
+        default=None,
         metavar="true|false",
-        help="Statically embed discovered technology skills in AGENTS.md. Defaults to false.",
+        help="Statically embed discovered technology skills. Defaults to the persisted project setup selection, or false when setup metadata is absent.",
     )
     parser.add_argument(
         "--check-definition-change",
