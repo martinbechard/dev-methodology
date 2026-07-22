@@ -1,6 +1,6 @@
 # Add Lightweight Future Ideas Capture
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -26,21 +26,25 @@ Completion: direct-main
 
 ## Delivery Execution / Ownership
 
-- Owner: Unowned
+- Owner: Dev Orchestrator
 - Canonical task: /root/process_backlog/orch_future_ideas
-- Claim: None
-- Branch: codex/future-ideas-implementation-20260722
-- Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/future-ideas-implementation-20260722
-- Starting main: 13ea3ffe92fe7a8352f33b4f618f39f212322ba3
-- Phase: Exact expansion approval recorded; Ready for fresh correction dispatch.
+- Artifact claim: future-ideas-correction-1-current-main-20260722, pending ARTIFACT GO.
+- Branch: codex/future-ideas-correction-1-current-main-20260722
+- Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/future-ideas-correction-1-current-main-20260722
+- Starting main: e414fa04307d086321373e6bd090ae38a2d2177b
+- Phase: Lifecycle Running committed; ARTIFACT GO pending.
 - Candidate: 65b94bc05f8745e67c53fb6e7963b32c90e7a2fd, preserved.
 - Accepted commit: Pending.
+- Claim wait started at: None.
+- Claim wait attempts: 0.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Delivery evidence: Candidate, review evidence, and exact expansion approval preserved; no correction attempt dispatched.
-- Next owner: Dev Backlog Coordinator.
+- Open issues: Initial artifact claims must remain non-overlapping; shared surfaces require explicit sequencing.
+- Shared-surface sequencing: Future Ideas has first priority on its candidate-to-current-main generated reconciliation and scripts/test_bundle_content.py.
+- Delivery evidence: Pending; candidate, correction findings, and expanded approval remain preserved below.
+- Next owner: Dev Orchestrator.
 
 ## User Action Required
 

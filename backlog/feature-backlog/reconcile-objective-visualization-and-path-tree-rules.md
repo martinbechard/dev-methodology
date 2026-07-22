@@ -1,6 +1,6 @@
 # Reconcile Objective Visualization and Repository Path-Tree Rules
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -12,20 +12,25 @@ Completion: direct-main
 
 ## Execution / Ownership
 
-- Owner: Unowned
+- Owner: Dev Orchestrator
 - Canonical task: /root/process_backlog/orch_objective_path_rules
-- Proposed artifact claim: objective-path-rules-019f817f-reconcile
-- Claim: None
+- Artifact claim: objective-path-rules-019f817f-reconcile, pending ARTIFACT GO.
 - Branch: codex/reconcile-objective-path-rules-019f817f
 - Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/objective-path-rules-019f817f-reconcile
-- Phase: Exact approval recorded; Ready for fresh dispatch.
-- Starting main: af0a3fe63404a793f2bf7dcf40dd2a3de563109e
-- Accepted candidate: None.
+- Phase: Lifecycle Running committed; ARTIFACT GO pending.
+- Starting main: e414fa04307d086321373e6bd090ae38a2d2177b
+- Candidate: Pending; preserved evidence commit e9b31dbf961d32c1eccdc68becd5666f05497b73 is not an accepted candidate.
+- Accepted commit: Pending.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
-- Open issues: None for lifecycle dispatch; implementation must remain within the recorded approval.
-- Next owner: Dev Backlog Coordinator.
-- Delivery evidence: Approval recorded; implementation and candidate remain pending.
+- Integration wait started at: None.
+- Integration wait attempts: 0.
+- Completion wait started at: None.
+- Completion wait attempts: 0.
+- Open issues: Initial artifact claims must remain non-overlapping; shared generated and test outputs are deferred.
+- Shared-surface sequencing: Start on the eight approved canonical skill sources and unique templates and checklists; defer shared generated and test outputs until wake-up.
+- Next owner: Dev Orchestrator.
+- Delivery evidence: Pending; e9b31db evidence, exclusions, and the exact eight-path approval remain preserved below.
 
 ## Read-Only Discovery
 

@@ -1,6 +1,6 @@
 # Publish Agent And Skill Evaluation HTML
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -9,6 +9,28 @@ Provider: file
 Provider Reference: backlog/feature-backlog/publish-agent-and-skill-evaluation-html.md
 
 Completion: direct-main
+
+## Delivery Execution / Ownership
+
+- Owner: Dev Orchestrator
+- Canonical task: /root/process_backlog/orch_evaluation_html
+- Artifact claim: publish-agent-skill-evaluation-html-20260722, pending ARTIFACT GO.
+- Branch: codex/publish-agent-skill-evaluation-html-20260722
+- Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/publish-agent-skill-evaluation-html-20260722
+- Starting main: e414fa04307d086321373e6bd090ae38a2d2177b
+- Phase: Lifecycle Running committed; ARTIFACT GO pending.
+- Candidate: Pending.
+- Accepted commit: Pending.
+- Claim wait started at: None.
+- Claim wait attempts: 0.
+- Integration wait started at: None.
+- Integration wait attempts: 0.
+- Completion wait started at: None.
+- Completion wait attempts: 0.
+- Open issues: Initial artifact claims must remain non-overlapping; shared bundle and navigation paths are deferred.
+- Shared-surface sequencing: Start on new unique evaluation documentation and data-generator surfaces; defer shared bundle and navigation paths until wake-up.
+- Next owner: Dev Orchestrator.
+- Delivery evidence: Pending.
 
 Creation Claim: create-eval-html-docs-item-20260722
 
