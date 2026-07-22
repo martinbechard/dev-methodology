@@ -136,7 +136,7 @@ technology_confirmation:
       reason: "TODO: User-confirmed rejection reason."
   confirmation:
     status: "confirmed"
-    evidence: "TODO: Durable user-confirmation reference; do not store raw private conversation content."
+    evidence: "TODO: non-empty auditable reference in a project-defined format; do not store raw private conversation content."
 
 claude_bridge_files:
   enabled: false

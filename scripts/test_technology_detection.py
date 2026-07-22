@@ -127,13 +127,13 @@ def explicit_user_approval(path: str) -> dict[str, object]:
 
 
 def with_unset_workflows(value: dict[str, object]) -> dict[str, object]:
-    """Add one verified claim transport and explicit deferred workflow selectors."""
+    """Add one verified claim transport and explicit deferred Persistence and Commit selectors."""
 
     return {
         **with_claim_transport({}),
         "workflow_selection": {
-            "provider": {"default": "UNSET"},
-            "completion": {"default": "UNSET"},
+            "persistence": {"default": "UNSET"},
+            "commit": {"default": "UNSET"},
         },
         **value,
     }
@@ -287,7 +287,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             renderer.render(project)
 
     def test_setup_selectors_reconcile_with_canonical_and_legacy_workflow_paths(self) -> None:
-        """Reject selector divergence before setup text and workflow routing can disagree."""
+        """Reject selector divergence before setup text and canonical routing can disagree."""
 
         renderer = load_renderer_module()
         project = {
@@ -317,7 +317,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
         with self.assertRaisesRegex(
             ValueError,
-            "^project_setup.persistence 'none' conflicts with workflow_selection.provider.default 'file'$",
+            "^project_setup.persistence 'none' conflicts with workflow_selection.persistence.default 'file'$",
         ):
             renderer.render(project)
 
@@ -327,8 +327,69 @@ class TechnologyDetectionTests(unittest.TestCase):
         }
         rendered = renderer.render(project)
         self.assertIn("Set: Persistence none", rendered)
-        self.assertIn("Default provider none", rendered)
+        self.assertIn("Default persistence none", rendered)
+        self.assertIn(
+            "Normalized workflow_selection.provider to workflow_selection.persistence",
+            rendered,
+        )
+        self.assertIn(
+            "Normalized workflow_selection.completion to workflow_selection.commit",
+            rendered,
+        )
+        self.assertNotIn("Default provider", rendered)
+        self.assertNotIn("Default completion", rendered)
         self.assertNotIn("feature-branch", rendered)
+
+    def test_legacy_selector_families_normalize_directly_to_persistence_and_commit(self) -> None:
+        """Preserve compatibility values while rendering canonical labels and routes only."""
+
+        renderer = load_renderer_module()
+        rendered = renderer.render({
+            "workflow_selection": {
+                "backlog": {
+                    "default": "file-based-backlog",
+                    "folder_overrides": [{
+                        "pattern": "services/**",
+                        "process": "github-issues-backlog",
+                    }],
+                },
+                "workitem": {
+                    "default": "simple-workitem",
+                    "folder_overrides": [{
+                        "pattern": "release/**",
+                        "process": "feature-branch-workitem",
+                    }],
+                },
+            },
+        })
+
+        self.assertIn("Default persistence file: create with create-file-work-item", rendered)
+        self.assertIn("services/** persistence github: create with create-github-work-item", rendered)
+        self.assertIn("Default commit direct-main: use complete-work-item-direct-main", rendered)
+        self.assertIn("release/** commit feature-branch: use complete-work-item-feature-branch", rendered)
+        self.assertIn(
+            "Normalized workflow_selection.backlog to workflow_selection.persistence",
+            rendered,
+        )
+        self.assertIn(
+            "Normalized workflow_selection.workitem to workflow_selection.commit",
+            rendered,
+        )
+        self.assertNotIn("Default provider", rendered)
+        self.assertNotIn("Default completion", rendered)
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "^workflow_selection.provider collides with workflow_selection.persistence; "
+            "replace workflow_selection.provider with workflow_selection.persistence and keep exactly one selector family$",
+        ):
+            renderer.render({
+                "workflow_selection": {
+                    "persistence": {"default": "file"},
+                    "provider": {"default": "file"},
+                    "commit": {"default": "direct-main"},
+                },
+            })
 
     def test_setup_requires_structured_technology_confirmation_evidence(self) -> None:
         """Reject missing, boolean-only, empty, or internally inconsistent confirmations."""
@@ -374,7 +435,14 @@ class TechnologyDetectionTests(unittest.TestCase):
                     **confirmed_technology_selection(),
                     "confirmation": {"status": "confirmed", "evidence": ""},
                 },
-                "technology_confirmation.confirmation.evidence must be a non-empty string",
+                "technology_confirmation.confirmation.evidence must be a non-empty auditable reference",
+            ),
+            (
+                {
+                    **confirmed_technology_selection(),
+                    "confirmation": {"status": "confirmed", "evidence": "   "},
+                },
+                "technology_confirmation.confirmation.evidence must be a non-empty auditable reference",
             ),
         )
         for confirmation, expected in invalid_values:
@@ -1831,46 +1899,46 @@ class TechnologyDetectionTests(unittest.TestCase):
         ):
             renderer.render(project, inline_tech_skills=False)
 
-    def test_agents_section_requires_explicit_provider_and_completion_selectors(self) -> None:
+    def test_agents_section_requires_explicit_persistence_and_commit_selectors(self) -> None:
         renderer = load_renderer_module()
         invalid_projects = (
             (
                 {},
-                "workflow_selection is required; record workflow_selection.provider.default and workflow_selection.completion.default explicitly, using UNSET when either decision is deferred",
+                "workflow_selection is required; record workflow_selection.persistence.default and workflow_selection.commit.default explicitly, using UNSET when either decision is deferred",
             ),
             (
                 {
                     "workflow_selection": {
-                        "completion": {"default": "UNSET"},
+                        "commit": {"default": "UNSET"},
                     },
                 },
-                "workflow_selection.provider must be a mapping; record workflow_selection.provider.default: UNSET when the provider decision is deferred",
+                "workflow_selection.persistence must be a mapping; record workflow_selection.persistence.default: UNSET when the persistence decision is deferred",
             ),
             (
                 {
                     "workflow_selection": {
-                        "provider": {"default": "UNSET"},
+                        "persistence": {"default": "UNSET"},
                     },
                 },
-                "workflow_selection.completion must be a mapping; record workflow_selection.completion.default: UNSET when the completion decision is deferred",
+                "workflow_selection.commit must be a mapping; record workflow_selection.commit.default: UNSET when the commit decision is deferred",
             ),
             (
                 {
                     "workflow_selection": {
-                        "provider": {},
-                        "completion": {"default": "UNSET"},
+                        "persistence": {},
+                        "commit": {"default": "UNSET"},
                     },
                 },
-                "workflow_selection.provider.default is required; record workflow_selection.provider.default: UNSET when the provider decision is deferred",
+                "workflow_selection.persistence.default is required; record workflow_selection.persistence.default: UNSET when the persistence decision is deferred",
             ),
             (
                 {
                     "workflow_selection": {
-                        "provider": {"default": "UNSET"},
-                        "completion": {},
+                        "persistence": {"default": "UNSET"},
+                        "commit": {},
                     },
                 },
-                "workflow_selection.completion.default is required; record workflow_selection.completion.default: UNSET when the completion decision is deferred",
+                "workflow_selection.commit.default is required; record workflow_selection.commit.default: UNSET when the commit decision is deferred",
             ),
         )
 
@@ -1949,80 +2017,82 @@ class TechnologyDetectionTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, f"^{re.escape(expected)}$"):
                     renderer.render(project)
 
-    def test_agents_section_accepts_boundary_provider_overrides_without_inference(self) -> None:
+    def test_agents_section_accepts_boundary_persistence_overrides_without_inference(self) -> None:
         renderer = load_renderer_module()
         rendered = renderer.render(with_claim_transport({
             "workflow_selection": {
-                "provider": {
+                "persistence": {
                     "default": "file",
                     "folder_overrides": [
-                        {"pattern": "interactive/**", "provider": "none"},
-                        {"pattern": "deferred/**", "provider": "UNSET"},
-                        {"pattern": "jira/**", "provider": "jira"},
-                        {"pattern": "ado/**", "provider": "azure-devops"},
+                        {"pattern": "interactive/**", "persistence": "none"},
+                        {"pattern": "deferred/**", "persistence": "UNSET"},
+                        {"pattern": "jira/**", "persistence": "jira"},
+                        {"pattern": "ado/**", "persistence": "azure-devops"},
                     ],
                 },
-                "completion": {"default": "direct-main"},
+                "commit": {"default": "direct-main"},
             },
         }))
 
-        self.assertIn("interactive/** provider none: no durable provider skill", rendered)
-        self.assertIn("deferred/** provider UNSET: the pertinent agent asks", rendered)
-        self.assertIn("jira/** provider jira: create with create-jira-work-item", rendered)
-        self.assertIn("ado/** provider azure-devops: create with create-azure-devops-work-item", rendered)
+        self.assertIn("interactive/** persistence none: no durable persistence skill", rendered)
+        self.assertIn("deferred/** persistence UNSET: the pertinent agent asks", rendered)
+        self.assertIn("jira/** persistence jira: create with create-jira-work-item", rendered)
+        self.assertIn("ado/** persistence azure-devops: create with create-azure-devops-work-item", rendered)
         self.assertEqual(2, rendered.count("unsupported placeholder remains selected and reports BLOCKED"))
         self.assertIn("does not infer either value", rendered)
 
-    def test_agents_section_renders_every_provider_as_reference_only_skill_guidance(self) -> None:
+    def test_agents_section_renders_every_persistence_as_reference_only_skill_guidance(self) -> None:
         renderer = load_renderer_module()
-        provider_guidance = {
-            "file": "Default provider file: create with create-file-work-item; manage with manage-file-work-items.",
-            "github": "Default provider github: create with create-github-work-item; manage with manage-github-work-items.",
-            "gitlab": "Default provider gitlab: create with create-gitlab-work-item; manage with manage-gitlab-work-items.",
-            "azure-devops": "Default provider azure-devops: create with create-azure-devops-work-item; manage with manage-azure-devops-work-items.",
-            "jira": "Default provider jira: create with create-jira-work-item; manage with manage-jira-work-items.",
-            "none": "Default provider none: no durable provider skill; durable create and manage operations are invalid.",
-            "UNSET": "Default provider UNSET: the pertinent agent asks for the provider decision before a provider operation.",
+        persistence_guidance = {
+            "file": "Default persistence file: create with create-file-work-item; manage with manage-file-work-items.",
+            "github": "Default persistence github: create with create-github-work-item; manage with manage-github-work-items.",
+            "gitlab": "Default persistence gitlab: create with create-gitlab-work-item; manage with manage-gitlab-work-items.",
+            "azure-devops": "Default persistence azure-devops: create with create-azure-devops-work-item; manage with manage-azure-devops-work-items.",
+            "jira": "Default persistence jira: create with create-jira-work-item; manage with manage-jira-work-items.",
+            "none": "Default persistence none: no durable persistence skill; durable create and manage operations are invalid.",
+            "UNSET": "Default persistence UNSET: the pertinent agent asks for the Persistence decision before a persistence operation.",
         }
-        completion_guidance = {
-            "direct-main": "Default completion direct-main: use complete-work-item-direct-main.",
-            "feature-branch": "Default completion feature-branch: use complete-work-item-feature-branch.",
-            "UNSET": "Default completion UNSET: the pertinent agent asks for the completion decision before implementation or publication.",
+        commit_guidance = {
+            "direct-main": "Default commit direct-main: use complete-work-item-direct-main.",
+            "feature-branch": "Default commit feature-branch: use complete-work-item-feature-branch.",
+            "UNSET": "Default commit UNSET: the pertinent agent asks for the Commit decision before implementation or publication.",
         }
 
-        for provider, expected_provider in provider_guidance.items():
-            for completion, expected_completion in completion_guidance.items():
-                with self.subTest(provider=provider, completion=completion):
+        for persistence, expected_persistence in persistence_guidance.items():
+            for commit, expected_commit in commit_guidance.items():
+                with self.subTest(persistence=persistence, commit=commit):
                     rendered = renderer.render(with_claim_transport({
                         "workflow_selection": {
-                            "provider": {"default": provider},
-                            "completion": {"default": completion},
+                            "persistence": {"default": persistence},
+                            "commit": {"default": commit},
                         },
                         "technology_skill_loadouts": [],
                     }))
 
                     self.assertIn("## Work-Item Workflow Skill References", rendered)
-                    self.assertIn(expected_provider, rendered)
-                    self.assertIn(expected_completion, rendered)
+                    self.assertIn(expected_persistence, rendered)
+                    self.assertIn(expected_commit, rendered)
+                    self.assertNotIn("Default provider", rendered)
+                    self.assertNotIn("Default completion", rendered)
                     self.assertNotIn("# Create File Work Item", rendered)
                     self.assertNotIn("# Complete Work Item Direct Main", rendered)
 
-    def test_agents_section_resolves_provider_and_completion_overrides_independently(self) -> None:
+    def test_agents_section_resolves_persistence_and_commit_overrides_independently(self) -> None:
         renderer = load_renderer_module()
         rendered = renderer.render(with_claim_transport({
             "workflow_selection": {
-                "provider": {
+                "persistence": {
                     "default": "file",
                     "folder_overrides": [{
                         "pattern": "services/**",
-                        "provider": "github",
+                        "persistence": "github",
                     }],
                 },
-                "completion": {
+                "commit": {
                     "default": "feature-branch",
                     "folder_overrides": [{
                         "pattern": "services/**",
-                        "completion": "direct-main",
+                        "commit": "direct-main",
                     }],
                 },
             },
@@ -2030,19 +2100,19 @@ class TechnologyDetectionTests(unittest.TestCase):
         }))
 
         self.assertIn(
-            "Default provider file: create with create-file-work-item; manage with manage-file-work-items.",
+            "Default persistence file: create with create-file-work-item; manage with manage-file-work-items.",
             rendered,
         )
         self.assertIn(
-            "services/** provider github: create with create-github-work-item; manage with manage-github-work-items.",
+            "services/** persistence github: create with create-github-work-item; manage with manage-github-work-items.",
             rendered,
         )
         self.assertIn(
-            "Default completion feature-branch: use complete-work-item-feature-branch.",
+            "Default commit feature-branch: use complete-work-item-feature-branch.",
             rendered,
         )
         self.assertIn(
-            "services/** completion direct-main: use complete-work-item-direct-main.",
+            "services/** commit direct-main: use complete-work-item-direct-main.",
             rendered,
         )
         self.assertIn("Most-specific matching folder pattern wins independently", rendered)
@@ -2051,29 +2121,29 @@ class TechnologyDetectionTests(unittest.TestCase):
         renderer = load_renderer_module()
         none_rendered = renderer.render(with_claim_transport({
             "workflow_selection": {
-                "provider": {"default": "none"},
-                "completion": {"default": "feature-branch"},
+                "persistence": {"default": "none"},
+                "commit": {"default": "feature-branch"},
             },
         }))
         unset_rendered = renderer.render(with_claim_transport({
             "workflow_selection": {
-                "provider": {"default": "UNSET"},
-                "completion": {"default": "UNSET"},
+                "persistence": {"default": "UNSET"},
+                "commit": {"default": "UNSET"},
             },
         }))
         placeholder_rendered = renderer.render(with_claim_transport({
             "workflow_selection": {
-                "provider": {"default": "azure-devops"},
-                "completion": {"default": "direct-main"},
+                "persistence": {"default": "azure-devops"},
+                "commit": {"default": "direct-main"},
             },
         }))
 
         self.assertIn(
-            "Default provider none: no durable provider skill; durable create and manage operations are invalid.",
+            "Default persistence none: no durable persistence skill; durable create and manage operations are invalid.",
             none_rendered,
         )
-        self.assertIn("asks for the provider decision before a provider operation", unset_rendered)
-        self.assertIn("asks for the completion decision before implementation or publication", unset_rendered)
+        self.assertIn("asks for the Persistence decision before a persistence operation", unset_rendered)
+        self.assertIn("asks for the Commit decision before implementation or publication", unset_rendered)
         self.assertIn("does not infer either value from repository or hosting evidence", unset_rendered)
         self.assertIn("create-azure-devops-work-item", placeholder_rendered)
         self.assertIn("manage-azure-devops-work-items", placeholder_rendered)
@@ -2083,8 +2153,8 @@ class TechnologyDetectionTests(unittest.TestCase):
         renderer = load_renderer_module()
         rendered = renderer.render(with_claim_transport({
             "workflow_selection": {
-                "provider": {"default": "github"},
-                "completion": {"default": "feature-branch"},
+                "persistence": {"default": "github"},
+                "commit": {"default": "feature-branch"},
             },
             "technology_skill_loadouts": [{
                 "pathPattern": "services/**",
@@ -2092,7 +2162,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             }],
         }), inline_tech_skills=True)
 
-        self.assertIn("Workflow skills are referenced by name only and are never inlined", rendered)
+        self.assertIn("Workflow skills are referenced by name only", rendered)
         self.assertIn("## Technology Skills", rendered)
         self.assertIn("----- BEGIN INLINED TECHNOLOGY SKILL: python -----", rendered)
         self.assertIn(renderer.inlined_skill_body("python"), rendered)
@@ -2342,45 +2412,47 @@ class TechnologyDetectionTests(unittest.TestCase):
         cases = (
             (
                 "workitem",
-                {"default": "simple-workitem"},
-                "completion",
-                {"default": "direct-main"},
-                "workflow_selection.workitem.default 'simple-workitem' maps to 'direct-main', redundantly matching workflow_selection.completion.default 'direct-main'; preserve workflow_selection.completion.default, migrate any remaining workflow_selection.workitem overrides, then remove workflow_selection.workitem",
+                "commit",
+                "workflow_selection.workitem collides with workflow_selection.commit; replace workflow_selection.workitem with workflow_selection.commit and keep exactly one selector family",
             ),
             (
-                "workitem",
-                {"default": "simple-workitem"},
                 "completion",
-                {"default": "feature-branch"},
-                "workflow_selection.workitem.default 'simple-workitem' maps to 'direct-main', conflicts with workflow_selection.completion.default 'feature-branch'; preserve the valid canonical maintainer edit at workflow_selection.completion.default; migrate any remaining workflow_selection.workitem overrides, then remove workflow_selection.workitem without overwriting workflow_selection.completion.default",
+                "commit",
+                "workflow_selection.completion collides with workflow_selection.commit; replace workflow_selection.completion with workflow_selection.commit and keep exactly one selector family",
             ),
             (
                 "backlog",
-                {"default": "file-based-backlog"},
-                "provider",
-                {"default": "file"},
-                "workflow_selection.backlog.default 'file-based-backlog' maps to 'file', redundantly matching workflow_selection.provider.default 'file'; preserve workflow_selection.provider.default, migrate any remaining workflow_selection.backlog overrides, then remove workflow_selection.backlog",
+                "persistence",
+                "workflow_selection.backlog collides with workflow_selection.persistence; replace workflow_selection.backlog with workflow_selection.persistence and keep exactly one selector family",
             ),
             (
-                "backlog",
-                {"default": "file-based-backlog"},
                 "provider",
-                {"default": "github"},
-                "workflow_selection.backlog.default 'file-based-backlog' maps to 'file', conflicts with workflow_selection.provider.default 'github'; preserve the valid canonical maintainer edit at workflow_selection.provider.default; migrate any remaining workflow_selection.backlog overrides, then remove workflow_selection.backlog without overwriting workflow_selection.provider.default",
+                "persistence",
+                "workflow_selection.provider collides with workflow_selection.persistence; replace workflow_selection.provider with workflow_selection.persistence and keep exactly one selector family",
             ),
         )
 
-        for legacy_key, legacy, canonical_key, canonical, expected in cases:
-            with self.subTest(legacy_key=legacy_key, expected=expected):
+        for legacy_key, canonical_key, expected in cases:
+            with self.subTest(legacy_key=legacy_key):
+                legacy_default = (
+                    "simple-workitem" if legacy_key == "workitem"
+                    else "file-based-backlog" if legacy_key == "backlog"
+                    else "direct-main" if legacy_key == "completion"
+                    else "file"
+                )
+                canonical_default = "direct-main" if canonical_key == "commit" else "file"
                 project = {
                     "workflow_selection": {
-                        legacy_key: legacy,
-                        canonical_key: canonical,
+                        legacy_key: {"default": legacy_default},
+                        canonical_key: {"default": canonical_default},
                     },
                 }
                 with self.assertRaisesRegex(ValueError, f"^{re.escape(expected)}$"):
                     renderer.render(project)
-                self.assertEqual(canonical, project["workflow_selection"][canonical_key])
+                self.assertEqual(
+                    {"default": canonical_default},
+                    project["workflow_selection"][canonical_key],
+                )
 
     def test_agents_section_collision_checks_mixed_legacy_and_canonical_overrides(self) -> None:
         renderer = load_renderer_module()
@@ -2388,37 +2460,23 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 "workitem",
                 "feature-branch-workitem",
-                "completion",
+                "commit",
                 "feature-branch",
-                "workflow_selection.workitem.folder_overrides[0].process 'feature-branch-workitem' maps to 'feature-branch', redundantly matching workflow_selection.completion.folder_overrides[0].completion 'feature-branch' for pattern 'services/**'; preserve workflow_selection.completion.folder_overrides[0].completion and remove the redundant legacy override",
-            ),
-            (
-                "workitem",
-                "feature-branch-workitem",
-                "completion",
-                "direct-main",
-                "workflow_selection.workitem.folder_overrides[0].process 'feature-branch-workitem' maps to 'feature-branch', conflicts with workflow_selection.completion.folder_overrides[0].completion 'direct-main' for pattern 'services/**'; preserve the valid canonical maintainer edit at workflow_selection.completion.folder_overrides[0].completion and resolve the legacy override explicitly",
+                "workflow_selection.workitem collides with workflow_selection.commit; replace workflow_selection.workitem with workflow_selection.commit and keep exactly one selector family",
             ),
             (
                 "backlog",
                 "github-issues-backlog",
-                "provider",
+                "persistence",
                 "github",
-                "workflow_selection.backlog.folder_overrides[0].process 'github-issues-backlog' maps to 'github', redundantly matching workflow_selection.provider.folder_overrides[0].provider 'github' for pattern 'services/**'; preserve workflow_selection.provider.folder_overrides[0].provider and remove the redundant legacy override",
-            ),
-            (
-                "backlog",
-                "github-issues-backlog",
-                "provider",
-                "file",
-                "workflow_selection.backlog.folder_overrides[0].process 'github-issues-backlog' maps to 'github', conflicts with workflow_selection.provider.folder_overrides[0].provider 'file' for pattern 'services/**'; preserve the valid canonical maintainer edit at workflow_selection.provider.folder_overrides[0].provider and resolve the legacy override explicitly",
+                "workflow_selection.backlog collides with workflow_selection.persistence; replace workflow_selection.backlog with workflow_selection.persistence and keep exactly one selector family",
             ),
         )
 
         for legacy_key, legacy_value, canonical_key, canonical_value, expected in cases:
             with self.subTest(legacy_key=legacy_key, expected=expected):
                 legacy_default = "simple-workitem" if legacy_key == "workitem" else "file-based-backlog"
-                canonical_default = "direct-main" if canonical_key == "completion" else "file"
+                canonical_default = "direct-main" if canonical_key == "commit" else "file"
                 project = {
                     "workflow_selection": {
                         legacy_key: {
@@ -2437,52 +2495,12 @@ class TechnologyDetectionTests(unittest.TestCase):
                         },
                     },
                 }
-                with self.assertRaises(ValueError) as raised:
+                with self.assertRaisesRegex(ValueError, f"^{re.escape(expected)}$"):
                     renderer.render(project)
-                message = str(raised.exception)
-                self.assertTrue(
-                    message.startswith("mixed legacy and canonical workflow selectors collide: "),
-                    message,
-                )
-                self.assertIn(expected, message)
                 self.assertEqual(
                     canonical_value,
                     project["workflow_selection"][canonical_key]["folder_overrides"][0][canonical_key],
                 )
-
-        project = {
-            "workflow_selection": {
-                "workitem": {
-                    "default": "simple-workitem",
-                    "folder_overrides": [{
-                        "pattern": "legacy-only/**",
-                        "process": "feature-branch-workitem",
-                    }],
-                },
-                "completion": {
-                    "default": "direct-main",
-                    "folder_overrides": [{
-                        "pattern": "maintainer/**",
-                        "completion": "feature-branch",
-                    }],
-                },
-            },
-        }
-        with self.assertRaises(ValueError) as raised:
-            renderer.render(project)
-        message = str(raised.exception)
-        self.assertIn(
-            "after resolving these collisions, apply remaining migration guidance without changing canonical fields",
-            message,
-        )
-        self.assertIn(
-            "add workflow_selection.completion.folder_overrides entry: pattern=legacy-only/**, completion=feature-branch",
-            message,
-        )
-        self.assertEqual(
-            [{"pattern": "maintainer/**", "completion": "feature-branch"}],
-            project["workflow_selection"]["completion"]["folder_overrides"],
-        )
 
     def test_render_docstring_distinguishes_optional_authority_from_required_workflow(self) -> None:
         renderer = load_renderer_module()
@@ -2494,55 +2512,33 @@ class TechnologyDetectionTests(unittest.TestCase):
     def test_agents_section_reports_deterministic_legacy_selector_migrations(self) -> None:
         renderer = load_renderer_module()
         legacy_values = (
-            ("workitem", "simple-workitem", "workflow_selection.completion.default: direct-main"),
-            ("workitem", "feature-branch-workitem", "workflow_selection.completion.default: feature-branch"),
-            ("backlog", "file-based-backlog", "workflow_selection.provider.default: file"),
-            ("backlog", "github-issues-backlog", "workflow_selection.provider.default: github"),
-            ("backlog", "none", "workflow_selection.provider.default: none"),
-            ("backlog", "UNSET", "workflow_selection.provider.default: UNSET"),
+            ("workitem", "simple-workitem", "Default commit direct-main"),
+            ("workitem", "feature-branch-workitem", "Default commit feature-branch"),
+            ("backlog", "file-based-backlog", "Default persistence file"),
+            ("backlog", "github-issues-backlog", "Default persistence github"),
+            ("backlog", "none", "Default persistence none"),
+            ("backlog", "UNSET", "Default persistence UNSET"),
         )
 
         for selector, legacy_value, expected_target in legacy_values:
             with self.subTest(selector=selector, legacy_value=legacy_value):
-                with self.assertRaises(ValueError) as raised:
-                    renderer.render({
-                        "workflow_selection": {
-                            selector: {"default": legacy_value},
-                        },
-                    })
-                message = str(raised.exception)
-                self.assertIn(expected_target, message)
-                self.assertIn("preserve folder overrides", message)
-                self.assertIn("do not infer replacements", message)
-
-        with self.assertRaises(ValueError) as raised:
-            renderer.render({
-                "workflow_selection": {
-                    "workitem": {
-                        "default": "simple-workitem",
-                        "folder_overrides": [{
-                            "pattern": "services/**",
-                            "process": "feature-branch-workitem",
-                        }],
+                other = (
+                    {"persistence": {"default": "file"}}
+                    if selector == "workitem"
+                    else {"commit": {"default": "direct-main"}}
+                )
+                rendered = renderer.render({
+                    "workflow_selection": {
+                        selector: {"default": legacy_value},
+                        **other,
                     },
-                    "backlog": {
-                        "default": "file-based-backlog",
-                        "folder_overrides": [{
-                            "pattern": "services/**",
-                            "process": "github-issues-backlog",
-                        }],
-                    },
-                },
-            })
-        migration = str(raised.exception)
-        self.assertIn(
-            "add workflow_selection.completion.folder_overrides entry: pattern=services/**, completion=feature-branch",
-            migration,
-        )
-        self.assertIn(
-            "add workflow_selection.provider.folder_overrides entry: pattern=services/**, provider=github",
-            migration,
-        )
+                })
+                canonical_key = "commit" if selector == "workitem" else "persistence"
+                self.assertIn(
+                    f"Normalized workflow_selection.{selector} to workflow_selection.{canonical_key}",
+                    rendered,
+                )
+                self.assertIn(expected_target, rendered)
 
     def test_agents_section_validates_every_legacy_selector_field_before_migration(self) -> None:
         renderer = load_renderer_module()
@@ -2557,7 +2553,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         invalid_projects = (
             (
                 {"workflow_selection": {"workitem": "simple-workitem"}},
-                "workflow_selection.workitem must be a mapping; canonical replacement: workflow_selection.completion"
+                "workflow_selection.workitem must be a mapping; canonical replacement: workflow_selection.commit"
                 + completion_guidance,
             ),
             (

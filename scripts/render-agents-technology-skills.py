@@ -618,144 +618,139 @@ def update_authority_directive(existing: str, section_lines: list[str]) -> str:
     return "\n".join(merged) + "\n"
 
 
-def _legacy_selector_migration(selection: dict[str, object]) -> str | None:
-    """Validate prototype selectors and return deterministic canonical migration guidance."""
+def _legacy_process_configuration(
+    selection: dict[str, object],
+    source_key: str,
+    target_key: str,
+    values: dict[str, str],
+) -> dict[str, object]:
+    """Normalize one backlog or workitem selector into its canonical selector shape."""
 
-    migrations: list[str] = []
-    collisions: list[str] = []
-    for legacy_key, target_key, values in (
-        ("workitem", "completion", LEGACY_COMPLETION_VALUES),
-        ("backlog", "provider", LEGACY_PROVIDER_VALUES),
-    ):
-        if legacy_key not in selection:
-            continue
-        prefix = f"workflow_selection.{legacy_key}"
-        mappings = ", ".join(f"{source} -> {target}" for source, target in values.items())
-        guidance = f"supported legacy values and canonical replacements: {mappings}"
-        configuration = selection[legacy_key]
-        if not isinstance(configuration, dict):
-            raise ValueError(
-                f"{prefix} must be a mapping; canonical replacement: workflow_selection.{target_key}; {guidance}"
-            )
-        unsupported_keys = set(configuration) - {"default", "folder_overrides"}
-        if unsupported_keys:
-            raise ValueError(f"{prefix} keys must be exactly: default, folder_overrides; {guidance}")
-        default = configuration.get("default")
-        if not isinstance(default, str) or default not in values:
-            raise ValueError(
-                f"{prefix}.default rejects {default!r}; supported legacy values and canonical replacements: {mappings}"
-            )
-        canonical_default: str | None = None
-        canonical_overrides: list[tuple[str, str]] = []
-        if target_key in selection:
-            supported_values = PROVIDER_VALUES if target_key == "provider" else COMPLETION_VALUES
-            canonical_default, canonical_overrides = _workflow_configuration(
-                selection,
-                target_key,
-                supported_values,
-            )
-        mapped_default = values[default]
-        if canonical_default is None:
-            migrations.append(f"workflow_selection.{target_key}.default: {mapped_default}")
-        else:
-            legacy_path = f"{prefix}.default"
-            canonical_path = f"workflow_selection.{target_key}.default"
-            if mapped_default == canonical_default:
-                collisions.append(
-                    f"{legacy_path} {default!r} maps to {mapped_default!r}, redundantly matching "
-                    f"{canonical_path} {canonical_default!r}; preserve {canonical_path}, migrate any "
-                    f"remaining {prefix} overrides, then remove {prefix}"
-                )
-            else:
-                collisions.append(
-                    f"{legacy_path} {default!r} maps to {mapped_default!r}, conflicts with "
-                    f"{canonical_path} {canonical_default!r}; preserve the valid canonical maintainer edit "
-                    f"at {canonical_path}; migrate any remaining {prefix} overrides, then remove {prefix} "
-                    f"without overwriting {canonical_path}"
-                )
-        overrides = configuration.get("folder_overrides", [])
-        if not isinstance(overrides, list):
-            raise ValueError(f"{prefix}.folder_overrides must be a list; {guidance}")
-        seen_patterns: dict[str, tuple[int, str]] = {}
-        for override_index, override in enumerate(overrides):
-            override_prefix = f"{prefix}.folder_overrides[{override_index}]"
-            if not isinstance(override, dict):
-                raise ValueError(
-                    f"{override_prefix} must be a mapping with pattern and process; {guidance}"
-                )
-            if "pattern" not in override:
-                _validated_override_pattern(override_prefix, None, guidance=guidance)
-            if set(override) != {"pattern", "process"}:
-                raise ValueError(f"{override_prefix} keys must be exactly: pattern, process; {guidance}")
-            pattern = _validated_override_pattern(
-                override_prefix,
-                override.get("pattern"),
-                guidance=guidance,
-            )
-            process = override.get("process")
-            if not isinstance(process, str) or process not in values:
-                raise ValueError(
-                    f"{override_prefix}.process rejects {process!r}; supported legacy values and canonical replacements: {mappings}"
-                )
-            _reject_duplicate_override_pattern(
-                seen_patterns,
-                prefix,
-                override_index,
-                pattern,
-                process,
-                guidance=guidance,
-            )
-            mapped_process = values[process]
-            canonical_match = next(
-                (
-                    (canonical_index, canonical_value)
-                    for canonical_index, (canonical_pattern, canonical_value) in enumerate(canonical_overrides)
-                    if canonical_pattern == pattern
-                ),
-                None,
-            )
-            if canonical_match is None:
-                migrations.append(
-                    f"add workflow_selection.{target_key}.folder_overrides entry: "
-                    f"pattern={pattern}, {target_key}={mapped_process}"
-                )
-                continue
-            canonical_index, canonical_value = canonical_match
-            legacy_path = f"{override_prefix}.process"
-            canonical_path = (
-                f"workflow_selection.{target_key}.folder_overrides[{canonical_index}].{target_key}"
-            )
-            if mapped_process == canonical_value:
-                collisions.append(
-                    f"{legacy_path} {process!r} maps to {mapped_process!r}, redundantly matching "
-                    f"{canonical_path} {canonical_value!r} for pattern {pattern!r}; preserve "
-                    f"{canonical_path} and remove the redundant legacy override"
-                )
-            else:
-                collisions.append(
-                    f"{legacy_path} {process!r} maps to {mapped_process!r}, conflicts with "
-                    f"{canonical_path} {canonical_value!r} for pattern {pattern!r}; preserve the valid "
-                    f"canonical maintainer edit at {canonical_path} and resolve the legacy override explicitly"
-                )
-    if collisions:
-        collision_message = (
-            collisions[0]
-            if len(collisions) == 1
-            else "mixed legacy and canonical workflow selectors collide: " + "; ".join(collisions)
+    prefix = f"workflow_selection.{source_key}"
+    target_path = f"workflow_selection.{target_key}"
+    mappings = ", ".join(f"{source} -> {target}" for source, target in values.items())
+    guidance = f"supported legacy values and canonical replacements: {mappings}"
+    configuration = selection[source_key]
+    if not isinstance(configuration, dict):
+        raise ValueError(
+            f"{prefix} must be a mapping; canonical replacement: {target_path}; {guidance}"
         )
-        if migrations:
-            collision_message += (
-                "; after resolving these collisions, apply remaining migration guidance without changing "
-                "canonical fields: " + "; ".join(migrations)
+    if set(configuration) - {"default", "folder_overrides"}:
+        raise ValueError(f"{prefix} keys must be exactly: default, folder_overrides; {guidance}")
+    default = configuration.get("default")
+    if not isinstance(default, str) or default not in values:
+        raise ValueError(
+            f"{prefix}.default rejects {default!r}; supported legacy values and canonical replacements: {mappings}"
+        )
+    overrides = configuration.get("folder_overrides", [])
+    if not isinstance(overrides, list):
+        raise ValueError(f"{prefix}.folder_overrides must be a list; {guidance}")
+    normalized_overrides: list[dict[str, str]] = []
+    seen_patterns: dict[str, tuple[int, str]] = {}
+    for index, override in enumerate(overrides):
+        override_prefix = f"{prefix}.folder_overrides[{index}]"
+        if not isinstance(override, dict):
+            raise ValueError(
+                f"{override_prefix} must be a mapping with pattern and process; {guidance}"
             )
-        raise ValueError(collision_message)
-    if not migrations:
-        return None
-    return (
-        "legacy workflow selectors require migration: "
-        + "; ".join(migrations)
-        + "; preserve folder overrides under the matching independent selector and do not infer replacements from repository evidence"
-    )
+        if "pattern" not in override:
+            _validated_override_pattern(override_prefix, None, guidance=guidance)
+        if set(override) != {"pattern", "process"}:
+            raise ValueError(f"{override_prefix} keys must be exactly: pattern, process; {guidance}")
+        pattern = _validated_override_pattern(
+            override_prefix,
+            override.get("pattern"),
+            guidance=guidance,
+        )
+        process = override.get("process")
+        if not isinstance(process, str) or process not in values:
+            raise ValueError(
+                f"{override_prefix}.process rejects {process!r}; supported legacy values and canonical replacements: {mappings}"
+            )
+        _reject_duplicate_override_pattern(
+            seen_patterns,
+            prefix,
+            index,
+            pattern,
+            process,
+            guidance=guidance,
+        )
+        normalized_overrides.append({"pattern": pattern, target_key: values[process]})
+    return {
+        "default": values[default],
+        "folder_overrides": normalized_overrides,
+    }
+
+
+def _canonical_workflow_selection(
+    selection: dict[str, object],
+) -> tuple[dict[str, object], list[str]]:
+    """Normalize one compatible selector family per domain to Persistence and Commit."""
+
+    allowed_keys = {
+        "persistence",
+        "commit",
+        "provider",
+        "completion",
+        "backlog",
+        "workitem",
+        "selection_policy",
+    }
+    unsupported = set(selection) - allowed_keys
+    if unsupported:
+        raise ValueError(
+            "workflow_selection keys must be canonical persistence and commit, compatibility "
+            "provider, completion, backlog, or workitem, and optional selection_policy"
+        )
+    normalized: dict[str, object] = {}
+    notices: list[str] = []
+    for target_key, families in (
+        ("persistence", ("persistence", "provider", "backlog")),
+        ("commit", ("commit", "completion", "workitem")),
+    ):
+        present = [key for key in families if key in selection]
+        if len(present) > 1:
+            source_key = next(key for key in present if key != target_key) if target_key in present else present[1]
+            other_key = target_key if target_key in present else present[0]
+            raise ValueError(
+                f"workflow_selection.{source_key} collides with workflow_selection.{other_key}; "
+                f"replace workflow_selection.{source_key} with workflow_selection.{target_key} "
+                "and keep exactly one selector family"
+            )
+        if not present:
+            continue
+        source_key = present[0]
+        if source_key == target_key:
+            normalized[target_key] = selection[source_key]
+        elif source_key in {"provider", "completion"}:
+            supported_values = PROVIDER_VALUES if target_key == "persistence" else COMPLETION_VALUES
+            default, overrides = _workflow_configuration(selection, source_key, supported_values)
+            normalized[target_key] = {
+                "default": default,
+                "folder_overrides": [
+                    {"pattern": pattern, target_key: selected}
+                    for pattern, selected in overrides
+                ],
+            }
+            notices.append(
+                f"Normalized workflow_selection.{source_key} to workflow_selection.{target_key} "
+                "without changing selected values."
+            )
+        else:
+            values = LEGACY_PROVIDER_VALUES if target_key == "persistence" else LEGACY_COMPLETION_VALUES
+            normalized[target_key] = _legacy_process_configuration(
+                selection,
+                source_key,
+                target_key,
+                values,
+            )
+            notices.append(
+                f"Normalized workflow_selection.{source_key} to workflow_selection.{target_key} "
+                "using the documented compatibility value mapping."
+            )
+    if "selection_policy" in selection:
+        normalized["selection_policy"] = selection["selection_policy"]
+    return normalized, notices
 
 
 def _validated_override_pattern(
@@ -834,7 +829,11 @@ def _workflow_configuration(
         )
     default = configuration.get("default")
     if not isinstance(default, str) or default not in supported_values:
-        legacy_values = LEGACY_PROVIDER_VALUES if key == "provider" else LEGACY_COMPLETION_VALUES
+        legacy_values = (
+            LEGACY_PROVIDER_VALUES
+            if key in {"provider", "persistence"}
+            else LEGACY_COMPLETION_VALUES
+        )
         if isinstance(default, str) and default in legacy_values:
             raise ValueError(
                 f"{prefix}.default uses legacy value {default!r}; migrate to {legacy_values[default]!r}"
@@ -858,7 +857,12 @@ def _workflow_configuration(
             and isinstance(combined_process, str)
             and "+" in combined_process
         ):
-            other_key = "completion" if key == "provider" else "provider"
+            other_key = {
+                "provider": "completion",
+                "persistence": "commit",
+                "completion": "provider",
+                "commit": "persistence",
+            }[key]
             rendered_values = ", ".join(supported_values)
             raise ValueError(
                 f"{override_prefix}.process rejects combined value {combined_process!r}; supported {key} "
@@ -870,7 +874,11 @@ def _workflow_configuration(
         pattern = _validated_override_pattern(override_prefix, override.get("pattern"))
         selected_value = override.get(key)
         if not isinstance(selected_value, str) or selected_value not in supported_values:
-            legacy_values = LEGACY_PROVIDER_VALUES if key == "provider" else LEGACY_COMPLETION_VALUES
+            legacy_values = (
+                LEGACY_PROVIDER_VALUES
+                if key in {"provider", "persistence"}
+                else LEGACY_COMPLETION_VALUES
+            )
             if isinstance(selected_value, str) and selected_value in legacy_values:
                 raise ValueError(
                     f"{override_prefix}.{key} uses legacy value {selected_value!r}; migrate to {legacy_values[selected_value]!r}"
@@ -878,7 +886,12 @@ def _workflow_configuration(
             rendered_values = ", ".join(supported_values)
             split_guidance = ""
             if isinstance(selected_value, str) and "+" in selected_value:
-                other_key = "completion" if key == "provider" else "provider"
+                other_key = {
+                    "provider": "completion",
+                    "persistence": "commit",
+                    "completion": "provider",
+                    "commit": "persistence",
+                }[key]
                 split_guidance = (
                     f"; split the combined value into {override_prefix}.{key} and a "
                     f"workflow_selection.{other_key}.folder_overrides entry with the same pattern"
@@ -898,130 +911,83 @@ def _workflow_configuration(
     return default, validated_overrides
 
 
-def _provider_reference(label: str, provider: str) -> str:
-    """Render one provider selection as create and manage skill references."""
+def _persistence_reference(label: str, persistence: str) -> str:
+    """Render one Persistence selection as create and manage skill references."""
 
-    if provider == "UNSET":
-        return f"- {label} provider UNSET: the pertinent agent asks for the provider decision before a provider operation."
-    if provider == "none":
+    if persistence == "UNSET":
+        return f"- {label} UNSET: the pertinent agent asks for the Persistence decision before a persistence operation."
+    if persistence == "none":
         return (
-            f"- {label} provider none: no durable provider skill; durable create and manage operations are invalid."
+            f"- {label} none: no durable persistence skill; durable create and manage operations are invalid."
         )
-    create_skill, manage_skill = PROVIDER_SKILLS[provider]
+    create_skill, manage_skill = PROVIDER_SKILLS[persistence]
     suffix = ""
-    if provider in {"azure-devops", "jira"}:
+    if persistence in {"azure-devops", "jira"}:
         suffix = " The unsupported placeholder remains selected and reports BLOCKED without mutation."
     return (
-        f"- {label} provider {provider}: create with {create_skill}; manage with {manage_skill}."
+        f"- {label} {persistence}: create with {create_skill}; manage with {manage_skill}."
         f"{suffix}"
     )
 
 
-def _completion_reference(label: str, completion: str) -> str:
-    """Render one completion selection as a completion skill reference."""
+def _commit_reference(label: str, commit: str) -> str:
+    """Render one Commit selection as a delivery skill reference."""
 
-    if completion == "UNSET":
+    if commit == "UNSET":
         return (
-            f"- {label} completion UNSET: the pertinent agent asks for the completion decision before implementation or publication."
+            f"- {label} UNSET: the pertinent agent asks for the Commit decision before implementation or publication."
         )
-    return f"- {label} completion {completion}: use {COMPLETION_SKILLS[completion]}."
+    return f"- {label} {commit}: use {COMPLETION_SKILLS[commit]}."
 
 
 def workflow_lines(value: dict[str, object]) -> list[str]:
-    """Render reference-only provider and completion workflow guidance."""
+    """Render canonical Persistence and Commit guidance from compatible selector inputs."""
 
     selection = value.get("workflow_selection")
     if selection is None:
         raise ValueError(
-            "workflow_selection is required; record workflow_selection.provider.default and "
-            "workflow_selection.completion.default explicitly, using UNSET when either decision is deferred"
+            "workflow_selection is required; record workflow_selection.persistence.default and "
+            "workflow_selection.commit.default explicitly, using UNSET when either decision is deferred"
         )
     if not isinstance(selection, dict):
         raise ValueError("workflow_selection must be a mapping")
-    canonical = "persistence" in selection or "commit" in selection
-    if canonical:
-        allowed_keys = {"persistence", "commit", "selection_policy"}
-        if set(selection) - allowed_keys:
-            raise ValueError(
-                "workflow_selection keys must be exactly persistence, commit, and optional selection_policy; "
-                "migrate legacy provider and completion fields without changing their selected values"
-            )
-        selection_policy = selection.get("selection_policy")
-        if selection_policy is not None and (
-            not isinstance(selection_policy, str) or not selection_policy
-        ):
-            raise ValueError("workflow_selection.selection_policy must be a non-empty string")
-        persistence, persistence_overrides = _workflow_configuration(
-            selection, "persistence", PROVIDER_VALUES
-        )
-        commit, commit_overrides = _workflow_configuration(
-            selection, "commit", COMPLETION_VALUES
-        )
-        lines = [
-            "## Work-Item Workflow Skill References",
-            "",
-            "Project Configurator owns the independent Persistence and Commit selectors. Persistence routes durable work-item storage; Commit routes delivery. Workflow skills are referenced by name only and technology skill routing remains separate.",
-            "",
-            _provider_reference("Default persistence", persistence).replace(" provider ", " ", 1),
-        ]
-        lines.extend(
-            _provider_reference(f"{pattern} persistence", selected).replace(" provider ", " ", 1)
-            for pattern, selected in persistence_overrides
-        )
-        lines.append(_completion_reference("Default commit", commit).replace(" completion ", " ", 1))
-        lines.extend(
-            _completion_reference(f"{pattern} commit", selected).replace(" completion ", " ", 1)
-            for pattern, selected in commit_overrides
-        )
-        lines.extend([
-            "",
-            "Most-specific matching folder pattern wins independently for Persistence and Commit overrides. A folder override changes only its own selector.",
-            "",
-            "When a selector is UNSET, the pertinent agent asks at the stated operation boundary and does not infer either value from repository or hosting evidence, files, remotes, templates, plugins, or available tools.",
-            "",
-        ])
-        return lines
-    migration = _legacy_selector_migration(selection)
-    if migration is not None:
-        raise ValueError(migration)
-    allowed_keys = {"provider", "completion", "selection_policy"}
-    unsupported_keys = set(selection) - allowed_keys
-    if unsupported_keys:
-        raise ValueError(
-            "workflow_selection keys must be exactly provider, completion, and optional selection_policy"
-        )
-    selection_policy = selection.get("selection_policy")
+    canonical_selection, notices = _canonical_workflow_selection(selection)
+    selection_policy = canonical_selection.get("selection_policy")
     if selection_policy is not None and (
         not isinstance(selection_policy, str) or not selection_policy
     ):
         raise ValueError("workflow_selection.selection_policy must be a non-empty string")
-    provider, provider_overrides = _workflow_configuration(
-        selection,
-        "provider",
+    persistence, persistence_overrides = _workflow_configuration(
+        canonical_selection,
+        "persistence",
         PROVIDER_VALUES,
     )
-    completion, completion_overrides = _workflow_configuration(
-        selection,
-        "completion",
+    commit, commit_overrides = _workflow_configuration(
+        canonical_selection,
+        "commit",
         COMPLETION_VALUES,
     )
 
     lines = [
         "## Work-Item Workflow Skill References",
         "",
-        "Project Configurator owns these independent selectors. Workflow skills are referenced by name only and are never inlined; their procedures stay in the selected skill definitions. Technology skill inlining is a separate mechanism below.",
+        "Project Configurator owns the independent Persistence and Commit selectors. Persistence routes durable work-item storage; Commit routes delivery. Workflow skills are referenced by name only and technology skill routing remains separate.",
         "",
-        _provider_reference("Default", provider),
+        *(f"- {notice}" for notice in notices),
+        _persistence_reference("Default persistence", persistence),
     ]
-    lines.extend(_provider_reference(pattern, selected) for pattern, selected in provider_overrides)
-    lines.append(_completion_reference("Default", completion))
     lines.extend(
-        _completion_reference(pattern, selected)
-        for pattern, selected in completion_overrides
+        _persistence_reference(f"{pattern} persistence", selected)
+        for pattern, selected in persistence_overrides
+    )
+    lines.append(_commit_reference("Default commit", commit))
+    lines.extend(
+        _commit_reference(f"{pattern} commit", selected)
+        for pattern, selected in commit_overrides
     )
     lines.extend([
         "",
-        "Most-specific matching folder pattern wins independently for provider and completion overrides. A folder override changes only its own selector.",
+        "Most-specific matching folder pattern wins independently for Persistence and Commit overrides. A folder override changes only its own selector.",
         "",
         "When a selector is UNSET, the pertinent agent asks at the stated operation boundary and does not infer either value from repository or hosting evidence, files, remotes, templates, plugins, or available tools.",
         "",
@@ -1087,7 +1053,7 @@ def claim_transport_lines(value: dict[str, object]) -> list[str]:
 
 
 def _reconcile_setup_workflow(value: dict[str, object]) -> None:
-    """Require persisted setup selectors to match canonical or compatible workflow paths."""
+    """Require persisted setup selectors to match normalized canonical workflow paths."""
 
     setup = value.get("project_setup")
     if setup is None:
@@ -1097,23 +1063,26 @@ def _reconcile_setup_workflow(value: dict[str, object]) -> None:
     selection = value.get("workflow_selection")
     if not isinstance(selection, dict):
         raise ValueError("workflow_selection must be a mapping")
-    if "persistence" in selection or "commit" in selection:
-        persistence_key = "persistence"
-        commit_key = "commit"
-    else:
-        persistence_key = "provider"
-        commit_key = "completion"
-    persistence, _ = _workflow_configuration(selection, persistence_key, PROVIDER_VALUES)
-    commit, _ = _workflow_configuration(selection, commit_key, COMPLETION_VALUES)
-    for setup_key, workflow_key, workflow_value in (
-        ("persistence", persistence_key, persistence),
-        ("commit", commit_key, commit),
+    canonical_selection, _ = _canonical_workflow_selection(selection)
+    persistence, _ = _workflow_configuration(
+        canonical_selection,
+        "persistence",
+        PROVIDER_VALUES,
+    )
+    commit, _ = _workflow_configuration(
+        canonical_selection,
+        "commit",
+        COMPLETION_VALUES,
+    )
+    for setup_key, workflow_value in (
+        ("persistence", persistence),
+        ("commit", commit),
     ):
         setup_value = setup.get(setup_key)
         if setup_value != workflow_value:
             raise ValueError(
                 f"project_setup.{setup_key} {setup_value!r} conflicts with "
-                f"workflow_selection.{workflow_key}.default {workflow_value!r}"
+                f"workflow_selection.{setup_key}.default {workflow_value!r}"
             )
 
 
@@ -1220,9 +1189,9 @@ def technology_confirmation_lines(value: dict[str, object]) -> list[str]:
     if user_confirmation.get("status") != "confirmed":
         raise ValueError("technology_confirmation.confirmation.status must be confirmed")
     evidence_reference = user_confirmation.get("evidence")
-    if not isinstance(evidence_reference, str) or not evidence_reference:
+    if not isinstance(evidence_reference, str) or not evidence_reference.strip():
         raise ValueError(
-            "technology_confirmation.confirmation.evidence must be a non-empty string"
+            "technology_confirmation.confirmation.evidence must be a non-empty auditable reference"
         )
     accepted_text = ", ".join(accepted_skills) if accepted_skills else "none"
     lines = [

@@ -1267,8 +1267,8 @@ agents:
         requiredBehaviors: [Never show Concurrent capacity, Create only the empty Wiki structure, Persist confirmed technology evidence]
         forbiddenBehaviors: [Ask for specifications, Run reverse engineering, Infer installed core delivery]
         judgePlan: {deterministicChecks: [artifact-structure, technology-detection-evidence], modelRubric: source-faithfulness}
-        executableCases: [project-configuration-routing]
-        coverageStatus: fixture-backed
+        executableCases: []
+        coverageStatus: declared
       - id: project-configurator-advanced-setup
         kind: happy-path
         fixtureProfile: project-setup-repository
@@ -1277,8 +1277,8 @@ agents:
         requiredBehaviors: [Show candidate evidence and rejections, Reveal capacity only after Yes, Keep core delivery Set from installation metadata]
         forbiddenBehaviors: [Ask core delivery as an ordinary field, Add provider skills to Dev Coder]
         judgePlan: {deterministicChecks: [artifact-structure, technology-detection-evidence], modelRubric: source-faithfulness}
-        executableCases: [project-configuration-routing]
-        coverageStatus: fixture-backed
+        executableCases: []
+        coverageStatus: declared
       - id: project-configurator-documentation-roots
         kind: happy-path
         fixtureProfile: project-setup-repository
@@ -1287,8 +1287,8 @@ agents:
         requiredBehaviors: [Support exactly wiki specifications and both, Keep reverse engineering later]
         forbiddenBehaviors: [Create source-derived documents, Invoke independent review during setup]
         judgePlan: {deterministicChecks: [artifact-structure], modelRubric: source-faithfulness}
-        executableCases: [project-configuration-routing]
-        coverageStatus: fixture-backed
+        executableCases: []
+        coverageStatus: declared
       - id: project-configurator-persisted-technology-confirmation
         kind: happy-path
         fixtureProfile: project-setup-repository
@@ -1297,8 +1297,8 @@ agents:
         requiredBehaviors: [Reject missing or boolean-only confirmation, Keep accepted skills and rejections aligned with candidate dispositions]
         forbiddenBehaviors: [Treat detection as confirmation, Store raw private conversation content]
         judgePlan: {deterministicChecks: [artifact-structure, technology-detection-evidence], modelRubric: source-faithfulness}
-        executableCases: [project-configuration-routing]
-        coverageStatus: fixture-backed
+        executableCases: []
+        coverageStatus: declared
       - id: project-configurator-conceptual-role-technology-exclusion
         kind: boundary-failure
         fixtureProfile: project-setup-repository
@@ -1307,8 +1307,8 @@ agents:
         requiredBehaviors: [Keep technology skills in folder loadouts, Preserve canonical conceptual role skill metadata]
         forbiddenBehaviors: [Add detected technology skills to conceptual role definitions]
         judgePlan: {deterministicChecks: [artifact-structure, technology-detection-evidence], modelRubric: source-faithfulness}
-        executableCases: [project-configuration-routing]
-        coverageStatus: fixture-backed
+        executableCases: []
+        coverageStatus: declared
       - id: project-configurator-dev-coder-provider-dependency-exclusion
         kind: boundary-failure
         fixtureProfile: project-setup-repository
@@ -1317,8 +1317,8 @@ agents:
         requiredBehaviors: [Render provider workflow references, Keep Dev Coder provider-independent]
         forbiddenBehaviors: [Edit Dev Coder role examples, Add provider skills or provider agents to Dev Coder]
         judgePlan: {deterministicChecks: [artifact-structure, agent-dependency-routing], modelRubric: source-faithfulness}
-        executableCases: [project-configuration-routing]
-        coverageStatus: fixture-backed
+        executableCases: []
+        coverageStatus: declared
     coverageStatus: fixture-backed
   - id: project-organiser
     source: agents/roles/project-setup/project-organiser.role.yaml

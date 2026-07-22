@@ -2029,6 +2029,58 @@ class InstallSkillsTests(unittest.TestCase):
             self.assertFalse(destination.exists())
             self.assertFalse(agents_destination.exists())
 
+    def test_agent_install_does_not_relabel_skipped_destination_bytes(self) -> None:
+        """Reject a destination byte mismatch before ownership metadata is written."""
+
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "skills"
+            destination = root / "skills-destination"
+            agents_source = root / "generated" / "adapters" / "codex" / "agents"
+            agents_destination = root / "agents-destination"
+            self.create_skill(source, "alpha")
+            agents_source.mkdir(parents=True)
+            source_agent = agents_source / "reviewer.toml"
+            source_agent.write_text(AGENT_FILE_CONTENT, encoding="utf-8")
+            self.write_agent_generation_manifest(
+                agents_source,
+                "codex",
+                delivery="by-reference",
+            )
+            agents_destination.mkdir()
+            destination_agent = agents_destination / "reviewer.toml"
+            inline_bytes = AGENT_FILE_CONTENT.replace("Review.", "Review with inlined core skills.")
+            destination_agent.write_text(inline_bytes, encoding="utf-8")
+
+            error = io.StringIO()
+            with redirect_stdout(io.StringIO()), redirect_stderr(error):
+                exit_code = installer.main([
+                    "--adapter",
+                    "codex",
+                    "--source",
+                    str(source),
+                    "--dest",
+                    str(destination),
+                    "--install-agents",
+                    "--agents-source",
+                    str(agents_source),
+                    "--agents-dest",
+                    str(agents_destination),
+                ])
+
+            self.assertEqual(installer.ERROR_EXIT_CODE, exit_code)
+            self.assertEqual(inline_bytes, destination_agent.read_text(encoding="utf-8"))
+            self.assertFalse((agents_destination / installer.INSTALL_MANIFEST_FILE_NAME).exists())
+            self.assertFalse(destination.exists())
+            self.assertEqual(
+                "destination agent reviewer.toml disagrees with selected by-reference generation inventory; "
+                "rerun with --replace, or regenerate with python3 scripts/build-skill-docs.py and reinstall "
+                "with --replace from generated/adapters/codex/agents\n",
+                error.getvalue(),
+            )
+
     def test_agent_generation_metadata_failures_use_exact_remediation(self) -> None:
         """Block unsupported, inconsistent, and byte-mismatched generated agents."""
 

@@ -4925,7 +4925,7 @@ class BundleContentTests(unittest.TestCase):
         setup_role = next(role for role in roles if role.name == "project-configurator")
         self.assertIn("detect-technology-skills", setup_role.skills)
 
-    def test_core_skills_inline_by_default_and_can_use_native_loading(self) -> None:
+    def test_native_rendering_helpers_reference_core_skills_by_default_and_can_inline(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         skill_payload = build_skill_docs.build_payload()
         role = next(
@@ -4936,91 +4936,88 @@ class BundleContentTests(unittest.TestCase):
         profile_ids = set(build_skill_docs.load_model_profiles())
 
         claude_profiles = build_skill_docs.load_adapter_model_profiles("claude", profile_ids)
-        inlined = build_skill_docs.render_claude_agent(role, claude_profiles)
-        inlined_frontmatter = yaml.safe_load(inlined.split("---", 2)[1])
-        self.assertNotIn("skills", inlined_frontmatter)
-        self.assertNotIn(
-            "Before acting, load these definition-owned skills completely",
-            inlined,
-        )
-        for skill in build_skill_docs.fixed_role_skills(role):
-            self.assertIn(f"BEGIN INLINED CORE SKILL: {skill}", inlined)
-        for skill, condition in role.skill_conditions.items():
-            self.assertIn(f"Use the {skill} skill {condition}.", inlined)
-            self.assertNotIn(f"BEGIN INLINED CORE SKILL: {skill}", inlined)
-
-        dynamically_loaded = build_skill_docs.render_claude_agent(
-            role,
-            claude_profiles,
-            inline_core_skills=False,
-        )
-        dynamically_loaded_frontmatter = yaml.safe_load(
-            dynamically_loaded.split("---", 2)[1]
-        )
+        referenced = build_skill_docs.render_claude_agent(role, claude_profiles)
+        referenced_frontmatter = yaml.safe_load(referenced.split("---", 2)[1])
         self.assertEqual(
             list(build_skill_docs.fixed_role_skills(role)),
-            dynamically_loaded_frontmatter["skills"],
+            referenced_frontmatter["skills"],
         )
-        self.assertNotIn("BEGIN INLINED CORE SKILL", dynamically_loaded)
+        self.assertNotIn("BEGIN INLINED CORE SKILL", referenced)
         self.assertIn(
             "These definition-owned skills are preloaded and govern the work",
-            dynamically_loaded,
+            referenced,
         )
+        inlined = build_skill_docs.render_claude_agent(
+            role,
+            claude_profiles,
+            inline_core_skills=True,
+        )
+        self.assertNotIn("skills", yaml.safe_load(inlined.split("---", 2)[1]))
+        for skill in build_skill_docs.fixed_role_skills(role):
+            self.assertIn(f"BEGIN INLINED CORE SKILL: {skill}", inlined)
 
         codex_profiles = build_skill_docs.load_adapter_model_profiles("codex", profile_ids)
-        codex_inlined = tomllib.loads(
+        codex_referenced = tomllib.loads(
             build_skill_docs.render_codex_agent(role, codex_profiles)
         )
+        self.assertIn(
+            {"name": CODEX_HARNESS_SKILL_NAME, "enabled": True},
+            codex_referenced["skills"]["config"],
+        )
         self.assertNotIn(
-            CODEX_HARNESS_SKILL_NAME,
-            [
-                item.get("name")
-                for item in codex_inlined.get("skills", {}).get("config", [])
-            ],
+            "BEGIN INLINED CORE SKILL",
+            codex_referenced["developer_instructions"],
+        )
+        codex_inlined = tomllib.loads(
+            build_skill_docs.render_codex_agent(
+                role,
+                codex_profiles,
+                inline_core_skills=True,
+            )
         )
         self.assertIn(
             f"BEGIN INLINED CORE SKILL: {CODEX_HARNESS_SKILL_NAME}",
             codex_inlined["developer_instructions"],
         )
 
-        codex_dynamic = tomllib.loads(
-            build_skill_docs.render_codex_agent(
-                role,
-                codex_profiles,
-                inline_core_skills=False,
-            )
-        )
-        self.assertIn(
-            {"name": CODEX_HARNESS_SKILL_NAME, "enabled": True},
-            codex_dynamic["skills"]["config"],
-        )
-        self.assertNotIn("BEGIN INLINED CORE SKILL", codex_dynamic["developer_instructions"])
-
         gemini_profiles = build_skill_docs.load_adapter_model_profiles("gemini", profile_ids)
-        gemini_dynamic = build_skill_docs.render_gemini_agent(
-            role,
-            gemini_profiles,
-            inline_core_skills=False,
-        )
+        gemini_referenced = build_skill_docs.render_gemini_agent(role, gemini_profiles)
         self.assertIn(
             "Before acting, load these definition-owned skills completely",
-            gemini_dynamic,
+            gemini_referenced,
         )
-        self.assertNotIn("BEGIN INLINED CORE SKILL", gemini_dynamic)
+        self.assertNotIn("BEGIN INLINED CORE SKILL", gemini_referenced)
+        gemini_inlined = build_skill_docs.render_gemini_agent(
+            role,
+            gemini_profiles,
+            inline_core_skills=True,
+        )
+        self.assertIn("BEGIN INLINED CORE SKILL", gemini_inlined)
 
         junie_profiles = build_skill_docs.load_adapter_model_profiles("junie", profile_ids)
-        junie_inlined = build_skill_docs.render_junie_agent(role, junie_profiles)
-        self.assertNotIn("skills", yaml.safe_load(junie_inlined.split("---", 2)[1]))
-        junie_dynamic = build_skill_docs.render_junie_agent(
-            role,
-            junie_profiles,
-            inline_core_skills=False,
-        )
+        junie_referenced = build_skill_docs.render_junie_agent(role, junie_profiles)
         self.assertEqual(
             list(build_skill_docs.fixed_role_skills(role)),
-            yaml.safe_load(junie_dynamic.split("---", 2)[1])["skills"],
+            yaml.safe_load(junie_referenced.split("---", 2)[1])["skills"],
         )
-        self.assertNotIn("BEGIN INLINED CORE SKILL", junie_dynamic)
+        self.assertNotIn("BEGIN INLINED CORE SKILL", junie_referenced)
+        junie_inlined = build_skill_docs.render_junie_agent(
+            role,
+            junie_profiles,
+            inline_core_skills=True,
+        )
+        self.assertNotIn("skills", yaml.safe_load(junie_inlined.split("---", 2)[1]))
+        self.assertIn("BEGIN INLINED CORE SKILL", junie_inlined)
+
+        self.assertNotIn("BEGIN INLINED CORE SKILL", build_skill_docs.role_instruction_text(
+            role,
+            adapter_name="codex",
+        ))
+        self.assertNotIn("BEGIN INLINED CORE SKILL", build_skill_docs.codex_role_instruction_text(role))
+        self.assertIn(
+            {"name": CODEX_HARNESS_SKILL_NAME, "enabled": True},
+            build_skill_docs.codex_skill_availability(role),
+        )
 
     def test_adapter_generator_cli_defaults_to_referenced_core_skills(self) -> None:
         current = subprocess.run(
@@ -5443,15 +5440,20 @@ class BundleContentTests(unittest.TestCase):
         for role in roles:
             with self.subTest(role=role.name, mutation=role.repository_mutation):
                 rendered = build_skill_docs.render_codex_agent(role, codex_profiles)
-                instructions = tomllib.loads(rendered)["developer_instructions"]
+                parsed = tomllib.loads(rendered)
+                instructions = parsed["developer_instructions"]
+                configured = parsed.get("skills", {}).get("config", [])
                 if role.repository_mutation == "never":
                     self.assertNotIn(CODEX_HARNESS_SKILL_NAME, instructions)
+                    self.assertNotIn(
+                        CODEX_HARNESS_SKILL_NAME,
+                        [item.get("name") for item in configured],
+                    )
                 else:
-                    self.assertEqual(
-                        1,
-                        instructions.count(
-                            f"BEGIN INLINED CORE SKILL: {CODEX_HARNESS_SKILL_NAME}"
-                        ),
+                    self.assertNotIn("BEGIN INLINED CORE SKILL", instructions)
+                    self.assertIn(
+                        CODEX_HARNESS_SKILL_NAME,
+                        [item.get("name") for item in configured],
                     )
 
         for adapter_name, extension in (("claude", ".md"), ("gemini", ".md"), ("junie", ".md")):
@@ -6238,13 +6240,14 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("clean status", integrated_response.lower())
         self.assertIn("released claims", integrated_response.lower())
 
-    def test_project_bootstrapper_has_an_ordinary_setup_terminal_path(self) -> None:
-        """Keep empty-root setup separate from later documentation and review gates."""
+    def test_project_bootstrapper_has_separate_setup_and_documentation_branches(self) -> None:
+        """Keep every later documentation gate out of the ordinary setup branch."""
 
         role = load_yaml_object(
             ROLES_ROOT / "project-setup" / "project-bootstrapper.role.yaml"
         )
-        workflow = role["instructions"]["workflow"]
+        instructions = role["instructions"]
+        workflow = instructions["workflow"]
         ordinary_steps = [
             step for step in workflow if "ordinary setup terminal path" in step.lower()
         ]
@@ -6270,10 +6273,51 @@ class BundleContentTests(unittest.TestCase):
                 self.assertNotIn(forbidden, ordinary_step.lower())
 
         later_steps = [
-            step for step in workflow if "later explicit reverse-engineering workflow" in step.lower()
+            step for step in workflow
+            if step.lower().startswith(
+                "for the separately requested reverse-engineering/documentation workflow:"
+            ) and "require dev-documentation-writer" in step.lower()
+            and "coverage manifest" in step.lower()
         ]
         self.assertEqual(1, len(later_steps))
         self.assertIn("coverage manifest", later_steps[0].lower())
+
+        later_prefix = "for the separately requested reverse-engineering/documentation workflow:"
+        later_gate_terms = (
+            "coverage manifest",
+            "path coverage ledger",
+            "module design",
+            "higher-level design",
+            "architecture",
+            "functional specifications",
+            "independent reviewer",
+            "artifact review",
+            "dev-verifier",
+            "direct commit",
+            "multi-contribution",
+            "dev-merge-coordinator",
+        )
+        for section_name in ("workflow", "review", "completion"):
+            for clause in instructions[section_name]:
+                normalized = clause.lower()
+                if normalized.startswith("ordinary setup"):
+                    continue
+                if any(term in normalized for term in later_gate_terms):
+                    with self.subTest(section=section_name, clause=clause):
+                        self.assertTrue(normalized.startswith(later_prefix), clause)
+
+        ordinary_review = [
+            clause for clause in instructions["review"]
+            if clause.lower().startswith("ordinary setup review branch:")
+        ]
+        ordinary_completion = [
+            clause for clause in instructions["completion"]
+            if clause.lower().startswith("ordinary setup completion branch:")
+        ]
+        self.assertEqual(1, len(ordinary_review))
+        self.assertEqual(1, len(ordinary_completion))
+        self.assertIn("without artifact review or dev-verifier", ordinary_review[0].lower())
+        self.assertIn("report ready", ordinary_completion[0].lower())
 
     def test_project_configurator_new_scenarios_link_executable_coverage(self) -> None:
         """Keep simplified setup and role-exclusion scenarios tied to runnable evidence."""
@@ -6292,11 +6336,25 @@ class BundleContentTests(unittest.TestCase):
         self.assertTrue(required.issubset(scenarios))
         for scenario_id in required:
             with self.subTest(scenario=scenario_id):
-                self.assertEqual(
-                    ["project-configuration-routing"],
-                    scenarios[scenario_id]["executableCases"],
-                )
-                self.assertEqual("fixture-backed", scenarios[scenario_id]["coverageStatus"])
+                self.assertEqual([], scenarios[scenario_id]["executableCases"])
+                self.assertEqual("declared", scenarios[scenario_id]["coverageStatus"])
+
+    def test_project_configuration_documents_confirmation_reference_boundary(self) -> None:
+        """Require an auditable reference without inventing one cross-project format."""
+
+        skill_text = (
+            SKILLS_ROOT / "create-project-configuration" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        template_text = (
+            SKILLS_ROOT
+            / "development-methodology"
+            / "assets"
+            / "templates"
+            / "project-template.yaml"
+        ).read_text(encoding="utf-8")
+        for text in (skill_text, template_text):
+            self.assertIn("non-empty auditable reference", text)
+            self.assertIn("project-defined", text)
 
     def test_project_bootstrapper_owns_complete_setup_and_review_loop(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
@@ -6578,6 +6636,7 @@ class BundleContentTests(unittest.TestCase):
         parsed = tomllib.loads(rendered)
         self.assertEqual(
             [
+                {"name": CODEX_HARNESS_SKILL_NAME, "enabled": True},
                 {"name": "python", "enabled": False},
                 {"path": "/opt/skills/fastapi", "enabled": True},
             ],

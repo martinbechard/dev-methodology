@@ -1244,7 +1244,7 @@ def role_instruction_text(
     role: RoleDefinition,
     *,
     adapter_name: str,
-    inline_core_skills: bool = True,
+    inline_core_skills: bool = False,
 ) -> str:
     output_text = "; ".join(role.output_contract)
     sections = [role_identity_instruction(role), role.instructions]
@@ -1291,7 +1291,7 @@ def markdown_role_instruction_text(
 
 def codex_role_instruction_text(
     role: RoleDefinition,
-    inline_core_skills: bool = True,
+    inline_core_skills: bool = False,
     known_role_names: Sequence[str] = (),
 ) -> str:
     """Adapt role-owned instructions to Codex without changing portable sources."""
@@ -1342,7 +1342,7 @@ def codex_role_instruction_text(
 
 def codex_skill_availability(
     role: RoleDefinition,
-    inline_core_skills: bool = True,
+    inline_core_skills: bool = False,
 ) -> list[dict[str, object]]:
     """Enable the Codex harness skill and retain explicit role-level overrides."""
 
@@ -1419,7 +1419,7 @@ def codex_role_reference_text(text: str, role_names: Sequence[str]) -> str:
 def render_codex_agent(
     role: RoleDefinition,
     model_profiles: dict[str, AdapterModelProfile],
-    inline_core_skills: bool = True,
+    inline_core_skills: bool = False,
     known_role_names: Sequence[str] = (),
 ) -> str:
     profile_id = role.model_profile
@@ -1457,7 +1457,7 @@ def render_codex_agent(
 def render_claude_agent(
     role: RoleDefinition,
     model_profiles: dict[str, AdapterModelProfile],
-    inline_core_skills: bool = True,
+    inline_core_skills: bool = False,
 ) -> str:
     profile_id = role.model_profile
     adapter_profile = model_profiles[profile_id]
@@ -1494,7 +1494,7 @@ def render_claude_agent(
 def render_gemini_agent(
     role: RoleDefinition,
     model_profiles: dict[str, AdapterModelProfile],
-    inline_core_skills: bool = True,
+    inline_core_skills: bool = False,
 ) -> str:
     profile_id = role.model_profile
     adapter_profile = model_profiles[profile_id]
@@ -1526,7 +1526,7 @@ def render_gemini_agent(
 def render_junie_agent(
     role: RoleDefinition,
     model_profiles: dict[str, AdapterModelProfile],
-    inline_core_skills: bool = True,
+    inline_core_skills: bool = False,
 ) -> str:
     profile_id = role.model_profile
     adapter_profile = model_profiles[profile_id]

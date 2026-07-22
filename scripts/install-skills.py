@@ -110,6 +110,7 @@ class _AgentInstallPlan(NamedTuple):
     current_agent_names: set[str]
     previous_manifest: Optional[dict[str, object]]
     core_skill_delivery: Optional[str]
+    generation_agent_digests: Optional[dict[str, str]]
 
 
 class _StagedDestination(NamedTuple):
@@ -1885,8 +1886,11 @@ def write_agent_manifest(
     _write_install_manifest_data(destination, manifest)
 
 
-def _agent_source_core_skill_delivery(source: Path, adapter: Adapter) -> str:
-    """Return core-skill delivery from verified generation metadata and agent bytes."""
+def _agent_source_generation_metadata(
+    source: Path,
+    adapter: Adapter,
+) -> tuple[str, dict[str, str]]:
+    """Return verified delivery mode and generated-agent digests for one adapter."""
 
     resolved_source = source.expanduser().resolve()
     remediation = (
@@ -1965,6 +1969,13 @@ def _agent_source_core_skill_delivery(source: Path, adapter: Adapter) -> str:
             raise ValueError(
                 f"installed agent bytes disagree with generation metadata for {name}; {remediation}"
             )
+    return delivery, expected
+
+
+def _agent_source_core_skill_delivery(source: Path, adapter: Adapter) -> str:
+    """Return core-skill delivery from verified generation metadata and agent bytes."""
+
+    delivery, _ = _agent_source_generation_metadata(source, adapter)
     return delivery
 
 
@@ -2033,6 +2044,7 @@ def _prepare_agent_install(
         current_agent_names=current_agent_names,
         previous_manifest=previous_manifest,
         core_skill_delivery=None,
+        generation_agent_digests=None,
     )
 
 
@@ -2087,6 +2099,8 @@ def install_agents(
     previous_manifest = plan.previous_manifest
     if plan.core_skill_delivery is None:
         raise ValueError("agent generation metadata was not prevalidated")
+    if plan.generation_agent_digests is None:
+        raise ValueError("agent generation inventory was not prevalidated")
     if not dry_run:
         destination.mkdir(parents=True, exist_ok=True)
 
@@ -2126,6 +2140,20 @@ def install_agents(
         results.append(f"{action} agent {source_agent.stem}")
 
     if not dry_run:
+        for agent_name, expected_digest in sorted(plan.generation_agent_digests.items()):
+            destination_agent = destination / agent_name
+            actual_digest = (
+                hashlib.sha256(destination_agent.read_bytes()).hexdigest()
+                if destination_agent.is_file() and not destination_agent.is_symlink()
+                else None
+            )
+            if actual_digest != expected_digest:
+                raise ValueError(
+                    f"destination agent {agent_name} disagrees with selected "
+                    f"{plan.core_skill_delivery} generation inventory; rerun with --replace, "
+                    f"or regenerate with python3 scripts/build-skill-docs.py and reinstall "
+                    f"with --replace from generated/adapters/{adapter.name}/agents"
+                )
         previously_owned_agents = {
             agent_name: agent_path
             for agent_name, agent_path in manifest_agent_paths(previous_manifest).items()
@@ -2354,11 +2382,12 @@ def main(argv: Sequence[str] | None = None) -> int:
                     agent_plan,
                     agents_destination,
                 )
+                core_skill_delivery, generation_agent_digests = (
+                    _agent_source_generation_metadata(agents_source, adapter)
+                )
                 agent_plan = agent_plan._replace(
-                    core_skill_delivery=_agent_source_core_skill_delivery(
-                        agents_source,
-                        adapter,
-                    )
+                    core_skill_delivery=core_skill_delivery,
+                    generation_agent_digests=generation_agent_digests,
                 )
             if args.dry_run:
                 results = install_skills(
