@@ -136,3 +136,23 @@ None.
 
 - Should promotion archive the source idea or retain it in place with a promoted-to reference?
 - Should revisit triggers be free text only or optionally machine-readable without making ideas part of routine dispatch?
+
+## Delivery Evidence Update — 2026-07-22
+
+- Current phase: Implementation and disjoint validation continue; candidate pending.
+- Artifact claim: future-ideas-implementation-20260722 acquired, event 71163a6f-decc-45af-856b-21d9e061c6a3.
+- Approval-record extension: Succeeded, event c060c39d-93fa-4180-8fb4-d36187339de8.
+- Governed approval checks: All four exact pre-mutation checks returned ALLOWED before mutation.
+- Generated-scope extension: Returned CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, event dcc8d3e4-6e74-46ce-a727-0d1e65a92aa7, against project-skill-extensions-20260722 on design/generated/skill-definitions.js and generated/adapters/agent-generation-manifest.json.
+- Claim wait started at: 2026-07-22T14:25:09Z.
+- Claim wait attempts: 1.
+- Current claim: Unchanged.
+- Wait behavior: No polling; disjoint validation continues.
+- Sequencing: README.md and scripts/test_bundle_content.py remain sequenced behind the project-extension lane and deploy README correction.
+- Candidate commit: Pending.
+- Integration wait started at: None.
+- Integration wait attempts: 0.
+- Completion wait started at: None.
+- Completion wait attempts: 0.
+- Delivery evidence: Pending.
+- Next owner: Dev Orchestrator.

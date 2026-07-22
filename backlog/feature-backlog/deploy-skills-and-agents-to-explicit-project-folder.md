@@ -97,3 +97,20 @@ None.
 - This item exposes a project root through the public deployment interface; it does not change the adapter-specific directory names.
 - This item does not make project deployment the default and does not authorize automatic deployment during ordinary repository maintenance.
 - Project-scoped installation should remain an explicit caller action with a caller-supplied target.
+
+## Delivery Evidence Update — 2026-07-22
+
+- Current phase: Candidate preserved; correction attempt 1 is active for review findings.
+- Candidate commit: d38efccbb86791e28ebd4d4f3d7b2139a5d8eac0, preserved.
+- Original artifact claim: Released.
+- Verification: 66 of 66 installer tests passed; installer help, Python compilation, and git diff checks were clean.
+- Deployment evidence: No real deployment was performed.
+- Review findings: High — default-destination and MCP-path symlink escape; Medium — stale existing MCP split identity; Low — inaccurate --mcp-config help.
+- Documentation finding: Workspace-root override replacement remains ambiguous.
+- Correction lane: codex/deploy-explicit-project-correction-1-20260722 at /Users/martinbechard/dev/dev-methodology/.worktrees/deploy-explicit-project-correction-1-20260722 with scripts-only claim deploy-explicit-project-correction-1-20260722.
+- README correction: Deferred behind project-skill-extensions-20260722.
+- Claim wait started at: 2026-07-22T14:25:09Z.
+- Claim wait attempts: 1.
+- Exact conflict owner: project-skill-extensions-20260722 on README.md.
+- Wait behavior: No polling; the correction lane continues on its proven non-overlapping scripts scope.
+- Next owner: Dev Orchestrator.
