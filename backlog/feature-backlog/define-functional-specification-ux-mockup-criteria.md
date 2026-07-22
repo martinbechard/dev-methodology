@@ -1,12 +1,12 @@
 # Define Functional Specification UX Mockup Criteria
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/define-functional-specification-ux-mockup-criteria.md
+Provider Reference: backlog/feature-backlog/define-functional-specification-ux-mockup-criteria.md
 
 Completion: direct-main
 
@@ -18,14 +18,14 @@ Completion: direct-main
 - Claim: None
 - Branch: codex/define-functional-spec-ux-mockup-criteria
 - Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/define-functional-spec-ux-mockup-criteria
-- Phase: Exact approval pending.
+- Phase: Exact approval recorded; Ready for fresh dispatch.
 - Starting main: af0a3fe63404a793f2bf7dcf40dd2a3de563109e
 - Accepted candidate: None.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
-- Open issues: Exact governed-scope approval is required before implementation.
-- Next owner: User.
-- Delivery evidence: Pending.
+- Open issues: None for lifecycle dispatch; implementation must remain within the recorded approval.
+- Next owner: Dev Backlog Coordinator.
+- Delivery evidence: Approval recorded; implementation and candidate remain pending.
 
 ## Read-Only Discovery
 
@@ -58,11 +58,21 @@ The completed read-only discovery identified one governed skill-definition path.
 
 ### Resolution
 
-Pending.
+Approved on 2026-07-22. The user answered "ok" directly after the exact Question For The User in the parent turn. Provenance: parent coordination conversation for /root/process_backlog/orch_functional_spec_ux.
+
+The approval covers exactly the governed path skills/create-functional-spec/SKILL.md and regeneration only of its supported generated mirrors.
+
+The only ordinary non-governed companion surfaces covered by this direction are:
+
+- skills/development-methodology/assets/templates/functional-spec-template.md
+- skills/review-functional-spec/references/review-checklist-functional-spec.md
+- scripts/test_bundle_content.py
+
+The answer does not authorize changes to skills/review-functional-spec/SKILL.md or any other governed path.
 
 ### Unattended Work Boundary
 
-No artifact claim or mutation is authorized while this question is pending. The listed non-governed companion surfaces remain ordinary implementation evidence and do not expand the governed approval.
+The item is Ready for a fresh dispatch but is not Running. No artifact claim has been acquired. Work must stay within skills/create-functional-spec/SKILL.md, its supported generated mirrors, and the three ordinary non-governed companion surfaces recorded in the Resolution. Changes to skills/review-functional-spec/SKILL.md or any other governed path remain prohibited without separate approval.
 
 ## Summary
 
