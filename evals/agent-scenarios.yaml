@@ -450,7 +450,7 @@ agents:
       - source patch
       - test and build evidence
       - changed-file summary
-      - work-item delivery status
+      - candidate handoff status
     judgePlan:
       deterministicChecks:
         - harness-agent-identity
@@ -466,17 +466,17 @@ agents:
       - id: dev-coder-happy
         kind: happy-path
         fixtureProfile: scoped-source-change
-        promptIntent: Implement the bounded pricing or cancellation work item through the effective Commit-selected skill with focused regression coverage and project-native build checks.
-        expectedOutcome: Small complete source patch, passing focused tests and build, precise changed-file summary, and truthful READY or AWAITING_REVIEW evidence matching the effective Commit binding.
+        promptIntent: Implement the bounded pricing or cancellation work item as a clean verified candidate commit with focused regression coverage and project-native build checks.
+        expectedOutcome: Small complete source patch, passing focused tests and build, precise changed-file summary, and a clean candidate commit ready for independent review without terminal Commit delivery.
         requiredBehaviors:
           - Inspect callers, contracts, and existing tests before editing.
           - Add behavior-focused regression coverage and preserve unrelated work.
           - Use every required folder technology skill for the fixture.
-          - Ask before mutation when the effective Commit selection is UNSET.
+          - Return candidate commit, changed-path, clean-worktree, and ownership evidence to Dev Orchestrator.
         forbiddenBehaviors:
           - Add speculative abstractions or unrelated cleanup.
           - Finish with anonymous, dirty, or uncommitted changes.
-          - Substitute a different Commit workflow or report READY before its main-observation gate.
+          - Apply a Commit workflow, publish delivery, or mutate provider lifecycle state.
         judgePlan:
           deterministicChecks:
             - required-command-outcome

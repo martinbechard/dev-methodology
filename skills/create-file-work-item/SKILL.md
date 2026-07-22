@@ -180,4 +180,4 @@ Return provider file, work_item_id and provider_reference, item type, lifecycle 
 
 ## Migration
 
-create-file-work-item owns all file-provider creation behavior formerly split between create-backlog and file-based-backlog. Update PROJECT.yaml and generated guidance to select provider file and load create-file-work-item for creation. The legacy identifiers are migration-only shells until their separately governed callers move; they must not receive new procedure changes.
+Callers migrated file-provider creation to create-file-work-item, and the legacy shells were removed. Historical mapping: create-backlog and file-based-backlog creation behavior moved into this skill; PROJECT.yaml and generated guidance now select Persistence file and reference create-file-work-item for creation.

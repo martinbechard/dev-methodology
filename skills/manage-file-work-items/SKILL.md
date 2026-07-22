@@ -184,4 +184,4 @@ Keep the report grounded in current files and state, not prior conversation memo
 
 ## Migration
 
-manage-file-work-items owns all file-provider inventory, lifecycle, recovery, completion, failure, and archival behavior formerly split between manage-backlog and file-based-backlog. Update PROJECT.yaml and generated guidance to select provider file and load manage-file-work-items for management. The legacy identifiers are migration-only shells until their separately governed callers move; they must not receive new procedure changes.
+Callers migrated file-provider inventory, lifecycle, recovery, completion, failure, and archival behavior to manage-file-work-items, and the legacy shells were removed. Historical mapping: manage-backlog and file-based-backlog management behavior moved into this skill; PROJECT.yaml and generated guidance now select Persistence file and reference manage-file-work-items for management.

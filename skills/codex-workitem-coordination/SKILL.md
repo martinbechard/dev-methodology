@@ -1,53 +1,62 @@
 ---
 name: codex-workitem-coordination
-description: Coordinate multiple file-backed repository work items through one parent backlog coordinator and one Dev Orchestrator task per Running item. Use when Codex must sustain a queue, integrate reviewed work, close completed items, and recover stalled integration without a separate task registry.
+description: Coordinate multiple provider-selected work items through one parent backlog coordinator and one Dev Orchestrator task per Running item. Use when Codex must sustain a queue, deliver reviewed work, close completed items, and recover stalled delivery without a separate task registry.
 metadata:
   category: development-practice
 ---
 
 # Codex Work-Item Coordination
 
-Use one Dev Backlog Coordinator as the parent dispatcher. Give each Running work item to one user-visible Dev Orchestrator task that owns delivery through review, integration, focused verification, work-item completion, and terminal handoff.
+Use one Dev Backlog Coordinator as the parent dispatcher. Give each Running work item to one user-visible Dev Orchestrator task that owns candidate production, independent review, verification, effective Commit delivery, Persistence closure, and terminal handoff.
 
 ## Authority And Roles
 
-- The file-backed work item is the only durable task record.
-- Git records branches, commits, integration, and cleanup eligibility.
+- The effective Persistence-selected provider record is the durable work-item authority when a provider is selected. Provider none has no durable provider record.
+- Git records branches, commits, delivery, and cleanup eligibility; it is not a work-item provider.
 - The coordination registry records temporary shared-mutation protection. It prevents concurrent conflicts but does not determine whether reviewed, verified, committed delivery exists.
 - Codex task state and title are display and execution state, not lifecycle authority.
-- Dev Backlog Coordinator owns queue inventory, priority, dispatch, stalled-integration investigation, and terminal task cleanup.
+- Dev Backlog Coordinator owns provider-routed queue inventory, priority, dispatch, stalled-delivery investigation, and terminal task cleanup.
 - Dev Orchestrator owns one work item from Running through delivery or a truthful terminal outcome. It may start Dev Coder, independent reviewer, and verifier subagents inside that task.
-- Dev Backlog Steward applies the management skill selected by the effective Persistence binding when it performs a specialized work-item mutation. The parent coordinator follows this skill's bounded retry and queue rules.
+- Dev Backlog Steward applies the effective Persistence-selected management skill for provider inventory and lifecycle mutation. Dev Orchestrator applies the effective Commit-selected skill only after candidate review and verification accept a direct or combined commit.
 
 Do not create a separate parent ledger, baton registry, waiting-task registry, or task database. Do not copy this procedure into AGENTS.md or a Dev Orchestrator definition.
 
 ## Work-Item Execution Record
 
-Every Running work item records these facts in its ownership, open-issues, and evidence sections:
+For a selected Persistence provider, use its management skill to record these facts in the provider's supported ownership, open-issues, and evidence fields. For provider none, retain them in the canonical Codex task result without creating a shadow record:
 
 - canonical Codex task identifier and Dev Orchestrator owner
 - branch and worktree
 - current phase
 - accepted candidate commit
-- integration-wait or completion-wait start time
+- delivery-wait or provider-closure-wait start time
 - claim attempt count, last outcome, next attempt time, and blocking claim identifiers
 - open issues and the owner of each next action
-- review, integration, focused verification, claim-release, completion, and cleanup evidence as those events occur
+- review, verification, Commit disposition, claim-release, provider closure, and cleanup evidence as those events occur
 
-Update the work item when a material phase changes. Preserve the same canonical task identifier through corrections, integration, and closeout. Never infer identity from the task title alone.
+Use the effective Persistence-selected management skill to update a provider record when a material phase changes. Preserve the same canonical task identifier and provider identity through corrections, delivery, and closeout. Never infer identity from the task title alone.
 
 ## Queue Target And Dispatch
 
-Derive active capacity from the backlog files:
+Obtain queue inventory, lifecycle counts, provider identities, and dispatchable state only by applying the effective Persistence-selected management skill.
 
-1. Count work items whose file-backed Status is Running.
+- Provider file: treat repository backlog paths as provider identities and use short backlog claims only for file-provider mutations.
+- Provider github: use GitHub issue identities and provider lifecycle evidence; do not create or inspect file backlog paths.
+- Provider gitlab: use GitLab issue identities and provider lifecycle evidence; do not translate them into GitHub or file records.
+- Provider azure-devops or jira: apply the selected placeholder management skill, preserve its BLOCKED zero-mutation result, and do not fall back.
+- Provider none: do not inventory, count, create, transition, or close durable provider records; coordinate only the explicit task and retain task-local evidence.
+- Provider UNSET or an unavailable selected skill: stop before durable inventory or mutation and request the missing project selection or capability.
+
+For a provider that supports queue inventory and lifecycle transitions:
+
+1. Count work items whose provider lifecycle state is Running.
 2. When the count is below ten, select eligible Ready items and dispatch enough distinct Dev Orchestrator tasks to restore ten Running items.
-3. Record each canonical task identifier in its work item as part of the Running transition.
+3. Ask Dev Backlog Steward to record each canonical task identifier through the selected management skill as part of the Running transition.
 4. Use exactly one user-visible task per Running work item.
 5. Dispatch only work that can begin implementation or another bounded delivery phase. Do not create a task merely to wait for approval, a dependency, a reviewer, a claim, or an integration window.
 6. When an item leaves Running, fill the vacancy promptly.
 
-Blocked, User Action Required, Holding, Completed, Failed, and Abandoned items do not count toward ten. If fewer than ten eligible items exist, run all eligible items and report the shortage instead of manufacturing placeholder work.
+Blocked, User Action Required, Holding, Completed, Failed, and Abandoned items do not count toward ten. If fewer than ten eligible items exist, run all eligible items and report the shortage instead of manufacturing placeholder work. Provider none does not synthesize a queue or a target of ten from task state.
 
 ## Dispatch Reconciliation
 
@@ -56,7 +65,7 @@ Treat a task-creation error, timeout, disconnect, or ambiguous response as an am
 Before retrying, reconcile active and archived tasks using all available identity evidence:
 
 - source parent task identifier
-- canonical backlog path
+- canonical provider identity and provider reference when one exists
 - normalized objective
 - creation time
 - task status
@@ -74,7 +83,7 @@ Create each Dev Orchestrator task in an environment that can perform its ordinar
 - The post-change pilot must prove the effective task profile and ordinary operations, not merely read the requested configuration or repeat permission wording in its prompt. Inspect the child task's effective approval, sandbox, and permission profile; create a harmless Git commit; invoke every special capability through the same nested helper used by the real workload; and read the claim registry through MCP.
 - If the requested configuration and effective child runtime differ, or any representative operation fails, stop equivalent dispatch immediately. Record the exact requested and effective profiles, archive the failed pilot, correct or replace the launch environment, and rerun the pilot. Do not treat a successful direct command, parent capability, config file, or earlier task as evidence for the failing child runtime.
 - If an ordinary required operation fails because the task environment lacks a capability, the task stops immediately, preserves its work, releases any claim truthfully, and reports the exact failed operation to the parent. It must not request escalation from the user.
-- The parent promptly re-homes or replaces that task in a compatible environment, updates the canonical task identifier in the work item, and fills any resulting Running vacancy. Do not leave an approval prompt or an execution-incompatible task consuming a Running slot.
+- The parent promptly re-homes or replaces that task in a compatible environment, asks Dev Backlog Steward to update the canonical task identifier through the selected Persistence manager, and fills any resulting Running vacancy. For provider none it updates only the task-local identity. Do not leave an approval prompt or an execution-incompatible task consuming a Running slot.
 
 Set a concise plain-text title when the task is created and update it only at material phase changes. Use a phase prefix such as Implementing —, Reviewing —, Verifying —, Integrating —, Waiting for Claim —, Waiting for Help —, Waiting for User —, Done —, Blocked —, Failed —, or Abandoned — followed by a short work-item name. Never use raw prompt text, XML or delegation tags, error output, task identifiers, or generic titles as the display title. Preserve the stable task identifier; the title remains display state and never becomes lifecycle authority or delivery evidence.
 
@@ -84,48 +93,37 @@ Implementation, correction, review, and focused local tests on a task-owned priv
 
 Acquire a claim before mutating shared state, including:
 
-- files on main during direct integration
-- the file-backed backlog on main
+- repository paths or target-branch integration resources required by the selected Commit skill
+- the file backlog on primary main only when Persistence is file
 - generated output or another shared output location
 - shared installations, ports, browsers, databases, or test resources that cannot safely run concurrently
 
 Keep every shared claim limited to the exact files and named resources required for that operation. Isolation never authorizes modification of another task's owned shared surface.
 
-## Direct Delivery Without A Pull Request
+## Effective Commit Delivery And Persistence Closure
 
-The work item's Dev Orchestrator owns integration and completion.
+Dev Orchestrator owns temporal delivery order while the selected Commit and Persistence skills own their respective procedures.
 
-1. Finish implementation and independent review on the task branch.
-2. Acquire one integration claim covering every path on main that the integration may modify, the target integration resource, and the exact shared test resources needed for focused verification.
-3. Under that ownership, refresh current main and create a fresh reconciliation branch from that exact commit. Designate this fresh branch as the task integration and cleanup branch. Record the prior candidate branch, accepted source commit, and path set as source provenance before applying content.
-4. Apply only the accepted file content or explicitly selected in-scope commits to the fresh current-main branch. Preserve required current-main and accepted contracts, regenerate supported outputs, and review the reconciled diff when semantic reconciliation is required.
-5. Record source commit identifiers and accepted paths in the integration commit and work item. Do not import cumulative branch ancestry merely to preserve provenance. Use a full-history merge only when the complete history is intentional, reviewed, and in scope.
-6. Integrate the bounded reconciliation commit into main.
-7. Run the smallest project-native tests that cover the changed behavior and credible regression risk.
-8. Record the main commit and test results in the work item, then release the integration claim from clean main.
-9. Acquire a separate short claim for exactly the active work-item path and its completed destination.
-10. Record completion evidence, set Status to Completed, move the item to the applicable completed-backlog folder, commit, and release the work-item claim.
-11. Notify the parent with the main commit, test evidence, integration and work-item release events, branch, worktree, and cleanup eligibility.
-12. The parent verifies that the fresh task integration branch is fully merged, removes its clean worktree, safely deletes that merged branch, prunes worktree metadata, sets the task title to Done — item, and archives the task when supported. A prior candidate branch used only as a non-ancestral content source is not the task cleanup branch; preserve or remove it separately according to repository policy after confirming the durable source mapping and absence of unique unintegrated work.
-13. The parent immediately recounts file-backed Running items and dispatches eligible Ready work until ten are Running or no eligible work remains.
+1. Require Dev Coder to return a clean verified candidate commit without applying terminal Commit delivery or provider mutation.
+2. Obtain fresh independent source review and source verification for every candidate. Return correctable source findings to the original Dev Coder and repeat those gates on the replacement candidate.
+3. When multiple accepted candidates must be combined, use Dev Merge Coordinator, then obtain the required fresh post-combination review and complete verification. A single accepted candidate remains the direct commit.
+4. Apply or resume the effective Commit-selected skill only after candidate review and source verification accept the direct or combined commit.
+5. Preserve AWAITING_REVIEW with the same delivery identity while review, checks, dependency order, correction, merge, or final observation remains pending. A source correction returns through Dev Coder, independent review, and verification before the same Commit delivery resumes.
+6. Do not ask Dev Backlog Steward for terminal provider mutation while Commit is AWAITING_REVIEW or BLOCKED.
+7. Only after the effective Commit-selected skill returns READY, ask Dev Backlog Steward to apply the effective Persistence-selected management skill and record provider terminal evidence.
+8. Provider file closure may use a separate short primary-main backlog claim and the file manager's archive procedure. GitHub and GitLab closure use their own provider identities, concurrency behavior, and lifecycle evidence. Placeholder providers preserve BLOCKED without fallback. Provider none records terminal evidence only in the task result and performs no durable provider mutation.
+9. Notify the parent with candidate provenance, independent review and verification, final Commit disposition, provider closure result when selected, claims, branch or delivery identity, worktree, and cleanup eligibility.
+10. The parent removes only clean eligible worktrees and branches, updates the task title, archives terminal task UI state when supported, then obtains fresh provider inventory and fills eligible capacity through the selected management skill.
 
-Keep administrative coordination-registry cleanup, Git integration, and terminal backlog completion as three distinct operations. Each operation has its own authority, evidence, and outcome; none can manufacture or replace another.
-
-Do not leave a reviewed commit for a separate integration task. The Dev Orchestrator performs this sequence because it knows the accepted commit, affected main paths, and required focused tests.
-
-## Pull-Request Delivery
-
-When the selected workflow uses a pull request, the authorized reviewer or merge owner merges it. The implementation task does not acquire a duplicate main integration claim.
-
-After merge evidence is available, the Dev Orchestrator runs or confirms the required focused verification, performs the separate work-item completion transaction, and notifies the parent for clean worktree, merged-branch, and task cleanup.
+Keep coordination-registry cleanup, Commit delivery, and Persistence closure as distinct operations. Each has its own authority, evidence, and outcome; none can manufacture or replace another. Do not leave an accepted commit for a separate delivery task: Dev Orchestrator applies the effective Commit-selected skill because it owns the accepted commit, review, verification, and resumption context.
 
 ## Claim Retry Window
 
-When an integration or work-item claim is unavailable, the Dev Orchestrator records the wait in the work item and owns this bounded retry schedule:
+When a shared Commit resource, file-provider backlog claim, or selected provider mutation guard is unavailable, Dev Orchestrator asks Dev Backlog Steward to record the wait through the effective Persistence management skill when a provider exists, retains task-local evidence for provider none, and owns this bounded retry schedule:
 
 1. Attempt immediately.
 2. Retry at five, ten, fifteen, twenty, twenty-five, and thirty minutes.
-3. Before each retry, inspect the blocking claim and update the work item with the outcome and next attempt.
+3. Before each retry, inspect the blocker and update the selected provider record, or the provider-none task result, with the outcome and next attempt.
 4. Stop retrying as soon as the claim succeeds.
 
 This is one initial attempt plus no more than six retries. Do not create a waiting task, transfer the wait through a task chain, poll more frequently, or ask the user to approve ordinary Git or shell commands already covered by the work item.
@@ -138,7 +136,7 @@ Perform the reset only through a host-supported targeted atomic operation that n
 
 Treat inactive-entry release problems as coordination diagnostics. Claim release does not audit commit history or interpret merge ancestry; independent review and integration own committed-content, changed-path, and provenance decisions. Reconcile each evidence owner separately and never invent a successful release.
 
-If the wait remains unresolved after investigation, record the precise open issue and move the item to the truthful Blocked or User Action Required state so it no longer consumes a Running slot. Dispatch a replacement Ready item immediately when available.
+If the wait remains unresolved after investigation, record the precise open issue through the selected Persistence manager and request the truthful Blocked or User Action Required transition so it no longer consumes a Running slot. For provider none, preserve the BLOCKED task result without a provider mutation. Dispatch a replacement Ready item from fresh selected-provider inventory when available.
 
 ## Tiered Verification
 
@@ -162,7 +160,7 @@ When a command or phase is expected to take more than five minutes, the Dev Orch
 - a hard stop condition and the retained evidence path
 - the distinct acceptance criterion that requires the expensive operation
 
-This is non-blocking operational telemetry in the task update, not a new backlog transaction or parent approval gate. Persist it in the work item at the next already-authorized material phase transition; do not acquire a backlog claim solely to record timing. The task may start without waiting for parent acknowledgement.
+This is non-blocking operational telemetry in the task update, not a new provider transaction or parent approval gate. Persist it through the selected Persistence manager at the next already-authorized material phase transition, or retain it task-locally for provider none. When Persistence is file, do not acquire a backlog claim solely to record timing. The task may start without waiting for parent acknowledgement.
 
 The parent observes long-running work at phase start, first failure, timeout, and completion rather than waiting for the fifteen-minute periodic review. This observation must not serialize healthy work. Inspect the actual process, elapsed time, latest evidence-bearing output, and remaining work. Status messages must distinguish one active serial case from selected or queued cases and must not describe queued work as running.
 
@@ -172,40 +170,40 @@ If the active unit reaches its hard stop, repeats the same failure signature, or
 
 ## Fifteen-Minute Parent Review
 
-Every fifteen minutes while queue work remains, Dev Backlog Coordinator reviews:
+Every fifteen minutes while queue work remains, Dev Backlog Coordinator obtains fresh inventory through the effective Persistence-selected management skill and reviews:
 
 - Running count and vacancies against the target of ten
 - work items by phase and age of the current phase
-- integration and completion waits, especially every wait at or beyond thirty minutes
+- Commit-delivery and Persistence-closure waits, especially every wait at or beyond thirty minutes
 - active claims, their exact scopes, owners, and heartbeat freshness
-- accepted commits awaiting integration
-- completed integrations awaiting work-item closeout
+- accepted commits awaiting Commit delivery
+- completed Commit deliveries awaiting Persistence closeout
 - task anomalies, duplicates, stopped tasks, and missing canonical identifiers
-- interval delivery counts: accepted commits, reviews, verifier gates, integrations, terminal transitions, and completed items
+- interval delivery counts: accepted commits, reviews, verifier gates, Commit dispositions, terminal transitions, and completed items
 - average productively active and blocked task counts using the available interval samples
 
-Make a scheduling or recovery adjustment during the same review whenever delivery worsens, vacancies remain, or a wait exceeds its limit. The work items hold all durable follow-up facts; the review must not create a second registry.
+Make a scheduling or recovery adjustment during the same review whenever delivery worsens, vacancies remain, or a wait exceeds its limit. The selected provider records hold durable follow-up facts; provider none retains only task-local evidence. The review must not create a second registry.
 
 ### Dedicated Read-Only Watchdog
 
 When the user requests background supervision for a sustained queue, the parent may create one dedicated watchdog task and schedule it to observe the fifteen-minute review checks. The watchdog never performs the parent review's scheduling or recovery adjustment. It is an observer, not a work-item owner, queue entry, Running slot, durable record, or substitute coordinator.
 
-On every cycle, the watchdog reads current work items, Git state, coordination-registry state, and task state. In addition to the parent-review checks above, it evaluates:
+On every cycle, the watchdog applies the selected provider's read-only management inventory, then reads Git state, coordination-registry state, and task state. For provider none it reads only explicit task state and does not invent provider inventory. In addition to the parent-review checks above, it evaluates:
 
 - every Running phase against its published estimate, hard stop, and latest evidence-bearing progress
 - every Blocked item's exact blocker and unblock condition against current evidence
-- accepted work stranded before integration, integrated work awaiting provider closeout, and terminal work awaiting cleanup
+- accepted work stranded before Commit delivery, READY Commit delivery awaiting provider closeout, and terminal work awaiting cleanup
 - stale, unsafe, or unnecessarily broad shared-resource ownership
 
 The watchdog must remain read-only. It does not mutate repository files or lifecycle state; acquire, extend, reset, release, or override coordination entries; dispatch work; change work-item or parent task state, branches, or worktrees; perform cleanup; or run expensive or live verification.
 
 Notify the parent only when an actionable condition exists. The alert identifies the affected item or task, the observed evidence, why attention is required now, and the smallest recommended parent action. Actionable conditions include a satisfied Blocked-item unblock condition, a Running vacancy with eligible Ready work, a phase overrun or evidence gap, a wait at or beyond thirty minutes, stranded accepted work, pending terminal closeout, unsafe coordination state, or a task-identity or cleanup anomaly.
 
-When no intervention is needed, the watchdog may emit its own concise no-action cycle result without messaging or interrupting the parent; this self-report is its only task-state exception. The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, integration, and cleanup decision. If the watchdog or its schedule is unavailable, the parent performs the review directly; it does not create a replacement ledger or duplicate watchdog.
+When no intervention is needed, the watchdog may emit its own concise no-action cycle result without messaging or interrupting the parent; this self-report is its only task-state exception. The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, Commit-application, Persistence-closure, and cleanup decision. If the watchdog or its schedule is unavailable, the parent performs the review directly; it does not create a replacement ledger or duplicate watchdog.
 
 ## Post-Facto Efficiency Audit
 
-These audits improve the next equivalent operation. They are not pre-dispatch, claim-acquisition, review, verification, or integration gates.
+These audits improve the next equivalent operation. They are not pre-dispatch, claim-acquisition, review, verification, Commit-delivery, or Persistence-closure gates.
 
 After evidence shows that a claim was broad enough to delay other work:
 
@@ -223,8 +221,8 @@ Do not retroactively invalidate valid evidence or weaken the final campaign-wide
 
 ## User Decisions And Terminal State
 
-A user answer resolves a decision gate once; it does not prove delivery. Record the exact answer and provenance in the work item and never ask it again. Route approved work to Ready, deferred work to Holding, and declined work to the applicable terminal disposition.
+A user answer resolves a decision gate once; it does not prove delivery. Record the exact answer and provenance through the selected Persistence manager and never ask it again. Route approved work to Ready, deferred work to Holding, and declined work to the applicable terminal disposition. For provider none, retain the answer in task-local evidence without creating durable provider state.
 
-Completed requires integrated delivery, required independent review, focused verification, released integration and work-item claims, and committed terminal backlog evidence. The Dev Orchestrator supplies a clean worktree and a fully merged fresh task integration branch as cleanup eligibility. When content came from an older candidate branch without importing its ancestry, the durable mapping proves source provenance but does not make that older branch the task cleanup branch. Preserve or remove the source branch separately according to repository policy after confirming that it contains no unique unintegrated work. An idle, stopped, titled, or archived Codex task proves none of those facts.
+Completed requires effective Commit disposition READY, required independent review, focused verification, released delivery ownership, and terminal evidence recorded through the effective Persistence-selected management skill when a provider exists. Provider none records the equivalent terminal evidence in the task result without a provider operation. Dev Orchestrator supplies the selected Commit skill's cleanup eligibility and candidate-to-delivery provenance. An idle, stopped, titled, or archived Codex task proves none of those facts.
 
-Archive a terminal task only after the work-item disposition is committed, all claims are released, the worktree is removed or deliberately preserved, the merged branch is safely deleted when eligible, and no unresolved notification remains. If archival does not persist, record the tool limitation in the work item and do not report success.
+Archive a terminal task only after the provider disposition is persisted when selected, all claims are released, the worktree is removed or deliberately preserved, the delivery branch is safely deleted when eligible, and no unresolved notification remains. If task archival does not persist, record the tool limitation through the selected provider manager or provider-none task result and do not report success.

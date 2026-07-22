@@ -2,8 +2,8 @@
 
 Add an order-cancellation endpoint and persistence operation.
 
-Use the configured direct-main Commit workflow. Complete and commit the verified local change
-without publishing a branch or pull request.
+Produce and commit a clean verified candidate change for independent review. Do not apply
+terminal delivery, publish a review record, or mutate work-item provider state.
 
 Requirements:
 

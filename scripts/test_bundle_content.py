@@ -1003,7 +1003,7 @@ class BundleContentTests(unittest.TestCase):
             "expected to take more than five minutes",
             "the exact currently active unit and any later units that have not started",
             "a hard stop condition and the retained evidence path",
-            "not a new backlog transaction or parent approval gate",
+            "not a new provider transaction or parent approval gate",
             "The task may start without waiting for parent acknowledgement.",
             "This observation must not serialize healthy work.",
             "must not describe queued work as running.",
@@ -1017,6 +1017,37 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, skill_text)
+
+    def test_codex_coordination_routes_provider_and_delivery_state_through_selected_skills(
+        self,
+    ) -> None:
+        """Coordination must stay neutral across Persistence and Commit selections."""
+        skill_text = (
+            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        for phrase in (
+            "Obtain queue inventory, lifecycle counts, provider identities, and dispatchable state only by applying the effective Persistence-selected management skill.",
+            "Provider file: treat repository backlog paths as provider identities and use short backlog claims only for file-provider mutations.",
+            "Provider github: use GitHub issue identities and provider lifecycle evidence; do not create or inspect file backlog paths.",
+            "Provider gitlab: use GitLab issue identities and provider lifecycle evidence; do not translate them into GitHub or file records.",
+            "Provider azure-devops or jira: apply the selected placeholder management skill, preserve its BLOCKED zero-mutation result, and do not fall back.",
+            "Provider none: do not inventory, count, create, transition, or close durable provider records; coordinate only the explicit task and retain task-local evidence.",
+            "Apply or resume the effective Commit-selected skill only after candidate review and source verification accept the direct or combined commit.",
+            "Only after the effective Commit-selected skill returns READY",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
+        self.assertNotIn("Derive active capacity from the backlog files", skill_text)
+        self.assertNotIn("Direct Delivery Without A Pull Request", skill_text)
+        self.assertNotIn("Pull-Request Delivery", skill_text)
+        self.assertLess(
+            skill_text.index(
+                "Apply or resume the effective Commit-selected skill only after candidate review"
+            ),
+            skill_text.index("Only after the effective Commit-selected skill returns READY"),
+        )
 
     def test_skill_authoring_contract_is_shared_by_maintainer_and_reviewer(self) -> None:
         skill_text = (SKILLS_ROOT / "skill-authoring" / "SKILL.md").read_text(
@@ -1514,7 +1545,7 @@ class BundleContentTests(unittest.TestCase):
         }
         self.assertNotIn("execute-workitem", coder_skills)
         self.assertNotIn("create-pull-request", coder_skills)
-        self.assertIn("work-item delivery status", {
+        self.assertIn("candidate handoff status", {
             next(iter(entry)) for entry in coder["outputContract"]
         })
 
@@ -1637,6 +1668,71 @@ class BundleContentTests(unittest.TestCase):
             "execute-workitem",
         ):
             self.assertFalse((SKILLS_ROOT / retired_skill).exists())
+
+    def test_dev_coder_and_orchestrator_preserve_candidate_review_commit_order(self) -> None:
+        """Terminal Commit delivery must begin only after independent candidate acceptance."""
+        coder = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml"
+        )
+        orchestrator = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-orchestrator.role.yaml"
+        )
+        coder_text = json.dumps(coder, sort_keys=True)
+        orchestrator_text = json.dumps(orchestrator, sort_keys=True)
+
+        self.assertIn(
+            "Return a clean verified candidate commit to Dev Orchestrator for independent review.",
+            coder_text,
+        )
+        self.assertIn("Do not apply the effective Commit-selected skill", coder_text)
+        self.assertNotIn("applied the effective Commit-selected skill", coder_text)
+        self.assertNotIn("main observation", coder_text)
+
+        for phrase in (
+            "Apply or resume the effective Commit-selected skill to the accepted direct or combined commit only after independent review and source verification pass.",
+            "When it returns AWAITING_REVIEW, preserve the same delivery identity and return AWAITING_REVIEW without a Persistence mutation.",
+            "Resume the same effective Commit-selected skill through review corrections, checks, dependency order, merge, and main observation until it returns READY or BLOCKED.",
+            "Only after the effective Commit-selected skill returns READY, ask dev-backlog-steward",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, orchestrator_text)
+
+        workflow_text = "\n".join(orchestrator["instructions"]["workflow"])
+        candidate_index = workflow_text.index("candidate commit")
+        review_index = workflow_text.index("fresh read-only")
+        commit_index = workflow_text.index(
+            "Apply or resume the effective Commit-selected skill to the accepted direct or combined commit"
+        )
+        persistence_index = workflow_text.index(
+            "Only after the effective Commit-selected skill returns READY, ask dev-backlog-steward"
+        )
+        self.assertLess(candidate_index, review_index)
+        self.assertLess(review_index, commit_index)
+        self.assertLess(commit_index, persistence_index)
+
+        cases = load_yaml_object(REPOSITORY_ROOT / "evals" / "cases.yaml")["cases"]
+        for case in cases:
+            if "dev-coder" not in case.get("requiredAgents", []):
+                continue
+            with self.subTest(dev_coder_case=case["id"]):
+                self.assertNotIn(
+                    "complete-work-item-direct-main",
+                    case.get("requiredSkills", []),
+                )
+                self.assertNotIn(
+                    "complete-work-item-direct-main",
+                    case.get("contextPack", {}).get("stagedSkillPackages", []),
+                )
+
+        for skill_name in ("create-file-work-item", "manage-file-work-items"):
+            migration = (
+                SKILLS_ROOT / skill_name / "SKILL.md"
+            ).read_text(encoding="utf-8").split("## Migration", 1)[1]
+            with self.subTest(skill_name=skill_name):
+                self.assertIn("Callers migrated", migration)
+                self.assertIn("legacy shells were removed", migration)
+                self.assertIn("Historical mapping:", migration)
+                self.assertNotIn("until their separately governed callers move", migration)
 
     def test_direct_main_completion_requires_integrated_main_evidence(self) -> None:
         skill_name = "complete-work-item-direct-main"
@@ -5433,15 +5529,16 @@ class BundleContentTests(unittest.TestCase):
 
         for required_contract in (
             "temporary shared-mutation protection",
-            "Designate this fresh branch as the task integration and cleanup branch",
-            "Do not import cumulative branch ancestry merely to preserve provenance",
-            "Keep administrative coordination-registry cleanup, Git integration, and terminal backlog completion as three distinct operations",
+            "Apply or resume the effective Commit-selected skill only after candidate review and source verification accept the direct or combined commit",
+            "Preserve AWAITING_REVIEW with the same delivery identity",
+            "Only after the effective Commit-selected skill returns READY",
+            "Keep coordination-registry cleanup, Commit delivery, and Persistence closure as distinct operations",
             "A live owner, dirty unpreserved worktree, resource in use, or unclear evidence blocks reset",
             "The bundled portable claim command has no reset operation",
             "If a supported atomic operation is unavailable, stop and route the reset",
             "Claim release does not audit commit history or interpret merge ancestry",
-            "fresh task integration branch is fully merged",
-            "prior candidate branch used only as a non-ancestral content source is not the task cleanup branch",
+            "GitHub and GitLab closure use their own provider identities",
+            "Provider none records terminal evidence only in the task result",
         ):
             with self.subTest(coordination_contract=required_contract):
                 self.assertIn(required_contract, coordination_text)

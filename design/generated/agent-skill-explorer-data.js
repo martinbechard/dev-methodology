@@ -4692,7 +4692,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "spring-boot-order-cancellation",
         "typescript-order-pricing"
       ],
-      "description": "Executes scoped source work items through the effective Commit-selected workflow using applicable project guidance, repository patterns, focused tests, and build commands.",
+      "description": "Produces clean verified candidate commits for scoped source work using applicable project guidance, repository patterns, focused tests, and build commands.",
       "dynamicFolderSkills": true,
       "executedCases": [],
       "fixedSkills": [
