@@ -1,6 +1,6 @@
 # Add Java Comment Placement Skill
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -12,16 +12,16 @@ Completion: direct-main
 
 ## Current Execution
 
-- Owner: Dev Orchestrator recovery lane
-- Claim: java-comment-recovery-20260722 acquired as ISOLATED_CHECKOUT_ACQUIRED at event 27a73910-4a76-4c3b-84cb-8a1e9ef81656.
+- Owner: Unowned
+- Claim: None
 - Canonical task: 019f77f4-c4bd-7c91-b197-c987a7beb838
 - Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/java-comment-recovery-20260722
 - Branch: codex/java-comment-placement-recovery-20260722
 - Starting main: 4a4a6195231fa9cbe351627bf0c42fa586e07b6c
-- Phase: Replay the preserved Java candidate, correct only the evaluator evidence contract and its focused regression, then obtain fresh review and verification before integration.
+- Phase: Blocked after the fresh recovery exhausted two bounded correction attempts on the same Markdown evidence-parser criterion.
 - Started: 2026-07-21; resumed with a fresh owner on 2026-07-22.
-- Open issues: None outside the bounded recovery scope. The previously recorded verifier bypass is the active correction criterion.
-- Accepted candidate: 02cc7215edce2782875998c3074a2a84ce5e441e, preserved as one clean feature commit on codex/add-java-comment-placement-skill atop main 3f262f6c3e8f997a8038edf42ffbd49df7b44bc4. The candidate is not independently verified and is not accepted for integration.
+- Open issues: The evaluator still accepts standard raw-HTML block forms such as CDATA, processing instructions, and split-line tag openers as visible Markdown evidence. No product integration has occurred.
+- Accepted candidate: Pending. Recovery tip 90333e05922e712d1d4172ea067e52ae330eac13 is preserved on codex/java-comment-placement-recovery-20260722 but failed final independent review and is not accepted for integration.
 
 ## Blocked Handoff
 
@@ -45,6 +45,17 @@ Completion: direct-main
 - New ownership: java-comment-recovery-20260722, branch codex/java-comment-placement-recovery-20260722, worktree /Users/martinbechard/dev/dev-methodology/.worktrees/java-comment-recovery-20260722, baseline current main 4a4a6195231fa9cbe351627bf0c42fa586e07b6c.
 - Recovery acceptance: Reject bare labels, blank sections, duplicate or malformed required headings, and missing affected-path or verification-result fields; accept complete evidence; then obtain fresh independent review and verification of the cumulative candidate.
 - Running transition claim: resume-java-comment-backlog-20260722 acquired event 019b310d-6068-4f79-adbd-43aa7a9f77ac and releases immediately after this one-file commit.
+
+## Second Recovery Blocked Handoff
+
+- Preserved cumulative recovery: 55e49f1 replayed the approved Java feature candidate; cd13193 added real heading and scoped-field validation; dde1c4d rejected fenced pseudo-headings, malformed ATX headings, Windows paths, and URI paths; 90333e0 rejected HTML comments, comment-only values, and ordinary raw HTML tag blocks.
+- Passing focused evidence: the Java bundle/evaluator contract test and Java technology-detection test passed; both changed skills and metadata validated; technology detection, skill documentation, hierarchy, and support-checklist freshness checks passed; Python compilation, Git diff, clean-worktree, and governed-byte identity checks passed. The three governed source blobs remain byte-identical to approved candidate 02cc7215.
+- Decisive final review finding: standard Markdown raw-HTML forms beginning with CDATA, processing instructions, or an end-of-line tag opener such as `<pre` still hide all six pseudo-sections while validate_evidence returns no errors.
+- Why execution stopped: the same hidden-Markdown-content acceptance criterion remained open after correction commits dde1c4d and 90333e0. Repository policy prohibits a third correction attempt in the same bounded loop.
+- Exact unblock condition: start a fresh correction owner from 90333e0; replace the partial raw-text recognizer with one complete Markdown block model, or a fully enumerated CommonMark-compatible block parser, that excludes every fenced and raw-HTML block form before recognizing headings and fields. Add exact-diagnostic regressions for comments, CDATA, processing instructions, declarations, ordinary tag blocks including split-line openers, fenced blocks, malformed ATX headings, comment-only values, and non-repository paths. Then obtain fresh independent review and focused verification of the cumulative candidate.
+- Preserved branch/worktree: codex/java-comment-placement-recovery-20260722 at 90333e05922e712d1d4172ea067e52ae330eac13 in /Users/martinbechard/dev/dev-methodology/.worktrees/java-comment-recovery-20260722; clean and intentionally retained for a fresh dispatch.
+- Recovery implementation claim: java-comment-recovery-20260722 acquired event 27a73910-4a76-4c3b-84cb-8a1e9ef81656, heartbeat event 8609ac3a-4496-411d-ae49-772f01d72a1f, and released cleanly at event 74ec7ae4-b577-4ea3-9437-95f486b220e8.
+- Backlog blocker transaction: block-java-comment-recovery-20260722 acquired event c0a060f4-fa7d-45e8-8d5c-677b11e0e678 and releases immediately after this one-file commit.
 
 ## User Action Required
 
