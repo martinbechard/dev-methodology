@@ -46,6 +46,18 @@ Completion: direct-main
 - Delivery evidence: Pending; candidate, correction findings, and expanded approval remain preserved below.
 - Next owner: Dev Orchestrator.
 
+## Phase Evidence Update — 2026-07-22
+
+- Current phase: Current-main replacement candidate preserved; fresh code and methodology reviews are active; acceptance remains pending.
+- Current-main replacement candidate: e3b605bf6e285833ea3b51ed3f3a71217bf7d2eb on codex/future-ideas-correction-1-current-main-20260722.
+- Reconciliation basis: Semantic reconciliation from preserved candidate 65b94bc05f8745e67c53fb6e7963b32c90e7a2fd; no stale cherry-pick was used.
+- Candidate scope: 24 paths with four in-scope review corrections.
+- Focused verification: 40 focused tests, three skill validations, generator checks, freshness checks, live report checks, and git diff checks passed.
+- Implementation claim release: future-ideas-correction-1-current-main-20260722 released, event f28b01a6-ab26-4144-b4ca-39a12c177da5.
+- Review state: Fresh code and methodology reviews active.
+- Accepted commit: Pending.
+- Next owner: Dev Orchestrator.
+
 ## User Action Required
 
 ### Question For The User

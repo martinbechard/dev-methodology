@@ -32,6 +32,17 @@ Completion: direct-main
 - Next owner: Dev Orchestrator.
 - Delivery evidence: Pending.
 
+## Phase Evidence Update — 2026-07-22
+
+- Current phase: Correction attempt 1 active; acceptance remains pending.
+- Candidate: df6911b3179bb82859ae25708ee4b09404a02af1, with a clean candidate worktree.
+- Initial implementation claim release: Event b772d85a-b94e-469b-b216-ea7042aea478.
+- Fresh review disposition: Both reviews reported CORRECTIONS REQUIRED.
+- Review findings: Replace the high-risk ID-only historical/current semantic join and its no-probe abort; prevent duplicate and removed rows; remove the fixed timestamp and hardcoded narrative; correct verdict and Judge semantics; include omitted follow-ups and freshness inputs; and provide browser evidence.
+- Correction attempt 1: Active under claim publish-agent-skill-evaluation-html-correction-1-20260722 for exactly design/agent-and-skill-evaluations.html, design/agent-and-skill-evaluations.js, scripts/build-agent-skill-evaluation-docs.py, and scripts/test_agent_skill_evaluation_docs.py.
+- Accepted commit: Pending.
+- Next owner: Dev Orchestrator.
+
 Creation Claim: create-eval-html-docs-item-20260722
 
 ## Summary

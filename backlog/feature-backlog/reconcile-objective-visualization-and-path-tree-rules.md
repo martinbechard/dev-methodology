@@ -32,6 +32,18 @@ Completion: direct-main
 - Next owner: Dev Orchestrator.
 - Delivery evidence: Pending; e9b31db evidence, exclusions, and the exact eight-path approval remain preserved below.
 
+## Phase Evidence Update — 2026-07-22
+
+- Current phase: Correction attempt 1 active; acceptance remains pending.
+- Stage-one candidate: 3ff6e29499671cc37cf873024a16211b26a8e716.
+- Initial implementation claim release: Event 8f32f4cd-2083-476c-a1d1-d9c9cbca2eb1.
+- Fresh review disposition: CORRECTIONS REQUIRED.
+- Review findings: Resolve the module-diagram contradiction, enforce the mandatory path-tree checklist rule, and correct the cardinality grammar.
+- Correction attempt 1: Active on branch codex/reconcile-objective-path-rules-correction-1 under claim objective-path-rules-correction-1 for its exact unique-path scope.
+- Shared-surface sequencing: Future Ideas retains priority for shared tests and generated outputs.
+- Accepted commit: Pending.
+- Next owner: Dev Orchestrator.
+
 ## Read-Only Discovery
 
 - Completed: Current-main and preserved-branch evidence was inspected without artifact mutation.
