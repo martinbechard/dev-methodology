@@ -76,33 +76,41 @@ The item is Ready for a fresh dispatch but is not Running. No artifact claim has
 
 ## Summary
 
-Define deterministic, evidence-based criteria for when a functional specification requires UX mockups.
+Define deterministic, evidence-based criteria for proportionate interface examples in functional specifications.
 
 ## Context
 
-Functional specifications describe user-visible behavior, actor workflows, entry points, states, permissions, acceptance behavior, and verification. A mockup is useful only when supported interaction or layout complexity makes it necessary to communicate the contract; it must not become mandatory HTML for every functional specification.
+Functional specifications describe user-visible behavior across UI, API, event or message, and CLI interfaces. Examples must be proportionate to the documented interface and complexity. A UI mockup is one possible example, not mandatory HTML for every functional specification.
 
 ## Source Evidence
 
 - Direct user authorization in the 2026-07-22 parent coordination request to create this Ready Feature item.
 - Current functional-specification guidance in skills/create-functional-spec/SKILL.md, skills/review-functional-spec/SKILL.md, and skills/development-methodology/assets/templates/functional-spec-template.md.
+- Fresh parent direction on 2026-07-22 broadened the ordinary requirement from UI mockups to proportionate interface examples while preserving the approved governed and companion-file scope.
 
 ## Requirements
 
-- Define deterministic criteria based on evidence-backed interaction and layout complexity for requiring a UX mockup.
-- Do not require HTML or a visual mockup for every functional specification.
-- Require an explicit no-mockup rationale for simple or non-visual specifications.
+- Define deterministic criteria for requiring proportionate examples from documented interface type and complexity.
+- For UI behavior, use a mockup, wireframe, or interaction diagram when documented interaction or layout complexity requires a visual example.
+- For API behavior, include a sample method, path, query, headers, authentication, and request together with response status, headers, body, and key validation, authentication, and conflict cases.
+- For event or message behavior, include a sample payload and producer-consumer sequence.
+- For CLI behavior, include a sample invocation, output, and failure.
+- Allow simple or non-interactive behavior to use an explicit no-example rationale.
+- Do not require HTML or a UI mockup for every functional specification.
 - Keep creation guidance, functional-specification template, and review checklist contracts compatible.
-- Add focused tests that distinguish mockup-required and no-mockup cases.
+- Add focused tests that distinguish required interface examples from justified no-example cases.
 - Before mutating any governed skill definition, obtain exact scope-specific user approval and run the supported pre-mutation approval check.
 
 ## Acceptance Criteria
 
-- Criteria can be applied consistently from documented interaction and layout evidence.
-- A simple or non-visual specification can pass with a concrete no-mockup rationale.
-- A specification with qualifying interaction or layout complexity identifies the required mockup form and its contract role.
+- Criteria can be applied consistently from documented interface type, interaction, layout, and behavioral complexity.
+- A UI specification with qualifying interaction or layout complexity provides a proportionate mockup, wireframe, or interaction diagram and identifies its contract role.
+- An API specification provides a coherent request and response example plus key validation, authentication, and conflict cases.
+- An event or message specification provides a representative payload and producer-consumer sequence.
+- A CLI specification provides a representative invocation, output, and failure.
+- A simple or non-interactive specification can pass with a concrete no-example rationale.
 - The compatible template and review checklist make the same requirement observable.
-- Focused tests cover positive and negative criteria cases.
+- Focused tests cover UI, API, event or message, CLI, and no-example criteria cases.
 - Any governed definition mutation has durable exact scope-specific approval evidence and passes the supported pre-mutation check.
 
 ## Dependencies
@@ -117,4 +125,4 @@ None.
 
 ## Notes
 
-Mockup can mean a proportionate visual artifact; this work item does not prescribe HTML unless the approved criteria and evidence require it.
+UI mockups remain one proportionate example form. This work item does not prescribe HTML unless the approved criteria and evidence require it.
