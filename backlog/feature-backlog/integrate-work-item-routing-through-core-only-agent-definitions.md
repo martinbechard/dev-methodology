@@ -1,12 +1,12 @@
 # Integrate Work-Item Routing Through Core-Only Agent Definitions
 
-Status: User Action Required
+Status: Running
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/integrate-work-item-routing-through-core-only-agent-definitions.md
+Provider Reference: backlog/feature-backlog/integrate-work-item-routing-through-core-only-agent-definitions.md
 
 Completion: direct-main
 
@@ -27,21 +27,21 @@ Completion: direct-main
 
 ## Current Execution / Ownership
 
-- Owner: Unowned.
+- Owner: Dev Orchestrator.
 - Canonical task: 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
-- Claim: None.
+- Claim: approve-core-only-coordinator-role-019f8b4c, backlog transition only.
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology, clean.
 - Branch: codex/integrate-work-item-routing-core-only-019f8b4c at 1f7f1e5587bb63eef54202cd91bab501d5e68e37.
 - Starting main: 83135ebc590c2c244cf42283ae3f760521c55ed0.
-- Phase: exact one-path conceptual role approval gate.
+- Phase: exact pre-mutation check, one-path role correction, supported regeneration, fresh re-review and verification.
 - Lifecycle transition: Blocked -> Ready after dependency reconciliation -> Running after fresh canonical task assignment and successful serialized backlog claim acquisition.
 - Accepted candidate: 1f7f1e5587bb63eef54202cd91bab501d5e68e37, clean and unintegrated.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: Approval is required for agents/roles/dev-activities/dev-backlog-coordinator.role.yaml before role mutation, re-review, or acceptance.
-- Next owner: Unowned pending user approval resolution.
+- Open issues: Apply the approved one-path role correction, supported regeneration, and fresh re-review and verification.
+- Next owner: Dev Orchestrator.
 
 ## Resumption Evidence — 2026-07-22
 
@@ -67,15 +67,25 @@ Repository policy requires exact scope-specific approval before this conceptual 
 
 ### Resolution
 
-Pending.
+- Date: 2026-07-22.
+- Answer: Approved.
+- User wording: "ok I approve of it".
+- Provenance: direct response in parent coordinator thread 019f8b00-e6d7-7841-854a-40a50ca4e7f2 to the separately stated Dev Backlog Coordinator role approval question.
+- Approved governed role scope: exactly agents/roles/dev-activities/dev-backlog-coordinator.role.yaml.
+- Approved dependent scope: only its supported generated mirrors and directly related tests and documentation.
+- Exclusion: no other governed scope is approved.
+- Disposition: User Action Required -> Ready -> Running under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
 
 ### Unattended Work Boundary
 
-Do not mutate agents/roles/dev-activities/dev-backlog-coordinator.role.yaml or widen any other governed scope until the parent records the user answer and sends approval resolution. Preserve every prior approval and evidence.
+Mutate only the approved agents/roles/dev-activities/dev-backlog-coordinator.role.yaml role path, supported mirrors, and directly related tests and documentation. Do not widen any other governed scope. Preserve every prior approval and evidence.
 
 ### Handoff Evidence
 
 - Backlog handoff claim: route-core-only-coordinator-role-019f8b4c, acquired event 62d7cd79-a256-47aa-9d7a-c648fc22f7b3 from primary main.
+- Prior blocked no-mutation claim attempt: b351f3c8-93bd-498b-bd6d-51430f8cd2de, SHARED_CHECKOUT_RELEASE_REQUIRED.
+- Bounded-release evidence: child release event 2533c4ea-9223-4cc9-ab3d-8a075584a700 after clean preserved commit 92d4e328a279e3f2e6fea693412e2810a5d7d7f1; root no-change release event b9ada40e-da6f-4267-8ee8-18e16cad3b62.
+- Approval-resumption claim: approve-core-only-coordinator-role-019f8b4c, acquired event d03860c9-d6f0-452c-82c0-5ac3b06a5330 from primary main.
 
 ## Codex Metadata Approval Gate
 
