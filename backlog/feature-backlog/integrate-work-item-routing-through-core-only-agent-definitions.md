@@ -1,6 +1,6 @@
 # Integrate Work-Item Routing Through Core-Only Agent Definitions
 
-Status: Blocked
+Status: Running
 
 Type: Feature
 
@@ -24,6 +24,30 @@ Completion: direct-main
 - Next action owner: Dev Backlog Coordinator.
 - Resumption: Reconcile the completed dependency, transition through Ready, acquire a new canonical Dev Orchestrator, and only then record Running.
 - Verification: focused provider, completion, selector, role, metadata, renderer, migration, stale-name, and evaluation checks first; then the item-required full repository, project-wiki, catalog, generated-adapter, disposable smoke, and install/refresh release gates.
+
+## Current Execution / Ownership
+
+- Owner: Dev Orchestrator.
+- Canonical task: 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
+- Claim: resume-core-only-work-item-routing-019f8b4c-2, backlog transition only.
+- Canonical worktree: /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology.
+- Starting main: 83135ebc590c2c244cf42283ae3f760521c55ed0.
+- Phase: bounded current-main reconciliation before implementation.
+- Lifecycle transition: Blocked -> Ready after dependency reconciliation -> Running after fresh canonical task assignment and successful serialized backlog claim acquisition.
+- Accepted candidate: Pending.
+- Integration wait started at: None.
+- Integration wait attempts: 0.
+- Completion wait started at: None.
+- Completion wait attempts: 0.
+- Open issues: Live current-main reconciliation and implementation within the authoritative prior approval.
+- Next owner: Dev Orchestrator.
+
+## Resumption Evidence — 2026-07-22
+
+- Satisfied dependency: backlog/completed-backlog/features/simplify-project-configuration-setup-and-skill-routing.md, completed at a07ffb333db915294513c8ce798436d347d6dd98 with integrated delivery baff164e94557bff47a32b17fb64f3ecd4f6bf2a, recorded focused verification, integration-claim release, and cleanup evidence.
+- Prior claim attempt: resume-core-only-work-item-routing-019f8b4c returned CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, event 85cd9175-dfc1-460a-bf5a-fe828b0af090; it made no mutation.
+- Fresh backlog claim: resume-core-only-work-item-routing-019f8b4c-2, acquired event ba5ae47a-ff1b-43e9-b7e4-6aa66e67ca37 from primary main.
+- The exact prior approval remains authoritative.
 
 ## Resolved Approval
 
