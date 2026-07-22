@@ -1,31 +1,32 @@
 # Add Starting Lifecycle And Resource Deadline Policies
 
-Status: User Action Required
+Status: Running
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/add-starting-lifecycle-and-resource-deadline-policies.md
+Provider Reference: backlog/feature-backlog/add-starting-lifecycle-and-resource-deadline-policies.md
 
 Completion: direct-main
 
 ## Execution / Ownership
 
-- Owner: Unowned.
+- Owner: Dev Orchestrator.
 - Canonical thread: 019f8b51-f8ed-7c03-8193-9bbee1ccb7f2.
-- Claim: None.
-- Canonical worktree: /Users/martinbechard/.codex/worktrees/81ba/dev-methodology.
-- Starting main: d1a3b768fc79a6d4f6ede4736229b12aa4c28562.
-- Phase: User Action Required — exact governed canonical-path approval gate.
-- Lifecycle transition: Running -> User Action Required after bounded source discovery; execution ownership cleared pending an explicit scope-specific user decision.
+- Claim: approve-starting-lifecycle-deadline-scope-019f8b51, backlog transition only.
+- Canonical worktree: /Users/martinbechard/.codex/worktrees/81ba/dev-methodology, clean and detached.
+- Branch: Pending task-owned branch creation after LIFECYCLE START.
+- Starting main: 2ba5dbd772ab80ad87f6db9c7ea4683488a823cf.
+- Phase: current-main refresh, task-owned branch creation, path-by-path pre-mutation checks, then implementation.
+- Lifecycle transition: User Action Required -> Ready after exact approval reconciliation -> Running under existing canonical Dev Orchestrator ownership.
 - Accepted candidate: Pending.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: Exact path-specific user approval is required before any governed definition mutation.
-- Next owner: User, then parent coordinator for an approval-resolution handoff to canonical thread 019f8b51-f8ed-7c03-8193-9bbee1ccb7f2.
+- Open issues: Approved implementation, review, and verification within the exact ten-path scope.
+- Next owner: Dev Orchestrator.
 
 ## Running Dispatch Evidence — 2026-07-22
 
@@ -50,9 +51,30 @@ Completion: direct-main
 - Ordinary companion scope, not governed-definition approval: PROJECT.yaml; AGENTS.md; README.md; skills/development-methodology/assets/templates/project-template.yaml; skills/agent-claim-command/scripts/claim.py; scripts/render-agents-technology-skills.py; focused claim, transport, work-item lifecycle, watchdog, renderer/configuration, bundle, and lifecycle-documentation tests; design/orchestrated-development-lifecycle.html; and design/agentic-configuration.html only if source-backed configuration explanation is required.
 - Discovery rationale: codex-workitem-coordination owns Ready/Starting dispatch, capacity, duplicate-start reconciliation, and read-only watchdog; manage-file-work-items owns the file-provider Starting state and atomic transitions/recovery; agent-claim owns transport-neutral hard-stop, extension, heartbeat, overdue, no-auto-release, and cleanup-grace semantics; command and MCP adapter definitions own the two invocation envelopes; create-project-configuration owns project policy/default/override validation; the three dev roles own parent dispatch, root work-item-thread orchestration, and steward lifecycle boundaries; project-configurator owns persisted policy setup.
 - Excluded governed sources: create-file-work-item because creation still terminates at Ready; completion skills because delivery semantics remain unchanged; role schema/model profiles and OpenAI metadata because no schema, model, name, activation description, or tool dependency needs to change.
-- Resolution: Pending.
+- Resolution: Approved on 2026-07-22. The user answered "ok approved" in canonical work-item thread 019f8b51-f8ed-7c03-8193-9bbee1ccb7f2 directly in response to the exact ten-path approval question. No other governed source is approved.
 - Why user input is required: repository policy requires exact scope-specific user approval before any skill or role definition mutation.
-- Prohibited unattended action: do not mutate any governed definition until the parent records the user's answer and sends approval resolution to canonical thread 019f8b51-f8ed-7c03-8193-9bbee1ccb7f2.
+- Unattended work boundary: mutate only the exact ten approved governed sources and recorded dependent scope after path-by-path pre-mutation checks. Do not widen the approval.
+
+## Approval Resolution — 2026-07-22
+
+- Answer: Approved.
+- User wording: "ok approved".
+- Provenance: canonical work-item thread 019f8b51-f8ed-7c03-8193-9bbee1ccb7f2, directly responding to the exact ten-path question.
+- Approved governed canonical sources, exactly:
+  - skills/agent-claim/SKILL.md
+  - skills/agent-claim-command/SKILL.md
+  - skills/agent-claim-mcp/SKILL.md
+  - skills/codex-workitem-coordination/SKILL.md
+  - skills/manage-file-work-items/SKILL.md
+  - skills/create-project-configuration/SKILL.md
+  - agents/roles/dev-activities/dev-backlog-coordinator.role.yaml
+  - agents/roles/dev-activities/dev-orchestrator.role.yaml
+  - agents/roles/dev-activities/dev-backlog-steward.role.yaml
+  - agents/roles/project-setup/project-configurator.role.yaml
+- Approved dependent scope: only the supported generated mirrors and ordinary companions recorded in Discovery And Approval Gate.
+- Exclusion: no other governed source is approved.
+- Resumption claim: approve-starting-lifecycle-deadline-scope-019f8b51, acquired event 54a48623-5ad9-4cef-8e21-8cf1e98fac75 from primary main.
+- The original discovery starting main d1a3b768fc79a6d4f6ede4736229b12aa4c28562 remains preserved above; current execution starts from refreshed main 2ba5dbd772ab80ad87f6db9c7ea4683488a823cf.
 
 ## User Action Required
 
