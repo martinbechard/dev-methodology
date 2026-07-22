@@ -1,12 +1,12 @@
 # Select Resource Coordination Per Project
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/selectable-resource-coordination.md
+Provider Reference: backlog/user-action-required/selectable-resource-coordination.md
 
 Completion: direct-main
 
@@ -22,19 +22,19 @@ Completion: direct-main
 
 ## Execution / Ownership
 
-- Owner: Dev Orchestrator
+- Owner: Unowned
 - Canonical task: 019f8b1d-5817-72f3-be99-ba471da716b9
-- Claim: start-selectable-resource-coordination-019f8b1d (backlog transition only)
-- Artifact claim: Pending fresh artifact claim.
+- Claim: None
+- Artifact claim: None
 - Branch: codex/selectable-resource-coordination-implementation-20260722
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/3da9/dev-methodology
-- Phase: implementing approved resource-coordination loading separation.
+- Phase: exact additional governed-scope approval gate.
 - Starting main: f5534ec28fd8e1c75efb65970de61918406992a0
 - Lifecycle transition: Ready -> Running after exact approval, fresh canonical task assignment, and successful serialized backlog claim acquisition.
-- Candidate: Pending.
+- Candidate: b77bdb6, clean and unintegrated in canonical thread 019f8b1d-5817-72f3-be99-ba471da716b9.
 - Accepted commit: Pending.
-- Review: Pending.
-- Verification: Pending.
+- Review: Additional governed-scope approval required before post-b77 review and acceptance.
+- Verification: Preserved candidate evidence only; post-b77 verification is prohibited pending approval.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
 - Integration wait started at: None.
@@ -43,9 +43,9 @@ Completion: direct-main
 - Completion wait attempts: 0.
 - Dependency evidence: backlog/completed-backlog/features/configure-agent-claim-transport-adapters.md is Status Completed; integration commit 1b1b819fa051f9f0f1d572184b18f18c06d3cba0 is reachable from main; focused verification, archive, clean integration-claim release, and cleanup-eligibility evidence are recorded; Open issues is None.
 - Preserved dependency boundary: The completed transport-adapter contract remains the required input to this item.
-- Open issues: None for lifecycle dispatch; implementation remains within the approved scope.
-- Delivery evidence: Dependency unblock, discovery evidence, and exact approval are preserved; implementation, review, verification, integration, and acceptance are pending.
-- Next owner: Dev Orchestrator.
+- Open issues: Review and acceptance are blocked on approval for exactly one additional governed definition, skills/execute-workitem/SKILL.md.
+- Delivery evidence: The clean unintegrated b77bdb6 candidate, dependency unblock, discovery evidence, and original 40-path approval are preserved; no post-b77 governed mutation is authorized.
+- Next owner: Unowned pending user approval resolution.
 
 Creation Claim: draft-selectable-mutation-coordination
 
@@ -141,6 +141,68 @@ PROJECT.yaml, AGENTS.md, README.md, project template, scripts/build-skill-docs.p
 ### Unattended Work Boundary
 
 The user approved the exact governed manifest and dependent scope recorded in Resolution. Do not mutate any other governed definition. The canonical discovery task 019f8b05-5251-7d73-9cc9-4057edfef9a0 remains preserved as discovery evidence; current ownership remains unowned until fresh canonical dispatch.
+
+## Additional Governed Scope Approval
+
+### Candidate And Review Blocker
+
+- Candidate b77bdb6 is clean and unintegrated in canonical thread 019f8b1d-5817-72f3-be99-ba471da716b9.
+- Review and acceptance require an additional exact governed-definition approval before any post-b77 governed mutation.
+
+### Additional Governed Canonical Source
+
+- skills/execute-workitem/SKILL.md
+
+### Required Governed Behavior
+
+- Resolve project resource_coordination alongside delivery.
+- When agent-claim is selected, preserve acquisition, isolation, heartbeat, handoff, release, and evidence behavior.
+- When none is selected, execute selected delivery with zero coordination discovery, load, acquisition, heartbeat, registry, handoff, release, or evidence.
+- Keep provider lifecycle and completion separate from resource coordination.
+
+### Ordinary Companion Scope
+
+- skills/execute-workitem/references/simple-workitem.md
+- skills/execute-workitem/references/feature-branch-workitem.md
+- scripts/render-agents-technology-skills.py selector-bypass blocking for agent-claim, agent-claim-mcp, and agent-claim-command in project_skill_extensions and technology_skill_loadouts under conflicting resource_coordination
+- scripts/test_agent_claim_transport.py transport fidelity and none validation
+- scripts/test_role_mutation_policy.py
+- scripts/test_technology_detection.py
+- focused bundle tests
+- design/agentic-configuration.html
+- already-approved skills/create-project-configuration/SKILL.md refinement
+- relevant README and lifecycle wording if drift
+
+### Supported Generated Mirrors
+
+- design/generated/skill-definitions.js
+- generated/adapters/agent-generation-manifest.json
+- generated/adapters/claude/agents/dev-coder.md
+- generated/adapters/codex/agents/dev-coder.toml
+- generated/adapters/gemini/agents/dev-coder.md
+- generated/adapters/junie/agents/dev-coder.md
+
+Regenerate these only from approved canonical source and reference changes. Do not edit generated output directly.
+
+### Explicit Exclusions
+
+- No other skills/*/SKILL.md beyond the original 40 paths plus skills/execute-workitem/SKILL.md.
+- No agent-claim-mcp or agent-claim-command definition, metadata, or script changes.
+- No execute-workitem/agents/openai.yaml.
+- No role schema, model profiles, adapter-owned skills, or additional conceptual roles.
+- No claims broker, folder override, compatibility default, provider redesign, or direct generated edit.
+
+### Question For The User
+
+Do you approve changing exactly skills/execute-workitem/SKILL.md, in addition to the already approved 40 paths, to honor resource_coordination none versus agent-claim during delivery, together with only the listed ordinary companion changes and supported generated mirrors? No other governed definition will change without separate approval.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+No post-b77 governed mutation may occur until the parent records the user answer and sends approval resolution. The original 40-path approval and all prior evidence remain preserved.
 
 ## Summary
 
