@@ -11,7 +11,7 @@ target:
     codex-workitem-coordination: Codex user-visible tasks coordinate multiple backlog items.
     agent-claim: Parent recovery or cleanup mutates a repository-global resource.
   allowedAgentDependencies: [dev-orchestrator, dev-backlog-steward]
-  requiredOutputs: [status, file-backed queue snapshot, dispatch and capacity outcome, stalled integration actions, completed item cleanup, fifteen-minute throughput summary]
+  requiredOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
 projectAgents:
   supervisor: agents/supervisor.toml
   judge: agents/judge.toml

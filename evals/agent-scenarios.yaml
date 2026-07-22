@@ -79,18 +79,19 @@ agents:
       - junie
     outputContractFields:
       - status
-      - file-backed queue snapshot
+      - provider lifecycle snapshot
       - dispatch and capacity outcome
-      - stalled integration actions
+      - stalled delivery actions
       - completed item cleanup
       - fifteen-minute throughput summary
     judgePlan:
       deterministicChecks:
         - harness-agent-identity
-        - file-backed-workitem-ownership
+        - provider-selected-workitem-ownership
+        - provider-selector-routing
         - running-capacity-refill
         - bounded-claim-retry
-        - direct-orchestrator-integration
+        - selected-commit-routing
         - focused-item-verification
         - task-identity-fields
         - claim-lifecycle
@@ -104,24 +105,27 @@ agents:
       - id: dev-backlog-coordinator-happy
         kind: happy-path
         fixtureProfile: backlog-state-machine
-        promptIntent: Reconcile the file-backed queue, restore ten Running work items, and ensure each canonical Dev Orchestrator carries one item through review, main integration, focused verification, completion, and cleanup.
-        expectedOutcome: Ten file-backed Running items or an explicit eligible-work shortage, stable canonical task ids recorded in their work items, accepted commits integrated without a separate integration queue, and terminal cleanup followed by an immediate capacity refill.
+        promptIntent: Reconcile a selected durable provider, restore ten Running work items, and ensure each canonical Dev Orchestrator applies the effective Commit-selected skill after review and verification.
+        expectedOutcome: Ten provider-backed Running items or an explicit eligible-work shortage, stable canonical task ids recorded through the effective manager, selected-Commit delivery without a separate integration queue, provider completion, and immediate capacity refill after cleanup.
         requiredBehaviors:
-          - Count only work items whose files say Status Running.
+          - Count only lifecycle RUNNING items returned by the effective Persistence-selected management skill.
           - Use one canonical Dev Orchestrator task for each Running work item.
-          - Record canonical task id, branch, worktree, phase, accepted commit, waits, and delivery evidence in the work item.
-          - Route accepted review immediately to that item's Dev Orchestrator for integration and focused tests.
+          - Delegate lifecycle transitions and provider evidence to Dev Backlog Steward through the effective manager.
+          - Record canonical task id, provider identity, branch, worktree, phase, accepted commit, waits, and delivery evidence in the provider record.
+          - Route accepted review immediately to that item's Dev Orchestrator with the effective Commit-selected skill.
           - Recount and refill toward ten after every terminal cleanup.
         forbiddenBehaviors:
-          - Treat task title, task status, or messages as backlog or delivery authority.
+          - Treat task title, task status, or messages as provider or delivery authority.
           - Create a separate task ledger, baton registry, waiting-task registry, or placeholder task.
           - Count Blocked, User Action Required, Holding, or pure waiting tasks as Running capacity.
+          - Reproduce provider or Commit procedures in the coordinator.
         judgePlan:
           deterministicChecks:
-            - file-backed-workitem-ownership
+            - provider-selected-workitem-ownership
+            - provider-selector-routing
             - running-capacity-refill
             - bounded-claim-retry
-            - direct-orchestrator-integration
+            - selected-commit-routing
             - focused-item-verification
             - task-identity-fields
             - claim-lifecycle
@@ -133,16 +137,19 @@ agents:
       - id: dev-backlog-coordinator-boundary
         kind: boundary-failure
         fixtureProfile: backlog-state-machine
-        promptIntent: Recover an ambiguous timed-out dispatch and a Dev Orchestrator whose exact integration claim remains unavailable through the thirty-minute retry window.
-        expectedOutcome: Bounded dispatch reconciliation, one canonical task id, six recorded five-minute claim retries, parent investigation at thirty minutes, safe claim narrowing or truthful Blocked or User Action Required disposition, and immediate capacity replacement.
+        promptIntent: Reconcile file, GitHub, GitLab, placeholder, none, and UNSET provider boundaries while recovering an ambiguous dispatch and a selected-delivery resource wait.
+        expectedOutcome: Provider-native identities, no fallback or shadow records, bounded dispatch reconciliation, one canonical task id, six recorded five-minute retries, parent investigation at thirty minutes, and a truthful disposition or capacity replacement.
         requiredBehaviors:
-          - Reconcile active and archived tasks by parent id, backlog path, normalized objective, creation time, and status.
-          - Record the immediate claim attempt and retries at five, ten, fifteen, twenty, twenty-five, and thirty minutes in the work item.
+          - Reconcile active and archived tasks by parent id, provider identifier and reference, normalized objective, creation time, and status.
+          - Preserve file, GitHub, and GitLab manager routing and native identities without shadow records.
+          - Preserve Azure DevOps and Jira placeholder BLOCKED results, provider-none non-durable state, and UNSET without fallback.
+          - Record the immediate resource attempt and retries at five, ten, fifteen, twenty, twenty-five, and thirty minutes in provider or task-local evidence.
           - Investigate the blocking owner and exact scope at thirty minutes without stealing unpreserved work.
           - Route a genuine unresolved authority or decision blocker truthfully and fill the Running vacancy.
-          - Accept completion only with main or pull-request integration, focused tests, completion commit, released claims, and cleanup evidence.
+          - Accept completion only with effective Commit READY, focused tests, required provider completion, released claims, and cleanup evidence.
         forbiddenBehaviors:
           - Infer task absence from one immediate list read.
+          - Infer or fall back to a provider from repository or hosting evidence.
           - Ask the user to approve ordinary Git, shell, review, test, integration, or cleanup operations.
           - Run the complete agent catalog for an individual work item when focused risk-relevant tests are available.
         judgePlan:
@@ -150,9 +157,11 @@ agents:
             - delayed-visibility-settlement
             - retry-limit
             - duplicate-containment
-            - file-backed-workitem-ownership
+            - provider-selected-workitem-ownership
+            - provider-selector-routing
             - bounded-claim-retry
             - running-capacity-refill
+            - selected-commit-routing
             - workitem-completion-handoff
             - suite-simulator-tests
           modelRubric: workflow-quality

@@ -1,27 +1,28 @@
 schema: synthetic-agent-suite-cases
 cases:
-  file-backed-ten-item-dispatch:
+  provider-selected-ten-item-dispatch:
     runningItems: 7
     readyItems: 5
     nonRunningStatuses: [Blocked, User Action Required, Holding]
     targetRunningItems: 10
     expectedDispatchCount: 3
-    durableRecord: work-item files
+    durableRecord: selected provider records
     forbiddenRegistry: separate parent task ledger
-  bounded-integration-retry-and-closeout:
+  selected-commit-retry-and-closeout:
     workItemStatus: Running
     candidateReview: accepted
     claimAttemptMinutes: [0, 5, 10, 15, 20, 25, 30]
     maximumRetries: 6
     investigationMinute: 30
-    directDeliveryOwner: dev-orchestrator
+    deliveryOwner: dev-orchestrator
+    completionRoute: effective Commit-selected skill
     claimKinds: [integration, completion]
     requiredCompletionEvidence: [integration commit, focused tests, distinct integration claim, integration release, completion commit, distinct completion claim, completion release, clean worktree, fully merged branch]
     requiredParentCleanup: [worktree removal, merged branch deletion, Done title, task archival]
     forbiddenPerItemGate: complete agent catalog
   ambiguous-dispatch-and-user-decision-integrity:
     parentTaskId: parent-123
-    canonicalBacklogPath: backlog/feature-backlog/example.md
+    canonicalProviderReference: https://provider.example/items/42
     normalizedObjective: deliver example
     immediateMatches: 0
     settlementMatches: 2
@@ -37,3 +38,11 @@ cases:
     finalCampaignVerification: [complete agent catalog]
     postFactoOptions: [narrow claim paths, split named resources, sequence only shared finalization]
     selectedPostFactoOption: split named resources
+  provider-selector-boundaries:
+    providers: [file, github, gitlab, azure-devops, jira, none, UNSET]
+    durableInventoryProviders: [file, github, gitlab]
+    placeholderProviders: [azure-devops, jira]
+    nonDurableProviders: [none]
+    unresolvedProviders: [UNSET]
+    unavailableSelectedSkill: manage-github-work-items
+    fallbackAllowed: false

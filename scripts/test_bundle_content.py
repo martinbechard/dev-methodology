@@ -5809,6 +5809,46 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("GOOD post-move verdict", response)
                 self.assertIn("released the ingest claim", response)
 
+    def test_dev_backlog_coordinator_uses_selected_provider_and_completion_routes(self) -> None:
+        """The coordinator should supervise provider-neutral state and selected delivery."""
+        role = yaml.safe_load(
+            (
+                ROLES_ROOT
+                / "dev-activities"
+                / "dev-backlog-coordinator.role.yaml"
+            ).read_text(encoding="utf-8")
+        )
+        role_text = json.dumps(role, sort_keys=True)
+
+        for required_contract in (
+            "effective Persistence-selected management skill",
+            "Provider file",
+            "Provider github",
+            "Provider gitlab",
+            "Provider azure-devops or jira",
+            "Provider none",
+            "Provider UNSET or an unavailable selected skill",
+            "effective Commit-selected skill",
+            "Do not reproduce provider or Commit procedures",
+            "ten Running items",
+            "six five-minute retries",
+            "Every fifteen minutes",
+            "canonical task id",
+            "remove the clean worktree",
+        ):
+            with self.subTest(contract=required_contract):
+                self.assertIn(required_contract, role_text)
+
+        for obsolete_contract in (
+            "file-backed work-item queue",
+            "Count Status Running from the file-backed backlog",
+            "canonical backlog path",
+            "direct integration",
+            "file-backed queue snapshot",
+        ):
+            with self.subTest(contract=obsolete_contract):
+                self.assertNotIn(obsolete_contract, role_text)
+
     def test_wiki_ingester_continues_substantiated_ingest_after_verifier_interruption(
         self,
     ) -> None:

@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies file-backed capacity, claim retry, dispatch, and cleanup contracts.
+# Summary: Verifies provider-selected capacity, claim retry, dispatch, and cleanup contracts.
 # Test plan: evals/agent-tests/dev-backlog-coordinator/requirements-matrix.md
 
 """Verify the deterministic parent backlog coordination simulator."""
@@ -34,9 +34,9 @@ class CoordinationSimulatorTests(unittest.TestCase):
     """Exercise queue capacity and delivery recovery through observable state."""
 
     def test_dispatches_ready_items_until_ten_are_running(self) -> None:
-        """Use file-backed status to fill three vacancies without placeholders."""
+        """Use provider lifecycle status to fill three vacancies without placeholders."""
 
-        case = _fixture_cases()["file-backed-ten-item-dispatch"]
+        case = _fixture_cases()["provider-selected-ten-item-dispatch"]
         items = [
             WorkItem(f"running-{index}", "Running")
             for index in range(case["runningItems"])
@@ -69,10 +69,45 @@ class CoordinationSimulatorTests(unittest.TestCase):
         self.assertEqual(("ready",), simulator.dispatch_to_target())
         self.assertEqual(2, simulator.running_count())
 
+    def test_persistence_routes_cover_supported_providers_without_fallback(self) -> None:
+        """Preserve each selected provider's manager, inventory, and blocked semantics."""
+
+        expected = {
+            "file": ("manage-file-work-items", True, "READY", False),
+            "github": ("manage-github-work-items", True, "READY", False),
+            "gitlab": ("manage-gitlab-work-items", True, "READY", False),
+            "azure-devops": (
+                "manage-azure-devops-work-items",
+                False,
+                "BLOCKED",
+                True,
+            ),
+            "jira": ("manage-jira-work-items", False, "BLOCKED", True),
+            "none": (None, False, "READY", True),
+            "UNSET": (None, False, "BLOCKED", True),
+        }
+
+        for provider, route_contract in expected.items():
+            with self.subTest(provider=provider):
+                route = CoordinationSimulator.persistence_route(provider)
+                self.assertEqual(route_contract, (
+                    route.management_skill,
+                    route.durable_inventory,
+                    route.status,
+                    route.zero_mutation,
+                ))
+
+        unavailable = CoordinationSimulator.persistence_route(
+            "github", selected_skill_available=False
+        )
+        self.assertEqual("manage-github-work-items", unavailable.management_skill)
+        self.assertEqual("BLOCKED", unavailable.status)
+        self.assertTrue(unavailable.zero_mutation)
+
     def test_claim_retry_window_is_bounded_to_thirty_minutes(self) -> None:
         """Record one immediate attempt and six five-minute retries in the work item."""
 
-        case = _fixture_cases()["bounded-integration-retry-and-closeout"]
+        case = _fixture_cases()["selected-commit-retry-and-closeout"]
         item = WorkItem("integration", "Running")
         simulator = CoordinationSimulator((item,))
 
@@ -192,7 +227,7 @@ class CoordinationSimulatorTests(unittest.TestCase):
 
         common = {
             "parent_task_id": "parent-123",
-            "backlog_path": "backlog/feature-backlog/example.md",
+            "provider_reference": "https://provider.example/items/42",
             "normalized_objective": "deliver example",
         }
         canonical = TaskCandidate(

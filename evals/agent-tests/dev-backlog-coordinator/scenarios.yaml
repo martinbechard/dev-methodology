@@ -2,45 +2,59 @@ schema: dev-methodology-agent-suite-scenarios
 version: 1
 suite: dev-backlog-coordinator
 scenarios:
-  - id: file-backed-ten-item-dispatch
+  - id: provider-selected-ten-item-dispatch
     priority: 1
     status: executable
     executableCase: fixtures/cases.yaml
-    purpose: Restore ten Running work items from file-backed status without a separate registry.
-    initialState: Seven items are Running, five are Ready, and non-running queues contain blocked and decision-owned work.
+    purpose: Restore ten Running items from a selected durable provider without a separate registry.
+    initialState: The effective manager returns seven Running items, five Ready items, and blocked or decision-owned work.
     task: Reconcile canonical tasks and dispatch exactly enough eligible work to restore ten Running items.
     targetSkills: [structured-explanation, codex-workitem-coordination]
     allowedAgentDependencies: [dev-orchestrator, dev-backlog-steward]
-    requiredBehaviors: [Identify as Dev Backlog Coordinator, Count Running from work-item files, Dispatch three Ready items, Persist one canonical task id in each started item, Avoid placeholder and wait-only tasks]
-    forbiddenBehaviors: [Create a separate task ledger, Count Blocked or User Action Required as Running, Dispatch more than ten, Match a task by title alone]
-    deterministicChecks: [harness-agent-identity, suite-simulator-tests, task-identity-fields, file-backed-workitem-ownership, running-capacity-refill, output-contract-presence]
-    expectedOutputs: [status, file-backed queue snapshot, dispatch and capacity outcome, stalled integration actions, completed item cleanup, fifteen-minute throughput summary]
+    requiredBehaviors: [Identify as Dev Backlog Coordinator, Count Running from the effective manager, Dispatch three Ready items, Delegate each Running transition to Dev Backlog Steward, Persist one canonical task id in each selected provider record, Avoid placeholder and wait-only tasks]
+    forbiddenBehaviors: [Create a separate task ledger, Count Blocked or User Action Required as Running, Dispatch more than ten, Match a task by title alone, Read or create a shadow provider record]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, task-identity-fields, provider-selected-workitem-ownership, running-capacity-refill, output-contract-presence]
+    expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
     expectedTerminalStatus: PASS
-  - id: bounded-integration-retry-and-closeout
+  - id: selected-commit-retry-and-closeout
     priority: 2
     status: executable
     executableCase: fixtures/cases.yaml
-    purpose: Recover an unavailable integration claim within a bounded window and complete direct delivery.
-    initialState: One reviewed candidate is Running and its exact main integration claim is unavailable.
-    task: Record the bounded retries, investigate at thirty minutes, recover safely, and require complete integration, test, backlog, and cleanup evidence.
+    purpose: Recover an unavailable delivery resource and complete through the effective Commit skill.
+    initialState: One reviewed candidate is Running and a resource required by its selected completion skill is unavailable.
+    task: Record bounded retries, investigate at thirty minutes, recover safely, and require selected-Commit, provider-completion, test, and cleanup evidence.
     targetSkills: [structured-explanation, codex-workitem-coordination, agent-claim]
     allowedAgentDependencies: [dev-orchestrator, dev-backlog-steward]
-    requiredBehaviors: [Attempt immediately, Retry every five minutes through thirty minutes, Record attempts in the work item, Investigate the blocking owner at thirty minutes, Keep direct integration with Dev Orchestrator, Run focused tests, Require separate work-item completion claim, Remove clean worktree, Safely delete merged branch]
-    forbiddenBehaviors: [Create a waiting task, Poll more frequently, Steal active unpreserved work, Run the complete agent catalog for one item, Report Done before cleanup evidence]
-    deterministicChecks: [harness-agent-identity, suite-simulator-tests, claim-lifecycle, bounded-claim-retry, direct-orchestrator-integration, focused-item-verification, workitem-completion-handoff, done-success-title, output-contract-presence]
-    expectedOutputs: [status, file-backed queue snapshot, dispatch and capacity outcome, stalled integration actions, completed item cleanup, fifteen-minute throughput summary]
+    requiredBehaviors: [Attempt immediately, Retry every five minutes through thirty minutes, Record attempts in the selected provider record, Investigate the blocking owner at thirty minutes, Route delivery through Dev Orchestrator with the effective Commit-selected skill, Run focused tests, Require Persistence completion only after Commit READY, Remove clean worktree, Safely delete merged branch]
+    forbiddenBehaviors: [Create a waiting task, Poll more frequently, Steal active unpreserved work, Reproduce the selected completion procedure, Run the complete agent catalog for one item, Report Done before provider completion and cleanup evidence]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, claim-lifecycle, bounded-claim-retry, selected-commit-routing, focused-item-verification, workitem-completion-handoff, done-success-title, output-contract-presence]
+    expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
     expectedTerminalStatus: PASS
   - id: ambiguous-dispatch-and-user-decision-integrity
     priority: 3
     status: executable
     executableCase: fixtures/cases.yaml
-    purpose: Contain a delayed duplicate while preserving one canonical task and one resolved user answer.
+    purpose: Contain a delayed duplicate while preserving one provider identity and one resolved user answer.
     initialState: A creation response timed out, the immediate list is empty, two matches become visible after settlement, and the user already resolved one decision.
     task: Adopt one canonical task, contain the duplicate, and preserve the decision without treating it as delivery.
     targetSkills: [structured-explanation, codex-workitem-coordination]
     allowedAgentDependencies: [dev-orchestrator, dev-backlog-steward]
-    requiredBehaviors: [Wait one bounded settlement interval, Reconcile active and archived tasks, Retry no more than once, Persist one canonical task id in the work item, Stop verify and archive duplicates before mutation, Record the exact user answer once]
+    requiredBehaviors: [Wait one bounded settlement interval, Reconcile active and archived tasks, Retry no more than once, Persist one canonical task id through the effective manager, Stop verify and archive duplicates before mutation, Record the exact user answer once]
     forbiddenBehaviors: [Infer absence from one immediate read, Match by title alone, Create a separate registry, Ask the resolved question again, Treat approval as completion]
-    deterministicChecks: [harness-agent-identity, suite-simulator-tests, delayed-visibility-settlement, settled-zero-retry, retry-limit, duplicate-containment, file-backed-workitem-ownership, workitem-completion-handoff, output-contract-presence]
-    expectedOutputs: [status, file-backed queue snapshot, dispatch and capacity outcome, stalled integration actions, completed item cleanup, fifteen-minute throughput summary]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, delayed-visibility-settlement, settled-zero-retry, retry-limit, duplicate-containment, provider-selected-workitem-ownership, workitem-completion-handoff, output-contract-presence]
+    expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
+    expectedTerminalStatus: BLOCKED
+  - id: provider-selector-boundaries
+    priority: 4
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Preserve provider-specific identities, placeholder failures, provider none, and UNSET without fallback.
+    initialState: The request matrix selects file, GitHub, GitLab, Azure DevOps, Jira, none, UNSET, and one unavailable selected manager.
+    task: Route each inventory boundary through the effective Persistence manager and report its exact supported or blocked result.
+    targetSkills: [structured-explanation, codex-workitem-coordination]
+    allowedAgentDependencies: [dev-backlog-steward]
+    requiredBehaviors: [Use the file manager for backlog paths, Use GitHub issue identities, Use GitLab issue identities, Preserve Azure DevOps and Jira placeholder BLOCKED results, Coordinate provider none without durable inventory, Stop at UNSET, Stop when the selected manager is unavailable]
+    forbiddenBehaviors: [Create shadow files for GitHub or GitLab, Translate GitLab records into GitHub terminology, Fall back from a placeholder, Invent a provider-none queue, Infer UNSET from repository or hosting evidence]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, provider-selected-workitem-ownership, provider-selector-routing, output-contract-presence]
+    expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
     expectedTerminalStatus: BLOCKED

@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Simulates file-backed queue capacity, bounded claim retries, and terminal cleanup.
+# Summary: Simulates provider-selected capacity, bounded claim retries, and terminal cleanup.
 # Test plan: evals/agent-tests/dev-backlog-coordinator/requirements-matrix.md
 
 """Provide deterministic state transitions for parent backlog coordination."""
@@ -18,11 +18,19 @@ CLAIM_KINDS = ("integration", "completion")
 SHARED_CLAIM_OPERATIONS = frozenset(
     {"main integration", "backlog mutation", "generated output", "exclusive resource"}
 )
+PERSISTENCE_MANAGERS = {
+    "file": "manage-file-work-items",
+    "github": "manage-github-work-items",
+    "gitlab": "manage-gitlab-work-items",
+    "azure-devops": "manage-azure-devops-work-items",
+    "jira": "manage-jira-work-items",
+}
+PLACEHOLDER_PROVIDERS = frozenset({"azure-devops", "jira"})
 
 
 @dataclass
 class WorkItem:
-    """Represent the durable execution fields stored in one work-item file.
+    """Represent execution fields returned by a selected provider manager.
 
     Example:
         item = WorkItem("feature-a", "Ready")
@@ -47,13 +55,13 @@ class TaskCandidate:
     """Represent one task candidate during ambiguous-dispatch reconciliation.
 
     Example:
-        candidate = TaskCandidate("task-1", "parent", "backlog/a.md", "a", datetime.now())
+        candidate = TaskCandidate("task-1", "parent", "provider:a", "a", datetime.now())
         assert not candidate.archived
     """
 
     task_id: str
     parent_task_id: str
-    backlog_path: str
+    provider_reference: str
     normalized_objective: str
     created_at: datetime
     repository_mutation_count: int = 0
@@ -80,6 +88,17 @@ class DispatchReconciliation:
     canonical_task_id: str
     contained_duplicates: tuple[TaskCandidate, ...]
     retry_count: int
+
+
+@dataclass(frozen=True)
+class PersistenceRoute:
+    """Describe the observable result of resolving one Persistence selector."""
+
+    provider: str
+    management_skill: str | None
+    durable_inventory: bool
+    status: str
+    zero_mutation: bool
 
 
 @dataclass(frozen=True)
@@ -145,13 +164,13 @@ class CoordinationSimulator:
     """Simulate observable parent scheduling and recovery decisions."""
 
     def __init__(self, items: Sequence[WorkItem]) -> None:
-        """Initialize from file-backed work items without a second registry."""
+        """Initialize from provider-returned work items without a second registry."""
 
         self.items = list(items)
         self.events: list[dict[str, object]] = []
 
     def running_count(self) -> int:
-        """Count only file-backed Running work items."""
+        """Count only provider-returned Running work items."""
 
         return sum(item.status == "Running" for item in self.items)
 
@@ -178,6 +197,32 @@ class CoordinationSimulator:
             }
         )
         return tuple(started)
+
+    @staticmethod
+    def persistence_route(
+        provider: str,
+        *,
+        selected_skill_available: bool = True,
+    ) -> PersistenceRoute:
+        """Resolve provider inventory without inferring or falling back to another provider."""
+
+        normalized = provider.strip().lower()
+        if normalized == "none":
+            return PersistenceRoute(normalized, None, False, "READY", True)
+        if normalized == "unset":
+            return PersistenceRoute(normalized, None, False, "BLOCKED", True)
+        if normalized not in PERSISTENCE_MANAGERS:
+            raise ValueError(f"unsupported provider: {provider}")
+        management_skill = PERSISTENCE_MANAGERS[normalized]
+        if not selected_skill_available or normalized in PLACEHOLDER_PROVIDERS:
+            return PersistenceRoute(
+                normalized,
+                management_skill,
+                False,
+                "BLOCKED",
+                True,
+            )
+        return PersistenceRoute(normalized, management_skill, True, "READY", False)
 
     def record_claim_attempt(
         self,
@@ -313,7 +358,7 @@ class CoordinationSimulator:
         return selected
 
     def _item(self, item_id: str) -> WorkItem:
-        """Resolve one item by its durable file-backed identifier."""
+        """Resolve one item by its provider-returned canonical identifier."""
 
         try:
             return next(item for item in self.items if item.item_id == item_id)

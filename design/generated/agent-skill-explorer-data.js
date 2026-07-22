@@ -367,7 +367,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "agent-claim"
     },
     {
-      "condition": "when Codex user-visible tasks coordinate multiple backlog work items",
+      "condition": "when Codex user-visible tasks coordinate multiple work items",
       "kind": "conditional",
       "role": "dev-backlog-coordinator",
       "skill": "codex-workitem-coordination"
@@ -4246,7 +4246,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "conditionalSkills": {
         "agent-claim": "when parent recovery or cleanup mutates a repository-global resource",
-        "codex-workitem-coordination": "when Codex user-visible tasks coordinate multiple backlog work items"
+        "codex-workitem-coordination": "when Codex user-visible tasks coordinate multiple work items"
       },
       "coverage": {
         "caseBacked": false,
@@ -4286,7 +4286,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [],
-      "description": "Acts as the parent backlog coordinator for a file-backed work-item queue, sustaining ten Running items, recovering stalled integration, and cleaning up terminal tasks without taking over per-item delivery.",
+      "description": "Acts as the parent backlog coordinator across the effective work-item provider, sustaining ten Running items when durable inventory exists, recovering stalled delivery, and cleaning up terminal tasks without taking over provider lifecycle or per-item delivery.",
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
