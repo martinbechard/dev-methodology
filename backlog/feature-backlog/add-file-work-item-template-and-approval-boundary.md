@@ -17,7 +17,7 @@ Completion: direct-main
 - Canonical task: 019f8b05-29c8-7a82-b962-1a12d0c9564f
 - Parent task: 019f8b00-e6d7-7841-854a-40a50ca4e7f2
 - Worktree: /Users/martinbechard/.codex/worktrees/6e5b/dev-methodology
-- Branch: codex/file-work-item-template-structural-correction
+- Branch: codex/file-work-item-template-resume-20260722
 - Starting main: 1219af1d14871630b2b4973dc6584cb7c03e8821
 - Phase: Implementing a fresh current-main correction for the exact structural verifier and governed-fixture defects recorded in the Unblock Condition.
 - Started: 2026-07-22.
