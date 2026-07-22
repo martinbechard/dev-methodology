@@ -417,7 +417,17 @@ class InstallSkillsTests(unittest.TestCase):
             self.create_skill(source, "alpha")
             project.mkdir()
             config_path.parent.mkdir()
-            original = '[mcp_servers.mcp-agent-ops]\ncommand = "/installed/server"\n'
+            skills_destination = (project / ".agents/skills").resolve()
+            detection_registry = (
+                skills_destination / installer.MCP_DETECTION_REGISTRY_RELATIVE_PATH
+            ).resolve()
+            original = (
+                '[mcp_servers.mcp-agent-ops]\ncommand = "/installed/server"\n\n'
+                '[mcp_servers.mcp-agent-ops.env]\n'
+                f'MCP_AGENT_OPS_SKILL_ROOTS = "{skills_destination}"\n'
+                f'MCP_AGENT_OPS_DETECTION_REGISTRY = "{detection_registry}"\n'
+                f'MCP_AGENT_OPS_WORKSPACE_ROOTS = "{project.resolve()}"\n'
+            )
             config_path.write_text(original, encoding="utf-8")
 
             with (
@@ -439,6 +449,81 @@ class InstallSkillsTests(unittest.TestCase):
             self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
             self.assertEqual(original, config_path.read_text(encoding="utf-8"))
             self.assertFalse(config_path.with_suffix(".toml.bak").exists())
+            self.assertFalse(config_path.with_name("config.mcp-agent-ops.toml").exists())
+
+    def test_codex_project_root_reconciles_stale_mcp_identity_through_candidate(
+        self,
+    ) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            project = root / "selected-project"
+            source = root / "source"
+            config_path = project / ".codex/config.toml"
+            self.create_skill(source, "alpha")
+            project.mkdir()
+            config_path.parent.mkdir()
+            original = (
+                '[mcp_servers.github]\ncommand = "github-mcp"\n\n'
+                '[mcp_servers.mcp-agent-ops-helper]\ncommand = "helper-mcp"\n\n'
+                '[mcp_servers.mcp-agent-ops]\ncommand = "/installed/server"\n\n'
+                '[mcp_servers.mcp-agent-ops.env]\n'
+                'MCP_AGENT_OPS_SKILL_ROOTS = "/stale/.agents/skills"\n'
+                'MCP_AGENT_OPS_DETECTION_REGISTRY = "/stale/registry.yaml"\n'
+                'MCP_AGENT_OPS_WORKSPACE_ROOTS = "/stale"\n'
+            )
+            config_path.write_text(original, encoding="utf-8")
+
+            with (
+                patch.object(installer.shutil, "which", return_value=None),
+                patch.object(installer.sys.stdin, "isatty", return_value=True),
+                patch("builtins.input", return_value="y"),
+                redirect_stdout(io.StringIO()),
+            ):
+                exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(source),
+                        "--scope",
+                        "project",
+                        "--project-root",
+                        str(project),
+                    ]
+                )
+
+            skills_destination = project / ".agents/skills"
+            detection_registry = (
+                skills_destination / installer.MCP_DETECTION_REGISTRY_RELATIVE_PATH
+            ).resolve()
+            active = config_path.read_text(encoding="utf-8")
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            self.assertEqual(
+                original,
+                config_path.with_suffix(".toml.bak").read_text(encoding="utf-8"),
+            )
+            self.assertIn('[mcp_servers.github]\ncommand = "github-mcp"', active)
+            self.assertIn(
+                '[mcp_servers.mcp-agent-ops-helper]\ncommand = "helper-mcp"',
+                active,
+            )
+            self.assertEqual(1, active.count("[mcp_servers.mcp-agent-ops]"))
+            self.assertIn('command = "/installed/server"', active)
+            self.assertIn(
+                f'MCP_AGENT_OPS_SKILL_ROOTS = "{skills_destination.resolve()}"',
+                active,
+            )
+            self.assertIn(
+                f'MCP_AGENT_OPS_DETECTION_REGISTRY = "{detection_registry}"',
+                active,
+            )
+            self.assertIn(
+                f'MCP_AGENT_OPS_WORKSPACE_ROOTS = "{project.resolve()}"',
+                active,
+            )
+            self.assertFalse(config_path.with_name("config.mcp-agent-ops.toml").exists())
 
     def test_codex_deployment_preserves_other_servers_until_candidate_is_accepted(self) -> None:
         installer = load_installer()
@@ -560,6 +645,85 @@ class InstallSkillsTests(unittest.TestCase):
                 '{"mcpServers": {}}\n',
                 config_path.with_suffix(".json.bak").read_text(encoding="utf-8"),
             )
+
+    def test_junie_project_root_reconciles_stale_mcp_identity_through_candidate(
+        self,
+    ) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            project = root / "selected-project"
+            source = root / "source"
+            config_path = project / ".junie/mcp.json"
+            self.create_skill(source, "alpha")
+            project.mkdir()
+            config_path.parent.mkdir()
+            original_configuration = {
+                "mcpServers": {
+                    "github": {"command": "github-mcp"},
+                    "mcp-agent-ops": {
+                        "command": "/installed/server",
+                        "args": [],
+                        "env": {
+                            "MCP_AGENT_OPS_SKILL_ROOTS": "/stale/.junie/skills",
+                            "MCP_AGENT_OPS_DETECTION_REGISTRY": "/stale/registry.yaml",
+                            "MCP_AGENT_OPS_WORKSPACE_ROOTS": "/stale",
+                        },
+                    },
+                }
+            }
+            original = json.dumps(original_configuration, indent=2) + "\n"
+            config_path.write_text(original, encoding="utf-8")
+
+            with (
+                patch.object(installer.shutil, "which", return_value=None),
+                patch.object(installer.sys.stdin, "isatty", return_value=True),
+                patch("builtins.input", return_value="y"),
+                redirect_stdout(io.StringIO()),
+            ):
+                exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "junie",
+                        "--source",
+                        str(source),
+                        "--scope",
+                        "project",
+                        "--project-root",
+                        str(project),
+                    ]
+                )
+
+            skills_destination = project / ".junie/skills"
+            detection_registry = (
+                skills_destination / installer.MCP_DETECTION_REGISTRY_RELATIVE_PATH
+            ).resolve()
+            active = json.loads(config_path.read_text(encoding="utf-8"))
+            server = active["mcpServers"]["mcp-agent-ops"]
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            self.assertEqual(
+                original,
+                config_path.with_suffix(".json.bak").read_text(encoding="utf-8"),
+            )
+            self.assertEqual(
+                {"command": "github-mcp"},
+                active["mcpServers"]["github"],
+            )
+            self.assertEqual("/installed/server", server["command"])
+            self.assertEqual(
+                str(skills_destination.resolve()),
+                server["env"]["MCP_AGENT_OPS_SKILL_ROOTS"],
+            )
+            self.assertEqual(
+                str(detection_registry),
+                server["env"]["MCP_AGENT_OPS_DETECTION_REGISTRY"],
+            )
+            self.assertEqual(
+                str(project.resolve()),
+                server["env"]["MCP_AGENT_OPS_WORKSPACE_ROOTS"],
+            )
+            self.assertFalse(config_path.with_name("mcp-agent-ops.json").exists())
 
     def test_explicit_destinations_override_scope_defaults_in_main(self) -> None:
         installer = load_installer()
@@ -688,10 +852,17 @@ class InstallSkillsTests(unittest.TestCase):
         self.assertEqual(0, raised.exception.code)
         self.assertIn("--project-root PROJECT_ROOT", help_output.getvalue())
         self.assertIn("Existing project directory used by --scope project", help_output.getvalue())
+        self.assertIn("Overrides the scoped default", help_output.getvalue())
+        self.assertNotIn("deployments without --scope", help_output.getvalue())
+        self.assertIn("one or more values replace the scoped project", help_output.getvalue())
         readme = README_PATH.read_text(encoding="utf-8")
         self.assertIn("--project-root /absolute/path/to/another-project", readme)
         self.assertIn(
             "Relative project roots are resolved from the invocation directory.",
+            readme,
+        )
+        self.assertIn(
+            "explicit --mcp-workspace-root values replace that default workspace-root set",
             readme,
         )
 
@@ -926,6 +1097,123 @@ class InstallSkillsTests(unittest.TestCase):
                 "not a directory",
                 file_project.read_text(encoding="utf-8"),
             )
+
+    def test_project_default_destinations_reject_symlink_escape_before_manifest_read(
+        self,
+    ) -> None:
+        installer = load_installer()
+
+        cases = (
+            ("skill", "generic", ".agents", False),
+            ("agent", "codex", ".codex", True),
+        )
+        for destination_kind, adapter_name, linked_parent, install_agents in cases:
+            with (
+                self.subTest(destination_kind=destination_kind),
+                tempfile.TemporaryDirectory() as temp_dir,
+            ):
+                root = Path(temp_dir)
+                project = root / "selected-project"
+                outside = root / "outside"
+                source = root / "source"
+                project.mkdir()
+                outside.mkdir()
+                self.create_skill(source, "alpha")
+                (project / linked_parent).symlink_to(outside, target_is_directory=True)
+                arguments = [
+                    "--adapter",
+                    adapter_name,
+                    "--source",
+                    str(source),
+                    "--scope",
+                    "project",
+                    "--project-root",
+                    str(project),
+                    "--configure-mcp",
+                    "false",
+                ]
+                if install_agents:
+                    agents_source = root / "agents-source"
+                    agents_source.mkdir()
+                    (agents_source / "reviewer.toml").write_text(
+                        AGENT_FILE_CONTENT,
+                        encoding="utf-8",
+                    )
+                    arguments.extend(
+                        [
+                            "--install-agents",
+                            "--agents-source",
+                            str(agents_source),
+                        ]
+                    )
+
+                error_output = io.StringIO()
+                with (
+                    patch.object(
+                        installer,
+                        "load_install_manifest",
+                        side_effect=AssertionError("manifest read before containment check"),
+                    ),
+                    redirect_stdout(io.StringIO()),
+                    redirect_stderr(error_output),
+                ):
+                    exit_code = installer.main(arguments)
+
+                self.assertEqual(installer.ERROR_EXIT_CODE, exit_code)
+                self.assertIn(
+                    f"project-scoped default {destination_kind} destination escapes project root",
+                    error_output.getvalue(),
+                )
+                self.assertEqual([], list(outside.iterdir()))
+
+    def test_project_default_mcp_config_rejects_symlink_escape_before_read(self) -> None:
+        installer = load_installer()
+
+        for adapter_name, config_relative_path in installer.MCP_CONFIG_FILE_NAMES.items():
+            with self.subTest(adapter=adapter_name), tempfile.TemporaryDirectory() as temp_dir:
+                root = Path(temp_dir)
+                project = root / "selected-project"
+                outside_config = root / f"outside-{adapter_name}-config"
+                source = root / "source"
+                project.mkdir()
+                self.create_skill(source, "alpha")
+                config_path = project / config_relative_path
+                config_path.parent.mkdir()
+                outside_config.write_text("invalid managed config", encoding="utf-8")
+                config_path.symlink_to(outside_config)
+
+                error_output = io.StringIO()
+                with redirect_stdout(io.StringIO()), redirect_stderr(error_output):
+                    exit_code = installer.main(
+                        [
+                            "--adapter",
+                            adapter_name,
+                            "--source",
+                            str(source),
+                            "--scope",
+                            "project",
+                            "--project-root",
+                            str(project),
+                        ]
+                    )
+
+                self.assertEqual(installer.ERROR_EXIT_CODE, exit_code)
+                self.assertIn(
+                    "project-scoped default MCP config path escapes project root",
+                    error_output.getvalue(),
+                )
+                skills_destination, _ = installer.default_destinations(
+                    installer.ADAPTERS[adapter_name],
+                    "project",
+                    project_root=project,
+                )
+                self.assertFalse(
+                    (skills_destination / installer.INSTALL_MANIFEST_FILE_NAME).exists()
+                )
+                self.assertEqual(
+                    "invalid managed config",
+                    outside_config.read_text(encoding="utf-8"),
+                )
 
     def test_project_root_preserves_explicit_destination_precedence(self) -> None:
         installer = load_installer()

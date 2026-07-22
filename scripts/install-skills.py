@@ -273,7 +273,10 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
         "--mcp-config",
         type=Path,
         default=None,
-        help="Explicit Codex config.toml or Junie mcp.json path for deployments without --scope.",
+        help=(
+            "Explicit Codex config.toml or Junie mcp.json path. "
+            "Overrides the scoped default."
+        ),
     )
     parser.add_argument(
         "--mcp-agent-ops-executable",
@@ -287,8 +290,8 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
         type=Path,
         default=None,
         help=(
-            "Allowed MCP workspace root. Repeat for multiple roots; defaults to the scoped "
-            "project or current directory."
+            "Allowed MCP workspace root. Repeat for every desired root; one or more values "
+            "replace the scoped project or current-directory default."
         ),
     )
     args = parser.parse_args(argv)
@@ -327,6 +330,20 @@ def _resolve_project_root(
     if not requested_root.is_dir():
         raise ValueError(f"project root must be a directory: {requested_root}")
     return requested_root.resolve()
+
+
+def _resolve_project_default_path(
+    project_root: Path,
+    path: Path,
+    path_description: str,
+) -> Path:
+    resolved_path = path.expanduser().resolve()
+    if resolved_path != project_root and project_root not in resolved_path.parents:
+        raise ValueError(
+            f"project-scoped default {path_description} escapes project root: "
+            f"{resolved_path} is not within {project_root}"
+        )
+    return resolved_path
 
 
 def default_destinations(
@@ -375,7 +392,14 @@ def _mcp_config_path(
         base = project_root
     else:
         return None
-    return (base / MCP_CONFIG_FILE_NAMES[adapter_name]).resolve()
+    config_path = base / MCP_CONFIG_FILE_NAMES[adapter_name]
+    if scope == PROJECT_SCOPE:
+        return _resolve_project_default_path(
+            project_root,
+            config_path,
+            "MCP config path",
+        )
+    return config_path.resolve()
 
 
 def _mcp_executable_path(explicit_path: Path | None) -> str:
@@ -416,18 +440,27 @@ def _toml_string(value: str) -> str:
     return json.dumps(value, ensure_ascii=False)
 
 
+def _mcp_environment(
+    skills_destination: Path,
+    workspace_roots: Sequence[Path],
+) -> dict[str, str]:
+    return {
+        "MCP_AGENT_OPS_SKILL_ROOTS": str(skills_destination.resolve()),
+        "MCP_AGENT_OPS_DETECTION_REGISTRY": str(
+            (skills_destination / MCP_DETECTION_REGISTRY_RELATIVE_PATH).resolve()
+        ),
+        "MCP_AGENT_OPS_WORKSPACE_ROOTS": os.pathsep.join(
+            str(path) for path in workspace_roots
+        ),
+    }
+
+
 def _codex_mcp_server_block(
     executable: str,
     skills_destination: Path,
     workspace_roots: Sequence[Path],
 ) -> str:
-    environment = {
-        "MCP_AGENT_OPS_SKILL_ROOTS": str(skills_destination.resolve()),
-        "MCP_AGENT_OPS_DETECTION_REGISTRY": str(
-            (skills_destination / MCP_DETECTION_REGISTRY_RELATIVE_PATH).resolve()
-        ),
-        "MCP_AGENT_OPS_WORKSPACE_ROOTS": os.pathsep.join(str(path) for path in workspace_roots),
-    }
+    environment = _mcp_environment(skills_destination, workspace_roots)
     lines = [
         f"[mcp_servers.{MCP_AGENT_OPS_SERVER_NAME}]",
         "enabled = true",
@@ -463,6 +496,91 @@ def _codex_server_names(content: str) -> set[str]:
     }
 
 
+def _codex_mcp_agent_ops_table_kind(header: str) -> str | None:
+    target_pattern = re.compile(
+        rf"^\s*mcp_servers\s*\.\s*"
+        rf"(?:{re.escape(MCP_AGENT_OPS_SERVER_NAME)}|"
+        rf'"{re.escape(MCP_AGENT_OPS_SERVER_NAME)}"|'
+        rf"'{re.escape(MCP_AGENT_OPS_SERVER_NAME)}')"
+        rf"(?P<suffix>\s*(?:\.\s*.+)?)\s*$"
+    )
+    match = target_pattern.fullmatch(header)
+    if match is None:
+        return None
+    suffix = match.group("suffix")
+    if not suffix.strip():
+        return "server"
+    if re.fullmatch(r"\s*\.\s*(?:env|\"env\"|'env')\s*", suffix):
+        return "env"
+    return "owned"
+
+
+def _codex_mcp_agent_ops_table_blocks(
+    content: str,
+) -> list[tuple[str, int, int, str]]:
+    header_pattern = re.compile(
+        r"(?m)^[ \t]*\[(?P<header>[^\]\r\n]+)\][^\r\n]*(?:\r?\n|$)"
+    )
+    headers = list(header_pattern.finditer(content))
+    blocks: list[tuple[str, int, int, str]] = []
+    for index, header in enumerate(headers):
+        kind = _codex_mcp_agent_ops_table_kind(header.group("header"))
+        if kind is None:
+            continue
+        end = headers[index + 1].start() if index + 1 < len(headers) else len(content)
+        blocks.append((kind, header.start(), end, content[header.end() : end]))
+    return blocks
+
+
+def _codex_string_assignment(content: str, key: str) -> str | None:
+    assignment_pattern = re.compile(
+        rf"(?m)^\s*{re.escape(key)}\s*=\s*"
+        r"(?P<value>\"(?:\\.|[^\"\\])*\"|'[^']*')\s*(?:#.*)?$"
+    )
+    match = assignment_pattern.search(content)
+    if match is None:
+        return None
+    value = match.group("value")
+    if value.startswith('"'):
+        try:
+            decoded = json.loads(value)
+        except json.JSONDecodeError:
+            return None
+        return decoded if isinstance(decoded, str) else None
+    return value[1:-1]
+
+
+def _codex_mcp_agent_ops_settings(content: str) -> tuple[str | None, dict[str, str]]:
+    command = None
+    environment: dict[str, str] = {}
+    for kind, _, _, block in _codex_mcp_agent_ops_table_blocks(content):
+        if kind == "server":
+            command = _codex_string_assignment(block, "command")
+        elif kind == "env":
+            for key in (
+                "MCP_AGENT_OPS_SKILL_ROOTS",
+                "MCP_AGENT_OPS_DETECTION_REGISTRY",
+                "MCP_AGENT_OPS_WORKSPACE_ROOTS",
+            ):
+                value = _codex_string_assignment(block, key)
+                if value is not None:
+                    environment[key] = value
+    return command, environment
+
+
+def _remove_codex_mcp_agent_ops_tables(content: str) -> str:
+    blocks = _codex_mcp_agent_ops_table_blocks(content)
+    if not blocks:
+        return content
+    pieces: list[str] = []
+    position = 0
+    for _, start, end, _ in blocks:
+        pieces.append(content[position:start])
+        position = end
+    pieces.append(content[position:])
+    return "".join(pieces).rstrip()
+
+
 def _render_codex_mcp_config(
     active_content: str,
     executable: str,
@@ -470,11 +588,10 @@ def _render_codex_mcp_config(
     workspace_roots: Sequence[Path],
 ) -> tuple[str, set[str]]:
     server_names = _codex_server_names(active_content)
-    if MCP_AGENT_OPS_SERVER_NAME in server_names:
-        return active_content, server_names
-    separator = "" if not active_content or active_content.endswith("\n\n") else "\n"
+    remaining_content = _remove_codex_mcp_agent_ops_tables(active_content)
+    separator = "\n\n" if remaining_content else ""
     return (
-        active_content
+        remaining_content
         + separator
         + _codex_mcp_server_block(executable, skills_destination, workspace_roots),
         server_names,
@@ -500,20 +617,11 @@ def _render_junie_mcp_config(
     if not isinstance(servers, dict):
         raise ValueError("Junie mcpServers must contain a JSON object")
     server_names = set(servers)
-    if MCP_AGENT_OPS_SERVER_NAME not in servers:
-        servers[MCP_AGENT_OPS_SERVER_NAME] = {
-            "command": executable,
-            "args": [],
-            "env": {
-                "MCP_AGENT_OPS_SKILL_ROOTS": str(skills_destination.resolve()),
-                "MCP_AGENT_OPS_DETECTION_REGISTRY": str(
-                    (skills_destination / MCP_DETECTION_REGISTRY_RELATIVE_PATH).resolve()
-                ),
-                "MCP_AGENT_OPS_WORKSPACE_ROOTS": os.pathsep.join(
-                    str(path) for path in workspace_roots
-                ),
-            },
-        }
+    servers[MCP_AGENT_OPS_SERVER_NAME] = {
+        "command": executable,
+        "args": [],
+        "env": _mcp_environment(skills_destination, workspace_roots),
+    }
     return json.dumps(configuration, indent=2, ensure_ascii=False) + "\n", server_names
 
 
@@ -530,6 +638,30 @@ def _junie_server_names(active_content: str) -> set[str]:
     if not isinstance(servers, dict):
         raise ValueError("Junie mcpServers must contain a JSON object")
     return set(servers)
+
+
+def _junie_mcp_agent_ops_settings(content: str) -> tuple[str | None, dict[str, str]]:
+    configuration = json.loads(content) if content else {}
+    if not isinstance(configuration, dict):
+        return None, {}
+    servers = configuration.get("mcpServers", {})
+    if not isinstance(servers, dict):
+        return None, {}
+    server = servers.get(MCP_AGENT_OPS_SERVER_NAME)
+    if not isinstance(server, dict):
+        return None, {}
+    command = server.get("command")
+    environment = server.get("env", {})
+    return (
+        command if isinstance(command, str) and command else None,
+        {
+            key: value
+            for key, value in environment.items()
+            if isinstance(key, str) and isinstance(value, str)
+        }
+        if isinstance(environment, dict)
+        else {},
+    )
 
 
 def _prepare_mcp_config(
@@ -562,7 +694,8 @@ def _prepare_mcp_config(
         else _junie_server_names(active_content)
     )
     candidate_path = active_path.with_name(MCP_CONFIG_CANDIDATE_FILE_NAMES[adapter.name])
-    if MCP_AGENT_OPS_SERVER_NAME in server_names:
+    target_is_configured = MCP_AGENT_OPS_SERVER_NAME in server_names
+    if target_is_configured and scope != PROJECT_SCOPE:
         return _McpConfigPlan(
             active_path=active_path,
             candidate_path=candidate_path,
@@ -572,12 +705,43 @@ def _prepare_mcp_config(
             configured_server_count=len(server_names),
             target_already_configured=True,
         )
-    executable = _mcp_executable_path(executable_path)
     workspace_roots = _mcp_workspace_roots(
         scope,
         configured_workspace_roots,
         project_root,
     )
+    expected_environment = _mcp_environment(skills_destination, workspace_roots)
+    if adapter.name == CODEX_ADAPTER_NAME:
+        current_command, current_environment = _codex_mcp_agent_ops_settings(
+            active_content
+        )
+    else:
+        current_command, current_environment = _junie_mcp_agent_ops_settings(
+            active_content
+        )
+    executable = (
+        _mcp_executable_path(executable_path)
+        if executable_path is not None or current_command is None
+        else current_command
+    )
+    target_matches = (
+        target_is_configured
+        and current_command == executable
+        and all(
+            current_environment.get(key) == value
+            for key, value in expected_environment.items()
+        )
+    )
+    if target_matches:
+        return _McpConfigPlan(
+            active_path=active_path,
+            candidate_path=candidate_path,
+            backup_path=active_path.with_suffix(active_path.suffix + ".bak"),
+            rendered_content=active_content,
+            active_exists=active_path.exists(),
+            configured_server_count=len(server_names),
+            target_already_configured=True,
+        )
     if adapter.name == CODEX_ADAPTER_NAME:
         rendered, server_names = _render_codex_mcp_config(
             active_content,
@@ -599,7 +763,7 @@ def _prepare_mcp_config(
         rendered_content=rendered,
         active_exists=active_path.exists(),
         configured_server_count=len(server_names),
-        target_already_configured=MCP_AGENT_OPS_SERVER_NAME in server_names,
+        target_already_configured=False,
     )
 
 
@@ -1771,6 +1935,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     mcp_config_plan: _McpConfigPlan | None = None
     try:
         project_root = _resolve_project_root(args.scope, args.project_root)
+        uses_default_destination = destination is None
+        uses_default_agents_destination = agents_destination is None
         if args.scope is not None:
             scoped_destination, scoped_agents_destination = default_destinations(
                 adapter,
@@ -1781,6 +1947,19 @@ def main(argv: Sequence[str] | None = None) -> int:
                 destination = scoped_destination
             if agents_destination is None:
                 agents_destination = scoped_agents_destination
+        if project_root is not None:
+            if uses_default_destination and destination is not None:
+                destination = _resolve_project_default_path(
+                    project_root,
+                    destination,
+                    "skill destination",
+                )
+            if uses_default_agents_destination and agents_destination is not None:
+                agents_destination = _resolve_project_default_path(
+                    project_root,
+                    agents_destination,
+                    "agent destination",
+                )
         if destination is None:
             raise ValueError("provide --dest or --scope")
         if args.install_agents and agents_destination is None:
