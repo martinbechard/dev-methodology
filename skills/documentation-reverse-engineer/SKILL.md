@@ -218,7 +218,7 @@ Pass 5 plus a passing final reconciliation completes whole-repository reverse en
 
 ## Parallelization
 
-Parallelize independent module or HLD groups after Pass 0 freezes ownership. Give each writer an explicit scope, accepted inputs, output path, and applicable technology routing. Prevent overlap with repository claims when writers mutate files.
+Parallelize independent module or HLD groups after Pass 0 freezes ownership. Give each writer an explicit scope, accepted inputs, output path, and applicable technology routing. When resource coordination is enabled, use the project-selected policy to prevent overlap as writers mutate files.
 
 Do not parallelize across an unmet dependency gate. Module review precedes HLD synthesis; HLD review precedes architecture; accepted implementation and design evidence precede functional synthesis; accepted lower levels precede wiki integration.
 

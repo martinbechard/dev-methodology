@@ -1,13 +1,13 @@
 ---
 name: agent-claim
-description: Use before repository mutation when multiple agents may work concurrently, including atomic narrow-scope extension, explicit broad scopes, repository-global journals, contention reporting, worktree isolation, recovery, and clean release.
+description: Use when PROJECT.yaml selects agent-claim for repository paths or exclusive resources, including atomic scope extension, journals, contention reporting, worktree isolation, recovery, and clean release.
 metadata:
   category: development-practice
 ---
 
 # Agent Claim
 
-Use this skill before editing files or taking exclusive runtime resources in a repository where more than one agent may be active. Apply the one claim transport adapter selected by Project Configurator for invocation details. This skill defines transport-neutral coordination semantics and never chooses, probes, or changes transports.
+Use this skill before editing files or taking exclusive runtime resources only when the project-wide resource_coordination selection is agent-claim. When the selection is none, do not discover, acquire, heartbeat, mutate, hand off, or release claims and do not require claim evidence. Apply the one claim transport adapter selected by Project Configurator for invocation details. This skill defines transport-neutral coordination semantics and never chooses, probes, or changes transports.
 
 ## Goal
 

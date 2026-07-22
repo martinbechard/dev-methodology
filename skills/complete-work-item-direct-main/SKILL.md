@@ -37,7 +37,7 @@ This skill owns Git delivery and main observation. It does not create, inventory
 Before shared mutation:
 
 1. Confirm the source commit exists and represents the reviewed, verified contribution.
-2. Confirm the source worktree is clean and its implementation claim is released or explicitly handed to the integration owner.
+2. Confirm the source worktree is clean. When resource coordination is enabled, confirm implementation ownership is released or explicitly handed to the integration owner.
 3. Confirm every required review finding is resolved and every accepted source check names its command or provider check and outcome.
 4. Record the source commit and changed paths before refreshing main so later evidence cannot silently substitute another contribution.
 
@@ -45,13 +45,13 @@ A branch name, pushed branch, patch file, detached checkout, pull request, merge
 
 ## Integration Authority
 
-Load and apply agent-claim before touching shared main state. Acquire one narrow integration claim covering:
+When agent-claim is selected, apply that enabled resource-coordination implementation before touching shared main state and acquire one narrow integration claim covering:
 
 - every main-worktree path that integration or conflict resolution may modify;
 - the target-specific integration resource for the configured main branch; and
 - only the shared test resources required by focused post-integration verification.
 
-Do not include provider lifecycle surfaces in this integration claim. Provider closure is a separate transaction owned by the provider manager. If the claim is unavailable, preserve the accepted source commit and return or follow the owning coordination procedure's bounded wait state without mutating main.
+Do not include provider lifecycle surfaces in operational coordination ownership. Provider closure is a separate transaction owned by the provider manager. If enabled ownership is unavailable, preserve the accepted source commit and return or follow the selected coordination procedure's bounded wait state without mutating main. When none is selected, skip acquisition, wait, heartbeat, registry, handoff, and release evidence.
 
 ## Main Reconciliation
 
@@ -96,7 +96,7 @@ Use graph reachability for ancestral delivery, such as Git's merge-base ancestor
 
 ## Release And Lifecycle Handoff
 
-Release the integration claim only after main is clean, required checks pass, and all local and configured remote observations are recorded. A failed release returns BLOCKED until ownership is reconciled; do not hide a live claim behind READY.
+When resource coordination is enabled, release integration ownership only after main is clean, required checks pass, and all local and configured remote observations are recorded. A failed release returns BLOCKED until ownership is reconciled; do not hide live ownership behind READY. When coordination is none, main cleanliness and verification still apply without release evidence.
 
 When a provider is selected, give its manager one terminal update containing:
 
@@ -108,7 +108,7 @@ When a provider is selected, give its manager one terminal update containing:
 - review and source-check evidence;
 - post-integration checks and any scoped omissions;
 - required remote observation;
-- clean worktree and released integration-claim evidence; and
+- clean worktree and enabled integration-release evidence; and
 - completion disposition READY with requested lifecycle COMPLETED.
 
 The provider manager owns the actual terminal mutation and reports whether lifecycle COMPLETED was persisted. Do not report a provider-backed item as completed before that succeeds.
@@ -123,9 +123,9 @@ Return READY only when the complete direct-main delivery proof exists. Return:
 - exact reachability or integration-mapping evidence;
 - review, source-check, and post-integration verification evidence;
 - required local and remote observations;
-- clean-state and released-claim evidence; and
+- clean-state and enabled resource-coordination release evidence; and
 - the provider lifecycle update or provider-none terminal result.
 
-Return BLOCKED with the preserved source commit, exact failed gate, current ownership state, recovery evidence, and one next action when integration, conflict resolution, verification, publication, main observation, claim release, provider authority, or provider terminal recording cannot finish safely.
+Return BLOCKED with the preserved source commit, exact failed gate, current ownership state, recovery evidence, and one next action when integration, conflict resolution, verification, publication, main observation, enabled coordination release, provider authority, or provider terminal recording cannot finish safely.
 
 An unmerged temporary branch can never return READY or cause lifecycle COMPLETED.

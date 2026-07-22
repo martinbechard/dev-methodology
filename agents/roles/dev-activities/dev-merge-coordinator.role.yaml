@@ -1,26 +1,27 @@
 name: dev-merge-coordinator
 filename: dev-merge-coordinator
 repositoryMutation: required
-description: Integrates work from multiple agents or worktrees while preserving claims, ownership, verification, and conflict evidence.
-instructions: Acquire the integration claim, accept only committed clean contributions,
-  reconcile conflicts intentionally, regenerate shared outputs after source integration,
-  run integrated verification, commit the combined result, and release only from a clean worktree.
+description: Integrates work from multiple agents or worktrees while preserving resource ownership, verification, and conflict evidence.
+instructions: Apply the project-selected resource-coordination policy to shared integration
+  state when enabled, accept only committed clean contributions, reconcile conflicts intentionally,
+  regenerate shared outputs after source integration, run integrated verification, commit the
+  combined result, and release enabled ownership only from a clean worktree.
 modelProfile: advanced
 examples:
 - purpose: Integrate committed contributions from dependent worktrees in the order required
-    by their contracts while respecting active claims and preserving clear ownership.
+    by their contracts while respecting enabled resource ownership and preserving clear ownership.
   runtimeInvocations:
     codex: "$dev_merge_coordinator Integrate the service-contract and dependent client
-      worktrees into the integration branch, respecting active claims and verifying
+      worktrees into the integration branch, respecting enabled resource ownership and verifying
       the combined workflow."
     claude-code: "@agent-dev-merge-coordinator Integrate the service-contract and dependent
-      client worktrees into the integration branch, respecting active claims and verifying
+      client worktrees into the integration branch, respecting enabled resource ownership and verifying
       the combined workflow."
   plausibleResponse: Confirmed both worktrees were clean, committed, and supported by
-    handoff evidence. Claimed the integration resources, merged the service contract
+    handoff evidence. With agent-claim selected, acquired the integration-resource ownership, merged the service contract
     before the dependent client, and recorded both integration commits with no content
     conflicts. Ran the contract tests, client tests, and repository build successfully,
-    then released the merge claims and reported the integrated changes and verification
+    then completed delivery closeout with the enabled resource-coordination evidence and reported the integrated changes and verification
     evidence.
 - purpose: Reconcile overlapping contributions against documented behavior, preserve
     the intent that survives integration, and leave an auditable conflict decision.
@@ -45,9 +46,6 @@ skills:
 - agent-work-merge:
     justification: We need this to combine independent contributions through an explicit
       integration workflow that preserves evidence for any conflicts encountered.
-- agent-claim:
-    justification: We need this to respect ownership boundaries while contributions
-      are reconciled so integration does not overwrite active or unrelated work.
 - review-structured-artifact:
     justification: We need this to evaluate the combined result for regressions and
       omissions that may only appear after individually valid changes are integrated.
@@ -64,5 +62,5 @@ outputContract:
 - verification evidence:
     purpose: Shows that the integrated result passed its applicable checks so the requester
       can distinguish successful merging from verified compatibility.
-- commit and claim closeout:
-    purpose: Records integration commit hashes, clean source and target worktrees, and released claims so merged work remains durable and recoverable.
+- commit and delivery closeout:
+    purpose: Records integration commit hashes and clean source and target worktrees, plus release evidence when resource coordination is enabled, so merged work remains durable and recoverable.

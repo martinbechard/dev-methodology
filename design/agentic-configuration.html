@@ -465,7 +465,7 @@
 
     <section class="section" aria-labelledby="context-title">
       <h2 id="context-title">Knowledge Structure</h2>
-      <p class="lede">In order to generate usable code, we need to provide all of the relevant context that will steer the agent to generating it in a way that is acceptable to us. The main problem is choosing the relevant context from many possible units of information. The solution is to split the information into focused files, select only the skills relevant to the work, and deliver their instructions through the applicable harness lifecycle.</p>
+      <p class="lede">In order to generate usable code, we need to provide all of the relevant context that will steer the agent to generating it in a way that is acceptable to us. The main problem is choosing the relevant context from many possible units of information. The solution is to split the information into focused files, select only the skills relevant to the work, and deliver their instructions through the applicable harness lifecycle. The <a href="skills-modularization.html#skill-lifecycle-title">cross-harness skill lifecycle</a> owns the difference between availability, instruction delivery, behavioral application, and verification. Dynamic load-by-name guidance appears only when technology inlining is explicitly disabled. Generated project guidance otherwise embeds the complete selected technology instructions.</p>
     </section>
 
     <section class="section" aria-labelledby="layers-title">
@@ -511,7 +511,7 @@
               <li class="nested-layer">
                 <div class="nested-copy">
                   <h4>Root Project Instruction Files</h4>
-                  <p>Project setup creates a portable <code>AGENTS.md</code> at the project root. It always contains exactly one setup-verified agent-claim-mcp or agent-claim-command adapter, names user-confirmed folder technology skills by reference by default, appends ordered project skill-extension references at the root only, and records the selected Persistence and Commit routes from <code>PROJECT.yaml</code>, while shared claim semantics and workflow skills retain procedural ownership. Advanced setup may explicitly select inline technology delivery. A missing or unavailable claim transport is a configuration error; runtime agents never probe or switch transports. An UNSET selector requires the pertinent agent to ask rather than infer a workflow. For Claude Code, a thin colocated <code>CLAUDE.md</code> imports that root guidance without duplicating it. The <a href="skills-modularization.html#skill-lifecycle-title">cross-harness skill lifecycle</a> distinguishes embedded content from availability, invocation, application, and proof.</p>
+                  <p>Project setup creates a portable <code>AGENTS.md</code> at the project root. <code>PROJECT.yaml</code> selects resource coordination independently as none or agent-claim. The root guidance references agent-claim by name only when selected and then contains exactly one setup-verified agent-claim-mcp or agent-claim-command adapter. With none, it contains no coordination or transport section. It names user-confirmed folder technology skills by reference by default, appends ordered project skill-extension references at the root only, and records the selected Persistence and Commit routes while shared workflow skills retain procedural ownership. Advanced setup may explicitly select inline technology delivery. A missing resource-coordination selector is a configuration error; a missing transport is an error only for agent-claim. Runtime agents never probe or switch transports. An UNSET selector requires the pertinent agent to ask rather than infer a workflow. For Claude Code, a thin colocated <code>CLAUDE.md</code> imports that root guidance without duplicating it. The <a href="skills-modularization.html#skill-lifecycle-title">cross-harness skill lifecycle</a> distinguishes embedded content from availability, invocation, application, and proof.</p>
                 </div>
               </li>
               <li class="nested-layer">
@@ -558,7 +558,7 @@
         </thead>
         <tbody class="purpose-group">
           <tr class="purpose-heading">
-            <th colspan="4" scope="rowgroup">Skill Definition Files<span class="purpose-summary">Package reusable action guidance whose selection and instruction delivery follow the applicable harness lifecycle. All rows use the same portable <code>SKILL.md</code> format.</span></th>
+            <th colspan="4" scope="rowgroup">Skill Definition Files<span class="purpose-summary">Package reusable action guidance whose selection and instruction delivery follow the applicable harness lifecycle. Generated project technology guidance embeds complete skill instructions by default and uses load-by-name only when technology inlining is disabled. All rows use the same portable <code>SKILL.md</code> format.</span></th>
           </tr>
           <tr data-harness-row data-harness="codex">
             <td><a href="https://developers.openai.com/codex/skills">Codex</a></td>

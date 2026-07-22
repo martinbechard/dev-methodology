@@ -54,8 +54,6 @@ examples:
     observable workflow, and connected the complete hierarchy through README and wiki hubs.
     Reported explicit open questions for behavior that source evidence could not establish.
 skills:
-- agent-claim:
-    justification: We need this before durable documentation mutation so concurrent writers remain isolated and the completed document work ends in a clean commit.
 - organise-project-files:
     justification: We need this to place each new durable document in the repository's most specific documentation area before authoring it.
     condition: when the requested documentation work creates a new project file or directory.

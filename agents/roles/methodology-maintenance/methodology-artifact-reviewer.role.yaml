@@ -32,9 +32,6 @@ examples:
     of the stale invocation and clarification of the verification owner, then recorded
     uncertainty about an undocumented migration case as residual risk.
 skills:
-- agent-claim:
-    justification: We need this when methodology review evidence is saved so checklists or findings artifacts have explicit ownership through commit and clean release.
-    condition: when the requested review creates or updates a methodology review checklist, findings file, or other project artifact.
 - organise-project-files:
     justification: We need this to confirm the destination of any new methodology review checklist or findings file before writing it.
     condition: when the requested review creates a new project file or directory.

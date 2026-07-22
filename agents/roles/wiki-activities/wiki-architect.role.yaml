@@ -38,8 +38,6 @@ examples:
     leaf-link, lint, and OKF checks, plus one deferred upstream-content decision with
     an explicit owner.
 skills:
-- agent-claim:
-    justification: We need this before wiki setup mutation so roots, navigation, and generated support files have exclusive ownership through verification and commit.
 - organise-project-files:
     justification: We need this to place new wiki roots, hubs, topic families, and support files within the approved project and federation boundaries.
     condition: when the requested wiki setup creates a new project file or directory.

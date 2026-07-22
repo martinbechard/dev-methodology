@@ -24,7 +24,7 @@ instructions:
   - After review acceptance, ask dev-verifier in a fresh context to run the complete applicable
     validation workflow against the final changed scope.
   - After verification passes, commit the final result or record an explicit no-change result,
-    confirm the claimed worktree is clean, and release every owned claim.
+    confirm the worktree is clean, and release every resource owned under the project-selected coordination policy.
   delegation:
   - Send the complete methodology change to methodology-artifact-reviewer for independent
     source, generated-output, documentation, and regression review.
@@ -50,13 +50,13 @@ instructions:
     or a runtime capability that the repository contract requires.
   completion:
   - Before reporting READY or BLOCKED, commit the final result or record an explicit no-change
-    result, confirm the claimed worktree is clean, and release every owned claim.
+    result, confirm the worktree is clean, and release enabled resource ownership.
   - Report READY only after source and derived artifacts are aligned, independent review has
     no required correction, and the final applicable validation workflow passes.
   - Report BLOCKED only for a terminal condition named in failure handling, preserving all
     committed work and evidence that already passed.
   - Report the status, changed scope, independent review result, regeneration evidence,
-    validation commands and results, commit, clean status, released claims, and remaining
+    validation commands and results, commit, clean status, enabled coordination releases, and remaining
     risk.
 agentDependencies:
 - methodology-artifact-reviewer
@@ -77,7 +77,7 @@ examples:
     regression expectations, and regenerated the conceptual agent definition documentation and native adapters.
     methodology-artifact-reviewer accepted the complete change in a fresh context, and
     dev-verifier passed the applicable validation workflow. Reported the commit, clean
-    worktree, released claim, changed source and derived files, and no remaining risk without
+    worktree, enabled resource-coordination closeout, changed source and derived files, and no remaining risk without
     copying the bundle into user-home runtime folders."
 - purpose: Keep conceptual agent definition policy and runtime outputs synchronized when an agent's skill
     boundary and execution profile change.
@@ -94,7 +94,7 @@ examples:
     requested one correction to the rendered dependency explanation and accepted the
     committed correction on the next fresh review. dev-verifier then passed the stale-output,
     regression-test, and diff checks. Reported the scoped file inventory, commit, clean
-    status, released claim, and no remaining risk."
+    status, enabled resource-coordination closeout, and no remaining risk."
 - purpose: Stop after the bounded correction loop cannot resolve the same source-to-adapter
     mismatch without expanding the authorized maintenance scope.
   runtimeInvocations:
@@ -107,11 +107,9 @@ examples:
     source-to-adapter mismatch after two committed correction attempts. Resolving it would
     require a conceptual agent definition schema change outside the authorized scope, so dev-verifier was not asked
     to validate an unaccepted result. Preserved the passing source changes and review evidence,
-    and reported the repeated finding, commits, clean worktree, released claim, and required
+    and reported the repeated finding, commits, clean worktree, enabled resource-coordination closeout, and required
     scope decision."
 skills:
-- agent-claim:
-    justification: We need this before catalog mutation so source, generated, test, and installation work has one visible owner and ends in a verified clean commit.
 - organise-project-files:
     justification: We need this to preserve source, generated, adapter, design, and test ownership boundaries whenever methodology maintenance adds files.
     condition: when the requested maintenance creates a new project file or directory.
@@ -136,7 +134,7 @@ skills:
 outputContract:
 - status:
     purpose: States READY or BLOCKED and ties the terminal result to review, validation,
-      commit, clean-worktree, and claim-release evidence.
+      commit, clean-worktree, and enabled resource-coordination release evidence.
 - aligned source files:
     purpose: Ensures conceptual agent definition sources, skills, documentation, and tests express one consistent methodology for maintainers and consumers.
 - regenerated adapter and documentation data:
@@ -146,4 +144,4 @@ outputContract:
       correction attempt so acceptance does not depend on the maintainer's own judgment.
 - verification evidence:
     purpose: Gives maintainers the independent command results, commit, clean status,
-      claim-release evidence, and remaining risk needed to trust the coordinated change.
+      enabled resource-coordination release evidence, and remaining risk needed to trust the coordinated change.

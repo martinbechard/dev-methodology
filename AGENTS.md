@@ -47,6 +47,12 @@ Most-specific matching folder pattern wins independently for provider and comple
 
 When a selector is UNSET, the pertinent agent asks at the stated operation boundary and does not infer either value from repository or hosting evidence, files, remotes, templates, plugins, or available tools.
 
+## Resource Coordination Skill Reference
+
+Project Configurator selected resource-coordination skill agent-claim. Apply that bundled skill by reference before taking ownership of repository paths or exclusive runtime and integration resources.
+
+The selected skill owns its coordination procedure and evidence. Work-item providers own durable assignment and lifecycle records; they do not own operational resources.
+
 ## Agent Claim Transport
 
 Project Configurator selected and verified the command transport. Apply the shared agent-claim semantics and the inlined agent-claim-command adapter for every claim operation.

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Renders project setup, authority, claim transport, workflow, folder technology, and project skill guidance.
+# Summary: Renders project setup, authority, resource coordination, workflows, folder technology, and project skill guidance.
 
 from __future__ import annotations
 
@@ -24,11 +24,16 @@ FRONTMATTER_DELIMITER = "---"
 SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 AUTHORITY_HEADING = "## Agent And Skill Definition Approval"
 CLAIM_TRANSPORT_HEADING = "## Agent Claim Transport"
+RESOURCE_COORDINATION_HEADING = "## Resource Coordination Skill Reference"
 PROJECT_SKILL_EXTENSIONS_HEADING = "## Project Skill Extensions"
 CLAIM_TRANSPORT_SKILLS = {
     "mcp": "agent-claim-mcp",
     "command": "agent-claim-command",
 }
+RESOURCE_COORDINATION_VALUES = {"none", "agent-claim"}
+RESOURCE_COORDINATION_RESERVED_SKILLS = frozenset(
+    {"agent-claim", *CLAIM_TRANSPORT_SKILLS.values()}
+)
 PROVIDER_SKILLS = {
     "file": ("create-file-work-item", "manage-file-work-items"),
     "github": ("create-github-work-item", "manage-github-work-items"),
@@ -207,6 +212,12 @@ def _project_skill_extensions(value: dict[str, object]) -> list[str]:
         else:
             raise ValueError(
                 f"{prefix} must be a bundled skill id string or a registered-skill mapping"
+            )
+
+        if skill in RESOURCE_COORDINATION_RESERVED_SKILLS:
+            raise ValueError(
+                f"{prefix} skill id {skill!r} is reserved for resource_coordination; "
+                "remove it from project_skill_extensions"
             )
 
         if skill in first_paths:
@@ -1028,6 +1039,44 @@ def workflow_lines(value: dict[str, object]) -> list[str]:
     return lines
 
 
+def resource_coordination_lines(value: dict[str, object]) -> list[str]:
+    """Render the selected project-wide coordination skill as a reference.
+
+    resource_coordination is a required mapping containing only selected. The selected
+    value is none or agent-claim. none requires agent_claim_transport to be absent and
+    returns no guidance, while agent-claim returns a reference-only section and leaves the
+    implementation body in its bundled skill. Invalid or unsupported configuration raises
+    ValueError without a compatibility default.
+    """
+
+    configuration = value.get("resource_coordination")
+    if configuration is None:
+        raise ValueError(
+            "resource_coordination is required; run Project Configurator to select none or agent-claim"
+        )
+    if not isinstance(configuration, dict):
+        raise ValueError("resource_coordination must be a mapping")
+    if set(configuration) != {"selected"}:
+        raise ValueError("resource_coordination keys must be exactly: selected")
+    selected = configuration.get("selected")
+    if not isinstance(selected, str) or selected not in RESOURCE_COORDINATION_VALUES:
+        raise ValueError("resource_coordination.selected must be none or agent-claim")
+    if selected == "none":
+        if "agent_claim_transport" in value:
+            raise ValueError(
+                "agent_claim_transport must be omitted when resource_coordination.selected is none"
+            )
+        return []
+    return [
+        RESOURCE_COORDINATION_HEADING,
+        "",
+        "Project Configurator selected resource-coordination skill agent-claim. Apply that bundled skill by reference before taking ownership of repository paths or exclusive runtime and integration resources.",
+        "",
+        "The selected skill owns its coordination procedure and evidence. Work-item providers own durable assignment and lifecycle records; they do not own operational resources.",
+        "",
+    ]
+
+
 def claim_transport_lines(value: dict[str, object]) -> list[str]:
     """Render the one setup-verified claim transport selected by Project Configurator.
 
@@ -1425,14 +1474,16 @@ def render(
     """Render configured root AGENTS.md project authority and skill sections.
 
     value is the mapping loaded from PROJECT.yaml. Optional definition authority produces
-    its corresponding section. agent_claim_transport and workflow_selection are required.
+    its corresponding section. workflow_selection and resource_coordination are required.
+    agent_claim_transport is required only when resource_coordination selects agent-claim
+    and must be absent when resource_coordination selects none.
     Technology guidance is always produced from the configured loadouts, and an optional
     project_skill_extensions list produces the final root-only reference section when
     include_project_skill_extensions is true. The optional inline_tech_skills request must
     agree with project_setup.technology_skill_delivery when setup metadata exists. With no
     setup metadata or explicit request, delivery defaults to by-reference. Inline delivery
-    embeds each referenced bundled skill body. The claim adapter is always embedded because
-    setup selected it as the project-wide transport.
+    embeds each referenced bundled skill body. agent-claim is referenced and its selected
+    transport adapter is embedded only when resource coordination selects agent-claim.
 
     The return value is the complete generated Markdown text and ends with a newline.
     Rendering does not write an output file, but inlined rendering reads bundled SKILL.md
@@ -1444,7 +1495,10 @@ def render(
     inline_tech_skills = _resolved_inline_technology_delivery(value, inline_tech_skills)
     lines: list[str] = definition_change_authority_lines(value)
     workflow = workflow_lines(value)
-    lines.extend(claim_transport_lines(value))
+    coordination = resource_coordination_lines(value)
+    lines.extend(coordination)
+    if coordination:
+        lines.extend(claim_transport_lines(value))
     lines.extend(setup_lines(value))
     lines.extend(workflow)
     lines.extend([
@@ -1477,6 +1531,11 @@ def render(
             if not isinstance(evidence, Mapping):
                 raise ValueError(f"{row_prefix} must be a mapping")
             skill = _normalized_skill_id(evidence.get("skill"), f"{row_prefix}.skill")
+            if skill in RESOURCE_COORDINATION_RESERVED_SKILLS:
+                raise ValueError(
+                    f"{row_prefix}.skill id {skill!r} is reserved for "
+                    "resource_coordination; remove it from technology_skill_loadouts"
+                )
             facts = evidence.get("evidence")
             facts_prefix = f"{row_prefix}.evidence"
             if not isinstance(facts, list):
@@ -1499,13 +1558,19 @@ def render(
         )
         if not isinstance(skills, list):
             raise ValueError(f"technology_skill_loadouts[{loadout_index}].skills must be a list")
-        names = [
-            _normalized_skill_id(
+        names: list[str] = []
+        for skill_index, skill in enumerate(skills):
+            normalized_skill = _normalized_skill_id(
                 skill,
                 f"technology_skill_loadouts[{loadout_index}].skills[{skill_index}]",
             )
-            for skill_index, skill in enumerate(skills)
-        ]
+            if normalized_skill in RESOURCE_COORDINATION_RESERVED_SKILLS:
+                raise ValueError(
+                    f"technology_skill_loadouts[{loadout_index}].skills[{skill_index}] skill id "
+                    f"{normalized_skill!r} is reserved for resource_coordination; remove it "
+                    "from technology_skill_loadouts"
+                )
+            names.append(normalized_skill)
         if not names:
             if item.get("status") != "NO_VARIANT":
                 continue
@@ -1574,7 +1639,7 @@ def main(arguments: Sequence[str] | None = None) -> int:
     Argument-parser usage failures raise SystemExit with argparse's exit code, normally 2.
     """
     parser = argparse.ArgumentParser(
-        description="Render claim transport, workflow selectors, technology guidance, and root project skill references."
+        description="Render resource coordination, workflow selectors, technology guidance, and root project skill references."
     )
     parser.add_argument("--project", type=Path, required=True)
     parser.add_argument("--output", type=Path)

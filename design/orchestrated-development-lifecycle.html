@@ -523,7 +523,7 @@
         <div><b>02</b><strong>Intent</strong><p>Summary, context, source evidence, requirements, and acceptance criteria.</p></div>
         <div><b>03</b><strong>Readiness</strong><p>Status, dependencies, open questions, approval evidence, and verification plan.</p></div>
         <div><b>04</b><strong>Execution</strong><p>Current owner, branch, worktree, phase, accepted candidate, waits, and blockers.</p></div>
-        <div><b>05</b><strong>Closeout</strong><p>Review, verification, integration, release, completion, and cleanup evidence.</p></div>
+        <div><b>05</b><strong>Closeout</strong><p>Review, verification, integration, completion, and cleanup evidence, plus coordination release evidence only when enabled.</p></div>
       </div>
     </div>
     <p class="source-note">The work item is the only durable task record. File-provider creation and lifecycle procedures are defined by <a href="../skills/create-file-work-item/SKILL.md">Create File Work Item</a> and <a href="../skills/manage-file-work-items/SKILL.md">Manage File Work Items</a>.</p>
@@ -563,18 +563,18 @@
       </div>
     </figure>
     <div class="delivery-paths">
-      <article class="delivery-path"><h3>Direct-main delivery</h3><ol><li>Review and verify the private candidate.</li><li>Acquire exact shared integration paths and the integration resource.</li><li>Under that ownership, refresh current main and create a fresh reconciliation branch from that exact commit.</li><li>Apply only the accepted paths; do not import unrelated ancestry merely for provenance. Verify the integrated result, update main, then release.</li></ol></article>
-      <article class="delivery-path"><h3>Pull-request delivery</h3><ol><li>Review and verify the feature branch.</li><li>Push the branch and open a pull request with evidence.</li><li>The authorized reviewer or merge owner approves and merges it.</li><li>The implementation lane does not acquire a duplicate main-integration claim.</li></ol></article>
+      <article class="delivery-path"><h3>Direct-main delivery</h3><ol><li>Review and verify the private candidate.</li><li>When resource coordination is enabled, acquire the exact shared integration paths and integration resource; with none, enter the serialized integration transaction without claim operations or evidence.</li><li>Refresh current main and create a fresh reconciliation branch from that exact commit.</li><li>Apply only the accepted paths; do not import unrelated ancestry merely for provenance. Verify the integrated result, update main, and complete delivery closeout with coordination evidence only when enabled.</li></ol></article>
+      <article class="delivery-path"><h3>Pull-request delivery</h3><ol><li>Review and verify the feature branch.</li><li>Push the branch and open a pull request with evidence.</li><li>The authorized reviewer or merge owner approves and merges it.</li><li>When coordination is enabled, the implementation lane does not acquire duplicate main-integration ownership; with none, no claim operation or evidence exists.</li></ol></article>
     </div>
   </section>
 
   <section class="section" id="coordination" aria-labelledby="coordination-title">
     <div class="section-heading">
       <span class="chapter-number">Chapter 05</span>
-      <div><h2 id="coordination-title">Coordinating Shared Resources</h2><p>Private work is parallel by default. A short coordination claim is needed only when two agents could mutate the same shared object. The registry is a temporary conflict-avoidance scratchpad, not a delivery authority.</p></div>
+      <div><h2 id="coordination-title">Coordinating Shared Resources</h2><p>PROJECT.yaml selects resource coordination independently as none or agent-claim. Private work is parallel by default. When agent-claim is selected, a short coordination claim protects shared objects and its registry remains a temporary conflict-avoidance scratchpad rather than delivery authority. When none is selected, the lifecycle records no claim procedure or evidence and relies on explicit task scope plus serialized delivery transactions.</p></div>
     </div>
     <figure class="resource-figure" aria-labelledby="resource-title">
-      <figcaption id="resource-title">Many private lanes, one exact shared gate<span>Claim the smallest path or named resource, use it, preserve the result, and release it promptly.</span></figcaption>
+      <figcaption id="resource-title">Many private lanes, one exact shared gate<span>With agent-claim, protect the smallest path or named resource and release promptly. With none, serialize the delivery transaction without coordination operations or evidence.</span></figcaption>
       <div class="resource-lanes">
         <div class="private-lanes"><div class="private-lane">Worktree A remains private</div><div class="private-lane">Worktree B remains private</div><div class="private-lane">Worktree C remains private</div></div>
         <div class="gate">exact shared gate</div>
@@ -603,7 +603,7 @@
         <li><span class="number">3</span><span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Verifier</span><p>After acceptance, run checks proportional to affected behavior and risk.</p></li>
         <li><span class="number">4</span><span class="actor">Verifier</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Orchestrator</span><p>Return the exact accepted candidate, checks, residual risks, and justified omissions.</p></li>
         <li><span class="number">5</span><span class="actor">Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Main or PR</span><p>Follow the configured delivery path. Re-review reconciled content when integration changes meaning.</p></li>
-        <li><span class="number">6</span><span class="actor">Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Backlog Steward</span><p>After integration, use a separate short claim to record Completed, archive the item, and release.</p></li>
+        <li><span class="number">6</span><span class="actor">Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Backlog Steward</span><p>After integration, record Completed and archive the item in a separate provider transaction. Agent-claim protects that mutation with short backlog ownership; none performs no claim operation and records no claim evidence.</p></li>
         <li><span class="number">7</span><span class="actor">Coordinator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Cleanup</span><p>Verify the integration branch is merged, remove the clean worktree, delete the merged branch, prune metadata, and refill queue capacity.</p></li>
       </ol>
     </figure>
@@ -637,10 +637,10 @@
         <tr><td><strong>Work item</strong></td><td>Status, authority, decisions, current owner, phase, accepted candidate, delivery evidence, and terminal outcome.</td><td>Git reachability or current shared-resource availability.</td></tr>
         <tr><td><strong>Git</strong></td><td>File content, commits, ancestry, integration, clean state, and branch-cleanup eligibility.</td><td>Review quality, test meaning, or lifecycle status.</td></tr>
         <tr><td><strong>Review and verification outputs</strong></td><td>The exact candidate assessed, findings or acceptance, checks run, retained evidence, and residual risk.</td><td>Shared mutation authority or backlog completion.</td></tr>
-        <tr><td><strong>Coordination registry</strong></td><td>Temporary shared-mutation protection, conflict, heartbeat, release, and recovery state.</td><td>Accepted content, successful integration, or completed work.</td></tr>
+        <tr><td><strong>Coordination registry when enabled</strong></td><td>When agent-claim is selected, the coordination registry records temporary shared-mutation protection, conflict, heartbeat, release, and recovery state. With none, registry evidence is absent.</td><td>Accepted content, successful integration, or completed work.</td></tr>
       </tbody>
     </table>
-    <aside class="not-a-record"><strong>An agent runtime session is not another evidence record.</strong> Its messages, title, and live state help people observe execution. Durable facts still belong in the work item, Git, review outputs, and coordination registry.</aside>
+    <aside class="not-a-record"><strong>An agent runtime session is not another evidence record.</strong> Its messages, title, and live state help people observe execution. Durable facts still belong in the work item, Git, review outputs, and the coordination registry when enabled. With none, registry evidence is absent.</aside>
     <details><summary>Administrative cleanup remains separate from delivery</summary><div><p>Reset only an inactive coordination entry whose work is preserved and whose resources are stopped or handed off. A reset changes temporary registry state only. It must not rewrite Git, edit project files, discard a worktree, manufacture a release event, or claim that delivery occurred.</p><p>Neither bundled coordination transport exposes reset, and manual registry editing is forbidden. If a host-supported targeted atomic reset is unavailable, stop and route the operation to an administrator.</p><p>Create a fresh reconciliation branch from current main for integration; this becomes the task integration and cleanup branch. An older candidate branch retained only as a non-ancestral content source is handled separately.</p></div></details>
   </section>
 

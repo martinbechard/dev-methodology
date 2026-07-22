@@ -33,8 +33,6 @@ examples:
     items, reported the collection window, and provided wiki ingest with the artifact
     inventory and follow-up notes.
 skills:
-- agent-claim:
-    justification: We need this before saving raw source artifacts so collection paths and runtime resources remain collision-safe through commit and release.
 - organise-project-files:
     justification: We need this to select a collision-safe raw-source path from the project's live collection queue and naming conventions.
     condition: when the requested collection creates a new raw source artifact or other project file.

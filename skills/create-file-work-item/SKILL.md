@@ -1,6 +1,6 @@
 ---
 name: create-file-work-item
-description: Create one authoritative repository-backed work item with typed placement, source evidence, user-action boundaries, and a short primary-main backlog claim. Use when the effective provider is file or the user explicitly requests one file-backed item.
+description: Create one authoritative repository-backed work item with typed placement, source evidence, user-action boundaries, and conditional backlog resource coordination. Use when the effective provider is file or the user explicitly requests one file-backed item; agent-claim uses a short primary-main backlog claim, while none uses no claim lifecycle or evidence.
 metadata:
   category: development-practice
 ---
@@ -24,11 +24,11 @@ The only authoritative file-provider storage root is backlog in the primary work
 
 An isolated worktree, a linked worktree other than the primary worktree, or a primary worktree not on main has no authority to create the item. Return BLOCKED with the observed worktree and branch, the required primary-main authority, and the next handoff. Do not write a shadow queue elsewhere.
 
-Before each creation mutation, acquire agent-claim backlog scope from the primary main worktree. SHARED_CHECKOUT_RELEASE_REQUIRED is a coordination outcome: arrange a direct handoff or completion notification and suspend without polling. SHARED_CHECKOUT_REQUIRED means the operation must be handed to the primary main worktree. After notification or handoff, reconcile live status before retrying. Commit the one queue mutation and release the short backlog-domain claim immediately.
+Before each creation mutation, apply the resource-coordination selection from PROJECT.yaml. When agent-claim is selected, acquire backlog scope from the primary main worktree. SHARED_CHECKOUT_RELEASE_REQUIRED is a coordination outcome: arrange a direct handoff or completion notification and suspend without polling. SHARED_CHECKOUT_REQUIRED means the operation must be handed to the primary main worktree. After notification or handoff, reconcile live status before retrying. Commit the one queue mutation and release the short backlog-domain claim immediately. When none is selected, perform no claim discovery, acquisition, heartbeat, registry mutation, handoff, or release.
 
-After that commit, release that claim immediately.
+After that commit, release enabled backlog ownership immediately.
 
-Do not combine backlog creation with a project-files implementation claim. When creation immediately authorizes delivery, record the READY item first, release the backlog claim, and then acquire a separate exact, tree, or project-files implementation claim. A later backlog claim records terminal evidence and archive movement.
+Keep backlog creation separate from implementation ownership. When creation immediately authorizes delivery, record the READY item first, release enabled backlog ownership, and then apply the selected coordination policy independently to implementation. Enabled backlog ownership later records terminal evidence and archive movement. With coordination none, these remain separate commit transactions without claim evidence.
 
 ## Template Workflow
 
@@ -149,7 +149,7 @@ For an item in backlog/user-action-required, also include:
 - Resolution, initially Pending.
 - Unattended Work Boundary.
 
-The creation commit and result must preserve work_item_id, provider_reference, source evidence, provider selection, completion selection, creation authority, creation time when the repository records it, and the released backlog claim reference. Keep Requirements, Acceptance Criteria, Dependencies, and Verification so the item remains complete after it moves into an active typed backlog.
+The creation commit and result must preserve work_item_id, provider_reference, source evidence, provider selection, completion selection, creation authority, creation time when the repository records it, and enabled resource-coordination evidence. Keep Requirements, Acceptance Criteria, Dependencies, and Verification so the item remains complete after it moves into an active typed backlog.
 
 ## Writing Rules
 
@@ -167,7 +167,7 @@ The creation commit and result must preserve work_item_id, provider_reference, s
 Before reporting completion:
 
 - Confirm the effective provider is file and the mutation occurred only under backlog in the primary main worktree.
-- Confirm the backlog claim was short, committed, released, and separate from implementation ownership.
+- Confirm enabled backlog ownership was short, committed, released, and separate from implementation ownership; require no coordination evidence when none is selected.
 - Confirm the item is in the right typed folder and has a stable unique path.
 - Confirm related multi-item goals have an index.md and linked independently runnable children.
 - Confirm the complete required item shape, source evidence, dependencies, and verification expectations are present.
@@ -176,7 +176,7 @@ Before reporting completion:
 - Confirm user-action-required content has the complete question and unattended boundary.
 - Confirm no provider issue, mirror, shadow queue, or duplicate file was created.
 
-Return provider file, work_item_id and provider_reference, item type, lifecycle status, source evidence, dependencies, completion selection, creation commit, released claim reference, and next runnable action.
+Return provider file, work_item_id and provider_reference, item type, lifecycle status, source evidence, dependencies, completion selection, creation commit, enabled coordination release reference, and next runnable action.
 
 ## Migration
 

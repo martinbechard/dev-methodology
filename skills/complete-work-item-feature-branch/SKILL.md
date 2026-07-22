@@ -11,7 +11,7 @@ Carry one verified work item from branch creation through review publication and
 
 ## Dependencies
 
-- Apply [agent-claim](../agent-claim/SKILL.md) for every repository mutation and shared resource.
+- When agent-claim is selected, apply that enabled resource-coordination implementation for repository mutation and shared resources. When none is selected, load no coordination implementation and perform no acquisition, heartbeat, registry, handoff, or release lifecycle.
 - Apply [create-pull-request](../create-pull-request/SKILL.md) only for GitHub or another configured host whose contract accurately uses pull-request terminology.
 - Use the configured GitLab merge-request capability and GitLab tools for GitLab publication, review, pipeline, and merge evidence. If no accurate capability exists, return BLOCKED instead of substituting create-pull-request or GitHub-shaped evidence.
 - Send the final lifecycle update to the manager selected by the work-item provider. Do not mutate a provider record through an unselected provider capability.
@@ -31,10 +31,10 @@ The work-item provider and code host are independent. A file or GitLab work item
 ## Branch And Ownership
 
 1. Inspect the configured base, work-item scope, dependency branches, existing publication, commits, worktree state, and remote state.
-2. Acquire the narrow repository ownership and shared resources required for the current mutation phase. Preserve unrelated work and stop on overlapping ownership.
-3. Create the intended feature branch from the assigned base before changing source files. When claim isolation creates the delivery branch, use that same branch instead of adding a parallel coordination branch.
+2. When agent-claim is selected, acquire the narrow repository ownership and shared resources required for the current mutation phase and stop on overlapping ownership. When none is selected, continue the delivery phase without coordination operations or evidence. In both cases, preserve unrelated work and stop when existing work makes safe mutation impossible.
+3. Create the intended feature branch from the assigned base before changing source files. When the selected coordination policy creates the delivery branch, use that same branch instead of adding a parallel coordination branch.
 4. Keep accepted review corrections on the same work item, feature branch, and publication record. A correction that changes the independent work-item boundary returns to the coordinator before scope expands.
-5. Release ownership only after the phase is committed, verified, clean, and safely published or preserved. Reacquire the required scope when a later review cycle resumes mutation.
+5. When agent-claim is selected, release ownership only after the phase is committed, verified, clean, and safely published or preserved, then reacquire the required scope when a later review cycle resumes mutation. When none is selected, preserve the same commit, verification, cleanliness, and publication gates without coordination operations or evidence.
 
 ## Implementation And Publication
 
@@ -101,14 +101,14 @@ When the configured strategy rebases or squashes, record the provider-observed m
 
 A closed-unmerged, abandoned, replaced, or superseded publication cannot return READY. Follow an explicit replacement only after its relationship to the same work item and branch history is verified; otherwise return BLOCKED with both references.
 
-After the merge gate passes, send the selected provider manager the work-item reference, completion disposition READY, branch and publication reference, final merged base commit, approvals, checks, dependencies, merge evidence, claim releases, and requested terminal lifecycle update. The provider-backed item remains nonterminal until that manager records lifecycle COMPLETED. When the selected provider is none, record the complete task-local terminal evidence and lifecycle COMPLETED before returning READY.
+After the merge gate passes, send the selected provider manager the work-item reference, completion disposition READY, branch and publication reference, final merged base commit, approvals, checks, dependencies, merge evidence, enabled resource-coordination releases, and requested terminal lifecycle update. The provider-backed item remains nonterminal until that manager records lifecycle COMPLETED. When the selected provider is none, record the complete task-local terminal evidence and lifecycle COMPLETED before returning READY.
 
 ## Results
 
 Return exactly one disposition with deciding evidence:
 
 - AWAITING_REVIEW: canonical work-item identifier and provider reference, branch, pushed commit, pull-request or merge-request URL, base and head, ready or draft state, review and dependency order, completed checks, and every outstanding review, check, dependency, or merge gate.
-- READY: all publication evidence plus required approvals and checks, merged state, final merge commit, configured base-branch reachability, released ownership, and the provider lifecycle update this evidence authorizes.
-- BLOCKED: preserved branch, commits, publication URL when one exists, provider-accurate state, released or retained ownership state, exact missing evidence or authority, and the next safe action.
+- READY: all publication evidence plus required approvals and checks, merged state, final merge commit, configured base-branch reachability, enabled resource-coordination release evidence, and the provider lifecycle update this evidence authorizes.
+- BLOCKED: preserved branch, commits, publication URL when one exists, provider-accurate state, enabled resource-coordination disposition, exact missing evidence or authority, and the next safe action.
 
 Never report READY from branch publication alone, and never report provider lifecycle COMPLETED before the selected provider manager, or the provider-none task result, records the terminal update.

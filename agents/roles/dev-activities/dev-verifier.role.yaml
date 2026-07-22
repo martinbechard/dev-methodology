@@ -44,9 +44,6 @@ examples:
     covered workflow boundaries, no skipped applicable checks, and the failing acceptance
     criterion.
 skills:
-- agent-claim:
-    justification: We need this when verification writes fixtures or evidence or owns builds, servers, browsers, databases, or generated output resources.
-    condition: when the requested verification mutates files or uses exclusive runtime resources.
 - organise-project-files:
     justification: We need this to keep any new verification reports, fixtures, traces, or runtime evidence in the repository's declared ownership areas.
     condition: when the requested verification creates a new project file or directory.

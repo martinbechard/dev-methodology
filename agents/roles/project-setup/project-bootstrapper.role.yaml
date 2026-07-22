@@ -63,7 +63,7 @@ instructions:
     core delivery mode again.
   - "Ordinary setup terminal path: create only the selected empty documentation roots and
     required placeholders, run setup-specific validation, commit the bounded setup or record
-    an explicit no-change result, confirm clean status, release the setup claim, report the
+    an explicit no-change result, confirm clean status, release enabled setup resource ownership, report the
     result, and stop."
   - "For the separately requested reverse-engineering/documentation workflow: require dev-documentation-writer
     to create a documentation coverage manifest that maps every meaningful in-scope module
@@ -83,9 +83,10 @@ instructions:
     documentation levels when the preceding coverage gate is incomplete. Do not accept
     higher-level summaries as substitutes for missing module documents."
   - "For the separately requested reverse-engineering/documentation workflow: assign each
-    mutating responsibility with a narrow non-overlapping claim. Require every
+    mutating responsibility a narrow non-overlapping scope and apply the project-selected
+    resource-coordination policy when enabled. Require every
     contributor to return a committed clean handoff with its validation evidence and release
-    its owned claim."
+    enabled resource ownership."
   - "For the separately requested reverse-engineering/documentation workflow: send each
     completed source-derived documentation artifact to the appropriate independent reviewer
     in a fresh context."
@@ -126,7 +127,7 @@ instructions:
   - "For the separately requested reverse-engineering/documentation workflow: after the
     applicable gates pass, record the final direct commit, final integration commit,
     or explicit no-change result, confirm every owned worktree is clean, and release every
-    owned claim."
+    resource owned under the selected coordination policy."
   delegation:
   - Send missing or authorized invalid project configuration work to project-configurator.
   - "For the separately requested reverse-engineering/documentation workflow: send non-wiki
@@ -214,18 +215,18 @@ instructions:
     source evidence, assigned owner, and latest independent review when the finding remains.
   - "For the separately requested reverse-engineering/documentation workflow: report BLOCKED
     if the target runtime cannot provide an agent required by the selected
-    direct or multi-contribution path, or cannot provide the agent-claim skill. Name the
-    unavailable dependency; do not substitute same-owner review or copy generic claim
-    instructions into PROJECT.yaml or AGENTS.md."
+    direct or multi-contribution path, or cannot provide the resource-coordination skill
+    selected in PROJECT.yaml when enabled. Name the unavailable dependency; do not substitute
+    same-owner review or copy the selected skill procedure into PROJECT.yaml or AGENTS.md."
   completion:
   - "Ordinary setup completion branch: after the accepted setup commit or explicit no-change
-    result, setup-specific validation evidence, clean worktree, and released claim, report READY.
+    result, setup-specific validation evidence, clean worktree, and release of enabled resource ownership, report READY.
     Do not require source-derived documentation, design, independent review, integration, or
     dev-verifier gates."
   - "For the separately requested reverse-engineering/documentation workflow: before reporting
     READY or BLOCKED, record the final direct commit, final integration
     commit, or explicit no-change result, confirm every owned worktree is clean, and release
-    every owned claim."
+    all enabled resource ownership."
   - "For the separately requested reverse-engineering/documentation workflow: treat the direct
     path as complete only when exactly one accepted committed contribution remains the final
     direct commit and dev-verifier passes the complete applicable checks."
@@ -252,8 +253,8 @@ instructions:
   - "For the separately requested reverse-engineering/documentation workflow: report the status,
     project setup files, documents produced, review results, commands run,
     command results, final direct commit, final integration commit, or explicit no-change
-    result, clean status, released claims, direct or integration evidence, and remaining
-    questions."
+    result, clean status, enabled coordination releases, direct or integration evidence, and
+    remaining questions."
 agentDependencies:
 - project-configurator
 - dev-documentation-writer
@@ -286,7 +287,7 @@ examples:
     committed contribution remained, so it became the final direct commit and
     dev-merge-coordinator was not invoked. dev-verifier passed the configured build, test,
     documentation, wiki, and link checks against that direct commit in a fresh context. The
-    report lists the final direct commit, clean status, released claims, review and verification
+    report lists the final direct commit, clean status, enabled resource-coordination closeout, review and verification
     results, commands run, and no remaining questions."
 - purpose: Bootstrap a project that requires a maintained project wiki but has no project
     routing or previously accepted setup evidence.
@@ -301,14 +302,14 @@ examples:
     created it and the required AGENTS.md files from repository evidence. wiki-architect
     set up the project wiki, dev-documentation-writer completed the coverage manifest and
     the reviewed module, high-level, architecture, functional, and entry documents in gated
-    order, and wiki-writer added the complete navigation pages in separate claimed worktrees.
+    order, and wiki-writer added the complete navigation pages in separate owned worktrees.
     The artifact reviewers accepted every assigned document. Multiple accepted committed
     contributions remained, so dev-merge-coordinator integrated them in dependency order.
     In fresh contexts, dev-artifact-reviewer, wiki-artifact-reviewer, and wiki-topic-verifier
     then reviewed every artifact touched or combined by integration. After all post-integration
     artifact reviews passed, dev-verifier passed the repository, documentation, wiki, and
     link checks against the complete integrated result. The report records the final integration
-    commit, fresh review and verification evidence, clean status, released claims, and one
+    commit, fresh review and verification evidence, clean status, enabled resource-coordination closeout, and one
     question that does not block development."
 - purpose: Stop safely when an existing project configuration is invalid and the request
     does not authorize reconfiguration.
@@ -321,8 +322,8 @@ examples:
     a missing conceptual agent definition and a folder that no longer exists. The request did not allow configuration
     changes, so project-configurator and technology detection were not run. No documentation
     was created from the invalid configuration. The report lists the validation errors,
-    explicit no-change result, clean status, and released root claim, then asks for permission
-    to reconfigure the project."
+    explicit no-change result and clean status. Because resource coordination was none, the
+    report contains no coordination lifecycle or evidence, then asks for permission to reconfigure the project."
 - purpose: Repair an invalid project configuration when the user has authorized
     reconfiguration, then continue setup from the repaired configuration.
   runtimeInvocations:
@@ -336,7 +337,7 @@ examples:
     documentation roots and required placeholders were created, setup-specific validation passed,
     and the bounded setup was committed directly. The ordinary setup terminal path stopped there.
     The report lists the repaired setup files, selected empty roots, setup-specific checks, bounded setup commit, clean
-    status, released setup claim, and no remaining questions."
+    status, released enabled setup resource ownership, and no remaining questions."
 - purpose: Reconcile a whole-project reverse-engineering result after all accepted
     contributions have been assembled into the final tree.
   runtimeInvocations:
@@ -356,10 +357,8 @@ examples:
     was integrated and passed fresh independent artifact review. A second wiki-ingester audit
     found no stale, contradictory, or missing artifacts, then dev-verifier passed final
     verification. The report records the final integration commit, audit evidence, review
-    results, clean status, and released claims."
+    results, clean status, and enabled resource-coordination closeout."
 skills:
-- agent-claim:
-    justification: We need this before bootstrap mutation so project setup files and shared runtime resources have explicit ownership through commit and clean release.
 - organise-project-files:
     justification: We need this to place project configuration, documentation, review evidence, and setup records from live repository structure before bootstrap creates them.
     condition: when the requested bootstrap creates a new project file or directory whose path is not already fixed by the bootstrap contract.
@@ -379,6 +378,6 @@ outputContract:
 - checks:
     purpose: Lists every command run, whether it passed or failed, and the final direct commit,
       final integration commit, or explicit no-change result together with review, verification,
-      clean-worktree, and claim-release evidence.
+      clean-worktree, and enabled resource-coordination release evidence.
 - remaining questions:
     purpose: Lists decisions or information still required from the user.

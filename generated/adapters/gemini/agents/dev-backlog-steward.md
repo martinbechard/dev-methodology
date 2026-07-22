@@ -14,7 +14,6 @@ Skill justifications:
 - create-backlog: We need this to turn incoming requests into consistently typed repository backlog files.
 - manage-backlog: We need this to keep repository-file lifecycle transitions, archival state, and recovery evidence consistent.
 - github-issues-backlog: We need this to create and manage the authoritative issue-backed queue without duplicating it in repository files.
-- agent-claim: We need this to preserve exclusive visible ownership when the selected backlog operation mutates repository files or records repository-global claim state.
 - structured-explanation: We need this so status, blocked, completion, and handoff records leave enough context for the next person to make a sound decision.
 Request-specific skill conditions:
 - organise-project-files: when file-based-backlog creates a new file or directory
@@ -22,10 +21,9 @@ Request-specific skill conditions:
 - create-backlog: when file-based-backlog is selected and an incoming request must become a new durable item
 - manage-backlog: when file-based-backlog is selected and existing backlog state must be inspected or changed
 - github-issues-backlog: when applicable project guidance or the request selects github-issues-backlog
-- agent-claim: when the selected backlog operation mutates repository files or records repository-global claim state
 Output purposes:
 - backlog item or status update: Makes the requested backend operation or lifecycle transition durable and explicit so the backlog remains a trustworthy source of current state.
-- ownership record: Identifies who controls the work so other contributors can coordinate without creating conflicting claims or edits.
+- ownership record: Identifies who controls the work so other contributors can coordinate without creating conflicting assignments or edits.
 - completion or blocked summary: Preserves the backend, outcome, remaining obstacle, and next decision so another contributor can recover the work without reconstructing its history.
 -->
 
@@ -53,7 +51,7 @@ Keep the configured backlog authoritative and recoverable by applying the select
 
 1. Resolve the backend, target, item type, user authorization source, source evidence, requirements, acceptance criteria, dependencies, verification expectations, ownership, and requested lifecycle transition.
 2. Search the selected backend for an existing matching item before creating another.
-3. Apply the selected backend skill to create, claim, resume, block, complete, fail, archive, or report the item without changing unrelated backlog state.
+3. Apply the selected backend skill to create, assign, resume, block, complete, fail, archive, or report the item without changing unrelated backlog state.
 4. Preserve implementation and delivery references while requiring the configured completion evidence before closing or archiving the item.
 5. Return the backend, durable item reference, state, ownership, dependencies, evidence, and next runnable action.
 
@@ -73,7 +71,6 @@ Load request-specific skills only when their conditions apply. Use judgment when
 - Use the create-backlog skill when file-based-backlog is selected and an incoming request must become a new durable item.
 - Use the manage-backlog skill when file-based-backlog is selected and existing backlog state must be inspected or changed.
 - Use the github-issues-backlog skill when applicable project guidance or the request selects github-issues-backlog.
-- Use the agent-claim skill when the selected backlog operation mutates repository files or records repository-global claim state.
 
 Return:
 

@@ -48,7 +48,7 @@ author, revise, or maintain a design artifact.
 - Writing or editing the appropriate file is allowed.
 - This includes updating an existing authoritative design document as part of
   an authorized implementation workflow.
-- Follow the repository's file-placement, ownership, and claim rules.
+- Follow the repository's file-placement and ownership rules plus the project-selected resource-coordination policy when enabled.
 - Use the requested path, an existing authoritative artifact, or the
   repository's file-placement mechanism. Do not choose an arbitrary path.
 - If none of those authorities resolves a path, report the placement blocker
@@ -589,7 +589,7 @@ Check all of these before returning:
 10. Gaps are stated explicitly rather than guessed away.
 11. A response-only request did not create or edit a design file.
 12. File-backed work used an authorized path and followed applicable
-    placement, ownership, and claim rules.
+    placement and ownership rules plus enabled resource-coordination rules.
 
 ## Do Not
 

@@ -5,12 +5,6 @@
 window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
   "edges": [
     {
-      "condition": "when the requested review creates or updates a checklist, findings file, or other project artifact.",
-      "kind": "conditional",
-      "role": "dev-artifact-reviewer",
-      "skill": "agent-claim"
-    },
-    {
       "condition": "when reviewing an architecture, high-level design, or module design that uses or compares Observer or Mediator.",
       "kind": "conditional",
       "role": "dev-artifact-reviewer",
@@ -361,12 +355,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "review-structured-artifact"
     },
     {
-      "condition": "when parent recovery or cleanup mutates a repository-global resource",
-      "kind": "conditional",
-      "role": "dev-backlog-coordinator",
-      "skill": "agent-claim"
-    },
-    {
       "condition": "when Codex user-visible tasks coordinate multiple backlog work items",
       "kind": "conditional",
       "role": "dev-backlog-coordinator",
@@ -376,12 +364,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "dev-backlog-coordinator",
       "skill": "structured-explanation"
-    },
-    {
-      "condition": "when the selected backlog operation mutates repository files or records repository-global claim state",
-      "kind": "conditional",
-      "role": "dev-backlog-steward",
-      "skill": "agent-claim"
     },
     {
       "condition": "when file-based-backlog is selected and an incoming request must become a new durable item",
@@ -417,12 +399,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "dev-backlog-steward",
       "skill": "structured-explanation"
-    },
-    {
-      "condition": "when the requested browser workflow mutates repository evidence or uses exclusive runtime resources.",
-      "kind": "conditional",
-      "role": "dev-browser-operator",
-      "skill": "agent-claim"
     },
     {
       "condition": "when the requested browser workflow creates a new project file or directory.",
@@ -689,12 +665,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "dev-browser-operator",
       "skill": "structured-explanation"
-    },
-    {
-      "condition": "when the requested review creates or updates an evidence packet, checklist, findings file, or other project artifact.",
-      "kind": "conditional",
-      "role": "dev-code-reviewer",
-      "skill": "agent-claim"
     },
     {
       "condition": "when the requested review creates an evidence packet, checklist, findings file, or other project artifact.",
@@ -1243,11 +1213,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "dev-coder",
-      "skill": "agent-claim"
-    },
-    {
-      "kind": "fixed",
-      "role": "dev-coder",
       "skill": "careful-coding"
     },
     {
@@ -1631,11 +1596,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "dev-documentation-writer",
-      "skill": "agent-claim"
-    },
-    {
-      "kind": "fixed",
-      "role": "dev-documentation-writer",
       "skill": "development-methodology"
     },
     {
@@ -1643,11 +1603,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "conditional",
       "role": "dev-merge-coordinator",
       "skill": "organise-project-files"
-    },
-    {
-      "kind": "fixed",
-      "role": "dev-merge-coordinator",
-      "skill": "agent-claim"
     },
     {
       "kind": "fixed",
@@ -1673,23 +1628,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "dev-orchestrator",
-      "skill": "agent-claim"
-    },
-    {
-      "kind": "fixed",
-      "role": "dev-orchestrator",
       "skill": "structured-design"
     },
     {
       "kind": "fixed",
       "role": "dev-orchestrator",
       "skill": "structured-explanation"
-    },
-    {
-      "condition": "when the requested review creates or updates a prompt review checklist, findings file, evaluation artifact, or other project artifact.",
-      "kind": "conditional",
-      "role": "dev-prompt-reviewer",
-      "skill": "agent-claim"
     },
     {
       "condition": "when the requested review creates a new project file or directory.",
@@ -1956,12 +1900,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "dev-prompt-reviewer",
       "skill": "review-structured-artifact"
-    },
-    {
-      "condition": "when the requested diagnosis mutates files or uses exclusive runtime resources.",
-      "kind": "conditional",
-      "role": "dev-runtime-diagnostician",
-      "skill": "agent-claim"
     },
     {
       "condition": "when adding diagnostic instrumentation or implementing a verified remediation as part of the investigation.",
@@ -2257,12 +2195,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "test-strategy"
     },
     {
-      "condition": "when the requested review creates or updates a security review checklist, findings file, evidence artifact, or other project artifact.",
-      "kind": "conditional",
-      "role": "dev-security-reviewer",
-      "skill": "agent-claim"
-    },
-    {
       "condition": "when the requested review creates a new project file or directory.",
       "kind": "conditional",
       "role": "dev-security-reviewer",
@@ -2534,12 +2466,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "structured-explanation"
     },
     {
-      "condition": "when the requested UX work mutates files or uses exclusive runtime resources.",
-      "kind": "conditional",
-      "role": "dev-ux-specialist",
-      "skill": "agent-claim"
-    },
-    {
       "condition": "when the requested UX work creates a new project file or directory.",
       "kind": "conditional",
       "role": "dev-ux-specialist",
@@ -2809,12 +2735,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "dev-ux-specialist",
       "skill": "user-experience-review"
-    },
-    {
-      "condition": "when the requested verification mutates files or uses exclusive runtime resources.",
-      "kind": "conditional",
-      "role": "dev-verifier",
-      "skill": "agent-claim"
     },
     {
       "condition": "when an observed outcome must be connected to source-level control flow or unconfirmed branches must be identified.",
@@ -3118,12 +3038,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "test-strategy"
     },
     {
-      "condition": "when the requested review creates or updates a methodology review checklist, findings file, or other project artifact.",
-      "kind": "conditional",
-      "role": "methodology-artifact-reviewer",
-      "skill": "agent-claim"
-    },
-    {
       "condition": "when the requested review creates a new project file or directory.",
       "kind": "conditional",
       "role": "methodology-artifact-reviewer",
@@ -3174,11 +3088,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "methodology-maintainer",
-      "skill": "agent-claim"
-    },
-    {
-      "kind": "fixed",
-      "role": "methodology-maintainer",
       "skill": "agent-role-authoring"
     },
     {
@@ -3215,29 +3124,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "project-bootstrapper",
-      "skill": "agent-claim"
-    },
-    {
-      "kind": "fixed",
-      "role": "project-bootstrapper",
       "skill": "development-methodology"
     },
     {
       "kind": "fixed",
       "role": "project-bootstrapper",
       "skill": "documentation-bootstrap"
-    },
-    {
-      "condition": "when PROJECT.yaml selects command or initial setup verifies the independently distributable command adapter",
-      "kind": "conditional",
-      "role": "project-configurator",
-      "skill": "agent-claim-command"
-    },
-    {
-      "condition": "when PROJECT.yaml selects mcp or initial setup verifies the complete MCP claim tool surface",
-      "kind": "conditional",
-      "role": "project-configurator",
-      "skill": "agent-claim-mcp"
     },
     {
       "condition": "when the target lacks the documentation and routing structure needed for agents to load and follow the configuration consistently",
@@ -3250,11 +3142,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "conditional",
       "role": "project-configurator",
       "skill": "organise-project-files"
-    },
-    {
-      "kind": "fixed",
-      "role": "project-configurator",
-      "skill": "agent-claim"
     },
     {
       "kind": "fixed",
@@ -3275,12 +3162,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "project-configurator",
       "skill": "documentation-page-verify"
-    },
-    {
-      "condition": "when the requested placement work moves, creates, rewrites, stages, or commits project files.",
-      "kind": "conditional",
-      "role": "project-organiser",
-      "skill": "agent-claim"
     },
     {
       "kind": "fixed",
@@ -3318,18 +3199,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "wiki-architect",
-      "skill": "agent-claim"
-    },
-    {
-      "kind": "fixed",
-      "role": "wiki-architect",
       "skill": "project-wiki"
-    },
-    {
-      "condition": "when the requested review creates or updates a project-wiki checklist, findings file, or other project artifact.",
-      "kind": "conditional",
-      "role": "wiki-artifact-reviewer",
-      "skill": "agent-claim"
     },
     {
       "condition": "when the requested review creates a new project file or directory.",
@@ -3346,12 +3216,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "wiki-artifact-reviewer",
       "skill": "project-wiki-review"
-    },
-    {
-      "condition": "when the requested mode performs mutating ingest rather than a read-only final evidence audit.",
-      "kind": "conditional",
-      "role": "wiki-ingester",
-      "skill": "agent-claim"
     },
     {
       "condition": "when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.",
@@ -3389,11 +3253,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "wiki-researcher",
-      "skill": "agent-claim"
-    },
-    {
-      "kind": "fixed",
-      "role": "wiki-researcher",
       "skill": "project-wiki-query"
     },
     {
@@ -3406,11 +3265,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "conditional",
       "role": "wiki-source-collector",
       "skill": "organise-project-files"
-    },
-    {
-      "kind": "fixed",
-      "role": "wiki-source-collector",
-      "skill": "agent-claim"
     },
     {
       "kind": "fixed",
@@ -3693,11 +3547,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "detected-folder",
       "role": "wiki-writer",
       "skill": "vitest"
-    },
-    {
-      "kind": "fixed",
-      "role": "wiki-writer",
-      "skill": "agent-claim"
     },
     {
       "kind": "fixed",
@@ -4181,7 +4030,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
   "roles": [
     {
       "conditionalSkills": {
-        "agent-claim": "when the requested review creates or updates a checklist, findings file, or other project artifact.",
         "collaboration-patterns": "when reviewing an architecture, high-level design, or module design that uses or compares Observer or Mediator.",
         "composition-patterns": "when reviewing an architecture, high-level design, or module design that uses or compares Composite, Decorator, Proxy, or Flyweight.",
         "interface-patterns": "when reviewing an architecture, high-level design, or module design that uses or compares Adapter, Bridge, or Facade.",
@@ -4280,7 +4128,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
-        "agent-claim": "when parent recovery or cleanup mutates a repository-global resource",
         "codex-workitem-coordination": "when Codex user-visible tasks coordinate multiple backlog work items"
       },
       "coverage": {
@@ -4364,7 +4211,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
-        "agent-claim": "when the selected backlog operation mutates repository files or records repository-global claim state",
         "create-backlog": "when file-based-backlog is selected and an incoming request must become a new durable item",
         "file-based-backlog": "when applicable project guidance or the request selects file-based-backlog",
         "github-issues-backlog": "when applicable project guidance or the request selects github-issues-backlog",
@@ -4494,7 +4340,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
-        "agent-claim": "when the requested browser workflow mutates repository evidence or uses exclusive runtime resources.",
         "organise-project-files": "when the requested browser workflow creates a new project file or directory."
       },
       "coverage": {
@@ -4579,7 +4424,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
-        "agent-claim": "when the requested review creates or updates an evidence packet, checklist, findings file, or other project artifact.",
         "organise-project-files": "when the requested review creates an evidence packet, checklist, findings file, or other project artifact."
       },
       "coverage": {
@@ -4736,7 +4580,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": true,
       "executedCases": [],
       "fixedSkills": [
-        "agent-claim",
         "execute-workitem",
         "careful-coding",
         "code-comments",
@@ -4852,7 +4695,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": true,
       "executedCases": [],
       "fixedSkills": [
-        "agent-claim",
         "development-methodology"
       ],
       "generatedAdapters": [
@@ -4933,12 +4775,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [],
-      "description": "Integrates work from multiple agents or worktrees while preserving claims, ownership, verification, and conflict evidence.",
+      "description": "Integrates work from multiple agents or worktrees while preserving resource ownership, verification, and conflict evidence.",
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
         "agent-work-merge",
-        "agent-claim",
         "review-structured-artifact",
         "fix-explanation"
       ],
@@ -5019,13 +4860,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [],
-      "description": "Coordinates multi-step development work across implementation and writing agents, fresh-context source and artifact reviewers, independent verification, and deliberate integration while preserving bounded context, explicit handoffs, and claim evidence.",
+      "description": "Coordinates multi-step development work across implementation and writing agents, fresh-context source and artifact reviewers, independent verification, and deliberate integration while preserving bounded context, explicit handoffs, and enabled resource-coordination evidence.",
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
         "structured-design",
-        "structured-explanation",
-        "agent-claim"
+        "structured-explanation"
       ],
       "generatedAdapters": [
         {
@@ -5064,7 +4904,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
-        "agent-claim": "when the requested review creates or updates a prompt review checklist, findings file, evaluation artifact, or other project artifact.",
         "organise-project-files": "when the requested review creates a new project file or directory."
       },
       "coverage": {
@@ -5149,7 +4988,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
-        "agent-claim": "when the requested diagnosis mutates files or uses exclusive runtime resources.",
         "careful-coding": "when adding diagnostic instrumentation or implementing a verified remediation as part of the investigation.",
         "organise-project-files": "when the requested diagnosis creates a new project file or directory.",
         "runtime-evidence-collection": "when the suspected failure mechanism depends on runtime state that source inspection alone cannot establish reliably."
@@ -5239,7 +5077,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
-        "agent-claim": "when the requested review creates or updates a security review checklist, findings file, evidence artifact, or other project artifact.",
         "organise-project-files": "when the requested review creates a new project file or directory."
       },
       "coverage": {
@@ -5325,7 +5162,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
-        "agent-claim": "when the requested UX work mutates files or uses exclusive runtime resources.",
         "organise-project-files": "when the requested UX work creates a new project file or directory."
       },
       "coverage": {
@@ -5411,7 +5247,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
-        "agent-claim": "when the requested verification mutates files or uses exclusive runtime resources.",
         "code-execution-tracing": "when an observed outcome must be connected to source-level control flow or unconfirmed branches must be identified.",
         "end-to-end-verification": "when confidence depends on proving a complete user or system workflow across its real boundaries.",
         "organise-project-files": "when the requested verification creates a new project file or directory.",
@@ -5504,7 +5339,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
-        "agent-claim": "when the requested review creates or updates a methodology review checklist, findings file, or other project artifact.",
         "organise-project-files": "when the requested review creates a new project file or directory."
       },
       "coverage": {
@@ -5638,7 +5472,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
-        "agent-claim",
         "maintain-methodology-documentation",
         "skill-authoring",
         "agent-role-authoring",
@@ -5727,7 +5560,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
-        "agent-claim",
         "documentation-bootstrap",
         "development-methodology"
       ],
@@ -5768,8 +5600,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
-        "agent-claim-command": "when PROJECT.yaml selects command or initial setup verifies the independently distributable command adapter",
-        "agent-claim-mcp": "when PROJECT.yaml selects mcp or initial setup verifies the complete MCP claim tool surface",
         "documentation-bootstrap": "when the target lacks the documentation and routing structure needed for agents to load and follow the configuration consistently",
         "organise-project-files": "when the requested configuration creates a new project file or directory whose path is not fixed by the configuration contract."
       },
@@ -5857,11 +5687,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [
         "project-configuration-routing"
       ],
-      "description": "Creates or updates the single project-root PROJECT.yaml through Basic or Advanced setup and validates installed core-skill delivery, one claim transport, Persistence and Commit, conceptual agents, project skill extensions, confirmed folder technology skillsets, nested guidance, documentation roots, and Claude bridges.",
+      "description": "Creates or updates the single project-root PROJECT.yaml through Basic or Advanced setup and validates installed core-skill delivery, resource coordination, Persistence and Commit, conceptual agents, project skill extensions, confirmed folder technology skillsets, nested guidance, documentation roots, and Claude bridges.",
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
-        "agent-claim",
         "detect-technology-skills",
         "create-project-configuration",
         "development-methodology",
@@ -5903,9 +5732,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "conditionalSkills": {
-        "agent-claim": "when the requested placement work moves, creates, rewrites, stages, or commits project files."
-      },
+      "conditionalSkills": {},
       "coverage": {
         "caseBacked": false,
         "caseBackedCases": [],
@@ -6035,7 +5862,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
-        "agent-claim",
         "project-wiki"
       ],
       "generatedAdapters": [
@@ -6075,7 +5901,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
-        "agent-claim": "when the requested review creates or updates a project-wiki checklist, findings file, or other project artifact.",
         "organise-project-files": "when the requested review creates a new project file or directory."
       },
       "coverage": {
@@ -6160,7 +5985,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
-        "agent-claim": "when the requested mode performs mutating ingest rather than a read-only final evidence audit.",
         "code-project-wiki": "when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.",
         "organise-project-files": "when the requested ingest creates a new project file or directory."
       },
@@ -6381,7 +6205,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
-        "agent-claim",
         "project-wiki-query",
         "project-wiki-research"
       ],
@@ -6466,7 +6289,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
-        "agent-claim",
         "project-wiki-research",
         "project-wiki",
         "structured-explanation"
@@ -6634,7 +6456,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": true,
       "executedCases": [],
       "fixedSkills": [
-        "agent-claim",
         "project-wiki",
         "project-wiki-topic-write"
       ],

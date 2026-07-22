@@ -23,14 +23,14 @@ Manage GitLab issue state while keeping provider lifecycle and delivery completi
 - Assign or unassign ownership, record the canonical task identifier and material phase, and update only configured labels, milestone or project fields, notes, and relationships.
 - Map GitLab native state to READY, RUNNING, BLOCKED, USER_ACTION_REQUIRED, HOLDING, AWAITING_REVIEW, COMPLETED, FAILED, or ABANDONED without treating a native open or closed state as sufficient lifecycle evidence.
 - Record dependencies and blocking relationships with GitLab-native links, related issues, notes, or configured project fields. Preserve the exact blocker, next-action owner, recovery evidence, and bounded retry state.
-- Record branch, commit, merge-request, approval, pipeline, merge, review, check, claim-release, and main-observation evidence using GitLab terminology and provider-supported history.
+- Record branch, commit, merge-request, approval, pipeline, merge, review, check, main-observation, and enabled resource-coordination release evidence using GitLab terminology and provider-supported history.
 - When delivery is hosted somewhere other than GitLab, record that host and its provider-accurate delivery reference without changing the GitLab work-item provider.
 - Reopen only when authorized recovery or correction requires a nonterminal lifecycle state. Preserve prior terminal and delivery evidence in GitLab history.
 
 ## Completion And Reconciliation
 
 1. Keep issue completion independent from delivery completion. Merge-request publication, approval, a successful pipeline, a closed merge request, or a merge action is intermediate evidence unless the configured completion contract is fully satisfied.
-2. Close an issue only after completion disposition READY and the configured review, check, merge when applicable, main-observation, and claim-release evidence are all present.
+2. Close an issue only after completion disposition READY and the configured review, check, merge when applicable, main-observation, and any enabled resource-coordination release evidence are all present.
 3. Apply the provider-native terminal state, labels, assignees, relationships, milestone or project fields, notes, and lifecycle evidence required by the authorized transition.
 4. Read the issue back after every mutation. Verify the observed namespace, project, issue internal identifier, URL, state, labels, assignees, relationships, milestone or project fields, and updated content.
 5. Only after the terminal update is observed may the result return terminal evidence and lifecycle COMPLETED.

@@ -6,6 +6,10 @@
 from __future__ import annotations
 
 import importlib.util
+import json
+import subprocess
+import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -48,7 +52,7 @@ class _AmbiguousDispatch(RuntimeError):
 
 
 class _SimulatedMcpTransport:
-    """Provide deterministic schema-v2 claim results and a complete-tool setup probe."""
+    """Provide deterministic schema-v2 results for the MCP claim boundary."""
 
     def __init__(
         self,
@@ -72,6 +76,8 @@ class _SimulatedMcpTransport:
         }
         self.ambiguous_acquire = ambiguous_acquire
         self.calls: list[str] = []
+        self.claim_calls: list[tuple[str, str, tuple[str, ...]]] = []
+        self.active_claim_id: str | None = None
 
     def verify_setup(self) -> None:
         """Reject unavailable, incomplete, or noncanonical MCP claim surfaces."""
@@ -83,18 +89,40 @@ class _SimulatedMcpTransport:
         if self.result_schema_version != 2:
             raise RuntimeError("CLAIM_TRANSPORT_SCHEMA_UNSUPPORTED")
 
-    def call(self, tool: str) -> dict[str, object]:
+    def call(
+        self,
+        tool: str,
+        *,
+        claim_id: str | None = None,
+        resources: tuple[str, ...] = (),
+    ) -> dict[str, object]:
         """Record one simulated MCP call and return its configured structured result."""
 
         if tool not in self.tools:
             raise AssertionError(f"unexpected MCP tool: {tool}")
         self.calls.append(tool)
+        if tool in {"claim_acquire", "claim_release"}:
+            if not claim_id:
+                raise AssertionError(f"{tool} requires claim_id")
+            if tool == "claim_acquire" and not resources:
+                raise AssertionError("claim_acquire requires named resources")
+            if tool == "claim_release" and claim_id != self.active_claim_id:
+                raise AssertionError("claim_release must use the acquired claim_id")
+            self.claim_calls.append((tool, claim_id, resources))
+            if tool == "claim_acquire":
+                self.active_claim_id = claim_id
         if tool == "claim_acquire" and self.ambiguous_acquire:
             raise _AmbiguousDispatch("response lost after dispatch")
         if tool == "claim_status":
             return {
                 "exit_code": 0,
                 "result": {"schema_version": 2, "outcome": "STATUS"},
+            }
+        if tool == "claim_release":
+            self.active_claim_id = None
+            return {
+                "exit_code": 0,
+                "result": {"schema_version": 2, "outcome": "CLAIM_RELEASED"},
             }
         return self.acquire_result
 
@@ -115,7 +143,11 @@ def _run_mcp_acquire(transport: _SimulatedMcpTransport) -> dict[str, object]:
 
     transport.verify_setup()
     try:
-        response = transport.call("claim_acquire")
+        response = transport.call(
+            "claim_acquire",
+            claim_id="mcp-acquire-test",
+            resources=("database:test",),
+        )
     except _AmbiguousDispatch:
         response = transport.call("claim_status")
     result = _canonical_mcp_result(response)
@@ -123,6 +155,143 @@ def _run_mcp_acquire(transport: _SimulatedMcpTransport) -> dict[str, object]:
     if outcome != "STATUS" and outcome not in CANONICAL_ACQUIRE_OUTCOMES:
         raise RuntimeError("CLAIM_TRANSPORT_OUTCOME_UNSUPPORTED")
     return result
+
+
+def _run_none_resource_lifecycle(project: dict[str, object]) -> dict[str, object]:
+    """Validate one renderer-valid none selection without invoking a transport."""
+
+    load_renderer_module().render(project)
+    coordination = project.get("resource_coordination")
+    if not isinstance(coordination, dict) or coordination.get("selected") != "none":
+        raise ValueError("resource_coordination.selected must be none")
+    return {"resource_coordination": "none"}
+
+
+def _run_selected_mcp_lifecycle(
+    project: dict[str, object],
+    transport: _SimulatedMcpTransport,
+    claim_id: str,
+    resources: tuple[str, ...],
+) -> dict[str, object]:
+    """Exercise an MCP-selected acquire and release through its simulated tool boundary."""
+
+    load_renderer_module().render(project)
+    coordination = project.get("resource_coordination")
+    if not isinstance(coordination, dict):
+        raise ValueError("resource_coordination is required")
+    selected = coordination.get("selected")
+    if selected != "agent-claim":
+        raise ValueError("resource_coordination.selected must be agent-claim")
+
+    transport_configuration = project.get("agent_claim_transport")
+    if not isinstance(transport_configuration, dict):
+        raise ValueError("agent_claim_transport is required")
+    configured_transport = transport_configuration.get("selected")
+    if configured_transport != "mcp":
+        raise RuntimeError("CLAIM_TRANSPORT_BINDING_MISMATCH")
+
+    transport.verify_setup()
+    acquired = _canonical_mcp_result(
+        transport.call("claim_acquire", claim_id=claim_id, resources=resources)
+    )
+    released = _canonical_mcp_result(
+        transport.call("claim_release", claim_id=claim_id)
+    )
+    return {
+        "resource_coordination": "agent-claim",
+        "transport": "mcp",
+        "claim_id": claim_id,
+        "resources": list(resources),
+        "acquire_outcome": acquired["outcome"],
+        "release_outcome": released["outcome"],
+    }
+
+
+def _command_result(
+    completed: subprocess.CompletedProcess[str],
+) -> dict[str, object]:
+    """Decode one successful command-adapter JSON result."""
+
+    if completed.returncode != 0:
+        raise RuntimeError(
+            f"command claim invocation failed with {completed.returncode}: {completed.stderr}"
+        )
+    result = json.loads(completed.stdout)
+    if not isinstance(result, dict) or result.get("schema_version") != 2:
+        raise RuntimeError("CLAIM_TRANSPORT_SCHEMA_UNSUPPORTED")
+    return result
+
+
+def _run_command_resource_lifecycle(
+    project: dict[str, object],
+    repository: Path,
+    claim_id: str,
+    resources: tuple[str, ...],
+) -> dict[str, object]:
+    """Exercise a command-selected acquire and release through actual process argv."""
+
+    load_renderer_module().render(project)
+    transport_configuration = project.get("agent_claim_transport")
+    if not isinstance(transport_configuration, dict):
+        raise ValueError("agent_claim_transport is required")
+    if transport_configuration.get("selected") != "command":
+        raise RuntimeError("CLAIM_TRANSPORT_BINDING_MISMATCH")
+    if not resources:
+        raise ValueError("command lifecycle requires at least one named resource")
+
+    acquire_argv = [
+        sys.executable,
+        str(COMMAND_SCRIPT),
+        "--repo",
+        str(repository),
+        "acquire",
+        "--claim-id",
+        claim_id,
+        "--agent",
+        "claim-transport-test",
+        "--task",
+        "command resource lifecycle",
+        "--root-task-id",
+        claim_id,
+    ]
+    for resource in resources:
+        acquire_argv.extend(("--resource", resource))
+    release_argv = [
+        sys.executable,
+        str(COMMAND_SCRIPT),
+        "--repo",
+        str(repository),
+        "release",
+        "--claim-id",
+        claim_id,
+        "--no-change",
+    ]
+    acquire_process = subprocess.run(
+        acquire_argv,
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    acquire_result = _command_result(acquire_process)
+    release_process = subprocess.run(
+        release_argv,
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    release_result = _command_result(release_process)
+    return {
+        "resource_coordination": "agent-claim",
+        "transport": "command",
+        "claim_id": claim_id,
+        "resources": list(resources),
+        "acquire_argv": acquire_argv,
+        "release_argv": release_argv,
+        "acquire_returncode": acquire_process.returncode,
+        "release_returncode": release_process.returncode,
+        "acquire_outcome": acquire_result["outcome"],
+        "release_outcome": release_result["outcome"],
+    }
 
 
 def load_renderer_module():
@@ -143,6 +312,7 @@ def project_with_transport(selected: str, availability: str = "AVAILABLE") -> di
     """Return the smallest renderable project fixture with one verified claim transport."""
 
     return {
+        "resource_coordination": {"selected": "agent-claim"},
         "agent_claim_transport": {
             "selected": selected,
             "availability": availability,
@@ -170,6 +340,8 @@ class AgentClaimTransportTests(unittest.TestCase):
             with self.subTest(selected=selected):
                 rendered = renderer.render(project_with_transport(selected))
 
+                self.assertIn("## Resource Coordination Skill Reference", rendered)
+                self.assertIn("selected resource-coordination skill agent-claim", rendered)
                 self.assertIn("## Agent Claim Transport", rendered)
                 self.assertIn(
                     f"BEGIN INLINED CLAIM TRANSPORT SKILL: {included}",
@@ -178,8 +350,227 @@ class AgentClaimTransportTests(unittest.TestCase):
                 self.assertNotIn(excluded, rendered)
                 self.assertIn("does not probe or switch to another transport", rendered)
 
-    def test_renderer_rejects_missing_or_unavailable_transport(self) -> None:
-        """Fail deterministically until Project Configurator records an available transport."""
+    def test_renderer_rejects_missing_or_unsupported_resource_coordination(self) -> None:
+        """Require one supported project-wide coordination selector without a fallback."""
+
+        renderer = load_renderer_module()
+        missing = project_with_transport("mcp")
+        missing.pop("resource_coordination")
+        unsupported = project_with_transport("mcp")
+        unsupported["resource_coordination"] = {"selected": "claims-broker"}
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "resource_coordination is required",
+        ):
+            renderer.render(missing)
+        with self.assertRaisesRegex(
+            ValueError,
+            "resource_coordination.selected must be none or agent-claim",
+        ):
+            renderer.render(unsupported)
+
+    def test_none_renders_no_coordination_or_transport_guidance(self) -> None:
+        """Omit implementation, procedure, transport, and evidence when coordination is disabled."""
+
+        renderer = load_renderer_module()
+        project = project_with_transport("mcp")
+        project["resource_coordination"] = {"selected": "none"}
+        project.pop("agent_claim_transport")
+
+        rendered = renderer.render(project)
+
+        self.assertNotIn("## Resource Coordination Skill Reference", rendered)
+        self.assertNotIn("## Agent Claim Transport", rendered)
+        self.assertNotIn("agent-claim", rendered)
+        self.assertNotIn("CLAIM_TRANSPORT", rendered)
+        self.assertNotIn("transport fixture evidence", rendered)
+
+    def test_none_rejects_every_present_claim_transport_value(self) -> None:
+        """Reject stale transport configuration instead of silently ignoring its value."""
+
+        renderer = load_renderer_module()
+        stale_values = (
+            project_with_transport("mcp")["agent_claim_transport"],
+            {"selected": "mcp"},
+            "mcp",
+        )
+
+        for stale_value in stale_values:
+            with self.subTest(stale_value=stale_value):
+                project = project_with_transport("mcp")
+                project["resource_coordination"] = {"selected": "none"}
+                project["agent_claim_transport"] = stale_value
+
+                with self.assertRaisesRegex(
+                    ValueError,
+                    "agent_claim_transport must be omitted when resource_coordination.selected is none",
+                ):
+                    renderer.render(project)
+
+    def test_selected_resource_lifecycle_pairs_none_with_agent_claim(self) -> None:
+        """Validate none without calls and keep MCP operations on the MCP boundary."""
+
+        none_project = project_with_transport("mcp")
+        none_project["resource_coordination"] = {"selected": "none"}
+        none_project.pop("agent_claim_transport")
+        unavailable_transport = _SimulatedMcpTransport(available=False)
+
+        none_evidence = _run_none_resource_lifecycle(none_project)
+
+        self.assertEqual({"resource_coordination": "none"}, none_evidence)
+        self.assertEqual([], unavailable_transport.calls)
+        self.assertEqual([], unavailable_transport.claim_calls)
+
+        selected_transport = _SimulatedMcpTransport()
+        claim_evidence = _run_selected_mcp_lifecycle(
+            project_with_transport("mcp"),
+            selected_transport,
+            "resource-lifecycle-agent-claim",
+            ("database:integration", "browser-profile:primary"),
+        )
+
+        self.assertEqual(["claim_acquire", "claim_release"], selected_transport.calls)
+        self.assertEqual(
+            [
+                (
+                    "claim_acquire",
+                    "resource-lifecycle-agent-claim",
+                    ("database:integration", "browser-profile:primary"),
+                ),
+                ("claim_release", "resource-lifecycle-agent-claim", ()),
+            ],
+            selected_transport.claim_calls,
+        )
+        self.assertEqual("mcp", claim_evidence["transport"])
+        self.assertEqual("resource-lifecycle-agent-claim", claim_evidence["claim_id"])
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", claim_evidence["acquire_outcome"])
+        self.assertEqual("CLAIM_RELEASED", claim_evidence["release_outcome"])
+
+        mismatched_transport = _SimulatedMcpTransport()
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "CLAIM_TRANSPORT_BINDING_MISMATCH",
+        ):
+            _run_selected_mcp_lifecycle(
+                project_with_transport("command"),
+                mismatched_transport,
+                "resource-lifecycle-mismatch",
+                ("database:integration",),
+            )
+        self.assertEqual([], mismatched_transport.calls)
+        self.assertEqual([], mismatched_transport.claim_calls)
+
+    def test_command_lifecycle_uses_actual_argv_and_structured_results(self) -> None:
+        """Bind command selection to the bundled script and one claim identifier."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            repository = Path(directory) / "repository"
+            repository.mkdir()
+            subprocess.run(
+                ["git", "init", "--initial-branch=main", str(repository)],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            subprocess.run(
+                ["git", "-C", str(repository), "config", "user.email", "test@example.invalid"],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            subprocess.run(
+                ["git", "-C", str(repository), "config", "user.name", "Claim Transport Test"],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            subprocess.run(
+                ["git", "-C", str(repository), "commit", "--allow-empty", "-m", "baseline"],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+
+            evidence = _run_command_resource_lifecycle(
+                project_with_transport("command"),
+                repository,
+                "resource-lifecycle-command",
+                ("database:integration",),
+            )
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "CLAIM_TRANSPORT_BINDING_MISMATCH",
+            ):
+                _run_command_resource_lifecycle(
+                    project_with_transport("mcp"),
+                    repository,
+                    "resource-lifecycle-command-mismatch",
+                    ("database:integration",),
+                )
+
+        self.assertEqual("command", evidence["transport"])
+        self.assertEqual("resource-lifecycle-command", evidence["claim_id"])
+        self.assertEqual(["database:integration"], evidence["resources"])
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", evidence["acquire_outcome"])
+        self.assertEqual("RELEASED", evidence["release_outcome"])
+        self.assertEqual(0, evidence["acquire_returncode"])
+        self.assertEqual(0, evidence["release_returncode"])
+        self.assertEqual(sys.executable, evidence["acquire_argv"][0])
+        self.assertEqual(str(COMMAND_SCRIPT), evidence["acquire_argv"][1])
+        self.assertEqual("acquire", evidence["acquire_argv"][4])
+        self.assertIn("--resource", evidence["acquire_argv"])
+        self.assertIn("database:integration", evidence["acquire_argv"])
+        self.assertEqual("resource-lifecycle-command", evidence["release_argv"][-2])
+        self.assertEqual("--no-change", evidence["release_argv"][-1])
+
+    def test_renderer_reserves_coordination_skills_from_alternate_loading(self) -> None:
+        """Prevent project extensions and technology loadouts from bypassing the selector."""
+
+        renderer = load_renderer_module()
+        reserved = ("agent-claim", "agent-claim-mcp", "agent-claim-command")
+        for coordination in ("none", "agent-claim"):
+            for skill in reserved:
+                with self.subTest(
+                    coordination=coordination,
+                    route="project_skill_extensions",
+                    skill=skill,
+                ):
+                    project = project_with_transport("mcp")
+                    project["resource_coordination"] = {"selected": coordination}
+                    if coordination == "none":
+                        project.pop("agent_claim_transport")
+                    project["project_skill_extensions"] = [skill]
+                    with self.assertRaisesRegex(
+                        ValueError,
+                        "reserved for resource_coordination",
+                    ):
+                        renderer.render(project)
+
+                with self.subTest(
+                    coordination=coordination,
+                    route="technology_skill_loadouts",
+                    skill=skill,
+                ):
+                    project = project_with_transport("mcp")
+                    project["resource_coordination"] = {"selected": coordination}
+                    if coordination == "none":
+                        project.pop("agent_claim_transport")
+                    project["technology_skill_loadouts"] = [
+                        {
+                            "pathPattern": "src/**",
+                            "skills": [skill],
+                            "sourceEvidence": [],
+                        }
+                    ]
+                    with self.assertRaisesRegex(
+                        ValueError,
+                        "reserved for resource_coordination",
+                    ):
+                        renderer.render(project)
+
+    def test_agent_claim_rejects_missing_or_unavailable_transport(self) -> None:
+        """Require a verified transport only when agent-claim is selected."""
 
         renderer = load_renderer_module()
         project = project_with_transport("mcp", availability="UNAVAILABLE")
@@ -255,7 +646,7 @@ class AgentClaimTransportTests(unittest.TestCase):
             if "agent-claim" in case.get("requiredSkills", [])
             and not case.get("readOnly", False)
         ]
-        self.assertEqual(6, len(cases))
+        self.assertEqual(8, len(cases))
         for case in cases:
             selected = "agent-claim-mcp" if "mcpAgentOps" in case else "agent-claim-command"
             unused = "agent-claim-command" if selected == "agent-claim-mcp" else "agent-claim-mcp"

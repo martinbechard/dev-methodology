@@ -36,9 +36,6 @@ examples:
     release-on-cancel regression test, and reported the sustained verification run required
     to confirm the remediation.
 skills:
-- agent-claim:
-    justification: We need this when diagnosis changes instrumentation or owns runtime resources so concurrent investigation cannot overwrite evidence or shared state.
-    condition: when the requested diagnosis mutates files or uses exclusive runtime resources.
 - organise-project-files:
     justification: We need this to keep new instrumentation, logs, reproductions, and runtime evidence in their declared project ownership areas.
     condition: when the requested diagnosis creates a new project file or directory.

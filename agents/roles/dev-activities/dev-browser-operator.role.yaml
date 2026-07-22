@@ -39,9 +39,6 @@ examples:
     reported the relevant runtime state, observable evidence, and minimal reproduction
     steps for follow-up investigation.
 skills:
-- agent-claim:
-    justification: We need this when browser work owns ports, profiles, servers, screenshots, traces, or other mutable evidence so concurrent runs do not corrupt shared state.
-    condition: when the requested browser workflow mutates repository evidence or uses exclusive runtime resources.
 - organise-project-files:
     justification: We need this to keep any new screenshots, traces, or browser-run evidence in the repository's declared evidence area.
     condition: when the requested browser workflow creates a new project file or directory.

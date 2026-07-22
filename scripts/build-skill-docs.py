@@ -942,14 +942,11 @@ def load_role_definition(
         raise ValueError(
             f"Conceptual agent definition {ROLE_REPOSITORY_MUTATION_FIELD_NAME} must be required, conditional, or never: {source_path}"
         )
-    fixed_claim = "agent-claim" in role_skills and "agent-claim" not in skill_conditions
-    conditional_claim = "agent-claim" in skill_conditions
-    if repository_mutation == "required" and not fixed_claim:
-        raise ValueError(f"Conceptual agent definition with required repository mutation must load agent-claim as a definition-owned skill: {source_path}")
-    if repository_mutation == "conditional" and not conditional_claim:
-        raise ValueError(f"Conceptual agent definition with conditional repository mutation must conditionally load agent-claim: {source_path}")
-    if repository_mutation == "never" and "agent-claim" in role_skills:
-        raise ValueError(f"Read-only conceptual agent definition must not load agent-claim: {source_path}")
+    if "agent-claim" in role_skills:
+        raise ValueError(
+            "Conceptual agent definitions must not load the project-selected "
+            f"resource-coordination implementation agent-claim directly: {source_path}"
+        )
     if (
         parsed.get("isolation") == ROLE_READ_ONLY_ISOLATION
         and repository_mutation != "never"

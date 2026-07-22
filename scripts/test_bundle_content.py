@@ -572,7 +572,8 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "Runtime Configuration File Locations",
     "In order to generate usable code, we need to provide all of the relevant context that will steer the agent to generating it in a way that is acceptable to us.",
     "The main problem is choosing the relevant context from many possible units of information.",
-    "The solution is to split up the information into many files and have the agentic coding tool load just the skills it needs.",
+    "The solution is to split the information into focused files, select only the skills relevant to the work, and deliver their instructions through the applicable harness lifecycle.",
+    "Dynamic load-by-name guidance appears only when technology inlining is explicitly disabled.",
     "The Agent Skills format uses a text file named <code>SKILL.md</code> to describe how to perform actions.",
     "It is adopted by all vendors and is the most granular unit of description.",
     "Harness-specific agent definition files describe the purpose of a specific agent, the skills and other agents it should use, and its other directives.",
@@ -582,7 +583,7 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "Project skill definition files describe actions that are specific to the project or customize a shared skill for the project.",
     "Project agent definition files define project-specific agents or customize shared harness-specific agent definitions for the project.",
     "Project setup creates a portable <code>AGENTS.md</code> at the project root.",
-    "This guidance should usually act as a router to load skills appropriate for the project content.",
+    "It names user-confirmed folder technology skills by reference by default",
     "Project setup can place another portable <code>AGENTS.md</code> in a folder that needs specialized guidance.",
     "Every harness uses the same portable Agent Skills package",
     "Skill locations and precedence vary; the <code>SKILL.md</code> format does not.",
@@ -590,7 +591,7 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     '<option value="all">All harnesses</option>',
     "Shared Or User Location",
     "Harness Rule Or File Format",
-    "Package reusable action guidance that loads on demand when a task matches the skill.",
+    "Package reusable action guidance whose selection and instruction delivery follow the applicable harness lifecycle.",
     "Define a specialized worker's purpose, isolated context, tools, model, and delegation behavior.",
     "Provide project-wide context and routing instructions that the harness loads for every applicable task.",
     "Add or override instructions for a folder, path pattern, or narrower working scope.",
@@ -1013,8 +1014,8 @@ class BundleContentTests(unittest.TestCase):
             "classify its failure signature before repeating anything",
             "add the smallest offline replay or deterministic regression",
             "Run one cheapest representative first.",
-            "prove the applicable worktree clean before releasing its shared claim",
-            "retain and heartbeat the claim or hand it off explicitly",
+            "prove the applicable worktree clean before releasing enabled ownership",
+            "retain and heartbeat enabled ownership or hand it off explicitly",
             "Do not let later serial cases start automatically after a shared-boundary failure.",
             "require immediate parent investigation and a revised plan",
         ):
@@ -1309,7 +1310,7 @@ class BundleContentTests(unittest.TestCase):
             "completion disposition READY",
             "successful pipeline",
             "main-observation",
-            "claim-release",
+            "enabled resource-coordination release evidence",
             "Only after the terminal update is observed",
             "return terminal evidence and lifecycle COMPLETED",
             "preserve the READY disposition",
@@ -1646,7 +1647,7 @@ class BundleContentTests(unittest.TestCase):
 
         required_phrases = (
             "This skill owns Git delivery and main observation.",
-            "Do not include provider lifecycle surfaces in this integration claim.",
+            "Do not include provider lifecycle surfaces in operational coordination ownership.",
             "Preserve unrelated main advances.",
             "do not manufacture a topology-only merge",
             "The integration commit is an ancestor of the observed main tip.",
@@ -3351,10 +3352,18 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("schema: project", template_text)
         self.assertIn("proprietary_validation_notes:", template_text)
         self.assertIn("nested_agents_files:", template_text)
+        self.assertIn("resource_coordination:", template_text)
+        self.assertIn("selected: \"TODO: none or agent-claim", template_text)
         self.assertIn("agent_claim_transport:", template_text)
         self.assertIn("selected: \"TODO: mcp or command", template_text)
-        self.assertIn("Select exactly one agent_claim_transport value", skill_text)
-        self.assertIn("inline exactly the selected claim transport adapter", skill_text)
+        self.assertIn("has no compatibility default, and has no folder overrides", skill_text)
+        self.assertIn(
+            "resource-coordination selection and, for agent-claim, one verified claim transport",
+            skill_text,
+        )
+        self.assertIn("Only when resource_coordination selects agent-claim", skill_text)
+        self.assertIn("inline exactly the selected transport adapter", skill_text)
+        self.assertIn("For none, render no coordination skill, procedure, transport, or evidence", skill_text)
         self.assertIn("workflow_selection:", template_text)
         self.assertIn("project_skill_extensions: []", template_text)
         self.assertIn("file, github, gitlab, azure-devops, jira, none, or UNSET", template_text)
@@ -3383,6 +3392,14 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("intermediate, reviewable intent log", skill_text)
         self.assertIn("treat them as requested configuration intent", skill_text)
         self.assertIn("Project Configurator owns the setup process", modularization_text)
+        self.assertIn(
+            "Only agent-claim requires one verified transport and rendered adapter",
+            modularization_text,
+        )
+        self.assertIn(
+            "For none, confirm there is no coordination reference, procedure, transport, worktree requirement, or coordination evidence",
+            modularization_text,
+        )
         self.assertIn("Project-level extension selection", modularization_text)
         self.assertIn("project_skill_extensions", modularization_text)
         self.assertIn("Nested guidance does not inherit or repeat the section", modularization_text)
@@ -3395,11 +3412,11 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("agent_coordination:", template_text)
         self.assertNotIn("coordination_overrides:", template_text)
         self.assertIn(
-            "Generic repository-mutation behavior belongs to conceptual agent definitions",
+            "repositoryMutation belongs to conceptual agent definitions as an independent capability declaration",
             skill_text,
         )
         self.assertIn(
-            "Do not reproduce that procedure in PROJECT.yaml or AGENTS.md",
+            "generated AGENTS.md references that skill by name only when enabled and never reproduces its procedure",
             skill_text,
         )
         self.assertIn("Record a coordination_overrides mapping only when", skill_text)
@@ -3413,7 +3430,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("ordered project_skill_extensions list", readme_text)
         self.assertIn("final root-only section", readme_text)
         self.assertIn(
-            "Treat a missing conceptual agent definition, skill, or command as BLOCKED",
+            "Treat a missing conceptual agent definition, selected skill, adapter, or command as BLOCKED",
             skill_text,
         )
         self.assertIn("agent-claim", skill_text)
@@ -3421,10 +3438,13 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("must never derive it from another linked checkout", skill_text)
         self.assertIn("Do not record a machine-specific absolute worktree path", skill_text)
         self.assertIn(
-            "The .worktrees directory is ignored operational state immediately beneath the primary worktree",
+            "When resource_coordination selects agent-claim, the .worktrees directory is ignored operational state immediately beneath the primary worktree",
             template_text,
         )
-        self.assertIn("Contains the anchored /.worktrees/ entry", template_text)
+        self.assertIn(
+            "When agent-claim is selected, contains the anchored /.worktrees/ entry",
+            template_text,
+        )
         self.assertIn("worktree ignore behavior", modularization_text)
         self.assertIn("thin CLAUDE.md", skill_text)
         self.assertIn(PROJECT_CONFIGURATION_SKILL, development_methodology_text)
@@ -3590,9 +3610,9 @@ class BundleContentTests(unittest.TestCase):
         for required_phrase in (
             "## Blocked Handoff And Resumption",
             "replace the prior owner with Owner: Unowned",
-            "replace the prior claim with Claim: None",
+            "clear any enabled coordination reference",
             "Set the item to Ready",
-            "Only after a successful claim",
+            "only after successful acquisition",
             "Restore the byte-for-byte pre-attempt Blocked item",
         ):
             with self.subTest(manage_file_contract=required_phrase):
@@ -4390,10 +4410,10 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(required_guidance, create_text)
 
         for required_guidance in (
-            "Do not claim, dispatch, implement, or resolve user-action-required work",
+            "Do not own, dispatch, implement, or resolve user-action-required work",
             "Ask the user the exact question recorded in the item",
             "Move an approved or answered item into its typed active backlog folder",
-            "set Status: Ready before any separately requested claim or running transition",
+            "set Status: Ready before any separately requested resource-coordination or running transition",
             "backlog/holding is for intentionally deferred work",
         ):
             with self.subTest(manage_guidance=required_guidance):
@@ -4549,7 +4569,7 @@ class BundleContentTests(unittest.TestCase):
                 "Do not write a shadow queue elsewhere.",
                 "Before writing, search every active typed folder",
                 "Source Evidence",
-                "released backlog claim reference",
+                "enabled resource-coordination evidence",
             ),
             "manage-file-work-items": (
                 "The only authoritative file-provider storage root is backlog in the primary worktree while that worktree is on main.",
@@ -4568,8 +4588,22 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(skill=skill_name):
                 self.assertEqual(skill_name, frontmatter["name"])
                 self.assertIn("effective provider is file", frontmatter["description"])
+                self.assertIn(
+                    "while none uses no claim lifecycle or evidence",
+                    frontmatter["description"],
+                )
                 for required_contract in required_contracts:
                     self.assertIn(required_contract, skill_text)
+
+        readme_text = README_PATH.read_text(encoding="utf-8")
+        self.assertIn(
+            "When PROJECT.yaml selects agent-claim, they use a short primary-main backlog claim",
+            readme_text,
+        )
+        self.assertIn(
+            "When it selects none, they perform the same serialized provider transactions without claim operations or claim evidence",
+            readme_text,
+        )
 
         legacy_replacements = {
             "create-backlog": ("create-file-work-item",),
@@ -4687,13 +4721,13 @@ class BundleContentTests(unittest.TestCase):
         self.assertTrue(tracked_backlog, "Canonical primary backlog has no tracked inputs")
         self.assertTrue(all((primary_root / path).is_file() for path in tracked_backlog))
 
-    def test_answered_user_action_enters_ready_before_claiming(self) -> None:
+    def test_answered_user_action_enters_ready_before_coordination(self) -> None:
         manage_text = (SKILLS_ROOT / "manage-file-work-items" / "SKILL.md").read_text(
             encoding="utf-8"
         )
 
         self.assertIn(
-            "set Status: Ready before any separately requested claim or running transition",
+            "set Status: Ready before any separately requested resource-coordination or running transition",
             manage_text,
         )
         self.assertNotIn(
@@ -5270,7 +5304,7 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(readme_contract=required_contract):
                 self.assertIn(required_contract, readme_text)
 
-    def test_backlog_claim_guidance_uses_short_primary_batons(self) -> None:
+    def test_backlog_coordination_uses_short_primary_batons_when_enabled(self) -> None:
         create_text = (SKILLS_ROOT / "create-file-work-item" / "SKILL.md").read_text(
             encoding="utf-8"
         )
@@ -5279,11 +5313,11 @@ class BundleContentTests(unittest.TestCase):
         )
 
         for required_contract in (
-            "short backlog-domain claim",
-            "release that claim immediately",
-            "Do not combine backlog creation with a project-files implementation claim",
-            "acquire a separate exact, tree, or project-files implementation claim",
-            "A later backlog claim records terminal evidence and archive movement",
+            "When agent-claim is selected, acquire backlog scope",
+            "release enabled backlog ownership immediately",
+            "Keep backlog creation separate from implementation ownership",
+            "apply the selected coordination policy independently to implementation",
+            "With coordination none, these remain separate commit transactions without claim evidence",
         ):
             with self.subTest(create_contract=required_contract):
                 self.assertIn(required_contract, create_text)
@@ -5291,39 +5325,35 @@ class BundleContentTests(unittest.TestCase):
         for required_contract in (
             "record Status: Running and ownership evidence",
             "release immediately",
-            "Delivery then uses a separate exact, tree, or project-files claim without backlog ownership",
-            "acquire a later backlog claim to record result evidence and archive the item",
+            "Delivery then obtains separate implementation ownership without backlog scope",
+            "obtain later backlog ownership to record result evidence and archive the item",
             "SHARED_CHECKOUT_RELEASE_REQUIRED is a coordination outcome rather than a failed mutation",
             "suspend without polling",
             "Resume only after that notification",
+            "When none is selected, perform no claim discovery",
         ):
             with self.subTest(manage_contract=required_contract):
                 self.assertIn(required_contract, manage_text)
 
-    def test_modifying_roles_use_claims_and_coordination_roles_require_clean_commits(self) -> None:
+    def test_roles_keep_mutation_independent_from_resource_coordination(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         skill_payload = build_skill_docs.build_payload()
         roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
         roles_by_name = {role.name: role for role in roles}
         for role in roles:
             with self.subTest(role=role.name, mutation_policy=role.repository_mutation):
-                if role.repository_mutation == "required":
-                    self.assertIn("agent-claim", build_skill_docs.fixed_role_skills(role))
-                elif role.repository_mutation == "conditional":
-                    self.assertIn("agent-claim", role.skill_conditions)
-                else:
-                    self.assertNotIn(
-                        "agent-claim",
-                        build_skill_docs.fixed_role_skills(role),
-                    )
-                    self.assertNotIn("agent-claim", role.skill_conditions)
+                self.assertNotIn("agent-claim", build_skill_docs.fixed_role_skills(role))
+                self.assertNotIn("agent-claim", role.skill_conditions)
 
         orchestrator = roles_by_name["dev-orchestrator"]
         merge_coordinator = roles_by_name["dev-merge-coordinator"]
         self.assertIn("committed handoffs", orchestrator.instructions)
-        self.assertIn("verified, committed, clean, and released", orchestrator.instructions)
+        self.assertIn(
+            "verified, committed, clean, and with enabled resource-coordination closeout complete",
+            orchestrator.instructions,
+        )
         self.assertIn("committed clean contributions", merge_coordinator.instructions)
-        self.assertIn("release only from a clean worktree", merge_coordinator.instructions)
+        self.assertIn("release enabled ownership only from a clean worktree", merge_coordinator.instructions)
         claim_skill = (SKILLS_ROOT / "agent-claim" / "SKILL.md").read_text(encoding="utf-8")
         mcp_skill = (SKILLS_ROOT / "agent-claim-mcp" / "SKILL.md").read_text(encoding="utf-8")
         command_skill = (SKILLS_ROOT / "agent-claim-command" / "SKILL.md").read_text(encoding="utf-8")
@@ -5456,7 +5486,8 @@ class BundleContentTests(unittest.TestCase):
             "temporary shared-mutation protection",
             "Designate this fresh branch as the task integration and cleanup branch",
             "Do not import cumulative branch ancestry merely to preserve provenance",
-            "Keep administrative coordination-registry cleanup, Git integration, and terminal backlog completion as three distinct operations",
+            "When resource coordination selects agent-claim, keep administrative coordination-registry cleanup, Git integration, and terminal backlog completion as three distinct operations",
+            "When none is selected, omit coordination-registry cleanup and coordination evidence.",
             "A live owner, dirty unpreserved worktree, resource in use, or unclear evidence blocks reset",
             "The bundled portable claim command has no reset operation",
             "If a supported atomic operation is unavailable, stop and route the reset",
@@ -5729,9 +5760,12 @@ class BundleContentTests(unittest.TestCase):
         for example in wiki_ingester.examples[:2]:
             with self.subTest(wiki_ingester_example=example["purpose"]):
                 response = example["plausibleResponse"]
-                self.assertIn("GOOD pre-move verdict", response)
-                self.assertIn("GOOD post-move verdict", response)
-                self.assertIn("released the ingest claim", response)
+                normalized_response = " ".join(response.split())
+                self.assertIn("GOOD pre-move verdict", normalized_response)
+                self.assertIn("GOOD post-move verdict", normalized_response)
+                self.assertIn("commit closeout", normalized_response)
+                self.assertIn("enabled resource-coordination evidence", normalized_response)
+                self.assertNotIn("released the ingest claim", normalized_response)
 
     def test_wiki_ingester_continues_substantiated_ingest_after_verifier_interruption(
         self,
@@ -6175,12 +6209,13 @@ class BundleContentTests(unittest.TestCase):
             "exact shared integration paths",
             "Pull-request delivery",
             "authorized reviewer or merge owner",
-            "does not acquire a duplicate main-integration claim",
+            "does not acquire duplicate main-integration ownership",
             "Conditional integration role",
             "nested Merge Coordinator",
             "inside the same work item",
             "Re-review reconciled content when integration changes meaning",
-            "separate short claim",
+            "separate provider transaction",
+            "none performs no claim operation and records no claim evidence",
             "record Completed",
             "delete the merged branch",
             "refill queue capacity",
@@ -6194,8 +6229,8 @@ class BundleContentTests(unittest.TestCase):
         ]
         direct_main_steps = (
             "Review and verify the private candidate",
-            "Acquire exact shared integration paths",
-            "Under that ownership, refresh current main",
+            "When resource coordination is enabled, acquire the exact shared integration paths",
+            "Refresh current main",
             "Apply only the accepted paths",
         )
         direct_main_positions = tuple(
@@ -6356,7 +6391,7 @@ class BundleContentTests(unittest.TestCase):
             r"(?i)dev-merge-coordinator was not invoked",
         )
         self.assertIn("clean status", direct_response.lower())
-        self.assertIn("released claims", direct_response.lower())
+        self.assertIn("enabled resource-coordination closeout", direct_response.lower())
 
         integrated_examples = [
             example
@@ -6389,7 +6424,17 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertIn("complete integrated result", integration_tail.lower())
         self.assertIn("clean status", integrated_response.lower())
-        self.assertIn("released claims", integrated_response.lower())
+        self.assertIn("enabled resource-coordination closeout", integrated_response.lower())
+
+        no_coordination_example = next(
+            example
+            for example in role.examples
+            if "resource coordination was none" in example["plausibleResponse"].lower()
+        )
+        self.assertIn(
+            "no coordination lifecycle or evidence",
+            no_coordination_example["plausibleResponse"].lower(),
+        )
 
     def test_project_bootstrapper_has_separate_setup_and_documentation_branches(self) -> None:
         """Keep every later documentation gate out of the ordinary setup branch."""
@@ -6480,7 +6525,7 @@ class BundleContentTests(unittest.TestCase):
             "setup-specific validation",
             "bounded setup commit",
             "clean status",
-            "released setup claim",
+            "released enabled setup resource ownership",
         ):
             with self.subTest(configuration_only_evidence=phrase):
                 self.assertIn(phrase, configuration_only_response)
@@ -6673,7 +6718,6 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertEqual(
             {
-                "agent-claim",
                 "organise-project-files",
                 "review-architecture",
                 "review-functional-spec",
@@ -6683,6 +6727,7 @@ class BundleContentTests(unittest.TestCase):
             } | set(CORE_PATTERN_SKILLS),
             set(role.skill_conditions),
         )
+        self.assertNotIn("agent-claim", role.skill_conditions)
 
     def test_role_categories_and_names_follow_prefix_actor_rules(self) -> None:
         build_skill_docs = load_build_skill_docs_module()

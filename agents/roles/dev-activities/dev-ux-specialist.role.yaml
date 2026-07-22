@@ -39,9 +39,6 @@ examples:
     for persistent filter feedback and a single recovery action, leaving implementation
     authority with the product team.
 skills:
-- agent-claim:
-    justification: We need this when UX work writes design evidence or owns browser resources so concurrent reviews remain isolated and durable changes are committed.
-    condition: when the requested UX work mutates files or uses exclusive runtime resources.
 - organise-project-files:
     justification: We need this to place new design recommendations, review findings, screenshots, or accessibility evidence in the repository's declared areas.
     condition: when the requested UX work creates a new project file or directory.

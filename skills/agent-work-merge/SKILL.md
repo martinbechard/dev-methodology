@@ -1,6 +1,6 @@
 ---
 name: agent-work-merge
-description: Use when integrating work from multiple agents, linked git worktrees, parallel task branches, claim-coordinated repositories, subagent outputs, or concurrent implementation lanes.
+description: Use when integrating work from multiple agents, linked git worktrees, parallel task branches, resource-coordinated repositories, subagent outputs, or concurrent implementation lanes.
 metadata:
   category: development-practice
 ---
@@ -11,25 +11,25 @@ Use this skill when multiple agents complete work in separate git worktrees or b
 
 ## Goal
 
-Keep parallel work isolated during implementation, then merge only verified, committed, and claimed work into the integration lane. The merge agent owns coordination, conflict resolution, final verification, and cleanup.
+Keep parallel work isolated during implementation, then merge only verified and committed work into the integration lane. The merge agent owns coordination, conflict resolution, final verification, and cleanup. When resource coordination is enabled, it also preserves the selected policy's ownership and release contract.
 
 ## Preconditions
 
 Before merging a worktree:
 
-- Use the agent-claim skill for files and runtime resources touched during integration.
+- When agent-claim is selected, apply that enabled resource-coordination implementation when integration touches shared files or exclusive runtime resources. When none is selected, load no coordination implementation and perform no coordination lifecycle.
 - Confirm the source worktree has no uncommitted task changes unless the handoff explicitly says how to handle them.
 - Confirm the source branch has a meaningful commit for the completed unit.
 - Read the source agent status, final notes, verification results, and known risks.
 - Confirm the integration checkout is the intended target lane.
-- Confirm the source claim was released after a clean commit or explicitly handed to the integration owner.
-- Reject anonymous dirty state. Route it through the recovery workflow in agent-claim before integration.
+- When resource coordination is enabled, confirm source ownership was released after a clean commit or explicitly handed to the integration owner.
+- Reject anonymous dirty state. Use the selected policy's recovery workflow when enabled; otherwise preserve the dirty state and obtain an explicit work-item handoff before integration.
 
-## Merge Claim
+## Integration Ownership
 
-Claim the target-specific integration resource only for the shared target update, together with any files likely to be touched by conflict resolution. Separate worktrees may commit to their unique branches without a repository-global commit resource. Release the integration resource promptly after the merge, cherry-pick, rebase, or equivalent target update and its required verification complete.
+When resource coordination is enabled, acquire the target-specific integration resource only for the shared target update, together with any files likely to be touched by conflict resolution. Separate worktrees may commit to their unique branches without a repository-global commit resource. Release the integration resource promptly after the merge, cherry-pick, rebase, or equivalent target update and its required verification complete. When resource coordination is none, skip this acquisition and release evidence entirely.
 
-Example claim:
+Example agent-claim record when that implementation is selected:
 
 ```json
 {
@@ -54,7 +54,7 @@ Example claim:
 7. Commit each coherent merged unit before starting the next source.
 8. Regenerate shared outputs only after the branches containing their source changes are integrated.
 9. Run final repository verification required by the project.
-10. Release claims only after verification, a clean integration commit, and cleanup are complete.
+10. When resource coordination is enabled, release owned integration resources only after verification and a clean integration commit are complete.
 
 ## Fresh Current-Main Reconciliation
 
@@ -109,11 +109,11 @@ Never treat a clean merge as proof that the merged application works.
 After a source is merged and verified:
 
 - Record the merge commit or integration commit.
-- Remove only claims owned by the merge task.
+- Remove or release only coordination state owned by the merge task when coordination is enabled.
 - Stop or hand off runtime resources.
 - Remove completed worktrees only when the repository policy allows it and the branch has been safely integrated.
 - Leave failed or blocked worktrees intact with a clear status note.
-- Never release the integration claim while newly created uncommitted work remains.
+- Never release enabled integration ownership while newly created uncommitted work remains.
 - Keep inactive coordination-registry cleanup, Git integration, and terminal backlog closeout as distinct operations with separate evidence. A successful administrative reset is not an integration or completion event.
 
 ## Final Report
@@ -123,5 +123,5 @@ Report:
 - Source branches or worktrees merged.
 - Commit hashes created.
 - Verification commands and outcomes.
-- Claims released or remaining blockers.
+- Resource-coordination releases when enabled, or remaining blockers.
 - Worktrees removed or intentionally kept.

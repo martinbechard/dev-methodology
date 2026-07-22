@@ -42,16 +42,23 @@ Mark unknown requirements or acceptance criteria as open questions. Do not inven
 
 Read only the selected process. Keep backlog persistence separate from delivery: report lifecycle evidence to the configured backlog owner rather than embedding file or issue operations in this skill.
 
+## Resource Coordination
+
+Apply the project-wide resource_coordination selection independently from the delivery process:
+
+- When agent-claim is selected, load that enabled implementation and its configured transport before protected repository or runtime mutation. Preserve its acquire, isolation, heartbeat, handoff, release, and evidence requirements through the selected process.
+- When none is selected, do not discover or load a coordination implementation or transport, inspect coordination state, invoke coordination operations, create a coordination-only branch, or report coordination evidence. Perform no coordination operations or evidence collection while still preserving the authorized scope, coherent commits, required verification, clean worktree, delivery record, and backlog handoff.
+
 ## Common Boundaries
 
-- Acquire ownership before repository mutation and preserve unrelated work.
+- Follow the resource-coordination branch above before repository mutation and preserve unrelated work.
 - Keep one work item within one coherent delivery scope.
 - Return implementation findings to the work-item owner instead of silently expanding the item.
 - Apply review corrections to the same work item and delivery branch unless the accepted correction changes the independent review boundary.
 - Do not mark a backlog item complete merely because a commit or pull request exists.
 - Report READY only after the selected process reaches its required terminal evidence.
 - Report AWAITING_REVIEW only for a published feature-branch work item waiting on external review.
-- Report BLOCKED when authority, required inputs, dependencies, ownership, verification, or delivery capability prevents safe progress.
+- Report BLOCKED when authority, required inputs, dependencies, an enabled coordination conflict, verification, or delivery capability prevents safe progress.
 
 ## Result
 

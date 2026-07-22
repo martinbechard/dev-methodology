@@ -41,7 +41,7 @@ Structured instructions require objective, workflow, and completion. Omit option
 - Align the description with actual review, verification, and mutation behavior. Do not promise independent review when the workflow only performs same-owner validation.
 - Bound correction and verification loops. State who owns each failure, how many retries are allowed, and which condition ends in BLOCKED.
 - Include a terminal status in the output contract when instructions can return different terminal outcomes.
-- Keep repository mutation policy aligned with agent-claim loading.
+- Keep repositoryMutation as an independent capability declaration. Do not list a project-selected resource-coordination implementation in conceptual role skills.
 - Declare agent dependencies separately from skills. Skills provide methods; agent dependencies provide isolated responsibility or authority boundaries.
 - Keep provider model identifiers out of conceptual agent definitions and use semantic model profiles.
 - Keep customer-independent definitions free of personal, customer, company, or private operational data.

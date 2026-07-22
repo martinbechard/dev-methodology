@@ -30,7 +30,7 @@ instructions:
     requirements, acceptance criteria, dependencies, verification expectations, ownership,
     and requested lifecycle transition.
   - Search the selected backend for an existing matching item before creating another.
-  - Apply the selected backend skill to create, claim, resume, block, complete, fail, archive,
+  - Apply the selected backend skill to create, assign, resume, block, complete, fail, archive,
     or report the item without changing unrelated backlog state.
   - Preserve implementation and delivery references while requiring the configured completion
     evidence before closing or archiving the item.
@@ -44,15 +44,15 @@ instructions:
     backend and enough evidence remains for another agent to recover the item.
 modelProfile: default
 examples:
-- purpose: Create and claim a file-backed feature item with dispatchable evidence.
+- purpose: Create and assign a file-backed feature item with dispatchable evidence.
   runtimeInvocations:
     codex: "$dev_backlog_steward Use the configured file-based-backlog to create and
-      claim a feature item for adding idempotency keys to webhook processing."
+      assign a feature item for adding idempotency keys to webhook processing."
     claude-code: "@agent-dev-backlog-steward Use the configured file-based-backlog to
-      create and claim a feature item for adding idempotency keys to webhook processing."
+      create and assign a feature item for adding idempotency keys to webhook processing."
   plausibleResponse: 'READY. Created the typed feature file with requirements, acceptance
     criteria, dependencies, and verification expectations, recorded that the authorized
-    item entered Ready before the requested claim transition, established exclusive ownership,
+    item entered Ready before the requested assignment transition, established durable provider ownership,
     and reported its path and next runnable action without creating a hosting-service issue.'
 - purpose: Preserve an independently identified improvement as non-dispatchable until the
     user decides whether it is valuable enough to pursue.
@@ -87,14 +87,14 @@ examples:
     auditable lifecycle outcome.
   runtimeInvocations:
     codex: "$dev_backlog_steward Reconcile the interrupted cache-invalidation investigation
-      in the configured file-based backlog, determine its state from the item, claim,
+      in the configured file-based backlog, determine its state from the item, ownership,
       logs, and result evidence, and archive it if completion is supported."
     claude-code: "@agent-dev-backlog-steward Reconcile the interrupted cache-invalidation
       investigation in the configured file-based backlog, determine its state from the
-      item, claim, logs, and result evidence, and archive it if completion is supported."
-  plausibleResponse: 'READY. Reconciled the active item, claim, logs, and result record,
+      item, ownership, logs, and result evidence, and archive it if completion is supported."
+  plausibleResponse: 'READY. Reconciled the active item, provider owner, logs, and result record,
     confirmed that the investigation produced its required findings and verification
-    evidence, recorded the completion summary, released the stale claim, and moved the
+    evidence, recorded the completion summary, completed enabled coordination closeout, and moved the
     item to the completed investigation archive with recovery evidence intact.'
 skills:
 - organise-project-files:
@@ -112,9 +112,6 @@ skills:
 - github-issues-backlog:
     justification: We need this to create and manage the authoritative issue-backed queue without duplicating it in repository files.
     condition: when applicable project guidance or the request selects github-issues-backlog
-- agent-claim:
-    justification: We need this to preserve exclusive visible ownership when the selected backlog operation mutates repository files or records repository-global claim state.
-    condition: when the selected backlog operation mutates repository files or records repository-global claim state
 - structured-explanation:
     justification: We need this so status, blocked, completion, and handoff records leave
       enough context for the next person to make a sound decision.
@@ -123,6 +120,6 @@ outputContract:
     purpose: Makes the requested backend operation or lifecycle transition durable and explicit so the backlog remains a trustworthy source of current state.
 - ownership record:
     purpose: Identifies who controls the work so other contributors can coordinate
-      without creating conflicting claims or edits.
+      without creating conflicting assignments or edits.
 - completion or blocked summary:
     purpose: Preserves the backend, outcome, remaining obstacle, and next decision so another contributor can recover the work without reconstructing its history.

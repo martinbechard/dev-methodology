@@ -144,6 +144,7 @@ def with_claim_transport(value: dict[str, object]) -> dict[str, object]:
     """Add one available command adapter selection to a renderer fixture."""
 
     return {
+        "resource_coordination": {"selected": "agent-claim"},
         "agent_claim_transport": {
             "selected": "command",
             "availability": "AVAILABLE",
@@ -2744,7 +2745,11 @@ class TechnologyDetectionTests(unittest.TestCase):
         renderer = load_renderer_module()
 
         self.assertIn("Optional definition authority", renderer.render.__doc__)
-        self.assertIn("agent_claim_transport and workflow_selection are required", renderer.render.__doc__)
+        self.assertIn("workflow_selection and resource_coordination are required", renderer.render.__doc__)
+        self.assertIn(
+            "agent_claim_transport is required only when resource_coordination selects agent-claim",
+            renderer.render.__doc__,
+        )
         self.assertNotIn("Optional authority and workflow", renderer.render.__doc__)
 
     def test_agents_section_reports_deterministic_legacy_selector_migrations(self) -> None:

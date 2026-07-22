@@ -6,6 +6,9 @@ current_understanding:
   development_stage: "Active bundle maintenance with generated documentation, native agent adapters, regression tests, and explicit target deployment support."
   setup_need: "Python maintenance code exists in several ownership scopes, including a FastAPI fixture, so ordinary agents need deterministic folder technology skillsets without rerunning detection."
 
+resource_coordination:
+  selected: agent-claim
+
 agent_claim_transport:
   selected: command
   availability: AVAILABLE
@@ -210,9 +213,8 @@ role_agent_set:
       - manage-backlog
       - structured-explanation
       - codex-workitem-coordination
-      - agent-claim
     completion_checks:
-      - "Reconcile backlog, claims, Git, active and archived task state; require durable delivery and lifecycle evidence before terminal UI housekeeping."
+      - "Reconcile backlog, selected resource coordination, Git, active and archived task state; require durable delivery and lifecycle evidence before terminal UI housekeeping."
   - role: methodology-maintainer
     purpose: "Keep source skills, conceptual agent definitions, metadata, generated outputs, documentation, tests, and explicit deployment behavior aligned."
     owns:
@@ -220,7 +222,6 @@ role_agent_set:
     hands_off:
       - "Methodology artifact review to methodology-artifact-reviewer when a separate documentation review is required."
     skills:
-      - agent-claim
       - maintain-methodology-documentation
       - development-methodology
       - structured-explanation
@@ -233,16 +234,10 @@ role_agent_set:
     hands_off:
       - "Ordinary implementation to dev-coder after routing is established."
     skills:
-      - agent-claim
       - detect-technology-skills
       - create-project-configuration
       - development-methodology
       - documentation-page-verify
-    conditional_skills:
-      - skill: agent-claim-mcp
-        condition: "When PROJECT.yaml selects mcp or initial setup verifies the complete MCP claim tool surface."
-      - skill: agent-claim-command
-        condition: "When PROJECT.yaml selects command or initial setup verifies the independently distributable command adapter."
     completion_checks:
       - "Rerun representative-scope detection and compare AGENTS.md with this plan."
   - role: dev-coder
@@ -252,7 +247,6 @@ role_agent_set:
     hands_off:
       - "Independent review to dev-code-reviewer and verification to dev-verifier."
     skills:
-      - agent-claim
       - careful-coding
       - code-comments
       - code-discovery

@@ -44,9 +44,6 @@ examples:
     Placement audit: both destinations match one binding rule, so neither can be approved.
     Approved path omitted. Status: BLOCKED.'
 skills:
-- agent-claim:
-    justification: We need this when placement work moves, creates, or rewrites project files so the mutation has explicit ownership through a clean commit.
-    condition: when the requested placement work moves, creates, rewrites, stages, or commits project files.
 - organise-project-files:
     justification: We need this to turn live repository guidance, taxonomy, ownership, lifecycle, naming, and generated-output boundaries into an auditable placement decision.
 - structured-design:
