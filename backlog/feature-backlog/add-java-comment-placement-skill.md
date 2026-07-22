@@ -1,6 +1,6 @@
 # Add Java Comment Placement Skill
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -12,16 +12,29 @@ Completion: direct-main
 
 ## Current Execution
 
-- Owner: Dev Orchestrator
-- Claim: Running-record claim start-java-comment-placement-019f8781 acquired as SHARED_CHECKOUT_ACQUIRED at event 7a7a17bf-a048-487e-bf26-c95b44353537; release follows the committed lifecycle transition.
+- Owner: Unowned
+- Claim: None
 - Canonical task: 019f8781-917c-7933-9c76-d7e3305df9b3
 - Worktree: /Users/martinbechard/.codex/worktrees/e56a/dev-methodology
 - Branch: codex/add-java-comment-placement-skill
 - Starting main: 92a2009c70657860d6182b234e8a64da31ca40ed
-- Phase: Run the three exact governed-definition approval checks, implement the Java-specific placement contract and supported dependent surfaces, obtain fresh independent review and focused Tier 1/2 verification, integrate from fresh main under exact ownership, and complete the file-provider item separately.
+- Phase: Blocked after the bounded correction loop exhausted the evaluator output-contract criterion; no integration or completion transaction started.
 - Started: 2026-07-21.
-- Open issues: None. Scope remains exactly the three approved governed paths; the prior read-only discovery task is retained under Discovery Evidence.
-- Accepted candidate: Pending.
+- Open issues: The Java evaluation verifier accepts an eval-result.md containing only the six bare required labels. It does not require real Markdown headings or non-empty affected-path and verification-result content under each heading.
+- Accepted candidate: 02cc7215edce2782875998c3074a2a84ce5e441e, preserved as one clean feature commit on codex/add-java-comment-placement-skill atop main 3f262f6c3e8f997a8038edf42ffbd49df7b44bc4. The candidate is not independently verified and is not accepted for integration.
+
+## Blocked Handoff
+
+- Blocker: Independent Dev Verifier demonstrated that evals/projects/java-comment-placement/verify.py checks only substring presence for six evidence labels. A result containing only those labels returns exit 0 even though TASK.md requires an affected path and verification result under every heading.
+- Decisive evidence: HEADINGS_ONLY_EXIT=0 with empty stdout and stderr; verifier implementation lines 235-247 conflict with TASK.md line 18.
+- Why execution stopped: The same evaluator and oracle acceptance boundary remained open after two correction attempts. The bounded correction loop prohibits a third blind correction or a weakened verification gate.
+- Preserved work: candidate 02cc7215edce2782875998c3074a2a84ce5e441e on codex/add-java-comment-placement-skill. Earlier focused skill, metadata, detection, catalog, generator, diff, and clean-status checks passed, but they do not override the verifier failure.
+- Next action owner: A fresh Dev Orchestrator task with a new correction owner; the exhausted canonical task must not resume implementation.
+- Unblock condition: Parse actual Markdown headings, require non-empty affected-path and verification-result content under every required heading, add a bare-label rejection regression, add a complete-evidence acceptance regression, and obtain fresh independent review and verification of the cumulative candidate.
+- Permitted resumption: After a fresh owner accepts the item through the normal Blocked to Ready to newly claimed Running transition. Do not integrate 02cc721 directly and do not infer ownership from this authorization.
+- Scope authority: The existing exact approval for skills/code-comments/SKILL.md, skills/java-comment/SKILL.md, and skills/java-comment/agents/openai.yaml remains valid. The required evaluator-only correction is within the already approved directly related non-governed tests and evaluations scope; no additional governed-definition approval is required.
+- Released implementation claims: add-java-comment-placement-019f8781 release event 9ef2efdc-0752-4d99-9d4e-ba30a9459909; java-comment-correction-019f8781 release event cf590329-30e7-4ac7-8e14-51e207084891; java-comment-final-correction-019f8781 release event 7432a914-02ac-4a04-8151-886638933d4a.
+- Backlog transition claim: block-java-comment-verifier-019f8781 acquired event fe03cd38-5a84-4d81-aca4-911ab1c7905b and releases immediately after this one-file commit.
 
 ## User Action Required
 
