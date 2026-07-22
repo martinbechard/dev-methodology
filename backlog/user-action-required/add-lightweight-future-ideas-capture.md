@@ -1,12 +1,12 @@
 # Add Lightweight Future Ideas Capture
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/add-lightweight-future-ideas-capture.md
+Provider Reference: backlog/user-action-required/add-lightweight-future-ideas-capture.md
 
 Completion: direct-main
 
@@ -26,25 +26,64 @@ Completion: direct-main
 
 ## Delivery Execution / Ownership
 
-- Owner: Dev Orchestrator
+- Owner: Unowned
 - Canonical task: /root/process_backlog/orch_future_ideas
-- Artifact claim: future-ideas-implementation-20260722
+- Claim: None
 - Branch: codex/future-ideas-implementation-20260722
 - Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/future-ideas-implementation-20260722
 - Starting main: 13ea3ffe92fe7a8352f33b4f618f39f212322ba3
-- Phase: Lifecycle Running committed; ARTIFACT GO pending.
-- Candidate: Pending.
+- Phase: Authority expansion pending; correction not dispatched.
+- Candidate: 65b94bc05f8745e67c53fb6e7963b32c90e7a2fd, preserved.
 - Accepted commit: Pending.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Delivery evidence: Pending.
-- Claim pressure: README.md is currently owned by deploy-explicit-project-20260722. Start on proven non-overlapping scopes; serialize any later README.md or scripts/test_bundle_content.py extension rather than waiting idle or polling.
+- Delivery evidence: Candidate and review evidence preserved; no correction attempt dispatched.
+- Next owner: User.
 
 ## User Action Required
 
 ### Question For The User
+
+Do you explicitly approve expanding Add Lightweight Future Ideas Capture to update exactly design/agent-skill-hierarchy.svg and design/generated/agent-skill-explorer-data.js as deterministic generated documentation outputs required by the already approved skill/role changes?
+
+### Why User Input Is Required
+
+Removing these two outputs leaves required role-skill views stale. The prior approval covered supported mirrors and directly named non-governed surfaces, but it did not enumerate design/agent-skill-hierarchy.svg or design/generated/agent-skill-explorer-data.js. Repository policy requires explicit authority before expanding the approved scope to these exact outputs.
+
+### Options And Tradeoffs
+
+- Approve both exact generated documentation outputs: permit a correction attempt that keeps the role-skill views aligned with the already approved sources.
+- Narrow or defer: preserve the candidate and leave the required views stale until authority is resolved.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+Do not dispatch a correction or mutate either newly requested output until the user answers the exact question. Preserve candidate 65b94bc05f8745e67c53fb6e7963b32c90e7a2fd and the clean worktree without treating the candidate as accepted.
+
+## Candidate And Review Evidence
+
+- Canonical task: /root/process_backlog/orch_future_ideas.
+- Candidate branch: codex/future-ideas-implementation-20260722.
+- Candidate worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/future-ideas-implementation-20260722, verified clean at candidate commit.
+- Candidate commit: 65b94bc05f8745e67c53fb6e7963b32c90e7a2fd.
+- Artifact claim release: future-ideas-implementation-20260722 released, event 349cfbfa-050d-44d5-ae0c-786ba33e05bf.
+- Initial generated-scope wait: CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, event dcc8d3e4-6e74-46ce-a727-0d1e65a92aa7.
+- Exact generated-scope resume: Atomic extension succeeded, event 5bbb847b-9a54-4a48-be99-8d19bec57a13.
+- README scope resume: Exact extension succeeded, event 6c5c13b0-c002-4d9e-b9ca-a27def6d326b.
+- Review disposition: Corrections required; no correction attempt was dispatched.
+- Pending in-scope review correction: Promotion destinations must explicitly cover active, Holding, and User Action Required records and add reciprocal Source Evidence.
+- Pending in-scope review correction: Define the steward's lightweight branch and completion rule explicitly.
+- Pending in-scope review correction: Replace the retired create-backlog supervisor identifier.
+- Pending in-scope review correction: Protect output paths for normal and symlink paths under backlog/future-ideas while preserving existing bytes.
+
+## Original Approval Record
+
+### Original Question For The User
 
 Do you approve changes to exactly these four governed canonical files for this work item, with regeneration only of their supported mirrors?
 
@@ -53,21 +92,21 @@ Do you approve changes to exactly these four governed canonical files for this w
 3. skills/codex-workitem-coordination/SKILL.md
 4. agents/roles/dev-activities/dev-backlog-steward.role.yaml
 
-### Why User Input Is Required
+### Original Why User Input Is Required
 
 The evidence-backed Future Ideas design changes three governed skill definitions and one governed conceptual agent definition. Repository policy requires exact path-specific approval before mutation.
 
-### Options And Tradeoffs
+### Original Options And Tradeoffs
 
 - Approve the exact four-file scope: implement lightweight non-dispatchable ideas, opt-in listing, and explicit promotion provenance.
 - Narrow the scope by naming allowed paths: preserve excluded behavior as blocked follow-up work.
 - Defer: retain the resolved design without implementation.
 
-### Resolution
+### Original Resolution
 
 Approved on 2026-07-22. The user answered "ok authorized" immediately after the exact Question For The User recorded above in the parent conversation. Provenance: parent coordination conversation for this backlog transition. The approval covers exactly the four governed canonical files listed in that question and regeneration only of their supported mirrors.
 
-### Unattended Work Boundary
+### Original Unattended Work Boundary
 
 Ready-state work may proceed only within the exact approved scope. Any governed path or related surface outside the recorded question requires separate scope-specific approval. Future Ideas remain outside normal backlog scans and dispatch.
 
@@ -137,8 +176,9 @@ None.
 - Should promotion archive the source idea or retain it in place with a promoted-to reference?
 - Should revisit triggers be free text only or optionally machine-readable without making ideas part of routine dispatch?
 
-## Delivery Evidence Update — 2026-07-22
+## Historical Delivery Evidence Update — 2026-07-22
 
+- Superseded by the current Candidate And Review Evidence and User Action Required sections above.
 - Current phase: Implementation and disjoint validation continue; candidate pending.
 - Artifact claim: future-ideas-implementation-20260722 acquired, event 71163a6f-decc-45af-856b-21d9e061c6a3.
 - Approval-record extension: Succeeded, event c060c39d-93fa-4180-8fb4-d36187339de8.
