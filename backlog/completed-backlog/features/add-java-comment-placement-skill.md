@@ -1,27 +1,27 @@
 # Add Java Comment Placement Skill
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/add-java-comment-placement-skill.md
+Provider Reference: backlog/completed-backlog/features/add-java-comment-placement-skill.md
 
 Completion: direct-main
 
 ## Current Execution
 
-- Owner: Dev Orchestrator validation-contract recovery lane
-- Claim: java-validation-contract-20260722 acquired as ISOLATED_CHECKOUT_ACQUIRED at event 3cec62d4-0ec1-4847-8f4f-7c316168cb0b.
+- Owner: Unowned
+- Claim: None
 - Canonical task: 019f77f4-c4bd-7c91-b197-c987a7beb838
 - Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/java-validation-contract-20260722
 - Branch: codex/java-comment-validation-contract-20260722
 - Starting main: 6ffacb7dd9de75d351761577dff7d18ec9b36609; correction baseline: preserved recovery tip 90333e05922e712d1d4172ea067e52ae330eac13.
-- Phase: Replace renderer-oriented HTML rejection with the user-approved line-oriented evidence contract, record it in focused unit tests, then obtain fresh review and verification.
+- Phase: Completed after accepted line-oriented validation, independent review and verification, direct-main integration, and focused post-main checks.
 - Started: 2026-07-21; resumed with a fresh owner on 2026-07-22.
-- Open issues: None outside the bounded three-file validation-contract correction. No product integration has occurred.
-- Accepted candidate: Pending. Recovery tip 90333e05922e712d1d4172ea067e52ae330eac13 is preserved on codex/java-comment-placement-recovery-20260722 but failed final independent review and is not accepted for integration.
+- Open issues: None. Structured skill_validate remained unavailable for linked worktrees because configured roots reject them; the repository-native validator passed on the primary checkout before and after integration.
+- Accepted candidate: 9e4cf541d33146150ed2ba6ff0fd9f30bd911d5e on codex/java-comment-validation-contract-20260722, cumulatively preserving the approved Java feature and the accepted validation contract.
 
 ## Blocked Handoff
 
@@ -65,6 +65,19 @@ Completion: direct-main
 - Scope: only evals/projects/java-comment-placement/TASK.md, evals/projects/java-comment-placement/verify.py, and scripts/test_bundle_content.py. No governed definition or generated mirror changes are authorized or required by this correction.
 - Resumption claim: resume-java-validation-contract-20260722 acquired event 217dc06f-70f7-4e2f-b641-ec9f3912f232 and releases immediately after this one-file Running commit.
 - Implementation claim: java-validation-contract-20260722 acquired event 3cec62d4-0ec1-4847-8f4f-7c316168cb0b on codex/java-comment-validation-contract-20260722 from preserved recovery tip 90333e05922e712d1d4172ea067e52ae330eac13.
+
+## Delivery Evidence
+
+- Final definition of good: six exact line-oriented Markdown record delimiters outside fenced code; exactly one non-empty affected path and verification result per record; repository-relative POSIX affected paths; arbitrary non-empty verification content including HTML; no HTML parsing or renderer emulation.
+- Focused regressions: complete plain-text and HTML-bearing records pass; HTML wrappers and supplementary fenced examples pass; fenced-only records, bare labels, headings only, missing, blank, duplicate, or malformed headings and fields, and Windows, URI, NUL, or HTML affected paths fail with exact diagnostics.
+- Independent review: ACCEPT on 168100b after the user-defined boundary correction; ACCEPT on 9e4cf54 after adding malformed wrong-label and missing-colon cases. No material findings remain.
+- Independent verification: VERIFIED-WARN on 9e4cf54. All candidate checks passed; the warning is limited to the structured linked-worktree skill validator rejecting paths outside configured roots. No bypass was used.
+- Verification: focused Java bundle/evaluator and Java technology-detection tests pass; Python compilation passes; repository-native skill and metadata validation passes; technology detection, skill documentation, hierarchy, and support-checklist freshness checks pass; Git diff, clean status, exact correction scope, and approved governed-byte identity pass.
+- Direct-main integration: accepted cumulative content was replayed from current main and committed as 22c1925ce89b72847e04fc6f52258ed6849d94ea. All 36 integrated paths were byte-identical to accepted candidate 9e4cf54 before commit, and focused post-main verification passed.
+- Integration claim: integrate-java-comment-20260722 acquired event cab79b5d-4f47-4f81-8304-7517b47e7da6 and released cleanly at event 0c320fb6-d0ac-4f3f-b8ab-d014485fdd4f.
+- Validation correction claim: java-validation-contract-20260722 acquired event 3cec62d4-0ec1-4847-8f4f-7c316168cb0b and released cleanly at event cf44abd6-78d0-414f-8fa8-2e0a3defa9da.
+- Terminal backlog claim: complete-java-comment-20260722 acquired event 875d4310-70f3-415a-9085-57f73d7c4e09 and releases immediately after the archive commit.
+- Completed: 2026-07-22.
 
 ## User Action Required
 
