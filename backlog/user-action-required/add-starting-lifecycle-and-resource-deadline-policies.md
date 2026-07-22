@@ -1,36 +1,62 @@
 # Add Starting Lifecycle And Resource Deadline Policies
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/add-starting-lifecycle-and-resource-deadline-policies.md
+Provider Reference: backlog/user-action-required/add-starting-lifecycle-and-resource-deadline-policies.md
 
 Completion: direct-main
 
 ## Execution / Ownership
 
-- Owner: Dev Orchestrator.
+- Owner: Unowned.
 - Canonical thread: 019f8b51-f8ed-7c03-8193-9bbee1ccb7f2.
-- Claim: start-starting-lifecycle-resource-deadlines-019f8b51, backlog transition only.
+- Claim: None.
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/81ba/dev-methodology.
-- Starting main: 7d1ed4bd2f871329727206a1a1bfb4dc801b95f5.
-- Phase: bounded source discovery and exact governed canonical-path manifest determination before any governed mutation.
-- Lifecycle transition: Ready -> Running after fresh canonical Dev Orchestrator ownership and successful serialized backlog claim acquisition.
+- Starting main: d1a3b768fc79a6d4f6ede4736229b12aa4c28562.
+- Phase: User Action Required — exact governed canonical-path approval gate.
+- Lifecycle transition: Running -> User Action Required after bounded source discovery; execution ownership cleared pending an explicit scope-specific user decision.
 - Accepted candidate: Pending.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: Exact path-specific user approval is required after discovery before governed changes.
-- Next owner: Dev Orchestrator.
+- Open issues: Exact path-specific user approval is required before any governed definition mutation.
+- Next owner: User, then parent coordinator for an approval-resolution handoff to canonical thread 019f8b51-f8ed-7c03-8193-9bbee1ccb7f2.
 
 ## Running Dispatch Evidence — 2026-07-22
 
 - Backlog transition claim: start-starting-lifecycle-resource-deadlines-019f8b51, acquired event d4fca16b-0c33-410d-bdbf-8e382d3f9f54 from primary main.
 - The full user-approved lifecycle, deadline, watchdog, terminology, and lifecycle-HTML behavior remains authoritative below.
+
+## Discovery And Approval Gate — 2026-07-22
+
+- Reconciled primary main at d1a3b768fc79a6d4f6ede4736229b12aa4c28562 and the live claim registry before this handoff; no active claim remained from the prior startup transition.
+- Bounded discovery determined the smallest exact governed canonical definition manifest required for this outcome:
+  - skills/agent-claim/SKILL.md
+  - skills/agent-claim-command/SKILL.md
+  - skills/agent-claim-mcp/SKILL.md
+  - skills/codex-workitem-coordination/SKILL.md
+  - skills/manage-file-work-items/SKILL.md
+  - skills/create-project-configuration/SKILL.md
+  - agents/roles/dev-activities/dev-backlog-coordinator.role.yaml
+  - agents/roles/dev-activities/dev-orchestrator.role.yaml
+  - agents/roles/dev-activities/dev-backlog-steward.role.yaml
+  - agents/roles/project-setup/project-configurator.role.yaml
+- Supported generated mirrors are limited to generated/adapters/** outputs derived from those approved role or skill sources, design/generated/role-definitions.js, and design/generated/skill-definitions.js.
+- Ordinary companion scope, not governed-definition approval: PROJECT.yaml; AGENTS.md; README.md; skills/development-methodology/assets/templates/project-template.yaml; skills/agent-claim-command/scripts/claim.py; scripts/render-agents-technology-skills.py; focused claim, transport, work-item lifecycle, watchdog, renderer/configuration, bundle, and lifecycle-documentation tests; design/orchestrated-development-lifecycle.html; and design/agentic-configuration.html only if source-backed configuration explanation is required.
+- Discovery rationale: codex-workitem-coordination owns Ready/Starting dispatch, capacity, duplicate-start reconciliation, and read-only watchdog; manage-file-work-items owns the file-provider Starting state and atomic transitions/recovery; agent-claim owns transport-neutral hard-stop, extension, heartbeat, overdue, no-auto-release, and cleanup-grace semantics; command and MCP adapter definitions own the two invocation envelopes; create-project-configuration owns project policy/default/override validation; the three dev roles own parent dispatch, root work-item-thread orchestration, and steward lifecycle boundaries; project-configurator owns persisted policy setup.
+- Excluded governed sources: create-file-work-item because creation still terminates at Ready; completion skills because delivery semantics remain unchanged; role schema/model profiles and OpenAI metadata because no schema, model, name, activation description, or tool dependency needs to change.
+- Resolution: Pending.
+- Why user input is required: repository policy requires exact scope-specific user approval before any skill or role definition mutation.
+- Prohibited unattended action: do not mutate any governed definition until the parent records the user's answer and sends approval resolution to canonical thread 019f8b51-f8ed-7c03-8193-9bbee1ccb7f2.
+
+## User Action Required
+
+Do you approve changing exactly the ten governed canonical definition paths listed in this item to add the Starting lifecycle bridge, mechanical read-only watchdog rules, project-configured resource deadline and cleanup-grace policy, and the required Work item, Thread, Agent, Role, Task, and Handoff ownership distinctions, together with only the listed supported generated mirrors and ordinary companion implementation, tests, and documentation? No other governed definition will change without separate approval.
 
 ## Summary
 
