@@ -1313,6 +1313,10 @@ class InstallSkillsTests(unittest.TestCase):
                             AGENT_FILE_CONTENT,
                             encoding="utf-8",
                         )
+                        self.write_agent_generation_manifest(
+                            agents_source,
+                            adapter_name,
+                        )
                         arguments.extend(
                             [
                                 "--install-agents",
@@ -1386,6 +1390,7 @@ class InstallSkillsTests(unittest.TestCase):
                 AGENT_FILE_CONTENT,
                 encoding="utf-8",
             )
+            self.write_agent_generation_manifest(agents_source, "codex")
             executable.write_text("server", encoding="utf-8")
 
             with patch.object(installer.Path, "cwd", return_value=invocation):
@@ -1458,6 +1463,7 @@ class InstallSkillsTests(unittest.TestCase):
                 AGENT_FILE_CONTENT,
                 encoding="utf-8",
             )
+            self.write_agent_generation_manifest(agents_source, "junie")
             executable.write_text("server", encoding="utf-8")
 
             with patch.object(installer.Path, "cwd", return_value=invocation):
@@ -1736,6 +1742,7 @@ class InstallSkillsTests(unittest.TestCase):
                 AGENT_FILE_CONTENT,
                 encoding="utf-8",
             )
+            self.write_agent_generation_manifest(agents_source, "codex")
             executable.write_text("server", encoding="utf-8")
 
             exit_code = installer.main(
