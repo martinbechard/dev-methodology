@@ -16,8 +16,8 @@ Completion: direct-main
 - Previous worktree: /Users/martinbechard/.codex/worktrees/2c00/dev-methodology.
 - Previous branch: codex/integrate-work-item-contracts-across-bundle.
 - Previous starting main commit: 2ddedf5a83ca8567ac3de93867a3f90624a2e28c.
-- Owner: Dev Orchestrator.
-- Claim: approve-core-only-codex-metadata-019f8b4c, backlog transition only.
+- Owner: Unowned.
+- Claim: None.
 - Phase: Blocked after approval resolution because the accepted core-only routing design depends on simplify-project-configuration-setup-and-skill-routing.
 - User approval: On 2026-07-21, in parent task 019f77f4-c4bd-7c91-b197-c987a7beb838, the user directed: "I approve the items in holding". The prior exact codex-workitem-coordination approval remains recorded below.
 - Unblock condition: backlog/feature-backlog/simplify-project-configuration-setup-and-skill-routing.md is integrated, verified, and archived as Completed on main.
@@ -27,9 +27,9 @@ Completion: direct-main
 
 ## Current Execution / Ownership
 
-- Owner: Unowned.
+- Owner: Dev Orchestrator.
 - Canonical task: 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
-- Claim: None.
+- Claim: approve-core-only-codex-metadata-019f8b4c, backlog transition only.
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology.
 - Branch: codex/integrate-work-item-routing-core-only-019f8b4c at c9b9a2d.
 - Starting main: 83135ebc590c2c244cf42283ae3f760521c55ed0.
@@ -84,6 +84,7 @@ Mutate only the approved skills/codex-workitem-coordination/agents/openai.yaml m
 
 - Backlog handoff claim: route-core-only-codex-metadata-019f8b4c, acquired event 803aa720-2333-4461-8514-555f70b17e51 from primary main.
 - Approval-resumption claim: approve-core-only-codex-metadata-019f8b4c, acquired event 618e04bf-56f1-4554-b290-e10e7880cb2b from primary main.
+- Ownership-record correction claim: correct-core-only-routing-current-owner-019f8b4c, acquired event b8f6a0ab-28fc-4056-a15f-76ee31c7e18c from primary main.
 
 ## Resolved Approval
 
