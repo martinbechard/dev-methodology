@@ -1,6 +1,6 @@
 # Add Java Comment Placement Skill
 
-Status: Blocked
+Status: Running
 
 Type: Feature
 
@@ -12,15 +12,15 @@ Completion: direct-main
 
 ## Current Execution
 
-- Owner: Unowned
-- Claim: None
-- Canonical task: 019f8781-917c-7933-9c76-d7e3305df9b3
-- Worktree: /Users/martinbechard/.codex/worktrees/e56a/dev-methodology
-- Branch: codex/add-java-comment-placement-skill
-- Starting main: 92a2009c70657860d6182b234e8a64da31ca40ed
-- Phase: Blocked after the bounded correction loop exhausted the evaluator output-contract criterion; no integration or completion transaction started.
-- Started: 2026-07-21.
-- Open issues: The Java evaluation verifier accepts an eval-result.md containing only the six bare required labels. It does not require real Markdown headings or non-empty affected-path and verification-result content under each heading.
+- Owner: Dev Orchestrator recovery lane
+- Claim: java-comment-recovery-20260722 acquired as ISOLATED_CHECKOUT_ACQUIRED at event 27a73910-4a76-4c3b-84cb-8a1e9ef81656.
+- Canonical task: 019f77f4-c4bd-7c91-b197-c987a7beb838
+- Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/java-comment-recovery-20260722
+- Branch: codex/java-comment-placement-recovery-20260722
+- Starting main: 4a4a6195231fa9cbe351627bf0c42fa586e07b6c
+- Phase: Replay the preserved Java candidate, correct only the evaluator evidence contract and its focused regression, then obtain fresh review and verification before integration.
+- Started: 2026-07-21; resumed with a fresh owner on 2026-07-22.
+- Open issues: None outside the bounded recovery scope. The previously recorded verifier bypass is the active correction criterion.
 - Accepted candidate: 02cc7215edce2782875998c3074a2a84ce5e441e, preserved as one clean feature commit on codex/add-java-comment-placement-skill atop main 3f262f6c3e8f997a8038edf42ffbd49df7b44bc4. The candidate is not independently verified and is not accepted for integration.
 
 ## Blocked Handoff
@@ -35,6 +35,16 @@ Completion: direct-main
 - Scope authority: The existing exact approval for skills/code-comments/SKILL.md, skills/java-comment/SKILL.md, and skills/java-comment/agents/openai.yaml remains valid. The required evaluator-only correction is within the already approved directly related non-governed tests and evaluations scope; no additional governed-definition approval is required.
 - Released implementation claims: add-java-comment-placement-019f8781 release event 9ef2efdc-0752-4d99-9d4e-ba30a9459909; java-comment-correction-019f8781 release event cf590329-30e7-4ac7-8e14-51e207084891; java-comment-final-correction-019f8781 release event 7432a914-02ac-4a04-8151-886638933d4a.
 - Backlog transition claim: block-java-comment-verifier-019f8781 acquired event fe03cd38-5a84-4d81-aca4-911ab1c7905b and releases immediately after this one-file commit.
+
+## Resumption Evidence
+
+- Preserved pre-attempt state: main commit 4a4a6195231fa9cbe351627bf0c42fa586e07b6c, work-item blob a82d72cd1c38592506d4ecfe40164b9348e116c5, Status Blocked, Owner Unowned, Claim None.
+- Resumption authority: On 2026-07-22, the user directed the parent task to carry out the recorded sequential recovery plan.
+- Blocker reconciliation: The fresh recovery owner accepted the exact evaluator-only correction scope. The original exhausted task remains stopped; its blocker, evidence, candidate, and acceptance criteria are preserved above.
+- Lifecycle transition: Blocked moved through Ready only for the serialized acquisition attempt, then to Running after the new exclusive claim succeeded.
+- New ownership: java-comment-recovery-20260722, branch codex/java-comment-placement-recovery-20260722, worktree /Users/martinbechard/dev/dev-methodology/.worktrees/java-comment-recovery-20260722, baseline current main 4a4a6195231fa9cbe351627bf0c42fa586e07b6c.
+- Recovery acceptance: Reject bare labels, blank sections, duplicate or malformed required headings, and missing affected-path or verification-result fields; accept complete evidence; then obtain fresh independent review and verification of the cumulative candidate.
+- Running transition claim: resume-java-comment-backlog-20260722 acquired event 019b310d-6068-4f79-adbd-43aa7a9f77ac and releases immediately after this one-file commit.
 
 ## User Action Required
 
