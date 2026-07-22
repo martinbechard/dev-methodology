@@ -1,6 +1,6 @@
 # Add Java Comment Placement Skill
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -12,15 +12,15 @@ Completion: direct-main
 
 ## Current Execution
 
-- Owner: Unowned
-- Claim: None
-- Canonical task: Pending fresh dispatch.
-- Worktree: Pending fresh dispatch.
-- Branch: Pending fresh dispatch.
-- Starting main: 7cbbfaeed8c6cf100385f5a43ac17f30d3fff1a1
-- Phase: Ready for a fresh Dev Orchestrator to run the three exact approval checks and implement only the resolved scope.
-- Started: Pending.
-- Open issues: None. The prior read-only discovery task is retained under Discovery Evidence.
+- Owner: Dev Orchestrator
+- Claim: Running-record claim start-java-comment-placement-019f8781 acquired as SHARED_CHECKOUT_ACQUIRED at event 7a7a17bf-a048-487e-bf26-c95b44353537; release follows the committed lifecycle transition.
+- Canonical task: 019f8781-917c-7933-9c76-d7e3305df9b3
+- Worktree: /Users/martinbechard/.codex/worktrees/e56a/dev-methodology
+- Branch: codex/add-java-comment-placement-skill
+- Starting main: 92a2009c70657860d6182b234e8a64da31ca40ed
+- Phase: Run the three exact governed-definition approval checks, implement the Java-specific placement contract and supported dependent surfaces, obtain fresh independent review and focused Tier 1/2 verification, integrate from fresh main under exact ownership, and complete the file-provider item separately.
+- Started: 2026-07-21.
+- Open issues: None. Scope remains exactly the three approved governed paths; the prior read-only discovery task is retained under Discovery Evidence.
 - Accepted candidate: Pending.
 
 ## User Action Required
