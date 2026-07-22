@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Renders project authority, one verified claim transport, workflow selectors, and folder technology guidance.
+# Summary: Renders project authority, claim transport, workflow, folder technology, and project skill guidance.
 
 from __future__ import annotations
 
@@ -23,6 +23,7 @@ FRONTMATTER_DELIMITER = "---"
 SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 AUTHORITY_HEADING = "## Agent And Skill Definition Approval"
 CLAIM_TRANSPORT_HEADING = "## Agent Claim Transport"
+PROJECT_SKILL_EXTENSIONS_HEADING = "## Project Skill Extensions"
 CLAIM_TRANSPORT_SKILLS = {
     "mcp": "agent-claim-mcp",
     "command": "agent-claim-command",
@@ -87,6 +88,144 @@ def loadouts(value: dict[str, object]) -> list[dict[str, object]]:
     """Return normalized technology skillset mappings from a project configuration."""
     rows = value.get("technology_skill_loadouts", value.get("loadouts", []))
     return [row for row in rows if isinstance(row, dict)] if isinstance(rows, list) else []
+
+
+def _normalized_skill_id(value: object, field: str) -> str:
+    """Return one lowercase, trimmed skill identifier or reject its exact field."""
+
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{field} must normalize to a lowercase hyphenated skill id")
+    normalized = value.strip().lower()
+    if not SKILL_NAME_PATTERN.fullmatch(normalized):
+        raise ValueError(f"{field} must normalize to a lowercase hyphenated skill id")
+    return normalized
+
+
+def _definition_owned_skill_paths(value: dict[str, object]) -> dict[str, str]:
+    """Return the first PROJECT.yaml field owning each valid role skill identifier."""
+
+    owned: dict[str, str] = {}
+    roles = value.get("role_agent_set", [])
+    if not isinstance(roles, list):
+        return owned
+    for role_index, role in enumerate(roles):
+        if not isinstance(role, Mapping):
+            continue
+        skills = role.get("skills", [])
+        if isinstance(skills, list):
+            for skill_index, skill in enumerate(skills):
+                if not isinstance(skill, str):
+                    continue
+                normalized = skill.strip().lower()
+                if SKILL_NAME_PATTERN.fullmatch(normalized):
+                    owned.setdefault(
+                        normalized,
+                        f"role_agent_set[{role_index}].skills[{skill_index}]",
+                    )
+        conditional = role.get("conditional_skills", [])
+        if isinstance(conditional, list):
+            for skill_index, entry in enumerate(conditional):
+                if not isinstance(entry, Mapping) or not isinstance(entry.get("skill"), str):
+                    continue
+                normalized = entry["skill"].strip().lower()
+                if SKILL_NAME_PATTERN.fullmatch(normalized):
+                    owned.setdefault(
+                        normalized,
+                        f"role_agent_set[{role_index}].conditional_skills[{skill_index}].skill",
+                    )
+    return owned
+
+
+def _project_skill_extensions(value: dict[str, object]) -> list[str]:
+    """Validate and return ordered, normalized root project skill references.
+
+    PROJECT.yaml may omit project_skill_extensions or provide an empty list. Each list
+    entry is either a bundled skill id string or a registered-skill mapping with exactly
+    skill, registration, availability, and catalog. Registered entries are accepted only
+    when setup recorded registration, runtime availability, and a non-empty catalog
+    identifier. Normalized skill ids determine duplicate and definition-owned conflicts.
+    The returned order matches the declared list order and no skill body is loaded.
+    """
+
+    if "project_skill_extensions" not in value:
+        return []
+    entries = value["project_skill_extensions"]
+    if not isinstance(entries, list):
+        raise ValueError(
+            "project_skill_extensions must be a list; use [] when no project-level extension is selected"
+        )
+
+    normalized_entries: list[str] = []
+    first_paths: dict[str, str] = {}
+    for index, entry in enumerate(entries):
+        prefix = f"project_skill_extensions[{index}]"
+        registered = isinstance(entry, Mapping)
+        if isinstance(entry, str):
+            skill = _normalized_skill_id(entry, prefix)
+        elif registered:
+            if set(entry) != {"skill", "registration", "availability", "catalog"}:
+                raise ValueError(
+                    f"{prefix} keys must be exactly: skill, registration, availability, catalog"
+                )
+            skill = _normalized_skill_id(entry.get("skill"), f"{prefix}.skill")
+        else:
+            raise ValueError(
+                f"{prefix} must be a bundled skill id string or a registered-skill mapping"
+            )
+
+        if skill in first_paths:
+            raise ValueError(
+                f"{prefix} skill id {skill!r} duplicates {first_paths[skill]}; remove the duplicate entry"
+            )
+        first_paths[skill] = prefix
+
+        if registered:
+            if entry.get("registration") != "registered":
+                raise ValueError(
+                    f"{prefix}.registration must be registered; use a bundled skill id string for bundled skills"
+                )
+            availability = entry.get("availability")
+            if availability not in {"AVAILABLE", "UNAVAILABLE"}:
+                raise ValueError(f"{prefix}.availability must be AVAILABLE or UNAVAILABLE")
+            catalog = entry.get("catalog")
+            if not isinstance(catalog, str) or not catalog.strip():
+                raise ValueError(
+                    f"{prefix}.catalog must be a non-empty registered catalog identifier"
+                )
+            if availability == "UNAVAILABLE":
+                raise ValueError(
+                    f"{prefix}.availability is UNAVAILABLE for skill {skill!r}; install or expose the registered skill, then set {prefix}.availability to AVAILABLE"
+                )
+        elif not (SKILLS_ROOT / skill / SKILL_FILE_NAME).is_file():
+            raise ValueError(
+                f"{prefix} unknown bundled skill id {skill!r}; use a bundled skill id or a registered-skill mapping"
+            )
+        normalized_entries.append(skill)
+
+    definition_owned = _definition_owned_skill_paths(value)
+    for index, skill in enumerate(normalized_entries):
+        if skill in definition_owned:
+            raise ValueError(
+                f"project_skill_extensions[{index}] skill id {skill!r} duplicates definition-owned skill "
+                f"{definition_owned[skill]}; remove it from project_skill_extensions"
+            )
+    return normalized_entries
+
+
+def _project_skill_extension_lines(value: dict[str, object]) -> list[str]:
+    """Render the final root-only, reference-only project skill section."""
+
+    extensions = _project_skill_extensions(value)
+    if not extensions:
+        return []
+    return [
+        PROJECT_SKILL_EXTENSIONS_HEADING,
+        "",
+        "These references apply through the root AGENTS.md only. Load each selected skill completely in the declared order when starting project work. Skill definitions remain in their bundled or registered catalogs and are not copied here.",
+        "",
+        *(f"- {skill}" for skill in extensions),
+        "",
+    ]
 
 
 def _required_boolean(mapping: dict[str, object], key: str, expected: bool, prefix: str) -> None:
@@ -920,21 +1059,27 @@ def inlined_skill_body(skill_name: str) -> str:
     return "\n".join(lines[closing_index + 1:]).strip()
 
 
-def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
-    """Render configured root AGENTS.md authority, claim transport, workflow, and technology sections.
+def render(
+    value: dict[str, object],
+    inline_tech_skills: bool = True,
+    include_project_skill_extensions: bool = True,
+) -> str:
+    """Render configured root AGENTS.md project authority and skill sections.
 
     value is the mapping loaded from PROJECT.yaml. Optional definition authority produces
     its corresponding section. agent_claim_transport is required and workflow_selection is required.
-    Technology guidance is always produced from the configured loadouts. The claim
-    adapter is always embedded because setup selected it as a project-wide transport. When
-    inline_tech_skills is true, the return value also embeds each referenced bundled
-    technology skill body. When false, it emits dynamic technology loading instructions.
+    Technology guidance is always produced from the configured loadouts, and an optional
+    project_skill_extensions list produces the final root-only reference section when
+    include_project_skill_extensions is true. The claim adapter is always embedded because
+    setup selected it as a project-wide transport. When inline_tech_skills is true, the
+    return value also embeds each referenced bundled technology skill body. When false, it
+    emits dynamic technology loading instructions.
 
     The return value is the complete generated Markdown text and ends with a newline.
     Rendering does not write an output file, but inlined rendering reads bundled SKILL.md
-    files. Invalid authority, workflow, or source-evidence configuration, unsafe skill
-    names, and invalid skill frontmatter raise ValueError. Missing or unreadable skill
-    files raise OSError, and malformed YAML may raise yaml.YAMLError.
+    files. Invalid authority, workflow, project extension, or source-evidence configuration,
+    unsafe skill names, and invalid skill frontmatter raise ValueError. Missing or unreadable
+    skill files raise OSError, and malformed YAML may raise yaml.YAMLError.
     """
     lines: list[str] = definition_change_authority_lines(value)
     workflow = workflow_lines(value)
@@ -1028,6 +1173,9 @@ def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
                     f"----- END INLINED TECHNOLOGY SKILL: {skill_name} -----",
                 ])
     lines.append("")
+    project_skill_extension_lines = _project_skill_extension_lines(value)
+    if include_project_skill_extensions:
+        lines.extend(project_skill_extension_lines)
     return "\n".join(lines)
 
 
@@ -1048,7 +1196,7 @@ def main(arguments: Sequence[str] | None = None) -> int:
     Argument-parser usage failures raise SystemExit with argparse's exit code, normally 2.
     """
     parser = argparse.ArgumentParser(
-        description="Render one claim transport, workflow selectors, and unconditional technology guidance."
+        description="Render claim transport, workflow selectors, technology guidance, and root project skill references."
     )
     parser.add_argument("--project", type=Path, required=True)
     parser.add_argument("--output", type=Path)
@@ -1105,7 +1253,15 @@ def main(arguments: Sequence[str] | None = None) -> int:
             return 0 if result["outcome"].startswith("ALLOWED_") else 3
         if args.approval_record or args.regenerated_from:
             raise ValueError("--approval-record and --regenerated-from require --check-definition-change")
-        content = render(project, args.inline_tech_skills)
+        root_output = (
+            args.output is None
+            or args.output.resolve().parent == args.project.resolve().parent
+        )
+        content = render(
+            project,
+            args.inline_tech_skills,
+            include_project_skill_extensions=root_output,
+        )
         if args.output:
             if args.update_authority_directive:
                 if not args.output.exists():

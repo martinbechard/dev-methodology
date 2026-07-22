@@ -572,7 +572,7 @@ Functional specifications, architecture documents, high-level designs, and modul
 Use the smallest document type that fully explains the work:
 
 - Project wiki page: durable synthesis, navigation, code ownership, known defects, open decisions, glossary, or recurring topic knowledge.
-- PROJECT.yaml: project-wide agent and skill setup, root and nested AGENTS.md routing references, definition-owned skillsets, folder routing, validation evidence, proprietary validation notes, or customer-safe fictitious examples.
+- PROJECT.yaml: project-wide agent and skill setup, ordered project-level skill extensions, root and nested AGENTS.md routing references, definition-owned skillsets, folder routing, validation evidence, proprietary validation notes, or customer-safe fictitious examples.
 - Functional specification: user-visible behavior, actor workflow, route behavior, acceptance criteria, permissions, status display, operational affordance, or error state.
 - Architecture: project-wide boundary, technology choice, shared rule, cross-cutting concern, layer relationship, persistence, security, privacy, observability, or UI composition.
 - High-level design: coherent subsystem, feature family, system slice, integration path, or multi-module implementation plan.
@@ -597,7 +597,7 @@ Use project-wiki-topic-write for ordinary docs/wiki topic pages that summarize o
 Template assets live under skills/development-methodology/assets/templates. Read an already staged template directly. When the required template is not staged and mcp-agent-ops is available, retrieve it through skill_resource_load. Use the direct skill-relative asset as the fallback only when the tool is absent or its server cannot initialize or connect before dispatch; do not bypass a structured policy rejection.
 
 - project-wiki-template.md defines project wiki setup and code-aware maintenance rules.
-- project-template.yaml defines project conceptual agent definitions, folder technology skillsets, root and nested AGENTS.md operational guidance, proprietary validation notes, and customer-safe example boundaries in one project-root configuration.
+- project-template.yaml defines project conceptual agent definitions, ordered project-level skill extensions, folder technology skillsets, root and nested AGENTS.md operational guidance, proprietary validation notes, and customer-safe example boundaries in one project-root configuration.
 - functional-spec-template.md defines user-visible workflow and acceptance documentation.
 - architecture-template.md defines project-wide and cross-cutting architecture documentation.
 - high-level-design-template.md defines subsystem and feature-family documentation.
