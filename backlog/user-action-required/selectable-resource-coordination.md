@@ -1,12 +1,12 @@
 # Select Resource Coordination Per Project
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/selectable-resource-coordination.md
+Provider Reference: backlog/user-action-required/selectable-resource-coordination.md
 
 Completion: direct-main
 
@@ -22,12 +22,13 @@ Completion: direct-main
 
 ## Execution / Ownership
 
-- Owner: Dev Orchestrator
+- Owner: Unowned
 - Canonical task: 019f8b05-5251-7d73-9cc9-4057edfef9a0
-- Artifact claim: selectable-resource-coordination, pending ARTIFACT GO.
+- Claim: None
+- Artifact claim: None.
 - Branch: codex/selectable-resource-coordination-discovery-20260722
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/e483/dev-methodology
-- Phase: bounded governed-path discovery pending exact approval.
+- Phase: awaiting exact governed-definition approval.
 - Starting main: 1560326152977581d2c62711e9fb861e7f2cf8f0
 - Lifecycle transition: Blocked eligibility was reconciled, the completed dependency made the item Ready, and fresh ownership then transitioned it to Running.
 - Candidate: Pending.
@@ -40,9 +41,9 @@ Completion: direct-main
 - Completion wait attempts: 0.
 - Dependency evidence: backlog/completed-backlog/features/configure-agent-claim-transport-adapters.md is Status Completed; integration commit 1b1b819fa051f9f0f1d572184b18f18c06d3cba0 is reachable from main; focused verification, archive, clean integration-claim release, and cleanup-eligibility evidence are recorded; Open issues is None.
 - Preserved dependency boundary: The completed transport-adapter contract remains the required input to this item.
-- Open issues: None for lifecycle dispatch; exact governed-definition scope and approval remain implementation boundaries.
-- Delivery evidence: Dependency unblock and fresh ownership recorded; implementation and acceptance remain pending.
-- Next owner: Dev Orchestrator.
+- Open issues: Exact scope-specific user approval is required before governed-definition mutation.
+- Delivery evidence: Dependency unblock and discovery evidence are preserved; implementation is prohibited pending approval.
+- Next owner: Unowned pending a user answer.
 
 Creation Claim: draft-selectable-mutation-coordination
 
@@ -54,6 +55,71 @@ Refinement Claims: improve-selectable-mutation-coordination-019f850e, capture-re
 - Backlog recovery claim: cold-start-backlog-reconcile-2-019f8b00, acquired event 66822334-e85a-41aa-b2ad-6a6c433b6798 from primary main.
 - Recovery phase: bounded governed-path discovery pending exact approval.
 - The completed transport-adapter dependency and all prior evidence remain preserved.
+
+## User Action Required
+
+### Question For The User
+
+Do you approve changes to exactly the following 40 governed-definition paths for Select Resource Coordination Per Project, so projects can select resource coordination as none or agent-claim, repositoryMutation remains an independent capability declaration, and none loads or requires no coordination lifecycle or evidence? Supported generated mirrors and directly related ordinary configuration, renderer, test, and documentation changes are included; no other governed definition will change without separate approval.
+
+### Exact Governed Definition Manifest
+
+- skills/agent-claim/SKILL.md
+- skills/agent-claim/agents/openai.yaml
+- skills/agent-role-authoring/SKILL.md
+- skills/agent-work-merge/SKILL.md
+- skills/codex-workitem-coordination/SKILL.md
+- skills/codex-workitem-coordination/agents/openai.yaml
+- skills/complete-work-item-direct-main/SKILL.md
+- skills/complete-work-item-feature-branch/SKILL.md
+- skills/create-file-work-item/SKILL.md
+- skills/create-project-configuration/SKILL.md
+- skills/documentation-reverse-engineer/SKILL.md
+- skills/maintain-methodology-documentation/SKILL.md
+- skills/manage-file-work-items/SKILL.md
+- skills/manage-gitlab-work-items/SKILL.md
+- skills/structured-design/SKILL.md
+- agents/roles/dev-activities/dev-artifact-reviewer.role.yaml
+- agents/roles/dev-activities/dev-backlog-coordinator.role.yaml
+- agents/roles/dev-activities/dev-backlog-steward.role.yaml
+- agents/roles/dev-activities/dev-browser-operator.role.yaml
+- agents/roles/dev-activities/dev-code-reviewer.role.yaml
+- agents/roles/dev-activities/dev-coder.role.yaml
+- agents/roles/dev-activities/dev-documentation-writer.role.yaml
+- agents/roles/dev-activities/dev-merge-coordinator.role.yaml
+- agents/roles/dev-activities/dev-orchestrator.role.yaml
+- agents/roles/dev-activities/dev-prompt-reviewer.role.yaml
+- agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml
+- agents/roles/dev-activities/dev-security-reviewer.role.yaml
+- agents/roles/dev-activities/dev-ux-specialist.role.yaml
+- agents/roles/dev-activities/dev-verifier.role.yaml
+- agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml
+- agents/roles/methodology-maintenance/methodology-maintainer.role.yaml
+- agents/roles/project-setup/project-bootstrapper.role.yaml
+- agents/roles/project-setup/project-configurator.role.yaml
+- agents/roles/project-setup/project-organiser.role.yaml
+- agents/roles/wiki-activities/wiki-architect.role.yaml
+- agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml
+- agents/roles/wiki-activities/wiki-ingester.role.yaml
+- agents/roles/wiki-activities/wiki-researcher.role.yaml
+- agents/roles/wiki-activities/wiki-source-collector.role.yaml
+- agents/roles/wiki-activities/wiki-writer.role.yaml
+
+### Why User Input Is Required
+
+Repository policy requires exact scope-specific approval before these governed definition mutations.
+
+### Excluded Governed Surface
+
+agents/role-schema.yaml is excluded because repositoryMutation remains unchanged and independent.
+
+### Ordinary Companion Scope
+
+PROJECT.yaml, AGENTS.md, README.md, project template, scripts/build-skill-docs.py, scripts/render-agents-technology-skills.py, focused role-policy/transport/renderer/bundle tests, relevant design pages, and supported generated role/skill/native-adapter/hierarchy/explorer/checklist/manifest outputs.
+
+### Unattended Work Boundary
+
+Do not mutate any governed definition, supported generated mirror, or ordinary companion surface until the user explicitly approves the exact manifest above. The canonical discovery task 019f8b05-5251-7d73-9cc9-4057edfef9a0 remains preserved as discovery evidence; current ownership remains unowned.
 
 ## Summary
 
