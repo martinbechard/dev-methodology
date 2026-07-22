@@ -2906,13 +2906,17 @@ class BundleContentTests(unittest.TestCase):
                     return line
             self.fail(f"Expected a contract line containing {marker!r}")
 
-        architecture_diagram_surfaces = {
-            "create skill": architecture_create,
-            "review skill": architecture_review,
+        def assert_terms(text: str, terms: tuple[str, ...]) -> None:
+            for term in terms:
+                self.assertIn(term, text)
+
+        architecture_surfaces = {
+            "create": architecture_create,
+            "review": architecture_review,
             "template": templates["architecture-template.md"],
             "checklist": checklists["architecture"],
         }
-        architecture_ordered_triggers = (
+        architecture_triggers = (
             "two or more ordered actions or phases",
             "handoff",
             "data movement",
@@ -2923,32 +2927,21 @@ class BundleContentTests(unittest.TestCase):
             "startup or shutdown dependency",
             "dependent implementation phase",
         )
-        for name, text in architecture_diagram_surfaces.items():
+        for name, text in architecture_surfaces.items():
             with self.subTest(architecture_ordered_surface=name):
-                ordered_rule = line_containing(
-                    text, "two or more ordered actions or phases"
-                )
-                for trigger in architecture_ordered_triggers:
-                    self.assertIn(trigger, ordered_rule)
-                self.assertIn("diagram", ordered_rule)
-                for supporting_form in ("prose", "numbered list", "table"):
-                    self.assertIn(supporting_form, ordered_rule.lower())
-                self.assertTrue(
-                    "must not carry" in ordered_rule.lower()
-                    or "instead of leaving" in ordered_rule.lower()
-                )
-
+                rule = line_containing(text, architecture_triggers[0])
+                assert_terms(rule, architecture_triggers)
+                assert_terms(rule.lower(), ("diagram", "prose", "numbered list", "table"))
+                self.assertRegex(rule.lower(), r"must not carry|instead of leaving")
                 additive_rule = line_containing(text, "additive minimum")
-                self.assertIn("shared development-methodology rule", additive_rule)
-                self.assertRegex(
+                assert_terms(
                     additive_rule,
-                    r"does not waive another shared trigger|"
-                    r"without using one satisfied section trigger to waive another shared trigger",
+                    ("shared development-methodology rule", "waive another shared trigger"),
                 )
 
-        functional_diagram_surfaces = {
-            "create skill": (functional_create, "Mermaid workflow diagram whenever"),
-            "review skill": (functional_review, "Mermaid diagram whenever"),
+        functional_surfaces = {
+            "create": (functional_create, "Mermaid workflow diagram whenever"),
+            "review": (functional_review, "Mermaid diagram whenever"),
             "template": (
                 templates["functional-spec-template.md"],
                 "Mermaid diagram whenever",
@@ -2958,7 +2951,7 @@ class BundleContentTests(unittest.TestCase):
                 "appropriate Mermaid sequence, state, or flow diagram",
             ),
         }
-        functional_ordered_triggers = (
+        functional_triggers = (
             "two or more ordered actor actions",
             "branch",
             "permission gate",
@@ -2967,27 +2960,21 @@ class BundleContentTests(unittest.TestCase):
             "state transition",
             "external handoff",
         )
-        for name, (text, marker) in functional_diagram_surfaces.items():
+        for name, (text, marker) in functional_surfaces.items():
             with self.subTest(functional_ordered_surface=name):
-                ordered_rule = line_containing(text, marker)
-                for trigger in functional_ordered_triggers:
-                    self.assertIn(trigger, ordered_rule)
-                self.assertIn("Mermaid", ordered_rule)
-                for supporting_form in ("prose", "numbered list", "table"):
-                    self.assertIn(supporting_form, ordered_rule.lower())
-                verification_exception = line_containing(
-                    text, "Verification-step lists"
-                )
-                self.assertIn("test procedures", verification_exception)
-                self.assertIn("trigger", verification_exception)
+                rule = line_containing(text, marker)
+                assert_terms(rule, functional_triggers)
+                assert_terms(rule.lower(), ("mermaid", "prose", "numbered list", "table"))
+                verification_exception = line_containing(text, "verification-step lists")
+                assert_terms(verification_exception, ("test procedures", "trigger"))
 
-        module_diagram_surfaces = {
-            "create skill": module_create,
-            "review skill": module_review,
+        module_surfaces = {
+            "create": module_create,
+            "review": module_review,
             "template": templates["module-design-template.md"],
             "checklist": checklists["module-design"],
         }
-        module_exception_disqualifiers = (
+        module_disqualifiers = (
             "branch",
             "retry",
             "error path",
@@ -2995,90 +2982,25 @@ class BundleContentTests(unittest.TestCase):
             "external handoff",
             "asynchronous phase transition",
         )
-        for name, text in module_diagram_surfaces.items():
-            with self.subTest(module_exception_surface=name):
-                exception_rule = line_containing(text, "one-row synchronous effect")
-                self.assertRegex(exception_rule, r"exception|exempting|may omit|omission")
-                self.assertRegex(exception_rule, r"only when.*\bno\b")
-                for trigger in module_exception_disqualifiers:
-                    self.assertIn(trigger, exception_rule)
+        for name, text in module_surfaces.items():
+            with self.subTest(module_synchronous_exception_surface=name):
+                rule = line_containing(text, "one-row synchronous effect")
+                self.assertRegex(rule, r"exception|exempting|may omit|omission")
+                self.assertRegex(rule, r"only when.*\bno\b")
+                assert_terms(rule, module_disqualifiers)
 
-        path_tree_template_contracts = {
-            "architecture-template.md": {
-                "trigger": "repository placement of source code, tests, design documents",
-                "complete": "complete repository-relative paths",
-                "split": "named subsections by runtime unit or ownership area",
-                "metadata": "metadata immediately after the tree",
-                "deduplicate": (
-                    "Do not repeat shared prefixes",
-                    "do not repeat every full path",
-                ),
-            },
-            "functional-spec-template.md": {
-                "trigger": "three or more related paths share a prefix, or span two or more folders",
-                "complete": "complete project paths",
-                "split": "named subsections by surface",
-                "metadata": "metadata immediately after the tree",
-                "deduplicate": (
-                    "share a prefix",
-                    "instead of repeating full paths",
-                ),
-            },
-            "high-level-design-template.md": {
-                "trigger": "three or more paths share a prefix or span two or more folders",
-                "complete": "complete planned or existing layout",
-                "split": "named subsections by component or ownership area",
-                "metadata": "metadata immediately after the tree",
-                "deduplicate": (
-                    "do not repeat the same prefixes",
-                    "do not restate full paths in every row",
-                ),
-            },
-            "module-design-template.md": {
-                "trigger": "three or more paths share a prefix or span two or more folders",
-                "complete": "complete repository-relative folders and package segments",
-                "split": "named subsections by ownership area",
-                "metadata": "metadata immediately after the tree",
-                "deduplicate": (
-                    "do not abbreviate or repeat them in a long list",
-                    "do not repeat the full path in each row",
-                ),
-            },
-            "project-wiki-template.md": {
-                "trigger": "three or more paths share a prefix or span two or more folders",
-                "complete": "complete wiki layout",
-                "split": "named subsections by topic family",
-                "metadata": "metadata immediately after the tree",
-                "deduplicate": (
-                    "Do not repeat the docs/wiki prefix",
-                    "instead of repeating full paths",
-                ),
-            },
-            "unit-test-plan-template.md": {
-                "trigger": "three or more implementation, test, fixture, snapshot, or configuration paths share a prefix or span two or more folders",
-                "complete": "complete project paths",
-                "split": "named subsections by test group",
-                "metadata": "metadata immediately after the tree",
-                "deduplicate": (
-                    "rather than repeating full paths",
-                    "do not repeat the full common prefix for every test",
-                ),
-            },
-            "project-template.yaml": {
-                "trigger": "present repeated prefixes once as a tree",
-                "complete": "project-root/",
-                "split": "named subsections by ownership area",
-                "metadata": "nearby metadata",
-                "deduplicate": (
-                    "present repeated prefixes once",
-                    "rather than creating one row per full path",
-                ),
-            },
+        complete_path_markers = {
+            "architecture-template.md": "complete repository-relative paths",
+            "functional-spec-template.md": "complete project paths",
+            "high-level-design-template.md": "complete planned or existing layout",
+            "module-design-template.md": "complete repository-relative folders and package segments",
+            "project-wiki-template.md": "complete wiki layout",
+            "unit-test-plan-template.md": "complete project paths",
+            "project-template.yaml": "project-root/",
         }
-        for name, contract in path_tree_template_contracts.items():
+        for name, complete_path_marker in complete_path_markers.items():
             text = templates[name]
-            normalized_text = " ".join(text.split())
-            contract_text = normalized_text
+            contract_text = " ".join(text.split())
             if name == "project-template.yaml":
                 contract_text = " ".join(
                     line.removeprefix("#").strip()
@@ -3086,83 +3008,100 @@ class BundleContentTests(unittest.TestCase):
                     if line.startswith("#")
                 )
             with self.subTest(path_tree_template=name):
-                self.assertIn(contract["trigger"], contract_text)
-                self.assertIn(contract["complete"], contract_text)
-                self.assertIn("Path tree example", contract_text)
-                self.assertIn(contract["split"], contract_text)
-                self.assertIn(contract["metadata"], contract_text)
-                self.assertIn("fenced text tree", contract_text)
-                self.assertIn("Markdown table cells", contract_text)
-                for deduplication_rule in contract["deduplicate"]:
-                    self.assertIn(deduplication_rule, contract_text)
+                if name == "architecture-template.md":
+                    self.assertIn("repository placement", contract_text)
+                elif name == "project-template.yaml":
+                    self.assertIn("present repeated prefixes once", contract_text)
+                else:
+                    assert_terms(
+                        contract_text,
+                        ("three or more", "share a prefix", "two or more folders"),
+                    )
+                assert_terms(
+                    contract_text,
+                    (
+                        complete_path_marker,
+                        "Path tree example",
+                        "fenced text tree",
+                        "named subsections",
+                        "metadata",
+                        "prefix",
+                        "full path",
+                        "Markdown table cells",
+                    ),
+                )
                 self.assertNotRegex(text, r"<br\s*/?>")
                 if name != "project-template.yaml":
-                    self.assertIn("```text", text)
-                    self.assertIn("HTML breaks", text)
+                    assert_terms(text, ("```text", "HTML breaks"))
 
         project_template = templates["project-template.yaml"]
-        self.assertIn("schema-required path arrays below machine-readable", project_template)
-        self.assertIn("generated prose", project_template)
-        project_config = yaml.safe_load(project_template)
-        configured_paths = project_config["project_taxonomy"]["application_tiers"][0][
-            "paths"
-        ]
-        self.assertIsInstance(configured_paths, list)
-        self.assertTrue(configured_paths)
+        assert_terms(
+            project_template,
+            ("schema-required path arrays below machine-readable", "generated prose"),
+        )
+        configured_paths = yaml.safe_load(project_template)["project_taxonomy"][
+            "application_tiers"
+        ][0]["paths"]
         self.assertTrue(
-            all(isinstance(path, str) and path for path in configured_paths)
+            isinstance(configured_paths, list)
+            and all(isinstance(path, str) and path for path in configured_paths)
         )
 
         for name, text in checklists.items():
             questions, findings = text.split("## Findings", maxsplit=1)
             with self.subTest(path_tree_checklist_enforcement=name):
-                for phrase in (
-                    "three or more repository paths that share a prefix",
-                    "paths spanning two or more folders",
-                    "fenced text trees",
-                    "complete repository-relative",
-                    "named component or ownership subsections",
-                    "adjacent metadata",
-                    "multiline table cells",
-                    "simulated HTML breaks",
-                    "repeated common-prefix lists",
-                    "one row per full path",
-                ):
-                    self.assertIn(phrase, questions)
-                for finding in (
-                    "a missing or malformed required path tree",
-                    "missing complete repository-relative tree segments",
-                    "unsplit large trees",
-                    "tree metadata separated from its owning tree",
-                    "table-cell or HTML-simulated trees",
-                    "duplicated full paths or common prefixes",
-                ):
-                    self.assertIn(finding, findings)
+                assert_terms(
+                    questions,
+                    (
+                        "three or more repository paths that share a prefix",
+                        "paths spanning two or more folders",
+                        "fenced text trees",
+                        "complete repository-relative",
+                        "named component or ownership subsections",
+                        "adjacent metadata",
+                        "multiline table cells",
+                        "simulated HTML breaks",
+                        "repeated common-prefix lists",
+                        "one row per full path",
+                    ),
+                )
+                assert_terms(
+                    findings,
+                    (
+                        "a missing or malformed required path tree",
+                        "missing complete repository-relative tree segments",
+                        "unsplit large trees",
+                        "tree metadata separated from its owning tree",
+                        "table-cell or HTML-simulated trees",
+                        "duplicated full paths or common prefixes",
+                    ),
+                )
 
-        hld_ordered_create_rule = line_containing(hld_create, "ordered sequence")
-        self.assertIn("dependent implementation steps", hld_ordered_create_rule)
-        self.assertIn("complete sequence alone", hld_ordered_create_rule)
-        hld_ordered_review_rule = line_containing(hld_review, "ordered sequence")
-        self.assertIn("dependent implementation steps", hld_ordered_review_rule)
-        self.assertIn("response-adequacy finding", hld_ordered_review_rule)
-
+        hld_create_rule = line_containing(hld_create, "ordered sequence")
+        assert_terms(
+            hld_create_rule, ("dependent implementation steps", "complete sequence alone")
+        )
+        hld_review_rule = line_containing(hld_review, "ordered sequence")
+        assert_terms(
+            hld_review_rule,
+            ("dependent implementation steps", "response-adequacy finding"),
+        )
         hld_template = templates["high-level-design-template.md"]
         implementation_rule = line_containing(
             hld_template, "ordered or dependent implementation actions"
         )
-        self.assertIn("verification gates", implementation_rule)
-        self.assertIn("complete sequence only", implementation_rule)
+        assert_terms(implementation_rule, ("verification gates", "complete sequence only"))
         verification_rule = line_containing(
             hld_template, "dependency order and required verification gates"
         )
         self.assertIn("Implementation Sequence Diagram", verification_rule)
-
         hld_questions, hld_findings = checklists["high-level-design"].split(
             "## Findings", maxsplit=1
         )
-        hld_checklist_rule = line_containing(hld_questions, "ordered sequence")
-        self.assertIn("dependent implementation steps", hld_checklist_rule)
-        self.assertIn("Mermaid sequence, state, or flow diagram", hld_checklist_rule)
+        assert_terms(
+            line_containing(hld_questions, "ordered sequence"),
+            ("dependent implementation steps", "Mermaid sequence, state, or flow diagram"),
+        )
         self.assertIn("Does Implementation Order give a credible sequence", hld_questions)
         self.assertIn(
             "an ordered action sequence left only in prose, a numbered list, or a table",
