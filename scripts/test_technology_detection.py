@@ -2629,6 +2629,58 @@ class TechnologyDetectionTests(unittest.TestCase):
                 output.read_text(encoding="utf-8"),
             )
 
+    def test_agents_section_omits_project_skill_extensions_from_nested_output(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            plan = root / "PROJECT.yaml"
+            root_output = root / "AGENTS.md"
+            output = root / "services" / "AGENTS.md"
+            output.parent.mkdir()
+            plan.write_text(yaml.safe_dump(with_unset_workflows({
+                "project_skill_extensions": ["python"],
+                "technology_skill_loadouts": [],
+            })), encoding="utf-8")
+
+            root_completed = subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDER_SCRIPT),
+                    "--project",
+                    str(plan),
+                    "--output",
+                    str(root_output),
+                ],
+                cwd=ROOT,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDER_SCRIPT),
+                    "--project",
+                    str(plan),
+                    "--output",
+                    str(output),
+                ],
+                cwd=ROOT,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(0, root_completed.returncode, root_completed.stderr)
+            self.assertIn(
+                "## Project Skill Extensions",
+                root_output.read_text(encoding="utf-8"),
+            )
+            self.assertEqual(0, completed.returncode, completed.stderr)
+            rendered = output.read_text(encoding="utf-8")
+            self.assertIn("## Technology Skills", rendered)
+            self.assertNotIn("## Project Skill Extensions", rendered)
+            self.assertNotIn("- python", rendered)
+
     def test_definition_change_authority_renders_and_updates_without_losing_guidance(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

@@ -1059,16 +1059,21 @@ def inlined_skill_body(skill_name: str) -> str:
     return "\n".join(lines[closing_index + 1:]).strip()
 
 
-def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
+def render(
+    value: dict[str, object],
+    inline_tech_skills: bool = True,
+    include_project_skill_extensions: bool = True,
+) -> str:
     """Render configured root AGENTS.md project authority and skill sections.
 
     value is the mapping loaded from PROJECT.yaml. Optional definition authority produces
     its corresponding section. agent_claim_transport is required and workflow_selection is required.
     Technology guidance is always produced from the configured loadouts, and an optional
-    project_skill_extensions list produces the final root-only reference section. The
-    claim adapter is always embedded because setup selected it as a project-wide transport.
-    When inline_tech_skills is true, the return value also embeds each referenced bundled
-    technology skill body. When false, it emits dynamic technology loading instructions.
+    project_skill_extensions list produces the final root-only reference section when
+    include_project_skill_extensions is true. The claim adapter is always embedded because
+    setup selected it as a project-wide transport. When inline_tech_skills is true, the
+    return value also embeds each referenced bundled technology skill body. When false, it
+    emits dynamic technology loading instructions.
 
     The return value is the complete generated Markdown text and ends with a newline.
     Rendering does not write an output file, but inlined rendering reads bundled SKILL.md
@@ -1168,7 +1173,9 @@ def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
                     f"----- END INLINED TECHNOLOGY SKILL: {skill_name} -----",
                 ])
     lines.append("")
-    lines.extend(_project_skill_extension_lines(value))
+    project_skill_extension_lines = _project_skill_extension_lines(value)
+    if include_project_skill_extensions:
+        lines.extend(project_skill_extension_lines)
     return "\n".join(lines)
 
 
@@ -1246,7 +1253,15 @@ def main(arguments: Sequence[str] | None = None) -> int:
             return 0 if result["outcome"].startswith("ALLOWED_") else 3
         if args.approval_record or args.regenerated_from:
             raise ValueError("--approval-record and --regenerated-from require --check-definition-change")
-        content = render(project, args.inline_tech_skills)
+        root_output = (
+            args.output is None
+            or args.output.resolve().parent == args.project.resolve().parent
+        )
+        content = render(
+            project,
+            args.inline_tech_skills,
+            include_project_skill_extensions=root_output,
+        )
         if args.output:
             if args.update_authority_directive:
                 if not args.output.exists():
