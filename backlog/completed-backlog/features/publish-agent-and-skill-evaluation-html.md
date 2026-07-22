@@ -1,36 +1,36 @@
 # Publish Agent And Skill Evaluation HTML
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/publish-agent-and-skill-evaluation-html.md
+Provider Reference: backlog/completed-backlog/features/publish-agent-and-skill-evaluation-html.md
 
 Completion: direct-main
 
 ## Delivery Execution / Ownership
 
-- Owner: Dev Orchestrator
+- Owner: Unowned after terminal backlog-claim release.
 - Canonical task: 019f8b05-a1a0-70a1-bda7-0c93d28a28ba
-- Artifact claim: Pending fresh artifact claim; the initial claim and both correction claims are released.
+- Artifact claim: complete-evaluation-html-019f8b05 during terminal provider update; all implementation, correction, integration, refresh, browser, and review ownership is released, and terminal release follows the archive commit.
 - Branch: codex/evaluation-html-resume-20260722
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/40a0/dev-methodology
 - Starting main: e414fa04307d086321373e6bd090ae38a2d2177b
-- Phase: parser normalization correction recovery.
-- Candidate: 08d8154fcf14e02a30e749296fb992210e61d000 preserved; not accepted.
-- Accepted commit: Pending.
+- Phase: Completed.
+- Candidate: 3b4c638 accepted after fresh correction and review; preserved prior chain df6911b to 71102b3 to 08d8154.
+- Accepted commit: 3b4c638.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: The accepted parser/browser correction condition is now execution work; preserve the exact regression boundary.
-- Shared-surface sequencing: Start on new unique evaluation documentation and data-generator surfaces; defer shared bundle and navigation paths until wake-up.
-- Next owner: Dev Orchestrator.
-- Delivery evidence: Candidate chain preserved; no browser verifier, integration, or completion evidence exists.
+- Open issues: None.
+- Shared-surface sequencing: Complete; both direct-main integration claims were released after verification.
+- Next owner: Parent coordinator for private-worktree and branch cleanup only.
+- Delivery evidence: Accepted source 3b4c638 mapped to main by 394707d, primary-checkout correction 32b3f7f, and current-main refresh 83135eb; fresh review, focused reconciliation, and browser verification accepted.
 
 ## Cold-Start Recovery Execution — 2026-07-22
 
@@ -144,3 +144,22 @@ None.
 - Skill probes are diagnostic controls within scenarios, not a requirement for one probe per assigned skill. The HTML must make that limitation visible while still listing every skill.
 - The latest complete governed agent campaign is the default summary candidate, but implementation must select campaigns through explicit source metadata rather than filename ordering alone.
 - Historical reports may be linked or offered as alternate views, but the global summary must identify one unambiguous selected campaign.
+
+## Completion Evidence — 2026-07-22
+
+- Completion disposition: READY under the configured direct-main contract; implementation, review, verification, integration, current-main refresh, and provider archival are complete.
+- Preserved historical candidate chain: df6911b3179bb82859ae25708ee4b09404a02af1 to 71102b36f729d2e3520d0a5575b6ea280cb53b36 to 08d8154fcf14e02a30e749296fb992210e61d000.
+- Fresh correction chain: 629ee68 to 94ef223 to d9527ab to accepted source 3b4c638.
+- Direct-main mapping: accepted source 3b4c638 mapped to integration commit 394707dbd55481ff07a53edbced324980fa67f51; primary-checkout test correction landed at 32b3f7fdb5e5146eb785474a69db889e90028376.
+- Current-main reconciliation: later catalog and definition changes were regenerated from authoritative sources at 83135ebc590c2c244cf42283ae3f760521c55ed0, based on main a07ffb333db915294513c8ce798436d347d6dd98.
+- Parser corrections: omission and duplication are rejected for dash, asterisk, and plus follow-up markers; mixed YAML scalar priorities collide after integer normalization; literal Git path history prevents wildcard alias acceptance.
+- Focused verification: 25 evaluation documentation tests passed; generator freshness and git diff whitespace checks passed.
+- Focused data reconciliation: 129 skill cards, 27 agent cards, 87 visible scenario rows, and selected-campaign totals PASS 52, BLOCKED 17, FAIL 9; catalog counts show 12 executable cases, 61 agent-scenario associations, and 5 workflow packs.
+- Source snapshot: 7ed524ee6e2c13ecf33ee5f9287289b323579ff42bf2c8850e23caea41efc4aa.
+- Fresh independent artifact review: ACCEPTED with no findings; 1,125 local links plus two scripts resolved, descriptions and coverage metadata matched authoritative sources, and the exact refresh remained one generated HTML file.
+- Fresh browser verification: VERIFIED at 83135eb on desktop width 1440 and narrow width 390; 1,616 visible status, card, and heading nodes had zero clipping; filters, Clear, keyboard focus, and JavaScript-disabled 27-agent and 129-skill fallback passed; console, page, request, and HTTP errors were zero; the ephemeral server was stopped and its port confirmed closed.
+- Integration ownership: integrate-evaluation-html-019f8b05 acquired at event 5ae186cd-935d-4248-81cc-531026237c10 and released at event e56707ea-4432-4147-90bf-761b4944484b.
+- Current-main refresh ownership: the first acquire made no mutation at event 5dfc97f6-54c6-4a09-be2b-15c0d185b37d; refresh-evaluation-html-019f8b05 acquired at event 5e82f49b-eae5-43d4-9149-76994ae17e39 and released at event 5b68064c-20a0-4eb5-8013-a9abccbd1733.
+- Completion serialization: the earlier provider acquire made no mutation at event 48ff4fb1-9613-4ae9-91b3-c95bc307d936; terminal claim complete-evaluation-html-019f8b05 acquired at event d27911c0-f99d-4082-8583-0b7992d97c70 for exactly the active and completed record paths.
+- Recovery evidence: lifecycle claim conflict event 399e08e8-792c-4f55-866c-c46da3dd3b0a remains preserved as a no-mutation attempt.
+- Cleanup: source branch codex/evaluation-html-resume-20260722 and integration branch codex/evaluation-html-integration-019f8b05 are preserved for parent-coordinated cleanup; no active product or browser ownership remains.
