@@ -26,7 +26,7 @@ An isolated worktree, another linked worktree, or a primary worktree not on main
 
 Apply the project-wide resource_coordination selection independently from this provider. When agent-claim is selected, serialize each queue mutation with a short backlog scope from the primary main worktree. SHARED_CHECKOUT_RELEASE_REQUIRED is a coordination outcome rather than a failed mutation. Arrange a direct handoff or completion notification and suspend without polling. SHARED_CHECKOUT_REQUIRED means the operation must be handed to the primary main worktree. Resume only after that notification or handoff, reconcile live status, then retry the exact transition. When none is selected, perform no claim discovery, acquisition, heartbeat, registry mutation, handoff, or release and require no claim-specific evidence anywhere in this skill.
 
-When coordination is enabled, use one short backlog ownership transaction to record Status: Running and ownership evidence, commit that transition, and release immediately. Delivery then obtains separate implementation ownership without backlog scope. After delivery, review, verification, and integration complete, obtain later backlog ownership to record result evidence and archive the item, then commit and release it. With coordination none, preserve the same separate commits and provider transitions without coordination transactions or evidence.
+When coordination is enabled, use one short backlog ownership transaction for each startup transition. The parent Dev Backlog Coordinator owns the dispatch decision and has a Dev Backlog Steward child commit Ready -> Starting with reservation evidence, then releases immediately. After the work-item Thread's root Dev Orchestrator accepts ownership, that root uses its own Dev Backlog Steward child to commit Starting -> Running with the canonical Thread identifier, canonical task id, branch, worktree, and claim evidence, then releases immediately. Delivery obtains separate implementation ownership without backlog scope. After delivery, review, verification, and integration complete, the work-item Orchestrator uses its Steward child for the atomic terminal provider transaction that records result evidence, sets Completed, moves the archive, commits, and releases. With coordination none, preserve the same separate commits and provider transitions without coordination transactions or evidence.
 
 ## Folder Model
 
@@ -60,6 +60,7 @@ When an active folder contains a subfolder with index.md, treat it as one relate
 Use explicit provider lifecycle states and never infer success from silence:
 
 - READY: authorized, complete enough to dispatch, and without unmet prerequisites.
+- STARTING: a parent Coordinator has durably reserved capacity and dispatched exactly one work-item Thread, but its root Orchestrator has not yet accepted delivery ownership.
 - RUNNING: one owner and execution identity have accepted the item.
 - BLOCKED: a technical, dependency, capability, resource-coordination, or provider prerequisite prevents safe progress.
 - USER_ACTION_REQUIRED: a genuine user decision, authority grant, value judgment, or user-held fact is required.
@@ -69,7 +70,7 @@ Use explicit provider lifecycle states and never infer success from silence:
 - FAILED: delivery ended without satisfying completion and terminal failure evidence is recorded.
 - ABANDONED: authorized direction ends the work without delivery.
 
-READY as a completion disposition is not lifecycle READY. A RUNNING item remains RUNNING until manage-file-work-items records terminal evidence and lifecycle COMPLETED. A provider terminal-update failure after delivery disposition READY preserves the accepted delivery evidence but leaves lifecycle RUNNING or BLOCKED until reconciliation applies the pending update.
+READY as a completion disposition is not lifecycle READY. Starting and Running remain active typed work items in their existing type folder; neither moves to a holding or terminal queue. A RUNNING item remains RUNNING until manage-file-work-items records terminal evidence and lifecycle COMPLETED. A provider terminal-update failure after delivery disposition READY preserves the accepted delivery evidence but leaves lifecycle RUNNING or BLOCKED until reconciliation applies the pending update.
 
 Missing result evidence, missing logs, a stopped process, a commit, branch publication, or absence of errors is never completion.
 
@@ -94,6 +95,11 @@ If closed items remain in active folders, explicit status is the open or closed 
 - Apply configured priority; otherwise prefer defects, features, investigations, then analyses.
 - Exclude User Action Required and Holding from runnable selection and unattended counts.
 - Do not dispatch items with unmet dependencies or duplicate ownership.
+- Ready -> Starting is the parent Dev Backlog Coordinator's dispatch and capacity-reservation decision. Its Steward child records the parent coordination Thread, one launch reservation, normalized objective, dispatch time, and available launch evidence atomically before the runtime Thread is created.
+- Starting counts against capacity exactly like Running, so ambiguous or slow startup cannot cause over-dispatch.
+- Before creating a work-item Thread, reconcile the item, parent Thread, runtime task inventory, reservation evidence, and any canonical task id. The Coordinator must not create a duplicate after an ambiguous startup or timeout.
+- Starting -> Running is owned by the root Dev Orchestrator after it accepts the item. Its Dev Backlog Steward child atomically records the canonical work-item Thread identifier, canonical task id, root Dev Orchestrator, branch, worktree, and claim evidence.
+- If startup fails or remains ambiguous, reconcile twice across the bounded settlement interval. When no root Orchestrator accepted ownership and no matching Thread exists, restore Ready and clear only the failed reservation fields. When ownership was accepted or evidence is inconsistent, preserve it and record Blocked or User Action Required with the exact recovery owner instead of restoring Ready.
 - Keep each dispatched item isolated so concurrent work does not share mutable workspace state.
 - Keep delivery ownership isolated from backlog mutation ownership.
 - Do not own, dispatch, implement, or resolve user-action-required work before the user answers its recorded question.
@@ -105,6 +111,7 @@ Do not move an independently identified idea into a typed active folder until th
 Record durable evidence appropriate to every transition:
 
 - READY: source evidence, requirements, acceptance criteria, dependencies, verification expectations, provider_reference, and completion selection.
+- STARTING: parent coordination Thread, dispatch reservation, normalized objective, dispatch time, intended root Dev Orchestrator Role, and any observed runtime creation response.
 - RUNNING: owner, canonical task id when applicable, branch or worktree, phase, started-at evidence, and enabled coordination reference.
 - BLOCKED: exact blocker, owner of the next action, blocking references, recovery note, and permitted resumption transition.
 - USER_ACTION_REQUIRED: one exact question, why input is required, prohibited unattended action, and recorded resolution when answered.
@@ -144,7 +151,7 @@ When resource coordination is enabled, acquire only the backlog scope needed for
 
 ## Completion And Archive Workflow
 
-Only record COMPLETED when all of these exist:
+Only the work-item Thread's root Dev Orchestrator may request terminal completion, and only its Dev Backlog Steward child performs the atomic status-and-archive mutation. Only record COMPLETED when all of these exist:
 
 - The requested delivery or result exists.
 - Required verification and independent review succeeded or an explicitly accepted omission is recorded.
@@ -168,7 +175,8 @@ Record the destination as the terminal provider_reference. Preserve enabled coor
 ## Recovery Workflow
 
 - Read visible active items first.
-- Reconcile owner, canonical task, enabled coordination, branch, worktree, accepted candidate commit, logs, results, checks, delivery references, waits, and archive locations.
+- Reconcile owner, parent and work-item Thread identifiers, canonical task, Starting reservation, enabled coordination, branch, worktree, accepted candidate commit, logs, results, checks, delivery references, waits, and archive locations.
+- For a Starting item, adopt one matching Thread when evidence proves it exists; restore Ready only when no ownership was accepted; otherwise preserve ownership evidence and use Blocked or User Action Required. Never create a replacement until duplicate reconciliation proves there is no accepted canonical Thread.
 - Classify stale running state as resumable, blocked, crashed, failed, or already delivered but pending provider update from concrete evidence.
 - Resume recoverable owned work before selecting new work.
 - Apply the Blocked Handoff And Resumption workflow when the item is Blocked; state alone never supplies ownership.

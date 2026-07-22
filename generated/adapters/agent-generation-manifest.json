@@ -19,7 +19,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "07be4405840e8ee17a8ec6de2d66b1514a62b3e240b751274d00743b2261b12a",
+          "sha256": "9aebb79919f534554266dc0d5f63115c09159c5277dd6fa948192aefa3b99fe2",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -28,7 +28,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "ac51d937aa765ab59b71ae141532d9737c56fd06bb6aaed12a47584ec460afd8",
+          "sha256": "3697f67263077cac6656d12858f2abd02803a8108042828c1817dd4b11d88983",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -93,7 +93,7 @@
             "structured-design",
             "structured-explanation"
           ],
-          "sha256": "1514f44db58d4d68f66b711ebaa85e39eb36b70cfe1d7cb00ad52721ed1fc371",
+          "sha256": "2f159f222e37dbcbbb06531f36f49fd7be5dcdca5201632ef3ca19a0c73f5f3f",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -199,7 +199,7 @@
             "development-methodology",
             "documentation-page-verify"
           ],
-          "sha256": "2b992ec447b5b0d624368b5db0d932d296eeea9079fe38640ec6c9d135fb42d0",
+          "sha256": "84a0bda994c1a2b0335248d8de7f188c8bc4bfc5a3a4b02172f5baf05e51d852",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -317,7 +317,7 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "6a639619691be935a27d8ae0e06f89b135763450d7d2cd362e6349ce464847f4",
+          "sha256": "1bc9dc7bcfff92421a73470d53bdb0dafeaba98d664a02919733804413bead21",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -327,7 +327,7 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "6597da010b67c5f02801cd4657eac4f78b72d94b8a6dc498d635141d06e1fc25",
+          "sha256": "bf43fd5d675c8a0a8a0944b5efa8710e0d3cc7ad976fdb41eded389e1a5f4bf0",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -398,7 +398,7 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "c4dcff002827ad30a11bccea074205a24fe547c24664b13c9e8ee81007bed08a",
+          "sha256": "2deb954f1906f4bf28f008db5e1eb9ca83054ab9e0e2d3f36b62ed487e143688",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -513,7 +513,7 @@
             "documentation-page-verify",
             "codex-harness-directives"
           ],
-          "sha256": "236d1f7e3ea661507b602b3a21b06b00a0758f19485bce04c9c957fdefcd87cf",
+          "sha256": "7d932e0a8cacbfaa7bf3d274db7bf370bec3fca5d380113a6250e66ba4dce889",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -642,7 +642,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "e52cad9fbe4b2bbcab41693a180ffe689f0289ea2065d920ac3b85985aaff3c1",
+          "sha256": "7f59ee4327e79fd73ea56fcf00b6784d9c524f9432d8cff30727a9a3c0a45037",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -651,7 +651,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "849b55b1f60a8c1e098282b61eecaaf5f2a490478b49accd718e43fe42a899f2",
+          "sha256": "ed027a6fcb201ebea50fa74914f4a16141f57eec0f96ca82ca81862ed6c45514",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -716,7 +716,7 @@
             "structured-design",
             "structured-explanation"
           ],
-          "sha256": "914e8b8a581dc38ed9f35fda170f93cb0fa5c7972c8036566d593f1c947227e6",
+          "sha256": "90ee10d6e9979b7337891b0c3768a4e97eafd1a2907b25147570acadf8505c97",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -822,7 +822,7 @@
             "development-methodology",
             "documentation-page-verify"
           ],
-          "sha256": "ba459be640897db2b29ccc89caebc76005ca170887fd7f1b27888dd560621748",
+          "sha256": "e40bc883218f52400dae614fb4264851c239741d14b21e7d9773101bed7bb634",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -938,7 +938,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "58d93a8f2d7ebf2aa9289a5b3489a960b4d97204235ef2d74fb527e5f02f73f3",
+          "sha256": "3fa82762a55ece74c54b98ff6820f41fd7335f361b1534ac40de877550a38321",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -947,7 +947,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "53484a6e2f93415de42d8808de3bd1c1e0432184aa334281639b2da43af70d77",
+          "sha256": "0c999fc31125526fa7ed55391236b9058afd1b534d1f15b76b8c9ce7bdbf6f75",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -1012,7 +1012,7 @@
             "structured-design",
             "structured-explanation"
           ],
-          "sha256": "51cde3604af11a992cb0a615d5cab89148c88e8cb33d98379df266aaead5ac2c",
+          "sha256": "de5f91a5ab633d346f18651edfc230af5f34db52e274e07126725674e21252aa",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -1118,7 +1118,7 @@
             "development-methodology",
             "documentation-page-verify"
           ],
-          "sha256": "a9a22cc6605efdc5f4960ba3645af45532da139342d7098ba6c15e5e5cf3da39",
+          "sha256": "bd8edc1a89e9654ff3706b8b6c690975ee645e3a31357ac34508b9ff4ed1dedc",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {

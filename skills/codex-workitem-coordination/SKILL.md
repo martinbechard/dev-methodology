@@ -82,6 +82,18 @@ Create each Dev Orchestrator task in an environment that can perform its ordinar
 
 Set a concise plain-text title when the task is created and update it only at material phase changes. Use a phase prefix such as Implementing —, Reviewing —, Verifying —, Integrating —, Waiting for Claim —, Waiting for Help —, Waiting for User —, Done —, Blocked —, Failed —, or Abandoned — followed by a short work-item name. Never use raw prompt text, XML or delegation tags, error output, task identifiers, or generic titles as the display title. Preserve the stable task identifier; the title remains display state and never becomes lifecycle authority or delivery evidence.
 
+## Starting And Work-Item Thread Ownership
+
+A Work item is the durable provider record for an outcome, lifecycle, evidence, and ownership. A Thread is one execution context or conversation. An Agent is a runtime instance operating under a Role, which is a reusable responsibility and authority contract. A Task is a bounded assignment to an Agent; it is never a synonym for Thread. A Handoff is a lifecycle event that transfers evidence and the next action.
+
+The parent coordination Thread has one root Agent under the Dev Backlog Coordinator Role. Each Starting or Running Work item has exactly one work-item Thread with one root Agent under the Dev Orchestrator Role. Producing, implementation, independent review, verification, integration, and stewardship Agents are children in that work-item Thread.
+
+Ready -> Starting is the parent Coordinator's dispatch and reservation decision. Use its Dev Backlog Steward child to record the reservation before launch, and count Starting against capacity. Reconcile existing reservation and runtime evidence before every launch. One Work item must not create a duplicate Thread after a timeout, task-creation error, or ambiguous startup.
+
+After the work-item Thread's root Dev Orchestrator accepts ownership, it uses its Dev Backlog Steward child for the atomic Starting -> Running transition. The record includes the canonical Thread identifier, canonical task id, branch, worktree, and claim evidence. If launch fails and no owner accepted, restore Ready. If ownership was accepted or evidence cannot safely be discarded, record Blocked or User Action Required with the exact recovery condition. Starting and Running stay in the active typed queue.
+
+The work-item Orchestrator owns production, review, verification, integration, and the terminal provider request. Its Steward child atomically records Completed and moves the archive. The parent Coordinator never performs per-item delivery or completion; after the terminal Handoff it cleans the runtime Thread and worktree, recounts Starting plus Running capacity, and dispatches replacement work.
+
 ## Private Worktree Work
 
 Implementation, correction, review, and focused local tests on a task-owned private branch and worktree do not require operational ownership when they cannot mutate shared repository state or a named shared resource.
@@ -178,7 +190,7 @@ If the active unit reaches its hard stop, repeats the same failure signature, or
 
 Every fifteen minutes while queue work remains, Dev Backlog Coordinator reviews:
 
-- Running count and vacancies against the target of ten
+- Starting plus Running count and vacancies against the target of ten
 - work items by phase and age of the current phase
 - integration and completion waits, especially every wait at or beyond thirty minutes
 - active resource ownership when enabled, including exact scopes, owners, and heartbeat freshness
@@ -194,16 +206,18 @@ Make a scheduling or recovery adjustment during the same review whenever deliver
 
 When the user requests background supervision for a sustained queue, the parent may create one dedicated watchdog task and schedule it to observe the fifteen-minute review checks. The watchdog never performs the parent review's scheduling or recovery adjustment. It is an observer, not a work-item owner, queue entry, Running slot, durable record, or substitute coordinator.
 
-On every cycle, the watchdog reads current work items, Git state, and task state. When resource coordination selects agent-claim, it also reads coordination-registry state and evaluates shared-resource ownership. When resource coordination selects none, it omits coordination-registry reads, shared-resource ownership evaluation, and coordination alerts or evidence. In addition to the applicable parent-review checks above, it evaluates:
+On every cycle, the watchdog reads current work items, Git state, and task state. When resource coordination selects agent-claim, it also reads coordination-registry state and evaluates shared-resource ownership. When resource coordination selects none, it omits coordination-registry reads, shared-resource ownership evaluation, and coordination alerts or evidence. It immediately alerts on every stopped, failed, or missing canonical task for a Starting or Running item, every stopped task that retains a live coordination entry, and every terminal item that retains a live coordination entry. Detection has no extra grace timeout beyond the cycle interval. In addition to the applicable parent-review checks above, it evaluates:
 
 - every Running phase against its published estimate, hard stop, and latest evidence-bearing progress
 - every Blocked item's exact blocker and unblock condition against current evidence
 - accepted work stranded before integration, integrated work awaiting provider closeout, and terminal work awaiting cleanup
 - when resource coordination selects agent-claim, stale, unsafe, or unnecessarily broad shared-resource ownership
 
-The watchdog must remain read-only. It does not mutate repository files or lifecycle state; acquire, extend, reset, release, or override coordination entries; dispatch work; change work-item or parent task state, branches, or worktrees; perform cleanup; or run expensive or live verification.
+The watchdog is mechanical read-only evidence and advice only. It must remain read-only and does not mutate repository files or lifecycle state. It must not mutate backlog, claims, or task state; acquire, extend, reset, release, or override coordination entries; dispatch work; change work-item or parent task state, branches, or worktrees; perform cleanup; or run expensive or live verification. It must not infer integration readiness, accepted delivery, or completion readiness.
 
-Notify the parent only when an actionable condition exists. The alert identifies the affected item or task, the observed evidence, why attention is required now, and the smallest recommended parent action. Actionable conditions include a satisfied Blocked-item unblock condition, a Running vacancy with eligible Ready work, a phase overrun or evidence gap, a wait at or beyond thirty minutes, stranded accepted work, pending terminal closeout, unsafe coordination state when resource coordination selects agent-claim, or a task-identity or cleanup anomaly.
+Notify the parent only when an actionable condition exists. The alert identifies the affected item or task, the observed evidence, why attention is required now, and the smallest recommended parent action. Actionable conditions include the immediate task and coordination mismatches above, a satisfied Blocked-item unblock condition, a Starting-plus-Running vacancy with eligible Ready work, a phase overrun or evidence gap, a wait at or beyond thirty minutes, stranded accepted work, pending terminal closeout, unsafe coordination state when resource coordination selects agent-claim, or a task-identity or cleanup anomaly.
+
+Treat active quiet tasks as healthy absent an explicit deadline or hard stop. Silence, title age, or lack of a recent message is not evidence of failure. When a configured hard stop is overdue, report the read-only deadline and cleanup-grace evidence; never auto-release the claim or decide delivery state.
 
 When no intervention is needed, the watchdog may emit its own concise no-action cycle result without messaging or interrupting the parent; this self-report is its only task-state exception. The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, integration, and cleanup decision. If the watchdog or its schedule is unavailable, the parent performs the review directly; it does not create a replacement ledger or duplicate watchdog.
 

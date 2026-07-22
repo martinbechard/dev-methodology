@@ -48,17 +48,22 @@ Keep the configured backlog authoritative and recoverable by applying the select
 - Treat an explicit one-item backend request as a task override unless the user establishes it as the project default.
 - Put directly requested or explicitly authorized work in its typed active queue as Ready unless the user defers it or a separate genuine user-owned question remains.
 - Put an independently identified potentially valuable idea in User Action Required with its underlying Type and one concrete approval question; keep ordinary evidence-backed dependencies with typed active work.
+- Treat Ready -> Starting as a parent Dev Backlog Coordinator-owned dispatch reservation, and Starting -> Running as acceptance owned by the work-item Thread's root Dev Orchestrator. Perform either mutation only as that owner's child Agent and never combine both into one transition.
 
 ## Workflow
 
 1. Resolve the backend, target, item type, user authorization source, source evidence, requirements, acceptance criteria, dependencies, verification expectations, ownership, and requested lifecycle transition.
 2. Search the selected backend for an existing matching item before creating another.
-3. Apply the selected backend skill to create, assign, resume, block, complete, fail, archive, or report the item without changing unrelated backlog state.
-4. Preserve implementation and delivery references while requiring the configured completion evidence before closing or archiving the item.
-5. Return the backend, durable item reference, state, ownership, dependencies, evidence, and next runnable action.
+3. For Coordinator dispatch, atomically record Ready -> Starting with the parent Thread, one launch reservation, dispatch time, normalized objective, and observed launch evidence. Starting counts against capacity and remains in the active typed queue.
+4. For root Orchestrator acceptance, atomically record Starting -> Running with the canonical work-item Thread identifier, canonical task id, root Dev Orchestrator, branch, worktree, and enabled coordination evidence. Refuse a duplicate Thread or a second accepted owner.
+5. Apply the selected backend skill to create, assign, resume, block, complete, fail, archive, or report the item without changing unrelated backlog state.
+6. Preserve implementation and delivery references while requiring the configured completion evidence before closing or archiving the item.
+7. For file-backed terminal completion requested by the work-item Orchestrator, atomically record Completed, update the provider reference, move the item to its typed completed archive, commit the transaction, and return evidence for parent cleanup.
+8. Return the backend, durable item reference, state, ownership, dependencies, evidence, and next runnable action.
 
 ## Failure Handling
 
+- On failed or ambiguous startup, reconcile the reservation and runtime evidence. Restore Ready only when no ownership was accepted and no matching Thread exists; otherwise preserve evidence and record Blocked or User Action Required with the exact recovery condition.
 - Report BLOCKED when backend selection, target, authority, authentication, ownership, or required lifecycle evidence is missing. Do not silently change providers.
 
 ## Completion

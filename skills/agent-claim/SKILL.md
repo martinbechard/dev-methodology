@@ -122,7 +122,29 @@ Extension preserves the original worktree, branch, mode, baseline commit, and cl
 
 ## Heartbeat
 
-Refresh the heartbeat during long work. A heartbeat is coordination liveness evidence, not proof that implementation, review, verification, or integration progressed.
+Refresh the heartbeat during long work. A heartbeat is coordination liveness evidence, not proof that implementation, review, verification, or integration progressed. It never changes an expected release, hard stop, configured maximum, or cleanup-grace boundary.
+
+## Resource Deadline Policy
+
+Every named resource acquisition is bound to the project-owned resource_coordination.deadline_policy. The required resource classes are backlog-mutation, main-integration, browser-server, database-port, and live-model-evaluation. Each class supplies maximum_duration_seconds and cleanup_grace_seconds. The resource_overrides mapping uses one exact resource id as each key and supplies resource_class, maximum_duration_seconds, and cleanup_grace_seconds; an exact-id override replaces the named class values for that resource.
+
+A claim may protect at most one named timed resource. Acquisition or atomic scope extension supplies that exact resource id and class together with expected_duration_seconds and requested_hard_stop_duration_seconds. The engine, not the caller, resolves the configured maximum and cleanup grace from PROJECT.yaml. It accepts only positive durations satisfying expected duration <= requested hard stop <= configured maximum, then records the resource id, class, expected duration, requested hard stop, configured maximum, expected release time, absolute hard-stop time, cleanup grace, cleanup-grace end time, and later extension evidence. Callers must not assert a configured maximum.
+
+The initial methodology defaults are:
+
+| Resource class | Maximum duration | Cleanup grace |
+|---|---:|---:|
+| backlog-mutation | 600 seconds | 120 seconds |
+| main-integration | 2700 seconds | 600 seconds |
+| browser-server | 3600 seconds | 600 seconds |
+| database-port | 1800 seconds | 300 seconds |
+| live-model-evaluation | 14400 seconds | 1800 seconds |
+
+These are editable project policy, not inferred runtime constants. Later measured evidence may justify changing them through Project Configurator.
+
+An owner may request extend-deadline only with explicit evidence and a larger requested hard-stop duration that remains within the immutable configured maximum recorded at acquisition. The extension is measured from the original acquisition time, updates the absolute hard stop and cleanup-grace end, and appends the evidence to the journal. Heartbeat alone never extends it.
+
+Status is read-only. It reports whether the hard stop is overdue, whether cleanup grace is active or elapsed, and the inputs needed to judge stopped-owner actionability. An overdue entry is never auto-released. Cleanup grace is a bounded interval for truthful resource shutdown and evidence preservation, not authorization to continue normal work after the hard stop. A stopped owner with a live timed-resource entry is immediately actionable; inspect the actual resource and durable evidence, then use an authorized handoff, release, or administrative recovery path without inventing delivery or completion evidence.
 
 ## Runtime And Integration Resources
 
@@ -141,7 +163,7 @@ merge:integration:main
 
 Separate linked worktrees have independent indexes, branches, and commits. An isolated writer may commit to its unique branch without a repository-global commit resource.
 
-The shared Git operation is integration into a target branch. Acquire a target-specific resource such as merge:integration:main only for the merge, cherry-pick, rebase, or equivalent update of that target, then release it promptly. Continue using dedicated resources for shared hooks, generators, databases, ports, installations, and output locations that cross worktree boundaries.
+The shared Git operation is integration into a target branch. Acquire a target-specific resource such as merge:integration:main only for the merge, cherry-pick, rebase, or equivalent update of that target, give it the main-integration deadline class and evidence-backed requested duration, then release it promptly. Continue using dedicated timed resources for shared hooks, generators, databases, ports, installations, and output locations that cross worktree boundaries.
 
 ## Overlap And Isolation
 

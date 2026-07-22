@@ -42,6 +42,29 @@ current_understanding:
 
 resource_coordination:
   selected: "TODO: none or agent-claim. Select exactly one project-wide resource-coordination policy without folder overrides."
+  # Required when selected is agent-claim. These initial defaults are project-owned
+  # policy and may be tuned later from measured evidence. Omit deadline_policy when
+  # selected is none.
+  deadline_policy:
+    resource_classes:
+      backlog-mutation:
+        maximum_duration_seconds: 600
+        cleanup_grace_seconds: 120
+      main-integration:
+        maximum_duration_seconds: 2700
+        cleanup_grace_seconds: 600
+      browser-server:
+        maximum_duration_seconds: 3600
+        cleanup_grace_seconds: 600
+      database-port:
+        maximum_duration_seconds: 1800
+        cleanup_grace_seconds: 300
+      live-model-evaluation:
+        maximum_duration_seconds: 14400
+        cleanup_grace_seconds: 1800
+    # Exact resource-id keys override their class values and must contain
+    # resource_class, maximum_duration_seconds, and cleanup_grace_seconds.
+    resource_overrides: {}
 
 # Required only when resource_coordination.selected is agent-claim. Omit this complete
 # mapping when resource coordination is none.

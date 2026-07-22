@@ -35,7 +35,7 @@ Invoke the script with Python and one operation:
 python3 "$CLAIM_SCRIPT" --repo /absolute/path/to/project OPERATION [ARGUMENTS]
 ```
 
-Supported operations are status, acquire, extend, heartbeat, release, maintain-journal, and report. Each completed invocation writes one JSON document to standard output. Decode it and inspect result.outcome. The top-level exit_code and process exit code are stable automation aids; the structured outcome is authoritative.
+Supported operations are status, acquire, extend, extend-deadline, heartbeat, release, maintain-journal, and report. Each completed invocation writes one JSON document to standard output. Decode it and inspect result.outcome. The top-level exit_code and process exit code are stable automation aids; the structured outcome is authoritative.
 
 Stable process exit codes are:
 
@@ -50,9 +50,9 @@ Several outcomes share one exit code. Never branch on the process code alone. A 
 
 ## Command Arguments
 
-Acquire requires claim-id, agent, task, and root-task-id. Scope arguments are repeatable file, tree, and resource values or one mutually exclusive broad selector: project-files, backlog, or all-files. Tree, project-files, and all-files require scope-reason. Optional acquisition arguments are parent-claim-id, branch, base, allow-recovery, and the compatibility-only worktree-path and compat-file-directories options.
+Acquire requires claim-id, agent, task, and root-task-id. Scope arguments are repeatable file and tree values, at most one resource value, or one mutually exclusive broad selector: project-files, backlog, or all-files. Tree, project-files, and all-files require scope-reason. A named resource also requires resource-class, resource-id, expected-duration-seconds, and requested-hard-stop-duration-seconds; the command resolves configured maximum and cleanup grace from PROJECT.yaml. Optional acquisition arguments are parent-claim-id, branch, base, allow-recovery, and the compatibility-only worktree-path and compat-file-directories options.
 
-Extend requires claim-id plus net-new scope. Heartbeat and release require claim-id. Release accepts no-change only for a truthful no-change result. Journal maintenance accepts hot-days, defaulting to 2. Reporting accepts since and format; use JSON output for automation.
+Extend requires claim-id plus net-new scope and uses the same complete timing arguments when adding the claim's one named resource. Extend-deadline requires claim-id, requested-hard-stop-duration-seconds, and extension-evidence. Heartbeat and release require claim-id. Release accepts no-change only for a truthful no-change result. Journal maintenance accepts hot-days, defaulting to 2. Reporting accepts since and format; use JSON output for automation.
 
 ## Exact Invocations
 
@@ -111,18 +111,39 @@ python3 "$CLAIM_SCRIPT" --repo . acquire \
   --allow-recovery
 ```
 
-Extend, heartbeat, and release:
+Acquire one deadline-bound resource. The project policy, not this command, supplies the configured maximum and cleanup grace:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id browser-check-123 \
+  --agent browser-operator \
+  --task browser-check-123 \
+  --root-task-id task-123 \
+  --resource browser-test:primary \
+  --resource-class browser-server \
+  --resource-id browser-test:primary \
+  --expected-duration-seconds 900 \
+  --requested-hard-stop-duration-seconds 1800
+```
+
+Extend scope, explicitly extend a resource deadline, heartbeat, and release:
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . extend \
   --claim-id task-123 \
-  --file tests/test_feature.py \
-  --resource generated:codegen
+  --file tests/test_feature.py
+
+python3 "$CLAIM_SCRIPT" --repo . extend-deadline \
+  --claim-id browser-check-123 \
+  --requested-hard-stop-duration-seconds 2400 \
+  --extension-evidence "one final accessibility case remains"
 
 python3 "$CLAIM_SCRIPT" --repo . heartbeat --claim-id task-123
 
 python3 "$CLAIM_SCRIPT" --repo . release --claim-id task-123
 ```
+
+Heartbeat is liveness only and never extends a deadline. Extend-deadline succeeds only when the evidence is non-empty, the requested duration increases, and it stays within the immutable configured maximum recorded at acquisition. Status reports overdue and cleanup-grace state without auto-release or delivery inference.
 
 Declare a clean no-change result:
 

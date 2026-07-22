@@ -244,7 +244,7 @@
     figcaption span { display: block; margin-top: 0.35rem; color: var(--muted); font-family: var(--body); font-size: 0.88rem; font-weight: 500; }
     .state-map {
       display: grid;
-      grid-template-columns: repeat(7, minmax(5rem, 1fr));
+      grid-template-columns: repeat(9, minmax(5rem, 1fr));
       gap: 0.75rem;
       align-items: center;
     }
@@ -285,6 +285,12 @@
     .role-row .arrow { color: var(--teal); font-size: 1.3rem; font-weight: 900; }
     .role-row p { font-size: 0.93rem; }
     .optional-role { margin-top: 1rem; padding: 1rem 1.2rem; border-left: 0.3rem solid var(--violet); background: var(--soft-violet); }
+    .role-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .role-card { padding: 1rem 1.1rem; border-top: 0.3rem solid var(--teal); background: var(--soft-teal); }
+    .role-card:nth-child(3n + 2) { border-color: var(--blue); background: var(--soft-blue); }
+    .role-card:nth-child(3n) { border-color: var(--violet); background: var(--soft-violet); }
+    .role-card h3 { margin-bottom: 0.35rem; }
+    .thread-context { margin-top: 1rem; padding: 1rem 1.2rem; border-left: 0.3rem solid var(--blue); background: var(--soft-blue); }
     .branch-map { position: relative; display: grid; grid-template-columns: 11rem minmax(0,1fr); gap: 0.8rem 1.2rem; align-items: center; }
     .branch-map::before { position: absolute; top: 1rem; bottom: 1rem; left: 11.6rem; width: 0.22rem; background: var(--ink); content: ""; }
     .branch-label { padding: 0.7rem; border-radius: 0.4rem; background: var(--ink); color: white; font-family: var(--utility); font-size: 0.78rem; font-weight: 800; text-align: center; }
@@ -336,7 +342,7 @@
     .site-footer p { padding-top: 1rem; border-top: 1px solid var(--line); font-size: 0.78rem; }
 
     @media (max-width: 860px) {
-      .hero, .two-column { grid-template-columns: 1fr; }
+      .hero, .two-column, .role-cards { grid-template-columns: 1fr; }
       .section-heading { grid-template-columns: 1fr; }
       .lifecycle-rail ol { grid-template-columns: repeat(3, 1fr); gap: 1.5rem 0.8rem; }
       .lifecycle-rail ol::before { display: none; }
@@ -435,7 +441,7 @@
       <p>Methodology installation first chooses and records core-skill delivery while generating and installing matching native agents. Later project setup reuses that evidence, creates PROJECT.yaml and only the selected empty wiki or specification roots, and never runs reverse engineering. Explicit later documentation and development workflows consume the accepted configuration and routed skill references.</p>
     </div>
     <aside class="hero-principle" aria-label="Core lifecycle principle">
-      <strong>One work item is the thread of continuity.</strong>
+      <strong>One Work item is the durable line of continuity.</strong>
       <p>Its status, decisions, owner, accepted change, verification, and delivery evidence travel together from intake to completion.</p>
     </aside>
   </section>
@@ -491,8 +497,8 @@
     </div>
     <figure class="status-figure" aria-labelledby="status-title">
       <figcaption id="status-title">Status answers “what may happen next?”<span>Type stays stable; status changes as authority, dependencies, execution, and delivery change.</span></figcaption>
-      <div class="state-map" role="img" aria-label="Ready moves to Running, then Awaiting Review, then Completed. User Action Required and Holding pause before Ready. Blocked can return Running work to Ready. Failed and Abandoned are terminal outcomes.">
-        <div class="state-node active">Ready</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Running</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Awaiting Review</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Completed</div>
+      <div class="state-map" role="img" aria-label="Ready moves to Starting, then Running, then Awaiting Review, then Completed. Starting and Running are active states. User Action Required and Holding pause before Ready. Blocked can return active work to Ready. Failed and Abandoned are terminal outcomes.">
+        <div class="state-node active">Ready</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Starting</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Running</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Awaiting Review</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Completed</div>
       </div>
       <p class="source-note">After completion, a file provider may move the item to its archive location. Archive placement is not another lifecycle status.</p>
       <div class="state-branches">
@@ -526,33 +532,34 @@
         <div><b>05</b><strong>Closeout</strong><p>Review, verification, integration, completion, and cleanup evidence, plus coordination release evidence only when enabled.</p></div>
       </div>
     </div>
-    <p class="source-note">The work item is the only durable task record. File-provider creation and lifecycle procedures are defined by <a href="../skills/create-file-work-item/SKILL.md">Create File Work Item</a> and <a href="../skills/manage-file-work-items/SKILL.md">Manage File Work Items</a>.</p>
+    <p class="source-note">The Work item is the only durable provider record. File-provider creation and lifecycle procedures are defined by <a href="../skills/create-file-work-item/SKILL.md">Create File Work Item</a> and <a href="../skills/manage-file-work-items/SKILL.md">Manage File Work Items</a>.</p>
   </section>
 
   <section class="section" id="agents" aria-labelledby="agents-title">
     <div class="section-heading">
       <span class="chapter-number">Chapter 03</span>
-      <div><h2 id="agents-title">Agents And Handoffs</h2><p>Each agent owns one kind of decision. The sequence prevents the producer from approving its own work and keeps queue updates separate from implementation.</p></div>
+      <div><h2 id="agents-title">Agents</h2><p>A Role is a reusable responsibility and authority contract applied to a runtime Agent; each Agent below owns one distinct kind of decision.</p></div>
     </div>
-    <figure class="sequence-figure" aria-labelledby="handoff-title">
-      <figcaption id="handoff-title">One work item, one delivery sequence<span>The same orchestration lane persists through corrections, integration, and closeout.</span></figcaption>
-      <div class="role-score">
-        <div class="role-row"><span class="from">Backlog Coordinator</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Backlog Steward</span><p>Select eligible Ready work; record Running, owner, branch, worktree, and starting phase.</p></div>
-        <div class="role-row"><span class="from">Backlog Steward</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Work Orchestrator</span><p>Hand off the complete item. The orchestrator owns delivery or a truthful terminal outcome.</p></div>
-        <div class="role-row"><span class="from">Work Orchestrator</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Producer</span><p>Choose the appropriate coder, documentation writer, organiser, or specialist for one bounded contribution.</p></div>
-        <div class="role-row"><span class="from">Producer</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Independent Reviewer</span><p>Return a committed, clean contribution. Source, documentation, security, UX, and other surfaces go to the matching reviewer.</p></div>
-        <div class="role-row"><span class="from">Independent Reviewer</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Verifier</span><p>After review acceptance, run the behavior and risk-based acceptance checks. Findings return to the original producer.</p></div>
-        <div class="role-row"><span class="from">Verifier</span><span class="arrow" aria-hidden="true">&rarr;</span><span class="to">Work Orchestrator</span><p>Hand back accepted evidence so the orchestrator can choose the configured delivery path and close the item.</p></div>
+    <figure class="sequence-figure" aria-labelledby="agent-role-title">
+      <figcaption id="agent-role-title">Roles used inside the lifecycle<span>A Role defines authority; an Agent is the runtime instance applying that Role in one Thread.</span></figcaption>
+      <div class="role-cards">
+        <article class="role-card"><h3>Dev Backlog Coordinator</h3><p>The parent coordination Agent reserves capacity, dispatches one Thread per Work item, reconciles duplicates, and cleans up terminal execution contexts.</p></article>
+        <article class="role-card"><h3>Dev Orchestrator</h3><p>The root Agent in a work-item Thread owns production, review, verification, integration, and the terminal provider request.</p></article>
+        <article class="role-card"><h3>Dev Backlog Steward</h3><p>A child Agent performs atomic provider lifecycle updates for its Coordinator or Orchestrator without taking over delivery.</p></article>
+        <article class="role-card"><h3>Producing and implementation Agents</h3><p>These child Agents complete bounded coding, writing, design, or other production Tasks and return committed evidence.</p></article>
+        <article class="role-card"><h3>Independent reviewers</h3><p>These child Agents assess source, documentation, security, UX, or other artifacts from fresh contexts without producing the correction.</p></article>
+        <article class="role-card"><h3>Dev Verifier</h3><p>This child Agent runs acceptance checks only after the applicable independent review gates pass.</p></article>
+        <article class="role-card"><h3>Optional integration specialists</h3><p>Conditional integration role: a nested Merge Coordinator combines accepted contributions or resolves integration-only conflicts inside the same work item.</p></article>
       </div>
-      <aside class="optional-role"><strong>Conditional integration role:</strong> when several accepted contributions must be combined or integration conflicts require a dedicated owner, a nested Merge Coordinator reconciles them inside the same work item. It does not create a second queue item or independent delivery chain.</aside>
     </figure>
-    <p class="source-note">The <a href="agent-and-skill-definitions.html#dev-activities-title">development-agent catalog</a> owns the complete definitions. <a href="../skills/codex-workitem-coordination/SKILL.md">Work-item coordination</a> owns this handoff model.</p>
+    <aside class="thread-context"><h3>Threads And Execution Contexts</h3><p>The parent coordination Thread has one root Coordinator Agent. Each active Work item has one work-item Thread with one root Orchestrator Agent. Producing, review, verification, integration, and stewardship Agents are children in that work-item Thread. A Task is one bounded assignment to an Agent, never another name for a Thread.</p></aside>
+    <p class="source-note">The <a href="agent-and-skill-definitions.html#dev-activities-title">development-agent catalog</a> owns the complete Role definitions. <a href="../skills/codex-workitem-coordination/SKILL.md">Work-item coordination</a> owns the execution-context model.</p>
   </section>
 
   <section class="section" id="private-work" aria-labelledby="private-work-title">
     <div class="section-heading">
       <span class="chapter-number">Chapter 04</span>
-      <div><h2 id="private-work-title">Private Branches And Worktrees</h2><p>Running items do not share a mutable checkout. Each item works on its own branch in its own worktree, so ordinary implementation, corrections, local tests, and read-only review can proceed independently.</p></div>
+      <div><h2 id="private-work-title">Private Branches And Worktrees</h2><p>Starting and Running Work items do not share a mutable checkout. Each work-item Thread uses its own branch and worktree, so ordinary implementation, corrections, local tests, and read-only review can proceed independently.</p></div>
     </div>
     <figure class="branch-figure" aria-labelledby="branch-title">
       <figcaption id="branch-title">Parallel work leaves the main branch stable<span>A worktree is a separate checkout. A branch records that item's commits.</span></figcaption>
@@ -571,7 +578,7 @@
   <section class="section" id="coordination" aria-labelledby="coordination-title">
     <div class="section-heading">
       <span class="chapter-number">Chapter 05</span>
-      <div><h2 id="coordination-title">Coordinating Shared Resources</h2><p>PROJECT.yaml selects resource coordination independently as none or agent-claim. Private work is parallel by default. When agent-claim is selected, a short coordination claim protects shared objects and its registry remains a temporary conflict-avoidance scratchpad rather than delivery authority. When none is selected, the lifecycle records no claim procedure or evidence and relies on explicit task scope plus serialized delivery transactions.</p></div>
+      <div><h2 id="coordination-title">Coordinating Shared Resources</h2><p>PROJECT.yaml selects resource coordination independently as none or agent-claim. Private work is parallel by default. When agent-claim is selected, a deadline-bound coordination claim protects shared objects and its registry remains a temporary conflict-avoidance scratchpad rather than delivery authority. When none is selected, the lifecycle records no claim procedure or evidence and relies on explicit Task scope plus serialized delivery transactions.</p></div>
     </div>
     <figure class="resource-figure" aria-labelledby="resource-title">
       <figcaption id="resource-title">Many private lanes, one exact shared gate<span>With agent-claim, protect the smallest path or named resource and release promptly. With none, serialize the delivery transaction without coordination operations or evidence.</span></figcaption>
@@ -586,7 +593,8 @@
       <div><h3>What a claim proves</h3><dl class="definition-list"><div><dt>Acquired</dt><dd>The named writer may use the recorded shared scope.</dd></div><div><dt>Wait required</dt><dd>Another live writer overlaps; coordinate release or narrow the requested scope.</dd></div><div><dt>Isolation required</dt><dd>Non-overlapping work needs its own branch and worktree.</dd></div><div><dt>Recovery authority required</dt><dd>Dirty unclaimed state must be preserved before another writer proceeds.</dd></div></dl></div>
       <div><h3>What a claim does not prove</h3><dl class="definition-list"><div><dt>Quality</dt><dd>It is not proof of review, verification, delivery, or work-item completion.</dd></div><div><dt>Commit scope</dt><dd>It does not audit commit history or decide whether committed paths belong to the contribution.</dd></div><div><dt>Integration</dt><dd>Independent review and integration own committed-content, changed-path, and provenance decisions.</dd></div><div><dt>Lifecycle</dt><dd>Registry cleanup, Git integration, and backlog closeout are distinct operations.</dd></div></dl></div>
     </div>
-    <details><summary>When a shared gate stays busy</summary><div><p>Keep the existing work item and delivery lane. Request direct release notification, retry only on the documented bounded schedule, and investigate the real owner and scope when the wait exceeds its limit. Never create a wait-only work item, release protection for dirty unpreserved work, or treat a heartbeat as proof of useful progress.</p></div></details>
+    <details><summary>Deadline policy and cleanup grace</summary><div><p>Each named resource records its exact class and id, expected duration (the planned working time), requested hard stop (the owner-requested latest finish), configured maximum (the immutable project-policy cap), expected release (acquisition time plus expected duration), absolute hard stop (acquisition time plus the accepted requested duration), and cleanup grace (the bounded post-stop shutdown window). The initial maximum/grace defaults in seconds are backlog mutation 600/120, main integration 2700/600, browser or server 3600/600, database or port 1800/300, and live or model evaluation 14400/1800. Exact-id overrides are explicit project policy.</p><p>Heartbeat reports liveness and never extends the hard stop. An evidence-backed extension stays within the immutable maximum. Status is read-only, overdue state never auto-releases ownership, and a stopped owner is immediately actionable. Cleanup grace is for shutdown and evidence preservation, not continued work.</p></div></details>
+    <details><summary>When a shared gate stays busy</summary><div><p>Keep the existing Work item and delivery lane. Request direct release notification, retry only on the documented bounded schedule, and investigate the real owner and scope when the wait exceeds its limit. Never create a wait-only Work item, release protection for dirty unpreserved work, or treat a heartbeat as proof of useful progress.</p></div></details>
     <p class="source-note">The portable <a href="../skills/agent-claim/SKILL.md">Agent Claim</a> contract owns the exact outcomes, recovery, release, and administrative reset safeguards. <a href="../scripts/test_agent_claim.py">Focused claim tests</a> and <a href="../README.md#agent-claims-and-worktrees">operator guidance</a> provide executable and operational detail.</p>
   </section>
 
@@ -596,15 +604,17 @@
       <div><h2 id="delivery-title">Review, Verification, And Delivery</h2><p>Production work is accepted in layers. Review asks whether the change is correct and maintainable; verification proves the required behavior; delivery integrates the accepted result through the configured path.</p></div>
     </div>
     <figure class="sequence-figure" aria-labelledby="delivery-sequence-title">
-      <figcaption id="delivery-sequence-title">Running to Done<span>Correction loops back to the original producer; backlog closeout begins only after delivery evidence exists.</span></figcaption>
+      <figcaption id="delivery-sequence-title">Lifecycle Handoffs: dispatch through cleanup<span>A Handoff transfers evidence and the next action; it never lets one Role silently absorb another Role's authority.</span></figcaption>
       <ol class="sequence-list">
-        <li><span class="number">1</span><span class="actor">Producer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Reviewer</span><p>Submit a committed, clean contribution with focused evidence.</p></li>
-        <li><span class="number">2</span><span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Producer</span><p>Accept or return actionable findings. Corrected work receives a fresh review.</p></li>
-        <li><span class="number">3</span><span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Verifier</span><p>After acceptance, run checks proportional to affected behavior and risk.</p></li>
-        <li><span class="number">4</span><span class="actor">Verifier</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Orchestrator</span><p>Return the exact accepted candidate, checks, residual risks, and justified omissions.</p></li>
-        <li><span class="number">5</span><span class="actor">Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Main or PR</span><p>Follow the configured delivery path. Re-review reconciled content when integration changes meaning.</p></li>
-        <li><span class="number">6</span><span class="actor">Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Backlog Steward</span><p>After integration, record Completed and archive the item in a separate provider transaction. Agent-claim protects that mutation with short backlog ownership; none performs no claim operation and records no claim evidence.</p></li>
-        <li><span class="number">7</span><span class="actor">Coordinator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Cleanup</span><p>Verify the integration branch is merged, remove the clean worktree, delete the merged branch, prune metadata, and refill queue capacity.</p></li>
+        <li><span class="number">1</span><span class="actor">Coordinator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Steward</span><p>Reserve one Ready Work item as Starting with dispatch evidence before Thread creation.</p></li>
+        <li><span class="number">2</span><span class="actor">Root Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Steward</span><p>Accept the Work item and atomically record Running with canonical Thread, Agent Task, branch, worktree, and enabled coordination evidence.</p></li>
+        <li><span class="number">3</span><span class="actor">Producer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Reviewer</span><p>Submit a committed, clean contribution with focused implementation evidence.</p></li>
+        <li><span class="number">4</span><span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Producer</span><p>Accept or return actionable findings; corrected work receives a fresh independent review.</p></li>
+        <li><span class="number">5</span><span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Dev Verifier</span><p>After review acceptance, run checks proportional to affected behavior and risk.</p></li>
+        <li><span class="number">6</span><span class="actor">Dev Verifier</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Root Orchestrator</span><p>Return the accepted candidate, check results, residual risks, and justified omissions.</p></li>
+        <li><span class="number">7</span><span class="actor">Root Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Main or PR</span><p>Follow the configured integration path. Re-review reconciled content when integration changes meaning.</p></li>
+        <li><span class="number">8</span><span class="actor">Root Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Steward</span><p>After integration, atomically record Completed and archive the Work item in a separate provider transaction. Agent-claim protects that mutation with short backlog ownership; none performs no claim operation and records no claim evidence.</p></li>
+        <li><span class="number">9</span><span class="actor">Coordinator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Cleanup</span><p>Verify the integration branch is merged, remove the clean worktree, delete the merged branch, close the Thread, prune metadata, and refill queue capacity through a recount and replacement dispatch.</p></li>
       </ol>
     </figure>
     <details><summary>Correction and long-running work safeguards</summary><div><p>Findings return to the original producer. After two failed correction attempts for the same criterion, a repeated failure signature, or an unavailable fixed dependency, preserve the candidate and record a truthful blocker.</p><p>Before a phase expected to exceed five minutes, publish the active unit, estimate, hard stop, retained evidence path, and distinct acceptance criterion. After an expensive failure, classify retained evidence, add the smallest offline regression, and run one cheapest representative first.</p></div></details>
@@ -640,8 +650,8 @@
         <tr><td><strong>Coordination registry when enabled</strong></td><td>When agent-claim is selected, the coordination registry records temporary shared-mutation protection, conflict, heartbeat, release, and recovery state. With none, registry evidence is absent.</td><td>Accepted content, successful integration, or completed work.</td></tr>
       </tbody>
     </table>
-    <aside class="not-a-record"><strong>An agent runtime session is not another evidence record.</strong> Its messages, title, and live state help people observe execution. Durable facts still belong in the work item, Git, review outputs, and the coordination registry when enabled. With none, registry evidence is absent.</aside>
-    <details><summary>Administrative cleanup remains separate from delivery</summary><div><p>Reset only an inactive coordination entry whose work is preserved and whose resources are stopped or handed off. A reset changes temporary registry state only. It must not rewrite Git, edit project files, discard a worktree, manufacture a release event, or claim that delivery occurred.</p><p>Neither bundled coordination transport exposes reset, and manual registry editing is forbidden. If a host-supported targeted atomic reset is unavailable, stop and route the operation to an administrator.</p><p>Create a fresh reconciliation branch from current main for integration; this becomes the task integration and cleanup branch. An older candidate branch retained only as a non-ancestral content source is handled separately.</p></div></details>
+    <aside class="not-a-record"><strong>A Thread is an execution context, not another durable evidence record.</strong> Its Agent messages, title, and live state help people observe execution. Durable facts still belong in the Work item, Git, review outputs, and the coordination registry when enabled. With none, registry evidence is absent.</aside>
+    <details><summary>Administrative cleanup remains separate from delivery</summary><div><p>Reset only an inactive coordination entry whose work is preserved and whose resources are stopped or handed off. A reset changes temporary registry state only. It must not rewrite Git, edit project files, discard a worktree, manufacture a release event, or claim that delivery occurred.</p><p>Neither bundled coordination transport exposes reset, and manual registry editing is forbidden. If a host-supported targeted atomic reset is unavailable, stop and route the operation to an administrator.</p><p>Create a fresh reconciliation branch from current main for integration; this becomes the work-item Thread's integration and cleanup branch. An older candidate branch retained only as a non-ancestral content source is handled separately.</p></div></details>
   </section>
 
   <section class="section" id="design-work" aria-labelledby="design-work-title">
