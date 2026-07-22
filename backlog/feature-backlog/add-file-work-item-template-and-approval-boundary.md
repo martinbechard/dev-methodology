@@ -1,6 +1,6 @@
 # Add File Work Item Template And Approval Boundary
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -9,6 +9,20 @@ Provider: file
 Provider Reference: backlog/feature-backlog/add-file-work-item-template-and-approval-boundary.md
 
 Completion: direct-main
+
+## Current Execution
+
+- Owner: Dev Orchestrator
+- Claim: None; the short Running-record transaction is released after this committed transition, and implementation/integration ownership remains separate.
+- Canonical task: 019f8747-6997-7a62-9b49-4af5a15fd86e
+- Worktree: /Users/martinbechard/.codex/worktrees/0414/dev-methodology
+- Branch: codex/add-file-work-item-template-and-approval-boundary
+- Starting main: cd09c3617fd92172b175414ac23e878c57e937d1
+- Phase: Run the two exact definition approval checks; implement the approved reusable template and approval-boundary contract; obtain fresh independent review and focused Tier 1/2 verification; reconcile onto fresh current main; integrate and complete the item under separate claims.
+- Started: 2026-07-21.
+- Running-record claim: start-file-work-item-template-019f8747, acquired event b8335ea5-8d24-42eb-b435-f495d97fce9a.
+- Open issues: None. No other governed definition is authorized, and the full catalog is not required solely for this item.
+- Accepted candidate: Pending.
 
 ## User Action Required
 
