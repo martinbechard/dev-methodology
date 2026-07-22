@@ -1,6 +1,6 @@
 # Publish Agent And Skill Evaluation HTML
 
-Status: Blocked
+Status: Running
 
 Type: Feature
 
@@ -12,13 +12,13 @@ Completion: direct-main
 
 ## Delivery Execution / Ownership
 
-- Owner: Unowned
-- Canonical task: /root/process_backlog/orch_evaluation_html
-- Artifact claim: None; the initial claim and both correction claims are released.
-- Branch: codex/publish-agent-skill-evaluation-html-20260722
-- Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/publish-agent-skill-evaluation-html-20260722
+- Owner: Dev Orchestrator
+- Canonical task: 019f8b05-a1a0-70a1-bda7-0c93d28a28ba
+- Artifact claim: Pending fresh artifact claim; the initial claim and both correction claims are released.
+- Branch: codex/evaluation-html-resume-20260722
+- Canonical worktree: /Users/martinbechard/.codex/worktrees/40a0/dev-methodology
 - Starting main: e414fa04307d086321373e6bd090ae38a2d2177b
-- Phase: Blocked after the bounded two-attempt correction loop was exhausted.
+- Phase: parser normalization correction recovery.
 - Candidate: 08d8154fcf14e02a30e749296fb992210e61d000 preserved; not accepted.
 - Accepted commit: Pending.
 - Claim wait started at: None.
@@ -27,10 +27,18 @@ Completion: direct-main
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: Final methodology re-review found a recurring fail-open parser and completeness class that remains unresolved after two correction attempts.
+- Open issues: The accepted parser/browser correction condition is now execution work; preserve the exact regression boundary.
 - Shared-surface sequencing: Start on new unique evaluation documentation and data-generator surfaces; defer shared bundle and navigation paths until wake-up.
-- Next owner: Unowned; a fresh owner must complete the exact unblock work below.
+- Next owner: Dev Orchestrator.
 - Delivery evidence: Candidate chain preserved; no browser verifier, integration, or completion evidence exists.
+
+## Cold-Start Recovery Execution — 2026-07-22
+
+- Lifecycle transition: Blocked -> Ready after reconciliation confirmed the recorded fresh-owner parser/browser correction condition was accepted for execution -> Running under fresh ownership.
+- Canonical task identity: 019f8b05-a1a0-70a1-bda7-0c93d28a28ba.
+- Backlog recovery claim: cold-start-backlog-reconcile-2-019f8b00, acquired event 66822334-e85a-41aa-b2ad-6a6c433b6798 from primary main.
+- Recovery phase: parser normalization correction recovery.
+- The blocker, exact unblock condition, candidate chain, review findings, and verification boundary below remain preserved.
 
 ## Phase Evidence Update — 2026-07-22
 

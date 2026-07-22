@@ -13,11 +13,11 @@ Completion: direct-main
 ## Execution / Ownership
 
 - Owner: Dev Orchestrator
-- Canonical task: /root/process_backlog/orch_functional_spec_ux
+- Canonical task: 019f8b05-29c8-7a82-b962-1a347eebecc3
 - Artifact claim: define-functional-spec-ux-mockup-criteria, pending ARTIFACT GO.
-- Branch: codex/define-functional-spec-ux-mockup-criteria
-- Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/define-functional-spec-ux-mockup-criteria
-- Phase: Lifecycle Running committed; ARTIFACT GO pending.
+- Branch: codex/functional-spec-ux-resume-20260722
+- Canonical worktree: /Users/martinbechard/.codex/worktrees/3362/dev-methodology
+- Phase: cold-start current-main reconciliation.
 - Starting main: 1560326152977581d2c62711e9fb861e7f2cf8f0
 - Lifecycle transition: Ready eligibility and exact approval were preserved before fresh ownership transitioned the item to Running.
 - Candidate: Pending.
@@ -31,6 +31,13 @@ Completion: direct-main
 - Open issues: None for lifecycle dispatch; implementation must remain within the recorded approval.
 - Next owner: Dev Orchestrator.
 - Delivery evidence: Exact governed and ordinary companion scope approval preserved; implementation, review, verification, integration, and acceptance remain pending.
+
+## Cold-Start Recovery Execution — 2026-07-22
+
+- Canonical task identity reconciled to 019f8b05-29c8-7a82-b962-1a347eebecc3.
+- Backlog recovery claim: cold-start-backlog-reconcile-2-019f8b00, acquired event 66822334-e85a-41aa-b2ad-6a6c433b6798 from primary main.
+- Recovery phase: cold-start current-main reconciliation.
+- Prior exact approval evidence and acceptance criteria remain preserved.
 
 ## Read-Only Discovery
 

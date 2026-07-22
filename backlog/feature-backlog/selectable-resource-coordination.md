@@ -23,11 +23,11 @@ Completion: direct-main
 ## Execution / Ownership
 
 - Owner: Dev Orchestrator
-- Canonical task: /root/process_backlog/orch_selectable_resource_coordination
+- Canonical task: 019f8b05-5251-7d73-9cc9-4057edfef9a0
 - Artifact claim: selectable-resource-coordination, pending ARTIFACT GO.
-- Branch: codex/selectable-resource-coordination-20260722
-- Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/selectable-resource-coordination-20260722
-- Phase: Lifecycle Running committed; ARTIFACT GO pending.
+- Branch: codex/selectable-resource-coordination-discovery-20260722
+- Canonical worktree: /Users/martinbechard/.codex/worktrees/e483/dev-methodology
+- Phase: bounded governed-path discovery pending exact approval.
 - Starting main: 1560326152977581d2c62711e9fb861e7f2cf8f0
 - Lifecycle transition: Blocked eligibility was reconciled, the completed dependency made the item Ready, and fresh ownership then transitioned it to Running.
 - Candidate: Pending.
@@ -47,6 +47,13 @@ Completion: direct-main
 Creation Claim: draft-selectable-mutation-coordination
 
 Refinement Claims: improve-selectable-mutation-coordination-019f850e, capture-resource-coordination-dialogue-20260721
+
+## Cold-Start Recovery Execution — 2026-07-22
+
+- Canonical task identity reconciled to 019f8b05-5251-7d73-9cc9-4057edfef9a0.
+- Backlog recovery claim: cold-start-backlog-reconcile-2-019f8b00, acquired event 66822334-e85a-41aa-b2ad-6a6c433b6798 from primary main.
+- Recovery phase: bounded governed-path discovery pending exact approval.
+- The completed transport-adapter dependency and all prior evidence remain preserved.
 
 ## Summary
 

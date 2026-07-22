@@ -1,6 +1,6 @@
 # Deploy Skills And Agents To An Explicit Project Folder
 
-Status: Blocked
+Status: Running
 
 Type: Feature
 
@@ -12,21 +12,29 @@ Completion: direct-main
 
 ## Execution / Ownership
 
-- Owner: Unowned
-- Canonical task: /root/process_backlog/orch_deploy_explicit_project
-- Claim: None
-- Branch: codex/deploy-explicit-project-20260722
-- Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/deploy-explicit-project-20260722
-- Phase: Blocked handoff committed after the bounded correction loop was exhausted.
+- Owner: Dev Orchestrator
+- Canonical task: 019f8b05-525f-7b10-bb66-9c6a3abcbc47
+- Claim: cold-start-backlog-reconcile-2-019f8b00 (backlog transition only; artifact claim pending)
+- Branch: codex/deploy-explicit-project-resume-20260722
+- Canonical worktree: /Users/martinbechard/.codex/worktrees/16de/dev-methodology
+- Phase: target-only noninteractive regression recovery.
 - Starting main: af0a3fe63404a793f2bf7dcf40dd2a3de563109e
 - Accepted candidate: None; candidate chain preserved below.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
-- Open issues: A fresh source review reproduced the one-project-identity defect after correction attempt 2.
-- Next owner: Freshly dispatched Dev Orchestrator.
+- Open issues: The accepted correction condition is now execution work; preserve the target-only regression boundary.
+- Next owner: Dev Orchestrator.
 - Delivery evidence: Preserved below; no integration or completion is authorized.
 
 Creation Claim: create-explicit-project-deployment-item-20260721
+
+## Cold-Start Recovery Execution — 2026-07-22
+
+- Lifecycle transition: Blocked -> Ready after reconciliation confirmed the recorded fresh-owner exact correction condition was accepted for execution -> Running under fresh ownership.
+- Canonical task identity: 019f8b05-525f-7b10-bb66-9c6a3abcbc47.
+- Backlog recovery claim: cold-start-backlog-reconcile-2-019f8b00, acquired event 66822334-e85a-41aa-b2ad-6a6c433b6798 from primary main.
+- Recovery phase: target-only noninteractive regression recovery.
+- The blocker, exact unblock condition, candidate chain, review evidence, and verification evidence below remain preserved.
 
 ## Summary
 

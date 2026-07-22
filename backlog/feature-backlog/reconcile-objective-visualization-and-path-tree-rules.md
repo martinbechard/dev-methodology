@@ -13,11 +13,11 @@ Completion: direct-main
 ## Execution / Ownership
 
 - Owner: Dev Orchestrator
-- Canonical task: /root/process_backlog/orch_objective_path_rules
+- Canonical task: 019f8b05-5912-79b2-ba63-bf7cd38e50f7
 - Artifact claim: objective-path-rules-019f817f-reconcile, pending ARTIFACT GO.
-- Branch: codex/reconcile-objective-path-rules-019f817f
-- Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/objective-path-rules-019f817f-reconcile
-- Phase: Lifecycle Running committed; ARTIFACT GO pending.
+- Branch: codex/objective-path-rules-closeout-20260722
+- Canonical worktree: /Users/martinbechard/.codex/worktrees/d2c9/dev-methodology
+- Phase: cold-start final-review and verification recovery.
 - Starting main: e414fa04307d086321373e6bd090ae38a2d2177b
 - Candidate: Pending; preserved evidence commit e9b31dbf961d32c1eccdc68becd5666f05497b73 is not an accepted candidate.
 - Accepted commit: Pending.
@@ -31,6 +31,13 @@ Completion: direct-main
 - Shared-surface sequencing: Start on the eight approved canonical skill sources and unique templates and checklists; defer shared generated and test outputs until wake-up.
 - Next owner: Dev Orchestrator.
 - Delivery evidence: Pending; e9b31db evidence, exclusions, and the exact eight-path approval remain preserved below.
+
+## Cold-Start Recovery Execution — 2026-07-22
+
+- Canonical task identity reconciled to 019f8b05-5912-79b2-ba63-bf7cd38e50f7.
+- Backlog recovery claim: cold-start-backlog-reconcile-2-019f8b00, acquired event 66822334-e85a-41aa-b2ad-6a6c433b6798 from primary main.
+- Recovery phase: cold-start final-review and verification recovery.
+- Prior evidence, approval boundary, candidate history, and acceptance criteria remain preserved.
 
 ## Phase Evidence Update — 2026-07-22
 

@@ -1,6 +1,6 @@
 # Simplify Project Configuration Setup And Skill Routing
 
-Status: Blocked
+Status: Running
 
 Type: Feature
 
@@ -12,17 +12,25 @@ Completion: direct-main
 
 ## Current Execution
 
-- Owner: Unowned
-- Claim: None
-- Canonical task: 019f86b1-e0e5-7fc2-8fd2-d4e2391c7193
-- Worktree: /Users/martinbechard/.codex/worktrees/6445/dev-methodology
-- Branch: codex/simplify-project-configuration-setup-and-skill-routing
+- Owner: Dev Orchestrator
+- Claim: cold-start-backlog-reconcile-2-019f8b00 (backlog transition only; artifact claim pending)
+- Canonical task: 019f8b05-5922-7bc1-a5c9-dfc7f37e58d0
+- Worktree: /Users/martinbechard/.codex/worktrees/593b/dev-methodology
+- Branch: codex/simplify-project-configuration-setup-reconcile-019f8b05
 - Starting main: 351799b174362ca418cf167ecae6ef3a20dbebff
-- Phase: Run the seven exact approval checks; implement the bounded setup, selector, delivery-mode, documentation-boundary, renderer, and migration contract; obtain fresh independent review and focused verification; then integrate from fresh current main and complete the item separately.
+- Phase: Project Bootstrapper example correction recovery.
 - Started: 2026-07-21
 - Running-record claim: start-simplify-project-config-019f86b1, acquired event 3d804405-ef17-42aa-b1f2-24d0b0edde33.
-- Open issues: None. Implementation must remain within the exact seven-path governed-definition scope below.
+- Open issues: The accepted Project Bootstrapper correction condition is now execution work; implementation must remain within the exact seven-path governed-definition scope below.
 - Accepted candidate: Pending.
+
+## Cold-Start Recovery Execution — 2026-07-22
+
+- Lifecycle transition: Blocked -> Ready after reconciliation confirmed the exact seven-path approval and fresh-owner correction condition were accepted for execution -> Running under fresh ownership.
+- Canonical task identity: 019f8b05-5922-7bc1-a5c9-dfc7f37e58d0.
+- Backlog recovery claim: cold-start-backlog-reconcile-2-019f8b00, acquired event 66822334-e85a-41aa-b2ad-6a6c433b6798 from primary main.
+- Recovery phase: Project Bootstrapper example correction recovery.
+- The blocker, exact seven-path approval, candidate history, and prior evidence remain preserved.
 
 ## Blocked Handoff
 
