@@ -1,6 +1,6 @@
 # Select Resource Coordination Per Project
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -22,17 +22,19 @@ Completion: direct-main
 
 ## Execution / Ownership
 
-- Owner: Unowned
-- Canonical task: 019f8b05-5251-7d73-9cc9-4057edfef9a0
-- Claim: None
-- Artifact claim: None.
-- Branch: codex/selectable-resource-coordination-discovery-20260722
-- Canonical worktree: /Users/martinbechard/.codex/worktrees/e483/dev-methodology
-- Phase: approved and Ready for fresh canonical dispatch.
-- Starting main: 1560326152977581d2c62711e9fb861e7f2cf8f0
-- Lifecycle transition: Blocked eligibility was reconciled, the completed dependency made the item Ready, and fresh ownership then transitioned it to Running.
+- Owner: Dev Orchestrator
+- Canonical task: 019f8b1d-5817-72f3-be99-ba471da716b9
+- Claim: start-selectable-resource-coordination-019f8b1d (backlog transition only)
+- Artifact claim: Pending fresh artifact claim.
+- Branch: codex/selectable-resource-coordination-implementation-20260722
+- Canonical worktree: /Users/martinbechard/.codex/worktrees/3da9/dev-methodology
+- Phase: implementing approved resource-coordination loading separation.
+- Starting main: f5534ec28fd8e1c75efb65970de61918406992a0
+- Lifecycle transition: Ready -> Running after exact approval, fresh canonical task assignment, and successful serialized backlog claim acquisition.
 - Candidate: Pending.
 - Accepted commit: Pending.
+- Review: Pending.
+- Verification: Pending.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
 - Integration wait started at: None.
@@ -41,13 +43,22 @@ Completion: direct-main
 - Completion wait attempts: 0.
 - Dependency evidence: backlog/completed-backlog/features/configure-agent-claim-transport-adapters.md is Status Completed; integration commit 1b1b819fa051f9f0f1d572184b18f18c06d3cba0 is reachable from main; focused verification, archive, clean integration-claim release, and cleanup-eligibility evidence are recorded; Open issues is None.
 - Preserved dependency boundary: The completed transport-adapter contract remains the required input to this item.
-- Open issues: None for approval routing; fresh canonical dispatch remains required before implementation.
-- Delivery evidence: Dependency unblock, discovery evidence, and exact approval are preserved; implementation has not started.
-- Next owner: Unowned pending fresh canonical dispatch.
+- Open issues: None for lifecycle dispatch; implementation remains within the approved scope.
+- Delivery evidence: Dependency unblock, discovery evidence, and exact approval are preserved; implementation, review, verification, integration, and acceptance are pending.
+- Next owner: Dev Orchestrator.
 
 Creation Claim: draft-selectable-mutation-coordination
 
 Refinement Claims: improve-selectable-mutation-coordination-019f850e, capture-resource-coordination-dialogue-20260721
+
+## Running Dispatch — 2026-07-22
+
+- Canonical task: 019f8b1d-5817-72f3-be99-ba471da716b9.
+- Backlog transition claim: start-selectable-resource-coordination-019f8b1d, acquired event a7765c3b-c035-4ea1-834a-e959cfdab2f5 from primary main.
+- Branch and worktree: codex/selectable-resource-coordination-implementation-20260722 at /Users/martinbechard/.codex/worktrees/3da9/dev-methodology.
+- Starting main: f5534ec28fd8e1c75efb65970de61918406992a0.
+- Phase: implementing approved resource-coordination loading separation.
+- The complete approval Resolution, 40-path manifest, loading clarification, and discovery evidence remain preserved below.
 
 ## Cold-Start Recovery Execution — 2026-07-22
 
