@@ -6319,6 +6319,30 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("without artifact review or dev-verifier", ordinary_review[0].lower())
         self.assertIn("report ready", ordinary_completion[0].lower())
 
+        configuration_only_example = next(
+            example for example in role["examples"]
+            if "repair an invalid project configuration" in example["purpose"].lower()
+        )
+        configuration_only_response = configuration_only_example["plausibleResponse"].lower()
+        for phrase in (
+            "selected empty documentation roots",
+            "setup-specific validation",
+            "bounded setup commit",
+            "clean status",
+            "released setup claim",
+        ):
+            with self.subTest(configuration_only_evidence=phrase):
+                self.assertIn(phrase, configuration_only_response)
+        for forbidden in (
+            "dev-artifact-reviewer",
+            "dev-merge-coordinator",
+            "dev-verifier",
+            "independent review",
+            "final integration commit",
+        ):
+            with self.subTest(configuration_only_forbidden=forbidden):
+                self.assertNotIn(forbidden, configuration_only_response)
+
     def test_project_configurator_new_scenarios_link_executable_coverage(self) -> None:
         """Keep simplified setup and role-exclusion scenarios tied to runnable evidence."""
 

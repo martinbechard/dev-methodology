@@ -3865,7 +3865,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "caseBackedAgentCount": 6,
     "caseBackedWorkflowPackCount": 5,
     "codexRunnableCaseCount": 11,
-    "declaredScenarioCount": 55,
+    "declaredScenarioCount": 61,
     "endToEndFixtureBackedWorkflowPackCount": 0,
     "executableCaseCount": 11,
     "executableFixtureAgentCount": 1,
@@ -5707,7 +5707,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [],
-      "description": "Sets up a project for later development work. It creates or reuses the project configuration, produces the required documentation, sends each setup and documentation artifact for independent review, keeps exactly one accepted committed contribution as the final direct commit or integrates multiple accepted committed contributions, and verifies the completed project state.",
+      "description": "Sets up a project for later development work and separately coordinates explicitly requested documentation workflows. Ordinary setup creates or reuses the project configuration and selected empty documentation roots, validates and commits that setup, then stops without entering reverse-engineering, design, or review gates.",
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
@@ -5776,7 +5776,32 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "judgePassedCases": [],
         "partialScenarioCoverage": true,
         "scenarioCoverage": {
+          "project-configurator-advanced-setup": {
+            "caseBacked": false,
+            "executableCases": [],
+            "executableFixture": false
+          },
+          "project-configurator-basic-setup": {
+            "caseBacked": false,
+            "executableCases": [],
+            "executableFixture": false
+          },
           "project-configurator-boundary": {
+            "caseBacked": false,
+            "executableCases": [],
+            "executableFixture": false
+          },
+          "project-configurator-conceptual-role-technology-exclusion": {
+            "caseBacked": false,
+            "executableCases": [],
+            "executableFixture": false
+          },
+          "project-configurator-dev-coder-provider-dependency-exclusion": {
+            "caseBacked": false,
+            "executableCases": [],
+            "executableFixture": false
+          },
+          "project-configurator-documentation-roots": {
             "caseBacked": false,
             "executableCases": [],
             "executableFixture": false
@@ -5787,12 +5812,23 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
               "project-configuration-routing"
             ],
             "executableFixture": true
+          },
+          "project-configurator-persisted-technology-confirmation": {
+            "caseBacked": false,
+            "executableCases": [],
+            "executableFixture": false
           }
         },
         "scenarioDeclared": true,
         "scenarioIds": [
+          "project-configurator-advanced-setup",
+          "project-configurator-basic-setup",
           "project-configurator-boundary",
-          "project-configurator-happy"
+          "project-configurator-conceptual-role-technology-exclusion",
+          "project-configurator-dev-coder-provider-dependency-exclusion",
+          "project-configurator-documentation-roots",
+          "project-configurator-happy",
+          "project-configurator-persisted-technology-confirmation"
         ],
         "securityContainedCases": [],
         "staleByDigestCases": [],
@@ -5805,7 +5841,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [
         "project-configuration-routing"
       ],
-      "description": "Creates or updates the single project-root PROJECT.yaml and validates one claim transport, conceptual agent definitions, work-item selectors, skillsets, folder routing, nested AGENTS.md guidance, and Claude bridges.",
+      "description": "Creates or updates the single project-root PROJECT.yaml through Basic or Advanced setup and validates installed core-skill delivery, one claim transport, Persistence and Commit, conceptual agents, project skill extensions, confirmed folder technology skillsets, nested guidance, documentation roots, and Claude bridges.",
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [

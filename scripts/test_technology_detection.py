@@ -199,7 +199,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         """Keep Basic setup inspectable while hiding fixed decisions."""
 
         renderer = load_renderer_module()
-        rendered = renderer.render({
+        rendered = renderer.render(with_claim_transport({
             "project_setup": {
                 "mode": "basic",
                 "concurrent_tasking": False,
@@ -222,7 +222,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "pathPattern": "src/**",
                 "skills": ["python"],
             }],
-        })
+        }))
 
         for expected in (
             "Setup mode: Basic",
@@ -241,7 +241,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         """Expose Advanced concurrent capacity only after tasking is enabled."""
 
         renderer = load_renderer_module()
-        project = {
+        project = with_claim_transport({
             "project_setup": {
                 "mode": "advanced",
                 "concurrent_tasking": True,
@@ -265,7 +265,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "pathPattern": "src/**",
                 "skills": ["python"],
             }],
-        }
+        })
 
         rendered = renderer.render(project)
         self.assertIn("Setup mode: Advanced", rendered)
@@ -290,7 +290,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         """Reject selector divergence before setup text and canonical routing can disagree."""
 
         renderer = load_renderer_module()
-        project = {
+        project = with_claim_transport({
             "project_setup": {
                 "mode": "basic",
                 "concurrent_tasking": False,
@@ -313,7 +313,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "pathPattern": "src/**",
                 "skills": ["python"],
             }],
-        }
+        })
 
         with self.assertRaisesRegex(
             ValueError,
@@ -344,7 +344,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         """Preserve compatibility values while rendering canonical labels and routes only."""
 
         renderer = load_renderer_module()
-        rendered = renderer.render({
+        rendered = renderer.render(with_claim_transport({
             "workflow_selection": {
                 "backlog": {
                     "default": "file-based-backlog",
@@ -361,7 +361,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                     }],
                 },
             },
-        })
+        }))
 
         self.assertIn("Default persistence file: create with create-file-work-item", rendered)
         self.assertIn("services/** persistence github: create with create-github-work-item", rendered)
@@ -383,19 +383,19 @@ class TechnologyDetectionTests(unittest.TestCase):
             "^workflow_selection.provider collides with workflow_selection.persistence; "
             "replace workflow_selection.provider with workflow_selection.persistence and keep exactly one selector family$",
         ):
-            renderer.render({
+            renderer.render(with_claim_transport({
                 "workflow_selection": {
                     "persistence": {"default": "file"},
                     "provider": {"default": "file"},
                     "commit": {"default": "direct-main"},
                 },
-            })
+            }))
 
     def test_setup_requires_structured_technology_confirmation_evidence(self) -> None:
         """Reject missing, boolean-only, empty, or internally inconsistent confirmations."""
 
         renderer = load_renderer_module()
-        project = {
+        project = with_claim_transport({
             "project_setup": {
                 "mode": "basic",
                 "concurrent_tasking": False,
@@ -417,7 +417,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "pathPattern": "src/**",
                 "skills": ["python"],
             }],
-        }
+        })
 
         invalid_values = (
             (None, "technology_confirmation must be a mapping"),

@@ -332,14 +332,11 @@ examples:
       PROJECT.yaml, and complete the remaining project setup."
   plausibleResponse: "STATUS: READY. The existing PROJECT.yaml failed validation, and
     the request authorized reconfiguration. project-configurator repaired the missing conceptual agent definition
-    and folder entries, then the updated configuration passed validation. dev-artifact-reviewer
-    accepted the repaired setup files, and the required documents passed independent review.
-    Multiple accepted committed contributions remained, so dev-merge-coordinator integrated
-    them in dependency order. dev-artifact-reviewer then reviewed every setup and non-wiki
-    document touched or combined by integration in fresh contexts. After those post-integration
-    reviews passed, dev-verifier passed all configured checks against the complete integrated
-    result. The report lists the repaired setup files, fresh reviews, final integration commit,
-    verification results, clean status, released claims, and no remaining questions."
+    and folder entries, then the updated configuration passed validation. The selected empty
+    documentation roots and required placeholders were created, setup-specific validation passed,
+    and the bounded setup was committed directly. The ordinary setup terminal path stopped there.
+    The report lists the repaired setup files, selected empty roots, setup-specific checks, bounded setup commit, clean
+    status, released setup claim, and no remaining questions."
 - purpose: Reconcile a whole-project reverse-engineering result after all accepted
     contributions have been assembled into the final tree.
   runtimeInvocations:
