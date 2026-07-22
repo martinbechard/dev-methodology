@@ -1,6 +1,6 @@
 # Add File Work Item Template And Approval Boundary
 
-Status: Blocked
+Status: Running
 
 Type: Feature
 
@@ -12,20 +12,22 @@ Completion: direct-main
 
 ## Current Execution
 
-- Owner: Unowned
-- Claim: None
-- Canonical task: 019f8747-6997-7a62-9b49-4af5a15fd86e
-- Worktree: /Users/martinbechard/.codex/worktrees/0414/dev-methodology
-- Branch: codex/add-file-work-item-template-and-approval-boundary
-- Starting main: cd09c3617fd92172b175414ac23e878c57e937d1
-- Phase: Blocked handoff after Dev Orchestrator exhausted two correction attempts for the repeated independent-review criterion. Final verification, main integration, and completion/archive were not run.
-- Started: 2026-07-21.
+- Owner: Dev Orchestrator task 019f8b05-29c8-7a82-b962-1a12d0c9564f
+- Claim: Private-worktree delivery needs no shared project-file claim. Running-record backlog claim resume-file-work-item-template-019f8b05 remains active through this committed transition and is released immediately afterward.
+- Canonical task: 019f8b05-29c8-7a82-b962-1a12d0c9564f
+- Parent task: 019f8b00-e6d7-7841-854a-40a50ca4e7f2
+- Worktree: /Users/martinbechard/.codex/worktrees/6e5b/dev-methodology
+- Branch: codex/file-work-item-template-structural-correction
+- Starting main: 1219af1d14871630b2b4973dc6584cb7c03e8821
+- Phase: Implementing a fresh current-main correction for the exact structural verifier and governed-fixture defects recorded in the Unblock Condition.
+- Started: 2026-07-22.
 - Running-record claim: start-file-work-item-template-019f8747, acquired event b8335ea5-8d24-42eb-b435-f495d97fce9a.
 - Open issues: The deterministic fixture verifier accepts governed/dependent section swaps, arbitrary extra governed paths, and lifecycle status masked by stray text; the governed fixture lacks the complete User Action Required hierarchy and evidence; and the verifier incorrectly requires optional Notes.
 - Preserved candidate branch: codex/add-file-work-item-template-and-approval-boundary at d879ba1e3d48a22b1661255299ad5829ae93a6ef.
 - Earlier preserved candidates: codex/add-file-work-item-template-and-approval-boundary-pre-review at 0e94e39595255fb86273e9fbf1d1123886be7169; codex/add-file-work-item-template-and-approval-boundary-pre-review-2 at 662b03d19e6d7dad5dd1c34b01bbf42c9b973bd0.
 - Blocked-handoff claim: block-file-work-item-template-019f8747, acquired event 00703e18-29e1-429c-a089-4c153bba31f6.
 - Accepted candidate: Pending fresh independent review and focused verification.
+- Resumption evidence: the recorded exact two-skill approval and dependent scope satisfy the governed-definition authority boundary; the Unblock Condition supplies a bounded correction target. Serialized Blocked to Ready to Running transaction used backlog claim resume-file-work-item-template-019f8b05, acquired event 623d6b38-a6c2-4dc4-a6d2-97259ed80f58.
 
 ## Blocker
 
