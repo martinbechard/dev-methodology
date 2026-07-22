@@ -1,12 +1,12 @@
 # Add Java Comment Placement Skill
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/add-java-comment-placement-skill.md
+Provider Reference: backlog/feature-backlog/add-java-comment-placement-skill.md
 
 Completion: direct-main
 
@@ -14,14 +14,13 @@ Completion: direct-main
 
 - Owner: Unowned
 - Claim: None
-- Canonical task: 019f86b4-9e20-76a1-b5cb-7618fce32e28
-- Worktree: /Users/martinbechard/.codex/worktrees/2682/dev-methodology
-- Branch: codex/add-java-comment-placement-skill
-- Starting main: 3539bf0445ccb9359b8403b5ef5af6558a85f4d3
-- Phase: Bounded source and routing discovery completed; implementation is paused at the exact governed-definition approval boundary below.
-- Started: 2026-07-21
-- Running-record claim: start-java-comment-placement-019f86b4, acquired event e78cc5c5-74bf-443f-9b79-23011788d47a.
-- Open issues: The exact three-path governed-definition scope requires the user's answer below.
+- Canonical task: Pending fresh dispatch.
+- Worktree: Pending fresh dispatch.
+- Branch: Pending fresh dispatch.
+- Starting main: 7cbbfaeed8c6cf100385f5a43ac17f30d3fff1a1
+- Phase: Ready for a fresh Dev Orchestrator to run the three exact approval checks and implement only the resolved scope.
+- Started: Pending.
+- Open issues: None. The prior read-only discovery task is retained under Discovery Evidence.
 - Accepted candidate: Pending.
 
 ## User Action Required
@@ -48,11 +47,18 @@ The work item requires two distributed skill definitions and one skill metadata 
 
 ### Resolution
 
-Pending.
+- Answer: Approved.
+- User wording: "ok".
+- Date: 2026-07-21.
+- Provenance: direct user response in parent backlog-coordination task 019f77f4-c4bd-7c91-b197-c987a7beb838 to the Java comment-placement approval item and exact three-path question previously presented.
+- Approved governed scope: skills/code-comments/SKILL.md, skills/java-comment/SKILL.md, and skills/java-comment/agents/openai.yaml.
+- Approved dependent scope: only their supported generated mirrors and directly related non-governed detection metadata, review checklists, tests and evaluations, README, and design documentation.
+- Exclusions: no other governed definition; in particular, no change to skills/java/SKILL.md or skills/java/agents/openai.yaml.
+- Disposition: Ready for a fresh canonical Dev Orchestrator task.
 
 ### Unattended Work Boundary
 
-No governed or project mutation is authorized while this question is pending. Preserve the evidence-backed selection through java-comment detection metadata and do not change the existing java skill definitions.
+Implementation is authorized only within the exact resolved scope above. Preserve the evidence-backed selection through java-comment detection metadata and do not change the existing java skill definitions.
 
 ### Discovery Evidence
 
@@ -117,7 +123,7 @@ Applicable repository rules make distributed skill definitions and their metadat
 
 ## Dependencies
 
-- Explicit, scope-specific user approval for the governed java-comment and code-comments definition and metadata sources identified during implementation discovery.
+None. The exact governed source scope is approved in the Resolution above.
 
 ## Verification
 
