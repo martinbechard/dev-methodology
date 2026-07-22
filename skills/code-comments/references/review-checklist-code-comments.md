@@ -1,6 +1,7 @@
 # Code Comments Review Checklist
 
-- Question: Does every changed human-maintained code artifact have the required language-appropriate header without applying the rule to configuration or other non-code files?
+- Question: Does every changed human-maintained code artifact carry the required file-level information in the default standalone header or an applicable language-specific placement override, without applying the rule to configuration or other non-code files?
+- Question: When a language-specific comment skill overrides placement, does the artifact preserve every required information field exactly once instead of adding a duplicate standalone header?
 - Question: Does each header use the copyright statement supplied by the applicable project instructions exactly?
 - Question: Does each header accurately distinguish code generated with AI assistance from human-origin code modified with AI assistance?
 - Question: Does each header provide an accurate one-sentence responsibility summary and applicable design or test-plan references without fabricated links?

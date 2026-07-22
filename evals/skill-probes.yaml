@@ -720,7 +720,21 @@ probes:
     judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage], modelRubric: null}
     scenarioAssociations: [dev-coder-happy, dev-code-reviewer-happy]
     workflowAssociations: [code-delivery]
-    executableCases: [spring-boot-order-cancellation]
+    executableCases: [spring-boot-order-cancellation, java-comment-placement]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-java-comment
+    skill: java-comment
+    source: skills/java-comment/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Java source is created, changed, or reviewed, including package-info.java, ordinary packaged types, and top-level types without package declarations.
+    negativeCondition: A duplicate standalone header is rejected, and moving metadata into Javadoc does not permit removal of required generic fields.
+    expectedBehavior: Compose with code-comments, place all required generic fields in package or first top-level type Javadoc, preserve valid Java structure, and emit no duplicate standalone metadata.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, contradiction-scan], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: [java-comment-placement]
     coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
   - id: probe-java-design

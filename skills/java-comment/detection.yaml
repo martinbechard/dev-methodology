@@ -1,0 +1,12 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: java-comment
+kind: domain
+label: Java Comment
+capabilities:
+- language-comment-placement
+activation:
+  anyOf:
+  - fileExtension: .java
+companions: []
+selection: additive

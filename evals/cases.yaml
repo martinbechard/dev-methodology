@@ -197,6 +197,83 @@ cases:
       - SQL-STATE
       - JAVA-TESTS
       - REVIEW-SYNTHESIS
+  - id: java-comment-placement
+    coverageStatus: fixture-backed
+    executionStatus: runnable
+    project: evals/projects/java-comment-placement
+    task: TASK.md
+    allowedWritePaths: [src, eval-result.md]
+    ephemeralWritePaths: []
+    protectedPaths: [TASK.md, verify.py, negative-fixtures]
+    install: null
+    verify: python3 verify.py
+    harnesses: [codex, junie]
+    risk: {level: ordinary, reasons: []}
+    executionTier: local
+    securityContainmentRequired: false
+    harnessExecutionStatus: {codex: runnable, junie: runnable}
+    requiredAgents: [dev-coder]
+    agentScenarios: []
+    requiredSkills:
+      - agent-claim
+      - agent-claim-command
+      - execute-workitem
+      - careful-coding
+      - code-comments
+      - code-discovery
+      - fix-explanation
+      - structured-explanation
+      - test-driven-development
+      - java
+      - java-comment
+      - code-review-evidence
+    skillProbes:
+      - probe-agent-claim
+      - probe-agent-claim-command
+      - probe-execute-workitem
+      - probe-careful-coding
+      - probe-code-comments
+      - probe-code-discovery
+      - probe-fix-explanation
+      - probe-structured-explanation
+      - probe-test-driven-development
+      - probe-java
+      - probe-java-comment
+      - probe-code-review-evidence
+    fixtureBackedProbeClaims:
+      - probe-java
+      - probe-java-comment
+    sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
+    judgePlan:
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, required-command-outcome, allowed-paths-only, no-forbidden-mutation, artifact-structure, snapshot-reset, local-execution-boundary]
+      modelRubric: source-faithfulness
+    contextPack:
+      fixtureRoot: evals/projects/java-comment-placement
+      include: [TASK.md, verify.py, src, negative-fixtures]
+      stagedSkillPackages: [agent-claim, agent-claim-command, execute-workitem, careful-coding, code-comments, code-discovery, fix-explanation, structured-explanation, test-driven-development, java, java-comment, code-review-evidence]
+      wholeRepositoryAllowed: false
+      approvedSensitiveData: false
+    modelVisiblePaths: [TASK.md, verify.py, src, negative-fixtures]
+    skillResourceAllowlist:
+      agent-claim: [SKILL.md]
+      agent-claim-command: [SKILL.md, scripts/claim.py]
+      execute-workitem: [SKILL.md, references/simple-workitem.md, references/feature-branch-workitem.md]
+      careful-coding: [SKILL.md]
+      code-comments: [SKILL.md, references/review-checklist-code-comments.md]
+      code-discovery: [SKILL.md]
+      fix-explanation: [SKILL.md]
+      structured-explanation: [SKILL.md]
+      test-driven-development: [SKILL.md]
+      java: [SKILL.md, references/coding-guidelines-java.md, references/review-checklist-java.md]
+      java-comment: [SKILL.md, references/review-checklist-java-comment.md]
+      code-review-evidence: [SKILL.md, references/review-checklist-code-evidence.md]
+    requiredEvidence:
+      - JAVA-COMMENT-PACKAGE
+      - JAVA-COMMENT-PACKAGED-TYPE
+      - JAVA-COMMENT-NO-PACKAGE
+      - JAVA-COMMENT-DUPLICATE-REJECTED
+      - JAVA-COMMENT-MISSING-REJECTED
+      - REVIEW-SYNTHESIS
   - id: typescript-code-review
     coverageStatus: fixture-backed
     executionStatus: runnable

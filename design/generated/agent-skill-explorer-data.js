@@ -143,6 +143,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "detected-folder",
       "role": "dev-artifact-reviewer",
+      "skill": "java-comment"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
       "skill": "java-design"
     },
     {
@@ -468,6 +473,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "detected-folder",
       "role": "dev-browser-operator",
+      "skill": "java-comment"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
       "skill": "java-design"
     },
     {
@@ -731,6 +741,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "detected-folder",
       "role": "dev-code-reviewer",
       "skill": "java"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "java-comment"
     },
     {
       "kind": "detected-folder",
@@ -1014,6 +1029,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "detected-folder",
       "role": "dev-coder",
       "skill": "java"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "java-comment"
     },
     {
       "kind": "detected-folder",
@@ -1401,6 +1421,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "detected-folder",
       "role": "dev-documentation-writer",
+      "skill": "java-comment"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
       "skill": "java-design"
     },
     {
@@ -1715,6 +1740,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "detected-folder",
       "role": "dev-prompt-reviewer",
+      "skill": "java-comment"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
       "skill": "java-design"
     },
     {
@@ -1990,6 +2020,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "detected-folder",
       "role": "dev-runtime-diagnostician",
       "skill": "java"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "java-comment"
     },
     {
       "kind": "detected-folder",
@@ -2276,6 +2311,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "detected-folder",
       "role": "dev-security-reviewer",
+      "skill": "java-comment"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
       "skill": "java-design"
     },
     {
@@ -2544,6 +2584,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "detected-folder",
       "role": "dev-ux-specialist",
       "skill": "java"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "java-comment"
     },
     {
       "kind": "detected-folder",
@@ -2846,6 +2891,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "detected-folder",
       "role": "dev-verifier",
       "skill": "java"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "java-comment"
     },
     {
       "kind": "detected-folder",
@@ -3437,6 +3487,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "detected-folder",
       "role": "wiki-writer",
+      "skill": "java-comment"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
       "skill": "java-design"
     },
     {
@@ -3709,6 +3764,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "codex",
         "junie"
       ],
+      "id": "java-comment-placement",
+      "kind": "evaluation-case",
+      "receiptPaths": [],
+      "sourcePath": "evals/cases.yaml",
+      "status": "declared"
+    },
+    {
+      "harnesses": [
+        "codex",
+        "junie"
+      ],
       "id": "project-configuration-routing",
       "kind": "evaluation-case",
       "receiptPaths": [],
@@ -3798,42 +3864,42 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
   "evidenceStatus": {
     "caseBackedAgentCount": 6,
     "caseBackedWorkflowPackCount": 5,
-    "codexRunnableCaseCount": 10,
+    "codexRunnableCaseCount": 11,
     "declaredScenarioCount": 55,
     "endToEndFixtureBackedWorkflowPackCount": 0,
-    "executableCaseCount": 10,
+    "executableCaseCount": 11,
     "executableFixtureAgentCount": 1,
     "executableFixtureSkillCount": 0,
     "executedAgentCount": 0,
     "executedRunCount": 0,
     "executedSkillCount": 0,
     "fixtureBackedAgentCount": 1,
-    "fixtureBackedCaseCount": 10,
+    "fixtureBackedCaseCount": 11,
     "fixtureBackedSkillCount": 0,
     "highRiskExternalCaseCount": 0,
     "judgeCalibrationStatusCounts": {},
     "judgePassedAgentCount": 0,
     "judgePassedRunCount": 0,
     "judgePassedSkillCount": 0,
-    "junieRunnableCaseCount": 10,
+    "junieRunnableCaseCount": 11,
     "modelJudgeCalibratedAgentCount": 0,
     "modelJudgeCalibratedSkillCount": 0,
     "modelJudgeNotRequiredAgentCount": 0,
     "modelJudgeNotRequiredSkillCount": 26,
     "modelJudgePendingAgentCount": 27,
-    "modelJudgePendingSkillCount": 102,
+    "modelJudgePendingSkillCount": 103,
     "negativeCaseBackedSkillCount": 0,
-    "ordinaryLocalCaseCount": 10,
+    "ordinaryLocalCaseCount": 11,
     "pairedControlsExecutableSkillCount": 0,
     "partialScenarioBackedAgentCount": 5,
     "partialWorkflowPackCount": 5,
-    "positiveCaseBackedSkillCount": 25,
+    "positiveCaseBackedSkillCount": 26,
     "positiveExecutedSkillCount": 0,
     "positiveJudgePassedSkillCount": 0,
     "positiveSecurityContainedSkillCount": 0,
     "positiveStaleByDigestSkillCount": 0,
     "positiveVerifiedSkillCount": 0,
-    "probeDeclaredSkillCount": 128,
+    "probeDeclaredSkillCount": 129,
     "scenarioDeclaredAgentCount": 27,
     "securityContainedAgentCount": 0,
     "securityContainedRunCount": 0,
@@ -3842,7 +3908,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "staleByDigestRunCount": 0,
     "staleByDigestSkillCount": 0,
     "structuralAgentCount": 27,
-    "structuralSkillCount": 128,
+    "structuralSkillCount": 129,
     "verifiedAgentCount": 0,
     "verifiedRunCount": 0,
     "verifiedSkillCount": 0,
@@ -9714,6 +9780,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "catalogFixtureBacked": true,
         "evaluationCategory": "stack-and-domain",
         "executableCases": [
+          "java-comment-placement",
           "spring-boot-order-cancellation"
         ],
         "executableFixture": false,
@@ -9727,6 +9794,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "pairedControlsExecutable": false,
         "positiveCaseBacked": true,
         "positiveCaseBackedCases": [
+          "java-comment-placement",
           "spring-boot-order-cancellation"
         ],
         "positiveExecutedCases": [],
@@ -9751,6 +9819,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [
+        "java-comment-placement",
         "spring-boot-order-cancellation"
       ],
       "detection": {
@@ -9782,6 +9851,83 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "label": "Java",
       "securityContainedCases": [],
       "sourcePath": "skills/java/SKILL.md",
+      "verifiedCases": []
+    },
+    {
+      "capabilities": [
+        "language-comment-placement"
+      ],
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": true,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [
+          "java-comment-placement"
+        ],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": true,
+        "positiveCaseBackedCases": [
+          "java-comment-placement"
+        ],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-java-comment"
+        ],
+        "scenarioAssociations": [
+          "dev-code-reviewer-happy",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [
+        "java-comment-placement"
+      ],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileExtension": ".java"
+            }
+          ]
+        },
+        "capabilities": [
+          "language-comment-placement"
+        ],
+        "companions": [],
+        "kind": "domain",
+        "label": "Java Comment",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "java-comment"
+      },
+      "detectionPath": "skills/java-comment/detection.yaml",
+      "executedCases": [],
+      "id": "java-comment",
+      "judgePassedCases": [],
+      "kind": "domain",
+      "label": "Java Comment",
+      "securityContainedCases": [],
+      "sourcePath": "skills/java-comment/SKILL.md",
       "verifiedCases": []
     },
     {

@@ -375,6 +375,25 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
         ]
       },
       "capabilities": [
+        "language-comment-placement"
+      ],
+      "companions": [],
+      "kind": "domain",
+      "label": "Java Comment",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "java-comment"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "fileExtension": ".java"
+          }
+        ]
+      },
+      "capabilities": [
         "language-design"
       ],
       "companions": [

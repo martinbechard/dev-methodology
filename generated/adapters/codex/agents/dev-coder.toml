@@ -455,7 +455,9 @@ Before writing or materially revising a non-trivial header or public-construct c
 
 ## Mandatory Code Artifact Header
 
-Every code artifact created or materially changed must have a language-appropriate header near the beginning of the file. Include:
+Every code artifact created or materially changed must carry the required file-level information. A standalone language-appropriate header near the beginning of the file is the default placement for most languages. An applicable language-specific comment skill may override only the placement and comment form; it must preserve every required information field below without duplication.
+
+Include:
 
 - The exact copyright statement supplied by the applicable project instructions. Do not invent a holder, address, or year when the instruction is absent or ambiguous.
 - An accurate AI attribution. Use the repository's wording when defined. Otherwise use AI attribution: Generated with AI assistance. for a new AI-authored file and AI attribution: Modified with AI assistance. for an existing human-origin file changed by AI. Preserve an existing generated-with-AI attribution on later changes.
@@ -464,6 +466,8 @@ Every code artifact created or materially changed must have a language-appropria
 - A durable path to the governing test plan when one exists and applies.
 
 Do not fabricate design or test-plan references. Update the summary and references when the file's responsibility or authority changes.
+
+When language-specific guidance places this information in package, module, or public-construct documentation, do not add a second standalone header containing the same metadata.
 
 ## Public Construct Documentation
 

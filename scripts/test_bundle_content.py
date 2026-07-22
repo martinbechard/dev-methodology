@@ -108,6 +108,7 @@ NEW_DEVELOPMENT_SKILLS = (
     "python",
     "fastapi",
     "java",
+    "java-comment",
     "java-design",
     "object-creation-patterns",
     "singleton-pattern",
@@ -2019,6 +2020,339 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(role_name=role_name):
                 self.assertEqual(1, len(code_comments_entries))
                 self.assertEqual({"justification"}, set(code_comments_entries[0]))
+
+    def test_java_comment_refines_generic_header_placement_without_losing_fields(self) -> None:
+        generic_root = SKILLS_ROOT / "code-comments"
+        java_root = SKILLS_ROOT / "java-comment"
+        generic_text = (generic_root / "SKILL.md").read_text(encoding="utf-8")
+        generic_checklist = (
+            generic_root / "references" / "review-checklist-code-comments.md"
+        ).read_text(encoding="utf-8")
+        java_text = (java_root / "SKILL.md").read_text(encoding="utf-8")
+        java_checklist = (
+            java_root / "references" / "review-checklist-java-comment.md"
+        ).read_text(encoding="utf-8")
+
+        for phrase in (
+            "default placement for most languages",
+            "language-specific comment skill may override only the placement",
+            "preserve every required information field",
+        ):
+            with self.subTest(generic_phrase=phrase):
+                self.assertIn(phrase, generic_text)
+        self.assertIn("language-specific placement override", generic_checklist)
+
+        java_examples = re.findall(r"```java\n(.*?)```", java_text, re.DOTALL)
+        self.assertEqual(4, len(java_examples))
+        package_info, packaged_type, no_package_type, duplicate = java_examples
+        required_fields = (
+            "[exact project copyright statement]",
+            "AI attribution:",
+            "Responsibility:",
+            "Design:",
+            "Test plan:",
+        )
+        for example_name, example in (
+            ("package_info", package_info),
+            ("packaged_type", packaged_type),
+            ("no_package_type", no_package_type),
+        ):
+            for field in required_fields:
+                with self.subTest(example=example_name, field=field):
+                    self.assertEqual(1, example.count(field))
+
+        self.assertTrue(package_info.startswith("/**"))
+        self.assertLess(package_info.index("*/"), package_info.index("package "))
+        self.assertTrue(packaged_type.startswith("package "))
+        self.assertLess(packaged_type.index("package "), packaged_type.index("/**"))
+        self.assertLess(packaged_type.index("/**"), packaged_type.index("public final class"))
+        self.assertTrue(no_package_type.startswith("/**"))
+        self.assertNotIn("package ", no_package_type)
+        self.assertLess(no_package_type.index("/**"), no_package_type.index("public final class"))
+        self.assertTrue(duplicate.startswith("/* "))
+        self.assertIn("\n/**", duplicate)
+        for field in ("copyright", "AI attribution", "responsibility", "design", "test-plan"):
+            with self.subTest(duplicate_field=field):
+                self.assertEqual(2, duplicate.lower().count(field.lower()))
+        for phrase in (
+            "valid Javadoc",
+            "package documentation or first top-level type",
+            "duplicate standalone header",
+            "required generic information",
+        ):
+            with self.subTest(java_checklist_phrase=phrase):
+                self.assertIn(phrase, java_checklist)
+
+        detection = load_yaml_object(java_root / "detection.yaml")
+        self.assertEqual("java-comment", detection["skill"])
+        self.assertEqual(
+            {"anyOf": [{"fileExtension": ".java"}]},
+            detection["activation"],
+        )
+        self.assertEqual([], detection["companions"])
+        self.assertEqual("additive", detection["selection"])
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probe = next(
+            entry for entry in probes["probes"] if entry["id"] == "probe-java-comment"
+        )
+        self.assertIn("package-info.java", probe["activationCondition"])
+        self.assertIn("duplicate standalone header", probe["negativeCondition"])
+        self.assertIn("required generic fields", probe["expectedBehavior"])
+        self.assertEqual(["java-comment-placement"], probe["executableCases"])
+
+        cases = load_yaml_object(REPOSITORY_ROOT / "evals" / "cases.yaml")["cases"]
+        java_case = next(case for case in cases if case["id"] == "java-comment-placement")
+        self.assertEqual("evals/projects/java-comment-placement", java_case["project"])
+        self.assertEqual("python3 verify.py", java_case["verify"])
+        self.assertEqual(["src", "eval-result.md"], java_case["allowedWritePaths"])
+        self.assertIn("negative-fixtures", java_case["protectedPaths"])
+        self.assertIn("negative-fixtures", java_case["contextPack"]["include"])
+        self.assertIn("java-comment", java_case["requiredSkills"])
+        self.assertIn("probe-java-comment", java_case["skillProbes"])
+        self.assertIn("probe-java-comment", java_case["fixtureBackedProbeClaims"])
+        self.assertIn("java-comment", java_case["contextPack"]["stagedSkillPackages"])
+        self.assertEqual(
+            ["SKILL.md", "references/review-checklist-java-comment.md"],
+            java_case["skillResourceAllowlist"]["java-comment"],
+        )
+
+        fixture_root = REPOSITORY_ROOT / java_case["project"]
+        verify_path = fixture_root / "verify.py"
+        spec = importlib.util.spec_from_file_location("java_comment_fixture_verify", verify_path)
+        self.assertIsNotNone(spec)
+        self.assertIsNotNone(spec.loader)
+        verifier = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(verifier)
+
+        golden_root = fixture_root / "negative-fixtures" / "golden"
+        goldens = {
+            "package-info.java": golden_root / "package-info.java",
+            "OrderService.java": golden_root / "OrderService.java",
+            "OrderImport.java": golden_root / "OrderImport.java",
+        }
+        for filename, golden in goldens.items():
+            with self.subTest(golden=filename):
+                self.assertEqual([], verifier.validate_java(golden, golden))
+
+        service_golden = goldens["OrderService.java"]
+        service_text = service_golden.read_text(encoding="utf-8")
+        mutations = {
+            "blank_value": (
+                service_text.replace(
+                    "Responsibility: Coordinates validated order submission for application callers.",
+                    "Responsibility:",
+                ),
+                "Responsibility value is blank",
+            ),
+            "changed_value": (
+                service_text.replace("Design: TASK.md", "Design: changed-design.md"),
+                "Design value differs from protected golden",
+            ),
+            "removed_public_prose": (
+                service_text.replace(" * Accepts valid orders from application callers.\n", ""),
+                "public documentation differs from protected golden",
+            ),
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            mutation_root = Path(directory)
+            for name, (content, expected_error) in mutations.items():
+                candidate = mutation_root / f"{name}.java"
+                candidate.write_text(content, encoding="utf-8")
+                with self.subTest(invalid=name):
+                    errors = verifier.validate_java(candidate, service_golden)
+                    self.assertTrue(any(expected_error in error for error in errors), errors)
+
+            attached_javadoc = verifier.attached_javadoc(service_text, service_golden)
+            metadata_only = attached_javadoc.replace(
+                " * Accepts valid orders from application callers.\n",
+                "",
+            )
+            public_only = "/**\n * Accepts valid orders from application callers.\n */"
+            detached = service_text.replace(
+                attached_javadoc,
+                metadata_only + "\n" + public_only,
+            )
+            detached_path = mutation_root / "DetachedJavadocs.java"
+            detached_path.write_text(detached, encoding="utf-8")
+            detached_errors = verifier.validate_java(detached_path, service_golden)
+            self.assertTrue(
+                any("metadata-bearing Javadoc is not attached" in error for error in detached_errors),
+                detached_errors,
+            )
+
+        duplicate_errors = verifier.validate_java(
+            fixture_root / "negative-fixtures" / "duplicate" / "DuplicateHeader.java",
+            service_golden,
+        )
+        missing_errors = verifier.validate_java(
+            fixture_root / "negative-fixtures" / "missing" / "MissingInformation.java",
+            goldens["OrderImport.java"],
+        )
+        self.assertTrue(any("standalone metadata" in error for error in duplicate_errors))
+        self.assertTrue(any("duplicate required metadata" in error for error in duplicate_errors))
+        self.assertTrue(any("Test plan is missing" in error for error in missing_errors))
+
+        task_text = (fixture_root / "TASK.md").read_text(encoding="utf-8")
+        self.assertIn(
+            "Affected path: <non-empty repository-relative path>",
+            task_text,
+        )
+        self.assertIn("Verification result: <non-empty result>", task_text)
+        self.assertIn("exactly one of each field", task_text)
+        self.assertIn("HTML is allowed in verification-result content", task_text)
+        self.assertIn("does not interpret HTML", task_text)
+
+        complete_evidence = "\n\n".join(
+            (
+                f"## {heading}\n"
+                f"Affected path: evidence/{heading.lower()}.md\n"
+                "Verification result: PASS - verified by the focused fixture."
+            )
+            for heading in verifier.REQUIRED_EVIDENCE_HEADINGS
+        )
+        self.assertEqual([], verifier.validate_evidence(complete_evidence))
+        html_evidence = complete_evidence.replace(
+            "Verification result: PASS - verified by the focused fixture.",
+            "Verification result: <details><summary>PASS</summary><p>Verified.</p></details>",
+            1,
+        )
+        self.assertEqual([], verifier.validate_evidence(html_evidence))
+        html_wrapped_evidence = "<section>\n" + complete_evidence + "\n</section>"
+        self.assertEqual([], verifier.validate_evidence(html_wrapped_evidence))
+        evidence_with_fenced_example = (
+            "```markdown\n"
+            "## JAVA-COMMENT-PACKAGE\n"
+            "Affected path: ignored/example.java\n"
+            "Verification result: ignored example\n"
+            "```\n\n"
+            + complete_evidence
+        )
+        self.assertEqual([], verifier.validate_evidence(evidence_with_fenced_example))
+
+        evidence_contract_cases = {
+            "bare_labels": (
+                "\n".join(verifier.REQUIRED_EVIDENCE_HEADINGS),
+                "missing required Markdown heading: JAVA-COMMENT-PACKAGE",
+            ),
+            "headings_only": (
+                "\n\n".join(f"## {heading}" for heading in verifier.REQUIRED_EVIDENCE_HEADINGS),
+                "JAVA-COMMENT-PACKAGE: missing Affected path field",
+            ),
+            "blank_affected_path": (
+                complete_evidence.replace(
+                    "Affected path: evidence/java-comment-package.md",
+                    "Affected path:",
+                    1,
+                ),
+                "JAVA-COMMENT-PACKAGE: Affected path value is blank",
+            ),
+            "blank_verification_result": (
+                complete_evidence.replace(
+                    "Verification result: PASS - verified by the focused fixture.",
+                    "Verification result:",
+                    1,
+                ),
+                "JAVA-COMMENT-PACKAGE: Verification result value is blank",
+            ),
+            "malformed_affected_path_label": (
+                complete_evidence.replace(
+                    "Affected path: evidence/java-comment-package.md",
+                    "Affected paths: evidence/java-comment-package.md",
+                    1,
+                ),
+                "JAVA-COMMENT-PACKAGE: missing Affected path field",
+            ),
+            "malformed_verification_result_separator": (
+                complete_evidence.replace(
+                    "Verification result: PASS - verified by the focused fixture.",
+                    "Verification result PASS - verified by the focused fixture.",
+                    1,
+                ),
+                "JAVA-COMMENT-PACKAGE: missing Verification result field",
+            ),
+            "duplicate_affected_path": (
+                complete_evidence.replace(
+                    "Affected path: evidence/java-comment-package.md",
+                    "Affected path: evidence/java-comment-package.md\n"
+                    "Affected path: evidence/duplicate.md",
+                    1,
+                ),
+                "JAVA-COMMENT-PACKAGE: duplicate Affected path field",
+            ),
+            "duplicate_verification_result": (
+                complete_evidence.replace(
+                    "Verification result: PASS - verified by the focused fixture.",
+                    "Verification result: PASS - verified by the focused fixture.\n"
+                    "Verification result: duplicate",
+                    1,
+                ),
+                "JAVA-COMMENT-PACKAGE: duplicate Verification result field",
+            ),
+            "duplicate_heading": (
+                complete_evidence
+                + "\n\n## REVIEW-SYNTHESIS\n"
+                + "Affected path: duplicate.md\nVerification result: PASS",
+                "duplicate required Markdown heading: REVIEW-SYNTHESIS",
+            ),
+            "malformed_heading": (
+                complete_evidence.replace(
+                    "## JAVA-COMMENT-PACKAGE",
+                    "## JAVA-COMMENT-PACKAGE#",
+                    1,
+                ),
+                "missing required Markdown heading: JAVA-COMMENT-PACKAGE",
+            ),
+            "fenced_pseudo_headings": (
+                "```markdown\n" + complete_evidence + "\n```",
+                "missing required Markdown heading: JAVA-COMMENT-PACKAGE",
+            ),
+            "windows_absolute_path": (
+                complete_evidence.replace(
+                    "evidence/java-comment-package.md",
+                    r"C:\outside\result.md",
+                    1,
+                ),
+                "JAVA-COMMENT-PACKAGE: Affected path must be repository-relative",
+            ),
+            "uri_path": (
+                complete_evidence.replace(
+                    "evidence/java-comment-package.md",
+                    "https://example.test/result.md",
+                    1,
+                ),
+                "JAVA-COMMENT-PACKAGE: Affected path must be repository-relative",
+            ),
+            "html_affected_path": (
+                complete_evidence.replace(
+                    "evidence/java-comment-package.md",
+                    "<span>evidence/java-comment-package.md</span>",
+                    1,
+                ),
+                "JAVA-COMMENT-PACKAGE: Affected path must be repository-relative",
+            ),
+            "nul_affected_path": (
+                complete_evidence.replace(
+                    "evidence/java-comment-package.md",
+                    "evidence/\x00result.md",
+                    1,
+                ),
+                "JAVA-COMMENT-PACKAGE: Affected path must be repository-relative",
+            ),
+        }
+        for name, (content, expected_error) in evidence_contract_cases.items():
+            with self.subTest(invalid_evidence=name):
+                self.assertIn(expected_error, verifier.validate_evidence(content))
+
+        initial_verify = subprocess.run(
+            [sys.executable, str(verify_path)],
+            cwd=fixture_root,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertNotEqual(0, initial_verify.returncode)
+        self.assertIn("source verification failed", initial_verify.stdout + initial_verify.stderr)
 
     def test_artifact_creation_skills_route_to_templates_and_reviews(self) -> None:
         development_methodology_text = (

@@ -214,6 +214,18 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
+- skill: java-comment
+  kind: domain
+  label: Java Comment
+  capabilities:
+  - language-comment-placement
+  activation:
+    anyOf:
+    - fileExtension: .java
+  companions: []
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
 - skill: java-design
   kind: technology
   label: Java Design

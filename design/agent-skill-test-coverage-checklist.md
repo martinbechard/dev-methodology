@@ -20,18 +20,18 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 27 conceptual agents and 128 bundled skills have structural coverage.
-- [x] 27 agents are scenario-declared and 128 skills are probe-declared.
+- [x] 27 conceptual agents and 129 bundled skills have structural coverage.
+- [x] 27 agents are scenario-declared and 129 skills are probe-declared.
 - [x] 55 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
-- 10 cases are fixture-backed and 10 fixtures are structurally executable before harness readiness is considered.
-- 10 cases can run locally through Codex and 10 can run locally through Junie.
-- 10 cases use the ordinary local tier; 0 explicitly high-risk cases require the externally-contained tier.
+- 11 cases are fixture-backed and 11 fixtures are structurally executable before harness readiness is considered.
+- 11 cases can run locally through Codex and 11 can run locally through Junie.
+- 11 cases use the ordinary local tier; 0 explicitly high-risk cases require the externally-contained tier.
 - 6 agents have at least one case-backed scenario; 5 are partial and 1 have all declared scenarios backed.
-- 25 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
+- 26 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 1 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 27 agents and 102 skills have pending Model Judge status.
+- 27 agents and 103 skills have pending Model Judge status.
 - 0 agents and 26 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -205,7 +205,8 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | electron-preload | [x] | [x] probe-electron-preload | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | fastapi | [x] | [x] probe-fastapi | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | hibernate-orm-panache | [x] | [x] probe-hibernate-orm-panache | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| java | [x] | [x] probe-java | [x] spring-boot-order-cancellation | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| java | [x] | [x] probe-java | [x] java-comment-placement, spring-boot-order-cancellation | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| java-comment | [x] | [x] probe-java-comment | [x] java-comment-placement | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | java-design | [x] | [x] probe-java-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | java-design-pattern-examples | [x] | [x] probe-java-design-pattern-examples | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | jest | [x] | [x] probe-jest | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
@@ -260,6 +261,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | fastapi | technology | FastAPI | [x] | [ ] | [ ] | none | none | none | none |
 | hibernate-orm-panache | technology | Hibernate ORM With Panache | [x] | [ ] | [ ] | none | none | none | none |
 | java | technology | Java | [x] | [x] | [ ] | none | none | none | none |
+| java-comment | domain | Java Comment | [x] | [x] | [ ] | none | none | none | none |
 | java-design | technology | Java Design | [x] | [ ] | [ ] | none | none | none | none |
 | java-design-pattern-examples | technology | Java Design Pattern Examples | [x] | [ ] | [ ] | none | none | none | none |
 | jest | technology | Jest | [x] | [ ] | [ ] | none | none | none | none |

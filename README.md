@@ -462,6 +462,7 @@ The stack and project-domain skill packs are:
 - python
 - fastapi
 - java
+- java-comment
 - java-design
 - java-design-pattern-examples
 - typescript-design-pattern-examples
@@ -507,6 +508,8 @@ The stack and project-domain skill packs are:
 - local-model-integration
 
 The jhipster skill family targets Java and Spring Boot applications generated with JHipster. Setup-time detection requires JHipster evidence at the nearest owning project boundary before it adds the project skill or any concern-specific JHipster skill.
+
+java-comment is selected additively for every Java source scope. It keeps code-comments as the generic information contract while placing that information in package or first top-level type Javadoc rather than a duplicated standalone Java header.
 
 The optional tool variants are:
 

@@ -314,9 +314,22 @@ class TechnologyDetectionTests(unittest.TestCase):
             with self.subTest(detector=detector):
                 result = run_detection(ROOT / "evals" / "projects" / "spring-boot-order-cancellation", "src/main", detector=detector)
                 self.assertEqual(
-                    ["java", "java-design", "spring-boot", "spring-boot-design", "sql"],
+                    ["java", "java-comment", "java-design", "spring-boot", "spring-boot-design", "sql"],
                     result["loadouts"][0]["skills"],
                 )
+
+    def test_java_source_selects_java_comment_additively_with_java(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "src" / "main" / "java" / "example"
+            source.mkdir(parents=True)
+            (source / "Order.java").write_text("class Order {}\n", encoding="utf-8")
+
+            expected = ["java", "java-comment", "java-design"]
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, "src/main", detector=detector)
+                    self.assertEqual(expected, result["loadouts"][0]["skills"])
 
     def test_spring_data_jpa_composes_with_spring_design_and_sql(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -332,6 +345,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
             expected = [
                 "java",
+                "java-comment",
                 "java-design",
                 "spring-boot",
                 "spring-boot-design",
@@ -357,6 +371,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
             expected = [
                 "java",
+                "java-comment",
                 "java-design",
                 "junit",
                 "mockito",
@@ -384,6 +399,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             expected = [
                 "hibernate-orm-panache",
                 "java",
+                "java-comment",
                 "java-design",
                 "quarkus",
                 "quarkus-design",
@@ -409,6 +425,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
             expected = [
                 "java",
+                "java-comment",
                 "java-design",
                 "quarkus",
                 "quarkus-design",
@@ -434,6 +451,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
             expected = [
                 "java",
+                "java-comment",
                 "java-design",
                 "quarkus",
                 "quarkus-design",
@@ -457,6 +475,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
             expected = [
                 "java",
+                "java-comment",
                 "java-design",
                 "junit",
                 "quarkus",
@@ -485,7 +504,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
-            expected = ["java", "java-design", "junit", "mockito"]
+            expected = ["java", "java-comment", "java-design", "junit", "mockito"]
             for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
                 with self.subTest(detector=detector):
                     result = run_detection(root, "src/test", detector=detector)
@@ -513,6 +532,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
             expected = [
                 "java",
+                "java-comment",
                 "java-design",
                 "java-design-pattern-examples",
             ]
@@ -528,7 +548,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             source.mkdir(parents=True)
             (source / "OrderState.java").write_text("class OrderState {}\n", encoding="utf-8")
 
-            expected = ["java", "java-design"]
+            expected = ["java", "java-comment", "java-design"]
             for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
                 with self.subTest(detector=detector):
                     result = run_detection(root, "src/main", detector=detector)
@@ -611,7 +631,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "<dependency><groupId>com.mysql</groupId><artifactId>mysql-connector-j</artifactId></dependency>\n",
                 "src/main/java/example/Application.java",
                 "class Application {}\n",
-                ["java", "java-design", "mysql", "sql"],
+                ["java", "java-comment", "java-design", "mysql", "sql"],
             ),
             (
                 "gradle",
@@ -686,7 +706,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "datasource.url=jdbc:mysql://db.example/orders\n",
                 "pom.xml",
                 "<project/>\n",
-                ["java", "java-design", "mysql", "sql"],
+                ["java", "java-comment", "java-design", "mysql", "sql"],
             ),
         )
         for name, source_name, source, config_name, config, manifest_name, manifest, expected in cases:
@@ -976,6 +996,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
             expected = [
                 "java",
+                "java-comment",
                 "java-design",
                 "jhipster-domain-modeling",
                 "jhipster-persistence",
