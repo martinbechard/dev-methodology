@@ -32,14 +32,14 @@ Completion: direct-main
 - Claim: resume-core-only-work-item-routing-019f8b4c-2, backlog transition only.
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology.
 - Starting main: 83135ebc590c2c244cf42283ae3f760521c55ed0.
-- Phase: bounded current-main reconciliation before implementation.
+- Phase: implementation authorized after current-main reconciliation and expanded governed-definition approval.
 - Lifecycle transition: Blocked -> Ready after dependency reconciliation -> Running after fresh canonical task assignment and successful serialized backlog claim acquisition.
 - Accepted candidate: Pending.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: Live current-main reconciliation and implementation within the authoritative prior approval.
+- Open issues: None for the approved routing-definition scope; proceed with implementation and the required governed-definition pre-mutation checks.
 - Next owner: Dev Orchestrator.
 
 ## Resumption Evidence — 2026-07-22
@@ -73,6 +73,27 @@ Approved governed scope: change exactly skills/codex-workitem-coordination/SKILL
 ### Unattended Work Boundary
 
 The approval is resolved, but this item is intentionally deferred. Do not dispatch it until backlog/holding/simplify-project-configuration-setup-and-skill-routing.md is accepted and supplies the final project binding and installation contracts. On resumption, create or assign one canonical Dev Orchestrator task and run the exact governed-definition pre-mutation check using this recorded provenance before mutating skills/codex-workitem-coordination/SKILL.md.
+
+## Expanded Governed-Definition Approval — 2026-07-22
+
+### Question for the User
+
+Do you approve changing exactly the three conceptual role definitions and retiring exactly the execute-workitem skill and metadata paths listed above, together with its references and only supported generated mirrors and directly related tests and documentation, so Persistence and Commit routing comes exclusively from PROJECT.yaml and AGENTS.md?
+
+### Resolution
+
+Approved on 2026-07-22. In canonical task 019f8b4c-8fb9-7d23-9eed-7bbb4968e163, the user answered "approved" directly after the question above.
+
+Approved governed scope:
+
+- agents/roles/dev-activities/dev-coder.role.yaml.
+- agents/roles/dev-activities/dev-orchestrator.role.yaml.
+- agents/roles/dev-activities/dev-backlog-steward.role.yaml.
+- skills/execute-workitem/SKILL.md.
+- skills/execute-workitem/agents/openai.yaml.
+- References to execute-workitem, only the supported generated mirrors for those governed sources, and directly related tests and documentation.
+
+Authorized outcome: Persistence and Commit routing comes exclusively from PROJECT.yaml and AGENTS.md. Run the required governed-definition pre-mutation check with an approval record that cites this provenance before each approved canonical definition mutation. This approval does not authorize unrelated governed definitions, product files, or changes outside the listed scope.
 
 ## Summary
 
