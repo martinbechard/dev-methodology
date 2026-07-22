@@ -619,6 +619,82 @@ class TechnologyDetectionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "lowercase hyphenated skill id"):
             renderer.render(rejected)
 
+    def test_technology_free_text_cannot_inject_generated_guidance(self) -> None:
+        """Reject multiline or control-bearing text before rendering AGENTS.md."""
+
+        renderer = load_renderer_module()
+        project = with_claim_transport({
+            "project_setup": {
+                "mode": "basic",
+                "concurrent_tasking": False,
+                "persistence": "none",
+                "commit": "direct-main",
+                "documentation": "wiki",
+                "core_skill_delivery": {
+                    "mode": "by-reference",
+                    "source": "installed-agent-metadata",
+                },
+                "technology_skill_delivery": "by-reference",
+                "technology_confirmation_required": True,
+            },
+            "workflow_selection": {
+                "persistence": {"default": "none"},
+                "commit": {"default": "direct-main"},
+            },
+            "technology_confirmation": confirmed_technology_selection(),
+            "technology_skill_loadouts": [{
+                "pathPattern": "src/**",
+                "skills": ["python"],
+                "sourceEvidence": [{
+                    "skill": "python",
+                    "evidence": ["Python source evidence: src/app.py"],
+                }],
+            }],
+        })
+        mutations = (
+            ("candidate evidence", lambda value: value["technology_confirmation"]["candidates"][0]["evidence"].__setitem__(0, "fact\n## injected")),
+            ("candidate conflict", lambda value: value["technology_confirmation"]["candidates"][0].__setitem__("conflicts", ["conflict\r## injected"])),
+            ("confirmation evidence", lambda value: value["technology_confirmation"]["confirmation"].__setitem__("evidence", "reference\n## injected")),
+            ("source evidence", lambda value: value["technology_skill_loadouts"][0]["sourceEvidence"][0]["evidence"].__setitem__(0, "fact\twith control")),
+        )
+        for surface, mutate in mutations:
+            with self.subTest(surface=surface):
+                candidate = deepcopy(project)
+                mutate(candidate)
+                with self.assertRaisesRegex(ValueError, "single-line text without control characters"):
+                    renderer.render(candidate)
+
+        rejected = deepcopy(project)
+        rejected["technology_confirmation"] = {
+            "candidates": [{
+                "scope": "src/**",
+                "skill": "python",
+                "evidence": ["Python source evidence: src/app.py"],
+                "conflicts": ["not selected"],
+                "disposition": "rejected",
+            }],
+            "accepted_skills": [],
+            "rejections": [{"skill": "python", "reason": "reason\n## injected"}],
+            "confirmation": {
+                "status": "confirmed",
+                "evidence": "user-message: no technology skills accepted",
+            },
+        }
+        rejected["technology_skill_loadouts"] = []
+        with self.assertRaisesRegex(ValueError, "single-line text without control characters"):
+            renderer.render(rejected)
+
+        no_variant = with_unset_workflows({
+            "technology_skill_loadouts": [{
+                "pathPattern": "config/**",
+                "skills": [],
+                "status": "NO_VARIANT",
+                "fallback": "general model training\n## injected",
+            }],
+        })
+        with self.assertRaisesRegex(ValueError, "single-line text without control characters"):
+            renderer.render(no_variant)
+
     def test_explicit_activation_clause_requires_every_condition(self) -> None:
         for dependencies, expected in (([], False), (["example-framework"], True)):
             with self.subTest(dependencies=dependencies):

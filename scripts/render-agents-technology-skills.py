@@ -120,6 +120,18 @@ def _normalized_technology_scope(value: object, field: str) -> str:
     return normalized
 
 
+def _single_line_rendered_text(value: object, field: str) -> str:
+    """Return non-empty text that cannot introduce generated guidance structure."""
+
+    if (
+        not isinstance(value, str)
+        or not value.strip()
+        or any(ord(character) < 32 or ord(character) == 127 for character in value)
+    ):
+        raise ValueError(f"{field} must be non-empty single-line text without control characters")
+    return value
+
+
 def _definition_owned_skill_paths(value: dict[str, object]) -> dict[str, str]:
     """Return the first PROJECT.yaml field owning each valid role skill identifier."""
 
@@ -1151,10 +1163,21 @@ def technology_confirmation_lines(value: dict[str, object]) -> list[str]:
             isinstance(fact, str) and fact for fact in evidence
         ):
             raise ValueError(f"{prefix}.evidence must be a non-empty list of strings")
+        evidence = [
+            _single_line_rendered_text(fact, f"{prefix}.evidence[{fact_index}]")
+            for fact_index, fact in enumerate(evidence)
+        ]
         if not isinstance(conflicts, list) or not all(
             isinstance(conflict, str) and conflict for conflict in conflicts
         ):
             raise ValueError(f"{prefix}.conflicts must be a list of non-empty strings")
+        conflicts = [
+            _single_line_rendered_text(
+                conflict,
+                f"{prefix}.conflicts[{conflict_index}]",
+            )
+            for conflict_index, conflict in enumerate(conflicts)
+        ]
         if disposition not in {"accepted", "rejected"}:
             raise ValueError(f"{prefix}.disposition must be accepted or rejected")
         target = accepted_candidates if disposition == "accepted" else rejected_candidates
@@ -1203,6 +1226,7 @@ def technology_confirmation_lines(value: dict[str, object]) -> list[str]:
         reason = rejection.get("reason")
         if not isinstance(reason, str) or not reason:
             raise ValueError(f"{prefix}.reason must be a non-empty string")
+        reason = _single_line_rendered_text(reason, f"{prefix}.reason")
         rejection_names.append(skill)
         rejection_lines.append(f"- Rejected {skill}: {reason}")
     if rejection_names != rejected_candidates:
@@ -1224,6 +1248,10 @@ def technology_confirmation_lines(value: dict[str, object]) -> list[str]:
         raise ValueError(
             "technology_confirmation.confirmation.evidence must be a non-empty auditable reference"
         )
+    evidence_reference = _single_line_rendered_text(
+        evidence_reference,
+        "technology_confirmation.confirmation.evidence",
+    )
     accepted_text = ", ".join(normalized_accepted_skills) if normalized_accepted_skills else "none"
     lines = [
         f"- Technology candidates: {len(candidates)}",
@@ -1448,9 +1476,14 @@ def render(
             facts_prefix = f"{row_prefix}.evidence"
             if not isinstance(facts, list):
                 raise ValueError(f"{facts_prefix} must be a list of strings")
+            normalized_facts: list[str] = []
             for fact_index, fact in enumerate(facts):
                 if not isinstance(fact, str):
                     raise ValueError(f"{facts_prefix}[{fact_index}] must be a string")
+                normalized_facts.append(
+                    _single_line_rendered_text(fact, f"{facts_prefix}[{fact_index}]")
+                )
+            facts = normalized_facts
             if facts:
                 evidence_lines.append(f"  - {skill} evidence: {'; '.join(facts)}")
         pattern_value = item.get("pathPattern", item.get("pattern"))
@@ -1471,7 +1504,10 @@ def render(
         if not names:
             if item.get("status") != "NO_VARIANT":
                 continue
-            fallback = item.get("fallback", "General model training")
+            fallback = _single_line_rendered_text(
+                item.get("fallback", "General model training"),
+                f"technology_skill_loadouts[{loadout_index}].fallback",
+            )
             lines.append(
                 f"- {pattern}: no pertinent specialized technology skill is available; "
                 f"use {fallback} and continue full scope coverage."
