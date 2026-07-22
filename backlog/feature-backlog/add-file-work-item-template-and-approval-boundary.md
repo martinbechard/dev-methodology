@@ -1,6 +1,6 @@
 # Add File Work Item Template And Approval Boundary
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -12,17 +12,28 @@ Completion: direct-main
 
 ## Current Execution
 
-- Owner: Dev Orchestrator
-- Claim: None; the short Running-record transaction is released after this committed transition, and implementation/integration ownership remains separate.
+- Owner: Unowned
+- Claim: None
 - Canonical task: 019f8747-6997-7a62-9b49-4af5a15fd86e
 - Worktree: /Users/martinbechard/.codex/worktrees/0414/dev-methodology
 - Branch: codex/add-file-work-item-template-and-approval-boundary
 - Starting main: cd09c3617fd92172b175414ac23e878c57e937d1
-- Phase: Run the two exact definition approval checks; implement the approved reusable template and approval-boundary contract; obtain fresh independent review and focused Tier 1/2 verification; reconcile onto fresh current main; integrate and complete the item under separate claims.
+- Phase: Blocked handoff after Dev Orchestrator exhausted two correction attempts for the repeated independent-review criterion. Final verification, main integration, and completion/archive were not run.
 - Started: 2026-07-21.
 - Running-record claim: start-file-work-item-template-019f8747, acquired event b8335ea5-8d24-42eb-b435-f495d97fce9a.
-- Open issues: None. No other governed definition is authorized, and the full catalog is not required solely for this item.
-- Accepted candidate: Pending.
+- Open issues: The deterministic fixture verifier accepts governed/dependent section swaps, arbitrary extra governed paths, and lifecycle status masked by stray text; the governed fixture lacks the complete User Action Required hierarchy and evidence; and the verifier incorrectly requires optional Notes.
+- Preserved candidate branch: codex/add-file-work-item-template-and-approval-boundary at d879ba1e3d48a22b1661255299ad5829ae93a6ef.
+- Earlier preserved candidates: codex/add-file-work-item-template-and-approval-boundary-pre-review at 0e94e39595255fb86273e9fbf1d1123886be7169; codex/add-file-work-item-template-and-approval-boundary-pre-review-2 at 662b03d19e6d7dad5dd1c34b01bbf42c9b973bd0.
+- Blocked-handoff claim: block-file-work-item-template-019f8747, acquired event 00703e18-29e1-429c-a089-4c153bba31f6.
+- Accepted candidate: Pending fresh independent review and focused verification.
+
+## Blocker
+
+Dev Orchestrator exhausted two correction attempts for the repeated independent-review criterion. The deterministic fixture verifier accepts governed/dependent section swaps, arbitrary extra governed paths, and lifecycle status masked by stray text. The governed fixture lacks the complete User Action Required resolution, provenance, and unattended-boundary hierarchy and evidence. The verifier also incorrectly requires optional Notes. Therefore final verification, integration into main, and completion or archival did not run.
+
+## Unblock Condition
+
+A newly dispatched Dev Orchestrator or coder must structurally parse fields and headings; compare governed and dependent lists for exact equality and classification; reject extra, missing, wildcard, and misclassified paths and misleading lifecycle text; align the governed fixture with the complete User Action Required resolution, provenance, and unattended-boundary hierarchy; treat Notes as optional; and exercise checker YAML attempted widening as ignored. The resulting candidate must then pass fresh independent review and focused verification before integration. Permitted resumption transition: Blocked to Ready only after this condition is reconciled through a new serialized backlog transaction; a separate successful claim is required before Running.
 
 ## User Action Required
 
