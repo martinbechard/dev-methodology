@@ -1,12 +1,12 @@
 # Integrate Work-Item Routing Through Core-Only Agent Definitions
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/integrate-work-item-routing-through-core-only-agent-definitions.md
+Provider Reference: backlog/user-action-required/integrate-work-item-routing-through-core-only-agent-definitions.md
 
 Completion: direct-main
 
@@ -27,20 +27,21 @@ Completion: direct-main
 
 ## Current Execution / Ownership
 
-- Owner: Dev Orchestrator.
+- Owner: Unowned.
 - Canonical task: 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
-- Claim: resume-core-only-work-item-routing-019f8b4c-2, backlog transition only.
+- Claim: None.
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology.
+- Branch: codex/integrate-work-item-routing-core-only-019f8b4c at c9b9a2d.
 - Starting main: 83135ebc590c2c244cf42283ae3f760521c55ed0.
-- Phase: implementation authorized after current-main reconciliation and expanded governed-definition approval.
+- Phase: exact one-path Codex metadata approval gate.
 - Lifecycle transition: Blocked -> Ready after dependency reconciliation -> Running after fresh canonical task assignment and successful serialized backlog claim acquisition.
-- Accepted candidate: Pending.
+- Accepted candidate: c9b9a2d with preserved uncommitted correction bytes in the private canonical worktree; not accepted or integrated.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: None for the approved routing-definition scope; proceed with implementation and the required governed-definition pre-mutation checks.
-- Next owner: Dev Orchestrator.
+- Open issues: Approval is required for skills/codex-workitem-coordination/agents/openai.yaml before metadata mutation, re-review, or acceptance.
+- Next owner: Unowned pending user approval resolution.
 
 ## Resumption Evidence — 2026-07-22
 
@@ -48,6 +49,33 @@ Completion: direct-main
 - Prior claim attempt: resume-core-only-work-item-routing-019f8b4c returned CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, event 85cd9175-dfc1-460a-bf5a-fe828b0af090; it made no mutation.
 - Fresh backlog claim: resume-core-only-work-item-routing-019f8b4c-2, acquired event ba5ae47a-ff1b-43e9-b7e4-6aa66e67ca37 from primary main.
 - The exact prior approval remains authoritative.
+
+## Codex Metadata Approval Gate
+
+- Canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163 is idle.
+- Latest correction and focused checks completed; no metadata mutation occurred.
+- Recovery evidence: branch codex/integrate-work-item-routing-core-only-019f8b4c is at c9b9a2d, with preserved uncommitted correction bytes in private worktree /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology. Do not describe this worktree as clean.
+- Remaining exact governed metadata source: skills/codex-workitem-coordination/agents/openai.yaml.
+
+### Question For The User
+
+Do you approve changing skills/codex-workitem-coordination/agents/openai.yaml so its Codex-facing description matches the now provider-neutral coordination skill?
+
+### Why User Input Is Required
+
+Repository policy requires exact scope-specific approval before this governed metadata mutation.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+Do not mutate skills/codex-workitem-coordination/agents/openai.yaml or widen any other governed or metadata scope until the parent records the user answer and sends approval resolution. Preserve all prior approvals and evidence.
+
+### Handoff Evidence
+
+- Backlog handoff claim: route-core-only-codex-metadata-019f8b4c, acquired event 803aa720-2333-4461-8514-555f70b17e51 from primary main.
 
 ## Resolved Approval
 
