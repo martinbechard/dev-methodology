@@ -2297,8 +2297,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                     replace_customized=args.replace_customized,
                     mcp_config_plan=mcp_config_plan,
                 )
-            if mcp_config_plan is not None and args.dry_run:
-                results.extend(_apply_mcp_config(mcp_config_plan, args.dry_run))
+            if mcp_config_plan is not None:
+                if args.dry_run:
+                    results.extend(_apply_mcp_config(mcp_config_plan, True))
             elif args.configure_mcp and adapter.name in MCP_CONFIG_ADAPTERS:
                 results.append(
                     "MCP configuration skipped; provide --scope or --mcp-config to select "

@@ -496,11 +496,12 @@ class InstallSkillsTests(unittest.TestCase):
             )
             config_path.write_text(original, encoding="utf-8")
 
+            output = io.StringIO()
             with (
                 patch.object(installer.Path, "cwd", return_value=invocation),
                 patch.object(installer.shutil, "which", return_value=None),
                 patch.object(installer.sys.stdin, "isatty", return_value=False),
-                redirect_stdout(io.StringIO()),
+                redirect_stdout(output),
             ):
                 exit_code = installer.main(
                     [
@@ -538,6 +539,7 @@ class InstallSkillsTests(unittest.TestCase):
             )
             self.assertFalse(config_path.with_name("config.mcp-agent-ops.toml").exists())
             self.assertEqual([], list(invocation.iterdir()))
+            self.assertNotIn("MCP configuration skipped", output.getvalue())
 
     def test_codex_project_root_reconciles_stale_mcp_identity_through_candidate(
         self,
