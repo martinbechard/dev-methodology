@@ -1,12 +1,12 @@
 # Define Functional Specification UX Mockup Criteria
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/define-functional-specification-ux-mockup-criteria.md
+Provider Reference: backlog/completed-backlog/features/define-functional-specification-ux-mockup-criteria.md
 
 Completion: direct-main
 
@@ -14,23 +14,23 @@ Completion: direct-main
 
 - Owner: Dev Orchestrator
 - Canonical task: 019f8b05-29c8-7a82-b962-1a347eebecc3
-- Artifact claim: define-functional-spec-ux-mockup-criteria, pending ARTIFACT GO.
-- Branch: codex/functional-spec-ux-resume-20260722
+- Artifact claim: Integration claim functional-spec-ux-integration-019f8b05 released by event 64f27e75-1b84-400c-a2db-9c09db9b3fb9.
+- Branch: codex/functional-spec-ux-integration-20260722
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/3362/dev-methodology
-- Phase: cold-start current-main reconciliation.
+- Phase: Completed; integrated, verified on main, and archived through the file provider.
 - Starting main: 1560326152977581d2c62711e9fb861e7f2cf8f0
 - Lifecycle transition: Ready eligibility and exact approval were preserved before fresh ownership transitioned the item to Running.
-- Candidate: Pending.
-- Accepted commit: Pending.
+- Candidate: 2398fdb3bcb0aed6a73b34e4b216bd315962d8c6 on codex/functional-spec-ux-resume-20260722.
+- Accepted commit: 2398fdb3bcb0aed6a73b34e4b216bd315962d8c6.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
-- Integration wait started at: None.
-- Integration wait attempts: 0.
+- Integration wait started at: 2026-07-22T18:27:19Z.
+- Integration wait attempts: Initial attempt and the five-minute retry returned SHARED_CHECKOUT_RELEASE_REQUIRED; the ten-minute retry acquired ownership. Blocking evidence preserved in events 9a87f285-75bd-4261-92d3-fb3c0aa9bf6b and 85f60977-584a-44be-abda-b7be224fee70; the second wait observed claim eval-playwright-629ee68.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: None for lifecycle dispatch; implementation must remain within the recorded approval.
-- Next owner: Dev Orchestrator.
-- Delivery evidence: Exact governed and ordinary companion scope approval preserved; implementation, review, verification, integration, and acceptance remain pending.
+- Open issues: None.
+- Next owner: Parent coordinator for terminal task and clean worktree or branch cleanup.
+- Delivery evidence: Accepted source 2398fdb3bcb0aed6a73b34e4b216bd315962d8c6 was replayed onto current main 817a34c31304312fb38f2e2c9c2a793306ecb646 as integration commit ca1b7960497251a75db97c80dc612f89ed8e4859, verified on main, and released from integration ownership.
 
 ## Cold-Start Recovery Execution — 2026-07-22
 
@@ -138,3 +138,19 @@ None.
 ## Notes
 
 UI mockups remain one proportionate example form. This work item does not prescribe HTML unless the approved criteria and evidence require it.
+
+## Completion Evidence — 2026-07-22
+
+- Approval gate: The supported pre-mutation check returned ALLOWED_APPROVED_DEFINITION_CHANGE for skills/create-functional-spec/SKILL.md using the recorded exact delegated user direction. The supported generated skill mirror check returned ALLOWED_APPROVED_REGENERATION. The generated template mirror remained an ordinary generated companion of the approved template surface.
+- Current-main reconciliation: The replacement task began from recorded main 5d6a2e60b8382888c5c53bc35bed686749d71912. Intervening main changes affected backlog-only surfaces until integration; no approved product path overlapped. The fresh integration branch was created from main 817a34c31304312fb38f2e2c9c2a793306ecb646.
+- Accepted source: Candidate 2398fdb3bcb0aed6a73b34e4b216bd315962d8c6 changes exactly the approved creation skill, functional-specification template, review checklist, focused bundle test, and supported generated mirrors.
+- Independent review: The first fresh reviewer found that the checklist would force each artifact to quote a global methodology disclaimer. The candidate was corrected so the checklist assesses proportionate selection while the global policy remains in skill and template guidance. A second fresh reviewer returned ACCEPT with no material findings on 2398fdb3bcb0aed6a73b34e4b216bd315962d8c6.
+- Independent verification: A fresh verifier passed Agent Skill validation for create-functional-spec, review-functional-spec, and development-methodology; the focused interface-example regression; the supporting-operation-inventory regression; the objective diagram and repository path-tree regression; build-skill-docs freshness; changed-commit whitespace checks; exact six-file scope; and clean candidate state under Python 3.11.13.
+- Environment note: The default Python 3.9 interpreter failed before test collection because tomllib was unavailable. The repository-compatible Python 3.11 interpreter ran every accepted Python check successfully.
+- Verification tier: Tier 1 was selected because this is a bounded skill, template, checklist, generated-mirror, and focused-test change. The full scripts, project-wiki, and live catalog campaigns were not required for this item.
+- Integration mapping: Source 2398fdb3bcb0aed6a73b34e4b216bd315962d8c6 was cherry-picked without conflict onto current main as ca1b7960497251a75db97c80dc612f89ed8e4859. Main fast-forwarded to that commit.
+- Main observation: Local branch main was clean at ca1b7960497251a75db97c80dc612f89ed8e4859, and the integration commit was directly reachable from main. This repository's selected local direct-main contract did not require remote publication.
+- Post-integration verification: From the primary main checkout, Agent Skill validation passed; the three focused Python 3.11 regressions passed; build-skill-docs reported current generated data; git diff --check passed; and the six integrated paths matched the accepted scope.
+- Integration claim: functional-spec-ux-integration-019f8b05 acquired by event 2042a0ce-18bf-4db3-adb2-31b2eaf6512e and released cleanly by event 64f27e75-1b84-400c-a2db-9c09db9b3fb9 with resulting commit ca1b7960497251a75db97c80dc612f89ed8e4859.
+- Provider transaction: functional-spec-ux-closeout-019f8b05 acquired the exact active and completed provider paths by event 25e8c480-9e3a-4613-8c92-5aac41503cc0. This terminal record and archive movement are committed under that claim before its clean release.
+- Cleanup eligibility: codex/functional-spec-ux-integration-20260722 is fully merged into main. The clean task worktree may be removed and the merged integration branch deleted after provider release. The source mapping above preserves candidate provenance; codex/functional-spec-ux-resume-20260722 has no unique unintegrated content after that mapping is confirmed.
