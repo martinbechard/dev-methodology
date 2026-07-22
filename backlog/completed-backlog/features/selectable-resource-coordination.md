@@ -1,12 +1,12 @@
 # Select Resource Coordination Per Project
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/selectable-resource-coordination.md
+Provider Reference: backlog/completed-backlog/features/selectable-resource-coordination.md
 
 Completion: direct-main
 
@@ -22,19 +22,19 @@ Completion: direct-main
 
 ## Execution / Ownership
 
-- Owner: Unowned
+- Owner: Dev Backlog Steward (terminal archive transaction)
 - Canonical task: 019f8b1d-5817-72f3-be99-ba471da716b9
-- Claim: approve-selectable-execute-workitem-019f8b1d, backlog transition only
-- Artifact claim: Pending bounded correction claim.
-- Branch: codex/selectable-resource-coordination-implementation-20260722
-- Canonical worktree: /Users/martinbechard/.codex/worktrees/3da9/dev-methodology
-- Phase: approval reconciliation then bounded correction and re-review.
-- Starting main: f5534ec28fd8e1c75efb65970de61918406992a0
-- Lifecycle transition: Ready -> Running after exact approval, fresh canonical task assignment, and successful serialized backlog claim acquisition.
-- Candidate: b77bdb6, pending correction and re-review in canonical thread 019f8b1d-5817-72f3-be99-ba471da716b9.
-- Accepted commit: Pending.
-- Review: Pending bounded correction and re-review.
-- Verification: Pending bounded correction verification.
+- Claim: complete-selectable-resource-coordination-backlog-019f8b1d, exact primary-main source and archive paths.
+- Artifact claim: Released after accepted direct-main integration.
+- Branch: main
+- Canonical worktree: /Users/martinbechard/dev/dev-methodology
+- Phase: Completed and archived after direct-main reconciliation.
+- Starting main: c9d8fb2c41e4ae14da323c37197c2a527653e777
+- Lifecycle transition: Running -> Completed after accepted delivery, direct-main observation, and this terminal provider transaction.
+- Candidate: 33de738852ae73aee729411affba808a630a6a7e, accepted.
+- Accepted commit: 33de738852ae73aee729411affba808a630a6a7e.
+- Review: Fresh code review PASS; methodology-correction re-review PASS.
+- Verification: READY/PASS; focused integration 137/137 before commit; final focused 41/41; project-wiki 17/17; full scripts 640 with only the parent-reproduced runtime-inventory baseline failure; all freshness and diff checks pass.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
 - Integration wait started at: None.
@@ -43,13 +43,26 @@ Completion: direct-main
 - Completion wait attempts: 0.
 - Dependency evidence: backlog/completed-backlog/features/configure-agent-claim-transport-adapters.md is Status Completed; integration commit 1b1b819fa051f9f0f1d572184b18f18c06d3cba0 is reachable from main; focused verification, archive, clean integration-claim release, and cleanup-eligibility evidence are recorded; Open issues is None.
 - Preserved dependency boundary: The completed transport-adapter contract remains the required input to this item.
-- Open issues: Implement the approved execute-workitem branch and already-authorized companion selector-bypass and test-fidelity corrections.
-- Delivery evidence: The b77bdb6 candidate, dependency unblock, discovery evidence, original 40-path approval, and additional execute-workitem approval are preserved; integration and acceptance remain pending.
-- Next owner: Dev Orchestrator.
+- Open issues: None. The unresolved lifecycle/deadline ten-path question remains excluded and unresolved.
+- Delivery evidence: Accepted candidate 33de738852ae73aee729411affba808a630a6a7e; reconciliation source 6062d768a90d401a31075d283e882982aa00e78b atop c62066017fea17903dec41659a3a0bde098006e1; scope-reconciled ordinary companion design/agent-and-skill-evaluations.html committed by c9d8fb2 with 17 insertions and 17 deletions; final main c9d8fb2c41e4ae14da323c37197c2a527653e777. Exact delivery scope: 41 governed canonical paths, 103 supported mirrors, and 21 ordinary companions (165 paths total), including additionally approved governed skills/execute-workitem/SKILL.md.
+- Next owner: None.
 
 Creation Claim: draft-selectable-mutation-coordination
 
 Refinement Claims: improve-selectable-mutation-coordination-019f850e, capture-resource-coordination-dialogue-20260721
+
+## Completion Evidence — 2026-07-22
+
+- Accepted candidate: 33de738852ae73aee729411affba808a630a6a7e.
+- Direct-main reconciliation source: 6062d768a90d401a31075d283e882982aa00e78b, reconciled atop c62066017fea17903dec41659a3a0bde098006e1.
+- Scope-reconciled ordinary companion: design/agent-and-skill-evaluations.html, committed by c9d8fb2 with 17 insertions and 17 deletions.
+- Final main observation: main at c9d8fb2c41e4ae14da323c37197c2a527653e777.
+- Delivered scope: 41 governed canonical paths, 103 supported mirrors, and 21 ordinary companions, for 165 paths total. The additional approved governed source was skills/execute-workitem/SKILL.md.
+- Independent review: fresh code review PASS and methodology-correction re-review PASS.
+- Verification disposition: verifier READY/PASS. Focused integration verification passed 137/137 before commit. Final focused verification passed 41/41, project-wiki verification passed 17/17, and the full scripts suite passed 640 checks. Freshness and diff checks passed.
+- Baseline follow-up only: the full scripts run retained the parent-reproduced runtime-inventory failure, and HTML verification retained only the parent-reproduced missing claims-communication-title fragment. These warnings are not open issues for this completed item.
+- Enabled coordination: integration claim integrate-selectable-resource-coordination-019f8b1d was extended in event a37278ef-ab6c-4f3e-9e4d-3fd70158d43b and cleanly released in event 1a3b294b-a78a-43c5-b685-a9761264767b.
+- Remaining excluded boundary: the lifecycle/deadline ten-path question remains unresolved and excluded from this completion.
 
 ## Running Dispatch — 2026-07-22
 
