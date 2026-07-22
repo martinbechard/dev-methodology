@@ -26,12 +26,27 @@ SCRIPT_PATH = ROOT / "design" / "agent-and-skill-evaluations.js"
 NODE_PATH = shutil.which("node")
 
 
+def write_git_reference(root: Path) -> None:
+    """Point a temporary source root at this checkout's exact Git directory."""
+    result = subprocess.run(
+        ["git", "-C", str(ROOT), "rev-parse", "--absolute-git-dir"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0 or not result.stdout.strip():
+        raise RuntimeError(f"Cannot resolve checkout Git directory: {result.stderr}")
+    (root / ".git").write_text(
+        f"gitdir: {result.stdout.strip()}\n", encoding="utf-8"
+    )
+
+
 @contextmanager
 def temporary_source_root():
     """Yield a lightweight editable evaluation-source root backed by repository symlinks."""
     with tempfile.TemporaryDirectory() as temporary_directory:
         root = Path(temporary_directory)
-        shutil.copy2(ROOT / ".git", root / ".git")
+        write_git_reference(root)
         (root / "skills").symlink_to(ROOT / "skills", target_is_directory=True)
         (root / "agents").symlink_to(ROOT / "agents", target_is_directory=True)
         evals = root / "evals"
@@ -458,7 +473,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         for kind, content in mutations.items():
             with self.subTest(kind=kind), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
-                shutil.copy2(ROOT / ".git", root / ".git")
+                write_git_reference(root)
                 report = root / "evals/agent-tests/results/report.md"
                 report.parent.mkdir(parents=True)
                 report.write_text(content, encoding="utf-8")
@@ -489,7 +504,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
                     tempfile.TemporaryDirectory() as directory,
                 ):
                     root = Path(directory)
-                    shutil.copy2(ROOT / ".git", root / ".git")
+                    write_git_reference(root)
                     report = root / "evals/agent-tests/results/report.md"
                     report.parent.mkdir(parents=True)
                     report.write_text(content, encoding="utf-8")
@@ -529,7 +544,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         for mutation, (target, message) in mutations.items():
             with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
-                shutil.copy2(ROOT / ".git", root / ".git")
+                write_git_reference(root)
                 if mutation == "untracked":
                     (root / "untracked-follow-up.md").write_text(
                         "not tracked", encoding="utf-8"
