@@ -1,6 +1,6 @@
 # Select Resource Coordination Per Project
 
-Status: Blocked
+Status: Running
 
 Type: Feature
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/feature-backlog/selectable-resource-coordination.md
 
 Completion: direct-main
 
-## Blocked State
+## Historical Blocked State
 
 - Owner: Unowned
 - Claim: None
@@ -19,6 +19,30 @@ Completion: direct-main
 - Next action owner: Dev Backlog Coordinator.
 - Resumption: Reconcile the completed dependency, transition this item through Ready, acquire new exclusive ownership for one canonical Dev Orchestrator, and only then record Running.
 - Evidence: The Dependencies section names Configure Agent Claim Transport Adapters; claim block-selectable-resource-coordination-dependency acquired event 0e436d62-4184-48ec-a689-e6aa12d56df5 to record this non-user dependency.
+
+## Execution / Ownership
+
+- Owner: Dev Orchestrator
+- Canonical task: /root/process_backlog/orch_selectable_resource_coordination
+- Artifact claim: selectable-resource-coordination, pending ARTIFACT GO.
+- Branch: codex/selectable-resource-coordination-20260722
+- Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/selectable-resource-coordination-20260722
+- Phase: Lifecycle Running committed; ARTIFACT GO pending.
+- Starting main: 1560326152977581d2c62711e9fb861e7f2cf8f0
+- Lifecycle transition: Blocked eligibility was reconciled, the completed dependency made the item Ready, and fresh ownership then transitioned it to Running.
+- Candidate: Pending.
+- Accepted commit: Pending.
+- Claim wait started at: None.
+- Claim wait attempts: 0.
+- Integration wait started at: None.
+- Integration wait attempts: 0.
+- Completion wait started at: None.
+- Completion wait attempts: 0.
+- Dependency evidence: backlog/completed-backlog/features/configure-agent-claim-transport-adapters.md is Status Completed; integration commit 1b1b819fa051f9f0f1d572184b18f18c06d3cba0 is reachable from main; focused verification, archive, clean integration-claim release, and cleanup-eligibility evidence are recorded; Open issues is None.
+- Preserved dependency boundary: The completed transport-adapter contract remains the required input to this item.
+- Open issues: None for lifecycle dispatch; exact governed-definition scope and approval remain implementation boundaries.
+- Delivery evidence: Dependency unblock and fresh ownership recorded; implementation and acceptance remain pending.
+- Next owner: Dev Orchestrator.
 
 Creation Claim: draft-selectable-mutation-coordination
 

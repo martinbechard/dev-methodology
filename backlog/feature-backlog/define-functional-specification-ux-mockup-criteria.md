@@ -1,6 +1,6 @@
 # Define Functional Specification UX Mockup Criteria
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -12,20 +12,25 @@ Completion: direct-main
 
 ## Execution / Ownership
 
-- Owner: Unowned
+- Owner: Dev Orchestrator
 - Canonical task: /root/process_backlog/orch_functional_spec_ux
-- Proposed artifact claim: define-functional-spec-ux-mockup-criteria
-- Claim: None
+- Artifact claim: define-functional-spec-ux-mockup-criteria, pending ARTIFACT GO.
 - Branch: codex/define-functional-spec-ux-mockup-criteria
 - Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/define-functional-spec-ux-mockup-criteria
-- Phase: Exact approval recorded; Ready for fresh dispatch.
-- Starting main: af0a3fe63404a793f2bf7dcf40dd2a3de563109e
-- Accepted candidate: None.
+- Phase: Lifecycle Running committed; ARTIFACT GO pending.
+- Starting main: 1560326152977581d2c62711e9fb861e7f2cf8f0
+- Lifecycle transition: Ready eligibility and exact approval were preserved before fresh ownership transitioned the item to Running.
+- Candidate: Pending.
+- Accepted commit: Pending.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
+- Integration wait started at: None.
+- Integration wait attempts: 0.
+- Completion wait started at: None.
+- Completion wait attempts: 0.
 - Open issues: None for lifecycle dispatch; implementation must remain within the recorded approval.
-- Next owner: Dev Backlog Coordinator.
-- Delivery evidence: Approval recorded; implementation and candidate remain pending.
+- Next owner: Dev Orchestrator.
+- Delivery evidence: Exact governed and ordinary companion scope approval preserved; implementation, review, verification, integration, and acceptance remain pending.
 
 ## Read-Only Discovery
 
