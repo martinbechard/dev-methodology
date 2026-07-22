@@ -155,3 +155,14 @@ None.
 - Completion wait attempts: 0.
 - Delivery evidence: Implementation in progress.
 - Next owner: Dev Orchestrator.
+
+## Parent Cleanup Evidence — 2026-07-22
+
+- Task worktrees: Both project-skill-extension worktrees were already removed and clean before parent cleanup.
+- Original branch: codex/project-skill-extensions-20260722 at 318b9b5 was verified as an ancestor of main and safely deleted with git branch -d.
+- Correction branch: codex/project-skill-extensions-correction-1-20260722 at a51047d was verified as an ancestor of main and safely deleted with git branch -d.
+- Worktree metadata: git worktree prune completed.
+- Cleanup resource claim: coordinator-cleanup-project-skill-extensions-20260722 acquired, event e77ff382-7ecd-4328-a572-704887da26c8.
+- Cleanup resource release: Released as no-change, event f0bf0a6a-5f2b-4278-8261-325d423cbcbb.
+- Lifecycle result: The work item and collaboration task are terminal completed.
+- Harness limitation: Task title and archive mutation is unavailable in this collaboration harness; UI archival is not claimed.
