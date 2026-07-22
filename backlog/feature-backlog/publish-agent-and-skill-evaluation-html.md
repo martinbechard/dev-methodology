@@ -1,6 +1,6 @@
 # Publish Agent And Skill Evaluation HTML
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -12,14 +12,14 @@ Completion: direct-main
 
 ## Delivery Execution / Ownership
 
-- Owner: Dev Orchestrator
+- Owner: Unowned
 - Canonical task: /root/process_backlog/orch_evaluation_html
-- Artifact claim: publish-agent-skill-evaluation-html-20260722, pending ARTIFACT GO.
+- Artifact claim: None; the initial claim and both correction claims are released.
 - Branch: codex/publish-agent-skill-evaluation-html-20260722
 - Canonical worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/publish-agent-skill-evaluation-html-20260722
 - Starting main: e414fa04307d086321373e6bd090ae38a2d2177b
-- Phase: Lifecycle Running committed; ARTIFACT GO pending.
-- Candidate: Pending.
+- Phase: Blocked after the bounded two-attempt correction loop was exhausted.
+- Candidate: 08d8154fcf14e02a30e749296fb992210e61d000 preserved; not accepted.
 - Accepted commit: Pending.
 - Claim wait started at: None.
 - Claim wait attempts: 0.
@@ -27,21 +27,37 @@ Completion: direct-main
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: Initial artifact claims must remain non-overlapping; shared bundle and navigation paths are deferred.
+- Open issues: Final methodology re-review found a recurring fail-open parser and completeness class that remains unresolved after two correction attempts.
 - Shared-surface sequencing: Start on new unique evaluation documentation and data-generator surfaces; defer shared bundle and navigation paths until wake-up.
-- Next owner: Dev Orchestrator.
-- Delivery evidence: Pending.
+- Next owner: Unowned; a fresh owner must complete the exact unblock work below.
+- Delivery evidence: Candidate chain preserved; no browser verifier, integration, or completion evidence exists.
 
 ## Phase Evidence Update — 2026-07-22
 
-- Current phase: Correction attempt 1 active; acceptance remains pending.
+- Historical phase: Correction attempt 1 was active; acceptance remained pending.
 - Candidate: df6911b3179bb82859ae25708ee4b09404a02af1, with a clean candidate worktree.
 - Initial implementation claim release: Event b772d85a-b94e-469b-b216-ea7042aea478.
 - Fresh review disposition: Both reviews reported CORRECTIONS REQUIRED.
 - Review findings: Replace the high-risk ID-only historical/current semantic join and its no-probe abort; prevent duplicate and removed rows; remove the fixed timestamp and hardcoded narrative; correct verdict and Judge semantics; include omitted follow-ups and freshness inputs; and provide browser evidence.
-- Correction attempt 1: Active under claim publish-agent-skill-evaluation-html-correction-1-20260722 for exactly design/agent-and-skill-evaluations.html, design/agent-and-skill-evaluations.js, scripts/build-agent-skill-evaluation-docs.py, and scripts/test_agent_skill_evaluation_docs.py.
+- Correction attempt 1: Was active under claim publish-agent-skill-evaluation-html-correction-1-20260722 for exactly design/agent-and-skill-evaluations.html, design/agent-and-skill-evaluations.js, scripts/build-agent-skill-evaluation-docs.py, and scripts/test_agent_skill_evaluation_docs.py.
 - Accepted commit: Pending.
-- Next owner: Dev Orchestrator.
+- Next owner at that phase: Dev Orchestrator.
+
+## Blocked Handoff — 2026-07-22
+
+- Blocked reason: The bounded two-attempt correction loop is exhausted. Final methodology re-review found a recurring fail-open parser and completeness class.
+- Remaining parser and completeness failure: Valid Markdown follow-up markers using * or + can be silently omitted, reformatted, or duplicated, reducing evidence without failure.
+- Remaining priority-normalization failure: Raw YAML priority validation allows mixed scalar 1 and "1" values to pass before they collide after integer normalization.
+- Preserved commit chain: df6911b3179bb82859ae25708ee4b09404a02af1 to 71102b36f729d2e3520d0a5575b6ea280cb53b36 to 08d8154fcf14e02a30e749296fb992210e61d000.
+- Initial claim release: publish-agent-skill-evaluation-html-20260722 released, event b772d85a-b94e-469b-b216-ea7042aea478.
+- Correction attempt 1 release: publish-agent-skill-evaluation-html-correction-1-20260722 released, event 4e75bc61-513f-4c02-9ba5-697aa7bacf3b.
+- Correction attempt 2 release: publish-agent-skill-evaluation-html-correction-2-20260722 released, event a7d77293-839e-41e7-9728-c3be2584832e.
+- Verification state: No browser verifier was run; no integration or work-item completion occurred.
+- User-package mutation: None.
+- Exact unblock: A fresh owner must add omission and duplicate regressions for * and + follow-up markers, add mixed-scalar priority duplicate rejection, correct parsing and normalization, then repeat fresh review, browser verification, and focused data reconciliation before integration.
+- Owner: Unowned.
+- Artifact claim: None.
+- Accepted commit: Pending.
 
 Creation Claim: create-eval-html-docs-item-20260722
 
