@@ -1,6 +1,6 @@
 # Integrate Work-Item Routing Through Core-Only Agent Definitions
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -27,21 +27,21 @@ Completion: direct-main
 
 ## Current Execution / Ownership
 
-- Owner: Unowned.
+- Owner: User Action Required.
 - Canonical task: 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
-- Claim: None.
+- Claim: route-core-only-gitlab-manager-approval-019f8b4c, lifecycle transition only.
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology, clean.
-- Branch: codex/integrate-work-item-routing-core-only-019f8b4c at f3c493848ab871b7ccc0afa58cfecb40b1c866bc.
+- Branch: codex/integrate-work-item-routing-core-only-019f8b4c at 14adbbfa70bb6640e90c8ec68b177557add29d48.
 - Starting main: 83135ebc590c2c244cf42283ae3f760521c55ed0.
-- Phase: exact governed pre-mutation approval check, correction, review, verification, integration, and provider completion.
-- Lifecycle transition: User Action Required -> Ready -> Running under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163 and the same root Dev Orchestrator after approval resolution and successful serialized backlog claim acquisition.
-- Accepted candidate: f3c493848ab871b7ccc0afa58cfecb40b1c866bc, pending correction.
+- Phase: User Action Required for the exact GitLab terminal-reconciliation approval.
+- Lifecycle transition: Running -> User Action Required pending an exact governed-definition approval under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
+- Accepted candidate: 14adbbfa70bb6640e90c8ec68b177557add29d48, clean and preserved unchanged pending the user decision.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: None; implementation must remain within the exact feature-branch governed scope.
-- Next owner: Root Dev Orchestrator for the approved correction, review, verification, integration, and provider completion lifecycle.
+- Open issues: User approval is required before changing the exact GitLab terminal-reconciliation scope below.
+- Next owner: User, then the Root Dev Orchestrator after an approved resolution.
 
 ## Resumption Evidence — 2026-07-22
 
@@ -49,6 +49,29 @@ Completion: direct-main
 - Prior claim attempt: resume-core-only-work-item-routing-019f8b4c returned CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, event 85cd9175-dfc1-460a-bf5a-fe828b0af090; it made no mutation.
 - Fresh backlog claim: resume-core-only-work-item-routing-019f8b4c-2, acquired event ba5ae47a-ff1b-43e9-b7e4-6aa66e67ca37 from primary main.
 - The exact prior approval remains authoritative.
+
+## GitLab Terminal-Reconciliation Approval Gate — 2026-07-23
+
+### Methodology Finding
+
+Current Completion/Reconciliation lines 6-7 force RUNNING-or-BLOCKED after terminal failure. That contradicts approved durable AWAITING_REVIEW and coordinator capacity because it erases the durable review-wait state.
+
+### Question for the User
+
+Do you approve changing exactly skills/manage-gitlab-work-items/SKILL.md, with only its supported generated skill mirror and directly related tests/documentation, so a failed/partial terminal update preserves the current nonterminal lifecycle (AWAITING_REVIEW for feature-branch delivery, RUNNING for direct-main) or records BLOCKED, rather than always forcing RUNNING and erasing durable review-wait state?
+
+### Why User Input Is Required
+
+This changes a distributed skill definition. Repository policy requires explicit scope-specific user approval before the governed definition is mutated.
+
+### Resolution
+
+- Status: Pending.
+- Pending user answer. The item transitioned from Running to User Action Required on 2026-07-23 under canonical task 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
+
+### Unattended Work Boundary
+
+Do not mutate skills/manage-gitlab-work-items/SKILL.md, its supported generated skill mirror, tests, documentation, or any other governed definition until the user answers the exact question. Preserve candidate 14adbbfa70bb6640e90c8ec68b177557add29d48 unchanged. No other governed scope is authorized.
 
 ## Feature-Branch Commit Ownership Approval Gate — 2026-07-23
 
