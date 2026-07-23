@@ -1,6 +1,6 @@
 # Integrate Work-Item Routing Through Core-Only Agent Definitions
 
-Status: User Action Required
+Status: Running
 
 Type: Feature
 
@@ -16,8 +16,8 @@ Completion: direct-main
 - Previous worktree: /Users/martinbechard/.codex/worktrees/2c00/dev-methodology.
 - Previous branch: codex/integrate-work-item-contracts-across-bundle.
 - Previous starting main commit: 2ddedf5a83ca8567ac3de93867a3f90624a2e28c.
-- Owner: User Action Required.
-- Claim: route-core-only-feature-branch-approval-019f8b4c, lifecycle transition only.
+- Owner: Root Dev Orchestrator.
+- Claim: None.
 - Phase: Blocked after approval resolution because the accepted core-only routing design depends on simplify-project-configuration-setup-and-skill-routing.
 - User approval: On 2026-07-21, in parent task 019f77f4-c4bd-7c91-b197-c987a7beb838, the user directed: "I approve the items in holding". The prior exact codex-workitem-coordination approval remains recorded below.
 - Unblock condition: backlog/feature-backlog/simplify-project-configuration-setup-and-skill-routing.md is integrated, verified, and archived as Completed on main.
@@ -33,15 +33,15 @@ Completion: direct-main
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology, clean.
 - Branch: codex/integrate-work-item-routing-core-only-019f8b4c at f3c493848ab871b7ccc0afa58cfecb40b1c866bc.
 - Starting main: 83135ebc590c2c244cf42283ae3f760521c55ed0.
-- Phase: User Action Required for the exact feature-branch Commit ownership approval.
-- Lifecycle transition: Running -> User Action Required pending an exact governed-definition approval under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
-- Accepted candidate: f3c493848ab871b7ccc0afa58cfecb40b1c866bc, clean and preserved unchanged pending the user decision.
+- Phase: exact governed pre-mutation approval check, correction, review, verification, integration, and provider completion.
+- Lifecycle transition: User Action Required -> Ready -> Running under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163 and the same root Dev Orchestrator after approval resolution and successful serialized backlog claim acquisition.
+- Accepted candidate: f3c493848ab871b7ccc0afa58cfecb40b1c866bc, pending correction.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: User approval is required before changing the exact feature-branch Commit scope below.
-- Next owner: User, then the canonical Dev Orchestrator after an approved resolution.
+- Open issues: None; implementation must remain within the exact feature-branch governed scope.
+- Next owner: Root Dev Orchestrator for the approved correction, review, verification, integration, and provider completion lifecycle.
 
 ## Resumption Evidence — 2026-07-22
 
@@ -66,12 +66,23 @@ This changes a distributed skill definition. Repository policy requires explicit
 
 ### Resolution
 
-- Status: Pending.
-- Pending user answer. The item transitioned from Running to User Action Required on 2026-07-23 under canonical task 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
+- Date: 2026-07-22.
+- Answer: Approved.
+- User wording: "I approve".
+- Provenance: direct response in parent coordination thread 019f8b00-e6d7-7841-854a-40a50ca4e7f2 to the latest recorded Core-only Routing feature-branch Commit ownership approval gate.
+- Approved governed skill scope: exactly skills/complete-work-item-feature-branch/SKILL.md.
+- Approved dependent scope: only its supported generated skill mirror and directly related tests and documentation.
+- Approved goal: feature-branch Commit consumes an already accepted reviewed and verified candidate; owns publication, host review and checks, merge, and main observation only; returns source-correction requests to Dev Coder through the Orchestrator for fresh review and verification before resuming the same delivery identity; and does not modify source itself.
+- Exclusion: no other governed scope is approved.
+- Disposition: User Action Required -> Ready -> Running under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
 
 ### Unattended Work Boundary
 
-Do not mutate skills/complete-work-item-feature-branch/SKILL.md, its supported generated skill mirror, tests, documentation, or any other governed definition until the user answers the exact question. Preserve candidate f3c493848ab871b7ccc0afa58cfecb40b1c866bc unchanged. No other governed scope is authorized.
+Mutate only skills/complete-work-item-feature-branch/SKILL.md, its supported generated skill mirror, and directly related tests and documentation. Do not widen any scope. Preserve candidate evidence until the approved correction and verification supersede it.
+
+### Handoff Evidence
+
+- Approval-resolution claim: approve-core-only-feature-branch-019f8b4c, acquired event 313f765a-a698-4c2e-8da1-966a85947d42 from primary main.
 
 ## Durable AWAITING_REVIEW File-Manager Approval Gate — 2026-07-23
 
