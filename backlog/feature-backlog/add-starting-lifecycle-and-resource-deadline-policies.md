@@ -1,32 +1,32 @@
 # Add Starting Lifecycle And Resource Deadline Policies
 
-Status: User Action Required
+Status: Running
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/add-starting-lifecycle-and-resource-deadline-policies.md
+Provider Reference: backlog/feature-backlog/add-starting-lifecycle-and-resource-deadline-policies.md
 
 Completion: direct-main
 
 ## Execution / Ownership
 
-- Owner: Unowned.
+- Owner: Canonical Dev Orchestrator.
 - Canonical thread: 019f8b51-f8ed-7c03-8193-9bbee1ccb7f2.
 - Claim: None.
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/81ba/dev-methodology, clean.
 - Branch: codex/starting-lifecycle-resource-deadlines at 1c9c38fd391e96fc567a12a2dd5c6a0d2ede8a42.
 - Starting main: 2ba5dbd772ab80ad87f6db9c7ea4683488a823cf.
-- Phase: exact one-path ordinary generated documentation companion approval gate.
-- Lifecycle transition: Running -> User Action Required pending scoped ordinary-companion approval.
-- Accepted candidate: 1c9c38fd391e96fc567a12a2dd5c6a0d2ede8a42, clean and unintegrated.
+- Phase: generate exactly the approved HTML companion, review and verify, exact-path timed integration, and provider completion.
+- Lifecycle transition: User Action Required -> Ready -> Running under canonical thread 019f8b51-f8ed-7c03-8193-9bbee1ccb7f2 after approval resolution and successful serialized backlog claim acquisition.
+- Accepted candidate: 1c9c38fd391e96fc567a12a2dd5c6a0d2ede8a42, pending companion.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: Approval is required for the exact generated ordinary documentation companion before generation, mutation, integration, or acceptance.
-- Next owner: Unowned pending user approval resolution and LIFECYCLE START.
+- Open issues: None; work must remain within the exact one-path ordinary companion scope.
+- Next owner: Canonical Dev Orchestrator for companion generation, review, verification, integration, and provider completion.
 
 ## Running Dispatch Evidence — 2026-07-22
 
@@ -51,15 +51,23 @@ The required generated ordinary documentation companion is outside the previousl
 
 ### Resolution
 
-Pending.
+- Date: 2026-07-22.
+- Answer: Approved.
+- Clarification: the user's earlier wording, "ok sounds good - the task is still waiting for my confirmation to resume", was intended as approval.
+- User wording: "In fact both are approved".
+- Provenance: direct clarification and approval in parent coordinator thread 019f8b00-e6d7-7841-854a-40a50ca4e7f2 in response to this exact ordinary documentation companion question.
+- Approved ordinary companion scope: exactly design/agent-and-skill-evaluations.html as the generated ordinary documentation companion required by the already-approved ten governed sources.
+- Exclusion: no other source or scope expansion is approved.
+- Disposition: User Action Required -> Ready -> Running under canonical thread 019f8b51-f8ed-7c03-8193-9bbee1ccb7f2.
 
 ### Unattended Work Boundary
 
-Do not generate, mutate, or integrate design/agent-and-skill-evaluations.html until the parent records the user answer and sends a new approval-resolution and LIFECYCLE START. Do not widen any scope. Preserve the original ten-path approval and all review and verification evidence.
+Generate, review, verify, integrate, and complete only design/agent-and-skill-evaluations.html as the approved ordinary companion. Do not widen any scope. Preserve the original ten-path approval and all review and verification evidence.
 
 ### Handoff Evidence
 
 - Backlog handoff claim: route-starting-lifecycle-doc-companion-019f8b51, acquired event 5a4e14fd-ac04-4607-87c3-02aa2363d91c from primary main.
+- Approval-resolution claim: approve-starting-lifecycle-doc-companion-019f8b51, acquired event aac12036-b053-4acb-8164-f9753676c3a8 from primary main.
 
 ## Discovery And Approval Gate — 2026-07-22
 
