@@ -28,6 +28,51 @@ _GENERATED_COORDINATOR_ADAPTERS = tuple(
         ("junie", "dev-backlog-coordinator.md"),
     )
 )
+_RETIRED_QUEUE_CLAUSES = (
+    "Count work items whose file-backed Status is Running.",
+    "Count Work items whose file-backed Status is Running.",
+    "When an item leaves Running, fill the active-capacity vacancy",
+    "recount Running capacity",
+    "ten are Running",
+)
+_RETIRED_RECONCILIATION_CLAUSES = (
+    "Retry creation only once after that settled read still shows no match, then reconcile once more.",
+    "Retry Thread creation after an ambiguous response.",
+    "Retry Task creation after ambiguous startup.",
+    "Create another Thread after ambiguous startup.",
+)
+_RETIRED_PROVIDER_SHORTCUT_CLAUSES = (
+    "Record the owner, enabled coordination reference, and Status: Running, then commit.",
+    "Ready -> Running",
+    "Blocked -> Running",
+    "Blocked/Ready -> Running",
+    "Blocked or Ready -> Running",
+)
+_WATCHDOG_AUTHORITY_PATTERNS = (
+    (
+        "delivery authority",
+        re.compile(
+            r"\b(?:infer(?:s|red|ring)?|decid(?:e|es|ed|ing)|"
+            r"determin(?:e|es|ed|ing))\b[^.!?\n]{0,160}?\b"
+            r"(?:integration readiness|accepted delivery|completion readiness)\b",
+            re.IGNORECASE,
+        ),
+    ),
+    (
+        "state mutation authority",
+        re.compile(
+            r"\b(?:mutat(?:e|es|ed|ing)|chang(?:e|es|ed|ing))\b"
+            r"[^.!?\n]{0,160}?\b(?:backlog(?: lifecycle)?|claims?|"
+            r"coordination entries?|task state)\b",
+            re.IGNORECASE,
+        ),
+    ),
+)
+_NEGATED_AUTHORITY = re.compile(
+    r"\b(?:must not|does not|do not|never|cannot|can't)\b",
+    re.IGNORECASE,
+)
+_AUTHORITY_CONTRAST = re.compile(r"\b(?:but|however|yet)\b", re.IGNORECASE)
 
 
 def _markdown_section(text: str, heading: str) -> str:
@@ -35,6 +80,24 @@ def _markdown_section(text: str, heading: str) -> str:
     if marker not in text:
         raise AssertionError(f"missing coordination section: {marker}")
     return text.split(marker, 1)[1].split("\n## ", 1)[0]
+
+
+def _present_retired_clauses(text: str, clauses: tuple[str, ...]) -> tuple[str, ...]:
+    return tuple(clause for clause in clauses if clause in text)
+
+
+def _watchdog_authority_violations(text: str) -> tuple[tuple[str, str], ...]:
+    violations: list[tuple[str, str]] = []
+    for sentence in re.split(r"(?<=[.!?])\s+", text):
+        for label, pattern in _WATCHDOG_AUTHORITY_PATTERNS:
+            for match in pattern.finditer(sentence):
+                prefix = sentence[: match.start()]
+                contrasts = tuple(_AUTHORITY_CONTRAST.finditer(prefix))
+                if contrasts:
+                    prefix = prefix[contrasts[-1].end() :]
+                if not _NEGATED_AUTHORITY.search(prefix):
+                    violations.append((label, sentence))
+    return tuple(violations)
 
 
 class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
@@ -109,25 +172,31 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
             with self.subTest(clause=clause):
                 self.assertIn(clause, self.watchdog_section)
 
-        for retired_contradiction in (
-            "The watchdog infers integration readiness",
-            "The watchdog decides accepted delivery",
-            "The watchdog determines completion readiness",
-            "The watchdog mutates backlog, claims, or task state",
-            "The watchdog changes work-item lifecycle state",
-        ):
-            with self.subTest(retired_contradiction=retired_contradiction):
-                self.assertNotIn(retired_contradiction, self.watchdog_section)
+        self.assertEqual((), _watchdog_authority_violations(self.watchdog_section))
 
-        semantic_verbs = re.compile(
-            r"\b(?:infer(?:s|red)?|decid(?:e|es|ed)|determin(?:e|es|ed)|"
-            r"mutat(?:e|es|ed)|chang(?:e|es|ed))\b",
-            re.IGNORECASE,
+    def test_watchdog_authority_guard_is_mutation_sensitive(self) -> None:
+        prohibited_sentences = (
+            "The watchdog infers integration readiness from a quiet Thread.",
+            "The watchdog decides accepted delivery after review.",
+            "The watchdog determines completion readiness from task state.",
+            "The watchdog mutates backlog lifecycle after observing a transition.",
+            "The watchdog changes claims and coordination entries during cleanup.",
+            "The watchdog mutates task state when a deadline expires.",
+            "The watchdog must not infer integration readiness but decides accepted delivery.",
         )
-        for sentence in re.split(r"(?<=[.!?])\s+", self.watchdog_section):
-            if semantic_verbs.search(sentence):
-                with self.subTest(semantic_sentence=sentence):
-                    self.assertRegex(sentence, r"(?i)\b(?:not|never|read-only)\b")
+        for sentence in prohibited_sentences:
+            with self.subTest(prohibited_sentence=sentence):
+                with self.assertRaises(AssertionError):
+                    self.assertEqual((), _watchdog_authority_violations(sentence))
+
+        valid_mechanical_sentences = (
+            "The watchdog determines whether a configured deadline is overdue.",
+            "The watchdog changes its own process status after a read-only cycle.",
+            "The watchdog reports that an Agent process stopped.",
+        )
+        for sentence in valid_mechanical_sentences:
+            with self.subTest(valid_mechanical_sentence=sentence):
+                self.assertEqual((), _watchdog_authority_violations(sentence))
 
     def test_watchdog_omits_coordination_registry_work_under_none(self) -> None:
         """Branch registry reads, ownership evaluation, and alerts inside the watchdog body."""
@@ -195,6 +264,10 @@ class StartingLifecycleContractTests(unittest.TestCase):
             cls.coordination,
             "Starting And Work-Item Thread Ownership",
         )
+        cls.provider_dispatch_section = _markdown_section(
+            cls.provider,
+            "Dispatch Workflow",
+        )
         cls.blocked_handoff_section = _markdown_section(
             cls.provider,
             "Blocked Handoff And Resumption",
@@ -224,6 +297,14 @@ class StartingLifecycleContractTests(unittest.TestCase):
             "Never retry Thread creation after an ambiguous response.",
             self.reconciliation_section,
         )
+        self.assertIn(
+            "Ready -> Starting is the parent Dev Backlog Coordinator's dispatch and capacity-reservation decision.",
+            self.provider_dispatch_section,
+        )
+        self.assertIn(
+            "Starting counts against capacity exactly like Running",
+            self.provider_dispatch_section,
+        )
 
     def test_start_acceptance_and_recovery_preserve_ownership_evidence(self) -> None:
         required = (
@@ -241,6 +322,14 @@ class StartingLifecycleContractTests(unittest.TestCase):
         self.assertIn(
             "After the work-item Thread's root Dev Orchestrator Agent accepts ownership, it uses its Dev Backlog Steward child for the atomic Starting -> Running transition.",
             self.ownership_section,
+        )
+        self.assertIn(
+            "Starting -> Running is owned by the root Dev Orchestrator after it accepts the item.",
+            self.provider_dispatch_section,
+        )
+        self.assertIn(
+            "Only after the work-item Thread's root Dev Orchestrator Agent accepts ownership",
+            self.blocked_handoff_section,
         )
 
     def test_runtime_terms_remain_distinct(self) -> None:
@@ -262,34 +351,59 @@ class StartingLifecycleContractTests(unittest.TestCase):
                 self.assertNotIn(retired_contradiction, self.ownership_section)
 
     def test_retired_capacity_and_startup_shortcuts_stay_absent(self) -> None:
-        for retired_contradiction in (
-            "Count Work items whose file-backed Status is Running.",
-            "When an item leaves Running, fill the active-capacity vacancy",
-            "recount Running capacity",
-            "ten are Running",
-        ):
-            with self.subTest(retired_contradiction=retired_contradiction):
-                self.assertNotIn(retired_contradiction, self.queue_section)
+        self.assertEqual(
+            (),
+            _present_retired_clauses(self.queue_section, _RETIRED_QUEUE_CLAUSES),
+        )
 
         lifecycle_sections = "\n".join(
-            (self.queue_section, self.ownership_section, self.blocked_handoff_section)
+            (
+                self.queue_section,
+                self.ownership_section,
+                self.provider_dispatch_section,
+                self.blocked_handoff_section,
+            )
         )
-        for retired_contradiction in (
-            "Ready -> Running",
-            "Blocked -> Running",
-            "Blocked/Ready -> Running",
-            "Blocked or Ready -> Running",
-        ):
-            with self.subTest(retired_contradiction=retired_contradiction):
-                self.assertNotIn(retired_contradiction, lifecycle_sections)
+        self.assertEqual(
+            (),
+            _present_retired_clauses(
+                lifecycle_sections,
+                _RETIRED_PROVIDER_SHORTCUT_CLAUSES,
+            ),
+        )
+        self.assertEqual(
+            (),
+            _present_retired_clauses(
+                self.reconciliation_section,
+                _RETIRED_RECONCILIATION_CLAUSES,
+            ),
+        )
 
-        for retired_contradiction in (
-            "Retry Thread creation after an ambiguous response.",
-            "Retry Task creation after ambiguous startup.",
-            "Create another Thread after ambiguous startup.",
-        ):
-            with self.subTest(retired_contradiction=retired_contradiction):
-                self.assertNotIn(retired_contradiction, self.reconciliation_section)
+    def test_exact_retired_clause_guards_are_mutation_sensitive(self) -> None:
+        section_cases = (
+            ("queue", self.queue_section, _RETIRED_QUEUE_CLAUSES),
+            (
+                "reconciliation",
+                self.reconciliation_section,
+                _RETIRED_RECONCILIATION_CLAUSES,
+            ),
+            (
+                "provider",
+                "\n".join(
+                    (self.provider_dispatch_section, self.blocked_handoff_section)
+                ),
+                _RETIRED_PROVIDER_SHORTCUT_CLAUSES,
+            ),
+        )
+        for section_name, section, clauses in section_cases:
+            for clause in clauses:
+                with self.subTest(section=section_name, retired_clause=clause):
+                    mutated = f"{section}\n{clause}"
+                    with self.assertRaises(AssertionError):
+                        self.assertEqual(
+                            (),
+                            _present_retired_clauses(mutated, clauses),
+                        )
 
     def test_watchdog_reports_mechanical_task_and_coordination_mismatches(self) -> None:
         required = (
