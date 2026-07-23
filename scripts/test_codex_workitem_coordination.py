@@ -157,6 +157,7 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
             "observed evidence",
             "why attention is required now",
             "smallest recommended parent action",
+            "a Starting-plus-Running vacancy with eligible Ready work",
             "without messaging or interrupting the parent",
             "this self-report is its only task-state exception",
             "The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, Commit-application, Persistence-closure, integration, and cleanup decision",
