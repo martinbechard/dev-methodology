@@ -1,12 +1,12 @@
 # Add Starting Lifecycle And Resource Deadline Policies
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/add-starting-lifecycle-and-resource-deadline-policies.md
+Provider Reference: backlog/completed-backlog/features/add-starting-lifecycle-and-resource-deadline-policies.md
 
 Completion: direct-main
 
@@ -27,6 +27,19 @@ Completion: direct-main
 - Completion wait attempts: 0.
 - Open issues: None; work must remain within the exact one-path ordinary companion scope.
 - Next owner: Canonical Dev Orchestrator for companion generation, review, verification, integration, and provider completion.
+
+## Completion Evidence — 2026-07-22
+
+- Terminal lifecycle: Completed; archived from backlog/feature-backlog to backlog/completed-backlog/features by the file provider.
+- Completion method: direct-main.
+- Accepted source commit: a450d267d9db53db2e5c67ffd6fe9a58190a67fa atop accepted cumulative commit 1c9c38fd391e96fc567a12a2dd5c6a0d2ede8a42.
+- Integration mapping: cherry-pick onto main tip c06b30e85f2d3dab9cdb0ee8926d15cc95f660a0 from integration base 77db7a719ee1f91aff9e12c7dc8661666e07cdeb.
+- Integration evidence: exact accepted-path content equivalence PASS; integration commit ancestor/main tip PASS.
+- Review evidence: source review PASS; methodology review PASS; UX review PASS; exact one-page companion review PASS.
+- Verification evidence: pre-integration full scripts ran 664 tests with the sole unrelated baseline runtime inventory failure reproduced at 9f48ba6; post-integration validation and generator freshness PASS; focused 134 tests PASS; worktree clean.
+- Integration coordination: claim starting-lifecycle-main-integration-019f8b51 released with event a7804098-6a11-4e46-a66f-2dcf44185170.
+- Residual external limitation: external MCP deadline parity remains UNRESOLVED_EXTERNAL_PROVIDER. This is not a repository delivery failure.
+- Publication: remote publication is not configured or required.
 
 ## Running Dispatch Evidence — 2026-07-22
 
