@@ -96,7 +96,7 @@
             "structured-explanation",
             "agent-claim"
           ],
-          "sha256": "fa3a70451d04e50fd9af8743957295fbd2abc8afe8dd951a8ca7a49d14a71297",
+          "sha256": "6720755efff30d89fdc668ce80cbc5095a9b2d9a67cb866f1075563691296088",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -411,7 +411,7 @@
             "agent-claim",
             "codex-harness-directives"
           ],
-          "sha256": "72d428ea9979431262529676b55f15661accc73ba3fe38ae992ad340a339acc6",
+          "sha256": "2191330dfcd05a54cc90c6b841e105efb27b17760697c2cfd5df875a58a4c60b",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -739,7 +739,7 @@
             "structured-explanation",
             "agent-claim"
           ],
-          "sha256": "ddf9f108419f45f8952fb54deb72c11a2b9151ae7abc61ea9f8829656e99286c",
+          "sha256": "396d5fb59455b3cb2691d4d1634e7dc8497f55aa97d310cb3f472ac50d5c7684",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -1045,7 +1045,7 @@
             "structured-explanation",
             "agent-claim"
           ],
-          "sha256": "6ecf41b67b95ffca3665546975d207699f47c4213c23abbfa447599542a29d37",
+          "sha256": "62781a972be782ac29cd82c259f45af1065b68011a4c0f8ca2e99d70f86f86f9",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {

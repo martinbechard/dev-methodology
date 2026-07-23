@@ -237,7 +237,7 @@ The complete-work-item-feature-branch skill owns these stages:
 2. Publish the intended feature branch.
 3. Create or update the hosting-provider delivery record using provider-accurate terminology and tools: pull request for GitHub and merge request for GitLab.
 4. Verify the published base, head, commit, title, body, readiness, checks, and dependency order.
-5. Record AWAITING_REVIEW while any required review, check, approval, or configured merge remains incomplete.
+5. Return AWAITING_REVIEW while any required review, check, approval, or configured merge remains incomplete. Dev Orchestrator asks Dev Backlog Steward exactly once to record that nonterminal lifecycle state for a selected provider and reconciles repeated observations without a duplicate update.
 6. Resume the same work item and branch for accepted corrections, then repeat affected verification and publication checks.
 7. Observe required review approval, required checks, and the configured merge on the hosting service and in Git.
 8. Observe the merged commit as reachable from the configured main branch.
@@ -250,6 +250,7 @@ Branch publication, a ready review, an approved review, green checks, a closed d
 - A failed publish, review, check, integration, or main observation prevents completion disposition READY and lifecycle COMPLETED.
 - After completion disposition READY has been returned, a provider terminal-update failure preserves READY as the successful delivery handoff but prohibits lifecycle COMPLETED. The provider-backed item remains lifecycle RUNNING or becomes BLOCKED until reconciliation applies the pending update. A retry does not rerun or invalidate already accepted delivery evidence unless that evidence has become stale or contradictory.
 - A correctable review finding returns AWAITING_REVIEW to RUNNING on the same item and branch.
+- AWAITING_REVIEW never authorizes lifecycle COMPLETED. Its one nonterminal Persistence update is distinct from the one terminal update authorized only by later Commit READY evidence.
 - A provider terminal-update failure after merge preserves delivery disposition READY and its evidence while the provider lifecycle remains RUNNING or BLOCKED until reconciliation succeeds.
 - A missing merge after successful publication remains AWAITING_REVIEW, not BLOCKED, unless a concrete prerequisite or failure prevents review or merge.
 - A stale or interrupted execution resumes from the provider record, accepted candidate commit, claims, delivery reference, checks, and open issues rather than inferring success from a stopped task.
@@ -312,7 +313,7 @@ Compatibility is transition-bounded:
 
 ## Contract Walkthroughs
 
-Applying the effective Commit skill yields the prepared terminal delivery handoff; it does not dispatch a provider manager. Commit AWAITING_REVIEW preserves the delivery identity without Persistence mutation. Commit READY permits Dev Orchestrator to dispatch Dev Backlog Steward exactly once for Persistence closure and then verify the selected manager's recorded result. Provider none instead returns READY with task-local COMPLETED finalization and no manager dispatch.
+Applying the effective Commit skill yields the prepared delivery handoff; it does not dispatch a provider manager. Commit AWAITING_REVIEW causes Dev Orchestrator to dispatch Dev Backlog Steward exactly once for a nonterminal Persistence update, then preserve the same delivery identity. Repeated observation reconciles that update without duplication. Commit READY permits one distinct steward dispatch for terminal COMPLETED and verification of the selected manager's recorded result. Provider none retains AWAITING_REVIEW task-locally and returns READY with task-local COMPLETED finalization without manager dispatch.
 
 ### File plus direct main
 
@@ -320,7 +321,7 @@ The file create skill records a READY item under backlog on primary main. The fi
 
 ### File plus feature branch
 
-The file provider owns the backlog record while the feature-branch Commit skill owns publication and returns Commit AWAITING_REVIEW with the branch and delivery reference. Dev Orchestrator preserves that delivery identity without Persistence mutation. Accepted corrections resume the same item and branch. After required review, checks, merge, and main observation, the Commit skill returns Commit READY. Dev Orchestrator then dispatches Dev Backlog Steward exactly once for Persistence closure; the file manager records COMPLETED and archives the item, and the orchestrator verifies the result.
+The file provider owns the backlog record while the feature-branch Commit skill owns publication and returns Commit AWAITING_REVIEW with the branch and delivery reference. Dev Orchestrator dispatches Dev Backlog Steward exactly once to persist nonterminal AWAITING_REVIEW, then preserves that delivery identity. Accepted corrections resume the same item and branch without duplicating the recorded update. After required review, checks, merge, and main observation, the Commit skill returns Commit READY. Dev Orchestrator then dispatches Dev Backlog Steward exactly once for the distinct terminal closure; the file manager records COMPLETED and archives the item, and the orchestrator verifies the result.
 
 ### GitHub plus direct main
 
@@ -328,7 +329,7 @@ The GitHub create skill creates one issue and returns its issue URL. The GitHub 
 
 ### GitHub plus feature branch
 
-The GitHub issue remains the work-item identifier. The feature-branch Commit skill publishes a GitHub pull request as the delivery reference and returns Commit AWAITING_REVIEW without Persistence mutation. The same Commit delivery resumes through required review, checks, pull-request merge, and main observation, then returns Commit READY. Dev Orchestrator dispatches Dev Backlog Steward exactly once for Persistence closure and verifies that the GitHub manager closed the issue as COMPLETED.
+The GitHub issue remains the work-item identifier. The feature-branch Commit skill publishes a GitHub pull request as the delivery reference and returns Commit AWAITING_REVIEW. Dev Orchestrator dispatches Dev Backlog Steward exactly once to persist that nonterminal state. The same Commit delivery resumes through required review, checks, pull-request merge, and main observation without duplicating the update, then returns Commit READY. Dev Orchestrator dispatches Dev Backlog Steward exactly once for the distinct terminal COMPLETED update and verifies that the GitHub manager closed the issue.
 
 ### GitLab plus direct main
 
@@ -336,7 +337,7 @@ The GitLab create skill creates one issue and returns its issue URL. The GitLab 
 
 ### GitLab plus feature branch
 
-The GitLab issue remains the work-item identifier. The feature-branch Commit skill publishes a GitLab merge request as the delivery reference and returns Commit AWAITING_REVIEW without Persistence mutation. The same Commit delivery resumes through required review, checks, merge-request merge, and main observation, then returns Commit READY. Dev Orchestrator dispatches Dev Backlog Steward exactly once for Persistence closure and verifies that the GitLab manager closed the issue as COMPLETED.
+The GitLab issue remains the work-item identifier. The feature-branch Commit skill publishes a GitLab merge request as the delivery reference and returns Commit AWAITING_REVIEW. Dev Orchestrator dispatches Dev Backlog Steward exactly once to persist that nonterminal state. The same Commit delivery resumes through required review, checks, merge-request merge, and main observation without duplicating the update, then returns Commit READY. Dev Orchestrator dispatches Dev Backlog Steward exactly once for the distinct terminal COMPLETED update and verifies that the GitLab manager closed the issue.
 
 ### Azure DevOps and Jira placeholders
 

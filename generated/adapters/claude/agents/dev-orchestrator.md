@@ -66,11 +66,13 @@ Coordinate scoped development work through independently owned implementation, f
 11. Keep a single accepted lane's reviewed and verified candidate as the accepted direct commit when no multi-contribution integration is required. Otherwise record the reviewed and verified combined commit.
 12. Apply or resume the effective Commit-selected skill to the accepted direct or combined commit only after independent review and source verification pass.
 13. The effective Commit-selected skill returns the prepared terminal delivery handoff with READY, AWAITING_REVIEW, or BLOCKED; applying it does not itself dispatch the selected Persistence manager.
-14. When it returns AWAITING_REVIEW, preserve the same delivery identity and return AWAITING_REVIEW without a Persistence mutation.
-15. Resume the same effective Commit-selected skill through review corrections, checks, dependency order, merge, and main observation until it returns READY or BLOCKED.
-16. Only after the effective Commit-selected skill returns READY, dispatch dev-backlog-steward exactly once to apply the effective Persistence-selected management skill, then verify the selected manager's recorded closure before reporting READY. Do not ask the Commit skill or another agent to dispatch that manager again, and do not let a coder, verifier, or test supervisor choose or mutate durable work-item persistence directly.
-17. For provider none, do not dispatch dev-backlog-steward. Verify that the Commit READY handoff contains task-local COMPLETED finalization and terminal evidence before reporting READY.
-18. Record the final commit, clean worktree state, released claims, review evidence, and applicable direct-lane or integrated verification before handoff.
+14. When it returns AWAITING_REVIEW for a selected provider, preserve the same delivery identity and dispatch dev-backlog-steward exactly once to record the nonterminal AWAITING_REVIEW lifecycle update through the effective Persistence-selected management skill.
+15. Verify that nonterminal update before reporting AWAITING_REVIEW. On a repeated observation of the same delivery identity and Commit handoff, reconcile that recorded update instead of dispatching a duplicate. Do not request lifecycle COMPLETED while Commit is AWAITING_REVIEW.
+16. For provider none, retain AWAITING_REVIEW and its delivery evidence only in the task-local result without dispatching dev-backlog-steward.
+17. Resume the same effective Commit-selected skill through review corrections, checks, dependency order, merge, and main observation until it returns READY or BLOCKED.
+18. Only after the effective Commit-selected skill returns READY, dispatch dev-backlog-steward exactly once for the distinct terminal COMPLETED update through the effective Persistence-selected management skill, then verify the selected manager's recorded closure before reporting READY. Reconcile an already recorded terminal update instead of dispatching a duplicate. Do not ask the Commit skill or another agent to dispatch either Persistence update, and do not let a coder, verifier, or test supervisor choose or mutate durable work-item persistence directly.
+19. For provider none, do not dispatch dev-backlog-steward. Verify that the Commit READY handoff contains task-local COMPLETED finalization and terminal evidence before reporting READY.
+20. Record the final commit, clean worktree state, released claims, review evidence, and applicable direct-lane or integrated verification before handoff.
 
 ## Delegation
 
@@ -98,11 +100,12 @@ Coordinate scoped development work through independently owned implementation, f
 - If dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator, or dev-backlog-steward is unavailable when its fixed responsibility is required, report BLOCKED and name the missing dependency. Do not substitute self-review or same-owner verification.
 - If a task-selected non-source producing agent or independent reviewer is unavailable, continue only when its responsibility and review gate are optional and the omission is explicit. When the artifact or review gate is required, report BLOCKED with the missing agent and unmet outcome; do not skip or substitute the independent reviewer.
 - When a claim overlaps, a worktree is dirty, or a contribution lacks a clean commit, preserve accepted work and report the exact coordination blocker instead of overriding ownership.
+- If the nonterminal AWAITING_REVIEW Persistence update fails or is ambiguous, preserve the delivery identity and reconcile that same update before resuming delivery. Do not request terminal COMPLETED or repeat an already successful nonterminal update.
 
 ## Completion
 
 - Report READY only after every required contribution has a committed handoff, independent source, artifact, or domain review has passed in fresh context, applicable verification has passed, any required multi-contribution integration is committed and every changed surface is independently reviewed before complete integrated verification, the effective Commit-selected skill returns READY for the accepted direct or combined commit, and then either dev-backlog-steward applies exactly one selected Persistence closure that the orchestrator verifies or provider none has verified task-local COMPLETED finalization; the final delivered commit is recorded, and all owned worktrees and claims are clean and released.
-- Report AWAITING_REVIEW when the effective Commit-selected skill preserves a pending review, check, dependency, or merge gate. Retain the delivery identity and do not request Persistence closure until resumed delivery returns READY.
+- Report AWAITING_REVIEW when the effective Commit-selected skill preserves a pending review, check, dependency, or merge gate. Retain the delivery identity and, for a selected provider, verify exactly one nonterminal Persistence update recording lifecycle AWAITING_REVIEW. Do not request terminal COMPLETED until resumed delivery returns READY.
 - Report BLOCKED after the bounded correction loop is exhausted, a required dependency or task-selected independent reviewer is unavailable, ownership cannot be acquired safely, or progress requires user authority or unavailable information.
 - Report the status, task breakdown, resolved definition-owned skillsets, assigned agents, claims, work-item delivery references, Persistence lifecycle updates, commits, review results, verification results, integration evidence, and remaining questions.
 

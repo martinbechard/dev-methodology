@@ -1691,9 +1691,11 @@ class BundleContentTests(unittest.TestCase):
         for phrase in (
             "Apply or resume the effective Commit-selected skill to the accepted direct or combined commit only after independent review and source verification pass.",
             "The effective Commit-selected skill returns the prepared terminal delivery handoff",
-            "When it returns AWAITING_REVIEW, preserve the same delivery identity and return AWAITING_REVIEW without a Persistence mutation.",
+            "dispatch dev-backlog-steward exactly once to record the nonterminal AWAITING_REVIEW lifecycle update",
+            "reconcile that recorded update instead of dispatching a duplicate",
+            "Do not request lifecycle COMPLETED while Commit is AWAITING_REVIEW",
             "Resume the same effective Commit-selected skill through review corrections, checks, dependency order, merge, and main observation until it returns READY or BLOCKED.",
-            "Only after the effective Commit-selected skill returns READY, dispatch dev-backlog-steward exactly once",
+            "dispatch dev-backlog-steward exactly once for the distinct terminal COMPLETED update",
             "verify the selected manager's recorded closure before reporting READY",
             "For provider none, do not dispatch dev-backlog-steward",
         ):
@@ -1707,7 +1709,7 @@ class BundleContentTests(unittest.TestCase):
             "Apply or resume the effective Commit-selected skill to the accepted direct or combined commit"
         )
         persistence_index = workflow_text.index(
-            "Only after the effective Commit-selected skill returns READY, dispatch dev-backlog-steward exactly once"
+            "dispatch dev-backlog-steward exactly once to record the nonterminal AWAITING_REVIEW lifecycle update"
         )
         self.assertLess(candidate_index, review_index)
         self.assertLess(review_index, commit_index)
@@ -6351,9 +6353,9 @@ class BundleContentTests(unittest.TestCase):
             "exact shared integration paths",
             "Feature-branch delivery",
             "GitHub pull request or GitLab merge request",
-            "Commit AWAITING_REVIEW without Persistence mutation",
+            "Commit AWAITING_REVIEW with one durable nonterminal Persistence update",
             "until Commit READY",
-            "dispatch Dev Backlog Steward exactly once for Persistence closure",
+            "dispatch Dev Backlog Steward exactly once for the distinct terminal Persistence closure",
             "Conditional integration role",
             "nested Merge Coordinator",
             "inside the same work item",

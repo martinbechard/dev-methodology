@@ -1,12 +1,23 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
-"""Focused contract tests for the backlog coordination watchdog guidance."""
+# AI attribution: Modified with AI assistance.
+"""Focused contract tests for Codex work-item coordination guidance."""
 
+import json
 from pathlib import Path
 import unittest
+
+import yaml
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SKILL_PATH = REPOSITORY_ROOT / "skills" / "codex-workitem-coordination" / "SKILL.md"
+ROLE_PATH = (
+    REPOSITORY_ROOT
+    / "agents"
+    / "roles"
+    / "dev-activities"
+    / "dev-orchestrator.role.yaml"
+)
 
 
 class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
@@ -62,6 +73,39 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
             with self.subTest(clause=clause):
                 self.assertIn(clause, self.watchdog_section)
 
+
+class AwaitingReviewPersistenceContractTests(unittest.TestCase):
+    """Keep nonterminal and terminal Persistence updates distinct and idempotent."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.skill_text = SKILL_PATH.read_text(encoding="utf-8")
+        cls.role_text = json.dumps(
+            yaml.safe_load(ROLE_PATH.read_text(encoding="utf-8")),
+            sort_keys=True,
+        )
+
+    def test_coordination_records_awaiting_review_once_before_terminal_closure(self) -> None:
+        required = (
+            "ask Dev Backlog Steward exactly once to record the nonterminal lifecycle AWAITING_REVIEW",
+            "reconcile the existing update instead of dispatching a duplicate",
+            "Never request lifecycle COMPLETED from an AWAITING_REVIEW handoff",
+            "ask Dev Backlog Steward exactly once for the distinct terminal lifecycle COMPLETED update",
+        )
+        for clause in required:
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.skill_text)
+
+    def test_orchestrator_routes_the_same_two_phase_persistence_sequence(self) -> None:
+        required = (
+            "dispatch dev-backlog-steward exactly once to record the nonterminal AWAITING_REVIEW lifecycle update",
+            "reconcile that recorded update instead of dispatching a duplicate",
+            "Do not request lifecycle COMPLETED while Commit is AWAITING_REVIEW",
+            "dispatch dev-backlog-steward exactly once for the distinct terminal COMPLETED update",
+        )
+        for clause in required:
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.role_text)
 
 if __name__ == "__main__":
     unittest.main()
