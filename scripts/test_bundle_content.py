@@ -651,7 +651,7 @@ DOCUMENT_INFORMATION_OWNERS = {
     "orchestrated-development-lifecycle.html": (
         "Start With The Backlog",
         "The File-Backed Backlog",
-        "Agents And Handoffs",
+        "Agents",
         "Private Branches And Worktrees",
         "Coordinating Shared Resources",
         "Review, Verification, And Delivery",
@@ -3431,7 +3431,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("ordered project_skill_extensions list", readme_text)
         self.assertIn("final root-only section", readme_text)
         self.assertIn(
-            "Treat a missing conceptual agent definition, selected skill, adapter, or command as BLOCKED",
+            "Treat missing MCP deadline parity, a missing conceptual agent definition, selected skill, adapter, or command as BLOCKED",
             skill_text,
         )
         self.assertIn("agent-claim", skill_text)
@@ -3634,8 +3634,8 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue(skill_path.is_file())
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
 
-    def test_dev_backlog_steward_requires_claimed_blocked_work_resumption(self) -> None:
-        """The suite makes claim-backed resumption and lossless failure observable."""
+    def test_dev_backlog_steward_requires_starting_blocked_work_resumption(self) -> None:
+        """The suite makes staged resumption and lossless failure observable."""
         suite_root = AGENT_TEST_SUITES_ROOT / "dev-backlog-steward"
         manage_file_text = (
             SKILLS_ROOT / "manage-file-work-items" / "SKILL.md"
@@ -3651,9 +3651,10 @@ class BundleContentTests(unittest.TestCase):
             "## Blocked Handoff And Resumption",
             "replace the prior owner with Owner: Unowned",
             "clear any enabled coordination reference",
-            "Set the item to Ready",
-            "only after successful acquisition",
-            "Restore the byte-for-byte pre-attempt Blocked item",
+            "restore Status: Ready with Owner: Unowned",
+            "Dev Backlog Steward child atomically records Ready -> Starting reservation and dispatch evidence",
+            "Only after the work-item Thread's root Dev Orchestrator Agent accepts ownership",
+            "restore the byte-for-byte pre-attempt Blocked item",
         ):
             with self.subTest(manage_file_contract=required_phrase):
                 self.assertIn(required_phrase, manage_file_text)
@@ -5363,10 +5364,10 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(required_contract, create_text)
 
         for required_contract in (
-            "record Status: Running and ownership evidence",
-            "release immediately",
-            "Delivery then obtains separate implementation ownership without backlog scope",
-            "obtain later backlog ownership to record result evidence and archive the item",
+            "commit Ready -> Starting with reservation evidence, then releases immediately",
+            "commit Starting -> Running with the canonical Thread identifier, canonical task id, branch, worktree, and claim evidence, then releases immediately",
+            "Delivery obtains separate implementation ownership without backlog scope",
+            "atomic terminal provider transaction that records result evidence, sets Completed, moves the archive, commits, and releases",
             "SHARED_CHECKOUT_RELEASE_REQUIRED is a coordination outcome rather than a failed mutation",
             "suspend without polling",
             "Resume only after that notification",
@@ -5524,7 +5525,7 @@ class BundleContentTests(unittest.TestCase):
 
         for required_contract in (
             "temporary shared-mutation protection",
-            "Designate this fresh branch as the task integration and cleanup branch",
+            "Designate this fresh branch as the Work-item integration and cleanup branch",
             "Do not import cumulative branch ancestry merely to preserve provenance",
             "When resource coordination selects agent-claim, keep administrative coordination-registry cleanup, Git integration, and terminal backlog completion as three distinct operations",
             "When none is selected, omit coordination-registry cleanup and coordination evidence.",
@@ -5532,8 +5533,8 @@ class BundleContentTests(unittest.TestCase):
             "The bundled portable claim command has no reset operation",
             "If a supported atomic operation is unavailable, stop and route the reset",
             "Claim release does not audit commit history or interpret merge ancestry",
-            "fresh task integration branch is fully merged",
-            "prior candidate branch used only as a non-ancestral content source is not the task cleanup branch",
+            "fresh Work-item integration branch is fully merged",
+            "prior candidate branch used only as a non-ancestral content source is not the Work-item cleanup branch",
         ):
             with self.subTest(coordination_contract=required_contract):
                 self.assertIn(required_contract, coordination_text)
@@ -5549,7 +5550,7 @@ class BundleContentTests(unittest.TestCase):
             "manual registry editing is forbidden",
             "route the operation to an administrator",
             "Registry cleanup, Git integration, and backlog closeout are distinct operations",
-            "this becomes the task integration and cleanup branch",
+            "this becomes the work-item Thread's integration and cleanup branch",
             "older candidate branch retained only as a non-ancestral content source is handled separately",
         ):
             with self.subTest(design_contract=required_contract):
