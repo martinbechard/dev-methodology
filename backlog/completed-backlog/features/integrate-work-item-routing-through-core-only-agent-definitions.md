@@ -1,6 +1,6 @@
 # Integrate Work-Item Routing Through Core-Only Agent Definitions
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -27,21 +27,21 @@ Completion: direct-main
 
 ## Current Execution / Ownership
 
-- Owner: Root Dev Orchestrator.
+- Owner: Completed.
 - Canonical task: 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
-- Claim: None.
+- Claim: complete-core-only-routing-019f8b4c, completion transition only.
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology, clean.
-- Branch: codex/integrate-work-item-routing-core-only-019f8b4c at 14adbbfa70bb6640e90c8ec68b177557add29d48.
+- Branch: codex/integrate-work-item-routing-core-only-019f8b4c, integrated on main.
 - Starting main: 83135ebc590c2c244cf42283ae3f760521c55ed0.
-- Phase: exact governed pre-mutation check, bounded correction, review, verification, integration, and provider completion.
-- Lifecycle transition: User Action Required -> Ready -> Running under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163 and the same root Dev Orchestrator after approval resolution and successful serialized backlog claim acquisition.
-- Accepted candidate: 14adbbfa70bb6640e90c8ec68b177557add29d48, pending correction.
+- Phase: completed and archived after integration, post-integration correction, final reviews, and verification.
+- Lifecycle transition: Running -> Completed after the direct-main delivery evidence below.
+- Accepted source candidate: c67e0687a0fa37e4e1203678626f9eacb0566f3b, with later same-branch corrections represented in the integrated delivery.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: None; implementation must remain within the exact GitLab manager governed scope.
-- Next owner: Root Dev Orchestrator for the bounded correction, review, verification, integration, and provider completion lifecycle.
+- Open issues: None.
+- Next owner: None; terminal completed record.
 
 ## Resumption Evidence — 2026-07-22
 
@@ -49,6 +49,19 @@ Completion: direct-main
 - Prior claim attempt: resume-core-only-work-item-routing-019f8b4c returned CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, event 85cd9175-dfc1-460a-bf5a-fe828b0af090; it made no mutation.
 - Fresh backlog claim: resume-core-only-work-item-routing-019f8b4c-2, acquired event ba5ae47a-ff1b-43e9-b7e4-6aa66e67ca37 from primary main.
 - The exact prior approval remains authoritative.
+
+## Completion Evidence — 2026-07-23
+
+- Integration commit: 155308385d1a08666281f2fc296a11cf09c27b6f.
+- Post-integration correction and current clean main: c43ecbebdaaabf27bbadcc69d8dcfd0e0829321f.
+- Reachability: c67e0687a0fa37e4e1203678626f9eacb0566f3b and 155308385d1a08666281f2fc296a11cf09c27b6f are ancestors of current main c43ecbebdaaabf27bbadcc69d8dcfd0e0829321f.
+- Fresh final code and methodology reviews: approved.
+- Pre-integration verifier: PASS_WITH_BASELINE_WARNINGS: 27 focused checks, 17 wiki checks, source/generator checks, and 16 adapters passed; nine full-suite baseline or excluded warnings remain explicit.
+- Merge checks: 114 bundle checks, 66 focused checks, 10 simulator checks, and 28 post-fast-forward checks passed.
+- Final verifier: PASS, 39/39, plus freshness and conflict scan.
+- Integration claim: acquired event f3f3861d-c870-445f-a729-2641391312e3; released event 878688af-0091-47b6-b0d4-6f36fdecc48b.
+- Excluded warning: the evaluation digest/catalog warning remains explicitly excluded from this delivery evidence.
+- All prior approval and pre-mutation-check history remains retained below.
 
 ## GitLab Terminal-Reconciliation Approval Gate — 2026-07-23
 
