@@ -63,7 +63,7 @@ _WATCHDOG_AUTHORITY_PATTERNS = (
         re.compile(
             r"\b(?:mutat(?:e|es|ed|ing)|chang(?:e|es|ed|ing))\b"
             r"[^.!?\n]{0,160}?\b(?:backlog(?: lifecycle)?|claims?|"
-            r"coordination entries?|task state)\b",
+            r"coordination entries?|task state|work-item (?:lifecycle state|status))\b",
             re.IGNORECASE,
         ),
     ),
@@ -182,6 +182,8 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
             "The watchdog mutates backlog lifecycle after observing a transition.",
             "The watchdog changes claims and coordination entries during cleanup.",
             "The watchdog mutates task state when a deadline expires.",
+            "The watchdog changes work-item lifecycle state.",
+            "The watchdog mutates work-item status.",
             "The watchdog must not infer integration readiness but decides accepted delivery.",
         )
         for sentence in prohibited_sentences:
