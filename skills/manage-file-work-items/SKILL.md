@@ -69,7 +69,7 @@ Use explicit provider lifecycle states and never infer success from silence:
 - FAILED: delivery ended without satisfying completion and terminal failure evidence is recorded.
 - ABANDONED: authorized direction ends the work without delivery.
 
-READY as a completion disposition is not lifecycle READY. A RUNNING item remains RUNNING until manage-file-work-items records terminal evidence and lifecycle COMPLETED. A provider terminal-update failure after delivery disposition READY preserves the accepted delivery evidence but leaves lifecycle RUNNING or BLOCKED until reconciliation applies the pending update.
+READY as a completion disposition is not lifecycle READY. A file item remains in its current nonterminal lifecycle until manage-file-work-items records an authorized transition. Once AWAITING_REVIEW is recorded for a feature-branch delivery, the same delivery identity remains lifecycle AWAITING_REVIEW through review corrections and merge preparation. A provider terminal-update failure after delivery disposition READY preserves the accepted delivery evidence but leaves the current nonterminal lifecycle unchanged or records BLOCKED until reconciliation applies the pending update.
 
 Missing result evidence, missing logs, a stopped process, a commit, branch publication, or absence of errors is never completion.
 
@@ -153,7 +153,7 @@ Only record COMPLETED when all of these exist:
 - Delivery and integration claims are released.
 - Provider terminal evidence is ready to commit under a new short backlog claim.
 
-For feature-branch completion, publication alone records AWAITING_REVIEW. Only required review, checks, merge, and main observation permit COMPLETED. A correctable review finding returns the same item and branch to RUNNING.
+For feature-branch completion, publication alone records AWAITING_REVIEW. During same-delivery review corrections, the same delivery identity remains lifecycle AWAITING_REVIEW. Do not change lifecycle back to RUNNING for same-delivery corrections. Only a later Commit READY permits the distinct terminal COMPLETED update. That terminal update also requires the accepted review, checks, merge, and main-observation evidence.
 
 Archive movement is explicit and serialized:
 
