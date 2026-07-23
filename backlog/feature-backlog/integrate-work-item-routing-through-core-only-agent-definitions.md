@@ -1,6 +1,6 @@
 # Integrate Work-Item Routing Through Core-Only Agent Definitions
 
-Status: User Action Required
+Status: Running
 
 Type: Feature
 
@@ -16,8 +16,8 @@ Completion: direct-main
 - Previous worktree: /Users/martinbechard/.codex/worktrees/2c00/dev-methodology.
 - Previous branch: codex/integrate-work-item-contracts-across-bundle.
 - Previous starting main commit: 2ddedf5a83ca8567ac3de93867a3f90624a2e28c.
-- Owner: User Action Required.
-- Claim: route-core-only-awaiting-review-019f8b4c, lifecycle transition only.
+- Owner: Unowned.
+- Claim: None.
 - Phase: Blocked after approval resolution because the accepted core-only routing design depends on simplify-project-configuration-setup-and-skill-routing.
 - User approval: On 2026-07-21, in parent task 019f77f4-c4bd-7c91-b197-c987a7beb838, the user directed: "I approve the items in holding". The prior exact codex-workitem-coordination approval remains recorded below.
 - Unblock condition: backlog/feature-backlog/simplify-project-configuration-setup-and-skill-routing.md is integrated, verified, and archived as Completed on main.
@@ -33,15 +33,15 @@ Completion: direct-main
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology, clean.
 - Branch: codex/integrate-work-item-routing-core-only-019f8b4c at 3c495eb05d1aa6ccb8851d484f732c2cc45a7ba3.
 - Starting main: 83135ebc590c2c244cf42283ae3f760521c55ed0.
-- Phase: User Action Required for the exact Commit AWAITING_REVIEW persistence approval.
-- Lifecycle transition: Running -> User Action Required pending an exact governed-definition approval under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
-- Accepted candidate: 3c495eb05d1aa6ccb8851d484f732c2cc45a7ba3, clean and preserved unchanged pending the user decision.
+- Phase: exact pre-mutation checks, approved workflow correction, supported regeneration, fresh review, and verification.
+- Lifecycle transition: User Action Required -> Ready -> Running under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163 after approval resolution and successful serialized backlog claim acquisition.
+- Accepted candidate: 3c495eb05d1aa6ccb8851d484f732c2cc45a7ba3, pending correction.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: User approval is required before changing the exact Commit AWAITING_REVIEW persistence orchestration scope below.
-- Next owner: User, then the canonical Dev Orchestrator after an approved resolution.
+- Open issues: None; implementation must remain within the exact two-path goal scope.
+- Next owner: Canonical Dev Orchestrator for the approved workflow correction and verification lifecycle.
 
 ## Resumption Evidence — 2026-07-22
 
@@ -66,12 +66,23 @@ This changes one conceptual role definition and one distributed coordination ski
 
 ### Resolution
 
-- Status: Pending.
-- Pending user answer. The item transitioned from Running to User Action Required on 2026-07-23 under canonical task 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
+- Date: 2026-07-22.
+- Answer: Approved.
+- User wording: "there are coding details I don't need to approve, but I approve the goal."
+- Provenance: direct response in parent coordinator thread 019f8b00-e6d7-7841-854a-40a50ca4e7f2, followed by the user's quote of the exact Commit AWAITING_REVIEW persistence approval question.
+- Approved governed scope: exactly agents/roles/dev-activities/dev-orchestrator.role.yaml and skills/codex-workitem-coordination/SKILL.md.
+- Approved dependent scope: only their supported generated mirrors and directly related tests and documentation.
+- Approved goal: Commit AWAITING_REVIEW triggers one nonterminal Persistence update recording durable AWAITING_REVIEW while terminal COMPLETED occurs exactly once only after Commit READY.
+- Exclusion: unrelated coding details, any other governed definition, and the separate lifecycle evaluation-catalog path are not approved.
+- Disposition: User Action Required -> Ready -> Running under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
 
 ### Unattended Work Boundary
 
-Do not mutate agents/roles/dev-activities/dev-orchestrator.role.yaml, skills/codex-workitem-coordination/SKILL.md, their generated mirrors, tests, documentation, or any other governed definition until the user answers the exact question. Do not dispatch Persistence from Commit. Preserve candidate 3c495eb05d1aa6ccb8851d484f732c2cc45a7ba3 unchanged. No other governed scope is authorized.
+Mutate only agents/roles/dev-activities/dev-orchestrator.role.yaml and skills/codex-workitem-coordination/SKILL.md, their supported generated mirrors, and directly related tests and documentation. Do not widen any other scope or the separate lifecycle evaluation-catalog path. Preserve candidate evidence until the approved correction and verification supersede it.
+
+### Handoff Evidence
+
+- Approval-resolution claim: approve-core-only-awaiting-review-019f8b4c, acquired event 2abcdd26-46ee-4066-9794-df8f2682e77b from primary main.
 
 ## Completion Skills Approval Gate
 
