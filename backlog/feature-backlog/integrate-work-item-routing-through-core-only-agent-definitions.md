@@ -1,12 +1,12 @@
 # Integrate Work-Item Routing Through Core-Only Agent Definitions
 
-Status: User Action Required
+Status: Running
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/integrate-work-item-routing-through-core-only-agent-definitions.md
+Provider Reference: backlog/feature-backlog/integrate-work-item-routing-through-core-only-agent-definitions.md
 
 Completion: direct-main
 
@@ -33,15 +33,15 @@ Completion: direct-main
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology, clean.
 - Branch: codex/integrate-work-item-routing-core-only-019f8b4c at 8a5cce44.
 - Starting main: 83135ebc590c2c244cf42283ae3f760521c55ed0.
-- Phase: exact two-path completion-skill approval gate.
-- Lifecycle transition: Blocked -> Ready after dependency reconciliation -> Running after fresh canonical task assignment and successful serialized backlog claim acquisition.
-- Accepted candidate: 8a5cce44, clean and unintegrated.
+- Phase: exact two-path pre-mutation checks, correction, supported regeneration, fresh re-review, and verification.
+- Lifecycle transition: User Action Required -> Ready -> Running under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163 after approval resolution and successful serialized backlog claim acquisition.
+- Accepted candidate: 8a5cce44, pending correction.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: Approval is required for the two completion skills before mutation, re-review, or acceptance.
-- Next owner: Unowned pending user approval resolution.
+- Open issues: None; implementation must remain within the exact two-path approval scope.
+- Next owner: Canonical Dev Orchestrator for the approved correction and verification lifecycle.
 
 ## Resumption Evidence — 2026-07-22
 
@@ -67,15 +67,23 @@ Repository policy requires exact scope-specific approval before these two govern
 
 ### Resolution
 
-Pending.
+- Date: 2026-07-22.
+- Answer: Approved.
+- User wording: "approved to proceed".
+- Provenance: direct response in parent coordinator thread 019f8b00-e6d7-7841-854a-40a50ca4e7f2 to the separately stated completion-skills approval question.
+- Approved governed skill scope: exactly skills/complete-work-item-direct-main/SKILL.md and skills/complete-work-item-feature-branch/SKILL.md.
+- Approved dependent scope: only their supported generated mirrors and directly related tests and documentation.
+- Exclusion: no other governed definition is approved.
+- Disposition: User Action Required -> Ready -> Running under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
 
 ### Unattended Work Boundary
 
-Do not mutate either completion-skill path or widen any other governed scope until the parent records the user answer and sends approval resolution. Preserve all prior approvals and evidence.
+Mutate only the approved completion-skill paths, their supported generated mirrors, and directly related tests and documentation. Do not widen any other governed scope. Preserve every prior approval and evidence.
 
 ### Handoff Evidence
 
 - Backlog handoff claim: route-core-only-completion-skills-019f8b4c, acquired event 08400cca-910f-4dab-a177-ef07efcfbcc7 from primary main.
+- Approval-resolution claim: approve-core-only-completion-skills-019f8b4c, acquired event 118edd20-35a1-4979-b404-20fe256dd24f from primary main.
 
 ## Dev Backlog Coordinator Role Approval Gate
 
