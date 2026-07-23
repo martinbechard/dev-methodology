@@ -1,6 +1,6 @@
 # Integrate Work-Item Routing Through Core-Only Agent Definitions
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -16,8 +16,8 @@ Completion: direct-main
 - Previous worktree: /Users/martinbechard/.codex/worktrees/2c00/dev-methodology.
 - Previous branch: codex/integrate-work-item-contracts-across-bundle.
 - Previous starting main commit: 2ddedf5a83ca8567ac3de93867a3f90624a2e28c.
-- Owner: Unowned.
-- Claim: None.
+- Owner: User Action Required.
+- Claim: route-core-only-awaiting-review-019f8b4c, lifecycle transition only.
 - Phase: Blocked after approval resolution because the accepted core-only routing design depends on simplify-project-configuration-setup-and-skill-routing.
 - User approval: On 2026-07-21, in parent task 019f77f4-c4bd-7c91-b197-c987a7beb838, the user directed: "I approve the items in holding". The prior exact codex-workitem-coordination approval remains recorded below.
 - Unblock condition: backlog/feature-backlog/simplify-project-configuration-setup-and-skill-routing.md is integrated, verified, and archived as Completed on main.
@@ -31,17 +31,17 @@ Completion: direct-main
 - Canonical task: 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
 - Claim: None.
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology, clean.
-- Branch: codex/integrate-work-item-routing-core-only-019f8b4c at 8a5cce44.
+- Branch: codex/integrate-work-item-routing-core-only-019f8b4c at 3c495eb05d1aa6ccb8851d484f732c2cc45a7ba3.
 - Starting main: 83135ebc590c2c244cf42283ae3f760521c55ed0.
-- Phase: exact two-path pre-mutation checks, correction, supported regeneration, fresh re-review, and verification.
-- Lifecycle transition: User Action Required -> Ready -> Running under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163 after approval resolution and successful serialized backlog claim acquisition.
-- Accepted candidate: 8a5cce44, pending correction.
+- Phase: User Action Required for the exact Commit AWAITING_REVIEW persistence approval.
+- Lifecycle transition: Running -> User Action Required pending an exact governed-definition approval under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
+- Accepted candidate: 3c495eb05d1aa6ccb8851d484f732c2cc45a7ba3, clean and preserved unchanged pending the user decision.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: None; implementation must remain within the exact two-path approval scope.
-- Next owner: Canonical Dev Orchestrator for the approved correction and verification lifecycle.
+- Open issues: User approval is required before changing the exact Commit AWAITING_REVIEW persistence orchestration scope below.
+- Next owner: User, then the canonical Dev Orchestrator after an approved resolution.
 
 ## Resumption Evidence — 2026-07-22
 
@@ -49,6 +49,29 @@ Completion: direct-main
 - Prior claim attempt: resume-core-only-work-item-routing-019f8b4c returned CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, event 85cd9175-dfc1-460a-bf5a-fe828b0af090; it made no mutation.
 - Fresh backlog claim: resume-core-only-work-item-routing-019f8b4c-2, acquired event ba5ae47a-ff1b-43e9-b7e4-6aa66e67ca37 from primary main.
 - The exact prior approval remains authoritative.
+
+## Commit AWAITING_REVIEW Persistence Approval Gate — 2026-07-23
+
+### Methodology Finding
+
+Existing manager, provider, and coordinator contracts require durable AWAITING_REVIEW state for inventory and capacity visibility. The current zero-Persistence orchestration leaves provider state Running and unobservable at the nonterminal Commit boundary.
+
+### Question for the User
+
+Do you approve changing exactly agents/roles/dev-activities/dev-orchestrator.role.yaml and skills/codex-workitem-coordination/SKILL.md, with only supported generated mirrors and directly related tests/documentation, so Commit AWAITING_REVIEW triggers one nonterminal Dev Backlog Steward Persistence update that records durable AWAITING_REVIEW, while Commit itself never dispatches Persistence and terminal COMPLETED closure still occurs exactly once only after Commit READY?
+
+### Why User Input Is Required
+
+This changes one conceptual role definition and one distributed coordination skill definition. Repository policy requires explicit scope-specific user approval before either governed definition is mutated.
+
+### Resolution
+
+- Status: Pending.
+- Pending user answer. The item transitioned from Running to User Action Required on 2026-07-23 under canonical task 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
+
+### Unattended Work Boundary
+
+Do not mutate agents/roles/dev-activities/dev-orchestrator.role.yaml, skills/codex-workitem-coordination/SKILL.md, their generated mirrors, tests, documentation, or any other governed definition until the user answers the exact question. Do not dispatch Persistence from Commit. Preserve candidate 3c495eb05d1aa6ccb8851d484f732c2cc45a7ba3 unchanged. No other governed scope is authorized.
 
 ## Completion Skills Approval Gate
 
