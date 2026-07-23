@@ -6150,20 +6150,45 @@ class BundleContentTests(unittest.TestCase):
         lifecycle_text = lifecycle_path.read_text(encoding="utf-8")
 
         ordered_headings = (
-            "Start With The Backlog",
-            "The File-Backed Backlog",
-            "Agents And Handoffs",
-            "Private Branches And Worktrees",
-            "Coordinating Shared Resources",
-            "Review, Verification, And Delivery",
-            "User Decisions Stop Only The Affected Item",
-            "Evidence That Proves Delivery",
-            "Design And Documentation Work Uses The Same Loop",
+            ("backlog-title", "Start With The Backlog"),
+            ("file-provider-title", "The File-Backed Backlog"),
+            ("agents-title", "Agents"),
+            ("private-work-title", "Private Branches And Worktrees"),
+            ("coordination-title", "Coordinating Shared Resources"),
+            ("delivery-title", "Review, Verification, And Delivery"),
+            ("decisions-title", "User Decisions Stop Only The Affected Item"),
+            ("evidence-title", "Evidence That Proves Delivery"),
+            ("design-work-title", "Design And Documentation Work Uses The Same Loop"),
         )
         heading_positions = tuple(
-            lifecycle_text.index(f">{heading}<") for heading in ordered_headings
+            lifecycle_text.index(f'<h2 id="{heading_id}">{heading}</h2>')
+            for heading_id, heading in ordered_headings
         )
         self.assertEqual(tuple(sorted(heading_positions)), heading_positions)
+
+        agents_section = lifecycle_text[
+            lifecycle_text.index('<section class="section" id="agents"') :
+            lifecycle_text.index('<section class="section" id="private-work"')
+        ]
+        delivery_section = lifecycle_text[
+            lifecycle_text.index('<section class="section" id="delivery"') :
+            lifecycle_text.index('<section class="section" id="decisions"')
+        ]
+        self.assertIn('<h2 id="agents-title">Agents</h2>', agents_section)
+        self.assertNotIn("Agents And Handoffs", agents_section)
+        self.assertNotIn("Lifecycle Handoffs", agents_section)
+        self.assertIn(
+            '<figcaption id="delivery-sequence-title">Lifecycle Handoffs:',
+            delivery_section,
+        )
+        self.assertIn(
+            "A Handoff transfers evidence and the next action",
+            delivery_section,
+        )
+        self.assertIn(
+            "A Task is one bounded assignment to an Agent, never another name for a Thread.",
+            agents_section,
+        )
 
         self.assertEqual(1, lifecycle_text.count('class="lifecycle-rail"'))
         self.assertEqual(1, lifecycle_text.count('class="status-figure"'))
@@ -6174,7 +6199,13 @@ class BundleContentTests(unittest.TestCase):
         self.assertEqual(1, lifecycle_text.count("<table"))
         self.assertGreater(lifecycle_text.count('aria-label="sends to"'), 0)
 
-        paragraphs = re.findall(r"<p(?:\s[^>]*)?>(.*?)</p>", lifecycle_text, re.DOTALL)
+        overview_text = re.sub(
+            r"<details>.*?</details>",
+            "",
+            lifecycle_text,
+            flags=re.DOTALL,
+        )
+        paragraphs = re.findall(r"<p(?:\s[^>]*)?>(.*?)</p>", overview_text, re.DOTALL)
         paragraph_word_counts = [
             len(re.sub(r"<[^>]+>", " ", paragraph).split())
             for paragraph in paragraphs
@@ -6193,21 +6224,21 @@ class BundleContentTests(unittest.TestCase):
             "Completed",
             "Awaiting Review",
             "Archive placement is not another lifecycle status",
-            "The work item is the only durable task record",
+            "The Work item is the only durable provider record",
             "Backlog Coordinator",
             "Backlog Steward",
-            "Work Orchestrator",
-            "Independent Reviewer",
+            "Dev Orchestrator",
+            "Independent reviewers",
             "Verifier",
             "Merge Coordinator",
-            "its own branch in its own worktree",
+            "Each work-item Thread uses its own branch and worktree",
             "Direct-main delivery",
             "Pull-request delivery",
             "temporary conflict-avoidance scratchpad",
             "not proof of review, verification, delivery, or work-item completion",
             "one cheapest representative first",
             "A user answer resolves the decision gate",
-            "An agent runtime session is not another evidence record",
+            "A Thread is an execution context, not another durable evidence record",
         ):
             with self.subTest(lifecycle_phrase=phrase):
                 self.assertIn(phrase, lifecycle_text)
