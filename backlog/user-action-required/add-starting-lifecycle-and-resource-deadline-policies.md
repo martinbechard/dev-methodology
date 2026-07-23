@@ -1,37 +1,65 @@
 # Add Starting Lifecycle And Resource Deadline Policies
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/add-starting-lifecycle-and-resource-deadline-policies.md
+Provider Reference: backlog/user-action-required/add-starting-lifecycle-and-resource-deadline-policies.md
 
 Completion: direct-main
 
 ## Execution / Ownership
 
-- Owner: Dev Orchestrator.
+- Owner: Unowned.
 - Canonical thread: 019f8b51-f8ed-7c03-8193-9bbee1ccb7f2.
-- Claim: approve-starting-lifecycle-deadline-scope-019f8b51, backlog transition only.
-- Canonical worktree: /Users/martinbechard/.codex/worktrees/81ba/dev-methodology, clean and detached.
-- Branch: Pending task-owned branch creation after LIFECYCLE START.
+- Claim: None.
+- Canonical worktree: /Users/martinbechard/.codex/worktrees/81ba/dev-methodology, clean.
+- Branch: codex/starting-lifecycle-resource-deadlines at 1c9c38fd391e96fc567a12a2dd5c6a0d2ede8a42.
 - Starting main: 2ba5dbd772ab80ad87f6db9c7ea4683488a823cf.
-- Phase: current-main refresh, task-owned branch creation, path-by-path pre-mutation checks, then implementation.
-- Lifecycle transition: User Action Required -> Ready after exact approval reconciliation -> Running under existing canonical Dev Orchestrator ownership.
-- Accepted candidate: Pending.
+- Phase: exact one-path ordinary generated documentation companion approval gate.
+- Lifecycle transition: Running -> User Action Required pending scoped ordinary-companion approval.
+- Accepted candidate: 1c9c38fd391e96fc567a12a2dd5c6a0d2ede8a42, clean and unintegrated.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: Approved implementation, review, and verification within the exact ten-path scope.
-- Next owner: Dev Orchestrator.
+- Open issues: Approval is required for the exact generated ordinary documentation companion before generation, mutation, integration, or acceptance.
+- Next owner: Unowned pending user approval resolution and LIFECYCLE START.
 
 ## Running Dispatch Evidence — 2026-07-22
 
 - Backlog transition claim: start-starting-lifecycle-resource-deadlines-019f8b51, acquired event d4fca16b-0c33-410d-bdbf-8e382d3f9f54 from primary main.
 - The full user-approved lifecycle, deadline, watchdog, terminology, and lifecycle-HTML behavior remains authoritative below.
+
+## Generated Documentation Companion Approval Gate
+
+- Canonical thread 019f8b51-f8ed-7c03-8193-9bbee1ccb7f2 has a clean accepted source commit 1c9c38fd391e96fc567a12a2dd5c6a0d2ede8a42 on branch codex/starting-lifecycle-resource-deadlines in clean worktree /Users/martinbechard/.codex/worktrees/81ba/dev-methodology.
+- Source, methodology, and UX reviews passed.
+- Fresh Tier 3 ran 664 tests. The runtime inventory failure reproduces at baseline 9f48ba6 and is unrelated.
+- Agent-skill evaluation-document generator freshness passes at baseline but fails on the accepted commit because design/agent-and-skill-evaluations.html is stale.
+- This exact HTML path is outside the recorded ordinary companions. No root or child claim remains; root release event ad4add6f-c30f-48ec-bbea-564034ccce24.
+
+### Question For The User
+
+Do you approve adding exactly design/agent-and-skill-evaluations.html as the generated ordinary documentation companion required by the already-approved ten governed sources, with no other source or scope expansion?
+
+### Why User Input Is Required
+
+The required generated ordinary documentation companion is outside the previously recorded ordinary companion scope.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+Do not generate, mutate, or integrate design/agent-and-skill-evaluations.html until the parent records the user answer and sends a new approval-resolution and LIFECYCLE START. Do not widen any scope. Preserve the original ten-path approval and all review and verification evidence.
+
+### Handoff Evidence
+
+- Backlog handoff claim: route-starting-lifecycle-doc-companion-019f8b51, acquired event 5a4e14fd-ac04-4607-87c3-02aa2363d91c from primary main.
 
 ## Discovery And Approval Gate — 2026-07-22
 
