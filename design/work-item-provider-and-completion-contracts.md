@@ -238,7 +238,7 @@ The complete-work-item-feature-branch skill owns these stages:
 3. Create or update the hosting-provider delivery record using provider-accurate terminology and tools: pull request for GitHub and merge request for GitLab.
 4. Verify the published base, head, commit, title, body, readiness, checks, and dependency order.
 5. Return AWAITING_REVIEW while any required review, check, approval, or configured merge remains incomplete. Dev Orchestrator asks Dev Backlog Steward exactly once to record that nonterminal lifecycle state for a selected provider and reconciles repeated observations without a duplicate update.
-6. Resume the same work item and branch for accepted corrections, then repeat affected verification and publication checks.
+6. Return accepted source correction requests through Dev Orchestrator to the original Dev Coder. Consume the replacement candidate only after fresh independent review and verification, then resume the same branch and publication identity.
 7. Observe required review approval, required checks, and the configured merge on the hosting service and in Git.
 8. Observe the merged commit as reachable from the configured main branch.
 9. Return completion disposition READY with the prepared lifecycle update. When a provider is selected, return that handoff to the caller without dispatching Persistence; Dev Orchestrator owns the later steward dispatch and reconciliation. When provider is none, record lifecycle COMPLETED and the full terminal evidence in the active task result.

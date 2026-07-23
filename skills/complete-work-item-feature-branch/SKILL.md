@@ -7,7 +7,7 @@ metadata:
 
 # Complete Work Item Feature Branch
 
-Carry one verified work item from branch creation through review publication and observed merge without confusing publication with completion.
+Carry one accepted candidate from branch publication through host review and observed merge without confusing publication with implementation or completion.
 
 ## Dependencies
 
@@ -22,30 +22,33 @@ Resolve these inputs before repository mutation:
 
 - Normalized work-item identifier, provider, provider reference, title, requirements, acceptance criteria, dependencies, and verification expectations.
 - Target repository, code host, remote, configured base branch, intended feature branch, and merge policy.
+- Accepted candidate commit plus fresh independent review, verification, changed-path, and clean-worktree evidence.
 - Required review approvals, checks or pipelines, dependency merge order, and any user-requested draft state.
-- Existing pull-request or merge-request identity when resuming publication or accepted corrections.
+- Existing pull-request or merge-request identity when resuming publication after a source correction.
 - Authority to create the branch, push it, publish or update the delivery record, and perform any requested merge action.
 
 The work-item provider and code host are independent. A file or GitLab work item may be delivered through GitHub, and a file or GitHub work item may be delivered through GitLab, when applicable project configuration or explicit task-level user direction selects that host. Do not infer either selection from remotes, templates, available tools, or existing records.
+
+Consume an already accepted, independently reviewed and verified candidate commit. This skill must not modify source files or implement review corrections.
 
 ## Branch And Ownership
 
 1. Inspect the configured base, work-item scope, dependency branches, existing publication, commits, worktree state, and remote state.
 2. Acquire the narrow repository ownership and shared resources required for the current mutation phase. Preserve unrelated work and stop on overlapping ownership.
-3. Create the intended feature branch from the assigned base before changing source files. When claim isolation creates the delivery branch, use that same branch instead of adding a parallel coordination branch.
-4. Keep accepted review corrections on the same work item, feature branch, and publication record. A correction that changes the independent work-item boundary returns to the coordinator before scope expands.
+3. Create or reuse the intended feature branch for the accepted candidate. When claim isolation already created the delivery branch, use that same branch instead of adding a parallel coordination branch.
+4. Preserve the same work item, feature branch, publication record, and delivery identity across correction cycles. A correction that changes the independent work-item boundary returns to the coordinator before scope expands.
 5. Release ownership only after the phase is committed, verified, clean, and safely published or preserved. Reacquire the required scope when a later review cycle resumes mutation.
 
-## Implementation And Publication
+## Candidate Publication
 
-1. Implement the smallest complete work-item scope and focused regression coverage.
-2. Run the checks required by the changed behavior and risk. Create coherent verified commits and confirm the worktree is clean.
-3. Push only the intended feature branch and verify that the remote head resolves to the reviewed commit.
+1. Verify that the supplied candidate commit matches the accepted independent review and verification evidence and that its source worktree is clean.
+2. Point the intended feature branch at that accepted candidate without editing its source content.
+3. Push only the intended feature branch and verify that the remote head resolves to the accepted candidate.
 4. Publish or update one provider-accurate delivery record:
    - For GitHub, use create-pull-request and GitHub evidence. Call it a pull request.
    - For GitLab, use the configured merge-request capability and GitLab evidence. Call it a merge request.
    - For another host, use only a configured capability whose terminology, readiness, review, checks, and merge evidence are explicit.
-5. Publish completed, verified work ready for review. Use draft only when the user requests it or concrete implementation, verification, or dependency work remains incomplete.
+5. Publish accepted work ready for host review. Use draft only when the user requests it or a concrete publication, host-check, or dependency gate remains incomplete.
 6. Record and verify the canonical work-item identifier and provider reference, publication URL, code host, base, head, commit, dependencies, review order, required checks, and observed ready or draft state.
 
 Successful publication returns AWAITING_REVIEW while any required approval, check, dependency merge, or configured merge remains outstanding. A ready publication is not READY delivery evidence. AWAITING_REVIEW performs no Persistence mutation.
@@ -53,10 +56,13 @@ Successful publication returns AWAITING_REVIEW while any required approval, chec
 ## Review And Check Loop
 
 1. Retrieve the existing pull request or merge request by its durable publication identity.
-2. Classify review findings and apply accepted corrections on the same branch.
-3. Rerun every check affected by the correction, commit coherently, push, and verify the existing publication now points to the corrected head.
-4. Observe required approvals, checks or pipelines, and dependency order from the configured code host. Do not translate GitLab pipelines into GitHub checks or GitHub review evidence into GitLab approval evidence.
-5. Preserve AWAITING_REVIEW while valid review or merge work is merely pending. Return BLOCKED only when a concrete failure, missing authority, unavailable capability, rejected check, ownership conflict, or unsatisfied dependency prevents safe progress.
+2. Classify host findings and identify every accepted request that requires a source correction.
+3. Return every source correction request to the caller for Dev Orchestrator to route to the original Dev Coder.
+4. Preserve the existing branch and publication identity while Dev Coder produces a replacement candidate and Dev Orchestrator repeats fresh independent review and verification.
+5. Resume the same branch, publication, and delivery identity only after the replacement candidate passes fresh independent review and verification.
+6. Push the accepted replacement candidate and verify the existing publication now points to it without authoring or amending its source changes.
+7. Observe required approvals, checks or pipelines, and dependency order from the configured code host. Do not translate GitLab pipelines into GitHub checks or GitHub review evidence into GitLab approval evidence.
+8. Preserve AWAITING_REVIEW while valid review or merge work is merely pending. Return BLOCKED only when a concrete failure, missing authority, unavailable capability, rejected check, ownership conflict, or unsatisfied dependency prevents safe progress.
 
 ## Host State Decision Table
 
@@ -66,7 +72,7 @@ Apply these outcomes to provider-accurate host evidence. Do not convert a pendin
 | --- | --- | --- |
 | Ready publication | Ready pull request or merge request; review or merge remains pending | AWAITING_REVIEW |
 | Explicit draft | User-requested draft, or named incomplete implementation, check, or dependency work | AWAITING_REVIEW |
-| Review correction | Existing publication points to the corrected commit on the same branch; affected checks reran | AWAITING_REVIEW |
+| Review correction | Existing publication points to the independently re-reviewed and re-verified replacement candidate on the same branch; affected host checks reran | AWAITING_REVIEW |
 | Checks pending | Required checks or pipelines have not completed for the current head | AWAITING_REVIEW |
 | Check failure | A required check or pipeline failed for the current head | BLOCKED |
 | Approval pending | Required current-head approval has not arrived | AWAITING_REVIEW |

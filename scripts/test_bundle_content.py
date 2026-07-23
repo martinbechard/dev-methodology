@@ -1438,12 +1438,13 @@ class BundleContentTests(unittest.TestCase):
         skill_text = skill_path.read_text(encoding="utf-8")
 
         for phrase in (
-            "Create the intended feature branch from the assigned base before changing source files.",
+            "Consume an already accepted, independently reviewed and verified candidate commit.",
             "use create-pull-request and GitHub evidence. Call it a pull request.",
             "use the configured merge-request capability and GitLab evidence. Call it a merge request.",
             "Successful publication returns AWAITING_REVIEW",
             "A ready publication is not READY delivery evidence.",
-            "apply accepted corrections on the same branch",
+            "Return every source correction request to the caller for Dev Orchestrator to route to the original Dev Coder.",
+            "Resume the same branch, publication, and delivery identity only after the replacement candidate passes fresh independent review and verification.",
             "The pull request or merge request reports a merged state",
             "reachable from the configured base branch in Git",
             "A closed-unmerged, abandoned, replaced, or superseded publication cannot return READY.",
