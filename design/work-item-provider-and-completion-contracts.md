@@ -249,7 +249,7 @@ Branch publication, a ready review, an approved review, green checks, a closed d
 
 - A failed publish, review, check, integration, or main observation prevents completion disposition READY and lifecycle COMPLETED.
 - After completion disposition READY has been returned, a provider terminal-update failure preserves READY as the successful delivery handoff but prohibits lifecycle COMPLETED. The provider-backed item remains lifecycle RUNNING or becomes BLOCKED until reconciliation applies the pending update. A retry does not rerun or invalidate already accepted delivery evidence unless that evidence has become stale or contradictory.
-- A correctable review finding returns AWAITING_REVIEW to RUNNING on the same item and branch.
+- A correctable review finding preserves durable AWAITING_REVIEW for the same delivery identity while correction work resumes on the same item and branch. It does not transition the provider lifecycle back to RUNNING.
 - AWAITING_REVIEW never authorizes lifecycle COMPLETED. Its one nonterminal Persistence update is distinct from the one terminal update authorized only by later Commit READY evidence.
 - A provider terminal-update failure after merge preserves delivery disposition READY and its evidence while the provider lifecycle remains RUNNING or BLOCKED until reconciliation succeeds.
 - A missing merge after successful publication remains AWAITING_REVIEW, not BLOCKED, unless a concrete prerequisite or failure prevents review or merge.

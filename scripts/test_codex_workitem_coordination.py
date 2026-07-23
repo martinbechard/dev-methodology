@@ -49,8 +49,8 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
         required = (
             "published estimate, hard stop, and latest evidence-bearing progress",
             "Blocked item's exact blocker and unblock condition",
-            "accepted work stranded before integration",
-            "integrated work awaiting provider closeout",
+            "accepted work stranded before Commit delivery",
+            "READY Commit delivery awaiting provider closeout",
             "terminal work awaiting cleanup",
             "stale, unsafe, or unnecessarily broad shared-resource ownership",
         )
@@ -67,7 +67,7 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
             "smallest recommended parent action",
             "without messaging or interrupting the parent",
             "this self-report is its only task-state exception",
-            "The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, integration, and cleanup decision",
+            "The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, Commit-application, Persistence-closure, and cleanup decision",
         )
         for clause in required:
             with self.subTest(clause=clause):
