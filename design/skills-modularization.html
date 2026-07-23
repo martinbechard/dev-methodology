@@ -532,13 +532,13 @@
             <td><span class="name">Required core skill</span></td>
             <td>A skill entry in the agent definition without a condition.</td>
             <td>Every invocation of that agent needs the capability.</td>
-            <td>Dev Coder always uses execute-workitem, careful-coding, code-comments, code-discovery, and fix-explanation.</td>
+            <td>Dev Coder always uses agent-claim, careful-coding, code-comments, code-discovery, and fix-explanation to produce a clean candidate. After independent review and verification, Dev Orchestrator applies the effective Commit-selected skill referenced by applicable AGENTS.md guidance.</td>
           </tr>
           <tr>
             <td><span class="name">Optional core skill</span></td>
             <td>A skill entry in the agent definition with a human-readable condition.</td>
             <td>The request and available evidence satisfy the rule; the agent applies judgment rather than matching prompt words.</td>
-            <td>Dev Coder uses create-pull-request only for feature-branch-workitem or an explicit pull-request request, and uses test-driven-development when behavior can be expressed through executable tests.</td>
+            <td>Dev Coder uses test-driven-development when behavior can be expressed through executable tests and organise-project-files when it creates a project path. Feature-branch completion loads create-pull-request only when its provider-accurate GitHub publication boundary requires it.</td>
           </tr>
         </tbody>
       </table>
@@ -951,8 +951,8 @@
         <tbody>
           <tr>
             <td><span class="name">Dev Coder</span></td>
-            <td>execute-workitem, careful-coding, code-comments, code-discovery, fix-explanation; project guidance supplies resource coordination separately</td>
-            <td>create-pull-request for feature-branch-workitem or an explicit pull-request request; organise-project-files when creating a file or directory; test-driven-development when tests can guide the behavior</td>
+            <td>careful-coding, code-comments, code-discovery, fix-explanation; project guidance supplies resource coordination separately</td>
+            <td>organise-project-files when creating a file or directory; test-driven-development when tests can guide the behavior. Dev Coder returns a candidate and does not apply the effective Commit-selected skill.</td>
           </tr>
           <tr>
             <td><span class="name">Dev Artifact Reviewer</span></td>
@@ -966,13 +966,13 @@
           </tr>
           <tr>
             <td><span class="name">Dev Backlog Steward</span></td>
-            <td>No backend-specific skill is unconditional.</td>
-            <td>file-based-backlog with create-backlog and manage-backlog for a file-backed queue; github-issues-backlog for a GitHub Issues queue; the steward asks when the selector is unset</td>
+            <td>structured-explanation; project guidance supplies resource coordination separately when enabled</td>
+            <td>organise-project-files only when the selected persistence operation creates a repository path whose destination is not fixed. The effective Persistence-selected create or manage skill comes from applicable AGENTS.md guidance.</td>
           </tr>
           <tr>
             <td><span class="name">Dev Backlog Coordinator</span></td>
-            <td>manage-backlog and structured-explanation</td>
-            <td>codex-workitem-coordination only when user-visible Codex tasks coordinate multiple backlog items; project guidance supplies resource coordination separately when enabled</td>
+            <td>structured-explanation</td>
+            <td>codex-workitem-coordination only when user-visible Codex Threads coordinate multiple work items; project guidance supplies resource coordination separately when enabled. Inventory and lifecycle use the effective Persistence manager, and delivery uses the effective Commit skill without copying either procedure.</td>
           </tr>
         </tbody>
       </table>

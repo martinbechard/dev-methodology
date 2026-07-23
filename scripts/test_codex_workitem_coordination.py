@@ -1,10 +1,13 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Verifies Starting lifecycle and conditional watchdog behavior in coordination sources and generated adapters.
+# Summary: Verifies Starting, watchdog, and two-phase Persistence behavior in coordination contracts.
 
+import json
 from pathlib import Path
 import re
 import unittest
+
+import yaml
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
@@ -138,8 +141,8 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
         required = (
             "published estimate, hard stop, and latest evidence-bearing progress",
             "Blocked item's exact blocker and unblock condition",
-            "accepted work stranded before integration",
-            "integrated work awaiting provider closeout",
+            "accepted work stranded before Commit delivery",
+            "READY Commit delivery awaiting provider closeout",
             "terminal work awaiting cleanup",
             "stale, unsafe, or unnecessarily broad shared-resource ownership",
         )
@@ -156,7 +159,7 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
             "smallest recommended parent action",
             "without messaging or interrupting the parent",
             "this self-report is its only task-state exception",
-            "The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, integration, and cleanup decision",
+            "The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, Commit-application, Persistence-closure, integration, and cleanup decision",
         )
         for clause in required:
             with self.subTest(clause=clause):
@@ -166,7 +169,7 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
         required = (
             "must not mutate backlog, claims, or task state",
             "must not infer integration readiness, accepted delivery, or completion readiness",
-            "The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, integration, and cleanup decision",
+            "The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, Commit-application, Persistence-closure, integration, and cleanup decision",
         )
         for clause in required:
             with self.subTest(clause=clause):
@@ -231,7 +234,8 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
             adapter = adapter_path.read_text(encoding="utf-8")
             with self.subTest(adapter=adapter_path.parent.parent.name):
                 self.assertIn("enabled resource coordination", adapter)
-                self.assertIn("when coordination is enabled", adapter)
+                self.assertIn("shared mutation authority when enabled", adapter)
+                self.assertIn("Provider none", adapter)
                 self.assertNotIn(
                     "reads current work items, Git state, coordination-registry state, and task state",
                     adapter,
@@ -288,11 +292,11 @@ class StartingLifecycleContractTests(unittest.TestCase):
                 self.assertIn(clause, self.contract)
 
         self.assertIn(
-            "Count Work items whose file-backed Status is Starting or Running.",
+            "Count work items whose provider lifecycle state is Starting or Running.",
             self.queue_section,
         )
         self.assertIn(
-            "create at most one user-visible work-item Thread for the Starting Work item",
+            "create at most one user-visible work-item Thread for the Starting work item",
             self.queue_section,
         )
         self.assertIn(
@@ -431,6 +435,40 @@ class StartingLifecycleContractTests(unittest.TestCase):
         for clause in required:
             with self.subTest(clause=clause):
                 self.assertIn(clause, self.coordination)
+
+
+class AwaitingReviewPersistenceContractTests(unittest.TestCase):
+    """Keep nonterminal and terminal Persistence updates distinct and idempotent."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.skill_text = SKILL_PATH.read_text(encoding="utf-8")
+        cls.role_text = json.dumps(
+            yaml.safe_load(ORCHESTRATOR_ROLE_PATH.read_text(encoding="utf-8")),
+            sort_keys=True,
+        )
+
+    def test_coordination_records_awaiting_review_once_before_terminal_closure(self) -> None:
+        required = (
+            "ask Dev Backlog Steward exactly once to record the nonterminal lifecycle AWAITING_REVIEW",
+            "reconcile the existing update instead of dispatching a duplicate",
+            "Never request lifecycle COMPLETED from an AWAITING_REVIEW handoff",
+            "ask Dev Backlog Steward exactly once for the distinct terminal lifecycle COMPLETED update",
+        )
+        for clause in required:
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.skill_text)
+
+    def test_orchestrator_routes_the_same_two_phase_persistence_sequence(self) -> None:
+        required = (
+            "dispatch dev-backlog-steward exactly once to record the nonterminal AWAITING_REVIEW lifecycle update",
+            "reconcile that recorded update instead of dispatching a duplicate",
+            "Do not request lifecycle COMPLETED while Commit is AWAITING_REVIEW",
+            "dispatch dev-backlog-steward exactly once for the distinct terminal COMPLETED update",
+        )
+        for clause in required:
+            with self.subTest(clause=clause):
+                self.assertIn(clause, self.role_text)
 
 
 if __name__ == "__main__":

@@ -70,7 +70,7 @@ Use explicit provider lifecycle states and never infer success from silence:
 - FAILED: delivery ended without satisfying completion and terminal failure evidence is recorded.
 - ABANDONED: authorized direction ends the work without delivery.
 
-READY as a completion disposition is not lifecycle READY. Starting and Running remain active typed work items in their existing type folder; neither moves to a holding or terminal queue. A RUNNING item remains RUNNING until manage-file-work-items records terminal evidence and lifecycle COMPLETED. A provider terminal-update failure after delivery disposition READY preserves the accepted delivery evidence but leaves lifecycle RUNNING or BLOCKED until reconciliation applies the pending update.
+READY as a completion disposition is not lifecycle READY. Starting and Running remain active typed work items in their existing type folder; neither moves to a holding or terminal queue. A file item remains in its current nonterminal lifecycle until manage-file-work-items records an authorized transition. Once AWAITING_REVIEW is recorded for a feature-branch delivery, the same delivery identity remains lifecycle AWAITING_REVIEW through review corrections and merge preparation. A provider terminal-update failure after delivery disposition READY preserves the accepted delivery evidence but leaves the current nonterminal lifecycle unchanged or records BLOCKED until reconciliation applies the pending update.
 
 Missing result evidence, missing logs, a stopped process, a commit, branch publication, or absence of errors is never completion.
 
@@ -161,7 +161,7 @@ Only the work-item Thread's root Dev Orchestrator may request terminal completio
 - Enabled delivery and integration ownership is released.
 - Provider terminal evidence is ready to commit under a new short backlog transaction.
 
-For feature-branch completion, publication alone records AWAITING_REVIEW. Only required review, checks, merge, and main observation permit COMPLETED. A correctable review finding returns the same item and branch to RUNNING.
+For feature-branch completion, publication alone records AWAITING_REVIEW. During same-delivery review corrections, the same delivery identity remains lifecycle AWAITING_REVIEW. Do not change lifecycle back to RUNNING for same-delivery corrections. Only a later Commit READY permits the distinct terminal COMPLETED update. That terminal update also requires the accepted review, checks, merge, and main-observation evidence.
 
 Archive movement is explicit and serialized:
 
@@ -193,4 +193,4 @@ Keep the report grounded in current files and state, not prior conversation memo
 
 ## Migration
 
-manage-file-work-items owns all file-provider inventory, lifecycle, recovery, completion, failure, and archival behavior formerly split between manage-backlog and file-based-backlog. Update PROJECT.yaml and generated guidance to select provider file and load manage-file-work-items for management. The legacy identifiers are migration-only shells until their separately governed callers move; they must not receive new procedure changes.
+Callers migrated file-provider inventory, lifecycle, recovery, completion, failure, and archival behavior to manage-file-work-items, and the legacy shells were removed. Historical mapping: manage-backlog and file-based-backlog management behavior moved into this skill; PROJECT.yaml and generated guidance now select Persistence file and reference manage-file-work-items for management.

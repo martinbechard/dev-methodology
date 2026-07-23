@@ -19,7 +19,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "99485e86d4dbb7fc8edd398761cdfc5ec4ca4387b840dbf1ac7775a009830a02",
+          "sha256": "345f0ea24ce97a721a66433825b644034fd40686f6548cfecb1c84e3d0aa6c9d",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -28,7 +28,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "3697f67263077cac6656d12858f2abd02803a8108042828c1817dd4b11d88983",
+          "sha256": "3774b7c9894325b8f790d3c8ed4e8a6168e3fd9363ab563046b17191528e87f6",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -57,13 +57,12 @@
           "name": "dev-coder",
           "output": "generated/adapters/claude/agents/dev-coder.md",
           "referencedFixedSkills": [
-            "execute-workitem",
             "careful-coding",
             "code-comments",
             "code-discovery",
             "fix-explanation"
           ],
-          "sha256": "2b8a179ce6c677df4856fcdd8e8e415dfa13586ede3a994b1419f9dd25debc1c",
+          "sha256": "18133b6589f460d1578fcb1384d4a17a7ff76be49f3622511b7a995c55efb6c4",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -93,7 +92,7 @@
             "structured-design",
             "structured-explanation"
           ],
-          "sha256": "2f159f222e37dbcbbb06531f36f49fd7be5dcdca5201632ef3ca19a0c73f5f3f",
+          "sha256": "bd4766d224be1d1f49f8e954199bf5f7bc8718180dbd88bd4842a96c47bc2f27",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -317,7 +316,7 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "0f28b2a9809c60b4f085b154f3afe423d9958de0802c8164ef58765705d1740e",
+          "sha256": "83d22cd83dea86427b46850f6d39b0224a1ca3b2c41fa796b3b15a3aa70b1950",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -327,7 +326,7 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "bf43fd5d675c8a0a8a0944b5efa8710e0d3cc7ad976fdb41eded389e1a5f4bf0",
+          "sha256": "c16f47e58b586c441e9ba36f3a4fd80bb311bb39d542bb10a14e91516bb6b248",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -358,14 +357,13 @@
           "name": "dev-coder",
           "output": "generated/adapters/codex/agents/dev-coder.toml",
           "referencedFixedSkills": [
-            "execute-workitem",
             "careful-coding",
             "code-comments",
             "code-discovery",
             "fix-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "e2b58223482005175d79482bb1a2fbfec8db40f84407bbcbd749e8474ad0bd42",
+          "sha256": "8a3772ef28ffb80930412918f494a879b47e7809d97179f0e0e761b16e146aae",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -398,7 +396,7 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "2deb954f1906f4bf28f008db5e1eb9ca83054ab9e0e2d3f36b62ed487e143688",
+          "sha256": "1a5f1566625639dd3c823c06050ab3ce401a9de8b927b82d8352ec37eef6c17c",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -642,7 +640,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "f76cde565b367311e7fa75050cdf9a5321c618c5f9178450493f84c2a9569e55",
+          "sha256": "68c4069de02f6d6b1b5d4abefb3ade202123cfcb79fc12730d378591c51a5292",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -651,7 +649,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "ed027a6fcb201ebea50fa74914f4a16141f57eec0f96ca82ca81862ed6c45514",
+          "sha256": "0dc08eb5cd78e1aa384defe8501b2942be2907d3fc5d8434a32b0bd0c57ef435",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -680,13 +678,12 @@
           "name": "dev-coder",
           "output": "generated/adapters/gemini/agents/dev-coder.md",
           "referencedFixedSkills": [
-            "execute-workitem",
             "careful-coding",
             "code-comments",
             "code-discovery",
             "fix-explanation"
           ],
-          "sha256": "cbc1311f9b10fd86a3fd9b35d4c13a3ab153f0d0f1c09d9df7c07f94b2a26acb",
+          "sha256": "ba75c6567b7a9aacb34e123b4a6026d4b3e6a20940199693059b8b9d3ede2746",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -716,7 +713,7 @@
             "structured-design",
             "structured-explanation"
           ],
-          "sha256": "90ee10d6e9979b7337891b0c3768a4e97eafd1a2907b25147570acadf8505c97",
+          "sha256": "9ff4b902cdd5790a5dbe84ad0f87a4c3e714b1ad155d4e00ae718c3a2690cdd9",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -938,7 +935,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "7137ff4c6c0e93179dedeaa02120615e176bd5e3547f6e371017f858b71fb670",
+          "sha256": "4a0e66bb4698e526610fcd7fc95bc4eefedbd8f3f39c8af24092cdc8cdb08cb8",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -947,7 +944,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "0c999fc31125526fa7ed55391236b9058afd1b534d1f15b76b8c9ce7bdbf6f75",
+          "sha256": "557ea5cfa7eb304178573942b0fe411c4d28b055291393094352fd06de5dacae",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -976,13 +973,12 @@
           "name": "dev-coder",
           "output": "generated/adapters/junie/agents/dev-coder.md",
           "referencedFixedSkills": [
-            "execute-workitem",
             "careful-coding",
             "code-comments",
             "code-discovery",
             "fix-explanation"
           ],
-          "sha256": "4df8db69fe81b6785857f06a35bb17cba6611d4f969340423bd054598fb44602",
+          "sha256": "8ec2103f88e282e93eb43a55e8ade8ae8ef0e93f1f8b643fcf3720ded591ac05",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -1012,7 +1008,7 @@
             "structured-design",
             "structured-explanation"
           ],
-          "sha256": "de5f91a5ab633d346f18651edfc230af5f34db52e274e07126725674e21252aa",
+          "sha256": "caf999875b2dbf4c0ee09d144fdba878b9da487c7f6e2fa0060bfa24f5ff7ad4",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {

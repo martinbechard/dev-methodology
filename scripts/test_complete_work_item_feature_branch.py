@@ -15,6 +15,16 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SKILL_PATH = (
     REPOSITORY_ROOT / "skills" / "complete-work-item-feature-branch" / "SKILL.md"
 )
+DEV_CODER_PATH = (
+    REPOSITORY_ROOT / "agents" / "roles" / "dev-activities" / "dev-coder.role.yaml"
+)
+DEV_ORCHESTRATOR_PATH = (
+    REPOSITORY_ROOT
+    / "agents"
+    / "roles"
+    / "dev-activities"
+    / "dev-orchestrator.role.yaml"
+)
 
 
 def load_host_state_table() -> dict[str, str]:
@@ -231,6 +241,56 @@ class CompleteWorkItemFeatureBranchTests(unittest.TestCase):
             )
             self.assertEqual(0, published_commit_merged.returncode)
             self.assertEqual(0, final_merge_observed.returncode)
+
+    def test_commit_dispositions_never_dispatch_persistence(self) -> None:
+        skill_text = SKILL_PATH.read_text(encoding="utf-8")
+
+        for phrase in (
+            "must not dispatch a provider manager, Dev Backlog Steward, or any Persistence mutation",
+            "AWAITING_REVIEW performs no Persistence mutation",
+            "Return the prepared terminal handoff to the caller",
+            "does not change Commit READY into BLOCKED",
+            "record lifecycle COMPLETED in the task-local result before returning READY",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
+    def test_source_corrections_return_through_the_accepted_candidate_contract(
+        self,
+    ) -> None:
+        skill_text = SKILL_PATH.read_text(encoding="utf-8")
+        dev_coder_text = DEV_CODER_PATH.read_text(encoding="utf-8")
+        dev_orchestrator_text = DEV_ORCHESTRATOR_PATH.read_text(encoding="utf-8")
+
+        for phrase in (
+            "accepted, independently reviewed and verified candidate commit",
+            "must not modify source files or implement review corrections",
+            "Return every source correction request to the caller for Dev Orchestrator to route to the original Dev Coder.",
+            "Resume the same branch, publication, and delivery identity only after the replacement candidate passes fresh independent review and verification.",
+        ):
+            with self.subTest(skill_phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
+        for stale_phrase in (
+            "before changing source files",
+            "Implement the smallest complete work-item scope",
+            "apply accepted corrections on the same branch",
+        ):
+            with self.subTest(stale_phrase=stale_phrase):
+                self.assertNotIn(stale_phrase, skill_text)
+
+        self.assertIn(
+            "Return a clean verified candidate commit to Dev Orchestrator for independent review.",
+            dev_coder_text,
+        )
+        self.assertIn(
+            "When the effective Commit-selected skill exposes an accepted source correction, return",
+            dev_orchestrator_text,
+        )
+        self.assertIn(
+            "source review and verification, then resume the same Commit delivery identity.",
+            dev_orchestrator_text,
+        )
 
 
 if __name__ == "__main__":

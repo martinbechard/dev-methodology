@@ -15,8 +15,8 @@ scenarios:
     requiredDependencyOrder: [dev-coder, dev-code-reviewer, dev-documentation-writer, dev-artifact-reviewer, dev-verifier, dev-merge-coordinator, dev-code-reviewer, dev-artifact-reviewer, dev-verifier, dev-backlog-steward]
     requiredHandoffReceiptLanes: [source, documentation, integration, closeout]
     requiredHandoffReceiptFields: [lane, role, commit, review, verification, claimRelease]
-    requiredBehaviors: [Assign bounded lanes, Keep review ownership independent, Verify before and after required integration, Record commits claims and closeout]
-    forbiddenBehaviors: [Implement child work directly, Self-review, Run dependencies concurrently, Skip post-integration gates]
+    requiredBehaviors: [Assign bounded lanes, Keep review ownership independent, Verify before and after required integration, Apply Commit only after review and verification, Preserve AWAITING_REVIEW without Persistence, Dispatch Dev Backlog Steward exactly once after Commit READY, Verify Persistence closure, Record commits claims and closeout]
+    forbiddenBehaviors: [Implement child work directly, Self-review, Run dependencies concurrently, Skip post-integration gates, Dispatch Persistence before Commit READY, Duplicate the selected manager call]
     deterministicChecks: [harness-agent-identity, dependency-identity-and-order, one-nested-dependency-at-a-time, claim-lifecycle, committed-handoffs, structured-handoff-receipts, post-integration-reviews, output-contract-presence, readiness-consistency]
     expectedOutputs: [status, task breakdown, resolved definition-owned skillsets, assigned agents, handoff plan, integrated verification, committed integration, work-item delivery]
     expectedTerminalStatus: PASS

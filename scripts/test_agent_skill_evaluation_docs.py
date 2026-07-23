@@ -100,11 +100,11 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         summary = self.model["summary"]
         campaign = self.model["campaign"]
 
-        self.assertEqual(129, summary["skillCount"])
-        self.assertEqual(129, summary["probeCount"])
+        self.assertEqual(124, summary["skillCount"])
+        self.assertEqual(124, summary["probeCount"])
         self.assertEqual(27, summary["roleCount"])
         self.assertEqual(27, summary["suiteCount"])
-        self.assertEqual(87, summary["currentScenarioCount"])
+        self.assertEqual(88, summary["currentScenarioCount"])
         self.assertEqual(26, campaign["suiteCount"])
         self.assertEqual(78, campaign["scenarioCount"])
         self.assertEqual({"PASS": 52, "BLOCKED": 17, "FAIL": 9}, campaign["verdicts"])
@@ -115,14 +115,14 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         summary = self.model["summary"]
         agents = {agent["id"]: agent for agent in self.model["agents"]}
 
-        self.assertEqual(9, summary["missingScenarioResults"])
+        self.assertEqual(10, summary["missingScenarioResults"])
         self.assertEqual(78, summary["historicalIdOnlyResults"])
         self.assertEqual(0, summary["snapshotAlignedResults"])
         self.assertEqual(0, summary["definitionDriftResults"])
         self.assertEqual(0, summary["removedCampaignResults"])
         coordinator = agents["dev-backlog-coordinator"]
         self.assertEqual("missing", coordinator["freshness"])
-        self.assertEqual(3, coordinator["missingScenarioCount"])
+        self.assertEqual(4, coordinator["missingScenarioCount"])
         self.assertTrue(all(item["campaignVerdict"] is None for item in coordinator["scenarios"]))
         self.assertTrue(all(item["evidenceState"] == "missing" for item in coordinator["scenarios"]))
         coder = agents["dev-coder"]
@@ -193,7 +193,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             by_skill = {skill["id"]: skill for skill in model["skills"]}
             self.assertEqual("indirect-only", by_skill[linked_skill]["classification"])
             self.assertEqual("none", by_skill[unlinked_skill]["classification"])
-            self.assertEqual(127, model["summary"]["probeCount"])
+            self.assertEqual(122, model["summary"]["probeCount"])
             page = self.generator.render_page(model)
             self.assertRegex(
                 page,
@@ -223,9 +223,9 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
 
     def test_skill_entries_separate_probe_declarations_from_governed_outcomes(self) -> None:
         """Every skill must retain probe, indirect coverage, and outcome limitations separately."""
-        self.assertEqual(129, len(self.model["skills"]))
+        self.assertEqual(124, len(self.model["skills"]))
         self.assertTrue(all(skill["probe"] is not None for skill in self.model["skills"]))
-        self.assertEqual(129, self.model["summary"]["directProbeSkillCount"])
+        self.assertEqual(124, self.model["summary"]["directProbeSkillCount"])
         self.assertEqual(0, self.model["summary"]["indirectOnlySkillCount"])
         self.assertEqual(0, self.model["summary"]["noRecordedEvidenceSkillCount"])
         self.assertTrue(
@@ -262,7 +262,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
 
     def test_static_page_contains_every_entry_without_javascript(self) -> None:
         """Generated details must remain complete when the optional filter script is absent."""
-        self.assertEqual(129, self.page.count('class="evaluation-card skill-card"'))
+        self.assertEqual(124, self.page.count('class="evaluation-card skill-card"'))
         self.assertEqual(27, self.page.count('class="evaluation-card agent-card"'))
         self.assertNotRegex(self.page, r'<(?:article|section)[^>]+\shidden(?:\s|>)')
         self.assertIn('<script src="documentation-settings.js"></script>', self.page)

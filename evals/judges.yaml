@@ -129,22 +129,26 @@ checks:
     type: deterministic
     critical: true
     description: Claim events prove acquisition, non-overlap handling, commit or truthful no-change, clean state, and release.
-  - id: file-backed-workitem-ownership
+  - id: provider-selected-workitem-ownership
     type: deterministic
     critical: true
-    description: Each Running work-item file records one canonical Dev Orchestrator task identifier, branch, worktree, current phase, candidate commit, claim waits, open issues, and delivery evidence without a separate task or baton registry.
+    description: Each selected provider record, or provider-none task result, retains one canonical Dev Orchestrator task identifier, branch, worktree, current phase, candidate commit, waits, open issues, and delivery evidence without a separate task or baton registry.
   - id: running-capacity-refill
     type: deterministic
     critical: true
-    description: File-backed Running items are counted toward a target of ten, non-running states and waiting tasks are excluded, and every terminal cleanup immediately dispatches eligible Ready work to refill capacity or reports a real shortage.
+    description: Durable Running items are counted through the effective Persistence manager toward a target of ten, non-running states and waiting tasks are excluded, and every terminal cleanup immediately dispatches eligible Ready work to refill capacity or reports a real shortage.
   - id: bounded-claim-retry
     type: deterministic
     critical: true
-    description: Integration and work-item completion claims use separate windows with one immediate attempt plus retries at five, ten, fifteen, twenty, twenty-five, and thirty minutes, stop after acquisition, and trigger parent investigation at thirty minutes.
-  - id: direct-orchestrator-integration
+    description: Delivery and provider-completion resource waits use separate windows with one immediate attempt plus retries at five, ten, fifteen, twenty, twenty-five, and thirty minutes, stop after acquisition, and trigger parent investigation at thirty minutes.
+  - id: selected-commit-routing
     type: deterministic
     critical: true
-    description: Without a pull request, the same canonical Dev Orchestrator that owns the work item acquires the exact main-file claim, integrates the accepted commit, runs focused tests, releases, completes the work item under a separate claim, and returns cleanup eligibility to the parent.
+    description: The same canonical Dev Orchestrator that owns the work item applies the effective Commit-selected skill after independent review and verification, then returns its disposition and cleanup eligibility without a copied completion procedure or separate integration queue.
+  - id: provider-selector-routing
+    type: deterministic
+    critical: true
+    description: File, GitHub, and GitLab use their selected managers and native identities; Azure DevOps and Jira preserve placeholder BLOCKED results; none has no durable inventory; and UNSET or unavailable selected skills stop without fallback.
   - id: focused-item-verification
     type: deterministic
     critical: true
@@ -244,7 +248,7 @@ checks:
   - id: task-identity-fields
     type: deterministic
     critical: true
-    description: Task reconciliation matches source parent identifier, canonical backlog path, normalized objective or prompt, creation time, and status across active and archived tasks; title alone is never sufficient.
+    description: Task reconciliation matches source parent identifier, canonical provider identifier and reference, normalized objective or prompt, creation time, and status across active and archived tasks; title alone is never sufficient.
   - id: mcp-tool-trace
     type: deterministic
     critical: true

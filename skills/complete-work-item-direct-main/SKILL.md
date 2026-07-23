@@ -19,18 +19,18 @@ Resolve these inputs before integration:
 - Independent review result and the checks accepted for the source commit.
 - Smallest credible post-integration verification for the changed surface.
 - Required local main and, when configured, remote publication state.
-- Provider manager that owns the terminal lifecycle update, or explicit provider none.
+- Terminal lifecycle evidence required by the selected provider, or explicit provider none.
 
 Return BLOCKED when the completion selector is not direct-main, required evidence is missing, main is ambiguous, or the requested integration or publication lacks authority. Do not infer main from the current branch name, a remote default, a temporary branch, or provider metadata.
 
 ## Provider Independence
 
-This skill owns Git delivery and main observation. It does not create, inventory, assign, close, move, or otherwise mutate provider records for file, GitHub, GitLab, Azure DevOps, or Jira providers.
+This skill owns Git delivery and main observation. It also owns terminal handoff preparation. It does not create, inventory, assign, close, move, or otherwise mutate provider records for file, GitHub, GitLab, Azure DevOps, or Jira providers. It must not dispatch a provider manager, Dev Backlog Steward, or any Persistence mutation.
 
 - Preserve the canonical work-item identifier independently of the delivery branch and commit identifiers.
-- After successful delivery, return the exact terminal evidence to the selected provider manager.
-- For provider none, record the complete terminal evidence and lifecycle COMPLETED in the active task result because no provider manager exists.
-- A provider lifecycle failure after successful delivery preserves the READY delivery evidence but prohibits reporting the provider-backed item as COMPLETED until its manager reconciles the update.
+- After successful delivery, return the exact terminal evidence to the caller for the owning orchestrator to route through its Persistence phase.
+- For provider none, record lifecycle COMPLETED in the task-local result before returning READY, together with the complete terminal evidence, because no provider manager exists.
+- A provider-backed Persistence recording failure happens after this skill returns. It does not change Commit READY into BLOCKED or erase the delivery evidence; the provider-backed item remains nonterminal until the owning orchestrator reconciles Persistence.
 
 ## Evidence Gate
 
@@ -51,7 +51,7 @@ When agent-claim is selected, apply that enabled resource-coordination implement
 - the target-specific integration resource for the configured main branch; and
 - only the shared test resources required by focused post-integration verification.
 
-Do not include provider lifecycle surfaces in operational coordination ownership. Provider closure is a separate transaction owned by the provider manager. If enabled ownership is unavailable, preserve the accepted source commit and return or follow the selected coordination procedure's bounded wait state without mutating main. When none is selected, skip acquisition, wait, heartbeat, registry, handoff, and release evidence.
+Do not include provider lifecycle surfaces in operational coordination ownership. Provider closure is a separate transaction owned by the Persistence phase. If enabled ownership is unavailable, preserve the accepted source commit and return or follow the selected coordination procedure's bounded wait state without mutating main. When none is selected, skip acquisition, wait, heartbeat, registry, handoff, and release evidence.
 
 ## Main Reconciliation
 
@@ -98,7 +98,7 @@ Use graph reachability for ancestral delivery, such as Git's merge-base ancestor
 
 When resource coordination is enabled, release integration ownership only after main is clean, required checks pass, and all local and configured remote observations are recorded. A failed release returns BLOCKED until ownership is reconciled; do not hide live ownership behind READY. When coordination is none, main cleanliness and verification still apply without release evidence.
 
-When a provider is selected, give its manager one terminal update containing:
+When a provider is selected, prepare one terminal update containing:
 
 - work-item identifier and provider reference;
 - completion selector direct-main;
@@ -111,7 +111,7 @@ When a provider is selected, give its manager one terminal update containing:
 - clean worktree and enabled integration-release evidence; and
 - completion disposition READY with requested lifecycle COMPLETED.
 
-The provider manager owns the actual terminal mutation and reports whether lifecycle COMPLETED was persisted. Do not report a provider-backed item as completed before that succeeds.
+Return the prepared terminal handoff to the caller after the integration claim is released. The owning orchestrator decides whether and when to dispatch the selected provider manager. This skill neither performs that dispatch nor waits for its result. The provider-backed item remains nonterminal until the separate Persistence update succeeds. Do not report a provider-backed item as completed before that succeeds.
 
 ## Result
 
@@ -126,6 +126,6 @@ Return READY only when the complete direct-main delivery proof exists. Return:
 - clean-state and enabled resource-coordination release evidence; and
 - the provider lifecycle update or provider-none terminal result.
 
-Return BLOCKED with the preserved source commit, exact failed gate, current ownership state, recovery evidence, and one next action when integration, conflict resolution, verification, publication, main observation, enabled coordination release, provider authority, or provider terminal recording cannot finish safely.
+Return BLOCKED with the preserved source commit, exact failed gate, current ownership state, recovery evidence, and one next action when integration, conflict resolution, verification, publication, main observation, or enabled resource-coordination release cannot finish safely. A later provider recording failure is a Persistence failure and does not change Commit READY into BLOCKED.
 
 An unmerged temporary branch can never return READY or cause lifecycle COMPLETED.

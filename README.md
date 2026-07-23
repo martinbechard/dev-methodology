@@ -356,7 +356,7 @@ After that analysis and explicit user approval, --replace-customized may be comb
 
 Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The [Wiki Skills And Project Context page](design/wiki-skills-and-project-context.html) owns the conceptual relationship among the LLM-wiki pattern, OKF-compatible files, project-wiki operations, and code-project-wiki synchronization. The generated [Core Agent and Skills](design/agent-and-skill-definitions.html) page owns catalog views of current conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. [Technology Skills](design/skills-modularization.html) explains technology-agnostic agent skills and setup-bound technology extensions. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns bootstrap, normal planned design progression, complete source-backed documentation, execution, review, verification, integration, configured delivery closeout, and execution evidence. agent-claim adds claim-release gates; none adds no coordination operations or evidence.
 
-Dev Backlog Coordinator owns parent-level, just-in-time coordination only when a user explicitly requests several user-visible Codex backlog tasks. It reconciles active and archived task identities, delegates brief lifecycle mutations to Dev Backlog Steward, delegates each active delivery campaign to Dev Orchestrator, and retains the one immediate successor and terminal housekeeping obligations. The portable [codex-workitem-coordination skill](skills/codex-workitem-coordination/SKILL.md) is the procedure source of truth; task titles, task status, and messages are coordination state rather than backlog or delivery evidence.
+Dev Backlog Coordinator owns parent-level, just-in-time coordination only when a user explicitly requests several user-visible Codex work-item tasks. It obtains inventory and lifecycle state through the effective Persistence-selected manager, delegates provider mutation to Dev Backlog Steward, and sends each active delivery campaign to Dev Orchestrator with the effective Commit-selected skill. File, GitHub, and GitLab retain native provider identities; placeholder providers, provider none, and UNSET preserve their defined zero-mutation or non-durable boundaries without fallback. The coordinator retains capacity, retry, watchdog, canonical-task, and terminal housekeeping obligations without copying provider or completion procedures. The portable [codex-workitem-coordination skill](skills/codex-workitem-coordination/SKILL.md) is the procedure source of truth; task titles, task status, and messages are coordination state rather than provider or delivery evidence.
 
 Backlog work that the user directly requests or explicitly authorizes starts with Status: Ready in the typed active folders under backlog unless the user defers it or a separate genuine user-owned question remains. Independently identified potentially valuable ideas, and other work whose next safe step requires a user decision, approval, authority grant, value judgment, or user-held information, belong in [backlog/user-action-required](backlog/user-action-required/README.md) with their underlying Type and one concrete question. Agents report that question but do not claim or dispatch the work until the user answers. Evidence-backed ordinary dependencies remain with typed active work. Intentionally deferred work with no immediate question remains in backlog/holding. Status: Proposed is not an operational backlog state.
 
@@ -421,19 +421,14 @@ The development practice skills are:
 - organise-project-files
 - create-file-work-item
 - manage-file-work-items
-- create-backlog
-- manage-backlog
-- file-based-backlog
 - create-github-work-item
 - manage-github-work-items
-- github-issues-backlog
 - create-gitlab-work-item
 - manage-gitlab-work-items
 - create-azure-devops-work-item
 - manage-azure-devops-work-items
 - create-jira-work-item
 - manage-jira-work-items
-- execute-workitem
 - complete-work-item-direct-main
 - fix-explanation
 - structured-explanation
@@ -461,18 +456,9 @@ The development practice skills are:
 - traversal-patterns
 - interpreter-pattern
 
-create-github-work-item and manage-github-work-items are the canonical split GitHub provider skills. github-issues-backlog remains only as a transition route for existing callers until the separately governed selector and role migration removes those references.
+create-github-work-item and manage-github-work-items are the canonical split GitHub Persistence skills. They keep GitHub Issues authoritative and never create a shadow repository queue.
 
-create-file-work-item and manage-file-work-items are the canonical file-provider pair. They keep authoritative records only under backlog in the primary worktree on main and never mirror provider issues into repository files. When PROJECT.yaml selects agent-claim, they use a short primary-main backlog claim for each mutation. When it selects none, they perform the same serialized provider transactions without claim operations or claim evidence.
-
-create-backlog, manage-backlog, and file-based-backlog are migration-only bridges while separately governed callers still use the prototype identifiers. They contain no independent work-item procedure. Existing repositories migrate as follows:
-
-- Replace create-backlog with create-file-work-item.
-- Replace manage-backlog with manage-file-work-items.
-- Replace file-based-backlog selector values with provider file, then load the canonical create or manage skill for the operation.
-- Keep Persistence and Commit selection independent and preserve UNSET until the user decides.
-
-Remove the three bridge packages only after PROJECT.yaml files, generated guidance, conceptual agent definitions, evaluations, and other authorized callers use the canonical pair and generated-output checks pass without the legacy identifiers.
+create-file-work-item and manage-file-work-items are the canonical file Persistence pair. They keep authoritative records only under backlog in the primary worktree on main and never mirror provider issues into repository files. When PROJECT.yaml selects agent-claim, they use a short primary-main backlog claim for each mutation. When it selects none, they perform the same serialized provider transactions without claim operations or claim evidence. PROJECT.yaml selects Persistence and Commit independently, while AGENTS.md supplies only the corresponding skill references. Conceptual agent definitions remain neutral to both selectors.
 
 The stack and project-domain skill packs are:
 

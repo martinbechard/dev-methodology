@@ -24,9 +24,7 @@ PROJECT_CONFIGURATION_SKILL = ROOT / "skills" / "create-project-configuration" /
 FEATURE_BRANCH_SKILL = ROOT / "skills" / "complete-work-item-feature-branch" / "SKILL.md"
 DIRECT_MAIN_SKILL = ROOT / "skills" / "complete-work-item-direct-main" / "SKILL.md"
 WORK_MERGE_SKILL = ROOT / "skills" / "agent-work-merge" / "SKILL.md"
-EXECUTE_WORKITEM_SKILL = ROOT / "skills" / "execute-workitem" / "SKILL.md"
-SIMPLE_WORKITEM_PROCESS = ROOT / "skills" / "execute-workitem" / "references" / "simple-workitem.md"
-FEATURE_WORKITEM_PROCESS = ROOT / "skills" / "execute-workitem" / "references" / "feature-branch-workitem.md"
+EXECUTE_WORKITEM_PACKAGE = ROOT / "skills" / "execute-workitem"
 README = ROOT / "README.md"
 ORCHESTRATED_LIFECYCLE = ROOT / "design" / "orchestrated-development-lifecycle.html"
 OPERATIONAL_CLAIM_PHRASES = (
@@ -134,21 +132,17 @@ class RoleMutationPolicyTests(unittest.TestCase):
                 self.assertIn("When agent-claim is selected", skill_text)
                 self.assertIn("When none is selected", skill_text)
 
-    def test_execute_workitem_package_branches_coordination_without_a_none_bypass(self) -> None:
-        """Keep clean delivery mandatory while none performs no coordination lifecycle."""
+    def test_execute_workitem_package_is_retired_without_weakening_delivery_contracts(self) -> None:
+        """Keep the retired bridge absent while maintained Commit skills own clean delivery."""
 
-        package = EXECUTE_WORKITEM_SKILL.read_text(encoding="utf-8")
-        simple_process = SIMPLE_WORKITEM_PROCESS.read_text(encoding="utf-8")
-        feature_process = FEATURE_WORKITEM_PROCESS.read_text(encoding="utf-8")
-
-        self.assertNotIn("Acquire ownership before repository mutation", package)
-        self.assertNotIn("Acquire the narrow required claim", simple_process)
-        self.assertNotIn("Acquire ownership before creating or switching branches", feature_process)
-        for text in (package, simple_process, feature_process):
+        self.assertFalse(EXECUTE_WORKITEM_PACKAGE.exists())
+        for text in (
+            FEATURE_BRANCH_SKILL.read_text(encoding="utf-8"),
+            DIRECT_MAIN_SKILL.read_text(encoding="utf-8"),
+        ):
             with self.subTest(document=text.splitlines()[0]):
                 self.assertIn("When agent-claim is selected", text)
                 self.assertIn("When none is selected", text)
-                self.assertIn("no coordination operations or evidence", text)
                 self.assertIn("clean", text.lower())
                 self.assertIn("commit", text.lower())
 

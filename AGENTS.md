@@ -38,12 +38,12 @@ Do not create separate skill files for repo-local maintenance procedures. Keep r
 
 ## Work-Item Workflow Skill References
 
-Project Configurator owns these independent selectors. Workflow skills are referenced by name only and are never inlined; their procedures stay in the selected skill definitions. Technology skill inlining is a separate mechanism below.
+Project Configurator owns the independent Persistence and Commit selectors. Persistence routes durable work-item storage; Commit routes delivery. Workflow skills are referenced by name only and technology skill routing remains separate.
 
-- Default provider file: create with create-file-work-item; manage with manage-file-work-items.
-- Default completion direct-main: use complete-work-item-direct-main.
+- Default persistence file: create with create-file-work-item; manage with manage-file-work-items.
+- Default commit direct-main: use complete-work-item-direct-main.
 
-Most-specific matching folder pattern wins independently for provider and completion overrides. A folder override changes only its own selector.
+Most-specific matching folder pattern wins independently for Persistence and Commit overrides. A folder override changes only its own selector.
 
 When a selector is UNSET, the pertinent agent asks at the stated operation boundary and does not infer either value from repository or hosting evidence, files, remotes, templates, plugins, or available tools.
 

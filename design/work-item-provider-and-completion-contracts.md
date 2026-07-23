@@ -4,8 +4,8 @@
 
 This contract separates two project decisions:
 
-- The provider selector chooses where durable work items are created and managed.
-- The completion selector chooses how verified delivery reaches a terminal state.
+- The Persistence selector chooses where durable work items are created and managed.
+- The Commit selector chooses how verified delivery reaches a terminal state.
 
 The selectors compose independently. A repository, remote, template, installed tool, existing queue, or hosting account is evidence about available capabilities, not authority to select either value.
 
@@ -13,9 +13,9 @@ This document is the policy source for the provider, completion, renderer, role,
 
 ## Selector Contract
 
-PROJECT.yaml owns both selectors. The intended keys are workflow_selection.provider and workflow_selection.completion. Each default and each folder override contains exactly one supported value.
+PROJECT.yaml owns both selectors. The canonical keys are workflow_selection.persistence and workflow_selection.commit. Each default and each folder override contains exactly one supported value.
 
-### Provider selector
+### Persistence selector
 
 | Value | Meaning | Create skill | Manage skill | Operational support |
 | --- | --- | --- | --- | --- |
@@ -29,7 +29,7 @@ PROJECT.yaml owns both selectors. The intended keys are workflow_selection.provi
 
 Provider skill identifiers are symmetric: create-provider-work-item and manage-provider-work-items. The create form is singular because one operation creates one independently actionable item. The manage form is plural because inventory, selection, lifecycle, recovery, and reconciliation operate over a provider-backed collection.
 
-### Completion selector
+### Commit selector
 
 | Value | Meaning | Completion skill | Operational support |
 | --- | --- | --- | --- |
@@ -41,7 +41,7 @@ Completion skill identifiers are action-centered because each skill owns the ter
 
 ### Folder overrides
 
-Provider and completion folder overrides are resolved independently using the project's existing most-specific matching pattern rule. A provider override never changes completion, and a completion override never changes provider. Each effective value must pass the same validation as its corresponding default. Within one selector, an exact folder pattern may appear only once; validation rejects both a redundant duplicate with the same value and a conflict with different values, naming both indexed rows and selected values.
+Persistence and Commit folder overrides are resolved independently using the project's existing most-specific matching pattern rule. A Persistence override never changes Commit, and a Commit override never changes Persistence. Each effective value must pass the same validation as its corresponding default. Within one selector, an exact folder pattern may appear only once; validation rejects both a redundant duplicate with the same value and a conflict with different values, naming both indexed rows and selected values.
 
 ## Combination Matrix
 
@@ -225,7 +225,7 @@ The complete-work-item-direct-main skill owns these stages:
 4. Run the smallest credible post-integration verification for the changed surface.
 5. Observe the final verified commit as reachable from main and record the main commit identity.
 6. Release integration authority from clean main.
-7. Return completion disposition READY with the required lifecycle update. When a provider is selected, ask its manager to record terminal evidence and lifecycle COMPLETED. When provider is none, record lifecycle COMPLETED and the full terminal evidence in the active task result.
+7. Return completion disposition READY with the prepared lifecycle update. When a provider is selected, return that handoff to the caller without dispatching Persistence; Dev Orchestrator owns the later steward dispatch and reconciliation. When provider is none, record lifecycle COMPLETED and the full terminal evidence in the active task result.
 
 The work is not completed while the accepted commit exists only on an isolated branch, coordination branch, detached worktree, patch, or unmerged pull request or merge request. A clean cherry-pick or merge command is insufficient until the commit is observed on main and focused post-integration verification has passed or a documented completion policy explicitly accepts a scoped omission.
 
@@ -237,20 +237,21 @@ The complete-work-item-feature-branch skill owns these stages:
 2. Publish the intended feature branch.
 3. Create or update the hosting-provider delivery record using provider-accurate terminology and tools: pull request for GitHub and merge request for GitLab.
 4. Verify the published base, head, commit, title, body, readiness, checks, and dependency order.
-5. Record AWAITING_REVIEW while any required review, check, approval, or configured merge remains incomplete.
-6. Resume the same work item and branch for accepted corrections, then repeat affected verification and publication checks.
+5. Return AWAITING_REVIEW while any required review, check, approval, or configured merge remains incomplete. Dev Orchestrator asks Dev Backlog Steward exactly once to record that nonterminal lifecycle state for a selected provider and reconciles repeated observations without a duplicate update.
+6. Return accepted source correction requests through Dev Orchestrator to the original Dev Coder. Consume the replacement candidate only after fresh independent review and verification, then resume the same branch and publication identity.
 7. Observe required review approval, required checks, and the configured merge on the hosting service and in Git.
 8. Observe the merged commit as reachable from the configured main branch.
-9. Return completion disposition READY with the required lifecycle update. When a provider is selected, ask its manager to record terminal evidence and lifecycle COMPLETED. When provider is none, record lifecycle COMPLETED and the full terminal evidence in the active task result.
+9. Return completion disposition READY with the prepared lifecycle update. When a provider is selected, return that handoff to the caller without dispatching Persistence; Dev Orchestrator owns the later steward dispatch and reconciliation. When provider is none, record lifecycle COMPLETED and the full terminal evidence in the active task result.
 
 Branch publication, a ready review, an approved review, green checks, a closed delivery record, and a merge button action are each intermediate evidence. Completion requires the configured merge result and main observation. If a project uses a hosting service other than the work-item provider, the delivery reference records that host explicitly without changing the work-item provider.
 
 ### Failure and recovery
 
 - A failed publish, review, check, integration, or main observation prevents completion disposition READY and lifecycle COMPLETED.
-- After completion disposition READY has been returned, a provider terminal-update failure preserves READY as the successful delivery handoff but prohibits lifecycle COMPLETED. The provider-backed item remains lifecycle RUNNING or becomes BLOCKED until reconciliation applies the pending update. A retry does not rerun or invalidate already accepted delivery evidence unless that evidence has become stale or contradictory.
-- A correctable review finding returns AWAITING_REVIEW to RUNNING on the same item and branch.
-- A provider terminal-update failure after merge preserves delivery disposition READY and its evidence while the provider lifecycle remains RUNNING or BLOCKED until reconciliation succeeds.
+- After completion disposition READY has been returned, a failed or partially observed provider terminal update preserves READY as the successful delivery handoff but prohibits lifecycle COMPLETED. For feature-branch delivery, preserve lifecycle AWAITING_REVIEW for the same delivery identity. For direct-main delivery, preserve lifecycle RUNNING. Record lifecycle BLOCKED when safe reconciliation cannot continue. Never unconditionally reset lifecycle to RUNNING. A retry does not rerun or invalidate already accepted delivery evidence unless that evidence has become stale or contradictory.
+- A correctable review finding preserves durable AWAITING_REVIEW for the same delivery identity while correction work resumes on the same item and branch. It does not transition the provider lifecycle back to RUNNING.
+- AWAITING_REVIEW never authorizes lifecycle COMPLETED. Its one nonterminal Persistence update is distinct from the one terminal update authorized only by later Commit READY evidence.
+- A provider terminal-update failure after merge follows the same delivery-mode recovery lifecycle while preserving delivery disposition READY and its evidence until reconciliation succeeds.
 - A missing merge after successful publication remains AWAITING_REVIEW, not BLOCKED, unless a concrete prerequisite or failure prevents review or merge.
 - A stale or interrupted execution resumes from the provider record, accepted candidate commit, claims, delivery reference, checks, and open issues rather than inferring success from a stopped task.
 
@@ -312,29 +313,31 @@ Compatibility is transition-bounded:
 
 ## Contract Walkthroughs
 
+Applying the effective Commit skill yields the prepared delivery handoff; it does not dispatch a provider manager. Commit AWAITING_REVIEW causes Dev Orchestrator to dispatch Dev Backlog Steward exactly once for a nonterminal Persistence update, then preserve the same delivery identity. Repeated observation reconciles that update without duplication. Commit READY permits one distinct steward dispatch for terminal COMPLETED and verification of the selected manager's recorded result. Provider none retains AWAITING_REVIEW task-locally and returns READY with task-local COMPLETED finalization without manager dispatch.
+
 ### File plus direct main
 
-The file create skill records a READY item under backlog on primary main. The file manage skill records RUNNING ownership through a short backlog transaction. Implementation and review occur separately. The direct-main completion skill integrates and verifies the accepted commit, observes it on main, and releases integration authority. The file manage skill then records terminal evidence, moves the item to completed-backlog, commits the move, and releases the separate backlog claim.
+The file create skill records a READY item under backlog on primary main. The file manage skill records RUNNING ownership through a short backlog transaction. Implementation, independent review, and verification occur separately. The direct-main Commit skill integrates the accepted commit, observes it on main, and returns Commit READY. Dev Orchestrator then dispatches Dev Backlog Steward exactly once for Persistence closure. The file manager records terminal evidence, moves the item to completed-backlog, commits the move, and releases the separate backlog claim; the orchestrator verifies that closure.
 
 ### File plus feature branch
 
-The file provider owns the backlog record while the completion skill owns branch publication. After verified publication, the file manage skill records AWAITING_REVIEW with the branch and delivery reference. Accepted corrections resume the same item and branch. Only after required review, checks, merge, and main observation does the file manager record COMPLETED and archive the item.
+The file provider owns the backlog record while the feature-branch Commit skill owns publication and returns Commit AWAITING_REVIEW with the branch and delivery reference. Dev Orchestrator dispatches Dev Backlog Steward exactly once to persist nonterminal AWAITING_REVIEW, then preserves that delivery identity. Accepted corrections resume the same item and branch without duplicating the recorded update. After required review, checks, merge, and main observation, the Commit skill returns Commit READY. Dev Orchestrator then dispatches Dev Backlog Steward exactly once for the distinct terminal closure; the file manager records COMPLETED and archives the item, and the orchestrator verifies the result.
 
 ### GitHub plus direct main
 
-The GitHub create skill creates one issue and returns its issue URL. The GitHub manage skill records ownership without a shadow backlog file. The direct-main completion skill integrates and verifies the commit and observes it on main. The GitHub manage skill then records evidence and closes the issue according to project convention.
+The GitHub create skill creates one issue and returns its issue URL. The GitHub manage skill records ownership without a shadow backlog file. The direct-main Commit skill integrates and verifies the commit, observes it on main, and returns Commit READY. Dev Orchestrator dispatches Dev Backlog Steward exactly once for Persistence closure, then verifies that the GitHub manager recorded evidence and closed the issue according to project convention.
 
 ### GitHub plus feature branch
 
-The GitHub issue remains the work-item identifier. The feature-branch completion skill publishes a GitHub pull request as the delivery reference and records AWAITING_REVIEW. The issue remains nonterminal until required review, checks, pull-request merge, and main observation exist; only then may the GitHub manager close it as COMPLETED.
+The GitHub issue remains the work-item identifier. The feature-branch Commit skill publishes a GitHub pull request as the delivery reference and returns Commit AWAITING_REVIEW. Dev Orchestrator dispatches Dev Backlog Steward exactly once to persist that nonterminal state. The same Commit delivery resumes through required review, checks, pull-request merge, and main observation without duplicating the update, then returns Commit READY. Dev Orchestrator dispatches Dev Backlog Steward exactly once for the distinct terminal COMPLETED update and verifies that the GitHub manager closed the issue.
 
 ### GitLab plus direct main
 
-The GitLab create skill creates one issue and returns its issue URL. The GitLab manage skill records ownership without a shadow backlog file. The direct-main completion skill integrates and verifies the commit and observes it on main. The GitLab manage skill then records evidence and closes the issue according to project convention.
+The GitLab create skill creates one issue and returns its issue URL. The GitLab manage skill records ownership without a shadow backlog file. The direct-main Commit skill integrates and verifies the commit, observes it on main, and returns Commit READY. Dev Orchestrator dispatches Dev Backlog Steward exactly once for Persistence closure, then verifies that the GitLab manager recorded evidence and closed the issue according to project convention.
 
 ### GitLab plus feature branch
 
-The GitLab issue remains the work-item identifier. The feature-branch completion skill publishes a GitLab merge request as the delivery reference and records AWAITING_REVIEW. The issue remains nonterminal until required review, checks, merge-request merge, and main observation exist; only then may the GitLab manager close it as COMPLETED.
+The GitLab issue remains the work-item identifier. The feature-branch Commit skill publishes a GitLab merge request as the delivery reference and returns Commit AWAITING_REVIEW. Dev Orchestrator dispatches Dev Backlog Steward exactly once to persist that nonterminal state. The same Commit delivery resumes through required review, checks, merge-request merge, and main observation without duplicating the update, then returns Commit READY. Dev Orchestrator dispatches Dev Backlog Steward exactly once for the distinct terminal COMPLETED update and verifies that the GitLab manager closed the issue.
 
 ### Azure DevOps and Jira placeholders
 
@@ -342,7 +345,7 @@ For either selected provider and either completion value, the first requested pr
 
 ### UNSET
 
-An unset provider causes an explicit provider question only when persistence is needed. An unset completion causes an explicit completion question before implementation or publication. The agent does not inspect remotes, files, tools, or templates to decide. Once answered, the selected provider and completion proceed independently through the applicable walkthrough.
+An unset Persistence selection causes an explicit provider question only when persistence is needed. An unset Commit selection causes an explicit completion question before implementation or publication. The agent does not inspect remotes, files, tools, or templates to decide. Once answered, the selected Persistence and Commit values proceed independently through the applicable walkthrough.
 
 ## Verification Obligations
 
@@ -362,8 +365,8 @@ Each downstream implementation must provide focused evidence for its owned part 
 
 ## Source Reconciliation
 
-The file-provider creation and management procedures are owned by [create-file-work-item](../skills/create-file-work-item/SKILL.md) and [manage-file-work-items](../skills/manage-file-work-items/SKILL.md). create-backlog, manage-backlog, and file-based-backlog remain migration-only bridges until their separately governed callers move; they own no independent procedure and are removed at that caller-migration gate. The remaining prototype behavior is distributed across [github-issues-backlog](../skills/github-issues-backlog/SKILL.md), [execute-workitem](../skills/execute-workitem/SKILL.md), [create-pull-request](../skills/create-pull-request/SKILL.md), [agent-work-merge](../skills/agent-work-merge/SKILL.md), and [agent-claim](../skills/agent-claim/SKILL.md).
+The file-provider creation and management procedures are owned by [create-file-work-item](../skills/create-file-work-item/SKILL.md) and [manage-file-work-items](../skills/manage-file-work-items/SKILL.md). The migration table above records how create-backlog, manage-backlog, file-based-backlog, github-issues-backlog, and execute-workitem were replaced before their packages and active callers were removed. [create-pull-request](../skills/create-pull-request/SKILL.md) remains a subordinate GitHub publication capability of feature-branch completion, while [agent-work-merge](../skills/agent-work-merge/SKILL.md) and [agent-claim](../skills/agent-claim/SKILL.md) retain their independent integration and ownership responsibilities.
 
-The [project configuration template](../skills/development-methodology/assets/templates/project-template.yaml), this repository's root PROJECT.yaml, and [render-agents-technology-skills.py](../scripts/render-agents-technology-skills.py) implement workflow_selection.provider and workflow_selection.completion. Generated workflow guidance references the selected create, manage, and completion skills by name, while the existing folder technology mechanism remains separately inlined.
+The [project configuration template](../skills/development-methodology/assets/templates/project-template.yaml), this repository's root PROJECT.yaml, and [render-agents-technology-skills.py](../scripts/render-agents-technology-skills.py) implement workflow_selection.persistence and workflow_selection.commit. Generated workflow guidance references the selected create, manage, and completion skills by name, while the existing folder technology mechanism remains separately inlined.
 
 The renderer rejects the prototype workitem and backlog keys with deterministic mappings from simple-workitem, feature-branch-workitem, file-based-backlog, github-issues-backlog, none, and UNSET. When prototype and canonical fields coexist, it validates both shapes and reports every redundant or conflicting mapped default and exact-pattern override with both source paths and values. It preserves canonical maintainer selections, unsupported placeholders, and independent folder overrides without inferring or suggesting overwriting replacements. A combined override diagnostic names the exact rejected field and value, lists the selector-specific vocabulary, and directs the maintainer to split provider and completion overrides. The migration table remains the authority for downstream caller transitions; downstream work must not independently rename, split, alias, or reinterpret these identifiers.

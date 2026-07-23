@@ -86,14 +86,11 @@ NEW_DEVELOPMENT_SKILLS = (
     "root-cause-analysis",
     "runtime-evidence-collection",
     "organise-project-files",
-    "execute-workitem",
     "complete-work-item-direct-main",
     "create-file-work-item",
     "manage-file-work-items",
-    "file-based-backlog",
     "create-github-work-item",
     "manage-github-work-items",
-    "github-issues-backlog",
     "create-gitlab-work-item",
     "manage-gitlab-work-items",
     "create-azure-devops-work-item",
@@ -1007,7 +1004,7 @@ class BundleContentTests(unittest.TestCase):
             "expected to take more than five minutes",
             "the exact currently active unit and any later units that have not started",
             "a hard stop condition and the retained evidence path",
-            "not a new backlog transaction or parent approval gate",
+            "not a new provider transaction or parent approval gate",
             "The task may start without waiting for parent acknowledgement.",
             "This observation must not serialize healthy work.",
             "must not describe queued work as running.",
@@ -1021,6 +1018,37 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, skill_text)
+
+    def test_codex_coordination_routes_provider_and_delivery_state_through_selected_skills(
+        self,
+    ) -> None:
+        """Coordination must stay neutral across Persistence and Commit selections."""
+        skill_text = (
+            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        for phrase in (
+            "Obtain queue inventory, lifecycle counts, provider identities, and dispatchable state only by applying the effective Persistence-selected management skill.",
+            "Provider file: treat repository backlog paths as provider identities and use short backlog claims only for file-provider mutations.",
+            "Provider github: use GitHub issue identities and provider lifecycle evidence; do not create or inspect file backlog paths.",
+            "Provider gitlab: use GitLab issue identities and provider lifecycle evidence; do not translate them into GitHub or file records.",
+            "Provider azure-devops or jira: apply the selected placeholder management skill, preserve its BLOCKED zero-mutation result, and do not fall back.",
+            "Provider none: do not inventory, count, create, transition, or close durable provider records; coordinate only the explicit task and retain task-local evidence.",
+            "Apply or resume the effective Commit-selected skill only after candidate review and source verification accept the direct or combined commit.",
+            "Only after the effective Commit-selected skill returns READY",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
+        self.assertNotIn("Derive active capacity from the backlog files", skill_text)
+        self.assertNotIn("Direct Delivery Without A Pull Request", skill_text)
+        self.assertNotIn("Pull-Request Delivery", skill_text)
+        self.assertLess(
+            skill_text.index(
+                "Apply or resume the effective Commit-selected skill only after candidate review"
+            ),
+            skill_text.index("Only after the effective Commit-selected skill returns READY"),
+        )
 
     def test_skill_authoring_contract_is_shared_by_maintainer_and_reviewer(self) -> None:
         skill_text = (SKILLS_ROOT / "skill-authoring" / "SKILL.md").read_text(
@@ -1274,6 +1302,11 @@ class BundleContentTests(unittest.TestCase):
         manage_text = (SKILLS_ROOT / "manage-gitlab-work-items" / "SKILL.md").read_text(
             encoding="utf-8"
         )
+        provider_contract_text = (
+            REPOSITORY_ROOT
+            / "design"
+            / "work-item-provider-and-completion-contracts.md"
+        ).read_text(encoding="utf-8")
 
         for text in (create_text, manage_text):
             for phrase in (
@@ -1320,6 +1353,26 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(manage_phrase=phrase):
                 self.assertIn(phrase, manage_text)
 
+        for phrase in (
+            "For feature-branch delivery, preserve lifecycle AWAITING_REVIEW for the same delivery identity.",
+            "For direct-main delivery, preserve lifecycle RUNNING.",
+            "Record lifecycle BLOCKED when safe reconciliation cannot continue.",
+            "Never unconditionally reset lifecycle to RUNNING.",
+        ):
+            with self.subTest(reconciliation_phrase=phrase):
+                self.assertIn(phrase, manage_text)
+                self.assertIn(phrase, provider_contract_text)
+
+        for stale_phrase in (
+            "leave the lifecycle RUNNING or set it to BLOCKED",
+            "keep lifecycle RUNNING or set it to BLOCKED",
+            "remains lifecycle RUNNING or becomes BLOCKED",
+            "remains RUNNING or BLOCKED",
+        ):
+            with self.subTest(stale_reconciliation_phrase=stale_phrase):
+                self.assertNotIn(stale_phrase, manage_text)
+                self.assertNotIn(stale_phrase, provider_contract_text)
+
     def test_create_pull_request_skill_and_template_define_modular_scope_and_review_order(
         self,
     ) -> None:
@@ -1359,15 +1412,18 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(template_heading=heading):
                 self.assertIn(heading, template_text)
 
-        role = load_yaml_object(
-            ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml"
+        role = load_yaml_object(ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml")
+        self.assertNotIn(
+            "create-pull-request",
+            {next(iter(entry)) for entry in role["skills"]},
         )
-        pull_request_skill = next(
-            entry["create-pull-request"]
-            for entry in role["skills"]
-            if "create-pull-request" in entry
+        feature_completion_text = (
+            SKILLS_ROOT / "complete-work-item-feature-branch" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "Apply [create-pull-request]",
+            feature_completion_text,
         )
-        self.assertIn("feature-branch-workitem", pull_request_skill["condition"])
 
         probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
         probe = next(
@@ -1408,12 +1464,13 @@ class BundleContentTests(unittest.TestCase):
         skill_text = skill_path.read_text(encoding="utf-8")
 
         for phrase in (
-            "Create the intended feature branch from the assigned base before changing source files.",
+            "Consume an already accepted, independently reviewed and verified candidate commit.",
             "use create-pull-request and GitHub evidence. Call it a pull request.",
             "use the configured merge-request capability and GitLab evidence. Call it a merge request.",
             "Successful publication returns AWAITING_REVIEW",
             "A ready publication is not READY delivery evidence.",
-            "apply accepted corrections on the same branch",
+            "Return every source correction request to the caller for Dev Orchestrator to route to the original Dev Coder.",
+            "Resume the same branch, publication, and delivery identity only after the replacement candidate passes fresh independent review and verification.",
             "The pull request or merge request reports a merged state",
             "reachable from the configured base branch in Git",
             "A closed-unmerged, abandoned, replaced, or superseded publication cannot return READY.",
@@ -1477,32 +1534,11 @@ class BundleContentTests(unittest.TestCase):
         )
 
     def test_workitem_provider_and_completion_processes_are_selector_driven(self) -> None:
-        execute_text = (
-            SKILLS_ROOT / "execute-workitem" / "SKILL.md"
-        ).read_text(encoding="utf-8")
-        simple_text = (
-            SKILLS_ROOT
-            / "execute-workitem"
-            / "references"
-            / "simple-workitem.md"
-        ).read_text(encoding="utf-8")
-        feature_text = (
-            SKILLS_ROOT
-            / "execute-workitem"
-            / "references"
-            / "feature-branch-workitem.md"
-        ).read_text(encoding="utf-8")
         create_file_text = (
             SKILLS_ROOT / "create-file-work-item" / "SKILL.md"
         ).read_text(encoding="utf-8")
         manage_file_text = (
             SKILLS_ROOT / "manage-file-work-items" / "SKILL.md"
-        ).read_text(encoding="utf-8")
-        legacy_file_text = (
-            SKILLS_ROOT / "file-based-backlog" / "SKILL.md"
-        ).read_text(encoding="utf-8")
-        github_backlog_text = (
-            SKILLS_ROOT / "github-issues-backlog" / "SKILL.md"
         ).read_text(encoding="utf-8")
         create_github_text = (
             SKILLS_ROOT / "create-github-work-item" / "SKILL.md"
@@ -1511,18 +1547,8 @@ class BundleContentTests(unittest.TestCase):
             SKILLS_ROOT / "manage-github-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
-        self.assertIn("simple-workitem or feature-branch-workitem", execute_text)
-        self.assertIn("Read only the selected process", execute_text)
-        self.assertIn("Do not push a branch or create a pull request", simple_text)
-        self.assertIn("Set the pull request ready for review", feature_text)
-        self.assertIn("report AWAITING_REVIEW", feature_text)
         self.assertIn("effective provider is file", create_file_text)
         self.assertIn("effective provider is file", manage_file_text)
-        self.assertIn("create-file-work-item and manage-file-work-items", legacy_file_text)
-        self.assertNotIn("## Operations", legacy_file_text)
-        self.assertIn("transition route for current generated and configured callers", github_backlog_text)
-        self.assertIn("create-github-work-item", github_backlog_text)
-        self.assertIn("manage-github-work-items", github_backlog_text)
         self.assertIn("Search open and recently closed issues", create_github_text)
         self.assertIn("do not create another", create_github_text)
         self.assertIn("possibly completed mutation", create_github_text)
@@ -1544,10 +1570,9 @@ class BundleContentTests(unittest.TestCase):
             for entry in coder["skills"]
             for skill_name, metadata in entry.items()
         }
-        self.assertIn("execute-workitem", coder_skills)
-        self.assertNotIn("condition", coder_skills["execute-workitem"])
-        self.assertIn("feature-branch-workitem", coder_skills["create-pull-request"]["condition"])
-        self.assertIn("work-item delivery status", {
+        self.assertNotIn("execute-workitem", coder_skills)
+        self.assertNotIn("create-pull-request", coder_skills)
+        self.assertIn("candidate handoff status", {
             next(iter(entry)) for entry in coder["outputContract"]
         })
 
@@ -1558,7 +1583,18 @@ class BundleContentTests(unittest.TestCase):
             next(iter(entry)) for entry in orchestrator["skills"]
         }
         self.assertNotIn("create-pull-request", orchestrator_skills)
-        self.assertNotIn("manage-backlog", orchestrator_skills)
+        self.assertTrue(
+            orchestrator_skills.isdisjoint(
+                {
+                    "create-file-work-item",
+                    "manage-file-work-items",
+                    "create-github-work-item",
+                    "manage-github-work-items",
+                    "complete-work-item-direct-main",
+                    "complete-work-item-feature-branch",
+                }
+            )
+        )
         self.assertIn("dev-backlog-steward", orchestrator["agentDependencies"])
 
         backlog_steward = load_yaml_object(
@@ -1569,10 +1605,16 @@ class BundleContentTests(unittest.TestCase):
             for entry in backlog_steward["skills"]
             for skill_name, metadata in entry.items()
         }
-        self.assertIn("file-based-backlog", backlog_skills)
-        self.assertIn("github-issues-backlog", backlog_skills)
-        self.assertIn("condition", backlog_skills["file-based-backlog"])
-        self.assertIn("condition", backlog_skills["github-issues-backlog"])
+        self.assertTrue(
+            backlog_skills.keys().isdisjoint(
+                {
+                    "create-file-work-item",
+                    "manage-file-work-items",
+                    "create-github-work-item",
+                    "manage-github-work-items",
+                }
+            )
+        )
 
         project_template = (
             SKILLS_ROOT
@@ -1602,43 +1644,184 @@ class BundleContentTests(unittest.TestCase):
         project_configuration = load_yaml_object(REPOSITORY_ROOT / "PROJECT.yaml")
         self.assertEqual(
             "file",
-            project_configuration["workflow_selection"]["provider"]["default"],
+            project_configuration["workflow_selection"]["persistence"]["default"],
         )
         self.assertEqual(
             "direct-main",
-            project_configuration["workflow_selection"]["completion"]["default"],
+            project_configuration["workflow_selection"]["commit"]["default"],
         )
         agents_text = (REPOSITORY_ROOT / "AGENTS.md").read_text(encoding="utf-8")
         self.assertIn("## Work-Item Workflow Skill References", agents_text)
         self.assertIn("create-file-work-item", agents_text)
         self.assertIn("manage-file-work-items", agents_text)
         self.assertIn("complete-work-item-direct-main", agents_text)
-        self.assertIn("Technology skill inlining is a separate mechanism", agents_text)
+        self.assertIn("technology skill routing remains separate", agents_text)
 
         probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
         probe_ids = {entry["id"] for entry in probes["probes"]}
         for probe_id in (
-            "probe-execute-workitem",
-            "probe-file-based-backlog",
             "probe-create-github-work-item",
             "probe-manage-github-work-items",
             "probe-create-file-work-item",
-            "probe-github-issues-backlog",
             "probe-manage-file-work-items",
+            "probe-complete-work-item-direct-main",
+            "probe-complete-work-item-feature-branch",
         ):
             self.assertIn(probe_id, probe_ids)
+        for retired_probe_id in (
+            "probe-execute-workitem",
+            "probe-file-based-backlog",
+            "probe-github-issues-backlog",
+            "probe-create-backlog",
+            "probe-manage-backlog",
+        ):
+            self.assertNotIn(retired_probe_id, probe_ids)
 
         readme_text = README_PATH.read_text(encoding="utf-8")
         for skill_name in (
-            "execute-workitem",
-            "file-based-backlog",
             "create-github-work-item",
             "manage-github-work-items",
             "create-file-work-item",
-            "github-issues-backlog",
             "manage-file-work-items",
+            "complete-work-item-direct-main",
+            "complete-work-item-feature-branch",
         ):
             self.assertIn(f"- {skill_name}", readme_text)
+        for retired_skill in (
+            "create-backlog",
+            "manage-backlog",
+            "file-based-backlog",
+            "github-issues-backlog",
+            "execute-workitem",
+        ):
+            self.assertFalse((SKILLS_ROOT / retired_skill).exists())
+
+    def test_dev_coder_and_orchestrator_preserve_candidate_review_commit_order(self) -> None:
+        """Terminal Commit delivery must begin only after independent candidate acceptance."""
+        coder = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml"
+        )
+        orchestrator = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-orchestrator.role.yaml"
+        )
+        coder_text = json.dumps(coder, sort_keys=True)
+        orchestrator_text = json.dumps(orchestrator, sort_keys=True)
+
+        self.assertIn(
+            "Return a clean verified candidate commit to Dev Orchestrator for independent review.",
+            coder_text,
+        )
+        self.assertIn("Do not apply the effective Commit-selected skill", coder_text)
+        self.assertNotIn("applied the effective Commit-selected skill", coder_text)
+        self.assertNotIn("main observation", coder_text)
+
+        for phrase in (
+            "Apply or resume the effective Commit-selected skill to the accepted direct or combined commit only after independent review and source verification pass.",
+            "The effective Commit-selected skill returns the prepared terminal delivery handoff",
+            "dispatch dev-backlog-steward exactly once to record the nonterminal AWAITING_REVIEW lifecycle update",
+            "reconcile that recorded update instead of dispatching a duplicate",
+            "Do not request lifecycle COMPLETED while Commit is AWAITING_REVIEW",
+            "Resume the same effective Commit-selected skill through review corrections, checks, dependency order, merge, and main observation until it returns READY or BLOCKED.",
+            "dispatch dev-backlog-steward exactly once for the distinct terminal COMPLETED update",
+            "verify the selected manager's recorded closure before reporting READY",
+            "For provider none, do not dispatch dev-backlog-steward",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, orchestrator_text)
+
+        workflow_text = "\n".join(orchestrator["instructions"]["workflow"])
+        candidate_index = workflow_text.index("candidate commit")
+        review_index = workflow_text.index("fresh read-only")
+        commit_index = workflow_text.index(
+            "Apply or resume the effective Commit-selected skill to the accepted direct or combined commit"
+        )
+        persistence_index = workflow_text.index(
+            "dispatch dev-backlog-steward exactly once to record the nonterminal AWAITING_REVIEW lifecycle update"
+        )
+        self.assertLess(candidate_index, review_index)
+        self.assertLess(review_index, commit_index)
+        self.assertLess(commit_index, persistence_index)
+
+        status_output = next(
+            entry["status"]["purpose"]
+            for entry in orchestrator["outputContract"]
+            if "status" in entry
+        )
+        for status in ("READY", "AWAITING_REVIEW", "BLOCKED"):
+            self.assertIn(status, status_output)
+
+        ready_examples = [
+            example["plausibleResponse"]
+            for example in orchestrator["examples"]
+            if "STATUS: READY" in example["plausibleResponse"]
+        ]
+        self.assertTrue(ready_examples)
+        self.assertTrue(any("provider none" in response for response in ready_examples))
+        for response in ready_examples:
+            with self.subTest(ready_example=response[:80]):
+                self.assertIn("Commit returned READY", response)
+                commit_ready_index = response.index("Commit returned READY")
+                if "provider none" in response:
+                    finalization_index = response.index("task-local COMPLETED finalization")
+                else:
+                    self.assertIn("dev-backlog-steward exactly once", response)
+                    self.assertIn("verified the selected manager's recorded closure", response)
+                    finalization_index = response.index("dev-backlog-steward exactly once")
+                self.assertLess(commit_ready_index, finalization_index)
+
+        provider_contract = (
+            REPOSITORY_ROOT / "design" / "work-item-provider-and-completion-contracts.md"
+        ).read_text(encoding="utf-8")
+        for phrase in (
+            "workflow_selection.persistence",
+            "workflow_selection.commit",
+            "Commit AWAITING_REVIEW",
+            "Commit READY",
+            "Persistence closure",
+            "GitHub pull request",
+            "GitLab merge request",
+        ):
+            with self.subTest(provider_contract=phrase):
+                self.assertIn(phrase, provider_contract)
+        self.assertNotIn("workflow_selection.provider", provider_contract)
+        self.assertNotIn("workflow_selection.completion", provider_contract)
+
+        lifecycle_text = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        ).read_text(encoding="utf-8")
+        for phrase in (
+            "Commit AWAITING_REVIEW",
+            "Commit READY",
+            "Persistence closure",
+            "pull request or GitLab merge request",
+            "exactly once",
+        ):
+            with self.subTest(lifecycle_contract=phrase):
+                self.assertIn(phrase, lifecycle_text)
+
+        cases = load_yaml_object(REPOSITORY_ROOT / "evals" / "cases.yaml")["cases"]
+        for case in cases:
+            if "dev-coder" not in case.get("requiredAgents", []):
+                continue
+            with self.subTest(dev_coder_case=case["id"]):
+                self.assertNotIn(
+                    "complete-work-item-direct-main",
+                    case.get("requiredSkills", []),
+                )
+                self.assertNotIn(
+                    "complete-work-item-direct-main",
+                    case.get("contextPack", {}).get("stagedSkillPackages", []),
+                )
+
+        for skill_name in ("create-file-work-item", "manage-file-work-items"):
+            migration = (
+                SKILLS_ROOT / skill_name / "SKILL.md"
+            ).read_text(encoding="utf-8").split("## Migration", 1)[1]
+            with self.subTest(skill_name=skill_name):
+                self.assertIn("Callers migrated", migration)
+                self.assertIn("legacy shells were removed", migration)
+                self.assertIn("Historical mapping:", migration)
+                self.assertNotIn("until their separately governed callers move", migration)
 
     def test_direct_main_completion_requires_integrated_main_evidence(self) -> None:
         skill_name = "complete-work-item-direct-main"
@@ -3640,13 +3823,6 @@ class BundleContentTests(unittest.TestCase):
         manage_file_text = (
             SKILLS_ROOT / "manage-file-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
-        legacy_bridge_text = (
-            SKILLS_ROOT / "manage-backlog" / "SKILL.md"
-        ).read_text(encoding="utf-8")
-        self.assertNotIn(
-            "## Blocked Handoff And Resumption",
-            legacy_bridge_text,
-        )
         for required_phrase in (
             "## Blocked Handoff And Resumption",
             "replace the prior owner with Owner: Unowned",
@@ -4602,7 +4778,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("cannot create or widen approval", requests_text)
         self.assertIn("checker-approval.yaml", requests_text)
 
-    def test_file_work_item_skills_own_behavior_and_legacy_ids_are_migration_only(self) -> None:
+    def test_file_work_item_skills_own_behavior_after_legacy_retirement(self) -> None:
         primary_root = resolve_primary_repository_root()
         canonical_contracts = {
             "create-file-work-item": (
@@ -4617,6 +4793,9 @@ class BundleContentTests(unittest.TestCase):
                 "must not create, transition, or archive the canonical record",
                 "SHARED_CHECKOUT_RELEASE_REQUIRED is a coordination outcome rather than a failed mutation",
                 "AWAITING_REVIEW",
+                "same delivery identity remains lifecycle AWAITING_REVIEW",
+                "Do not change lifecycle back to RUNNING for same-delivery corrections.",
+                "Only a later Commit READY permits the distinct terminal COMPLETED update.",
                 "main observation",
                 "failed archive path",
             ),
@@ -4646,26 +4825,13 @@ class BundleContentTests(unittest.TestCase):
             readme_text,
         )
 
-        legacy_replacements = {
-            "create-backlog": ("create-file-work-item",),
-            "manage-backlog": ("manage-file-work-items",),
-            "file-based-backlog": (
-                "create-file-work-item",
-                "manage-file-work-items",
-            ),
-        }
-        for legacy_name, replacements in legacy_replacements.items():
-            legacy_text = (SKILLS_ROOT / legacy_name / "SKILL.md").read_text(
-                encoding="utf-8"
-            )
-            with self.subTest(legacy=legacy_name):
-                self.assertIn("migration-only", legacy_text.lower())
-                self.assertIn("supplies no", legacy_text)
-                self.assertNotIn("## Operations", legacy_text)
-                self.assertNotIn("## Folder Model", legacy_text)
-                self.assertNotIn("## Completion Workflow", legacy_text)
-                for replacement in replacements:
-                    self.assertIn(replacement, legacy_text)
+        for retired_name in (
+            "create-backlog",
+            "manage-backlog",
+            "file-based-backlog",
+        ):
+            with self.subTest(retired=retired_name):
+                self.assertFalse((SKILLS_ROOT / retired_name).exists())
 
         user_action_required_root = primary_root / "backlog" / "user-action-required"
         queue_readme = user_action_required_root / "README.md"
@@ -5529,12 +5695,18 @@ class BundleContentTests(unittest.TestCase):
             "Do not import cumulative branch ancestry merely to preserve provenance",
             "When resource coordination selects agent-claim, keep administrative coordination-registry cleanup, Git integration, and terminal backlog completion as three distinct operations",
             "When none is selected, omit coordination-registry cleanup and coordination evidence.",
+            "Apply or resume the effective Commit-selected skill only after candidate review and source verification accept the direct or combined commit",
+            "Preserve AWAITING_REVIEW with the same delivery identity",
+            "Only after the effective Commit-selected skill returns READY",
+            "Keep coordination-registry cleanup, Commit delivery, and Persistence closure as distinct operations",
             "A live owner, dirty unpreserved worktree, resource in use, or unclear evidence blocks reset",
             "The bundled portable claim command has no reset operation",
             "If a supported atomic operation is unavailable, stop and route the reset",
             "Claim release does not audit commit history or interpret merge ancestry",
             "fresh Work-item integration branch is fully merged",
             "prior candidate branch used only as a non-ancestral content source is not the Work-item cleanup branch",
+            "GitHub and GitLab closure use their own provider identities",
+            "Provider none records terminal evidence only in the task result",
         ):
             with self.subTest(coordination_contract=required_contract):
                 self.assertIn(required_contract, coordination_text)
@@ -5807,6 +5979,46 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("commit closeout", normalized_response)
                 self.assertIn("enabled resource-coordination evidence", normalized_response)
                 self.assertNotIn("released the ingest claim", normalized_response)
+
+    def test_dev_backlog_coordinator_uses_selected_provider_and_completion_routes(self) -> None:
+        """The coordinator should supervise provider-neutral state and selected delivery."""
+        role = yaml.safe_load(
+            (
+                ROLES_ROOT
+                / "dev-activities"
+                / "dev-backlog-coordinator.role.yaml"
+            ).read_text(encoding="utf-8")
+        )
+        role_text = json.dumps(role, sort_keys=True)
+
+        for required_contract in (
+            "effective Persistence-selected management skill",
+            "Provider file",
+            "Provider github",
+            "Provider gitlab",
+            "Provider azure-devops or jira",
+            "Provider none",
+            "Provider UNSET or an unavailable selected skill",
+            "effective Commit-selected skill",
+            "Do not reproduce provider or Commit procedures",
+            "ten Starting or Running items",
+            "six five-minute retries",
+            "Every fifteen minutes",
+            "canonical task id",
+            "remove the clean worktree",
+        ):
+            with self.subTest(contract=required_contract):
+                self.assertIn(required_contract, role_text)
+
+        for obsolete_contract in (
+            "file-backed work-item queue",
+            "Count Status Running from the file-backed backlog",
+            "canonical backlog path",
+            "direct integration",
+            "file-backed queue snapshot",
+        ):
+            with self.subTest(contract=obsolete_contract):
+                self.assertNotIn(obsolete_contract, role_text)
 
     def test_wiki_ingester_continues_substantiated_ingest_after_verifier_interruption(
         self,
@@ -6234,7 +6446,7 @@ class BundleContentTests(unittest.TestCase):
             "Merge Coordinator",
             "Each work-item Thread uses its own branch and worktree",
             "Direct-main delivery",
-            "Pull-request delivery",
+            "Feature-branch delivery",
             "temporary conflict-avoidance scratchpad",
             "not proof of review, verification, delivery, or work-item completion",
             "one cheapest representative first",
@@ -6268,7 +6480,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("overflow-x: auto", lifecycle_text)
 
     def test_lifecycle_routes_direct_main_and_pull_request_completion_paths(self) -> None:
-        """The lifecycle should distinguish direct-main and pull-request delivery."""
+        """The lifecycle should distinguish direct-main and feature-branch delivery."""
         lifecycle_path = (
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
         )
@@ -6279,16 +6491,16 @@ class BundleContentTests(unittest.TestCase):
             "fresh reconciliation branch from that exact commit",
             "Apply only the accepted paths",
             "exact shared integration paths",
-            "Pull-request delivery",
-            "authorized reviewer or merge owner",
-            "does not acquire duplicate main-integration ownership",
+            "Feature-branch delivery",
+            "GitHub pull request or GitLab merge request",
+            "Commit AWAITING_REVIEW without Persistence mutation",
+            "Dev Orchestrator separately dispatches Dev Backlog Steward exactly once for the nonterminal AWAITING_REVIEW update",
+            "until Commit READY",
+            "dispatch exactly once for the distinct terminal Persistence closure",
             "Conditional integration role",
             "nested Merge Coordinator",
             "inside the same work item",
             "Re-review reconciled content when integration changes meaning",
-            "separate provider transaction",
-            "none performs no claim operation and records no claim evidence",
-            "record Completed",
             "delete the merged branch",
             "refill queue capacity",
         ):
@@ -6297,7 +6509,7 @@ class BundleContentTests(unittest.TestCase):
 
         direct_main = lifecycle_text[
             lifecycle_text.index(">Direct-main delivery<") :
-            lifecycle_text.index(">Pull-request delivery<")
+            lifecycle_text.index(">Feature-branch delivery<")
         ]
         direct_main_steps = (
             "Review and verify the private candidate",
@@ -7197,7 +7409,10 @@ class BundleContentTests(unittest.TestCase):
         suite_directories = {
             path.name
             for path in AGENT_TEST_SUITES_ROOT.iterdir()
-            if path.is_dir() and path.name not in {"results", "skills"} and not path.name.startswith("__")
+            if path.is_dir()
+            and (path / "suite.yaml").is_file()
+            and path.name not in {"results", "skills"}
+            and not path.name.startswith("__")
         }
         self.assertEqual(set(expected_suites), suite_directories)
 
@@ -7348,6 +7563,8 @@ class BundleContentTests(unittest.TestCase):
                             for scenario in scenarios["scenarios"]
                         },
                     )
+                elif entry["id"] == "dev-backlog-coordinator":
+                    self.assertEqual(4, len(scenarios["scenarios"]))
                 else:
                     self.assertEqual(3, len(scenarios["scenarios"]))
 

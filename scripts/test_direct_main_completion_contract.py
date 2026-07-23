@@ -11,6 +11,12 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
+REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+SKILL_PATH = (
+    REPOSITORY_ROOT / "skills" / "complete-work-item-direct-main" / "SKILL.md"
+)
+
+
 @dataclass(frozen=True)
 class CompletionEvidence:
     disposition: str
@@ -366,6 +372,18 @@ class DirectMainCompletionContractTests(unittest.TestCase):
             "COMPLETED",
             result.provider_lifecycle_update["requested_lifecycle"],
         )
+
+    def test_ready_prepares_handoff_without_dispatching_persistence(self) -> None:
+        skill_text = SKILL_PATH.read_text(encoding="utf-8")
+
+        for phrase in (
+            "must not dispatch a provider manager, Dev Backlog Steward, or any Persistence mutation",
+            "Return the prepared terminal handoff to the caller",
+            "does not change Commit READY into BLOCKED",
+            "record lifecycle COMPLETED in the task-local result before returning READY",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
 
 
 if __name__ == "__main__":
