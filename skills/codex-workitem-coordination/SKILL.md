@@ -1,25 +1,25 @@
 ---
 name: codex-workitem-coordination
-description: Coordinate multiple file-backed repository work items through one parent backlog coordinator and one Dev Orchestrator task per Running item. Use when Codex must sustain a queue, integrate reviewed work, close completed items, and recover stalled integration without a separate task registry.
+description: Coordinate multiple file-backed repository work items through one parent backlog coordinator and one Dev Orchestrator work-item Thread per Starting or Running item. Use when Codex must sustain a queue, integrate reviewed work, close completed items, and recover stalled integration without a separate Thread registry.
 metadata:
   category: development-practice
 ---
 
 # Codex Work-Item Coordination
 
-Use one Dev Backlog Coordinator as the parent dispatcher. Give each Running work item to one user-visible Dev Orchestrator task that owns delivery through review, integration, focused verification, work-item completion, and terminal handoff.
+Use one Dev Backlog Coordinator as the parent dispatcher. Reserve each selected Work item as Starting, then give its one user-visible work-item Thread to a root Dev Orchestrator Agent that owns delivery after Starting -> Running acceptance through review, integration, focused verification, work-item completion, and terminal Handoff.
 
 ## Authority And Roles
 
-- The file-backed work item is the only durable task record.
+- The file-backed Work item is the only durable provider record.
 - Git records branches, commits, integration, and cleanup eligibility.
 - PROJECT.yaml selects resource coordination independently as none or agent-claim. When enabled, its registry records temporary shared-mutation protection but does not determine whether reviewed, verified, committed delivery exists.
-- Codex task state and title are display and execution state, not lifecycle authority.
-- Dev Backlog Coordinator owns queue inventory, priority, dispatch, stalled-integration investigation, and terminal task cleanup.
-- Dev Orchestrator owns one work item from Running through delivery or a truthful terminal outcome. It may start Dev Coder, independent reviewer, and verifier subagents inside that task.
+- Codex Thread state and title are display and execution state, not lifecycle authority.
+- Dev Backlog Coordinator owns queue inventory, priority, dispatch, stalled-integration investigation, and terminal Thread cleanup.
+- Dev Orchestrator owns one Work item after its root Agent accepts Starting -> Running through delivery or a truthful terminal outcome. It may assign bounded Tasks to Dev Coder, independent reviewer, and verifier child Agents inside that Thread.
 - Dev Backlog Steward applies [manage-backlog](../manage-backlog/SKILL.md) when it performs a specialized backlog mutation. The parent coordinator follows this skill's bounded retry and queue rules.
 
-Do not create a separate parent ledger, baton registry, waiting-task registry, or task database. Do not copy this procedure into AGENTS.md or a Dev Orchestrator definition.
+Do not create a separate parent ledger, baton registry, waiting-Task registry, or Thread database. Do not copy this procedure into AGENTS.md or a Dev Orchestrator definition.
 
 ## Resource Coordination Selection
 
@@ -27,9 +27,9 @@ When PROJECT.yaml selects agent-claim, apply that enabled resource-coordination 
 
 ## Work-Item Execution Record
 
-Every Running work item records these facts in its ownership, open-issues, and evidence sections:
+Every Starting or Running Work item records the phase-appropriate facts below in its ownership, open-issues, and evidence sections:
 
-- canonical Codex task identifier and Dev Orchestrator owner
+- canonical work-item Thread identifier, root Dev Orchestrator Agent, and canonical Task identifier for that root assignment when the runtime supplies one
 - branch and worktree
 - current phase
 - accepted candidate commit
@@ -38,49 +38,50 @@ Every Running work item records these facts in its ownership, open-issues, and e
 - open issues and the owner of each next action
 - review, integration, focused verification, enabled coordination release, completion, and cleanup evidence as those events occur
 
-Update the work item when a material phase changes. Preserve the same canonical task identifier through corrections, integration, and closeout. Never infer identity from the task title alone.
+Update the Work item when a material phase changes. Preserve the same canonical Thread identifier and root Agent assignment through corrections, integration, and closeout. Never infer identity from the Thread title alone.
 
 ## Queue Target And Dispatch
 
 Derive active capacity from the backlog files:
 
-1. Count work items whose file-backed Status is Running.
-2. When the count is below ten, select eligible Ready items and dispatch enough distinct Dev Orchestrator tasks to restore ten Running items.
-3. Record each canonical task identifier in its work item as part of the Running transition.
-4. Use exactly one user-visible task per Running work item.
-5. Dispatch only work that can begin implementation or another bounded delivery phase. Do not create a task merely to wait for approval, a dependency, a reviewer, resource ownership, or an integration window.
-6. When an item leaves Running, fill the vacancy promptly.
+1. Count Work items whose file-backed Status is Starting or Running.
+2. When the count is below ten, select enough eligible Ready items to fill the available capacity without exceeding ten active items.
+3. For each selection, have the parent Coordinator's Dev Backlog Steward child atomically record Ready -> Starting reservation and dispatch evidence before creating a runtime Thread.
+4. Reconcile the reservation and existing runtime evidence, then create at most one user-visible work-item Thread for the Starting Work item.
+5. After the Thread's root Dev Orchestrator Agent accepts ownership, have that Orchestrator's Dev Backlog Steward child atomically record Starting -> Running with the canonical Thread identifier, root Agent Task identifier when applicable, branch, worktree, and enabled coordination evidence.
+6. Dispatch only work that can begin implementation or another bounded delivery phase. Do not create a Thread merely to wait for approval, a dependency, a reviewer, resource ownership, or an integration window.
+7. When an item leaves Starting or Running, fill the active-capacity vacancy promptly through the same Ready -> Starting reservation sequence.
 
-Blocked, User Action Required, Holding, Completed, Failed, and Abandoned items do not count toward ten. If fewer than ten eligible items exist, run all eligible items and report the shortage instead of manufacturing placeholder work.
+Blocked, User Action Required, Holding, Completed, Failed, and Abandoned items do not count toward ten. If fewer than ten eligible items exist, activate all eligible items and report the shortage instead of manufacturing placeholder work.
 
 ## Dispatch Reconciliation
 
-Treat a task-creation error, timeout, disconnect, or ambiguous response as an ambiguous mutation.
+Treat a Thread-creation error, timeout, disconnect, or ambiguous response as an ambiguous mutation. Do not retry creation.
 
-Before retrying, reconcile active and archived tasks using all available identity evidence:
+Reconcile active and archived Threads using all available identity evidence:
 
-- source parent task identifier
+- source parent Thread identifier
 - canonical backlog path
 - normalized objective
 - creation time
-- task status
+- Thread status
 
-If exactly one match exists, adopt it. If multiple matches exist, preserve one canonical task, stop every duplicate before mutation, verify no unique work is lost, and archive the duplicates when supported. If no match is immediately visible, allow one bounded settlement interval and reconcile again. Retry creation only once after that settled read still shows no match, then reconcile once more.
+If exactly one match exists, adopt it as the canonical work-item Thread. If multiple matches exist, preserve one canonical Thread, stop every duplicate before mutation, verify no unique work is lost, and archive the duplicates when supported. If no match is immediately visible, allow one bounded settlement interval and reconcile once more. When the settled read still shows no Thread and no root Agent accepted ownership, use the parent Coordinator's Steward child to restore Ready and clear only the failed reservation fields. When ownership was accepted or evidence remains inconsistent, preserve the evidence and record Blocked or User Action Required with the exact recovery owner. Never retry Thread creation after an ambiguous response.
 
-## Task Execution Compatibility And Titles
+## Thread Execution Compatibility And Titles
 
-Create each Dev Orchestrator task in an environment that can perform its ordinary repository work without asking the user to approve Git, shell, test, process-inspection, or selected resource-coordination commands. The dispatch prompt must state that these ordinary operations are already authorized by the work item and that the task must not open or wait on a user approval prompt for them.
+Create each Dev Orchestrator work-item Thread in an environment where its root Agent can perform ordinary repository work without asking the user to approve Git, shell, test, process-inspection, or selected resource-coordination commands. The dispatch prompt must state that these ordinary operations are already authorized by the Work item and that the Agent must not open or wait on a user approval prompt for them.
 
 - When agent-claim is selected, use its configured transport exactly as rendered in AGENTS.md. When none is selected, do not probe either claim transport.
-- Keep implementation and focused tests in the task-owned private worktree. The environment must permit ordinary writes to that worktree and the Git worktree metadata needed for local commits.
+- Keep implementation and focused tests in the work-item Thread's private worktree. The environment must permit ordinary writes to that worktree and the Git worktree metadata needed for local commits.
 - When a work item depends on a special runtime capability, test that capability through the same nested execution path the real workload uses before assigning more equivalent work to that environment. A direct command is not sufficient evidence for a runner that invokes the command from a child process.
-- Treat prior task-capability evidence as stale after any agent-definition or metadata generation, adapter installation, MCP refresh, Codex configuration change, permission-profile change, application update, or host restart. Before dispatching real work again, run one disposable worktree pilot through the effective child task runtime.
-- The post-change pilot must prove the effective task profile and ordinary operations, not merely read the requested configuration or repeat permission wording in its prompt. Inspect the child task's effective approval, sandbox, and permission profile; create a harmless Git commit; invoke every selected special capability through the same nested helper used by the real workload; and, only when agent-claim with MCP is selected, read its registry through MCP.
-- If the requested configuration and effective child runtime differ, or any representative operation fails, stop equivalent dispatch immediately. Record the exact requested and effective profiles, archive the failed pilot, correct or replace the launch environment, and rerun the pilot. Do not treat a successful direct command, parent capability, config file, or earlier task as evidence for the failing child runtime.
-- If an ordinary required operation fails because the task environment lacks a capability, the task stops immediately, preserves its work, truthfully releases enabled resource ownership, and reports the exact failed operation to the parent. It must not request escalation from the user.
-- The parent promptly re-homes or replaces that task in a compatible environment, updates the canonical task identifier in the work item, and fills any resulting Running vacancy. Do not leave an approval prompt or an execution-incompatible task consuming a Running slot.
+- Treat prior runtime-capability evidence as stale after any agent-definition or metadata generation, adapter installation, MCP refresh, Codex configuration change, permission-profile change, application update, or host restart. Before dispatching real work again, run one disposable worktree pilot through the effective child Agent runtime.
+- The post-change pilot must prove the effective Agent profile and ordinary operations, not merely read the requested configuration or repeat permission wording in its prompt. Inspect the child Agent's effective approval, sandbox, and permission profile; create a harmless Git commit; invoke every selected special capability through the same nested helper used by the real workload; and, only when agent-claim with MCP is selected, read its registry through MCP.
+- If the requested configuration and effective child runtime differ, or any representative operation fails, stop equivalent dispatch immediately. Record the exact requested and effective profiles, archive the failed pilot Thread, correct or replace the launch environment, and rerun the pilot. Do not treat a successful direct command, parent capability, config file, or earlier Thread as evidence for the failing child runtime.
+- If an ordinary required operation fails because the Agent environment lacks a capability, the Agent stops immediately, preserves its work, truthfully releases enabled resource ownership, and reports the exact failed operation to the parent. It must not request escalation from the user.
+- The parent promptly re-homes the Thread or replaces its root Agent in a compatible environment, updates the canonical identifiers in the Work item, and fills any resulting Starting-plus-Running vacancy. Do not leave an approval prompt or an execution-incompatible Agent consuming active capacity.
 
-Set a concise plain-text title when the task is created and update it only at material phase changes. Use a phase prefix such as Implementing —, Reviewing —, Verifying —, Integrating —, Waiting for Claim —, Waiting for Help —, Waiting for User —, Done —, Blocked —, Failed —, or Abandoned — followed by a short work-item name. Never use raw prompt text, XML or delegation tags, error output, task identifiers, or generic titles as the display title. Preserve the stable task identifier; the title remains display state and never becomes lifecycle authority or delivery evidence.
+Set a concise plain-text title when the Thread is created and update it only at material phase changes. Use a phase prefix such as Implementing —, Reviewing —, Verifying —, Integrating —, Waiting for Claim —, Waiting for Help —, Waiting for User —, Done —, Blocked —, Failed —, or Abandoned — followed by a short Work-item name. Never use raw prompt text, XML or delegation tags, error output, identifiers, or generic titles as the display title. Preserve the stable Thread identifier; the title remains display state and never becomes lifecycle authority or delivery evidence.
 
 ## Starting And Work-Item Thread Ownership
 
@@ -88,15 +89,15 @@ A Work item is the durable provider record for an outcome, lifecycle, evidence, 
 
 The parent coordination Thread has one root Agent under the Dev Backlog Coordinator Role. Each Starting or Running Work item has exactly one work-item Thread with one root Agent under the Dev Orchestrator Role. Producing, implementation, independent review, verification, integration, and stewardship Agents are children in that work-item Thread.
 
-Ready -> Starting is the parent Coordinator's dispatch and reservation decision. Use its Dev Backlog Steward child to record the reservation before launch, and count Starting against capacity. Reconcile existing reservation and runtime evidence before every launch. One Work item must not create a duplicate Thread after a timeout, task-creation error, or ambiguous startup.
+Ready -> Starting is the parent Coordinator's dispatch and reservation decision. Use its Dev Backlog Steward child to record the reservation before launch, and count Starting against capacity. Reconcile existing reservation and runtime evidence before every launch. One Work item must not create a duplicate Thread after a timeout, Thread-creation error, or ambiguous startup.
 
-After the work-item Thread's root Dev Orchestrator accepts ownership, it uses its Dev Backlog Steward child for the atomic Starting -> Running transition. The record includes the canonical Thread identifier, canonical task id, branch, worktree, and claim evidence. If launch fails and no owner accepted, restore Ready. If ownership was accepted or evidence cannot safely be discarded, record Blocked or User Action Required with the exact recovery condition. Starting and Running stay in the active typed queue.
+After the work-item Thread's root Dev Orchestrator Agent accepts ownership, it uses its Dev Backlog Steward child for the atomic Starting -> Running transition. The record includes the canonical Thread identifier, canonical root Agent Task id when applicable, branch, worktree, and enabled coordination evidence. If launch fails and no owner accepted, restore Ready. If ownership was accepted or evidence cannot safely be discarded, record Blocked or User Action Required with the exact recovery condition. Starting and Running stay in the active typed queue.
 
 The work-item Orchestrator owns production, review, verification, integration, and the terminal provider request. Its Steward child atomically records Completed and moves the archive. The parent Coordinator never performs per-item delivery or completion; after the terminal Handoff it cleans the runtime Thread and worktree, recounts Starting plus Running capacity, and dispatches replacement work.
 
 ## Private Worktree Work
 
-Implementation, correction, review, and focused local tests on a task-owned private branch and worktree do not require operational ownership when they cannot mutate shared repository state or a named shared resource.
+Implementation, correction, review, and focused local tests on a work-item Thread's private branch and worktree do not require operational ownership when they cannot mutate shared repository state or a named shared resource.
 
 When resource coordination is enabled, acquire ownership before mutating shared state, including:
 
@@ -105,15 +106,15 @@ When resource coordination is enabled, acquire ownership before mutating shared 
 - generated output or another shared output location
 - shared installations, ports, browsers, databases, or test resources that cannot safely run concurrently
 
-Keep every enabled ownership scope limited to the exact files and named resources required for that operation. Isolation never authorizes modification of another task's owned shared surface. With coordination none, skip this lifecycle and rely on the delivery process's explicit task scope and serialized main/backlog transactions.
+Keep every enabled ownership scope limited to the exact files and named resources required for that operation. Isolation never authorizes modification of another Thread's owned shared surface. With coordination none, skip this lifecycle and rely on the delivery process's explicit Work-item scope and serialized main/backlog transactions.
 
 ## Direct Delivery Without A Pull Request
 
 The work item's Dev Orchestrator owns integration and completion.
 
-1. Finish implementation and independent review on the task branch.
+1. Finish implementation and independent review on the Work-item branch.
 2. When resource coordination is enabled, acquire integration ownership covering every path on main that the integration may modify, the target integration resource, and the exact shared test resources needed for focused verification.
-3. After any enabled ownership is established, refresh current main and create a fresh reconciliation branch from that exact commit. Designate this fresh branch as the task integration and cleanup branch. Record the prior candidate branch, accepted source commit, and path set as source provenance before applying content.
+3. After any enabled ownership is established, refresh current main and create a fresh reconciliation branch from that exact commit. Designate this fresh branch as the Work-item integration and cleanup branch. Record the prior candidate branch, accepted source commit, and path set as source provenance before applying content.
 4. Apply only the accepted file content or explicitly selected in-scope commits to the fresh current-main branch. Preserve required current-main and accepted contracts, regenerate supported outputs, and review the reconciled diff when semantic reconciliation is required.
 5. Record source commit identifiers and accepted paths in the integration commit and work item. Do not import cumulative branch ancestry merely to preserve provenance. Use a full-history merge only when the complete history is intentional, reviewed, and in scope.
 6. Integrate the bounded reconciliation commit into main.
@@ -122,8 +123,8 @@ The work item's Dev Orchestrator owns integration and completion.
 9. When resource coordination is enabled, acquire separate short ownership for exactly the active work-item path and its completed destination.
 10. Record completion evidence, set Status to Completed, move the item to the applicable completed-backlog folder, commit, and release enabled work-item ownership.
 11. Notify the parent with the main commit, test evidence, enabled coordination release outcomes, branch, worktree, and cleanup eligibility.
-12. The parent verifies that the fresh task integration branch is fully merged, removes its clean worktree, safely deletes that merged branch, prunes worktree metadata, sets the task title to Done — item, and archives the task when supported. A prior candidate branch used only as a non-ancestral content source is not the task cleanup branch; preserve or remove it separately according to repository policy after confirming the durable source mapping and absence of unique unintegrated work.
-13. The parent immediately recounts file-backed Running items and dispatches eligible Ready work until ten are Running or no eligible work remains.
+12. The parent verifies that the fresh Work-item integration branch is fully merged, removes its clean worktree, safely deletes that merged branch, prunes worktree metadata, sets the Thread title to Done — item, and archives the Thread when supported. A prior candidate branch used only as a non-ancestral content source is not the Work-item cleanup branch; preserve or remove it separately according to repository policy after confirming the durable source mapping and absence of unique unintegrated work.
+13. The parent immediately recounts file-backed Starting plus Running items and reserves and dispatches eligible Ready work through Ready -> Starting until ten items are active or no eligible work remains.
 
 When resource coordination selects agent-claim, keep administrative coordination-registry cleanup, Git integration, and terminal backlog completion as three distinct operations. Each operation has its own authority, evidence, and outcome; none can manufacture or replace another. When none is selected, omit coordination-registry cleanup and coordination evidence. Git integration and terminal backlog completion remain separate durable operations.
 
@@ -131,9 +132,9 @@ Do not leave a reviewed commit for a separate integration task. The Dev Orchestr
 
 ## Pull-Request Delivery
 
-When the selected workflow uses a pull request, the authorized reviewer or merge owner merges it. The implementation task does not acquire duplicate enabled main integration ownership.
+When the selected workflow uses a pull request, the authorized reviewer or merge owner merges it. The implementation Agent does not acquire duplicate enabled main integration ownership.
 
-After merge evidence is available, the Dev Orchestrator runs or confirms the required focused verification, performs the separate work-item completion transaction, and notifies the parent for clean worktree, merged-branch, and task cleanup.
+After merge evidence is available, the Dev Orchestrator runs or confirms the required focused verification, performs the separate Work-item completion transaction, and notifies the parent for clean worktree, merged-branch, and Thread cleanup.
 
 ## Agent-Claim Retry Window
 
@@ -148,13 +149,13 @@ This is one initial attempt plus no more than six retries. Do not create a waiti
 
 At thirty minutes, Dev Backlog Coordinator investigates instead of allowing another passive wait. Identify the blocking owner, verify whether its claim is active or stale, and choose a safe remedy: request prompt release, narrow or split an unnecessarily broad claim, complete the blocking integration first, or route a genuine technical or user-decision blocker. Never release or override a claim whose owner has uncommitted or otherwise unpreserved work.
 
-An evidence-backed administrative reset is available only for an inactive coordination-registry entry. Before reset, inspect the task and logs, matching processes, claimed worktrees, Git cleanliness and preserved commits, every claimed shared resource, other registry entries, and journal evidence. Retain a readable snapshot or journal reference. Reset only registry state after proving the owner inactive, all work completed or preserved, all resources stopped or handed off, and no active protection affected. A live owner, dirty unpreserved worktree, resource in use, or unclear evidence blocks reset.
+An evidence-backed administrative reset is available only for an inactive coordination-registry entry. Before reset, inspect the Thread, Agent Tasks and logs, matching processes, claimed worktrees, Git cleanliness and preserved commits, every claimed shared resource, other registry entries, and journal evidence. Retain a readable snapshot or journal reference. Reset only registry state after proving the owner inactive, all work completed or preserved, all resources stopped or handed off, and no active protection affected. A live owner, dirty unpreserved worktree, resource in use, or unclear evidence blocks reset.
 
 Perform the reset only through a host-supported targeted atomic operation that names the exact entry, locks the coordination registry, revalidates those safeguards at mutation time, removes no peer entry, and journals the administrative outcome. The bundled portable claim command has no reset operation. If a supported atomic operation is unavailable, stop and route the reset instead of editing the registry file manually.
 
 Treat inactive-entry release problems as coordination diagnostics. Claim release does not audit commit history or interpret merge ancestry; independent review and integration own committed-content, changed-path, and provenance decisions. Reconcile each evidence owner separately and never invent a successful release.
 
-If the wait remains unresolved after investigation, record the precise open issue and move the item to the truthful Blocked or User Action Required state so it no longer consumes a Running slot. Dispatch a replacement Ready item immediately when available.
+If the wait remains unresolved after investigation, record the precise open issue and move the item to the truthful Blocked or User Action Required state so it no longer consumes active Starting-plus-Running capacity. Reserve and dispatch a replacement Ready item through Ready -> Starting immediately when available.
 
 ## Tiered Verification
 
@@ -196,7 +197,7 @@ Every fifteen minutes while queue work remains, Dev Backlog Coordinator reviews:
 - active resource ownership when enabled, including exact scopes, owners, and heartbeat freshness
 - accepted commits awaiting integration
 - completed integrations awaiting work-item closeout
-- task anomalies, duplicates, stopped tasks, and missing canonical identifiers
+- Thread or Agent Task anomalies, duplicate Threads, stopped Agents, and missing canonical identifiers
 - interval delivery counts: accepted commits, reviews, verifier gates, integrations, terminal transitions, and completed items
 - average productively active and blocked task counts using the available interval samples
 
@@ -204,7 +205,7 @@ Make a scheduling or recovery adjustment during the same review whenever deliver
 
 ### Dedicated Read-Only Watchdog
 
-When the user requests background supervision for a sustained queue, the parent may create one dedicated watchdog task and schedule it to observe the fifteen-minute review checks. The watchdog never performs the parent review's scheduling or recovery adjustment. It is an observer, not a work-item owner, queue entry, Running slot, durable record, or substitute coordinator.
+When the user requests background supervision for a sustained queue, the parent may assign one dedicated watchdog Task to an Agent and schedule it to observe the fifteen-minute review checks. The watchdog never performs the parent review's scheduling or recovery adjustment. It is an observer, not a Work-item owner, queue entry, active-capacity slot, durable record, or substitute Coordinator.
 
 On every cycle, the watchdog reads current work items, Git state, and task state. When resource coordination selects agent-claim, it also reads coordination-registry state and evaluates shared-resource ownership. When resource coordination selects none, it omits coordination-registry reads, shared-resource ownership evaluation, and coordination alerts or evidence. It immediately alerts on every stopped, failed, or missing canonical task for a Starting or Running item, every stopped task that retains a live coordination entry, and every terminal item that retains a live coordination entry. Detection has no extra grace timeout beyond the cycle interval. In addition to the applicable parent-review checks above, it evaluates:
 
@@ -243,6 +244,6 @@ Do not retroactively invalidate valid evidence or weaken the final campaign-wide
 
 A user answer resolves a decision gate once; it does not prove delivery. Record the exact answer and provenance in the work item and never ask it again. Route approved work to Ready, deferred work to Holding, and declined work to the applicable terminal disposition.
 
-Completed requires integrated delivery, required independent review, focused verification, released integration and work-item ownership when coordination is enabled, and committed terminal backlog evidence. The Dev Orchestrator supplies a clean worktree and a fully merged fresh task integration branch as cleanup eligibility. When content came from an older candidate branch without importing its ancestry, the durable mapping proves source provenance but does not make that older branch the task cleanup branch. Preserve or remove the source branch separately according to repository policy after confirming that it contains no unique unintegrated work. An idle, stopped, titled, or archived Codex task proves none of those facts.
+Completed requires integrated delivery, required independent review, focused verification, released integration and Work-item ownership when coordination is enabled, and committed terminal backlog evidence. The Dev Orchestrator supplies a clean worktree and a fully merged fresh Work-item integration branch as cleanup eligibility. When content came from an older candidate branch without importing its ancestry, the durable mapping proves source provenance but does not make that older branch the Work-item cleanup branch. Preserve or remove the source branch separately according to repository policy after confirming that it contains no unique unintegrated work. An idle, stopped, titled, or archived Codex Thread proves none of those facts.
 
-Archive a terminal task only after the work-item disposition is committed, all enabled coordination ownership is released, the worktree is removed or deliberately preserved, the merged branch is safely deleted when eligible, and no unresolved notification remains. If archival does not persist, record the tool limitation in the work item and do not report success.
+Archive a terminal work-item Thread only after the Work-item disposition is committed, all enabled coordination ownership is released, the worktree is removed or deliberately preserved, the merged branch is safely deleted when eligible, and no unresolved notification remains. If Thread archival does not persist, record the tool limitation in the Work item and do not report success.

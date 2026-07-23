@@ -127,15 +127,16 @@ Keep wait_started_at, attempt_count, last_attempt, next_attempt, open issues, an
 
 A blocked handoff ends the prior ownership transaction. Set Status to Blocked, replace the prior owner with Owner: Unowned, clear any enabled coordination reference, and retain the exact blocker, unblock condition, accumulated evidence, and acceptance criteria. Commit those durable item fields before releasing enabled ownership, then release it promptly. Do not report the handoff complete until the committed item and any enabled coordination registry are unowned. Neither the BLOCKED state nor satisfaction of the unblock condition authorizes execution or a direct transition to RUNNING.
 
-Resume blocked work through one serialized backlog transaction:
+Resume blocked work through the same provider and startup boundaries as new work:
 
 1. Read and retain the complete pre-attempt Blocked item bytes.
 2. Reconcile the blocker and confirm that the recorded unblock condition is satisfied.
-3. Set the item to Ready without removing or rewriting its blocker, unblock condition, evidence, or acceptance criteria.
-4. When coordination is enabled, acquire new exclusive ownership for the resuming agent.
-5. Record the owner, enabled coordination reference, and Status: Running, then commit. Under enabled coordination, do so only after successful acquisition.
+3. In one short provider transaction, restore Status: Ready with Owner: Unowned while retaining the blocker, unblock condition, evidence, and acceptance criteria as recovery history. When coordination is enabled, use only short backlog ownership for this transaction and release it immediately. If this transaction fails, restore the byte-for-byte pre-attempt Blocked item and do not infer execution ownership.
+4. Let the parent Dev Backlog Coordinator select the Ready item through normal priority and Starting-plus-Running capacity rules. Its Dev Backlog Steward child atomically records Ready -> Starting reservation and dispatch evidence; this transaction does not grant delivery ownership.
+5. Reconcile the Starting reservation against active and archived runtime Threads. Create at most one canonical work-item Thread. After an error, timeout, disconnect, or ambiguous response, do not retry creation; perform the bounded settlement read and either adopt the one matching Thread, restore Ready when no root Agent accepted ownership and no Thread exists, or record Blocked or User Action Required when ownership or evidence cannot safely be discarded.
+6. Only after the work-item Thread's root Dev Orchestrator Agent accepts ownership may that Orchestrator use its own Dev Backlog Steward child for the atomic Starting -> Running transaction. Record the canonical Thread identifier, canonical root Agent Task id when applicable, owner, branch, worktree, and enabled coordination evidence.
 
-When coordination is enabled, if no acquisition is attempted, no successful result exists, or acquisition returns CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, a structured rejection, or another non-success outcome, do not infer ownership. Restore the byte-for-byte pre-attempt Blocked item, leave it unowned and not Running, and preserve all prior blocker, unblock, evidence, and acceptance data. Release any partially acquired ownership truthfully before reporting the unchanged Blocked outcome. With coordination none, the committed provider owner is sufficient and no operational ownership result exists.
+Blocked, Ready, or satisfaction of an unblock condition never authorizes a direct transition to Running. Under enabled coordination, each provider mutation uses its own short backlog ownership transaction and cannot substitute for delivery ownership. With coordination none, preserve the same provider transactions and state sequence without coordination operations or evidence.
 
 ## User Action Required Workflow
 

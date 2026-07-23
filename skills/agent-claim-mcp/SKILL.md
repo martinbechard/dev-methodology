@@ -132,8 +132,7 @@ Extend one claim:
 {
   "repository": "/workspace/project",
   "claim_id": "task-123",
-  "files": ["tests/test_feature.py"],
-  "resources": ["generated:codegen"]
+  "files": ["tests/test_feature.py"]
 }
 ```
 

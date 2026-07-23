@@ -19,7 +19,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "9aebb79919f534554266dc0d5f63115c09159c5277dd6fa948192aefa3b99fe2",
+          "sha256": "99485e86d4dbb7fc8edd398761cdfc5ec4ca4387b840dbf1ac7775a009830a02",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -317,7 +317,7 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "1bc9dc7bcfff92421a73470d53bdb0dafeaba98d664a02919733804413bead21",
+          "sha256": "0f28b2a9809c60b4f085b154f3afe423d9958de0802c8164ef58765705d1740e",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -642,7 +642,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "7f59ee4327e79fd73ea56fcf00b6784d9c524f9432d8cff30727a9a3c0a45037",
+          "sha256": "f76cde565b367311e7fa75050cdf9a5321c618c5f9178450493f84c2a9569e55",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -938,7 +938,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "3fa82762a55ece74c54b98ff6820f41fd7335f361b1534ac40de877550a38321",
+          "sha256": "7137ff4c6c0e93179dedeaa02120615e176bd5e3547f6e371017f858b71fb670",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
