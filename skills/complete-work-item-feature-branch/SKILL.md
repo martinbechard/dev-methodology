@@ -14,7 +14,7 @@ Carry one verified work item from branch creation through review publication and
 - Apply [agent-claim](../agent-claim/SKILL.md) for every repository mutation and shared resource.
 - Apply [create-pull-request](../create-pull-request/SKILL.md) only for GitHub or another configured host whose contract accurately uses pull-request terminology.
 - Use the configured GitLab merge-request capability and GitLab tools for GitLab publication, review, pipeline, and merge evidence. If no accurate capability exists, return BLOCKED instead of substituting create-pull-request or GitHub-shaped evidence.
-- Send the final lifecycle update to the manager selected by the work-item provider. Do not mutate a provider record through an unselected provider capability.
+- Prepare the final lifecycle update for the caller. This skill must not dispatch a provider manager, Dev Backlog Steward, or any Persistence mutation.
 
 ## Inputs
 
@@ -48,7 +48,7 @@ The work-item provider and code host are independent. A file or GitLab work item
 5. Publish completed, verified work ready for review. Use draft only when the user requests it or concrete implementation, verification, or dependency work remains incomplete.
 6. Record and verify the canonical work-item identifier and provider reference, publication URL, code host, base, head, commit, dependencies, review order, required checks, and observed ready or draft state.
 
-Successful publication returns AWAITING_REVIEW while any required approval, check, dependency merge, or configured merge remains outstanding. A ready publication is not READY delivery evidence.
+Successful publication returns AWAITING_REVIEW while any required approval, check, dependency merge, or configured merge remains outstanding. A ready publication is not READY delivery evidence. AWAITING_REVIEW performs no Persistence mutation.
 
 ## Review And Check Loop
 
@@ -88,7 +88,7 @@ Return READY only after all of the following are observed:
 - Dependencies merged in the configured order.
 - The pull request or merge request reports a merged state rather than merely closed, approved, ready, or superseded.
 - The recorded merge commit and resulting verified commit are reachable from the configured base branch in Git.
-- Provider lifecycle completion evidence is prepared for the selected work-item manager.
+- Provider lifecycle completion evidence is prepared for the caller.
 
 For a merge strategy that preserves the published head, verify both the published commit and final merge commit with the project-supported equivalent of these read-only ancestry checks:
 
@@ -101,7 +101,9 @@ When the configured strategy rebases or squashes, record the provider-observed m
 
 A closed-unmerged, abandoned, replaced, or superseded publication cannot return READY. Follow an explicit replacement only after its relationship to the same work item and branch history is verified; otherwise return BLOCKED with both references.
 
-After the merge gate passes, send the selected provider manager the work-item reference, completion disposition READY, branch and publication reference, final merged base commit, approvals, checks, dependencies, merge evidence, claim releases, and requested terminal lifecycle update. The provider-backed item remains nonterminal until that manager records lifecycle COMPLETED. When the selected provider is none, record the complete task-local terminal evidence and lifecycle COMPLETED before returning READY.
+After the merge gate passes, prepare the work-item reference, completion disposition READY, branch and publication reference, final merged base commit, approvals, checks, dependencies, merge evidence, claim releases, and requested terminal lifecycle update. Return the prepared terminal handoff to the caller; the owning orchestrator decides whether and when to dispatch the selected provider manager. This skill neither performs that dispatch nor waits for its result. The provider-backed item remains nonterminal until the separate Persistence phase records lifecycle COMPLETED. When the selected provider is none, record lifecycle COMPLETED in the task-local result before returning READY, together with the complete terminal evidence.
+
+A provider-backed Persistence recording failure happens after this skill returns. It does not change Commit READY into BLOCKED or erase the delivery evidence; the owning orchestrator reports and reconciles the Persistence failure separately.
 
 ## Results
 
@@ -111,4 +113,4 @@ Return exactly one disposition with deciding evidence:
 - READY: all publication evidence plus required approvals and checks, merged state, final merge commit, configured base-branch reachability, released ownership, and the provider lifecycle update this evidence authorizes.
 - BLOCKED: preserved branch, commits, publication URL when one exists, provider-accurate state, released or retained ownership state, exact missing evidence or authority, and the next safe action.
 
-Never report READY from branch publication alone, and never report provider lifecycle COMPLETED before the selected provider manager, or the provider-none task result, records the terminal update.
+Never report READY from branch publication alone. The owning orchestrator may later select a provider manager for Persistence; only that manager or the provider-none task result records lifecycle COMPLETED. This skill does not dispatch the manager.

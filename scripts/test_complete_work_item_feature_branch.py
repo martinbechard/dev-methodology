@@ -232,6 +232,19 @@ class CompleteWorkItemFeatureBranchTests(unittest.TestCase):
             self.assertEqual(0, published_commit_merged.returncode)
             self.assertEqual(0, final_merge_observed.returncode)
 
+    def test_commit_dispositions_never_dispatch_persistence(self) -> None:
+        skill_text = SKILL_PATH.read_text(encoding="utf-8")
+
+        for phrase in (
+            "must not dispatch a provider manager, Dev Backlog Steward, or any Persistence mutation",
+            "AWAITING_REVIEW performs no Persistence mutation",
+            "Return the prepared terminal handoff to the caller",
+            "does not change Commit READY into BLOCKED",
+            "record lifecycle COMPLETED in the task-local result before returning READY",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -225,7 +225,7 @@ The complete-work-item-direct-main skill owns these stages:
 4. Run the smallest credible post-integration verification for the changed surface.
 5. Observe the final verified commit as reachable from main and record the main commit identity.
 6. Release integration authority from clean main.
-7. Return completion disposition READY with the required lifecycle update. When a provider is selected, ask its manager to record terminal evidence and lifecycle COMPLETED. When provider is none, record lifecycle COMPLETED and the full terminal evidence in the active task result.
+7. Return completion disposition READY with the prepared lifecycle update. When a provider is selected, return that handoff to the caller without dispatching Persistence; Dev Orchestrator owns the later steward dispatch and reconciliation. When provider is none, record lifecycle COMPLETED and the full terminal evidence in the active task result.
 
 The work is not completed while the accepted commit exists only on an isolated branch, coordination branch, detached worktree, patch, or unmerged pull request or merge request. A clean cherry-pick or merge command is insufficient until the commit is observed on main and focused post-integration verification has passed or a documented completion policy explicitly accepts a scoped omission.
 
@@ -241,7 +241,7 @@ The complete-work-item-feature-branch skill owns these stages:
 6. Resume the same work item and branch for accepted corrections, then repeat affected verification and publication checks.
 7. Observe required review approval, required checks, and the configured merge on the hosting service and in Git.
 8. Observe the merged commit as reachable from the configured main branch.
-9. Return completion disposition READY with the required lifecycle update. When a provider is selected, ask its manager to record terminal evidence and lifecycle COMPLETED. When provider is none, record lifecycle COMPLETED and the full terminal evidence in the active task result.
+9. Return completion disposition READY with the prepared lifecycle update. When a provider is selected, return that handoff to the caller without dispatching Persistence; Dev Orchestrator owns the later steward dispatch and reconciliation. When provider is none, record lifecycle COMPLETED and the full terminal evidence in the active task result.
 
 Branch publication, a ready review, an approved review, green checks, a closed delivery record, and a merge button action are each intermediate evidence. Completion requires the configured merge result and main observation. If a project uses a hosting service other than the work-item provider, the delivery reference records that host explicitly without changing the work-item provider.
 
