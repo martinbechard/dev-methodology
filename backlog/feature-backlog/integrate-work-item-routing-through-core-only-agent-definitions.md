@@ -1,6 +1,6 @@
 # Integrate Work-Item Routing Through Core-Only Agent Definitions
 
-Status: User Action Required
+Status: Running
 
 Type: Feature
 
@@ -27,21 +27,21 @@ Completion: direct-main
 
 ## Current Execution / Ownership
 
-- Owner: User Action Required.
+- Owner: Root Dev Orchestrator.
 - Canonical task: 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
-- Claim: route-core-only-gitlab-manager-approval-019f8b4c, lifecycle transition only.
+- Claim: None.
 - Canonical worktree: /Users/martinbechard/.codex/worktrees/d9e0/dev-methodology, clean.
 - Branch: codex/integrate-work-item-routing-core-only-019f8b4c at 14adbbfa70bb6640e90c8ec68b177557add29d48.
 - Starting main: 83135ebc590c2c244cf42283ae3f760521c55ed0.
-- Phase: User Action Required for the exact GitLab terminal-reconciliation approval.
-- Lifecycle transition: Running -> User Action Required pending an exact governed-definition approval under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
-- Accepted candidate: 14adbbfa70bb6640e90c8ec68b177557add29d48, clean and preserved unchanged pending the user decision.
+- Phase: exact governed pre-mutation check, bounded correction, review, verification, integration, and provider completion.
+- Lifecycle transition: User Action Required -> Ready -> Running under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163 and the same root Dev Orchestrator after approval resolution and successful serialized backlog claim acquisition.
+- Accepted candidate: 14adbbfa70bb6640e90c8ec68b177557add29d48, pending correction.
 - Integration wait started at: None.
 - Integration wait attempts: 0.
 - Completion wait started at: None.
 - Completion wait attempts: 0.
-- Open issues: User approval is required before changing the exact GitLab terminal-reconciliation scope below.
-- Next owner: User, then the Root Dev Orchestrator after an approved resolution.
+- Open issues: None; implementation must remain within the exact GitLab manager governed scope.
+- Next owner: Root Dev Orchestrator for the bounded correction, review, verification, integration, and provider completion lifecycle.
 
 ## Resumption Evidence — 2026-07-22
 
@@ -66,12 +66,23 @@ This changes a distributed skill definition. Repository policy requires explicit
 
 ### Resolution
 
-- Status: Pending.
-- Pending user answer. The item transitioned from Running to User Action Required on 2026-07-23 under canonical task 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
+- Date: 2026-07-22.
+- Answer: Approved.
+- User wording: "ok".
+- Provenance: direct response in canonical work-item task 019f8b4c-8fb9-7d23-9eed-7bbb4968e163 to the GitLab lifecycle approval question; the task acknowledged the answer.
+- Approved governed skill scope: exactly skills/manage-gitlab-work-items/SKILL.md.
+- Approved dependent scope: only its supported generated skill mirror and directly related tests and documentation.
+- Approved goal: a failed or partial terminal update preserves the truthful nonterminal lifecycle—AWAITING_REVIEW for feature-branch delivery, RUNNING for direct-main—or records BLOCKED when reconciliation cannot safely continue, instead of always forcing RUNNING.
+- Exclusion: no other governed scope is approved.
+- Disposition: User Action Required -> Ready -> Running under canonical thread 019f8b4c-8fb9-7d23-9eed-7bbb4968e163.
 
 ### Unattended Work Boundary
 
-Do not mutate skills/manage-gitlab-work-items/SKILL.md, its supported generated skill mirror, tests, documentation, or any other governed definition until the user answers the exact question. Preserve candidate 14adbbfa70bb6640e90c8ec68b177557add29d48 unchanged. No other governed scope is authorized.
+Mutate only skills/manage-gitlab-work-items/SKILL.md, its supported generated skill mirror, and directly related tests and documentation. Do not widen any scope. Preserve candidate evidence until the approved correction and verification supersede it.
+
+### Handoff Evidence
+
+- Approval-resolution claim: approve-core-only-gitlab-manager-019f8b4c, acquired event 14b22b6d-2fa2-4ed0-b4bd-bf09c13a0612 from primary main.
 
 ## Feature-Branch Commit Ownership Approval Gate — 2026-07-23
 
