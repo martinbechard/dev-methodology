@@ -1301,6 +1301,11 @@ class BundleContentTests(unittest.TestCase):
         manage_text = (SKILLS_ROOT / "manage-gitlab-work-items" / "SKILL.md").read_text(
             encoding="utf-8"
         )
+        provider_contract_text = (
+            REPOSITORY_ROOT
+            / "design"
+            / "work-item-provider-and-completion-contracts.md"
+        ).read_text(encoding="utf-8")
 
         for text in (create_text, manage_text):
             for phrase in (
@@ -1346,6 +1351,26 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(manage_phrase=phrase):
                 self.assertIn(phrase, manage_text)
+
+        for phrase in (
+            "For feature-branch delivery, preserve lifecycle AWAITING_REVIEW for the same delivery identity.",
+            "For direct-main delivery, preserve lifecycle RUNNING.",
+            "Record lifecycle BLOCKED when safe reconciliation cannot continue.",
+            "Never unconditionally reset lifecycle to RUNNING.",
+        ):
+            with self.subTest(reconciliation_phrase=phrase):
+                self.assertIn(phrase, manage_text)
+                self.assertIn(phrase, provider_contract_text)
+
+        for stale_phrase in (
+            "leave the lifecycle RUNNING or set it to BLOCKED",
+            "keep lifecycle RUNNING or set it to BLOCKED",
+            "remains lifecycle RUNNING or becomes BLOCKED",
+            "remains RUNNING or BLOCKED",
+        ):
+            with self.subTest(stale_reconciliation_phrase=stale_phrase):
+                self.assertNotIn(stale_phrase, manage_text)
+                self.assertNotIn(stale_phrase, provider_contract_text)
 
     def test_create_pull_request_skill_and_template_define_modular_scope_and_review_order(
         self,
