@@ -20,6 +20,11 @@ CONSTANTS_IMPLEMENTATION = SKILL_ROOT / "scripts" / "project_wiki_ops" / "consta
 TOPIC_WRITER_SKILL = SKILL_ROOT.parent / "project-wiki-topic-write" / "SKILL.md"
 TOPIC_VERIFIER_SKILL = SKILL_ROOT.parent / "project-wiki-topic-verify" / "SKILL.md"
 WIKI_OPS_COMMAND_PREFIX = "python3 project-wiki-skill-root/scripts/wiki_ops.py"
+COMPANY_DIGEST_BOUNDARY_PHRASE = (
+    "do not discuss multiple companies in one digest entry unless they are part of the same joint story, "
+    "such as a partnership, acquisition, coordinated release, or directly comparative event; appearing "
+    "in the same source article or collection batch is not enough."
+)
 
 DIGEST_REPAIR_PHRASES = [
     "When repairing an existing digest, inspect the current month page for bundled dated paragraphs and rewrite the requested date range into item-level synopsis entries instead of only appending new entries.",
@@ -87,6 +92,7 @@ REQUIRED_SKILL_PHRASES = [
     "source-specific ideas",
     "A digest entry may keep the date when the information was added or modified, but the text must summarize the content change rather than list page or file changes.",
     "Use one digest entry per independently changing item or closely coupled product family; do not bundle unrelated items into one dated paragraph.",
+    COMPANY_DIGEST_BOUNDARY_PHRASE,
     "Monthly digest Current Understanding entries must appear in reverse chronological order by entry date, newest first; keep same-date entries in stable content order unless a clearer local grouping is needed.",
     *DIGEST_REPAIR_PHRASES,
     *RAW_INGEST_AUTOMATION_PHRASES,
@@ -115,6 +121,7 @@ REQUIRED_OPERATIONS_PHRASES = [
     "source-specific ideas",
     "A digest entry may keep the date when the information was added or modified, but the text must summarize the content change rather than list page or file changes.",
     "Use one digest entry per independently changing item or closely coupled product family; do not bundle unrelated items into one dated paragraph.",
+    COMPANY_DIGEST_BOUNDARY_PHRASE,
     "Keep monthly digest Current Understanding entries in reverse chronological order by entry date, newest first.",
     *DIGEST_REPAIR_PHRASES,
     *RAW_INGEST_AUTOMATION_PHRASES,
@@ -166,6 +173,22 @@ class SetupGuidanceTest(unittest.TestCase):
             for phrase in DIGEST_REPAIR_PHRASES:
                 with self.subTest(path=reference_path.name, phrase=phrase):
                     self.assertIn(phrase, reference_text)
+
+    def test_company_digest_boundary_example_is_available(self) -> None:
+        reference_paths = [
+            SKILL_DOCUMENT,
+            OPERATIONS_REFERENCE,
+            PAGE_SCHEMA_REFERENCE,
+            VERIFICATION_CHECKLIST,
+            CORE_IMPLEMENTATION,
+            TOPIC_WRITER_SKILL,
+            TOPIC_VERIFIER_SKILL,
+        ]
+
+        for reference_path in reference_paths:
+            reference_text = reference_path.read_text(encoding="utf-8").lower()
+            with self.subTest(path=reference_path.name):
+                self.assertIn(COMPANY_DIGEST_BOUNDARY_PHRASE, reference_text)
 
     def test_raw_ingest_automation_guidance_is_available(self) -> None:
         reference_paths = [

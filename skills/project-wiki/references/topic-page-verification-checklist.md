@@ -71,6 +71,7 @@ Use this checklist when verifying created or updated docs/wiki topic pages, espe
 - docs/wiki/digests/index.md remains a hub when digests are used.
 - The relevant docs/wiki/digests/YYYY-MM.md entry may keep the date when information was added or modified, but it summarizes the content change instead of listing page or file changes.
 - The relevant docs/wiki/digests/YYYY-MM.md page uses one digest entry per independently changing item or closely coupled product family; it does not bundle unrelated items into one dated paragraph.
+- For example, do not discuss multiple companies in one digest entry unless they are part of the same joint story, such as a partnership, acquisition, coordinated release, or directly comparative event; appearing in the same source article or collection batch is not enough.
 - The relevant docs/wiki/digests/YYYY-MM.md Current Understanding entries appear in reverse chronological order by entry date, newest first; same-date entries keep a stable content order unless a clearer local grouping is needed.
 - The relevant docs/wiki/digests/YYYY-MM.md entry is at most three lines for the source and leaves detailed background in the relevant leaf page.
 - When repairing an existing digest, inspect the current month page for bundled dated paragraphs and rewrite the requested date range into item-level synopsis entries instead of only appending new entries.

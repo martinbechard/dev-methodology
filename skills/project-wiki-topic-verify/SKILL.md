@@ -104,6 +104,8 @@ Return NEEDS_CORRECTION when a digest entry uses its dated text mainly to list p
 
 Return NEEDS_CORRECTION when unrelated digest items are bundled into one dated paragraph instead of separate item-level synopsis entries.
 
+For example, do not discuss multiple companies in one digest entry unless they are part of the same joint story, such as a partnership, acquisition, coordinated release, or directly comparative event; appearing in the same source article or collection batch is not enough. Return NEEDS_CORRECTION when an entry violates this boundary.
+
 Return NEEDS_CORRECTION when digest entries are grouped by raw source artifact, collector run, sweep category, or ingestion batch instead of independently changing item or closely coupled product family.
 
 Return NEEDS_CORRECTION when dated Current Understanding entries in a monthly digest are not in reverse chronological order by entry date, newest first.
