@@ -397,6 +397,15 @@ DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
     "When the user, target file type, runtime schema, existing document, or surrounding documentation indicates a specific structure or format, preserve that structure.",
     "Use the shared page contract only when the selected artifact type requires it.",
 )
+DOCUMENTATION_LIST_WRITER_SKILLS = (
+    "development-methodology",
+    "maintain-methodology-documentation",
+    "project-wiki-topic-write",
+)
+DOCUMENTATION_LIST_VERIFIER_SKILLS = (
+    "documentation-page-verify",
+    "project-wiki-topic-verify",
+)
 MODULARIZATION_REQUIRED_PHRASES = (
     "Core Agent Skills",
     "Why Technology-Specific Skills Are Loaded Separately",
@@ -881,8 +890,12 @@ class VisibleProseParser(HTMLParser):
 
 
 def visible_prose_blocks(path: Path) -> list[str]:
+    return visible_prose_from_html(path.read_text(encoding="utf-8"))
+
+
+def visible_prose_from_html(html: str) -> list[str]:
     parser = VisibleProseParser()
-    parser.feed(path.read_text(encoding="utf-8"))
+    parser.feed(html)
     return parser.blocks
 
 
@@ -3881,6 +3894,37 @@ class BundleContentTests(unittest.TestCase):
         for phrase in DOCUMENTATION_PAGE_VERIFIER_REVIEW_PHRASES:
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, skill_text)
+
+    def test_documentation_writing_skills_require_lists_for_enumerated_prose(
+        self,
+    ) -> None:
+        writer_phrases = (
+            "Do not pack a sequence or enumeration into a long paragraph.",
+            "Treat three or more distinct steps or items in one paragraph as a list-structure trigger.",
+            "use a numbered list for ordered steps and a bulleted list for unordered items",
+            "keep one coherent step or item in each entry",
+        )
+        verifier_phrases = (
+            "Flag a long paragraph that carries a sequence or enumeration",
+            "Treat three or more distinct steps or items in one paragraph as a finding.",
+            "Require a numbered list for ordered steps and a bulleted list for unordered items",
+        )
+
+        for skill_name in DOCUMENTATION_LIST_WRITER_SKILLS:
+            skill_text = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(
+                encoding="utf-8"
+            )
+            for phrase in writer_phrases:
+                with self.subTest(skill_name=skill_name, phrase=phrase):
+                    self.assertIn(phrase, skill_text)
+
+        for skill_name in DOCUMENTATION_LIST_VERIFIER_SKILLS:
+            skill_text = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(
+                encoding="utf-8"
+            )
+            for phrase in verifier_phrases:
+                with self.subTest(skill_name=skill_name, phrase=phrase):
+                    self.assertIn(phrase, skill_text)
 
     def test_example_project_skill_packs_are_packaged(self) -> None:
         for skill_name in EXAMPLE_PROJECT_SKILL_PACKS:
@@ -8292,6 +8336,144 @@ class BundleContentTests(unittest.TestCase):
             if len(filenames) > 1
         }
         self.assertEqual({}, duplicates)
+
+    def test_agent_and_skill_catalog_exposes_multi_item_rules_as_lists(self) -> None:
+        page_text = (
+            REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.html"
+        ).read_text(encoding="utf-8")
+        skill_catalog = page_text.split(
+            '<section class="section" aria-labelledby="skills-title">',
+            maxsplit=1,
+        )[1].split("</section>", maxsplit=1)[0]
+
+        for heading in (
+            "Delivery Workflow",
+            "Persistence Selection",
+            "Codex Multi-Item Coordination",
+        ):
+            with self.subTest(heading=heading):
+                self.assertIn(f"<h3>{heading}</h3>", skill_catalog)
+
+        self.assertEqual(2, skill_catalog.count("<ol>"))
+        self.assertEqual(2, skill_catalog.count("<ul>"))
+        self.assertNotIn(
+            "Dev Coder returns a clean verified candidate commit without applying terminal delivery. Dev Orchestrator obtains",
+            skill_catalog,
+        )
+
+        delivery_section = skill_catalog.split(
+            "<h3>Delivery Workflow</h3>",
+            maxsplit=1,
+        )[1].split("<h3>Persistence Selection</h3>", maxsplit=1)[0]
+        self.assertEqual(1, delivery_section.count("<ol>"))
+        self.assertNotIn("<ul>", delivery_section)
+        delivery_item_fragments = re.findall(
+            r"<li(?:\s[^>]*)?>.*?</li>",
+            delivery_section,
+            flags=re.DOTALL,
+        )
+        self.assertEqual(6, len(delivery_item_fragments))
+        delivery_items = [
+            visible_prose_from_html(fragment)
+            for fragment in delivery_item_fragments
+        ]
+        self.assertTrue(all(len(item) == 1 and item[0] for item in delivery_items))
+        delivery_item_text = " ".join(item[0] for item in delivery_items)
+        for fact in (
+            "Dev Coder returns a clean verified candidate commit",
+            "Dev Orchestrator obtains fresh independent review and source verification",
+            "preserves one delivery identity through host review and corrections",
+            "Every source correction returns through Dev Orchestrator to the original Dev Coder",
+            "returns AWAITING_REVIEW until required review, checks, dependency order, merge, and configured base-branch reachability are observed",
+            "Persistence closure begins only after Commit returns READY",
+        ):
+            with self.subTest(delivery_list_fact=fact):
+                self.assertIn(fact, delivery_item_text)
+        for fact in (
+            "Publication is therefore a resumable handoff rather than completion",
+            "Focused pull requests separate shared foundations from independently reviewable changes",
+        ):
+            with self.subTest(delivery_paragraph_fact=fact):
+                self.assertIn(fact, delivery_section)
+
+        persistence_section = skill_catalog.split(
+            "<h3>Persistence Selection</h3>",
+            maxsplit=1,
+        )[1].split("<h3>Codex Multi-Item Coordination</h3>", maxsplit=1)[0]
+        self.assertNotIn("<ol>", persistence_section)
+        self.assertEqual(1, persistence_section.count("<ul>"))
+        persistence_item_fragments = re.findall(
+            r"<li(?:\s[^>]*)?>.*?</li>",
+            persistence_section,
+            flags=re.DOTALL,
+        )
+        self.assertEqual(2, len(persistence_item_fragments))
+        persistence_items = [
+            visible_prose_from_html(fragment)
+            for fragment in persistence_item_fragments
+        ]
+        self.assertTrue(
+            all(len(item) == 1 and item[0] for item in persistence_items)
+        )
+        persistence_item_text = " ".join(item[0] for item in persistence_items)
+        self.assertIn(
+            "Work-item Persistence is an independent project selection",
+            persistence_section,
+        )
+        for fact in (
+            "Dev Backlog Steward applies the effective Persistence-selected create or manage skill",
+            "An UNSET selection requires a decision instead of fallback or shadow persistence",
+        ):
+            with self.subTest(persistence_list_fact=fact):
+                self.assertIn(fact, persistence_item_text)
+
+        coordination_section = skill_catalog.split(
+            "<h3>Codex Multi-Item Coordination</h3>",
+            maxsplit=1,
+        )[1]
+        self.assertEqual(1, coordination_section.count("<ol>"))
+        self.assertEqual(1, coordination_section.count("<ul>"))
+        coordination_item_fragments = re.findall(
+            r"<li(?:\s[^>]*)?>.*?</li>",
+            coordination_section,
+            flags=re.DOTALL,
+        )
+        self.assertEqual(8, len(coordination_item_fragments))
+        coordination_items = [
+            visible_prose_from_html(fragment)
+            for fragment in coordination_item_fragments
+        ]
+        self.assertTrue(
+            all(len(item) == 1 and item[0] for item in coordination_items)
+        )
+        coordination_item_text = " ".join(item[0] for item in coordination_items)
+        for fact in (
+            "loads codex-workitem-coordination only when user-visible Codex tasks coordinate several work items",
+            "reads inventory and lifecycle through the effective Persistence-selected manager",
+            "delegates provider mutation to Dev Backlog Steward",
+            "sends active delivery to Dev Orchestrator with the effective Commit-selected skill",
+            "Provider none has no durable queue or capacity target",
+            "UNSET, unavailable selected skills, and provider placeholders stop without fallback",
+            "preserves capacity, retry, watchdog, identity, and cleanup semantics",
+            "orchestrated development lifecycle",
+        ):
+            with self.subTest(coordination_list_fact=fact):
+                self.assertIn(fact, coordination_item_text)
+
+        paragraph_fragments = re.findall(
+            r"<p(?:\s[^>]*)?>.*?</p>",
+            skill_catalog,
+            flags=re.DOTALL,
+        )
+        self.assertGreater(len(paragraph_fragments), 0)
+        for paragraph in paragraph_fragments:
+            visible = visible_prose_from_html(paragraph)
+            self.assertEqual(1, len(visible))
+            self.assertLess(
+                len(visible[0].split()),
+                80,
+                msg=f"Skill Catalog paragraph should be split into a list: {visible[0]}",
+            )
 
     def test_agent_role_map_separates_lifecycle_categories(self) -> None:
         role_map_text = (

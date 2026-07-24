@@ -124,6 +124,7 @@ Confirm Mermaid or another editable source remains authoritative. Rendered SVG a
 4. Keep implementation detail out of functional specifications unless the user needs it to understand behavior.
 5. Keep broad architecture pages from duplicating every module detail.
 6. Keep module pages focused on one coherent responsibility.
+7. Flag a long paragraph that carries a sequence or enumeration instead of exposing its structure. Treat three or more distinct steps or items in one paragraph as a finding. Require a numbered list for ordered steps and a bulleted list for unordered items, with one coherent step or item in each entry.
 
 ## Output
 

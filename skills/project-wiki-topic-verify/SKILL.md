@@ -44,12 +44,13 @@ Non-reserved Markdown concept documents should have YAML frontmatter with a non-
 6. Check whether created or updated hubs stayed navigational instead of absorbing leaf details.
 7. Check named source references in prose. They must link to the source at the point of use when the prose names or compares source artifacts.
 8. Check multi-source paragraphs for a synthesis, contrast, tension, or source-specific boundary instead of stacked source summaries.
-9. Check that the leaf-link pass was run for created or updated durable leaves. Run the leaf-link pass after creating or updating a durable leaf page. Use repository grep to find existing wiki mentions of each leaf title before finishing. A page that mentions a durable leaf title should link the first unlinked mention to that leaf unless the mention is inside a heading, code fence, or existing link.
-10. Check source links, digest links, topic-index links, and federation boundaries. Raw and raw/processed source links must be relative to the wiki page, not absolute filesystem paths.
-11. Run the project-wiki lint command from the repository root when available.
-12. Run python3 project-wiki-skill-root/scripts/wiki_ops.py okf-migrate only when the caller asks for repair; otherwise stay read-only and report missing or stale frontmatter as a finding.
-13. Run python3 project-wiki-skill-root/scripts/wiki_ops.py okf-validate from the repository root when available.
-14. Return a verdict about the created or updated topic pages. Do not edit files.
+9. Flag a long paragraph that carries a sequence or enumeration instead of exposing its structure. Treat three or more distinct steps or items in one paragraph as a finding. Require a numbered list for ordered steps and a bulleted list for unordered items, with one coherent step or item in each entry.
+10. Check that the leaf-link pass was run for created or updated durable leaves. Run the leaf-link pass after creating or updating a durable leaf page. Use repository grep to find existing wiki mentions of each leaf title before finishing. A page that mentions a durable leaf title should link the first unlinked mention to that leaf unless the mention is inside a heading, code fence, or existing link.
+11. Check source links, digest links, topic-index links, and federation boundaries. Raw and raw/processed source links must be relative to the wiki page, not absolute filesystem paths.
+12. Run the project-wiki lint command from the repository root when available.
+13. Run python3 project-wiki-skill-root/scripts/wiki_ops.py okf-migrate only when the caller asks for repair; otherwise stay read-only and report missing or stale frontmatter as a finding.
+14. Run python3 project-wiki-skill-root/scripts/wiki_ops.py okf-validate from the repository root when available.
+15. Return a verdict about the created or updated topic pages. Do not edit files.
 
 ## Leaf Concept Audit
 
@@ -97,6 +98,8 @@ Return NEEDS_CORRECTION when raw or raw/processed source links use absolute file
 Return NEEDS_CORRECTION when prose names or compares source artifacts, decks, procedures, pages, or external references without linking those sources at the point of use.
 
 Return NEEDS_CORRECTION when a paragraph uses multiple sources but only stacks source summaries instead of stating the shared rule, scope contrast, tension, or source-specific boundary.
+
+Return NEEDS_CORRECTION when a long paragraph carries a sequence or enumeration. Three or more distinct steps or items in one paragraph require a numbered list for ordered steps or a bulleted list for unordered items.
 
 Return NEEDS_CORRECTION when a created or updated durable leaf was not followed by python3 project-wiki-skill-root/scripts/wiki_ops.py link-leaves or equivalent repository grep coverage.
 

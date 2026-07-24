@@ -51,7 +51,8 @@ Non-reserved Markdown concept documents should have YAML frontmatter with a non-
 8. Use steady-state language. Do not describe the page as enhanced, revised, old, or new unless documenting history in Maintenance Notes.
 9. Link named source artifacts, decks, procedures, pages, and external references at the point of use in prose.
 10. When multiple sources inform a paragraph, synthesize or contrast them. State the integrated rule, scope difference, tension, or source-specific boundary instead of listing what each source says.
-11. Do not invent source paths, code paths, tests, backlog status, behavior, fallback, or compatibility claims.
+11. Do not pack a sequence or enumeration into a long paragraph. Treat three or more distinct steps or items in one paragraph as a list-structure trigger. Introduce the group with a short sentence, use a numbered list for ordered steps and a bulleted list for unordered items, and keep one coherent step or item in each entry.
+12. Do not invent source paths, code paths, tests, backlog status, behavior, fallback, or compatibility claims.
 
 ## Verifier Loop
 
