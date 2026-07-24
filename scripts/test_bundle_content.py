@@ -646,15 +646,15 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Beacon Knowledge Base: Workflow Separation",
     ),
     "orchestrated-development-lifecycle.html": (
-        "Start With The Backlog",
-        "The File-Backed Backlog",
-        "Agents",
-        "Private Branches And Worktrees",
-        "Coordinating Shared Resources",
-        "Review, Verification, And Delivery",
-        "User Decisions Stop Only The Affected Item",
-        "Evidence That Proves Delivery",
-        "Design And Documentation Work Uses The Same Loop",
+        "Work-Item Backlog",
+        "File-Backed Work Items",
+        "Agent Roles",
+        "Private Workspaces And Delivery Paths",
+        "Shared-Resource Coordination",
+        "Delivery Stages",
+        "User Decision Gates",
+        "Delivery Evidence",
+        "Design And Documentation Workflows",
     ),
     "documentation-templates.html": (
         "Documentation Templates",
@@ -6363,15 +6363,15 @@ class BundleContentTests(unittest.TestCase):
         lifecycle_text = lifecycle_path.read_text(encoding="utf-8")
 
         ordered_headings = (
-            ("backlog-title", "Start With The Backlog"),
-            ("file-provider-title", "The File-Backed Backlog"),
-            ("agents-title", "Agents"),
-            ("private-work-title", "Private Branches And Worktrees"),
-            ("coordination-title", "Coordinating Shared Resources"),
-            ("delivery-title", "Review, Verification, And Delivery"),
-            ("decisions-title", "User Decisions Stop Only The Affected Item"),
-            ("evidence-title", "Evidence That Proves Delivery"),
-            ("design-work-title", "Design And Documentation Work Uses The Same Loop"),
+            ("backlog-title", "Work-Item Backlog"),
+            ("file-provider-title", "File-Backed Work Items"),
+            ("agents-title", "Agent Roles"),
+            ("private-work-title", "Private Workspaces And Delivery Paths"),
+            ("coordination-title", "Shared-Resource Coordination"),
+            ("delivery-title", "Delivery Stages"),
+            ("decisions-title", "User Decision Gates"),
+            ("evidence-title", "Delivery Evidence"),
+            ("design-work-title", "Design And Documentation Workflows"),
         )
         heading_positions = tuple(
             lifecycle_text.index(f'<h2 id="{heading_id}">{heading}</h2>')
@@ -6387,11 +6387,11 @@ class BundleContentTests(unittest.TestCase):
             lifecycle_text.index('<section class="section" id="delivery"') :
             lifecycle_text.index('<section class="section" id="decisions"')
         ]
-        self.assertIn('<h2 id="agents-title">Agents</h2>', agents_section)
+        self.assertIn('<h2 id="agents-title">Agent Roles</h2>', agents_section)
         self.assertNotIn("Agents And Handoffs", agents_section)
         self.assertNotIn("Lifecycle Handoffs", agents_section)
         self.assertIn(
-            '<figcaption id="delivery-sequence-title">Lifecycle Handoffs:',
+            '<figcaption id="delivery-sequence-title">Lifecycle Handoffs',
             delivery_section,
         )
         self.assertIn(
@@ -6401,6 +6401,56 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn(
             "A Task is one bounded assignment to an Agent, never another name for a Thread.",
             agents_section,
+        )
+
+        title_like_labels = (
+            "Work-Item Continuity",
+            "Lifecycle Overview",
+            "Work-Item Types",
+            "Work-Item Readiness",
+            "Work-Item Status",
+            "Lifecycle Roles",
+            "Production And Implementation Agents",
+            "Independent Reviewers",
+            "Integration Specialists",
+            "Execution Contexts",
+            "Parallel Workspaces",
+            "Shared Resource Gate",
+            "Claim Outcomes",
+            "Claim Limits",
+            "Resource Deadlines",
+            "Shared-Resource Contention",
+            "Lifecycle Handoffs",
+            "Execution Safeguards",
+            "1 · User Question",
+            "2 · Preserved Context",
+            "3 · Decision Record",
+            "4 · Outcome Routing",
+            "Evidence Boundaries",
+            "Thread Evidence Boundary:",
+            "Administrative Cleanup",
+            "Planned Development",
+            "Whole-Project Reverse Engineering",
+        )
+        for label in title_like_labels:
+            with self.subTest(title_like_label=label):
+                self.assertIn(f">{label}<", lifecycle_text)
+
+        self.assertEqual(
+            (
+                "Intake",
+                "Selection",
+                "Private Work",
+                "Independent Review",
+                "Delivery",
+                "Closeout",
+            ),
+            tuple(
+                re.findall(
+                    r'<li><span class="station">\d{2}</span><strong>([^<]+)</strong>',
+                    lifecycle_text,
+                )
+            ),
         )
 
         self.assertEqual(1, lifecycle_text.count('class="lifecycle-rail"'))
@@ -6441,7 +6491,7 @@ class BundleContentTests(unittest.TestCase):
             "Backlog Coordinator",
             "Backlog Steward",
             "Dev Orchestrator",
-            "Independent reviewers",
+            "Independent Reviewers",
             "Verifier",
             "Merge Coordinator",
             "Each work-item Thread uses its own branch and worktree",
@@ -6451,7 +6501,7 @@ class BundleContentTests(unittest.TestCase):
             "not proof of review, verification, delivery, or work-item completion",
             "one cheapest representative first",
             "A user answer resolves the decision gate",
-            "A Thread is an execution context, not another durable evidence record",
+            "Thread Evidence Boundary",
         ):
             with self.subTest(lifecycle_phrase=phrase):
                 self.assertIn(phrase, lifecycle_text)
@@ -6528,9 +6578,9 @@ class BundleContentTests(unittest.TestCase):
         self.assertGreater(lifecycle_text.count('role="img" aria-label="sends to"'), 0)
         self.assertIn("position: static; flex-wrap: wrap", lifecycle_text)
 
-        private_index = lifecycle_text.index(">Private Branches And Worktrees<")
-        coordination_index = lifecycle_text.index(">Coordinating Shared Resources<")
-        delivery_index = lifecycle_text.index(">Review, Verification, And Delivery<")
+        private_index = lifecycle_text.index(">Private Workspaces And Delivery Paths<")
+        coordination_index = lifecycle_text.index(">Shared-Resource Coordination<")
+        delivery_index = lifecycle_text.index(">Delivery Stages<")
         self.assertLess(private_index, coordination_index)
         self.assertLess(coordination_index, delivery_index)
 
@@ -6541,7 +6591,7 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertEqual(
             1,
-            lifecycle_text.count(">Design And Documentation Work Uses The Same Loop<"),
+            lifecycle_text.count(">Design And Documentation Workflows<"),
         )
         ordered_stages = (
             "Functional intent",
@@ -6551,7 +6601,7 @@ class BundleContentTests(unittest.TestCase):
             "Implementation",
         )
         planned_text = lifecycle_text[
-            lifecycle_text.index(">Design And Documentation Work Uses The Same Loop<") :
+            lifecycle_text.index(">Design And Documentation Workflows<") :
         ]
         stage_positions = tuple(
             planned_text.index(f">{stage}<") for stage in ordered_stages
