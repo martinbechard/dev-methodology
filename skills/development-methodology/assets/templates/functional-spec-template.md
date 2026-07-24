@@ -9,6 +9,8 @@ File path: skills/development-methodology/assets/templates/functional-spec-templ
 
 ## Current Understanding
 
+> This gives product, design, and implementation readers a shared behavioral baseline before they interpret detailed workflows. Product owners, designers, implementers, and reviewers use it during onboarding, planning, and review to state the actor goal, the capability being described, and whether the behavior is current, planned, partial, or blocked.
+
 TODO: Describe the user-visible workflow, product capability, admin flow, operator flow, or external-system behavior this document defines.
 
 TODO: State the user or actor goal in steady-state language.
@@ -17,6 +19,8 @@ TODO: State whether the behavior is implemented, planned, partially implemented,
 
 ## Authoritative Sources
 
+> This lets reviewers distinguish required behavior from assumption and resolve conflicting descriptions consistently. Product owners, designers, implementers, and reviewers use it when creating or revising the specification to link the product, code, test, procedure, route, and backlog evidence that governs the workflow and to declare source precedence.
+
 TODO: Link the source material that defines the intended behavior.
 
 TODO: Include product requirements, existing functional documents, code, tests, procedures, backlog records, routes, UI surfaces, command entry points, or external integration notes as applicable.
@@ -24,6 +28,8 @@ TODO: Include product requirements, existing functional documents, code, tests, 
 TODO: State which source wins when two sources can disagree.
 
 ## Related Code
+
+> This gives implementers and reviewers a direct path from user-visible behavior to the surfaces that provide it. Product owners, designers, implementers, and reviewers use it during implementation, change review, and reverse engineering to locate the exact routes, components, services, scripts, migrations, and configuration involved.
 
 TODO: Link source files, routes, components, services, scripts, migrations, or configuration that implement the behavior.
 
@@ -49,11 +55,15 @@ TODO: For a larger layout, repeat the named-subsection pattern above with anothe
 
 ## Related Tests
 
+> This shows which behavioral claims are exercised and where confidence still depends on missing or manual checks. Product owners, designers, implementers, and reviewers use it during review, regression analysis, and release planning to find the tests, fixtures, snapshots, and retained verification evidence for the workflow.
+
 TODO: Link automated tests, manual test notes, fixtures, snapshots, or generated verification artifacts.
 
 TODO: Say Not yet identified when tests still need to be written.
 
 ## Related Backlog Items
+
+> This preserves the decisions, defects, and planned work that explain why the behavior has its current shape or may change. Product owners, designers, implementers, and reviewers use it during planning, triage, and maintenance to connect the specification to active and historical work.
 
 TODO: Link active or historical backlog items that affect this behavior.
 
@@ -61,11 +71,15 @@ TODO: Say Not yet identified when no related backlog item is known.
 
 ## Related Wiki Pages
 
+> This helps readers reach broader product context or deeper technical detail without duplicating it in the specification. Product owners, designers, implementers, and reviewers use it during exploration, onboarding, and impact analysis to find parent workflows, designs, decisions, defects, and shared terminology.
+
 TODO: Link parent workflow pages, related functional pages, architecture pages, high-level designs, module designs, decisions, known defects, and glossary entries.
 
 TODO: Say Not yet identified when no related wiki page is known.
 
 ## Open Questions
+
+> This keeps unresolved behavior or authority conflicts visible so downstream designers do not invent incompatible answers. Product owners, designers, implementers, and reviewers use it before design handoffs and implementation planning to record each unresolved question, its impact, decision owner, and required evidence.
 
 TODO: Record unresolved product, behavior, verification, route, permission, or source-of-truth questions.
 
@@ -73,11 +87,15 @@ TODO: If there are no unresolved questions, replace this section with a sentence
 
 ## Maintenance Notes
 
+> This helps future maintainers recognize when the specification may be stale and what evidence must be rechecked. Product owners, designers, implementers, and reviewers use it after changes to routes, permissions, tests, or user-visible behavior to record review triggers and the latest meaningful source review.
+
 TODO: Record what future maintainers should check when code, tests, routes, permissions, or user-visible behavior change.
 
 TODO: Include the last meaningful source review when known.
 
 ## Parent Workflow
+
+> This prevents a locally complete feature description from becoming disconnected from the larger user journey it serves. Product owners, designers, implementers, and reviewers use it during product decomposition and change-impact review to identify the owning workflow and explain this capability's contribution to it.
 
 TODO: Link the parent workflow, product area, project wiki page, backlog item, or functional index that owns this behavior.
 
@@ -85,11 +103,15 @@ TODO: State how this feature contributes to the parent workflow.
 
 ## Actors
 
+> This makes authority and expected behavior explicit for every participant, reducing permission and ownership ambiguity. Product owners, designers, implementers, and reviewers use it during workflow design, security review, and testing to name each actor and define what the actor may and must not do.
+
 TODO: List the users, administrators, operators, services, or external systems that participate in this behavior.
 
 TODO: For each actor, state what the actor can do and what the actor must not be able to do.
 
 ## Entry Points
+
+> This ensures every way of starting or supporting the workflow is accounted for rather than hidden behind the primary screen or route. Product owners, designers, implementers, and reviewers use it during interface design, operation inventory, and coverage review to identify primary and alternate entry points and their actor, request, response, side-effect, and verification contracts.
 
 TODO: List routes, pages, commands, scheduled jobs, integrations, widgets, buttons, forms, or external events that start this workflow.
 
@@ -99,11 +121,15 @@ TODO: Build a primary and supporting operation inventory that includes every rou
 
 ## Scope
 
+> This prevents the specification from absorbing unrelated behavior or leaving owned capabilities undocumented. Product owners, designers, implementers, and reviewers use it during planning and review to define included capabilities, non-goals, and the boundary with other functional artifacts.
+
 TODO: List the capabilities included in this functional specification.
 
 TODO: List non-goals and boundaries that keep the workflow from expanding into unrelated work.
 
 ## Concepts
+
+> This gives actors, designers, and implementers one vocabulary for interpreting the workflow and its states. Product owners, designers, implementers, and reviewers use it when domain terms, roles, statuses, entities, or route parameters could otherwise be understood differently; define only the concepts needed by this behavior.
 
 TODO: Define user-facing terms, statuses, roles, business entities, route parameters, or operational concepts needed to understand the workflow.
 
@@ -111,11 +137,15 @@ TODO: Link technical documents only when a concept needs implementation context.
 
 ## Workflows
 
+> This makes the actor-visible sequence and outcomes reviewable before technical design or implementation begins. Product owners, designers, implementers, and reviewers use it during product review, design, and acceptance planning to describe each path from the actor's perspective, including visible results, navigation, persistence, and recovery behavior.
+
 TODO: For each workflow, write the steps from the actor's point of view.
 
 TODO: Include expected visible results, confirmation messages, disabled states, navigation outcomes, and persistence outcomes.
 
 ## Interface Examples
+
+> This turns important interface contracts into concrete examples that readers can compare and test, reducing ambiguity left by abstract prose. Product owners, designers, implementers, and reviewers use it when layout, payload, message, command, state, or interaction details materially affect behavior; choose the example form that matches the interface and explain when no additional example adds value.
 
 TODO: Classify every documented interface as UI, API, event or message, CLI, or another non-interactive surface. Provide each required example below, or a concrete no-example rationale only when no required-example condition applies. This template does not require HTML or a UI mockup for every functional specification.
 
@@ -133,6 +163,8 @@ TODO: One example may cover multiple operations only when each operation is mapp
 
 ## Workflow Diagram
 
+> This exposes ordering, branches, permissions, recovery, state changes, and handoffs that are difficult to verify from prose alone. Product owners, designers, implementers, and reviewers use it during workflow design and review whenever objective sequence triggers apply; choose a sequence, state, or flow diagram that matches the relationship.
+
 TODO: Add a Mermaid diagram whenever a workflow contains two or more ordered actor actions, or any branch, permission gate, alternate path, recovery path, state transition, or external handoff. Do not leave the complete workflow only in prose, a numbered list, or a table.
 
 TODO: Use a sequence diagram for ordered actor-system exchanges, a state diagram for named states and transitions, and a flowchart for branches, decisions, or recovery paths. Verification-step lists are test procedures and do not independently trigger a workflow diagram.
@@ -149,6 +181,8 @@ TODO: If an SVG artifact is maintained, link it only when a review or publishing
 
 ## States And Rules
 
+> This prevents edge behavior from depending on unstated assumptions about status, permissions, validation, and conflict handling. Product owners, designers, implementers, and reviewers use it during interface design, implementation, and testing to define valid states, transitions, gates, limits, fallbacks, and the authority that resolves disagreement.
+
 TODO: List the states the feature can be in.
 
 TODO: Describe rules for permissions, validation, sorting, filtering, redirects, retry behavior, empty states, unavailable states, and conflict states.
@@ -157,21 +191,21 @@ TODO: State which source of information is authoritative when two sources can di
 
 ## Edge Cases
 
+> This makes realistic failure, empty, conflict, and boundary conditions part of the product contract instead of late implementation surprises. Product owners, designers, implementers, and reviewers use it during review and test planning to state what the actor sees and whether or how the workflow can continue.
+
 TODO: List the edge cases that users can realistically encounter.
 
 TODO: For each edge case, state what the user sees and whether the workflow can continue.
 
-## Documentation Acceptance
-
-TODO: Begin this section with **ACCEPTED.** or **BLOCKED.** State ACCEPTED when the artifact accurately records observable behavior from source evidence, accepted design prerequisites, and current-pass requirements. During bottom-up reverse engineering, do not fail documentation acceptance solely because later wiki pages are intentionally absent, or because an accurately recorded defect, unimplemented behavior, open decision, or limitation blocks implementation.
-
-TODO: When BLOCKED, name the missing accepted prerequisite, insufficient evidence, unresolved current-pass review finding, or unavailable mandatory dependency.
-
 ## Implementation Readiness
 
-TODO: Begin this section with **READY.** or **BLOCKED.** State READY only when workflow-dependent downstream work can proceed without an unresolved critical behavior, decision, defect, or verification gap. Otherwise state BLOCKED for the affected downstream work while preserving an independent Documentation Acceptance result.
+> This prevents a reviewed specification from being mistaken for permission to begin unsafe downstream work. Product owners, designers, implementers, and reviewers use it during design handoff and planning to record READY or BLOCKED and identify unresolved behavior, authority, defect, or verification gaps that must be closed first.
+
+TODO: Immediately after the retained blockquote note, begin the authored section content with **READY.** or **BLOCKED.** State READY only when workflow-dependent downstream work can proceed without an unresolved critical behavior, decision, defect, or verification gap. Otherwise state BLOCKED for the affected downstream work. A BLOCKED result does not make an accurately documented limitation an automatic review failure.
 
 ## Verification
+
+> This makes observable behavior provable and exposes unsupported workflow or rule claims. Product owners, designers, implementers, and reviewers use it during implementation, review, regression analysis, and release assessment to map every workflow, rule group, and important edge case to executable or manual evidence and its current status.
 
 TODO: Add a verification block for every workflow, rule group, and important edge case.
 

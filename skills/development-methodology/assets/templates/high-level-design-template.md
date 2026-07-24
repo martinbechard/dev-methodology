@@ -9,6 +9,8 @@ File path: skills/development-methodology/assets/templates/high-level-design-tem
 
 ## Current Understanding
 
+> This gives architecture, module-design, and implementation readers a shared subsystem baseline before they interpret detailed contracts. Architects, module designers, implementers, and reviewers use it during planning, onboarding, and review to state the subsystem outcome, current or intended behavior, and selected design mode.
+
 TODO: Describe the subsystem, feature family, or system slice this document defines.
 
 TODO: State the user or runtime outcome the subsystem must provide.
@@ -19,11 +21,15 @@ TODO: State the selected design mode: PLANNED_DEVELOPMENT, EXISTING_IMPLEMENTATI
 
 ## Authoritative Sources
 
+> This lets reviewers distinguish required subsystem behavior from inference and resolve conflicting inputs consistently. Architects, module designers, implementers, and reviewers use it when creating or maintaining the design to identify the accepted specifications, architecture, decisions, modules, code, tests, and procedures permitted by the selected mode.
+
 TODO: Link accepted functional specifications, architecture, decisions, backlog requirements, project configuration, module designs, code, tests, procedures, and plan documents permitted by the selected design mode.
 
 TODO: State which source wins when sources disagree.
 
 ## Related Code
+
+> This gives designers and implementers a direct path from subsystem decisions to the artifacts they govern. Architects, module designers, implementers, and reviewers use it during module assignment, implementation, change review, and reverse engineering to locate exact source, configuration, migration, generated, and runtime surfaces.
 
 TODO: Link the source files, folders, tasks, services, UI components, scripts, migrations, generated artifacts, or configuration governed by this subsystem.
 
@@ -31,11 +37,15 @@ TODO: Say Not yet identified when no code exists yet.
 
 ## Related Tests
 
+> This shows which subsystem claims are exercised and where confidence still depends on missing or manual evidence. Architects, module designers, implementers, and reviewers use it during review, integration planning, and regression analysis to find tests, fixtures, logs, and other verification artifacts.
+
 TODO: Link unit tests, integration tests, manual checks, fixtures, generated artifacts, or runtime logs that prove the subsystem behavior.
 
 TODO: Say Not yet identified when tests still need to be written.
 
 ## Related Backlog Items
+
+> This preserves the work history and planned changes that explain the subsystem's present boundaries and future direction. Architects, module designers, implementers, and reviewers use it during planning, triage, and maintenance to connect decisions and defects to their owning backlog records.
 
 TODO: Link active or historical backlog items that affect this subsystem.
 
@@ -43,11 +53,15 @@ TODO: Say Not yet identified when no related backlog item is known.
 
 ## Related Wiki Pages
 
+> This helps readers reach parent context and constituent detail without duplicating it in the HLD. Architects, module designers, implementers, and reviewers use it during navigation and impact analysis to find architecture, module designs, functional behavior, decisions, defects, and shared terminology.
+
 TODO: Link the parent architecture, constituent module designs, related functional pages, glossary entries, open decisions, known defects, and adjacent subsystem pages.
 
 TODO: Say Not yet identified when no related wiki page is known.
 
 ## Open Questions
+
+> This prevents unresolved cross-module or authority conflicts from becoming incompatible module-level assumptions. Architects, module designers, implementers, and reviewers use it before design handoff and implementation planning to record each question's impact, blocking status, decision owner, affected contracts, and required evidence.
 
 TODO: Record unresolved subsystem ownership, behavior, data flow, verification, dependency, identity, security, response, selector, validation, state, or source-of-truth questions.
 
@@ -57,11 +71,15 @@ TODO: If there are no unresolved questions, replace this section with a sentence
 
 ## Maintenance Notes
 
+> This helps future maintainers identify when subsystem documentation may be stale and what relationships must be revalidated. Architects, module designers, implementers, and reviewers use it after changes to modules, contracts, configuration, tests, or user-visible behavior to record review triggers and the last meaningful source review.
+
 TODO: Record what future maintainers should recheck when modules, data contracts, tests, configuration, or user-visible behavior change.
 
 TODO: Include the last meaningful source review when known.
 
 ## Requirements Coverage
+
+> This prevents source requirements and exact operations from disappearing into general subsystem prose. Architects, module designers, implementers, and reviewers use it during design review, module decomposition, and change assessment to map every requirement to its claim mode, satisfying design, status, ownership, and verification.
 
 TODO: Account for every applicable requirement from the authoritative functional specifications and parent architecture. Do not hide an omitted requirement in general subsystem prose.
 
@@ -75,9 +93,11 @@ TODO: Give every exact route variant or supporting UI action named by an authori
 
 ## Parent Architecture
 
+> This keeps subsystem decisions aligned with the system-wide constraints that give them context and authority. Architects, module designers, implementers, and reviewers use it during HLD creation and review to identify the governing architecture, inherited rules, expected later parent during reverse engineering, and any resulting readiness effect.
+
 TODO: Link the architecture document that governs this subsystem.
 
-TODO: In PLANNED_DEVELOPMENT, when an accepted parent architecture is required but absent, record a blocking upstream design question rather than inventing architectural constraints. In EXISTING_IMPLEMENTATION bottom-up reverse engineering, state that the intentionally later parent architecture is Not yet identified; do not treat that expected absence as a documentation-acceptance blocker, and record any effect on implementation readiness separately.
+TODO: In PLANNED_DEVELOPMENT, when an accepted parent architecture is required but absent, record a blocking upstream design question rather than inventing architectural constraints. In EXISTING_IMPLEMENTATION bottom-up reverse engineering, state that the intentionally later parent architecture is Not yet identified; do not treat that expected absence as a review finding, and record any effect on implementation readiness separately.
 
 TODO: State which architectural constraints apply most directly to this subsystem.
 
@@ -86,6 +106,8 @@ TODO: Add an Architecture Constraint Map in this section when one subsystem inhe
 TODO: The Architecture Constraint Map should connect parent architecture rules to the subsystem sections or components they govern.
 
 ## Scope
+
+> This prevents overlapping subsystem ownership and uncontrolled expansion into unrelated capabilities. Architects, module designers, implementers, and reviewers use it during design decomposition and review to define included behavior, adjacent systems, integrations, non-goals, and the boundary other artifacts must own.
 
 TODO: List the capabilities included in this high-level design.
 
@@ -96,6 +118,8 @@ TODO: Add a Scope Boundary Diagram in this section when included capabilities, n
 TODO: The Scope Boundary Diagram should show what belongs inside the subsystem, what sits next to it, and what is explicitly outside the design.
 
 ## Data Anchors
+
+> This gives downstream module designers stable reference points for identities, contracts, records, state, configuration, and UI surfaces that must not be redefined independently. Architects, module designers, implementers, and reviewers use it during component and contract design to record each anchor's authority, owner, representation, lifetime, and downstream constraint.
 
 TODO: Data anchors establish the shared reference points that the next design layer must elaborate without redefining. Include only routes, selectors, configuration contracts, exchanged data contracts, persisted records, files, logs, UI surfaces, transient state, or derived state whose identity, authority, ownership, or downstream treatment must remain consistent across later designs.
 
@@ -116,6 +140,8 @@ TODO: Add a Data Anchor Map in this section when multiple records, state values,
 TODO: The Data Anchor Map should distinguish authoritative anchors from derived outputs and should not imply ownership unless the section states it.
 
 ## Constituent Components
+
+> This establishes a shared component vocabulary and ownership map so separate module designers do not invent competing boundaries or paths. Architects, module designers, implementers, and reviewers use it during work assignment, dependency analysis, and review to enumerate every participating component, responsibility, design link, and exact artifact placement.
 
 TODO: List every module, task, service, UI component, script, type group, fixture, or external integration that participates in this subsystem.
 
@@ -151,6 +177,8 @@ TODO: The component association diagram should show only constituent items from 
 
 ## Interaction Model
 
+> This makes collaboration, ordering, state movement, persistence, and external handoffs reviewable across component boundaries. Architects, module designers, implementers, and reviewers use it during contract design, integration planning, and failure analysis to describe callers, callees, exchanges, branches, and the diagrams required to expose them.
+
 TODO: Describe how the constituent components collaborate from top to bottom.
 
 TODO: Include caller and callee relationships, event flow, state flow, persistence flow, and external service boundaries.
@@ -174,6 +202,8 @@ TODO: If an SVG artifact is maintained, link it only when a review or publishing
 
 ## Critical Trust And Identity Boundaries
 
+> This prevents authentication, authorization, disclosure, selector, and sensitive-data rules from being assumed or collapsed across protected operations. Architects, module designers, implementers, and reviewers use it during security review and module design to map each actor and operation to its protected asset, authority checks, data limits, and failure posture.
+
 TODO: Complete this section whenever the subsystem contains an authenticated actor, protected operation, trust-boundary crossing, privileged background task, or sensitive-data flow. If none apply, state why no critical trust or identity boundary exists.
 
 TODO: For each protected operation family, independently inventory every applicable anonymous, authenticated, administrator, service, or background actor. Record denial and equivalent-role behavior explicitly instead of subsuming those actors into a broader row.
@@ -186,6 +216,8 @@ TODO: Keep authentication, authorization, roles, ownership, tenancy, and data fi
 
 ## Lifecycle
 
+> This exposes runtime ordering and recovery constraints that can otherwise create startup, concurrency, and shutdown defects. Architects, module designers, implementers, and reviewers use it during operational design, integration review, and incident analysis to describe states, transitions, actors, persistence, error handling, recovery, and required diagrams.
+
 TODO: Describe subsystem startup, normal operation, user-triggered actions, scheduled actions, error handling, persistence, recovery, and shutdown.
 
 TODO: Identify ordering constraints and concurrency constraints.
@@ -195,6 +227,8 @@ TODO: Add a Mermaid Lifecycle Diagram whenever this section describes an ordered
 TODO: The Lifecycle Diagram should show states and transitions. Use a state diagram when state names are the main concept, a sequence diagram when actors or components exchange ordered actions, and a flowchart when ordered phases, branches, decisions, or recovery paths are the main concept. Keep prose for constraints, ownership, concurrency, and exceptions.
 
 ## Data Shapes And Contracts
+
+> This prevents producers and consumers from inventing incompatible payloads, records, messages, and view models. Architects, module designers, implementers, and reviewers use it during API, persistence, event, and UI design to define each shared shape, its owner, exact type or fields, serialization boundary, and consumers.
 
 TODO: Describe the payloads, persisted records, state summaries, route bodies, event records, and UI view models shared across components.
 
@@ -208,6 +242,8 @@ TODO: The Data Contract Map should show the shape owner, producers, consumers, a
 
 ## Cross-Module Contract Reconciliation
 
+> This catches incompatible boundary assumptions before separate modules are implemented and makes unresolved high-impact contracts visible. Architects, module designers, implementers, and reviewers use it during HLD review and module handoff to reconcile actor, selector, payload, validation, state, transaction, asynchronous, disclosure, and failure behavior for every edge.
+
 TODO: Reconcile every producer-consumer or caller-callee boundary before module implementation begins. Do not select one conflicting contract silently or erase a missing critical fact through generalization.
 
 TODO: When the current contract and intended target differ, state both. Apply an explicit operation-specific response, selector, validation, state, or failure exception before any broader invariant or safety principle.
@@ -217,6 +253,8 @@ TODO: When the current contract and intended target differ, state both. Apply an
 | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | AGREED, OPEN, or CONFLICT |
 
 ## Configuration
+
+> This prevents settings from having unclear definition, validation, storage, or runtime ownership across components. Architects, module designers, implementers, and reviewers use it during implementation planning, operations, and review to list configuration contracts, defaults, change propagation, owners, and consumers.
 
 TODO: List subsystem settings, defaults, validation rules, and ownership.
 
@@ -228,6 +266,8 @@ TODO: The Configuration Ownership Map should show where configuration is defined
 
 ## Implementation Order
 
+> This turns subsystem dependencies into a safe delivery sequence and prevents work from starting before its prerequisites or verification gates exist. Architects, module designers, implementers, and reviewers use it during backlog decomposition and execution planning to order components, capabilities, and the checks required between steps.
+
 TODO: List the recommended implementation sequence.
 
 TODO: For each step, name the component or capability being added and the verification that must pass before moving on.
@@ -238,11 +278,15 @@ TODO: The Implementation Sequence Diagram should show dependency order and requi
 
 ## Invariants
 
+> This identifies properties that every constituent component must preserve even when internal implementations evolve. Architects, module designers, implementers, and reviewers use it during module design, testing, and change review to state non-negotiable ownership, privacy, state, persistence, failure, and user-visible rules.
+
 TODO: List rules that must remain true across all components in the subsystem.
 
 TODO: Include state ownership, privacy boundaries, failure behavior, user-visible behavior, and persistence guarantees.
 
 ## Non-Goals
+
+> This protects the subsystem boundary by making deliberately excluded behavior visible instead of leaving it as an accidental omission. Architects, module designers, implementers, and reviewers use it during planning and review to identify work owned elsewhere or deferred to a future design.
 
 TODO: List behaviors this subsystem must not implement.
 
@@ -250,21 +294,21 @@ TODO: Link future work documents if a non-goal is expected to become its own des
 
 ## Definition Of Good
 
+> This gives stakeholders a shared picture of what successful subsystem completion means beyond merely finishing code. Architects, module designers, implementers, and reviewers use it during planning, review, and release assessment to define required user outcomes, runtime behavior, observability, maintainability, and test coverage.
+
 TODO: Describe what complete and correct looks like for this subsystem.
 
 TODO: Include user-visible outcomes, runtime behavior, observability, maintainability, and test coverage.
 
-## Documentation Acceptance
-
-TODO: Begin this section with **ACCEPTED.** or **BLOCKED.** State ACCEPTED when the artifact accurately synthesizes source evidence, accepted module prerequisites, and current-pass requirements. During bottom-up reverse engineering, do not fail documentation acceptance solely because later architecture, functional specifications, or wiki pages are intentionally absent, or because an accurately recorded defect, open decision, or limitation blocks implementation.
-
-TODO: When BLOCKED, name the missing accepted prerequisite, insufficient evidence, unresolved current-pass review finding, or unavailable mandatory dependency.
-
 ## Implementation Readiness
 
-TODO: Begin this section with **READY.** or **BLOCKED.** State READY only when every applicable requirement is DEFINED, every required cross-module contract is AGREED, and no high-impact blocking question remains. Otherwise state BLOCKED for the affected downstream work and list the exact decisions or upstream artifacts required before dependent module design or implementation.
+> This prevents a reviewed HLD from being mistaken for permission to begin unsafe module design or implementation. Architects, module designers, implementers, and reviewers use it during handoff and planning to record READY or BLOCKED and identify unresolved requirements, cross-module contracts, decisions, or evidence that must be closed.
+
+TODO: Immediately after the retained blockquote note, begin the authored section content with **READY.** or **BLOCKED.** State READY only when every applicable requirement is DEFINED, every required cross-module contract is AGREED, and no high-impact blocking question remains. Otherwise state BLOCKED for the affected downstream work and list the exact decisions or upstream artifacts required before dependent module design or implementation. A BLOCKED result does not make an accurately documented limitation an automatic review failure.
 
 ## Verification
+
+> This makes subsystem behavior and contracts provable across components and exposes areas with no supporting evidence. Architects, module designers, implementers, and reviewers use it during implementation, integration, review, and release assessment to map tests, commands, logs, generated artifacts, and manual checks to the flows and states they verify.
 
 TODO: List unit tests, integration tests, manual checks, runtime logs, generated artifacts, and review steps needed to prove this subsystem works.
 

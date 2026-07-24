@@ -9,7 +9,7 @@ File path: skills/development-methodology/assets/templates/architecture-template
 
 ## Current Understanding
 
-TODO section note: This section is needed to orient readers before they evaluate details. Use it to summarize the architecture boundary, its importance, and whether the document describes current or intended behavior.
+> This section gives readers a reliable starting point so they do not interpret detailed decisions against the wrong system boundary or behavioral baseline. Architects, implementers, and reviewers use it during onboarding, handoffs, and design reviews to quickly understand what the architecture governs, why it matters, and whether it describes current or intended behavior.
 
 TODO: Describe the system or cross-cutting concern this architecture document covers.
 
@@ -19,7 +19,7 @@ TODO: State whether this architecture describes existing behavior, intended beha
 
 ## Authoritative Sources
 
-TODO section note: This section is needed to make architectural claims traceable and conflicts resolvable. Use it to identify the evidence behind the document and declare the precedence rule for disagreements.
+> This section lets authors and reviewers distinguish evidence-backed architecture from assumption and resolve contradictions consistently. Architects, implementers, and reviewers use it when creating, reviewing, or maintaining the document to trace decisions to code, tests, specifications, and procedures and to determine which source wins when they disagree.
 
 TODO: Link code, tests, procedures, README files, functional specifications, high-level designs, module designs, backlog records, and plan documents used to derive this architecture.
 
@@ -27,7 +27,7 @@ TODO: State which source wins when sources disagree.
 
 ## Related Code
 
-TODO section note: This section is needed to connect architectural rules to the implementation they govern. Use it to link the exact code, configuration, migration, script, generated, and runtime paths within scope.
+> This section gives implementers a direct path from architectural decisions to the affected implementation and lets reviewers verify that the code still follows the design. Architects, implementers, and reviewers use it during implementation, change review, impact analysis, and reverse engineering to locate the exact code, configuration, migration, script, generated, and runtime paths governed by the architecture.
 
 TODO: Link the source roots, entry points, configuration files, scripts, migrations, generated artifacts, or runtime files governed by this architecture.
 
@@ -35,7 +35,7 @@ TODO: Say Not yet identified when no code exists yet.
 
 ## Related Tests
 
-TODO section note: This section is needed to show where architecture conformance is exercised. Use it to link automated and manual evidence that proves the documented boundaries and behavior.
+> This section shows readers which architectural claims are actively proven and where confidence still depends on missing or manual checks. Architects, implementers, and reviewers use it during design review, regression analysis, and release assessment to find the automated and manual evidence that exercises the documented boundaries and behavior.
 
 TODO: Link build checks, unit tests, integration tests, smoke tests, manual checks, fixtures, or generated verification artifacts that prove the architecture is followed.
 
@@ -43,7 +43,7 @@ TODO: Say Not yet identified when tests still need to be written.
 
 ## Related Backlog Items
 
-TODO section note: This section is needed to preserve the history and future work that may change the architecture. Use it to link decisions, defects, and planned work with architectural impact.
+> This section prevents architectural decisions, known defects, and planned changes from becoming detached from the work that motivated them. Architects, implementers, and reviewers use it during planning, triage, and maintenance to understand why the architecture has its current shape and which backlog work may invalidate or extend it.
 
 TODO: Link active or historical backlog items that affect architectural direction, known defects, or planned cross-cutting work.
 
@@ -51,7 +51,7 @@ TODO: Say Not yet identified when no related backlog item is known.
 
 ## Related Wiki Pages
 
-TODO section note: This section is needed to place the architecture within the durable documentation graph. Use it to link deeper designs, functional context, shared terminology, decisions, defects, and adjacent architecture pages.
+> This section helps readers move from the system-wide view to the deeper context needed for a specific question without duplicating that material here. Architects, implementers, and reviewers use it during design exploration, onboarding, and change-impact analysis to find related designs, functional behavior, terminology, decisions, defects, and adjacent architecture pages.
 
 TODO: Link high-level design pages, module design pages, functional pages, glossary entries, open decisions, known defects, and adjacent architecture pages.
 
@@ -59,7 +59,7 @@ TODO: Say Not yet identified when no related wiki page is known.
 
 ## Open Questions
 
-TODO section note: This section is needed to keep unresolved architecture conflicts from being mistaken for accepted decisions. Use it only for questions that reasonable architecture propositions cannot resolve, and state each question's blocking effect, decision owner, and required evidence.
+> This section makes unresolved architectural uncertainty visible so downstream teams do not unknowingly build on an assumption. Architects, implementers, and reviewers use it before design handoffs, implementation planning, and decision reviews to identify questions that reasonable architecture propositions cannot resolve and to state each question's blocking effect, decision owner, and required evidence.
 
 TODO: Record unresolved source conflicts, ownership questions, dependency boundary questions, verification gaps, or architecture decisions.
 
@@ -67,7 +67,7 @@ TODO: If there are no unresolved questions, replace this section with a sentence
 
 ## Maintenance Notes
 
-TODO section note: This section is needed to keep the document reliable as the system changes. Use it to identify change triggers, revalidation work, and the most recent meaningful source review.
+> This section helps future maintainers recognize when the architecture may have become stale and what must be checked before trusting it again. Architects, implementers, and reviewers use it after changes to source roots, technologies, dependencies, tests, procedures, or runtime boundaries to guide revalidation and record the most recent meaningful source review.
 
 TODO: Record what future maintainers should recheck when source roots, technology choices, dependencies, tests, procedures, or runtime boundaries change.
 
@@ -75,7 +75,7 @@ TODO: Include the last meaningful source review when known.
 
 ## Scope
 
-TODO section note: This section is needed to prevent overlap and gaps between design artifacts. Use it to define what this architecture owns, what it excludes, and where excluded concerns belong.
+> This section prevents responsibilities from being duplicated, omitted, or silently assigned to the wrong design artifact. Architects, implementers, and reviewers use it when selecting documentation ownership, planning changes, and reviewing boundaries to determine what this architecture governs, what it excludes, and where excluded concerns belong.
 
 TODO: List what is included in this architecture.
 
@@ -87,7 +87,7 @@ TODO: The Scope Boundary Diagram should show the architecture boundary, included
 
 ## System Context
 
-TODO section note: This section is needed to show the system from outside its boundary. Use it to identify actors, runtime surfaces, neighboring systems, environments, and trust or deployment boundaries.
+> This section reveals how the system participates in its wider environment so integration, deployment, and trust-boundary consequences are visible before internal design is evaluated. Architects, implementers, and reviewers use it during architecture review, integration planning, and security analysis to identify actors, runtime surfaces, neighboring systems, environments, and external boundaries.
 
 TODO: Describe the users, runtime surfaces, external systems, browser or server boundaries, and local development boundaries involved.
 
@@ -99,7 +99,7 @@ TODO: The System Context Diagram should show actors and neighboring systems from
 
 ## Technology Stack
 
-TODO section note: This section is needed to constrain implementation to compatible, supportable technology choices. Use it to record required technologies, their architectural purpose, version authority, ownership, validation, and prohibited alternatives.
+> This section prevents teams from making locally convenient technology choices that conflict with system-wide compatibility, support, or migration constraints. Architects, implementers, and reviewers use it during implementation planning, dependency upgrades, environment setup, and review to identify approved technologies, their architectural purpose, version authority, ownership, validation, and prohibited alternatives.
 
 TODO: List the required runtime, language, package manager, build tools, test tools, browser platform, persistence tools, and important libraries.
 
@@ -115,7 +115,7 @@ TODO: The Stack Association Diagram should group technologies by architectural r
 
 ## File Organization
 
-TODO section note: This section is needed to make physical placement and ownership predictable. Use it to map source, tests, documentation, configuration, generated output, and runtime data to complete repository-relative paths.
+> This section makes placement and ownership predictable so contributors can find artifacts quickly and avoid creating competing folders or unclear boundaries. Architects, implementers, and reviewers use it during onboarding, implementation, refactoring, and code review to map source, tests, documentation, configuration, generated output, and runtime data to complete repository-relative paths.
 
 TODO: Show the repository placement of source code, tests, design documents, runtime data, scripts, configuration, and generated artifacts as one fenced text tree. Do not repeat shared prefixes in a long list or table.
 
@@ -154,7 +154,7 @@ TODO: A separate Ownership Diagram should show only the cross-folder ownership r
 
 ## Architectural Layers
 
-TODO section note: This section is needed to control dependency direction and separation of responsibilities. Use it to order the layers, define what each owns, and state allowed and forbidden dependencies.
+> This section protects separation of responsibilities by making dependency direction reviewable before coupling spreads across the system. Architects, implementers, and reviewers use it during component design, implementation review, and refactoring to understand each layer's role and to detect allowed or forbidden dependencies.
 
 TODO: Name each layer in dependency order from outer shell to core logic or from user-facing surface to persistence.
 
@@ -168,7 +168,7 @@ TODO: The Layered Dependency Diagram should show allowed dependency direction, f
 
 ## Key Components
 
-TODO section note: This section is needed to establish a shared vocabulary for the system's major building blocks. Use it to name each component, summarize its role, and connect it to its lower-level design.
+> This section gives teams a shared vocabulary and ownership map for the system's major building blocks, reducing ambiguity in designs and handoffs. Architects, implementers, and reviewers use it during high-level design decomposition, collaboration, and change-impact analysis to identify each component's role and locate its lower-level design.
 
 TODO: List the major services, UI surfaces, workflow components, data stores, scripts, and external integrations.
 
@@ -180,7 +180,7 @@ TODO: The Component Association Diagram should show the structural association b
 
 ## Diagram Authoring Rules
 
-TODO section note: This section is needed to make complex relationships reviewable without relying on prose alone. Use it to select only the diagrams triggered by the architecture's real structures, sequences, states, and boundary crossings.
+> This section helps authors and reviewers recognize when prose would hide important structure, ordering, state, or boundary relationships. Architects, implementers, and reviewers use it while authoring and reviewing the architecture to choose diagrams that make real relationships inspectable without adding decorative or duplicate visuals.
 
 TODO: Keep only the diagram sections that match real structural relationships in this architecture.
 
@@ -198,7 +198,7 @@ TODO: If an SVG artifact is maintained, link it only when a review or publishing
 
 ## Data Flow
 
-TODO section note: This section is needed to show how information changes and who owns it across boundaries. Use it to trace inputs, handoffs, transformations, persistence, serialization, and user-visible outputs.
+> This section exposes where information is owned, transformed, persisted, or exposed so integration, privacy, consistency, and debugging risks can be assessed. Architects, implementers, and reviewers use it during interface design, security review, incident analysis, and change-impact analysis to trace inputs, handoffs, transformations, persistence, serialization, and user-visible outputs.
 
 TODO: Describe the main data flow through the system from input to output.
 
@@ -210,7 +210,7 @@ TODO: The Data Flow Diagram should show the data shape or event at each handoff 
 
 ## Lifecycle Flow
 
-TODO section note: This section is needed to make ordering and recovery behavior explicit. Use it to describe startup, steady operation, failure, shutdown, recovery, and the transitions or constraints between them.
+> This section prevents initialization, shutdown, failure, and recovery assumptions from becoming hidden sources of runtime defects. Architects, implementers, and reviewers use it during workflow design, operational review, and incident analysis to understand required ordering across startup, steady operation, failure handling, shutdown, and recovery.
 
 TODO: Describe startup, steady-state operation, error handling, shutdown, and recovery.
 
@@ -222,7 +222,7 @@ TODO: The Lifecycle Diagram should show states and transitions. Use a state diag
 
 ## Cross-Cutting Concerns
 
-TODO section note: This section is needed to keep project-wide policies consistent across components and layers. Use it to identify each shared concern, its enforcement owner, and the deeper document that owns its details.
+> This section prevents shared policies from being implemented inconsistently or left without a clear enforcement owner. Architects, implementers, and reviewers use it during subsystem design, security and performance review, and cross-component changes to determine how concerns such as errors, tracing, state, persistence, testing, privacy, and performance are enforced across the architecture.
 
 TODO: Document the project-wide rules for error handling, tracing, notifications, settings, state, persistence, testing, security, privacy, and performance.
 
@@ -234,7 +234,7 @@ TODO: The Concern Ownership Map should connect each concern to the component, la
 
 ## Design Principles
 
-TODO section note: This section is needed to guide choices not fully specified elsewhere. Use it to state concrete decision rules and the implementation or review consequence of following each one.
+> This section gives teams stable decision rules for situations the architecture cannot enumerate in advance, helping independent choices remain coherent. Architects, implementers, and reviewers use it during design trade-offs, implementation, and review to evaluate whether a proposed choice follows the architecture's intent and practical constraints.
 
 TODO: List the principles this architecture requires. Each principle should be concrete enough to guide implementation and review.
 
@@ -246,7 +246,7 @@ TODO: The Principle Traceability Diagram should show which architectural items e
 
 ## Invariants
 
-TODO section note: This section is needed to protect properties that no valid implementation may violate. Use it to state testable rules for ownership, dependencies, persistence, privacy, and user-visible behavior.
+> This section identifies the non-negotiable properties that implementations and future changes must preserve, even when internal designs evolve. Architects, implementers, and reviewers use it during implementation, testing, code review, and change assessment to detect violations of ownership, dependency, persistence, privacy, and user-visible behavior guarantees.
 
 TODO: List rules that must always remain true across the architecture.
 
@@ -254,7 +254,7 @@ TODO: Include ownership boundaries, dependency boundaries, persistence guarantee
 
 ## Risks And Trade-Offs
 
-TODO section note: This section is needed to make accepted costs and failure exposure visible. Use it to connect risks and trade-offs to affected architectural choices, mitigations, and future decision points.
+> This section makes the consequences of architectural choices explicit so decision-makers can judge whether accepted compromises remain reasonable. Architects, implementers, and reviewers use it during architecture approval, planning, mitigation work, and later design changes to connect risks and trade-offs to affected components, boundaries, dependencies, and future decision points.
 
 TODO: List the major risks created by this architecture.
 
@@ -266,23 +266,15 @@ TODO: Add a Risk Association Diagram only when risks cluster around components, 
 
 TODO: The Risk Association Diagram should connect each risk to the architectural item that creates or mitigates it.
 
-## Documentation Acceptance
-
-TODO section note: This section is needed to judge whether the document is trustworthy for its current documentation pass. Use it to record ACCEPTED or BLOCKED based on source reconciliation, required prerequisites, and unresolved review findings.
-
-TODO: Begin this section with **ACCEPTED.** or **BLOCKED.** State ACCEPTED when the artifact accurately reconciles source evidence, accepted high-level-design prerequisites, and current-pass requirements. During bottom-up reverse engineering, do not fail documentation acceptance solely because later functional specifications or wiki pages are intentionally absent, or because an accurately recorded defect, open decision, or limitation blocks implementation.
-
-TODO: When BLOCKED, name the missing accepted prerequisite, insufficient evidence, unresolved current-pass review finding, or unavailable mandatory dependency.
-
 ## Implementation Readiness
 
-TODO section note: This section is needed to separate documentation quality from permission to proceed downstream. Use it to record READY or BLOCKED for architecture-dependent work and name any critical unresolved boundary, decision, defect, or verification gap.
+> This section prevents a reviewed document from being mistaken for authorization to begin unsafe downstream work. Architects, implementers, and reviewers use it during planning and design handoff to record READY or BLOCKED for architecture-dependent work and to identify any critical unresolved boundary, decision, defect, or verification gap.
 
-TODO: Begin this section with **READY.** or **BLOCKED.** State READY only when architecture-dependent downstream work can proceed without an unresolved critical boundary, decision, defect, or verification gap. Otherwise state BLOCKED for the affected downstream work while preserving an independent Documentation Acceptance result.
+TODO: Immediately after the retained blockquote note, begin the authored section content with **READY.** or **BLOCKED.** State READY only when architecture-dependent downstream work can proceed without an unresolved critical boundary, decision, defect, or verification gap. Otherwise state BLOCKED for the affected downstream work. A BLOCKED result does not make an accurately documented limitation an automatic review failure.
 
 ## Verification
 
-TODO section note: This section is needed to make continued architecture conformance provable. Use it to map architectural rules and components to builds, tests, reviews, runtime evidence, and known coverage gaps.
+> This section turns architectural intent into observable evidence so teams can detect drift instead of relying on confidence or documentation alone. Architects, implementers, and reviewers use it during implementation, release review, regression analysis, and maintenance to map architectural rules and components to builds, tests, reviews, runtime evidence, and known coverage gaps.
 
 TODO: Define how this architecture will be verified through builds, tests, linting, manual checks, runtime logging, or design review.
 
