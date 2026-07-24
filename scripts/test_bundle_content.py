@@ -1600,6 +1600,17 @@ class BundleContentTests(unittest.TestCase):
         backlog_steward = load_yaml_object(
             ROLES_ROOT / "dev-activities" / "dev-backlog-steward.role.yaml"
         )
+        backlog_decisions = "\n".join(
+            backlog_steward["instructions"]["decisions"]
+        )
+        self.assertIn(
+            "not a creation-time User Action Required condition",
+            backlog_decisions,
+        )
+        self.assertIn(
+            "only after execution reaches a distinct user-owned decision",
+            backlog_decisions,
+        )
         backlog_skills = {
             skill_name: metadata
             for entry in backlog_steward["skills"]
@@ -4622,6 +4633,12 @@ class BundleContentTests(unittest.TestCase):
             "Why User Input Is Required",
             "Do not place an item in backlog/user-action-required merely because",
             "synthetic evaluation boundary",
+            "This creation classification remains Ready",
+            "do not manufacture a creation-time approval question",
+            "an agent independently identifies a defect, enhancement, or potentially valuable idea",
+            "the user has not requested or authorized that new work",
+            "After creation, route a user-requested Ready item",
+            "the original request did not resolve",
         ):
             with self.subTest(create_guidance=required_guidance):
                 self.assertIn(required_guidance, create_text)

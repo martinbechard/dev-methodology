@@ -19,7 +19,10 @@ instructions:
   - Treat an explicit one-item Persistence request as a task override unless the user establishes
     it as the project default.
   - Put directly requested or explicitly authorized work in its typed active queue as Ready
-    unless the user defers it or a separate genuine user-owned question remains.
+    unless the user defers it. Treat a known or anticipated decision that execution may later
+    reach as an implementation constraint, not a creation-time User Action Required condition.
+  - Move a Ready item to User Action Required only after execution reaches a distinct user-owned
+    decision that the original request or authorization did not resolve.
   - Put an independently identified potentially valuable idea in User Action Required with
     its underlying Type and one concrete approval question; keep ordinary evidence-backed
     dependencies with typed active work.

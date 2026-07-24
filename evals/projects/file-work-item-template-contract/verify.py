@@ -40,6 +40,19 @@ _DEPENDENT_ARTIFACTS = (
     "scripts/test_bundle_content.py",
 )
 
+_EXPECTED_BACKLOG_MARKDOWN = frozenset(
+    {
+        "backlog/analysis-backlog/design-parser-boundary.md",
+        "backlog/feature-backlog/automate-release-publication.md",
+        "backlog/feature-backlog/governed-definition-update.md",
+        "backlog/feature-backlog/import-series/index.md",
+        "backlog/feature-backlog/import-series/phase-one.md",
+        "backlog/holding/deferred-dashboard.md",
+        "backlog/user-action-required/publish-release-announcement.md",
+        "backlog/user-action-required/select-deployment-region.md",
+    }
+)
+
 _REQUIRED_ITEM_SECTIONS = (
     "Summary",
     "Context",
@@ -417,6 +430,31 @@ def _validate_governed_item(document: Document, errors: list[str]) -> None:
 
 def _validate(root: Path) -> list[str]:
     errors: list[str] = []
+    backlog_root = root / "backlog"
+    actual_backlog_markdown = (
+        {
+            path.relative_to(root).as_posix()
+            for path in backlog_root.rglob("*.md")
+            if path.is_file()
+        }
+        if backlog_root.exists()
+        else set()
+    )
+    missing_backlog_markdown = sorted(
+        _EXPECTED_BACKLOG_MARKDOWN - actual_backlog_markdown
+    )
+    unexpected_backlog_markdown = sorted(
+        actual_backlog_markdown - _EXPECTED_BACKLOG_MARKDOWN
+    )
+    if missing_backlog_markdown:
+        errors.append(
+            f"missing backlog Markdown artifacts: {missing_backlog_markdown!r}"
+        )
+    if unexpected_backlog_markdown:
+        errors.append(
+            f"unexpected backlog Markdown artifacts: {unexpected_backlog_markdown!r}"
+        )
+
     ready_path = "backlog/analysis-backlog/design-parser-boundary.md"
     ready = _read(root, ready_path, errors)
     ready_document = _require_item_shape(
@@ -435,24 +473,79 @@ def _validate(root: Path) -> list[str]:
     if forbidden_context_item.exists():
         errors.append("context-only Source Evidence created an item")
 
-    user_action_path = "backlog/user-action-required/publish-release.md"
-    user_action = _read(root, user_action_path, errors)
-    user_action_document = _require_item_shape(
-        user_action,
-        "user-action item",
+    requested_feature_path = "backlog/feature-backlog/automate-release-publication.md"
+    requested_feature = _read(root, requested_feature_path, errors)
+    requested_feature_document = _require_item_shape(
+        requested_feature,
+        "user-requested feature",
+        errors,
+        expected_status="Ready",
+        expected_type="Feature",
+        expected_reference=requested_feature_path,
+    )
+    _require(
+        requested_feature,
+        ("publication", "authority", "implementation"),
+        "user-requested feature",
+        errors,
+    )
+    if requested_feature_document.find_heading(
+        "User Action Required", level=2, parents=()
+    ) is not None:
+        errors.append("user-requested feature became User Action Required at creation")
+
+    discovered_path = "backlog/user-action-required/publish-release-announcement.md"
+    discovered = _read(root, discovered_path, errors)
+    discovered_document = _require_item_shape(
+        discovered,
+        "independently identified item",
         errors,
         expected_status="User Action Required",
         expected_type="Feature",
-        expected_reference=user_action_path,
+        expected_reference=discovered_path,
     )
-    user_action_sections = _require_user_action_hierarchy(
-        user_action_document,
-        "user-action item",
+    _require(
+        discovered,
+        ("independently identified", "not requested", "proceed"),
+        "independently identified item",
         errors,
     )
-    resolution = user_action_sections.get("Resolution")
-    if resolution is not None and user_action_document.section_text(resolution) != "Pending":
-        errors.append("user-action item resolution is not exactly Pending")
+    discovered_sections = _require_user_action_hierarchy(
+        discovered_document,
+        "independently identified item",
+        errors,
+    )
+    resolution = discovered_sections.get("Resolution")
+    if resolution is not None and discovered_document.section_text(resolution) != "Pending":
+        errors.append("independently identified item resolution is not exactly Pending")
+
+    later_decision_path = "backlog/user-action-required/select-deployment-region.md"
+    later_decision = _read(root, later_decision_path, errors)
+    later_decision_document = _require_item_shape(
+        later_decision,
+        "later user-owned decision",
+        errors,
+        expected_status="User Action Required",
+        expected_type="Feature",
+        expected_reference=later_decision_path,
+    )
+    _require(
+        later_decision,
+        ("previously Ready", "execution", "region", "original request"),
+        "later user-owned decision",
+        errors,
+    )
+    later_decision_sections = _require_user_action_hierarchy(
+        later_decision_document,
+        "later user-owned decision",
+        errors,
+    )
+    later_resolution = later_decision_sections.get("Resolution")
+    if (
+        later_resolution is not None
+        and later_decision_document.section_text(later_resolution) != "Pending"
+    ):
+        errors.append("later user-owned decision resolution is not exactly Pending")
 
     holding_path = "backlog/holding/deferred-dashboard.md"
     holding = _read(root, holding_path, errors)
@@ -604,27 +697,37 @@ None.
             "Agents must discover the parser boundary.",
             notes=None,
         ),
-        "backlog/user-action-required/publish-release.md": item(
-            "Publish Release",
+        "backlog/feature-backlog/automate-release-publication.md": item(
+            "Automate Release Publication",
+            "Ready",
+            "Feature",
+            "backlog/feature-backlog/automate-release-publication.md",
+            "The implementation may later require a user-owned external publication authority grant.",
+            "The user requested creation of this release publication feature.",
+            "None.",
+            notes="Implementation constraint: obtain external publication authority only if execution reaches that boundary.",
+        ),
+        "backlog/user-action-required/publish-release-announcement.md": item(
+            "Publish Release Announcement",
             "User Action Required",
             "Feature",
-            "backlog/user-action-required/publish-release.md",
-            "Publication requires a user-owned authority grant.",
-            "The user requested release preparation.",
+            "backlog/user-action-required/publish-release-announcement.md",
+            "This independently identified enhancement was not requested by the user.",
+            "The agent independently identified a separate release-announcement enhancement while performing other work.",
             "None.",
             """## User Action Required
 
 ### Question for the User
 
-Do you grant external publication authority?
+Should this newly identified release-announcement enhancement proceed?
 
 ### Why User Input Is Required
 
-Only the user can grant this authority.
+The user did not request or authorize this separate enhancement.
 
 ### Options and Tradeoffs
 
-- Grant or defer publication.
+- Authorize the enhancement or leave it unstarted.
 
 ### Resolution
 
@@ -632,7 +735,38 @@ Pending
 
 ### Unattended Work Boundary
 
-Do not publish before resolution.
+Do not move this unrequested enhancement into the typed active backlog before resolution.
+""",
+        ),
+        "backlog/user-action-required/select-deployment-region.md": item(
+            "Select Deployment Region",
+            "User Action Required",
+            "Feature",
+            "backlog/user-action-required/select-deployment-region.md",
+            "This user-requested item was previously Ready. During execution, a production-region choice emerged that the original request did not resolve.",
+            "Execution evidence shows that only the user can select the production region.",
+            "None.",
+            """## User Action Required
+
+### Question for the User
+
+Which production region should the deployment use?
+
+### Why User Input Is Required
+
+The original request did not resolve this user-owned production choice.
+
+### Options and Tradeoffs
+
+- Select the appropriate production region or defer deployment.
+
+### Resolution
+
+Pending
+
+### Unattended Work Boundary
+
+Do not deploy until the production region is selected.
 """,
         ),
         "backlog/holding/deferred-dashboard.md": item(
@@ -711,6 +845,26 @@ def _self_test() -> list[str]:
         if "context-only Source Evidence created an item" not in _validate(root):
             errors.append("self-test did not reject context-only source evidence")
         context_item.unlink()
+
+        duplicate_item = (
+            root / "backlog/user-action-required/automate-release-publication.md"
+        )
+        duplicate_item.write_text(
+            (
+                root / "backlog/feature-backlog/automate-release-publication.md"
+            ).read_text(encoding="utf-8"),
+            encoding="utf-8",
+        )
+        duplicate_errors = _validate(root)
+        if not any(
+            "unexpected backlog Markdown artifacts" in error
+            and "backlog/user-action-required/automate-release-publication.md" in error
+            for error in duplicate_errors
+        ):
+            errors.append(
+                "self-test accepted a duplicate misclassified backlog artifact"
+            )
+        duplicate_item.unlink()
 
         governed_path = root / "backlog/feature-backlog/governed-definition-update.md"
         original = governed_path.read_text(encoding="utf-8")
@@ -859,14 +1013,16 @@ def _self_test() -> list[str]:
             errors,
         )
 
-        user_action_path = root / "backlog/user-action-required/publish-release.md"
+        user_action_path = (
+            root / "backlog/user-action-required/publish-release-announcement.md"
+        )
         user_action_original = user_action_path.read_text(encoding="utf-8")
         incomplete_user_action = user_action_original
         for evidence in (
-            "Do you grant external publication authority?",
-            "Only the user can grant this authority.",
-            "- Grant or defer publication.",
-            "Do not publish before resolution.",
+            "Should this newly identified release-announcement enhancement proceed?",
+            "The user did not request or authorize this separate enhancement.",
+            "- Authorize the enhancement or leave it unstarted.",
+            "Do not move this unrequested enhancement into the typed active backlog before resolution.",
         ):
             incomplete_user_action = incomplete_user_action.replace(evidence, "", 1)
         user_action_path.write_text(incomplete_user_action, encoding="utf-8")
@@ -875,10 +1031,10 @@ def _self_test() -> list[str]:
             errors.append("self-test accepted empty User Action Required evidence")
         heading_only_user_action = user_action_original
         for evidence in (
-            "Do you grant external publication authority?",
-            "Only the user can grant this authority.",
-            "- Grant or defer publication.",
-            "Do not publish before resolution.",
+            "Should this newly identified release-announcement enhancement proceed?",
+            "The user did not request or authorize this separate enhancement.",
+            "- Authorize the enhancement or leave it unstarted.",
+            "Do not move this unrequested enhancement into the typed active backlog before resolution.",
         ):
             heading_only_user_action = heading_only_user_action.replace(
                 evidence,

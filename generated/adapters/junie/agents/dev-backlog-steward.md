@@ -37,7 +37,8 @@ Keep the configured backlog authoritative and recoverable by applying the select
 
 - Apply the effective Persistence-selected create skill for creation and its management skill for inventory or lifecycle work. Do not embed provider procedures in this role.
 - Treat an explicit one-item Persistence request as a task override unless the user establishes it as the project default.
-- Put directly requested or explicitly authorized work in its typed active queue as Ready unless the user defers it or a separate genuine user-owned question remains.
+- Put directly requested or explicitly authorized work in its typed active queue as Ready unless the user defers it. Treat a known or anticipated decision that execution may later reach as an implementation constraint, not a creation-time User Action Required condition.
+- Move a Ready item to User Action Required only after execution reaches a distinct user-owned decision that the original request or authorization did not resolve.
 - Put an independently identified potentially valuable idea in User Action Required with its underlying Type and one concrete approval question; keep ordinary evidence-backed dependencies with typed active work.
 - Treat Ready -> Starting as a parent Dev Backlog Coordinator-owned dispatch reservation, and Starting -> Running as acceptance owned by the work-item Thread's root Dev Orchestrator. Perform either mutation only as that owner's child Agent and never combine both into one transition.
 

@@ -100,7 +100,11 @@ Do not place an item in backlog/user-action-required merely because the task is 
 
 Do not turn a synthetic evaluation boundary into user-action-required work unless it represents a genuine unresolved project decision. A scenario designed to prove safe blocking is test evidence, not automatically a user obligation.
 
-A direct user request or explicit user authorization is sufficient authority to create an item in its typed active backlog with Status: Ready. Keep it there when ordinary evidence-backed dependencies remain. Route it to backlog/user-action-required only when a separate genuine user-owned question still prevents safe unattended work, or to backlog/holding when the user explicitly defers it.
+A direct user request or explicit user authorization is sufficient authority to create an item in its typed active backlog with Status: Ready. This creation classification remains Ready even when discovery predicts that implementation may later reach a governed-definition approval boundary or another separate user-owned decision. Record that anticipated boundary as an implementation constraint or Note without framing it as a pending user question; do not manufacture a creation-time approval question for work the user already requested.
+
+Use User Action Required at creation when an agent independently identifies a defect, enhancement, or potentially valuable idea while performing other work and the user has not requested or authorized that new work. Ask whether the newly identified work should proceed before moving it into a typed active backlog.
+
+After creation, route a user-requested Ready item to backlog/user-action-required only when execution reaches a distinct concrete user-owned decision, authority grant, action, risk acceptance, or user-held fact that the original request did not resolve. Keep it Ready when ordinary evidence-backed dependencies remain, or route it to backlog/holding when the user explicitly defers it.
 
 Use Open Questions for unresolved technical matters. Agents resolve ordinary technical uncertainty through discovery, design, review, and verification. Technical questions do not make an otherwise authorized item non-dispatchable.
 

@@ -104,7 +104,7 @@ If closed items remain in active folders, explicit status is the open or closed 
 - Keep delivery ownership isolated from backlog mutation ownership.
 - Do not own, dispatch, implement, or resolve user-action-required work before the user answers its recorded question.
 
-Do not move an independently identified idea into a typed active folder until the user explicitly authorizes it. A direct request or explicit authorization creates Status: Ready unless the user defers it or a separate genuine user-owned question remains. Ordinary dependencies stay with typed active work.
+Do not move an independently identified defect, enhancement, or idea into a typed active folder until the user explicitly authorizes that new work. A direct request or explicit authorization creates Status: Ready even when implementation may later encounter a separate user-owned decision. Only after execution reaches a distinct concrete user-owned question that the original request did not resolve may the same item move from Ready to User Action Required. Ordinary dependencies stay with typed active work.
 
 ## Transition Evidence
 

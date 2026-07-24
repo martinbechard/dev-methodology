@@ -8,9 +8,17 @@ The user requested an analysis of the import parser design. Create backlog/analy
 
 The only supplied evidence is: See the conversation above. Reject this candidate and do not create backlog/feature-backlog/context-only-request.md.
 
-## Genuine User-Owned Authority
+## User-Requested Feature With A Later Approval Boundary
 
-External release publication requires an authority grant that only the user can provide. Create backlog/user-action-required/publish-release.md with Status: User Action Required, Type: Feature, one exact question, the reason user input is required, known options and tradeoffs, Resolution: Pending, and an unattended-work boundary.
+The user requested a feature to automate release publication. Creating the feature is authorized, but implementation may later require an external publication authority grant. Create backlog/feature-backlog/automate-release-publication.md with Status: Ready and Type: Feature. Record the anticipated authority boundary as an implementation constraint or Note without framing it as a pending user question. Do not create a User Action Required section.
+
+## Independently Identified Enhancement
+
+While working on the requested parser analysis, the agent identified a separate release-announcement enhancement that the user did not request or authorize. Create backlog/user-action-required/publish-release-announcement.md with Status: User Action Required and Type: Feature. Ask one exact question about whether this newly identified enhancement should proceed, explain why user input is required, preserve known options and tradeoffs, set Resolution: Pending, and record an unattended-work boundary.
+
+## Later User-Owned Decision
+
+The user-requested deployment-target feature was already created as Ready. During execution, the agent reached a distinct production-region choice that the original request did not resolve and that only the user can make. Move the item to backlog/user-action-required/select-deployment-region.md with Status: User Action Required and Type: Feature. Record that it was previously Ready, identify the execution evidence that exposed the choice, ask one exact region question, explain why user input is required, preserve known options and tradeoffs, set Resolution: Pending, and record an unattended-work boundary.
 
 ## Explicit Holding
 
