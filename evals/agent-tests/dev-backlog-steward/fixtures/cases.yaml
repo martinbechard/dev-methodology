@@ -119,12 +119,21 @@ cases:
         verifiedCommitPaths:
           - backlog/future-ideas/retry-dashboard.md
           - backlog/feature-backlog/retry-dashboard.md
+        verifiedCommitReference: captured immutable commit OID
         failureRestoration: restore exact bytes and existence then verify
         rollbackFailure:
           status: BLOCKED
-          claimRetained: true
           recoveryOwner: Dev Backlog Steward
           preservedEvidence: worktree and Git index snapshots
+      resourceCoordination:
+        agent-claim:
+          claimLifecycle:
+            - acquire before mutation
+            - release after success or safe verified rollback
+            - retain after unsafe rollback or postcommit verification failure
+        none:
+          claimCalls: []
+          claimEvidence: absent
       collision:
         result: BLOCKED
         writesAttempted: false
@@ -156,6 +165,13 @@ cases:
           targetAfter: absent
           cleanupScope: remove only a target created by this attempt
         - boundary: validation
+          ideaBefore: *promotion-idea-before
+          ideaAfter: *promotion-idea-before
+          targetExistedBefore: false
+          targetBefore: absent
+          targetAfter: absent
+          cleanupScope: remove only a target created by this attempt
+        - boundary: staging
           ideaBefore: *promotion-idea-before
           ideaAfter: *promotion-idea-before
           targetExistedBefore: false

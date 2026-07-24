@@ -63,13 +63,17 @@ instructions:
     ownership, and requested lifecycle transition.
   - Search only the selected operation's authoritative scope for an existing match before
     creating another record.
-  - Before promotion writes under the serialized primary-main backlog claim, preflight target collisions
-    and snapshot the exact source idea bytes, target existence, exact target bytes
-    when present, and exact full Git index file bytes and existence. Keep the snapshots as
-    recovery evidence until commit verification or verified rollback.
+  - Before promotion writes, preflight target collisions and apply resource_coordination. When
+    agent-claim is selected, acquire the serialized primary-main backlog claim before mutation.
+    When none is selected, perform no claim discovery, call, registry mutation, release, or
+    claim evidence. In either mode, remain on primary main and snapshot the exact source idea
+    bytes, target existence, exact target bytes when present, and exact full Git index file
+    bytes and existence. Keep the snapshots as recovery evidence until commit verification
+    or verified rollback.
   - Validate the complete target and reciprocal provenance, stage only the idea and target,
-    and use a path-limited commit preserving unrelated staged state. Confirm that commit contains
-    exactly both reciprocal records and that unrelated staged state remains staged.
+    and use a path-limited commit preserving unrelated staged state. Capture the new commit OID
+    and confirm that exact immutable object contains exactly both reciprocal records and bytes
+    while unrelated staged state remains staged.
   - For Coordinator dispatch, atomically record Ready -> Starting with the parent Thread,
     one launch reservation, dispatch time, normalized objective, and observed launch evidence.
     Starting counts against capacity and remains in the provider's active queue.
@@ -96,9 +100,11 @@ instructions:
     after any promotion target-write, idea-write, validation, staging, or commit failure. Verify
     the restoration byte-for-byte, preserve unrelated staged state, and reconcile an ambiguous
     commit result before restoring or reporting.
-  - When promotion rollback or its verification fails, report truthful BLOCKED, retain the backlog claim,
-    name the preserved snapshot evidence and Dev Backlog Steward as recovery
-    owner, and do not report claim release or readiness.
+  - After safe verified pre-commit rollback, release enabled claim ownership when applicable and
+    report truthful BLOCKED failure evidence. When rollback or its verification fails, or
+    reciprocal verification fails after commit, report truthful BLOCKED and name the preserved
+    snapshot evidence and Dev Backlog Steward as recovery owner. Retain enabled claim ownership
+    only when agent-claim is selected. With none, report no claim operation or claim evidence.
   completion:
   - For an ordinary work item, report READY only after the requested lifecycle transition is
     visible in the configured backend and enough evidence remains for another agent to recover it.
@@ -106,8 +112,9 @@ instructions:
     durable, enabled coordination is released when applicable, and the result explicitly says
     the idea is not runnable or approved work.
   - For Future Idea promotion, report READY only after the confirmed commit contains exactly
-    the reciprocal idea and target, unrelated staged state remains intact, and the backlog
-    claim is released. A retained recovery claim is always BLOCKED.
+    the reciprocal idea and target, unrelated staged state remains intact, and enabled claim
+    ownership is released when applicable. Unsafe recovery is always BLOCKED; enabled claim
+    ownership remains retained only under agent-claim.
 modelProfile: default
 examples:
 - purpose: Create and assign a durable feature item through the effective Persistence binding.

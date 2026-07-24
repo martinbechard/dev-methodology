@@ -120,7 +120,7 @@ Do not move an independently identified defect, enhancement, or idea into a type
 - Treat only a resolved regular work-item file contained by its canonical backlog queue as a promotion target. Reject a symlinked or otherwise resolved target that escapes authority without reading external bytes.
 - Include the exact retained idea path in the promoted work item's Source Evidence section, and add Promoted To with the canonical work-item reference to the original idea.
 - Preserve the original idea in place after promotion. Do not archive or delete it merely because typed work now exists.
-- Apply the reciprocal provenance update under one short backlog transaction and commit only after duplicate detection succeeds.
+- Apply the reciprocal provenance update as one primary-main transaction and commit only after duplicate detection succeeds. When resource_coordination selects agent-claim, acquire the short serialized backlog claim before mutation, release it after success or safe verified rollback, and retain it after unsafe rollback or post-commit reciprocal verification failure. When resource_coordination selects none, make no claim discovery, call, registry mutation, or claim-specific evidence while preserving the same snapshots, exact-pair commit, verification, rollback, and truthful BLOCKED recovery ownership.
 
 ## Transition Evidence
 

@@ -10,7 +10,7 @@ target:
   conditionalSkills:
     organise-project-files: Backlog work creates a file or directory.
     create-file-work-item: An incoming request becomes a typed file-provider item or an explicitly requested file-provider Future Idea.
-    agent-claim: Work is claimed, resumed, or exclusively assigned.
+    agent-claim: Resource coordination selects agent-claim for claimed, resumed, exclusively assigned, or serialized promotion work.
   allowedAgentDependencies: []
   requiredOutputs: ["backlog item, Future Idea, or status update", ownership record, completion or blocked summary]
 projectAgents:

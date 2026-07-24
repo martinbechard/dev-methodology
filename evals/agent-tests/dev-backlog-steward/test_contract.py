@@ -13,7 +13,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from unittest import mock
+from typing import Callable
 
 import yaml
 
@@ -38,6 +38,35 @@ def _restore_snapshot(path: Path, existed: bool, content: bytes) -> None:
         path.unlink(missing_ok=True)
 
 
+class _FakeClaimRegistry:
+    """Record the mutable promotion-claim lifecycle exercised by contract tests."""
+
+    def __init__(self) -> None:
+        """Create an inactive registry with an empty operation log."""
+        self.active = False
+        self.calls: list[str] = []
+
+    def acquire(self) -> None:
+        """Acquire one serialized promotion claim before repository mutation."""
+        if self.active:
+            raise RuntimeError("claim is already active")
+        self.active = True
+        self.calls.append("acquire")
+
+    def retain(self) -> None:
+        """Retain active ownership when recovery remains unsafe or incomplete."""
+        if not self.active:
+            raise RuntimeError("no active claim to retain")
+        self.calls.append("retain")
+
+    def release(self) -> None:
+        """Release active ownership after success or a verified safe rollback."""
+        if not self.active:
+            raise RuntimeError("no active claim to release")
+        self.active = False
+        self.calls.append("release")
+
+
 def _execute_promotion_transaction(
     repository: Path,
     idea: Path,
@@ -45,24 +74,58 @@ def _execute_promotion_transaction(
     idea_after: bytes,
     target_after: bytes,
     *,
+    resource_coordination: str,
+    claim_registry: _FakeClaimRegistry | None = None,
+    after_commit: Callable[[str], None] | None = None,
+    fail_staging: bool = False,
     fail_commit: bool = False,
+    fail_postcommit_verification: bool = False,
+    fail_rollback_verification: bool = False,
 ) -> dict[str, object]:
     """Exercise the promotion contract against a real temporary Git index.
 
     The transaction snapshots exact worktree and index bytes, stages only the
-    reciprocal records, and commits only those paths. A failed operation
-    restores and verifies the snapshots. An injected rollback failure retains
-    its evidence and reports the recovery owner instead of claiming readiness.
+    reciprocal records, commits only those paths, and verifies the captured
+    commit object. Agent-claim coordination records acquire, retain, and release
+    calls; none performs the same Git transaction without claim operations or
+    claim evidence.
     """
+    if resource_coordination not in {"agent-claim", "none"}:
+        raise ValueError("unsupported resource coordination selection")
+    if resource_coordination == "agent-claim" and claim_registry is None:
+        raise ValueError("agent-claim requires a claim registry")
+
+    def result_with_claim_evidence(
+        result: dict[str, object],
+        *,
+        retain: bool = False,
+        release: bool = False,
+    ) -> dict[str, object]:
+        """Apply the selected coordination lifecycle to one transaction result."""
+        if resource_coordination == "agent-claim":
+            assert claim_registry is not None
+            if retain:
+                claim_registry.retain()
+            if release:
+                claim_registry.release()
+            result["claimRetained"] = claim_registry.active
+            result["claimCalls"] = tuple(claim_registry.calls)
+        return result
+
     idea_relative = idea.relative_to(repository).as_posix()
     target_relative = target.relative_to(repository).as_posix()
     if target.exists():
-        return {
-            "status": "BLOCKED",
-            "rollbackVerified": True,
-            "claimRetained": False,
-            "reason": "target collision",
-        }
+        return result_with_claim_evidence(
+            {
+                "status": "BLOCKED",
+                "rollbackVerified": True,
+                "reason": "target collision",
+            }
+        )
+    if resource_coordination == "agent-claim":
+        assert claim_registry is not None
+        claim_registry.acquire()
+
     idea_existed = idea.exists()
     idea_before = idea.read_bytes() if idea_existed else b""
     target_existed = target.exists()
@@ -95,20 +158,27 @@ def _execute_promotion_transaction(
         b"present\n" if index_existed else b"absent\n"
     )
 
-    commit_created = False
+    commit_oid: str | None = None
     try:
         idea.write_bytes(idea_after)
         target.write_bytes(target_after)
-        subprocess.run(
+        add_arguments = [
+            "git",
+            "-C",
+            str(repository),
+            "add",
+        ]
+        if fail_staging:
+            add_arguments.append("--invalid-option")
+        add_arguments.extend(
             [
-                "git",
-                "-C",
-                str(repository),
-                "add",
                 "--",
                 idea_relative,
                 target_relative,
-            ],
+            ]
+        )
+        subprocess.run(
+            add_arguments,
             check=True,
             capture_output=True,
             text=True,
@@ -142,7 +212,14 @@ def _execute_promotion_transaction(
             capture_output=True,
             text=True,
         )
-        commit_created = True
+        commit_oid = subprocess.run(
+            ["git", "-C", str(repository), "rev-parse", "HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        if after_commit is not None:
+            after_commit(commit_oid)
         committed_paths = set(
             subprocess.run(
                 [
@@ -153,7 +230,7 @@ def _execute_promotion_transaction(
                     "--no-commit-id",
                     "--name-only",
                     "-r",
-                    "HEAD",
+                    commit_oid,
                 ],
                 check=True,
                 capture_output=True,
@@ -166,35 +243,46 @@ def _execute_promotion_transaction(
             (idea_relative, idea_after),
             (target_relative, target_after),
         ):
+            verification_expected = expected_content
+            if (
+                fail_postcommit_verification
+                and relative_path == target_relative
+            ):
+                verification_expected += b"injected verification mismatch\n"
             committed_content = subprocess.run(
                 [
                     "git",
                     "-C",
                     str(repository),
                     "show",
-                    f"HEAD:{relative_path}",
+                    f"{commit_oid}:{relative_path}",
                 ],
                 check=True,
                 capture_output=True,
             ).stdout
-            if committed_content != expected_content:
+            if committed_content != verification_expected:
                 raise RuntimeError(
                     "confirmed reciprocal record bytes do not match"
                 )
     except (OSError, subprocess.CalledProcessError, ValueError, RuntimeError) as exc:
-        if commit_created:
-            return {
-                "status": "BLOCKED",
-                "rollbackVerified": False,
-                "claimRetained": True,
-                "recoveryOwner": "Dev Backlog Steward",
-                "preservedEvidence": recovery,
-                "failure": str(exc),
-            }
+        if commit_oid is not None:
+            return result_with_claim_evidence(
+                {
+                    "status": "BLOCKED",
+                    "rollbackVerified": False,
+                    "recoveryOwner": "Dev Backlog Steward",
+                    "preservedEvidence": recovery,
+                    "commitOid": commit_oid,
+                    "failure": str(exc),
+                },
+                retain=True,
+            )
         try:
             _restore_snapshot(idea, idea_existed, idea_before)
             _restore_snapshot(target, target_existed, target_before)
             _restore_snapshot(index_path, index_existed, index_before)
+            if fail_rollback_verification:
+                idea.write_bytes(idea_before + b"injected rollback divergence\n")
             if (
                 idea.exists() != idea_existed
                 or target.exists() != target_existed
@@ -205,27 +293,34 @@ def _execute_promotion_transaction(
             ):
                 raise OSError("rollback verification failed")
         except OSError as rollback_error:
-            return {
-                "status": "BLOCKED",
-                "rollbackVerified": False,
-                "claimRetained": True,
-                "recoveryOwner": "Dev Backlog Steward",
-                "preservedEvidence": recovery,
-                "failure": str(rollback_error),
-            }
+            return result_with_claim_evidence(
+                {
+                    "status": "BLOCKED",
+                    "rollbackVerified": False,
+                    "recoveryOwner": "Dev Backlog Steward",
+                    "preservedEvidence": recovery,
+                    "failure": str(rollback_error),
+                },
+                retain=True,
+            )
         shutil.rmtree(recovery)
-        return {
-            "status": "BLOCKED",
-            "rollbackVerified": True,
-            "claimRetained": False,
-            "failure": str(exc),
-        }
+        return result_with_claim_evidence(
+            {
+                "status": "BLOCKED",
+                "rollbackVerified": True,
+                "failure": str(exc),
+            },
+            release=True,
+        )
     shutil.rmtree(recovery)
-    return {
-        "status": "READY",
-        "commitVerified": True,
-        "claimRetained": False,
-    }
+    return result_with_claim_evidence(
+        {
+            "status": "READY",
+            "commitVerified": True,
+            "commitOid": commit_oid,
+        },
+        release=True,
+    )
 
 
 class DevBacklogStewardContractTests(unittest.TestCase):
@@ -391,7 +486,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         self.assertEqual(collision["ideaBefore"], collision["ideaAfter"])
         self.assertEqual(collision["targetBefore"], collision["targetAfter"])
         self.assertEqual(
-            {"target-write", "idea-write", "validation", "commit"},
+            {"target-write", "idea-write", "validation", "staging", "commit"},
             {
                 failure["boundary"]
                 for failure in transaction["injectedFailures"]
@@ -424,32 +519,58 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             git_index["verifiedCommitPaths"],
         )
         self.assertEqual(
+            "captured immutable commit OID",
+            git_index["verifiedCommitReference"],
+        )
+        self.assertEqual(
             "restore exact bytes and existence then verify",
             git_index["failureRestoration"],
         )
         self.assertEqual("BLOCKED", git_index["rollbackFailure"]["status"])
-        self.assertTrue(git_index["rollbackFailure"]["claimRetained"])
         self.assertEqual(
             "Dev Backlog Steward",
             git_index["rollbackFailure"]["recoveryOwner"],
         )
+        coordination = transaction["resourceCoordination"]
+        self.assertEqual(
+            [
+                "acquire before mutation",
+                "release after success or safe verified rollback",
+                "retain after unsafe rollback or postcommit verification failure",
+            ],
+            coordination["agent-claim"]["claimLifecycle"],
+        )
+        self.assertEqual([], coordination["none"]["claimCalls"])
+        self.assertEqual("absent", coordination["none"]["claimEvidence"])
         for behavior in (
             "Preflight target collisions before any promotion write",
             "Snapshot exact idea bytes target bytes and target existence",
-            "Restore exact pre-attempt state after target-write idea-write validation or commit failure",
-            "Snapshot exact full Git index file bytes and existence under the serialized primary-main backlog claim",
+            "Restore exact pre-attempt state after target-write idea-write validation staging or commit failure",
+            "Snapshot exact full Git index file bytes and existence before mutation",
             "Stage and path-limit commit to exactly the idea and target while preserving unrelated staged state",
-            "Verify the confirmed commit contains exactly the reciprocal idea and target pair",
+            "Capture the new commit OID and verify that exact object contains exactly the reciprocal idea and target pair",
             "Restore and verify exact pre-attempt index bytes and existence on failure",
-            "Retain the claim and recovery evidence when rollback cannot be verified",
+            "Use acquire release and retain only when resource_coordination selects agent-claim",
+            "With resource_coordination none perform no claim call or claim evidence",
+            "Retain enabled claim ownership after unsafe rollback or postcommit verification failure",
+            "Release enabled claim ownership after success or safe verified rollback",
         ):
             with self.subTest(required_behavior=behavior):
                 self.assertIn(behavior, scenario["requiredBehaviors"])
-        self.assertIn("failure-atomic transaction", contract_text)
-        self.assertIn("target-write, idea-write, validation, or commit", contract_text)
+        self.assertIn("failure-atomic primary-main transaction", contract_text)
+        self.assertIn(
+            "target-write, idea-write, validation, staging, or commit",
+            contract_text,
+        )
         self.assertIn("exact full Git index file", contract_text)
         self.assertIn("path-limited commit", contract_text)
-        self.assertIn("retain the backlog claim", contract_text)
+        self.assertIn("captured immutable commit OID", contract_text)
+        self.assertIn(
+            "When resource_coordination selects agent-claim", contract_text
+        )
+        self.assertIn(
+            "When resource_coordination selects none", contract_text
+        )
         self.assertTrue(
             any(
                 "Restore the exact pre-attempt idea and target state"
@@ -459,7 +580,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         )
         self.assertTrue(
             any(
-                "A retained recovery claim is always BLOCKED" in step
+                "Unsafe recovery is always BLOCKED" in step
                 for step in role["instructions"]["completion"]
             )
         )
@@ -472,6 +593,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         idea_before = idea.read_bytes()
         index_before = index_path.read_bytes()
+        registry = _FakeClaimRegistry()
 
         result = _execute_promotion_transaction(
             repository,
@@ -481,12 +603,16 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             b"backlog/feature-backlog/retry-dashboard.md\n",
             b"# Retry Dashboard\n\n## Source Evidence\n\n"
             b"- backlog/future-ideas/retry-dashboard.md\n",
+            resource_coordination="agent-claim",
+            claim_registry=registry,
             fail_commit=True,
         )
 
         self.assertEqual("BLOCKED", result["status"])
         self.assertTrue(result["rollbackVerified"])
         self.assertFalse(result["claimRetained"])
+        self.assertEqual(("acquire", "release"), result["claimCalls"])
+        self.assertFalse(registry.active)
         self.assertEqual(idea_before, idea.read_bytes())
         self.assertFalse(target.exists())
         self.assertEqual(index_before, index_path.read_bytes())
@@ -503,6 +629,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         """A successful path-limited commit contains only reciprocal records."""
         temporary, repository, idea, target, _, _ = self._promotion_repository()
         self.addCleanup(temporary.cleanup)
+        registry = _FakeClaimRegistry()
         unrelated_staged_before = self._git(
             repository, "diff", "--cached", "--", "unrelated.txt"
         ).stdout
@@ -515,10 +642,15 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             b"backlog/feature-backlog/retry-dashboard.md\n",
             b"# Retry Dashboard\n\n## Source Evidence\n\n"
             b"- backlog/future-ideas/retry-dashboard.md\n",
+            resource_coordination="agent-claim",
+            claim_registry=registry,
         )
 
         self.assertEqual("READY", result["status"])
         self.assertTrue(result["commitVerified"])
+        self.assertEqual(("acquire", "release"), result["claimCalls"])
+        self.assertFalse(registry.active)
+        commit_oid = str(result["commitOid"])
         self.assertEqual(
             {
                 "backlog/future-ideas/retry-dashboard.md",
@@ -531,7 +663,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
                     "--no-commit-id",
                     "--name-only",
                     "-r",
-                    "HEAD",
+                    commit_oid,
                 ).stdout.splitlines()
             ),
         )
@@ -558,31 +690,206 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         idea_before = idea.read_bytes()
         index_before = index_path.read_bytes()
+        unrelated_staged_before = self._git(
+            repository, "show", ":unrelated.txt"
+        ).stdout
+        registry = _FakeClaimRegistry()
 
-        with mock.patch.object(
-            sys.modules[__name__],
-            "_restore_snapshot",
-            side_effect=OSError("injected rollback failure"),
-        ):
-            result = _execute_promotion_transaction(
-                repository,
-                idea,
-                target,
-                b"# Retry Dashboard\n\nPromoted To: "
-                b"backlog/feature-backlog/retry-dashboard.md\n",
-                b"# Retry Dashboard\n\n## Source Evidence\n\n"
-                b"- backlog/future-ideas/retry-dashboard.md\n",
-                fail_commit=True,
-            )
+        result = _execute_promotion_transaction(
+            repository,
+            idea,
+            target,
+            b"# Retry Dashboard\n\nPromoted To: "
+            b"backlog/feature-backlog/retry-dashboard.md\n",
+            b"# Retry Dashboard\n\n## Source Evidence\n\n"
+            b"- backlog/future-ideas/retry-dashboard.md\n",
+            resource_coordination="agent-claim",
+            claim_registry=registry,
+            fail_commit=True,
+            fail_rollback_verification=True,
+        )
 
         evidence = Path(str(result["preservedEvidence"]))
         self.assertEqual("BLOCKED", result["status"])
         self.assertFalse(result["rollbackVerified"])
         self.assertTrue(result["claimRetained"])
+        self.assertEqual(("acquire", "retain"), result["claimCalls"])
+        self.assertTrue(registry.active)
         self.assertEqual("Dev Backlog Steward", result["recoveryOwner"])
         self.assertEqual(idea_before, (evidence / "idea.bin").read_bytes())
         self.assertEqual(index_before, (evidence / "index.bin").read_bytes())
         self.assertEqual(b"absent\n", (evidence / "target-state").read_bytes())
+        self.assertEqual(
+            unrelated_staged_before,
+            self._git(repository, "show", ":unrelated.txt").stdout,
+        )
+
+    def test_promotion_staging_failure_restores_and_releases_safe_claim(
+        self,
+    ) -> None:
+        """A staging failure restores exact state before releasing enabled ownership."""
+        temporary, repository, idea, target, _, index_path = (
+            self._promotion_repository()
+        )
+        self.addCleanup(temporary.cleanup)
+        idea_before = idea.read_bytes()
+        index_before = index_path.read_bytes()
+        unrelated_staged_before = self._git(
+            repository, "show", ":unrelated.txt"
+        ).stdout
+        registry = _FakeClaimRegistry()
+
+        result = _execute_promotion_transaction(
+            repository,
+            idea,
+            target,
+            b"# Retry Dashboard\n\nPromoted To: "
+            b"backlog/feature-backlog/retry-dashboard.md\n",
+            b"# Retry Dashboard\n\n## Source Evidence\n\n"
+            b"- backlog/future-ideas/retry-dashboard.md\n",
+            resource_coordination="agent-claim",
+            claim_registry=registry,
+            fail_staging=True,
+        )
+
+        self.assertEqual("BLOCKED", result["status"])
+        self.assertTrue(result["rollbackVerified"])
+        self.assertEqual(("acquire", "release"), result["claimCalls"])
+        self.assertFalse(registry.active)
+        self.assertEqual(idea_before, idea.read_bytes())
+        self.assertFalse(target.exists())
+        self.assertEqual(index_before, index_path.read_bytes())
+        self.assertEqual(
+            unrelated_staged_before,
+            self._git(repository, "show", ":unrelated.txt").stdout,
+        )
+
+    def test_postcommit_verification_failure_retains_claim_and_exact_oid(
+        self,
+    ) -> None:
+        """A reciprocal verification failure preserves its exact commit and ownership."""
+        temporary, repository, idea, target, _, _ = self._promotion_repository()
+        self.addCleanup(temporary.cleanup)
+        unrelated_staged_before = self._git(
+            repository, "show", ":unrelated.txt"
+        ).stdout
+        registry = _FakeClaimRegistry()
+
+        result = _execute_promotion_transaction(
+            repository,
+            idea,
+            target,
+            b"# Retry Dashboard\n\nPromoted To: "
+            b"backlog/feature-backlog/retry-dashboard.md\n",
+            b"# Retry Dashboard\n\n## Source Evidence\n\n"
+            b"- backlog/future-ideas/retry-dashboard.md\n",
+            resource_coordination="agent-claim",
+            claim_registry=registry,
+            fail_postcommit_verification=True,
+        )
+
+        self.assertEqual("BLOCKED", result["status"])
+        self.assertFalse(result["rollbackVerified"])
+        self.assertEqual(("acquire", "retain"), result["claimCalls"])
+        self.assertTrue(registry.active)
+        self.assertEqual(
+            str(result["commitOid"]),
+            self._git(repository, "rev-parse", "HEAD").stdout.strip(),
+        )
+        self.assertEqual(
+            unrelated_staged_before,
+            self._git(repository, "show", ":unrelated.txt").stdout,
+        )
+
+    def test_promotion_verifies_captured_commit_oid_after_head_moves(self) -> None:
+        """Commit verification remains bound to the captured object when HEAD moves."""
+        temporary, repository, idea, target, _, _ = self._promotion_repository()
+        self.addCleanup(temporary.cleanup)
+        registry = _FakeClaimRegistry()
+
+        def move_head(commit_oid: str) -> None:
+            tree_oid = self._git(repository, "rev-parse", f"{commit_oid}^{{tree}}")
+            moved_oid = subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    str(repository),
+                    "commit-tree",
+                    tree_oid.stdout.strip(),
+                    "-p",
+                    commit_oid,
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+                input="Move mutable HEAD\n",
+            ).stdout.strip()
+            self._git(repository, "update-ref", "HEAD", moved_oid, commit_oid)
+
+        result = _execute_promotion_transaction(
+            repository,
+            idea,
+            target,
+            b"# Retry Dashboard\n\nPromoted To: "
+            b"backlog/feature-backlog/retry-dashboard.md\n",
+            b"# Retry Dashboard\n\n## Source Evidence\n\n"
+            b"- backlog/future-ideas/retry-dashboard.md\n",
+            resource_coordination="agent-claim",
+            claim_registry=registry,
+            after_commit=move_head,
+        )
+
+        self.assertEqual("READY", result["status"])
+        self.assertNotEqual(
+            str(result["commitOid"]),
+            self._git(repository, "rev-parse", "HEAD").stdout.strip(),
+        )
+        self.assertEqual(("acquire", "release"), result["claimCalls"])
+
+    def test_none_coordination_uses_no_claim_calls_or_evidence(self) -> None:
+        """Coordination none preserves success and failure semantics without claims."""
+        for fail_staging, expected_status in ((False, "READY"), (True, "BLOCKED")):
+            with self.subTest(fail_staging=fail_staging):
+                temporary, repository, idea, target, _, index_path = (
+                    self._promotion_repository()
+                )
+                self.addCleanup(temporary.cleanup)
+                idea_before = idea.read_bytes()
+                index_before = index_path.read_bytes()
+                unrelated_staged_before = self._git(
+                    repository, "show", ":unrelated.txt"
+                ).stdout
+                registry = _FakeClaimRegistry()
+
+                result = _execute_promotion_transaction(
+                    repository,
+                    idea,
+                    target,
+                    b"# Retry Dashboard\n\nPromoted To: "
+                    b"backlog/feature-backlog/retry-dashboard.md\n",
+                    b"# Retry Dashboard\n\n## Source Evidence\n\n"
+                    b"- backlog/future-ideas/retry-dashboard.md\n",
+                    resource_coordination="none",
+                    claim_registry=registry,
+                    fail_staging=fail_staging,
+                )
+
+                self.assertEqual(expected_status, result["status"])
+                self.assertEqual([], registry.calls)
+                self.assertFalse(registry.active)
+                self.assertNotIn("claimCalls", result)
+                self.assertNotIn("claimRetained", result)
+                self.assertEqual(
+                    unrelated_staged_before,
+                    self._git(repository, "show", ":unrelated.txt").stdout,
+                )
+                if fail_staging:
+                    self.assertTrue(result["rollbackVerified"])
+                    self.assertEqual(idea_before, idea.read_bytes())
+                    self.assertFalse(target.exists())
+                    self.assertEqual(index_before, index_path.read_bytes())
+                else:
+                    self.assertTrue(result["commitVerified"])
 
     def test_blocked_resumption_has_negative_and_positive_scenarios(self) -> None:
         """The suite covers unowned, failed-claim, and successful claim outcomes."""

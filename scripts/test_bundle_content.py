@@ -1029,7 +1029,8 @@ class BundleContentTests(unittest.TestCase):
 
         for phrase in (
             "Obtain queue inventory, lifecycle counts, provider identities, and dispatchable state only by applying the effective Persistence-selected management skill.",
-            "Provider file: treat repository backlog paths as provider identities and use short backlog claims only for file-provider mutations.",
+            "Provider file: treat ordinary repository backlog paths as provider identities and use short backlog claims only for file-provider mutations.",
+            "Do not scan or count backlog/future-ideas unless the parent explicitly requests ideation or promotion.",
             "Provider github: use GitHub issue identities and provider lifecycle evidence; do not create or inspect file backlog paths.",
             "Provider gitlab: use GitLab issue identities and provider lifecycle evidence; do not translate them into GitHub or file records.",
             "Provider azure-devops or jira: apply the selected placeholder management skill, preserve its BLOCKED zero-mutation result, and do not fall back.",
@@ -3932,15 +3933,18 @@ class BundleContentTests(unittest.TestCase):
             "Keep revisit triggers as free text",
             "Retain the original idea in backlog/future-ideas",
             "preflight target collisions before any promotion write",
-            "Snapshot the exact pre-attempt source idea bytes",
+            "snapshot the exact pre-attempt source idea bytes",
             "including Open Questions",
             "one failure-atomic promotion",
             "remove only the target newly created by this promotion attempt",
-            "exact full Git index file bytes and existence",
+            "exact full Git index file",
+            "bytes and existence",
             "Stage exactly the idea and target paths",
             "path-limited commit",
-            "contains exactly both reciprocal records",
-            "retain the serialized backlog claim",
+            "Capture the new commit OID immediately after commit creation",
+            "captured immutable commit OID contains exactly both reciprocal records",
+            "When agent-claim is selected, release the enabled claim only after promotion success or a safe verified pre-commit rollback",
+            "When none is selected, perform the same restoration and verification without a claim call or claim evidence",
         ):
             with self.subTest(create_future_ideas_contract=required_phrase):
                 self.assertIn(required_phrase, create_file_text)
@@ -3962,9 +3966,14 @@ class BundleContentTests(unittest.TestCase):
             "include lifecycle state, ownership, and dependencies only for ordinary work",
             "preflight target collisions",
             "Restore the exact pre-attempt idea and target state",
-            "exact full Git index file bytes and existence",
+            "exact full Git index file",
+            "bytes and existence",
             "preserving unrelated staged state",
-            "retain the backlog claim",
+            "Capture the new commit OID",
+            "Retain enabled claim ownership",
+            "only when agent-claim is selected",
+            "With none, report no claim operation",
+            "or claim evidence",
         ):
             with self.subTest(steward_future_ideas_branch=required_phrase):
                 self.assertIn(required_phrase, role_text)
@@ -3973,7 +3982,9 @@ class BundleContentTests(unittest.TestCase):
                 "exact full Git index file bytes and existence",
                 "path-limited commit",
                 "unrelated staged state",
-                "retain the backlog claim",
+                "captures the new commit OID",
+                "When resource coordination selects agent-claim",
+                "When none is selected",
             ):
                 with self.subTest(
                     future_ideas_documentation=required_phrase
