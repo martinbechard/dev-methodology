@@ -106,3 +106,50 @@ cases:
       None
       ## Verification
       - Run focused behavior checks.
+      ## Open Questions
+      None
+    promotionTransaction:
+      collision:
+        result: BLOCKED
+        writesAttempted: false
+        ideaBefore: &promotion-idea-before |
+          # Retry Dashboard
+          ## Synopsis
+          Consider a dashboard for retry visibility.
+          ## Origin or Rationale
+          Operators currently inspect several separate logs.
+        ideaAfter: *promotion-idea-before
+        targetExistedBefore: true
+        targetBefore: &promotion-collision-target |
+          # Existing Retry Dashboard Work
+          Existing bytes must not be replaced.
+        targetAfter: *promotion-collision-target
+      injectedFailures:
+        - boundary: target-write
+          ideaBefore: *promotion-idea-before
+          ideaAfter: *promotion-idea-before
+          targetExistedBefore: false
+          targetBefore: absent
+          targetAfter: absent
+          cleanupScope: remove only a target created by this attempt
+        - boundary: idea-write
+          ideaBefore: *promotion-idea-before
+          ideaAfter: *promotion-idea-before
+          targetExistedBefore: false
+          targetBefore: absent
+          targetAfter: absent
+          cleanupScope: remove only a target created by this attempt
+        - boundary: validation
+          ideaBefore: *promotion-idea-before
+          ideaAfter: *promotion-idea-before
+          targetExistedBefore: false
+          targetBefore: absent
+          targetAfter: absent
+          cleanupScope: remove only a target created by this attempt
+        - boundary: commit
+          ideaBefore: *promotion-idea-before
+          ideaAfter: *promotion-idea-before
+          targetExistedBefore: false
+          targetBefore: absent
+          targetAfter: absent
+          cleanupScope: remove only a target created by this attempt

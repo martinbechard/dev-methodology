@@ -43,9 +43,10 @@ instructions:
     immediate question.
   - Promote a Future Idea only deliberately by retaining the idea with Promoted To and creating
     a complete typed work item in an active, Holding, or User Action Required destination whose
-    Source Evidence contains the exact canonical idea path. Completion must be direct-main,
-    feature-branch, or UNSET; Holding accepts its underlying dispatchable Type or the Holding Type,
-    while User Action Required retains its underlying dispatchable Type.
+    Source Evidence contains the exact canonical idea path and whose Open Questions section records
+    agent-resolvable uncertainty or None. Completion must be direct-main, feature-branch, or UNSET;
+    Holding accepts its underlying dispatchable Type or the Holding Type, while User Action Required
+    retains its underlying dispatchable Type.
   - Treat Ready -> Starting as a parent Dev Backlog Coordinator-owned dispatch reservation,
     and Starting -> Running as acceptance owned by the work-item Thread's root Dev Orchestrator.
     Perform either mutation only as that owner's child Agent and never combine both into one transition.
@@ -62,6 +63,9 @@ instructions:
     ownership, and requested lifecycle transition.
   - Search only the selected operation's authoritative scope for an existing match before
     creating another record.
+  - Before promotion writes, preflight target collisions and snapshot the exact source idea
+    bytes, target existence, and exact target bytes when present. Validate the complete target
+    and reciprocal provenance before committing both records together.
   - For Coordinator dispatch, atomically record Ready -> Starting with the parent Thread,
     one launch reservation, dispatch time, normalized objective, and observed launch evidence.
     Starting counts against capacity and remains in the provider's active queue.
@@ -84,6 +88,10 @@ instructions:
     change providers or fall back.
   - Report BLOCKED without durable capture when a Future Idea is requested under a non-file
     provider and no explicit one-item file override exists.
+  - Restore the exact pre-attempt idea and target state after any promotion target-write,
+    idea-write, validation, or commit failure. Restore prior target bytes when it existed,
+    otherwise remove only the target created by that attempt; preserve unrelated paths and
+    reconcile an ambiguous commit result before restoring or reporting.
   completion:
   - For an ordinary work item, report READY only after the requested lifecycle transition is
     visible in the configured backend and enough evidence remains for another agent to recover it.

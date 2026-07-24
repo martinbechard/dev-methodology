@@ -14,6 +14,7 @@ import json
 import os
 import re
 import subprocess
+import tempfile
 from collections import Counter
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -427,6 +428,7 @@ def _read_items(
                 and item.provider_reference == item.path
                 and item.completion in ALLOWED_COMPLETIONS
                 and bool(item.source_evidence.strip())
+                and bool(sections.get("Open Questions", "").strip())
                 and (
                     (
                         queue == "active"
@@ -854,6 +856,45 @@ def _render_report(
 </main></body></html>"""
 
 
+def _same_existing_file(first: Path, second: Path) -> bool:
+    """Return whether two existing paths identify the same underlying file.
+
+    Missing paths return False. Other filesystem comparison failures propagate
+    so callers cannot write after an inconclusive source-protection check.
+    """
+    try:
+        return os.path.samefile(first, second)
+    except FileNotFoundError:
+        return False
+
+
+def _write_output_atomically(output: Path, rendered: str) -> None:
+    """Replace output with rendered text only after a sibling temporary write succeeds.
+
+    output identifies the final report path. rendered is the complete UTF-8
+    report. The function creates output's parent, writes a private sibling
+    temporary file, and atomically replaces output. Any write or replacement
+    failure propagates after the temporary file is removed, preserving prior
+    output bytes.
+    """
+    output.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary_name = tempfile.mkstemp(
+        dir=output.parent,
+        prefix=f".{output.name}.",
+        suffix=".tmp",
+    )
+    os.close(descriptor)
+    temporary = Path(temporary_name)
+    try:
+        temporary.write_text(rendered, encoding="utf-8")
+        os.replace(temporary, output)
+    finally:
+        try:
+            temporary.unlink()
+        except FileNotFoundError:
+            pass
+
+
 def generate_report(
     repository_root: Path,
     output: Path,
@@ -870,10 +911,12 @@ def generate_report(
     current UTC time. include_future_ideas explicitly adds the lightweight
     backlog/future-ideas inventory; the default ordinary scan does not read or
     count that folder. Output is always rejected when its lexical path is inside
-    backlog/future-ideas or its resolved destination enters that folder. Source
-    backlog files are read but never modified. Invalid scanned content is
-    rendered as findings; missing input, unsafe output, and I/O failures
-    propagate to the caller.
+    backlog/future-ideas, its resolved destination enters that folder, or it is
+    a hard-link alias of any backlog source. Source backlog files are read but
+    never modified. A sibling temporary file preserves prior output until an
+    atomic replacement succeeds. Invalid scanned content is rendered as
+    findings; missing input, unsafe output, and I/O failures propagate to the
+    caller.
     """
     lexical_repository_root = Path(os.path.abspath(os.fspath(repository_root)))
     resolved_root = repository_root.resolve()
@@ -919,7 +962,12 @@ def generate_report(
     scanned_sources = {resolved_root / item.path for item in items}
     scanned_sources.update(resolved_root / idea.path for idea in future_ideas)
     scanned_sources.update(resolved_root / path for path in ignored)
-    if resolved_output in {path.resolve() for path in scanned_sources}:
+    ideas_root = resolved_root / "backlog" / FUTURE_IDEAS_FOLDER
+    if ideas_root.is_dir():
+        scanned_sources.update(ideas_root.rglob("*.md"))
+    if resolved_output in {path.resolve() for path in scanned_sources} or any(
+        _same_existing_file(resolved_output, path) for path in scanned_sources
+    ):
         raise ValueError(f"Output path would overwrite a backlog source: {resolved_output}")
     _reconcile(items)
     claim_captured_at, claims, claim_status = _claim_snapshot(resolved_root, timestamp)
@@ -935,8 +983,7 @@ def generate_report(
         scope_findings,
         snapshot,
     )
-    resolved_output.parent.mkdir(parents=True, exist_ok=True)
-    resolved_output.write_text(rendered, encoding="utf-8")
+    _write_output_atomically(resolved_output, rendered)
 
 
 def main(argv: Sequence[str] | None = None) -> int:

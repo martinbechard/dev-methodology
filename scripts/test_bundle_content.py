@@ -3925,6 +3925,11 @@ class BundleContentTests(unittest.TestCase):
             "Do not require Status, Type, Owner",
             "Keep revisit triggers as free text",
             "Retain the original idea in backlog/future-ideas",
+            "preflight target collisions before any promotion write",
+            "Snapshot the exact pre-attempt source idea bytes",
+            "including Open Questions",
+            "one failure-atomic promotion",
+            "remove only the target newly created by this promotion attempt",
         ):
             with self.subTest(create_future_ideas_contract=required_phrase):
                 self.assertIn(required_phrase, create_file_text)
@@ -3944,6 +3949,8 @@ class BundleContentTests(unittest.TestCase):
             "For lightweight capture, collect only the minimal Future Idea inputs",
             "Do not enter ordinary lifecycle processing",
             "include lifecycle state, ownership, and dependencies only for ordinary work",
+            "preflight target collisions",
+            "Restore the exact pre-attempt idea and target state",
         ):
             with self.subTest(steward_future_ideas_branch=required_phrase):
                 self.assertIn(required_phrase, role_text)

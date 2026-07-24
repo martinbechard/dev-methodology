@@ -47,11 +47,15 @@ class BacklogReportTest(unittest.TestCase):
         dependencies: str = "None",
         context: str = "Fixture context.",
         completion: str = "direct-main",
+        include_open_questions: bool = True,
         extra: str = "",
     ) -> None:
         """Write one complete backlog item with optional queue-specific sections."""
         path = self.root / relative
         path.parent.mkdir(parents=True, exist_ok=True)
+        open_questions = (
+            "## Open Questions\n\nNone\n\n" if include_open_questions else ""
+        )
         path.write_text(
             f"""# {title}
 
@@ -89,6 +93,7 @@ Summary for {title}.
 
 - Verify it.
 
+{open_questions}
 {extra}""",
             encoding="utf-8",
         )
@@ -310,6 +315,44 @@ The source path appears here instead: {misplaced_source}
         )
         self.assertIn(
             f"Promotion target Source Evidence does not reference {misplaced_source}: {misplaced_target}.",
+            rendered,
+        )
+
+    def test_promotion_requires_open_questions_in_the_complete_target(self) -> None:
+        """A promoted ordinary record without Open Questions remains incomplete."""
+        source = "backlog/future-ideas/missing-open-questions.md"
+        target = "backlog/feature-backlog/missing-open-questions.md"
+        self.write_idea(
+            source,
+            title="Missing Open Questions",
+            promoted_to=target,
+        )
+        self.write_item(
+            target,
+            title="Missing Open Questions Work",
+            status="Ready",
+            item_type="Feature",
+            include_open_questions=False,
+            extra=f"## Source Evidence\n\n- {source}\n",
+        )
+
+        rendered = self.generate(include_future_ideas=True)
+
+        self.assertIn(
+            f"Promotion target is not a complete work item: {target}.",
+            rendered,
+        )
+
+    def test_missing_minimal_future_idea_fields_are_reported(self) -> None:
+        """Opt-in validation reports missing title, Synopsis, and rationale fields."""
+        incomplete = self.root / "backlog/future-ideas/incomplete.md"
+        incomplete.parent.mkdir(parents=True)
+        incomplete.write_text("## Notes\n\nOnly a note.\n", encoding="utf-8")
+
+        rendered = self.generate(include_future_ideas=True)
+
+        self.assertIn(
+            "Missing required idea fields: Title, Synopsis, Origin or Rationale.",
             rendered,
         )
 
@@ -975,6 +1018,83 @@ Do not proceed.
             REPORT.generate_report(self.root, outward)
 
         self.assertEqual(before, external.read_bytes())
+
+    def test_hard_link_output_alias_cannot_replace_a_future_idea(self) -> None:
+        """A hard-link alias is rejected while preserving the source idea inode bytes."""
+        idea = self.root / "backlog/future-ideas/hard-linked.md"
+        idea.parent.mkdir(parents=True)
+        idea.write_bytes(b"original future idea bytes")
+        self.output.parent.mkdir(parents=True)
+        self.output.hardlink_to(idea)
+        before = idea.read_bytes()
+
+        with self.assertRaisesRegex(
+            ValueError, "Output path would overwrite a backlog source"
+        ):
+            REPORT.generate_report(self.root, self.output)
+
+        self.assertEqual(before, idea.read_bytes())
+        self.assertEqual(before, self.output.read_bytes())
+
+    def test_atomic_output_write_failure_preserves_prior_report_and_cleans_temp(
+        self,
+    ) -> None:
+        """A temporary-file write failure leaves the existing report untouched."""
+        self.write_item(
+            "backlog/feature-backlog/ready.md",
+            title="Ready",
+            status="Ready",
+            item_type="Feature",
+        )
+        idea = self.root / "backlog/future-ideas/preserved-on-write.md"
+        self.write_idea(
+            "backlog/future-ideas/preserved-on-write.md",
+            title="Preserved On Write",
+        )
+        idea_before = idea.read_bytes()
+        self.output.parent.mkdir(parents=True)
+        self.output.write_bytes(b"prior report bytes")
+
+        with mock.patch.object(
+            Path, "write_text", side_effect=OSError("injected output write failure")
+        ):
+            with self.assertRaisesRegex(OSError, "injected output write failure"):
+                REPORT.generate_report(self.root, self.output)
+
+        self.assertEqual(idea_before, idea.read_bytes())
+        self.assertEqual(b"prior report bytes", self.output.read_bytes())
+        self.assertEqual([], list(self.output.parent.glob(".*.tmp")))
+
+    def test_atomic_output_replace_failure_preserves_prior_report_and_cleans_temp(
+        self,
+    ) -> None:
+        """An atomic replace failure leaves prior output and source bytes untouched."""
+        self.write_item(
+            "backlog/feature-backlog/ready.md",
+            title="Ready",
+            status="Ready",
+            item_type="Feature",
+        )
+        idea = self.root / "backlog/future-ideas/preserved.md"
+        self.write_idea(
+            "backlog/future-ideas/preserved.md",
+            title="Preserved",
+        )
+        idea_before = idea.read_bytes()
+        self.output.parent.mkdir(parents=True)
+        self.output.write_bytes(b"prior report bytes")
+
+        with mock.patch.object(
+            REPORT.os,
+            "replace",
+            side_effect=OSError("injected output replace failure"),
+        ):
+            with self.assertRaisesRegex(OSError, "injected output replace failure"):
+                REPORT.generate_report(self.root, self.output)
+
+        self.assertEqual(idea_before, idea.read_bytes())
+        self.assertEqual(b"prior report bytes", self.output.read_bytes())
+        self.assertEqual([], list(self.output.parent.glob(".*.tmp")))
 
     def test_missing_optional_folders_and_repeat_generation_are_deterministic(self) -> None:
         """A minimal backlog generates equivalent ordered content at a controlled snapshot time."""

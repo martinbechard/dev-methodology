@@ -89,6 +89,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         self.assertFalse(fixture["ordinaryScanIncludesIdea"])
         self.assertNotIn("Status:", fixture["ideaBefore"])
         self.assertIn("Completion: direct-main", fixture["promotedWorkItem"])
+        self.assertIn("## Open Questions", fixture["promotedWorkItem"])
         self.assertEqual(expected_output, fixture["expectedOutput"])
         self.assertIn(expected_output, scenario["expectedOutputs"])
         self.assertIn(expected_output, suite["target"]["requiredOutputs"])
@@ -98,6 +99,76 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         )
         self.assertIn(
             "Return the Future Idea output contract", scenario["requiredBehaviors"]
+        )
+
+    def test_future_idea_promotion_is_failure_atomic_at_every_boundary(self) -> None:
+        """Collision and injected failures restore exact pre-attempt promotion state."""
+        fixture = yaml.safe_load(
+            (SUITE_ROOT / "fixtures" / "cases.yaml").read_text(encoding="utf-8")
+        )["cases"]["future-ideas-capture-and-promotion"]
+        scenario = next(
+            entry
+            for entry in yaml.safe_load(
+                (SUITE_ROOT / "scenarios.yaml").read_text(encoding="utf-8")
+            )["scenarios"]
+            if entry["id"] == "future-ideas-capture-and-promotion"
+        )
+        contract_text = (
+            SUITE_ROOT
+            / "skills"
+            / "dev-backlog-steward-suite-contract"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        role = yaml.safe_load(
+            (
+                SUITE_ROOT.parent.parent.parent
+                / "agents"
+                / "roles"
+                / "dev-activities"
+                / "dev-backlog-steward.role.yaml"
+            ).read_text(encoding="utf-8")
+        )
+        transaction = fixture["promotionTransaction"]
+        collision = transaction["collision"]
+
+        self.assertEqual("BLOCKED", collision["result"])
+        self.assertFalse(collision["writesAttempted"])
+        self.assertEqual(collision["ideaBefore"], collision["ideaAfter"])
+        self.assertEqual(collision["targetBefore"], collision["targetAfter"])
+        self.assertEqual(
+            {"target-write", "idea-write", "validation", "commit"},
+            {
+                failure["boundary"]
+                for failure in transaction["injectedFailures"]
+            },
+        )
+        for failure in transaction["injectedFailures"]:
+            with self.subTest(boundary=failure["boundary"]):
+                self.assertEqual(failure["ideaBefore"], failure["ideaAfter"])
+                if failure["targetExistedBefore"]:
+                    self.assertEqual(failure["targetBefore"], failure["targetAfter"])
+                else:
+                    self.assertEqual("absent", failure["targetAfter"])
+                self.assertEqual(
+                    "remove only a target created by this attempt",
+                    failure["cleanupScope"],
+                )
+
+        for behavior in (
+            "Preflight target collisions before any promotion write",
+            "Snapshot exact idea bytes target bytes and target existence",
+            "Restore exact pre-attempt state after target-write idea-write validation or commit failure",
+        ):
+            with self.subTest(required_behavior=behavior):
+                self.assertIn(behavior, scenario["requiredBehaviors"])
+        self.assertIn("failure-atomic transaction", contract_text)
+        self.assertIn("target-write, idea-write, validation, or commit", contract_text)
+        self.assertTrue(
+            any(
+                "Restore the exact pre-attempt idea and target state"
+                in step
+                for step in role["instructions"]["failureHandling"]
+            )
         )
 
     def test_blocked_resumption_has_negative_and_positive_scenarios(self) -> None:
