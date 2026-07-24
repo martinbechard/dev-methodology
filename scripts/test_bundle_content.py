@@ -8398,16 +8398,17 @@ class BundleContentTests(unittest.TestCase):
             self.assertEqual(1, len(delivery_ordered))
             self.assertEqual([], tag_containers(delivery_section, "ul"))
             delivery_items = list_item_texts(delivery_ordered[0], 6)
-            delivery_item_text = " ".join(delivery_items)
-            for fact in (
-                "Dev Coder returns a clean verified candidate commit",
-                "Dev Orchestrator obtains fresh independent review and source verification",
-                "preserves one delivery identity through host review and corrections",
-                "Every source correction returns through Dev Orchestrator to the original Dev Coder",
-                "returns AWAITING_REVIEW until required review, checks, dependency order, merge, and configured base-branch reachability are observed",
-                "Persistence closure begins only after Commit returns READY",
-            ):
-                self.assertIn(fact, delivery_item_text)
+            self.assertEqual(
+                [
+                    "Dev Coder returns a clean verified candidate commit without applying terminal delivery.",
+                    "Dev Orchestrator obtains fresh independent review and source verification, combines accepted candidates when needed, then applies or resumes the effective Commit-selected skill referenced by applicable AGENTS.md guidance.",
+                    "The complete-work-item-feature-branch completion contract consumes the accepted candidate without modifying source and preserves one delivery identity through host review and corrections.",
+                    "Every source correction returns through Dev Orchestrator to the original Dev Coder for a replacement candidate, fresh independent review, and verification before delivery resumes.",
+                    "The completion contract loads create-pull-request only as its subordinate GitHub publication capability and returns AWAITING_REVIEW until required review, checks, dependency order, merge, and configured base-branch reachability are observed.",
+                    "Persistence closure begins only after Commit returns READY.",
+                ],
+                delivery_items,
+            )
             delivery_paragraphs = paragraph_texts(delivery_section)
             self.assertIn(
                 "Candidate creation and terminal delivery are separate responsibilities:",
@@ -8426,12 +8427,13 @@ class BundleContentTests(unittest.TestCase):
             persistence_unordered = tag_containers(persistence_section, "ul")
             self.assertEqual(1, len(persistence_unordered))
             persistence_items = list_item_texts(persistence_unordered[0], 2)
-            persistence_item_text = " ".join(persistence_items)
-            for fact in (
-                "Dev Backlog Steward applies the effective Persistence-selected create or manage skill",
-                "An UNSET selection requires a decision instead of fallback or shadow persistence",
-            ):
-                self.assertIn(fact, persistence_item_text)
+            self.assertCountEqual(
+                [
+                    "Dev Backlog Steward applies the effective Persistence-selected create or manage skill referenced by applicable AGENTS.md guidance.",
+                    "An UNSET selection requires a decision instead of fallback or shadow persistence.",
+                ],
+                persistence_items,
+            )
             self.assertIn(
                 "Work-item Persistence is an independent project selection:",
                 paragraph_texts(persistence_section),
@@ -8445,26 +8447,24 @@ class BundleContentTests(unittest.TestCase):
             coordination_unordered = tag_containers(coordination_section, "ul")
             self.assertEqual(1, len(coordination_ordered))
             self.assertEqual(1, len(coordination_unordered))
-            coordination_ordered_text = " ".join(
-                list_item_texts(coordination_ordered[0], 4)
+            self.assertEqual(
+                [
+                    "Dev Backlog Coordinator loads codex-workitem-coordination only when user-visible Codex tasks coordinate several work items.",
+                    "It reads inventory and lifecycle through the effective Persistence-selected manager.",
+                    "It delegates provider mutation to Dev Backlog Steward.",
+                    "It sends active delivery to Dev Orchestrator with the effective Commit-selected skill.",
+                ],
+                list_item_texts(coordination_ordered[0], 4),
             )
-            for fact in (
-                "loads codex-workitem-coordination only when user-visible Codex tasks coordinate several work items",
-                "reads inventory and lifecycle through the effective Persistence-selected manager",
-                "delegates provider mutation to Dev Backlog Steward",
-                "sends active delivery to Dev Orchestrator with the effective Commit-selected skill",
-            ):
-                self.assertIn(fact, coordination_ordered_text)
-            coordination_unordered_text = " ".join(
-                list_item_texts(coordination_unordered[0], 4)
+            self.assertCountEqual(
+                [
+                    "Provider none has no durable queue or capacity target.",
+                    "UNSET, unavailable selected skills, and provider placeholders stop without fallback.",
+                    "The coordinator preserves capacity, retry, watchdog, identity, and cleanup semantics without copying provider or completion procedures.",
+                    "The orchestrated development lifecycle owns the communication flows.",
+                ],
+                list_item_texts(coordination_unordered[0], 4),
             )
-            for fact in (
-                "Provider none has no durable queue or capacity target",
-                "UNSET, unavailable selected skills, and provider placeholders stop without fallback",
-                "preserves capacity, retry, watchdog, identity, and cleanup semantics",
-                "orchestrated development lifecycle",
-            ):
-                self.assertIn(fact, coordination_unordered_text)
             self.assertIn(
                 "Codex multi-item coordination is request-specific:",
                 paragraph_texts(coordination_section),
@@ -8516,6 +8516,39 @@ class BundleContentTests(unittest.TestCase):
         with self.subTest(mutant="ordered and unordered coordination items swapped"):
             with self.assertRaises(AssertionError):
                 assert_catalog_structure(swapped_list_mutant)
+
+        first_delivery_item = (
+            "<li>Dev Coder returns a clean verified candidate commit without "
+            "applying terminal delivery.</li>"
+        )
+        last_delivery_item = (
+            "<li>Persistence closure begins only after Commit returns READY.</li>"
+        )
+        reordered_delivery_mutant = skill_catalog.replace(
+            first_delivery_item,
+            "__FIRST_DELIVERY_ITEM__",
+            1,
+        ).replace(
+            last_delivery_item,
+            first_delivery_item,
+            1,
+        ).replace(
+            "__FIRST_DELIVERY_ITEM__",
+            last_delivery_item,
+            1,
+        )
+        with self.subTest(mutant="ordered delivery items swapped"):
+            with self.assertRaises(AssertionError):
+                assert_catalog_structure(reordered_delivery_mutant)
+
+        missing_commit_clause_mutant = skill_catalog.replace(
+            "<li>Dev Orchestrator obtains fresh independent review and source verification, combines accepted candidates when needed, then applies or resumes the effective Commit-selected skill referenced by applicable AGENTS.md guidance.</li>",
+            "<li>Dev Orchestrator obtains fresh independent review and source verification.</li>",
+            1,
+        )
+        with self.subTest(mutant="delivery Commit-routing clause removed"):
+            with self.assertRaises(AssertionError):
+                assert_catalog_structure(missing_commit_clause_mutant)
 
         paragraph_to_item_mutant = skill_catalog
         paragraph_moves = (
