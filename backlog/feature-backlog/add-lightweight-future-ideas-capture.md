@@ -1,6 +1,6 @@
 # Add Lightweight Future Ideas Capture
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -42,6 +42,21 @@ Completion: direct-main
 - Historical owner boundary: Task 019f85c8-6274-7593-b073-dd8b12b7b079 is notLoaded, its historical worktree /Users/martinbechard/.codex/worktrees/ceb0/dev-methodology is removed, and it is not the fresh owner.
 - Owner: Parent Dev Backlog Coordinator reservation only; delivery ownership remains unassigned.
 - Next action: The intended fresh root Dev Orchestrator may accept Starting -> Running only after its canonical runtime Thread exists and records new delivery ownership.
+
+## Running Acceptance — 2026-07-24
+
+- Parent coordinator: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Canonical task and runtime Thread: 019f9620-a737-7300-830c-d2fe1cc045a0.
+- Root owner: Dev Orchestrator.
+- Backlog lifecycle claim: steward-running-future-ideas-20260724, acquired event 742139a3-9031-4964-be11-c7837b84197e.
+- Branch: codex/future-ideas-current-main-20260724.
+- Private worktree: /Users/martinbechard/.codex/worktrees/727b/dev-methodology.
+- Starting main: 887ba31db1d961dbc451276a69329ab2f8a7e6e6.
+- Phase: Current-main correction pending.
+- Accepted candidate: Pending.
+- Artifact claim: None.
+- Historical owner boundary: Task 019f85c8-6274-7593-b073-dd8b12b7b079 remains notLoaded; its removed historical worktree and all historical non-owner evidence remain non-owner boundaries for this running delivery.
+- Next action: Dev Orchestrator may begin the exact approved current-main correction scope; this provider transition does not accept a candidate or create an artifact claim.
 
 ## Delivery Execution / Ownership
 
