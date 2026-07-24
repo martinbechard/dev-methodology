@@ -8346,134 +8346,213 @@ class BundleContentTests(unittest.TestCase):
             maxsplit=1,
         )[1].split("</section>", maxsplit=1)[0]
 
-        for heading in (
-            "Delivery Workflow",
-            "Persistence Selection",
-            "Codex Multi-Item Coordination",
-        ):
-            with self.subTest(heading=heading):
-                self.assertIn(f"<h3>{heading}</h3>", skill_catalog)
-
-        self.assertEqual(2, skill_catalog.count("<ol>"))
-        self.assertEqual(2, skill_catalog.count("<ul>"))
-        self.assertNotIn(
-            "Dev Coder returns a clean verified candidate commit without applying terminal delivery. Dev Orchestrator obtains",
-            skill_catalog,
-        )
-
-        delivery_section = skill_catalog.split(
-            "<h3>Delivery Workflow</h3>",
-            maxsplit=1,
-        )[1].split("<h3>Persistence Selection</h3>", maxsplit=1)[0]
-        self.assertEqual(1, delivery_section.count("<ol>"))
-        self.assertNotIn("<ul>", delivery_section)
-        delivery_item_fragments = re.findall(
-            r"<li(?:\s[^>]*)?>.*?</li>",
-            delivery_section,
-            flags=re.DOTALL,
-        )
-        self.assertEqual(6, len(delivery_item_fragments))
-        delivery_items = [
-            visible_prose_from_html(fragment)
-            for fragment in delivery_item_fragments
-        ]
-        self.assertTrue(all(len(item) == 1 and item[0] for item in delivery_items))
-        delivery_item_text = " ".join(item[0] for item in delivery_items)
-        for fact in (
-            "Dev Coder returns a clean verified candidate commit",
-            "Dev Orchestrator obtains fresh independent review and source verification",
-            "preserves one delivery identity through host review and corrections",
-            "Every source correction returns through Dev Orchestrator to the original Dev Coder",
-            "returns AWAITING_REVIEW until required review, checks, dependency order, merge, and configured base-branch reachability are observed",
-            "Persistence closure begins only after Commit returns READY",
-        ):
-            with self.subTest(delivery_list_fact=fact):
-                self.assertIn(fact, delivery_item_text)
-        for fact in (
-            "Publication is therefore a resumable handoff rather than completion",
-            "Focused pull requests separate shared foundations from independently reviewable changes",
-        ):
-            with self.subTest(delivery_paragraph_fact=fact):
-                self.assertIn(fact, delivery_section)
-
-        persistence_section = skill_catalog.split(
-            "<h3>Persistence Selection</h3>",
-            maxsplit=1,
-        )[1].split("<h3>Codex Multi-Item Coordination</h3>", maxsplit=1)[0]
-        self.assertNotIn("<ol>", persistence_section)
-        self.assertEqual(1, persistence_section.count("<ul>"))
-        persistence_item_fragments = re.findall(
-            r"<li(?:\s[^>]*)?>.*?</li>",
-            persistence_section,
-            flags=re.DOTALL,
-        )
-        self.assertEqual(2, len(persistence_item_fragments))
-        persistence_items = [
-            visible_prose_from_html(fragment)
-            for fragment in persistence_item_fragments
-        ]
-        self.assertTrue(
-            all(len(item) == 1 and item[0] for item in persistence_items)
-        )
-        persistence_item_text = " ".join(item[0] for item in persistence_items)
-        self.assertIn(
-            "Work-item Persistence is an independent project selection",
-            persistence_section,
-        )
-        for fact in (
-            "Dev Backlog Steward applies the effective Persistence-selected create or manage skill",
-            "An UNSET selection requires a decision instead of fallback or shadow persistence",
-        ):
-            with self.subTest(persistence_list_fact=fact):
-                self.assertIn(fact, persistence_item_text)
-
-        coordination_section = skill_catalog.split(
-            "<h3>Codex Multi-Item Coordination</h3>",
-            maxsplit=1,
-        )[1]
-        self.assertEqual(1, coordination_section.count("<ol>"))
-        self.assertEqual(1, coordination_section.count("<ul>"))
-        coordination_item_fragments = re.findall(
-            r"<li(?:\s[^>]*)?>.*?</li>",
-            coordination_section,
-            flags=re.DOTALL,
-        )
-        self.assertEqual(8, len(coordination_item_fragments))
-        coordination_items = [
-            visible_prose_from_html(fragment)
-            for fragment in coordination_item_fragments
-        ]
-        self.assertTrue(
-            all(len(item) == 1 and item[0] for item in coordination_items)
-        )
-        coordination_item_text = " ".join(item[0] for item in coordination_items)
-        for fact in (
-            "loads codex-workitem-coordination only when user-visible Codex tasks coordinate several work items",
-            "reads inventory and lifecycle through the effective Persistence-selected manager",
-            "delegates provider mutation to Dev Backlog Steward",
-            "sends active delivery to Dev Orchestrator with the effective Commit-selected skill",
-            "Provider none has no durable queue or capacity target",
-            "UNSET, unavailable selected skills, and provider placeholders stop without fallback",
-            "preserves capacity, retry, watchdog, identity, and cleanup semantics",
-            "orchestrated development lifecycle",
-        ):
-            with self.subTest(coordination_list_fact=fact):
-                self.assertIn(fact, coordination_item_text)
-
-        paragraph_fragments = re.findall(
-            r"<p(?:\s[^>]*)?>.*?</p>",
-            skill_catalog,
-            flags=re.DOTALL,
-        )
-        self.assertGreater(len(paragraph_fragments), 0)
-        for paragraph in paragraph_fragments:
-            visible = visible_prose_from_html(paragraph)
-            self.assertEqual(1, len(visible))
-            self.assertLess(
-                len(visible[0].split()),
-                80,
-                msg=f"Skill Catalog paragraph should be split into a list: {visible[0]}",
+        def tag_containers(section: str, tag: str) -> list[str]:
+            return re.findall(
+                rf"<{tag}(?:\s[^>]*)?>.*?</{tag}>",
+                section,
+                flags=re.DOTALL,
             )
+
+        def list_item_texts(container: str, expected_count: int) -> list[str]:
+            fragments = re.findall(
+                r"<li(?:\s[^>]*)?>.*?</li>",
+                container,
+                flags=re.DOTALL,
+            )
+            self.assertEqual(expected_count, len(fragments))
+            items = [visible_prose_from_html(fragment) for fragment in fragments]
+            self.assertTrue(all(len(item) == 1 and item[0] for item in items))
+            return [item[0] for item in items]
+
+        def paragraph_texts(section: str) -> list[str]:
+            fragments = re.findall(
+                r"<p(?:\s[^>]*)?>.*?</p>",
+                section,
+                flags=re.DOTALL,
+            )
+            self.assertGreater(len(fragments), 0)
+            paragraphs = [visible_prose_from_html(fragment) for fragment in fragments]
+            self.assertTrue(
+                all(len(paragraph) == 1 and paragraph[0] for paragraph in paragraphs)
+            )
+            return [paragraph[0] for paragraph in paragraphs]
+
+        def assert_catalog_structure(catalog: str) -> None:
+            for heading in (
+                "Delivery Workflow",
+                "Persistence Selection",
+                "Codex Multi-Item Coordination",
+            ):
+                self.assertIn(f"<h3>{heading}</h3>", catalog)
+
+            self.assertNotIn(
+                "Dev Coder returns a clean verified candidate commit without applying terminal delivery. Dev Orchestrator obtains",
+                catalog,
+            )
+
+            delivery_section = catalog.split(
+                "<h3>Delivery Workflow</h3>",
+                maxsplit=1,
+            )[1].split("<h3>Persistence Selection</h3>", maxsplit=1)[0]
+            delivery_ordered = tag_containers(delivery_section, "ol")
+            self.assertEqual(1, len(delivery_ordered))
+            self.assertEqual([], tag_containers(delivery_section, "ul"))
+            delivery_items = list_item_texts(delivery_ordered[0], 6)
+            delivery_item_text = " ".join(delivery_items)
+            for fact in (
+                "Dev Coder returns a clean verified candidate commit",
+                "Dev Orchestrator obtains fresh independent review and source verification",
+                "preserves one delivery identity through host review and corrections",
+                "Every source correction returns through Dev Orchestrator to the original Dev Coder",
+                "returns AWAITING_REVIEW until required review, checks, dependency order, merge, and configured base-branch reachability are observed",
+                "Persistence closure begins only after Commit returns READY",
+            ):
+                self.assertIn(fact, delivery_item_text)
+            delivery_paragraphs = paragraph_texts(delivery_section)
+            self.assertIn(
+                "Candidate creation and terminal delivery are separate responsibilities:",
+                delivery_paragraphs,
+            )
+            self.assertIn(
+                "Publication is therefore a resumable handoff rather than completion. Focused pull requests separate shared foundations from independently reviewable changes.",
+                delivery_paragraphs,
+            )
+
+            persistence_section = catalog.split(
+                "<h3>Persistence Selection</h3>",
+                maxsplit=1,
+            )[1].split("<h3>Codex Multi-Item Coordination</h3>", maxsplit=1)[0]
+            self.assertEqual([], tag_containers(persistence_section, "ol"))
+            persistence_unordered = tag_containers(persistence_section, "ul")
+            self.assertEqual(1, len(persistence_unordered))
+            persistence_items = list_item_texts(persistence_unordered[0], 2)
+            persistence_item_text = " ".join(persistence_items)
+            for fact in (
+                "Dev Backlog Steward applies the effective Persistence-selected create or manage skill",
+                "An UNSET selection requires a decision instead of fallback or shadow persistence",
+            ):
+                self.assertIn(fact, persistence_item_text)
+            self.assertIn(
+                "Work-item Persistence is an independent project selection:",
+                paragraph_texts(persistence_section),
+            )
+
+            coordination_section = catalog.split(
+                "<h3>Codex Multi-Item Coordination</h3>",
+                maxsplit=1,
+            )[1]
+            coordination_ordered = tag_containers(coordination_section, "ol")
+            coordination_unordered = tag_containers(coordination_section, "ul")
+            self.assertEqual(1, len(coordination_ordered))
+            self.assertEqual(1, len(coordination_unordered))
+            coordination_ordered_text = " ".join(
+                list_item_texts(coordination_ordered[0], 4)
+            )
+            for fact in (
+                "loads codex-workitem-coordination only when user-visible Codex tasks coordinate several work items",
+                "reads inventory and lifecycle through the effective Persistence-selected manager",
+                "delegates provider mutation to Dev Backlog Steward",
+                "sends active delivery to Dev Orchestrator with the effective Commit-selected skill",
+            ):
+                self.assertIn(fact, coordination_ordered_text)
+            coordination_unordered_text = " ".join(
+                list_item_texts(coordination_unordered[0], 4)
+            )
+            for fact in (
+                "Provider none has no durable queue or capacity target",
+                "UNSET, unavailable selected skills, and provider placeholders stop without fallback",
+                "preserves capacity, retry, watchdog, identity, and cleanup semantics",
+                "orchestrated development lifecycle",
+            ):
+                self.assertIn(fact, coordination_unordered_text)
+            self.assertIn(
+                "Codex multi-item coordination is request-specific:",
+                paragraph_texts(coordination_section),
+            )
+
+            for paragraph in paragraph_texts(catalog):
+                self.assertLess(
+                    len(paragraph.split()),
+                    80,
+                    msg=f"Skill Catalog paragraph should be split into a list: {paragraph}",
+                )
+
+        assert_catalog_structure(skill_catalog)
+
+        def empty_expected_lists(match: re.Match[str]) -> str:
+            tag = match.group(1)
+            return f"<{tag}></{tag}><menu>{match.group(2)}</menu>"
+
+        empty_container_mutant = re.sub(
+            r"<(ol|ul)>(.*?)</\1>",
+            empty_expected_lists,
+            skill_catalog,
+            flags=re.DOTALL,
+        )
+        with self.subTest(mutant="empty expected list containers"):
+            with self.assertRaises(AssertionError):
+                assert_catalog_structure(empty_container_mutant)
+
+        ordered_coordination_item = (
+            "<li>It reads inventory and lifecycle through the effective "
+            "Persistence-selected manager.</li>"
+        )
+        unordered_coordination_item = (
+            "<li>Provider none has no durable queue or capacity target.</li>"
+        )
+        swapped_list_mutant = skill_catalog.replace(
+            ordered_coordination_item,
+            "__ORDERED_COORDINATION_ITEM__",
+            1,
+        ).replace(
+            unordered_coordination_item,
+            ordered_coordination_item,
+            1,
+        ).replace(
+            "__ORDERED_COORDINATION_ITEM__",
+            unordered_coordination_item,
+            1,
+        )
+        with self.subTest(mutant="ordered and unordered coordination items swapped"):
+            with self.assertRaises(AssertionError):
+                assert_catalog_structure(swapped_list_mutant)
+
+        paragraph_to_item_mutant = skill_catalog
+        paragraph_moves = (
+            (
+                "<p>Candidate creation and terminal delivery are separate responsibilities:</p>",
+                "Dev Coder returns a clean verified candidate commit without applying terminal delivery.",
+                "Candidate creation and terminal delivery are separate responsibilities:",
+            ),
+            (
+                "<p>Publication is therefore a resumable handoff rather than completion. Focused pull requests separate shared foundations from independently reviewable changes.</p>",
+                "Persistence closure begins only after Commit returns READY.",
+                "Publication is therefore a resumable handoff rather than completion. Focused pull requests separate shared foundations from independently reviewable changes.",
+            ),
+            (
+                "<p>Work-item Persistence is an independent project selection:</p>",
+                "Dev Backlog Steward applies the effective Persistence-selected create or manage skill referenced by applicable AGENTS.md guidance.",
+                "Work-item Persistence is an independent project selection:",
+            ),
+            (
+                "<p>Codex multi-item coordination is request-specific:</p>",
+                "Dev Backlog Coordinator loads codex-workitem-coordination only when user-visible Codex tasks coordinate several work items.",
+                "Codex multi-item coordination is request-specific:",
+            ),
+        )
+        for paragraph_html, item_text, paragraph_text in paragraph_moves:
+            paragraph_to_item_mutant = paragraph_to_item_mutant.replace(
+                paragraph_html,
+                "<p>Structure.</p>",
+                1,
+            ).replace(
+                f"<li>{item_text}</li>",
+                f"<li>{item_text} {paragraph_text}</li>",
+                1,
+            )
+        with self.subTest(mutant="intended paragraphs moved into list items"):
+            with self.assertRaises(AssertionError):
+                assert_catalog_structure(paragraph_to_item_mutant)
 
     def test_agent_role_map_separates_lifecycle_categories(self) -> None:
         role_map_text = (
