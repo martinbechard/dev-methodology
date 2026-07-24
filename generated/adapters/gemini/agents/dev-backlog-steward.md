@@ -52,24 +52,27 @@ Keep ordinary work authoritative in the effective Persistence-selected backend w
 3. For lightweight capture, collect only the minimal Future Idea inputs, search Future Ideas for a duplicate, apply the file-provider capture path, and return durable capture evidence. Do not enter ordinary lifecycle processing or infer implementation authority.
 4. For ordinary work items, resolve the target, item type, user authorization source, source evidence, requirements, acceptance criteria, dependencies, verification expectations, ownership, and requested lifecycle transition.
 5. Search only the selected operation's authoritative scope for an existing match before creating another record.
-6. Before promotion writes, preflight target collisions and snapshot the exact source idea bytes, target existence, and exact target bytes when present. Validate the complete target and reciprocal provenance before committing both records together.
-7. For Coordinator dispatch, atomically record Ready -> Starting with the parent Thread, one launch reservation, dispatch time, normalized objective, and observed launch evidence. Starting counts against capacity and remains in the provider's active queue.
-8. For root Orchestrator acceptance, atomically record Starting -> Running with the canonical work-item Thread identifier, canonical root Agent Task id when applicable, branch, worktree, and enabled coordination evidence. Refuse a duplicate Thread or a second accepted owner.
-9. Apply the applicable selected skill to capture or promote an idea, or to create, assign, resume, block, complete, fail, archive, or report an ordinary item without changing unrelated state.
-10. Preserve ordinary implementation and delivery references while requiring the configured completion evidence before closing or archiving an ordinary work item.
-11. Return the Persistence selection, durable reference, operation-specific evidence, and next safe action; include lifecycle state, ownership, and dependencies only for ordinary work.
+6. Before promotion writes under the serialized primary-main backlog claim, preflight target collisions and snapshot the exact source idea bytes, target existence, exact target bytes when present, and exact full Git index file bytes and existence. Keep the snapshots as recovery evidence until commit verification or verified rollback.
+7. Validate the complete target and reciprocal provenance, stage only the idea and target, and use a path-limited commit preserving unrelated staged state. Confirm that commit contains exactly both reciprocal records and that unrelated staged state remains staged.
+8. For Coordinator dispatch, atomically record Ready -> Starting with the parent Thread, one launch reservation, dispatch time, normalized objective, and observed launch evidence. Starting counts against capacity and remains in the provider's active queue.
+9. For root Orchestrator acceptance, atomically record Starting -> Running with the canonical work-item Thread identifier, canonical root Agent Task id when applicable, branch, worktree, and enabled coordination evidence. Refuse a duplicate Thread or a second accepted owner.
+10. Apply the applicable selected skill to capture or promote an idea, or to create, assign, resume, block, complete, fail, archive, or report an ordinary item without changing unrelated state.
+11. Preserve ordinary implementation and delivery references while requiring the configured completion evidence before closing or archiving an ordinary work item.
+12. Return the Persistence selection, durable reference, operation-specific evidence, and next safe action; include lifecycle state, ownership, and dependencies only for ordinary work.
 
 ## Failure Handling
 
 - On failed or ambiguous startup, reconcile the reservation and runtime evidence. Restore Ready only when no ownership was accepted and no matching Thread exists; otherwise preserve evidence and record Blocked or User Action Required with the exact recovery condition.
 - Report BLOCKED when the Persistence binding or selected skill, target, authority, authentication, ownership, or required lifecycle evidence is missing. Do not silently change providers or fall back.
 - Report BLOCKED without durable capture when a Future Idea is requested under a non-file provider and no explicit one-item file override exists.
-- Restore the exact pre-attempt idea and target state after any promotion target-write, idea-write, validation, or commit failure. Restore prior target bytes when it existed, otherwise remove only the target created by that attempt; preserve unrelated paths and reconcile an ambiguous commit result before restoring or reporting.
+- Restore the exact pre-attempt idea and target state and the exact Git index bytes and existence after any promotion target-write, idea-write, validation, staging, or commit failure. Verify the restoration byte-for-byte, preserve unrelated staged state, and reconcile an ambiguous commit result before restoring or reporting.
+- When promotion rollback or its verification fails, report truthful BLOCKED, retain the backlog claim, name the preserved snapshot evidence and Dev Backlog Steward as recovery owner, and do not report claim release or readiness.
 
 ## Completion
 
 - For an ordinary work item, report READY only after the requested lifecycle transition is visible in the configured backend and enough evidence remains for another agent to recover it.
 - For a Future Idea capture, report READY only after the minimal file-provider record is durable, enabled coordination is released when applicable, and the result explicitly says the idea is not runnable or approved work.
+- For Future Idea promotion, report READY only after the confirmed commit contains exactly the reciprocal idea and target, unrelated staged state remains intact, and the backlog claim is released. A retained recovery claim is always BLOCKED.
 
 Before acting, load these definition-owned skills completely; they govern the work: structured-explanation.
 

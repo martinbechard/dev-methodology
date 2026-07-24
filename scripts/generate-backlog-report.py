@@ -868,6 +868,18 @@ def _same_existing_file(first: Path, second: Path) -> bool:
         return False
 
 
+def _has_multiple_hard_links(path: Path) -> bool:
+    """Return whether an existing path has aliases to the same underlying file.
+
+    A missing output is safe to create. Other stat failures propagate so an
+    inconclusive alias check cannot be followed by a report write.
+    """
+    try:
+        return path.stat().st_nlink > 1
+    except FileNotFoundError:
+        return False
+
+
 def _write_output_atomically(output: Path, rendered: str) -> None:
     """Replace output with rendered text only after a sibling temporary write succeeds.
 
@@ -883,10 +895,16 @@ def _write_output_atomically(output: Path, rendered: str) -> None:
         prefix=f".{output.name}.",
         suffix=".tmp",
     )
-    os.close(descriptor)
     temporary = Path(temporary_name)
     try:
-        temporary.write_text(rendered, encoding="utf-8")
+        try:
+            temporary_stream = os.fdopen(descriptor, "wb")
+        except BaseException:
+            os.close(descriptor)
+            raise
+        with temporary_stream:
+            temporary_stream.write(rendered.encode("utf-8"))
+            temporary_stream.flush()
         os.replace(temporary, output)
     finally:
         try:
@@ -911,10 +929,12 @@ def generate_report(
     current UTC time. include_future_ideas explicitly adds the lightweight
     backlog/future-ideas inventory; the default ordinary scan does not read or
     count that folder. Output is always rejected when its lexical path is inside
-    backlog/future-ideas, its resolved destination enters that folder, or it is
-    a hard-link alias of any backlog source. Source backlog files are read but
-    never modified. A sibling temporary file preserves prior output until an
-    atomic replacement succeeds. Invalid scanned content is rendered as
+    backlog/future-ideas, its resolved destination enters that folder, or an
+    existing output has multiple hard links. The default mode neither
+    enumerates nor stats backlog/future-ideas; only include_future_ideas opens
+    that store. Source backlog files are read but never modified. A still-open
+    sibling temporary descriptor receives the report bytes before an atomic
+    replacement preserves prior output. Invalid scanned content is rendered as
     findings; missing input, unsafe output, and I/O failures propagate to the
     caller.
     """
@@ -929,9 +949,7 @@ def generate_report(
         )
     )
     resolved_output = output.resolve()
-    resolved_future_ideas_root = (
-        resolved_root / "backlog" / FUTURE_IDEAS_FOLDER
-    ).resolve()
+    resolved_future_ideas_root = resolved_root / "backlog" / FUTURE_IDEAS_FOLDER
     try:
         resolved_output.relative_to(resolved_future_ideas_root)
     except ValueError:
@@ -950,6 +968,10 @@ def generate_report(
             "Output path cannot be located inside backlog/future-ideas: "
             f"{lexical_output}"
         )
+    if _has_multiple_hard_links(resolved_output):
+        raise ValueError(
+            f"Output path would overwrite a backlog source: {resolved_output}"
+        )
     timestamp = generated_at or datetime.now(timezone.utc).isoformat(timespec="seconds")
     items, scanned, ignored, scope_findings = _read_items(resolved_root)
     future_ideas: list[_FutureIdea] = []
@@ -962,9 +984,6 @@ def generate_report(
     scanned_sources = {resolved_root / item.path for item in items}
     scanned_sources.update(resolved_root / idea.path for idea in future_ideas)
     scanned_sources.update(resolved_root / path for path in ignored)
-    ideas_root = resolved_root / "backlog" / FUTURE_IDEAS_FOLDER
-    if ideas_root.is_dir():
-        scanned_sources.update(ideas_root.rglob("*.md"))
     if resolved_output in {path.resolve() for path in scanned_sources} or any(
         _same_existing_file(resolved_output, path) for path in scanned_sources
     ):

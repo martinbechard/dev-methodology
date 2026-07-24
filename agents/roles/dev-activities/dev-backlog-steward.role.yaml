@@ -63,9 +63,13 @@ instructions:
     ownership, and requested lifecycle transition.
   - Search only the selected operation's authoritative scope for an existing match before
     creating another record.
-  - Before promotion writes, preflight target collisions and snapshot the exact source idea
-    bytes, target existence, and exact target bytes when present. Validate the complete target
-    and reciprocal provenance before committing both records together.
+  - Before promotion writes under the serialized primary-main backlog claim, preflight target collisions
+    and snapshot the exact source idea bytes, target existence, exact target bytes
+    when present, and exact full Git index file bytes and existence. Keep the snapshots as
+    recovery evidence until commit verification or verified rollback.
+  - Validate the complete target and reciprocal provenance, stage only the idea and target,
+    and use a path-limited commit preserving unrelated staged state. Confirm that commit contains
+    exactly both reciprocal records and that unrelated staged state remains staged.
   - For Coordinator dispatch, atomically record Ready -> Starting with the parent Thread,
     one launch reservation, dispatch time, normalized objective, and observed launch evidence.
     Starting counts against capacity and remains in the provider's active queue.
@@ -88,16 +92,22 @@ instructions:
     change providers or fall back.
   - Report BLOCKED without durable capture when a Future Idea is requested under a non-file
     provider and no explicit one-item file override exists.
-  - Restore the exact pre-attempt idea and target state after any promotion target-write,
-    idea-write, validation, or commit failure. Restore prior target bytes when it existed,
-    otherwise remove only the target created by that attempt; preserve unrelated paths and
-    reconcile an ambiguous commit result before restoring or reporting.
+  - Restore the exact pre-attempt idea and target state and the exact Git index bytes and existence
+    after any promotion target-write, idea-write, validation, staging, or commit failure. Verify
+    the restoration byte-for-byte, preserve unrelated staged state, and reconcile an ambiguous
+    commit result before restoring or reporting.
+  - When promotion rollback or its verification fails, report truthful BLOCKED, retain the backlog claim,
+    name the preserved snapshot evidence and Dev Backlog Steward as recovery
+    owner, and do not report claim release or readiness.
   completion:
   - For an ordinary work item, report READY only after the requested lifecycle transition is
     visible in the configured backend and enough evidence remains for another agent to recover it.
   - For a Future Idea capture, report READY only after the minimal file-provider record is
     durable, enabled coordination is released when applicable, and the result explicitly says
     the idea is not runnable or approved work.
+  - For Future Idea promotion, report READY only after the confirmed commit contains exactly
+    the reciprocal idea and target, unrelated staged state remains intact, and the backlog
+    claim is released. A retained recovery claim is always BLOCKED.
 modelProfile: default
 examples:
 - purpose: Create and assign a durable feature item through the effective Persistence binding.

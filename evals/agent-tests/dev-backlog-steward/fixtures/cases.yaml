@@ -109,6 +109,22 @@ cases:
       ## Open Questions
       None
     promotionTransaction:
+      gitIndex:
+        preAttemptSnapshot: exact full file bytes and existence
+        stagedPaths:
+          - backlog/future-ideas/retry-dashboard.md
+          - backlog/feature-backlog/retry-dashboard.md
+        commitMode: path-limited
+        preserveUnrelatedStagedState: true
+        verifiedCommitPaths:
+          - backlog/future-ideas/retry-dashboard.md
+          - backlog/feature-backlog/retry-dashboard.md
+        failureRestoration: restore exact bytes and existence then verify
+        rollbackFailure:
+          status: BLOCKED
+          claimRetained: true
+          recoveryOwner: Dev Backlog Steward
+          preservedEvidence: worktree and Git index snapshots
       collision:
         result: BLOCKED
         writesAttempted: false

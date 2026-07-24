@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import importlib.util
+import os
 import subprocess
 import sys
 import tempfile
@@ -194,6 +195,57 @@ Summary for {title}.
         self.assertIn("<span>Active typed items</span><strong>1</strong>", explicit)
         self.assertIn("<span>Runnable now</span><strong>1</strong>", explicit)
         self.assertIn("<span>Holding</span><strong>1</strong>", explicit)
+
+    def test_default_report_does_not_enumerate_read_or_stat_future_ideas(self) -> None:
+        """The excluded Future Ideas store remains completely untouched by default."""
+        self.write_item(
+            "backlog/feature-backlog/ready.md",
+            title="Ready Work",
+            status="Ready",
+            item_type="Feature",
+        )
+        self.write_idea(
+            "backlog/future-ideas/unscanned.md",
+            title="Unscanned",
+        )
+        original_rglob = Path.rglob
+        original_read_text = Path.read_text
+        original_stat = Path.stat
+
+        def is_idea_path(path: Path) -> bool:
+            parts = path.parts
+            return any(
+                parts[index : index + 2] == ("backlog", "future-ideas")
+                for index in range(len(parts) - 1)
+            )
+
+        def reject_idea_rglob(path: Path, pattern: str):
+            if is_idea_path(path):
+                raise AssertionError("default report enumerated Future Ideas")
+            return original_rglob(path, pattern)
+
+        def reject_idea_read(
+            path: Path, *args: object, **kwargs: object
+        ) -> str:
+            if is_idea_path(path):
+                raise AssertionError("default report read Future Ideas")
+            return original_read_text(path, *args, **kwargs)
+
+        def reject_idea_stat(
+            path: Path, *args: object, **kwargs: object
+        ) -> os.stat_result:
+            if is_idea_path(path):
+                raise AssertionError("default report stated Future Ideas")
+            return original_stat(path, *args, **kwargs)
+
+        with (
+            mock.patch.object(Path, "rglob", reject_idea_rglob),
+            mock.patch.object(Path, "read_text", reject_idea_read),
+            mock.patch.object(Path, "stat", reject_idea_stat),
+        ):
+            rendered = self.generate()
+
+        self.assertNotIn("Unscanned", rendered)
 
     def test_promoted_ideas_validate_active_holding_and_user_action_targets(self) -> None:
         """Promotion accepts complete targets in each deliberate destination."""
@@ -1039,7 +1091,7 @@ Do not proceed.
     def test_atomic_output_write_failure_preserves_prior_report_and_cleans_temp(
         self,
     ) -> None:
-        """A temporary-file write failure leaves the existing report untouched."""
+        """A still-open descriptor write failure preserves source and prior report."""
         self.write_item(
             "backlog/feature-backlog/ready.md",
             title="Ready",
@@ -1055,14 +1107,85 @@ Do not proceed.
         self.output.parent.mkdir(parents=True)
         self.output.write_bytes(b"prior report bytes")
 
-        with mock.patch.object(
-            Path, "write_text", side_effect=OSError("injected output write failure")
-        ):
+        class FailingWriter:
+            """Own and close the mkstemp descriptor while injecting a write failure."""
+
+            def __init__(self, descriptor: int) -> None:
+                self.descriptor = descriptor
+
+            def __enter__(self) -> "FailingWriter":
+                return self
+
+            def __exit__(
+                self,
+                exc_type: type[BaseException] | None,
+                exc_value: BaseException | None,
+                traceback: object,
+            ) -> None:
+                os.close(self.descriptor)
+
+            def write(self, content: bytes) -> int:
+                raise OSError("injected output write failure")
+
+        def failing_fdopen(
+            descriptor: int, mode: str, **kwargs: object
+        ) -> FailingWriter:
+            self.assertEqual("wb", mode)
+            self.assertEqual({}, kwargs)
+            return FailingWriter(descriptor)
+
+        with mock.patch.object(REPORT.os, "fdopen", side_effect=failing_fdopen):
             with self.assertRaisesRegex(OSError, "injected output write failure"):
                 REPORT.generate_report(self.root, self.output)
 
         self.assertEqual(idea_before, idea.read_bytes())
         self.assertEqual(b"prior report bytes", self.output.read_bytes())
+        self.assertEqual([], list(self.output.parent.glob(".*.tmp")))
+
+    def test_atomic_output_never_reopens_the_mkstemp_pathname(self) -> None:
+        """Report bytes flow through mkstemp's descriptor without pathname reopening."""
+        self.write_item(
+            "backlog/feature-backlog/ready.md",
+            title="Ready",
+            status="Ready",
+            item_type="Feature",
+        )
+        self.output.parent.mkdir(parents=True)
+        self.output.write_bytes(b"prior report bytes")
+        original_open = Path.open
+        original_write_text = Path.write_text
+        original_mkstemp = REPORT.tempfile.mkstemp
+        created_temporaries: list[Path] = []
+
+        def record_mkstemp(*args: object, **kwargs: object) -> tuple[int, str]:
+            descriptor, temporary_name = original_mkstemp(*args, **kwargs)
+            created_temporaries.append(Path(temporary_name))
+            return descriptor, temporary_name
+
+        def reject_temp_open(
+            path: Path, *args: object, **kwargs: object
+        ):
+            if path in created_temporaries:
+                raise AssertionError("temporary pathname was reopened")
+            return original_open(path, *args, **kwargs)
+
+        def reject_temp_write_text(
+            path: Path, *args: object, **kwargs: object
+        ) -> int:
+            if path in created_temporaries:
+                raise AssertionError("temporary pathname was reopened")
+            return original_write_text(path, *args, **kwargs)
+
+        with (
+            mock.patch.object(
+                REPORT.tempfile, "mkstemp", side_effect=record_mkstemp
+            ),
+            mock.patch.object(Path, "open", reject_temp_open),
+            mock.patch.object(Path, "write_text", reject_temp_write_text),
+        ):
+            REPORT.generate_report(self.root, self.output)
+
+        self.assertIn(b"<!doctype html>", self.output.read_bytes())
         self.assertEqual([], list(self.output.parent.glob(".*.tmp")))
 
     def test_atomic_output_replace_failure_preserves_prior_report_and_cleans_temp(

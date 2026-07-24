@@ -3846,6 +3846,12 @@ class BundleContentTests(unittest.TestCase):
         role_text = (
             ROLES_ROOT / "dev-activities" / "dev-backlog-steward.role.yaml"
         ).read_text(encoding="utf-8")
+        readme_text = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
+        provider_contract_text = (
+            REPOSITORY_ROOT
+            / "design"
+            / "work-item-provider-and-completion-contracts.md"
+        ).read_text(encoding="utf-8")
         for required_phrase in (
             "## Blocked Handoff And Resumption",
             "replace the prior owner with Owner: Unowned",
@@ -3930,6 +3936,11 @@ class BundleContentTests(unittest.TestCase):
             "including Open Questions",
             "one failure-atomic promotion",
             "remove only the target newly created by this promotion attempt",
+            "exact full Git index file bytes and existence",
+            "Stage exactly the idea and target paths",
+            "path-limited commit",
+            "contains exactly both reciprocal records",
+            "retain the serialized backlog claim",
         ):
             with self.subTest(create_future_ideas_contract=required_phrase):
                 self.assertIn(required_phrase, create_file_text)
@@ -3951,9 +3962,23 @@ class BundleContentTests(unittest.TestCase):
             "include lifecycle state, ownership, and dependencies only for ordinary work",
             "preflight target collisions",
             "Restore the exact pre-attempt idea and target state",
+            "exact full Git index file bytes and existence",
+            "preserving unrelated staged state",
+            "retain the backlog claim",
         ):
             with self.subTest(steward_future_ideas_branch=required_phrase):
                 self.assertIn(required_phrase, role_text)
+        for documentation_text in (readme_text, provider_contract_text):
+            for required_phrase in (
+                "exact full Git index file bytes and existence",
+                "path-limited commit",
+                "unrelated staged state",
+                "retain the backlog claim",
+            ):
+                with self.subTest(
+                    future_ideas_documentation=required_phrase
+                ):
+                    self.assertIn(required_phrase, documentation_text)
         self.assertTrue((suite_root / "contract_harness.py").is_file())
         judge_text = (suite_root / "agents" / "judge.toml").read_text(
             encoding="utf-8"

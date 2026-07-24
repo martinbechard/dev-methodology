@@ -185,6 +185,8 @@ python3 scripts/generate-backlog-report.py --output /path/to/backlog-report.html
 
 The explicit view lists Future Ideas separately. Each idea needs only a title, Synopsis, and Origin or Rationale; Notes and a free-text Revisit Trigger are optional. A promoted idea remains in place with Promoted To and the complete promoted work item carries the exact source idea path in its Source Evidence. Promotion Completion is direct-main, feature-branch, or UNSET. Holding accepts an underlying dispatchable Type or the Holding Type; User Action Required retains its underlying dispatchable Type.
 
+Promotion is serialized under the primary-main backlog claim. Before mutation, the steward snapshots exact idea and target bytes and existence plus the exact full Git index file bytes and existence. It stages the reciprocal pair only, uses a path-limited commit, verifies that commit contains exactly both records, and leaves unrelated staged state intact. A failed operation restores and verifies both worktree paths and the Git index. If restoration cannot be verified, the steward reports BLOCKED, names the preserved evidence and recovery owner, and must retain the backlog claim rather than claiming release or readiness.
+
 The report is read-only. It does not approve user-action items, mutate backlog files, acquire work, or dispatch agents.
 
 ## Scoped Target Deployment

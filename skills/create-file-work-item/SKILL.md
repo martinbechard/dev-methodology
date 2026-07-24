@@ -81,14 +81,18 @@ Promote an idea only through a deliberate user-authorized operation:
 
 1. Read the retained source idea, resolve its canonical regular-file authority, and search ordinary queues for an existing matching work item.
 2. Resolve the intended canonical target path and preflight target collisions before any promotion write. An existing target or matching ordinary work item blocks promotion without changing either record.
-3. Snapshot the exact pre-attempt source idea bytes, target existence, and exact target bytes when it exists.
+3. Hold the serialized primary-main backlog claim. Snapshot the exact pre-attempt source idea bytes, target existence, exact target bytes when it exists, and the exact full Git index file bytes and existence. Preserve those snapshots as recovery evidence until commit verification or verified rollback.
 4. Create one complete typed work item in its applicable active, Holding, or User Action Required destination with every field and section required by Required Item Shape, including Open Questions, and any destination-specific sections. Holding may retain its underlying dispatchable Type or declare Type: Holding; User Action Required must retain its underlying dispatchable Type.
 5. Set Completion to exactly direct-main, feature-branch, or UNSET.
 6. Include the exact canonical source idea path in the promoted work item's Source Evidence section.
 7. Retain the original idea in backlog/future-ideas and add Promoted To with the promoted item's canonical provider reference.
-8. Validate both resolved regular files, complete item shape, destination rules, and reciprocal provenance, then commit both sides of this provenance link in one short backlog mutation.
+8. Validate both resolved regular files, complete item shape, destination rules, and reciprocal provenance.
+9. Stage exactly the idea and target paths without clearing, replacing, or committing unrelated staged state. Use a path-limited commit for exactly those two paths.
+10. Re-read the confirmed commit and require its changed-path set to contain exactly both reciprocal records. Verify unrelated staged state remains staged before reporting success.
 
-Treat the writes, validation, and commit as one failure-atomic promotion. On any target write, idea write, post-write validation, or commit failure, restore the source idea to its exact pre-attempt bytes. Restore an existing target to its exact pre-attempt bytes, or remove only the target newly created by this promotion attempt. Preserve every unrelated path. When commit dispatch is ambiguous, reconcile repository history before deciding whether restoration is required. Do not report promotion success until the paired commit is confirmed.
+Treat the writes, validation, index changes, and commit as one failure-atomic promotion. On any target write, idea write, post-write validation, staging, or commit failure, restore the source idea to its exact pre-attempt bytes. Restore an existing target to its exact pre-attempt bytes, or remove only the target newly created by this promotion attempt. Restore the exact pre-attempt Git index file bytes and existence so unrelated staged state is byte-for-byte preserved. Verify every restored path and the Git index against the snapshots before releasing the backlog claim. When commit dispatch is ambiguous, reconcile repository history before deciding whether restoration is required.
+
+If restoration or its verification fails, return truthful BLOCKED, retain the serialized backlog claim, name the preserved snapshot evidence and the Dev Backlog Steward recovery owner, and do not claim release or readiness. Do not report promotion success until the confirmed commit contains exactly both reciprocal records and unrelated staged state remains intact.
 
 Promotion does not copy the idea's optional revisit trigger into lifecycle scheduling. The promoted work item receives Status: Ready in its typed active folder when promotion authorizes active work, Status: Holding when the user deliberately defers the recognized work, or Status: User Action Required when a separate genuine user-owned question prevents safe work.
 
