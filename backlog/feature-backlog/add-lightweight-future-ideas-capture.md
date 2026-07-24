@@ -1,6 +1,6 @@
 # Add Lightweight Future Ideas Capture
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -32,6 +32,16 @@ Completion: direct-main
 - Owner: Unowned.
 - Claim: None.
 - Next action: Parent Dev Backlog Coordinator may reserve Ready -> Starting for one fresh root Dev Orchestrator; this recovery does not create a runtime Thread or delivery ownership.
+
+## Starting Reservation — 2026-07-24
+
+- Parent reservation: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Backlog claim: steward-start-future-ideas-20260724, acquired event 8373439e-e5c4-4664-966d-c0b2e3f448d9.
+- Normalized correction objective: Reconcile the approved lightweight Future Ideas workflow onto current main within the recorded exact approved scope; correct the provider-boundary and output-contract findings, complete fresh independent review and focused verification, and do not integrate or claim completion until that evidence exists.
+- Intended root owner: One fresh Dev Orchestrator root Agent, to be created and accepted separately. No runtime Thread has been created or accepted by this reservation.
+- Historical owner boundary: Task 019f85c8-6274-7593-b073-dd8b12b7b079 is notLoaded, its historical worktree /Users/martinbechard/.codex/worktrees/ceb0/dev-methodology is removed, and it is not the fresh owner.
+- Owner: Parent Dev Backlog Coordinator reservation only; delivery ownership remains unassigned.
+- Next action: The intended fresh root Dev Orchestrator may accept Starting -> Running only after its canonical runtime Thread exists and records new delivery ownership.
 
 ## Delivery Execution / Ownership
 
