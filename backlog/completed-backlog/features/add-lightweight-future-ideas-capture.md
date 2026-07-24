@@ -1,14 +1,25 @@
 # Add Lightweight Future Ideas Capture
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/add-lightweight-future-ideas-capture.md
+Provider Reference: backlog/completed-backlog/features/add-lightweight-future-ideas-capture.md
 
 Completion: direct-main
+
+## Terminal Provider Completion — 2026-07-24
+
+- Completion authority: canonical task/thread 019f9620-a737-7300-830c-d2fe1cc045a0; parent coordinator 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a. Commit disposition is READY and direct-main observation exists.
+- Delivery source: branch codex/future-ideas-current-main-20260724 at /Users/martinbechard/.codex/worktrees/727b/dev-methodology. The reviewed four-commit linear candidate chain starts at series base/current-main parent 9f77a368e55f65f4e4d637d662e560913ae2c68b and ends at accepted candidate, delivery, and main commit 14f757594cb4551613c87f811dc0e3f460f06575.
+- Integration: direct-main fast-forward completed; main observation and graph reachability were confirmed. Integration claim acquired as event 0faa724e-f361-4d27-94af-af4cc2497550 and released as event 49cf305c-3097-44bf-85da-7cb89acf9031; the registry was empty before provider completion.
+- Independent acceptance: final fresh methodology review APPROVED, final fresh code review APPROVED with no candidate-caused findings, and fresh Dev Verifier disposition VERIFIED/READY.
+- Verification: source evidence records 35 reporter, 13 steward real-Git, and 3 focused bundle passes. The full bundle has 114 checks with four identical baseline failures reproduced on 9f77; changed skills validate; role, skill, adapter, manifest, explorer, hierarchy, and support freshness were accepted; live default excludes and opt-in includes Future Ideas; Git diff checks and seven code headers pass. Post-integration checks repeated 35+13+3 and the focused checks on main.
+- Artifact ownership: released claims include original c311b554-1a87-474a-afaa-968dfd4f1021 and corrections 7213dfe0-49e9-4a20-8b9e-00442ab9cc8c, e3022f28-b117-491b-92ca-e0d8af102588, and 2811c562-5c76-4c31-889e-df200461df4a; the final registry is empty.
+- Governed-precheck process incident: correction cycle 3 initially changed skills/manage-file-work-items/SKILL.md without its exact pre-mutation check. Work stopped and captured the one-line diff; the parent acknowledged bounded recovery; the prospective check returned ALLOWED, not retroactive authorization; the file was restored to cycle baseline 50d00082 and verified as blob 7f3072a3..., then the intended one-line change was reapplied under the valid receipt. Final reviewers approved immutable bytes while explicitly not retroactively authorizing the incident.
+- Scoped inherited warning: unchanged design/generated/template-definitions.js and the exact four full-bundle failures remain inherited debt, with no candidate regression. Campaign-wide agent catalog remains intentionally deferred to the parent final campaign gate and is not part of this item.
 
 ## Discovery Execution
 
