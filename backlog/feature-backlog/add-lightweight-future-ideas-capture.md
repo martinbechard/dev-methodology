@@ -1,6 +1,6 @@
 # Add Lightweight Future Ideas Capture
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -23,6 +23,15 @@ Completion: direct-main
 - Running-record claim: start-future-ideas-019f85c8, acquired event e227f815-0a32-41f5-9753-606238d66788.
 - Open issues: No user-action issue remains. Implementation must stay within the approved exact scope.
 - Accepted candidate: Pending.
+
+## Ready Recovery — 2026-07-24
+
+- Recovery authority: Parent coordinator thread 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a directed a fresh dispatch after reconciling this item's recorded approvals and unblock condition.
+- Approval reconciliation: The original 2026-07-22 exact governed-source approval remains recorded for skills/create-file-work-item/SKILL.md, skills/manage-file-work-items/SKILL.md, skills/codex-workitem-coordination/SKILL.md, and agents/roles/dev-activities/dev-backlog-steward.role.yaml. The separately recorded 2026-07-22 expansion remains limited to design/agent-skill-hierarchy.svg and design/generated/agent-skill-explorer-data.js.
+- Unblock reconciliation: The required fresh owner and correction dispatch are now authorized; preserve the exact approved scope, prior candidate and review history, and the requirement for fresh independent review and focused verification before integration.
+- Owner: Unowned.
+- Claim: None.
+- Next action: Parent Dev Backlog Coordinator may reserve Ready -> Starting for one fresh root Dev Orchestrator; this recovery does not create a runtime Thread or delivery ownership.
 
 ## Delivery Execution / Ownership
 
