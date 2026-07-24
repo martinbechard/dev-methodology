@@ -9,10 +9,10 @@ target:
   requiredSkills: [manage-file-work-items, structured-explanation]
   conditionalSkills:
     organise-project-files: Backlog work creates a file or directory.
-    create-file-work-item: An incoming request becomes a typed file-provider item.
+    create-file-work-item: An incoming request becomes a typed file-provider item or an explicitly requested file-provider Future Idea.
     agent-claim: Work is claimed, resumed, or exclusively assigned.
   allowedAgentDependencies: []
-  requiredOutputs: [backlog item or status update, ownership record, completion or blocked summary]
+  requiredOutputs: ["backlog item, Future Idea, or status update", ownership record, completion or blocked summary]
 projectAgents:
   supervisor: agents/supervisor.toml
   judge: agents/judge.toml

@@ -59,3 +59,50 @@ cases:
     otherFailedClaimOutcomes: [INVALID_SCOPE, DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED]
     requiredResult: byte-for-byte unchanged
     itemBefore: *blocked-resumption-item
+  future-ideas-capture-and-promotion:
+    provider: file
+    nonFileProviderWithoutOverride: github
+    nonFileProviderResult: BLOCKED with no issue and no shadow file
+    explicitFileOverrideResult: capture under backlog/future-ideas
+    ideaPath: backlog/future-ideas/retry-dashboard.md
+    promotedWorkItemPath: backlog/feature-backlog/retry-dashboard.md
+    ordinaryScanIncludesIdea: false
+    expectedOutput: backlog item, Future Idea, or status update
+    ideaBefore: |
+      # Retry Dashboard
+      ## Synopsis
+      Consider a dashboard for retry visibility.
+      ## Origin or Rationale
+      Operators currently inspect several separate logs.
+      ## Revisit Trigger
+      Revisit when retry observability becomes planned work.
+    ideaAfter: |
+      # Retry Dashboard
+      Promoted To: backlog/feature-backlog/retry-dashboard.md
+      ## Synopsis
+      Consider a dashboard for retry visibility.
+      ## Origin or Rationale
+      Operators currently inspect several separate logs.
+      ## Revisit Trigger
+      Revisit when retry observability becomes planned work.
+    promotedWorkItem: |
+      # Retry Dashboard
+      Status: Ready
+      Type: Feature
+      Provider: file
+      Provider Reference: backlog/feature-backlog/retry-dashboard.md
+      Completion: direct-main
+      ## Summary
+      Deliver retry visibility.
+      ## Context
+      The promoted idea is now authorized work.
+      ## Source Evidence
+      - backlog/future-ideas/retry-dashboard.md
+      ## Requirements
+      - Define the operator view.
+      ## Acceptance Criteria
+      - Operators can inspect retry status.
+      ## Dependencies
+      None
+      ## Verification
+      - Run focused behavior checks.

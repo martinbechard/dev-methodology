@@ -4258,7 +4258,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "github-work-item-provider",
         "provider-placeholder-matrix"
       ],
-      "description": "Creates and manages durable work items through the effective Persistence-selected skills while preserving ownership, lifecycle, and recovery evidence.",
+      "description": "Routes ordinary durable work through the effective Persistence-selected skills, while capturing or managing lightweight Future Ideas only through the file-provider path or an explicit one-item file override.",
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [

@@ -44,7 +44,7 @@ Use the effective Persistence-selected management skill to update a provider rec
 
 Obtain queue inventory, lifecycle counts, provider identities, and dispatchable state only by applying the effective Persistence-selected management skill.
 
-- Provider file: treat repository backlog paths as provider identities and use short backlog claims only for file-provider mutations.
+- Provider file: treat ordinary repository backlog paths as provider identities and use short backlog claims only for file-provider mutations. Do not scan or count backlog/future-ideas unless the parent explicitly requests ideation or promotion.
 - Provider github: use GitHub issue identities and provider lifecycle evidence; do not create or inspect file backlog paths.
 - Provider gitlab: use GitLab issue identities and provider lifecycle evidence; do not translate them into GitHub or file records.
 - Provider azure-devops or jira: apply the selected placeholder management skill, preserve its BLOCKED zero-mutation result, and do not fall back.
@@ -61,7 +61,9 @@ For a provider that supports queue inventory and lifecycle transitions:
 6. Dispatch only work that can begin implementation or another bounded delivery phase. Do not create a Thread merely to wait for approval, a dependency, a reviewer, resource ownership, or a delivery window.
 7. When an item leaves Starting or Running, fill the active-capacity vacancy promptly through the same Ready -> Starting reservation sequence.
 
-Blocked, User Action Required, Holding, Awaiting Review, Completed, Failed, and Abandoned items do not count toward ten. If fewer than ten eligible items exist, activate all eligible items and report the shortage instead of manufacturing placeholder work. Provider none does not synthesize a queue or a target of ten from Thread state.
+Blocked, User Action Required, Holding, Awaiting Review, Completed, Failed, Abandoned, and Future Ideas do not count toward ten. Future Ideas are not work-item states and enter coordination only after deliberate promotion creates a complete typed work item. If fewer than ten eligible items exist, activate all eligible items and report the shortage instead of manufacturing placeholder work. Provider none does not synthesize a queue or a target of ten from Thread state.
+
+List or validate backlog/future-ideas only when the parent request explicitly includes ideation or promotion and file Persistence applies to that operation. A revisit trigger is free text and never schedules a Thread, fills capacity, or authorizes unattended work.
 
 ## Dispatch Reconciliation
 

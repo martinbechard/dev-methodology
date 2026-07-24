@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Generates a deterministic, self-contained HTML view of a repository backlog.
-# Governing backlog item: backlog/feature-backlog/add-styled-backlog-report-with-user-input.md
+# Summary: Generates a deterministic, self-contained HTML view of repository work items and explicitly requested Future Ideas.
+# Governing backlog items: backlog/feature-backlog/add-styled-backlog-report-with-user-input.md and backlog/feature-backlog/add-lightweight-future-ideas-capture.md
 
 """Generate an offline HTML report from the repository backlog."""
 
@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import os
 import re
 import subprocess
 from collections import Counter
@@ -34,6 +35,10 @@ SCAN_FOLDERS = (
     "completed-backlog",
     "failed-backlog",
 )
+FUTURE_IDEAS_FOLDER = "future-ideas"
+FUTURE_IDEA_REQUIRED_SECTIONS = ("Synopsis", "Origin or Rationale")
+FUTURE_IDEA_PROMOTION_QUEUES = {"active", "holding", "user-action-required"}
+ALLOWED_COMPLETIONS = {"direct-main", "feature-branch", "UNSET"}
 REQUIRED_SECTIONS = (
     "Summary",
     "Context",
@@ -53,10 +58,12 @@ ALLOWED_TYPES = {"Defect", "Feature", "Analysis", "Investigation", "Holding"}
 DISPATCHABLE_TYPES = {"Defect", "Feature", "Analysis", "Investigation"}
 ALLOWED_STATUSES = {
     "Ready",
+    "Starting",
     "Claimed",
     "Running",
     "Blocked",
     "User Action Required",
+    "Awaiting Review",
     "Target Merge Pending",
     "Completed",
     "Failed",
@@ -84,11 +91,29 @@ class _Item:
     priority: int = 10**9
     question: str = ""
     resolution: str = ""
+    provider: str = ""
+    provider_reference: str = ""
+    completion: str = ""
+    source_evidence: str = ""
     missing: list[str] = field(default_factory=list)
     anomalies: list[str] = field(default_factory=list)
     unmet_dependencies: list[str] = field(default_factory=list)
     satisfied_dependencies: list[str] = field(default_factory=list)
     eligible: bool = False
+    promotion_complete: bool = False
+    authority_valid: bool = True
+
+
+@dataclass
+class _FutureIdea:
+    path: str
+    title: str
+    synopsis: str
+    origin: str
+    notes: str
+    revisit_trigger: str
+    promoted_to: str
+    anomalies: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -200,24 +225,35 @@ def _series_orders(
     orders: dict[str, tuple[str, int]] = {}
     ignored: list[str] = []
     findings: list[tuple[str, str]] = []
-    for index in sorted(backlog_root.rglob("index.md")):
-        relative_index = index.relative_to(backlog_root.parent).as_posix()
-        ignored.append(relative_index)
-        try:
-            content = index.read_text(encoding="utf-8")
-        except (OSError, UnicodeError) as exc:
-            findings.append(
-                (relative_index, f"Unreadable series index: {type(exc).__name__}: {exc}")
-            )
+    for folder_name in SCAN_FOLDERS:
+        folder = backlog_root / folder_name
+        if not folder.is_dir():
             continue
-        series = index.parent.name
-        for position, target in enumerate(MARKDOWN_LINK_PATTERN.findall(content), start=1):
-            child = (index.parent / target).resolve()
+        for index in sorted(folder.rglob("index.md")):
+            relative_index = index.relative_to(backlog_root.parent).as_posix()
+            ignored.append(relative_index)
             try:
-                relative_child = child.relative_to(backlog_root.parent.resolve()).as_posix()
-            except ValueError:
+                content = index.read_text(encoding="utf-8")
+            except (OSError, UnicodeError) as exc:
+                findings.append(
+                    (
+                        relative_index,
+                        f"Unreadable series index: {type(exc).__name__}: {exc}",
+                    )
+                )
                 continue
-            orders.setdefault(relative_child, (series, position))
+            series = index.parent.name
+            for position, target in enumerate(
+                MARKDOWN_LINK_PATTERN.findall(content), start=1
+            ):
+                child = (index.parent / target).resolve()
+                try:
+                    relative_child = child.relative_to(
+                        backlog_root.parent.resolve()
+                    ).as_posix()
+                except ValueError:
+                    continue
+                orders.setdefault(relative_child, (series, position))
     return orders, ignored, findings
 
 
@@ -253,6 +289,21 @@ def _expected_type(relative: Path, queue: str) -> str:
     return ""
 
 
+def _is_resolved_regular_file_within(
+    path: Path,
+    authority_root: Path,
+    repository_root: Path,
+) -> bool:
+    """Return whether path resolves to a regular file inside both authority roots."""
+    try:
+        resolved_path = path.resolve(strict=True)
+        resolved_path.relative_to(authority_root.resolve(strict=True))
+        resolved_path.relative_to(repository_root.resolve(strict=True))
+    except (OSError, RuntimeError, ValueError):
+        return False
+    return resolved_path.is_file()
+
+
 def _read_items(
     repository_root: Path,
 ) -> tuple[list[_Item], list[str], list[str], list[tuple[str, str]]]:
@@ -274,11 +325,24 @@ def _read_items(
         for path in sorted(folder.rglob("*.md")):
             relative = path.relative_to(repository_root)
             relative_text = relative.as_posix()
+            queue = _queue_for(relative)
             if path.name in {"README.md", "index.md"}:
                 if relative_text not in ignored:
                     ignored.append(relative_text)
                 continue
-            queue = _queue_for(relative)
+            if not _is_resolved_regular_file_within(
+                path, folder, repository_root
+            ):
+                item = _Item(
+                    relative_text, path.stem, path.stem, queue, "", "", "", []
+                )
+                item.authority_valid = False
+                item.anomalies.append(
+                    "Backlog item resolves outside canonical backlog authority: "
+                    f"{relative_text}."
+                )
+                items.append(item)
+                continue
             try:
                 title, fields, sections = _parse_document(path)
             except (OSError, UnicodeError) as exc:
@@ -310,6 +374,10 @@ def _read_items(
                 priority=priority,
                 question=_plain_text(sections.get("Question for the User", "")),
                 resolution=_plain_text(sections.get("Resolution", "")),
+                provider=fields.get("Provider", ""),
+                provider_reference=fields.get("Provider Reference", ""),
+                completion=fields.get("Completion", ""),
+                source_evidence=sections.get("Source Evidence", ""),
                 missing=missing,
             )
             expected_type = _expected_type(relative, queue)
@@ -329,6 +397,7 @@ def _read_items(
                 item.anomalies.append("Migration anomaly: Status Proposed is not an operational state.")
             if item.missing:
                 item.anomalies.append("Missing required fields: " + ", ".join(item.missing) + ".")
+            absent: list[str] = []
             if queue == "user-action-required":
                 absent = [name for name in USER_SECTIONS if not sections.get(name)]
                 if item.status != "User Action Required":
@@ -348,8 +417,150 @@ def _read_items(
                 item.anomalies.append("Completed archive contains an item not declared Completed.")
             if queue == "failed" and item.status not in {"Failed", "Abandoned"}:
                 item.anomalies.append("Failed archive contains an item without Failed or Abandoned status.")
+            promotion_type_valid = item.declared_type in DISPATCHABLE_TYPES or (
+                queue == "holding" and item.declared_type == "Holding"
+            )
+            item.promotion_complete = (
+                not item.missing
+                and promotion_type_valid
+                and item.provider == "file"
+                and item.provider_reference == item.path
+                and item.completion in ALLOWED_COMPLETIONS
+                and bool(item.source_evidence.strip())
+                and (
+                    (
+                        queue == "active"
+                        and expected_type == item.declared_type
+                        and item.status
+                        in {
+                            "Ready",
+                            "Starting",
+                            "Claimed",
+                            "Running",
+                            "Blocked",
+                            "Awaiting Review",
+                            "Target Merge Pending",
+                        }
+                    )
+                    or (queue == "holding" and item.status == "Holding")
+                    or (
+                        queue == "user-action-required"
+                        and item.status == "User Action Required"
+                        and not absent
+                    )
+                )
+            )
             items.append(item)
     return items, scanned, sorted(set(ignored)), scope_findings
+
+
+def _source_evidence_references(section: str, canonical_path: str) -> bool:
+    """Return whether Source Evidence contains one exact canonical path reference."""
+    for line in section.splitlines():
+        candidate = line.strip().lstrip("-* ").strip()
+        if candidate.strip("`") == canonical_path:
+            return True
+        link = DEPENDENCY_LINK_PATTERN.fullmatch(candidate)
+        if link and link.group(1) == canonical_path:
+            return True
+    return False
+
+
+def _read_future_ideas(
+    repository_root: Path,
+    work_items: list[_Item],
+) -> tuple[list[_FutureIdea], list[str], list[str]]:
+    """Read and validate lightweight ideas only for an explicit listing operation."""
+    ideas_root = repository_root / "backlog" / FUTURE_IDEAS_FOLDER
+    if not ideas_root.is_dir():
+        return [], [], []
+    work_items_by_path = {item.path: item for item in work_items}
+    ideas: list[_FutureIdea] = []
+    ignored: list[str] = []
+    for path in sorted(ideas_root.rglob("*.md")):
+        relative_text = path.relative_to(repository_root).as_posix()
+        if path.name in {"README.md", "index.md"}:
+            ignored.append(relative_text)
+            continue
+        if not _is_resolved_regular_file_within(
+            path, ideas_root, repository_root
+        ):
+            idea = _FutureIdea(relative_text, path.stem, "", "", "", "", "")
+            idea.anomalies.append(
+                "Future Idea resolves outside canonical Future Ideas authority: "
+                f"{relative_text}."
+            )
+            ideas.append(idea)
+            continue
+        try:
+            title, fields, sections = _parse_document(path)
+        except (OSError, UnicodeError) as exc:
+            idea = _FutureIdea(relative_text, path.stem, "", "", "", "", "")
+            idea.anomalies.append(
+                f"Unreadable Future Idea: {type(exc).__name__}: {exc}"
+            )
+            ideas.append(idea)
+            continue
+        missing = [
+            name
+            for name in FUTURE_IDEA_REQUIRED_SECTIONS
+            if not sections.get(name)
+        ]
+        if not title:
+            missing.insert(0, "Title")
+        idea = _FutureIdea(
+            path=relative_text,
+            title=title or path.stem,
+            synopsis=_plain_text(sections.get("Synopsis", "")),
+            origin=_plain_text(sections.get("Origin or Rationale", "")),
+            notes=_plain_text(sections.get("Notes", "")),
+            revisit_trigger=_plain_text(sections.get("Revisit Trigger", "")),
+            promoted_to=fields.get("Promoted To", ""),
+        )
+        if missing:
+            idea.anomalies.append(
+                "Missing required idea fields: " + ", ".join(missing) + "."
+            )
+        if idea.promoted_to:
+            target = Path(idea.promoted_to)
+            valid_parts = (
+                not target.is_absolute()
+                and ".." not in target.parts
+                and len(target.parts) >= 3
+                and target.parts[0] == "backlog"
+                and target.suffix == ".md"
+            )
+            target_item = (
+                work_items_by_path.get(idea.promoted_to) if valid_parts else None
+            )
+            if (
+                not valid_parts
+                or target_item is None
+                or target_item.queue not in FUTURE_IDEA_PROMOTION_QUEUES
+            ):
+                idea.anomalies.append(
+                    f"Invalid Promoted To work-item path: {idea.promoted_to}."
+                )
+            elif not target_item.authority_valid:
+                idea.anomalies.append(
+                    "Promotion target resolves outside canonical backlog authority: "
+                    f"{idea.promoted_to}."
+                )
+            else:
+                if not target_item.promotion_complete:
+                    idea.anomalies.append(
+                        "Promotion target is not a complete work item: "
+                        f"{idea.promoted_to}."
+                    )
+                if not _source_evidence_references(
+                    target_item.source_evidence, relative_text
+                ):
+                    idea.anomalies.append(
+                        "Promotion target Source Evidence does not reference "
+                        f"{relative_text}: {idea.promoted_to}."
+                    )
+        ideas.append(idea)
+    return ideas, [ideas_root.relative_to(repository_root).as_posix()], ignored
 
 
 def _reconcile(items: list[_Item]) -> None:
@@ -487,11 +698,52 @@ def _item_card(item: _Item) -> str:
     )
 
 
+def _future_idea_card(idea: _FutureIdea) -> str:
+    """Render one explicitly requested Future Idea without lifecycle badges."""
+    notes = (
+        f'<p class="detail"><strong>Notes:</strong> {_escape(idea.notes)}</p>'
+        if idea.notes
+        else ""
+    )
+    revisit = idea.revisit_trigger or "None recorded"
+    promoted_to = idea.promoted_to or "Not promoted"
+    return (
+        '<article class="item">'
+        '<div class="badges"><span class="badge">Future Idea</span></div>'
+        f'<h3>{_escape(idea.title)}</h3>'
+        f'<p>{_escape(idea.synopsis or "Missing synopsis.")}</p>'
+        f'<p class="detail"><strong>Origin or Rationale:</strong> '
+        f'{_escape(idea.origin or "Missing")}</p>'
+        f"{notes}"
+        f'<p class="detail"><strong>Revisit Trigger:</strong> {_escape(revisit)}</p>'
+        f'<p class="detail"><strong>Promoted To:</strong> {_escape(promoted_to)}</p>'
+        f'<p class="source"><strong>Source:</strong> '
+        f'<code>{_escape(idea.path)}</code></p>'
+        "</article>"
+    )
+
+
 def _section(title: str, description: str, items: Iterable[_Item], empty: str) -> str:
     """Render a named report section and a stable empty state."""
     rendered = "".join(_item_card(item) for item in items)
     body = f'<div class="item-grid">{rendered}</div>' if rendered else f'<p class="empty">{_escape(empty)}</p>'
     return f'<section class="section"><div class="section-head"><div><h2>{_escape(title)}</h2><p>{_escape(description)}</p></div></div>{body}</section>'
+
+
+def _future_ideas_section(ideas: Iterable[_FutureIdea]) -> str:
+    """Render the opt-in idea inventory and its stable empty state."""
+    rendered = "".join(_future_idea_card(idea) for idea in ideas)
+    body = (
+        f'<div class="item-grid">{rendered}</div>'
+        if rendered
+        else '<p class="empty">No Future Ideas are currently recorded.</p>'
+    )
+    return (
+        '<section class="section"><div class="section-head"><div>'
+        '<h2>Future Ideas</h2><p>Explicitly requested lightweight ideas that are '
+        "not approved work, lifecycle items, or unattended dispatch candidates.</p>"
+        f"</div></div>{body}</section>"
+    )
 
 
 def _sort_key(item: _Item) -> tuple[int, str, int, int, str]:
@@ -502,6 +754,8 @@ def _sort_key(item: _Item) -> tuple[int, str, int, int, str]:
 
 def _render_report(
     items: list[_Item],
+    future_ideas: list[_FutureIdea],
+    include_future_ideas: bool,
     scanned: list[str],
     ignored: list[str],
     scope_findings: list[tuple[str, str]],
@@ -519,15 +773,23 @@ def _render_report(
     type_counts = Counter(item.declared_type or "Missing" for item in ordered)
     status_counts = Counter(item.status or "Missing" for item in ordered)
     anomalies = [(item, anomaly) for item in ordered for anomaly in item.anomalies]
-    metrics = (
+    idea_anomalies = [
+        (idea, anomaly) for idea in future_ideas for anomaly in idea.anomalies
+    ]
+    metrics = [
         ("Active typed items", len(active)),
         ("Runnable now", len(runnable)),
         ("Needs your input", len(needs_input)),
         ("Holding", len(holding)),
         ("Completed archive", len(completed)),
         ("Failed archive", len(failed)),
-        ("Validation findings", len(anomalies) + len(scope_findings)),
-    )
+        (
+            "Validation findings",
+            len(anomalies) + len(idea_anomalies) + len(scope_findings),
+        ),
+    ]
+    if include_future_ideas:
+        metrics.insert(4, ("Future ideas", len(future_ideas)))
     metrics_html = "".join(f'<div class="metric"><span>{_escape(label)}</span><strong>{value}</strong></div>' for label, value in metrics)
     count_rows = "".join(
         f'<tr><th scope="row">{_escape(label)}</th><td>{count}</td></tr>'
@@ -540,6 +802,11 @@ def _render_report(
     anomaly_rows = "".join(
         f'<li><strong>{_escape(item.title)}</strong>: {_escape(message)} <code>{_escape(item.path)}</code></li>'
         for item, message in anomalies
+    )
+    anomaly_rows += "".join(
+        f'<li><strong>{_escape(idea.title)}</strong>: {_escape(message)} '
+        f'<code>{_escape(idea.path)}</code></li>'
+        for idea, message in idea_anomalies
     )
     anomaly_rows += "".join(
         f'<li><strong>Scan finding</strong>: {_escape(message)} <code>{_escape(path)}</code></li>'
@@ -577,6 +844,7 @@ def _render_report(
 {_section("Runnable Work", "Ready items whose declared dependencies are satisfied. Workspace claims do not change this lifecycle classification.", runnable, "No items are effectively eligible for dispatch.")}
 {_section("Blocked Work", "Active items with unmet dependencies or a declared Blocked status.", blocked, "No blocked active items.")}
 {_section("Holding", "Visible work intentionally excluded from unattended dispatch.", holding, "No holding items.")}
+{_future_ideas_section(future_ideas) if include_future_ideas else ""}
 {_section("Active Typed Work", "All items found in typed active queues, including running and non-runnable states.", active, "No active typed items.")}
 {_section("Completed Archive", "Successful outcomes found in the completed archive.", completed, "No completed archive items.")}
 {_section("Failed Archive", "Failed or abandoned outcomes found in the failed archive.", failed, "No failed archive items.")}
@@ -586,23 +854,71 @@ def _render_report(
 </main></body></html>"""
 
 
-def generate_report(repository_root: Path, output: Path, generated_at: str | None = None) -> None:
+def generate_report(
+    repository_root: Path,
+    output: Path,
+    generated_at: str | None = None,
+    *,
+    include_future_ideas: bool = False,
+) -> None:
     """Generate a report from repository_root and write it to output.
 
     repository_root must contain a backlog directory. output must not resolve
     to a scanned backlog source or guidance file; its parent directories are
-    created after that validation. generated_at
-    accepts an explicit ISO-8601 snapshot value for reproducible automation and
-    otherwise defaults to the current UTC time. Source backlog files are read
-    but never modified. Invalid backlog content is rendered as findings; a
-    missing backlog root raises ValueError and output failures propagate.
+    created after that validation. generated_at accepts an explicit ISO-8601
+    snapshot value for reproducible automation and otherwise defaults to the
+    current UTC time. include_future_ideas explicitly adds the lightweight
+    backlog/future-ideas inventory; the default ordinary scan does not read or
+    count that folder. Output is always rejected when its lexical path is inside
+    backlog/future-ideas or its resolved destination enters that folder. Source
+    backlog files are read but never modified. Invalid scanned content is
+    rendered as findings; missing input, unsafe output, and I/O failures
+    propagate to the caller.
     """
+    lexical_repository_root = Path(os.path.abspath(os.fspath(repository_root)))
     resolved_root = repository_root.resolve()
+    lexical_output = Path(os.path.abspath(os.fspath(output)))
+    lexical_future_ideas_root = Path(
+        os.path.abspath(
+            os.fspath(
+                lexical_repository_root / "backlog" / FUTURE_IDEAS_FOLDER
+            )
+        )
+    )
+    resolved_output = output.resolve()
+    resolved_future_ideas_root = (
+        resolved_root / "backlog" / FUTURE_IDEAS_FOLDER
+    ).resolve()
+    try:
+        resolved_output.relative_to(resolved_future_ideas_root)
+    except ValueError:
+        pass
+    else:
+        raise ValueError(
+            "Output path cannot resolve inside backlog/future-ideas: "
+            f"{resolved_output}"
+        )
+    try:
+        lexical_output.relative_to(lexical_future_ideas_root)
+    except ValueError:
+        pass
+    else:
+        raise ValueError(
+            "Output path cannot be located inside backlog/future-ideas: "
+            f"{lexical_output}"
+        )
     timestamp = generated_at or datetime.now(timezone.utc).isoformat(timespec="seconds")
     items, scanned, ignored, scope_findings = _read_items(resolved_root)
+    future_ideas: list[_FutureIdea] = []
+    if include_future_ideas:
+        future_ideas, idea_scanned, idea_ignored = _read_future_ideas(
+            resolved_root, items
+        )
+        scanned.extend(idea_scanned)
+        ignored.extend(idea_ignored)
     scanned_sources = {resolved_root / item.path for item in items}
+    scanned_sources.update(resolved_root / idea.path for idea in future_ideas)
     scanned_sources.update(resolved_root / path for path in ignored)
-    resolved_output = output.resolve()
     if resolved_output in {path.resolve() for path in scanned_sources}:
         raise ValueError(f"Output path would overwrite a backlog source: {resolved_output}")
     _reconcile(items)
@@ -610,7 +926,15 @@ def generate_report(repository_root: Path, output: Path, generated_at: str | Non
     snapshot = _Snapshot(
         _source_commit(resolved_root), timestamp, claim_captured_at, claims, claim_status
     )
-    rendered = _render_report(items, scanned, ignored, scope_findings, snapshot)
+    rendered = _render_report(
+        items,
+        future_ideas,
+        include_future_ideas,
+        scanned,
+        ignored,
+        scope_findings,
+        snapshot,
+    )
     resolved_output.parent.mkdir(parents=True, exist_ok=True)
     resolved_output.write_text(rendered, encoding="utf-8")
 
@@ -620,15 +944,26 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     argv is an optional argument sequence used by tests and embedded callers;
     None reads the process arguments. The command writes one explicit output
-    path and returns zero on success. Parsing, input, and I/O errors are exposed
-    to the caller with their original causes.
+    path, includes Future Ideas only when --include-future-ideas is present, and
+    returns zero on success. Parsing, input, and I/O errors are exposed to the
+    caller with their original causes.
     """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repository-root", type=Path, default=Path.cwd(), help="repository containing backlog/")
     parser.add_argument("--output", type=Path, required=True, help="standalone HTML output path")
     parser.add_argument("--generated-at", help="explicit ISO-8601 snapshot time for reproducible output")
+    parser.add_argument(
+        "--include-future-ideas",
+        action="store_true",
+        help="explicitly include and validate backlog/future-ideas",
+    )
     arguments = parser.parse_args(argv)
-    generate_report(arguments.repository_root, arguments.output, arguments.generated_at)
+    generate_report(
+        arguments.repository_root,
+        arguments.output,
+        arguments.generated_at,
+        include_future_ideas=arguments.include_future_ideas,
+    )
     return 0
 
 

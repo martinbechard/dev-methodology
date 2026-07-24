@@ -17,6 +17,7 @@ Manage file-provider work as a visible queue with explicit lifecycle state. Acti
 - When durable provider management is required and the provider is UNSET, ask the user before mutation.
 - When the effective provider is none or another provider, return the provider mismatch without changing backlog or falling back to file storage.
 - Do not create, update, close, reopen, label, or mirror GitHub, GitLab, Azure DevOps, or Jira records.
+- Durable Future Ideas are file-provider-only. With another provider selected, return BLOCKED without capturing, listing, validating, or promoting an idea unless the user explicitly selects file as the one-item provider override for that idea. Never represent a Future Idea as a provider issue or shadow file.
 
 ## File Authority And Resource Coordination
 
@@ -38,12 +39,13 @@ Use these folders when present:
 - backlog/investigation-backlog for active investigations.
 - backlog/user-action-required for visible work whose next safe step requires a user answer.
 - backlog/holding for visible work that should not be dispatched.
+- backlog/future-ideas for lightweight thoughts that are not yet actionable, approved, scheduled, or recognized as work.
 - backlog/completed-backlog grouped by type for delivered work.
 - backlog/failed-backlog grouped by type for failed, incomplete, abandoned, or blocked terminal work.
 
-Active typed folders contain only dispatchable work or work blocked by an explicit non-user dependency. User Action Required and Holding are separate non-dispatchable queues. Completed and failed archives are durable history, not fresh work.
+Active typed folders contain only dispatchable work or work blocked by an explicit non-user dependency. User Action Required and Holding are separate non-dispatchable work queues. Future Ideas is not a work queue or lifecycle state. Completed and failed archives are durable history, not fresh work.
 
-backlog/holding is for intentionally deferred work without an immediate user question.
+backlog/holding is for intentionally deferred work without an immediate user question. It contains already-recognized work; backlog/future-ideas contains possibilities that have not become recognized work.
 
 ## Series Folders
 
@@ -85,6 +87,7 @@ When asked for status:
 - Report invalid, unreadable, duplicated, shadow, or provider-mismatched items rather than silently skipping them.
 - Separate backlog status from unrelated workspace status.
 - Report Status: Proposed as invalid migration debt.
+- Do not scan, validate, count, or report backlog/future-ideas unless the request explicitly opts into Future Ideas, ideation, or promotion.
 
 If closed items remain in active folders, explicit status is the open or closed signal. If the repository moves closed items to archives, archive location is durable outcome evidence.
 
@@ -93,7 +96,7 @@ If closed items remain in active folders, explicit status is the open or closed 
 - Reconcile enabled coordination ownership and interrupted work before assigning new items.
 - Prefer unfinished owned work over new work.
 - Apply configured priority; otherwise prefer defects, features, investigations, then analyses.
-- Exclude User Action Required and Holding from runnable selection and unattended counts.
+- Exclude User Action Required, Holding, and Future Ideas from runnable selection and unattended counts.
 - Do not dispatch items with unmet dependencies or duplicate ownership.
 - Ready -> Starting is the parent Dev Backlog Coordinator's dispatch and capacity-reservation decision. Its Steward child records the parent coordination Thread, one launch reservation, normalized objective, dispatch time, and available launch evidence atomically before the runtime Thread is created.
 - Starting counts against capacity exactly like Running, so ambiguous or slow startup cannot cause over-dispatch.
@@ -104,7 +107,20 @@ If closed items remain in active folders, explicit status is the open or closed 
 - Keep delivery ownership isolated from backlog mutation ownership.
 - Do not own, dispatch, implement, or resolve user-action-required work before the user answers its recorded question.
 
-Do not move an independently identified defect, enhancement, or idea into a typed active folder until the user explicitly authorizes that new work. A direct request or explicit authorization creates Status: Ready even when implementation may later encounter a separate user-owned decision. Only after execution reaches a distinct concrete user-owned question that the original request did not resolve may the same item move from Ready to User Action Required. Ordinary dependencies stay with typed active work.
+Do not move an independently identified defect, enhancement, or idea into a typed active folder until the user explicitly authorizes that new work or deliberately authorizes Future Idea promotion. A direct request or explicit authorization to perform work creates Status: Ready even when implementation may later encounter a separate user-owned decision. A request only to capture an idea does not authorize promotion. Only after execution reaches a distinct concrete user-owned question that the original request did not resolve may the same item move from Ready to User Action Required. Ordinary dependencies stay with typed active work.
+
+## Future Ideas Workflow
+
+- Read backlog/future-ideas only for an explicit listing, ideation, validation, or promotion operation after confirming the file provider applies to that idea.
+- Validate only a title, Synopsis, and Origin or Rationale. Notes and a free-text Revisit Trigger are optional. Do not require ordinary work-item fields or lifecycle evidence.
+- Treat only resolved regular files contained by the canonical backlog/future-ideas root as idea records. Reject symlinked or otherwise resolved paths that escape that authority without reading the external bytes.
+- Report ideas separately from Ready, Starting, Running, Blocked, User Action Required, Holding, terminal, runnable, and unattended counts.
+- Never acquire implementation ownership for an idea or apply a lifecycle transition to it.
+- For deliberate promotion, create a complete typed work item in an active, Holding, or User Action Required destination. Require Completion to be exactly direct-main, feature-branch, or UNSET. Holding accepts either the underlying dispatchable Type or Type: Holding; User Action Required retains the underlying dispatchable Type.
+- Treat only a resolved regular work-item file contained by its canonical backlog queue as a promotion target. Reject a symlinked or otherwise resolved target that escapes authority without reading external bytes.
+- Include the exact retained idea path in the promoted work item's Source Evidence section, and add Promoted To with the canonical work-item reference to the original idea.
+- Preserve the original idea in place after promotion. Do not archive or delete it merely because typed work now exists.
+- Apply the reciprocal provenance update under one short backlog transaction and commit only after duplicate detection succeeds.
 
 ## Transition Evidence
 
@@ -187,7 +203,7 @@ Record the destination as the terminal provider_reference. Preserve enabled coor
 
 ## Reporting
 
-Return provider file; canonical active or archive path; counts by lifecycle state; separate User Action Required questions; next runnable items; dependencies and blockers; owner and canonical task; delivery, review, check, main-observation, and archive evidence; enabled coordination and commit references; invalid or duplicate records; and the next safe action.
+Return provider file; canonical active or archive path; counts by lifecycle state; separate User Action Required questions; next runnable items; dependencies and blockers; owner and canonical task; delivery, review, check, main-observation, and archive evidence; enabled coordination and commit references; invalid or duplicate records; and the next safe action. Only for an explicit file-provider Future Ideas operation, also return separately labelled idea paths, minimal validation findings, revisit triggers, and promotion provenance without adding them to work-item counts.
 
 Keep the report grounded in current files and state, not prior conversation memory.
 

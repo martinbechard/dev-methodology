@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies the Dev Backlog Steward blocked-work resumption evaluation contract.
+# Summary: Verifies Dev Backlog Steward blocked-work resumption and Future Ideas evaluation contracts.
 # Governing design: evals/agent-tests/dev-backlog-steward/skills/dev-backlog-steward-suite-contract/SKILL.md
 # Governing test plan: evals/agent-tests/dev-backlog-steward/scenarios.yaml
 
@@ -55,6 +55,50 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         ):
             with self.subTest(preserved_line=preserved_line):
                 self.assertIn(preserved_line, after)
+
+    def test_future_ideas_case_and_output_contract_are_aligned(self) -> None:
+        """Every suite surface exposes a meaningful Future Idea output contract."""
+        fixture = yaml.safe_load(
+            (SUITE_ROOT / "fixtures" / "cases.yaml").read_text(encoding="utf-8")
+        )["cases"]["future-ideas-capture-and-promotion"]
+        scenarios = yaml.safe_load(
+            (SUITE_ROOT / "scenarios.yaml").read_text(encoding="utf-8")
+        )["scenarios"]
+        scenario = next(
+            entry
+            for entry in scenarios
+            if entry["id"] == "future-ideas-capture-and-promotion"
+        )
+        suite = yaml.safe_load(
+            (SUITE_ROOT / "suite.yaml").read_text(encoding="utf-8")
+        )
+        role = yaml.safe_load(
+            (
+                SUITE_ROOT.parent.parent.parent
+                / "agents"
+                / "roles"
+                / "dev-activities"
+                / "dev-backlog-steward.role.yaml"
+            ).read_text(encoding="utf-8")
+        )
+        expected_output = "backlog item, Future Idea, or status update"
+
+        self.assertEqual("file", fixture["provider"])
+        self.assertEqual("github", fixture["nonFileProviderWithoutOverride"])
+        self.assertIn("BLOCKED", fixture["nonFileProviderResult"])
+        self.assertFalse(fixture["ordinaryScanIncludesIdea"])
+        self.assertNotIn("Status:", fixture["ideaBefore"])
+        self.assertIn("Completion: direct-main", fixture["promotedWorkItem"])
+        self.assertEqual(expected_output, fixture["expectedOutput"])
+        self.assertIn(expected_output, scenario["expectedOutputs"])
+        self.assertIn(expected_output, suite["target"]["requiredOutputs"])
+        self.assertIn(
+            expected_output,
+            [next(iter(entry)) for entry in role["outputContract"]],
+        )
+        self.assertIn(
+            "Return the Future Idea output contract", scenario["requiredBehaviors"]
+        )
 
     def test_blocked_resumption_has_negative_and_positive_scenarios(self) -> None:
         """The suite covers unowned, failed-claim, and successful claim outcomes."""

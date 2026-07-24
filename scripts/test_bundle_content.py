@@ -3829,10 +3829,22 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
 
     def test_dev_backlog_steward_requires_starting_blocked_work_resumption(self) -> None:
-        """The suite makes staged resumption and lossless failure observable."""
+        """The suite covers staged resumption and lightweight Future Ideas."""
         suite_root = AGENT_TEST_SUITES_ROOT / "dev-backlog-steward"
+        create_file_text = (
+            SKILLS_ROOT / "create-file-work-item" / "SKILL.md"
+        ).read_text(encoding="utf-8")
         manage_file_text = (
             SKILLS_ROOT / "manage-file-work-items" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        coordination_text = (
+            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        role = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-backlog-steward.role.yaml"
+        )
+        role_text = (
+            ROLES_ROOT / "dev-activities" / "dev-backlog-steward.role.yaml"
         ).read_text(encoding="utf-8")
         for required_phrase in (
             "## Blocked Handoff And Resumption",
@@ -3886,6 +3898,55 @@ class BundleContentTests(unittest.TestCase):
             "BLOCKED",
             by_id["blocked-failed-claim-resumption"]["expectedTerminalStatus"],
         )
+        future_scenario = by_id["future-ideas-capture-and-promotion"]
+        self.assertEqual("PASS", future_scenario["expectedTerminalStatus"])
+        self.assertIn(
+            "Block non-file capture without creating an issue or shadow file",
+            future_scenario["requiredBehaviors"],
+        )
+        self.assertIn(
+            "Keep Holding as recognized deferred work",
+            future_scenario["requiredBehaviors"],
+        )
+        self.assertIn(
+            "Add Promoted To on the idea and reciprocal Source Evidence on the complete typed work item",
+            future_scenario["requiredBehaviors"],
+        )
+        expected_output = "backlog item, Future Idea, or status update"
+        self.assertIn(expected_output, future_scenario["expectedOutputs"])
+        self.assertIn(
+            expected_output,
+            [next(iter(entry)) for entry in role["outputContract"]],
+        )
+        for required_phrase in (
+            "## Future Ideas Capture",
+            "## Future Idea Promotion",
+            "Durable Future Ideas are available only through the file provider",
+            "Do not require Status, Type, Owner",
+            "Keep revisit triggers as free text",
+            "Retain the original idea in backlog/future-ideas",
+        ):
+            with self.subTest(create_future_ideas_contract=required_phrase):
+                self.assertIn(required_phrase, create_file_text)
+        for required_phrase in (
+            "## Future Ideas Workflow",
+            "Durable Future Ideas are file-provider-only",
+            "Do not scan, validate, count, or report backlog/future-ideas unless",
+            "Report ideas separately from Ready, Starting, Running, Blocked",
+            "Preserve the original idea in place after promotion",
+        ):
+            with self.subTest(manage_future_ideas_contract=required_phrase):
+                self.assertIn(required_phrase, manage_file_text)
+        self.assertIn("Do not scan or count backlog/future-ideas", coordination_text)
+        for required_phrase in (
+            "Routes ordinary durable work through the effective Persistence-selected skills",
+            "Durable Future Ideas are file-provider-only",
+            "For lightweight capture, collect only the minimal Future Idea inputs",
+            "Do not enter ordinary lifecycle processing",
+            "include lifecycle state, ownership, and dependencies only for ordinary work",
+        ):
+            with self.subTest(steward_future_ideas_branch=required_phrase):
+                self.assertIn(required_phrase, role_text)
         self.assertTrue((suite_root / "contract_harness.py").is_file())
         judge_text = (suite_root / "agents" / "judge.toml").read_text(
             encoding="utf-8"
@@ -4635,7 +4696,8 @@ class BundleContentTests(unittest.TestCase):
             "synthetic evaluation boundary",
             "This creation classification remains Ready",
             "do not manufacture a creation-time approval question",
-            "an agent independently identifies a defect, enhancement, or potentially valuable idea",
+            "an agent independently identifies definite work",
+            "Preserve an uncertain possibility as a Future Idea",
             "the user has not requested or authorized that new work",
             "After creation, route a user-requested Ready item",
             "the original request did not resolve",
@@ -7601,7 +7663,7 @@ class BundleContentTests(unittest.TestCase):
                         },
                     )
                 elif entry["id"] == "dev-backlog-steward":
-                    self.assertEqual(6, len(scenarios["scenarios"]))
+                    self.assertEqual(7, len(scenarios["scenarios"]))
                 elif entry["id"] == "project-bootstrapper":
                     self.assertEqual(4, len(scenarios["scenarios"]))
                     self.assertEqual(

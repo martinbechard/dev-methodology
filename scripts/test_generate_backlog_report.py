@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies backlog report inventory, reconciliation, ordering, and offline HTML output.
-# Governing backlog item: backlog/feature-backlog/add-styled-backlog-report-with-user-input.md
+# Summary: Verifies backlog report inventory, Future Ideas authority, reconciliation, ordering, and offline HTML output.
+# Governing backlog items: backlog/feature-backlog/add-styled-backlog-report-with-user-input.md and backlog/feature-backlog/add-lightweight-future-ideas-capture.md
 
 """Focused tests for the styled backlog report generator."""
 
@@ -46,6 +46,7 @@ class BacklogReportTest(unittest.TestCase):
         item_type: str,
         dependencies: str = "None",
         context: str = "Fixture context.",
+        completion: str = "direct-main",
         extra: str = "",
     ) -> None:
         """Write one complete backlog item with optional queue-specific sections."""
@@ -57,6 +58,12 @@ class BacklogReportTest(unittest.TestCase):
 Status: {status}
 
 Type: {item_type}
+
+Provider: file
+
+Provider Reference: {relative}
+
+Completion: {completion}
 
 ## Summary
 
@@ -86,10 +93,263 @@ Summary for {title}.
             encoding="utf-8",
         )
 
-    def generate(self, timestamp: str = "2026-07-19T06:00:00+00:00") -> str:
+    def write_idea(
+        self,
+        relative: str,
+        *,
+        title: str,
+        synopsis: str = "A potentially useful direction.",
+        origin: str = "Observed during repository work.",
+        notes: str = "",
+        revisit_trigger: str = "",
+        promoted_to: str = "",
+    ) -> None:
+        """Write one lightweight Future Idea without work-item lifecycle fields."""
+        path = self.root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        promoted_field = f"\nPromoted To: {promoted_to}\n" if promoted_to else ""
+        optional_sections = ""
+        if notes:
+            optional_sections += f"\n## Notes\n\n{notes}\n"
+        if revisit_trigger:
+            optional_sections += f"\n## Revisit Trigger\n\n{revisit_trigger}\n"
+        path.write_text(
+            f"""# {title}
+{promoted_field}
+## Synopsis
+
+{synopsis}
+
+## Origin or Rationale
+
+{origin}
+{optional_sections}""",
+            encoding="utf-8",
+        )
+
+    def generate(
+        self,
+        timestamp: str = "2026-07-19T06:00:00+00:00",
+        *,
+        include_future_ideas: bool = False,
+    ) -> str:
         """Generate and return one report at a controlled snapshot time."""
-        REPORT.generate_report(self.root, self.output, timestamp)
+        REPORT.generate_report(
+            self.root,
+            self.output,
+            timestamp,
+            include_future_ideas=include_future_ideas,
+        )
         return self.output.read_text(encoding="utf-8")
+
+    def test_future_ideas_are_excluded_by_default_and_listed_only_by_opt_in(self) -> None:
+        """Future Ideas stay outside ordinary inventory, runnable counts, and Holding."""
+        self.write_item(
+            "backlog/feature-backlog/ready.md",
+            title="Ready Work",
+            status="Ready",
+            item_type="Feature",
+        )
+        self.write_item(
+            "backlog/holding/deferred.md",
+            title="Deferred Work",
+            status="Holding",
+            item_type="Feature",
+        )
+        self.write_idea(
+            "backlog/future-ideas/context-map.md",
+            title="Context Map",
+            notes="Compare two possible visual forms.",
+            revisit_trigger="Revisit when the navigation model changes.",
+        )
+        (self.root / "backlog/future-ideas/index.md").write_text(
+            "# Ideas\n\n- [Context Map](context-map.md)\n", encoding="utf-8"
+        )
+
+        ordinary = self.generate()
+
+        self.assertNotIn("Context Map", ordinary)
+        self.assertNotIn("backlog/future-ideas", ordinary)
+        self.assertIn("<span>Active typed items</span><strong>1</strong>", ordinary)
+        self.assertIn("<span>Runnable now</span><strong>1</strong>", ordinary)
+        self.assertIn("<span>Holding</span><strong>1</strong>", ordinary)
+
+        explicit = self.generate(include_future_ideas=True)
+
+        self.assertIn("<span>Future ideas</span><strong>1</strong>", explicit)
+        self.assertIn("<h2>Future Ideas</h2>", explicit)
+        self.assertIn("Context Map", explicit)
+        self.assertIn("A potentially useful direction.", explicit)
+        self.assertIn("Observed during repository work.", explicit)
+        self.assertIn("Compare two possible visual forms.", explicit)
+        self.assertIn("Revisit when the navigation model changes.", explicit)
+        self.assertIn("Not promoted", explicit)
+        self.assertIn("backlog/future-ideas/context-map.md", explicit)
+        self.assertIn("backlog/future-ideas/index.md", explicit)
+        self.assertIn("<span>Active typed items</span><strong>1</strong>", explicit)
+        self.assertIn("<span>Runnable now</span><strong>1</strong>", explicit)
+        self.assertIn("<span>Holding</span><strong>1</strong>", explicit)
+
+    def test_promoted_ideas_validate_active_holding_and_user_action_targets(self) -> None:
+        """Promotion accepts complete targets in each deliberate destination."""
+        destinations = (
+            (
+                "active",
+                "backlog/feature-backlog/active.md",
+                "Ready",
+                "Feature",
+                "direct-main",
+                "",
+            ),
+            (
+                "holding",
+                "backlog/holding/holding.md",
+                "Holding",
+                "Holding",
+                "feature-branch",
+                "",
+            ),
+            (
+                "user-action",
+                "backlog/user-action-required/user-action.md",
+                "User Action Required",
+                "Feature",
+                "UNSET",
+                """## User Action Required
+
+The user owns the remaining decision.
+
+## Question for the User
+
+Should this work proceed?
+
+## Why User Input Is Required
+
+Only the user can authorize it.
+
+## Resolution
+
+Pending.
+
+## Unattended Work Boundary
+
+Do not implement.
+""",
+            ),
+        )
+        for slug, target, status, item_type, completion, destination_sections in destinations:
+            source = f"backlog/future-ideas/{slug}.md"
+            self.write_idea(source, title=f"{slug.title()} Idea", promoted_to=target)
+            self.write_item(
+                target,
+                title=f"{slug.title()} Work",
+                status=status,
+                item_type=item_type,
+                completion=completion,
+                extra=f"""## Source Evidence
+
+- {source}
+
+{destination_sections}""",
+            )
+
+        rendered = self.generate(include_future_ideas=True)
+
+        self.assertIn("<span>Future ideas</span><strong>3</strong>", rendered)
+        self.assertNotIn("Promotion target is not a complete work item", rendered)
+        self.assertNotIn(
+            "Promotion target Source Evidence does not reference", rendered
+        )
+
+    def test_promotion_requires_supported_completion_and_reciprocal_source_evidence(
+        self,
+    ) -> None:
+        """Unsupported completion or a source path outside Source Evidence fails validation."""
+        invalid_completion_source = "backlog/future-ideas/invalid-completion.md"
+        invalid_completion_target = "backlog/holding/invalid-completion.md"
+        self.write_idea(
+            invalid_completion_source,
+            title="Invalid Completion",
+            promoted_to=invalid_completion_target,
+        )
+        self.write_item(
+            invalid_completion_target,
+            title="Invalid Completion Work",
+            status="Holding",
+            item_type="Feature",
+            completion="someday",
+            extra=f"## Source Evidence\n\n- {invalid_completion_source}\n",
+        )
+        misplaced_source = "backlog/future-ideas/misplaced-source.md"
+        misplaced_target = "backlog/feature-backlog/misplaced-source.md"
+        self.write_idea(
+            misplaced_source,
+            title="Misplaced Source",
+            promoted_to=misplaced_target,
+        )
+        self.write_item(
+            misplaced_target,
+            title="Misplaced Source Work",
+            status="Ready",
+            item_type="Feature",
+            extra=f"""## Source Evidence
+
+- unrelated observation
+
+## Notes
+
+The source path appears here instead: {misplaced_source}
+""",
+        )
+
+        rendered = self.generate(include_future_ideas=True)
+
+        self.assertIn(
+            f"Promotion target is not a complete work item: {invalid_completion_target}.",
+            rendered,
+        )
+        self.assertIn(
+            f"Promotion target Source Evidence does not reference {misplaced_source}: {misplaced_target}.",
+            rendered,
+        )
+
+    def test_outward_symlinked_idea_and_promotion_target_are_not_read(self) -> None:
+        """Symlinked records outside their canonical roots are findings, never authority."""
+        ideas_root = self.root / "backlog/future-ideas"
+        ideas_root.mkdir(parents=True)
+        external_idea = self.root / "external-idea.md"
+        external_idea.write_text(
+            "# External Idea Secret\n\n## Synopsis\n\nDo not read me.\n\n"
+            "## Origin or Rationale\n\nExternal.\n",
+            encoding="utf-8",
+        )
+        (ideas_root / "escaped.md").symlink_to(external_idea)
+
+        source = "backlog/future-ideas/promoted.md"
+        target = "backlog/feature-backlog/escaped-target.md"
+        self.write_idea(source, title="Promoted", promoted_to=target)
+        external_target = self.root / "external-target.md"
+        self.write_item(
+            "external-target.md",
+            title="External Target Secret",
+            status="Ready",
+            item_type="Feature",
+            extra=f"## Source Evidence\n\n- {source}\n",
+        )
+        target_path = self.root / target
+        target_path.parent.mkdir(parents=True)
+        target_path.symlink_to(external_target)
+
+        rendered = self.generate(include_future_ideas=True)
+
+        self.assertIn(
+            "Future Idea resolves outside canonical Future Ideas authority", rendered
+        )
+        self.assertIn(
+            "Promotion target resolves outside canonical backlog authority", rendered
+        )
+        self.assertNotIn("External Idea Secret", rendered)
+        self.assertNotIn("External Target Secret", rendered)
 
     def test_inventory_user_input_dependencies_order_and_ignored_files(self) -> None:
         """The report inventories every queue while enforcing dispatch and guidance rules."""
@@ -677,6 +937,45 @@ Do not proceed.
         self.assertEqual(item_before, item.read_bytes())
         self.assertEqual(readme_before, readme.read_bytes())
 
+    def test_default_output_cannot_resolve_inside_future_ideas(self) -> None:
+        """Direct and directory-alias outputs cannot overwrite an unscanned Future Idea."""
+        idea = self.root / "backlog/future-ideas/protected.md"
+        idea.parent.mkdir(parents=True)
+        idea.write_bytes(b"\xff\xfeoriginal future idea bytes")
+        before = idea.read_bytes()
+        alias_root = self.root / "future-ideas-alias"
+        alias_root.symlink_to(idea.parent, target_is_directory=True)
+
+        for protected in (idea, alias_root / idea.name):
+            with self.subTest(protected=protected):
+                with self.assertRaisesRegex(
+                    ValueError,
+                    "Output path cannot resolve inside backlog/future-ideas",
+                ):
+                    REPORT.generate_report(self.root, protected)
+
+        self.assertEqual(before, idea.read_bytes())
+
+    def test_lexical_output_inside_future_ideas_cannot_follow_symlink_outward(
+        self,
+    ) -> None:
+        """A Future Ideas path pointing outward cannot overwrite external bytes."""
+        ideas_root = self.root / "backlog/future-ideas"
+        ideas_root.mkdir(parents=True)
+        external = self.root / "external-report-target.html"
+        external.write_bytes(b"external target bytes")
+        outward = ideas_root / "outward.html"
+        outward.symlink_to(external)
+        before = external.read_bytes()
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Output path cannot be located inside backlog/future-ideas",
+        ):
+            REPORT.generate_report(self.root, outward)
+
+        self.assertEqual(before, external.read_bytes())
+
     def test_missing_optional_folders_and_repeat_generation_are_deterministic(self) -> None:
         """A minimal backlog generates equivalent ordered content at a controlled snapshot time."""
         self.write_item(
@@ -852,6 +1151,19 @@ Do not proceed.
         )
         self.assertEqual(0, result)
         self.assertTrue(self.output.is_file())
+        self.write_idea("backlog/future-ideas/cli-opt-in.md", title="CLI Opt In")
+        idea_output = self.root / "out" / "ideas.html"
+        idea_result = REPORT.main(
+            [
+                "--repository-root",
+                str(self.root),
+                "--output",
+                str(idea_output),
+                "--include-future-ideas",
+            ]
+        )
+        self.assertEqual(0, idea_result)
+        self.assertIn("CLI Opt In", idea_output.read_text(encoding="utf-8"))
         with tempfile.TemporaryDirectory() as empty:
             with self.assertRaisesRegex(ValueError, "Backlog directory does not exist"):
                 REPORT.generate_report(Path(empty), Path(empty) / "report.html")

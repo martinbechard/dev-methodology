@@ -132,6 +132,16 @@ Every provider maps its native record to the following logical fields. Providers
 
 Sensitive, private, proprietary, credential, or company-internal evidence must remain in an appropriate private evidence store. A public provider record may link to a safe reference but must not disclose unsuitable content.
 
+## Future Ideas Are Not Work Items
+
+The file provider reserves backlog/future-ideas for explicitly requested lightweight thoughts that are not yet actionable, approved, scheduled, or recognized as work. Durable Future Ideas are file-provider-only. When another Persistence provider applies, capture is BLOCKED unless the user explicitly selects file as the one-item override for that idea; the steward creates neither a provider issue nor a shadow file.
+
+An idea contains a title, Synopsis, and Origin or Rationale. Notes and a free-text Revisit Trigger are optional. It has no lifecycle Status, Type, Owner, Dependencies, Acceptance Criteria, Verification, Provider, Provider Reference, or Completion field and does not enter ordinary provider inventory, runnable counts, dispatch, ownership, lifecycle transitions, or archives.
+
+Only an explicit ideation or promotion operation reads or validates this folder. Idea and promotion target records must resolve to regular files inside their canonical file-provider authority. A symlink or resolved path that escapes the canonical root is rejected without reading external bytes.
+
+Deliberate promotion retains the idea, adds Promoted To with the canonical work-item reference, and creates one complete work item in an active, Holding, or User Action Required destination. The promoted item records file as Provider, its exact canonical path as Provider Reference, exactly direct-main, feature-branch, or UNSET as Completion, and the retained idea path as an exact Source Evidence entry. Holding accepts the underlying dispatchable Type or the Holding Type. User Action Required retains its underlying dispatchable Type.
+
 ## Provider Authority And References
 
 ### File

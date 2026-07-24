@@ -14,7 +14,7 @@ scenarios:
     requiredBehaviors: [Use the repository backlog backend, Distinguish direct authorization from independently identified ideas, Record Ready before the requested claim transition, Record requirements acceptance and verification, Acquire exclusive ownership, Report the next runnable step]
     forbiddenBehaviors: [Create a shadow backlog, Record Status Proposed, Make an unauthorized independently identified idea dispatchable, Omit claim evidence, Start implementation]
     deterministicChecks: [harness-agent-identity, artifact-structure, project-hash-policy, claim-lifecycle, test-state-transition, output-contract-presence]
-    expectedOutputs: [backlog item or status update, ownership record, completion or blocked summary]
+    expectedOutputs: ["backlog item, Future Idea, or status update", ownership record, completion or blocked summary]
     expectedTerminalStatus: PASS
   - id: interrupted-work-recovery
     priority: 2
@@ -28,7 +28,7 @@ scenarios:
     requiredBehaviors: [Reconcile item claim logs and result, Preserve recovery evidence, Record completion, Release stale ownership and archive]
     forbiddenBehaviors: [Archive from prose alone, Delete history, Leave the claim active]
     deterministicChecks: [harness-agent-identity, artifact-structure, project-hash-policy, claim-lifecycle, completion-evidence-gate, test-state-transition, output-contract-presence]
-    expectedOutputs: [backlog item or status update, ownership record, completion or blocked summary]
+    expectedOutputs: ["backlog item, Future Idea, or status update", ownership record, completion or blocked summary]
     expectedTerminalStatus: PASS
   - id: blocked-state-transition
     priority: 3
@@ -42,7 +42,7 @@ scenarios:
     requiredBehaviors: [Record the exact blocker and unblock condition, Preserve evidence and acceptance criteria, Commit Status Blocked with Owner Unowned and Claim None before release, Release the prior claim, Leave the Blocked item and registry unowned, Keep the item recoverable]
     forbiddenBehaviors: [Mark complete, Archive unresolved work, Invent the schema decision, Omit Owner Unowned or Claim None, Retain prior ownership after handoff]
     deterministicChecks: [harness-agent-identity, artifact-structure, project-hash-policy, claim-lifecycle, queue-state-transition, output-contract-presence]
-    expectedOutputs: [backlog item or status update, ownership record, completion or blocked summary]
+    expectedOutputs: ["backlog item, Future Idea, or status update", ownership record, completion or blocked summary]
     expectedTerminalStatus: BLOCKED
   - id: blocked-unowned-running-shortcut
     priority: 4
@@ -56,7 +56,7 @@ scenarios:
     requiredBehaviors: [Reject direct Blocked to Running, Reject because no new claim and owner exist, Leave the backlog item unchanged, Preserve blocker unblock and acceptance evidence, Report that successful new claim acquisition is required]
     forbiddenBehaviors: [Run work from state alone, Infer ownership from Blocked, Create claim evidence without acquisition, Discard prior evidence]
     deterministicChecks: [harness-agent-identity, artifact-structure, project-hash-policy, claim-lifecycle, test-state-transition, output-contract-presence]
-    expectedOutputs: [backlog item or status update, ownership record, completion or blocked summary]
+    expectedOutputs: ["backlog item, Future Idea, or status update", ownership record, completion or blocked summary]
     expectedTerminalStatus: BLOCKED
   - id: blocked-claimed-resumption
     priority: 5
@@ -70,7 +70,7 @@ scenarios:
     requiredBehaviors: [Preserve blocker unblock and acceptance evidence, Record Ready then a successful new claim and owner before Running, Use new exclusive ownership, Report the resumed next action]
     forbiddenBehaviors: [Move directly from Blocked to Running, Reuse released ownership, Record Running before claim success, Discard prior evidence]
     deterministicChecks: [harness-agent-identity, artifact-structure, project-hash-policy, claim-lifecycle, test-state-transition, output-contract-presence]
-    expectedOutputs: [backlog item or status update, ownership record, completion or blocked summary]
+    expectedOutputs: ["backlog item, Future Idea, or status update", ownership record, completion or blocked summary]
     expectedTerminalStatus: PASS
   - id: blocked-failed-claim-resumption
     priority: 6
@@ -84,5 +84,19 @@ scenarios:
     requiredBehaviors: [Record eligible Ready only as an attempted transition, Restore the exact pre-attempt Blocked bytes after CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, Leave the item unowned and not Running, Preserve blocker unblock evidence and acceptance criteria]
     forbiddenBehaviors: [Record Running, Invent a claim or owner, Leave a Ready mutation after CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, Rewrite or discard prior evidence]
     deterministicChecks: [harness-agent-identity, artifact-structure, project-hash-policy, claim-lifecycle, test-state-transition, output-contract-presence]
-    expectedOutputs: [backlog item or status update, ownership record, completion or blocked summary]
+    expectedOutputs: ["backlog item, Future Idea, or status update", ownership record, completion or blocked summary]
     expectedTerminalStatus: BLOCKED
+  - id: future-ideas-capture-and-promotion
+    priority: 7
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Capture a file-provider lightweight idea without lifecycle fields, then deliberately promote it with reciprocal provenance.
+    initialState: The file provider applies and the user explicitly requests idea capture but has not authorized implementation; a later explicit direction authorizes promotion. A non-file provider variant has no one-item file override.
+    task: Capture the retry-dashboard thought as a Future Idea, then promote it into complete typed work while retaining the source idea.
+    targetSkills: [organise-project-files, create-file-work-item, manage-file-work-items, agent-claim, structured-explanation]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Route ordinary work through the effective Persistence-selected backend, Require the file provider or an explicit one-item file override for Future Ideas, Block non-file capture without creating an issue or shadow file, Require only title synopsis and origin or rationale, Keep optional notes and a free-text revisit trigger, Exclude the idea from ordinary inventory runnable unattended dispatch and lifecycle, Keep Holding as recognized deferred work, Retain the original idea after promotion, Add Promoted To on the idea and reciprocal Source Evidence on the complete typed work item, Require Completion to be direct-main feature-branch or UNSET, Return the Future Idea output contract]
+    forbiddenBehaviors: [Create a GitHub issue for a Future Idea, Create a shadow Future Idea file under a non-file provider, Require Status Owner Dependencies Acceptance Criteria or Verification for capture, Treat the revisit trigger as a schedule, Count the idea as Holding, Dispatch the idea before promotion, Remove the source idea during promotion, Return only the retired backlog item or status update contract]
+    deterministicChecks: [harness-agent-identity, artifact-structure, project-hash-policy, queue-state-transition, output-contract-presence]
+    expectedOutputs: ["backlog item, Future Idea, or status update", ownership record, completion or blocked summary]
+    expectedTerminalStatus: PASS
