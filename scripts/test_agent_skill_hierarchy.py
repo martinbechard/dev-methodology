@@ -120,6 +120,75 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertIn("edge.dataset.skill === selectedSkill", self.rendered)
         self.assertIn("agents use", self.rendered)
 
+    def test_backlog_management_focus_exposes_agents_dependencies_and_skills(self) -> None:
+        """The map should make the complete backlog-management collaboration easy to isolate."""
+        focus_control = self.root.find(
+            f".//{{{SVG_NAMESPACE}}}g[@class='backlog-focus-control']"
+        )
+        self.assertIsNotNone(focus_control)
+        self.assertEqual("button", focus_control.attrib.get("role"))
+        self.assertEqual("0", focus_control.attrib.get("tabindex"))
+        self.assertEqual("false", focus_control.attrib.get("aria-pressed"))
+        self.assertEqual(
+            "Focus backlog management agents",
+            focus_control.attrib.get("aria-label"),
+        )
+        self.assertEqual(
+            " ".join(self.module.BACKLOG_MANAGEMENT_ROLES),
+            focus_control.attrib.get("data-focus-roles"),
+        )
+        self.assertIn("Focus backlog management", " ".join(self.root.itertext()))
+        for role_name in self.module.BACKLOG_MANAGEMENT_ROLES:
+            with self.subTest(role=role_name):
+                self.assertIn(
+                    f'data-role="{role_name}"',
+                    self.rendered,
+                )
+        self.assertIn("function toggleBacklogManagementFocus()", self.rendered)
+        self.assertIn(
+            "backlogFocusRoles.has(edge.dataset.role)",
+            self.rendered,
+        )
+        self.assertIn(
+            "backlogManagementRoles.has(edge.dataset.sourceRole)",
+            self.rendered,
+        )
+        expected_dependency_edges = {
+            (edge.attrib["data-source-role"], edge.attrib["data-target-role"])
+            for edge in self.root.findall(
+                f".//{{{SVG_NAMESPACE}}}path[@class='dependency-edge']"
+            )
+            if edge.attrib["data-source-role"]
+            in self.module.BACKLOG_MANAGEMENT_ROLES
+        }
+        expected_focus_roles = set(self.module.BACKLOG_MANAGEMENT_ROLES)
+        expected_focus_roles.update(target for _, target in expected_dependency_edges)
+        self.assertEqual(
+            {
+                "dev-backlog-coordinator",
+                "dev-backlog-steward",
+                "dev-orchestrator",
+                "dev-coder",
+                "dev-code-reviewer",
+                "dev-verifier",
+                "dev-merge-coordinator",
+            },
+            expected_focus_roles,
+        )
+        self.assertEqual(7, len(expected_dependency_edges))
+        self.assertIn(
+            "const hasDefinitionSelection = Boolean(selectedRole || selectedSkill)",
+            self.rendered,
+        )
+        self.assertIn(
+            'viewControl.classList.toggle("disabled", !hasDefinitionSelection)',
+            self.rendered,
+        )
+        self.assertIn(
+            "if (selectedRole || selectedSkill || focusBacklogManagement) clearSelection()",
+            self.rendered,
+        )
+
     def test_agent_dependencies_are_directional_and_user_controllable(self) -> None:
         """Fixed direct agent use should render as optional directional arrows."""
         expected_edges = [
@@ -270,6 +339,14 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertIn("Blue arrows show direct dependencies between agents", hierarchy_section)
         self.assertIn(
             "Blue skill cards have a separate meaning: they identify technology skills selected during project setup.",
+            hierarchy_section,
+        )
+        self.assertIn(
+            "Focus backlog management",
+            hierarchy_section,
+        )
+        self.assertIn(
+            "Dev Backlog Coordinator, Dev Backlog Steward, Dev Orchestrator, the delivery agents they directly dispatch",
             hierarchy_section,
         )
         self.assertNotIn("Role Agent Categories", role_map)
