@@ -1,6 +1,6 @@
 # Add Structured Commit Disposition To Orchestrator Evaluation Contract
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -73,3 +73,19 @@ None.
 ## Notes
 
 Do not implement this finding as part of unrelated candidate work. Governed-definition changes require a successful exact-path approval-manifest check before mutation.
+
+## Blocked Handoff
+
+- Owner: Unowned
+- Claim: None (released)
+- Canonical Runtime Identity: 019f970d-1e68-7563-b840-a18765cfb70a
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a (recovery identity only)
+- Disposition: The bounded correction loop is exhausted. Do not integrate the preserved candidate as-is.
+- Candidate History: Rejected candidates a04493177067abc3f40bc5bb49dcf91a601b0c65 and 3352102081b85c3dcda4c23a22bb238c84b2062b; final preserved candidate 9f0aafce2281519b5d35dbffe0cba72561e50ed9.
+- Released Candidate Ownership: All candidate claims are released. The final release event is 905da8cd-f1f5-4cf5-9148-36b19f6670ad. The preserved candidate worktree and branch are clean: codex/add-structured-commit-disposition-correction2-019f970d.
+- Fresh Code And Prompt Review Blockers:
+  - The file-provider Persistence receipt is self-asserted because the runner does not verify the configured backlog item's committed lifecycle state and archive path, and the positive fixture commits closeout.txt.
+  - The coordinator prompt contradicts the parser by requiring every sessionIds value to be non-empty while provider-none and BLOCKED dispositions require empty arrays.
+  - The promised AWAITING_REVIEW-to-READY same-delivery continuity is not executable across distinct nonterminal and terminal provider updates.
+- Recorded Checks: 38/38 fixtures passed; staging 2/2 passed; schema, bundle, skill, validate, py_compile, and diff checks passed. The broad runner result was 107/120, with the same 13 baseline Playwright environment failures.
+- Unblock Condition: Authorize and resume a fresh bounded correction that evidence-binds file-provider state and archive bytes to retained Dev Backlog Steward execution, fixes the prompt empty-session rule, and adds executable phase continuity. It must then receive fresh independent code and prompt review plus verification.
