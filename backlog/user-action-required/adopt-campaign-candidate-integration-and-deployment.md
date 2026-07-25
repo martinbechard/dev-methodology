@@ -1,6 +1,6 @@
 # Adopt Campaign Candidate Integration And Deployment
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
@@ -18,13 +18,35 @@ Type: Feature
 - Work-Item Thread: 019f96cf-48ef-7c41-bef1-ca69d574526c
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
 - Root Agent Task Id: 019f96cf-48ef-7c41-bef1-ca69d574526c
-- Owner: Dev Orchestrator
+- Owner: Unowned
 - Branch: detached at reservation commit 97e8e20761619518d37ca5a17310836b4f4bf3b6
 - Worktree: /Users/martinbechard/.codex/worktrees/1c8b/dev-methodology
 - Phase: Persistence acceptance / canonical-manifest discovery
 - Started At: 2026-07-25T01:09:02Z
-- Coordination: Enabled; agent-claim short backlog transaction completed before this provider mutation.
-- Claim Evidence: 019f96cf-48ef-7c41-bef1-ca69d574526c-backlog-running; agent-claim event ef24e4c8-e833-4434-a69b-94ebd69d2846; backlog scope on canonical primary main.
+- Prior Coordination Evidence: 019f96cf-48ef-7c41-bef1-ca69d574526c-backlog-running; agent-claim event ef24e4c8-e833-4434-a69b-94ebd69d2846; backlog scope on canonical primary main.
+
+## User Action Required
+
+### Question for the User
+
+Approve mutation of exactly agents/roles/dev-activities/dev-orchestrator.role.yaml; agents/roles/dev-activities/dev-backlog-coordinator.role.yaml; skills/codex-workitem-coordination/SKILL.md; skills/agent-work-merge/SKILL.md to implement the campaign candidate/finalizer model?
+
+### Why User Input Is Required
+
+These are governed canonical agent and skill definitions. Repository access, a running work item, and the need to satisfy validation do not authorize their mutation.
+
+### Options and Tradeoffs
+
+- Approve: authorizes only the four listed canonical definition edits. Derived mirrors may then be regenerated under their supported source-to-mirror relationship.
+- Decline: keeps all definitions unchanged and blocks implementation of this model.
+
+### Resolution
+
+Pending user direction.
+
+### Unattended Work Boundary
+
+Do not mutate governed definitions without the scope-specific user approval recorded above. No unattended implementation work may proceed while this question is unresolved.
 
 ## Summary
 
