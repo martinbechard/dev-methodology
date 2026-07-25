@@ -1,14 +1,14 @@
 # Migrate Dev Orchestrator Handoff Fixture Scenario Root
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Dev Orchestrator (terminal)
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/migrate-dev-orchestrator-handoff-fixture-scenario-root.md
+Provider Reference: backlog/completed-backlog/defects/migrate-dev-orchestrator-handoff-fixture-scenario-root.md
 
 Completion: direct-main
 
@@ -39,6 +39,19 @@ Completion: direct-main
 ## Running Coordination Evidence
 
 - Backlog Claim: start-running-migrate-orchestrator-fixture-root-20260725 acquired on primary main; acquisition journal event 8150c84c-cde4-45a9-8b5f-08e49108fe2b.
+
+## Completion Evidence
+
+- Terminal State: Completed after direct-main delivery, fresh independent review, independent verification, and primary-main reconciliation.
+- Completed At: 2026-07-25T11:45:39Z.
+- Accepted delivery source: 90f8c14f3139dbe82625fd65515089d0c65eca1a on codex/migrate-dev-orchestrator-fixture-root-019f9907, parent e68f45e53eb1a8a3f7a92ef787537d075b179b92. The candidate worktree was clean.
+- Direct-main integration: 5b4aa3ecfdea87d26d08f2d8d9e704bc63244598 on parent e4e7b511118fa1bad38a0bb821d5c75710f2c3b4, cherry-picked with -x from the accepted source. The exact owned path is evals/agent-tests/dev-orchestrator/test_fixtures.py.
+- Delivery integrity: source and integration blobs match at 29796490d1fbc57c9bd84f000b0e1620794f7e01; their parent blobs match at f4d0493c4cc6e8a56ccda559d4f516f6fd2c0719. The integration commit is reachable from and equal to primary main.
+- Fresh independent review: ACCEPT with no findings.
+- Independent verification: PASS: focused fixture suite 20/20; seven containment and handoff checks 7/7; Python compile; and diff-check.
+- Integration coordination: claim acquisition event 9d48f594-ea5e-46d3-bf87-ab567391cde2 and release event 56f5aea9-a74b-43cd-a246-0af9f84d7996. The registry was empty after release.
+- Cleanup: primary and candidate worktrees were clean. Branches codex/migrate-dev-orchestrator-fixture-root-019f9907 and codex/integrate-migrate-dev-orchestrator-fixture-root-019f9907 are cleanup-eligible and intentionally retained.
+- Terminal provider transaction: close-migrate-orchestrator-fixture-root-019f9907 acquired primary-main backlog ownership before this archive transition; acquisition journal event 9186f8db-7506-4ec0-8750-fcd1358f4beb. The terminal provider reference is this completed archive path.
 
 ## Summary
 
