@@ -34,6 +34,23 @@ Owner: Dev Orchestrator
 - Backlog Claim: 019f9783-supplemental-running-steward
 - Claim Acquisition Event: 415236d0-e665-443a-bf45-8fadfa00e94a
 
+## Corrected Candidate Re-Review Milestone
+
+- Corrected Candidate: f412674259b246bb0e3bb11edd569982e60c4c89
+- Independent Re-Review Verdict: FAIL.
+- Candidate Disposition: Unaccepted; the following confirmed defects are blocking defects, not warnings.
+- Prior Engine Findings: The prior three engine findings are closed.
+- Recorded At: 2026-07-25T16:33:15Z
+- Backlog Claim: 019f9783-rereview-milestone-steward
+- Claim Acquisition Event: 5dff52ac-3f34-423f-a061-fe7678d1bba8
+
+### Confirmed Blocking Defects
+
+1. HIGH macOS case-insensitive aliasing: _normalize_repository_path preserves spelling and file/file overlap uses raw equality, allowing two primary claims with case-varied paths to protect the same physical file. Require canonical filesystem identity or casefold-safe exclusivity, with regression and release checks.
+2. The MCP adapter still omits Tree from scope_reason-required scopes, contradicting the approved canonical and command contracts; its parity test is too weak.
+3. The Steward evaluation creation scenario requires release-before-handoff but has empty claimReleases.
+4. The Steward interrupted-recovery scenario omits stopped-owner proof and exact source-plus-destination recovery acquisition before archive.
+
 ## Review-Recovery Milestone
 
 - Candidate: f412674259b246bb0e3bb11edd569982e60c4c89; clean and preserved.
