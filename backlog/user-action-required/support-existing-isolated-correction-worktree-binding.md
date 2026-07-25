@@ -1,14 +1,14 @@
 # Support Existing Isolated Correction Worktree Binding
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/support-existing-isolated-correction-worktree-binding.md
+Provider Reference: backlog/user-action-required/support-existing-isolated-correction-worktree-binding.md
 
 Completion: direct-main
 
@@ -123,21 +123,25 @@ This record captures the defect only. Any governed-definition changes discovered
 
 ## User Action Required
 
-Authorization is required before changing the stale user-scope installation that caused the observed unnecessary acquisitions.
+The approved exact installer command was attempted under shared-install acquisition event 61157224-fb22-4be0-b761-c74bd7544bb0, but stopped before mutation because the installer reported: customized owned skills require discrepancy analysis. The shared-install resource claim was released with no change at event 8a5e5b45-0c32-4984-b970-30b078eb7705. No installed or repository file changed.
+
+Fresh independent three-way review compared the old deployed generic baseline at source commit 8a269a6c, 20 customized installed files across nine skill directories, and the current canonical source. It found that canonical source supersedes every meaningful customized intent. The documented replacement would discard only redundant wording, typos, and overbroad clauses, and it fixes the installed functional-spec template regression that removed the Related Code and Related Tests headings. The review also found that the removed preference-level literals -- brainstorming dependency, universal HTML-mockup instruction, and one-module/code-unit heuristic -- have more precise portable canonical replacements. Subset deployment is unsupported by the approved installer without a separate staged scope and approval.
+
+The delivery remains associated with canonical task/thread 019f976c-6691-7a83-9df4-e73fc0baae73, canonical branch and worktree, prior approval, root-cause history, and running delivery commit e2e3627401406b13f3e53b3ab93afcb0b7055cc5. The separate telemetry-label follow-up remains out of scope.
 
 ## Question for the User
 
-Do you authorize the documented user-scope Codex bundle deployment (`python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace`), followed by runtime catalog refresh or new-session activation and verification that the installed agent-claim bytes match the canonical source?
+Do you approve rerunning the documented user-scope Codex deployment with the additional --replace-customized flag, accepting replacement of the 20 customized files after the three-way review found no meaningful semantic requirement would be lost?
 
 ## Why User Input Is Required
 
-This operation mutates user-home installed skills and native agents and may affect host catalog or configuration state. It is outside ordinary repository artifact delivery.
+Prior approval covered only the exact installer command without destructive customized-owned replacement. The additional --replace-customized flag changes that authority boundary, so the user must decide whether the reviewed customized files may be replaced.
 
 ## Options and Tradeoffs
 
-- Approve the exact deployment and refresh. The user-scope Codex installation is updated, then activation and byte equality are verified.
-- Approve a narrower deployment variant to be specified. The exact target and verification must be recorded before execution.
-- Defer or decline. Canonical source remains correct, but installed guidance remains stale.
+- A. Approve --replace-customized (recommended). Canonical source supersedes the customized content and fixes the structural regression.
+- B. Identify exact clauses to preserve or merge. This requires separate canonical or staged-scope approval.
+- C. Defer or decline. Installed agent-claim remains stale and deployment remains incomplete.
 
 ## Resolution
 
@@ -145,11 +149,11 @@ Approved on 2026-07-25 in canonical task 019f976c-6691-7a83-9df4-e73fc0baae73. E
 
 Approved scope: only the documented user-scope Codex deployment `python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace`, followed by runtime catalog refresh or new-session activation and verification that installed agent-claim bytes match canonical source. No engine change or broader user-home mutation is authorized.
 
-Resulting disposition: Ready in the typed defect queue, preserving the same canonical task, branch, worktree, and evidence. A later parent-owned Ready -> Starting reservation is required before execution resumes.
+Resulting disposition: the exact approved command was attempted, but its customized-owned replacement safeguard stopped it before mutation. This new question is unresolved; the item is User Action Required with Owner: Unowned, preserving the same canonical task, branch, worktree, and evidence.
 
 ## Unattended Work Boundary
 
-Do not expand deployment scope, mutate user-home paths beyond the approved command, or implement speculative engine rebinding. Execute only after the normal Ready -> Starting -> Running lifecycle resumes.
+Do not run the installer, refresh the runtime catalog, mutate user-home paths, or make an engine change until the user answers the new question. After an answer, resume only through User Action Required -> Ready -> Starting -> Running lifecycle reconciliation.
 
 ## Follow-up Obligation
 
