@@ -1,6 +1,6 @@
 # Align Module Design Template And Bundle Test Contract
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -97,4 +97,14 @@ Why User Input Is Required: This item shares the canonical governed-definition d
 
 Resolution: Approved on 2026-07-25. The canonical Thread 019f96ce-dd33-7bf2-bbe1-73e2af07da52 current user message answered: "Amend it to skip over any note." This is explicit approval for only the five canonical sources named in the Question. Documentation Acceptance and Implementation Readiness must evaluate the first authored decision after skipping any retained explanatory note(s), preserving ACCEPTED/BLOCKED versus READY/BLOCKED and current-pass semantics.
 
-Ready Disposition: This approved defect is active in backlog/defect-backlog with Status: Ready and Owner: Unowned. Preserve candidate db82828f8e240a3014eb87635b6f7135362934af and the existing review and verification evidence. The parent Coordinator owns the later same-Thread Ready -> Starting transition; this record does not start or run implementation.
+Ready Disposition: This approved defect was resumed by the canonical work-item Thread after the parent Coordinator recorded the later same-Thread Ready -> Starting transition. Preserve candidate db82828f8e240a3014eb87635b6f7135362934af and the existing review and verification evidence.
+
+## Completion Evidence
+
+- Completed At: 2026-07-25T03:53:04Z.
+- Accepted source candidate: db82828f8e240a3014eb87635b6f7135362934af. It is non-ancestral, but its intended contract is superseded and reconciled by the stronger semantic integration at dfbd1542ade8bd8a705ea0396562146fbaa21af6; no stale candidate bytes were reapplied.
+- Integration and main delivery: dfbd1542ade8bd8a705ea0396562146fbaa21af6 was the delivery observation commit and is reachable from main. At terminal handoff, main later advanced through descendant eedb7117d4f698dea100516542136f078c379e82; the current primary-main observation is eb2accc2ead24fbb4074a1fd628e51cb962899cc.
+- Resumption and approval: the same canonical Thread 019f96ce-dd33-7bf2-bbe1-73e2af07da52 recorded the user-approved five-path correction to skip leading retained explanatory note(s). The earlier terminal backlog claim 019f96ce-doc-acceptance-complete was released (event 4538ebe7-1e37-4d24-b6ae-79423bf66a33). The implementation candidate claim and shared governed integration claim were released; the integration release event is f4d84f3c-2a92-40bb-8901-868d934ce9c7.
+- Contract evidence: both assertion sites now skip leading retained explanatory note(s), require the exact READY or BLOCKED marker for Implementation Readiness, preserve mandatory Documentation Acceptance before Implementation Readiness, and cover multiple-note and swapped-section mutants.
+- Review and verification: source review for db82828f8e240a3014eb87635b6f7135362934af approved with no findings; its focused verifier passed. Fresh shared-governed-correction review and verifier were GOOD. The full affected module passed 118/118, and validation, generator freshness, and diff gates passed.
+- Independent post-integration observation: under Python 3.11.13, the two focused tests passed, scripts.test_bundle_content passed 118/118, and the dfbd1542 diff check passed. An initial Python 3.9 run failed before discovery because tomllib is unavailable; the supported Python 3.11 run supplied the final evidence.
