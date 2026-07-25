@@ -1,6 +1,6 @@
 # Support Existing Isolated Correction Worktree Binding
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/support-existing-isolated-correction-worktree-binding.md
+Provider Reference: backlog/defect-backlog/support-existing-isolated-correction-worktree-binding.md
 
 Completion: direct-main
 
@@ -121,7 +121,7 @@ None.
 
 This record captures the defect only. Any governed-definition changes discovered during delivery require an exact canonical-path approval record before mutation.
 
-## User Action Required
+## Deployment Discrepancy Evidence
 
 The approved exact installer command exited 1 at its customization safety boundary before mutation. The shared-install claim was acquired at event 3fb1a956-d56f-410f-8e99-4877b4cfd45e and released no-change at event 82d30f3e-f58a-4402-9f0f-9c5a0be5b6f3. It changed no installed, repository, or provider bytes. Installed agent-claim remains stale.
 
@@ -131,29 +131,19 @@ The review found that useful proposition, ledger, diagram, and path-tree intent 
 
 The delivery remains associated with canonical task/thread 019f976c-6691-7a83-9df4-e73fc0baae73, parent 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a, canonical branch codex/isolated-binding-019f976c at stable deployment source commit 570a0271870e96abcb5c0ddf01428fd749b238f3, and canonical worktree /Users/martinbechard/.codex/worktrees/0311/dev-methodology. The separate telemetry-label follow-up remains out of scope.
 
-## Question for the User
+## Approval Record
 
-Do you approve rerunning the documented user-scope Codex deployment with the additional safety override --replace-customized, using python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace --replace-customized, followed by catalog refresh or new-session activation and installed-byte verification?
+Approved on 2026-07-25 in canonical task/thread 019f976c-6691-7a83-9df4-e73fc0baae73. Exact user answer: I approve. Provenance: direct answer to the recorded --replace-customized Question for the User.
 
-## Why User Input Is Required
-
-Prior approval did not include this override. It will overwrite the nine explicitly listed customized bundle-owned skill trees, so the user must decide whether the reviewed replacement is authorized.
-
-## Options and Tradeoffs
-
-- Approve replacement (recommended by review). The nine customized trees are replaced as one reviewed decision.
-- Preserve or reconcile exact clauses first. Specify the desired clauses; deployment remains pending.
-- Defer or decline. Installed agent-claim stays stale.
+Approved scope: python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace --replace-customized, followed by catalog refresh or new-session activation and installed-byte verification. The approval is limited to the existing reviewed nine customized bundle-owned skill trees and normal bundle-owned outputs of that command. No engine source change or unrelated user-home mutation is authorized.
 
 ## Resolution
 
-Earlier approval on 2026-07-25 in canonical task 019f976c-6691-7a83-9df4-e73fc0baae73 authorized only python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace, followed by catalog refresh or new-session activation and installed-byte verification. That command stopped at the customization safety boundary before mutation.
+Approval is recorded. Deployment has not yet been rerun. The item is Ready with Owner: Unowned, preserving the same canonical task, branch, worktree, investigation, discrepancy-review, and approval evidence. The next step is normal lifecycle reservation and execution, not an execution authorized by this provider transition.
 
-Resulting disposition: this replacement-override question is unresolved. The item is User Action Required with Owner: Unowned, preserving the same canonical task, branch, worktree, investigation, review, and prior-approval evidence.
+## Ready Lifecycle Boundary
 
-## Unattended Work Boundary
-
-Do not run the override installer, refresh the runtime catalog, edit user-home files, or make an engine change until the user answers this question. After an answer, resume only through User Action Required -> Ready -> Starting -> Running lifecycle reconciliation.
+Do not run the installer, refresh the runtime catalog, edit user-home files, or make an engine change in this provider transition. Resume only through Ready -> Starting -> Running lifecycle reconciliation.
 
 ## Follow-up Obligation
 
