@@ -19,7 +19,7 @@ Completion: direct-main
 - Reservation: One parent-owned launch reservation.
 - Intended Root Role: Dev Orchestrator
 - Isolated Checkout: /Users/martinbechard/.codex/worktrees/215b/dev-methodology
-- Phase: Correction attempt 1.
+- Phase: Correction attempt 2.
 - Dispatched At: 2026-07-25T04:36:08Z
 
 ## Execution Identity
@@ -36,7 +36,7 @@ Completion: direct-main
 - Candidate Branch: codex/reject-nonexistent-lifecycle-handoff-oids-019f978e
 - Candidate Worktree: /Users/martinbechard/.codex/worktrees/215b/dev-methodology
 - Candidate Base Commit: 3642d791d04fc06e5c2f586bafc42e2e2795bb82
-- Candidate Commit: ef86acb045a410ce9b9adec4cd01a483ae811149 (verified Git commit object on the clean private branch)
+- Candidate Commit: 22fa4219c2ee8f1f89da7cfeb8ccc9f027a00a70 (replacement candidate)
 - Earlier Project-File Claim: aa6826f1-62fd-4d00-933c-53aa1f8474bb, released no-change at event 1dd9a2b9-9618-420e-95a0-c50dcf1fe1ad before source writes due private-worktree relocation.
 
 ## Correction Attempt 1 Review
@@ -46,12 +46,22 @@ Completion: direct-main
 - Finding: High — a valid unrelated self-consistent commit can satisfy every lane, including terminal closeout, because expected parent, path, and state authority are not caller-bound.
 - Disposition: Correction returned to the original Dev Coder.
 
+## Correction Attempt 2 Review
+
+- Independent Reviewer: Dev Code Reviewer
+- Verdict: CHANGES_REQUIRED
+- Finding: High — repeated candidate-controlled root baseline accepts fully rewritten history.
+- Finding: High — Git replace refs can substitute content under the reported SHA.
+- Related Defect: backlog/defect-backlog/disable-git-replace-refs-for-lifecycle-receipts.md, durably logged in commit 6842a4647f98a1afde4d41364e032ce006124c75.
+- Disposition: Both findings returned to the original Dev Coder as the final bounded attempt.
+
 ## Coordination Evidence
 
 - Backlog Claim: reserve-lifecycle-handoff-oid-defect-019f978e acquired on primary main at 2026-07-25T04:36:08.080425Z; acquisition journal event 03c16c20-3fa5-40fd-a43b-61352ae4e3a7.
 - Running Transition Claim: record-running-lifecycle-handoff-oids-019f978e acquired on primary main at 2026-07-25T04:39:41.479916Z; acquisition journal event aaa4b206-d60a-47a4-abf5-7ec4e9782c22. Earlier wait attempt: f769d7a1-2113-4390-a1a9-096dd7d6f720; direct release baton received after unrelated claim release event 0db72b9d-17c1-4d45-8c5a-cb4260689656.
 - Material-Phase Claim: record-implementation-phase-handoff-oids-019f978e acquired on primary main at 2026-07-25T04:49:43.065533Z; acquisition journal event ffdd7539-8b43-42bd-9100-e89380e75484.
 - Correction-Attempt Claim: record-correction-attempt-handoff-oids-019f978e acquired on primary main at 2026-07-25T05:14:47.330838Z; acquisition journal event eaf39685-ca41-40a2-bbe2-bf7ee29a848b.
+- Correction-Attempt-2 Claim: record-correction-attempt2-handoff-oids-019f978e acquired on primary main at 2026-07-25T05:31:44.092988Z; acquisition journal event a9215dec-8cfc-46b3-aced-c5e055c15828.
 
 ## Summary
 
