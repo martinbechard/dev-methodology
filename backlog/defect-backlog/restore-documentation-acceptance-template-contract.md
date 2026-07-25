@@ -1,8 +1,17 @@
 # Restore Documentation Acceptance Template Contract
 
-Status: Ready
+Status: Starting
 
 Type: Defect
+
+## Launch Reservation
+
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Reservation: One launch reserved by the parent Dev Backlog Coordinator.
+- Normalized Objective: Restore or evidence-correct the Documentation Acceptance template contract.
+- Dispatched At: 2026-07-25T01:04:27Z
+- Intended Root Role: Dev Orchestrator
+- Runtime Thread And Task Id: Not created; the root Dev Orchestrator must accept ownership before a canonical identity is recorded.
 
 ## Summary
 
