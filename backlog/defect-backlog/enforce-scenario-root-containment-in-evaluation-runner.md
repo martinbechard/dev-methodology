@@ -35,6 +35,19 @@ Completion: direct-main
 - Phase: Scenario-root containment implementation and focused regression planning.
 - Started At: 2026-07-25T05:56:32.870561Z.
 
+## Accepted Integration Candidate
+
+- Candidate Commit: `81a2c556344a35b57493f552af9417f1a7faee9c`.
+- Source Branch: `codex/enforce-scenario-root-containment-019f97d7`.
+- Clean Source Worktree: `/Users/martinbechard/.codex/worktrees/1e13/dev-methodology`.
+- Phase: Ready for direct-main integration. Status remains Running and ownership remains with Dev Orchestrator until that integration and its later lifecycle evidence are complete.
+- Fresh Security Review: ACCEPTED with no findings.
+- Fresh Code Review: ACCEPTED with no findings.
+- Independent Verification: VERIFIED/PASS for focused Python 3.11 containment, Junie, handoff, and authority tests.
+- Additional Validation: Validation-only pass, compile pass, and diff-hygiene pass.
+- Baseline Caveats: Unrelated Playwright and catalog baseline caveats remain outside this candidate's scope.
+- Distinct Follow-up: Catalog-path containment is separately recorded at `backlog/defect-backlog/enforce-suite-catalog-path-containment-in-evaluation-runner.md` in commit `0a3b8b2a`; it remains outside this item's scope.
+
 ## Summary
 
 Constrain evaluation-runner scenario roots to the canonical fixture root so untrusted suite or scenario identifiers cannot traverse through paths or symlinks into external Git metadata, expensive trees, or unrelated workspace state.
