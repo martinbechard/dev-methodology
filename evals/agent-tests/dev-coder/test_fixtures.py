@@ -67,7 +67,8 @@ class DevCoderFixtureTests(unittest.TestCase):
 
         self.assertIn(
             "When project resource coordination selects agent-claim, repository mutation "
-            "has an explicit claim lifecycle with claim-call and release evidence.",
+            "has an explicit claim lifecycle with claim-call evidence and enabled ownership "
+            "release or explicit handoff evidence.",
             contract,
         )
         self.assertIn(
@@ -77,6 +78,10 @@ class DevCoderFixtureTests(unittest.TestCase):
         )
         self.assertNotIn(
             "- Repository mutation has an explicit claim lifecycle.",
+            contract,
+        )
+        self.assertNotIn(
+            "claim lifecycle with claim-call and release evidence",
             contract,
         )
 
