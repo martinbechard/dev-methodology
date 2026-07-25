@@ -1,10 +1,10 @@
 # Require Durable Defect Logging And Direct-Main Work-Item Creation
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
-Owner: Dev Orchestrator (canonical work-item Thread 019f96cf-226c-7f62-9d66-7d31cead822e)
+Owner: Unowned
 
 ## Launch Reservation
 
@@ -26,6 +26,30 @@ Owner: Dev Orchestrator (canonical work-item Thread 019f96cf-226c-7f62-9d66-7d31
 - Phase: Approved definition implementation / pre-mutation checks.
 - Started At: 2026-07-25T01:34:57Z
 - Prior Coordination Release: require-durable-defect-logging-running-019f96cf; acquire event b67710d6-d249-46e4-a44f-1ff6625f1b14; release event d25f25bb-d408-41b5-9396-edfe6b3197b2 after commit 126ee9befb575c4ebd1d4ddd00444616a8a48808.
+
+## Blocked Handoff
+
+- Status: Blocked
+- Owner: Unowned
+- Operational Claim: None
+- Delivery Claim: None
+- Canonical Work-Item Thread And Root Task: 019f96cf-226c-7f62-9d66-7d31cead822e
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Preserved Delivery Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/durable-defect-creation-coder-019f96cf
+- Preserved Delivery Branch: codex/durable-defect-creation-coder-019f96cf
+- Preserved Historical Branch HEAD: 32212af7d6751e3dd89d43485e2a355c1b3e3288
+- Preserved Commits: 4f47fea91dc6f49b4f36d5c1360bf414fce2d852 and 957c93370c476bb3296151f979b5f1407362e7be
+- Preserved Untracked Approval Records: approval-record-durable-defect-create-file-work-item.yaml and approval-record-durable-defect-dev-orchestrator.yaml remain only in the preserved private worktree.
+- Superseded Claim-Free Portion: The four-path claim-free net behavior is superseded and must not be integrated, discarded, or carried forward. Its exact cumulative paths are skills/create-file-work-item/scripts/create.py, scripts/test_create_file_work_item.py, skills/agent-claim-command/scripts/claim.py, and scripts/test_agent_claim.py.
+- Delivery Boundary: No primary integration occurred. No governed source mutation, generated mutation, test-policy mutation, or documentation-policy mutation occurred. Methodology Maintainer was interrupted before governed mutation.
+
+### Exact Blocker And Dependency
+
+Canonical exact-file lifecycle task 019f9783-31a0-7e91-9704-08cde7886b3a owns the superseding exact-file coordination policy. It is User Action Required with its exact eight-path governed manifest durable at primary-main commit 9cc05219fbb2c10b80ef3300568398dd44f5f8a2. Its manifest includes skills/create-file-work-item/SKILL.md and excludes agents/roles/dev-activities/dev-orchestrator.role.yaml. This task cannot safely complete its separate mandatory durable-defect logging work until that accepted and integrated exact-file policy delivery supplies a direct path, semantic, review, verification, release, and integration baton. Do not classify this technical dependency as User Action Required and do not log a duplicate defect for the already-recorded policy conflict.
+
+### Unblock And Resumption
+
+The unblock condition is accepted and integrated exact-file lifecycle delivery on main, plus the direct integration commit, path mapping, supersession semantics, review, verification, and release baton from task 019f9783-31a0-7e91-9704-08cde7886b3a. Resume only through the same-task provider sequence Blocked -> Ready -> Starting -> Running; no direct Blocked -> Running transition is authorized. Retain this item's acceptance criteria and original exact user approval history as recovery context while the claim-free portion remains superseded.
 
 ## User Action Required
 
