@@ -1,6 +1,6 @@
 # Reject Nonexistent Lifecycle Handoff Commit OIDs
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/reject-nonexistent-lifecycle-handoff-commit-oids.md
+Provider Reference: backlog/defect-backlog/reject-nonexistent-lifecycle-handoff-commit-oids.md
 
 Completion: direct-main
 
@@ -19,7 +19,7 @@ Completion: direct-main
 - Reservation: One parent-owned launch reservation.
 - Intended Root Role: Dev Orchestrator
 - Isolated Checkout: /Users/martinbechard/.codex/worktrees/215b/dev-methodology
-- Phase: Waiting for governed definition approval.
+- Phase: Awaiting parent reservation.
 - Dispatched At: 2026-07-25T04:36:08Z
 
 ## Execution Identity
@@ -83,7 +83,19 @@ Do not mutate those definitions or mirrors, run pre-mutation approval checks usi
 
 ### Resolution
 
-Pending explicit user answer in canonical task 019f978e-28b7-7561-be38-b535ab26850f.
+Approved on 2026-07-25 in canonical task 019f978e-28b7-7561-be38-b535ab26850f. Exact user messages: Approved; I approve. Provenance: direct answer to the recorded Question for the User.
+
+### Approved Scope
+
+- skills/manage-file-work-items/SKILL.md
+- agents/roles/dev-activities/dev-backlog-steward.role.yaml
+- skills/codex-workitem-coordination/SKILL.md
+- agents/roles/dev-activities/dev-orchestrator.role.yaml
+- Only the supported generated mirrors of those approved canonical sources.
+
+### Resulting Disposition
+
+Approved. The item is Ready and awaits the parent Coordinator's Ready -> Starting reservation. This transaction does not set Starting or Running.
 
 ### Resumption
 
@@ -98,6 +110,7 @@ The same canonical task preserves candidate a12babfc3b919b5e5334821703c8549fe40a
 - Correction-Attempt-2 Claim: record-correction-attempt2-handoff-oids-019f978e acquired on primary main at 2026-07-25T05:31:44.092988Z; acquisition journal event a9215dec-8cfc-46b3-aced-c5e055c15828.
 - Verification-Phase Claim: record-verification-phase-handoff-oids-019f978e acquired on primary main at 2026-07-25T06:37:04.074955Z; acquisition journal event fc079bb0-4edb-4b90-ada1-3fb402a5c711.
 - User-Action-Required Transition Claim: move-lifecycle-oid-to-uar-019f978e acquired on primary main at 2026-07-25T06:51:28.892456Z; acquisition journal event 27983099-ef32-45d1-9a76-cf2af3a9c6e1. Earlier wait attempt 9b5f91bc-2da1-4b64-bb6f-a8c53daef5f4 reconciled after direct release baton event d12478df-4ff5-41bf-96a2-212ae39081c8.
+- Approval-Resolution Claim: record-governed-approval-resume-019f978e acquired on primary main at 2026-07-25T12:08:23.325017Z; acquisition journal event 000030dc-d420-4cb4-9f41-641810b63b93.
 
 ## Summary
 
