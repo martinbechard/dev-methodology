@@ -1,14 +1,25 @@
 # Support Existing Isolated Correction Worktree Binding
 
-Status: Ready
+Status: Starting
 
 Type: Defect
+
+Owner: Dev Orchestrator
 
 Provider: file
 
 Provider Reference: backlog/defect-backlog/support-existing-isolated-correction-worktree-binding.md
 
 Completion: direct-main
+
+## Launch Reservation
+
+- Canonical Task/Thread: 019f976c-6691-7a83-9df4-e73fc0baae73
+- Reservation: One parent-owned launch reservation.
+- Intended Root Role: Dev Orchestrator
+- Isolated Checkout: /Users/martinbechard/.codex/worktrees/0311/dev-methodology
+- Phase: Awaiting root lifecycle acceptance.
+- Dispatched At: 2026-07-25T03:58:59Z
 
 ## Summary
 
