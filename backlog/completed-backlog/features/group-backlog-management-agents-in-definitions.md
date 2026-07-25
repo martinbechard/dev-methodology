@@ -1,12 +1,12 @@
 # Group Backlog Management Agents In The Definitions HTML And Diagram
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/group-backlog-management-agents-in-definitions.md
+Provider Reference: backlog/completed-backlog/features/group-backlog-management-agents-in-definitions.md
 
 Completion: direct-main
 
@@ -72,6 +72,23 @@ None.
 ## Open Questions
 
 - Which additional role definitions, if any, have source-backed backlog-management ownership beyond Dev Backlog Coordinator and Dev Backlog Steward?
+
+## Completion Evidence
+
+- Completed At: 2026-07-25T02:28:22Z
+- Canonical Thread And Task Id: 019f96f0-db65-7980-b2c5-6dc3d1756abb
+- Accepted Candidate: b7ee84cb55ede17f2b30bea308ffb9ac1ac238bc
+- Source Commits: 0dc9b9d4 and b7ee84cb55ede17f2b30bea308ffb9ac1ac238bc
+- Independent Review: Methodology Artifact Reviewer ACCEPTED cumulative b7ee84cb after source-authority correction, with no findings.
+- Browser Verification: PASS for catalog-driven groups and membership, all anchors, moved-role cards, modals, deep links, and zero errors. Browser resource release event: ceec07a1-78bf-4e5e-9c43-357163962129.
+- Focused Verification: Source checks and generator freshness checks passed.
+- Tier 3 Verification: Scripts suite ran 695 checks. Seven exact failures were reproduced on immutable clean baseline 766464a8 and confined to unchanged module-template and backlog-steward claim-neutrality surfaces.
+- Direct-Main Integration: 0dc9b9d4 mapped to ba5898be2b232d4d51d65d1d21c259e9c6428cc; b7ee84cb mapped to f678eb660aef1112977f3291af9c79e972c6f747. Stable patch IDs match, all nine paths are byte-identical, and no conflicts occurred.
+- Main Observation: f678eb660aef1112977f3291af9c79e972c6f747.
+- Integration Release Event: 5060d523-aa25-4103-82a0-a8caa4335274.
+- Implementation Release Events: 7d0e2d66-5029-46da-bcd8-f068a071147e and faa8acb7-37e5-4e88-abd1-5ebe47295e04.
+- Residual Paths: None.
+- Terminal Provider Transaction: backlog claim complete-backlog-lifecycle-019f96f0, acquired event d0f50926-31df-43c6-b905-18d93a21ab5b.
 
 ## Notes
 
