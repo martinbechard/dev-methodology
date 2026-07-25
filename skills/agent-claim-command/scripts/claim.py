@@ -1152,6 +1152,21 @@ def _commit_changed_paths(worktree: Path, commit: str) -> list[str]:
     return sorted({path for path in completed.stdout.split("\0") if path})
 
 
+def _commit_path_sha256(worktree: Path, commit: str, path: str) -> str:
+    object_spec = f"{commit}:{path}"
+    object_type = _git(worktree, "cat-file", "-t", object_spec, check=False)
+    if object_type.returncode != SUCCESS:
+        return "missing"
+    if object_type.stdout.strip() != "blob":
+        return f"non-blob:{object_type.stdout.strip()}"
+    blob = subprocess.run(
+        ["git", "-C", str(worktree), "cat-file", "blob", object_spec],
+        check=True,
+        capture_output=True,
+    ).stdout
+    return hashlib.sha256(blob).hexdigest()
+
+
 def _branch(worktree: Path) -> str:
     return _git(worktree, "branch", "--show-current").stdout.strip()
 
@@ -2740,22 +2755,46 @@ def _release_reconciliation_evidence(
             peer_commit_paths=peer_paths,
             reconciled_out_of_domain_paths=changed_paths,
         )
-    current_tree_matches = _git(
-        worktree,
-        "diff",
-        "--quiet",
-        peer_commit,
-        resulting_commit,
-        "--",
-        *changed_paths,
-        check=False,
-    )
-    if current_tree_matches.returncode != SUCCESS:
+
+    baseline_out_of_domain_state = claim["baseline_out_of_domain_state"]
+    peer_commit_content_sha256: dict[str, str] = {}
+    invalid_baseline_content_paths: list[str] = []
+    content_mismatches: list[dict[str, str]] = []
+    for path in changed_paths:
+        baseline_path_state = baseline_out_of_domain_state.get(path)
+        expected_sha256 = (
+            baseline_path_state.get("worktree_sha256")
+            if isinstance(baseline_path_state, dict)
+            else None
+        )
+        if not isinstance(expected_sha256, str) or (
+            expected_sha256 != "missing"
+            and not re.fullmatch(r"[0-9a-f]{64}", expected_sha256)
+        ):
+            invalid_baseline_content_paths.append(path)
+            continue
+        actual_sha256 = _commit_path_sha256(worktree, peer_commit, path)
+        peer_commit_content_sha256[path] = actual_sha256
+        if actual_sha256 != expected_sha256:
+            content_mismatches.append(
+                {
+                    "path": path,
+                    "acquisition_worktree_sha256": expected_sha256,
+                    "peer_commit_sha256": actual_sha256,
+                }
+            )
+    if invalid_baseline_content_paths:
         raise _ReleaseReconciliationError(
-            "The current tree must match the supplied peer commit for every reconciled path.",
-            "reconciliation_current_tree_mismatch",
+            "The acquisition baseline must contain trustworthy content evidence for every reconciled path.",
+            "reconciliation_baseline_content_invalid",
+            invalid_baseline_content_paths=invalid_baseline_content_paths,
+        )
+    if content_mismatches:
+        raise _ReleaseReconciliationError(
+            "The supplied peer commit must preserve the acquisition-time content for every reconciled path.",
+            "reconciliation_commit_content_mismatch",
             peer_commit=peer_commit,
-            reconciled_out_of_domain_paths=changed_paths,
+            content_mismatches=content_mismatches,
         )
 
     prior_reference = args.prior_rejected_release_reference
@@ -2798,6 +2837,7 @@ def _release_reconciliation_evidence(
         "baseline_out_of_domain_status": claim.get("baseline_out_of_domain_status", []),
         "baseline_out_of_domain_state": claim["baseline_out_of_domain_state"],
         "peer_commit": peer_commit,
+        "peer_commit_content_sha256": peer_commit_content_sha256,
         "reconciled_out_of_domain_paths": changed_paths,
         "prior_rejected_release_reference": prior_reference,
         "claim_incarnation": claim_incarnation,

@@ -5910,6 +5910,8 @@ class BundleContentTests(unittest.TestCase):
             "Independent review and integration own committed-content, changed-path, and provenance decisions",
             "Live claims are presumed valid; only the watchdog investigates stale ownership.",
             "Non-overlapping primary-worktree claims may coexist.",
+            "preserve the acquisition-time content for every reconciled path",
+            "Accepted descendant commits may later change those paths",
         ):
             with self.subTest(claim_contract=required_contract):
                 self.assertIn(required_contract, claim_text)
@@ -5949,6 +5951,8 @@ class BundleContentTests(unittest.TestCase):
             "fresh reconciliation branch from that exact commit",
             "do not import unrelated ancestry merely for provenance",
             "It does not audit commit history or decide whether committed paths belong to the contribution",
+            "acquisition-snapshot content, and event identity",
+            "Accepted descendant commits may later change a reconciled path.",
             "Independent review and integration own committed-content, changed-path, and provenance decisions",
             "this becomes the work-item Thread's integration and cleanup branch",
             "older candidate branch retained only as a non-ancestral content source is handled separately",

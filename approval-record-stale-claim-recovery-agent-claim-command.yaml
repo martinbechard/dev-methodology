@@ -1,0 +1,6 @@
+basis: explicit-user-direction
+definition_scope: skills/agent-claim-command/SKILL.md
+direction: "I authorize one new bounded stale-claim recovery cycle."
+provenance:
+  source: user-message
+  reference: thread:019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a/message:bounded-stale-claim-recovery-cycle

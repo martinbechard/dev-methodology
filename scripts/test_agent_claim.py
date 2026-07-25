@@ -1441,6 +1441,14 @@ class AgentClaimTests(unittest.TestCase):
             fixture["prior_rejected_release_reference"],
             evidence["prior_rejected_release_reference"],
         )
+        self.assertEqual(
+            {
+                "backlog/feature-backlog/queued.md": hashlib.sha256(
+                    b"pre-existing peer work\n"
+                ).hexdigest()
+            },
+            evidence["peer_commit_content_sha256"],
+        )
         event = self.journal_events()[-1]
         self.assertEqual("RELEASED", event["outcome"])
         self.assertEqual(fixture["head_commit"], event["resulting_commit"])
@@ -1741,7 +1749,7 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("reconciliation_resources_present", self.output(reconciled)["reason"])
         self.assertEqual(registry_bytes, self.registry_path().read_bytes())
 
-    def test_release_reconciliation_requires_exact_peer_paths_and_current_tree(self) -> None:
+    def test_release_reconciliation_requires_exact_peer_paths(self) -> None:
         fixture = self.release_reconciliation_fixture()
         registry_bytes = self.registry_path().read_bytes()
         extra_path = self.repository / "backlog" / "feature-backlog" / "extra.md"
@@ -1764,12 +1772,17 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("reconciliation_commit_paths_mismatch", self.output(wrong_paths)["reason"])
         self.assertEqual(registry_bytes, self.registry_path().read_bytes())
 
+    def test_release_reconciliation_allows_later_descendant_change_to_reconciled_path(
+        self,
+    ) -> None:
+        fixture = self.release_reconciliation_fixture()
         queued_path = self.repository / "backlog" / "feature-backlog" / "queued.md"
         queued_path.write_text("later committed peer value\n", encoding="utf-8")
         self.git("add", "backlog/feature-backlog/queued.md")
         self.git("commit", "-m", "change reconciled path after peer")
+        descendant_commit = self.git("rev-parse", "HEAD").stdout.strip()
 
-        tree_mismatch = self.claim(
+        released = self.claim(
             "release",
             "--claim-id",
             "project",
@@ -1779,10 +1792,89 @@ class AgentClaimTests(unittest.TestCase):
             fixture["prior_rejected_release_reference"],
         )
 
-        self.assertEqual(1, tree_mismatch.returncode)
+        self.assertEqual(0, released.returncode, released.stderr)
+        result = self.output(released)
+        self.assertEqual("RELEASED", result["outcome"])
+        self.assertEqual(descendant_commit, self.journal_events()[-1]["resulting_commit"])
         self.assertEqual(
-            "reconciliation_current_tree_mismatch",
-            self.output(tree_mismatch)["reason"],
+            fixture["peer_commit"],
+            result["reconciliation"]["peer_commit"],
+        )
+        self.assertEqual(
+            ["backlog/feature-backlog/queued.md"],
+            result["reconciliation"]["reconciled_out_of_domain_paths"],
+        )
+        self.assertEqual([], self.output(self.claim("status"))["claims"])
+
+    def test_release_reconciliation_requires_peer_content_to_match_acquisition_snapshot(
+        self,
+    ) -> None:
+        backlog_path = self.repository / "backlog" / "feature-backlog" / "queued.md"
+        backlog_path.write_text("acquisition-time peer work\n", encoding="utf-8")
+        acquired = self.claim(
+            *self.acquire_arguments("project"),
+            "--project-files",
+            "--scope-reason",
+            "project work",
+        )
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        backlog_path.write_text("different committed peer work\n", encoding="utf-8")
+        self.git("add", "backlog/feature-backlog/queued.md")
+        self.git("commit", "-m", "commit different peer content")
+        peer_commit = self.git("rev-parse", "HEAD").stdout.strip()
+        (self.repository / "src" / "one.py").write_text("claimed work\n", encoding="utf-8")
+        self.git("add", "src/one.py")
+        self.git("commit", "-m", "complete claimed project work")
+        rejected_release = self.claim("release", "--claim-id", "project")
+        prior_reference = self.output(rejected_release)["journal"]["event_id"]
+        registry_bytes = self.registry_path().read_bytes()
+
+        reconciled = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            peer_commit,
+            "--prior-rejected-release-reference",
+            prior_reference,
+        )
+
+        self.assertEqual(1, reconciled.returncode)
+        result = self.output(reconciled)
+        self.assertEqual("reconciliation_commit_content_mismatch", result["reason"])
+        self.assertEqual(
+            ["backlog/feature-backlog/queued.md"],
+            [mismatch["path"] for mismatch in result["content_mismatches"]],
+        )
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+    def test_release_reconciliation_rejects_missing_acquisition_content_evidence(
+        self,
+    ) -> None:
+        fixture = self.release_reconciliation_fixture()
+        registry = json.loads(self.registry_path().read_text(encoding="utf-8"))
+        del registry["claims"][0]["baseline_out_of_domain_state"][
+            "backlog/feature-backlog/queued.md"
+        ]["worktree_sha256"]
+        self.registry_path().write_text(json.dumps(registry), encoding="utf-8")
+        registry_bytes = self.registry_path().read_bytes()
+
+        reconciled = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+
+        self.assertEqual(1, reconciled.returncode)
+        result = self.output(reconciled)
+        self.assertEqual("reconciliation_baseline_content_invalid", result["reason"])
+        self.assertEqual(
+            ["backlog/feature-backlog/queued.md"],
+            result["invalid_baseline_content_paths"],
         )
         self.assertEqual(registry_bytes, self.registry_path().read_bytes())
 

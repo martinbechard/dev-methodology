@@ -52,6 +52,8 @@ Several outcomes share one exit code. Never branch on the process code alone. A 
 
 RECONCILIATION_RECOVERY_REQUIRED means a durable pending reconciliation marker still controls transaction recovery. A prepared marker protects the exact original registry and journal snapshots; its RELEASE_PENDING line is not a release. A committed marker makes the exact released registry authoritative and finalizes exactly one RELEASED journal event. Scoped commands and journal maintenance attempt validated deterministic recovery under the registry lock. Report remains read-only and returns this outcome before journal loading when a marker exists.
 
+Release reconciliation requires the claim baseline to precede the exact peer commit and the peer commit to be an ancestor of current HEAD. That peer commit must change exactly the rejected out-of-domain path set, exclude the claimed domain, and match the acquisition-time content for every reconciled path. Later descendant commits may change those paths without invalidating the bounded peer snapshot. The cited rejection must resolve to the same acquisition identity and evidence.
+
 When this outcome appears:
 
 1. Invoke status through this same CLAIM_SCRIPT path.
