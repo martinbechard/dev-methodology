@@ -1,6 +1,6 @@
 # Decouple Dev Backlog Steward Contract From Unconditional Claim Evidence
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/decouple-dev-backlog-steward-contract-from-unconditional-claim-evidence.md
+Provider Reference: backlog/defect-backlog/decouple-dev-backlog-steward-contract-from-unconditional-claim-evidence.md
 
 Completion: direct-main
 
@@ -57,11 +57,15 @@ Unattended Work Boundary: Do not mutate a governed definition or regenerate a mi
 
 Lifecycle Resumption: This answer restores the item to Ready only. The parent Coordinator must reserve Ready -> Starting, then the same root Dev Orchestrator must record Starting -> Running before delivery work resumes.
 
-## User Action Required
+## Approved User Direction
 
 Question: Do you approve mutation of agents/roles/dev-activities/dev-backlog-steward.role.yaml specifically to REMOVE resource-coordination selection and agent-claim mechanics from the portable Steward contract, leaving provider lifecycle durability in the role and relying entirely on PROJECT.yaml -> AGENTS.md injection for coordination behavior?
 
-Why Input Is Required: This is materially different from the prior rejected conditional-wording proposal. It changes the portable role boundary by removing coordination mechanics, so it requires new exact scope-specific user approval.
+Approval: APPROVED.
+
+Approval Provenance: Current user message in canonical Thread 019f96f1-1a19-7b01-b166-c5948a50fff5 on 2026-07-25.
+
+Approved Semantics: Remove resource-coordination selection and agent-claim mechanics from the portable Steward contract; preserve provider lifecycle durability; rely entirely on existing PROJECT.yaml -> AGENTS.md injection, with no renderer behavior change.
 
 ### Governed Canonical Approval Scope
 
@@ -82,11 +86,11 @@ Why Input Is Required: This is materially different from the prior rejected cond
 
 Discovery Evidence: The renderer already emits no coordination or transport guidance when resource_coordination is none, and adds reference-only agent-claim plus the configured inlined transport only when selected. No renderer behavior change is planned.
 
-Prohibited Unattended Action: Do not mutate the canonical role or regenerate any mirror before explicit approval.
+Prior Rejected Proposal Retained: The conditional-wording proposal remains NOT APPROVED; this approval governs only removal of coordination mechanics from the portable Steward contract.
 
-Permitted Resumption: Record the answer in this same canonical Thread, restore User Action Required -> Ready, have the parent Coordinator reserve Ready -> Starting, then have this same root Dev Orchestrator record Starting -> Running before delivery resumes.
+Resumption Path: This resolution restores Ready only. The parent Coordinator must reserve Ready -> Starting, then this same root Dev Orchestrator must record Starting -> Running in canonical Thread 019f96f1-1a19-7b01-b166-c5948a50fff5 before delivery resumes.
 
-Resolution: Pending explicit user answer to this distinct approval question.
+Resolution: Approved as recorded above. Before mutation, create and pass the exact governed approval manifest for the approved canonical path; regenerate only the supported mirrors after that check.
 
 ## Summary
 
