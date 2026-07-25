@@ -146,6 +146,7 @@ The same canonical task preserves candidate a12babfc3b919b5e5334821703c8549fe40a
 - Approval-Resolution Claim: record-governed-approval-resume-019f978e acquired on primary main at 2026-07-25T12:08:23.325017Z; acquisition journal event 000030dc-d420-4cb4-9f41-641810b63b93.
 - Running-Resumption Claim: record-governed-implementation-running-019f978e acquired on primary main at 2026-07-25T12:17:54.518445Z; acquisition journal event dca2352f-6f77-4452-90d2-5f7414ffcd6d.
 - Ambiguous-Commit-Provenance Claim: record-ambiguous-commit-provenance-019f978e acquired on primary main at 2026-07-25T13:02:28.343178Z; acquisition journal event c821b5ac-8169-4ed4-a732-161d374f9f11.
+- Contradictory-Release-Chain Claim: record-contradictory-release-chain-019f978e acquired on primary main at 2026-07-25T15:58:18.472064Z; acquisition journal event 85deed4d-b60b-4de0-aaa9-7cb4f4790430. Earlier wait attempt 6dfc7c4b-a535-40a8-8fe4-ff1c84886722 reconciled after direct release baton event d584675f-7650-4f71-82e2-8fcde7bad76d.
 - Blocked-Handoff Claim: block-overlapping-governed-dependency-019f978e acquired on primary main at 2026-07-25T13:16:59.778621Z; acquisition journal event 9875e09c-a965-47c5-a336-b98e28a60bf0.
 
 ## Summary
@@ -166,6 +167,12 @@ During exact-claims candidate work on 2026-07-25, the Dev Coder reported that it
 
 This is ambiguous commit-dispatch and provenance evidence, not proof that the reporting agent created the commit and not a nonexistent OID.
 
+## External False Premature Release Incident
+
+Lifecycle UAR commit 7515d5df349b0674b07c40eeabebb5923e5195df exists. Owner claim 019f9783-supplemental-approval-steward was acquired at event 49cfb40c-dc85-4b38-a201-a8fc28f77aa9. Before commit creation, an external actor released that claim with --no-change at event 8128b101-8acd-43dc-be2e-064ae773c931 against pre-commit baseline 5e935463. The owner's required post-commit normal release then returned CLAIM_NOT_FOUND at event c4c4b0aa-2f36-4678-b9f3-196b8dda13d8, and the registry no longer contained the claim.
+
+This is an externally false premature release and contradictory release chain, not owner success or evidence that the verified lifecycle UAR commit is absent. Recovery owner: Dev Backlog Steward.
+
 ## Requirements
 
 - Capture the actual commit OID immediately from Git after commit creation.
@@ -176,6 +183,9 @@ This is ambiguous commit-dispatch and provenance evidence, not proof that the re
 - Do not fabricate a correction by prefix matching or substitution.
 - Reconcile the raw Git object, claim release evidence, reflog, process identity, and dispatch identity after ambiguous commit dispatch.
 - Report unknown creator truthfully; never attribute an unknown commit to an agent or reject a verified object merely because creator identity is unknown.
+- Bind acquisition, commit creation and object evidence, and release actor, operation, baseline, and resulting_commit for every lifecycle transaction.
+- Detect a pre-commit --no-change release, preserve subsequent CLAIM_NOT_FOUND as structured recovery, and assign a recovery owner.
+- Never attribute an external release to the owner or treat registry absence as truthful owner closeout.
 
 ## Acceptance Criteria
 
@@ -187,6 +197,9 @@ This is ambiguous commit-dispatch and provenance evidence, not proof that the re
 - No prefix-based guessed correction is accepted.
 - Ambiguous commit-dispatch recovery reconciles the raw object, claim release, reflog, process identity, and dispatch identity.
 - Unknown creator identity is reported truthfully without attributing the commit to an agent or rejecting a verified object.
+- A pre-commit --no-change release is detected and a later CLAIM_NOT_FOUND is retained as structured recovery.
+- Release evidence binds acquisition, commit creation and object, actor, operation, baseline, and resulting_commit.
+- External release and registry absence are not treated as owner closeout; a recovery owner remains explicit.
 
 ## Dependencies
 
