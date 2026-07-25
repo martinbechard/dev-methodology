@@ -1,16 +1,32 @@
 # Support Existing Isolated Correction Worktree Binding
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
 Provider Reference: backlog/defect-backlog/support-existing-isolated-correction-worktree-binding.md
 
 Completion: direct-main
+
+## Resumption Reservation
+
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Canonical Task/Thread: 019f976c-6691-7a83-9df4-e73fc0baae73
+- Reservation: One parent-owned same-task launch reservation; no new task is created.
+- Normalized Objective: Deploy canonical Codex bundle to refresh stale agent-claim guidance.
+- Dispatched At: 2026-07-25T12:33:09Z
+- Intended Root Role: Dev Orchestrator
+- Canonical Worktree: /Users/martinbechard/.codex/worktrees/0311/dev-methodology
+- Canonical Branch: detached at 3f30d7c7d56dfea4ca23ca2a9afa8df55e9d138e
+- Phase: Awaiting root lifecycle acceptance.
+
+## Resumption Coordination Evidence
+
+- Backlog Claim: reserve-isolated-worktree-deployment-019f976c acquired on primary main at 2026-07-25T12:33:09.498977Z; acquisition journal event 917c1da2-1b74-4fb0-bcb5-b695400498ff.
 
 ## Launch Reservation
 
