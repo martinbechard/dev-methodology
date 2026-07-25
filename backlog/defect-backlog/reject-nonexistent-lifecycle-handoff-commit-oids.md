@@ -128,6 +128,7 @@ The same canonical task preserves candidate a12babfc3b919b5e5334821703c8549fe40a
 - User-Action-Required Transition Claim: move-lifecycle-oid-to-uar-019f978e acquired on primary main at 2026-07-25T06:51:28.892456Z; acquisition journal event 27983099-ef32-45d1-9a76-cf2af3a9c6e1. Earlier wait attempt 9b5f91bc-2da1-4b64-bb6f-a8c53daef5f4 reconciled after direct release baton event d12478df-4ff5-41bf-96a2-212ae39081c8.
 - Approval-Resolution Claim: record-governed-approval-resume-019f978e acquired on primary main at 2026-07-25T12:08:23.325017Z; acquisition journal event 000030dc-d420-4cb4-9f41-641810b63b93.
 - Running-Resumption Claim: record-governed-implementation-running-019f978e acquired on primary main at 2026-07-25T12:17:54.518445Z; acquisition journal event dca2352f-6f77-4452-90d2-5f7414ffcd6d.
+- Ambiguous-Commit-Provenance Claim: record-ambiguous-commit-provenance-019f978e acquired on primary main at 2026-07-25T13:02:28.343178Z; acquisition journal event c821b5ac-8169-4ed4-a732-161d374f9f11.
 
 ## Summary
 
@@ -141,6 +142,12 @@ A lifecycle Steward handoff reported commit OID `9cc052194342bddd471425ab9840f35
 
 Canonical task `019f9783-31a0-7e91-9704-08cde7886b3a` handoff and the direct Git reproduction on 2026-07-25. Standing user direction requires every confirmed defect to be logged durably.
 
+## Ambiguous Commit Dispatch and Provenance Evidence
+
+During exact-claims candidate work on 2026-07-25, the Dev Coder reported that it did not invoke a commit, but the candidate branch HEAD advanced to raw commit 0f3dcab5d539ea1aca197e1fc28fab574e2746b4. The claim release journal event 4f2e543a-91e7-4798-b1aa-b9a817fa1d0b recorded that resulting_commit and all committed scope paths. Reflog evidence shows an ordinary commit at 2026-07-25 08:56:08 -0400 authored and committed by configured user Martin Bechard. No responsible process or dispatch identity was identified; afterward the worktree was clean and the registry was empty.
+
+This is ambiguous commit-dispatch and provenance evidence, not proof that the reporting agent created the commit and not a nonexistent OID.
+
 ## Requirements
 
 - Capture the actual commit OID immediately from Git after commit creation.
@@ -149,6 +156,8 @@ Canonical task `019f9783-31a0-7e91-9704-08cde7886b3a` handoff and the direct Git
 - Reject absent, non-commit, stale, or mismatched reported OIDs with structured error and recovery behavior.
 - Preserve exact provider paths, canonical task identity, and claim-event evidence.
 - Do not fabricate a correction by prefix matching or substitution.
+- Reconcile the raw Git object, claim release evidence, reflog, process identity, and dispatch identity after ambiguous commit dispatch.
+- Report unknown creator truthfully; never attribute an unknown commit to an agent or reject a verified object merely because creator identity is unknown.
 
 ## Acceptance Criteria
 
@@ -158,6 +167,8 @@ Canonical task `019f9783-31a0-7e91-9704-08cde7886b3a` handoff and the direct Git
 - Tests cover stale HEAD movement and ambiguous commit dispatch without attributing mutable HEAD to the handoff.
 - Terminal and source-move transactions bind their provider paths and content evidence to the verified immutable object.
 - No prefix-based guessed correction is accepted.
+- Ambiguous commit-dispatch recovery reconciles the raw object, claim release, reflog, process identity, and dispatch identity.
+- Unknown creator identity is reported truthfully without attributing the commit to an agent or rejecting a verified object.
 
 ## Dependencies
 
