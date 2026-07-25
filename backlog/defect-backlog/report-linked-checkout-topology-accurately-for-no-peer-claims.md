@@ -1,16 +1,26 @@
 # Report Linked Checkout Topology Accurately For No-Peer Claims
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
 Provider Reference: backlog/defect-backlog/report-linked-checkout-topology-accurately-for-no-peer-claims.md
 
 Completion: direct-main
+
+## Launch Reservation
+
+- Parent Coordinator Task: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Canonical Task/Thread: 019f977f-8bf5-77a1-b3c8-b55a113736d7
+- Reservation: One parent-owned launch reservation.
+- Intended Root Role: Dev Orchestrator
+- Isolated Checkout: /Users/martinbechard/.codex/worktrees/c3a7/dev-methodology
+- Phase: Awaiting root lifecycle acceptance.
+- Dispatched At: 2026-07-25T04:19:36Z
 
 ## Summary
 
