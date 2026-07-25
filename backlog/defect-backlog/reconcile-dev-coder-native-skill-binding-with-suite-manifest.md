@@ -12,6 +12,21 @@ Provider Reference: backlog/defect-backlog/reconcile-dev-coder-native-skill-bind
 
 Completion: direct-main
 
+## Authority Reconciliation
+
+Read-only authority evidence confirms that no governed canonical mutation is currently indicated. The portable Dev Coder role intentionally omits agent-claim, scripts/test_role_mutation_policy.py explicitly protects mutation roles and native contracts from loading agent-claim, and PROJECT.yaml -> AGENTS.md owns project-selected resource-coordination injection.
+
+This defect is ordinary evaluation-contract drift in evals/agent-tests/dev-coder/suite.yaml and its associated suite scenarios, fixtures, and tests. Delivery must reconcile that evaluated contract without hand-editing generated/adapters/codex/agents/dev-coder.toml and without mutating a governed role or skill definition.
+
+If later discovery genuinely requires a governed definition, this same item must transition to User Action Required with an exact approval manifest before any such mutation. Do not infer approval or use a generated adapter edit as a substitute.
+
+## Reconciliation Evidence
+
+- Portable-role evidence: agents/roles/dev-activities/dev-coder.role.yaml makes resource coordination conditional on the project-selected policy and does not load agent-claim.
+- Native-contract evidence: scripts/test_role_mutation_policy.py asserts that mutation roles and their native contracts do not load agent-claim.
+- Project injection evidence: PROJECT.yaml selects resource coordination independently, and generated AGENTS.md guidance owns the selected coordination procedure.
+- Backlog Claim: reconcile-dev-coder-suite-contract-drift-019f9801 acquired on primary main at 2026-07-25T06:55:16.147805Z; acquisition journal event 14ea1ff2-834c-4287-87a6-76ee891740da.
+
 ## Summary
 
 Reconcile the Dev Coder evaluation suite's required skill binding with the generated Codex native agent so the current-main validate-only catalog check succeeds without weakening the governed-definition approval boundary.
