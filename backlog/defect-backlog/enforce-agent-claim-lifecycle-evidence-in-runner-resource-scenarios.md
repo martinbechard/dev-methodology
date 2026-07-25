@@ -113,6 +113,17 @@ None.
 - HIGH: A counterfeit claim executable is accepted because suffix-only script identity can forge matched structured outputs instead of binding the configured trusted adapter.
 - MEDIUM: Changed-state release accepts missing, null, or non-boolean `no_change` because it rejects only literal `True`.
 
+## Final Correction Plan And Hard Stop
+
+- Preserve rejected candidates e437702d2c0119c6641caca52fb7561348086568 and 446371ff424d2ab2e3da53c72396dde356c36bcb as review evidence.
+- Reuse canonical task 019f981c-4fea-7b83-b8d2-0b254ff45f0c, the original Dev Coder, and the existing branch and worktree. The correction lane is exactly `evals/agent-tests/runner.py` and `evals/agent-tests/test_runner.py`; do not create a task or worktree or expand into governed, generated, unrelated, or newly discovered defect scope.
+- Write red adversarial regressions before correction work.
+- Bind executable identity for the evaluated target to the exact configured agent-claim command adapter path through canonical resolved identity plus containment and regular-file checks. Reject suffix lookalikes, sibling counterfeits, and symlink substitutions; basename and suffix are not authority.
+- Treat release `no_change` as a required typed journal field bound exactly to the retained adapter result and scenario disposition. Reject missing, malformed, or contradictory values while preserving valid committed normal release and truthful normal no-change behavior.
+- Complete the prior seven-finding adversarial matrix, provider-none checks, non-browser runner checks, `py_compile`, diff hygiene, and the cheapest disposable valid and invalid scenarios. Reconcile owned baseline failures without duplicates; Playwright absence may remain an unchanged omission.
+- Produce one clean replacement commit and truthful claim release. Require a brand-new fresh independent full-candidate review, then independent verifier work only after review acceptance; do not integrate before both succeed.
+- Hard stop: any material fresh-review finding, repeated evidence-binding bypass, or scope expansion after attempt 2 prohibits correction 3. Preserve the candidate and have Dev Backlog Steward transition this item from Running to Blocked with Owner: Unowned, the exact unblock condition, and complete evidence.
+
 ## Notes
 
 This item is ready for independently scoped implementation. It does not authorize unrelated runner changes or governed-definition mutation without required approval evidence.
