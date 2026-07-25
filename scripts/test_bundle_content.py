@@ -492,11 +492,6 @@ CORE_PATTERN_SKILLS = (
     "interpreter-pattern",
 )
 AGENT_ROLE_MAP_REQUIRED_PHRASES = (
-    "Agents for Backlog Management",
-    "Agents for Methodology Maintenance",
-    "Agents for Project Setup",
-    "Agents for Wiki Activities",
-    "Agents for Dev Activities",
     "DEV_METHODOLOGY_ROLE_DEFINITIONS",
     "loadout-details",
     "generated/skill-definitions.js",
@@ -507,6 +502,8 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "const developmentPracticeCategory = categoriesById.get(",
     'categoriesById.get("design-patterns")',
     "agent-card__heading",
+    'heading.textContent = `Agents for ${group.label}`',
+    "roleData.catalogGroups.forEach((group) => {",
     'definitionButton.textContent = "View"',
     "agent-grid",
     "grid-template-columns: repeat(3, minmax(0, 1fr));",

@@ -319,17 +319,29 @@ class AgentSkillHierarchyTests(unittest.TestCase):
     def test_role_cards_follow_the_catalog_group_order(self) -> None:
         """The reader-facing conceptual agent definition cards follow catalog group order."""
         role_map = ROLE_MAP_PATH.read_text(encoding="utf-8")
-        group_markers = [
-            f'data-role-group="{group["id"]}"'
-            for group in self.module._load_yaml(
-                self.module.ROLE_CATALOG_GROUPS_PATH
-            )["groups"]
-        ]
+        catalog_groups = self.module._load_yaml(
+            self.module.ROLE_CATALOG_GROUPS_PATH
+        )["groups"]
 
-        self.assertEqual(
-            sorted(role_map.index(marker) for marker in group_markers),
-            [role_map.index(marker) for marker in group_markers],
+        self.assertIn("roleData.catalogGroups.forEach((group) => {", role_map)
+        self.assertIn("heading.id = `${group.id}-title`;", role_map)
+        self.assertIn("heading.textContent = `Agents for ${group.label}`;", role_map)
+        self.assertIn("container.dataset.roleGroup = group.id;", role_map)
+        self.assertIn(
+            ".filter((role) => (role.catalogGroup || role.group) === group.id)",
+            role_map,
         )
+        self.assertEqual(
+            [group["id"] for group in catalog_groups],
+            [
+                "backlog-management",
+                "dev-activities",
+                "wiki-activities",
+                "project-setup",
+                "methodology-maintenance",
+            ],
+        )
+        self.assertNotIn('data-role-group="backlog-management"', role_map)
 
     def test_map_legend_stays_with_the_map_without_a_category_summary(self) -> None:
         """The edge legend belongs to the diagram instead of a standalone section."""

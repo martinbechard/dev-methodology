@@ -648,30 +648,7 @@
     </object>
   </section>
 
-  <section class="section" aria-labelledby="backlog-management-title">
-    <h2 id="backlog-management-title">Agents for Backlog Management</h2>
-    <div class="grid agent-grid" data-role-group="backlog-management"></div>
-  </section>
-
-  <section class="section" aria-labelledby="dev-activities-title">
-    <h2 id="dev-activities-title">Agents for Dev Activities</h2>
-    <div class="grid agent-grid" data-role-group="dev-activities"></div>
-  </section>
-
-  <section class="section" aria-labelledby="wiki-activities-title">
-    <h2 id="wiki-activities-title">Agents for Wiki Activities</h2>
-    <div class="grid agent-grid" data-role-group="wiki-activities"></div>
-  </section>
-
-  <section class="section" aria-labelledby="project-setup-title">
-    <h2 id="project-setup-title">Agents for Project Setup</h2>
-    <div class="grid agent-grid" data-role-group="project-setup"></div>
-  </section>
-
-  <section class="section" aria-labelledby="methodology-maintenance-title">
-    <h2 id="methodology-maintenance-title">Agents for Methodology Maintenance</h2>
-    <div class="grid agent-grid" data-role-group="methodology-maintenance"></div>
-  </section>
+  <div id="agent-catalog"></div>
 
   <section class="section" aria-labelledby="skills-title">
     <h2 id="skills-title">Skill Catalog</h2>
@@ -793,14 +770,28 @@
 
     function renderRoleCatalog() {
       const roleData = window[ROLE_DATA_GLOBAL_NAME];
-      if (!roleData || !roleData.roles) return;
+      const catalog = document.getElementById("agent-catalog");
+      if (!roleData || !roleData.roles || !roleData.catalogGroups || !catalog) return;
 
-      document.querySelectorAll("[data-role-group]").forEach((container) => {
-        const group = container.dataset.roleGroup;
+      roleData.catalogGroups.forEach((group) => {
+        const section = document.createElement("section");
+        section.className = "section";
+        section.setAttribute("aria-labelledby", `${group.id}-title`);
+
+        const heading = document.createElement("h2");
+        heading.id = `${group.id}-title`;
+        heading.textContent = `Agents for ${group.label}`;
+        section.appendChild(heading);
+
+        const container = document.createElement("div");
+        container.className = "grid agent-grid";
+        container.dataset.roleGroup = group.id;
         const roles = Object.values(roleData.roles)
-          .filter((role) => (role.catalogGroup || role.group) === group)
+          .filter((role) => (role.catalogGroup || role.group) === group.id)
           .sort((left, right) => left.displayName.localeCompare(right.displayName));
         roles.forEach((role) => container.appendChild(createRoleCard(role)));
+        section.appendChild(container);
+        catalog.appendChild(section);
       });
     }
 
