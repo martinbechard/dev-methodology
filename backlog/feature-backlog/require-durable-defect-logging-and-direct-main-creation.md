@@ -1,6 +1,6 @@
 # Require Durable Defect Logging And Direct-Main Work-Item Creation
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -56,9 +56,9 @@ Why Input Is Required: Repository definition authority requires exact scope-spec
 - design/work-item-provider-and-completion-contracts.md
 - Applicable evaluation fixtures
 
-Unattended Work Boundary: Do not mutate any governed definition, approval record, generated mirror, or dependent artifact until the answer is recorded and lifecycle resumes through User Action Required -> Ready -> Starting -> Running in this same Thread.
+Unattended Work Boundary: Do not mutate any governed definition, approval record, generated mirror, or dependent artifact until the parent reserves this same Thread for the Ready -> Starting transition, then records Starting -> Running before implementation.
 
-Resolution: Pending explicit user answer to the recorded question.
+Resolution: On 2026-07-25, the user answered exactly "approved" in canonical work-item Thread 019f96cf-226c-7f62-9d66-7d31cead822e. This authorizes mutation of exactly skills/create-file-work-item/SKILL.md and agents/roles/dev-activities/dev-orchestrator.role.yaml for the recorded defect-capture and safe primary-main creation policy. The answer does not authorize dependent generated mirrors or non-governed companion artifacts as governed definition scope; they remain implementation-dependent surfaces. Provenance: the user reply followed the exact recorded two-path approval question in that same canonical Thread.
 
 ## Summary
 
