@@ -1,16 +1,31 @@
 # Reject Nonexistent Lifecycle Handoff Commit OIDs
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
 Provider Reference: backlog/defect-backlog/reject-nonexistent-lifecycle-handoff-commit-oids.md
 
 Completion: direct-main
+
+## Resumption Reservation
+
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Canonical Thread/Task: 019f978e-28b7-7561-be38-b535ab26850f
+- Reservation: One parent-owned same-task resumption launch reservation; no replacement task is created.
+- Normalized Objective: Reject nonexistent lifecycle handoff commit OIDs.
+- Dispatched At: 2026-07-25T12:16:47Z
+- Intended Root Role: Dev Orchestrator
+- Preserved Evidence: Candidate branch codex/reject-nonexistent-lifecycle-handoff-oids-019f978e, worktree /Users/martinbechard/.codex/worktrees/215b/dev-methodology, accepted candidate a12babfc3b919b5e5334821703c8549fe40aa82a, and the approved exact governed-definition scope remain binding.
+- Phase: Awaiting root lifecycle acceptance.
+
+## Resumption Coordination Evidence
+
+- Backlog Claim: resume-lifecycle-handoff-oid-019f978e acquired on primary main at 2026-07-25T12:16:47.368016Z; acquisition journal event 730270a6-96d9-4e28-9488-bf43dd958676.
 
 ## Launch Reservation
 
