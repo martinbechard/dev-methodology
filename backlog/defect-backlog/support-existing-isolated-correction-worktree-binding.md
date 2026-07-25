@@ -1,6 +1,6 @@
 # Support Existing Isolated Correction Worktree Binding
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/support-existing-isolated-correction-worktree-binding.md
+Provider Reference: backlog/defect-backlog/support-existing-isolated-correction-worktree-binding.md
 
 Completion: direct-main
 
@@ -111,11 +111,15 @@ This operation mutates user-home installed skills and native agents and may affe
 
 ## Resolution
 
-Pending. No user-scope installation, runtime catalog refresh, or engine rebinding work is authorized.
+Approved on 2026-07-25 in canonical task 019f976c-6691-7a83-9df4-e73fc0baae73. Exact user answer: I approve. Provenance: direct answer to the recorded Question for the User.
+
+Approved scope: only the documented user-scope Codex deployment `python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace`, followed by runtime catalog refresh or new-session activation and verification that installed agent-claim bytes match canonical source. No engine change or broader user-home mutation is authorized.
+
+Resulting disposition: Ready in the typed defect queue, preserving the same canonical task, branch, worktree, and evidence. A later parent-owned Ready -> Starting reservation is required before execution resumes.
 
 ## Unattended Work Boundary
 
-Do not run the installer, refresh the live catalog, edit user-home files, or implement speculative engine rebinding until the user answers the recorded question.
+Do not expand deployment scope, mutate user-home paths beyond the approved command, or implement speculative engine rebinding. Execute only after the normal Ready -> Starting -> Running lifecycle resumes.
 
 ## Follow-up Obligation
 
