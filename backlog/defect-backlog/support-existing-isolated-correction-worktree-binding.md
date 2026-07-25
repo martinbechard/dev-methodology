@@ -1,10 +1,10 @@
 # Support Existing Isolated Correction Worktree Binding
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
@@ -24,6 +24,18 @@ Completion: direct-main
 - Canonical Branch: codex/isolated-binding-019f976c at 570a0271870e96abcb5c0ddf01428fd749b238f3.
 - Approved Override Scope: python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace --replace-customized, followed by catalog refresh or new-session activation and installed-byte verification; limited to the nine reviewed customized bundle-owned skill trees and normal bundle-owned outputs.
 - Phase: Awaiting root lifecycle acceptance. Owner remains Unowned until the root Dev Orchestrator accepts the reservation.
+
+## Current Lifecycle Running
+
+- Canonical Task/Thread: 019f976c-6691-7a83-9df4-e73fc0baae73
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Owner: Dev Orchestrator
+- Canonical Worktree: /Users/martinbechard/.codex/worktrees/0311/dev-methodology
+- Canonical Branch: codex/isolated-binding-019f976c at stable source commit 570a0271870e96abcb5c0ddf01428fd749b238f3.
+- Accepted Approval Scope: python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace --replace-customized, followed by catalog refresh or new-session activation and installed-byte verification; no engine mutation.
+- Started At: 2026-07-25T16:06:41Z, after root lifecycle acceptance.
+- Sequencing Variance And Adoption: The Ready -> Starting transaction completed in the canonical task at commit e1572f96 before the parent STOP message arrived. The parent subsequently adopted that immutable same-task reservation as valid; no duplicate identity or mutation exists.
+- Phase: Root accepted. Deployment retry may proceed only after this provider transition is committed and its short backlog claim is released.
 
 ## Resumption Reservation
 
@@ -152,11 +164,11 @@ Approved scope: python3 scripts/install-skills.py --adapter codex --scope user -
 
 ## Resolution
 
-Approval is recorded. Deployment has not yet been rerun. The item is Starting with Owner: Unowned, preserving the same canonical task, branch, worktree, investigation, discrepancy-review, and approval evidence. The parent has made one same-task reservation; the next step is root lifecycle acceptance, not deployment in this provider transaction.
+Approval is recorded. Deployment has not yet been rerun. The item is Running with Owner: Dev Orchestrator, preserving the same canonical task, branch, worktree, investigation, discrepancy-review, and approval evidence. Root acceptance is recorded; deployment remains outside this provider transition.
 
 ## Ready Lifecycle Boundary
 
-Do not run the installer, refresh the runtime catalog, edit user-home files, or make an engine change in this provider transition. Resume only through Starting -> Running lifecycle reconciliation after root acceptance.
+Do not run the installer, refresh the runtime catalog, edit user-home files, or make an engine change in this provider transition. Deployment retry is permitted only after this commit and backlog-claim release.
 
 ## Follow-up Obligation
 
