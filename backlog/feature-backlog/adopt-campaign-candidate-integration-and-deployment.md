@@ -1,8 +1,17 @@
 # Adopt Campaign Candidate Integration And Deployment
 
-Status: Ready
+Status: Starting
 
 Type: Feature
+
+## Launch Reservation
+
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Reservation: One launch reserved by the parent Dev Backlog Coordinator.
+- Normalized Objective: Adopt reviewed private candidates with one final campaign integration/deployment transaction.
+- Dispatched At: 2026-07-25T01:04:58Z
+- Intended Root Role: Dev Orchestrator
+- Runtime Thread And Task Id: Not created; the root Dev Orchestrator must accept ownership before a canonical identity is recorded.
 
 ## Summary
 
