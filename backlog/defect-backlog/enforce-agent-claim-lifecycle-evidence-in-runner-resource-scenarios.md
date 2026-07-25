@@ -1,10 +1,10 @@
 # Enforce Agent-Claim Lifecycle Evidence In Runner Resource Scenarios
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
@@ -20,7 +20,7 @@ Completion: direct-main
 - Delivery Worktree: /Users/martinbechard/.codex/worktrees/e8bc/dev-methodology
 - Delivery Branch: detached HEAD
 - Delivery Commit At Acceptance: d40de70dcccf484284ce02310c90ad6c5fb89b83
-- Phase: Review correction attempt 2 assigned to the original Dev Coder; this is the last bounded correction attempt for repeated acceptance failure.
+- Phase: Hard-stop blocked; no active implementation owner.
 - Started At: 2026-07-25T07:12:44Z
 
 ## Execution Coordination Evidence
@@ -123,6 +123,22 @@ None.
 - Complete the prior seven-finding adversarial matrix, provider-none checks, non-browser runner checks, `py_compile`, diff hygiene, and the cheapest disposable valid and invalid scenarios. Reconcile owned baseline failures without duplicates; Playwright absence may remain an unchanged omission.
 - Produce one clean replacement commit and truthful claim release. Require a brand-new fresh independent full-candidate review, then independent verifier work only after review acceptance; do not integrate before both succeed.
 - Hard stop: any material fresh-review finding, repeated evidence-binding bypass, or scope expansion after attempt 2 prohibits correction 3. Preserve the candidate and have Dev Backlog Steward transition this item from Running to Blocked with Owner: Unowned, the exact unblock condition, and complete evidence.
+
+## Final Candidate And Review Evidence
+
+- Final candidate: 4778fd4435c50cc8a282a6a505eb41b061374278 on `codex/enforce-agent-claim-lifecycle-evidence-019f981c`; its private worktree was clean.
+- Coder claim: released at journal event 618bb101-5770-4227-8619-aaedea6e954d. The claim registry was empty after release.
+- Fresh Dev Code Reviewer disposition: REJECT.
+- HIGH: A different executable named `python` or `python3` can emit accepted results while the exact configured `claim.py` is only inert `argv[1]`; selected adapter execution is not proven.
+- HIGH: Real acquire and release plus a later unclaimed commit and rewrite of the target-writable journal release `resulting_commit` is accepted because retained release output lacks independent commit identity.
+- HIGH: Repository alias and contained journal symlink substitutions are accepted because relevant paths resolve without rejecting symlink components.
+- Supported verification: exact HEAD and clean checks, unique ordered events, actor/claim/event matching, typed no-change, configured adapter path checks, provider-none checks, and headers; eight focused checks passed; runner checks passed 128 with 13 known Playwright checks unavailable; `git diff --check` passed; worktree was clean; no new baseline defect was identified.
+
+## Blocked Handoff
+
+- Exact blocker: The runner lacks runner-owned immutable proof that the configured interpreter and adapter actually executed, release commit identity cannot be rewritten, and repository and journal component symlinks are rejected.
+- Next Action Owner: Dev Backlog Coordinator for future resumption routing. No active implementation owner exists.
+- Unblock Condition: Explicit authorization and a fresh bounded design and implementation plan must provide trusted interpreter-and-adapter execution identity, runner-owned immutable release-to-commit binding or an authoritative adapter result field, and component-wise repository and journal symlink rejection, with red regressions for all three. Resume only through the normal Blocked -> Ready -> Starting -> Running lifecycle; correction attempt 3 in this canonical run is prohibited.
 
 ## Notes
 
