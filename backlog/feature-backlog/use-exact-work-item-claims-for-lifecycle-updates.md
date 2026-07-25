@@ -1,6 +1,6 @@
 # Use Exact Work-Item Claims For Lifecycle Updates
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -65,7 +65,7 @@ Owner: Unowned
 - Supplemental Question: "Do you approve mutation of exactly skills/agent-claim-command/SKILL.md and skills/agent-claim-mcp/SKILL.md to align both transport contracts with the approved exact-work-item claim policy and the enforced documented-reason requirement for broad backlog scope?"
 - Supplemental Governed Approval Scope: Exactly skills/agent-claim-command/SKILL.md and skills/agent-claim-mcp/SKILL.md; no adapter openai.yaml scope is needed if descriptions remain unchanged.
 - Prior Prompt Reconciliation: This two-path supplemental question replaces the earlier command-only approval question; all prior lifecycle and eight-path approval evidence remains preserved.
-- Next Action Owner: User
+- Next Action Owner at Prompt: User
 - Recorded At: 2026-07-25T13:14:40Z
 - Backlog Claim: 019f9783-supplemental-approval-steward
 - Claim Acquisition Event: 49cfb40c-dc85-4b38-a201-a8fc28f77aa9
@@ -99,6 +99,19 @@ These findings require coder correction after resumption and require no new defi
 
 - design/generated/skill-definitions.js
 - generated/adapters/** only where supported by the approved supplemental source categories
+
+## Supplemental Approval Resolution
+
+- User Answer: "I approve"
+- Approval Scope: Exactly skills/agent-claim-command/SKILL.md and skills/agent-claim-mcp/SKILL.md; no scope expansion.
+- Original Approval: The original eight-path governed approval remains preserved and unchanged.
+- Canonical Task/Thread: 019f9783-31a0-7e91-9704-08cde7886b3a
+- Phase: Awaiting parent Coordinator Ready -> Starting reservation for this same canonical task.
+- Next Action Owner: Parent Coordinator
+- Recorded At: 2026-07-25T16:02:50Z
+- Backlog Claim: 019f9783-supplemental-ready-steward
+- Claim Acquisition Event: 09c38d5d-34ce-404e-ab93-7674dc6f4449
+- Unattended Boundary: Do not mutate governed sources, approval records, generated mirrors, evaluation or documentation artifacts, or engine corrections until this same Thread resumes through Ready -> Starting -> Running.
 
 ## Launch Reservation
 
