@@ -1,10 +1,10 @@
 # Use Exact Work-Item Claims For Lifecycle Updates
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 ## Launch Reservation
 
@@ -26,6 +26,52 @@ Owner: Dev Orchestrator
 - Phase: Running; bounded discovery and approval preparation.
 - Backlog Claim: 019f9783-starting-running-steward
 - Claim Acquisition Event: 7ef99fde-27a2-4057-afc6-54b989bc20a7
+
+## User Action Required
+
+- Question: "Do you approve mutation of exactly the eight governed canonical definition paths listed below to implement exact work-item claims for file-backed creation, lifecycle, recovery, completion, coordination, and claim semantics?"
+- Why Approval Is Required: Repository policy requires an exact scope-specific user answer before any governed canonical definition may be changed.
+- Unattended Boundary: Do not mutate any governed source, approval record, generated mirror, or dependent artifact until the user answers and this same canonical Thread resumes through User Action Required -> Ready -> Starting -> Running.
+- Next Action Owner: User
+- Resumption Thread: 019f9783-31a0-7e91-9704-08cde7886b3a
+- Recorded At: 2026-07-25T04:31:02Z
+- Backlog Claim: 019f9783-user-action-required-steward
+- Claim Acquisition Event: f4fc2367-cd1d-421d-931a-ad0535fda68f
+
+### Governed Canonical Definition Approval Scope
+
+1. skills/agent-claim/SKILL.md
+2. skills/codex-workitem-coordination/SKILL.md
+3. skills/create-file-work-item/SKILL.md
+4. skills/create-file-work-item/agents/openai.yaml
+5. skills/manage-file-work-items/SKILL.md
+6. skills/manage-file-work-items/agents/openai.yaml
+7. agents/roles/dev-activities/dev-backlog-coordinator.role.yaml
+8. agents/roles/dev-activities/dev-backlog-steward.role.yaml
+
+### Supported Generated Mirrors, Not Approval Scope
+
+- design/generated/skill-definitions.js
+- design/generated/role-definitions.js
+- generated/adapters/** only where supported by the approved source categories
+
+### Anticipated Non-Governed Companion Scope, Not Approval Scope
+
+- skills/agent-claim-command/scripts/claim.py
+- scripts/test_agent_claim.py
+- scripts/test_bundle_content.py
+- scripts/test_codex_workitem_coordination.py
+- Applicable evaluation fixtures
+- README.md
+- AGENTS.md only through a supported project-guidance render if required
+- design/orchestrated-development-lifecycle.html
+- design/work-item-provider-and-completion-contracts.md
+
+### Overlap Reconciliation Evidence
+
+- Canonical durable-defect task 019f96cf-226c-7f62-9d66-7d31cead822e accepted supersession of claim-free creation.
+- It stopped before governed, generated, test, or documentation mutation and will not integrate preserved commits 4f47fea91dc6f49b4f36d5c1360bf414fce2d852 and 957c93370c476bb3296151f979b5f1407362e7be.
+- agents/roles/dev-activities/dev-orchestrator.role.yaml is excluded from this approval manifest.
 
 ## Summary
 
