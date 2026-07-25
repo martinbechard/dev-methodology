@@ -1,14 +1,14 @@
 # Decouple Dev Backlog Steward Contract From Unconditional Claim Evidence
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/decouple-dev-backlog-steward-contract-from-unconditional-claim-evidence.md
+Provider Reference: backlog/user-action-required/decouple-dev-backlog-steward-contract-from-unconditional-claim-evidence.md
 
 Completion: direct-main
 
@@ -21,10 +21,10 @@ Completion: direct-main
 - Intended Root Role: Dev Orchestrator
 - Runtime Thread And Task Id: Existing canonical work-item Thread 019f96f1-1a19-7b01-b166-c5948a50fff5 is retained; no replacement task was created.
 
-## Execution Ownership
+## Prior Execution Ownership
 
 - Canonical Work-item Thread And Task Id: 019f96f1-1a19-7b01-b166-c5948a50fff5
-- Root Owner: Dev Orchestrator
+- Prior Root Owner: Dev Orchestrator
 - Delivery Branch: Detached pending delivery claim.
 - Delivery Worktree: /Users/martinbechard/.codex/worktrees/ecbc/dev-methodology
 - Phase: Fresh renderer and portable-contract discovery.
@@ -56,6 +56,37 @@ Prior Discovery Evidence Retained: The definition_change_authority precheck retu
 Unattended Work Boundary: Do not mutate a governed definition or regenerate a mirror until the fresh discovery identifies an exact governed scope and a successful user-approved manifest check exists.
 
 Lifecycle Resumption: This answer restores the item to Ready only. The parent Coordinator must reserve Ready -> Starting, then the same root Dev Orchestrator must record Starting -> Running before delivery work resumes.
+
+## User Action Required
+
+Question: Do you approve mutation of agents/roles/dev-activities/dev-backlog-steward.role.yaml specifically to REMOVE resource-coordination selection and agent-claim mechanics from the portable Steward contract, leaving provider lifecycle durability in the role and relying entirely on PROJECT.yaml -> AGENTS.md injection for coordination behavior?
+
+Why Input Is Required: This is materially different from the prior rejected conditional-wording proposal. It changes the portable role boundary by removing coordination mechanics, so it requires new exact scope-specific user approval.
+
+### Governed Canonical Approval Scope
+
+- agents/roles/dev-activities/dev-backlog-steward.role.yaml
+
+### Generated Mirrors Only (Not Approval Scope)
+
+- generated/adapters/claude/agents/dev-backlog-steward.*
+- generated/adapters/codex/agents/dev-backlog-steward.*
+- generated/adapters/gemini/agents/dev-backlog-steward.*
+- generated/adapters/junie/agents/dev-backlog-steward.*
+- design/generated/role-definitions.js
+
+### Ordinary Test Scope (Not Governed)
+
+- scripts/test_technology_detection.py: focused none-versus-agent-claim AGENTS.md output matrix.
+- scripts/test_role_mutation_policy.py: portable-role neutrality.
+
+Discovery Evidence: The renderer already emits no coordination or transport guidance when resource_coordination is none, and adds reference-only agent-claim plus the configured inlined transport only when selected. No renderer behavior change is planned.
+
+Prohibited Unattended Action: Do not mutate the canonical role or regenerate any mirror before explicit approval.
+
+Permitted Resumption: Record the answer in this same canonical Thread, restore User Action Required -> Ready, have the parent Coordinator reserve Ready -> Starting, then have this same root Dev Orchestrator record Starting -> Running before delivery resumes.
+
+Resolution: Pending explicit user answer to this distinct approval question.
 
 ## Summary
 
