@@ -23,7 +23,7 @@ Do not create a separate parent ledger, baton registry, waiting-Task registry, o
 
 ## Resource Coordination Selection
 
-When PROJECT.yaml selects agent-claim, apply that enabled resource-coordination implementation for shared files and exclusive runtime resources. The claim-specific commands, outcomes, retry window, registry evidence, and release fields below apply only under that selection. When PROJECT.yaml selects none, load no coordination implementation; do not discover, acquire, heartbeat, mutate, inspect, hand off, reset, or release claims; and omit claim attempt counts, blocking claim identifiers, registry evidence, and claim-release evidence while preserving work-item ownership, commits, clean-state checks, review, verification, Commit delivery, Persistence completion, and cleanup.
+When PROJECT.yaml selects agent-claim, apply Agent Claim's owning Event Contract exactly. When PROJECT.yaml selects none, perform no claim operation and omit claim evidence while preserving work-item ownership, commits, clean-state checks, review, verification, Commit delivery, Persistence completion, and cleanup.
 
 ## Work-Item Execution Record
 
@@ -44,7 +44,7 @@ Use the effective Persistence-selected management skill to update a provider rec
 
 Obtain queue inventory, lifecycle counts, provider identities, and dispatchable state only by applying the effective Persistence-selected management skill.
 
-- Provider file: treat ordinary repository backlog paths as provider identities and use short backlog claims only for file-provider mutations. Do not scan or count backlog/future-ideas unless the parent explicitly requests ideation or promotion.
+- Provider file: treat ordinary repository backlog paths as provider identities; updates use Agent Claim's exact existing-path and move-destination rule, while uniquely named atomic no-overwrite creation needs no claim. Do not scan or count backlog/future-ideas unless the parent explicitly requests ideation or promotion.
 - Provider github: use GitHub issue identities and provider lifecycle evidence; do not create or inspect file backlog paths.
 - Provider gitlab: use GitLab issue identities and provider lifecycle evidence; do not translate them into GitHub or file records.
 - Provider azure-devops or jira: apply the selected placeholder management skill, preserve its BLOCKED zero-mutation result, and do not fall back.
@@ -83,7 +83,7 @@ If exactly one match exists, adopt it as the canonical work-item Thread. If mult
 
 Create each Dev Orchestrator work-item Thread in an environment where its root Agent can perform ordinary repository work without asking the user to approve Git, shell, test, process-inspection, or selected resource-coordination commands. The dispatch prompt must state that these ordinary operations are already authorized by the work item and that the Agent must not open or wait on a user approval prompt for them.
 
-- When agent-claim is selected, use its configured transport exactly as rendered in AGENTS.md. When none is selected, do not probe either claim transport.
+- When agent-claim is selected, use its configured claim-helper invocation interface exactly as rendered in AGENTS.md. When none is selected, do not probe either claim-helper interface.
 - Keep implementation and focused tests in the work-item Thread's private worktree. The environment must permit ordinary writes to that worktree and the Git worktree metadata needed for local commits.
 - When a work item depends on a special runtime capability, test that capability through the same nested execution path the real workload uses before assigning more equivalent work to that environment. A direct command is not sufficient evidence for a runner that invokes the command from a child process.
 - Treat prior runtime-capability evidence as stale after any agent-definition or metadata generation, adapter installation, MCP refresh, Codex configuration change, permission-profile change, application update, or host restart. Before dispatching real work again, run one disposable worktree pilot through the effective child Agent runtime.
@@ -110,22 +110,15 @@ The work-item Orchestrator owns candidate production, review, verification, Comm
 
 ## Private Worktree Work
 
-Implementation, correction, review, and focused local tests on a work-item Thread's private branch and worktree do not require operational ownership when they cannot mutate shared repository state or a named shared resource.
+Private-worktree editing, generation, build, test, commit, and rebase need no claim; build outputs and caches stay worktree-local. A unique work-item remote branch also needs no claim. Use Agent Claim's Event Contract only when work crosses into the primary worktree, an existing work-item record, or a named shared runtime.
 
-When resource coordination is enabled, acquire ownership before mutating shared state, including:
-
-- repository paths or target-branch integration resources required by the selected Commit skill
-- the file backlog on primary main only when Persistence is file
-- generated output or another shared output location
-- shared installations, ports, browsers, databases, or test resources that cannot safely run concurrently
-
-Keep every enabled ownership scope limited to the exact files and named resources required for that operation. Isolation never authorizes modification of another Thread's owned shared surface. With coordination none, skip this lifecycle and rely on the delivery process's explicit work-item scope and serialized main or provider transactions.
+Interrupted private-worktree changes belong to that work item and are resumed there. Before finish, release, or handoff, commit completed work and prove the applicable worktree clean.
 
 ## Effective Commit Delivery And Persistence Closure
 
 Dev Orchestrator owns temporal delivery order while the selected Commit and Persistence skills own their respective procedures.
 
-For direct-main integration, start from current main and Designate this fresh branch as the Work-item integration and cleanup branch. Integrate only accepted commits or their exact accepted paths. Do not import cumulative branch ancestry merely to preserve provenance; record the source-to-integration mapping instead. When resource coordination selects agent-claim, keep administrative coordination-registry cleanup, Git integration, and terminal backlog completion as three distinct operations. Cleanup is eligible only after the fresh Work-item integration branch is fully merged. A prior candidate branch used only as a non-ancestral content source is not the Work-item cleanup branch.
+For direct-main integration, start from current main and designate this fresh branch as the Work-item integration and cleanup branch. Integrate only accepted commits or their exact accepted paths. Do not import cumulative branch ancestry merely to preserve provenance; record the source-to-integration mapping instead. Keep Git integration and terminal backlog completion as distinct operations. Cleanup is eligible only after the fresh Work-item integration branch is fully merged. A prior candidate branch used only as a non-ancestral content source is not the Work-item cleanup branch.
 
 1. Require Dev Coder to return a clean verified candidate commit without applying terminal Commit delivery or provider mutation.
 2. Obtain fresh independent source review and source verification for every candidate. Return correctable source findings to the original Dev Coder and repeat those gates on the replacement candidate.
@@ -136,13 +129,11 @@ For direct-main integration, start from current main and Designate this fresh br
 7. On a repeated observation of the same delivery identity and Commit handoff, reconcile the existing update instead of dispatching a duplicate. Never request lifecycle COMPLETED from an AWAITING_REVIEW handoff. Provider none retains the same nonterminal evidence task-locally without a steward dispatch.
 8. Resume the same effective Commit-selected skill through review corrections, checks, dependency order, merge, and main observation until it returns READY or BLOCKED.
 9. Only after the effective Commit-selected skill returns READY, ask Dev Backlog Steward exactly once for the distinct terminal lifecycle COMPLETED update through the effective Persistence-selected management skill. Verify the selected manager's recorded closure and reconcile an already successful terminal update instead of dispatching a duplicate.
-10. Provider file closure may use a separate short primary-main backlog claim and the file manager's archive procedure. GitHub and GitLab closure use their own provider identities, concurrency behavior, and lifecycle evidence. Placeholder providers preserve BLOCKED without fallback. Provider none records terminal evidence only in the task result and performs no durable provider mutation.
+10. Provider file closure follows Agent Claim's exact existing-path and move-destination rule when enabled, then applies the file manager's archive procedure. GitHub and GitLab closure use their own provider identities, concurrency behavior, and lifecycle evidence. Placeholder providers preserve BLOCKED without fallback. Provider none records terminal evidence only in the task result and performs no durable provider mutation.
 11. Notify the parent with candidate provenance, independent review and verification, final Commit disposition, nonterminal and terminal provider results when selected, claims, branch or delivery identity, worktree, and cleanup eligibility.
 12. The parent removes only clean eligible worktrees and branches, updates the task title, archives terminal task UI state when supported, then obtains fresh provider inventory and fills eligible capacity through the selected management skill.
 
-Keep coordination-registry cleanup, Commit delivery, and Persistence closure as distinct operations. Each has its own authority, evidence, and outcome; none can manufacture or replace another. Do not leave an accepted commit for a separate delivery task: Dev Orchestrator applies the effective Commit-selected skill because it owns the accepted commit, review, verification, and resumption context.
-
-When resource coordination selects agent-claim, keep administrative coordination-registry cleanup separate from Commit delivery and Persistence closure. When none is selected, omit coordination-registry cleanup and coordination evidence.
+Keep enabled claim release, Commit delivery, and Persistence closure as distinct operations. Each has its own authority, evidence, and outcome; none can manufacture or replace another. Do not leave an accepted commit for a separate delivery task: Dev Orchestrator applies the effective Commit-selected skill because it owns the accepted commit, review, verification, and resumption context.
 
 If the nonterminal AWAITING_REVIEW update fails or its result is ambiguous, preserve the Commit handoff and reconcile that same Persistence transaction before resuming delivery. Do not request terminal COMPLETED, repeat an already successful nonterminal update, or reinterpret the Commit disposition as terminal.
 
@@ -157,13 +148,7 @@ This section applies only when resource_coordination selects agent-claim. When a
 
 This is one initial attempt plus no more than six retries. Do not create a waiting Task, transfer the wait through a Task chain, poll more frequently, or ask the user to approve ordinary Git or shell commands already covered by the work item. Under resource coordination none, this entire retry and registry-recovery section is inapplicable.
 
-At thirty minutes, Dev Backlog Coordinator investigates instead of allowing another passive wait. Identify the blocking owner, verify whether its claim is active or stale, and choose a safe remedy: request prompt release, narrow or split an unnecessarily broad claim, complete the blocking integration first, or route a genuine technical or user-decision blocker. Never release or override a claim whose owner has uncommitted or otherwise unpreserved work.
-
-An evidence-backed administrative reset is available only for an inactive coordination-registry entry. Before reset, inspect the task and logs, matching processes, claimed worktrees, Git cleanliness and preserved commits, every claimed shared resource, other registry entries, and journal evidence. Retain a readable snapshot or journal reference. Reset only registry state after proving the owner inactive, all work completed or preserved, all resources stopped or handed off, and no active protection affected. A live owner, dirty unpreserved worktree, resource in use, or unclear evidence blocks reset.
-
-Perform the reset only through a host-supported targeted atomic operation that names the exact entry, locks the coordination registry, revalidates those safeguards at mutation time, removes no peer entry, and journals the administrative outcome. The bundled portable claim command has no reset operation. If a supported atomic operation is unavailable, stop and route the reset instead of editing the registry file manually.
-
-Treat inactive-entry release problems as coordination diagnostics. Claim release does not audit commit history or interpret merge ancestry; independent review and integration own committed-content, changed-path, and provenance decisions. Reconcile each evidence owner separately and never invent a successful release.
+At thirty minutes, treat the live claim as valid and route the wait evidence to the dedicated read-only watchdog. Only the watchdog investigates stale ownership and alerts the parent with evidence; no delivery Agent overrides or releases another owner's claim.
 
 If the wait remains unresolved after investigation, record the precise open issue through the selected Persistence manager and request the truthful Blocked or User Action Required transition so it no longer consumes active Starting-plus-Running capacity. For provider none, preserve the BLOCKED Thread result without a provider mutation. Reserve and dispatch a replacement Ready item through Ready -> Starting from fresh selected-provider inventory when available.
 

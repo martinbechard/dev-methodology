@@ -1,17 +1,19 @@
 ---
 name: agent-claim-command
-description: Invoke the transport-neutral agent-claim contract through the adapter-bundled structured command without runtime probing or transport fallback.
+description: Invoke the agent-claim contract through the adapter-bundled claim command-line interface without runtime probing or interface fallback.
 metadata:
   category: development-practice
 ---
 
 # Agent Claim Command
 
-Apply this adapter only when Project Configurator selected command in agent_claim_transport and verified this package, Python, and its executable script. Apply agent-claim for scope, ownership, state, recovery, heartbeat, release, and completion semantics.
+Apply this adapter only when Project Configurator selected command in the compatibility field agent_claim_transport and verified this package, Python, and its executable script. That field selects how the claim helper is invoked. Apply agent-claim for scope, ownership, state, recovery, heartbeat, release, and completion semantics.
+
+The command-line implementation flow is Python claim command -> claim helper -> claim registry and journal. The command parser and helper functions are implemented together in scripts/claim.py inside this adapter; the helper writes repository-global registry and journal state under the Git common directory.
 
 ## Availability Boundary
 
-Resolve the adapter-bundled script once before the first operation and reuse that exact path for the task. Do not search for MCP tools or change to an MCP transport. Do not assume the target repository contains the adapter package.
+Resolve the adapter-bundled script once before the first operation and reuse that exact path for the task. Do not search for MCP tools or change the configured claim-helper interface. Do not assume the target repository contains the adapter package.
 
 Use an explicit path supplied by configured project guidance when present. Otherwise use the scripts/claim.py file beside this loaded SKILL.md. Inside the dev-methodology source checkout, the bundle-owned path is:
 
@@ -25,7 +27,7 @@ For a normal Codex user-level installation, the default is:
 CLAIM_SCRIPT="${HOME}/.agents/skills/agent-claim-command/scripts/claim.py"
 ```
 
-If the configured script or Python interpreter is absent, unreadable, or cannot start before dispatch, stop with CLAIM_TRANSPORT_UNAVAILABLE and request Project Configurator reconfiguration. Do not switch transports. An argument, path, root, authorization, input-policy, or other structured rejection returned by the command is not unavailability.
+If the configured script or Python interpreter is absent, unreadable, or cannot start before dispatch, stop with CLAIM_TRANSPORT_UNAVAILABLE and request Project Configurator reconfiguration. Do not switch claim-helper interfaces. An argument, path, root, authorization, input-policy, or other structured rejection returned by the command is not unavailability.
 
 ## Command Contract
 
@@ -46,7 +48,7 @@ Stable process exit codes are:
 - 5 for DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED.
 - 2 for command-line parsing failure before coordination dispatch.
 
-Several outcomes share one exit code. Never branch on the process code alone. A completed structured rejection is a valid coordination result; do not switch transports or retry it through MCP.
+Several outcomes share one exit code. Never branch on the process code alone. A completed structured rejection is a valid coordination result; do not switch claim-helper interfaces or retry it through MCP.
 
 RECONCILIATION_RECOVERY_REQUIRED means a durable pending reconciliation marker still controls transaction recovery. A prepared marker protects the exact original registry and journal snapshots; its RELEASE_PENDING line is not a release. A committed marker makes the exact released registry authoritative and finalizes exactly one RELEASED journal event. Scoped commands and journal maintenance attempt validated deterministic recovery under the registry lock. Report remains read-only and returns this outcome before journal loading when a marker exists.
 
@@ -104,19 +106,6 @@ python3 "$CLAIM_SCRIPT" --repo . acquire \
   --file src/feature.py \
   --branch codex/task-123 \
   --base main
-```
-
-Acquire authorized recovery ownership:
-
-```bash
-python3 "$CLAIM_SCRIPT" --repo . acquire \
-  --claim-id recovery-123 \
-  --agent recovery-owner \
-  --task recovery-123 \
-  --root-task-id recovery-123 \
-  --all-files \
-  --scope-reason "recover anonymous dirty state" \
-  --allow-recovery
 ```
 
 Acquire one deadline-bound resource. The project policy, not this command, supplies the configured maximum and cleanup grace:
@@ -179,10 +168,10 @@ python3 "$CLAIM_SCRIPT" --repo . report --since 2d --format json
 
 ## Ambiguous Dispatch
 
-When process control or output capture fails after submitting a mutating command, the dispatch is ambiguous. Do not repeat the mutation and do not switch transports. Invoke status through the same CLAIM_SCRIPT path and reconcile the live registry before continuing.
+When process control or output capture fails after submitting a mutating command, the dispatch is ambiguous. Do not repeat the mutation or change the claim-helper interface. Invoke status through the same CLAIM_SCRIPT path and reconcile the live registry before continuing.
 
-If the same command transport cannot provide status, preserve the ambiguous state, report CLAIM_TRANSPORT_UNAVAILABLE, and request Project Configurator reconfiguration or an explicit ownership handoff. Never invoke the MCP adapter to guess whether the command mutation succeeded.
+If the same claim command-line interface cannot provide status, preserve the ambiguous state, report CLAIM_TRANSPORT_UNAVAILABLE, and request Project Configurator reconfiguration or an explicit ownership handoff. Never invoke the MCP adapter to guess whether the command mutation succeeded.
 
 ## Behavioral Equivalence
 
-Both configured transports expose the same engine outcomes and next-action semantics. Their invocation envelopes differ, but this adapter never renames, suppresses, retries, or translates a structured coordination outcome.
+Both configured claim-helper interfaces expose the same helper outcomes and next-action semantics. Their invocation envelopes differ, but this adapter never renames, suppresses, retries, or translates a structured coordination outcome.

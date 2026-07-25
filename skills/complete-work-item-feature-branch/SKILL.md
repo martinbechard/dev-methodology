@@ -11,7 +11,7 @@ Carry one accepted candidate from branch publication through host review and obs
 
 ## Dependencies
 
-- When agent-claim is selected, apply that enabled resource-coordination implementation for repository mutation and shared resources. When none is selected, load no coordination implementation and perform no acquisition, heartbeat, registry, handoff, or release lifecycle.
+- Apply Agent Claim only for an event in its complete Event Contract. Private feature-branch publication work needs no claim; shared browser, database, port, live-model, installed-runtime, or deployment events use their exact named resources.
 - Apply [create-pull-request](../create-pull-request/SKILL.md) only for GitHub or another configured host whose contract accurately uses pull-request terminology.
 - Use the configured GitLab merge-request capability and GitLab tools for GitLab publication, review, pipeline, and merge evidence. If no accurate capability exists, return BLOCKED instead of substituting create-pull-request or GitHub-shaped evidence.
 - Prepare the final lifecycle update for the caller. This skill must not dispatch a provider manager, Dev Backlog Steward, or any Persistence mutation.
@@ -34,10 +34,10 @@ Consume an already accepted, independently reviewed and verified candidate commi
 ## Branch And Ownership
 
 1. Inspect the configured base, work-item scope, dependency branches, existing publication, commits, worktree state, and remote state.
-2. When agent-claim is selected, acquire the narrow repository ownership and shared resources required for the current mutation phase and stop on overlapping ownership. When none is selected, continue the delivery phase without coordination operations or evidence. In both cases, preserve unrelated work and stop when existing work makes safe mutation impossible.
+2. Keep branch preparation, commit, rebase, and unique remote-branch publication claim-free. Apply only event-specific shared-resource claims and stop on identical-resource conflicts.
 3. Create or reuse the intended feature branch for the accepted candidate. When the selected coordination policy creates the delivery branch, use that same branch instead of adding a parallel coordination branch.
 4. Preserve the same work item, feature branch, publication record, and delivery identity across correction cycles. A correction that changes the independent work-item boundary returns to the coordinator before scope expands.
-5. When agent-claim is selected, release ownership only after the phase is committed, verified, clean, and safely published or preserved, then reacquire the required scope when a later review cycle resumes mutation. When none is selected, preserve the same commit, verification, cleanliness, and publication gates without coordination operations or evidence.
+5. Release any event-specific shared-resource claim after that resource use is complete. Preserve the same commit, verification, cleanliness, and publication gates without a private-branch claim.
 
 ## Candidate Publication
 

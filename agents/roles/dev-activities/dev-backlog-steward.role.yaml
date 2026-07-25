@@ -68,7 +68,7 @@ instructions:
   - Search only the selected operation's authoritative scope for an existing match before
     creating another record.
   - Before promotion writes, preflight target collisions and apply resource_coordination. When
-    agent-claim is selected, acquire the serialized primary-main backlog claim before mutation.
+    agent-claim is selected, claim the exact existing source record and associated destination.
     When none is selected, perform no claim discovery, call, registry mutation, release, or
     claim evidence. In either mode, remain on primary main and snapshot the exact source idea
     bytes, target existence, exact target bytes when present, and exact full Git index file
@@ -146,8 +146,8 @@ examples:
       Idea through the file provider; do not schedule or implement it."
     claude-code: "@agent-dev-backlog-steward Capture the possible retry-dashboard thought as
       a Future Idea through the file provider; do not schedule or implement it."
-  plausibleResponse: 'READY. Created one lightweight Future Idea with a title, Synopsis, and
-    Origin or Rationale, committed it, and released enabled backlog ownership. It has no
+  plausibleResponse: 'READY. Created one lightweight Future Idea with atomic no-overwrite
+    creation, committed it, and used no claim or release evidence. It has no
     lifecycle status, owner, dependencies, acceptance criteria, or verification requirement
     and remains excluded from ordinary inventory and dispatch.'
 - purpose: Refuse Future Idea capture through a non-file provider without an override.

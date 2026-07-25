@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies deterministic claim transport, deadline-policy rendering, invocation behavior, and evaluation staging.
+# Summary: Verifies claim-helper interfaces, deadline-policy rendering, invocation behavior, and evaluation staging.
 
 from __future__ import annotations
 
@@ -419,10 +419,10 @@ def project_with_transport(selected: str, availability: str = "AVAILABLE") -> di
     }
 
 
-class AgentClaimTransportTests(unittest.TestCase):
-    """Protect standalone claim-adapter composition and failure behavior."""
+class AgentClaimInterfaceTests(unittest.TestCase):
+    """Protect standalone claim-helper interface composition and failure behavior."""
 
-    def test_renderer_inlines_only_selected_transport_adapter(self) -> None:
+    def test_renderer_inlines_only_selected_claim_helper_adapter(self) -> None:
         """Compose shared role semantics with exactly one setup-selected adapter."""
 
         renderer = load_renderer_module()
@@ -549,8 +549,8 @@ class AgentClaimTransportTests(unittest.TestCase):
         ):
             renderer.render(unsupported)
 
-    def test_none_renders_no_coordination_or_transport_guidance(self) -> None:
-        """Omit implementation, procedure, transport, and evidence when coordination is disabled."""
+    def test_none_renders_no_coordination_or_claim_helper_guidance(self) -> None:
+        """Omit implementation, procedure, invocation interface, and evidence when coordination is disabled."""
 
         renderer = load_renderer_module()
         project = project_with_transport("mcp")
@@ -565,8 +565,8 @@ class AgentClaimTransportTests(unittest.TestCase):
         self.assertNotIn("CLAIM_TRANSPORT", rendered)
         self.assertNotIn("transport fixture evidence", rendered)
 
-    def test_none_rejects_every_present_claim_transport_value(self) -> None:
-        """Reject stale transport configuration instead of silently ignoring its value."""
+    def test_none_rejects_every_present_claim_interface_value(self) -> None:
+        """Reject a stale claim-helper interface selection instead of ignoring it."""
 
         renderer = load_renderer_module()
         stale_values = (
@@ -730,7 +730,7 @@ class AgentClaimTransportTests(unittest.TestCase):
         self.assertEqual("resource-lifecycle-command", evidence["release_argv"][-2])
         self.assertEqual("--no-change", evidence["release_argv"][-1])
 
-    def test_command_transport_reports_existing_linked_checkout_topology(self) -> None:
+    def test_claim_command_reports_existing_linked_checkout_topology(self) -> None:
         """Verify the selected command reports physical topology without changing primary state."""
 
         with tempfile.TemporaryDirectory() as directory:
@@ -903,8 +903,8 @@ class AgentClaimTransportTests(unittest.TestCase):
                     ):
                         renderer.render(project)
 
-    def test_agent_claim_rejects_missing_or_unavailable_transport(self) -> None:
-        """Require a verified transport only when agent-claim is selected."""
+    def test_agent_claim_rejects_missing_or_unavailable_interface(self) -> None:
+        """Require a verified claim-helper interface only when agent-claim is selected."""
 
         renderer = load_renderer_module()
         project = project_with_transport("mcp", availability="UNAVAILABLE")
@@ -922,7 +922,7 @@ class AgentClaimTransportTests(unittest.TestCase):
         ):
             renderer.render(project)
 
-    def test_shared_semantics_and_transport_mechanics_are_separate(self) -> None:
+    def test_shared_semantics_and_invocation_mechanics_are_separate(self) -> None:
         """Keep policy neutral while each adapter owns one complete invocation surface."""
 
         shared = SHARED_SKILL.read_text(encoding="utf-8")
@@ -949,7 +949,7 @@ class AgentClaimTransportTests(unittest.TestCase):
                 adapter = path.read_text(encoding="utf-8")
 
                 self.assertIn("structured rejection", adapter)
-                self.assertIn("do not switch transports", adapter)
+                self.assertIn("do not switch claim-helper interfaces", adapter)
                 self.assertIn("ambiguous", adapter)
                 self.assertIn("status", adapter)
                 self.assertIn("CLAIM_TRANSPORT_UNAVAILABLE", adapter)
@@ -971,7 +971,7 @@ class AgentClaimTransportTests(unittest.TestCase):
         self.assertNotIn('${CODEX_HOME:-$HOME/.codex}/skills', command)
 
     def test_mutating_eval_cases_stage_one_matching_claim_adapter(self) -> None:
-        """Stage shared semantics plus exactly the transport used by each mutating fixture."""
+        """Stage shared semantics plus exactly the claim-helper interface used by each mutating fixture."""
 
         catalog = yaml.safe_load(CASES_PATH.read_text(encoding="utf-8"))
         cases = [

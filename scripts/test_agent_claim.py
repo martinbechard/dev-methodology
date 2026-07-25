@@ -735,19 +735,18 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("codex/second", event["worktree_id"])
         self.assertNotIn(str(self.temporary_directory.name), json.dumps(event))
 
-    def test_isolation_required_reports_the_canonical_worktree_target(self) -> None:
+    def test_nonoverlapping_primary_claims_coexist_without_isolation(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
 
         completed = self.claim(*self.acquire_arguments("second"), "--file", "src/one.py")
 
-        self.assertEqual(4, completed.returncode)
+        self.assertEqual(0, completed.returncode, completed.stderr)
         result = self.output(completed)
-        self.assertEqual("ISOLATED_CHECKOUT_SETUP_REQUIRED", result["outcome"])
-        self.assertEqual("ISOLATE_REQUIRED", result["legacy_outcome"])
-        self.assertEqual(str((self.repository / ".worktrees").resolve()), result["worktree_root"])
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
+        self.assertEqual("primary", result["claim"]["checkout_topology"])
         self.assertEqual(
-            str((self.repository / ".worktrees" / "second").resolve()),
-            result["suggested_worktree"],
+            ["first", "second"],
+            [claim["claim_id"] for claim in self.output(self.claim("status"))["claims"]],
         )
 
     def test_explicit_worktree_path_must_match_the_canonical_target(self) -> None:
@@ -829,7 +828,7 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("claim_id", result["field"])
         self.assertFalse((self.repository / "recursive").exists())
 
-    def test_backlog_scope_waits_for_primary_instead_of_creating_worktree(self) -> None:
+    def test_exact_backlog_scope_coexists_with_nonoverlapping_primary_project_claim(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
         isolated, isolated_path = self.isolated_arguments("backlog")
 
@@ -840,14 +839,11 @@ class AgentClaimTests(unittest.TestCase):
             *isolated,
         )
 
-        self.assertEqual(3, completed.returncode)
+        self.assertEqual(0, completed.returncode, completed.stderr)
         result = self.output(completed)
-        self.assertEqual("SHARED_CHECKOUT_RELEASE_REQUIRED", result["outcome"])
-        self.assertEqual("PRIMARY_REQUIRED", result["legacy_outcome"])
-        self.assertEqual("backlog_requires_primary_worktree", result["reason"])
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
+        self.assertEqual("primary", result["claim"]["checkout_topology"])
         self.assertFalse(isolated_path.exists())
-        event = next(event for event in self.journal_events() if event["claim_id"] == "backlog")
-        self.assertIs(event["shared_checkout_claimed"], True)
 
     def test_backlog_scope_uses_available_primary_while_isolated_claim_remains(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
@@ -922,7 +918,7 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
         self.assertEqual(str(self.repository.resolve()), result["target"]["worktree"])
 
-    def test_primary_resource_only_claim_cannot_extend_into_an_occupied_file_lane(self) -> None:
+    def test_primary_resource_only_claim_can_extend_into_a_nonoverlapping_file_scope(self) -> None:
         self.claim(*self.acquire_arguments("file"), "--file", "README.md")
         resource = self.claim(
             *self.acquire_arguments("resource"),
@@ -938,13 +934,13 @@ class AgentClaimTests(unittest.TestCase):
         )
 
         self.assertEqual(0, resource.returncode, resource.stderr)
-        self.assertEqual(3, extended.returncode)
+        self.assertEqual(0, extended.returncode, extended.stderr)
         result = self.output(extended)
-        self.assertEqual("SHARED_CHECKOUT_RELEASE_REQUIRED", result["outcome"])
+        self.assertEqual("EXTENDED", result["outcome"])
         status = self.output(self.claim("status"))["claims"]
         stored = next(claim for claim in status if claim["claim_id"] == "resource")
-        self.assertEqual("none", stored["file_domain"])
-        self.assertEqual([], stored["files"])
+        self.assertEqual("project_files", stored["file_domain"])
+        self.assertEqual(["src/one.py"], stored["files"])
 
     def test_resource_only_claim_does_not_block_unrelated_primary_integration(self) -> None:
         resource = self.claim(
@@ -1090,7 +1086,7 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("WAIT", result["legacy_outcome"])
         self.assertEqual(["isolated"], result["conflicting_claim_ids"])
 
-    def test_primary_integration_scope_waits_for_existing_primary_owner(self) -> None:
+    def test_primary_integration_scope_coexists_with_nonoverlapping_primary_owner(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
 
         completed = self.claim(
@@ -1103,10 +1099,10 @@ class AgentClaimTests(unittest.TestCase):
             ),
         )
 
-        self.assertEqual(3, completed.returncode)
+        self.assertEqual(0, completed.returncode, completed.stderr)
         result = self.output(completed)
-        self.assertEqual("SHARED_CHECKOUT_RELEASE_REQUIRED", result["outcome"])
-        self.assertEqual("primary_location_resource_requires_primary_worktree", result["reason"])
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
+        self.assertEqual("primary", result["claim"]["checkout_topology"])
 
     def test_primary_integration_scope_preserves_dirty_primary_recovery(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
@@ -1139,7 +1135,7 @@ class AgentClaimTests(unittest.TestCase):
             result["dirty_status"],
         )
 
-    def test_simultaneous_writers_cannot_both_claim_primary(self) -> None:
+    def test_simultaneous_nonoverlapping_claims_can_both_use_primary(self) -> None:
         commands = [self.claim_command(*self.acquire_arguments(claim_id)) for claim_id in ("first", "second")]
         processes = [
             subprocess.Popen(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -1149,11 +1145,8 @@ class AgentClaimTests(unittest.TestCase):
         outcomes = {json.loads(stdout)["outcome"] for stdout, _stderr, _code in completed}
         return_codes = sorted(code for _stdout, _stderr, code in completed)
 
-        self.assertEqual([0, 4], return_codes)
-        self.assertEqual(
-            {"ISOLATED_CHECKOUT_SETUP_REQUIRED", "SHARED_CHECKOUT_ACQUIRED"},
-            outcomes,
-        )
+        self.assertEqual([0, 0], return_codes)
+        self.assertEqual({"SHARED_CHECKOUT_ACQUIRED"}, outcomes)
 
     def test_exact_files_do_not_use_ancestry_overlap(self) -> None:
         first = self.claim(*self.acquire_arguments("first"), "--file", "future")
@@ -1225,16 +1218,40 @@ class AgentClaimTests(unittest.TestCase):
         )
         backlog = self.claim(
             *self.acquire_arguments("backlog"),
-            "--backlog",
+            "--file",
+            "backlog/feature-backlog/queued.md",
         )
 
         self.assertEqual(0, project.returncode, project.stderr)
         self.assertEqual("project_files", self.output(project)["claim"]["file_domain"])
         self.assertEqual(3, other_project.returncode)
         self.assertFalse(isolated_path.exists())
-        self.assertEqual(3, backlog.returncode)
-        self.assertEqual("SHARED_CHECKOUT_RELEASE_REQUIRED", self.output(backlog)["outcome"])
-        self.assertEqual(["project"], [item["claim_id"] for item in self.output(self.claim("status"))["claims"]])
+        self.assertEqual(0, backlog.returncode, backlog.stderr)
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", self.output(backlog)["outcome"])
+        self.assertEqual(
+            ["project", "backlog"],
+            [item["claim_id"] for item in self.output(self.claim("status"))["claims"]],
+        )
+
+    def test_different_exact_backlog_items_coexist(self) -> None:
+        first = self.claim(
+            *self.acquire_arguments("first-backlog"),
+            "--file",
+            "backlog/feature-backlog/queued.md",
+        )
+        second = self.claim(
+            *self.acquire_arguments("second-backlog"),
+            "--file",
+            "backlog/feature-backlog/second.md",
+        )
+
+        self.assertEqual(0, first.returncode, first.stderr)
+        self.assertEqual(0, second.returncode, second.stderr)
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", self.output(second)["outcome"])
+        self.assertEqual(
+            ["first-backlog", "second-backlog"],
+            [item["claim_id"] for item in self.output(self.claim("status"))["claims"]],
+        )
 
     def test_backlog_broad_scope_does_not_overlap_project_paths(self) -> None:
         backlog = self.claim(*self.acquire_arguments("backlog"), "--backlog")
@@ -1286,10 +1303,10 @@ class AgentClaimTests(unittest.TestCase):
             "backlog/feature-backlog/queued.md",
         )
 
-        self.assertEqual(3, completed.returncode)
+        self.assertEqual(0, completed.returncode, completed.stderr)
         result = self.output(completed)
-        self.assertEqual("SHARED_CHECKOUT_RELEASE_REQUIRED", result["outcome"])
-        self.assertEqual("backlog", result["requested_scopes"]["file_domain"])
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
+        self.assertEqual("backlog", result["claim"]["file_domain"])
         self.assertEqual("compat_backlog_path", result["warnings"][0]["code"])
 
     def test_project_claim_ignores_unchanged_preexisting_backlog_dirtiness(self) -> None:
@@ -3229,7 +3246,7 @@ class AgentClaimTests(unittest.TestCase):
         ):
             self.assertEqual(before[field], after[field])
 
-    def test_isolated_claim_cannot_extend_into_backlog_scope(self) -> None:
+    def test_isolated_claim_hands_backlog_extension_to_primary_despite_unrelated_claim(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
         isolated, isolated_path = self.isolated_arguments("second")
         self.claim(*self.acquire_arguments("second"), "--file", "src/one.py", *isolated)
@@ -3247,7 +3264,7 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(3, completed.returncode)
         result = self.output(completed)
-        self.assertEqual("SHARED_CHECKOUT_RELEASE_REQUIRED", result["outcome"])
+        self.assertEqual("SHARED_CHECKOUT_REQUIRED", result["outcome"])
         self.assertEqual("PRIMARY_REQUIRED", result["legacy_outcome"])
         self.assertEqual(before, self.registry_path().read_bytes())
         event = next(
@@ -3255,10 +3272,10 @@ class AgentClaimTests(unittest.TestCase):
             for event in self.journal_events()
             if event["claim_id"] == "second" and event["outcome"] == "PRIMARY_REQUIRED"
         )
-        self.assertIs(event["shared_checkout_claimed"], True)
+        self.assertIs(event["shared_checkout_claimed"], False)
         self.assertEqual(0, report.returncode, report.stderr)
         metrics = self.output(report)["metrics"]
-        self.assertEqual(1, metrics["outcome_counts"]["SHARED_CHECKOUT_RELEASE_REQUIRED"])
+        self.assertEqual(1, metrics["outcome_counts"]["SHARED_CHECKOUT_REQUIRED"])
         self.assertEqual(1, metrics["raw_outcome_counts"]["PRIMARY_REQUIRED"])
         self.assertEqual([], metrics["outcome_normalization_gaps"])
 
@@ -3286,7 +3303,7 @@ class AgentClaimTests(unittest.TestCase):
         )
         self.assertIs(event["shared_checkout_claimed"], False)
 
-    def test_isolated_primary_resource_extension_reports_active_shared_checkout(self) -> None:
+    def test_isolated_named_resource_extension_ignores_unrelated_primary_claim(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
         isolated, isolated_path = self.isolated_arguments("second")
         self.claim(*self.acquire_arguments("second"), "--file", "src/one.py", *isolated)
@@ -3302,16 +3319,15 @@ class AgentClaimTests(unittest.TestCase):
             repo=isolated_path,
         )
 
-        self.assertEqual(3, completed.returncode)
+        self.assertEqual(0, completed.returncode, completed.stderr)
         result = self.output(completed)
-        self.assertEqual("SHARED_CHECKOUT_RELEASE_REQUIRED", result["outcome"])
-        self.assertEqual("primary_location_resource_requires_primary_worktree", result["reason"])
+        self.assertEqual("EXTENDED", result["outcome"])
         event = next(
             event
-            for event in self.journal_events()
-            if event["claim_id"] == "second" and event["outcome"] == "PRIMARY_REQUIRED"
+            for event in reversed(self.journal_events())
+            if event["claim_id"] == "second" and event["outcome"] == "EXTENDED"
         )
-        self.assertIs(event["shared_checkout_claimed"], True)
+        self.assertEqual(["git-index:primary"], event["added_scope"]["resources"])
 
     def test_report_uses_explicit_context_when_shared_checkout_is_available(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")

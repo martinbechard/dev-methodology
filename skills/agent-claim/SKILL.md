@@ -7,13 +7,38 @@ metadata:
 
 # Agent Claim
 
-Use this skill before editing files or taking exclusive runtime resources only when the project-wide resource_coordination selection is agent-claim. When the selection is none, do not discover, acquire, heartbeat, mutate, hand off, or release claims and do not require claim evidence. Apply the one claim transport adapter selected by Project Configurator for invocation details. This skill defines transport-neutral coordination semantics and never chooses, probes, or changes transports.
+Use this skill only when the project-wide resource_coordination selection is agent-claim and an event in the owning contract below occurs. When the selection is none, perform no claim operation and require no claim evidence. Apply the one claim-helper invocation interface selected by Project Configurator. The compatibility field agent_claim_transport records that implementation-interface selection. This skill owns coordination semantics and never chooses, probes, or changes the configured interface.
+
+For the command-line interface, the implementation flow is Python claim command -> claim helper -> claim registry and journal. The command parser and helper functions live in skills/agent-claim-command/scripts/claim.py; the helper writes repository-global registry and journal state under the Git common directory.
 
 ## Goal
 
-Claims make shared work explicit and keep completed work durable. The first independent writer may use a clean shared checkout. Later independent writers use isolated worktrees when their scopes do not overlap. Every isolated checkout lives in the canonical .worktrees directory beneath the primary worktree, with the claim id as one portable directory component. Each isolated worktree uses worktree-specific sparse checkout so the repository-root backlog directory remains available only from the primary worktree. Overlapping work waits. Dirty unclaimed state enters recovery rather than accepting another anonymous edit.
+Claims temporarily protect shared mutation events. Work-item ownership, private-worktree delivery, commits, review, verification, and lifecycle records remain the durable authorities for completed work.
 
 Start with the narrow scope supported by current evidence. Extend the same claim atomically when another file or resource becomes necessary. Do not speculate about entire directories merely because future scope is unknown.
+
+## Event Contract
+
+This table is the complete event-to-claim contract.
+
+| Event | Claim rule |
+|---|---|
+| Update an existing work item | Claim the exact current backlog path and, for a move or rename, the destination path. |
+| Perform any non-backlog work in the primary worktree | Claim project-files. |
+| Use a shared browser | Claim browser-test:&lt;id&gt;. |
+| Use a shared database | Claim database:&lt;id&gt;. |
+| Use a shared port | Claim port:&lt;number&gt;. |
+| Use a shared live model | Claim live-model:&lt;provider&gt;:&lt;suite&gt;. |
+| Change a shared installed runtime | Claim shared-install:&lt;target&gt;. |
+| Change a shared deployment | Claim deployment:&lt;environment&gt;. |
+
+Creating a uniquely named new work-item file needs no claim and must use atomic no-overwrite creation.
+
+Private-worktree editing, generation, build, test, commit, and rebase need no claim. Build outputs and caches must remain worktree-local, and unique work-item remote branches need no claim.
+
+Live claims are presumed valid; only the watchdog investigates stale ownership. Interrupted private-worktree changes belong to their work item and are resumed there.
+
+Before finish, release, or handoff, commit completed work and prove the applicable worktree clean.
 
 ## Coordination Registry Authority
 
@@ -50,7 +75,7 @@ Select at most one broad file domain. Exact files and trees are classified into 
 
 An existing directory is not a valid exact-file scope, and an existing file is not a valid tree scope. Repository roots and wildcard exact-file scopes are invalid. A temporary compatibility mode may convert existing directories supplied as files into warned tree scopes, but still requires a scope reason. New callers use the explicit forms.
 
-The repository-root backlog directory and all-files ownership are shared-checkout-only. When another claim already owns that checkout, acquisition returns SHARED_CHECKOUT_RELEASE_REQUIRED and preserves the live registry unchanged. An isolated claim extension into backlog returns SHARED_CHECKOUT_REQUIRED because the operation must be handed to the shared checkout. Project-files claims remain eligible for canonical isolated worktrees.
+The repository-root backlog directory and all-files ownership are primary-worktree-only. An isolated claim extension into backlog returns SHARED_CHECKOUT_REQUIRED because the operation must be handed to the primary worktree. Non-overlapping primary-worktree claims may coexist.
 
 Every claim and scope result records file_domain as project_files, backlog, all_files, or none and records the matching broad booleans. Explicit resource-only claims own no file domain and ignore unrelated worktree or index dirtiness. Legacy claims without a trustworthy file-domain baseline retain complete-worktree clean-release compatibility.
 
@@ -60,14 +85,7 @@ The claim id also names the canonical isolated checkout directory. It must be on
 
 ## When To Claim
 
-Claim before:
-
-- Editing, moving, deleting, formatting, staging, committing, or generating shared project files.
-- Running commands that monopolize shared state such as production builds, browser-test servers, dev server ports, browser profiles, database resets, seed data, generated output refreshes, shared installations, or long-running test servers.
-
-Private worktree activity that cannot affect shared files or resources follows the owning delivery process and does not need a project-file claim. Read-only inspection does not need a writer claim unless it mutates caches, generated files, databases, browser state, or server state.
-
-Use the smallest useful file and resource scope. A parent agent keeps the root task identity. Writing subagents use the same root task identity and their parent claim id, but still receive distinct ownership.
+Use the Event Contract as the only trigger list. Read-only inspection and worktree-local activity need no claim.
 
 ## Coordination Outcomes
 
@@ -84,7 +102,7 @@ The structured outcome is authoritative. Result schema version 2 uses the canoni
 | ISOLATED_CHECKOUT_SETUP_REQUIRED | No ownership was acquired because an isolated branch and checkout must be prepared. | Repeat the acquisition with the required isolation arguments. | ISOLATE_REQUIRED |
 | DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED | No ownership was acquired because dirty state requires explicit recovery authority. | Obtain authority before repeating with recovery enabled. | RECOVERY_REQUIRED |
 
-Structured rejections such as INVALID_SCOPE, INVALID_IDENTIFIER, INVALID_WORKTREE_PATH, WORKTREE_ROOT_NOT_IGNORED, CLAIM_NOT_FOUND, and RELEASE_REJECTED are valid coordination results. Do not reinterpret an ownership state or rejection as a transport failure.
+Structured rejections such as INVALID_SCOPE, INVALID_IDENTIFIER, INVALID_WORKTREE_PATH, WORKTREE_ROOT_NOT_IGNORED, CLAIM_NOT_FOUND, and RELEASE_REJECTED are valid coordination results. Do not reinterpret an ownership state or rejection as an implementation-interface failure.
 
 Schema version 1 journal events remain append-only and retain the original outcome strings. New PRIMARY_REQUIRED events include shared_checkout_claimed so reporting can distinguish the two canonical states. Historical PRIMARY_REQUIRED events without that field remain raw PRIMARY_REQUIRED and appear in outcome_normalization_gaps because active claim counts do not prove shared-checkout ownership.
 
@@ -94,25 +112,19 @@ Acquisition uses an exclusive registry lock. Its result includes the claim mode,
 
 ### Shared Checkout Acquisition
 
-Request only the narrow scope currently supported by evidence. When no other claim exists and the shared checkout is clean, acquisition returns SHARED_CHECKOUT_ACQUIRED. Use project-files, tree, or all-files only when the operation truly owns that broad scope.
+Request only the scope selected by the Event Contract. Acquisition returns SHARED_CHECKOUT_ACQUIRED when no active claim overlaps that scope or names the same resource.
 
 ### Isolated Checkout Acquisition
 
-When another non-overlapping file-writer claim is active and a new file-writer request lacks isolation arguments, acquisition returns ISOLATED_CHECKOUT_SETUP_REQUIRED without creating a claim. Repeat the same claim identifier with a unique branch and the required base. Successful isolation returns ISOLATED_CHECKOUT_ACQUIRED and the canonical target beneath the primary worktree's .worktrees directory.
-
-The target is derived rather than caller-selected. Worktree-specific sparse checkout omits backlog without changing primary-worktree status. Isolation is rejected until the canonical worktree root is ignored. Isolation arguments never bypass overlapping scope.
+Explicit isolation arguments may create an isolated claimed checkout beneath the primary worktree's .worktrees directory. The target is derived rather than caller-selected, and isolation arguments never bypass overlapping scope.
 
 ### Shared-Checkout-Only Backlog Acquisition
 
-Backlog creation, lifecycle changes, and archive movements run under a short backlog claim from the primary worktree. When another claim owns the shared checkout, acquisition returns SHARED_CHECKOUT_RELEASE_REQUIRED instead of creating an isolated checkout. Wait for a direct baton handoff or completion notification; do not poll.
+Updates and moves of existing work items run from the primary worktree under the exact source and destination paths required by the Event Contract. Non-overlapping backlog item claims may coexist, including alongside project-files.
 
 ### Claim Scope Conflict Wait
 
 Overlapping scope returns CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED with the conflicting claim identifiers and exact overlap pairs. Do not edit, create a competing worktree, or add isolation arguments. Wait, coordinate a handoff, or choose genuinely non-overlapping scope.
-
-### Recovery Acquisition
-
-When the unclaimed shared checkout is dirty, normal acquisition returns DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED. After explicit authorization to preserve the complete dirty state, acquire recovery ownership over all files. Successful recovery returns DIRTY_CHECKOUT_RECOVERY_ACQUIRED. Create the required checkpoint commit before cleanup or release.
 
 ## Atomic Scope Extension
 
@@ -128,7 +140,7 @@ Refresh the heartbeat during long work. A heartbeat is coordination liveness evi
 
 Every named resource acquisition is bound to the project-owned resource_coordination.deadline_policy. The required resource classes are backlog-mutation, main-integration, browser-server, database-port, and live-model-evaluation. Each class supplies maximum_duration_seconds and cleanup_grace_seconds. The resource_overrides mapping uses one exact resource id as each key and supplies resource_class, maximum_duration_seconds, and cleanup_grace_seconds; an exact-id override replaces the named class values for that resource.
 
-A claim may protect at most one named timed resource. Acquisition or atomic scope extension supplies that exact resource id and class together with expected_duration_seconds and requested_hard_stop_duration_seconds. The engine, not the caller, resolves the configured maximum and cleanup grace from PROJECT.yaml. It accepts only positive durations satisfying expected duration <= requested hard stop <= configured maximum, then records the resource id, class, expected duration, requested hard stop, configured maximum, expected release time, absolute hard-stop time, cleanup grace, cleanup-grace end time, and later extension evidence. Callers must not assert a configured maximum.
+A claim may protect at most one named timed resource. Acquisition or atomic scope extension supplies that exact resource id and class together with expected_duration_seconds and requested_hard_stop_duration_seconds. The claim helper, not the caller, resolves the configured maximum and cleanup grace from PROJECT.yaml. It accepts only positive durations satisfying expected duration <= requested hard stop <= configured maximum, then records the resource id, class, expected duration, requested hard stop, configured maximum, expected release time, absolute hard-stop time, cleanup grace, cleanup-grace end time, and later extension evidence. Callers must not assert a configured maximum.
 
 The initial methodology defaults are:
 
@@ -142,40 +154,38 @@ The initial methodology defaults are:
 
 These are editable project policy, not inferred runtime constants. Later measured evidence may justify changing them through Project Configurator.
 
+The Event Contract maps browser-test resources to browser-server, database and port resources to database-port, live-model resources to live-model-evaluation, and shared-install and deployment resources to main-integration. The exact resource-id override remains available when a project needs a different measured maximum or cleanup grace.
+
 An owner may request extend-deadline only with explicit evidence and a larger requested hard-stop duration that remains within the immutable configured maximum recorded at acquisition. The extension is measured from the original acquisition time, updates the absolute hard stop and cleanup-grace end, and appends the evidence to the journal. Heartbeat alone never extends it.
 
 Status is read-only. It reports whether the hard stop is overdue, whether cleanup grace is active or elapsed, and the inputs needed to judge stopped-owner actionability. An overdue entry is never auto-released. Cleanup grace is a bounded interval for truthful resource shutdown and evidence preservation, not authorization to continue normal work after the hard stop. A stopped owner with a live timed-resource entry is immediately actionable; inspect the actual resource and durable evidence, then use an authorized handoff, release, or administrative recovery path without inventing delivery or completion evidence.
 
 ## Runtime And Integration Resources
 
-Resource names are stable and descriptive. Common patterns include:
+Resource names are stable and descriptive. The complete Event Contract uses:
 
 ```text
 port:3000
-build:production
-test:e2e
 browser-test:primary
 database:seed
-generated:codegen
 shared-install:skills
-merge:integration:main
+deployment:production
 ```
 
 Separate linked worktrees have independent indexes, branches, and commits. An isolated writer may commit to its unique branch without a repository-global commit resource.
 
-The shared Git operation is integration into a target branch. Acquire a target-specific resource such as merge:integration:main only for the merge, cherry-pick, rebase, or equivalent update of that target, give it the main-integration deadline class and evidence-backed requested duration, then release it promptly. Continue using dedicated timed resources for shared hooks, generators, databases, ports, installations, and output locations that cross worktree boundaries.
-
 ## Overlap And Isolation
 
-- Any active file-writer claim causes a later non-overlapping independent file writer to use an isolated branch and worktree.
-- Every isolated checkout is derived beneath the primary worktree's .worktrees directory.
-- The canonical worktree root must be ignored, and double-force Git clean is prohibited while linked checkouts exist.
 - Exact files overlap only the same exact file.
 - Trees overlap descendants and intersecting ancestor or descendant trees.
-- All-files overlaps every exact file and tree.
+- Project-files overlaps project files and trees but excludes backlog.
+- Backlog overlaps backlog files and trees but excludes project files.
+- All-files overlaps every exact file, tree, project-files claim, and backlog claim.
 - Identical exclusive resources overlap even when file scope differs.
-- Resource-only claims serialize only exact resource overlaps and never occupy a file, backlog, or shared-checkout lane.
-- Backlog paths are never materialized in isolated worktrees and may only be claimed from the primary worktree.
+- Resource-only claims serialize only identical resources and never occupy a file or backlog domain.
+- Non-overlapping primary-worktree claims may coexist.
+- Different exact backlog items may be claimed concurrently.
+- One project-files claim may coexist with exact backlog item claims.
 - Overlap waits. Worktree isolation does not make conflicting changes logically safe.
 - Never stage, commit, revert, or clean another claim owner's files unless acting as the explicit integration owner.
 
@@ -183,9 +193,9 @@ The shared Git operation is integration into a target branch. Acquire a target-s
 
 Acquire, extension, heartbeat, recovery, wait, and release outcomes append one versioned event under the same Git common directory. Event identifiers are created at operation execution, so replaying or forking an external task transcript cannot duplicate an event. Every successful new acquisition also creates one immutable claim incarnation identifier stored in the live claim and copied to each later event in that claim lifecycle.
 
-The live registry remains authoritative. For a registry-changing operation, the engine writes the registry first and then appends one synchronized JSON line while still holding the registry lock. Except for evidence-gated release reconciliation, a journal failure produces a structured journal_write_failed warning without reversing or weakening the live coordination result. Reconciliation requires durable RELEASED evidence across the separate registry and journal files.
+The live registry remains authoritative. For a registry-changing operation, the claim helper writes the registry first and then appends one synchronized JSON line while still holding the registry lock. Except for evidence-gated release reconciliation, a journal failure produces a structured journal_write_failed warning without reversing or weakening the live coordination result. Reconciliation requires durable RELEASED evidence across the separate registry and journal files.
 
-Before removing the claim, the engine durably records one pending transaction marker. The registry target has exact original and released snapshots; the journal target has exact original, prepared, and released snapshots. The prepared journal appends RELEASE_PENDING and never RELEASED. Every snapshot carries its existence state, digest, and exact bytes. Recovery validates the complete marker schema, immutable relationships, canonical target allowlist, target components, snapshots, and one-event transformations before writing either target. Symbolic links, redirected or duplicate targets, malformed data, unsupported versions, inconsistent snapshots, and target bytes outside the allowed transaction states retain the marker and return RECONCILIATION_RECOVERY_REQUIRED.
+Before removing the claim, the claim helper durably records one pending transaction marker. The registry target has exact original and released snapshots; the journal target has exact original, prepared, and released snapshots. The prepared journal appends RELEASE_PENDING and never RELEASED. Every snapshot carries its existence state, digest, and exact bytes. Recovery validates the complete marker schema, immutable relationships, canonical target allowlist, target components, snapshots, and one-event transformations before writing either target. Symbolic links, redirected or duplicate targets, malformed data, unsupported versions, inconsistent snapshots, and target bytes outside the allowed transaction states retain the marker and return RECONCILIATION_RECOVERY_REQUIRED.
 
 Prepared and committed markers have different authority:
 
@@ -204,38 +214,9 @@ Contention reports use only the event journal and live registry. They count shar
 
 When RECONCILIATION_RECOVERY_REQUIRED appears:
 
-1. Invoke status through the same configured transport so a valid marker can recover under the registry lock.
+1. Invoke status through the same configured claim-helper interface so a valid marker can recover under the registry lock.
 2. If the outcome persists, preserve the marker, registry, journal, command result, and relevant filesystem evidence.
 3. Escalate the retained evidence for operator diagnosis. Do not manually edit or remove the marker, registry, journal, or protected claim.
-
-## Administrative Reset Of Inactive Entries
-
-An entry may be inactive when its heartbeat is old and no matching task, process, worktree activity, or claimed resource use exists. Do not reset an entry merely because it is inconvenient or because another task wants its scope.
-
-Before an administrative reset:
-
-1. Inspect the owning task state and logs, matching running processes, every claimed worktree, Git cleanliness, recent commits, and preserved source or integration commits.
-2. Inspect every claimed shared resource and confirm that no browser, database, port, server, generator, installation, integration target, or other exclusive facility remains in use or awaiting explicit handoff.
-3. Inspect the other coordination registry entries and confirm that removing the target entry cannot erase or weaken another active owner's protection.
-4. Inspect the event journal and retain a readable registry snapshot or exact journal references that identify the target, the observations, the decision, and the administrative actor.
-5. Treat a live process, a dirty unpreserved claimed worktree, unclear task ownership, or a resource still in use as active or interrupted work requiring handoff. Stop the reset and report the exact blocker.
-6. Reset only when the target entry is inactive, its work is completed or preserved in durable commits and evidence, every claimed resource is stopped or handed off, and no other active protection can be affected.
-7. Use only a host-supported targeted atomic reset operation that names the exact entry, reacquires the coordination registry lock, revalidates the safeguards at mutation time, removes only that entry, and appends the administrative outcome to the event journal. If no such operation is available, stop and route the reset to an administrator or implementation that supplies those guarantees.
-
-The bundled portable command does not expose an administrative reset subcommand. Neither supported transport adapter exposes reset. Never edit the live registry file manually: an unlocked edit can race acquisition, remove an active protection, or bypass the event journal. An administrative reset changes only the inactive coordination registry state. It must not rewrite Git, edit project files, discard a worktree, manufacture a release event, or substitute for review, verification, integration, work-item completion, or cleanup evidence. Preserve the snapshot or journal reference with the durable work-item or incident record.
-
-## Recovery
-
-Recovery is the one-time bridge from anonymous dirty state to normal coordination:
-
-1. Stop new mutation and obtain handoffs from active writers.
-2. Assign one recovery owner for the complete dirty scope.
-3. Acquire explicitly authorized all-files recovery ownership.
-4. Create a checkpoint commit on a recovery branch before cleanup or historical separation.
-5. Validate and stabilize the committed recovery state.
-6. Release only after the recovery worktree is clean and its commit differs from the recorded baseline.
-
-Do not require perfect historical commit reconstruction before preserving accumulated work. Preserve first, then stabilize.
 
 ## Completion And Release
 
@@ -249,9 +230,9 @@ A modifying task is not complete merely because implementation or tests are comp
 - A clean released isolated checkout is removed only after its verified commit is preserved on a branch or integrated into the target.
 - The final response reports the commit hash, verification, and terminal status.
 
-Release validates operational coordination state, not committed content. It checks current owned-domain cleanliness and compares current out-of-domain worktree and index state with the acquisition baseline. Status inspection uses NUL-delimited records so spaces, quotes, non-ASCII text, newlines, rename records, and text resembling a rename arrow remain exact paths. Unchanged pre-existing out-of-domain dirtiness does not become owned work and does not block release. A changed staged, unstaged, or untracked out-of-domain path returns RELEASE_REJECTED with reason out_of_domain_changes and reports only paths whose current state differs from the baseline. The coordination engine records the resulting commit and requires either a commit change or an explicit no-change declaration. Normal release does not traverse commit history, audit committed paths, enforce contribution scope, or interpret merge ancestry. The evidence-gated reconciliation variant performs only the bounded commit and ancestry proof described below. Independent review and integration own committed-content, changed-path, and provenance decisions beyond this bounded proof. The configured transport never stages, commits, reverts, or cleans project paths.
+Release validates operational coordination state, not committed content. It checks current owned-domain cleanliness and compares current out-of-domain worktree and index state with the acquisition baseline. Status inspection uses NUL-delimited records so spaces, quotes, non-ASCII text, newlines, rename records, and text resembling a rename arrow remain exact paths. Unchanged pre-existing out-of-domain dirtiness does not become owned work and does not block release. A changed staged, unstaged, or untracked out-of-domain path returns RELEASE_REJECTED with reason out_of_domain_changes and reports only paths whose current state differs from the baseline. The claim helper records the resulting commit and requires either a commit change or an explicit no-change declaration. Normal release does not traverse commit history, audit committed paths, enforce contribution scope, or interpret merge ancestry. The evidence-gated reconciliation variant performs only the bounded commit and ancestry proof described below. Independent review and integration own committed-content, changed-path, and provenance decisions beyond this bounded proof. The configured claim-helper interface never stages, commits, reverts, or cleans project paths.
 
-Treat release-validation failures as coordination diagnostics, not automatic delivery verdicts. When an inactive registry entry remains after work and resources are preserved, inspect the administrative-reset safeguards and reconcile the durable Git, review, verification, and work-item evidence. Never use that diagnosis to bypass an active owner, accept a dirty unpreserved worktree, or declare a release that did not occur.
+Treat release-validation failures as coordination diagnostics, not automatic delivery verdicts. Preserve live ownership and reconcile the durable Git, review, verification, and work-item evidence without inventing a successful release.
 
 An evidence-gated release reconciliation may resolve one retained primary scoped claim after a normal release rejected a peer-owned out-of-domain change. This variant is mutually exclusive with no-change and requires the full peer commit SHA plus the matching prior rejected release event reference. Under the registry lock, it revalidates a clean claimed domain, no resources, a clean current out-of-domain state, and the exact baseline-vs-current out-of-domain changed paths. The peer commit must be strictly after the claim baseline, be an ancestor of current HEAD, change exactly those out-of-domain paths without changing claimed-domain paths, and still match the current tree for every reconciled path. The referenced event must carry the active claim's immutable incarnation identifier and prove the same baseline, rejected path set, and out-of-domain rejection. For a legacy live claim and rejection without that field, reconciliation follows line order across the ordered daily archive and hot journal files without sorting events by timestamp. Acquisition state continues across daily-file boundaries, and reconciliation succeeds only when the active claim and referenced rejection uniquely resolve to the same acquisition event identifier. Reused event identifiers anywhere in the relevant claim history are ambiguous even when they occur in physically distinct lifecycle segments or use equal, reversed, or otherwise unreliable clocks. Missing, ambiguous, duplicate, malformed, or mismatched legacy evidence rejects the release while retaining the registry claim. A successful reconciliation removes only the named claim after durably recording the resolved incarnation, baseline snapshot and commit, peer commit, reconciled paths, and prior rejection reference in the RELEASED event. Every failed proof or journal write restores or leaves authoritative ownership evidence and retains normal release rejection behavior. Reconciliation never resets Git, edits project paths, or substitutes for independent review, verification, integration, or work-item completion.
 

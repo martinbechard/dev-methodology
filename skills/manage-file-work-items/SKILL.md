@@ -25,9 +25,9 @@ The only authoritative file-provider storage root is backlog in the primary work
 
 An isolated worktree, another linked worktree, or a primary worktree not on main may inspect available evidence but must not create, transition, or archive the canonical record. Return BLOCKED with the observed worktree and branch, required primary-main authority, exact requested transition, and next handoff. Never create a shadow queue.
 
-Apply the project-wide resource_coordination selection independently from this provider. When agent-claim is selected, serialize each queue mutation with a short backlog scope from the primary main worktree. SHARED_CHECKOUT_RELEASE_REQUIRED is a coordination outcome rather than a failed mutation. Arrange a direct handoff or completion notification and suspend without polling. SHARED_CHECKOUT_REQUIRED means the operation must be handed to the primary main worktree. Resume only after that notification or handoff, reconcile live status, then retry the exact transition. When none is selected, perform no claim discovery, acquisition, heartbeat, registry mutation, handoff, or release and require no claim-specific evidence anywhere in this skill.
+Apply the project-wide resource_coordination selection independently from this provider. When agent-claim is selected, use Agent Claim's owning Event Contract: creating a uniquely named new work-item file uses atomic no-overwrite creation without a claim, while updating an existing item claims its exact current path and also its destination for a move or rename. Different exact work-item claims may coexist. When none is selected, perform no claim operation and require no claim evidence.
 
-When coordination is enabled, use one short backlog ownership transaction for each startup transition. The parent Dev Backlog Coordinator owns the dispatch decision and has a Dev Backlog Steward child commit Ready -> Starting with reservation evidence, then releases immediately. After the work-item Thread's root Dev Orchestrator accepts ownership, that root uses its own Dev Backlog Steward child to commit Starting -> Running with the canonical Thread identifier, canonical task id, branch, worktree, and claim evidence, then releases immediately. Delivery obtains separate implementation ownership without backlog scope. After delivery, review, verification, and integration complete, the work-item Orchestrator uses its Steward child for the atomic terminal provider transaction that records result evidence, sets Completed, moves the archive, commits, and releases. With coordination none, preserve the same separate commits and provider transitions without coordination transactions or evidence.
+Each startup or terminal transition remains its own short primary-main provider transaction. Delivery in a private worktree needs no claim unless it triggers a named shared-resource event. Before finish, release, or handoff, commit completed work and prove the applicable worktree clean.
 
 ## Folder Model
 
@@ -93,7 +93,7 @@ If closed items remain in active folders, explicit status is the open or closed 
 
 ## Dispatch Workflow
 
-- Reconcile enabled coordination ownership and interrupted work before assigning new items.
+- Reconcile interrupted work before assigning new items; private-worktree changes remain with their work item and are resumed there.
 - Prefer unfinished owned work over new work.
 - Apply configured priority; otherwise prefer defects, features, investigations, then analyses.
 - Exclude User Action Required, Holding, and Future Ideas from runnable selection and unattended counts.
@@ -102,7 +102,7 @@ If closed items remain in active folders, explicit status is the open or closed 
 - Starting counts against capacity exactly like Running, so ambiguous or slow startup cannot cause over-dispatch.
 - Before creating a work-item Thread, reconcile the item, parent Thread, runtime task inventory, reservation evidence, and any canonical task id. The Coordinator must not create a duplicate after an ambiguous startup or timeout.
 - When a previously Running item entered User Action Required from an existing canonical work-item Thread, preserve and adopt that same Thread after the answer is recorded and the item is reserved as Starting. Do not require the user to repeat the answer in the parent Thread and do not create a replacement Thread.
-- Starting -> Running is owned by the root Dev Orchestrator after it accepts the item. Its Dev Backlog Steward child atomically records the canonical work-item Thread identifier, canonical task id, root Dev Orchestrator, branch, worktree, and claim evidence.
+- Starting -> Running is owned by the root Dev Orchestrator after it accepts the item. Its Dev Backlog Steward child atomically records the canonical work-item Thread identifier, canonical task id, root Dev Orchestrator, branch, worktree, and applicable claim evidence.
 - If startup fails or remains ambiguous, reconcile twice across the bounded settlement interval. When no root Orchestrator accepted ownership and no matching Thread exists, restore Ready and clear only the failed reservation fields. When ownership was accepted or evidence is inconsistent, preserve it and record Blocked or User Action Required with the exact recovery owner instead of restoring Ready.
 - Keep each dispatched item isolated so concurrent work does not share mutable workspace state.
 - Keep delivery ownership isolated from backlog mutation ownership.
@@ -121,7 +121,7 @@ Do not move an independently identified defect, enhancement, or idea into a type
 - Treat only a resolved regular work-item file contained by its canonical backlog queue as a promotion target. Reject a symlinked or otherwise resolved target that escapes authority without reading external bytes.
 - Include the exact retained idea path in the promoted work item's Source Evidence section, and add Promoted To with the canonical work-item reference to the original idea.
 - Preserve the original idea in place after promotion. Do not archive or delete it merely because typed work now exists.
-- Apply the reciprocal provenance update as one primary-main transaction and commit only after duplicate detection succeeds. When resource_coordination selects agent-claim, acquire the short serialized backlog claim before mutation, release it after success or safe verified rollback, and retain it after unsafe rollback or post-commit reciprocal verification failure. When resource_coordination selects none, make no claim discovery, call, registry mutation, or claim-specific evidence while preserving the same snapshots, exact-pair commit, verification, rollback, and truthful BLOCKED recovery ownership.
+- Apply the reciprocal provenance update as one primary-main transaction and commit only after duplicate detection succeeds. When resource_coordination selects agent-claim, claim the existing idea path and the destination path under Agent Claim's Event Contract. When resource_coordination selects none, preserve the same snapshots, exact-pair commit, verification, rollback, and truthful BLOCKED recovery ownership without claim evidence.
 
 ## Transition Evidence
 
@@ -148,7 +148,7 @@ Resume blocked work through the same provider and startup boundaries as new work
 
 1. Read and retain the complete pre-attempt Blocked item bytes.
 2. Reconcile the blocker and confirm that the recorded unblock condition is satisfied.
-3. In one short provider transaction, restore Status: Ready with Owner: Unowned while retaining the blocker, unblock condition, evidence, and acceptance criteria as recovery history. When coordination is enabled, use only short backlog ownership for this transaction and release it immediately. If this transaction fails, restore the byte-for-byte pre-attempt Blocked item and do not infer execution ownership.
+3. In one short provider transaction, restore Status: Ready with Owner: Unowned while retaining the blocker, unblock condition, evidence, and acceptance criteria as recovery history. When coordination is enabled, claim the item's exact current path under Agent Claim's Event Contract. If this transaction fails, restore the byte-for-byte pre-attempt Blocked item and do not infer execution ownership.
 4. Let the parent Dev Backlog Coordinator select the Ready item through normal priority and Starting-plus-Running capacity rules. Its Dev Backlog Steward child atomically records Ready -> Starting reservation and dispatch evidence; this transaction does not grant delivery ownership.
 5. Reconcile the Starting reservation against active and archived runtime Threads. Create at most one canonical work-item Thread. After an error, timeout, disconnect, or ambiguous response, do not retry creation; perform the bounded settlement read and either adopt the one matching Thread, restore Ready when no root Agent accepted ownership and no Thread exists, or record Blocked or User Action Required when ownership or evidence cannot safely be discarded.
 6. Only after the work-item Thread's root Dev Orchestrator Agent accepts ownership may that Orchestrator use its own Dev Backlog Steward child for the atomic Starting -> Running transaction. Record the canonical Thread identifier, canonical root Agent Task id when applicable, owner, branch, worktree, and enabled coordination evidence.
@@ -167,7 +167,7 @@ Blocked, Ready, or satisfaction of an unblock condition never authorizes a direc
 8. Move a deferred item to backlog/holding. Archive a clearly rejected or abandoned item under the matching failed type.
 9. Keep a partially answered item in User Action Required with a narrowed question.
 
-When resource coordination is enabled, acquire only the backlog scope needed for the answer and move. Acquire implementation scope separately after the item becomes active and dispatchable. With coordination none, perform the same provider transactions without operational ownership evidence.
+When resource coordination is enabled, apply Agent Claim's exact current-path and destination-path rule for the answer and move. Private-worktree implementation remains claim-free unless it triggers another event in that contract. With coordination none, perform the same provider transactions without operational ownership evidence.
 
 Work performed before User Action Required -> Ready -> Starting -> Running reconciliation is not automatically accepted and is not automatically discarded. Preserve its diff, commits, branch, worktree, enabled ownership, review, verification, and delivery evidence; stop further shared mutation; and report the sequence variance to the parent. Never reject, delete, duplicate, or reimplement work solely because it was performed in the User Action Required Thread. The parent and same root Orchestrator reconcile exact scope, ownership, Git provenance, independent gates, and delivery state before continuing. Never release or override dirty ownership to force the lifecycle sequence into alignment.
 

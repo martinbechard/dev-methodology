@@ -1,6 +1,6 @@
 ---
 name: create-file-work-item
-description: Create one authoritative repository-backed work item with typed placement, source evidence, user-action boundaries, and conditional backlog resource coordination. Use when the effective provider is file or the user explicitly requests one file-backed item; agent-claim uses a short primary-main backlog claim, while none uses no claim lifecycle or evidence.
+description: Create one authoritative repository-backed work item with typed placement, source evidence, user-action boundaries, and atomic no-overwrite creation when the effective provider is file.
 metadata:
   category: development-practice
 ---
@@ -25,11 +25,9 @@ The only authoritative file-provider storage root is backlog in the primary work
 
 An isolated worktree, a linked worktree other than the primary worktree, or a primary worktree not on main has no authority to create the item. Return BLOCKED with the observed worktree and branch, the required primary-main authority, and the next handoff. Do not write a shadow queue elsewhere.
 
-Before each creation mutation, apply the resource-coordination selection from PROJECT.yaml. When agent-claim is selected, acquire backlog scope from the primary main worktree. SHARED_CHECKOUT_RELEASE_REQUIRED is a coordination outcome: arrange a direct handoff or completion notification and suspend without polling. SHARED_CHECKOUT_REQUIRED means the operation must be handed to the primary main worktree. After notification or handoff, reconcile live status before retrying. Commit the one queue mutation and release the short backlog-domain claim immediately. When none is selected, perform no claim discovery, acquisition, heartbeat, registry mutation, handoff, or release.
+Creating a uniquely named new work-item file uses no claim. Resolve the final canonical path first, then create it with the platform's exclusive-create operation so the write fails when the path already exists. Never preflight with an existence check followed by an ordinary overwrite-capable write. Write the complete intended bytes through that exclusive descriptor, synchronize and close it, validate the created item, and remove only that newly created path if validation or commit fails. An existing target means duplicate reconciliation is required; do not overwrite or retry with a different name.
 
-After that commit, release enabled backlog ownership immediately.
-
-Keep backlog creation separate from implementation ownership. When creation immediately authorizes delivery, record the READY item first, release enabled backlog ownership, and then apply the selected coordination policy independently to implementation. Enabled backlog ownership later records terminal evidence and archive movement. With coordination none, these remain separate commit transactions without claim evidence.
+Keep backlog creation separate from implementation ownership. When creation immediately authorizes delivery, record and commit the READY item first, then apply the Event Contract independently to later implementation or existing-item updates.
 
 ## Template Workflow
 
@@ -81,7 +79,7 @@ Promote an idea only through a deliberate user-authorized operation:
 
 1. Read the retained source idea, resolve its canonical regular-file authority, and search ordinary queues for an existing matching work item.
 2. Resolve the intended canonical target path and preflight target collisions before any promotion write. An existing target or matching ordinary work item blocks promotion without changing either record.
-3. Apply the resource_coordination selection. When agent-claim is selected, acquire the serialized primary-main backlog claim before mutation. When none is selected, perform no claim discovery, acquisition, heartbeat, registry mutation, release, or claim evidence. In either mode, remain on the primary main worktree and snapshot the exact pre-attempt source idea bytes, target existence, exact target bytes when it exists, and exact full Git index file bytes and existence before mutation. Preserve those snapshots as recovery evidence until commit verification or verified rollback.
+3. Remain on primary main, claim the exact existing source record and its associated destination under Agent Claim's existing-record event, and snapshot the exact pre-attempt source idea bytes, target existence, exact target bytes when it exists, and exact full Git index file bytes and existence before mutation. With coordination none, make no claim call or claim evidence. Preserve the snapshots as recovery evidence until commit verification or verified rollback.
 4. Create one complete typed work item in its applicable active, Holding, or User Action Required destination with every field and section required by Required Item Shape, including Open Questions, and any destination-specific sections. Holding may retain its underlying dispatchable Type or declare Type: Holding; User Action Required must retain its underlying dispatchable Type.
 5. Set Completion to exactly direct-main, feature-branch, or UNSET.
 6. Include the exact canonical source idea path in the promoted work item's Source Evidence section.
@@ -210,7 +208,7 @@ The creation commit and result must preserve work_item_id, provider_reference, s
 Before reporting completion:
 
 - Confirm the effective provider is file and the mutation occurred only under backlog in the primary main worktree.
-- Confirm enabled backlog ownership was short, committed, released, and separate from implementation ownership; require no coordination evidence when none is selected.
+- Confirm uniquely named atomic no-overwrite creation used no claim and produced no release evidence; if another Event Contract event occurred, keep its claim evidence separate from creation and implementation ownership.
 - Confirm the item is in the right typed folder and has a stable unique path.
 - Confirm related multi-item goals have an index.md and linked independently runnable children.
 - Confirm the complete required item shape, source evidence, dependencies, and verification expectations are present.
@@ -220,7 +218,7 @@ Before reporting completion:
 - For Future Ideas, confirm the minimal idea shape, exclusion from ordinary work-item scans, resolved regular-file authority within backlog/future-ideas, and any reciprocal Promoted To and exact Source Evidence link.
 - Confirm no provider issue, mirror, shadow queue, or duplicate file was created.
 
-For an ordinary work item, return provider file, work_item_id and provider_reference, item type, lifecycle status, source evidence, dependencies, completion selection, creation commit, enabled coordination release reference, and next runnable action. For a Future Idea, return its path, synopsis, origin or rationale, optional revisit trigger, capture commit, enabled coordination release reference when applicable, and the explicit fact that it is not runnable or approved work.
+For an ordinary work item, return provider file, work_item_id and provider_reference, item type, lifecycle status, source evidence, dependencies, completion selection, creation commit, explicit no-claim creation evidence, and next runnable action. For a Future Idea, return its path, synopsis, origin or rationale, optional revisit trigger, capture commit, explicit no-claim creation evidence, and the fact that it is not runnable or approved work.
 
 ## Migration
 

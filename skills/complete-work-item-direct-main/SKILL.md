@@ -45,13 +45,9 @@ A branch name, pushed branch, patch file, detached checkout, pull request, merge
 
 ## Integration Authority
 
-When agent-claim is selected, apply that enabled resource-coordination implementation before touching shared main state and acquire one narrow integration claim covering:
+When agent-claim is selected, apply Agent Claim's owning Event Contract. Any non-backlog work in the primary worktree uses project-files, while a named shared runtime or deployment uses only its event-specific resource claim. Provider closure remains a separate Persistence transaction.
 
-- every main-worktree path that integration or conflict resolution may modify;
-- the target-specific integration resource for the configured main branch; and
-- only the shared test resources required by focused post-integration verification.
-
-Do not include provider lifecycle surfaces in operational coordination ownership. Provider closure is a separate transaction owned by the Persistence phase. If enabled ownership is unavailable, preserve the accepted source commit and return or follow the selected coordination procedure's bounded wait state without mutating main. When none is selected, skip acquisition, wait, heartbeat, registry, handoff, and release evidence.
+Private-worktree integration preparation, commit, and rebase need no claim. A unique work-item remote branch also needs no claim. If an applicable event claim is unavailable, preserve the accepted source commit and do not mutate that shared surface. When none is selected, require no claim evidence.
 
 ## Main Reconciliation
 
@@ -96,7 +92,7 @@ Use graph reachability for ancestral delivery, such as Git's merge-base ancestor
 
 ## Release And Lifecycle Handoff
 
-When resource coordination is enabled, release integration ownership only after main is clean, required checks pass, and all local and configured remote observations are recorded. A failed release returns BLOCKED until ownership is reconciled; do not hide live ownership behind READY. When coordination is none, main cleanliness and verification still apply without release evidence.
+When resource coordination is enabled, release applicable event ownership only after main is clean, required checks pass, and all local and configured remote observations are recorded. A failed release returns BLOCKED until ownership is reconciled; do not hide live ownership behind READY. When coordination is none, main cleanliness and verification still apply without release evidence.
 
 When a provider is selected, prepare one terminal update containing:
 

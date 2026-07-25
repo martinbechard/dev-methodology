@@ -1,23 +1,23 @@
 ---
 name: agent-claim-mcp
-description: Invoke the transport-neutral agent-claim contract through one setup-verified mcp-agent-ops tool surface without runtime probing or transport fallback.
+description: Invoke the agent-claim contract through one setup-verified MCP claim-helper interface without runtime probing or interface fallback.
 metadata:
   category: development-practice
 ---
 
 # Agent Claim MCP
 
-Apply this adapter only when Project Configurator selected mcp in agent_claim_transport and verified the complete claim tool surface. Apply agent-claim for scope, ownership, state, recovery, heartbeat, release, and completion semantics.
+Apply this adapter only when Project Configurator selected mcp in the compatibility field agent_claim_transport and verified the complete claim tool surface. That field selects how the claim helper is invoked. Apply agent-claim for scope, ownership, state, recovery, heartbeat, release, and completion semantics.
 
 ## Deadline Parity Boundary
 
-This adapter defines the MCP contract required for transport parity, but the live external mcp-agent-ops provider has not been verified to supply the deadline fields and claim_extend_deadline operation below. The bundle records this state as UNRESOLVED_EXTERNAL_PROVIDER. Project Configurator must not select MCP for agent-claim until setup evidence verifies the complete future surface and result schema. Do not claim current live MCP support, emulate the missing operation with another tool, or switch to command at runtime.
+This adapter defines the MCP contract required for interface parity, but the live external mcp-agent-ops provider has not been verified to supply the deadline fields and claim_extend_deadline operation below. The bundle records this state as UNRESOLVED_EXTERNAL_PROVIDER. Project Configurator must not select MCP for agent-claim until setup evidence verifies the complete future surface and result schema. Do not claim current live MCP support, emulate the missing operation with another tool, or switch to the command-line interface at runtime.
 
 ## Availability Boundary
 
-Project Configurator verifies the configured server before rendering this adapter. Runtime agents invoke the named tools directly. Do not list tools to rediscover the transport, inspect another transport, execute a claim command, or infer availability from package versions.
+Project Configurator verifies the configured server before rendering this adapter. Runtime agents invoke the named tools directly. Do not list tools to rediscover the configured claim-helper interface, inspect another interface, execute a claim command, or infer availability from package versions.
 
-If any required claim tool is absent, disconnected, or cannot initialize before dispatch, stop with CLAIM_TRANSPORT_UNAVAILABLE and request Project Configurator reconfiguration. Do not switch transports. A path, root, authorization, input-policy, schema, or other structured rejection is a valid tool result, not unavailability.
+If any required claim tool is absent, disconnected, or cannot initialize before dispatch, stop with CLAIM_TRANSPORT_UNAVAILABLE and request Project Configurator reconfiguration. Do not switch claim-helper interfaces. A path, root, authorization, input-policy, schema, or other structured rejection is a valid tool result, not unavailability.
 
 ## MCP Operations
 
@@ -42,13 +42,13 @@ The required future parity contract permits at most one resource value per claim
 
 Each completed tool call returns one structured wrapper with exit_code and result. Inspect result.outcome before taking the next action. Preserve result.schema_version, result.legacy_outcome when present, warnings, conflicts, claim data, and target data as coordination evidence.
 
-Do not treat a nonzero exit_code as a protocol failure. CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, SHARED_CHECKOUT_REQUIRED, SHARED_CHECKOUT_RELEASE_REQUIRED, ISOLATED_CHECKOUT_SETUP_REQUIRED, DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED, and every structured rejection are completed coordination results. Follow agent-claim without repeating the operation through another transport.
+Do not treat a nonzero exit_code as a protocol failure. CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, SHARED_CHECKOUT_REQUIRED, SHARED_CHECKOUT_RELEASE_REQUIRED, ISOLATED_CHECKOUT_SETUP_REQUIRED, DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED, and every structured rejection are completed coordination results. Follow agent-claim without repeating the operation through another claim-helper interface.
 
 The required future parity contract must also return RECONCILIATION_RECOVERY_REQUIRED when a durable pending reconciliation marker controls transaction recovery. A prepared marker protects the exact original registry and journal snapshots; RELEASE_PENDING is not a release. A committed marker makes the exact released registry authoritative and finalizes exactly one RELEASED journal event. Scoped operations and journal maintenance must attempt validated deterministic recovery under the registry lock. Reporting must remain read-only and return this outcome before loading journal events when a marker exists.
 
 When this outcome appears:
 
-1. Call claim_status through this same configured MCP transport.
+1. Call claim_status through this same configured MCP claim-helper interface.
 2. If the outcome persists, preserve the marker, registry, journal, tool result, and relevant filesystem evidence.
 3. Escalate that evidence. Do not manually edit or remove the marker, registry, journal, or protected claim.
 
@@ -99,21 +99,6 @@ Repeat an isolation-required acquisition with the same claim identity:
   "files": ["src/feature.py"],
   "branch": "codex/task-123",
   "base": "main"
-}
-```
-
-Acquire authorized recovery ownership:
-
-```json
-{
-  "repository": "/workspace/project",
-  "claim_id": "recovery-123",
-  "agent": "recovery-owner",
-  "task": "recovery-123",
-  "root_task_id": "recovery-123",
-  "all_files": true,
-  "scope_reason": "recover anonymous dirty state",
-  "allow_recovery": true
 }
 ```
 
@@ -186,10 +171,10 @@ The required future evidence-gated reconciliation shape is:
 
 ## Ambiguous Dispatch
 
-When a mutating MCP dispatch is ambiguous because the connection breaks after submission, do not repeat the mutation and do not switch transports. Reconnect to the same configured MCP transport and call claim_status for the same repository. Continue only from the observed registry state.
+When a mutating MCP dispatch is ambiguous because the connection breaks after submission, do not repeat the mutation and do not switch claim-helper interfaces. Reconnect to the same configured MCP interface and call claim_status for the same repository. Continue only from the observed registry state.
 
-If the same transport cannot provide status, preserve the ambiguous state, report CLAIM_TRANSPORT_UNAVAILABLE, and request Project Configurator reconfiguration or an explicit ownership handoff. Never use the command adapter to guess whether the mutation succeeded.
+If the same claim-helper interface cannot provide status, preserve the ambiguous state, report CLAIM_TRANSPORT_UNAVAILABLE, and request Project Configurator reconfiguration or an explicit ownership handoff. Never use the command adapter to guess whether the mutation succeeded.
 
 ## Behavioral Equivalence
 
-Both configured transports expose the same engine outcomes and next-action semantics. Their invocation envelopes differ, but this adapter never renames, suppresses, retries, or translates a structured coordination outcome.
+Both configured claim-helper interfaces expose the same helper outcomes and next-action semantics. Their invocation envelopes differ, but this adapter never renames, suppresses, retries, or translates a structured coordination outcome.

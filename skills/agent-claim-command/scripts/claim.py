@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Implements command-transport claims, resource deadlines, journaling, isolation, recovery, and release.
+# Summary: Implements the claim command-line interface and helper for registry, journal, deadline, recovery, and release operations.
 
 from __future__ import annotations
 
@@ -37,7 +37,6 @@ BACKLOG_ROOT_DIRECTORY = "backlog"
 WORKTREE_ROOT_DIRECTORY = ".worktrees"
 WORKTREE_IGNORE_PATTERN = "/.worktrees/"
 ISOLATED_SPARSE_CHECKOUT_PATTERNS = ("/*", "!/backlog/")
-PRIMARY_WORKTREE_RESOURCES = frozenset({"git-index:primary", "merge:integration:main"})
 REGISTRY_FILE_NAME = "agent-claims.json"
 LOCK_FILE_NAME = "agent-claims.lock"
 RECONCILIATION_PENDING_FILE_NAME = "agent-claim-reconciliation-pending.json"
@@ -161,20 +160,6 @@ def _checkout_topology(claim: dict[str, Any]) -> str | None:
     if mode in {"primary", "recovery"}:
         return "primary"
     return None
-
-
-def _claim_owns_primary_worktree(claim: dict[str, Any], primary_worktree: Path) -> bool:
-    if _scope_is_resource_only(_claim_scope(claim)):
-        return False
-    worktree = claim.get("worktree")
-    if isinstance(worktree, str):
-        return Path(worktree).resolve() == primary_worktree
-    return claim.get("mode") in {"primary", "recovery"}
-
-
-def _shared_checkout_is_claimed(repository: Path, claims: Sequence[dict[str, Any]]) -> bool:
-    primary_worktree = _primary_worktree(repository)
-    return any(_claim_owns_primary_worktree(claim, primary_worktree) for claim in claims)
 
 
 def _worktree_root_is_ignored(repository: Path) -> bool:
@@ -696,7 +681,7 @@ def _locked_registry(
                 _recover_pending_reconciliation(registry_path.parent)
             elif os.path.lexists(marker_path):
                 raise _PendingReconciliationError(
-                    "Pending reconciliation requires same-transport recovery before reporting.",
+                    "Pending reconciliation requires recovery through the same claim-helper interface before reporting.",
                     "unknown",
                     marker_path,
                 )
@@ -1477,10 +1462,7 @@ def _path_scopes(scope: dict[str, Any], include_broad: bool = True) -> list[tupl
 
 
 def _scope_requires_primary_worktree(scope: dict[str, Any]) -> bool:
-    return scope.get("file_domain") in {"backlog", "all_files"} or any(
-        resource in PRIMARY_WORKTREE_RESOURCES
-        for resource in scope.get("resources", [])
-    )
+    return scope.get("file_domain") in {"backlog", "all_files"}
 
 
 def _scope_file_domain(scope: dict[str, Any]) -> str:
@@ -1935,20 +1917,10 @@ def _primary_required_result(
     requested_scope: dict[str, Any],
     scope_warnings: list[dict[str, str]],
     claim: dict[str, Any] | None = None,
-    shared_checkout_claimed: bool = False,
     **details: Any,
 ) -> int:
-    backlog_scope = requested_scope.get("file_domain") in {"backlog", "all_files"}
-    reason = (
-        "backlog_requires_primary_worktree"
-        if backlog_scope
-        else "primary_location_resource_requires_primary_worktree"
-    )
-    message = (
-        "Backlog scope is available only from the primary worktree."
-        if backlog_scope
-        else "The requested primary-location resource is available only from the primary worktree."
-    )
+    reason = "backlog_requires_primary_worktree"
+    message = "Backlog scope is available only from the primary worktree."
     event = _event(
         action,
         "PRIMARY_REQUIRED",
@@ -1956,7 +1928,7 @@ def _primary_required_result(
         claim=claim,
         requested_scope=requested_scope,
         reason=reason,
-        shared_checkout_claimed=shared_checkout_claimed,
+        shared_checkout_claimed=False,
         command_warnings=scope_warnings,
         **details,
     )
@@ -1967,7 +1939,7 @@ def _primary_required_result(
         scope_warnings,
         canonical_outcome=_canonical_outcome(
             event["outcome"],
-            shared_checkout_claimed=shared_checkout_claimed,
+            shared_checkout_claimed=False,
         ),
         reason=reason,
         message=message,
@@ -2084,49 +2056,19 @@ def _acquire(args: argparse.Namespace) -> int:
         if requires_primary:
             primary_worktree = _primary_worktree(repository)
             caller_is_primary = repository == primary_worktree
-            primary_is_claimed = any(
-                _claim_owns_primary_worktree(claim, primary_worktree)
-                for claim in claims
-            )
-            if not caller_is_primary or primary_is_claimed:
+            if not caller_is_primary:
                 return _primary_required_result(
                     common_directory,
                     "acquire",
                     args,
                     requested_scope,
                     scope_warnings,
-                    shared_checkout_claimed=primary_is_claimed,
                     active_claim_count=len(claims),
                 )
 
-        file_claims = [
-            claim
-            for claim in claims
-            if not _scope_is_resource_only(_claim_scope(claim))
-        ]
-        requested_uses_writer_lane = not _scope_is_resource_only(requested_scope)
-        if file_claims and requested_uses_writer_lane and not requires_primary:
+        if args.branch and not requires_primary:
             worktree_root = _canonical_worktree_root(repository)
             target_worktree = _canonical_worktree(repository, args.claim_id)
-            if not args.branch:
-                event = _event(
-                    "acquire",
-                    "ISOLATE_REQUIRED",
-                    args,
-                    requested_scope=requested_scope,
-                    active_claim_count=len(claims),
-                    command_warnings=scope_warnings,
-                )
-                return _journaled_result(
-                    ISOLATION_SETUP_EXIT_CODE,
-                    common_directory,
-                    event,
-                    scope_warnings,
-                    active_claim_count=len(claims),
-                    required_ignore_pattern=WORKTREE_IGNORE_PATTERN,
-                    suggested_worktree=str(target_worktree),
-                    worktree_root=str(worktree_root),
-                )
             if args.worktree_path:
                 provided_worktree = Path(args.worktree_path).resolve()
                 if provided_worktree != target_worktree:
@@ -2308,7 +2250,6 @@ def _extend(args: argparse.Namespace) -> int:
                 requested_scope,
                 scope_warnings,
                 claim=claim,
-                shared_checkout_claimed=_shared_checkout_is_claimed(repository, claims),
             )
 
         try:
@@ -2339,30 +2280,6 @@ def _extend(args: argparse.Namespace) -> int:
                 already_owned_scope=already_owned,
             )
 
-        primary_worktree = _primary_worktree(repository)
-        claim_worktree = Path(claim["worktree"]).resolve()
-        primary_file_writer_exists = any(
-            other.get("claim_id") != args.claim_id
-            and _claim_owns_primary_worktree(other, primary_worktree)
-            for other in claims
-        )
-        if (
-            _scope_file_domain(added) != "none"
-            and claim_worktree == primary_worktree
-            and primary_file_writer_exists
-        ):
-            return _primary_required_result(
-                common_directory,
-                "extend",
-                args,
-                requested_scope,
-                scope_warnings,
-                claim=claim,
-                shared_checkout_claimed=True,
-                added_scope=added,
-                already_owned_scope=already_owned,
-            )
-
         if claim.get("mode") == "isolated" and _scope_requires_primary_worktree(added):
             return _primary_required_result(
                 common_directory,
@@ -2371,7 +2288,6 @@ def _extend(args: argparse.Namespace) -> int:
                 requested_scope,
                 scope_warnings,
                 claim=claim,
-                shared_checkout_claimed=_shared_checkout_is_claimed(repository, claims),
                 added_scope=added,
                 already_owned_scope=already_owned,
             )

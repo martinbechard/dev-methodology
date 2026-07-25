@@ -17,31 +17,12 @@ Keep parallel work isolated during implementation, then merge only verified and 
 
 Before merging a worktree:
 
-- When agent-claim is selected, apply that enabled resource-coordination implementation when integration touches shared files or exclusive runtime resources. When none is selected, load no coordination implementation and perform no coordination lifecycle.
+- When agent-claim is selected, claim project-files for non-backlog integration in the primary worktree and use only the named shared-resource events in Agent Claim's complete Event Contract. Private reconciliation-branch preparation needs no claim.
 - Confirm the source worktree has no uncommitted task changes unless the handoff explicitly says how to handle them.
 - Confirm the source branch has a meaningful commit for the completed unit.
 - Read the source agent status, final notes, verification results, and known risks.
 - Confirm the integration checkout is the intended target lane.
 - When resource coordination is enabled, confirm source ownership was released after a clean commit or explicitly handed to the integration owner.
-- Reject anonymous dirty state. Use the selected policy's recovery workflow when enabled; otherwise preserve the dirty state and obtain an explicit work-item handoff before integration.
-
-## Integration Ownership
-
-When resource coordination is enabled, acquire the target-specific integration resource only for the shared target update, together with any files likely to be touched by conflict resolution. Separate worktrees may commit to their unique branches without a repository-global commit resource. Release the integration resource promptly after the merge, cherry-pick, rebase, or equivalent target update and its required verification complete. When resource coordination is none, skip this acquisition and release evidence entirely.
-
-Example agent-claim record when that implementation is selected:
-
-```json
-{
-  "agent": "merge-agent",
-  "task": "Merge completed agent work",
-  "files": ["src/feature/file.ts", "test/feature/file.test.ts"],
-  "resources": ["merge:integration:main", "build:production"],
-  "claimed_at": "2026-06-10T20:30:00Z",
-  "heartbeat": "2026-06-10T20:30:00Z",
-  "worktree": "/absolute/path/to/integration-checkout"
-}
-```
 
 ## Merge Workflow
 
@@ -114,7 +95,7 @@ After a source is merged and verified:
 - Remove completed worktrees only when the repository policy allows it and the branch has been safely integrated.
 - Leave failed or blocked worktrees intact with a clear status note.
 - Never release enabled integration ownership while newly created uncommitted work remains.
-- Keep inactive coordination-registry cleanup, Git integration, and terminal backlog closeout as distinct operations with separate evidence. A successful administrative reset is not an integration or completion event.
+- Keep claim release, Git integration, and terminal backlog closeout as distinct operations with separate evidence.
 
 ## Final Report
 

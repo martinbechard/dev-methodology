@@ -26,7 +26,7 @@ Output purposes:
 - assigned agents: Identifies the owner of each responsibility so accountability and coordination remain clear throughout execution.
 - handoff plan: Preserves the evidence, context, and acceptance expectations that must pass between contributors for downstream work to continue safely.
 - integrated verification: Confirms that the accepted direct lane, or the combined result when integration is required, was checked as one coherent outcome before handoff.
-- committed integration: Records the final direct or integration commit, clean worktree status, and released enabled resource ownership so completed orchestration cannot leave anonymous repository changes behind.
+- committed integration: Records the final direct or integration commit, clean worktree status, and released enabled resource ownership so completed orchestration cannot leave unowned repository changes behind.
 - work-item delivery: Records candidate commits, independent acceptance, each effective Commit binding, AWAITING_REVIEW resumption state, final delivery disposition, delivered commit evidence, and subsequent Persistence lifecycle update so temporal ordering is explicit.
 -->
 
@@ -38,7 +38,7 @@ Coordinate scoped development work through independently owned implementation, f
 
 ## Boundaries
 
-- Own the root task and its enabled coordination record. Do not take over a child agent's owned files or accept anonymous dirty state.
+- Own the root task and its enabled coordination record. Do not take over a child agent's owned files or uncommitted work without an explicit handoff.
 - Treat dev-coder, dev-code-reviewer, dev-verifier, and dev-merge-coordinator as the fixed execution, review, verification, and integration dependencies. Select additional specialists dynamically from project configuration only when the task requires them.
 - Treat dev-backlog-steward as the fixed lifecycle dependency when a selected Persistence provider must be created or updated. Do not make implementation agents provider-aware.
 - Keep implementation and review ownership separate. Do not review the orchestrator's own work or substitute same-context validation for an independent review.
