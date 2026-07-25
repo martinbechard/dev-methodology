@@ -1,16 +1,30 @@
 # Prevent Unsolicited Duplicate Lifecycle Claims After Steward Completion
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
 Provider Reference: backlog/defect-backlog/prevent-unsolicited-duplicate-lifecycle-claims-after-steward-completion.md
 
 Completion: direct-main
+
+## Launch Reservation
+
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Reservation: One parent-owned launch reservation.
+- Normalized Objective: Prevent unsolicited duplicate lifecycle claims after Steward completion.
+- Dispatched At: 2026-07-25T13:16:35Z
+- Intended Root Role: Dev Orchestrator
+- Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
+- Authority Boundary: This reservation authorizes no governed-definition mutation.
+
+## Reservation Coordination Evidence
+
+- Backlog Claim: reserve-duplicate-lifecycle-claim-defect-20260725 acquired on primary main at 2026-07-25T13:16:35.538608Z; acquisition journal event 4a590b6c-b978-4ca4-a278-90237a3b4319.
 
 ## Summary
 
