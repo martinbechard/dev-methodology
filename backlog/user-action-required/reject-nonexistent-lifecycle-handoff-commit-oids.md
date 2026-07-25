@@ -1,14 +1,14 @@
 # Reject Nonexistent Lifecycle Handoff Commit OIDs
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/reject-nonexistent-lifecycle-handoff-commit-oids.md
+Provider Reference: backlog/user-action-required/reject-nonexistent-lifecycle-handoff-commit-oids.md
 
 Completion: direct-main
 
@@ -19,7 +19,7 @@ Completion: direct-main
 - Reservation: One parent-owned launch reservation.
 - Intended Root Role: Dev Orchestrator
 - Isolated Checkout: /Users/martinbechard/.codex/worktrees/215b/dev-methodology
-- Phase: Verification.
+- Phase: Waiting for governed definition approval.
 - Dispatched At: 2026-07-25T04:36:08Z
 
 ## Execution Identity
@@ -64,6 +64,30 @@ Completion: direct-main
 - Correction History: ef86acb -> 22fa421 -> 85e6a31 -> 1eab8bb -> 988bc4b -> a12babf.
 - Verifier Task: /root/verify_oid_receipts dispatched.
 - Governed-Definition Approval Gap: Open. This verification evidence does not imply terminal readiness or authorize governed-definition mutation.
+- Independent Verifier: PASSED with 46/46 focused tests, 18/18 wiki checks, and freshness, compile, diff, and raw object checks.
+- Delivery State: No Commit delivery or integration has been performed; the candidate remains on the clean private branch.
+
+## User Action Required
+
+### Question for the User
+
+Do you explicitly approve mutation of skills/manage-file-work-items/SKILL.md, agents/roles/dev-activities/dev-backlog-steward.role.yaml, skills/codex-workitem-coordination/SKILL.md, and agents/roles/dev-activities/dev-orchestrator.role.yaml, plus only their supported generated mirrors, to require immediate full commit-OID capture, raw commit-object verification, immutable provider-path/content/task/claim receipts, structured recovery, and end-to-end handoff propagation?
+
+### Why User Input Is Required
+
+These governed instruction sources own producer/provider and orchestrator handoff behavior; executable runner enforcement alone cannot make distributed agents comply.
+
+### Prohibited Unattended Action
+
+Do not mutate those definitions or mirrors, run pre-mutation approval checks using manufactured provenance, integrate a partial candidate, or close the provider without an explicit answer.
+
+### Resolution
+
+Pending explicit user answer in canonical task 019f978e-28b7-7561-be38-b535ab26850f.
+
+### Resumption
+
+The same canonical task preserves candidate a12babfc3b919b5e5334821703c8549fe40aa82a. After an answer, the parent must route User Action Required -> Ready -> Starting, and this root's Steward must record Starting -> Running before mutation resumes.
 
 ## Coordination Evidence
 
@@ -73,6 +97,7 @@ Completion: direct-main
 - Correction-Attempt Claim: record-correction-attempt-handoff-oids-019f978e acquired on primary main at 2026-07-25T05:14:47.330838Z; acquisition journal event eaf39685-ca41-40a2-bbe2-bf7ee29a848b.
 - Correction-Attempt-2 Claim: record-correction-attempt2-handoff-oids-019f978e acquired on primary main at 2026-07-25T05:31:44.092988Z; acquisition journal event a9215dec-8cfc-46b3-aced-c5e055c15828.
 - Verification-Phase Claim: record-verification-phase-handoff-oids-019f978e acquired on primary main at 2026-07-25T06:37:04.074955Z; acquisition journal event fc079bb0-4edb-4b90-ada1-3fb402a5c711.
+- User-Action-Required Transition Claim: move-lifecycle-oid-to-uar-019f978e acquired on primary main at 2026-07-25T06:51:28.892456Z; acquisition journal event 27983099-ef32-45d1-9a76-cf2af3a9c6e1. Earlier wait attempt 9b5f91bc-2da1-4b64-bb6f-a8c53daef5f4 reconciled after direct release baton event d12478df-4ff5-41bf-96a2-212ae39081c8.
 
 ## Summary
 
