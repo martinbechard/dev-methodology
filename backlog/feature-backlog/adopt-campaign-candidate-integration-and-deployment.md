@@ -1,17 +1,18 @@
 # Adopt Campaign Candidate Integration And Deployment
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
 ## Launch Reservation
 
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
-- Reservation: One launch reserved by the parent Dev Backlog Coordinator.
+- Reservation: One same-task resumption launch reserved by the parent Dev Backlog Coordinator.
 - Normalized Objective: Adopt reviewed private candidates with one final campaign integration/deployment transaction.
-- Dispatched At: 2026-07-25T01:04:58Z
+- Dispatched At: 2026-07-25T02:47:22Z
 - Intended Root Role: Dev Orchestrator
-- Runtime Thread And Task Id: Not created; the root Dev Orchestrator must accept ownership before a canonical identity is recorded.
+- Runtime Thread And Task Id: Existing canonical work-item Thread 019f96cf-48ef-7c41-bef1-ca69d574526c is retained; no replacement task was created.
+- Approval Provenance: The canonical Thread recorded the user's exact `ok approved` answer for the four-path scope before this same-task resumption reservation.
 
 ## Execution Ownership
 
