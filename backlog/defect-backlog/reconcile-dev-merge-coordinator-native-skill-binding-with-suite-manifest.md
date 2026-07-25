@@ -40,6 +40,17 @@ Completion: direct-main
 - Backlog Claim: transition-dev-merge-coordinator-suite-binding-019f993c acquired from primary main; acquisition journal event b5770617-3542-4956-bc5f-cbfef12a3d32.
 - Authority Boundary: This transition preserves the reservation's no-governed-or-generated-mutation authority boundary. No artifact, role, skill, suite, test, generated file, or other work-item change is authorized by this lifecycle record.
 
+## Material Phase Authorization
+
+- Phase: suite-local candidate implementation
+- Authority Decision: Read-only inspection determined that the conceptual role and generated native agent correctly keep agent-claim project-selected. The suite's fixed requiredSkills requirement is the drift.
+- Authoritative Regression Evidence: scripts/test_bundle_content.py:test_roles_keep_mutation_independent_from_resource_coordination establishes the mutation-versus-resource-coordination contract.
+- Baseline Reproduction: At c9dafac9535a4d51c344ade3940cb8c79b17cccd, /Users/martinbechard/.pyenv/versions/3.11.10/bin/python3 evals/agent-tests/runner.py --harness codex --suite dev-merge-coordinator --validate-only exited 1 with the missing agent-claim failure.
+- Authorized Implementation Scope: evals/agent-tests/dev-merge-coordinator/suite.yaml, evals/agent-tests/dev-merge-coordinator/skills/dev-merge-coordinator-suite-contract/SKILL.md, and focused suite-local regression test only.
+- Dev Coder Child Task: /root/suite_binding_coder
+- Authority Boundary: No governed canonical source or generated-definition mutation is required or authorized. This record authorizes no other artifact or work-item change, including any change to 019f978e.
+- Backlog Claim: material-phase-dev-merge-coordinator-suite-binding-019f993c acquired from primary main at 2026-07-25T12:29:23.939864Z; acquisition journal event bd8fd3cb-d796-43d4-b6d2-2f5f2d268b6c.
+
 ## Summary
 
 Reconcile the Dev Merge Coordinator suite required-skill contract with its generated Codex native agent so the current-main validate-only catalog check succeeds without weakening resource-coordination or governed-definition authority.
