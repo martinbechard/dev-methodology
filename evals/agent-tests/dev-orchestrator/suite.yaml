@@ -6,9 +6,10 @@ target:
   conceptualRole: agents/roles/dev-activities/dev-orchestrator.role.yaml
   nativeAgent: generated/adapters/codex/agents/dev-orchestrator.toml
   repositoryMutation: required
-  requiredSkills: [structured-design, structured-explanation, agent-claim]
+  requiredSkills: [structured-design, structured-explanation]
   conditionalSkills:
     organise-project-files: Orchestration creates a project file or directory.
+    agent-claim: Resource coordination selects agent-claim.
   allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator, dev-backlog-steward]
   taskSelectableAgentDependencies: [dev-documentation-writer, dev-artifact-reviewer]
   requiredOutputs: [status, task breakdown, resolved definition-owned skillsets, assigned agents, handoff plan, integrated verification, committed integration, work-item delivery]
@@ -32,4 +33,4 @@ acceptance:
   criticalFailureSkipsJudge: true
   semanticRubric: orchestration-quality
   terminalStatuses: [PASS, FAIL, BLOCKED, STALE]
-  dependencyRoutingReceiptFields: [lane, role, commit, review, verification, claimRelease]
+  dependencyRoutingReceiptFields: [lane, role, commit, review, verification]

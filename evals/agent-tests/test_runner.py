@@ -328,10 +328,10 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 "commit",
                 "review",
                 "verification",
-                "claimRelease",
             ],
             handoff_schema["required"],
         )
+        self.assertIn("claimRelease", handoff_schema["properties"])
 
     def test_cleanup_audit_rejects_active_claim_in_nested_fixture_repository(self) -> None:
         """A candidate repository cannot retain a claim outside the workspace registry."""
@@ -3971,6 +3971,52 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             RuntimeError,
             "dependency-routing:happy handoff receipt source missing field claimRelease",
         ):
+            runner._audit_report((run,), report)
+
+    def test_report_accepts_receipt_without_disabled_claim_evidence(self) -> None:
+        """A scenario without claimRelease accepts structured non-claim evidence."""
+        suite = self._suite("dependency-routing")
+        scenario = dict(suite.scenarios[0])
+        scenario["requiredHandoffReceiptFields"] = [
+            "lane",
+            "role",
+            "commit",
+            "review",
+            "verification",
+        ]
+        scenario["requiredHandoffReceiptLanes"] = ["source"]
+        suite = runner._Suite(
+            suite.suite_id,
+            suite.priority,
+            suite.path,
+            suite.manifest,
+            (scenario,),
+        )
+        run = runner._RunSpec(suite=suite, scenario_ids=("happy",))
+        report = {
+            "runs": [self._suite_report("dependency-routing", "BLOCKED")],
+            "batchCleanup": "clean",
+            "residualRisk": "",
+        }
+        report["runs"][0]["scenarioResults"][0]["handoffReceipts"] = [
+            {
+                "lane": "source",
+                "role": {
+                    "invocation": "dev-coder",
+                    "sessionIds": ["source-session"],
+                },
+                "commit": {"repository": "candidate", "sha": "a" * 40},
+                "review": {"sessionIds": ["review-session"]},
+                "verification": {"sessionIds": ["verification-session"]},
+            }
+        ]
+
+        runner._audit_report((run,), report)
+
+        report["runs"][0]["scenarioResults"][0]["handoffReceipts"][0][
+            "claimRelease"
+        ] = {"eventIds": ["unexpected-release"]}
+        with self.assertRaisesRegex(RuntimeError, "unexpected claimRelease evidence"):
             runner._audit_report((run,), report)
 
     def test_dependency_receipt_schema_requires_and_rejects_missing_lane(self) -> None:

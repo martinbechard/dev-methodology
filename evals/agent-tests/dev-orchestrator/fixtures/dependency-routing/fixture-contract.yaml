@@ -13,6 +13,19 @@ repository:
   project: PROJECT.yaml
   guidance: AGENTS.md
   backlogItem: backlog/feature-backlog/update-dependency-health-summary.md
+resourceCoordination:
+  selected: none
+  cases:
+    none:
+      claimCalls: []
+      claimEvidence: absent
+      requiredHandoffReceiptFields: [lane, role, commit, review, verification]
+    agent-claim:
+      claimLifecycle: [acquire before mutation, release after clean committed handoff]
+      sourceScope: [src/dependency_status.py, tests/test_dependency_status.py]
+      documentationScope: [docs/operator-runbook.md]
+      integrationResource: merge:integration:fixture-main
+      requiredHandoffReceiptFields: [lane, role, commit, review, verification, claimRelease]
 lanes:
   source:
     owner: dev-coder
@@ -46,12 +59,6 @@ orchestration:
     - {step: 8, role: dev-artifact-reviewer, lane: post-integration-documentation-review, fresh: true}
     - {step: 9, role: dev-verifier, lane: final-verification, fresh: true}
     - {step: 10, role: dev-backlog-steward, lane: closeout, fresh: true}
-  claims:
-    maximumActiveNestedDependencies: 1
-    sourceScope: [src/dependency_status.py, tests/test_dependency_status.py]
-    documentationScope: [docs/operator-runbook.md]
-    integrationResource: merge:integration:fixture-main
-    releaseRequirement: Every modifying claim is clean, committed, and normally released.
   integration:
     owner: dev-merge-coordinator
     requiresAcceptedSource: true
@@ -70,7 +77,7 @@ orchestration:
     terminalState: Complete
 handoffReceipt:
   requiredLanes: [source, documentation, integration, closeout]
-  requiredFields: [lane, role, commit, review, verification, claimRelease]
+  requiredFields: [lane, role, commit, review, verification]
 runtimeResources:
   python: Python 3.11 or newer
   model: Current app-bundled Codex runtime with staged custom agents

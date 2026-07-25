@@ -120,8 +120,11 @@ _DEPENDENCY_ROUTING_FIXTURE_FIELDS = (
     "surfaces.documentation",
     "surfaces.generatedReadOnly",
     "surfaces.report",
+    "repository.project",
+    "resourceCoordination.selected",
+    "resourceCoordination.cases.none",
+    "resourceCoordination.cases.agent-claim",
     "orchestration.dependencyOrder",
-    "orchestration.claims",
     "orchestration.integration",
     "orchestration.postIntegrationReviews",
     "orchestration.finalVerification",
@@ -241,6 +244,33 @@ def _validate_fixture_contract(suite: _Suite, scenario: dict[str, Any]) -> None:
     expected_fields = scenario.get("requiredHandoffReceiptFields", [])
     if expected_fields and contract["handoffReceipt"]["requiredFields"] != expected_fields:
         raise ValueError(f"{identity} fixture handoffReceipt.requiredFields disagrees with scenario")
+    project_path = (path.parent / str(contract["repository"]["project"])).resolve()
+    if suite.path.resolve() not in project_path.parents or not project_path.is_file():
+        raise ValueError(f"{identity} has no fixture project configuration: {project_path}")
+    project = _load_yaml(project_path)
+    selected_coordination = _dotted_value(project, "resource_coordination.selected")
+    coordination = contract["resourceCoordination"]
+    if selected_coordination not in {"agent-claim", "none"}:
+        raise ValueError(f"{identity} has an invalid resource coordination selection")
+    if coordination["selected"] != selected_coordination:
+        raise ValueError(f"{identity} fixture resource coordination disagrees with project")
+    coordination_case = coordination["cases"][selected_coordination]
+    if coordination_case["requiredHandoffReceiptFields"] != expected_fields:
+        raise ValueError(f"{identity} resource coordination receipt fields disagree with scenario")
+    target_skills = set(scenario.get("targetSkills", []))
+    deterministic_checks = set(scenario.get("deterministicChecks", []))
+    if selected_coordination == "none":
+        if "agent-claim" in target_skills or "claim-lifecycle" in deterministic_checks:
+            raise ValueError(f"{identity} none resource coordination selects agent-claim behavior")
+        if "claimRelease" in expected_fields:
+            raise ValueError(f"{identity} none resource coordination requires claim release evidence")
+        if coordination_case.get("claimCalls") != [] or coordination_case.get("claimEvidence") != "absent":
+            raise ValueError(f"{identity} none resource coordination does not prove zero claim evidence")
+    else:
+        if "agent-claim" not in target_skills or "claim-lifecycle" not in deterministic_checks:
+            raise ValueError(f"{identity} agent-claim resource coordination omits configured behavior")
+        if "claimRelease" not in expected_fields:
+            raise ValueError(f"{identity} agent-claim resource coordination omits claim release evidence")
     expected_order = scenario.get("requiredDependencyOrder", [])
     observed_order = [str(item.get("role", "")) for item in contract["orchestration"]["dependencyOrder"]]
     if expected_order and observed_order != expected_order:
@@ -1335,7 +1365,6 @@ def _coordinator_schema() -> dict[str, Any]:
                                                 "commit",
                                                 "review",
                                                 "verification",
-                                                "claimRelease",
                                             ],
                                             "properties": {
                                                 "lane": {"type": "string"},
@@ -2012,6 +2041,13 @@ def _coordinator_prompt(
                 "requiredHandoffReceiptFields": list(
                     _scenario_declared_values(run, "requiredHandoffReceiptFields")
                 ),
+                "requiredHandoffReceiptFieldsByScenario": {
+                    str(scenario["id"]): list(
+                        scenario.get("requiredHandoffReceiptFields", [])
+                    )
+                    for scenario in run.suite.scenarios
+                    if str(scenario["id"]) in set(run.scenario_ids)
+                },
                 "dependencyOrderByScenario": {
                     str(scenario["id"]): list(scenario.get("requiredDependencyOrder", []))
                     for scenario in run.suite.scenarios
@@ -2037,13 +2073,15 @@ def _coordinator_prompt(
         "diagnostic strings. evidenceReceipts must be an array of objects containing exactly path and sha256, where path "
         "is relative to checkpointRoot and sha256 is lowercase; path strings alone are invalid. cleanup must be clean or "
         "failed and residualRisk must be a string. Each assignment-declared handoffReceipts entry must be an object whose "
-        "lane is a string and whose role, commit, review, verification, and claimRelease values are objects, never prose "
-        "strings. role must contain exactly invocation and sessionIds; commit must contain exactly repository and sha; "
-        "review and verification must each contain exactly sessionIds; claimRelease must contain exactly eventIds. The "
+        "lane is a string and whose role, commit, review, and verification values are objects, never prose strings. "
+        "role must contain exactly invocation and sessionIds; commit must contain exactly repository and sha; review and "
+        "verification must each contain exactly sessionIds. claimRelease is required only when the scenario's "
+        "requiredHandoffReceiptFieldsByScenario includes it, must then contain exactly eventIds, and must otherwise be "
+        "omitted. The "
         "repository is relative to the suite fixtureRoot, every sessionIds and eventIds value is a non-empty string array, "
         "and the commit sha must be an ancestor. The final coordinator scenario result must repeat the checkpoint's status, "
         "targetInvoked, judgeInvoked, evidenceReceipts, handoffReceipts, and cleanup with structurally identical values. "
-        "Successful claim-release eventIds must bind a resulting commit and agent matching the receipt. Keep each clean "
+        "When required, successful claim-release eventIds must bind a resulting commit and agent matching the receipt. Keep each clean "
         "candidate repository and its Git claim journal available until the outer runner "
         "audits them. Prose cannot substitute for those receipts. Nested objects are forbidden in the diagnostic arrays. "
         "The diagnostic strings never prove a verdict. Beneath checkpointRoot/suite/scenario, retain one artifacts file and "
@@ -3040,6 +3078,12 @@ def _audit_report(
                         )
                     for field, key in (("review", "sessionIds"), ("verification", "sessionIds"), ("claimRelease", "eventIds")):
                         evidence_value = receipts_by_lane[lane].get(field)
+                        if field not in required_fields:
+                            if field == "claimRelease" and evidence_value is not None:
+                                raise RuntimeError(
+                                    f"{suite_id}:{scenario_id} handoff receipt {lane} has unexpected claimRelease evidence"
+                                )
+                            continue
                         values = evidence_value.get(key) if isinstance(evidence_value, dict) else None
                         if not isinstance(values, list) or not values or not all(
                             isinstance(item, str) and item for item in values
@@ -3767,13 +3811,17 @@ def _audit_handoff_evidence(
                 if lane not in lane_roles:
                     raise RuntimeError(f"{identity} has no evidence binding for handoff lane {lane}")
                 producer_role, review_spec, verification_spec = lane_roles[lane]
-                required_receipt_fields = (
+                claim_release_required = "claimRelease" in scenario.get(
+                    "requiredHandoffReceiptFields", []
+                )
+                required_receipt_fields = [
                     "role",
                     "commit",
                     "review",
                     "verification",
-                    "claimRelease",
-                )
+                ]
+                if claim_release_required:
+                    required_receipt_fields.append("claimRelease")
                 missing_fields = [field for field in required_receipt_fields if field not in receipt]
                 if missing_fields:
                     raise RuntimeError(
@@ -3784,6 +3832,10 @@ def _audit_handoff_evidence(
                 review = receipt.get("review")
                 verification = receipt.get("verification")
                 claim_release = receipt.get("claimRelease")
+                if not claim_release_required and claim_release is not None:
+                    raise RuntimeError(
+                        f"{identity} malformed handoff receipt {lane}: unexpected claimRelease evidence"
+                    )
                 if not isinstance(receipt_role, dict):
                     raise RuntimeError(f"{identity} malformed handoff receipt {lane}: role must be an object")
                 if not isinstance(commit, dict):
@@ -3794,16 +3846,19 @@ def _audit_handoff_evidence(
                     raise RuntimeError(
                         f"{identity} malformed handoff receipt {lane}: verification must be an object"
                     )
-                if not isinstance(claim_release, dict):
+                if claim_release_required and not isinstance(claim_release, dict):
                     raise RuntimeError(
                         f"{identity} malformed handoff receipt {lane}: claimRelease must be an object"
                     )
-                structured_fields = (
+                structured_fields = [
                     ("role.sessionIds", receipt_role.get("sessionIds")),
                     ("review.sessionIds", review.get("sessionIds")),
                     ("verification.sessionIds", verification.get("sessionIds")),
-                    ("claimRelease.eventIds", claim_release.get("eventIds")),
-                )
+                ]
+                if claim_release_required:
+                    structured_fields.append(
+                        ("claimRelease.eventIds", claim_release.get("eventIds"))
+                    )
                 for field, values in structured_fields:
                     if not isinstance(values, list) or not values or not all(
                         isinstance(value, str) and value for value in values
@@ -3897,17 +3952,18 @@ def _audit_handoff_evidence(
                         f"{identity} handoff receipt {lane} verification sessions are not retained evidence"
                     )
 
-                release_events = _release_events(repository, suite_fixture_root)
-                for event_id in claim_release["eventIds"]:
-                    event = release_events.get(event_id)
-                    if (
-                        event is None
-                        or event.get("resulting_commit") != sha
-                        or event.get("agent") != producer_role
-                    ):
-                        raise RuntimeError(
-                            f"{identity} handoff receipt {lane} claim release lacks fixture lifecycle evidence"
-                        )
+                if claim_release_required:
+                    release_events = _release_events(repository, suite_fixture_root)
+                    for event_id in claim_release["eventIds"]:
+                        event = release_events.get(event_id)
+                        if (
+                            event is None
+                            or event.get("resulting_commit") != sha
+                            or event.get("agent") != producer_role
+                        ):
+                            raise RuntimeError(
+                                f"{identity} handoff receipt {lane} claim release lacks fixture lifecycle evidence"
+                            )
 
 
 def _audit_session_concurrency(

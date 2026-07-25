@@ -27,6 +27,107 @@ _SPEC.loader.exec_module(runner)
 class DependencyRoutingFixtureTests(unittest.TestCase):
     """Protect the structured dependency-routing fixture without live model calls."""
 
+    def test_none_coordination_is_not_a_required_target_skill(self) -> None:
+        """The provider-none fixture does not select claim behavior or evidence."""
+        catalog = runner._load_catalog(_SUITE_ROOT.parent, {"dev-orchestrator"})
+        suite = catalog["dev-orchestrator"]
+        scenario = next(item for item in suite.scenarios if item["id"] == "dependency-routing")
+        project = runner._load_yaml(
+            _SUITE_ROOT / "fixtures" / "dependency-routing" / "PROJECT.yaml"
+        )
+
+        self.assertEqual("none", project["resource_coordination"]["selected"])
+        self.assertNotIn("agent-claim", suite.manifest["target"]["requiredSkills"])
+        self.assertIn("agent-claim", suite.manifest["target"]["conditionalSkills"])
+        self.assertNotIn("agent-claim", scenario["targetSkills"])
+        self.assertNotIn("claim-lifecycle", scenario["deterministicChecks"])
+        self.assertNotIn("claimRelease", scenario["requiredHandoffReceiptFields"])
+
+    def test_resource_coordination_contract_keeps_both_selections(self) -> None:
+        """The fixture preserves no-claim evidence and the enabled claim lifecycle."""
+        contract = runner._load_yaml(
+            _SUITE_ROOT / "fixtures" / "dependency-routing" / "fixture-contract.yaml"
+        )
+        coordination = contract["resourceCoordination"]
+
+        self.assertEqual("none", coordination["selected"])
+        self.assertEqual([], coordination["cases"]["none"]["claimCalls"])
+        self.assertEqual("absent", coordination["cases"]["none"]["claimEvidence"])
+        self.assertNotIn(
+            "claimRelease",
+            coordination["cases"]["none"]["requiredHandoffReceiptFields"],
+        )
+        self.assertEqual(
+            ["acquire before mutation", "release after clean committed handoff"],
+            coordination["cases"]["agent-claim"]["claimLifecycle"],
+        )
+        self.assertIn(
+            "claimRelease",
+            coordination["cases"]["agent-claim"]["requiredHandoffReceiptFields"],
+        )
+
+    def test_none_coordination_report_omits_claim_release_evidence(self) -> None:
+        """Provider-none receipts remain structured without claim release objects."""
+        run, report = self._complete_dependency_routing_report()
+
+        runner._audit_report((run,), report)
+
+    def test_none_coordination_evidence_needs_no_claim_journal(self) -> None:
+        """Provider-none handoffs validate without claim events or a claim registry."""
+        with tempfile.TemporaryDirectory() as directory:
+            run, report, sessions, fixture_root = self._evidence_fixture(
+                Path(directory),
+                claim_release=False,
+            )
+
+            runner._audit_report((run,), report)
+            runner._audit_handoff_evidence((run,), report, sessions, fixture_root)
+            candidate = fixture_root / "dev-orchestrator" / "candidate"
+            self.assertFalse((candidate / ".git" / "agent-claim-events").exists())
+            self.assertFalse((candidate / ".git" / "agent-claims.json").exists())
+
+    def test_agent_claim_companion_requires_configured_behavior(self) -> None:
+        """The enabled coordination variant retains its skill, gate, and evidence."""
+        source_root = _SUITE_ROOT / "fixtures" / "dependency-routing"
+        contract = runner._load_yaml(source_root / "fixture-contract.yaml")
+        project = runner._load_yaml(source_root / "PROJECT.yaml")
+        scenario = runner._load_yaml(_SUITE_ROOT / "scenarios.yaml")["scenarios"][0]
+        scenario["fixtureContract"] = "fixture-contract.yaml"
+        contract["resourceCoordination"]["selected"] = "agent-claim"
+        contract["handoffReceipt"]["requiredFields"] = contract[
+            "resourceCoordination"
+        ]["cases"]["agent-claim"]["requiredHandoffReceiptFields"]
+        project["resource_coordination"]["selected"] = "agent-claim"
+        scenario["targetSkills"].append("agent-claim")
+        scenario["deterministicChecks"].append("claim-lifecycle")
+        scenario["requiredHandoffReceiptFields"].append("claimRelease")
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "fixture-contract.yaml").write_text(
+                runner.yaml.safe_dump(contract, sort_keys=False),
+                encoding="utf-8",
+            )
+            (root / "PROJECT.yaml").write_text(
+                runner.yaml.safe_dump(project, sort_keys=False),
+                encoding="utf-8",
+            )
+            suite = runner._Suite(
+                "dev-orchestrator",
+                1,
+                root,
+                {"target": {"allowedAgentDependencies": ["dev-coder"]}},
+                (scenario,),
+            )
+
+            runner._validate_fixture_contract(suite, scenario)
+            scenario["requiredHandoffReceiptFields"].remove("claimRelease")
+            with self.assertRaisesRegex(
+                ValueError,
+                "fixture handoffReceipt.requiredFields disagrees with scenario",
+            ):
+                runner._validate_fixture_contract(suite, scenario)
+
     def test_committed_fixture_contract_is_complete(self) -> None:
         """The dependency-routing scenario exposes every required structured input."""
         catalog = runner._load_catalog(_SUITE_ROOT.parent, {"dev-orchestrator"})
@@ -39,10 +140,8 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         """Each required dotted path fails independently with its exact identity."""
         source = _SUITE_ROOT / "fixtures" / "dependency-routing" / "fixture-contract.yaml"
         complete = runner._load_yaml(source)
-        scenario = {
-            "id": "dependency-routing",
-            "fixtureContract": "fixture-contract.yaml",
-        }
+        scenario = runner._load_yaml(_SUITE_ROOT / "scenarios.yaml")["scenarios"][0]
+        scenario["fixtureContract"] = "fixture-contract.yaml"
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             suite = runner._Suite(
@@ -53,6 +152,15 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 (scenario,),
             )
             contract = root / "fixture-contract.yaml"
+            (root / "PROJECT.yaml").write_text(
+                (
+                    _SUITE_ROOT
+                    / "fixtures"
+                    / "dependency-routing"
+                    / "PROJECT.yaml"
+                ).read_text(encoding="utf-8"),
+                encoding="utf-8",
+            )
             for dotted_path in runner._DEPENDENCY_ROUTING_FIXTURE_FIELDS:
                 with self.subTest(field=dotted_path):
                     omitted = self._without_path(complete, dotted_path)
@@ -99,7 +207,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
     def test_scalar_receipt_evidence_matrix_is_rejected(self) -> None:
         """Non-empty prose strings cannot masquerade as repository or runtime evidence."""
         run, report = self._complete_dependency_routing_report()
-        for field in ("commit", "review", "verification", "claimRelease"):
+        for field in ("commit", "review", "verification"):
             with self.subTest(field=field):
                 fabricated = json.loads(json.dumps(report))
                 fabricated["runs"][0]["scenarioResults"][0]["handoffReceipts"][0][field] = "looks-valid"
@@ -255,7 +363,6 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 "commit": {"repository": "candidate", "sha": "a" * 40},
                 "review": {"sessionIds": ["review-evidence"]},
                 "verification": {"sessionIds": ["verification-evidence"]},
-                "claimRelease": {"eventIds": ["release-evidence"]},
             }
             for lane in scenario["requiredHandoffReceiptLanes"]
         ]
@@ -291,9 +398,24 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
     def _evidence_fixture(
         cls,
         temporary_root: Path,
+        claim_release: bool = True,
     ) -> tuple[object, dict[str, object], tuple[object, ...], Path]:
         """Create a disposable candidate repository and retained dependency evidence."""
         run, report = cls._complete_dependency_routing_report()
+        if claim_release:
+            scenario = dict(run.suite.scenarios[0])
+            scenario["requiredHandoffReceiptFields"] = [
+                *scenario["requiredHandoffReceiptFields"],
+                "claimRelease",
+            ]
+            suite = runner._Suite(
+                run.suite.suite_id,
+                run.suite.priority,
+                run.suite.path,
+                run.suite.manifest,
+                (scenario,),
+            )
+            run = runner._RunSpec(suite, run.scenario_ids)
         fixture_root = temporary_root / "fixtures"
         candidate = fixture_root / "dev-orchestrator" / "candidate"
         candidate.mkdir(parents=True)
@@ -349,33 +471,34 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             ),
         }
         producer_session_ids = {role: session_id for session_id, role in roles}
-        event_root = candidate / ".git" / "agent-claim-events" / "hot"
-        event_root.mkdir(parents=True)
         events = []
         for lane, (role, review_ids, verification_ids) in evidence.items():
             event_id = f"release-{lane}"
-            receipt_by_lane[lane].update(
-                {
-                    "role": {"invocation": role, "sessionIds": [producer_session_ids[role]]},
-                    "commit": {"repository": "candidate", "sha": sha},
-                    "review": {"sessionIds": review_ids},
-                    "verification": {"sessionIds": verification_ids},
-                    "claimRelease": {"eventIds": [event_id]},
-                }
+            receipt = {
+                "role": {"invocation": role, "sessionIds": [producer_session_ids[role]]},
+                "commit": {"repository": "candidate", "sha": sha},
+                "review": {"sessionIds": review_ids},
+                "verification": {"sessionIds": verification_ids},
+            }
+            if claim_release:
+                receipt["claimRelease"] = {"eventIds": [event_id]}
+                events.append(
+                    {
+                        "action": "release",
+                        "outcome": "RELEASED",
+                        "event_id": event_id,
+                        "agent": role,
+                        "resulting_commit": sha,
+                    }
+                )
+            receipt_by_lane[lane].update(receipt)
+        if claim_release:
+            event_root = candidate / ".git" / "agent-claim-events" / "hot"
+            event_root.mkdir(parents=True)
+            (event_root / "2026-07-19.jsonl").write_text(
+                "".join(json.dumps(event) + "\n" for event in events),
+                encoding="utf-8",
             )
-            events.append(
-                {
-                    "action": "release",
-                    "outcome": "RELEASED",
-                    "event_id": event_id,
-                    "agent": role,
-                    "resulting_commit": sha,
-                }
-            )
-        (event_root / "2026-07-19.jsonl").write_text(
-            "".join(json.dumps(event) + "\n" for event in events),
-            encoding="utf-8",
-        )
         return run, report, sessions, fixture_root
 
     @staticmethod

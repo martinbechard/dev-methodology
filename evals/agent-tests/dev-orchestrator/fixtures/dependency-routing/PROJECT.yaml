@@ -2,6 +2,8 @@ schema: synthetic-project-configuration
 version: 1
 project: dependency-health-fixture
 privacyBoundary: Synthetic dependency names and statuses only.
+resource_coordination:
+  selected: none
 folders:
   - path: src
     owner: dev-coder
