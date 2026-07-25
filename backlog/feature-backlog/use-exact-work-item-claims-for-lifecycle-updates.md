@@ -34,6 +34,19 @@ Owner: Dev Orchestrator
 - Backlog Claim: 019f9783-supplemental-running-steward
 - Claim Acquisition Event: 415236d0-e665-443a-bf45-8fadfa00e94a
 
+## Review-Recovery Milestone
+
+- Candidate: f412674259b246bb0e3bb11edd569982e60c4c89; clean and preserved.
+- Canonical Task/Thread: 019f9783-31a0-7e91-9704-08cde7886b3a
+- Registry Reconciliation: Live registry was empty before this exact-item lifecycle claim.
+- Gate Evidence: All three pending gate turns were interrupted or absent without a final verdict tied to f412674259b246bb0e3bb11edd569982e60c4c89.
+- Available Review Evidence: Available reviews target superseded candidate 0f3dcab5d539ea1aca197e1fc28fab574e2746b4.
+- Delivery Boundary: Integration and publication are prohibited.
+- Recovery Action: Only the three required gates are being rerun.
+- Recorded At: 2026-07-25T16:31:19Z
+- Exact-Item Claim: 019f9783-review-recovery-milestone-steward
+- Claim Acquisition Event: 1a589ac7-0aa9-4920-aec2-bd69be81ebcd
+
 ## Resumption Launch Reservation
 
 - Parent Coordinator Task: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
