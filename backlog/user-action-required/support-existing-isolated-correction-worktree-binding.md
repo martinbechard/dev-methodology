@@ -1,14 +1,14 @@
 # Support Existing Isolated Correction Worktree Binding
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/support-existing-isolated-correction-worktree-binding.md
+Provider Reference: backlog/user-action-required/support-existing-isolated-correction-worktree-binding.md
 
 Completion: direct-main
 
@@ -44,6 +44,12 @@ The current behavior can depend on an incidental competing claim to reach an iso
 ## Source Evidence
 
 Repeated confirmed coordination failure in canonical tasks `019f9722-61cb-7190-8a6d-21c5ab319339` and `019f96cf-226c-7f62-9d66-7d31cead822e`. Standing user direction requires every found defect to be durably logged and never ignored as a warning.
+
+## Investigation Result
+
+- Root investigation and a fresh independent review found no engine rebinding defect. Canonical agent-claim and codex-workitem-coordination already exempt private-worktree work that has no shared paths or resources.
+- First-writer shared-checkout behavior is intentional. Two canonical tasks produced or resumed clean private candidates without claims, and no source or test mutation was needed.
+- The causal issue is a coherent stale user-scope deployment: `/Users/martinbechard/.agents/skills/agent-claim/SKILL.md` has hash prefix `a3a487c3`, while the canonical source has hash prefix `8ec97bfe`. The stale installed guidance causes unnecessary acquisitions. README.md documents deployment as an explicit operation.
 
 ## Requirements
 
@@ -84,3 +90,33 @@ None.
 ## Notes
 
 This record captures the defect only. Any governed-definition changes discovered during delivery require an exact canonical-path approval record before mutation.
+
+## User Action Required
+
+Authorization is required before changing the stale user-scope installation that caused the observed unnecessary acquisitions.
+
+## Question for the User
+
+Do you authorize the documented user-scope Codex bundle deployment (`python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace`), followed by runtime catalog refresh or new-session activation and verification that the installed agent-claim bytes match the canonical source?
+
+## Why User Input Is Required
+
+This operation mutates user-home installed skills and native agents and may affect host catalog or configuration state. It is outside ordinary repository artifact delivery.
+
+## Options and Tradeoffs
+
+- Approve the exact deployment and refresh. The user-scope Codex installation is updated, then activation and byte equality are verified.
+- Approve a narrower deployment variant to be specified. The exact target and verification must be recorded before execution.
+- Defer or decline. Canonical source remains correct, but installed guidance remains stale.
+
+## Resolution
+
+Pending. No user-scope installation, runtime catalog refresh, or engine rebinding work is authorized.
+
+## Unattended Work Boundary
+
+Do not run the installer, refresh the live catalog, edit user-home files, or implement speculative engine rebinding until the user answers the recorded question.
+
+## Follow-up Obligation
+
+The distinct telemetry-label finding remains a separately logged follow-up obligation and is not part of this user-action-required question or transaction.
