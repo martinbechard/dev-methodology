@@ -1,16 +1,29 @@
 # Enforce Agent-Claim Lifecycle Evidence In Runner Resource Scenarios
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
-Owner: Unassigned
+Owner: Dev Orchestrator
 
 Provider: file
 
 Provider Reference: backlog/defect-backlog/enforce-agent-claim-lifecycle-evidence-in-runner-resource-scenarios.md
 
 Completion: direct-main
+
+## Launch Reservation
+
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Reservation: One parent-owned launch reservation.
+- Normalized Objective: Enforce agent-claim lifecycle evidence in runner resource scenarios.
+- Dispatched At: 2026-07-25T07:09:27Z
+- Intended Root Role: Dev Orchestrator
+- Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
+
+## Reservation Coordination Evidence
+
+- Backlog Claim: reserve-agent-claim-lifecycle-runner-defect-20260725 acquired on primary main at 2026-07-25T07:09:27.159466Z; acquisition journal event cf71e7da-e29c-45dd-bf1f-f3e30f6643c3.
 
 ## Summary
 
