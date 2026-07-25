@@ -1,6 +1,6 @@
 # Enforce Scenario-Root Containment In Evaluation Runner
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Dev Orchestrator
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/enforce-scenario-root-containment-in-evaluation-runner.md
+Provider Reference: backlog/completed-backlog/defects/enforce-scenario-root-containment-in-evaluation-runner.md
 
 Completion: direct-main
 
@@ -47,6 +47,17 @@ Completion: direct-main
 - Additional Validation: Validation-only pass, compile pass, and diff-hygiene pass.
 - Baseline Caveats: Unrelated Playwright and catalog baseline caveats remain outside this candidate's scope.
 - Distinct Follow-up: Catalog-path containment is separately recorded at `backlog/defect-backlog/enforce-suite-catalog-path-containment-in-evaluation-runner.md` in commit `0a3b8b2a`; it remains outside this item's scope.
+
+## Completion Evidence
+
+- Completed At: 2026-07-25T06:38:01Z.
+- Accepted delivery source: `81a2c556344a35b57493f552af9417f1a7faee9c` on `codex/enforce-scenario-root-containment-019f97d7`. Its source worktree was clean.
+- Direct-main integration: `8b7db47d75bad03bdfffd78102705160e8a67894`, an exact non-ancestral replay of the accepted source on parent `587955ccd1e8011b7f7722a41a190a0c79dd9015`. The four owned source and integration blobs are identical, and the integration commit is reachable from main.
+- Fresh independent security review: ACCEPTED with no findings. Fresh independent code review: ACCEPTED with no findings. Independent verification: VERIFIED/PASS.
+- Post-main checks passed: 10 focused Python 3.11 containment, Junie, handoff, and authority tests; header-policy validation-only; py_compile; changed SKILL.md backtick scan; and `git diff --check`.
+- Integration claim `integrate-scenario-containment-019f97d7` acquired at event `2f1c6a68-c9c3-437a-a9e9-8d916c52d945` and released at event `80e65ac1-70c9-474c-8774-691f9ae2b097`; the live registry was empty after release.
+- Completion reconciliation observed clean primary main at `680780c4c105666f131ee306932659cc7d4227cb`, with the integration commit reachable. No remote publication is configured or required.
+- Provider closure claim `close-scenario-root-containment-019f97d7` acquired primary backlog ownership at event `e099a2f6-e00a-4174-ae51-0272fbc32839` before this archive transition.
 
 ## Summary
 
