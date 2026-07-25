@@ -1,6 +1,6 @@
 # Require Durable Defect Logging And Direct-Main Work-Item Creation
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -11,7 +11,20 @@ Type: Feature
 - Normalized Objective: Require durable defect logging and define safe claim-free primary-main work-item creation.
 - Dispatched At: 2026-07-25T01:04:42Z
 - Intended Root Role: Dev Orchestrator
-- Runtime Thread And Task Id: Not created; the root Dev Orchestrator must accept ownership before a canonical identity is recorded.
+- Runtime Thread And Task Id: Accepted as canonical work-item Thread 019f96cf-226c-7f62-9d66-7d31cead822e; canonical root task recorded below.
+
+## Execution Ownership
+
+- Work-Item Thread: 019f96cf-226c-7f62-9d66-7d31cead822e
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Root Agent Task Id: 019f96cf-226c-7f62-9d66-7d31cead822e
+- Owner: Dev Orchestrator
+- Branch: Detached at 97e8e20761619518d37ca5a17310836b4f4bf3b6
+- Worktree: /Users/martinbechard/.codex/worktrees/fa2b/dev-methodology
+- Phase: Approval manifest ready; awaiting user approval.
+- Started At: 2026-07-25T01:34:57Z
+- Coordination: Enabled; agent-claim short backlog transaction completed before this provider mutation.
+- Claim Evidence: require-durable-defect-logging-running-019f96cf; agent-claim event b67710d6-d249-46e4-a44f-1ff6625f1b14; resource backlog:mutation:require-durable-defect-logging-and-direct-main-creation.
 
 ## Summary
 
