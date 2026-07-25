@@ -55,6 +55,51 @@ Owner: Unowned
 4. Medium: non-governed regeneration of stale design/agent-and-skill-evaluations.html.
 5. Add focused cases for simultaneous different-item processes, broad-versus-exact contention, and baseline_not_ancestor.
 
+## Supplemental Correction Authority Required
+
+- Accepted Candidate: 0f3dcab5d539ea1aca197e1fc28fab574e2746b4
+- Candidate Branch: codex/exact-work-item-claims-019f9783; clean.
+- Candidate Claim Release Event: 4f2e543a-91e7-4798-b1aa-b9a817fa1d0b
+- Source Review Verdict: FAIL.
+- Methodology Review Verdict: FAIL.
+- Supplemental Question: "Do you approve mutation of exactly skills/agent-claim-command/SKILL.md and skills/agent-claim-mcp/SKILL.md to align both transport contracts with the approved exact-work-item claim policy and the enforced documented-reason requirement for broad backlog scope?"
+- Supplemental Governed Approval Scope: Exactly skills/agent-claim-command/SKILL.md and skills/agent-claim-mcp/SKILL.md; no adapter openai.yaml scope is needed if descriptions remain unchanged.
+- Prior Prompt Reconciliation: This two-path supplemental question replaces the earlier command-only approval question; all prior lifecycle and eight-path approval evidence remains preserved.
+- Next Action Owner: User
+- Recorded At: 2026-07-25T13:14:40Z
+- Backlog Claim: 019f9783-supplemental-approval-steward
+- Claim Acquisition Event: 49cfb40c-dc85-4b38-a201-a8fc28f77aa9
+- Unattended Boundary: Do not mutate a governed source, approval record, generated mirror, evaluation or documentation artifact, or engine correction until the user answers and this same Thread resumes through UAR -> Ready -> Starting -> Running.
+
+### Source Review Findings Within Existing Approved Non-Governed Engine And Test Scope
+
+1. An exact backlog claim can add prohibited git-index:primary through a resource-only extension.
+2. Exact-path extension lacks dirty/recovery and per-path baseline evidence, allowing peer history or interrupted bytes to be misattributed.
+3. --no-change can succeed with nonempty committed_scope_paths.
+
+These findings require coder correction after resumption and require no new definition approval.
+
+### Methodology Review Findings
+
+- Executable broad --backlog now requires a documented scope reason, while skills/agent-claim-command/SKILL.md and skills/agent-claim-mcp/SKILL.md retain stale argument and parity contracts.
+- Evaluation sources and generated evaluation documentation still reward broad per-item backlog claims.
+
+### Anticipated Non-Governed Dependent Corrections, Not Approval Scope
+
+- AGENTS.md selected inlined command block through supported render
+- evals/agent-scenarios.yaml
+- evals/skill-probes.yaml
+- evals/agent-tests/dev-backlog-steward/skills/dev-backlog-steward-suite-contract/SKILL.md
+- evals/agent-tests/dev-backlog-steward/scenarios.yaml
+- design/agent-and-skill-evaluations.html through its generator
+- Relevant test modules
+- The three engine corrections in skills/agent-claim-command/scripts/claim.py and its tests
+
+### Supported Generated Mirrors, Not Supplemental Approval Scope
+
+- design/generated/skill-definitions.js
+- generated/adapters/** only where supported by the approved supplemental source categories
+
 ## Launch Reservation
 
 - Parent Coordinator Task: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
