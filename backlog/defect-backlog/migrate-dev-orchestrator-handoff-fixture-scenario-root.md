@@ -1,16 +1,30 @@
 # Migrate Dev Orchestrator Handoff Fixture Scenario Root
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
 Provider Reference: backlog/defect-backlog/migrate-dev-orchestrator-handoff-fixture-scenario-root.md
 
 Completion: direct-main
+
+## Launch Reservation
+
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Reservation: One parent-owned launch reservation.
+- Normalized Objective: Migrate the Dev Orchestrator handoff fixture to its dependency-routing scenario root.
+- Dispatched At: 2026-07-25T11:25:31Z
+- Intended Root Role: Dev Orchestrator
+- Discovered Source Scope: evals/agent-tests/dev-orchestrator/test_fixtures.py only; no governed or generated source is in scope, and it does not overlap the selected Dev Coder suite item.
+- Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
+
+## Reservation Coordination Evidence
+
+- Backlog Claim: reserve-migrate-orchestrator-fixture-root-20260725 acquired on primary main at 2026-07-25T11:25:31.225347Z; acquisition journal event e0215ebf-5b95-4c86-b7e0-cf43f4cc5002.
 
 ## Summary
 
