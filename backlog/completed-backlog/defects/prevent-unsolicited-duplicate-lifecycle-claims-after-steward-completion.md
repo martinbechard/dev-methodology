@@ -1,6 +1,6 @@
 # Prevent Overlapping Steward Follow-Up Cleanup Races
 
-Status: User Action Required
+Status: Completed
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/prevent-unsolicited-duplicate-lifecycle-claims-after-steward-completion.md
+Provider Reference: backlog/completed-backlog/defects/prevent-unsolicited-duplicate-lifecycle-claims-after-steward-completion.md
 
 Completion: direct-main
 
@@ -36,7 +36,7 @@ Completion: direct-main
 - Normalized Objective: Prevent unsolicited duplicate lifecycle claims after Steward completion.
 - Dispatched At: 2026-07-25T13:16:35Z
 - Intended Root Role: Dev Orchestrator
-- Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
+- Runtime Thread And Task Id: Historical reservation record; the canonical child task was subsequently created and accepted under the canonical work-item Thread above.
 - Authority Boundary: This reservation authorizes no governed-definition mutation.
 
 ## Reservation Coordination Evidence
@@ -84,32 +84,25 @@ PASS. The repository-side coordination evidence passed: 36 focused tests, consis
 
 Fresh Dev Code Reviewer evidence FAILed the original incident wording, PASSed the no-repository-implementation conclusion, and required this durable correction.
 
-## User Action Required
+## User Authority And Closure
 
-External owner: Codex collaboration runtime.
+On 2026-07-25, the user explicitly directed in this canonical task that the safeguard will be a different work item in a different project and that no user action remains on this original work. This is scope-specific terminal completion authority, not abandonment.
 
-## Question for the User
+The original item outcome is accepted as the corrected investigation, verified incident chronology, repository-ownership conclusion, and external handoff conclusion. The runtime safeguard itself is intentionally out of scope for this repository and is being handled as a separate work item in another project and agent. The user accepted the omission of an in-repository runtime implementation.
 
-Will you provide or route this work to the Codex collaboration runtime source and regression environment that owns followup_task scheduling, child terminal-result state, and cleanup reconciliation?
+## Completion Evidence
 
-## Why User Input Is Required
-
-The required runtime source, scheduler implementation, terminal-result store, reconciliation API, and regression environment are outside this repository. This repository has no candidate implementation surface for the defect.
-
-## Resolution
-
-Pending. No external runtime source or delivery capability has been supplied.
-
-## Unattended Work Boundary
-
-Do not mutate repository proxy code, governed definitions, generated mirrors, or the claim engine to simulate an external fix.
-
-## Permitted Resumption
-
-When the user or external owner supplies the runtime source and capability, or confirms external delivery, resume this same canonical task through User Action Required -> Ready -> Starting -> Running. Do not create a replacement task.
+- Completed At: 2026-07-25T16:26:55Z
+- Completion Disposition: READY for direct-main closure.
+- Accepted Result Commit: 2b7f5ba23d43a1f2e8629567e0f122ba0e942fb7.
+- Main Observation: accepted result commit is an ancestor of primary main observed at 25429bb1af1398cd09fd0df77573cb82abe89e16 before the terminal provider transaction; no source integration was necessary because the accepted conclusion and provider evidence were already on main.
+- Independent Review: original causal wording FAIL; corrected no-repository-implementation conclusion PASS; corrected external handoff accepted.
+- Verification: PASS — 36 focused tests (20/20 coordination simulator and 16/16 codex-workitem coordination), git diff --check, exact rollout, journal, and ancestry evidence, clean worktrees, and zero live claims before terminal completion.
+- Provider Closure: atomic User Action Required to Completed archive move under the short primary-main backlog claim terminal-complete-019f996c, acquired at journal event 8eac924e-1151-4e78-bd06-14c53fcf2ce8.
+- Terminal Archive Path: backlog/completed-backlog/defects/prevent-unsolicited-duplicate-lifecycle-claims-after-steward-completion.md.
 
 ## Notes
 
-This external handoff clears the stale Running ownership. No active implementation claim exists to release. Existing launch, reservation, task, thread, and lifecycle evidence above remains canonical.
+This completion clears the former User Action Required state. No active implementation claim exists to release. Existing launch, reservation, task, thread, lifecycle, and exact journal evidence above remains canonical.
 
 The historical provider filename is retained as the canonical identity but is not the corrected causal description.
