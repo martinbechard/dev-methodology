@@ -22,6 +22,7 @@ import shlex
 import signal
 import shutil
 import socket
+import stat
 import subprocess
 import sys
 import tempfile
@@ -40,6 +41,7 @@ import workspace_inventory as workspace_inventory_support
 _SUITE_ROOT = Path(__file__).resolve().parent
 _REPOSITORY_ROOT = _SUITE_ROOT.parents[1]
 _RUNTIME_NAME = re.compile(r"^[a-z][a-z0-9_]*$")
+_SCENARIO_ROOT_COMPONENT = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 _TERMINAL_STATUSES = frozenset({"PASS", "FAIL", "BLOCKED", "STALE"})
 _REPORT_STATUSES = frozenset((*_TERMINAL_STATUSES, "INFRASTRUCTURE_FAILED"))
 _EXECUTABLE_STATUSES = frozenset({"executable", "fixture-backed"})
@@ -347,20 +349,105 @@ def _scenario_declared_values(run: _RunSpec, field: str) -> tuple[str, ...]:
     )
 
 
+def _safe_scenario_root_component(value: object, field: str) -> str:
+    """Return one portable suite or scenario slug before it can influence a filesystem path."""
+    if not isinstance(value, str) or _SCENARIO_ROOT_COMPONENT.fullmatch(value) is None:
+        raise ValueError(f"{field} is not a safe path component: {value!r}")
+    return value
+
+
+def _scenario_root_identities(
+    batch: Sequence[_RunSpec],
+) -> tuple[tuple[str, str], ...]:
+    """Validate and return every selected suite-scenario identity without touching the filesystem."""
+    identities: list[tuple[str, str]] = []
+    for run in batch:
+        suite_id = _safe_scenario_root_component(run.suite.suite_id, "Suite id")
+        for raw_scenario_id in run.scenario_ids:
+            scenario_id = _safe_scenario_root_component(raw_scenario_id, "Scenario id")
+            identities.append((suite_id, scenario_id))
+    return tuple(identities)
+
+
+def _real_directory(path: Path, field: str, *, create: bool) -> None:
+    """Require one path to be a real directory, optionally creating the final component."""
+    if create:
+        try:
+            path.mkdir()
+        except FileExistsError:
+            pass
+    try:
+        metadata = path.lstat()
+    except FileNotFoundError as error:
+        raise RuntimeError(f"{field} is missing: {path}") from error
+    if stat.S_ISLNK(metadata.st_mode):
+        raise RuntimeError(f"{field} must not be a symbolic link: {path}")
+    if not stat.S_ISDIR(metadata.st_mode):
+        raise RuntimeError(f"{field} is not a directory: {path}")
+
+
+def _scenario_roots(
+    batch: Sequence[_RunSpec],
+    fixture_root: Path,
+    *,
+    create: bool,
+) -> dict[tuple[str, str], Path]:
+    """Resolve selected scenario roots only after validating each path component and directory."""
+    identities = _scenario_root_identities(batch)
+    _real_directory(fixture_root, "Fixture root", create=False)
+    boundary = fixture_root.resolve(strict=True)
+    roots: dict[tuple[str, str], Path] = {}
+    for suite_id, scenario_id in identities:
+        suite_root = fixture_root / suite_id
+        _real_directory(suite_root, f"Suite fixture root {suite_id}", create=create)
+        scenario_root = suite_root / scenario_id
+        _real_directory(
+            scenario_root,
+            f"Scenario fixture root {suite_id}:{scenario_id}",
+            create=create,
+        )
+        canonical = scenario_root.resolve(strict=True)
+        if canonical == boundary or not canonical.is_relative_to(boundary):
+            raise RuntimeError(
+                f"Scenario fixture root escapes fixture containment: {suite_id}:{scenario_id}"
+            )
+        roots[(suite_id, scenario_id)] = canonical
+    return roots
+
+
+def _prepare_scenario_roots(
+    batch: Sequence[_RunSpec],
+    fixture_root: Path,
+) -> dict[tuple[str, str], Path]:
+    """Precreate every selected canonical scenario root as a non-symlink directory."""
+    return _scenario_roots(batch, fixture_root, create=True)
+
+
+def _validate_scenario_roots(
+    batch: Sequence[_RunSpec],
+    fixture_root: Path,
+) -> dict[tuple[str, str], Path]:
+    """Revalidate every selected scenario root without creating or following an unsafe root."""
+    return _scenario_roots(batch, fixture_root, create=False)
+
+
 def _load_catalog(
     suite_root: Path = _SUITE_ROOT,
     include_ids: set[str] | None = None,
 ) -> dict[str, _Suite]:
     index = _load_yaml(suite_root / "suite-index.yaml")
     entries = index.get("suites", [])
-    available_ids = {str(entry["id"]) for entry in entries}
+    validated_entries = [
+        (_safe_scenario_root_component(entry.get("id"), "Suite id"), entry)
+        for entry in entries
+    ]
+    available_ids = {suite_id for suite_id, _ in validated_entries}
     if include_ids is not None:
         unknown = include_ids - available_ids
         if unknown:
             raise ValueError(f"Unknown suites: {', '.join(sorted(unknown))}")
     suites: dict[str, _Suite] = {}
-    for entry in entries:
-        suite_id = str(entry["id"])
+    for suite_id, entry in validated_entries:
         if include_ids is not None and suite_id not in include_ids:
             continue
         suite_path = suite_root / str(entry["path"])
@@ -383,6 +470,7 @@ def _load_catalog(
 
 
 def _validate_suite(suite: _Suite, require_executable: bool = True) -> None:
+    _safe_scenario_root_component(suite.suite_id, "Suite id")
     manifest = suite.manifest
     execution = manifest.get("execution", {})
     target = manifest.get("target", {})
@@ -408,8 +496,8 @@ def _validate_suite(suite: _Suite, require_executable: bool = True) -> None:
         str(value) for value in target.get("taskSelectableAgentDependencies", [])
     }
     for scenario in suite.scenarios:
-        scenario_id = str(scenario.get("id", ""))
-        if not scenario_id or scenario_id in scenario_ids:
+        scenario_id = _safe_scenario_root_component(scenario.get("id"), "Scenario id")
+        if scenario_id in scenario_ids:
             raise ValueError(f"{suite.suite_id} has a missing or duplicate scenario id")
         scenario_ids.add(scenario_id)
         if require_executable and scenario.get("status") not in _EXECUTABLE_STATUSES:
@@ -1216,9 +1304,12 @@ def _stage_workspace_inventory_fixtures(
                     f"Workspace inventory fixture must be a non-repository directory: "
                     f"{run.suite.suite_id}:{scenario_id}"
                 )
-            destination = fixture_root / run.suite.suite_id / scenario_id
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copytree(source, destination)
+            destination = _scenario_roots(
+                (_RunSpec(suite=run.suite, scenario_ids=(scenario_id,)),),
+                fixture_root,
+                create=True,
+            )[(run.suite.suite_id, scenario_id)]
+            shutil.copytree(source, destination, dirs_exist_ok=True)
             subprocess.run(["git", "init", "--quiet", str(destination)], check=True, capture_output=True)
             subprocess.run(["git", "-C", str(destination), "add", "."], check=True, capture_output=True)
             subprocess.run(
@@ -2023,6 +2114,13 @@ def _coordinator_prompt(
                 },
                 "checkpointRoot": str(checkpoint_root),
                 "fixtureRoot": str(fixture_root / run.suite.suite_id),
+                "scenarioRoots": {
+                    str(scenario["id"]): str(
+                        fixture_root / run.suite.suite_id / str(scenario["id"])
+                    )
+                    for scenario in run.suite.scenarios
+                    if str(scenario["id"]) in set(run.scenario_ids)
+                },
                 "workspaceInventoryRoots": {
                     str(scenario["id"]): str(
                         fixture_root / run.suite.suite_id / str(scenario["id"])
@@ -2095,8 +2193,10 @@ def _coordinator_prompt(
         "false for those child spawns. "
         "Each supervisor must run its selected scenarios sequentially, use exactly one active child at a time, invoke "
         "only those hardcoded agents, retain one independent result per scenario, "
-        "and create every suite-owned candidate repository, worktree, or fixture beneath its listed fixtureRoot, "
-        "never under /tmp or /private/tmp. The fixtureRoot is inside the coordinator workspace so target and dependency "
+        "and create every candidate repository, worktree, or fixture beneath the active scenario's "
+        "scenarioRoots[scenario] directory, never directly beneath fixtureRoot or beneath a sibling scenario root. "
+        "Candidate paths are never under /tmp or /private/tmp. Keep fixtureRoot only as the parent containment boundary. "
+        "Each scenario root is inside the coordinator workspace so target and dependency "
         "patch operations remain within the approved write boundary. "
         "write the required checkpointRoot/suite-id/scenario-id.json checkpoint immediately after each terminal "
         "scenario and before starting later work. Each checkpoint must contain suite, scenario, status, targetInvoked, "
@@ -2112,7 +2212,9 @@ def _coordinator_prompt(
         "script or tool, must not create an agent-claims registry or agent-claim-events journal, and must not report "
         "claim evidence on any receipt, including an extra lane. A scenario whose value is agent-claim must retain its "
         "configured acquisition and normal-release evidence. The "
-        "repository is relative to the suite fixtureRoot, every sessionIds and eventIds value is a non-empty string array, "
+        "repository is relative to the active scenario's scenarioRoots[scenario] directory, every sessionIds and "
+        "eventIds value is a "
+        "non-empty string array, "
         "and the commit sha must be an ancestor. The final coordinator scenario result must repeat the checkpoint's status, "
         "targetInvoked, judgeInvoked, evidenceReceipts, handoffReceipts, and cleanup with structurally identical values. "
         "When required, successful claim-release eventIds must bind a resulting commit and agent matching the receipt. "
@@ -3991,6 +4093,7 @@ def _audit_handoff_evidence(
     fixture_root: Path,
 ) -> None:
     """Bind dependency-routing receipts to repository, session, and claim journal evidence."""
+    scenario_roots = _validate_scenario_roots(batch, fixture_root)
     target_bindings = _bind_target_sessions(sessions, batch, report)
     report_results = {
         (str(run_result.get("suite", "")), str(result.get("scenario", ""))): result
@@ -4048,7 +4151,7 @@ def _audit_handoff_evidence(
                         f"{identity} malformed handoff receipt lane: expected a non-empty string"
                     )
                 receipts[receipt_lane] = receipt
-            suite_fixture_root = (fixture_root / run.suite.suite_id).resolve()
+            scenario_fixture_root = scenario_roots[(run.suite.suite_id, scenario_id)]
             selected_coordination, coordination_case = _scenario_resource_coordination(
                 run.suite,
                 scenario,
@@ -4062,7 +4165,7 @@ def _audit_handoff_evidence(
                         raise RuntimeError(
                             f"{identity} malformed handoff receipt {lane}: unexpected claimRelease evidence"
                         )
-                _audit_no_claim_repository_evidence(suite_fixture_root, identity)
+                _audit_no_claim_repository_evidence(scenario_fixture_root, identity)
                 _audit_no_claim_session_activity(target, sessions, identity)
             for lane in scenario.get("requiredHandoffReceiptLanes", []):
                 if lane not in receipts:
@@ -4142,8 +4245,8 @@ def _audit_handoff_evidence(
                         f"{identity} handoff receipt {lane} producer sessions are not retained evidence"
                     )
 
-                repository = (suite_fixture_root / str(commit["repository"])).resolve()
-                if repository != suite_fixture_root and suite_fixture_root not in repository.parents:
+                repository = (scenario_fixture_root / str(commit["repository"])).resolve()
+                if repository != scenario_fixture_root and scenario_fixture_root not in repository.parents:
                     raise RuntimeError(f"{identity} handoff receipt {lane} repository escapes fixture root")
                 sha = str(commit["sha"])
                 if not repository.is_dir() or re.fullmatch(r"[0-9a-f]{40,64}", sha) is None:
@@ -4212,12 +4315,12 @@ def _audit_handoff_evidence(
                 if claim_release_required:
                     _audit_clean_claim_registry(
                         repository,
-                        suite_fixture_root,
+                        scenario_fixture_root,
                         identity,
                     )
                     _audit_claim_lifecycle(
                         repository,
-                        suite_fixture_root,
+                        scenario_fixture_root,
                         identity,
                         lane,
                         producer_role,
@@ -5265,6 +5368,7 @@ def _run_live_junie_batch(
         workspace, junie_home, skill_root, staged = _stage_junie_batch(batch, run_root)
         fixture_root = workspace / ".agent-suite-fixtures"
         fixture_root.mkdir()
+        _prepare_scenario_roots(batch, fixture_root)
         checkpoint_root = run_root / "checkpoints"
         checkpoint_root.mkdir()
         workspace_inventory_baselines = _stage_workspace_inventory_fixtures(
@@ -5298,7 +5402,9 @@ def _run_live_junie_batch(
         environment["JUNIE_HOME"] = str(junie_home)
         if "JUNIE_API_KEY" in os.environ:
             environment["JUNIE_API_KEY"] = os.environ["JUNIE_API_KEY"]
+        _validate_scenario_roots(batch, fixture_root)
         completed = _run_process(command, workspace, environment, timeout_seconds, containment_root=run_root)
+        _validate_scenario_roots(batch, fixture_root)
         result_root.mkdir(parents=True, exist_ok=True)
         evidence_prefix = result_root / label
         evidence_prefix.with_suffix(".stdout.log").write_text(_redact_capture(completed["stdout"]), encoding="utf-8")
@@ -5397,10 +5503,11 @@ def _run_live_batch(
         capabilities = _runtime_capabilities(batch)
         checkpoint_root = run_root / "checkpoints"
         checkpoint_root.mkdir(exist_ok=True)
-        if "browser-automation" in capabilities:
-            _configure_playwright_scenarios(batch, workspace, codex_home, checkpoint_root)
         fixture_root = workspace / ".agent-suite-fixtures"
         fixture_root.mkdir()
+        _prepare_scenario_roots(batch, fixture_root)
+        if "browser-automation" in capabilities:
+            _configure_playwright_scenarios(batch, workspace, codex_home, checkpoint_root)
         workspace_inventory_baselines = _stage_workspace_inventory_fixtures(
             batch,
             fixture_root,
@@ -5507,6 +5614,7 @@ def _run_live_batch(
                 {broker.scenario: broker for broker in brokers},
             ),
         ]
+        _validate_scenario_roots(batch, fixture_root)
         broker_cleanup_error = None
         try:
             completed = _run_process(
@@ -5522,6 +5630,7 @@ def _run_live_batch(
                 preflight_evidence += broker_evidence
             except RuntimeError as error:
                 broker_cleanup_error = str(error)
+        _validate_scenario_roots(batch, fixture_root)
         result_root.mkdir(parents=True, exist_ok=True)
         evidence_prefix = result_root / label
         broker_tokens = tuple(broker.token for broker in brokers)

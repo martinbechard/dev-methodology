@@ -298,6 +298,15 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertIn("agent_type exactly equal", prompt)
         self.assertIn("fork_context exactly false", prompt)
         self.assertIn('"fixtureRoot": "/workspace/.agent-suite-fixtures/one"', prompt)
+        self.assertIn(
+            '"scenarioRoots": {"happy": "/workspace/.agent-suite-fixtures/one/happy"}',
+            prompt,
+        )
+        self.assertIn(
+            "repository is relative to the active scenario's scenarioRoots[scenario] directory",
+            prompt,
+        )
+        self.assertIn("Keep fixtureRoot only as the parent containment boundary", prompt)
         self.assertIn("never under /tmp or /private/tmp", prompt)
         self.assertIn("path strings alone are invalid", prompt)
         self.assertIn("objects, never prose strings", prompt)
@@ -571,6 +580,390 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "runtime capability"):
             runner._validate_suite(suite, require_executable=False)
+
+    def test_scenario_root_components_reject_unsafe_forms_without_process_probing(self) -> None:
+        """Traversal, platform separators, absolute forms, and malformed slugs fail before probing."""
+        invalid_components = (
+            "",
+            ".",
+            "..",
+            "../outside",
+            "nested/scenario",
+            r"nested\scenario",
+            "/absolute",
+            r"C:\absolute",
+            r"\\server\share",
+            "Uppercase",
+            "-leading",
+            "trailing-",
+            "double--dash",
+        )
+        for component_kind in ("suite", "scenario"):
+            for invalid in invalid_components:
+                with self.subTest(component_kind=component_kind, invalid=invalid):
+                    run = self._run_spec("safe-suite", 1)
+                    suite_id = invalid if component_kind == "suite" else run.suite.suite_id
+                    scenario_id = invalid if component_kind == "scenario" else run.scenario_ids[0]
+                    suite = runner._Suite(
+                        suite_id=suite_id,
+                        priority=run.suite.priority,
+                        path=run.suite.path,
+                        manifest=run.suite.manifest,
+                        scenarios=run.suite.scenarios,
+                    )
+                    unsafe_run = runner._RunSpec(suite=suite, scenario_ids=(scenario_id,))
+                    with tempfile.TemporaryDirectory() as temporary:
+                        root = Path(temporary)
+                        fixture_root = root / "fixtures"
+                        fixture_root.mkdir()
+                        with mock.patch.object(runner.subprocess, "run") as process:
+                            with self.assertRaisesRegex(ValueError, "safe path component"):
+                                runner._prepare_scenario_roots((unsafe_run,), fixture_root)
+
+                        process.assert_not_called()
+                        self.assertFalse((root / "outside").exists())
+
+    def test_catalog_rejects_unsafe_suite_id_before_loading_its_declared_path(self) -> None:
+        """An invalid suite slug cannot redirect manifest or scenario loading outside the catalog root."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            suite_root = root / "agent-tests"
+            suite_root.mkdir()
+            (suite_root / "suite-index.yaml").write_text(
+                "suites:\n"
+                "  - id: ../outside\n"
+                "    priority: 1\n"
+                "    path: ../outside\n",
+                encoding="utf-8",
+            )
+            outside = root / "outside"
+            outside.mkdir()
+            (outside / "suite.yaml").write_text("id: outside\n", encoding="utf-8")
+            loaded_paths: list[Path] = []
+            original_load_yaml = runner._load_yaml
+
+            def observe_load(path: Path) -> dict[str, object]:
+                loaded_paths.append(path)
+                return original_load_yaml(path)
+
+            with (
+                mock.patch.object(runner, "_load_yaml", side_effect=observe_load),
+                self.assertRaisesRegex(ValueError, "safe path component"),
+            ):
+                runner._load_catalog(suite_root)
+
+            self.assertEqual([suite_root / "suite-index.yaml"], loaded_paths)
+
+    def test_selected_scenario_roots_are_precreated_as_real_contained_directories(self) -> None:
+        """Every selected scenario receives one canonical non-symlink directory before execution."""
+        run = self._run_spec("safe-suite", 1)
+        with tempfile.TemporaryDirectory() as temporary:
+            fixture_root = Path(temporary) / "fixtures"
+            fixture_root.mkdir()
+
+            prepared = runner._prepare_scenario_roots((run,), fixture_root)
+            validated = runner._validate_scenario_roots((run,), fixture_root)
+
+            expected = fixture_root / "safe-suite" / "happy"
+            self.assertEqual({("safe-suite", "happy"): expected.resolve()}, prepared)
+            self.assertEqual(prepared, validated)
+            self.assertTrue(expected.is_dir())
+            self.assertFalse(expected.is_symlink())
+
+    def test_post_execution_scenario_root_validation_rejects_symlink_before_git_probe(self) -> None:
+        """A scenario-root swap cannot redirect later audit subprocesses outside fixture containment."""
+        run = self._run_spec("safe-suite", 1)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            fixture_root = root / "fixtures"
+            fixture_root.mkdir()
+            prepared = runner._prepare_scenario_roots((run,), fixture_root)
+            scenario_root = prepared[("safe-suite", "happy")]
+            scenario_root.rmdir()
+            outside = root / "outside"
+            (outside / ".git").mkdir(parents=True)
+            scenario_root.symlink_to(outside, target_is_directory=True)
+
+            with mock.patch.object(runner.subprocess, "run") as process:
+                with self.assertRaisesRegex(RuntimeError, "symbolic link"):
+                    runner._validate_scenario_roots((run,), fixture_root)
+
+            process.assert_not_called()
+
+    def test_live_runner_revalidates_scenario_root_after_process_before_git_audit(self) -> None:
+        """A model-time root swap is rejected immediately after execution without external audit probes."""
+        run = self._run_spec("safe-suite", 1)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            result_root = root / "results"
+            outside = root / "outside"
+            (outside / ".git").mkdir(parents=True)
+
+            def stage_batch(
+                batch: object,
+                run_root: Path,
+            ) -> tuple[Path, Path, tuple[object, ...]]:
+                workspace = run_root / "workspace"
+                codex_home = run_root / "codex-home"
+                workspace.mkdir()
+                codex_home.mkdir()
+                return workspace, codex_home, ()
+
+            def run_process(
+                command: object,
+                workspace: Path,
+                environment: object,
+                timeout_seconds: int,
+                **kwargs: object,
+            ) -> dict[str, object]:
+                scenario_root = (
+                    workspace
+                    / ".agent-suite-fixtures"
+                    / "safe-suite"
+                    / "happy"
+                )
+                scenario_root.rmdir()
+                scenario_root.symlink_to(outside, target_is_directory=True)
+                return {
+                    "exitCode": 0,
+                    "stdout": "",
+                    "stderr": "",
+                    "cleanup": "clean",
+                }
+
+            with (
+                mock.patch.object(runner, "_stage_batch", side_effect=stage_batch),
+                mock.patch.object(
+                    runner,
+                    "_bundled_codex_executable",
+                    return_value=Path("/bin/false"),
+                ),
+                mock.patch.object(runner, "_controlled_environment", return_value={}),
+                mock.patch.object(
+                    runner,
+                    "_preflight_runtime_capabilities",
+                    return_value=(),
+                ),
+                mock.patch.object(runner, "_run_process", side_effect=run_process),
+                mock.patch.object(runner.subprocess, "run") as audit_process,
+                self.assertRaisesRegex(RuntimeError, "symbolic link"),
+            ):
+                runner._run_live_batch((run,), 1, result_root, timeout_seconds=1)
+
+            audit_process.assert_not_called()
+
+    def test_junie_runner_revalidates_scenario_root_before_process_launch(self) -> None:
+        """A Junie pre-launch root swap stops before the model process or any Git audit starts."""
+        run = self._run_spec("safe-suite", 1)
+        original_prepare = runner._prepare_scenario_roots
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            result_root = root / "results"
+            outside = root / "outside"
+            (outside / ".git").mkdir(parents=True)
+
+            def prepare_and_swap(
+                batch: object,
+                fixture_root: Path,
+            ) -> dict[tuple[str, str], Path]:
+                prepared = original_prepare(batch, fixture_root)
+                self._replace_with_directory_symlink(
+                    prepared[("safe-suite", "happy")],
+                    outside,
+                )
+                return prepared
+
+            with (
+                mock.patch.object(
+                    runner,
+                    "_stage_junie_batch",
+                    side_effect=self._stage_empty_junie_batch,
+                ),
+                mock.patch.object(
+                    runner,
+                    "_prepare_scenario_roots",
+                    side_effect=prepare_and_swap,
+                ),
+                mock.patch.object(
+                    runner,
+                    "_bundled_junie_executable",
+                    return_value=Path("/bin/false"),
+                ),
+                mock.patch.object(runner, "_controlled_environment", return_value={}),
+                mock.patch.object(runner, "_run_process") as model_process,
+                mock.patch.object(runner.subprocess, "run") as audit_process,
+                self.assertRaisesRegex(RuntimeError, "symbolic link"),
+            ):
+                runner._run_live_junie_batch((run,), 1, result_root, timeout_seconds=1)
+
+            model_process.assert_not_called()
+            audit_process.assert_not_called()
+
+    def test_junie_runner_revalidates_scenario_root_after_process_before_git_audit(self) -> None:
+        """A Junie model-time root swap is rejected before retained evidence can trigger Git probing."""
+        run = self._run_spec("safe-suite", 1)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            result_root = root / "results"
+            outside = root / "outside"
+            (outside / ".git").mkdir(parents=True)
+
+            def run_process(
+                command: object,
+                workspace: Path,
+                environment: object,
+                timeout_seconds: int,
+                **kwargs: object,
+            ) -> dict[str, object]:
+                scenario_root = (
+                    workspace
+                    / ".agent-suite-fixtures"
+                    / "safe-suite"
+                    / "happy"
+                )
+                self._replace_with_directory_symlink(scenario_root, outside)
+                return {
+                    "exitCode": 0,
+                    "stdout": "",
+                    "stderr": "",
+                    "cleanup": "clean",
+                }
+
+            with (
+                mock.patch.object(
+                    runner,
+                    "_stage_junie_batch",
+                    side_effect=self._stage_empty_junie_batch,
+                ),
+                mock.patch.object(
+                    runner,
+                    "_bundled_junie_executable",
+                    return_value=Path("/bin/false"),
+                ),
+                mock.patch.object(runner, "_controlled_environment", return_value={}),
+                mock.patch.object(runner, "_run_process", side_effect=run_process),
+                mock.patch.object(runner.subprocess, "run") as audit_process,
+                self.assertRaisesRegex(RuntimeError, "symbolic link"),
+            ):
+                runner._run_live_junie_batch((run,), 1, result_root, timeout_seconds=1)
+
+            audit_process.assert_not_called()
+
+    def test_handoff_audit_accepts_candidate_repository_beneath_active_scenario_root(self) -> None:
+        """Valid retained handoff evidence remains compatible with scenario-specific containment."""
+        run = self._handoff_containment_run_spec()
+        target, producer, reviewer, verifier = self._handoff_sessions()
+        with tempfile.TemporaryDirectory() as temporary:
+            fixture_root = Path(temporary) / "fixtures"
+            fixture_root.mkdir()
+            scenario_root = runner._prepare_scenario_roots(
+                (run,),
+                fixture_root,
+            )[("handoff-suite", "happy")]
+            candidate = scenario_root / "candidate"
+            candidate.mkdir()
+            commit = self._commit_fixture_repository(candidate)
+            report = self._handoff_report(commit, "candidate")
+
+            with mock.patch.object(
+                runner,
+                "_bind_target_sessions",
+                return_value={("handoff-suite", "happy"): target},
+            ):
+                runner._audit_handoff_evidence(
+                    (run,),
+                    report,
+                    (target, producer, reviewer, verifier),
+                    fixture_root,
+                )
+
+    def test_handoff_audit_rejects_sibling_and_symlink_escape_before_git_probe(self) -> None:
+        """Retained repository paths cannot select a sibling scenario or an external symlink target."""
+        run = self._handoff_containment_run_spec()
+        target, producer, reviewer, verifier = self._handoff_sessions()
+        for escape in ("sibling", "symlink"):
+            with self.subTest(escape=escape), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                fixture_root = root / "fixtures"
+                fixture_root.mkdir()
+                scenario_root = runner._prepare_scenario_roots(
+                    (run,),
+                    fixture_root,
+                )[("handoff-suite", "happy")]
+                if escape == "sibling":
+                    sibling = scenario_root.parent / "sibling"
+                    (sibling / "candidate").mkdir(parents=True)
+                    repository = "../sibling/candidate"
+                else:
+                    outside = root / "outside"
+                    outside.mkdir()
+                    (scenario_root / "candidate").symlink_to(
+                        outside,
+                        target_is_directory=True,
+                    )
+                    repository = "candidate"
+                report = self._handoff_report("a" * 40, repository)
+
+                with (
+                    mock.patch.object(
+                        runner,
+                        "_bind_target_sessions",
+                        return_value={("handoff-suite", "happy"): target},
+                    ),
+                    mock.patch.object(runner.subprocess, "run") as git_process,
+                    self.assertRaisesRegex(RuntimeError, "repository escapes fixture root"),
+                ):
+                    runner._audit_handoff_evidence(
+                        (run,),
+                        report,
+                        (target, producer, reviewer, verifier),
+                        fixture_root,
+                    )
+
+                git_process.assert_not_called()
+
+    def test_staged_supervision_instructions_bind_candidates_to_active_scenario_root(self) -> None:
+        """Staged shared and suite supervision authority agrees with the runner assignment boundary."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            agent_root = root / "agents"
+            skill_root = root / "skills"
+            agent_root.mkdir()
+            skill_root.mkdir()
+            runner._copy_agent(
+                _RUNNER_PATH.parent
+                / "dev-code-reviewer"
+                / "agents"
+                / "supervisor.toml",
+                "dev_code_reviewer_suite_supervisor",
+                agent_root,
+                Path("/runtime/python3.11"),
+            )
+            runner._copy_skill_package(
+                _RUNNER_PATH.parent
+                / "skills"
+                / "agent-suite-supervision"
+                / "SKILL.md",
+                skill_root,
+            )
+            staged_agent = runner.tomllib.loads(
+                (
+                    agent_root
+                    / "dev_code_reviewer_suite_supervisor.toml"
+                ).read_text(encoding="utf-8")
+            )["developer_instructions"]
+            staged_skill = (
+                skill_root
+                / "agent-suite-supervision"
+                / "SKILL.md"
+            ).read_text(encoding="utf-8")
+
+        for staged in (staged_agent, staged_skill):
+            self.assertIn("scenarioRoots[scenario]", staged)
+            self.assertIn("fixtureRoot", staged)
+            self.assertIn("parent containment boundary", staged)
+        self.assertNotIn("fresh destination beneath the listed fixtureRoot", staged_agent)
+        self.assertNotIn("beneath the runner-provided fixtureRoot", staged_skill)
 
     def test_offline_node_dependencies_are_staged_for_selected_fixture(self) -> None:
         """A clean clone receives the fixture's pinned ignored dependency tree without network use."""
@@ -2316,6 +2709,159 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             (scenario,),
         )
         return runner._RunSpec(suite, ("happy",))
+
+    @classmethod
+    def _handoff_containment_run_spec(cls) -> object:
+        """Build one non-claim handoff scenario for repository containment checks."""
+        suite = cls._suite("handoff-suite")
+        scenario = dict(suite.scenarios[0])
+        scenario["requiredHandoffReceiptLanes"] = ["source"]
+        scenario["requiredHandoffReceiptFields"] = [
+            "lane",
+            "role",
+            "commit",
+            "review",
+            "verification",
+        ]
+        suite = runner._Suite(
+            suite.suite_id,
+            suite.priority,
+            suite.path,
+            suite.manifest,
+            (scenario,),
+        )
+        return runner._RunSpec(suite, ("happy",))
+
+    @staticmethod
+    def _handoff_sessions() -> tuple[object, object, object, object]:
+        """Return retained target, producer, reviewer, and verifier sessions for one source lane."""
+        target = runner._Session(
+            "target",
+            "supervisor",
+            "target_agent",
+            2,
+            1.0,
+            8.0,
+            frozenset(),
+        )
+        producer = runner._Session(
+            "producer",
+            "target",
+            "dev_coder",
+            3,
+            2.0,
+            3.0,
+            frozenset(),
+        )
+        reviewer = runner._Session(
+            "reviewer",
+            "target",
+            "dev_code_reviewer",
+            3,
+            4.0,
+            5.0,
+            frozenset(),
+        )
+        verifier = runner._Session(
+            "verifier",
+            "target",
+            "dev_verifier",
+            3,
+            6.0,
+            7.0,
+            frozenset(),
+        )
+        return target, producer, reviewer, verifier
+
+    @staticmethod
+    def _handoff_report(commit: str, repository: str) -> dict[str, object]:
+        """Return one structured source-lane receipt for the supplied repository reference."""
+        return {
+            "runs": [
+                {
+                    "suite": "handoff-suite",
+                    "scenarioResults": [
+                        {
+                            "scenario": "happy",
+                            "targetInvoked": True,
+                            "handoffReceipts": [
+                                {
+                                    "lane": "source",
+                                    "role": {
+                                        "invocation": "dev_coder",
+                                        "sessionIds": ["producer"],
+                                    },
+                                    "commit": {
+                                        "repository": repository,
+                                        "sha": commit,
+                                    },
+                                    "review": {"sessionIds": ["reviewer"]},
+                                    "verification": {"sessionIds": ["verifier"]},
+                                }
+                            ],
+                        }
+                    ],
+                }
+            ]
+        }
+
+    @staticmethod
+    def _stage_empty_junie_batch(
+        batch: object,
+        run_root: Path,
+    ) -> tuple[Path, Path, Path, tuple[object, ...]]:
+        """Create the empty runtime roots needed to exercise Junie launch containment."""
+        workspace = run_root / "workspace"
+        junie_home = run_root / "junie-home"
+        skill_root = run_root / "junie-skills"
+        workspace.mkdir()
+        junie_home.mkdir()
+        skill_root.mkdir()
+        return workspace, junie_home, skill_root, ()
+
+    @staticmethod
+    def _replace_with_directory_symlink(path: Path, target: Path) -> None:
+        """Replace one empty scenario root with an attacker-controlled directory symlink."""
+        path.rmdir()
+        path.symlink_to(target, target_is_directory=True)
+
+    @staticmethod
+    def _commit_fixture_repository(repository: Path) -> str:
+        """Create one clean synthetic commit and return its full object id."""
+        subprocess.run(
+            ["git", "init", "--quiet", str(repository)],
+            check=True,
+            capture_output=True,
+        )
+        (repository / "change.txt").write_text("bounded\n", encoding="utf-8")
+        subprocess.run(
+            ["git", "-C", str(repository), "add", "."],
+            check=True,
+            capture_output=True,
+        )
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                str(repository),
+                "-c",
+                "user.name=Synthetic Agent Eval",
+                "-c",
+                "user.email=agent-eval@example.invalid",
+                "commit",
+                "--quiet",
+                "-m",
+                "Bounded candidate",
+            ],
+            check=True,
+            capture_output=True,
+        )
+        return subprocess.run(
+            ["git", "-C", str(repository), "rev-parse", "HEAD"],
+            check=True,
+            text=True,
+            capture_output=True,
+        ).stdout.strip()
 
     def test_temporary_run_directory_is_removed_after_failure(self) -> None:
         """Disposable authentication, agents, and workspace state do not survive a run."""
