@@ -1,14 +1,14 @@
 # Support Existing Isolated Correction Worktree Binding
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/support-existing-isolated-correction-worktree-binding.md
+Provider Reference: backlog/completed-backlog/defects/support-existing-isolated-correction-worktree-binding.md
 
 Completion: direct-main
 
@@ -164,7 +164,11 @@ Approved scope: python3 scripts/install-skills.py --adapter codex --scope user -
 
 ## Resolution
 
-Approval is recorded. Deployment has not yet been rerun. The item is Running with Owner: Dev Orchestrator, preserving the same canonical task, branch, worktree, investigation, discrepancy-review, and approval evidence. Root acceptance is recorded; deployment remains outside this provider transition.
+The approved user-scope installer completed successfully with --replace-customized: 125 skills and 27 agents were installed, all 152 manifest artifacts verified, and the nine approved customized trees now match canonical source. Catalog revision 661d3da0cf3824b5665093f3e3bbe5babab60829231800bae74e9485494f39ca validates agent-claim and agent-claim-command with no findings. Installed agent-claim hash is 8ec97bfee6d5346a5815a7ae0d5ec6fbc7bf139d174523a089643717b3b1e7ee and installed claim.py hash is dceeca2e79edb58b5214be976beda3a4ca319e108625f03ba9805f3f9fc30b4a.
+
+Independent customization review accepted replacement and the independent Dev Verifier returned final verdict ACCEPT. Deployment resource claim c025145b-8c20-44d8-8b13-02e13f74a176 was released at 11dbbce4-9703-4647-9dc5-760d7115679d; catalog resource claim 56634689-d9aa-4ade-984d-22de2710f363 was released at de03f520-b277-4d25-a94d-ecb71da5fa88. No residual task claim remains.
+
+Completion is direct-main with no source mutation or integration required: accepted deployment source commit 570a0271870e96abcb5c0ddf01428fd749b238f3 is already an ancestor of primary main, and canonical isolated worktree /Users/martinbechard/.codex/worktrees/0311/dev-methodology is clean. This terminal provider transaction archives the record and releases ownership.
 
 ## Ready Lifecycle Boundary
 
