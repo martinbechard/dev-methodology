@@ -1,6 +1,6 @@
 # Adopt Campaign Candidate Integration And Deployment
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -25,28 +25,31 @@ Type: Feature
 - Started At: 2026-07-25T01:09:02Z
 - Prior Coordination Evidence: 019f96cf-48ef-7c41-bef1-ca69d574526c-backlog-running; agent-claim event ef24e4c8-e833-4434-a69b-94ebd69d2846; backlog scope on canonical primary main.
 
-## User Action Required
+## Approval Resolution
 
-### Question for the User
+### Question Asked
 
 Approve mutation of exactly agents/roles/dev-activities/dev-orchestrator.role.yaml; agents/roles/dev-activities/dev-backlog-coordinator.role.yaml; skills/codex-workitem-coordination/SKILL.md; skills/agent-work-merge/SKILL.md to implement the campaign candidate/finalizer model?
 
-### Why User Input Is Required
+### User Answer
 
-These are governed canonical agent and skill definitions. Repository access, a running work item, and the need to satisfy validation do not authorize their mutation.
+- Answered At: 2026-07-25
+- Answer: ok approved
+- Provenance: User answer in canonical Thread 019f96cf-48ef-7c41-bef1-ca69d574526c, following the exact four-path manifest and explanation.
+- Disposition: Approved; this item is Ready for the authorized implementation workflow.
 
-### Options and Tradeoffs
+### Approved Canonical Definition Scope
 
-- Approve: authorizes only the four listed canonical definition edits. Derived mirrors may then be regenerated under their supported source-to-mirror relationship.
-- Decline: keeps all definitions unchanged and blocks implementation of this model.
+- agents/roles/dev-activities/dev-orchestrator.role.yaml
+- agents/roles/dev-activities/dev-backlog-coordinator.role.yaml
+- skills/codex-workitem-coordination/SKILL.md
+- skills/agent-work-merge/SKILL.md
 
-### Resolution
+Derived mirrors may be regenerated only under the supported relationship for these approved source edits.
 
-Pending user direction.
+### Boundary
 
-### Unattended Work Boundary
-
-Do not mutate governed definitions without the scope-specific user approval recorded above. No unattended implementation work may proceed while this question is unresolved.
+This approval authorizes only the listed canonical definition edits. All other governed definitions remain unchanged unless separately approved.
 
 ## Summary
 
