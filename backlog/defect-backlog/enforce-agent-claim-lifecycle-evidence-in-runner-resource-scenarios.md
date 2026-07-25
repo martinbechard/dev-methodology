@@ -20,7 +20,7 @@ Completion: direct-main
 - Delivery Worktree: /Users/martinbechard/.codex/worktrees/e8bc/dev-methodology
 - Delivery Branch: detached HEAD
 - Delivery Commit At Acceptance: d40de70dcccf484284ce02310c90ad6c5fb89b83
-- Phase: Execution accepted; implementation pending.
+- Phase: Review correction attempt 1 assigned to the original Dev Coder.
 - Started At: 2026-07-25T07:12:44Z
 
 ## Execution Coordination Evidence
@@ -85,6 +85,21 @@ None.
 ## Coordination Evidence
 
 - Backlog claim `record-runner-review-defects-019f979e` acquired on primary main at 2026-07-25T05:39:43.871470Z; acquisition journal event `29dc95c6-c2ba-473b-8034-3420d7eecd6b`.
+
+## Candidate And Review Evidence
+
+- Candidate: e437702d2c0119c6641caca52fb7561348086568 on `codex/enforce-agent-claim-lifecycle-evidence-019f981c`.
+- Coder claim: released at journal event 1308c17c-e1a5-48db-9649-c919bc49bbfe.
+- Candidate checks: 14 focused claim, handoff, and receipt checks passed; four provider-none checks passed; valid lifecycle evidence passed and was verified; absent activity was blocked and invalid; `py_compile` and `git diff --check` passed; 123 non-browser checks passed; 13 browser checks were unavailable because Playwright is absent.
+- Fresh Dev Code Reviewer disposition: REJECT.
+
+## Review Findings
+
+- HIGH: Target-trace binding is token-only and does not bind repository, actor, claim, event, output, or success state.
+- HIGH: Stale evidence commits are accepted when they are merely ancestors of a later unclaimed HEAD.
+- HIGH: A truthful no-change release is incorrectly rejected.
+- HIGH: An external symlinked `agent-claims.json` is accepted.
+- MEDIUM: Duplicate successful lifecycle events and malformed journal lines do not fail closed.
 
 ## Notes
 
