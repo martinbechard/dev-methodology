@@ -1,14 +1,16 @@
 # Add Dedicated Watchdog And Stalled Lifecycle
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/add-dedicated-watchdog-and-stalled-lifecycle.md
+Provider Reference: backlog/feature-backlog/add-dedicated-watchdog-and-stalled-lifecycle.md
 
 Completion: direct-main
+
+Owner: Unowned
 
 ## Summary
 
@@ -53,6 +55,7 @@ The permanent contract must parameterize the parent task identifier and reposito
 - The user defined Blocked as a known preventing cause for which the Dev Backlog Coordinator owns the next action, with User Action Required used when the required next action belongs to the user.
 - The user proposed Stalled as a separate state for work that appears not to be progressing before a preventing cause is recognized.
 - The user explicitly required design/orchestrated-development-lifecycle.html to be updated as part of the delivery.
+- On 2026-07-25, the user approved the exact six governed canonical source paths and the listed dependent artifacts by answering, “I approve the whole thing.”
 - Live repository discovery on 2026-07-24 found no conceptual or generated watchdog agent definition. The existing contract assigns a dedicated watchdog Task to an unspecified Agent.
 
 ## Requirements
@@ -126,9 +129,9 @@ The permanent contract must parameterize the parent task identifier and reposito
 - Confirm whether the deterministic backlog report needs a dedicated Stalled section or a distinct Stalled badge within active non-runnable work. The report must not merge Stalled into Blocked.
 - Select an existing model profile for Dev Backlog Watchdog from live model-profile evidence; do not add or change a model profile unless separately approved.
 
-## User Action Required
+## Definition Change Approval
 
-The governed role and skill sources below require one exact scope-specific approval before implementation.
+The user approved the exact governed role and skill sources below for this work item.
 
 ## Governed Canonical Sources
 
@@ -168,31 +171,17 @@ The governed role and skill sources below require one exact scope-specific appro
 - evals/agent-tests/dev-backlog-watchdog/test_watchdog_simulator.py
 - design/agent-and-skill-evaluations.html
 
-## Question for the User
+## Approval Resolution
 
-Do you approve changing exactly the six governed canonical definition paths listed above to add the dedicated read-only Dev Backlog Watchdog Role, the Stalled lifecycle state, the explicit Orchestrator-to-Coordinator blocked handoff, and Coordinator-owned Blocked disposition, together with only the listed supported generated mirrors, implementation, tests, backlog-report output, README guidance, and design/orchestrated-development-lifecycle.html?
+On 2026-07-25, the user answered exactly:
 
-## Why User Input Is Required
+> I approve the whole thing.
 
-Repository policy requires explicit scope-specific user approval before any conceptual agent or distributed skill definition is created or changed. The request to create work items authorizes this backlog record but does not itself authorize mutation of the six governed canonical sources.
-
-## Options and Tradeoffs
-
-- Approve the exact scope. The item moves to the active feature backlog as Ready and implementation may change only the six governed sources and listed dependent artifacts.
-- Narrow the scope. The manifest and acceptance criteria must be revised before implementation.
-- Defer the work. The item moves to Holding without implementation.
-- Decline the work. The item is archived with the decision and no definition mutation.
-
-## Resolution
-
-Pending. No governed definition mutation is authorized by this backlog-creation request.
-
-## Unattended Work Boundary
-
-Agents may perform read-only discovery and refine verification commands. They must not create or change the Watchdog role, the Coordinator, Orchestrator, or Steward role definitions, either distributed skill definition, generated mirrors, implementation companions, or lifecycle HTML before the exact approval question is answered and recorded.
+The answer approves exactly the six paths in Governed Canonical Sources and only the dependent artifacts listed above. The resulting lifecycle disposition is Ready with Owner: Unowned. No Starting reservation or implementation ownership was created by this approval transaction.
 
 ## Notes
 
 - Creation authority: direct user request on 2026-07-24 to create one or more work items for the supplied watchdog contract, blocker handoff, Stalled state, Coordinator-owned Blocked disposition, and required lifecycle HTML update.
+- Approval provenance: the parent Dev Backlog Coordinator relayed the user’s exact answer for the canonical 019f9a91 work-item context on 2026-07-25.
 - Duplicate check: the completed predecessor introduced generic read-only watchdog behavior but did not define a Watchdog Role, Stalled lifecycle state, or universal Orchestrator-to-Coordinator blocked notification.
 - Non-goal: the Watchdog does not become an autonomous recovery, dispatch, integration, cleanup, or lifecycle-mutation agent.
