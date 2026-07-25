@@ -310,11 +310,19 @@ TODO: Describe expected errors, unexpected errors, failure-closed behavior, retr
 
 TODO: State which errors are returned, thrown, swallowed, or escalated; whether each occurs before the response, after the response, or asynchronously; and which side effects have already committed.
 
+## Documentation Acceptance
+
+> This distinguishes an accurate module design for the current reverse-engineering pass from permission to implement or change the module. Module designers, implementers, test authors, and reviewers use it during review and handoff to record whether source evidence, accepted prerequisites, and current-pass requirements are reconciled without concealing defects, unimplemented behavior, open decisions, or current limitations.
+
+TODO: After any leading retained explanatory note or notes, begin the first authored decision with **ACCEPTED.** or **BLOCKED.** State ACCEPTED when the artifact accurately and completely records source evidence, accepted prerequisites, and current-pass requirements. Do not fail documentation acceptance solely because a later parent artifact is intentionally absent or because an accurately recorded defect, unimplemented behavior, open decision, or current limitation blocks implementation.
+
+TODO: When BLOCKED, name the missing accepted prerequisite, insufficient evidence, unresolved current-pass review finding, or unavailable mandatory dependency.
+
 ## Implementation Readiness
 
 > This prevents a reviewed module design from being mistaken for permission to implement while critical contracts or questions remain unresolved. Module designers, implementers, test authors, and reviewers use it during work assignment and handoff to record READY or BLOCKED and name the exact decisions or upstream artifacts required before coding.
 
-TODO: Immediately after the retained blockquote note, begin the authored section content with **READY.** or **BLOCKED.** State READY only when every applicable requirement and required contract is DEFINED and no high-impact blocking question remains. Otherwise state BLOCKED for the affected downstream work and list the exact decisions or upstream artifacts required before implementation. A BLOCKED result does not make an accurately documented limitation an automatic review failure.
+TODO: After any leading retained explanatory note or notes, begin the first authored decision with **READY.** or **BLOCKED.** State READY only when every applicable requirement and required contract is DEFINED and no high-impact blocking question remains. Otherwise state BLOCKED for the affected downstream work and list the exact decisions or upstream artifacts required before implementation. A BLOCKED result does not make an accurately documented limitation an automatic review failure.
 
 ## Verification
 

@@ -71,8 +71,8 @@ Before finishing:
 3. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.
 4. Search the artifact for unresolved TODO markers that are not intentional.
 5. Confirm every architectural claim names source evidence, a verification path, or an open question.
-6. Confirm Documentation Acceptance begins with ACCEPTED or BLOCKED and judges only source evidence, accepted HLD prerequisites, and current reverse-engineering pass requirements.
-7. Confirm Implementation Readiness begins with READY or BLOCKED as a separate downstream decision and does not turn an accurately documented defect or open decision into an automatic documentation failure.
+6. For Documentation Acceptance, skip any leading retained explanatory note or notes, then confirm the first authored decision begins with ACCEPTED or BLOCKED and judges only source evidence, accepted HLD prerequisites, and current reverse-engineering pass requirements.
+7. For Implementation Readiness, skip any leading retained explanatory note or notes, then confirm the first authored decision begins with READY or BLOCKED as a separate downstream decision and does not turn an accurately documented defect or open decision into an automatic documentation failure.
 8. Confirm every justified architecture proposition states basis, necessity, and decision owner and that no resolvable system-frame gap remains open.
 9. Confirm complete repository-relative source, test, configuration, resource, migration, generated, script, runtime-data, and documentation roots are explicit and contain no placeholder segments.
 10. Confirm every qualifying ordered relationship has an appropriate Mermaid diagram, every qualifying structural relationship has a diagram, and no data, lifecycle, or implementation sequence remains only in prose, a numbered list, or a table.

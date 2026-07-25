@@ -266,11 +266,19 @@ TODO: Add a Risk Association Diagram only when risks cluster around components, 
 
 TODO: The Risk Association Diagram should connect each risk to the architectural item that creates or mitigates it.
 
+## Documentation Acceptance
+
+> This distinguishes an evidence-backed architecture for the current reverse-engineering pass from permission to begin architecture-dependent work. Architects, implementers, and reviewers use it during review and handoff to record whether source evidence, accepted high-level-design prerequisites, and current-pass requirements are reconciled without concealing defects, open decisions, or limitations.
+
+TODO: After any leading retained explanatory note or notes, begin the first authored decision with **ACCEPTED.** or **BLOCKED.** State ACCEPTED when the artifact accurately reconciles source evidence, accepted high-level-design prerequisites, and current-pass requirements. During bottom-up reverse engineering, do not fail documentation acceptance solely because later functional specifications or wiki pages are intentionally absent, or because an accurately recorded defect, open decision, or limitation blocks implementation.
+
+TODO: When BLOCKED, name the missing accepted prerequisite, insufficient evidence, unresolved current-pass review finding, or unavailable mandatory dependency.
+
 ## Implementation Readiness
 
 > This section prevents a reviewed document from being mistaken for authorization to begin unsafe downstream work. Architects, implementers, and reviewers use it during planning and design handoff to record READY or BLOCKED for architecture-dependent work and to identify any critical unresolved boundary, decision, defect, or verification gap.
 
-TODO: Immediately after the retained blockquote note, begin the authored section content with **READY.** or **BLOCKED.** State READY only when architecture-dependent downstream work can proceed without an unresolved critical boundary, decision, defect, or verification gap. Otherwise state BLOCKED for the affected downstream work. A BLOCKED result does not make an accurately documented limitation an automatic review failure.
+TODO: After any leading retained explanatory note or notes, begin the first authored decision with **READY.** or **BLOCKED.** State READY only when architecture-dependent downstream work can proceed without an unresolved critical boundary, decision, defect, or verification gap. Otherwise state BLOCKED for the affected downstream work. A BLOCKED result does not make an accurately documented limitation an automatic review failure.
 
 ## Verification
 

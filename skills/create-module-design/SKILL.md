@@ -19,7 +19,7 @@ Copy the template only when a local editable artifact is needed. Replace every T
 
 Treat every level-two heading in the template as mandatory. Preserve the heading text and order exactly; do not rename, merge, reorder, or omit headings. When a section is not applicable, keep its heading and state why. Compare the candidate's ordered level-two headings with the template before production review. A mismatch is BLOCKED and must be corrected before spending a semantic-review pass.
 
-The first nonblank content under Documentation Acceptance must begin with ACCEPTED or BLOCKED. The first nonblank content under Implementation Readiness must begin with READY or BLOCKED. Put each decision before explanatory prose so deterministic gates and downstream agents cannot conflate an accurate artifact with permission to implement from it.
+For each decision section, skip any leading retained explanatory note or notes. The first authored decision under Documentation Acceptance must begin with ACCEPTED or BLOCKED. The first authored decision under Implementation Readiness must begin with READY or BLOCKED. Put each decision before later explanatory prose so deterministic gates and downstream agents cannot conflate an accurate artifact with permission to implement from it.
 
 ## Design Mode
 
@@ -98,7 +98,7 @@ Use documentation-reverse-engineer when the user asks to derive many module desi
 
 Before finishing:
 
-1. Compare the ordered level-two headings with the module design template and verify that Documentation Acceptance begins with ACCEPTED or BLOCKED and Implementation Readiness begins with READY or BLOCKED. If any required heading is missing, renamed, duplicated, merged, or reordered, or either marker does not lead its section, stop with BLOCKED and correct the structure before invoking review-module-design.
+1. Compare the ordered level-two headings with the module design template. For Documentation Acceptance and Implementation Readiness, skip any leading retained explanatory note or notes, then verify that the first authored decisions begin with ACCEPTED or BLOCKED and READY or BLOCKED, respectively. If any required heading is missing, renamed, duplicated, merged, or reordered, or either decision does not lead the authored content after the notes, stop with BLOCKED and correct the structure before invoking review-module-design.
 2. After the template-conformance gate passes, use review-module-design on the completed artifact.
 3. Use documentation-page-verify with the artifact, source evidence, and completed review checklist when the review skill calls for it.
 4. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.

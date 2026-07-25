@@ -197,11 +197,19 @@ TODO: List the edge cases that users can realistically encounter.
 
 TODO: For each edge case, state what the user sees and whether the workflow can continue.
 
+## Documentation Acceptance
+
+> This distinguishes an accurate specification for the current reverse-engineering pass from permission to begin downstream work. Product owners, designers, implementers, and reviewers use it during review and handoff to record whether source evidence, accepted design prerequisites, and current-pass requirements are reconciled without concealing defects, unimplemented behavior, open decisions, or limitations.
+
+TODO: After any leading retained explanatory note or notes, begin the first authored decision with **ACCEPTED.** or **BLOCKED.** State ACCEPTED when the artifact accurately records observable behavior from source evidence, accepted design prerequisites, and current-pass requirements. During bottom-up reverse engineering, do not fail documentation acceptance solely because later wiki pages are intentionally absent, or because an accurately recorded defect, unimplemented behavior, open decision, or limitation blocks implementation.
+
+TODO: When BLOCKED, name the missing accepted prerequisite, insufficient evidence, unresolved current-pass review finding, or unavailable mandatory dependency.
+
 ## Implementation Readiness
 
 > This prevents a reviewed specification from being mistaken for permission to begin unsafe downstream work. Product owners, designers, implementers, and reviewers use it during design handoff and planning to record READY or BLOCKED and identify unresolved behavior, authority, defect, or verification gaps that must be closed first.
 
-TODO: Immediately after the retained blockquote note, begin the authored section content with **READY.** or **BLOCKED.** State READY only when workflow-dependent downstream work can proceed without an unresolved critical behavior, decision, defect, or verification gap. Otherwise state BLOCKED for the affected downstream work. A BLOCKED result does not make an accurately documented limitation an automatic review failure.
+TODO: After any leading retained explanatory note or notes, begin the first authored decision with **READY.** or **BLOCKED.** State READY only when workflow-dependent downstream work can proceed without an unresolved critical behavior, decision, defect, or verification gap. Otherwise state BLOCKED for the affected downstream work. A BLOCKED result does not make an accurately documented limitation an automatic review failure.
 
 ## Verification
 

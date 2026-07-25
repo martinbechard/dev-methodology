@@ -2729,7 +2729,7 @@ class BundleContentTests(unittest.TestCase):
                     "Preserve the heading text and order exactly",
                     "executor acceptance or rejection before any work",
                     "Do not merge executor rejection",
-                    "first nonblank content under Implementation Readiness",
+                    "skip any leading retained explanatory note or notes",
                     "installed documentation path",
                     "transient assembly or control files",
                     "source-category inventory",
@@ -2803,7 +2803,7 @@ class BundleContentTests(unittest.TestCase):
                         "shared cache is created, replaced, retained, or invalidated",
                         "failed cached source remains retained or is replaced",
                         "place executor acceptance or rejection before every executor-owned action",
-                        "Begin this section with **READY.** or **BLOCKED.**",
+                        "After any leading retained explanatory note or notes, begin the first authored decision with **READY.** or **BLOCKED.**",
                     )
                     if skill_name == "create-module-design"
                     else ()
@@ -3876,7 +3876,7 @@ class BundleContentTests(unittest.TestCase):
                         "ordered level-two headings",
                         "executor acceptance or rejection occur before every executor-owned action",
                         "sender or provider rejection",
-                        "first nonblank content under Implementation Readiness",
+                        "skip any leading retained explanatory note or notes",
                         "scope-bearing qualifier",
                     )
                     if skill_name == "review-module-design"
@@ -9071,6 +9071,51 @@ class BundleContentTests(unittest.TestCase):
         )
     def test_reverse_engineering_separates_pass_acceptance_and_readiness(self) -> None:
         """Keep bottom-up acceptance, persisted mode, wiki routing, and reconciliation aligned."""
+        def first_authored_line_after_notes(
+            document_text: str, heading: str
+        ) -> tuple[int, str]:
+            section_text = document_text.split(heading, maxsplit=1)[1]
+            section_text = section_text.split("\n## ", maxsplit=1)[0]
+            lines = section_text.splitlines()
+            index = 0
+            note_count = 0
+
+            while index < len(lines):
+                while index < len(lines) and not lines[index].strip():
+                    index += 1
+                if index >= len(lines) or not lines[index].startswith(">"):
+                    break
+                note_count += 1
+                while index < len(lines) and lines[index].startswith(">"):
+                    index += 1
+
+            self.assertLess(index, len(lines), f"{heading} has no authored content")
+            return note_count, lines[index]
+
+        def assert_decision_section_order(document_text: str) -> None:
+            level_two_headings = [
+                line for line in document_text.splitlines() if line.startswith("## ")
+            ]
+            acceptance_index = level_two_headings.index(
+                "## Documentation Acceptance"
+            )
+            self.assertEqual(
+                "## Implementation Readiness",
+                level_two_headings[acceptance_index + 1],
+            )
+
+        synthetic_note_count, synthetic_decision = first_authored_line_after_notes(
+            (
+                "## Documentation Acceptance\n\n"
+                "> First retained explanatory note.\n\n"
+                "> Second retained explanatory note.\n\n"
+                "ACCEPTED. Authored decision."
+            ),
+            "## Documentation Acceptance",
+        )
+        self.assertEqual(2, synthetic_note_count)
+        self.assertEqual("ACCEPTED. Authored decision.", synthetic_decision)
+
         reverse_text = (
             SKILLS_ROOT / "documentation-reverse-engineer" / "SKILL.md"
         ).read_text(encoding="utf-8")
@@ -9186,21 +9231,65 @@ class BundleContentTests(unittest.TestCase):
                     self.assertIn("current reverse-engineering pass", text.lower())
             self.assertEqual(1, template_text.count("## Documentation Acceptance"))
             self.assertEqual(1, template_text.count("## Implementation Readiness"))
+            assert_decision_section_order(template_text)
+            acceptance_start = template_text.index("## Documentation Acceptance")
+            readiness_start = template_text.index("## Implementation Readiness")
+            verification_start = template_text.index("## Verification", readiness_start)
+            swapped_decision_sections = (
+                template_text[:acceptance_start]
+                + template_text[readiness_start:verification_start]
+                + template_text[acceptance_start:readiness_start]
+                + template_text[verification_start:]
+            )
+            with self.assertRaises(AssertionError):
+                assert_decision_section_order(swapped_decision_sections)
+            acceptance_note_count, acceptance_decision_instruction = (
+                first_authored_line_after_notes(
+                    template_text, "## Documentation Acceptance"
+                )
+            )
+            readiness_note_count, readiness_decision_instruction = (
+                first_authored_line_after_notes(
+                    template_text, "## Implementation Readiness"
+                )
+            )
+            self.assertGreaterEqual(acceptance_note_count, 1)
+            self.assertGreaterEqual(readiness_note_count, 1)
+            self.assertTrue(
+                acceptance_decision_instruction.startswith(
+                    "TODO: After any leading retained explanatory note or notes, "
+                    "begin the first authored decision with **ACCEPTED.** or **BLOCKED.**"
+                )
+            )
+            self.assertTrue(
+                readiness_decision_instruction.startswith(
+                    "TODO: After any leading retained explanatory note or notes, "
+                    "begin the first authored decision with **READY.** or **BLOCKED.**"
+                )
+            )
+            self.assertNotIn("**READY.**", acceptance_decision_instruction)
+            self.assertNotIn("**ACCEPTED.**", readiness_decision_instruction)
             self.assertIn(
-                "Begin this section with **ACCEPTED.** or **BLOCKED.**",
-                template_text,
+                "skip any leading retained explanatory note or notes",
+                create_text,
             )
             self.assertIn(
-                "Begin this section with **READY.** or **BLOCKED.**",
-                template_text,
+                "skip any leading retained explanatory note or notes",
+                checklist_text,
             )
-            self.assertIn(
-                "first nonblank content under Documentation Acceptance",
+            self.assertEqual(
+                1,
+                checklist_text.count(
+                    "skip any leading retained explanatory note or notes"
+                ),
+            )
+            self.assertNotIn(
+                "Does Documentation Acceptance begin with ACCEPTED or BLOCKED",
                 checklist_text,
             )
             self.assertIn(
-                "first nonblank content under Implementation Readiness",
-                checklist_text,
+                "documentation acceptance separate from implementation readiness",
+                checklist_text.lower(),
             )
 
         readme_text = README_PATH.read_text(encoding="utf-8")

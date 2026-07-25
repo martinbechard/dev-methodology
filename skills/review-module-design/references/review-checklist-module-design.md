@@ -18,7 +18,6 @@ Do not mark pass without quoted evidence.
 ## Skill Workflow Checks
 
 - Question: Before semantic review, do the artifact's ordered level-two headings match every module design template heading exactly, with no missing, renamed, duplicated, merged, or reordered heading?
-- Question: Does the first nonblank content under Documentation Acceptance begin with ACCEPTED or BLOCKED, and does the first nonblank content under Implementation Readiness begin with READY or BLOCKED, before any explanatory prose?
 - Question: Does the review identify runtime path, implementation-placement and symbol ledger, responsibility, callers, dependencies, contracts, justified module propositions, internal state, processing rules, error handling, and verification claims before assessment?
 - Question: Does the completed review checklist name this checklist as review-checklist-module-design.md?
 - Question: Does the completed review checklist save next to the artifact using artifact-name.review-checklist-module-design.md?
@@ -35,7 +34,7 @@ Do not mark pass without quoted evidence.
 - Question: In EXISTING_IMPLEMENTATION or MIXED_CHANGE mode, do Authoritative Sources include the applicable module source, callers, tests, configuration, procedures, and runtime evidence, plus parent designs and related wiki pages when they are available and applicable to the current pass, without requiring intentionally absent later layers during bottom-up reverse engineering?
 - Question: Do Related Code and Related Tests identify evidence permitted by the selected mode or say Not yet identified when planned implementation and tests do not exist?
 - Question: Do Open Questions capture unresolved ownership, contracts, behavior, errors, identity, security, selectors, validation, state, response, or verification issues and classify each as blocking or non-blocking with a decision owner?
-- Question: Does Documentation Acceptance begin with ACCEPTED or BLOCKED and judge source evidence, accepted prerequisites, and current reverse-engineering pass requirements without requiring intentionally absent later high-level designs, architecture, functional specifications, or wiki pages?
+- Question: When evaluating Documentation Acceptance and Implementation Readiness, do you skip any leading retained explanatory note or notes, then require the first authored decisions to begin with ACCEPTED or BLOCKED and READY or BLOCKED, respectively, before any later explanatory prose, while Documentation Acceptance judges source evidence, accepted prerequisites, and current reverse-engineering pass requirements without requiring intentionally absent later high-level designs, architecture, functional specifications, or wiki pages?
 - Question: Is documentation acceptance separate from implementation readiness, allowing accurate documentation of known defects, unimplemented behavior, open design decisions, and current limitations while Implementation Readiness is BLOCKED for affected downstream work?
 
 ## Response Adequacy Questions
