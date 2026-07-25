@@ -1,10 +1,10 @@
 # Use Exact Work-Item Claims For Lifecycle Updates
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 ## Supplemental Resumption Reservation
 
@@ -74,6 +74,18 @@ Owner: Dev Orchestrator
 
 1. Steward role nonterminal move contradiction.
 2. List-format maintainability finding.
+
+## Claim Release Recovery Blocker
+
+- Candidate: f412674259b246bb0e3bb11edd569982e60c4c89; preserved, clean, unintegrated, and unpublished.
+- Gate Outcomes: Command gate ACCEPT; source and methodology gates FAIL.
+- Blocker: Correction cannot start because exact-item claim 019f9783-correction-required-milestone-retry-steward is permanently rejected for release after peer out-of-domain dirty state was validly committed at 98fafe55a21430cb1aef7b32582ba86101306205.
+- Release Rejection Event: 883f7f5d-b94c-4a12-94e3-fb6b8614f0d1.
+- Defect Creation Attempt Event: bbad1abe-a070-4b1c-8200-9151b16d626e.
+- Prohibited Recovery: No manual registry, index, or path mutation is authorized.
+- Next Action Owner: Parent Coordinator / Project Configurator.
+- Unblock Condition: Project Configurator or claim-engine recovery handoff safely reconciles and releases the live claim; then create the distinct defect and resume this same task normally to correction review.
+- Live Claim: 019f9783-correction-required-milestone-retry-steward remains active pending the recovery handoff.
 
 ## Review-Recovery Milestone
 
