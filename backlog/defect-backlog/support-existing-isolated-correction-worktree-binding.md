@@ -1,6 +1,6 @@
 # Support Existing Isolated Correction Worktree Binding
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -20,6 +20,18 @@ Completion: direct-main
 - Isolated Checkout: /Users/martinbechard/.codex/worktrees/0311/dev-methodology
 - Phase: Awaiting root lifecycle acceptance.
 - Dispatched At: 2026-07-25T03:58:59Z
+
+## Lifecycle Start
+
+- Canonical Task/Thread: 019f976c-6691-7a83-9df4-e73fc0baae73
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Root Role And Owner: Dev Orchestrator
+- Isolated Worktree Binding: /Users/martinbechard/.codex/worktrees/0311/dev-methodology
+- Canonical Branch State: detached at 3f30d7c7d56dfea4ca23ca2a9afa8df55e9d138e
+- Phase: Root lifecycle accepted; delivery proceeds only in the canonical isolated correction worktree.
+- Started At: 2026-07-25T04:01:00.487775Z, after the root Dev Orchestrator accepted ownership.
+- Coordination Claim: Dev Backlog Steward acquired short primary-main backlog claim support-existing-isolated-correction-worktree-binding-running-019f976c at event 41049fc1-bf18-453e-a663-7f7876efc28e from baseline commit ff63b40b46571f22fd5c5624c79d856ff9b243cf.
+- Scope Boundary: This claim owns only the committed Starting-to-Running provider transition and must release immediately; delivery owns separate isolated project-artifact scope.
 
 ## Summary
 
