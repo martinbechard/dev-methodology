@@ -116,7 +116,12 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
 
             runner._audit_report((run,), report)
             runner._audit_handoff_evidence((run,), report, sessions, fixture_root)
-            candidate = fixture_root / "dev-orchestrator" / "candidate"
+            candidate = (
+                fixture_root
+                / "dev-orchestrator"
+                / "dependency-routing"
+                / "candidate"
+            )
             self.assertFalse((candidate / ".git" / "agent-claim-events").exists())
             self.assertFalse((candidate / ".git" / "agent-claims.json").exists())
 
@@ -128,7 +133,12 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                     Path(directory),
                     claim_release=False,
                 )
-                candidate = fixture_root / "dev-orchestrator" / "candidate"
+                candidate = (
+                    fixture_root
+                    / "dev-orchestrator"
+                    / "dependency-routing"
+                    / "candidate"
+                )
                 if case == "empty-registry":
                     (candidate / ".git" / "agent-claims.json").write_text(
                         json.dumps({"claims": []}) + "\n",
@@ -213,7 +223,12 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 prompt,
             )
 
-            candidate = fixture_root / "dev-orchestrator" / "candidate"
+            candidate = (
+                fixture_root
+                / "dev-orchestrator"
+                / "dependency-routing"
+                / "candidate"
+            )
             registry = json.loads(
                 (candidate / ".git" / "agent-claims.json").read_text(encoding="utf-8")
             )
@@ -232,7 +247,12 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         for case, diagnostic in cases.items():
             with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
                 run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
-                candidate = fixture_root / "dev-orchestrator" / "candidate"
+                candidate = (
+                    fixture_root
+                    / "dev-orchestrator"
+                    / "dependency-routing"
+                    / "candidate"
+                )
                 journal = (
                     candidate
                     / ".git"
@@ -520,7 +540,12 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         for drift in ("tracked", "untracked"):
             with self.subTest(drift=drift), tempfile.TemporaryDirectory() as directory:
                 run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
-                candidate = fixture_root / "dev-orchestrator" / "candidate"
+                candidate = (
+                    fixture_root
+                    / "dev-orchestrator"
+                    / "dependency-routing"
+                    / "candidate"
+                )
                 if drift == "tracked":
                     (candidate / "evidence.txt").write_text("changed\n", encoding="utf-8")
                 else:
@@ -632,7 +657,12 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             )
             run = runner._RunSpec(suite, run.scenario_ids)
         fixture_root = temporary_root / "fixtures"
-        candidate = fixture_root / "dev-orchestrator" / "candidate"
+        candidate = (
+            fixture_root
+            / "dev-orchestrator"
+            / "dependency-routing"
+            / "candidate"
+        )
         candidate.mkdir(parents=True)
         subprocess.run(["git", "init", "--quiet"], cwd=candidate, check=True)
         subprocess.run(["git", "config", "user.name", "Fixture"], cwd=candidate, check=True)
