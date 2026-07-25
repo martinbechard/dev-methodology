@@ -24,7 +24,9 @@ resourceCoordination:
       claimLifecycle: [acquire before mutation, release after clean committed handoff]
       sourceScope: [src/dependency_status.py, tests/test_dependency_status.py]
       documentationScope: [docs/operator-runbook.md]
+      integrationScope: [integration.txt]
       integrationResource: merge:integration:fixture-main
+      closeoutScope: [closeout.txt]
       requiredHandoffReceiptFields: [lane, role, commit, review, verification, claimRelease]
 lanes:
   source:

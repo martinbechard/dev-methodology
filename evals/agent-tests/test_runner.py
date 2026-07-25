@@ -302,6 +302,11 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertIn("path strings alone are invalid", prompt)
         self.assertIn("objects, never prose strings", prompt)
         self.assertIn("structurally identical values", prompt)
+        self.assertIn(
+            '"resourceCoordinationByScenario": {"happy": "unspecified"}',
+            prompt,
+        )
+        self.assertIn("must not invoke agent-claim", prompt)
 
     def test_governed_result_contract_separates_identity_deterministic_and_judge_evidence(self) -> None:
         """Coordinator output cannot substitute identity strings for Judge or deterministic evidence."""
@@ -4049,7 +4054,6 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 "commit": {"repository": "candidate", "sha": "abc123"},
                 "review": {"sessionIds": ["review-session"]},
                 "verification": {"sessionIds": ["verification-session"]},
-                "claimRelease": {"eventIds": ["release-event"]},
             }
         ]
 

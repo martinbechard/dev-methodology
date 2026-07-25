@@ -72,6 +72,40 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
 
         runner._audit_report((run,), report)
 
+    def test_coordinator_prompt_exposes_none_coordination_boundary(self) -> None:
+        """The live assignment explicitly forbids claim behavior for provider-none."""
+        run, _ = self._complete_dependency_routing_report()
+
+        prompt = runner._coordinator_prompt(
+            (run,),
+            Path("/checkpoints"),
+            Path("/fixtures"),
+            "test-run",
+        )
+
+        self.assertIn(
+            '"resourceCoordinationByScenario": {"dependency-routing": "none"}',
+            prompt,
+        )
+        self.assertIn("must not invoke agent-claim", prompt)
+
+    def test_none_coordination_rejects_claim_release_on_an_extra_lane(self) -> None:
+        """Provider-none rejects claim evidence even outside its required lanes."""
+        run, report = self._complete_dependency_routing_report()
+        report["runs"][0]["scenarioResults"][0]["handoffReceipts"].append(
+            {
+                "lane": "extra",
+                "role": {"invocation": "extra", "sessionIds": ["extra"]},
+                "commit": {"repository": "candidate", "sha": "a" * 40},
+                "review": {"sessionIds": ["extra-review"]},
+                "verification": {"sessionIds": ["extra-verification"]},
+                "claimRelease": {"eventIds": ["extra-release"]},
+            }
+        )
+
+        with self.assertRaisesRegex(RuntimeError, "unexpected claimRelease evidence"):
+            runner._audit_report((run,), report)
+
     def test_none_coordination_evidence_needs_no_claim_journal(self) -> None:
         """Provider-none handoffs validate without claim events or a claim registry."""
         with tempfile.TemporaryDirectory() as directory:
@@ -86,47 +120,204 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             self.assertFalse((candidate / ".git" / "agent-claim-events").exists())
             self.assertFalse((candidate / ".git" / "agent-claims.json").exists())
 
-    def test_agent_claim_companion_requires_configured_behavior(self) -> None:
-        """The enabled coordination variant retains its skill, gate, and evidence."""
-        source_root = _SUITE_ROOT / "fixtures" / "dependency-routing"
-        contract = runner._load_yaml(source_root / "fixture-contract.yaml")
-        project = runner._load_yaml(source_root / "PROJECT.yaml")
-        scenario = runner._load_yaml(_SUITE_ROOT / "scenarios.yaml")["scenarios"][0]
-        scenario["fixtureContract"] = "fixture-contract.yaml"
-        contract["resourceCoordination"]["selected"] = "agent-claim"
-        contract["handoffReceipt"]["requiredFields"] = contract[
-            "resourceCoordination"
-        ]["cases"]["agent-claim"]["requiredHandoffReceiptFields"]
-        project["resource_coordination"]["selected"] = "agent-claim"
-        scenario["targetSkills"].append("agent-claim")
-        scenario["deterministicChecks"].append("claim-lifecycle")
-        scenario["requiredHandoffReceiptFields"].append("claimRelease")
+    def test_none_coordination_rejects_registry_journal_and_claim_invocation(self) -> None:
+        """Provider-none rejects every retained form of claim activity."""
+        for case in ("empty-registry", "release-journal", "claim-invocation"):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
+                run, report, sessions, fixture_root = self._evidence_fixture(
+                    Path(directory),
+                    claim_release=False,
+                )
+                candidate = fixture_root / "dev-orchestrator" / "candidate"
+                if case == "empty-registry":
+                    (candidate / ".git" / "agent-claims.json").write_text(
+                        json.dumps({"claims": []}) + "\n",
+                        encoding="utf-8",
+                    )
+                    diagnostic = "unexpected agent-claims registry"
+                elif case == "release-journal":
+                    journal = (
+                        candidate
+                        / ".git"
+                        / "agent-claim-events"
+                        / "hot"
+                        / "2026-07-19.jsonl"
+                    )
+                    journal.parent.mkdir(parents=True)
+                    journal.write_text(
+                        json.dumps(
+                            {
+                                "action": "release",
+                                "outcome": "RELEASED",
+                                "event_id": "unexpected-release",
+                            }
+                        )
+                        + "\n",
+                        encoding="utf-8",
+                    )
+                    diagnostic = "unexpected agent-claim journal"
+                else:
+                    rollout = Path(directory) / "rollout-target.jsonl"
+                    rollout.write_text(
+                        json.dumps(
+                            {
+                                "timestamp": "2026-07-19T00:00:00Z",
+                                "type": "response_item",
+                                "payload": {
+                                    "type": "custom_tool_call",
+                                    "name": "exec",
+                                    "input": (
+                                        "python3 /bundle/agent-claim-command/scripts/claim.py "
+                                        "--repo . status"
+                                    ),
+                                },
+                            }
+                        )
+                        + "\n",
+                        encoding="utf-8",
+                    )
+                    sessions = tuple(
+                        (
+                            runner.dataclasses.replace(session, rollout_path=rollout)
+                            if session.session_id == "target"
+                            else session
+                        )
+                        for session in sessions
+                    )
+                    diagnostic = "unexpected agent-claim invocation"
 
+                with self.assertRaisesRegex(RuntimeError, diagnostic):
+                    runner._audit_handoff_evidence(
+                        (run,),
+                        report,
+                        sessions,
+                        fixture_root,
+                    )
+
+    def test_agent_claim_companion_executes_and_audits_complete_lifecycle(self) -> None:
+        """The selected provider proves configured acquire, commit, release, and cleanup."""
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / "fixture-contract.yaml").write_text(
-                runner.yaml.safe_dump(contract, sort_keys=False),
-                encoding="utf-8",
-            )
-            (root / "PROJECT.yaml").write_text(
-                runner.yaml.safe_dump(project, sort_keys=False),
-                encoding="utf-8",
-            )
-            suite = runner._Suite(
-                "dev-orchestrator",
-                1,
-                root,
-                {"target": {"allowedAgentDependencies": ["dev-coder"]}},
-                (scenario,),
+            run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
+            prompt = runner._coordinator_prompt(
+                (run,),
+                Path(directory) / "checkpoints",
+                fixture_root,
+                "test-run",
             )
 
-            runner._validate_fixture_contract(suite, scenario)
-            scenario["requiredHandoffReceiptFields"].remove("claimRelease")
-            with self.assertRaisesRegex(
-                ValueError,
-                "fixture handoffReceipt.requiredFields disagrees with scenario",
-            ):
-                runner._validate_fixture_contract(suite, scenario)
+            runner._validate_fixture_contract(run.suite, run.suite.scenarios[0])
+            runner._audit_report((run,), report)
+            runner._audit_handoff_evidence((run,), report, sessions, fixture_root)
+            self.assertIn(
+                '"resourceCoordinationByScenario": {"dependency-routing": "agent-claim"}',
+                prompt,
+            )
+
+            candidate = fixture_root / "dev-orchestrator" / "candidate"
+            registry = json.loads(
+                (candidate / ".git" / "agent-claims.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual([], registry["claims"])
+
+    def test_agent_claim_companion_rejects_lifecycle_breaks(self) -> None:
+        """The selected provider rejects missing, late, overlapping, or dirty claims."""
+        cases = {
+            "missing-acquire": "has no matching acquisition",
+            "acquire-after-release": "acquisition does not precede release",
+            "acquire-after-mutation": "acquisition does not precede mutation",
+            "overlapping-scope": "scope disagrees with configured source scope",
+            "wrong-integration-resource": "integration resource disagrees with configuration",
+            "active-registry": "retains active claims",
+        }
+        for case, diagnostic in cases.items():
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
+                run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
+                candidate = fixture_root / "dev-orchestrator" / "candidate"
+                journal = (
+                    candidate
+                    / ".git"
+                    / "agent-claim-events"
+                    / "hot"
+                    / "2026-07-19.jsonl"
+                )
+                events = [
+                    json.loads(line)
+                    for line in journal.read_text(encoding="utf-8").splitlines()
+                ]
+                if case == "missing-acquire":
+                    events[:] = [
+                        event
+                        for event in events
+                        if not (
+                            event["action"] == "acquire"
+                            and event["claim_id"] == "source-claim"
+                        )
+                    ]
+                elif case == "acquire-after-release":
+                    source_acquire = next(
+                        event
+                        for event in events
+                        if event["action"] == "acquire"
+                        and event["claim_id"] == "source-claim"
+                    )
+                    events.remove(source_acquire)
+                    release_index = next(
+                        index
+                        for index, event in enumerate(events)
+                        if event["action"] == "release"
+                        and event["claim_id"] == "source-claim"
+                    )
+                    events.insert(release_index + 1, source_acquire)
+                elif case == "acquire-after-mutation":
+                    source_acquire = next(
+                        event
+                        for event in events
+                        if event["action"] == "acquire"
+                        and event["claim_id"] == "source-claim"
+                    )
+                    source_release = next(
+                        event
+                        for event in events
+                        if event["action"] == "release"
+                        and event["claim_id"] == "source-claim"
+                    )
+                    source_acquire["baseline_commit"] = source_release["resulting_commit"]
+                elif case == "overlapping-scope":
+                    source_acquire = next(
+                        event
+                        for event in events
+                        if event["action"] == "acquire"
+                        and event["claim_id"] == "source-claim"
+                    )
+                    source_acquire["scopes"]["files"] = ["docs/operator-runbook.md"]
+                elif case == "wrong-integration-resource":
+                    integration_acquire = next(
+                        event
+                        for event in events
+                        if event["action"] == "acquire"
+                        and event["claim_id"] == "integration-claim"
+                    )
+                    integration_acquire["scopes"]["resources"] = [
+                        "merge:integration:wrong"
+                    ]
+                else:
+                    (candidate / ".git" / "agent-claims.json").write_text(
+                        json.dumps({"claims": [{"claim_id": "retained"}]}) + "\n",
+                        encoding="utf-8",
+                    )
+                if case != "active-registry":
+                    journal.write_text(
+                        "".join(json.dumps(event) + "\n" for event in events),
+                        encoding="utf-8",
+                    )
+
+                with self.assertRaisesRegex(RuntimeError, diagnostic):
+                    runner._audit_handoff_evidence(
+                        (run,),
+                        report,
+                        sessions,
+                        fixture_root,
+                    )
 
     def test_committed_fixture_contract_is_complete(self) -> None:
         """The dependency-routing scenario exposes every required structured input."""
@@ -404,14 +595,38 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         run, report = cls._complete_dependency_routing_report()
         if claim_release:
             scenario = dict(run.suite.scenarios[0])
+            scenario["targetSkills"] = [*scenario["targetSkills"], "agent-claim"]
+            scenario["deterministicChecks"] = [
+                *scenario["deterministicChecks"],
+                "claim-lifecycle",
+            ]
             scenario["requiredHandoffReceiptFields"] = [
                 *scenario["requiredHandoffReceiptFields"],
                 "claimRelease",
             ]
+            source_root = _SUITE_ROOT / "fixtures" / "dependency-routing"
+            contract = runner._load_yaml(source_root / "fixture-contract.yaml")
+            contract["resourceCoordination"]["selected"] = "agent-claim"
+            contract["handoffReceipt"]["requiredFields"] = contract[
+                "resourceCoordination"
+            ]["cases"]["agent-claim"]["requiredHandoffReceiptFields"]
+            project = runner._load_yaml(source_root / "PROJECT.yaml")
+            project["resource_coordination"]["selected"] = "agent-claim"
+            suite_root = temporary_root / "suite-source"
+            contract_root = suite_root / "fixtures" / "dependency-routing"
+            contract_root.mkdir(parents=True)
+            (contract_root / "fixture-contract.yaml").write_text(
+                runner.yaml.safe_dump(contract, sort_keys=False),
+                encoding="utf-8",
+            )
+            (contract_root / "PROJECT.yaml").write_text(
+                runner.yaml.safe_dump(project, sort_keys=False),
+                encoding="utf-8",
+            )
             suite = runner._Suite(
                 run.suite.suite_id,
                 run.suite.priority,
-                run.suite.path,
+                suite_root,
                 run.suite.manifest,
                 (scenario,),
             )
@@ -422,16 +637,52 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         subprocess.run(["git", "init", "--quiet"], cwd=candidate, check=True)
         subprocess.run(["git", "config", "user.name", "Fixture"], cwd=candidate, check=True)
         subprocess.run(["git", "config", "user.email", "fixture@example.invalid"], cwd=candidate, check=True)
-        (candidate / "evidence.txt").write_text("synthetic\n", encoding="utf-8")
-        subprocess.run(["git", "add", "evidence.txt"], cwd=candidate, check=True)
-        subprocess.run(["git", "commit", "--quiet", "-m", "fixture evidence"], cwd=candidate, check=True)
-        sha = subprocess.run(
+        (candidate / "baseline.txt").write_text("baseline\n", encoding="utf-8")
+        subprocess.run(["git", "add", "baseline.txt"], cwd=candidate, check=True)
+        subprocess.run(["git", "commit", "--quiet", "-m", "fixture baseline"], cwd=candidate, check=True)
+        previous_sha = subprocess.run(
             ["git", "rev-parse", "HEAD"],
             cwd=candidate,
             check=True,
             text=True,
             capture_output=True,
         ).stdout.strip()
+        lane_mutations = {
+            "source": {
+                "src/dependency_status.py": "STATUS = 'healthy'\n",
+                "tests/test_dependency_status.py": "def test_status():\n    assert True\n",
+            },
+            "documentation": {
+                "docs/operator-runbook.md": "# Operator runbook\n",
+            },
+            "integration": {"integration.txt": "integrated\n"},
+            "closeout": {"closeout.txt": "ready\n"},
+        }
+        commit_evidence = {}
+        for lane, mutations in lane_mutations.items():
+            baseline_sha = previous_sha
+            for relative, content in mutations.items():
+                destination = candidate / relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                destination.write_text(content, encoding="utf-8")
+            subprocess.run(
+                ["git", "add", "--", *mutations],
+                cwd=candidate,
+                check=True,
+            )
+            subprocess.run(
+                ["git", "commit", "--quiet", "-m", f"fixture {lane}"],
+                cwd=candidate,
+                check=True,
+            )
+            previous_sha = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=candidate,
+                check=True,
+                text=True,
+                capture_output=True,
+            ).stdout.strip()
+            commit_evidence[lane] = (baseline_sha, previous_sha)
         roles = (
             ("coder", "dev_coder"),
             ("code-review-1", "dev_code_reviewer"),
@@ -472,7 +723,26 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         }
         producer_session_ids = {role: session_id for session_id, role in roles}
         events = []
+        scopes = {
+            "source": {
+                "files": ["src/dependency_status.py", "tests/test_dependency_status.py"],
+                "resources": [],
+            },
+            "documentation": {
+                "files": ["docs/operator-runbook.md"],
+                "resources": [],
+            },
+            "integration": {
+                "files": ["integration.txt"],
+                "resources": ["merge:integration:fixture-main"],
+            },
+            "closeout": {
+                "files": ["closeout.txt"],
+                "resources": [],
+            },
+        }
         for lane, (role, review_ids, verification_ids) in evidence.items():
+            baseline_sha, sha = commit_evidence[lane]
             event_id = f"release-{lane}"
             receipt = {
                 "role": {"invocation": role, "sessionIds": [producer_session_ids[role]]},
@@ -482,14 +752,39 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             }
             if claim_release:
                 receipt["claimRelease"] = {"eventIds": [event_id]}
-                events.append(
-                    {
-                        "action": "release",
-                        "outcome": "RELEASED",
-                        "event_id": event_id,
-                        "agent": role,
-                        "resulting_commit": sha,
-                    }
+                claim_id = f"{lane}-claim"
+                event_scopes = {
+                    "files": scopes[lane]["files"],
+                    "trees": [],
+                    "project_files": False,
+                    "backlog": False,
+                    "all_files": False,
+                    "file_domain": "project_files",
+                    "resources": scopes[lane]["resources"],
+                }
+                events.extend(
+                    (
+                        {
+                            "action": "acquire",
+                            "outcome": "PRIMARY",
+                            "event_id": f"acquire-{lane}",
+                            "claim_id": claim_id,
+                            "agent": role,
+                            "baseline_commit": baseline_sha,
+                            "resulting_commit": None,
+                            "scopes": event_scopes,
+                        },
+                        {
+                            "action": "release",
+                            "outcome": "RELEASED",
+                            "event_id": event_id,
+                            "claim_id": claim_id,
+                            "agent": role,
+                            "baseline_commit": baseline_sha,
+                            "resulting_commit": sha,
+                            "scopes": event_scopes,
+                        },
+                    )
                 )
             receipt_by_lane[lane].update(receipt)
         if claim_release:
@@ -497,6 +792,10 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             event_root.mkdir(parents=True)
             (event_root / "2026-07-19.jsonl").write_text(
                 "".join(json.dumps(event) + "\n" for event in events),
+                encoding="utf-8",
+            )
+            (candidate / ".git" / "agent-claims.json").write_text(
+                json.dumps({"claims": []}) + "\n",
                 encoding="utf-8",
             )
         return run, report, sessions, fixture_root
