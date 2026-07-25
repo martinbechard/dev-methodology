@@ -1,16 +1,30 @@
 # Reconcile Dev Coder Native Skill Binding With Suite Manifest
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
-Owner: Unassigned
+Owner: Dev Orchestrator
 
 Provider: file
 
 Provider Reference: backlog/defect-backlog/reconcile-dev-coder-native-skill-binding-with-suite-manifest.md
 
 Completion: direct-main
+
+## Launch Reservation
+
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Reservation: One parent-owned launch reservation.
+- Normalized Objective: Reconcile the Dev Coder suite required-skill contract with its native skill-binding evaluation.
+- Dispatched At: 2026-07-25T11:26:23Z
+- Intended Root Role: Dev Orchestrator
+- Discovered Ordinary Source Scope: evals/agent-tests/dev-coder/suite.yaml; evals/agent-tests/dev-coder/skills/dev-coder-suite-contract/SKILL.md; evals/agent-tests/dev-coder/test_fixtures.py. No governed or generated mutation is indicated.
+- Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
+
+## Reservation Coordination Evidence
+
+- Backlog Claim: reserve-dev-coder-suite-binding-20260725 acquired on primary main at 2026-07-25T11:26:23.901358Z; acquisition journal event d2728b4c-d898-4d25-aaf4-8a7fc1f9ede3.
 
 ## Authority Reconciliation
 
