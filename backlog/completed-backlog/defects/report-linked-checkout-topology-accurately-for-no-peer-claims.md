@@ -1,6 +1,6 @@
 # Report Linked Checkout Topology Accurately For No-Peer Claims
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Dev Orchestrator
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/report-linked-checkout-topology-accurately-for-no-peer-claims.md
+Provider Reference: backlog/completed-backlog/defects/report-linked-checkout-topology-accurately-for-no-peer-claims.md
 
 Completion: direct-main
 
@@ -80,6 +80,16 @@ None.
 - Exercise real-Git scenarios that confirm no primary mutation.
 - Run the full applicable shared-infrastructure regression and git diff --check.
 - Obtain fresh independent review of the implementation and verification evidence.
+
+## Completion Evidence
+
+- Accepted delivery source commit: cb771191e169a8219d047eb7c172a7ef351c4098 on branch codex/report-linked-checkout-topology-019f977f; its delivery worktree was clean.
+- Direct-main integration: 74297e06, replayed from the accepted source with cherry-pick -x. The exact three owned paths had empty source-to-integration content diff, and 74297e06 is reachable from main.
+- Independent code review passed with no findings. Independent verification passed: 82/82 claim-engine tests, 22/22 command-transport tests, seven named topology tests, detached no-peer and active-peer real-Git flows, five fast Tier-3 gates, 18/18 project-wiki checks, and git diff --check. The full scripts suite reported 699 tests with exactly six confirmed unrelated baseline failures and no new signature.
+- Post-integration verification passed: python3 -m unittest scripts.test_agent_claim scripts.test_agent_claim_transport (104/104) and git diff --check.
+- The delivery integration claim 019f977f-integrate-topology-main was acquired as event 17aa1292-cb6f-4207-a414-aaa5f99775f8 and released as event 746a2176-d23e-451d-8228-d8b5bc1ebfba; its registry was empty at release.
+- Completion reconciliation on 2026-07-25 observed main at a2a60a45cf10e7265a26b39e05deb5c1931a57b3, clean, with 74297e06 and the Running transition commit bb7fd9a83a0c99845eb6de74185978720850a745 as ancestors. Local main is the authoritative delivery target; remote publication was not required.
+- Provider closure claim: 019f977f-complete-topology-backlog acquired from primary main as SHARED_CHECKOUT_ACQUIRED, journal event 0e55f19d-70a8-41eb-8a52-d446e2245752.
 
 ## Open Questions
 
