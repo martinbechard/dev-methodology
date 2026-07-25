@@ -1,12 +1,16 @@
 # Explain User Action Required Requests With Examples
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
+Owner: Unowned
+
+Claim: None
+
 Provider: file
 
-Provider Reference: backlog/feature-backlog/explain-user-action-required-with-examples.md
+Provider Reference: backlog/user-action-required/explain-user-action-required-with-examples.md
 
 Completion: direct-main
 
@@ -17,7 +21,7 @@ Completion: direct-main
 - Normalized Objective: Explain User Action Required requests with examples.
 - Dispatched At: 2026-07-25T02:36:47Z
 - Intended Root Role: Dev Orchestrator
-- Runtime Thread And Task Id: Not created; the root Dev Orchestrator must accept ownership before a canonical identity is recorded.
+- Runtime Thread And Task Id at reservation: Not created; the root Dev Orchestrator must accept ownership before a canonical identity is recorded.
 
 ## Active Ownership
 
@@ -26,8 +30,52 @@ Completion: direct-main
 - Checkout: /Users/martinbechard/dev/dev-methodology
 - Branch: main
 - Checkout State: Attached to main; not detached.
-- Current Phase: Identify the narrow authoritative lifecycle guidance and evaluator fixtures before any governed definition mutation.
+- Current Phase: Await exact user approval for the governed canonical definition scope.
 - Transition Evidence: Parent Coordinator 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a provided the direct baton after the prior backlog transaction released. The file provider was reconciled as Starting at main commit 49c78f81a91c3eccab21e50a7413d707b7fe3938, then this serialized backlog claim was acquired as 019f9722-user-action-required-starting-running (claim event 5fa1c816-7d42-4fd0-9724-a13f5bbe6587).
+
+## User Action Required
+
+### Question for the User
+
+Do you approve changes to both governed canonical definitions agents/roles/dev-activities/dev-orchestrator.role.yaml and skills/manage-file-work-items/SKILL.md for this item, with regeneration limited to their supported generated mirrors?
+
+### Why User Input Is Required
+
+Only the user may authorize a governed definition mutation with exact canonical-path scope. Repository access and the implementation assignment do not supply exact canonical-scope approval.
+
+### Allowed Dependent Mirror Boundary
+
+If the user approves the canonical definition scope, regeneration is limited to these supported dependent mirrors and no others:
+
+- design/generated/role-definitions.js
+- design/generated/skill-definitions.js
+- generated/adapters/agent-generation-manifest.json
+- generated/adapters/claude/agents/dev-orchestrator.md
+- generated/adapters/codex/agents/dev-orchestrator.toml
+- generated/adapters/gemini/agents/dev-orchestrator.md
+- generated/adapters/junie/agents/dev-orchestrator.md
+
+### Illustrative Options And Consequences
+
+- Approve both: Implement the complete provider-reconciliation plus user-facing protocol and regenerate only the supported mirrors listed above.
+- Approve a narrower exact subset: Re-scope and reassess acceptance, with no mutation outside the approved paths.
+- Decline or defer: No governed definitions or mirrors change; the item remains deferred or ends without satisfying the requested guidance.
+
+### Unattended Work Boundary
+
+Until approval is recorded, prohibit all artifact mutation, generation, branch creation, and delivery for this item. Only read-only reconciliation and direct lifecycle communication may continue safely.
+
+### Resolution
+
+Pending the user's answer to the recorded question.
+
+### Same-Task Resumption
+
+Record the answer against canonical task/thread 019f9722-61cb-7190-8a6d-21c5ab319339. Resume through User Action Required to Ready to Starting to Running without creating a duplicate task or repeating this question.
+
+### User Action Required Transition Evidence
+
+The Coordinator required this distinct Running to User Action Required provider transition before asking the user. The provider was reconciled as Running at main commit a63fa0618a5573b0a50ece9293d182d3f09277b7, then backlog claim 019f9722-user-action-required-gate was acquired (claim event 21f1fdad-1cc9-4c29-994f-5e2c8800eb4b) to serialize this move and update.
 
 ## Summary
 
