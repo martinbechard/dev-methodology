@@ -1,4 +1,4 @@
-# Prevent Unsolicited Duplicate Lifecycle Claims After Steward Completion
+# Prevent Overlapping Steward Follow-Up Cleanup Races
 
 Status: User Action Required
 
@@ -45,7 +45,7 @@ Completion: direct-main
 
 ## Summary
 
-Prevent a completed Dev Backlog Steward transaction from executing an unsolicited duplicate lifecycle claim after its intended claim was released.
+Prevent overlapping or queued Dev Backlog Steward follow-ups from exposing misleading terminal state or allowing external cleanup while a child turn is still active.
 
 ## Context
 
@@ -111,3 +111,5 @@ When the user or external owner supplies the runtime source and capability, or c
 ## Notes
 
 This external handoff clears the stale Running ownership. No active implementation claim exists to release. Existing launch, reservation, task, thread, and lifecycle evidence above remains canonical.
+
+The historical provider filename is retained as the canonical identity but is not the corrected causal description.
