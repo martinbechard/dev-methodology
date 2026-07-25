@@ -1,8 +1,20 @@
 # Use Exact Work-Item Claims For Lifecycle Updates
 
-Status: Ready
+Status: Starting
 
 Type: Feature
+
+Owner: Dev Orchestrator
+
+## Launch Reservation
+
+- Parent Coordinator Task: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Canonical Task/Thread: 019f9783-31a0-7e91-9704-08cde7886b3a
+- Reservation: One parent-owned launch reservation under the current backlog-wide claim contract.
+- Intended Root Role: Dev Orchestrator
+- Isolated Checkout: /Users/martinbechard/.codex/worktrees/8b42/dev-methodology
+- Phase: Awaiting root lifecycle acceptance.
+- Dispatched At: 2026-07-25T04:24:30Z
 
 ## Summary
 
