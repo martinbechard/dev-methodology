@@ -1,16 +1,31 @@
 # Reconcile Project Bootstrapper native skill binding with the suite manifest
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
 Provider Reference: backlog/defect-backlog/reconcile-project-bootstrapper-native-skill-binding-with-suite-manifest.md
 
 Completion: direct-main
+
+## Launch Reservation
+
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Reservation: One parent-owned launch reservation.
+- Normalized Objective: Reconcile Project Bootstrapper native skill binding with suite manifest.
+- Dispatched At: 2026-07-25T11:47:34Z
+- Intended Root Role: Dev Orchestrator
+- Discovered Ordinary Scope: evals/agent-tests/project-bootstrapper/suite.yaml, its suite-local contract SKILL.md, and focused tests and fixtures.
+- Authority Boundary: Any governed or generated-definition mutation requires later exact approval and is not authorized by this reservation.
+- Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
+
+## Reservation Coordination Evidence
+
+- Backlog Claim: reserve-project-bootstrapper-suite-binding-20260725 acquired on primary main at 2026-07-25T11:47:34.139556Z; acquisition journal event 9490e5e8-4ac7-45e1-99eb-708257180a2c.
 
 ## Summary
 
