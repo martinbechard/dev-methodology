@@ -51,6 +51,30 @@ Owner: Dev Orchestrator
 3. The Steward evaluation creation scenario requires release-before-handoff but has empty claimReleases.
 4. The Steward interrupted-recovery scenario omits stopped-owner proof and exact source-plus-destination recovery acquisition before archive.
 
+## Correction-Required Gate Outcomes
+
+- Candidate: f412674259b246bb0e3bb11edd569982e60c4c89; preserved, unintegrated, and unpublished.
+- Command Verifier: ACCEPT.
+- Functional Review: FAIL.
+- Methodology Review: FAIL.
+- Correction Scope: Remains within the existing original-eight plus supplemental-two approvals.
+- Canonical Task/Thread: 019f9783-31a0-7e91-9704-08cde7886b3a
+- Recorded At: 2026-07-25T16:43:39Z
+- Exact-Item Claim: 019f9783-correction-required-milestone-retry-steward
+- Claim Acquisition Event: aa89425c-4072-45a8-95be-37ca170204dc
+
+### Functional Review Findings
+
+1. Linked resource-only-to-backlog topology escape.
+2. Merged-scope sharing defect.
+3. Stale release and ancestry contract.
+4. CLI help defect.
+
+### Methodology Review Findings
+
+1. Steward role nonterminal move contradiction.
+2. List-format maintainability finding.
+
 ## Review-Recovery Milestone
 
 - Candidate: f412674259b246bb0e3bb11edd569982e60c4c89; clean and preserved.
