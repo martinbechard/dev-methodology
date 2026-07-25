@@ -1,10 +1,10 @@
 # Explain User Action Required Requests With Examples
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Claim: None
 
@@ -28,11 +28,11 @@ Completion: direct-main
 
 - Canonical Dev Orchestrator Task/Thread: 019f9722-61cb-7190-8a6d-21c5ab319339
 - Canonical Owner: Dev Orchestrator
-- Checkout: /Users/martinbechard/dev/dev-methodology
-- Branch: main
-- Checkout State: Attached to main; not detached.
-- Current Phase: Approved User Action Required response recorded; Ready for the parent-owned resumption reservation.
-- Transition Evidence: Parent Coordinator 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a provided the direct baton after the prior backlog transaction released. The file provider was reconciled as Starting at main commit 49c78f81a91c3eccab21e50a7413d707b7fe3938, then this serialized backlog claim was acquired as 019f9722-user-action-required-starting-running (claim event 5fa1c816-7d42-4fd0-9724-a13f5bbe6587).
+- Checkout: /Users/martinbechard/.codex/worktrees/a8df/dev-methodology
+- Branch: HEAD
+- Checkout State: Detached HEAD at 271c0fe1a12d9c720fca3c041eb79a6f5ec422bb.
+- Current Phase: Approved governed implementation.
+- Transition Evidence: Parent Coordinator 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a provided the direct baton after the prior backlog transaction released. The file provider was reconciled as Starting at main commit 49c78f81a91c3eccab21e50a7413d707b7fe3938, then this serialized backlog claim was acquired as 019f9722-user-action-required-starting-running (claim event 5fa1c816-7d42-4fd0-9724-a13f5bbe6587). After the same-task approval was recorded, the provider was reconciled as Starting at main commit ef9efa60914050236ba2a409abe505eeea1c34d6 and claim 019f9722-approved-starting-running was acquired for this Starting to Running transition (claim event 0f5c6788-42bc-4f4d-bd24-25967053830d).
 
 ## Approval Resolution
 
