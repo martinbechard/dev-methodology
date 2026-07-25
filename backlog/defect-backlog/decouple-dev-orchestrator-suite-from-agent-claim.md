@@ -1,6 +1,6 @@
 # Decouple Dev Orchestrator Suite From Agent Claim When Resource Coordination Is None
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -18,13 +18,24 @@ Type: Defect
 - Work-Item Thread: 019f96ce-b1a0-7633-97ab-336ba7d188e4
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
 - Root Agent Task Id: 019f96ce-b1a0-7633-97ab-336ba7d188e4
-- Owner: Dev Orchestrator
+- Owner: Unowned
 - Branch: Detached at reservation commit 97e8e20761619518d37ca5a17310836b4f4bf3b6; implementation claim and branch are pending.
 - Worktree: /Users/martinbechard/.codex/worktrees/e5ea/dev-methodology
-- Phase: INVESTIGATING
+- Phase: BLOCKED
 - Started At: 2026-07-25T01:11:22Z
 - Coordination: Enabled; agent-claim is selected. The claim registry was empty when root acceptance began; this short lifecycle backlog transaction is recorded separately from delivery ownership.
 - Claim Evidence: backlog-starting-running-019f96ce-b1a0-7633-97ab-336ba7d188e4; agent-claim acquire event 42904e24-7b4e-4ba5-ae67-71c793ab25ec. No implementation claim is recorded.
+- Claim: None after release of the short blocked-handoff backlog transaction.
+
+## Blocked Handoff
+
+- Blocker: The bounded two-attempt correction loop is exhausted for the same resource-coordination acceptance criterion.
+- Final Review: The prompt reviewer approved real adapter execution. The code reviewer returned FINDINGS: (1) a release journal event can drift in claim id, baseline, scope, or resource from the retained adapter result, while audit accepts the wrong claim; (2) the provider-none helper commits agent-claim PROJECT configuration, allowing a scenario-none/candidate-agent-claim mismatch to pass.
+- Candidate Evidence: cb5c7725 and fb7ee1f5 are unaccepted candidate commits on main. Correction commit 2be3274a869355a9078d81b918700909006db652 is on branch codex/decouple-dev-orchestrator-eval-correction2-019f96ce in the clean worktree /Users/martinbechard/dev/dev-methodology/.worktrees/decouple-dev-orchestrator-eval-correction2-019f96ce.
+- Released Delivery Ownership: The implementation claim was released under agent-claim event c6756ff6-fe90-4a66-8b51-9e227c38048e.
+- Delivery State: No Commit READY disposition, integration, or terminal closure exists.
+- Unblock Condition: A fresh authorized dispatch after the parent reconciles this exhausted-loop evidence, with a new bounded correction owner to bind release-journal identity and preserve provider-none fixture configuration; then obtain fresh code and prompt review, verification, direct-main delivery, and terminal closure.
+- Permitted Resumption: Blocked to Ready through the parent Dev Backlog Coordinator, followed by a new Starting to Running acceptance transaction. This record grants no implementation ownership.
 
 ## Summary
 
