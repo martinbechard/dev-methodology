@@ -1,10 +1,26 @@
 # Use Exact Work-Item Claims For Lifecycle Updates
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
-Owner: Unowned
+Owner: Dev Orchestrator
+
+## Supplemental Resumption Reservation
+
+- Parent Coordinator Task: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Canonical Task/Thread: 019f9783-31a0-7e91-9704-08cde7886b3a
+- Reservation: One parent-owned same-task resumption launch reservation; no replacement task is created.
+- Normalized Objective: Use exact work-item claims for lifecycle updates.
+- Dispatched At: 2026-07-25T16:04:09Z
+- Intended Root Role: Dev Orchestrator
+- Canonical Worktree: /Users/martinbechard/.codex/worktrees/8b42/dev-methodology
+- Preserved Approval: Original eight governed paths plus only skills/agent-claim-command/SKILL.md and skills/agent-claim-mcp/SKILL.md; no other governed scope.
+- Phase: Awaiting root lifecycle acceptance.
+
+## Supplemental Resumption Coordination Evidence
+
+- Backlog Claim: reserve-exact-work-item-claims-supplemental-019f9783 acquired on primary main at 2026-07-25T16:04:09.645990Z; acquisition journal event 096f6363-1325-41d8-a432-ebef900a1bb3.
 
 ## Resumption Launch Reservation
 
