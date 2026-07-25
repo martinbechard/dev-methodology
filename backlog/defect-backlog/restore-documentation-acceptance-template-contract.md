@@ -1,6 +1,6 @@
 # Restore Documentation Acceptance Template Contract
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -9,11 +9,12 @@ Owner: Unowned
 ## Launch Reservation
 
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
-- Reservation: One launch reserved by the parent Dev Backlog Coordinator.
+- Reservation: One same-task resumption launch reserved by the parent Dev Backlog Coordinator.
 - Normalized Objective: Restore or evidence-correct the Documentation Acceptance template contract.
-- Dispatched At: 2026-07-25T01:04:27Z
+- Dispatched At: 2026-07-25T03:18:55Z
 - Intended Root Role: Dev Orchestrator
-- Runtime Thread And Task Id: Accepted as canonical work-item Thread 019f96ce-fb8b-7e51-9e26-c8b7617bf7b5; canonical root task recorded below.
+- Runtime Thread And Task Id: Existing canonical work-item Thread 019f96ce-fb8b-7e51-9e26-c8b7617bf7b5 and root task /root are retained; no replacement task was created.
+- Approval Provenance: Shared approval commit 154a4c491d82ac0f5cd15ab19776a003c87c3679 recorded the exact `Amend it to skip over any note.` answer for the approved five-path scope before this same-task resumption reservation.
 
 ## Delivery Ownership
 
