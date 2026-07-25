@@ -1,6 +1,6 @@
 # Report Linked Checkout Topology Accurately For No-Peer Claims
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -21,6 +21,20 @@ Completion: direct-main
 - Isolated Checkout: /Users/martinbechard/.codex/worktrees/c3a7/dev-methodology
 - Phase: Awaiting root lifecycle acceptance.
 - Dispatched At: 2026-07-25T04:19:36Z
+
+## Execution Ownership
+
+- Canonical Thread/Task: 019f977f-8bf5-77a1-b3c8-b55a113736d7
+- Root Role and Owner: Dev Orchestrator
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/c3a7/dev-methodology
+- Delivery Branch: Detached at 02bbcd34342e16a5b0d0dbec68091ad6dfe8e899.
+- Phase: Diagnostic/implementation coordination.
+- Started At: 2026-07-25T04:22:57Z
+
+## Coordination Evidence
+
+- Parent reservation: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a; parent claim acquisition 5d36de13-4b2e-40e6-b00e-48053bd4b5f8; parent release 077e9d59-5a29-42a3-acaf-6f7fef1cdffd; Starting commit 5e2eafcc6c78d61edd2b252c56abef5c4719adb0.
+- Running transition backlog claim: 019f977f-start-running-backlog acquired from primary main at 2026-07-25T04:22:57.288751Z; acquisition journal event a136d401-03e9-46b2-a282-fa20bc849570.
 
 ## Summary
 
