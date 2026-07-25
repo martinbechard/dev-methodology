@@ -123,37 +123,37 @@ This record captures the defect only. Any governed-definition changes discovered
 
 ## User Action Required
 
-The approved exact installer command was attempted under shared-install acquisition event 61157224-fb22-4be0-b761-c74bd7544bb0, but stopped before mutation because the installer reported: customized owned skills require discrepancy analysis. The shared-install resource claim was released with no change at event 8a5e5b45-0c32-4984-b970-30b078eb7705. No installed or repository file changed.
+The approved exact installer command exited 1 at its customization safety boundary before mutation. The shared-install claim was acquired at event 3fb1a956-d56f-410f-8e99-4877b4cfd45e and released no-change at event 82d30f3e-f58a-4402-9f0f-9c5a0be5b6f3. It changed no installed, repository, or provider bytes. Installed agent-claim remains stale.
 
-Fresh independent three-way review compared the old deployed generic baseline at source commit 8a269a6c, 20 customized installed files across nine skill directories, and the current canonical source. It found that canonical source supersedes every meaningful customized intent. The documented replacement would discard only redundant wording, typos, and overbroad clauses, and it fixes the installed functional-spec template regression that removed the Related Code and Related Tests headings. The review also found that the removed preference-level literals -- brainstorming dependency, universal HTML-mockup instruction, and one-module/code-unit heuristic -- have more precise portable canonical replacements. Subset deployment is unsupported by the approved installer without a separate staged scope and approval.
+Fresh independent discrepancy review compared the common manifest baseline commit 8a269a6c612a1e9b22f6ecf5d4877020cf974e7b, 20 changed installed files with no installed-added files, and current canonical source. The nine customized owned skill trees are create-architecture, create-functional-spec, create-high-level-design, create-module-design, development-methodology, review-architecture, review-functional-spec, review-high-level-design, and review-module-design. One canonical-only file-work-item template is also present.
 
-The delivery remains associated with canonical task/thread 019f976c-6691-7a83-9df4-e73fc0baae73, canonical branch and worktree, prior approval, root-cause history, and running delivery commit e2e3627401406b13f3e53b3ab93afcb0b7055cc5. The separate telemetry-label follow-up remains out of scope.
+The review found that useful proposition, ledger, diagram, and path-tree intent is already integrated canonically; installed-only directives are obsolete or overbroad; canonical source fixes missing Related Code and Related Tests sections; and no installed-only sensitive indicators were detected. It classified all nine customized trees safe to replace as one decision, while noting that 19 exact byte origins are not recoverable from Git.
+
+The delivery remains associated with canonical task/thread 019f976c-6691-7a83-9df4-e73fc0baae73, parent 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a, canonical branch codex/isolated-binding-019f976c at stable deployment source commit 570a0271870e96abcb5c0ddf01428fd749b238f3, and canonical worktree /Users/martinbechard/.codex/worktrees/0311/dev-methodology. The separate telemetry-label follow-up remains out of scope.
 
 ## Question for the User
 
-Do you approve rerunning the documented user-scope Codex deployment with the additional --replace-customized flag, accepting replacement of the 20 customized files after the three-way review found no meaningful semantic requirement would be lost?
+Do you approve rerunning the documented user-scope Codex deployment with the additional safety override --replace-customized, using python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace --replace-customized, followed by catalog refresh or new-session activation and installed-byte verification?
 
 ## Why User Input Is Required
 
-Prior approval covered only the exact installer command without destructive customized-owned replacement. The additional --replace-customized flag changes that authority boundary, so the user must decide whether the reviewed customized files may be replaced.
+Prior approval did not include this override. It will overwrite the nine explicitly listed customized bundle-owned skill trees, so the user must decide whether the reviewed replacement is authorized.
 
 ## Options and Tradeoffs
 
-- A. Approve --replace-customized (recommended). Canonical source supersedes the customized content and fixes the structural regression.
-- B. Identify exact clauses to preserve or merge. This requires separate canonical or staged-scope approval.
-- C. Defer or decline. Installed agent-claim remains stale and deployment remains incomplete.
+- Approve replacement (recommended by review). The nine customized trees are replaced as one reviewed decision.
+- Preserve or reconcile exact clauses first. Specify the desired clauses; deployment remains pending.
+- Defer or decline. Installed agent-claim stays stale.
 
 ## Resolution
 
-Approved on 2026-07-25 in canonical task 019f976c-6691-7a83-9df4-e73fc0baae73. Exact user answer: I approve. Provenance: direct answer to the recorded Question for the User.
+Earlier approval on 2026-07-25 in canonical task 019f976c-6691-7a83-9df4-e73fc0baae73 authorized only python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace, followed by catalog refresh or new-session activation and installed-byte verification. That command stopped at the customization safety boundary before mutation.
 
-Approved scope: only the documented user-scope Codex deployment `python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace`, followed by runtime catalog refresh or new-session activation and verification that installed agent-claim bytes match canonical source. No engine change or broader user-home mutation is authorized.
-
-Resulting disposition: the exact approved command was attempted, but its customized-owned replacement safeguard stopped it before mutation. This new question is unresolved; the item is User Action Required with Owner: Unowned, preserving the same canonical task, branch, worktree, and evidence.
+Resulting disposition: this replacement-override question is unresolved. The item is User Action Required with Owner: Unowned, preserving the same canonical task, branch, worktree, investigation, review, and prior-approval evidence.
 
 ## Unattended Work Boundary
 
-Do not run the installer, refresh the runtime catalog, mutate user-home paths, or make an engine change until the user answers the new question. After an answer, resume only through User Action Required -> Ready -> Starting -> Running lifecycle reconciliation.
+Do not run the override installer, refresh the runtime catalog, edit user-home files, or make an engine change until the user answers this question. After an answer, resume only through User Action Required -> Ready -> Starting -> Running lifecycle reconciliation.
 
 ## Follow-up Obligation
 
