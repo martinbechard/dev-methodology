@@ -1,6 +1,6 @@
 # Explain User Action Required Requests With Examples
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -17,11 +17,12 @@ Completion: direct-main
 ## Launch Reservation
 
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
-- Reservation: One launch reserved by the parent Dev Backlog Coordinator.
+- Reservation: One same-task resumption launch reserved by the parent Dev Backlog Coordinator.
 - Normalized Objective: Explain User Action Required requests with examples.
-- Dispatched At: 2026-07-25T02:36:47Z
+- Dispatched At: 2026-07-25T03:15:31Z
 - Intended Root Role: Dev Orchestrator
 - Runtime Thread And Task Id at reservation: Existing canonical work-item Thread 019f9722-61cb-7190-8a6d-21c5ab319339 is retained; no replacement task was created.
+- Approval Provenance: The same canonical task recorded the example-backed exact `ok approved` answer for agents/roles/dev-activities/dev-orchestrator.role.yaml and skills/manage-file-work-items/SKILL.md before this resumption reservation.
 
 ## Active Ownership
 
