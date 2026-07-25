@@ -1,8 +1,10 @@
 # Require Durable Defect Logging And Direct-Main Work-Item Creation
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
+
+Owner: Unowned
 
 ## Launch Reservation
 
@@ -13,18 +15,50 @@ Type: Feature
 - Intended Root Role: Dev Orchestrator
 - Runtime Thread And Task Id: Accepted as canonical work-item Thread 019f96cf-226c-7f62-9d66-7d31cead822e; canonical root task recorded below.
 
-## Execution Ownership
+## Prior Execution Ownership
 
 - Work-Item Thread: 019f96cf-226c-7f62-9d66-7d31cead822e
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
 - Root Agent Task Id: 019f96cf-226c-7f62-9d66-7d31cead822e
-- Owner: Dev Orchestrator
+- Owner: Unowned
 - Branch: Detached at 97e8e20761619518d37ca5a17310836b4f4bf3b6
 - Worktree: /Users/martinbechard/.codex/worktrees/fa2b/dev-methodology
 - Phase: Approval manifest ready; awaiting user approval.
 - Started At: 2026-07-25T01:34:57Z
-- Coordination: Enabled; agent-claim short backlog transaction completed before this provider mutation.
-- Claim Evidence: require-durable-defect-logging-running-019f96cf; agent-claim event b67710d6-d249-46e4-a44f-1ff6625f1b14; resource backlog:mutation:require-durable-defect-logging-and-direct-main-creation.
+- Prior Coordination Release: require-durable-defect-logging-running-019f96cf; acquire event b67710d6-d249-46e4-a44f-1ff6625f1b14; release event d25f25bb-d408-41b5-9396-edfe6b3197b2 after commit 126ee9befb575c4ebd1d4ddd00444616a8a48808.
+
+## User Action Required
+
+Question: Do you approve mutation of exactly skills/create-file-work-item/SKILL.md and agents/roles/dev-activities/dev-orchestrator.role.yaml to require durable duplicate-reconciled logging of every confirmed defect, prohibit downgrading confirmed defects to warnings, and define safe claim-free work-item creation only on clean primary main?
+
+Why Input Is Required: Repository definition authority requires exact scope-specific user approval; the Ready/Running item and general write authority are insufficient.
+
+### Governed Canonical Approval Scope
+
+- skills/create-file-work-item/SKILL.md
+- agents/roles/dev-activities/dev-orchestrator.role.yaml
+
+### Dependent Generated Mirrors (Not Approval Scope)
+
+- design/generated/skill-definitions.js
+- design/generated/role-definitions.js
+- generated/adapters/**, only where supported by the approved source categories
+
+### Non-Governed Companion Scope (Not Approval Scope)
+
+- skills/create-file-work-item/scripts/create.py
+- skills/agent-claim-command/scripts/claim.py
+- scripts/test_create_file_work_item.py
+- scripts/test_agent_claim.py
+- scripts/test_bundle_content.py
+- README.md
+- design/orchestrated-development-lifecycle.html
+- design/work-item-provider-and-completion-contracts.md
+- Applicable evaluation fixtures
+
+Unattended Work Boundary: Do not mutate any governed definition, approval record, generated mirror, or dependent artifact until the answer is recorded and lifecycle resumes through User Action Required -> Ready -> Starting -> Running in this same Thread.
+
+Resolution: Pending explicit user answer to the recorded question.
 
 ## Summary
 
