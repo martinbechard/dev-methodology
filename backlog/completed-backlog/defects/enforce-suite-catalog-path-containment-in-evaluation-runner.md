@@ -1,6 +1,6 @@
 # Enforce Suite-Catalog Path Containment In Evaluation Runner
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Dev Orchestrator
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/enforce-suite-catalog-path-containment-in-evaluation-runner.md
+Provider Reference: backlog/completed-backlog/defects/enforce-suite-catalog-path-containment-in-evaluation-runner.md
 
 Completion: direct-main
 
@@ -35,6 +35,19 @@ Completion: direct-main
 ## Coordination Evidence
 
 - Reservation Backlog Claim: reserve-runner-suite-catalog-containment-019f95a9 acquired on primary main at 2026-07-25T06:40:40.196731Z; acquisition journal event 92fdfab9-ec67-428c-bba2-5ed873f50900.
+
+## Completion Evidence
+
+- Completed At: 2026-07-25T07:05:32Z.
+- Canonical task: `019f9801-cef3-7e61-a8db-939dd6912763`; parent coordination thread: `019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a`.
+- Starting -> Running transition: `f88312697e0522adbb39d3b59d897fefc1b9b8e1`.
+- Accepted delivery source: `ab0c78fcadd9fef3786b7236c666aee7d79aff09`, following implementation commits `705bb916` and `ab0c78fc`. The implementation claims were normally released: initial final release `edd39482-3f72-4287-93ee-153f8c7395ee`; correction acquisition `dafbfb13-0682-4ce6-8e9c-0370213f1cfe` and release `516bc07b-dd18-49b7-afe2-df08eef6d93d`.
+- Fresh independent code review: GOOD. Fresh independent security review: GOOD after the endpoint-link correction. Independent verification: PASS with 11 focused containment/scenario tests plus 2 additional scenario-root tests, Codex/Junie selected-list and validate-only checks, compile, diff, and clean-worktree evidence.
+- Direct-main integration: `c7ed6ade3ea347245a8f7a3e1a09a16202bbfa1f`; the accepted source is graph-reachable. Integration claim `integrate-suite-catalog-containment-019f9801` acquired at event `3b1ed960-8eef-4812-921c-8ebc6cee4433` and released at event `2ff848fd-e7d2-48ce-8f10-1177ab33a227`.
+- Post-integration checks passed: six focused tests, compile, selected dev-code-reviewer Codex/Junie list, diff, reachability, and clean-main checks.
+- Scoped baseline and omission record: the full runner has the same 13 Playwright-unavailable failures as base; the full scripts suite has five role-mutation failures that map to active defect `decouple-dev-backlog-steward-contract-from-unconditional-claim-evidence.md`; the dev-coder native-skill mismatch is separately logged at `reconcile-dev-coder-native-skill-binding-with-suite-manifest.md` and is not absorbed here.
+- Scope protection: `enforce-agent-claim-lifecycle-evidence-in-runner-resource-scenarios.md` remains active, outside this item’s scope, and unchanged.
+- Provider closure claim `close-suite-catalog-containment-019f9801` acquired primary backlog ownership at event `3f5a3b9f-2630-4410-a54b-887be99bd5e7` before this archive transition.
 
 ## Summary
 
