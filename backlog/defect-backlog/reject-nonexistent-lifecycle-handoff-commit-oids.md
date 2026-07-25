@@ -21,7 +21,7 @@ Completion: direct-main
 - Dispatched At: 2026-07-25T12:16:47Z
 - Intended Root Role: Dev Orchestrator
 - Preserved Evidence: Candidate branch codex/reject-nonexistent-lifecycle-handoff-oids-019f978e, worktree /Users/martinbechard/.codex/worktrees/215b/dev-methodology, accepted candidate a12babfc3b919b5e5334821703c8549fe40aa82a, and the approved exact governed-definition scope remain binding.
-- Phase: Waiting for overlapping governed dependency delivery.
+- Phase: Correction attempt 1 for governed/executable release-chain finding.
 - Resumed At: 2026-07-25T12:18:08Z
 
 ## Resumption Coordination Evidence
@@ -52,7 +52,7 @@ Completion: direct-main
 - Reservation: One parent-owned launch reservation.
 - Intended Root Role: Dev Orchestrator
 - Isolated Checkout: /Users/martinbechard/.codex/worktrees/215b/dev-methodology
-- Phase: Waiting for overlapping governed dependency delivery.
+- Phase: Correction attempt 1 for governed/executable release-chain finding.
 - Dispatched At: 2026-07-25T04:36:08Z
 
 ## Execution Identity
@@ -87,6 +87,16 @@ Completion: direct-main
 - Finding: High — Git replace refs can substitute content under the reported SHA.
 - Related Defect: backlog/defect-backlog/disable-git-replace-refs-for-lifecycle-receipts.md, durably logged in commit 6842a4647f98a1afde4d41364e032ce006124c75.
 - Disposition: Both findings returned to the original Dev Coder as the final bounded attempt.
+
+## Governed and Executable Release-Chain Correction Attempt 1
+
+- Governed Candidate: Reported prefix 6ea21123; no full candidate OID was supplied for this evidence record.
+- Independent Reviewer: Dev Code Reviewer
+- Verdict: CHANGES_REQUIRED
+- Finding: High — an eight-field, event-ID-only contract cannot preserve the ordered acquisition -> false pre-commit no-change release -> owner CLAIM_NOT_FOUND sequence or truthful invoker and dispatch unknown state.
+- Related Executable Evidence: The a12 candidate verifier shares the same release-chain evidence gap.
+- Disposition: Correction returned to the exact original Dev Coder task /root/implement_oid_receipts across the preserved executable and governed branches.
+- Scope Boundary: No fifth governed source is authorized. Actor identity must remain unknown absent evidence. This candidate is not accepted or integrated.
 
 ## Verification Evidence
 
@@ -147,6 +157,7 @@ The same canonical task preserves candidate a12babfc3b919b5e5334821703c8549fe40a
 - Running-Resumption Claim: record-governed-implementation-running-019f978e acquired on primary main at 2026-07-25T12:17:54.518445Z; acquisition journal event dca2352f-6f77-4452-90d2-5f7414ffcd6d.
 - Ambiguous-Commit-Provenance Claim: record-ambiguous-commit-provenance-019f978e acquired on primary main at 2026-07-25T13:02:28.343178Z; acquisition journal event c821b5ac-8169-4ed4-a732-161d374f9f11.
 - Contradictory-Release-Chain Claim: record-contradictory-release-chain-019f978e acquired on primary main at 2026-07-25T15:58:18.472064Z; acquisition journal event 85deed4d-b60b-4de0-aaa9-7cb4f4790430. Earlier wait attempt 6dfc7c4b-a535-40a8-8fe4-ff1c84886722 reconciled after direct release baton event d584675f-7650-4f71-82e2-8fcde7bad76d.
+- Release-Chain-Correction-1 Claim: record-release-chain-correction1-019f978e acquired on primary main at 2026-07-25T16:07:28.831773Z; acquisition journal event 5e8976d4-0b91-454e-91b5-dea57fa3d070.
 - Blocked-Handoff Claim: block-overlapping-governed-dependency-019f978e acquired on primary main at 2026-07-25T13:16:59.778621Z; acquisition journal event 9875e09c-a965-47c5-a336-b98e28a60bf0.
 
 ## Summary
