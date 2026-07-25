@@ -1,6 +1,6 @@
 # Restore Documentation Acceptance Template Contract
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -11,7 +11,18 @@ Type: Defect
 - Normalized Objective: Restore or evidence-correct the Documentation Acceptance template contract.
 - Dispatched At: 2026-07-25T01:04:27Z
 - Intended Root Role: Dev Orchestrator
-- Runtime Thread And Task Id: Not created; the root Dev Orchestrator must accept ownership before a canonical identity is recorded.
+- Runtime Thread And Task Id: Accepted as canonical work-item Thread 019f96ce-fb8b-7e51-9e26-c8b7617bf7b5; canonical root task recorded below.
+
+## Delivery Ownership
+
+- Canonical Work-Item Thread: 019f96ce-fb8b-7e51-9e26-c8b7617bf7b5
+- Canonical Root Task: /root
+- Root Role: Dev Orchestrator
+- Current Delivery Checkout: /Users/martinbechard/.codex/worktrees/3e54/dev-methodology
+- Current Branch State: Detached at 97e8e20761619518d37ca5a17310836b4f4bf3b6
+- Phase: Source Reconciliation
+- Started At: 2026-07-25T01:14:02Z
+- Coordination Evidence: SHARED_CHECKOUT_ACQUIRED backlog claim 019f96ce-backlog-running; journal event 4391771e-568e-4baa-9ee5-780db88ed049.
 
 ## Summary
 
