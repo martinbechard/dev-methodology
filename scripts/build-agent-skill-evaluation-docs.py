@@ -334,6 +334,40 @@ def classify_skill(
     return "none"
 
 
+def scenario_skill_associations(
+    scenario: dict[str, object],
+) -> list[dict[str, object]]:
+    """Normalize one scenario's unconditional and conditional skill associations.
+
+    The source-model builder uses this boundary to retain skills declared by a
+    resource-coordination case without adding them to the scenario's
+    unconditional targetSkills contract. The returned records preserve source
+    order and identify whether each association is conditional. Malformed
+    target-skill or coordination-case values raise ValueError.
+    """
+    associations: dict[str, bool] = {}
+    target_skills = scenario.get("targetSkills", [])
+    if not isinstance(target_skills, list):
+        raise ValueError("Scenario targetSkills must be a list")
+    for skill in target_skills:
+        associations[str(skill)] = False
+    coordination_cases = scenario.get("resourceCoordinationCases", {})
+    if not isinstance(coordination_cases, dict):
+        raise ValueError("Scenario resourceCoordinationCases must be a mapping")
+    for case in coordination_cases.values():
+        if not isinstance(case, dict):
+            raise ValueError("Scenario resource coordination case must be a mapping")
+        conditional_skills = case.get("targetSkills", [])
+        if not isinstance(conditional_skills, list):
+            raise ValueError("Scenario conditional targetSkills must be a list")
+        for skill in conditional_skills:
+            associations.setdefault(str(skill), True)
+    return [
+        {"skill": skill, "conditional": conditional}
+        for skill, conditional in associations.items()
+    ]
+
+
 def reconcile_scenarios(
     current_scenarios: list[dict[str, object]],
     campaign_results: dict[str, str],
@@ -530,6 +564,7 @@ def build_model(root: Path = REPOSITORY_ROOT) -> dict[str, object]:
                     "targetSkills": [
                         str(value) for value in scenario.get("targetSkills", [])
                     ],
+                    "skillAssociations": scenario_skill_associations(scenario),
                 }
             )
         retained_snapshot = campaign["scenarioSnapshot"]
@@ -554,10 +589,18 @@ def build_model(root: Path = REPOSITORY_ROOT) -> dict[str, object]:
             freshness = "snapshot-aligned"
 
         for scenario_record in scenario_records:
-            for skill_id in scenario_record["targetSkills"]:
+            associations = scenario_record.get(
+                "skillAssociations",
+                [
+                    {"skill": skill_id, "conditional": False}
+                    for skill_id in scenario_record["targetSkills"]
+                ],
+            )
+            for association in associations:
                 all_scenario_links.append(
                     {
-                        "skill": skill_id,
+                        "skill": association["skill"],
+                        "conditional": association["conditional"],
                         "suite": suite_id,
                         "scenario": scenario_record["id"],
                         "campaignVerdict": scenario_record["campaignVerdict"],

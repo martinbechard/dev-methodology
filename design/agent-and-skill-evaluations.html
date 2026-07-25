@@ -129,7 +129,7 @@
       <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
       <div><dt>Documentation snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>ff13eefeaca14d8085657511ca75a8bc2559e90f1b7ebf61ee07b94966d42034</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source snapshot</dt><dd><code>4360b9cab9adc147cb201599221e31abd648ceee19244386a110517f1d0090e2</code>; regenerated and compared by the focused check</dd></div>
     </dl>
   </section>
 
@@ -680,7 +680,7 @@
           <tbody>
             <tr data-campaign-verdict="PASS">
               <th scope="row">creation-and-claim</th>
-              <td>Create a dispatchable typed item and establish recoverable ownership.</td>
+              <td>Create a dispatchable typed item; this row declares project-selected resource coordination variants and does not claim both variants were executed.</td>
               <td>PASS</td>
               <td><span class="status status--pass">PASS</span></td>
               <td><span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></td>
@@ -690,7 +690,7 @@
 
             <tr data-campaign-verdict="PASS">
               <th scope="row">interrupted-work-recovery</th>
-              <td>Reconcile interrupted work from durable evidence without losing history.</td>
+              <td>Reconcile interrupted work; this row declares project-selected resource coordination variants and does not claim both variants were executed.</td>
               <td>PASS</td>
               <td><span class="status status--pass">PASS</span></td>
               <td><span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></td>
@@ -700,7 +700,7 @@
 
             <tr data-campaign-verdict="FAIL">
               <th scope="row">blocked-state-transition</th>
-              <td>Preserve a blocked item with an exact unresolved dependency.</td>
+              <td>Preserve a blocked item; this row declares project-selected resource coordination variants and does not claim both variants were executed.</td>
               <td>BLOCKED</td>
               <td><span class="status status--fail">FAIL</span></td>
               <td><span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></td>
@@ -710,7 +710,7 @@
 
             <tr data-campaign-verdict="">
               <th scope="row">blocked-unowned-running-shortcut</th>
-              <td>Reject direct execution of otherwise eligible blocked work when no new claim establishes ownership.</td>
+              <td>Reject an unowned direct Running shortcut; this row declares project-selected resource coordination variants and does not claim both variants were executed.</td>
               <td>BLOCKED</td>
               <td><span class="status status--missing">Missing campaign evidence</span></td>
               <td><span class="status status--missing">Missing campaign evidence</span></td>
@@ -720,7 +720,7 @@
 
             <tr data-campaign-verdict="">
               <th scope="row">blocked-claimed-resumption</th>
-              <td>Resume eligible blocked work only after a successful new claim establishes ownership.</td>
+              <td>Resume eligible blocked work; this row declares project-selected resource coordination variants and does not claim both variants were executed.</td>
               <td>PASS</td>
               <td><span class="status status--missing">Missing campaign evidence</span></td>
               <td><span class="status status--missing">Missing campaign evidence</span></td>
@@ -730,7 +730,7 @@
 
             <tr data-campaign-verdict="">
               <th scope="row">blocked-failed-claim-resumption</th>
-              <td>Preserve the exact blocked item when a new claim cannot be acquired.</td>
+              <td>Preserve an exact blocked resumption failure; this row declares project-selected resource coordination variants and does not claim both variants were executed.</td>
               <td>BLOCKED</td>
               <td><span class="status status--missing">Missing campaign evidence</span></td>
               <td><span class="status status--missing">Missing campaign evidence</span></td>
@@ -740,7 +740,7 @@
 
             <tr data-campaign-verdict="">
               <th scope="row">future-ideas-capture-and-promotion</th>
-              <td>Capture a file-provider lightweight idea without lifecycle fields, then deliberately promote it with reciprocal provenance.</td>
+              <td>Capture and promote a Future Idea; this row declares project-selected resource coordination variants and does not claim both variants were executed.</td>
               <td>PASS</td>
               <td><span class="status status--missing">Missing campaign evidence</span></td>
               <td><span class="status status--missing">Missing campaign evidence</span></td>

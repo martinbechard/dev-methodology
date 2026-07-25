@@ -550,13 +550,32 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             "Stage and path-limit commit to exactly the idea and target while preserving unrelated staged state",
             "Capture the new commit OID and verify that exact object contains exactly the reciprocal idea and target pair",
             "Restore and verify exact pre-attempt index bytes and existence on failure",
-            "Use acquire release and retain only when resource_coordination selects agent-claim",
-            "With resource_coordination none perform no claim call or claim evidence",
-            "Retain enabled claim ownership after unsafe rollback or postcommit verification failure",
-            "Release enabled claim ownership after success or safe verified rollback",
         ):
             with self.subTest(required_behavior=behavior):
                 self.assertIn(behavior, scenario["requiredBehaviors"])
+        scenario_coordination = scenario["resourceCoordinationCases"]
+        agent_claim = scenario_coordination["agent-claim"]
+        none = scenario_coordination["none"]
+        self.assertEqual(["agent-claim"], agent_claim["targetSkills"])
+        self.assertEqual(["claim-lifecycle"], agent_claim["deterministicChecks"])
+        self.assertTrue(agent_claim["claimCalls"])
+        self.assertEqual("required", agent_claim["claimEvidence"])
+        self.assertIn(
+            "Retain ownership after unsafe rollback or postcommit verification failure",
+            agent_claim["claimLifecycle"],
+        )
+        self.assertIn(
+            "Release after success or safe verified rollback",
+            agent_claim["claimLifecycle"],
+        )
+        self.assertEqual([], none["targetSkills"])
+        self.assertEqual([], none["deterministicChecks"])
+        self.assertEqual([], none["claimCalls"])
+        self.assertEqual([], none["registryMutations"])
+        self.assertEqual([], none["journalWrites"])
+        self.assertEqual([], none["claimReleases"])
+        self.assertEqual("absent", none["claimEvidence"])
+        self.assertEqual(agent_claim["providerLifecycle"], none["providerLifecycle"])
         self.assertIn("failure-atomic primary-main transaction", contract_text)
         self.assertIn(
             "target-write, idea-write, validation, staging, or commit",
@@ -892,7 +911,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
                     self.assertTrue(result["commitVerified"])
 
     def test_blocked_resumption_has_negative_and_positive_scenarios(self) -> None:
-        """The suite covers unowned, failed-claim, and successful claim outcomes."""
+        """The suite keeps provider outcomes neutral and claim behavior conditional."""
         scenarios = yaml.safe_load(
             (SUITE_ROOT / "scenarios.yaml").read_text(encoding="utf-8")
         )["scenarios"]
@@ -902,20 +921,39 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         self.assertEqual("BLOCKED", shortcut["expectedTerminalStatus"])
         self.assertIn("Leave the backlog item unchanged", shortcut["requiredBehaviors"])
         self.assertIn(
-            "Reject because no new claim and owner exist",
+            "Reject because no provider owner exists",
             shortcut["requiredBehaviors"],
+        )
+        self.assertTrue(
+            shortcut["resourceCoordinationCases"]["agent-claim"]["claimCalls"]
+        )
+        self.assertEqual(
+            [],
+            shortcut["resourceCoordinationCases"]["none"]["claimCalls"],
         )
 
         resumption = by_id["blocked-claimed-resumption"]
         self.assertEqual("PASS", resumption["expectedTerminalStatus"])
         self.assertIn(
-            "Record Ready then a successful new claim and owner before Running",
+            "Record Ready then a new provider owner before Running",
             resumption["requiredBehaviors"],
+        )
+        self.assertTrue(
+            resumption["resourceCoordinationCases"]["agent-claim"]["claimCalls"]
         )
 
         failed_claim = by_id["blocked-failed-claim-resumption"]
         self.assertEqual("BLOCKED", failed_claim["expectedTerminalStatus"])
-        self.assertIn("CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED", failed_claim["initialState"])
+        self.assertIn(
+            "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
+            failed_claim["resourceCoordinationCases"]["agent-claim"][
+                "claimLifecycle"
+            ][1],
+        )
+        self.assertEqual(
+            [],
+            failed_claim["resourceCoordinationCases"]["none"]["claimCalls"],
+        )
         self.assertIn("project-hash-policy", failed_claim["deterministicChecks"])
 
     def test_failed_or_missing_claim_leaves_the_item_unchanged(self) -> None:

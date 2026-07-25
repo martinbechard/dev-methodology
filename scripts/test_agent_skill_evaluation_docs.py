@@ -23,6 +23,9 @@ ROOT = Path(__file__).resolve().parents[1]
 GENERATOR_PATH = ROOT / "scripts" / "build-agent-skill-evaluation-docs.py"
 PAGE_PATH = ROOT / "design" / "agent-and-skill-evaluations.html"
 SCRIPT_PATH = ROOT / "design" / "agent-and-skill-evaluations.js"
+BACKLOG_STEWARD_SCENARIOS_PATH = (
+    ROOT / "evals" / "agent-tests" / "dev-backlog-steward" / "scenarios.yaml"
+)
 NODE_PATH = shutil.which("node")
 
 
@@ -129,6 +132,175 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         self.assertEqual("historical-unknown", coder["freshness"])
         self.assertTrue(
             all(item["evidenceState"] == "historical-id-only" for item in coder["scenarios"])
+        )
+
+    def test_backlog_steward_rows_publish_neutral_resource_coordination_variants(self) -> None:
+        """All Steward rows must declare variants without asserting either one executed."""
+        disclosure = (
+            "this row declares project-selected resource coordination variants "
+            "and does not claim both variants were executed"
+        )
+        claim_only_language = re.compile(
+            r"\b(?:(?:agent[-_ ]?)?claims?(?:[-_][a-z0-9]+)*|"
+            r"acquir(?:e|ed|ing|es|isition|isitions)|"
+            r"releas(?:e|ed|ing|es)|registr(?:y|ies)|journals?|conflicts?)\b",
+            re.IGNORECASE,
+        )
+
+        def assert_neutral_top_level(source: dict[str, object]) -> None:
+            purpose = str(source["purpose"])
+            self.assertEqual(1, purpose.count(disclosure))
+            named_contract_fields = {
+                field: value
+                for field, value in source.items()
+                if field == "purpose"
+                or any(
+                    token in field.lower()
+                    for token in ("behavior", "skill", "check")
+                )
+            }
+            named_contract_fields["purpose"] = purpose.replace(disclosure, "", 1)
+            for field, value in named_contract_fields.items():
+                values = value if isinstance(value, list) else [value]
+                for item in values:
+                    self.assertIsNone(
+                        claim_only_language.search(str(item)),
+                        f"{field} retains claim-only top-level language: {item}",
+                    )
+
+        steward = next(
+            agent for agent in self.model["agents"] if agent["id"] == "dev-backlog-steward"
+        )
+        source_scenarios = self.generator.load_yaml(BACKLOG_STEWARD_SCENARIOS_PATH)[
+            "scenarios"
+        ]
+        source_by_id = {scenario["id"]: scenario for scenario in source_scenarios}
+        historical_ids = {
+            "creation-and-claim",
+            "interrupted-work-recovery",
+            "blocked-state-transition",
+            "blocked-unowned-running-shortcut",
+            "blocked-claimed-resumption",
+            "blocked-failed-claim-resumption",
+            "future-ideas-capture-and-promotion",
+        }
+        rendered_by_id = {scenario["id"]: scenario for scenario in steward["scenarios"]}
+
+        self.assertEqual(historical_ids, set(source_by_id))
+        self.assertEqual(historical_ids, set(rendered_by_id))
+        for scenario_id, source in source_by_id.items():
+            with self.subTest(scenario=scenario_id):
+                coordination_cases = source["resourceCoordinationCases"]
+                self.assertEqual({"agent-claim", "none"}, set(coordination_cases))
+                agent_claim = coordination_cases["agent-claim"]
+                none = coordination_cases["none"]
+                self.assertEqual(["agent-claim"], agent_claim["targetSkills"])
+                self.assertEqual(["claim-lifecycle"], agent_claim["deterministicChecks"])
+                self.assertTrue(agent_claim["claimCalls"])
+                self.assertTrue(agent_claim["registryMutations"])
+                self.assertTrue(agent_claim["journalWrites"])
+                self.assertTrue(agent_claim["claimLifecycle"])
+                self.assertEqual("required", agent_claim["claimEvidence"])
+                self.assertEqual([], none["targetSkills"])
+                self.assertEqual([], none["deterministicChecks"])
+                self.assertEqual([], none["claimCalls"])
+                self.assertEqual([], none["registryMutations"])
+                self.assertEqual([], none["journalWrites"])
+                self.assertEqual([], none["claimReleases"])
+                self.assertEqual("absent", none["claimEvidence"])
+                self.assertEqual(
+                    agent_claim["providerLifecycle"],
+                    none["providerLifecycle"],
+                )
+                assert_neutral_top_level(source)
+                purpose = rendered_by_id[scenario_id]["purpose"]
+                self.assertIn(
+                    "declares project-selected resource coordination variants",
+                    purpose,
+                )
+                self.assertIn(
+                    "does not claim both variants were executed",
+                    purpose,
+                )
+                self.assertNotIn("executable variant", purpose)
+                self.assertNotIn("runner-enforced", purpose)
+                self.assertIn(
+                    f"<td>{self.generator.escape(purpose)}</td>",
+                    self.page,
+                )
+
+        representative = source_scenarios[0]
+        bypass_mutations = {
+            "appended-purpose-directive": {
+                **representative,
+                "purpose": (
+                    representative["purpose"]
+                    + " Acquire a claim and publish claim evidence."
+                ),
+            },
+            "alternative-check-id": {
+                **representative,
+                "deterministicChecks": [
+                    *representative["deterministicChecks"],
+                    "claim-evidence-gate",
+                ],
+            },
+            "alternative-skill-id": {
+                **representative,
+                "targetSkills": [
+                    *representative["targetSkills"],
+                    "exclusive-ownership-claim",
+                ],
+            },
+        }
+        for mutation, mutated in bypass_mutations.items():
+            with self.subTest(mutation=mutation), self.assertRaises(AssertionError):
+                assert_neutral_top_level(mutated)
+
+        agent_claim = next(
+            skill for skill in self.model["skills"] if skill["id"] == "agent-claim"
+        )
+        steward = next(
+            agent for agent in self.model["agents"] if agent["id"] == "dev-backlog-steward"
+        )
+        governed_steward_links = [
+            link
+            for link in agent_claim["governedScenarioLinks"]
+            if link["suite"] == "dev-backlog-steward"
+        ]
+
+        self.assertEqual(
+            {
+                "creation-and-claim",
+                "interrupted-work-recovery",
+                "blocked-state-transition",
+            },
+            {link["scenario"] for link in governed_steward_links},
+        )
+        self.assertTrue(all(link["conditional"] for link in governed_steward_links))
+        self.assertTrue(
+            all(
+                "agent-claim" not in scenario["targetSkills"]
+                for scenario in steward["scenarios"]
+            )
+        )
+        source = self.generator.load_yaml(BACKLOG_STEWARD_SCENARIOS_PATH)[
+            "scenarios"
+        ][0]
+        none_only = {
+            **source,
+            "resourceCoordinationCases": {
+                "none": source["resourceCoordinationCases"]["none"]
+            },
+        }
+        self.assertNotIn(
+            "agent-claim",
+            {
+                association["skill"]
+                for association in self.generator.scenario_skill_associations(
+                    none_only
+                )
+            },
         )
 
     def test_scenario_reconciliation_detects_definition_drift_and_removed_rows(self) -> None:
