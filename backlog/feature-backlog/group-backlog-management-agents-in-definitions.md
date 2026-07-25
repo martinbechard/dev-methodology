@@ -1,6 +1,6 @@
 # Group Backlog Management Agents In The Definitions HTML And Diagram
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -9,6 +9,15 @@ Provider: file
 Provider Reference: backlog/feature-backlog/group-backlog-management-agents-in-definitions.md
 
 Completion: direct-main
+
+## Launch Reservation
+
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Reservation: One launch reserved by the parent Dev Backlog Coordinator.
+- Normalized Objective: Group backlog management agents in the definitions HTML and diagram.
+- Dispatched At: 2026-07-25T01:40:52Z
+- Intended Root Role: Dev Orchestrator
+- Runtime Thread And Task Id: Not created; the root Dev Orchestrator must accept ownership before a canonical identity is recorded.
 
 ## Summary
 
