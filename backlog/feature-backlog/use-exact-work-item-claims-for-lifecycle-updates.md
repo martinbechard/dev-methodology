@@ -1,6 +1,6 @@
 # Use Exact Work-Item Claims For Lifecycle Updates
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -15,11 +15,23 @@ Owner: Dev Orchestrator
 - Dispatched At: 2026-07-25T12:30:21Z
 - Intended Root Role: Dev Orchestrator
 - Preserved Evidence: The exact eight-path approval, existing canonical worktree and branch, and prior lifecycle evidence remain binding.
-- Phase: Awaiting root lifecycle acceptance.
+- Phase: Accepted; lifecycle now Running.
 
 ## Resumption Coordination Evidence
 
 - Backlog Claim: resume-exact-work-item-claims-019f9783 acquired on primary main at 2026-07-25T12:30:21.892742Z; acquisition journal event fff40958-7f3a-419f-8ef5-24b695e68d3d.
+
+## Resumption Running Acceptance
+
+- Root Dev Orchestrator: Dev Orchestrator
+- Canonical Task/Thread: 019f9783-31a0-7e91-9704-08cde7886b3a
+- Delivery Branch: Detached HEAD at bc30647a6de2f1593a1f5a746410c9d6761e2ba5
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/8b42/dev-methodology
+- Starting Baseline: c1b20bd399522479ae53bc3f6d81d0c762e33d33
+- Started At: 2026-07-25T12:31:30Z
+- Phase: approved implementation preparation
+- Backlog Claim: 019f9783-resumption-running-steward
+- Claim Acquisition Event: 6db6306c-a5f1-4ead-b6d2-ac8dc190636d
 
 ## Launch Reservation
 
