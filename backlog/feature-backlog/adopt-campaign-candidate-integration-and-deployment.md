@@ -1,6 +1,6 @@
 # Adopt Campaign Candidate Integration And Deployment
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -19,12 +19,15 @@ Type: Feature
 - Work-Item Thread: 019f96cf-48ef-7c41-bef1-ca69d574526c
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
 - Root Agent Task Id: 019f96cf-48ef-7c41-bef1-ca69d574526c
-- Owner: Unowned
-- Branch: detached at reservation commit 97e8e20761619518d37ca5a17310836b4f4bf3b6
+- Owner: Dev Orchestrator
+- Branch: detached at reservation commit 97e8e20761619518d37ca5a17310836b4f4bf3b6; resumed under primary reservation lineage b25464b67d59a2ef9674dc31fe727266f516cdfa; no delivery branch created.
 - Worktree: /Users/martinbechard/.codex/worktrees/1c8b/dev-methodology
-- Phase: Persistence acceptance / canonical-manifest discovery
+- Phase: approved canonical implementation preparation
 - Started At: 2026-07-25T01:09:02Z
+- Resumed At: 2026-07-25T02:48:20Z
 - Prior Coordination Evidence: 019f96cf-48ef-7c41-bef1-ca69d574526c-backlog-running; agent-claim event ef24e4c8-e833-4434-a69b-94ebd69d2846; backlog scope on canonical primary main.
+- Coordination: Enabled; agent-claim short backlog resumption transaction completed before this provider mutation.
+- Claim Evidence: 019f96cf-48ef-7c41-bef1-ca69d574526c-backlog-resume-running; agent-claim event 843b0658-5681-4d76-8012-02a707ef22f0; backlog scope on canonical primary main.
 
 ## Approval Resolution
 
