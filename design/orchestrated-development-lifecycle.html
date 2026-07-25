@@ -232,7 +232,8 @@
     }
     .definition-list dt { color: var(--ink); font-weight: 850; }
     .definition-list dd { margin: 0; color: var(--muted); }
-    .status-figure, .branch-figure, .resource-figure, .sequence-figure {
+    .status-figure, .branch-figure, .resource-figure, .sequence-figure,
+    .thread-model-figure, .steward-sequence-figure {
       margin: 2rem 0 0;
       padding: clamp(1.2rem, 3vw, 2rem);
       border: 1px solid var(--line);
@@ -291,6 +292,82 @@
     .role-card:nth-child(3n) { border-color: var(--violet); background: var(--soft-violet); }
     .role-card h3 { margin-bottom: 0.35rem; }
     .thread-context { margin-top: 1rem; padding: 1rem 1.2rem; border-left: 0.3rem solid var(--blue); background: var(--soft-blue); }
+    .thread-map {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 5rem minmax(0, 1fr);
+      gap: 1rem;
+      align-items: stretch;
+    }
+    .thread-box {
+      padding: 1rem;
+      border: 0.2rem solid var(--blue);
+      border-radius: 0.65rem;
+      background: var(--soft-blue);
+    }
+    .thread-box.work-item { border-color: var(--teal); background: var(--soft-teal); }
+    .thread-box > strong {
+      display: block;
+      margin-bottom: 0.8rem;
+      color: var(--ink);
+      font-family: var(--display);
+      font-size: 1.12rem;
+    }
+    .agent-stack { display: grid; gap: 0.65rem; }
+    .agent-node {
+      padding: 0.75rem;
+      border: 1px solid var(--line);
+      border-radius: 0.45rem;
+      background: var(--panel);
+    }
+    .agent-node b { display: block; color: var(--ink); }
+    .agent-node span { display: block; color: var(--muted); font-size: 0.82rem; }
+    .thread-dispatch {
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 0.35rem;
+      color: var(--teal-deep);
+      text-align: center;
+    }
+    .thread-dispatch b { font-size: 1.7rem; line-height: 1; }
+    .thread-dispatch span { font-family: var(--utility); font-size: 0.7rem; font-weight: 850; text-transform: uppercase; }
+    .terminology-key {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    .terminology-key div { padding-top: 0.7rem; border-top: 0.22rem solid var(--teal); }
+    .terminology-key div:nth-child(2) { border-color: var(--blue); }
+    .terminology-key div:nth-child(3) { border-color: var(--violet); }
+    .terminology-key div:nth-child(4) { border-color: var(--amber); }
+    .terminology-key div:nth-child(5) { border-color: var(--green); }
+    .terminology-key dt { color: var(--ink); font-weight: 850; }
+    .terminology-key dd { margin: 0.2rem 0 0; color: var(--muted); font-size: 0.82rem; }
+    .assignment-flow {
+      display: grid;
+      grid-template-columns:
+        minmax(5.5rem, 1fr) 1.2rem
+        minmax(5.5rem, 1fr) 1.2rem
+        minmax(5.5rem, 1fr) 1.2rem
+        minmax(5.5rem, 1fr) 1.2rem
+        minmax(5.5rem, 1fr) 1.2rem
+        minmax(5.5rem, 1fr);
+      gap: 0.55rem;
+      align-items: center;
+    }
+    .assignment-step {
+      min-height: 6.3rem;
+      padding: 0.75rem;
+      border-top: 0.28rem solid var(--teal);
+      background: var(--soft-teal);
+    }
+    .assignment-step.claim { border-color: var(--amber); background: var(--soft-amber); }
+    .assignment-step.idle { border-color: var(--blue); background: var(--soft-blue); }
+    .assignment-step strong { display: block; margin-bottom: 0.3rem; color: var(--ink); }
+    .assignment-step p { font-size: 0.8rem; }
+    .assignment-arrow { color: var(--teal-deep); font-size: 1.35rem; font-weight: 900; text-align: center; }
+    .sequence-warning { margin-top: 1rem; padding: 0.85rem 1rem; border-left: 0.32rem solid var(--coral); background: var(--soft-coral); }
     .branch-map { position: relative; display: grid; grid-template-columns: 11rem minmax(0,1fr); gap: 0.8rem 1.2rem; align-items: center; }
     .branch-map::before { position: absolute; top: 1rem; bottom: 1rem; left: 11.6rem; width: 0.22rem; background: var(--ink); content: ""; }
     .branch-label { padding: 0.7rem; border-radius: 0.4rem; background: var(--ink); color: white; font-family: var(--utility); font-size: 0.78rem; font-weight: 800; text-align: center; }
@@ -349,6 +426,11 @@
       .state-map { grid-template-columns: 1fr; }
       .state-arrow { transform: rotate(90deg); }
       .state-branches, .delivery-paths, .design-progression { grid-template-columns: 1fr; }
+      .thread-map { grid-template-columns: 1fr; }
+      .thread-dispatch b { transform: rotate(90deg); }
+      .terminology-key { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .assignment-flow { grid-template-columns: 1fr; }
+      .assignment-arrow { transform: rotate(90deg); }
       .role-row { grid-template-columns: 1fr 1.2rem 1fr; }
       .role-row p { grid-column: 1 / -1; }
       .sequence-list li { grid-template-columns: 2rem 1fr 1.2rem 1fr; }
@@ -379,6 +461,7 @@
       .sequence-list .direction { text-align: left; transform: rotate(90deg); transform-origin: left center; }
       .decision-band { grid-template-columns: 1fr; }
       .decision-band div + div { border-top: 1px solid var(--line); border-left: 0; }
+      .terminology-key { grid-template-columns: 1fr; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -548,13 +631,57 @@
         <article class="role-card"><h3>Dev Backlog Coordinator</h3><p>The parent coordination Agent reserves capacity, dispatches one Thread per Work item, reconciles duplicates, and cleans up terminal execution contexts.</p></article>
         <article class="role-card"><h3>Dev Orchestrator</h3><p>The root Agent in a work-item Thread owns production, review, verification, integration, and the terminal provider request.</p></article>
         <article class="role-card"><h3>Dev Backlog Steward</h3><p>A child Agent performs atomic provider lifecycle updates for its Coordinator or Orchestrator without taking over delivery.</p></article>
-        <article class="role-card"><h3>Production And Implementation Agents</h3><p>These child Agents complete bounded coding, writing, design, or other production Tasks and return committed evidence.</p></article>
+        <article class="role-card"><h3>Production And Implementation Agents</h3><p>These child Agents complete bounded coding, writing, design, or other production assignments and return committed evidence.</p></article>
         <article class="role-card"><h3>Independent Reviewers</h3><p>These child Agents assess source, documentation, security, UX, or other artifacts from fresh contexts without producing the correction.</p></article>
         <article class="role-card"><h3>Dev Verifier</h3><p>This child Agent runs acceptance checks only after the applicable independent review gates pass.</p></article>
         <article class="role-card"><h3>Integration Specialists</h3><p>Conditional integration role: a nested Merge Coordinator combines accepted contributions or resolves integration-only conflicts inside the same work item.</p></article>
       </div>
     </figure>
-    <aside class="thread-context"><h3>Execution Contexts</h3><p>The parent coordination Thread has one root Coordinator Agent. Each active Work item has one work-item Thread with one root Orchestrator Agent. Producing, review, verification, integration, and stewardship Agents are children in that work-item Thread. A Task is one bounded assignment to an Agent, never another name for a Thread.</p></aside>
+    <figure class="thread-model-figure" aria-labelledby="thread-model-title">
+      <figcaption id="thread-model-title">Threads Contain Agents<span>Roles describe responsibility. Agents perform bounded assignments inside execution Threads.</span></figcaption>
+      <div class="thread-map" role="img" aria-label="A parent coordination Thread contains a Coordinator Agent and a Steward Agent. It dispatches one work item to a work-item Thread, which contains a root Orchestrator Agent and child Producer, Reviewer, Verifier, and Steward Agents. Each Agent applies a Role and receives bounded assignments.">
+        <section class="thread-box" aria-label="Parent coordination Thread">
+          <strong>Parent Coordination Thread</strong>
+          <div class="agent-stack">
+            <div class="agent-node"><b>Coordinator Agent</b><span>Role · Dev Backlog Coordinator</span><span>Assignment · select and dispatch work</span></div>
+            <div class="agent-node"><b>Steward Agent</b><span>Role · Dev Backlog Steward</span><span>Assignment · reserve one work item</span></div>
+          </div>
+        </section>
+        <div class="thread-dispatch" aria-hidden="true"><span>dispatches one work item</span><b>&rarr;</b></div>
+        <section class="thread-box work-item" aria-label="Work-item Thread">
+          <strong>Work-Item Thread</strong>
+          <div class="agent-stack">
+            <div class="agent-node"><b>Root Orchestrator Agent</b><span>Role · Dev Orchestrator</span><span>Assignment · deliver this work item</span></div>
+            <div class="agent-node"><b>Child Agents</b><span>Roles · Producer, Reviewer, Verifier, Steward</span><span>Assignments · bounded execution and lifecycle work</span></div>
+          </div>
+        </section>
+      </div>
+      <dl class="terminology-key" aria-label="Lifecycle terminology">
+        <div><dt>Thread</dt><dd>The retained execution context.</dd></div>
+        <div><dt>Agent</dt><dd>A running actor inside a Thread.</dd></div>
+        <div><dt>Role</dt><dd>The reusable responsibility and authority contract.</dd></div>
+        <div><dt>Assignment</dt><dd>Bounded work sent to an Agent.</dd></div>
+        <div><dt>Claim</dt><dd>Conditional temporary protection when agent-claim is selected.</dd></div>
+      </dl>
+    </figure>
+    <aside class="thread-context"><h3>Execution Contexts</h3><p>The Dev Backlog Steward is a child Agent, not another work-item Thread or queue entry. An Assignment is bounded work sent to an Agent; it does not create another work-item Thread. A runtime may retain a child execution context for that Agent, but the methodology still treats it as part of the owning parent or work-item Thread.</p></aside>
+    <figure class="steward-sequence-figure" aria-labelledby="steward-sequence-title">
+      <figcaption id="steward-sequence-title">Steward Assignments Are Sequential<span>One retained Steward Agent may receive multiple assignments, but only one mutating assignment may be active or queued at a time. When agent-claim is selected, each mutating assignment owns and releases its own exact claim.</span></figcaption>
+      <div class="assignment-flow" role="img" aria-label="Assignment A performs and commits one lifecycle update. When agent-claim is selected, it acquires and releases conditional Claim A. The parent confirms the Steward Agent is idle before Assignment B begins and, when enabled, acquires conditional Claim B.">
+        <div class="assignment-step"><strong>Assignment A</strong><p>One exact lifecycle update.</p></div>
+        <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
+        <div class="assignment-step claim"><strong>Conditional Claim A</strong><p>Only when agent-claim is selected.</p></div>
+        <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
+        <div class="assignment-step"><strong>Commit And Finish</strong><p>Preserve the result; release its claim when enabled.</p></div>
+        <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
+        <div class="assignment-step idle"><strong>Confirm Idle</strong><p>No active or queued assignment remains.</p></div>
+        <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
+        <div class="assignment-step"><strong>Assignment B</strong><p>A distinct lifecycle update.</p></div>
+        <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
+        <div class="assignment-step claim"><strong>Conditional Claim B</strong><p>Only when agent-claim is selected.</p></div>
+      </div>
+      <p class="sequence-warning"><strong>Do not infer Agent idleness from an earlier result.</strong> A final assignment result proves only that assignment finished. When agent-claim is selected, the owning Agent releases its claim; another Agent must not remove it merely because the repository has not changed yet. With no coordination mechanism, the same assignments remain sequential but no Claim A or Claim B exists.</p>
+    </figure>
     <p class="source-note">The <a href="agent-and-skill-definitions.html#dev-activities-title">development-agent catalog</a> owns the complete Role definitions. <a href="../skills/codex-workitem-coordination/SKILL.md">Work-item coordination</a> owns the execution-context model.</p>
   </section>
 
@@ -573,14 +700,14 @@
     </figure>
     <div class="delivery-paths">
       <article class="delivery-path"><h3>Direct-main delivery</h3><ol><li>Review and verify the private candidate.</li><li>When resource coordination is enabled, acquire the exact shared integration paths and integration resource; with none, enter the serialized integration transaction without claim operations or evidence.</li><li>Refresh current main and create a fresh reconciliation branch from that exact commit.</li><li>Apply only the accepted paths; do not import unrelated ancestry merely for provenance. Verify the integrated result, update main, and complete delivery closeout with coordination evidence only when enabled.</li></ol></article>
-      <article class="delivery-path"><h3>Feature-branch delivery</h3><ol><li>Review and verify the feature branch.</li><li>The Commit skill publishes a GitHub pull request or GitLab merge request and returns Commit AWAITING_REVIEW without Persistence mutation.</li><li>Dev Orchestrator separately dispatches Dev Backlog Steward exactly once for the nonterminal AWAITING_REVIEW update; repeated observation reconciles that update.</li><li>Resume the same delivery identity through provider-accurate review, checks, merge, and main observation until Commit READY, then dispatch exactly once for the distinct terminal Persistence closure. Provider none keeps both states task-local.</li></ol></article>
+      <article class="delivery-path"><h3>Feature-branch delivery</h3><ol><li>Review and verify the feature branch.</li><li>The Commit skill publishes a GitHub pull request or GitLab merge request and returns Commit AWAITING_REVIEW without Persistence mutation.</li><li>Dev Orchestrator separately dispatches Dev Backlog Steward exactly once for the nonterminal AWAITING_REVIEW update; repeated observation reconciles that update.</li><li>Resume the same delivery identity through provider-accurate review, checks, merge, and main observation until Commit READY, then dispatch exactly once for the distinct terminal Persistence closure. Provider none keeps both states thread-local.</li></ol></article>
     </div>
   </section>
 
   <section class="section" id="coordination" aria-labelledby="coordination-title">
     <div class="section-heading">
       <span class="chapter-number">Chapter 05</span>
-      <div><h2 id="coordination-title">Shared-Resource Coordination</h2><p>PROJECT.yaml selects resource coordination independently as none or agent-claim. Private work is parallel by default. When agent-claim is selected, a deadline-bound coordination claim protects shared objects and its registry remains a temporary conflict-avoidance scratchpad rather than delivery authority. When none is selected, the lifecycle records no claim procedure or evidence and relies on explicit Task scope plus serialized delivery transactions.</p></div>
+      <div><h2 id="coordination-title">Shared-Resource Coordination</h2><p>PROJECT.yaml selects resource coordination independently as none or agent-claim. Private work is parallel by default. When agent-claim is selected, a deadline-bound coordination claim protects shared objects and its registry remains a temporary conflict-avoidance scratchpad rather than delivery authority. When none is selected, the lifecycle records no claim procedure or evidence and relies on explicit assignment scope plus serialized delivery transactions.</p></div>
     </div>
     <figure class="resource-figure" aria-labelledby="resource-title">
       <figcaption id="resource-title">Shared Resource Gate<span>With agent-claim, protect the smallest path or named resource and release promptly. With none, serialize the delivery transaction without coordination operations or evidence.</span></figcaption>
@@ -609,13 +736,13 @@
       <figcaption id="delivery-sequence-title">Lifecycle Handoffs<span>A Handoff transfers evidence and the next action; it never lets one Role silently absorb another Role's authority.</span></figcaption>
       <ol class="sequence-list">
         <li><span class="number">1</span><span class="actor">Coordinator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Steward</span><p>Reserve one Ready Work item as Starting with dispatch evidence before Thread creation.</p></li>
-        <li><span class="number">2</span><span class="actor">Root Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Steward</span><p>Accept the Work item and atomically record Running with canonical Thread, Agent Task, branch, worktree, and enabled coordination evidence.</p></li>
+        <li><span class="number">2</span><span class="actor">Root Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Steward</span><p>Accept the Work item and atomically record Running with the canonical Thread, assigned Agent, branch, worktree, and enabled coordination evidence.</p></li>
         <li><span class="number">3</span><span class="actor">Producer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Reviewer</span><p>Submit a committed, clean contribution with focused implementation evidence.</p></li>
         <li><span class="number">4</span><span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Producer</span><p>Accept or return actionable findings; corrected work receives a fresh independent review.</p></li>
         <li><span class="number">5</span><span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Dev Verifier</span><p>After review acceptance, run checks proportional to affected behavior and risk.</p></li>
         <li><span class="number">6</span><span class="actor">Dev Verifier</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Root Orchestrator</span><p>Return the accepted candidate, check results, residual risks, and justified omissions.</p></li>
         <li><span class="number">7</span><span class="actor">Root Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Commit</span><p>Apply Commit only after review and verification. Re-review reconciled content when integration changes meaning. Commit AWAITING_REVIEW preserves the delivery identity; Commit READY returns the prepared terminal handoff.</p></li>
-        <li><span class="number">8</span><span class="actor">Root Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Steward</span><p>Record AWAITING_REVIEW exactly once as nonterminal Persistence state. Only after Commit READY, dispatch exactly once for the distinct terminal COMPLETED update. Provider none retains both states task-locally.</p></li>
+        <li><span class="number">8</span><span class="actor">Root Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Steward</span><p>Record AWAITING_REVIEW exactly once as nonterminal Persistence state. Only after Commit READY, dispatch exactly once for the distinct terminal COMPLETED update. Provider none retains both states thread-locally.</p></li>
         <li><span class="number">9</span><span class="actor">Coordinator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Cleanup</span><p>Verify the integration branch is merged, remove the clean worktree, delete the merged branch, close the Thread, prune metadata, and refill queue capacity through a recount and replacement dispatch.</p></li>
       </ol>
     </figure>
@@ -632,7 +759,7 @@
       <div><strong>1 · User Question</strong><p>Record one concrete question, why it is needed, and the exact unattended boundary.</p></div>
       <div><strong>2 · Preserved Context</strong><p>Keep the requirements, scope, options, and discovered evidence in the item.</p></div>
       <div><strong>3 · Decision Record</strong><p>Store the exact answer, date, provenance, approved scope, and exclusions.</p></div>
-      <div><strong>4 · Same-Thread Resume</strong><p>The Coordinator decides routing. With a provider, Stewards record Ready, Starting, and Running; provider none keeps equivalent evidence task-locally.</p></div>
+      <div><strong>4 · Same-Thread Resume</strong><p>The Coordinator decides routing. With a provider, Stewards record Ready, Starting, and Running; provider none keeps equivalent evidence thread-locally.</p></div>
       <div><strong>5 · Outcome Routing</strong><p>Deferred work moves to Holding; a declined request receives its truthful disposition.</p></div>
     </div>
     <p class="source-note">The same root Orchestrator resumes the existing Thread; no replacement is created. The user does not need to repeat the answer in the parent Thread. A user answer resolves the decision gate, not delivery. Work produced before reconciliation is preserved for ownership, scope, review, verification, and delivery checks; Thread location alone never invalidates it.</p>

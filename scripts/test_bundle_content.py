@@ -6623,9 +6623,88 @@ class BundleContentTests(unittest.TestCase):
             delivery_section,
         )
         self.assertIn(
-            "A Task is one bounded assignment to an Agent, never another name for a Thread.",
+            "An Assignment is bounded work sent to an Agent; it does not create another work-item Thread.",
             agents_section,
         )
+        self.assertIn(
+            "The Dev Backlog Steward is a child Agent, not another work-item Thread or queue entry.",
+            agents_section,
+        )
+        self.assertIn(
+            '<figcaption id="thread-model-title">Threads Contain Agents',
+            agents_section,
+        )
+        self.assertIn(
+            '<figcaption id="steward-sequence-title">Steward Assignments Are Sequential',
+            agents_section,
+        )
+        self.assertIn(
+            "only one mutating assignment may be active or queued at a time",
+            agents_section,
+        )
+        self.assertIn(
+            "When agent-claim is selected, each mutating assignment owns and releases its own exact claim.",
+            agents_section,
+        )
+        self.assertIn(
+            "With no coordination mechanism, the same assignments remain sequential but no Claim A or Claim B exists.",
+            agents_section,
+        )
+        self.assertIn(
+            "A final assignment result proves only that assignment finished.",
+            agents_section,
+        )
+        self.assertIn(
+            'class="thread-model-figure" aria-labelledby="thread-model-title"',
+            agents_section,
+        )
+        self.assertIn(
+            'class="steward-sequence-figure" aria-labelledby="steward-sequence-title"',
+            agents_section,
+        )
+        self.assertIn(
+            'aria-label="Lifecycle terminology"',
+            agents_section,
+        )
+        terminology = (
+            ("Thread", "The retained execution context."),
+            ("Agent", "A running actor inside a Thread."),
+            ("Role", "The reusable responsibility and authority contract."),
+            ("Assignment", "Bounded work sent to an Agent."),
+            (
+                "Claim",
+                "Conditional temporary protection when agent-claim is selected.",
+            ),
+        )
+        for term, definition in terminology:
+            with self.subTest(lifecycle_term=term):
+                self.assertIn(f"<dt>{term}</dt><dd>{definition}</dd>", agents_section)
+
+        assignment_steps = (
+            "Assignment A",
+            "Conditional Claim A",
+            "Commit And Finish",
+            "Confirm Idle",
+            "Assignment B",
+            "Conditional Claim B",
+        )
+        assignment_positions = tuple(
+            agents_section.index(f"<strong>{step}</strong>")
+            for step in assignment_steps
+        )
+        self.assertEqual(
+            tuple(sorted(assignment_positions)),
+            assignment_positions,
+        )
+        self.assertIn(
+            ".thread-map { grid-template-columns: 1fr; }",
+            lifecycle_text,
+        )
+        self.assertIn(
+            ".assignment-flow { grid-template-columns: 1fr; }",
+            lifecycle_text,
+        )
+        self.assertNotRegex(lifecycle_text, r"\b[Tt]asks?\b|task-local")
 
         title_like_labels = (
             "Work-Item Continuity",
@@ -6637,7 +6716,9 @@ class BundleContentTests(unittest.TestCase):
             "Production And Implementation Agents",
             "Independent Reviewers",
             "Integration Specialists",
+            "Threads Contain Agents",
             "Execution Contexts",
+            "Steward Assignments Are Sequential",
             "Parallel Workspaces",
             "Shared Resource Gate",
             "Claim Outcomes",
@@ -6681,6 +6762,8 @@ class BundleContentTests(unittest.TestCase):
         self.assertEqual(1, lifecycle_text.count('class="lifecycle-rail"'))
         self.assertEqual(1, lifecycle_text.count('class="status-figure"'))
         self.assertEqual(2, lifecycle_text.count('class="sequence-figure"'))
+        self.assertEqual(1, lifecycle_text.count('class="thread-model-figure"'))
+        self.assertEqual(1, lifecycle_text.count('class="steward-sequence-figure"'))
         self.assertEqual(1, lifecycle_text.count('class="branch-figure"'))
         self.assertEqual(1, lifecycle_text.count('class="resource-figure"'))
         self.assertEqual(1, lifecycle_text.count('class="evidence-table"'))
