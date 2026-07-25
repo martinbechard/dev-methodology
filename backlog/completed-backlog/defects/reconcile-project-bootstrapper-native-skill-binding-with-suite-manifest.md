@@ -1,6 +1,6 @@
 # Reconcile Project Bootstrapper native skill binding with the suite manifest
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Dev Orchestrator
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/reconcile-project-bootstrapper-native-skill-binding-with-suite-manifest.md
+Provider Reference: backlog/completed-backlog/defects/reconcile-project-bootstrapper-native-skill-binding-with-suite-manifest.md
 
 Completion: direct-main
 
@@ -91,3 +91,14 @@ None.
 ## Notes
 
 Recording this defect authorizes neither implementation nor a governed or generated definition mutation. The existing Dev Coder candidate and its separate backlog item are out of scope.
+
+## Completion Evidence
+
+- Completed At: 2026-07-25T12:07:00Z.
+- Accepted delivery and main observation: 2e7c1763198f061ec67ca98c55853e4619f8ac07 is the accepted source and integration commit on primary main. It fast-forwarded from the Running transition commit 8449ab0846caf4558d171d9528c73265b5a81c60; graph reachability and primary-main observation passed.
+- Delivered scope: the accepted commit changes exactly evals/agent-tests/project-bootstrapper/suite.yaml, evals/agent-tests/project-bootstrapper/skills/project-bootstrapper-suite-contract/SKILL.md, and evals/agent-tests/project-bootstrapper/test_fixtures.py.
+- Independent review: Dev Code Reviewer ACCEPTED the accepted integration with no findings and no distinct defect.
+- Verification: Dev Verifier ACCEPTED the fixture module (5/5), exact validate-only command, git diff --check, provenance, and final clean primary-main status. The full catalog remains intentionally deferred to the campaign gate.
+- Integration coordination: claim integrate-project-bootstrapper-suite-binding-019f991a acquired event d045658a-3736-48a5-8c79-23e7c013aa28 and released event 21fc7295-78d4-40cb-93f3-c393db88ca2d; no residual paths remained and the registry was empty before terminal provider mutation.
+- Earlier lifecycle coordination: the Starting-to-Running provider commit is 8449ab0846caf4558d171d9528c73265b5a81c60 and its backlog claim released under event 7abb0832-e032-412f-a959-069d43a775c2.
+- Terminal provider coordination: short primary-main backlog claim complete-project-bootstrapper-suite-binding-019f991a acquired event 9bd46889-443e-4495-9e18-be708fb73a3c. This archive transaction records the terminal provider state; the claim is released only after this commit and final immutable-path verification.
