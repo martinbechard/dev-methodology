@@ -1,6 +1,6 @@
 # Decouple Dev Backlog Steward Contract From Unconditional Claim Evidence
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -21,14 +21,14 @@ Completion: direct-main
 - Intended Root Role: Dev Orchestrator
 - Runtime Thread And Task Id: Existing canonical work-item Thread 019f96f1-1a19-7b01-b166-c5948a50fff5 is retained; no replacement task was created.
 
-## Prior Execution Ownership
+## Execution Ownership
 
 - Canonical Work-item Thread And Task Id: 019f96f1-1a19-7b01-b166-c5948a50fff5
-- Prior Root Owner: Dev Orchestrator
+- Root Owner: Dev Orchestrator
 - Delivery Branch: Detached pending delivery claim.
 - Delivery Worktree: /Users/martinbechard/.codex/worktrees/ecbc/dev-methodology
-- Phase: Awaiting same-root Starting -> Running acceptance.
-- Started At: 2026-07-25T02:46:17Z
+- Phase: Approved implementation and focused coordination matrix.
+- Started At: 2026-07-25T04:09:25Z
 
 ## Coordination Evidence
 
@@ -36,6 +36,7 @@ Completion: direct-main
 - Direct Release Baton: running-backlog-lifecycle-019f96f0 was released after primary-main backlog transaction 766464a894ab3427d8eebc3aa28bc865119e199b; release event 5f486be7-acea-4f90-a200-75dcbe75fd43.
 - Prior Release Baton: decouple-dev-orchestrator-eval-correction1-019f96ce released event c1cd5671-52fe-468f-a363-c561e7e0140f.
 - Current Backlog Claim: 019f96f1-running-discovery-transition acquired on primary main at 2026-07-25T02:46:17.204850Z; acquisition journal event ef354e4e-41bb-46ea-a849-1c1287ca8eac.
+- Approved-Implementation Backlog Claim: 019f96f1-running-approved-implementation acquired on primary main at 2026-07-25T04:09:25.562855Z; acquisition journal event 0f745454-173b-4c39-8c9c-71a0544f447e.
 
 ## Prior User Action Resolution
 
