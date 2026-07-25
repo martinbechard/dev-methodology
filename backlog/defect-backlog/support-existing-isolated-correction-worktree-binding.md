@@ -1,6 +1,6 @@
 # Support Existing Isolated Correction Worktree Binding
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -21,8 +21,8 @@ Completion: direct-main
 - Dispatched At: 2026-07-25T12:33:09Z
 - Intended Root Role: Dev Orchestrator
 - Canonical Worktree: /Users/martinbechard/.codex/worktrees/0311/dev-methodology
-- Canonical Branch: detached at 3f30d7c7d56dfea4ca23ca2a9afa8df55e9d138e
-- Phase: Awaiting root lifecycle acceptance.
+- Canonical Branch: codex/isolated-binding-019f976c at cc400d340638eb917c2184de19c1e8354f1aa897.
+- Phase: Root lifecycle accepted; Starting-to-Running provider transition is recorded below.
 
 ## Resumption Coordination Evidence
 
@@ -34,7 +34,8 @@ Completion: direct-main
 - Reservation: One parent-owned launch reservation.
 - Intended Root Role: Dev Orchestrator
 - Isolated Checkout: /Users/martinbechard/.codex/worktrees/0311/dev-methodology
-- Phase: Awaiting root lifecycle acceptance.
+- Canonical Branch: codex/isolated-binding-019f976c at cc400d340638eb917c2184de19c1e8354f1aa897.
+- Phase: Root lifecycle accepted; delivery proceeds in the canonical isolated correction worktree.
 - Dispatched At: 2026-07-25T03:58:59Z
 
 ## Lifecycle Start
@@ -43,11 +44,24 @@ Completion: direct-main
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
 - Root Role And Owner: Dev Orchestrator
 - Isolated Worktree Binding: /Users/martinbechard/.codex/worktrees/0311/dev-methodology
-- Canonical Branch State: detached at 3f30d7c7d56dfea4ca23ca2a9afa8df55e9d138e
+- Canonical Branch State: codex/isolated-binding-019f976c at cc400d340638eb917c2184de19c1e8354f1aa897.
 - Phase: Root lifecycle accepted; delivery proceeds only in the canonical isolated correction worktree.
 - Started At: 2026-07-25T04:01:00.487775Z, after the root Dev Orchestrator accepted ownership.
 - Coordination Claim: Dev Backlog Steward acquired short primary-main backlog claim support-existing-isolated-correction-worktree-binding-running-019f976c at event 41049fc1-bf18-453e-a663-7f7876efc28e from baseline commit ff63b40b46571f22fd5c5624c79d856ff9b243cf.
 - Scope Boundary: This claim owns only the committed Starting-to-Running provider transition and must release immediately; delivery owns separate isolated project-artifact scope.
+
+## Lifecycle Running
+
+- Canonical Task/Thread: 019f976c-6691-7a83-9df4-e73fc0baae73
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Owner: Dev Orchestrator
+- Canonical Worktree: /Users/martinbechard/.codex/worktrees/0311/dev-methodology
+- Canonical Branch State: codex/isolated-binding-019f976c at cc400d340638eb917c2184de19c1e8354f1aa897.
+- Deployment Phase: Approved user-scope Codex bundle deployment is authorized and delivery may proceed only in the canonical isolated correction worktree.
+- Started-At Evidence: 2026-07-25T04:01:00.487775Z, after the root Dev Orchestrator accepted ownership.
+- Accepted Approval Scope: Only python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace, followed by runtime catalog refresh or new-session activation and installed-versus-canonical agent-claim byte verification; no engine change or broader user-home mutation.
+- Backlog Claim: Dev Backlog Steward acquired short primary-main backlog claim support-isolated-binding-running-019f976c at 2026-07-25T12:41:26.036618Z; acquisition journal event d98ea91e-3207-45f4-a405-4c069f7f49f4; baseline commit 37a07d65720350516a81225c373ab2808f17d036.
+- Scope Boundary: This claim owns only this committed Starting-to-Running provider transition and must release immediately; delivery remains under separate isolated project-artifact ownership.
 
 ## Summary
 
