@@ -1,6 +1,6 @@
 # Use Exact Work-Item Claims For Lifecycle Updates
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -32,11 +32,21 @@ Owner: Unowned
 - Question: "Do you approve mutation of exactly the eight governed canonical definition paths listed below to implement exact work-item claims for file-backed creation, lifecycle, recovery, completion, coordination, and claim semantics?"
 - Why Approval Is Required: Repository policy requires an exact scope-specific user answer before any governed canonical definition may be changed.
 - Unattended Boundary: Do not mutate any governed source, approval record, generated mirror, or dependent artifact until the user answers and this same canonical Thread resumes through User Action Required -> Ready -> Starting -> Running.
-- Next Action Owner: User
+- Next Action Owner at Prompt: User
 - Resumption Thread: 019f9783-31a0-7e91-9704-08cde7886b3a
 - Recorded At: 2026-07-25T04:31:02Z
 - Backlog Claim: 019f9783-user-action-required-steward
 - Claim Acquisition Event: f4fc2367-cd1d-421d-931a-ad0535fda68f
+
+## Ready Resumption
+
+- User Answer: "I approve"
+- Answer Received: 2026-07-25
+- Approval Thread: 019f9783-31a0-7e91-9704-08cde7886b3a
+- Approved Scope: Exactly the eight governed canonical definition paths listed below; no scope expansion.
+- Phase: Awaiting parent Coordinator Ready -> Starting reservation for this same canonical task.
+- Next Action Owner: Parent Coordinator
+- Unattended Boundary: Do not mutate governed sources, approval records, generated mirrors, or dependent artifacts until this same canonical Thread is resumed through Ready -> Starting -> Running.
 
 ### Governed Canonical Definition Approval Scope
 
