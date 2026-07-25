@@ -1,6 +1,6 @@
 # Add Structured Commit Disposition To Orchestrator Evaluation Contract
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -17,7 +17,17 @@ Completion: direct-main
 - Normalized Objective: Add structured Commit disposition to the Dev Orchestrator evaluation contract.
 - Dispatched At: 2026-07-25T02:12:50Z
 - Intended Root Role: Dev Orchestrator
-- Runtime Thread And Task Id: Not created; the root Dev Orchestrator must accept ownership before a canonical identity is recorded.
+- Runtime Thread And Task Id: 019f970d-1e68-7563-b840-a18765cfb70a
+
+## Lifecycle Start
+
+- Owner: root Dev Orchestrator
+- Canonical Runtime Identity: 019f970d-1e68-7563-b840-a18765cfb70a
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Canonical Worktree: /Users/martinbechard/.codex/worktrees/f18e/dev-methodology
+- Canonical Branch State: detached at 930261abea315b05c167a426d6e8729453b88a71
+- Phase: Diagnosis pending governed approval.
+- Coordination Evidence: The parent reserved this item in Starting, and the Dev Backlog Steward recorded this atomic Starting-to-Running acceptance on primary main under claim structured-commit-disposition-start-019f970d (event 14c1785e-ef75-43f0-a445-c72ebb0c9efc).
 
 ## Summary
 
