@@ -1,8 +1,10 @@
 # Restore Documentation Acceptance Template Contract
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
+
+Owner: Unowned
 
 ## Launch Reservation
 
@@ -61,3 +63,26 @@ None.
 ## Notes
 
 This is a baseline-reproduced defect. The implementation must preserve the distinction between accurate documentation acceptance and downstream implementation readiness.
+
+## User Action Required
+
+Question: Do you approve mutation only of these governed canonical source paths: skills/create-architecture/SKILL.md; skills/create-functional-spec/SKILL.md; skills/create-high-level-design/SKILL.md; skills/create-module-design/SKILL.md; skills/review-module-design/SKILL.md?
+
+Why Input Is Required: The independent reviewer found that retained blockquote notes precede authored decisions while the existing creation and review gates require the first nonblank content under the heading. Therefore the acceptance criterion is not met, and changing any governed canonical source requires explicit, scope-specific user approval.
+
+Authorized Scope If Approved: Align the wording to first authored decision after the retained blockquote note, preserving ACCEPTED/BLOCKED versus READY/BLOCKED independence and current-pass semantics. The ordinary companion correction will align four review checklists, strengthen scripts/test_bundle_content.py ordering assertions, and regenerate only policy-supported mirrors. No other governed source is authorized.
+
+Prohibited Until Approval: Do not perform further artifact or integration work.
+
+Permitted Resumption: User Action Required -> Ready after the answer, then the parent Starting reservation and the same canonical Thread Running transition.
+
+## Handoff Evidence
+
+- Preserved candidate commits: 3159c5bf63e25c71df8a264f925bac02a2c76541 and 7f97d242b4facde4e19727179a08a8bcb4111258.
+- Released implementation claim events: cb048e7b-e975-487b-b607-0e0488e5e42d and 3d50e8b9-5361-4aa0-80be-48ed748564a5.
+- Verifier gates: GOOD.
+- Independent reviewer finding: HIGH. Retained blockquote notes precede authored decisions while existing creation and review gates demand the first nonblank content under the heading, so the acceptance criterion is not met.
+
+## Resolution
+
+Pending explicit user answer to the recorded question.
