@@ -1,6 +1,6 @@
 # Reject Nonexistent Lifecycle Handoff Commit OIDs
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -21,7 +21,8 @@ Completion: direct-main
 - Dispatched At: 2026-07-25T12:16:47Z
 - Intended Root Role: Dev Orchestrator
 - Preserved Evidence: Candidate branch codex/reject-nonexistent-lifecycle-handoff-oids-019f978e, worktree /Users/martinbechard/.codex/worktrees/215b/dev-methodology, accepted candidate a12babfc3b919b5e5334821703c8549fe40aa82a, and the approved exact governed-definition scope remain binding.
-- Phase: Awaiting root lifecycle acceptance.
+- Phase: Governed definition implementation.
+- Resumed At: 2026-07-25T12:18:08Z
 
 ## Resumption Coordination Evidence
 
@@ -34,7 +35,7 @@ Completion: direct-main
 - Reservation: One parent-owned launch reservation.
 - Intended Root Role: Dev Orchestrator
 - Isolated Checkout: /Users/martinbechard/.codex/worktrees/215b/dev-methodology
-- Phase: Awaiting parent reservation.
+- Phase: Governed definition implementation.
 - Dispatched At: 2026-07-25T04:36:08Z
 
 ## Execution Identity
@@ -42,7 +43,7 @@ Completion: direct-main
 - Canonical Thread/Task: 019f978e-28b7-7561-be38-b535ab26850f
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
 - Root Role: Dev Orchestrator
-- Branch: main
+- Branch: codex/reject-nonexistent-lifecycle-handoff-oids-019f978e
 - Worktree: /Users/martinbechard/.codex/worktrees/215b/dev-methodology
 - Started At: 2026-07-25T04:39:47Z
 
@@ -126,6 +127,7 @@ The same canonical task preserves candidate a12babfc3b919b5e5334821703c8549fe40a
 - Verification-Phase Claim: record-verification-phase-handoff-oids-019f978e acquired on primary main at 2026-07-25T06:37:04.074955Z; acquisition journal event fc079bb0-4edb-4b90-ada1-3fb402a5c711.
 - User-Action-Required Transition Claim: move-lifecycle-oid-to-uar-019f978e acquired on primary main at 2026-07-25T06:51:28.892456Z; acquisition journal event 27983099-ef32-45d1-9a76-cf2af3a9c6e1. Earlier wait attempt 9b5f91bc-2da1-4b64-bb6f-a8c53daef5f4 reconciled after direct release baton event d12478df-4ff5-41bf-96a2-212ae39081c8.
 - Approval-Resolution Claim: record-governed-approval-resume-019f978e acquired on primary main at 2026-07-25T12:08:23.325017Z; acquisition journal event 000030dc-d420-4cb4-9f41-641810b63b93.
+- Running-Resumption Claim: record-governed-implementation-running-019f978e acquired on primary main at 2026-07-25T12:17:54.518445Z; acquisition journal event dca2352f-6f77-4452-90d2-5f7414ffcd6d.
 
 ## Summary
 
