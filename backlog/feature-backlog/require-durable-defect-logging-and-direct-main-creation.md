@@ -1,6 +1,6 @@
 # Require Durable Defect Logging And Direct-Main Work-Item Creation
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -9,11 +9,11 @@ Owner: Unowned
 ## Launch Reservation
 
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
-- Reservation: One launch reserved by the parent Dev Backlog Coordinator.
+- Reservation: One same-task resumption launch reserved by the parent Dev Backlog Coordinator.
 - Normalized Objective: Require durable defect logging and define safe claim-free primary-main work-item creation.
-- Dispatched At: 2026-07-25T01:04:42Z
+- Dispatched At: 2026-07-25T02:35:39Z
 - Intended Root Role: Dev Orchestrator
-- Runtime Thread And Task Id: Accepted as canonical work-item Thread 019f96cf-226c-7f62-9d66-7d31cead822e; canonical root task recorded below.
+- Runtime Thread And Task Id: Existing canonical work-item Thread 019f96cf-226c-7f62-9d66-7d31cead822e is retained; no replacement task was created.
 
 ## Prior Execution Ownership
 
