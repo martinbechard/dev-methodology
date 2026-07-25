@@ -1,6 +1,6 @@
 # Decouple Dev Backlog Steward Contract From Unconditional Claim Evidence
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -18,6 +18,21 @@ Completion: direct-main
 - Dispatched At: 2026-07-25T01:42:15Z
 - Intended Root Role: Dev Orchestrator
 - Runtime Thread And Task Id: Not created; the root Dev Orchestrator must accept ownership before a canonical identity is recorded.
+
+## Execution Ownership
+
+- Canonical Work-item Thread And Task Id: 019f96f1-1a19-7b01-b166-c5948a50fff5
+- Root Owner: Dev Orchestrator
+- Delivery Branch: Detached pending delivery claim.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/ecbc/dev-methodology
+- Phase: Discovery and approval manifest.
+- Started At: 2026-07-25T02:05:01Z
+
+## Coordination Evidence
+
+- Backlog Claim: 019f96f1-running-transition acquired on primary main at 2026-07-25T02:05:01.221304Z; acquisition journal event 48f71097-1095-4071-9b12-165048f4e832.
+- Direct Release Baton: running-backlog-lifecycle-019f96f0 was released after primary-main backlog transaction 766464a894ab3427d8eebc3aa28bc865119e199b; release event 5f486be7-acea-4f90-a200-75dcbe75fd43.
+- Prior Release Baton: decouple-dev-orchestrator-eval-correction1-019f96ce released event c1cd5671-52fe-468f-a363-c561e7e0140f.
 
 ## Summary
 
