@@ -1,6 +1,6 @@
 # Align Module Design Template And Bundle Test Contract
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -18,7 +18,7 @@ Type: Defect
 - Work-Item Thread: 019f96ce-dd33-7bf2-bbe1-73e2af07da52
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
 - Root Agent Task Id: 019f96ce-dd33-7bf2-bbe1-73e2af07da52
-- Owner: Dev Orchestrator
+- Owner: Unowned
 - Branch: codex/align-module-template-test-contract
 - Worktree: /Users/martinbechard/.codex/worktrees/1e75/dev-methodology
 - Phase: diagnosis-and-implementation
@@ -78,12 +78,12 @@ This is a baseline-reproduced regression, not a current-main-only failure. Do no
 - Canonical decision owner Thread: 019f96ce-fb8b-7e51-9e26-c8b7617bf7b5.
 - Durable canonical decision: backlog/user-action-required/restore-documentation-acceptance-template-contract.md at commit ab02f64a0718d47bd2da356890f09ab217b1eb45.
 
-## User Action Required
+## User Decision Record
 
-Question: Do you approve aligning only these governed canonical sources — skills/create-architecture/SKILL.md; skills/create-functional-spec/SKILL.md; skills/create-high-level-design/SKILL.md; skills/create-module-design/SKILL.md; skills/review-module-design/SKILL.md — so Documentation Acceptance and Implementation Readiness mean the first authored decision after the retained blockquote note, preserving ACCEPTED/BLOCKED versus READY/BLOCKED and current-pass semantics?
+Question: Do you approve aligning only these governed canonical sources — skills/create-architecture/SKILL.md; skills/create-functional-spec/SKILL.md; skills/create-high-level-design/SKILL.md; skills/create-module-design/SKILL.md; skills/review-module-design/SKILL.md — so Documentation Acceptance and Implementation Readiness mean the first authored decision after skipping any retained explanatory note(s), preserving ACCEPTED/BLOCKED versus READY/BLOCKED and current-pass semantics?
 
 Why User Input Is Required: This item shares the canonical governed-definition decision recorded by Thread 019f96ce-fb8b-7e51-9e26-c8b7617bf7b5. Explicit, scope-specific user approval is required before any governed canonical source may change.
 
-Resolution: Pending the exact approval decision recorded above; this references the canonical question and does not issue a second user request.
+Resolution: Approved on 2026-07-25. The canonical Thread 019f96ce-dd33-7bf2-bbe1-73e2af07da52 current user message answered: "Amend it to skip over any note." This is explicit approval for only the five canonical sources named in the Question. Documentation Acceptance and Implementation Readiness must evaluate the first authored decision after skipping any retained explanatory note(s), preserving ACCEPTED/BLOCKED versus READY/BLOCKED and current-pass semantics.
 
-Unattended Work Boundary: Do not integrate db82828f8e240a3014eb87635b6f7135362934af or mutate governed definitions before explicit approval and normal same-Thread Ready -> Starting -> Running resumption.
+Ready Disposition: This approved defect is active in backlog/defect-backlog with Status: Ready and Owner: Unowned. Preserve candidate db82828f8e240a3014eb87635b6f7135362934af and the existing review and verification evidence. The parent Coordinator owns the later same-Thread Ready -> Starting transition; this record does not start or run implementation.
