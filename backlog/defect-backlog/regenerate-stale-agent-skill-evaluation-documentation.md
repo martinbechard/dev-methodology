@@ -1,14 +1,31 @@
 # Regenerate stale agent-skill evaluation documentation
 
-Status: Ready
+Status: Starting
 
 Type: Defect
+
+Owner: Dev Orchestrator
 
 Provider: file
 
 Provider Reference: backlog/defect-backlog/regenerate-stale-agent-skill-evaluation-documentation.md
 
 Completion: direct-main
+
+## Launch Reservation
+
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Canonical Thread/Task: 019f979e-5330-7501-8340-92dfd593f6ef
+- Reservation: One parent-owned launch reservation.
+- Intended Root Role: Dev Orchestrator
+- Isolated Checkout: /Users/martinbechard/.codex/worktrees/5c5a/dev-methodology
+- Phase: Awaiting root acceptance.
+- Dispatched At: 2026-07-25T04:53:32Z
+
+## Coordination Evidence
+
+- Backlog Claim: reserve-stale-evaluation-documentation-defect-019f979e acquired on primary main at 2026-07-25T04:53:32.705924Z; acquisition journal event a03bd3f2-6561-4920-8fab-ada4cc43121c.
+- Artifact Overlap Constraint: claim 019f96f1-steward-correction2-isolated requires a later direct release baton before any generated HTML mutation.
 
 ## Summary
 
