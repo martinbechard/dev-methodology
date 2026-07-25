@@ -1,6 +1,6 @@
 # Use Exact Work-Item Claims For Lifecycle Updates
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -16,11 +16,23 @@ Owner: Dev Orchestrator
 - Intended Root Role: Dev Orchestrator
 - Canonical Worktree: /Users/martinbechard/.codex/worktrees/8b42/dev-methodology
 - Preserved Approval: Original eight governed paths plus only skills/agent-claim-command/SKILL.md and skills/agent-claim-mcp/SKILL.md; no other governed scope.
-- Phase: Awaiting root lifecycle acceptance.
+- Phase: Accepted; lifecycle now Running.
 
 ## Supplemental Resumption Coordination Evidence
 
 - Backlog Claim: reserve-exact-work-item-claims-supplemental-019f9783 acquired on primary main at 2026-07-25T16:04:09.645990Z; acquisition journal event 096f6363-1325-41d8-a432-ebef900a1bb3.
+
+## Supplemental Running Acceptance
+
+- Owner: Dev Orchestrator
+- Canonical Task/Thread: 019f9783-31a0-7e91-9704-08cde7886b3a
+- Delivery Branch: codex/exact-work-item-claims-019f9783
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/8b42/dev-methodology
+- Started At: 2026-07-25T16:05:23Z
+- Phase: Running; correction implementation and verification.
+- Preserved Approval: Original eight governed paths plus only skills/agent-claim-command/SKILL.md and skills/agent-claim-mcp/SKILL.md; no other governed scope.
+- Backlog Claim: 019f9783-supplemental-running-steward
+- Claim Acquisition Event: 415236d0-e665-443a-bf45-8fadfa00e94a
 
 ## Resumption Launch Reservation
 
