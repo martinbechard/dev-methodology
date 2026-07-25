@@ -1,6 +1,6 @@
 # Align Module Design Template And Bundle Test Contract
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
@@ -63,3 +63,27 @@ None.
 ## Notes
 
 This is a baseline-reproduced regression, not a current-main-only failure. Do not implement a template or skill-definition change without the required approval manifest.
+
+## Delivery And Review Evidence
+
+- Clean candidate: db82828f8e240a3014eb87635b6f7135362934af.
+- Candidate scope: scripts/test_bundle_content.py only; no governed definition path changed.
+- Independent review: approved with no findings.
+- Verifier: PASS for the focused test, structural readiness check, candidate scope audit, and whitespace gate.
+- Known concurrent baseline warning: the full bundle-content module still has the separately tracked, baseline-reproduced Documentation Acceptance failure. It was not introduced by this candidate.
+- Implementation and integration claims are released. No integration occurred.
+
+## Canonical Decision Dependency
+
+- Canonical decision owner Thread: 019f96ce-fb8b-7e51-9e26-c8b7617bf7b5.
+- Durable canonical decision: backlog/user-action-required/restore-documentation-acceptance-template-contract.md at commit ab02f64a0718d47bd2da356890f09ab217b1eb45.
+
+## User Action Required
+
+Question: Do you approve aligning only these governed canonical sources — skills/create-architecture/SKILL.md; skills/create-functional-spec/SKILL.md; skills/create-high-level-design/SKILL.md; skills/create-module-design/SKILL.md; skills/review-module-design/SKILL.md — so Documentation Acceptance and Implementation Readiness mean the first authored decision after the retained blockquote note, preserving ACCEPTED/BLOCKED versus READY/BLOCKED and current-pass semantics?
+
+Why User Input Is Required: This item shares the canonical governed-definition decision recorded by Thread 019f96ce-fb8b-7e51-9e26-c8b7617bf7b5. Explicit, scope-specific user approval is required before any governed canonical source may change.
+
+Resolution: Pending the exact approval decision recorded above; this references the canonical question and does not issue a second user request.
+
+Unattended Work Boundary: Do not integrate db82828f8e240a3014eb87635b6f7135362934af or mutate governed definitions before explicit approval and normal same-Thread Ready -> Starting -> Running resumption.
