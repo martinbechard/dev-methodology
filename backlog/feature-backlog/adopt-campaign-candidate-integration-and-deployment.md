@@ -1,6 +1,6 @@
 # Adopt Campaign Candidate Integration And Deployment
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -19,15 +19,24 @@ Type: Feature
 - Work-Item Thread: 019f96cf-48ef-7c41-bef1-ca69d574526c
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
 - Root Agent Task Id: 019f96cf-48ef-7c41-bef1-ca69d574526c
-- Owner: Dev Orchestrator
+- Owner: Unowned
 - Branch: detached at reservation commit 97e8e20761619518d37ca5a17310836b4f4bf3b6; resumed under primary reservation lineage b25464b67d59a2ef9674dc31fe727266f516cdfa; no delivery branch created.
 - Worktree: /Users/martinbechard/.codex/worktrees/1c8b/dev-methodology
-- Phase: approved canonical implementation preparation
+- Phase: blocked pending a separately authorized correction route
 - Started At: 2026-07-25T01:09:02Z
 - Resumed At: 2026-07-25T02:48:20Z
 - Prior Coordination Evidence: 019f96cf-48ef-7c41-bef1-ca69d574526c-backlog-running; agent-claim event ef24e4c8-e833-4434-a69b-94ebd69d2846; backlog scope on canonical primary main.
-- Coordination: Enabled; agent-claim short backlog resumption transaction completed before this provider mutation.
+- Coordination: Not active; prior short backlog transactions remain recorded as lifecycle evidence.
 - Claim Evidence: 019f96cf-48ef-7c41-bef1-ca69d574526c-backlog-resume-running; agent-claim event 843b0658-5681-4d76-8012-02a707ef22f0; backlog scope on canonical primary main.
+
+## Blocked Dependency
+
+- Blocked At: 2026-07-25T04:54:20Z
+- Dependency: A separately authorized correction route is required because the bounded correction contract prohibits a third correction attempt for this item.
+- Candidate Evidence: Final bounded correction-2 candidate 6ab5976a3fe74c6bc9b0ab8e4faa80e4471c8f2f was clean; claim campaign-candidate-integration-correction2-019f96cf was released with event 8d0eb41b-00f8-4643-b38f-5000e6d6e857.
+- Review Evidence: Fresh methodology review was GOOD. Fresh independent code review was FAIL with one high defect: receipt bundles are validated independently rather than relationally.
+- Required Correction Evidence: Enforce relations between generation.generated_commit and Commit accepted_commit; generation output SHA and deployment source/installed SHA; observed main reachability before deployment; and strict NOT_APPLICABLE empty targets, zero bytes, and sentinels. Direct probes accepted forged mismatched receipts and malformed NOT_APPLICABLE.
+- Lifecycle Evidence: This blocking transition used claim 019f96cf-48ef-7c41-bef1-ca69d574526c-backlog-blocked with acquisition event 9d4d8ce0-a62d-4f34-b7b9-447c03f0ec81 on canonical primary main.
 
 ## Approval Resolution
 
