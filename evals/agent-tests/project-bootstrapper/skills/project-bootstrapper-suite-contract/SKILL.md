@@ -24,6 +24,7 @@ Evaluate Project Bootstrapper as a stateful orchestrator whose value is correct 
 - Wiki Ingester reports exact stale, contradictory, or missing artifacts; Project Bootstrapper routes each result to the existing owner and obtains fresh independent review before a clear re-audit.
 - Dev Documentation Writer creates or updates supported assigned non-wiki documents, including a missing module design, without owning the final cross-artifact audit.
 - The same failed correction is attempted at most twice before BLOCKED.
+- Repository mutation remains required, while agent-claim applies only when the project-selected resource coordination policy selects it.
 - READY requires accepted configuration, complete documented scope, applicable independent reviews, final verification, a final direct or integration commit or explicit no-change result, clean worktrees, and released claims.
 - The result includes status, project setup files, documentation, checks, and remaining questions.
 

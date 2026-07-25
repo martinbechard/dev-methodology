@@ -7,10 +7,10 @@ target:
   nativeAgent: generated/adapters/codex/agents/project-bootstrapper.toml
   repositoryMutation: required
   requiredSkills:
-    - agent-claim
     - documentation-bootstrap
     - development-methodology
   conditionalSkills:
+    agent-claim: Resource coordination selects agent-claim.
     organise-project-files: Bootstrap creates a project file or directory whose path is not fixed by the bootstrap contract.
   allowedAgentDependencies:
     - project-configurator
