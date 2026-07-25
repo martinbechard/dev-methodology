@@ -431,6 +431,52 @@ def _validate_scenario_roots(
     return _scenario_roots(batch, fixture_root, create=False)
 
 
+def _contained_suite_path(suite_root: Path, value: object) -> Path:
+    """Return one real, non-symlink suite directory contained by the canonical suite root."""
+    if not isinstance(value, str):
+        raise ValueError(f"Suite path is not a safe relative path: {value!r}")
+    components = value.split("/")
+    if not value or any(_SCENARIO_ROOT_COMPONENT.fullmatch(part) is None for part in components):
+        raise ValueError(f"Suite path is not a safe relative path: {value!r}")
+
+    boundary = suite_root.resolve(strict=True)
+    candidate = suite_root
+    for component in components:
+        candidate /= component
+        try:
+            metadata = candidate.lstat()
+        except FileNotFoundError as error:
+            raise ValueError(f"Suite path is missing: {value!r}") from error
+        if stat.S_ISLNK(metadata.st_mode):
+            raise ValueError(f"Suite path must not contain a symbolic link: {value!r}")
+        if not stat.S_ISDIR(metadata.st_mode):
+            raise ValueError(f"Suite path is not a directory: {value!r}")
+
+    canonical = candidate.resolve(strict=True)
+    if canonical == boundary or not canonical.is_relative_to(boundary):
+        raise ValueError(f"Suite path escapes the canonical suite root: {value!r}")
+    return canonical
+
+
+def _contained_suite_file(suite_root: Path, suite_path: Path, file_name: str) -> Path:
+    """Return one real, non-symlink suite catalog file contained by the canonical suite root."""
+    candidate = suite_path / file_name
+    try:
+        metadata = candidate.lstat()
+    except FileNotFoundError as error:
+        raise ValueError(f"Suite catalog file is missing: {candidate}") from error
+    if stat.S_ISLNK(metadata.st_mode):
+        raise ValueError(f"Suite catalog file must not be a symbolic link: {candidate}")
+    if not stat.S_ISREG(metadata.st_mode):
+        raise ValueError(f"Suite catalog file is not a regular file: {candidate}")
+
+    boundary = suite_root.resolve(strict=True)
+    canonical = candidate.resolve(strict=True)
+    if not canonical.is_relative_to(boundary):
+        raise ValueError(f"Suite catalog file escapes the canonical suite root: {candidate}")
+    return canonical
+
+
 def _load_catalog(
     suite_root: Path = _SUITE_ROOT,
     include_ids: set[str] | None = None,
@@ -438,21 +484,26 @@ def _load_catalog(
     index = _load_yaml(suite_root / "suite-index.yaml")
     entries = index.get("suites", [])
     validated_entries = [
-        (_safe_scenario_root_component(entry.get("id"), "Suite id"), entry)
+        (
+            _safe_scenario_root_component(entry.get("id"), "Suite id"),
+            _contained_suite_path(suite_root, entry.get("path")),
+            entry,
+        )
         for entry in entries
     ]
-    available_ids = {suite_id for suite_id, _ in validated_entries}
+    available_ids = {suite_id for suite_id, _, _ in validated_entries}
     if include_ids is not None:
         unknown = include_ids - available_ids
         if unknown:
             raise ValueError(f"Unknown suites: {', '.join(sorted(unknown))}")
     suites: dict[str, _Suite] = {}
-    for suite_id, entry in validated_entries:
+    for suite_id, suite_path, entry in validated_entries:
         if include_ids is not None and suite_id not in include_ids:
             continue
-        suite_path = suite_root / str(entry["path"])
-        manifest = _load_yaml(suite_path / "suite.yaml")
-        scenario_document = _load_yaml(suite_path / "scenarios.yaml")
+        manifest_path = _contained_suite_file(suite_root, suite_path, "suite.yaml")
+        scenarios_path = _contained_suite_file(suite_root, suite_path, "scenarios.yaml")
+        manifest = _load_yaml(manifest_path)
+        scenario_document = _load_yaml(scenarios_path)
         suite = _Suite(
             suite_id=suite_id,
             priority=int(entry["priority"]),
