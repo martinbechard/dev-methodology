@@ -1,10 +1,10 @@
 # Explain User Action Required Requests With Examples
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Claim: None
 
@@ -31,8 +31,50 @@ Completion: direct-main
 - Checkout: /Users/martinbechard/.codex/worktrees/a8df/dev-methodology
 - Branch: HEAD
 - Checkout State: Detached HEAD at 271c0fe1a12d9c720fca3c041eb79a6f5ec422bb.
-- Current Phase: Approved governed implementation.
+- Current Phase: Blocked pending parent-coordinated recovery under the same canonical task.
 - Transition Evidence: Parent Coordinator 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a provided the direct baton after the prior backlog transaction released. The file provider was reconciled as Starting at main commit 49c78f81a91c3eccab21e50a7413d707b7fe3938, then this serialized backlog claim was acquired as 019f9722-user-action-required-starting-running (claim event 5fa1c816-7d42-4fd0-9724-a13f5bbe6587). After the same-task approval was recorded, the provider was reconciled as Starting at main commit ef9efa60914050236ba2a409abe505eeea1c34d6 and claim 019f9722-approved-starting-running was acquired for this Starting to Running transition (claim event 0f5c6788-42bc-4f4d-bd24-25967053830d).
+
+## Blocked Handoff
+
+### Exact Blocker
+
+The bounded correction loop is exhausted after two correction cycles. Final fresh prompt-contract review and fresh source and test review did not accept candidate 12721aaf54ae680671596a1ee934e0fa45d30a05.
+
+### Persistent Findings
+
+- Replay versus repeated-request wording remains contradictory.
+- Stable envelope normalization and state transitions are insufficiently deterministic.
+- Semantic adversarial tests still accept synonym and negated contradictions and weak task-local durability.
+- skills/manage-file-work-items/SKILL.md still contains a direct UNSET ask bypass.
+- The User Action Required resume example and status conflict with the existing RUNNING output contract.
+
+### Review Disposition
+
+Methodology review v3 was GOOD, but it cannot override the prompt-contract and source and test review rejection gates.
+
+### Candidate Chain
+
+- Initial: 59e9938810c9a498f3264f00a75d1424ed1deac4, base 1d909c76.
+- Correction 1: 331c33eb402853b08105cdc65dfdd4a2311050b5, base campaign 21737be5.
+- Correction 2 and final: 12721aaf54ae680671596a1ee934e0fa45d30a05, same base.
+- Branch: codex/uar-protocol-correction1-a8df.
+- Private worktree: /Users/martinbechard/.codex/worktrees/a8df/dev-methodology, clean.
+
+### Verification Evidence
+
+Candidate-focused verification had 23 passing checks, and skill validation, YAML, and diff checks passed. Fresh prompt and source reviews returned NEEDS_CORRECTION. Verifier, integration, generation, documentation, and direct-main delivery were not run because review acceptance failed.
+
+### Related Defect
+
+backlog/defect-backlog/align-coordinator-unset-selection-with-user-action-required-reconciliation.md was separately logged as Ready in commit 8b8f575e. It is related evidence, not a substitute for resolving this blocked item.
+
+### Next Action Owner
+
+The parent Dev Backlog Coordinator must choose a recovery or resumption strategy under canonical task/thread 019f9722-61cb-7190-8a6d-21c5ab319339. Do not create a replacement task.
+
+### Unblock Condition
+
+An authorized bounded recovery addresses every exact review finding, passes new fresh prompt, methodology, and source review plus independent verification, reconciles the campaign base and main with supported mirrors and documentation, then resumes through Blocked to Ready to Starting to Running normally.
 
 ## Approval Resolution
 
