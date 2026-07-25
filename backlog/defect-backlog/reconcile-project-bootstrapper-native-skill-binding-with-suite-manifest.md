@@ -1,6 +1,6 @@
 # Reconcile Project Bootstrapper native skill binding with the suite manifest
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -21,11 +21,28 @@ Completion: direct-main
 - Intended Root Role: Dev Orchestrator
 - Discovered Ordinary Scope: evals/agent-tests/project-bootstrapper/suite.yaml, its suite-local contract SKILL.md, and focused tests and fixtures.
 - Authority Boundary: Any governed or generated-definition mutation requires later exact approval and is not authorized by this reservation.
-- Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
+- Runtime Thread And Task Id: 019f991a-c3b1-7b31-ab52-42152a9f5f0c accepted by the root Dev Orchestrator.
 
 ## Reservation Coordination Evidence
 
 - Backlog Claim: reserve-project-bootstrapper-suite-binding-20260725 acquired on primary main at 2026-07-25T11:47:34.139556Z; acquisition journal event 9490e5e8-4ac7-45e1-99eb-708257180a2c.
+- Reservation Commit And Release: 1faf4fb7727aed05f84a0863af7c08b457281ade; release journal event 70d78b3f-899d-4f09-a6b5-0c3af8993bfb.
+
+## Execution Acceptance
+
+- Canonical Work-item Thread And Root Task Id: 019f991a-c3b1-7b31-ab52-42152a9f5f0c.
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Root Owner: Dev Orchestrator.
+- Delivery Branch: Detached at reservation commit 1faf4fb7727aed05f84a0863af7c08b457281ade; delivery claim and branch remain separate from this backlog transaction.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/3767/dev-methodology.
+- Primary Main Head At Acceptance: 0a27d2119a6acc49f1111c39f5096ae330857645.
+- Phase: Discovery.
+- Started At: 2026-07-25T11:50:36.672757Z.
+
+## Running Coordination Evidence
+
+- Backlog Claim: start-running-project-bootstrapper-suite-binding-019f991a acquired on primary main at 2026-07-25T11:50:36.672757Z; acquisition journal event 7c04a63b-762a-4adf-8951-69caddfeac83; resource backlog:mutation:project-bootstrapper-suite-binding.
+- Release: This short backlog-mutation claim is released immediately after the committed provider transition; its release journal event is retained in the lifecycle handoff.
 
 ## Summary
 
