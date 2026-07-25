@@ -1,10 +1,10 @@
 # Use Exact Work-Item Claims For Lifecycle Updates
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 ## Resumption Launch Reservation
 
@@ -32,6 +32,28 @@ Owner: Dev Orchestrator
 - Phase: approved implementation preparation
 - Backlog Claim: 019f9783-resumption-running-steward
 - Claim Acquisition Event: 6db6306c-a5f1-4ead-b6d2-ac8dc190636d
+
+## Correction Authority Required
+
+- Question: "Do you approve mutation of exactly skills/agent-claim-command/SKILL.md to align the distributed command adapter with the already-approved runtime rule that a broad backlog claim requires a documented scope reason?"
+- Additional Governed Approval Scope: skills/agent-claim-command/SKILL.md only; no other approval expansion.
+- Why Approval Is Required: Candidate command runtime now rejects unjustified broad --backlog without --scope-reason, but the governed command adapter still says only tree/project-files/all-files require the reason, so callers receive a documented-invalid command.
+- Candidate: 0f3dcab5d539ea1aca197e1fc28fab574e2746b4; clean and claim released.
+- Canonical Task/Thread: 019f9783-31a0-7e91-9704-08cde7886b3a
+- Delivery Branch: Detached HEAD at bc30647a6de2f1593a1f5a746410c9d6761e2ba5
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/8b42/dev-methodology
+- Recorded At: 2026-07-25T13:13:50Z
+- Backlog Claim: 019f9783-command-adapter-approval-steward
+- Claim Acquisition Event: 5e41129d-f6a1-4078-ae3d-1644edc5b14e
+- Unattended Boundary: Preserve candidate and do not mutate the new governed path, approval record, correction artifacts, generated outputs, or dependent docs/tests until the user answers and this same canonical Thread resumes through UAR -> Ready -> Starting -> Running.
+
+### Fresh Independent Review Findings
+
+1. High: command-adapter manifest omission requires the additional approval above.
+2. Medium: approved-scope correction for every nonterminal path move to claim exact source plus destination.
+3. Medium: approved-scope correction for stale release/ancestry guidance and test.
+4. Medium: non-governed regeneration of stale design/agent-and-skill-evaluations.html.
+5. Add focused cases for simultaneous different-item processes, broad-versus-exact contention, and baseline_not_ancestor.
 
 ## Launch Reservation
 
