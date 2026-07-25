@@ -1,6 +1,6 @@
 # Reject Nonexistent Lifecycle Handoff Commit OIDs
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -19,12 +19,22 @@ Completion: direct-main
 - Reservation: One parent-owned launch reservation.
 - Intended Root Role: Dev Orchestrator
 - Isolated Checkout: /Users/martinbechard/.codex/worktrees/215b/dev-methodology
-- Phase: Awaiting root acceptance.
+- Phase: Discovery and diagnosis.
 - Dispatched At: 2026-07-25T04:36:08Z
+
+## Execution Identity
+
+- Canonical Thread/Task: 019f978e-28b7-7561-be38-b535ab26850f
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Root Role: Dev Orchestrator
+- Branch: main
+- Worktree: /Users/martinbechard/.codex/worktrees/215b/dev-methodology
+- Started At: 2026-07-25T04:39:47Z
 
 ## Coordination Evidence
 
 - Backlog Claim: reserve-lifecycle-handoff-oid-defect-019f978e acquired on primary main at 2026-07-25T04:36:08.080425Z; acquisition journal event 03c16c20-3fa5-40fd-a43b-61352ae4e3a7.
+- Running Transition Claim: record-running-lifecycle-handoff-oids-019f978e acquired on primary main at 2026-07-25T04:39:41.479916Z; acquisition journal event aaa4b206-d60a-47a4-abf5-7ec4e9782c22. Earlier wait attempt: f769d7a1-2113-4390-a1a9-096dd7d6f720; direct release baton received after unrelated claim release event 0db72b9d-17c1-4d45-8c5a-cb4260689656.
 
 ## Summary
 
