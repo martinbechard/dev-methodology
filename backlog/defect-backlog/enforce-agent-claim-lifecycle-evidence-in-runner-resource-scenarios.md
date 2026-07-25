@@ -1,6 +1,6 @@
 # Enforce Agent-Claim Lifecycle Evidence In Runner Resource Scenarios
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -11,6 +11,21 @@ Provider: file
 Provider Reference: backlog/defect-backlog/enforce-agent-claim-lifecycle-evidence-in-runner-resource-scenarios.md
 
 Completion: direct-main
+
+## Execution Acceptance
+
+- Canonical Work-Item Thread: 019f981c-4fea-7b83-b8d2-0b254ff45f0c
+- Canonical Task Id: 019f981c-4fea-7b83-b8d2-0b254ff45f0c
+- Root Role: Dev Orchestrator
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/e8bc/dev-methodology
+- Delivery Branch: detached HEAD
+- Delivery Commit At Acceptance: d40de70dcccf484284ce02310c90ad6c5fb89b83
+- Phase: Execution accepted; implementation pending.
+- Started At: 2026-07-25T07:12:44Z
+
+## Execution Coordination Evidence
+
+- Backlog Claim: starting-to-running-019f981c-4fea-7b83-b8d2-0b254ff45f0c acquired on primary main at 2026-07-25T07:12:37.538066Z; acquisition journal event f395935f-c596-4d30-acec-1fe10192f1e8.
 
 ## Launch Reservation
 
