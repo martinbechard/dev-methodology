@@ -1,14 +1,14 @@
 # Regenerate stale agent-skill evaluation documentation
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Completed
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/regenerate-stale-agent-skill-evaluation-documentation.md
+Provider Reference: backlog/completed-backlog/defects/regenerate-stale-agent-skill-evaluation-documentation.md
 
 Completion: direct-main
 
@@ -36,6 +36,22 @@ Completion: direct-main
 - Worktree: /Users/martinbechard/.codex/worktrees/5c5a/dev-methodology.
 - Phase: Reconciling released semantic artifact baton.
 - Started At: 2026-07-25T04:55:33.857392Z.
+
+## Completion Evidence
+
+- Accepted source delivery: 7fdc9871cd033e3ed62c7b374f9abf50597d1575, based on a2a60a45.
+- Independent acceptance: fresh code review APPROVED, artifact review GOOD, and verifier VERIFIED.
+- Main integration: direct non-ancestral five-path replay from pre-integration main 84a95faa1a9a28bea96366ab6a4a05e6a99ce7d6 to f4e2405405f63828e159245688bddb89e4c9574d. Main observes that integration tip.
+- Content integrity: all five source and integration blobs are equal; the replay manifest SHA-256 is 95e50485eec7df9701e3de17dfdac0bd7fba1789ade38dff2510af92e76369e3.
+- Integration coordination: 019f979e-integrate-stale-eval-main acquired in event 40317435-1e4b-47c5-b9e4-04893d26c6ee and released in event b017e806-296a-47dc-a63a-372acb2e9ab8. The registry was empty before this terminal provider transaction.
+- Main verification passed: generator --check; 26 evaluation-document tests; 13 Steward contract tests; validate-only; focused bundle tests (3); scripts.test_bundle_content (118); py_compile; and git diff --check.
+- Tier 3 source verification ran 700 tests with five baseline-existing Steward-neutrality failures. The corrected baseline had six failures including this stale-documentation failure, so this delivery removes that failure and adds none. The remaining five have their own durable blocker: backlog/defect-backlog/decouple-dev-backlog-steward-contract-from-unconditional-claim-evidence.md.
+- Root cause and correction: page digest drift exposed scenario sources that encoded claim-required behavior unconditionally. Seven historical rows now use neutral top-level contracts with declared project-selected agent-claim and none variants; the generator preserves conditional skill associations without execution claims, and regression tests prevent recurrence.
+- Terminal provider transaction: 019f979e-complete-stale-eval-provider acquired on primary main in event 2e98b4a7-007e-4bf8-8d56-6cc5c98d0ad8. This archive commit is released immediately after its immutable-path verification.
+
+## Completed At
+
+2026-07-25T06:23:52Z (terminal provider transaction started; completion becomes durable in its archive commit).
 
 ## Summary
 
