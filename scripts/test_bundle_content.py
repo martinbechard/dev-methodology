@@ -6663,6 +6663,14 @@ class BundleContentTests(unittest.TestCase):
             agents_section,
         )
         self.assertIn(
+            'role="img" aria-label="A parent coordination Thread contains a Coordinator Agent',
+            agents_section,
+        )
+        self.assertIn(
+            'role="img" aria-label="Assignment A performs and commits one lifecycle update.',
+            agents_section,
+        )
+        self.assertIn(
             'aria-label="Lifecycle terminology"',
             agents_section,
         )
@@ -6703,6 +6711,10 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn(
             ".assignment-flow { grid-template-columns: 1fr; }",
             lifecycle_text,
+        )
+        self.assertIn(
+            "When agent-claim is selected, the owning Agent releases its claim",
+            agents_section,
         )
         self.assertNotRegex(lifecycle_text, r"\b[Tt]asks?\b|task-local")
 
