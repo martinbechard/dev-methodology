@@ -94,6 +94,12 @@ class AgentClaimTests(unittest.TestCase):
         isolated_path = (self.repository / ".worktrees" / (path_name or claim_id)).resolve()
         return ["--branch", f"codex/{claim_id}"], isolated_path
 
+    def existing_linked_worktree(self, name: str = "private") -> Path:
+        """Create an existing non-canonical linked checkout for caller-topology tests."""
+        linked_path = (Path(self.temporary_directory.name) / f"{name}-checkout").resolve()
+        self.git("worktree", "add", "-b", f"codex/{name}", str(linked_path), "HEAD")
+        return linked_path
+
     def timed_resource_arguments(
         self,
         resource: str = "port:3000",
@@ -218,7 +224,43 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
         self.assertEqual("PRIMARY", result["legacy_outcome"])
         self.assertEqual(str(self.repository.resolve()), result["claim"]["worktree"])
+        self.assertEqual("primary", result["claim"]["checkout_topology"])
         self.assertEqual("primary", result["target"]["mode"])
+        self.assertEqual("primary", result["target"]["checkout_topology"])
+        event = self.journal_events()[-1]
+        self.assertEqual("primary", event["checkout_topology"])
+        self.assertEqual("primary", event["worktree_id"])
+        self.assertNotIn(str(self.temporary_directory.name), json.dumps(event))
+
+    def test_first_writer_in_existing_linked_checkout_reports_linked_topology(self) -> None:
+        linked_path = self.existing_linked_worktree()
+        primary_head = self.git("rev-parse", "HEAD").stdout
+        primary_status = self.git("status", "--porcelain=v1").stdout
+
+        completed = self.claim(
+            *self.acquire_arguments("private"),
+            "--file",
+            "README.md",
+            repo=linked_path,
+        )
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        result = self.output(completed)
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
+        self.assertEqual("PRIMARY", result["legacy_outcome"])
+        self.assertEqual("primary", result["claim"]["mode"])
+        self.assertEqual("linked", result["claim"]["checkout_topology"])
+        self.assertEqual(str(linked_path), result["claim"]["worktree"])
+        self.assertEqual("primary", result["target"]["mode"])
+        self.assertEqual("linked", result["target"]["checkout_topology"])
+        self.assertFalse((self.repository / ".worktrees" / "private").exists())
+        self.assertEqual(primary_head, self.git("rev-parse", "HEAD").stdout)
+        self.assertEqual(primary_status, self.git("status", "--porcelain=v1").stdout)
+        event = self.journal_events()[-1]
+        self.assertEqual("linked", event["checkout_topology"])
+        self.assertEqual("codex/private", event["worktree_id"])
+        self.assertEqual("codex/private", event["branch"])
+        self.assertNotIn(str(self.temporary_directory.name), json.dumps(event))
 
     def test_timed_resource_acquisition_records_complete_deadline_evidence(self) -> None:
         acquired = self.claim(
@@ -557,11 +599,53 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("ISOLATED_CHECKOUT_ACQUIRED", result["outcome"])
         self.assertEqual("ISOLATE", result["legacy_outcome"])
         self.assertEqual(str(isolated_path), result["target"]["worktree"])
+        self.assertEqual("linked", result["claim"]["checkout_topology"])
+        self.assertEqual("linked", result["target"]["checkout_topology"])
         self.assertTrue((isolated_path / ".git").is_file())
         self.assertTrue((isolated_path / "src" / "one.py").is_file())
         self.assertFalse((isolated_path / "backlog").exists())
         self.assertTrue((self.repository / "backlog" / "feature-backlog" / "queued.md").is_file())
         self.assertEqual("", self.git("status", "--porcelain").stdout)
+        event = self.journal_events()[-1]
+        self.assertEqual("linked", event["checkout_topology"])
+        self.assertEqual("codex/second", event["worktree_id"])
+        self.assertNotIn(str(self.temporary_directory.name), json.dumps(event))
+
+    def test_existing_linked_checkout_with_active_peer_uses_canonical_isolation(self) -> None:
+        linked_path = self.existing_linked_worktree()
+        first = self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+        isolated, isolated_path = self.isolated_arguments("second")
+        primary_head = self.git("rev-parse", "HEAD").stdout
+        primary_status = self.git("status", "--porcelain=v1").stdout
+        linked_head = self.git("rev-parse", "HEAD", worktree=linked_path).stdout
+        linked_status = self.git("status", "--porcelain=v1", worktree=linked_path).stdout
+
+        second = self.claim(
+            *self.acquire_arguments("second"),
+            "--file",
+            "src/one.py",
+            *isolated,
+            repo=linked_path,
+        )
+
+        self.assertEqual(0, first.returncode, first.stderr)
+        self.assertEqual(0, second.returncode, second.stderr)
+        result = self.output(second)
+        self.assertEqual("ISOLATED_CHECKOUT_ACQUIRED", result["outcome"])
+        self.assertEqual("ISOLATE", result["legacy_outcome"])
+        self.assertEqual("isolated", result["claim"]["mode"])
+        self.assertEqual("linked", result["claim"]["checkout_topology"])
+        self.assertEqual(str(isolated_path), result["target"]["worktree"])
+        self.assertEqual("linked", result["target"]["checkout_topology"])
+        self.assertNotEqual(linked_path, isolated_path)
+        self.assertEqual(primary_head, self.git("rev-parse", "HEAD").stdout)
+        self.assertEqual(primary_status, self.git("status", "--porcelain=v1").stdout)
+        self.assertEqual(linked_head, self.git("rev-parse", "HEAD", worktree=linked_path).stdout)
+        self.assertEqual(linked_status, self.git("status", "--porcelain=v1", worktree=linked_path).stdout)
+        event = self.journal_events()[-1]
+        self.assertEqual("linked", event["checkout_topology"])
+        self.assertEqual("codex/second", event["worktree_id"])
+        self.assertNotIn(str(self.temporary_directory.name), json.dumps(event))
 
     def test_isolation_required_reports_the_canonical_worktree_target(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
@@ -1583,7 +1667,14 @@ class AgentClaimTests(unittest.TestCase):
         extended = self.claim("extend", "--claim-id", "second", "--file", "future.py")
         after = self.output(extended)["claim"]
 
-        for field in ("worktree", "branch", "baseline_commit", "claimed_at", "mode"):
+        for field in (
+            "worktree",
+            "branch",
+            "checkout_topology",
+            "baseline_commit",
+            "claimed_at",
+            "mode",
+        ):
             self.assertEqual(before[field], after[field])
 
     def test_isolated_claim_cannot_extend_into_backlog_scope(self) -> None:
@@ -1716,6 +1807,32 @@ class AgentClaimTests(unittest.TestCase):
         linked_event = next(event for event in events if event["claim_id"] == "third")
         self.assertEqual("codex/third", linked_event["worktree_id"])
         self.assertNotIn(str(self.temporary_directory.name), json.dumps(linked_event))
+
+    def test_legacy_linked_claim_without_topology_retains_accurate_journal_fallback(self) -> None:
+        linked_path = self.existing_linked_worktree()
+        acquired = self.claim(
+            *self.acquire_arguments("private"),
+            "--file",
+            "README.md",
+            repo=linked_path,
+        )
+        registry = json.loads(self.registry_path().read_text(encoding="utf-8"))
+        registry["claims"][0].pop("checkout_topology")
+        self.registry_path().write_text(
+            json.dumps(registry, indent=2) + "\n",
+            encoding="utf-8",
+        )
+
+        heartbeat = self.claim("heartbeat", "--claim-id", "private", repo=linked_path)
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(0, heartbeat.returncode, heartbeat.stderr)
+        event = self.journal_events()[-1]
+        self.assertEqual("HEARTBEAT", event["outcome"])
+        self.assertEqual("primary", event["mode"])
+        self.assertEqual("linked", event["checkout_topology"])
+        self.assertEqual("codex/private", event["worktree_id"])
+        self.assertNotIn(str(self.temporary_directory.name), json.dumps(event))
 
     def test_concurrent_journal_events_are_complete_and_unique(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")

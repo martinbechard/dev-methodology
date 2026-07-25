@@ -125,6 +125,25 @@ def _canonical_worktree(repository: Path, claim_id: str) -> Path:
     return (_canonical_worktree_root(repository) / claim_id).resolve()
 
 
+def _checkout_topology(claim: dict[str, Any]) -> str | None:
+    topology = claim.get("checkout_topology")
+    if topology in {"primary", "linked"}:
+        return str(topology)
+    worktree = claim.get("worktree")
+    if isinstance(worktree, str):
+        worktree_path = Path(worktree).resolve()
+        try:
+            return "primary" if worktree_path == _primary_worktree(worktree_path) else "linked"
+        except (OSError, RuntimeError, subprocess.CalledProcessError):
+            pass
+    mode = claim.get("mode")
+    if mode == "isolated":
+        return "linked"
+    if mode in {"primary", "recovery"}:
+        return "primary"
+    return None
+
+
 def _claim_owns_primary_worktree(claim: dict[str, Any], primary_worktree: Path) -> bool:
     if _scope_is_resource_only(_claim_scope(claim)):
         return False
@@ -1109,11 +1128,13 @@ def _apply_scope(claim: dict[str, Any], added: dict[str, Any]) -> None:
 
 
 def _worktree_identifier(claim: dict[str, Any]) -> str | None:
-    mode = claim.get("mode")
-    if mode in {"primary", "recovery"}:
+    topology = _checkout_topology(claim)
+    if topology == "primary":
         return "primary"
     branch = claim.get("branch")
-    return str(branch) if branch else None
+    if branch:
+        return str(branch)
+    return "linked" if topology == "linked" else None
 
 
 def _event(
@@ -1149,6 +1170,7 @@ def _event(
             for overlap in item["overlaps"]
         ],
         "branch": claim.get("branch") if claim else None,
+        "checkout_topology": _checkout_topology(claim) if claim else None,
         "worktree_id": _worktree_identifier(claim) if claim else None,
         "baseline_commit": claim.get("baseline_commit") if claim else None,
         "deadline": claim.get("deadline") if claim else None,
@@ -1594,6 +1616,11 @@ def _acquire(args: argparse.Namespace) -> int:
                 requested_scope["file_domain"],
             ),
             "branch": _branch(target_worktree),
+            "checkout_topology": (
+                "primary"
+                if target_worktree == _primary_worktree(repository)
+                else "linked"
+            ),
             "claim_id": args.claim_id,
             "claimed_at": now,
             "files": requested_scope["files"],
@@ -1628,7 +1655,12 @@ def _acquire(args: argparse.Namespace) -> int:
             scope_warnings,
             claim=claim,
             registry=str(registry_path),
-            target={"mode": mode, "branch": claim["branch"], "worktree": str(target_worktree)},
+            target={
+                "mode": mode,
+                "branch": claim["branch"],
+                "checkout_topology": claim["checkout_topology"],
+                "worktree": str(target_worktree),
+            },
         )
 
 

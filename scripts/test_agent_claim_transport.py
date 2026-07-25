@@ -730,6 +730,134 @@ class AgentClaimTransportTests(unittest.TestCase):
         self.assertEqual("resource-lifecycle-command", evidence["release_argv"][-2])
         self.assertEqual("--no-change", evidence["release_argv"][-1])
 
+    def test_command_transport_reports_existing_linked_checkout_topology(self) -> None:
+        """Verify the selected command reports physical topology without changing primary state."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repository = root / "repository"
+            linked_path = root / "private-checkout"
+            repository.mkdir()
+            subprocess.run(
+                ["git", "init", "--initial-branch=main", str(repository)],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            subprocess.run(
+                ["git", "-C", str(repository), "config", "user.email", "test@example.invalid"],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            subprocess.run(
+                ["git", "-C", str(repository), "config", "user.name", "Claim Transport Test"],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            (repository / "PROJECT.yaml").write_text(
+                yaml.safe_dump(project_with_transport("command"), sort_keys=False),
+                encoding="utf-8",
+            )
+            (repository / "README.md").write_text("baseline\n", encoding="utf-8")
+            subprocess.run(
+                ["git", "-C", str(repository), "add", "."],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            subprocess.run(
+                ["git", "-C", str(repository), "commit", "-m", "baseline"],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    str(repository),
+                    "worktree",
+                    "add",
+                    "-b",
+                    "codex/private",
+                    str(linked_path),
+                    "HEAD",
+                ],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            primary_head = subprocess.run(
+                ["git", "-C", str(repository), "rev-parse", "HEAD"],
+                check=True,
+                text=True,
+                capture_output=True,
+            ).stdout
+            primary_status = subprocess.run(
+                ["git", "-C", str(repository), "status", "--porcelain=v1"],
+                check=True,
+                text=True,
+                capture_output=True,
+            ).stdout
+
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    str(COMMAND_SCRIPT),
+                    "--repo",
+                    str(linked_path),
+                    "acquire",
+                    "--claim-id",
+                    "private",
+                    "--agent",
+                    "private",
+                    "--task",
+                    "linked topology",
+                    "--root-task-id",
+                    "private",
+                    "--file",
+                    "README.md",
+                ],
+                check=False,
+                text=True,
+                capture_output=True,
+            )
+
+            self.assertEqual(0, completed.returncode, completed.stderr)
+            result = json.loads(completed.stdout)
+            self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
+            self.assertEqual("PRIMARY", result["legacy_outcome"])
+            self.assertEqual("primary", result["claim"]["mode"])
+            self.assertEqual("linked", result["claim"]["checkout_topology"])
+            self.assertEqual("linked", result["target"]["checkout_topology"])
+            self.assertEqual(
+                primary_head,
+                subprocess.run(
+                    ["git", "-C", str(repository), "rev-parse", "HEAD"],
+                    check=True,
+                    text=True,
+                    capture_output=True,
+                ).stdout,
+            )
+            self.assertEqual(
+                primary_status,
+                subprocess.run(
+                    ["git", "-C", str(repository), "status", "--porcelain=v1"],
+                    check=True,
+                    text=True,
+                    capture_output=True,
+                ).stdout,
+            )
+            event_path = next(
+                (repository / ".git" / "agent-claim-events" / "hot").glob("*.jsonl")
+            )
+            event = json.loads(event_path.read_text(encoding="utf-8").splitlines()[-1])
+            self.assertEqual("linked", event["checkout_topology"])
+            self.assertEqual("codex/private", event["worktree_id"])
+            self.assertNotIn(str(root), json.dumps(event))
+
     def test_renderer_reserves_coordination_skills_from_alternate_loading(self) -> None:
         """Prevent project extensions and technology loadouts from bypassing the selector."""
 
