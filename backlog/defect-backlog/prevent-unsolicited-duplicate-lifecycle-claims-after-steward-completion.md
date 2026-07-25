@@ -1,6 +1,6 @@
 # Prevent Unsolicited Duplicate Lifecycle Claims After Steward Completion
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -11,6 +11,23 @@ Provider: file
 Provider Reference: backlog/defect-backlog/prevent-unsolicited-duplicate-lifecycle-claims-after-steward-completion.md
 
 Completion: direct-main
+
+## Execution Acceptance
+
+- Canonical Work-Item Thread: 019f996c-1d89-7ad3-bd4f-c3a9dc7708fd
+- Canonical Task Id: 019f996c-1d89-7ad3-bd4f-c3a9dc7708fd
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Root Role: Dev Orchestrator
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/e1d4/dev-methodology
+- Delivery Branch: detached HEAD
+- Delivery Checkout State: Detached HEAD at d19829abc54a331eb0493d44046737ef05d312fc.
+- Starting-to-Running Phase: accepted.
+- Authority Boundary: This accepted transition authorizes no governed-definition mutation.
+
+## Execution Coordination Evidence
+
+- Launch reservation claim: reserve-duplicate-lifecycle-claim-defect-20260725 acquired at journal event 4a590b6c-b978-4ca4-a278-90237a3b4319 and released at journal event e35a4e0d-c13e-465e-b15a-916cf785d741.
+- Starting-to-Running backlog claim: starting-running-prevent-duplicate-lifecycle-019f996c acquired on primary main at 2026-07-25T13:19:19.623969Z; acquisition journal event ce9c2011-2958-4083-9da1-aa0e665c37f1.
 
 ## Launch Reservation
 
