@@ -51,6 +51,17 @@ Completion: direct-main
 - Authority Boundary: No governed canonical source or generated-definition mutation is required or authorized. This record authorizes no other artifact or work-item change, including any change to 019f978e.
 - Backlog Claim: material-phase-dev-merge-coordinator-suite-binding-019f993c acquired from primary main at 2026-07-25T12:29:23.939864Z; acquisition journal event bd8fd3cb-d796-43d4-b6d2-2f5f2d268b6c.
 
+## Candidate Phase Evidence
+
+- Phase: independent review
+- Candidate Commit: 833cbf38bff1b9468f5d22c1163bcc2361ca35bc on branch codex/reconcile-dev-merge-coordinator-suite-binding-019f993c.
+- Exact Changed Paths: evals/agent-tests/dev-merge-coordinator/suite.yaml; evals/agent-tests/dev-merge-coordinator/skills/dev-merge-coordinator-suite-contract/SKILL.md; evals/agent-tests/dev-merge-coordinator/test_fixtures.py.
+- Focused Verification: coder focused unittest PASS 2; exact validate-only PASS; two focused runner tests PASS; git diff --check PASS.
+- Broader Verification: A broader runner attempt had unrelated unavailable Playwright runtime failures and is not an affected-surface gate.
+- Candidate Worktree: clean. No implementation claim is recorded because the worktree is private.
+- Authority Boundary: No governed canonical or generated-definition mutation occurred. This candidate remains disjoint from 019f978e.
+- Backlog Claim: candidate-review-dev-merge-coordinator-suite-binding-019f993c acquired from primary main at 2026-07-25T12:35:38.955883Z; acquisition journal event 36a6266d-e1f1-4361-83a4-c11653386986.
+
 ## Summary
 
 Reconcile the Dev Merge Coordinator suite required-skill contract with its generated Codex native agent so the current-main validate-only catalog check succeeds without weakening resource-coordination or governed-definition authority.
