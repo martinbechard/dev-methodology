@@ -654,6 +654,113 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
             self.assertEqual([suite_root / "suite-index.yaml"], loaded_paths)
 
+    def test_catalog_rejects_unsafe_suite_paths_before_loading_declared_files(self) -> None:
+        """Malformed or escaping catalog paths cannot trigger manifest probes outside the suite root."""
+        invalid_paths = (
+            "",
+            "../outside",
+            "nested/../../outside",
+            "/absolute",
+            r"C:\absolute",
+            r"nested\outside",
+            ".",
+            7,
+            [],
+        )
+        for invalid_path in invalid_paths:
+            with self.subTest(path=invalid_path), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                suite_root = root / "agent-tests"
+                suite_root.mkdir()
+                (suite_root / "suite-index.yaml").write_text(
+                    json.dumps(
+                        {
+                            "suites": [
+                                {
+                                    "id": "safe-suite",
+                                    "priority": 1,
+                                    "path": invalid_path,
+                                }
+                            ]
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+                outside = root / "outside"
+                outside.mkdir()
+                (outside / "suite.yaml").write_text("id: outside\n", encoding="utf-8")
+                (outside / "scenarios.yaml").write_text("scenarios: []\n", encoding="utf-8")
+                loaded_paths: list[Path] = []
+                original_load_yaml = runner._load_yaml
+
+                def observe_load(path: Path) -> dict[str, object]:
+                    loaded_paths.append(path)
+                    return original_load_yaml(path)
+
+                with (
+                    mock.patch.object(runner, "_load_yaml", side_effect=observe_load),
+                    self.assertRaisesRegex(ValueError, "Suite path"),
+                ):
+                    runner._load_catalog(suite_root)
+
+                self.assertEqual([suite_root / "suite-index.yaml"], loaded_paths)
+
+    def test_catalog_rejects_suite_symlink_escape_before_loading_declared_files(self) -> None:
+        """A catalog suite directory cannot redirect manifest probes through an external symlink."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            suite_root = root / "agent-tests"
+            suite_root.mkdir()
+            (suite_root / "suite-index.yaml").write_text(
+                "suites:\n"
+                "  - id: safe-suite\n"
+                "    priority: 1\n"
+                "    path: linked-suite\n",
+                encoding="utf-8",
+            )
+            outside = root / "outside"
+            outside.mkdir()
+            (outside / "suite.yaml").write_text("id: safe-suite\n", encoding="utf-8")
+            (outside / "scenarios.yaml").write_text("scenarios: []\n", encoding="utf-8")
+            (suite_root / "linked-suite").symlink_to(outside, target_is_directory=True)
+            loaded_paths: list[Path] = []
+            original_load_yaml = runner._load_yaml
+
+            def observe_load(path: Path) -> dict[str, object]:
+                loaded_paths.append(path)
+                return original_load_yaml(path)
+
+            with (
+                mock.patch.object(runner, "_load_yaml", side_effect=observe_load),
+                self.assertRaisesRegex(ValueError, "symbolic link"),
+            ):
+                runner._load_catalog(suite_root)
+
+            self.assertEqual([suite_root / "suite-index.yaml"], loaded_paths)
+
+    def test_catalog_loads_valid_contained_suite_directory(self) -> None:
+        """A real contained suite directory remains loadable through the catalog boundary."""
+        with tempfile.TemporaryDirectory() as temporary:
+            suite_root = Path(temporary) / "agent-tests"
+            suite_path = suite_root / "nested" / "safe-suite"
+            suite_path.mkdir(parents=True)
+            (suite_root / "suite-index.yaml").write_text(
+                "suites:\n"
+                "  - id: safe-suite\n"
+                "    priority: 1\n"
+                "    path: nested/safe-suite\n",
+                encoding="utf-8",
+            )
+            (suite_path / "suite.yaml").write_text("id: safe-suite\n", encoding="utf-8")
+            (suite_path / "scenarios.yaml").write_text("scenarios: []\n", encoding="utf-8")
+
+            with mock.patch.object(runner, "_validate_suite") as validate_suite:
+                catalog = runner._load_catalog(suite_root)
+
+            self.assertEqual({"safe-suite"}, set(catalog))
+            self.assertEqual(suite_path.resolve(), catalog["safe-suite"].path)
+            validate_suite.assert_called_once_with(catalog["safe-suite"], require_executable=False)
+
     def test_selected_scenario_roots_are_precreated_as_real_contained_directories(self) -> None:
         """Every selected scenario receives one canonical non-symlink directory before execution."""
         run = self._run_spec("safe-suite", 1)
