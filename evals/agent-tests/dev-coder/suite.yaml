@@ -7,12 +7,12 @@ target:
   nativeAgent: generated/adapters/codex/agents/dev-coder.toml
   repositoryMutation: required
   requiredSkills:
-    - agent-claim
     - careful-coding
     - code-comments
     - code-discovery
     - fix-explanation
   conditionalSkills:
+    agent-claim: Resource coordination selects agent-claim.
     organise-project-files: The implementation creates a new project file or directory.
     test-driven-development: The requested behavior can be expressed through executable tests.
   allowedAgentDependencies: []
