@@ -1,10 +1,16 @@
 # Restore Documentation Acceptance Template Contract
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
-Owner: canonical root Dev Orchestrator
+Owner: Completed by canonical root Dev Orchestrator
+
+Completion: direct-main
+
+Completed At: 2026-07-25T03:49:35Z
+
+Provider Reference: backlog/completed-backlog/defects/restore-documentation-acceptance-template-contract.md
 
 ## Launch Reservation
 
@@ -103,3 +109,20 @@ Permitted Resumption: User Action Required -> Ready after the answer, then the p
 - Approved meaning: Evaluate the first authored decision after skipping any retained explanatory note or notes, preserving ACCEPTED/BLOCKED versus READY/BLOCKED independence and current-pass semantics.
 - Resulting disposition: User Action Required -> Ready. No artifact mutation, integration work, task creation, or Running transition occurred in this provider transaction.
 - Next step: Parent same-task Starting reservation, followed only by the same canonical Thread Running transition after its root Dev Orchestrator accepts ownership.
+
+## Completion Evidence
+
+- Accepted delivery and integration commit: dfbd1542ade8bd8a705ea0396562146fbaa21af6.
+- Delivery parent: 1d909c76062e8235b64f649124c2898f9fa6557a.
+- Delivery tree: ad57cbe37d5bf34b5fbdefcad068a5305175c541.
+- Completion process: direct-main.
+- Main observation: main was observed at dfbd1542ade8bd8a705ea0396562146fbaa21af6; ancestry and reachability were confirmed.
+- Reviewed scope: exactly 21 paths; committed content manifest: 6541a5d6f3f8e4c3f959be18fc52c294cb5beb8bdff9d5d7a609426415ed4087; no generated/adapters changes.
+- Approval evidence: user answer 'Amend it to skip over any note'; shared approval commit 154a4c491d82ac0f5cd15ab19776a003c87c3679; all five exact approval records and checks ALLOWED for skills/create-architecture/SKILL.md; skills/create-functional-spec/SKILL.md; skills/create-high-level-design/SKILL.md; skills/create-module-design/SKILL.md; skills/review-module-design/SKILL.md.
+- Independent review: corrected fresh methodology review GOOD with no findings.
+- Independent verification: GOOD.
+- Precommit gates: focused 8/8, full scripts.test_bundle_content 118/118, skill validation, generator, hierarchy, support, and diff gates PASS.
+- Committed-main gates: narrow 1/1, generator freshness, skill validation, diff, and clean checks PASS.
+- Delivery ownership release: source/project claim restore-doc-acceptance-governed-019f96ce released at event f4d84f3c-2a92-40bb-8901-868d934ce9c7; primary main was clean.
+- Earlier candidate commits 3159c5bf63e25c71df8a264f925bac02a2c76541 and 7f97d242b4facde4e19727179a08a8bcb4111258 remain superseded evidence, together with the reviewer correction history.
+- Residual risk: none.
