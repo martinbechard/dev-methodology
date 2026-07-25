@@ -1,6 +1,6 @@
 # Support Existing Isolated Correction Worktree Binding
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -11,6 +11,19 @@ Provider: file
 Provider Reference: backlog/defect-backlog/support-existing-isolated-correction-worktree-binding.md
 
 Completion: direct-main
+
+## Starting Reservation
+
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Canonical Task/Thread: 019f976c-6691-7a83-9df4-e73fc0baae73
+- Reservation: One parent-owned same-task reservation; no replacement task is created.
+- Normalized Objective: Deploy canonical Codex bundle with approved customized replacement and verify catalog.
+- Dispatched At: 2026-07-25T16:01:43Z
+- Intended Root Role: Dev Orchestrator
+- Canonical Worktree: /Users/martinbechard/.codex/worktrees/0311/dev-methodology
+- Canonical Branch: codex/isolated-binding-019f976c at 570a0271870e96abcb5c0ddf01428fd749b238f3.
+- Approved Override Scope: python3 scripts/install-skills.py --adapter codex --scope user --install-agents --replace --replace-customized, followed by catalog refresh or new-session activation and installed-byte verification; limited to the nine reviewed customized bundle-owned skill trees and normal bundle-owned outputs.
+- Phase: Awaiting root lifecycle acceptance. Owner remains Unowned until the root Dev Orchestrator accepts the reservation.
 
 ## Resumption Reservation
 
@@ -139,11 +152,11 @@ Approved scope: python3 scripts/install-skills.py --adapter codex --scope user -
 
 ## Resolution
 
-Approval is recorded. Deployment has not yet been rerun. The item is Ready with Owner: Unowned, preserving the same canonical task, branch, worktree, investigation, discrepancy-review, and approval evidence. The next step is normal lifecycle reservation and execution, not an execution authorized by this provider transition.
+Approval is recorded. Deployment has not yet been rerun. The item is Starting with Owner: Unowned, preserving the same canonical task, branch, worktree, investigation, discrepancy-review, and approval evidence. The parent has made one same-task reservation; the next step is root lifecycle acceptance, not deployment in this provider transaction.
 
 ## Ready Lifecycle Boundary
 
-Do not run the installer, refresh the runtime catalog, edit user-home files, or make an engine change in this provider transition. Resume only through Ready -> Starting -> Running lifecycle reconciliation.
+Do not run the installer, refresh the runtime catalog, edit user-home files, or make an engine change in this provider transition. Resume only through Starting -> Running lifecycle reconciliation after root acceptance.
 
 ## Follow-up Obligation
 
