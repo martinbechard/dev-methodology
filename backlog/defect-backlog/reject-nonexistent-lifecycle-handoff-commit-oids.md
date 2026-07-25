@@ -1,10 +1,10 @@
 # Reject Nonexistent Lifecycle Handoff Commit OIDs
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
@@ -21,12 +21,29 @@ Completion: direct-main
 - Dispatched At: 2026-07-25T12:16:47Z
 - Intended Root Role: Dev Orchestrator
 - Preserved Evidence: Candidate branch codex/reject-nonexistent-lifecycle-handoff-oids-019f978e, worktree /Users/martinbechard/.codex/worktrees/215b/dev-methodology, accepted candidate a12babfc3b919b5e5334821703c8549fe40aa82a, and the approved exact governed-definition scope remain binding.
-- Phase: Governed definition implementation.
+- Phase: Waiting for overlapping governed dependency delivery.
 - Resumed At: 2026-07-25T12:18:08Z
 
 ## Resumption Coordination Evidence
 
 - Backlog Claim: resume-lifecycle-handoff-oid-019f978e acquired on primary main at 2026-07-25T12:16:47.368016Z; acquisition journal event 730270a6-96d9-4e28-9488-bf43dd958676.
+
+## Blocked Handoff
+
+- Enabled Coordination: None; no live task claim remains.
+- Blocker: Canonical task 019f9783-31a0-7e91-9704-08cde7886b3a owns an overlapping approved exact-file contribution and is currently User Action Required awaiting approval for ninth governed path skills/agent-claim-command/SKILL.md after reviews rejected its candidate. Our coder paused by direct handoff and cannot reconcile or commit until that task corrects, reviews, verifies, delivers to main, and releases.
+- Recovery Owner: Task 019f9783 root/user for approval, then parent Coordinator for Blocked -> Ready -> Starting same-task resumption.
+- Unblock Condition: Direct accepted main-delivery baton from 019f9783 with commit, path mapping, review, verification, and release evidence; primary clean; no overlapping claim.
+- Permitted Resumption: Only Blocked -> Ready parent reservation sequence.
+
+## Preserved Governed Diff
+
+- Branch: codex/lifecycle-handoff-oid-governed-contract-019f978e
+- Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/lifecycle-handoff-oid-governed-contract-019f978e
+- Base: a60ffa01
+- State: Dirty but internally coherent with 17 modified files and 4 untracked approval records.
+- Evidence: Four corrected approval prechecks are ALLOWED; focused tests, generator, design, link, and diff gates pass; exactly five known baseline Steward failures and no added regression.
+- Prohibited Action: Do not discard, clean, commit, rebase, or merge that diff, or bypass the other task's approval or ownership.
 
 ## Launch Reservation
 
@@ -35,7 +52,7 @@ Completion: direct-main
 - Reservation: One parent-owned launch reservation.
 - Intended Root Role: Dev Orchestrator
 - Isolated Checkout: /Users/martinbechard/.codex/worktrees/215b/dev-methodology
-- Phase: Governed definition implementation.
+- Phase: Waiting for overlapping governed dependency delivery.
 - Dispatched At: 2026-07-25T04:36:08Z
 
 ## Execution Identity
@@ -129,6 +146,7 @@ The same canonical task preserves candidate a12babfc3b919b5e5334821703c8549fe40a
 - Approval-Resolution Claim: record-governed-approval-resume-019f978e acquired on primary main at 2026-07-25T12:08:23.325017Z; acquisition journal event 000030dc-d420-4cb4-9f41-641810b63b93.
 - Running-Resumption Claim: record-governed-implementation-running-019f978e acquired on primary main at 2026-07-25T12:17:54.518445Z; acquisition journal event dca2352f-6f77-4452-90d2-5f7414ffcd6d.
 - Ambiguous-Commit-Provenance Claim: record-ambiguous-commit-provenance-019f978e acquired on primary main at 2026-07-25T13:02:28.343178Z; acquisition journal event c821b5ac-8169-4ed4-a732-161d374f9f11.
+- Blocked-Handoff Claim: block-overlapping-governed-dependency-019f978e acquired on primary main at 2026-07-25T13:16:59.778621Z; acquisition journal event 9875e09c-a965-47c5-a336-b98e28a60bf0.
 
 ## Summary
 
