@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies provider-selected capacity, claim retry, dispatch, and cleanup contracts.
+# Summary: Verifies provider-selected capacity, same-thread resumption, claims, and cleanup.
 # Test plan: evals/agent-tests/dev-backlog-coordinator/requirements-matrix.md
 
 """Verify the deterministic parent backlog coordination simulator."""
@@ -68,6 +68,347 @@ class CoordinationSimulatorTests(unittest.TestCase):
 
         self.assertEqual(("ready",), simulator.dispatch_to_target())
         self.assertEqual(2, simulator.running_count())
+
+    def test_user_action_resumes_same_task_and_preserves_early_work(self) -> None:
+        """Adopt the answered canonical task and reconcile rather than reject its work."""
+
+        case = _fixture_cases()["same-thread-user-action-resumption"]
+        item = WorkItem(
+            "user-action",
+            "User Action Required",
+            canonical_task_id=case["canonicalTaskId"],
+            canonical_thread_id=case["canonicalThreadId"],
+            provider=case["provider"],
+            dirty_owner_task_id=case["dirtyOwnerTaskId"],
+            branch=case["branch"],
+            worktree=case["worktree"],
+        )
+        simulator = CoordinationSimulator((item,))
+
+        statuses = simulator.resume_user_action_thread(
+            item.item_id,
+            user_answer=case["userAnswer"],
+            canonical_task_id=case["canonicalTaskId"],
+            canonical_thread_id=case["canonicalThreadId"],
+            selected_skill_available=True,
+            priority_eligible=case["priorityEligible"],
+            capacity_available=case["capacityAvailable"],
+            root_accepts=case["rootAccepts"],
+            preserved_artifacts=case["preservedArtifacts"],
+        )
+
+        self.assertEqual(case["expectedStatusSequence"], list(statuses))
+        self.assertEqual(case["canonicalTaskId"], item.canonical_task_id)
+        self.assertEqual(case["canonicalThreadId"], item.canonical_thread_id)
+        self.assertEqual("Running", item.status)
+        self.assertEqual("Reconciliation", item.phase)
+        self.assertEqual(case["dirtyOwnerTaskId"], item.dirty_owner_task_id)
+        self.assertFalse(item.delivery_accepted)
+        self.assertIn("Preserved out-of-sequence evidence", item.open_issues[0])
+        self.assertEqual(
+            tuple(case["preservedArtifacts"]),
+            simulator.events[-1]["artifacts"],
+        )
+        self.assertEqual(
+            case["dirtyOwnerTaskId"],
+            simulator.events[-1]["dirtyOwnerTask"],
+        )
+        self.assertFalse(simulator.events[-1]["deliveryAccepted"])
+        self.assertNotIn(
+            "release",
+            " ".join(str(event) for event in simulator.events).lower(),
+        )
+
+    def test_user_action_resumption_rejects_task_replacement(self) -> None:
+        """Keep the original canonical task identity through lifecycle reconciliation."""
+
+        item = WorkItem(
+            "user-action",
+            "User Action Required",
+            canonical_task_id="task-original",
+            canonical_thread_id="thread-original",
+        )
+        simulator = CoordinationSimulator((item,))
+
+        with self.assertRaisesRegex(ValueError, "cannot replace"):
+            simulator.resume_user_action_thread(
+                item.item_id,
+                user_answer="approved",
+                canonical_task_id="task-replacement",
+                canonical_thread_id="thread-original",
+                selected_skill_available=True,
+                priority_eligible=True,
+                capacity_available=True,
+                root_accepts=True,
+            )
+
+        self.assertEqual("User Action Required", item.status)
+        self.assertEqual("task-original", item.canonical_task_id)
+
+    def test_user_action_resumption_rejects_thread_replacement(self) -> None:
+        """Reject a different Thread even when it reuses the canonical Agent Task id."""
+
+        item = WorkItem(
+            "user-action",
+            "User Action Required",
+            canonical_task_id="task-original",
+            canonical_thread_id="thread-original",
+        )
+        simulator = CoordinationSimulator((item,))
+
+        with self.assertRaisesRegex(ValueError, "canonical Thread"):
+            simulator.resume_user_action_thread(
+                item.item_id,
+                user_answer="approved",
+                canonical_task_id="task-original",
+                canonical_thread_id="thread-replacement",
+                selected_skill_available=True,
+                priority_eligible=True,
+                capacity_available=True,
+                root_accepts=True,
+            )
+
+        self.assertEqual("User Action Required", item.status)
+        self.assertEqual("thread-original", item.canonical_thread_id)
+
+    def test_selected_provider_resumption_uses_steward_boundaries(self) -> None:
+        """Keep routing decisions separate from selected-provider mutations."""
+
+        item = WorkItem(
+            "user-action",
+            "User Action Required",
+            canonical_task_id="task-original",
+            canonical_thread_id="thread-original",
+            provider="file",
+        )
+        simulator = CoordinationSimulator((item,))
+
+        simulator.resume_user_action_thread(
+            item.item_id,
+            user_answer="approved",
+            canonical_task_id="task-original",
+            canonical_thread_id="thread-original",
+            selected_skill_available=True,
+            priority_eligible=True,
+            capacity_available=True,
+            root_accepts=True,
+        )
+
+        transitions = [
+            event
+            for event in simulator.events
+            if event["event"] == "lifecycle-transition"
+        ]
+        self.assertEqual(
+            ["dev-backlog-coordinator", "dev-backlog-coordinator", "dev-orchestrator"],
+            [event["decisionOwner"] for event in transitions],
+        )
+        self.assertEqual(
+            ["dev-backlog-steward"] * 3,
+            [event["mutationAgent"] for event in transitions],
+        )
+        self.assertTrue(
+            all(event["evidence"] == "selected-provider" for event in transitions)
+        )
+
+    def test_provider_none_resumption_has_zero_provider_mutation(self) -> None:
+        """Record equivalent task-local states without Steward or capacity inference."""
+
+        case = _fixture_cases()["same-thread-provider-none-resumption"]
+        item = WorkItem(
+            "provider-none",
+            "User Action Required",
+            canonical_task_id=case["canonicalTaskId"],
+            canonical_thread_id=case["canonicalThreadId"],
+            provider=case["provider"],
+        )
+        simulator = CoordinationSimulator((item,))
+
+        statuses = simulator.resume_user_action_thread(
+            item.item_id,
+            user_answer=case["userAnswer"],
+            canonical_task_id=case["canonicalTaskId"],
+            canonical_thread_id=case["canonicalThreadId"],
+            selected_skill_available=None,
+            priority_eligible=case["priorityEligible"],
+            capacity_available=None,
+            root_accepts=case["rootAccepts"],
+        )
+
+        self.assertEqual(case["expectedStatusSequence"], list(statuses))
+        transitions = [
+            event
+            for event in simulator.events
+            if event["event"] == "lifecycle-transition"
+        ]
+        self.assertTrue(all(event["mutationAgent"] is None for event in transitions))
+        self.assertTrue(all(event["evidence"] == "task-local" for event in transitions))
+        self.assertTrue(
+            all(event["capacityInferred"] is False for event in transitions)
+        )
+
+    def test_user_action_resumption_requires_recorded_identities(self) -> None:
+        """Do not let arbitrary caller ids become canonical during resumption."""
+
+        item = WorkItem("user-action", "User Action Required")
+        simulator = CoordinationSimulator((item,))
+
+        with self.assertRaisesRegex(ValueError, "recorded canonical identities"):
+            simulator.resume_user_action_thread(
+                item.item_id,
+                user_answer="approved",
+                canonical_task_id="task-invented",
+                canonical_thread_id="thread-invented",
+                selected_skill_available=True,
+                priority_eligible=True,
+                capacity_available=True,
+                root_accepts=True,
+            )
+
+        self.assertIsNone(item.canonical_task_id)
+        self.assertIsNone(item.canonical_thread_id)
+        self.assertEqual("User Action Required", item.status)
+
+    def test_user_action_resumption_stops_at_each_dispatch_gate(self) -> None:
+        """Require priority, capacity, and root acceptance before Running."""
+
+        def resume(
+            *,
+            priority_eligible: bool,
+            capacity_available: bool,
+            root_accepts: bool,
+        ) -> tuple[str, ...]:
+            item = WorkItem(
+                "user-action",
+                "User Action Required",
+                canonical_task_id="task-original",
+                canonical_thread_id="thread-original",
+            )
+            return CoordinationSimulator((item,)).resume_user_action_thread(
+                item.item_id,
+                user_answer="approved",
+                canonical_task_id="task-original",
+                canonical_thread_id="thread-original",
+                selected_skill_available=True,
+                priority_eligible=priority_eligible,
+                capacity_available=capacity_available,
+                root_accepts=root_accepts,
+            )
+
+        self.assertEqual(
+            ("User Action Required", "Ready"),
+            resume(
+                priority_eligible=False,
+                capacity_available=True,
+                root_accepts=True,
+            ),
+        )
+        self.assertEqual(
+            ("User Action Required", "Ready"),
+            resume(
+                priority_eligible=True,
+                capacity_available=False,
+                root_accepts=True,
+            ),
+        )
+        self.assertEqual(
+            ("User Action Required", "Ready", "Starting"),
+            resume(
+                priority_eligible=True,
+                capacity_available=True,
+                root_accepts=False,
+            ),
+        )
+
+    def test_placeholder_provider_resumption_is_blocked_without_mutation(self) -> None:
+        """Preserve a placeholder manager's zero-mutation result."""
+
+        for provider in ("azure-devops", "jira"):
+            with self.subTest(provider=provider):
+                item = WorkItem(
+                    "user-action",
+                    "User Action Required",
+                    canonical_task_id="task-original",
+                    canonical_thread_id="thread-original",
+                    provider=provider,
+                )
+                simulator = CoordinationSimulator((item,))
+
+                with self.assertRaisesRegex(ValueError, "zero mutation"):
+                    simulator.resume_user_action_thread(
+                        item.item_id,
+                        user_answer="approved",
+                        canonical_task_id="task-original",
+                        canonical_thread_id="thread-original",
+                        selected_skill_available=True,
+                        priority_eligible=True,
+                        capacity_available=True,
+                        root_accepts=True,
+                    )
+
+                self.assertEqual("User Action Required", item.status)
+                self.assertEqual([], simulator.events)
+
+    def test_different_dirty_owner_blocks_dispatch_without_release(self) -> None:
+        """Record the answer but stop before Starting while another task owns dirt."""
+
+        item = WorkItem(
+            "user-action",
+            "User Action Required",
+            canonical_task_id="task-original",
+            canonical_thread_id="thread-original",
+            dirty_owner_task_id="task-other",
+        )
+        simulator = CoordinationSimulator((item,))
+
+        statuses = simulator.resume_user_action_thread(
+            item.item_id,
+            user_answer="approved",
+            canonical_task_id="task-original",
+            canonical_thread_id="thread-original",
+            selected_skill_available=True,
+            priority_eligible=True,
+            capacity_available=True,
+            root_accepts=True,
+        )
+
+        self.assertEqual(("User Action Required", "Ready"), statuses)
+        self.assertEqual("Ready", item.status)
+        self.assertEqual("task-other", item.dirty_owner_task_id)
+        self.assertIn("must be handed off", item.open_issues[-1])
+        self.assertNotIn(
+            "release",
+            " ".join(str(event) for event in simulator.events).lower(),
+        )
+
+    def test_unavailable_selected_manager_blocks_resumption_without_mutation(self) -> None:
+        """Do not bypass a selected provider manager that cannot operate."""
+
+        for provider in ("file", "github", "gitlab"):
+            with self.subTest(provider=provider):
+                item = WorkItem(
+                    "user-action",
+                    "User Action Required",
+                    canonical_task_id="task-original",
+                    canonical_thread_id="thread-original",
+                    provider=provider,
+                )
+                simulator = CoordinationSimulator((item,))
+
+                with self.assertRaisesRegex(ValueError, "unavailable with zero mutation"):
+                    simulator.resume_user_action_thread(
+                        item.item_id,
+                        user_answer="approved",
+                        canonical_task_id="task-original",
+                        canonical_thread_id="thread-original",
+                        selected_skill_available=False,
+                        priority_eligible=True,
+                        capacity_available=True,
+                        root_accepts=True,
+                    )
+
+                self.assertEqual("User Action Required", item.status)
+                self.assertEqual([], simulator.events)
 
     def test_persistence_routes_cover_supported_providers_without_fallback(self) -> None:
         """Preserve each selected provider's manager, inventory, and blocked semantics."""

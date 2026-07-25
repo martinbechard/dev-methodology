@@ -58,3 +58,17 @@ scenarios:
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, provider-selected-workitem-ownership, provider-selector-routing, output-contract-presence]
     expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
     expectedTerminalStatus: BLOCKED
+  - id: same-thread-user-action-resumption
+    priority: 5
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Resume an answered User Action Required item in its existing canonical task without discarding early work.
+    initialState: A previously Running item is User Action Required, the user answered in its canonical Thread, and that Thread contains preserved work produced before lifecycle reconciliation; a provider-none variant has no durable manager or capacity.
+    task: Record the answer, reuse the canonical Thread and Agent Task through Ready then Starting then Running, reconcile preserved work through normal gates, and keep provider-none evidence task-local.
+    targetSkills: [structured-explanation, codex-workitem-coordination]
+    allowedAgentDependencies: [dev-orchestrator, dev-backlog-steward]
+    requiredBehaviors: [Accept the answer in the canonical work-item Thread, Preserve canonical Thread and Agent Task identities separately, Record User Action Required to Ready, Reserve Ready to Starting for the same Thread, Accept Starting to Running in the same Thread, Route selected-provider mutations through Dev Backlog Steward, Keep provider-none evidence task-local without capacity inference, Preserve out-of-sequence work and dirty ownership, Reconcile scope review verification and delivery]
+    forbiddenBehaviors: [Require the user to repeat the answer in the parent Thread, Create a replacement Thread, Replace the Thread while retaining the Agent Task id, Mutate a selected provider directly, Dispatch Dev Backlog Steward for provider none, Reject work solely because of Thread location, Release or override dirty ownership, Treat the answer or preserved artifacts as delivery]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, task-identity-fields, provider-selected-workitem-ownership, workitem-completion-handoff, output-contract-presence]
+    expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
+    expectedTerminalStatus: PASS

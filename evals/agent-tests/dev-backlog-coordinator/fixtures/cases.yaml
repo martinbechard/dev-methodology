@@ -30,6 +30,27 @@ cases:
     duplicateContainment: [stop, verify zero mutation, archive when supported]
     userAnswer: approved
     decisionEffect: Ready only
+  same-thread-user-action-resumption:
+    canonicalTaskId: task-user-action
+    canonicalThreadId: thread-user-action
+    userAnswer: approved
+    provider: file
+    priorityEligible: true
+    capacityAvailable: true
+    rootAccepts: true
+    dirtyOwnerTaskId: task-user-action
+    branch: codex/user-action-work
+    worktree: /tmp/user-action-worktree
+    preservedArtifacts: [dirty worktree, clean commit, review evidence]
+    expectedStatusSequence: [User Action Required, Ready, Starting, Running]
+  same-thread-provider-none-resumption:
+    canonicalTaskId: task-provider-none
+    canonicalThreadId: thread-provider-none
+    userAnswer: approved
+    provider: none
+    priorityEligible: true
+    rootAccepts: true
+    expectedStatusSequence: [User Action Required, Ready, Starting, Running]
   private-worktree-and-tiered-verification:
     privateOperations: [implementation, correction, independent review, focused local tests]
     sharedOperations: [main integration, backlog mutation, generated output, exclusive resource]

@@ -46,6 +46,7 @@ Keep ordinary work authoritative in the effective Persistence-selected backend w
 - Reserve User Action Required for recognized work whose next safe action needs one genuine user-owned answer. Keep Holding for recognized work intentionally deferred without an immediate question.
 - Promote a Future Idea only deliberately by retaining the idea with Promoted To and creating a complete typed work item in an active, Holding, or User Action Required destination whose Source Evidence contains the exact canonical idea path and whose Open Questions section records agent-resolvable uncertainty or None. Completion must be direct-main, feature-branch, or UNSET; Holding accepts its underlying dispatchable Type or the Holding Type, while User Action Required retains its underlying dispatchable Type.
 - Treat Ready -> Starting as a parent Dev Backlog Coordinator-owned dispatch reservation, and Starting -> Running as acceptance owned by the work-item Thread's root Dev Orchestrator. Perform either mutation only as that owner's child Agent and never combine both into one transition.
+- Preserve an existing canonical work-item Thread when a previously Running item enters User Action Required. Record the user's answer once, then let the parent reserve that same Thread through Ready -> Starting and let its root Dev Orchestrator accept Starting -> Running. Refuse a replacement Thread when the preserved canonical identity remains valid.
 
 ## Workflow
 
@@ -58,13 +59,15 @@ Keep ordinary work authoritative in the effective Persistence-selected backend w
 7. Validate the complete target and reciprocal provenance, stage only the idea and target, and use a path-limited commit preserving unrelated staged state. Capture the new commit OID and confirm that exact immutable object contains exactly both reciprocal records and bytes while unrelated staged state remains staged.
 8. For Coordinator dispatch, atomically record Ready -> Starting with the parent Thread, one launch reservation, dispatch time, normalized objective, and observed launch evidence. Starting counts against capacity and remains in the provider's active queue.
 9. For root Orchestrator acceptance, atomically record Starting -> Running with the canonical work-item Thread identifier, canonical root Agent Task id when applicable, branch, worktree, and enabled coordination evidence. Refuse a duplicate Thread or a second accepted owner.
-10. Apply the applicable selected skill to capture or promote an idea, or to create, assign, resume, block, complete, fail, archive, or report an ordinary item without changing unrelated state.
-11. Preserve ordinary implementation and delivery references while requiring the configured completion evidence before closing or archiving an ordinary work item.
-12. Return the Persistence selection, durable reference, operation-specific evidence, and next safe action; include lifecycle state, ownership, and dependencies only for ordinary work.
+10. For same-Thread User Action Required resumption, record the answer and User Action Required -> Ready in one short provider transaction. In a distinct parent-owned transaction, record Ready -> Starting against the preserved canonical Thread; in a distinct root-owned transaction, record Starting -> Running before further repository mutation.
+11. Apply the applicable selected skill to capture or promote an idea, or to create, assign, resume, block, complete, fail, archive, or report an ordinary item without changing unrelated state.
+12. Preserve ordinary implementation and delivery references while requiring the configured completion evidence before closing or archiving an ordinary work item.
+13. Return the Persistence selection, durable reference, operation-specific evidence, and next safe action; include lifecycle state, ownership, and dependencies only for ordinary work.
 
 ## Failure Handling
 
 - On failed or ambiguous startup, reconcile the reservation and runtime evidence. Restore Ready only when no ownership was accepted and no matching Thread exists; otherwise preserve evidence and record Blocked or User Action Required with the exact recovery condition.
+- Preserve work produced before User Action Required lifecycle reconciliation as out-of-sequence evidence. Never reject, delete, duplicate, or reimplement it solely because of its Thread location, and never release or override dirty ownership. Require the parent Coordinator and same root Orchestrator to reconcile scope, ownership, Git provenance, review, verification, and delivery before accepting it.
 - Report BLOCKED when the Persistence binding or selected skill, target, authority, authentication, ownership, or required lifecycle evidence is missing. Do not silently change providers or fall back.
 - Report BLOCKED without durable capture when a Future Idea is requested under a non-file provider and no explicit one-item file override exists.
 - Restore the exact pre-attempt idea and target state and the exact Git index bytes and existence after any promotion target-write, idea-write, validation, staging, or commit failure. Verify the restoration byte-for-byte, preserve unrelated staged state, and reconcile an ambiguous commit result before restoring or reporting.

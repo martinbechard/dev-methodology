@@ -56,7 +56,7 @@ For a provider that supports queue inventory and lifecycle transitions:
 1. Count work items whose provider lifecycle state is Starting or Running.
 2. When the count is below ten, select enough eligible Ready items to fill available capacity without exceeding ten active items.
 3. For each selection, have the parent Coordinator's Dev Backlog Steward child atomically record the Ready -> Starting reservation and dispatch evidence through the effective Persistence-selected management skill before creating a runtime Thread.
-4. Reconcile the reservation and existing runtime evidence, then create at most one user-visible work-item Thread for the Starting work item.
+4. Reconcile the reservation and existing runtime evidence, then create at most one user-visible work-item Thread for the Starting work item. When the item already has one canonical Thread preserved from a prior Running to User Action Required transition, adopt that same Thread instead of creating a replacement.
 5. After the Thread's root Dev Orchestrator Agent accepts ownership, have that Orchestrator's Dev Backlog Steward child atomically record Starting -> Running with the canonical Thread identifier, root Agent Task identifier when applicable, branch, worktree, and enabled coordination evidence.
 6. Dispatch only work that can begin implementation or another bounded delivery phase. Do not create a Thread merely to wait for approval, a dependency, a reviewer, resource ownership, or a delivery window.
 7. When an item leaves Starting or Running, fill the active-capacity vacancy promptly through the same Ready -> Starting reservation sequence.
@@ -101,6 +101,8 @@ A work item is the durable provider record for an outcome, lifecycle, evidence, 
 The parent coordination Thread has one root Agent under the Dev Backlog Coordinator Role. Each Starting or Running work item has exactly one work-item Thread with one root Agent under the Dev Orchestrator Role. Producing, implementation, independent review, verification, delivery, and stewardship Agents are children in that work-item Thread.
 
 Ready -> Starting is the parent Coordinator's dispatch and capacity-reservation decision. Use its Dev Backlog Steward child to record the reservation through the selected manager before launch, and count Starting against capacity exactly like Running. Reconcile existing reservation and runtime evidence before every launch. One work item must not create a duplicate Thread after a timeout, Thread-creation error, or ambiguous startup.
+
+When a Running work item pauses in User Action Required, preserve its canonical work-item Thread, root Agent Task identity, branch, worktree, clean commits, and unresolved question as non-owning resumption evidence. The user may answer and continue the conversation in that canonical Thread. The parent must reuse it after the answer is durably routed through Ready -> Starting; it must not require the user to repeat the answer in the parent Thread or create a replacement work-item Thread.
 
 After the work-item Thread's root Dev Orchestrator Agent accepts ownership, it uses its Dev Backlog Steward child for the atomic Starting -> Running transition. The record includes the canonical Thread identifier, canonical root Agent Task id when applicable, branch, worktree, and enabled coordination evidence. If launch fails and no owner accepted, restore Ready. If ownership was accepted or evidence cannot safely be discarded, record Blocked or User Action Required with the exact recovery condition. Starting and Running stay in the provider's active queue.
 
@@ -250,7 +252,16 @@ Do not retroactively invalidate valid evidence or weaken the final campaign-wide
 
 ## User Decisions And Terminal State
 
-A user answer resolves a decision gate once; it does not prove delivery. Record the exact answer and provenance through the selected Persistence manager and never ask it again. Route approved work to Ready, deferred work to Holding, and declined work to the applicable terminal disposition. For provider none, retain the answer in task-local evidence without creating durable provider state.
+A user answer resolves a decision gate once; it does not prove delivery. The user may supply that answer in the canonical work-item Thread that asked the question. Record the exact answer and provenance through the selected Persistence manager and never ask it again. Route approved work to Ready, deferred work to Holding, and declined work to the applicable terminal disposition. For provider none, retain the answer in task-local evidence without creating durable provider state.
+
+For approved work whose canonical Thread already exists:
+
+1. The canonical Thread records the answer, preserves its existing identity and evidence, and sends one resumption request to the parent Coordinator.
+2. For a selected provider, the parent Coordinator's Dev Backlog Steward child records User Action Required -> Ready. If the item is eligible under current priority and capacity, the parent Coordinator decides and reserves dispatch for that same Thread, and its Dev Backlog Steward child records Ready -> Starting rather than creating another Thread. Provider none records equivalent Ready and Starting evidence task-locally for its explicit task without Dev Backlog Steward, provider mutation, inventory, or capacity inference.
+3. For a selected provider, the same root Dev Orchestrator accepts Running and its own Dev Backlog Steward child records Starting -> Running before repository mutation or delivery resumes. Provider none records equivalent Running acceptance task-locally in the same root Thread without a provider or Steward operation.
+4. The parent acknowledges the lifecycle reconciliation in the canonical Thread. The user does not need to move to the parent Thread or repeat the answer there.
+
+If the canonical Thread produced a diff, commit, review, verification, merge, or delivery evidence before this lifecycle reconciliation completed, treat it as preserved out-of-sequence evidence rather than automatically accepted delivery. Stop further shared mutation, preserve dirty ownership and every recoverable artifact, and reconcile provider state, enabled resource coordination, exact scope, Git provenance, review, verification, and Commit evidence. Never reject, delete, or reimplement work solely because it was performed in the User Action Required Thread. Clean in-scope work may continue through the same Thread after Running is durable and all normal independent gates still apply. Dirty ownership is never released or overridden merely to complete reconciliation.
 
 Completed requires effective Commit disposition READY, required independent review, focused verification, released delivery ownership, and terminal evidence recorded through the effective Persistence-selected management skill when a provider exists. Provider none records the equivalent terminal evidence in the task result without a provider operation. Dev Orchestrator supplies the selected Commit skill's cleanup eligibility and candidate-to-delivery provenance. An idle, stopped, titled, or archived Codex task proves none of those facts.
 

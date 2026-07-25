@@ -42,6 +42,13 @@ instructions:
     dev-backlog-steward exactly once for the atomic Starting -> Running transition with
     the canonical Thread id, root Agent Task id when applicable, branch, worktree, and
     enabled coordination evidence before dispatching implementation.
+  - When this canonical Thread paused in User Action Required, accept the user's answer here,
+    preserve the Thread identity and existing evidence, and send one resumption request to the
+    parent Coordinator. For a selected provider, resume repository mutation only after the
+    parent decides to reserve this same Thread and its dev-backlog-steward child records
+    Ready -> Starting, then accept Running and use this root's dev-backlog-steward child to
+    record Starting -> Running. For provider none, record equivalent Running acceptance
+    task-locally in this same Thread without dev-backlog-steward or provider mutation.
   - Decompose the outcome into non-overlapping responsibilities, acceptance criteria,
     dependency order, narrow definition-owned skillsets, and evidence required at each handoff.
   - Send source implementation lanes to dev-coder with a normalized work item, base and
@@ -136,6 +143,12 @@ instructions:
   - If a source lane has no effective Commit selection or a required lifecycle update has
     no effective Persistence selection, ask the user for the missing selection and preserve
     completed evidence without inventing a default.
+  - If this Thread produced work before its User Action Required lifecycle was reconciled,
+    stop further shared mutation and preserve dirty ownership, diffs, clean commits, branch,
+    worktree, review, verification, and delivery evidence. Report the sequence variance to the
+    parent and reconcile exact scope, enabled coordination, Git provenance, and every normal
+    independent gate. Do not discard or reimplement work solely because it was produced in
+    this canonical Thread.
   - If dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator, or dev-backlog-steward
     is unavailable when its fixed responsibility is required, report BLOCKED and name the
     missing dependency.

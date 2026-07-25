@@ -129,18 +129,18 @@
       <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
       <div><dt>Documentation snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>490b76e1c5723603b29fe08a7901628b42b1b302f5d885393259a414dc65265a</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source snapshot</dt><dd><code>df68d9673be5b157fb55b8210b0df394db51ac37639c2d5b2c794f2c27ff8ced</code>; regenerated and compared by the focused check</dd></div>
     </dl>
   </section>
 
   <section class="section" id="summary" aria-labelledby="summary-title">
-    <div class="section-heading"><h2 id="summary-title">Global reconciliation</h2><p>Campaign verdict totals describe the historical 78-scenario campaign. Current catalog coverage and evidence alignment are calculated separately against 27 suites and 89 current scenarios.</p></div>
+    <div class="section-heading"><h2 id="summary-title">Global reconciliation</h2><p>Campaign verdict totals describe the historical 78-scenario campaign. Current catalog coverage and evidence alignment are calculated separately against 27 suites and 90 current scenarios.</p></div>
     <div class="grid">
       <article class="metric"><strong>124</strong><span>Bundled skills</span></article>
       <article class="metric"><strong>124</strong><span>Diagnostic probe records</span></article>
       <article class="metric"><strong>27</strong><span>Conceptual agents</span></article>
       <article class="metric"><strong>26 / 27</strong><span>Campaign suites / current suites (96.3%)</span></article>
-      <article class="metric"><strong>78 / 89</strong><span>Campaign outcomes / current scenarios (87.6%)</span></article>
+      <article class="metric"><strong>78 / 90</strong><span>Campaign outcomes / current scenarios (86.7%)</span></article>
 
         <article class="metric"><strong>52</strong>
         <span>PASS (66.7%)</span></article>
@@ -154,9 +154,9 @@
     </div>
     <div class="grid" style="margin-top:1rem">
       <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed skill result.</li><li>124 skills have a direct diagnostic probe declaration but no direct skill verdict.</li><li>0 skills have only indirect current-suite coverage without a direct probe or skill result.</li><li>0 skills have no recorded evaluation evidence.</li><li>52 skills are named by at least one selected-campaign scenario; 72 are not.</li></ul><p><strong>No skill-level verdict:</strong> the selected campaign publishes no skill receipts, so linked PASS outcomes remain agent-scenario evidence.</p></article>
-      <article class="method-card"><h3>Evidence alignment states</h3><ul><li>78 verdicts have only historical id alignment; definition freshness is unknown.</li><li>0 verdicts are aligned to a retained definition snapshot.</li><li>0 verdicts have proved definition-field drift.</li><li>0 campaign verdicts are campaign-only / removed from the current catalog.</li><li>11 current scenarios have missing campaign evidence.</li><li>26 suites are historical-unknown, 0 snapshot-aligned, 0 drifted, and 1 missing.</li></ul></article>
+      <article class="method-card"><h3>Evidence alignment states</h3><ul><li>78 verdicts have only historical id alignment; definition freshness is unknown.</li><li>0 verdicts are aligned to a retained definition snapshot.</li><li>0 verdicts have proved definition-field drift.</li><li>0 campaign verdicts are campaign-only / removed from the current catalog.</li><li>12 current scenarios have missing campaign evidence.</li><li>26 suites are historical-unknown, 0 snapshot-aligned, 0 drifted, and 1 missing.</li></ul></article>
       <article class="method-card"><h3>Not verified passes</h3><ul><li>17 BLOCKED outcomes are governed boundaries or unavailable semantic acceptance, not PASS or FAIL.</li><li>9 FAIL outcomes are reproducible defects, not verified passes.</li><li>Missing, historical-only, removed, or drifted current-catalog evidence does not inherit a current PASS.</li><li>Manual observations and uncalibrated semantic Judge outputs are excluded from verified-pass totals.</li></ul></article>
-      <article class="method-card"><h3>Harness and evidence breakdown</h3><ul><li>78 campaign scenarios: Codex, Governed agent-suite campaign.</li><li>11 current scenarios: no selected-campaign evidence level or harness outcome.</li><li>Per-scenario functional-isolation and security-containment fields are not published in the selected report; the report states clean suite-owned closeout globally.</li></ul></article>
+      <article class="method-card"><h3>Harness and evidence breakdown</h3><ul><li>78 campaign scenarios: Codex, Governed agent-suite campaign.</li><li>12 current scenarios: no selected-campaign evidence level or harness outcome.</li><li>Per-scenario functional-isolation and security-containment fields are not published in the selected report; the report states clean suite-owned closeout globally.</li></ul></article>
     </div>
   </section>
 
@@ -1749,7 +1749,7 @@
     </article>
 
     <article class="evaluation-card agent-card" id="agent-dev-backlog-coordinator"
-      data-kind="agent" data-status="missing" data-search="dev-backlog-coordinator acts as the parent backlog coordinator across the effective work-item provider, sustaining ten starting or running items when durable inventory exists, recovering stalled delivery, and cleaning up terminal tasks without taking over provider lifecycle or per-item delivery. missing provider-selected-ten-item-dispatch selected-commit-retry-and-closeout ambiguous-dispatch-and-user-decision-integrity provider-selector-boundaries pass 0, blocked 0, fail 0">
+      data-kind="agent" data-status="missing" data-search="dev-backlog-coordinator acts as the parent backlog coordinator across the effective work-item provider, sustaining ten starting or running items when durable inventory exists, recovering stalled delivery, and cleaning up terminal tasks without taking over provider lifecycle or per-item delivery. missing provider-selected-ten-item-dispatch selected-commit-retry-and-closeout ambiguous-dispatch-and-user-decision-integrity provider-selector-boundaries same-thread-user-action-resumption pass 0, blocked 0, fail 0">
       <div class="card-heading">
         <div><span class="card-kicker">Conceptual agent</span><h3>dev-backlog-coordinator</h3></div>
         <span class="status status--missing">Missing campaign evidence</span>
@@ -1765,7 +1765,7 @@
         <div><dt>Evidence level</dt><dd>Governed agent-suite campaign; scenario verdicts are not skill verdicts</dd></div>
         <div><dt>Execution context</dt><dd>Codex; disposable synthetic workspaces; per-scenario containment not reported</dd></div>
         <div><dt>Judge dimension</dt><dd>Governed Judge workflow or proved deterministic boundary; raw per-scenario Judge and calibration fields are not published in this report</dd></div>
-        <div><dt>Unresolved</dt><dd>4 current scenario(s) without campaign evidence</dd></div>
+        <div><dt>Unresolved</dt><dd>5 current scenario(s) without campaign evidence</dd></div>
       </dl>
 
       <div class="table-scroll" tabindex="0" aria-label="Scenario results for dev-backlog-coordinator">
@@ -1806,6 +1806,16 @@
               <th scope="row">provider-selector-boundaries</th>
               <td>Preserve provider-specific identities, placeholder failures, provider none, and UNSET without fallback.</td>
               <td>BLOCKED</td>
+              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td><span class="status status--missing">Missing campaign evidence</span></td>
+              <td>current</td>
+              <td>None proved</td>
+            </tr>
+
+            <tr data-campaign-verdict="">
+              <th scope="row">same-thread-user-action-resumption</th>
+              <td>Resume an answered User Action Required item in its existing canonical task without discarding early work.</td>
+              <td>PASS</td>
               <td><span class="status status--missing">Missing campaign evidence</span></td>
               <td><span class="status status--missing">Missing campaign evidence</span></td>
               <td>current</td>

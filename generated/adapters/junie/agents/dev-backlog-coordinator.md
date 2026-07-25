@@ -39,6 +39,7 @@ Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work mov
 - Send delivery through Dev Orchestrator with the effective Commit-selected skill. Do not reproduce provider or Commit procedures in this role.
 - Treat Git as delivery evidence, the project-selected resource-coordination registry as shared mutation authority when enabled, and Codex Thread state and titles as display or execution state only.
 - Delegate one whole Starting work item to one canonical work-item Thread whose root Agent operates under Dev Orchestrator Role. Do not take over that item's coding, independent review, verification, integration, publication, merge, or completion transaction.
+- When a previously Running item entered User Action Required, preserve and later adopt its existing canonical work-item Thread. Let the user answer there; never require the answer again in the parent Thread or create a replacement merely because lifecycle reconciliation is pending.
 - Require durable provider records, or the task-local result for provider none, to retain the canonical Thread id, canonical root Agent Task id when applicable, provider identity and reference, branch, worktree, phase, accepted commit, wait timing, enabled coordination outcomes, open issues, delivery evidence, and effective Commit selector.
 
 ## Decisions
@@ -71,6 +72,7 @@ Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work mov
 - Route one whole Starting work item to a root dev-orchestrator in its work-item Thread with the effective Commit-selected skill reference, independent-review requirement, focused verification expectation, and clean evidence handoff; do not duplicate the selected completion procedure.
 - Route provider inventory, normalization, and every user-decision or lifecycle transition to dev-backlog-steward applying the effective Persistence-selected management skill; do not duplicate the selected provider procedure.
 - Dev Backlog Coordinator owns READY -> STARTING dispatch, priority, capacity when inventory exists, canonical Thread and root Agent Task reconciliation, thirty-minute stall investigation, final campaign-wide catalog routing, and terminal UI, worktree, and merged-branch cleanup.
+- When a user answers in the canonical User Action Required Thread, use Dev Backlog Steward to record the answer and User Action Required -> Ready for a selected provider. If current priority and capacity permit dispatch, reserve Ready -> Starting for that same Thread and send it the lifecycle acknowledgement so its root Dev Orchestrator can accept Starting -> Running. For provider none, preserve the same Thread and record equivalent Ready and Starting evidence task-locally without Dev Backlog Steward, provider mutation, inventory, or capacity inference.
 
 ## Review
 
@@ -83,6 +85,7 @@ Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work mov
 - If a delivery or provider-completion resource remains unavailable through the thirty-minute retry window, investigate the owner and scope. Request release, narrow the ownership scope, split shared resources, or complete the blocker first when safe. Otherwise ask Dev Backlog Steward to record BLOCKED or USER_ACTION_REQUIRED through the effective manager and dispatch a replacement item when durable inventory supports one.
 - Ask the user only for a genuine decision or unavailable authority. Never ask for approval of ordinary Git, shell, review, test, integration, publication, merge, provider, or cleanup actions already authorized by the work item and selected skills.
 - If task archival does not persist, retain that limitation in provider or task-local evidence without claiming UI archival succeeded.
+- When a User Action Required Thread produced work before lifecycle reconciliation, stop further shared mutation and preserve its dirty ownership, diffs, commits, branch, worktree, review, verification, and delivery evidence. Reconcile exact scope, enabled coordination, Git provenance, and independent gates with the same root Orchestrator. Never reject, delete, duplicate, or reimplement the work solely because it was performed in that Thread.
 - If dev-orchestrator reports the same unresolved finding after at most two correction attempts, preserve its commits and review evidence, ask Dev Backlog Steward for a truthful provider disposition, free the Running slot when possible, and do not take over another correction.
 - If dev-orchestrator or dev-backlog-steward is unavailable or cannot provide a required agent, report BLOCKED with the affected provider identity or explicit task and preserve every clean commit and enabled coordination release result already supplied.
 

@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Simulates provider-selected capacity, bounded claim retries, and terminal cleanup.
+# Summary: Simulates provider-selected capacity, same-thread resumption, claim retries, and terminal cleanup.
 # Test plan: evals/agent-tests/dev-backlog-coordinator/requirements-matrix.md
 
 """Provide deterministic state transitions for parent backlog coordination."""
@@ -40,6 +40,10 @@ class WorkItem:
     item_id: str
     status: str
     canonical_task_id: str | None = None
+    canonical_thread_id: str | None = None
+    provider: str = "file"
+    dirty_owner_task_id: str | None = None
+    delivery_accepted: bool = False
     phase: str | None = None
     branch: str | None = None
     worktree: str | None = None
@@ -197,6 +201,115 @@ class CoordinationSimulator:
             }
         )
         return tuple(started)
+
+    def resume_user_action_thread(
+        self,
+        item_id: str,
+        *,
+        user_answer: str,
+        canonical_task_id: str,
+        canonical_thread_id: str,
+        selected_skill_available: bool | None,
+        priority_eligible: bool,
+        capacity_available: bool | None,
+        root_accepts: bool,
+        preserved_artifacts: Sequence[str] = (),
+    ) -> tuple[str, ...]:
+        """Resume one answered item through its recorded identity and dispatch gates."""
+
+        item = self._item(item_id)
+        if item.status != "User Action Required":
+            raise ValueError("only a User Action Required item may use this resumption")
+        if not user_answer.strip():
+            raise ValueError("same-thread resumption requires an explicit user answer")
+        if item.canonical_task_id is None or item.canonical_thread_id is None:
+            raise ValueError("same-thread resumption requires recorded canonical identities")
+        if item.canonical_task_id != canonical_task_id:
+            raise ValueError("same-thread resumption cannot replace the canonical task")
+        if item.canonical_thread_id != canonical_thread_id:
+            raise ValueError("same-thread resumption cannot replace the canonical Thread")
+        if item.provider not in {*PERSISTENCE_MANAGERS, "none"}:
+            raise ValueError(f"unsupported provider: {item.provider}")
+        if item.provider in PLACEHOLDER_PROVIDERS:
+            raise ValueError("placeholder provider remains BLOCKED with zero mutation")
+        if item.provider == "none" and selected_skill_available is not None:
+            raise ValueError("provider none has no selected management skill")
+        if item.provider != "none" and selected_skill_available is not True:
+            raise ValueError("selected provider manager is unavailable with zero mutation")
+        if item.provider == "none" and capacity_available is not None:
+            raise ValueError("provider none must not supply or infer capacity")
+        if item.provider != "none" and capacity_available is None:
+            raise ValueError("selected-provider dispatch requires current capacity evidence")
+
+        statuses = ["User Action Required"]
+        self.events.append(
+            {
+                "event": "user-answer-recorded",
+                "item": item_id,
+                "task": canonical_task_id,
+                "thread": canonical_thread_id,
+                "answer": user_answer,
+                "evidence": "task-local" if item.provider == "none" else "provider",
+            }
+        )
+        transitions = [("Ready", "dev-backlog-coordinator")]
+        ownership_reconciled = item.dirty_owner_task_id in {None, canonical_task_id}
+        if priority_eligible and ownership_reconciled and (
+            item.provider == "none" or capacity_available is True
+        ):
+            transitions.append(("Starting", "dev-backlog-coordinator"))
+            if root_accepts:
+                transitions.append(("Running", "dev-orchestrator"))
+
+        for status, decision_owner in transitions:
+            item.status = status
+            statuses.append(status)
+            self.events.append(
+                {
+                    "event": "lifecycle-transition",
+                    "item": item_id,
+                    "task": canonical_task_id,
+                    "thread": canonical_thread_id,
+                    "status": status,
+                    "decisionOwner": decision_owner,
+                    "mutationAgent": (
+                        None
+                        if item.provider == "none"
+                        else "dev-backlog-steward"
+                    ),
+                    "evidence": (
+                        "task-local"
+                        if item.provider == "none"
+                        else "selected-provider"
+                    ),
+                    "capacityInferred": False if item.provider == "none" else None,
+                }
+            )
+
+        if item.status == "Running":
+            item.phase = "Reconciliation" if preserved_artifacts else "Implementation"
+        if preserved_artifacts:
+            item.open_issues.append(
+                "Preserved out-of-sequence evidence requires ownership, scope, "
+                "review, verification, and delivery reconciliation."
+            )
+            self.events.append(
+                {
+                    "event": "out-of-sequence-evidence-preserved",
+                    "item": item_id,
+                    "task": canonical_task_id,
+                    "thread": canonical_thread_id,
+                    "artifacts": tuple(preserved_artifacts),
+                    "dirtyOwnerTask": item.dirty_owner_task_id,
+                    "deliveryAccepted": item.delivery_accepted,
+                }
+            )
+        if not ownership_reconciled:
+            item.open_issues.append(
+                "Dirty ownership belongs to another task and must be handed off "
+                "without release or override before dispatch."
+            )
+        return tuple(statuses)
 
     @staticmethod
     def persistence_route(

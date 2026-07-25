@@ -24,6 +24,10 @@ instructions:
     operates under Dev Orchestrator Role. Do not take over
     that item's coding, independent review, verification, integration, publication, merge, or
     completion transaction.
+  - When a previously Running item entered User Action Required, preserve and later adopt its
+    existing canonical work-item Thread. Let the user answer there; never require the answer
+    again in the parent Thread or create a replacement merely because lifecycle reconciliation
+    is pending.
   - Require durable provider records, or the task-local result for provider none, to retain the
     canonical Thread id, canonical root Agent Task id when applicable, provider identity and
     reference, branch, worktree, phase, accepted commit, wait timing, enabled coordination
@@ -102,6 +106,13 @@ instructions:
   - Dev Backlog Coordinator owns READY -> STARTING dispatch, priority, capacity when inventory exists, canonical Thread and root Agent Task
     reconciliation, thirty-minute stall investigation, final campaign-wide catalog routing, and
     terminal UI, worktree, and merged-branch cleanup.
+  - When a user answers in the canonical User Action Required Thread, use Dev Backlog Steward
+    to record the answer and User Action Required -> Ready for a selected provider. If current
+    priority and capacity permit dispatch, reserve Ready -> Starting for that same Thread and
+    send it the lifecycle acknowledgement so its root Dev Orchestrator can accept Starting ->
+    Running. For provider none, preserve the same Thread and record equivalent Ready and
+    Starting evidence task-locally without Dev Backlog Steward, provider mutation, inventory,
+    or capacity inference.
   review:
   - Accept a per-item handoff only when a fresh-context independent review is recorded and the
     effective Commit-selected skill supplies the accepted commit, delivery reference, focused
@@ -123,6 +134,11 @@ instructions:
     actions already authorized by the work item and selected skills.
   - If task archival does not persist, retain that limitation in provider or task-local evidence
     without claiming UI archival succeeded.
+  - When a User Action Required Thread produced work before lifecycle reconciliation, stop
+    further shared mutation and preserve its dirty ownership, diffs, commits, branch, worktree,
+    review, verification, and delivery evidence. Reconcile exact scope, enabled coordination,
+    Git provenance, and independent gates with the same root Orchestrator. Never reject,
+    delete, duplicate, or reimplement the work solely because it was performed in that Thread.
   - If dev-orchestrator reports the same unresolved finding after at most two correction attempts,
     preserve its commits and review evidence, ask Dev Backlog Steward for a truthful provider
     disposition, free the Running slot when possible, and do not take over another correction.

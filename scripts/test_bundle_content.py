@@ -1019,6 +1019,66 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, skill_text)
 
+    def test_user_action_resumes_in_the_existing_canonical_thread(self) -> None:
+        """The user may answer in place without losing lifecycle or delivery gates."""
+
+        coordination_text = (
+            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        manage_text = (
+            SKILLS_ROOT / "manage-file-work-items" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        readme_text = README_PATH.read_text(encoding="utf-8")
+        lifecycle_text = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        ).read_text(encoding="utf-8")
+
+        for phrase in (
+            "The user may answer and continue the conversation in that canonical Thread.",
+            "must not require the user to repeat the answer in the parent Thread",
+            "User Action Required -> Ready",
+            "its Dev Backlog Steward child records Ready -> Starting",
+            "Never reject, delete, or reimplement work solely because it was performed in the User Action Required Thread.",
+            "Dirty ownership is never released or overridden merely to complete reconciliation.",
+        ):
+            with self.subTest(coordination_contract=phrase):
+                self.assertIn(phrase, coordination_text)
+
+        for phrase in (
+            "Accept the answer in the canonical work-item Thread that asked the question",
+            "Do not require the user to switch Threads or repeat the answer.",
+            "parent Coordinator reserve Ready -> Starting for the existing canonical Thread",
+            "Work performed before User Action Required -> Ready -> Starting -> Running reconciliation is not automatically accepted and is not automatically discarded.",
+            "Never release or override dirty ownership to force the lifecycle sequence into alignment.",
+        ):
+            with self.subTest(manage_contract=phrase):
+                self.assertIn(phrase, manage_text)
+
+        self.assertIn(
+            "The user may answer and continue in the canonical work-item Thread",
+            readme_text,
+        )
+        self.assertIn("Same-Thread Resume", lifecycle_text)
+        self.assertIn(
+            "does not need to repeat the answer in the parent Thread",
+            lifecycle_text,
+        )
+
+        role_paths = (
+            ROLES_ROOT / "dev-activities" / "dev-backlog-coordinator.role.yaml",
+            ROLES_ROOT / "dev-activities" / "dev-orchestrator.role.yaml",
+            ROLES_ROOT / "dev-activities" / "dev-backlog-steward.role.yaml",
+        )
+        for role_path in role_paths:
+            with self.subTest(role=role_path.name):
+                role_text = role_path.read_text(encoding="utf-8")
+                self.assertIn("canonical work-item Thread", role_text)
+                self.assertIn("User Action Required", role_text)
+                self.assertRegex(
+                    role_text,
+                    r"(?s)(?:Never reject|Do not discard|Never reject, delete).*solely",
+                )
+
     def test_codex_coordination_routes_provider_and_delivery_state_through_selected_skills(
         self,
     ) -> None:
@@ -6547,7 +6607,8 @@ class BundleContentTests(unittest.TestCase):
             "1 · User Question",
             "2 · Preserved Context",
             "3 · Decision Record",
-            "4 · Outcome Routing",
+            "4 · Same-Thread Resume",
+            "5 · Outcome Routing",
             "Evidence Boundaries",
             "Thread Evidence Boundary:",
             "Administrative Cleanup",
@@ -7736,7 +7797,7 @@ class BundleContentTests(unittest.TestCase):
                         },
                     )
                 elif entry["id"] == "dev-backlog-coordinator":
-                    self.assertEqual(4, len(scenarios["scenarios"]))
+                    self.assertEqual(5, len(scenarios["scenarios"]))
                 else:
                     self.assertEqual(3, len(scenarios["scenarios"]))
 
