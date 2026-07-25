@@ -1,16 +1,31 @@
 # Reconcile Dev Merge Coordinator Native Skill Binding With Suite Manifest
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
 Provider Reference: backlog/defect-backlog/reconcile-dev-merge-coordinator-native-skill-binding-with-suite-manifest.md
 
 Completion: direct-main
+
+## Launch Reservation
+
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Reservation: One parent-owned launch reservation.
+- Normalized Objective: Reconcile Dev Merge Coordinator native skill binding with suite manifest.
+- Dispatched At: 2026-07-25T12:24:12Z
+- Intended Root Role: Dev Orchestrator
+- Discovered Ordinary Scope: Dev Merge Coordinator suite-local manifest, contract, focused tests, and fixtures only.
+- Authority Boundary: This reservation authorizes no governed or generated-definition mutation; any such later work requires exact approval.
+- Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
+
+## Reservation Coordination Evidence
+
+- Backlog Claim: reserve-dev-merge-coordinator-suite-binding-20260725 acquired on primary main at 2026-07-25T12:24:12.532512Z; acquisition journal event 0a6e7e8e-e25e-40f8-8475-42093ddd4391.
 
 ## Summary
 
