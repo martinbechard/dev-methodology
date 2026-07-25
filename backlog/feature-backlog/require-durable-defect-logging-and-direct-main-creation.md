@@ -1,10 +1,10 @@
 # Require Durable Defect Logging And Direct-Main Work-Item Creation
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
-Owner: Unowned
+Owner: Dev Orchestrator (canonical work-item Thread 019f96cf-226c-7f62-9d66-7d31cead822e)
 
 ## Launch Reservation
 
@@ -23,7 +23,7 @@ Owner: Unowned
 - Owner: Unowned
 - Branch: Detached at 97e8e20761619518d37ca5a17310836b4f4bf3b6
 - Worktree: /Users/martinbechard/.codex/worktrees/fa2b/dev-methodology
-- Phase: Approval manifest ready; awaiting user approval.
+- Phase: Approved definition implementation / pre-mutation checks.
 - Started At: 2026-07-25T01:34:57Z
 - Prior Coordination Release: require-durable-defect-logging-running-019f96cf; acquire event b67710d6-d249-46e4-a44f-1ff6625f1b14; release event d25f25bb-d408-41b5-9396-edfe6b3197b2 after commit 126ee9befb575c4ebd1d4ddd00444616a8a48808.
 
