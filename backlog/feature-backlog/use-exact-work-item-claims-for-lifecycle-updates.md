@@ -1,6 +1,6 @@
 # Use Exact Work-Item Claims For Lifecycle Updates
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -13,8 +13,19 @@ Owner: Dev Orchestrator
 - Reservation: One parent-owned launch reservation under the current backlog-wide claim contract.
 - Intended Root Role: Dev Orchestrator
 - Isolated Checkout: /Users/martinbechard/.codex/worktrees/8b42/dev-methodology
-- Phase: Awaiting root lifecycle acceptance.
+- Phase: Accepted; lifecycle now Running.
 - Dispatched At: 2026-07-25T04:24:30Z
+
+## Running Acceptance
+
+- Root Dev Orchestrator: Dev Orchestrator
+- Canonical Task/Thread: 019f9783-31a0-7e91-9704-08cde7886b3a
+- Delivery Branch: Detached HEAD at bc30647a6de2f1593a1f5a746410c9d6761e2ba5
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/8b42/dev-methodology
+- Started At: 2026-07-25T04:26:18Z
+- Phase: Running; bounded discovery and approval preparation.
+- Backlog Claim: 019f9783-starting-running-steward
+- Claim Acquisition Event: 7ef99fde-27a2-4057-afc6-54b989bc20a7
 
 ## Summary
 
