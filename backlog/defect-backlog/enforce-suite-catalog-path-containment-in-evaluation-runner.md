@@ -1,6 +1,6 @@
 # Enforce Suite-Catalog Path Containment In Evaluation Runner
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -15,11 +15,22 @@ Completion: direct-main
 ## Launch Reservation
 
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Canonical Thread/Task: 019f9801-cef3-7e61-a8db-939dd6912763
 - Reservation: One parent-owned launch reservation for the selected higher-risk runner item.
 - Intended Root Role: Dev Orchestrator
-- Phase: Awaiting canonical task creation/root acceptance.
+- Isolated Checkout: /Users/martinbechard/.codex/worktrees/97a9/dev-methodology
+- Reservation Commit: eb1bc29bf48e4fb72a58e36f3e70f01d49352104
+- Prior Reservation Claim: a44afa80-b0a5-407d-9b83-dcf20ff5d842, released before this lifecycle transition.
+- Phase: Running.
 - Dispatched At: 2026-07-25T06:40:40Z
-- Task Creation Boundary: The parent will create exactly one canonical task immediately after this durable reservation. Its identity will be recorded only by that task's own Starting -> Running transaction.
+
+## Execution Identity
+
+- Canonical Thread/Task: 019f9801-cef3-7e61-a8db-939dd6912763
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Root Role: Dev Orchestrator
+- Worktree: /Users/martinbechard/.codex/worktrees/97a9/dev-methodology
+- Started At: 2026-07-25T06:42:55Z
 
 ## Coordination Evidence
 
