@@ -1,6 +1,6 @@
 # Enforce Scenario-Root Containment In Evaluation Runner
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -15,15 +15,25 @@ Completion: direct-main
 ## Launch Reservation
 
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Canonical Thread/Task: 019f97d7-41ce-7763-a8fc-75f1be68a82d
 - Reservation: One parent-owned launch reservation for this higher-risk runner defect.
 - Intended Root Role: Dev Orchestrator
-- Phase: Awaiting canonical task creation/root acceptance.
+- Phase: Root acceptance recorded; implementation may begin in the isolated checkout.
 - Dispatched At: 2026-07-25T05:54:12Z
 - Task Creation Boundary: The parent will create exactly one canonical task immediately after this durable reservation. Its identity will be recorded only by that task's own Starting -> Running transaction.
 
 ## Coordination Evidence
 
 - Reservation Backlog Claim: reserve-runner-scenario-root-containment-019f95a9 acquired on primary main at 2026-07-25T05:54:12.371610Z; acquisition journal event bbff5d22-5707-4346-9ccb-dd80e47a572c.
+- Running Backlog Claim: 019f97d7-scenario-root-running-backlog acquired on primary main at 2026-07-25T05:56:32.870561Z; acquisition journal event b8d7d398-7e0c-4c5e-9fc0-aad704295d63.
+
+## Running Acceptance
+
+- Accepted Root Identity: Dev Orchestrator task 019f97d7-41ce-7763-a8fc-75f1be68a82d.
+- Branch: detached at 1c19d95cc2f361953b91119db71919216fe9d974.
+- Worktree: /Users/martinbechard/.codex/worktrees/1e13/dev-methodology.
+- Phase: Scenario-root containment implementation and focused regression planning.
+- Started At: 2026-07-25T05:56:32.870561Z.
 
 ## Summary
 
