@@ -1,6 +1,6 @@
 # Restore Documentation Acceptance Template Contract
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -85,4 +85,9 @@ Permitted Resumption: User Action Required -> Ready after the answer, then the p
 
 ## Resolution
 
-Pending explicit user answer to the recorded question.
+- User answer: 'Amend it to skip over any note.'
+- Provenance: Shared canonical module-contract Thread 019f96ce-dd33-7bf2-bbe1-73e2af07da52; durable approval commit 154a4c491d82ac0f5cd15ab19776a003c87c3679; delegated into this same canonical Documentation Acceptance Thread 019f96ce-fb8b-7e51-9e26-c8b7617bf7b5.
+- Approved governed scope: skills/create-architecture/SKILL.md; skills/create-functional-spec/SKILL.md; skills/create-high-level-design/SKILL.md; skills/create-module-design/SKILL.md; skills/review-module-design/SKILL.md.
+- Approved meaning: Evaluate the first authored decision after skipping any retained explanatory note or notes, preserving ACCEPTED/BLOCKED versus READY/BLOCKED independence and current-pass semantics.
+- Resulting disposition: User Action Required -> Ready. No artifact mutation, integration work, task creation, or Running transition occurred in this provider transaction.
+- Next step: Parent same-task Starting reservation, followed only by the same canonical Thread Running transition after its root Dev Orchestrator accepts ownership.
