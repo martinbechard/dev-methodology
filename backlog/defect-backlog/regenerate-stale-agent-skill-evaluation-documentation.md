@@ -1,6 +1,6 @@
 # Regenerate stale agent-skill evaluation documentation
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -25,7 +25,17 @@ Completion: direct-main
 ## Coordination Evidence
 
 - Backlog Claim: reserve-stale-evaluation-documentation-defect-019f979e acquired on primary main at 2026-07-25T04:53:32.705924Z; acquisition journal event a03bd3f2-6561-4920-8fab-ada4cc43121c.
-- Artifact Overlap Constraint: claim 019f96f1-steward-correction2-isolated requires a later direct release baton before any generated HTML mutation.
+- Starting Baton: primary-main commit 1ec0d3e67009f43f671f5bbef7a6f625547cc539.
+- Running Backlog Claim: 019f979e-steward-running acquired on primary main at 2026-07-25T04:55:33.857392Z; acquisition journal event 911addc4-59fc-4d68-a7fe-10f9fc4a6d36.
+- Artifact Overlap Resolution: prior claim 019f96f1-steward-correction2-isolated is released; release journal event a0a41f34-a1c8-4a82-bcfa-94aff56de2d6 and semantic artifact baton commit f30bbb84c47359a84f7e798c3a875b5657f0f923.
+
+## Running Acceptance
+
+- Accepted Root Identity: Dev Orchestrator task 019f979e-5330-7501-8340-92dfd593f6ef.
+- Branch: codex/regenerate-stale-evaluation-docs-019f979e.
+- Worktree: /Users/martinbechard/.codex/worktrees/5c5a/dev-methodology.
+- Phase: Reconciling released semantic artifact baton.
+- Started At: 2026-07-25T04:55:33.857392Z.
 
 ## Summary
 
