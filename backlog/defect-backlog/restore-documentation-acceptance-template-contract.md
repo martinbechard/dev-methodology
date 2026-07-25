@@ -1,10 +1,10 @@
 # Restore Documentation Acceptance Template Contract
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
-Owner: Unowned
+Owner: canonical root Dev Orchestrator
 
 ## Launch Reservation
 
@@ -26,6 +26,17 @@ Owner: Unowned
 - Phase: Source Reconciliation
 - Started At: 2026-07-25T01:14:02Z
 - Coordination Evidence: SHARED_CHECKOUT_ACQUIRED backlog claim 019f96ce-backlog-running; journal event 4391771e-568e-4baa-9ee5-780db88ed049.
+
+## Running Resumption
+
+- Resumed Phase: Approved Governed Contract Correction.
+- Preserved Candidate Branch: codex/restore-documentation-acceptance-template-contract-correction.
+- Preserved Candidate Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/restore-doc-acceptance-template-correction-019f96ce.
+- Preserved Candidate Tip: 7f97d242b4facde4e19727179a08a8bcb4111258.
+- Shared Approval Answer: 'Amend it to skip over any note.'
+- Approval Commit: 154a4c491d82ac0f5cd15ab19776a003c87c3679.
+- Exact Approved Governed Paths: skills/create-architecture/SKILL.md; skills/create-functional-spec/SKILL.md; skills/create-high-level-design/SKILL.md; skills/create-module-design/SKILL.md; skills/review-module-design/SKILL.md.
+- Enabled Claim Evidence: SHARED_CHECKOUT_ACQUIRED backlog claim 019f96ce-doc-acceptance-running-resume; journal event 243b9fd7-0653-4430-a79e-3c56029885d5.
 
 ## Summary
 
