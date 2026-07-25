@@ -1,0 +1,22 @@
+schema: agent-catalog-groups
+version: 1
+groups:
+  - id: backlog-management
+    label: Backlog Management
+  - id: dev-activities
+    label: Dev Activities
+  - id: wiki-activities
+    label: Wiki Activities
+  - id: project-setup
+    label: Project Setup
+  - id: methodology-maintenance
+    label: Methodology Maintenance
+role_overrides:
+  dev-backlog-coordinator:
+    group: backlog-management
+    source: agents/roles/dev-activities/dev-backlog-coordinator.role.yaml
+    evidence: Owns parent queue coordination, inventory, priority, dispatch, capacity, and terminal task cleanup.
+  dev-backlog-steward:
+    group: backlog-management
+    source: agents/roles/dev-activities/dev-backlog-steward.role.yaml
+    evidence: Owns provider-routed durable work-item creation, lifecycle mutation, recovery, completion, and archival.

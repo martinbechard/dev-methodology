@@ -39,198 +39,199 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 <g class="reset-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Clear map selection"><rect x="1000" y="24" width="120" height="30" rx="15"/><text x="1060" y="43" text-anchor="middle">Clear selection</text></g>
 <text x="30" y="126" class="heading">Agents</text>
 <text x="760" y="126" class="heading">Bundled skills</text>
-<path d="M 350 222 C 412 222, 412 432, 351 432" class="dependency-edge" data-source-role="dev-backlog-coordinator" data-target-role="dev-orchestrator" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 222 C 424 222, 424 252, 351 252" class="dependency-edge" data-source-role="dev-backlog-coordinator" data-target-role="dev-backlog-steward" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 432 C 436 432, 436 342, 351 342" class="dependency-edge" data-source-role="dev-orchestrator" data-target-role="dev-coder" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 432 C 448 432, 448 312, 351 312" class="dependency-edge" data-source-role="dev-orchestrator" data-target-role="dev-code-reviewer" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 432 C 460 432, 460 582, 351 582" class="dependency-edge" data-source-role="dev-orchestrator" data-target-role="dev-verifier" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 432 C 472 432, 472 402, 351 402" class="dependency-edge" data-source-role="dev-orchestrator" data-target-role="dev-merge-coordinator" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 432 C 484 432, 484 252, 351 252" class="dependency-edge" data-source-role="dev-orchestrator" data-target-role="dev-backlog-steward" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 1098 C 496 1098, 496 1068, 351 1068" class="dependency-edge" data-source-role="methodology-maintainer" data-target-role="methodology-artifact-reviewer" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 1098 C 508 1098, 508 582, 351 582" class="dependency-edge" data-source-role="methodology-maintainer" data-target-role="dev-verifier" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 936 C 520 936, 520 966, 351 966" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="project-configurator" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 936 C 532 936, 532 372, 351 372" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="dev-documentation-writer" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 936 C 544 936, 544 654, 351 654" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="wiki-architect" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 936 C 556 936, 556 864, 351 864" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="wiki-writer" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 936 C 568 936, 568 192, 351 192" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="dev-artifact-reviewer" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 936 C 580 936, 580 684, 351 684" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="wiki-artifact-reviewer" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 936 C 592 936, 592 834, 351 834" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="wiki-topic-verifier" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 936 C 604 936, 604 714, 351 714" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="wiki-ingester" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 936 C 616 936, 616 402, 351 402" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="dev-merge-coordinator" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 936 C 628 936, 628 582, 351 582" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="dev-verifier" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 714 C 640 714, 640 834, 351 834" class="dependency-edge" data-source-role="wiki-ingester" data-target-role="wiki-topic-verifier" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 864 C 652 864, 652 834, 351 834" class="dependency-edge" data-source-role="wiki-writer" data-target-role="wiki-topic-verifier" marker-end="url(#dependency-arrow)"/>
-<path d="M 350 192 C 500 192, 620 2250, 760 2250" class="edge" data-role="dev-artifact-reviewer" data-skill="review-structured-artifact"/>
-<path d="M 350 192 C 500 192, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="organise-project-files"/>
-<path d="M 350 192 C 500 192, 620 2160, 760 2160" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-functional-spec"/>
-<path d="M 350 192 C 500 192, 620 2130, 760 2130" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-architecture"/>
-<path d="M 350 192 C 500 192, 620 2190, 760 2190" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-high-level-design"/>
-<path d="M 350 192 C 500 192, 620 2220, 760 2220" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-module-design"/>
-<path d="M 350 192 C 500 192, 620 2472, 760 2472" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="object-creation-patterns"/>
-<path d="M 350 192 C 500 192, 620 2532, 760 2532" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="singleton-pattern"/>
-<path d="M 350 192 C 500 192, 620 2412, 760 2412" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="interface-patterns"/>
-<path d="M 350 192 C 500 192, 620 2382, 760 2382" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="composition-patterns"/>
-<path d="M 350 192 C 500 192, 620 2562, 760 2562" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="state-strategy-patterns"/>
-<path d="M 350 192 C 500 192, 620 2502, 760 2502" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="request-patterns"/>
-<path d="M 350 192 C 500 192, 620 2352, 760 2352" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="collaboration-patterns"/>
-<path d="M 350 192 C 500 192, 620 2592, 760 2592" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="traversal-patterns"/>
-<path d="M 350 192 C 500 192, 620 2442, 760 2442" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="interpreter-pattern"/>
-<path d="M 350 192 C 500 192, 620 2280, 760 2280" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-unit-test-plan"/>
-<path d="M 350 192 C 500 192, 620 1746, 760 1746" class="edge" data-role="dev-artifact-reviewer" data-skill="documentation-page-verify"/>
-<path d="M 350 222 C 500 222, 620 1182, 760 1182" class="edge" data-role="dev-backlog-coordinator" data-skill="structured-explanation"/>
-<path d="M 350 222 C 500 222, 620 522, 760 522" class="edge conditional-edge" data-role="dev-backlog-coordinator" data-skill="codex-workitem-coordination"/>
-<path d="M 350 252 C 500 252, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-backlog-steward" data-skill="organise-project-files"/>
-<path d="M 350 252 C 500 252, 620 1182, 760 1182" class="edge" data-role="dev-backlog-steward" data-skill="structured-explanation"/>
-<path d="M 350 282 C 500 282, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-browser-operator" data-skill="organise-project-files"/>
-<path d="M 350 282 C 500 282, 620 822, 760 822" class="edge" data-role="dev-browser-operator" data-skill="end-to-end-verification"/>
-<path d="M 350 282 C 500 282, 620 1182, 760 1182" class="edge" data-role="dev-browser-operator" data-skill="structured-explanation"/>
-<path d="M 350 312 C 500 312, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-code-reviewer" data-skill="organise-project-files"/>
-<path d="M 350 312 C 500 312, 620 492, 760 492" class="edge" data-role="dev-code-reviewer" data-skill="code-review-evidence"/>
-<path d="M 350 312 C 500 312, 620 2250, 760 2250" class="edge" data-role="dev-code-reviewer" data-skill="review-structured-artifact"/>
-<path d="M 350 312 C 500 312, 620 372, 760 372" class="edge" data-role="dev-code-reviewer" data-skill="careful-coding"/>
-<path d="M 350 312 C 500 312, 620 402, 760 402" class="edge" data-role="dev-code-reviewer" data-skill="code-comments"/>
-<path d="M 350 342 C 500 342, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-coder" data-skill="organise-project-files"/>
-<path d="M 350 342 C 500 342, 620 372, 760 372" class="edge" data-role="dev-coder" data-skill="careful-coding"/>
-<path d="M 350 342 C 500 342, 620 402, 760 402" class="edge" data-role="dev-coder" data-skill="code-comments"/>
-<path d="M 350 342 C 500 342, 620 1212, 760 1212" class="edge conditional-edge" data-role="dev-coder" data-skill="test-driven-development"/>
-<path d="M 350 342 C 500 342, 620 432, 760 432" class="edge" data-role="dev-coder" data-skill="code-discovery"/>
-<path d="M 350 342 C 500 342, 620 852, 760 852" class="edge" data-role="dev-coder" data-skill="fix-explanation"/>
-<path d="M 350 372 C 500 372, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="organise-project-files"/>
-<path d="M 350 372 C 500 372, 620 1686, 760 1686" class="edge" data-role="dev-documentation-writer" data-skill="development-methodology"/>
-<path d="M 350 372 C 500 372, 620 1968, 760 1968" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="create-functional-spec"/>
-<path d="M 350 372 C 500 372, 620 1938, 760 1938" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="create-architecture"/>
-<path d="M 350 372 C 500 372, 620 1998, 760 1998" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="create-high-level-design"/>
-<path d="M 350 372 C 500 372, 620 2028, 760 2028" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="create-module-design"/>
-<path d="M 350 372 C 500 372, 620 2472, 760 2472" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="object-creation-patterns"/>
-<path d="M 350 372 C 500 372, 620 2532, 760 2532" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="singleton-pattern"/>
-<path d="M 350 372 C 500 372, 620 2412, 760 2412" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="interface-patterns"/>
-<path d="M 350 372 C 500 372, 620 2382, 760 2382" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="composition-patterns"/>
-<path d="M 350 372 C 500 372, 620 2562, 760 2562" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="state-strategy-patterns"/>
-<path d="M 350 372 C 500 372, 620 2502, 760 2502" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="request-patterns"/>
-<path d="M 350 372 C 500 372, 620 2352, 760 2352" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="collaboration-patterns"/>
-<path d="M 350 372 C 500 372, 620 2592, 760 2592" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="traversal-patterns"/>
-<path d="M 350 372 C 500 372, 620 2442, 760 2442" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="interpreter-pattern"/>
-<path d="M 350 372 C 500 372, 620 2058, 760 2058" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="create-unit-test-plan"/>
-<path d="M 350 372 C 500 372, 620 1716, 760 1716" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="documentation-bootstrap"/>
-<path d="M 350 372 C 500 372, 620 1776, 760 1776" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="documentation-reverse-engineer"/>
-<path d="M 350 372 C 500 372, 620 1746, 760 1746" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="documentation-page-verify"/>
-<path d="M 350 402 C 500 402, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-merge-coordinator" data-skill="organise-project-files"/>
-<path d="M 350 402 C 500 402, 620 282, 760 282" class="edge" data-role="dev-merge-coordinator" data-skill="agent-work-merge"/>
-<path d="M 350 402 C 500 402, 620 2250, 760 2250" class="edge" data-role="dev-merge-coordinator" data-skill="review-structured-artifact"/>
-<path d="M 350 402 C 500 402, 620 852, 760 852" class="edge" data-role="dev-merge-coordinator" data-skill="fix-explanation"/>
-<path d="M 350 432 C 500 432, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-orchestrator" data-skill="organise-project-files"/>
-<path d="M 350 432 C 500 432, 620 1152, 760 1152" class="edge" data-role="dev-orchestrator" data-skill="structured-design"/>
-<path d="M 350 432 C 500 432, 620 1182, 760 1182" class="edge" data-role="dev-orchestrator" data-skill="structured-explanation"/>
-<path d="M 350 462 C 500 462, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-prompt-reviewer" data-skill="organise-project-files"/>
-<path d="M 350 462 C 500 462, 620 1062, 760 1062" class="edge" data-role="dev-prompt-reviewer" data-skill="prompt-contracts"/>
-<path d="M 350 462 C 500 462, 620 2250, 760 2250" class="edge" data-role="dev-prompt-reviewer" data-skill="review-structured-artifact"/>
-<path d="M 350 492 C 500 492, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-runtime-diagnostician" data-skill="organise-project-files"/>
-<path d="M 350 492 C 500 492, 620 432, 760 432" class="edge" data-role="dev-runtime-diagnostician" data-skill="code-discovery"/>
-<path d="M 350 492 C 500 492, 620 1242, 760 1242" class="edge" data-role="dev-runtime-diagnostician" data-skill="test-strategy"/>
-<path d="M 350 492 C 500 492, 620 1092, 760 1092" class="edge" data-role="dev-runtime-diagnostician" data-skill="root-cause-analysis"/>
-<path d="M 350 492 C 500 492, 620 1122, 760 1122" class="edge conditional-edge" data-role="dev-runtime-diagnostician" data-skill="runtime-evidence-collection"/>
-<path d="M 350 492 C 500 492, 620 462, 760 462" class="edge" data-role="dev-runtime-diagnostician" data-skill="code-execution-tracing"/>
-<path d="M 350 492 C 500 492, 620 1182, 760 1182" class="edge" data-role="dev-runtime-diagnostician" data-skill="structured-explanation"/>
-<path d="M 350 492 C 500 492, 620 372, 760 372" class="edge conditional-edge" data-role="dev-runtime-diagnostician" data-skill="careful-coding"/>
-<path d="M 350 522 C 500 522, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-security-reviewer" data-skill="organise-project-files"/>
-<path d="M 350 522 C 500 522, 620 312, 760 312" class="edge" data-role="dev-security-reviewer" data-skill="application-security"/>
-<path d="M 350 522 C 500 522, 620 2250, 760 2250" class="edge" data-role="dev-security-reviewer" data-skill="review-structured-artifact"/>
-<path d="M 350 522 C 500 522, 620 1182, 760 1182" class="edge" data-role="dev-security-reviewer" data-skill="structured-explanation"/>
-<path d="M 350 552 C 500 552, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-ux-specialist" data-skill="organise-project-files"/>
-<path d="M 350 552 C 500 552, 620 1272, 760 1272" class="edge" data-role="dev-ux-specialist" data-skill="user-experience-review"/>
-<path d="M 350 552 C 500 552, 620 822, 760 822" class="edge" data-role="dev-ux-specialist" data-skill="end-to-end-verification"/>
-<path d="M 350 552 C 500 552, 620 2250, 760 2250" class="edge" data-role="dev-ux-specialist" data-skill="review-structured-artifact"/>
-<path d="M 350 582 C 500 582, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-verifier" data-skill="organise-project-files"/>
-<path d="M 350 582 C 500 582, 620 1242, 760 1242" class="edge" data-role="dev-verifier" data-skill="test-strategy"/>
-<path d="M 350 582 C 500 582, 620 822, 760 822" class="edge conditional-edge" data-role="dev-verifier" data-skill="end-to-end-verification"/>
-<path d="M 350 582 C 500 582, 620 1092, 760 1092" class="edge conditional-edge" data-role="dev-verifier" data-skill="root-cause-analysis"/>
-<path d="M 350 582 C 500 582, 620 1122, 760 1122" class="edge conditional-edge" data-role="dev-verifier" data-skill="runtime-evidence-collection"/>
-<path d="M 350 582 C 500 582, 620 462, 760 462" class="edge conditional-edge" data-role="dev-verifier" data-skill="code-execution-tracing"/>
-<path d="M 350 582 C 500 582, 620 1062, 760 1062" class="edge conditional-edge" data-role="dev-verifier" data-skill="prompt-contracts"/>
-<path d="M 350 582 C 500 582, 620 2250, 760 2250" class="edge" data-role="dev-verifier" data-skill="review-structured-artifact"/>
-<path d="M 350 582 C 500 582, 620 1182, 760 1182" class="edge" data-role="dev-verifier" data-skill="structured-explanation"/>
-<path d="M 350 1068 C 500 1068, 620 1032, 760 1032" class="edge conditional-edge" data-role="methodology-artifact-reviewer" data-skill="organise-project-files"/>
-<path d="M 350 1068 C 500 1068, 620 2250, 760 2250" class="edge" data-role="methodology-artifact-reviewer" data-skill="review-structured-artifact"/>
-<path d="M 350 1068 C 500 1068, 620 1866, 760 1866" class="edge" data-role="methodology-artifact-reviewer" data-skill="skill-authoring"/>
-<path d="M 350 1068 C 500 1068, 620 1626, 760 1626" class="edge" data-role="methodology-artifact-reviewer" data-skill="agent-role-authoring"/>
-<path d="M 350 1068 C 500 1068, 620 1836, 760 1836" class="edge" data-role="methodology-artifact-reviewer" data-skill="name-methodology-artifacts"/>
-<path d="M 350 1068 C 500 1068, 620 1746, 760 1746" class="edge" data-role="methodology-artifact-reviewer" data-skill="documentation-page-verify"/>
-<path d="M 350 1068 C 500 1068, 620 1686, 760 1686" class="edge" data-role="methodology-artifact-reviewer" data-skill="development-methodology"/>
-<path d="M 350 1098 C 500 1098, 620 1032, 760 1032" class="edge conditional-edge" data-role="methodology-maintainer" data-skill="organise-project-files"/>
-<path d="M 350 1098 C 500 1098, 620 1806, 760 1806" class="edge" data-role="methodology-maintainer" data-skill="maintain-methodology-documentation"/>
-<path d="M 350 1098 C 500 1098, 620 1866, 760 1866" class="edge" data-role="methodology-maintainer" data-skill="skill-authoring"/>
-<path d="M 350 1098 C 500 1098, 620 1626, 760 1626" class="edge" data-role="methodology-maintainer" data-skill="agent-role-authoring"/>
-<path d="M 350 1098 C 500 1098, 620 1836, 760 1836" class="edge" data-role="methodology-maintainer" data-skill="name-methodology-artifacts"/>
-<path d="M 350 1098 C 500 1098, 620 1686, 760 1686" class="edge" data-role="methodology-maintainer" data-skill="development-methodology"/>
-<path d="M 350 1098 C 500 1098, 620 1152, 760 1152" class="edge conditional-edge" data-role="methodology-maintainer" data-skill="structured-design"/>
-<path d="M 350 1098 C 500 1098, 620 1182, 760 1182" class="edge" data-role="methodology-maintainer" data-skill="structured-explanation"/>
-<path d="M 350 936 C 500 936, 620 1032, 760 1032" class="edge conditional-edge" data-role="project-bootstrapper" data-skill="organise-project-files"/>
-<path d="M 350 936 C 500 936, 620 1716, 760 1716" class="edge" data-role="project-bootstrapper" data-skill="documentation-bootstrap"/>
-<path d="M 350 936 C 500 936, 620 1686, 760 1686" class="edge" data-role="project-bootstrapper" data-skill="development-methodology"/>
-<path d="M 350 966 C 500 966, 620 1032, 760 1032" class="edge conditional-edge" data-role="project-configurator" data-skill="organise-project-files"/>
-<path d="M 350 966 C 500 966, 620 792, 760 792" class="edge" data-role="project-configurator" data-skill="detect-technology-skills"/>
-<path d="M 350 966 C 500 966, 620 1656, 760 1656" class="edge" data-role="project-configurator" data-skill="create-project-configuration"/>
-<path d="M 350 966 C 500 966, 620 1686, 760 1686" class="edge" data-role="project-configurator" data-skill="development-methodology"/>
-<path d="M 350 966 C 500 966, 620 1716, 760 1716" class="edge conditional-edge" data-role="project-configurator" data-skill="documentation-bootstrap"/>
-<path d="M 350 966 C 500 966, 620 1746, 760 1746" class="edge" data-role="project-configurator" data-skill="documentation-page-verify"/>
-<path d="M 350 996 C 500 996, 620 1032, 760 1032" class="edge" data-role="project-organiser" data-skill="organise-project-files"/>
-<path d="M 350 996 C 500 996, 620 1152, 760 1152" class="edge" data-role="project-organiser" data-skill="structured-design"/>
-<path d="M 350 996 C 500 996, 620 1182, 760 1182" class="edge" data-role="project-organiser" data-skill="structured-explanation"/>
-<path d="M 350 654 C 500 654, 620 1032, 760 1032" class="edge conditional-edge" data-role="wiki-architect" data-skill="organise-project-files"/>
-<path d="M 350 654 C 500 654, 620 1374, 760 1374" class="edge" data-role="wiki-architect" data-skill="project-wiki"/>
-<path d="M 350 654 C 500 654, 620 1404, 760 1404" class="edge conditional-edge" data-role="wiki-architect" data-skill="project-wiki-create"/>
-<path d="M 350 654 C 500 654, 620 1716, 760 1716" class="edge conditional-edge" data-role="wiki-architect" data-skill="documentation-bootstrap"/>
-<path d="M 350 684 C 500 684, 620 1032, 760 1032" class="edge conditional-edge" data-role="wiki-artifact-reviewer" data-skill="organise-project-files"/>
-<path d="M 350 684 C 500 684, 620 1494, 760 1494" class="edge" data-role="wiki-artifact-reviewer" data-skill="project-wiki-review"/>
-<path d="M 350 684 C 500 684, 620 1746, 760 1746" class="edge" data-role="wiki-artifact-reviewer" data-skill="documentation-page-verify"/>
-<path d="M 350 714 C 500 714, 620 1032, 760 1032" class="edge conditional-edge" data-role="wiki-ingester" data-skill="organise-project-files"/>
-<path d="M 350 714 C 500 714, 620 1374, 760 1374" class="edge" data-role="wiki-ingester" data-skill="project-wiki"/>
-<path d="M 350 714 C 500 714, 620 1554, 760 1554" class="edge" data-role="wiki-ingester" data-skill="project-wiki-topic-write"/>
-<path d="M 350 714 C 500 714, 620 1344, 760 1344" class="edge conditional-edge" data-role="wiki-ingester" data-skill="code-project-wiki"/>
-<path d="M 350 744 C 500 744, 620 1434, 760 1434" class="edge" data-role="wiki-query-responder" data-skill="project-wiki-query"/>
-<path d="M 350 774 C 500 774, 620 1032, 760 1032" class="edge conditional-edge" data-role="wiki-researcher" data-skill="organise-project-files"/>
-<path d="M 350 774 C 500 774, 620 1434, 760 1434" class="edge" data-role="wiki-researcher" data-skill="project-wiki-query"/>
-<path d="M 350 774 C 500 774, 620 1464, 760 1464" class="edge" data-role="wiki-researcher" data-skill="project-wiki-research"/>
-<path d="M 350 804 C 500 804, 620 1032, 760 1032" class="edge conditional-edge" data-role="wiki-source-collector" data-skill="organise-project-files"/>
-<path d="M 350 804 C 500 804, 620 1464, 760 1464" class="edge" data-role="wiki-source-collector" data-skill="project-wiki-research"/>
-<path d="M 350 804 C 500 804, 620 1374, 760 1374" class="edge" data-role="wiki-source-collector" data-skill="project-wiki"/>
-<path d="M 350 804 C 500 804, 620 1182, 760 1182" class="edge" data-role="wiki-source-collector" data-skill="structured-explanation"/>
-<path d="M 350 834 C 500 834, 620 1524, 760 1524" class="edge" data-role="wiki-topic-verifier" data-skill="project-wiki-topic-verify"/>
-<path d="M 350 864 C 500 864, 620 1032, 760 1032" class="edge conditional-edge" data-role="wiki-writer" data-skill="organise-project-files"/>
-<path d="M 350 864 C 500 864, 620 1374, 760 1374" class="edge" data-role="wiki-writer" data-skill="project-wiki"/>
-<path d="M 350 864 C 500 864, 620 1554, 760 1554" class="edge" data-role="wiki-writer" data-skill="project-wiki-topic-write"/>
-<path d="M 350 864 C 500 864, 620 1344, 760 1344" class="edge conditional-edge" data-role="wiki-writer" data-skill="code-project-wiki"/>
-<text x="30" y="168" class="group">Dev Activities</text>
-<g class="role-node" data-role="dev-artifact-reviewer" data-display-name="Dev Artifact Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Artifact Reviewer"><title>Select Dev Artifact Reviewer to isolate its skills and dependencies</title><rect x="30" y="180" width="320" height="24" rx="5" class="node role"/><text x="42" y="196">dev-artifact-reviewer</text><text x="338" y="196" text-anchor="end" class="secondary">17 skills · 15 conditional</text></g>
-<g class="role-node" data-role="dev-backlog-coordinator" data-display-name="Dev Backlog Coordinator" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Backlog Coordinator"><title>Select Dev Backlog Coordinator to isolate its skills and dependencies</title><rect x="30" y="210" width="320" height="24" rx="5" class="node role"/><text x="42" y="226">dev-backlog-coordinator</text><text x="338" y="226" text-anchor="end" class="secondary">2 skills · 1 conditional · 2 dependencies</text></g>
-<g class="role-node" data-role="dev-backlog-steward" data-display-name="Dev Backlog Steward" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Backlog Steward"><title>Select Dev Backlog Steward to isolate its skills and dependencies</title><rect x="30" y="240" width="320" height="24" rx="5" class="node role"/><text x="42" y="256">dev-backlog-steward</text><text x="338" y="256" text-anchor="end" class="secondary">2 skills · 1 conditional</text></g>
-<g class="role-node" data-role="dev-browser-operator" data-display-name="Dev Browser Operator" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Browser Operator"><title>Select Dev Browser Operator to isolate its skills and dependencies</title><rect x="30" y="270" width="320" height="24" rx="5" class="node role"/><text x="42" y="286">dev-browser-operator</text><text x="338" y="286" text-anchor="end" class="secondary">3 skills · 1 conditional</text></g>
-<g class="role-node" data-role="dev-code-reviewer" data-display-name="Dev Code Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Code Reviewer"><title>Select Dev Code Reviewer to isolate its skills and dependencies</title><rect x="30" y="300" width="320" height="24" rx="5" class="node role"/><text x="42" y="316">dev-code-reviewer</text><text x="338" y="316" text-anchor="end" class="secondary">5 skills · 1 conditional</text></g>
-<g class="role-node" data-role="dev-coder" data-display-name="Dev Coder" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Coder"><title>Select Dev Coder to isolate its skills and dependencies</title><rect x="30" y="330" width="320" height="24" rx="5" class="node role"/><text x="42" y="346">dev-coder</text><text x="338" y="346" text-anchor="end" class="secondary">6 skills · 2 conditional</text></g>
-<g class="role-node" data-role="dev-documentation-writer" data-display-name="Dev Documentation Writer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Documentation Writer"><title>Select Dev Documentation Writer to isolate its skills and dependencies</title><rect x="30" y="360" width="320" height="24" rx="5" class="node role"/><text x="42" y="376">dev-documentation-writer</text><text x="338" y="376" text-anchor="end" class="secondary">19 skills · 18 conditional</text></g>
-<g class="role-node" data-role="dev-merge-coordinator" data-display-name="Dev Merge Coordinator" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Merge Coordinator"><title>Select Dev Merge Coordinator to isolate its skills and dependencies</title><rect x="30" y="390" width="320" height="24" rx="5" class="node role"/><text x="42" y="406">dev-merge-coordinator</text><text x="338" y="406" text-anchor="end" class="secondary">4 skills · 1 conditional</text></g>
-<g class="role-node" data-role="dev-orchestrator" data-display-name="Dev Orchestrator" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Orchestrator"><title>Select Dev Orchestrator to isolate its skills and dependencies</title><rect x="30" y="420" width="320" height="24" rx="5" class="node role"/><text x="42" y="436">dev-orchestrator</text><text x="338" y="436" text-anchor="end" class="secondary">3 skills · 1 conditional · 5 dependencies</text></g>
-<g class="role-node" data-role="dev-prompt-reviewer" data-display-name="Dev Prompt Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Prompt Reviewer"><title>Select Dev Prompt Reviewer to isolate its skills and dependencies</title><rect x="30" y="450" width="320" height="24" rx="5" class="node role"/><text x="42" y="466">dev-prompt-reviewer</text><text x="338" y="466" text-anchor="end" class="secondary">3 skills · 1 conditional</text></g>
-<g class="role-node" data-role="dev-runtime-diagnostician" data-display-name="Dev Runtime Diagnostician" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Runtime Diagnostician"><title>Select Dev Runtime Diagnostician to isolate its skills and dependencies</title><rect x="30" y="480" width="320" height="24" rx="5" class="node role"/><text x="42" y="496">dev-runtime-diagnostician</text><text x="338" y="496" text-anchor="end" class="secondary">8 skills · 3 conditional</text></g>
-<g class="role-node" data-role="dev-security-reviewer" data-display-name="Dev Security Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Security Reviewer"><title>Select Dev Security Reviewer to isolate its skills and dependencies</title><rect x="30" y="510" width="320" height="24" rx="5" class="node role"/><text x="42" y="526">dev-security-reviewer</text><text x="338" y="526" text-anchor="end" class="secondary">4 skills · 1 conditional</text></g>
-<g class="role-node" data-role="dev-ux-specialist" data-display-name="Dev UX Specialist" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev UX Specialist"><title>Select Dev UX Specialist to isolate its skills and dependencies</title><rect x="30" y="540" width="320" height="24" rx="5" class="node role"/><text x="42" y="556">dev-ux-specialist</text><text x="338" y="556" text-anchor="end" class="secondary">4 skills · 1 conditional</text></g>
-<g class="role-node" data-role="dev-verifier" data-display-name="Dev Verifier" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Verifier"><title>Select Dev Verifier to isolate its skills and dependencies</title><rect x="30" y="570" width="320" height="24" rx="5" class="node role"/><text x="42" y="586">dev-verifier</text><text x="338" y="586" text-anchor="end" class="secondary">9 skills · 6 conditional</text></g>
-<text x="30" y="630" class="group">Wiki Activities</text>
-<g class="role-node" data-role="wiki-architect" data-display-name="Wiki Architect" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Architect"><title>Select Wiki Architect to isolate its skills and dependencies</title><rect x="30" y="642" width="320" height="24" rx="5" class="node role"/><text x="42" y="658">wiki-architect</text><text x="338" y="658" text-anchor="end" class="secondary">4 skills · 3 conditional</text></g>
-<g class="role-node" data-role="wiki-artifact-reviewer" data-display-name="Wiki Artifact Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Artifact Reviewer"><title>Select Wiki Artifact Reviewer to isolate its skills and dependencies</title><rect x="30" y="672" width="320" height="24" rx="5" class="node role"/><text x="42" y="688">wiki-artifact-reviewer</text><text x="338" y="688" text-anchor="end" class="secondary">3 skills · 1 conditional</text></g>
-<g class="role-node" data-role="wiki-ingester" data-display-name="Wiki Ingester" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Ingester"><title>Select Wiki Ingester to isolate its skills and dependencies</title><rect x="30" y="702" width="320" height="24" rx="5" class="node role"/><text x="42" y="718">wiki-ingester</text><text x="338" y="718" text-anchor="end" class="secondary">4 skills · 2 conditional · 1 dependencies</text></g>
-<g class="role-node" data-role="wiki-query-responder" data-display-name="Wiki Query Responder" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Query Responder"><title>Select Wiki Query Responder to isolate its skills and dependencies</title><rect x="30" y="732" width="320" height="24" rx="5" class="node role"/><text x="42" y="748">wiki-query-responder</text><text x="338" y="748" text-anchor="end" class="secondary">1 skills</text></g>
-<g class="role-node" data-role="wiki-researcher" data-display-name="Wiki Researcher" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Researcher"><title>Select Wiki Researcher to isolate its skills and dependencies</title><rect x="30" y="762" width="320" height="24" rx="5" class="node role"/><text x="42" y="778">wiki-researcher</text><text x="338" y="778" text-anchor="end" class="secondary">3 skills · 1 conditional</text></g>
-<g class="role-node" data-role="wiki-source-collector" data-display-name="Wiki Source Collector" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Source Collector"><title>Select Wiki Source Collector to isolate its skills and dependencies</title><rect x="30" y="792" width="320" height="24" rx="5" class="node role"/><text x="42" y="808">wiki-source-collector</text><text x="338" y="808" text-anchor="end" class="secondary">4 skills · 1 conditional</text></g>
-<g class="role-node" data-role="wiki-topic-verifier" data-display-name="Wiki Topic Verifier" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Topic Verifier"><title>Select Wiki Topic Verifier to isolate its skills and dependencies</title><rect x="30" y="822" width="320" height="24" rx="5" class="node role"/><text x="42" y="838">wiki-topic-verifier</text><text x="338" y="838" text-anchor="end" class="secondary">1 skills</text></g>
-<g class="role-node" data-role="wiki-writer" data-display-name="Wiki Writer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Writer"><title>Select Wiki Writer to isolate its skills and dependencies</title><rect x="30" y="852" width="320" height="24" rx="5" class="node role"/><text x="42" y="868">wiki-writer</text><text x="338" y="868" text-anchor="end" class="secondary">4 skills · 2 conditional · 1 dependencies</text></g>
-<text x="30" y="912" class="group">Project Setup</text>
-<g class="role-node" data-role="project-bootstrapper" data-display-name="Project Bootstrapper" role="button" tabindex="0" aria-pressed="false" aria-label="Select Project Bootstrapper"><title>Select Project Bootstrapper to isolate its skills and dependencies</title><rect x="30" y="924" width="320" height="24" rx="5" class="node role"/><text x="42" y="940">project-bootstrapper</text><text x="338" y="940" text-anchor="end" class="secondary">3 skills · 1 conditional · 10 dependencies</text></g>
-<g class="role-node" data-role="project-configurator" data-display-name="Project Configurator" role="button" tabindex="0" aria-pressed="false" aria-label="Select Project Configurator"><title>Select Project Configurator to isolate its skills and dependencies</title><rect x="30" y="954" width="320" height="24" rx="5" class="node role"/><text x="42" y="970">project-configurator</text><text x="338" y="970" text-anchor="end" class="secondary">6 skills · 2 conditional</text></g>
-<g class="role-node" data-role="project-organiser" data-display-name="Project Organiser" role="button" tabindex="0" aria-pressed="false" aria-label="Select Project Organiser"><title>Select Project Organiser to isolate its skills and dependencies</title><rect x="30" y="984" width="320" height="24" rx="5" class="node role"/><text x="42" y="1000">project-organiser</text><text x="338" y="1000" text-anchor="end" class="secondary">3 skills</text></g>
-<text x="30" y="1044" class="group">Methodology Maintenance</text>
-<g class="role-node" data-role="methodology-artifact-reviewer" data-display-name="Methodology Artifact Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Methodology Artifact Reviewer"><title>Select Methodology Artifact Reviewer to isolate its skills and dependencies</title><rect x="30" y="1056" width="320" height="24" rx="5" class="node role"/><text x="42" y="1072">methodology-artifact-reviewer</text><text x="338" y="1072" text-anchor="end" class="secondary">7 skills · 1 conditional</text></g>
-<g class="role-node" data-role="methodology-maintainer" data-display-name="Methodology Maintainer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Methodology Maintainer"><title>Select Methodology Maintainer to isolate its skills and dependencies</title><rect x="30" y="1086" width="320" height="24" rx="5" class="node role"/><text x="42" y="1102">methodology-maintainer</text><text x="338" y="1102" text-anchor="end" class="secondary">8 skills · 2 conditional · 2 dependencies</text></g>
+<path d="M 350 192 C 412 192, 412 474, 351 474" class="dependency-edge" data-source-role="dev-backlog-coordinator" data-target-role="dev-orchestrator" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 192 C 424 192, 424 222, 351 222" class="dependency-edge" data-source-role="dev-backlog-coordinator" data-target-role="dev-backlog-steward" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 474 C 436 474, 436 384, 351 384" class="dependency-edge" data-source-role="dev-orchestrator" data-target-role="dev-coder" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 474 C 448 474, 448 354, 351 354" class="dependency-edge" data-source-role="dev-orchestrator" data-target-role="dev-code-reviewer" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 474 C 460 474, 460 624, 351 624" class="dependency-edge" data-source-role="dev-orchestrator" data-target-role="dev-verifier" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 474 C 472 474, 472 444, 351 444" class="dependency-edge" data-source-role="dev-orchestrator" data-target-role="dev-merge-coordinator" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 474 C 484 474, 484 222, 351 222" class="dependency-edge" data-source-role="dev-orchestrator" data-target-role="dev-backlog-steward" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 1140 C 496 1140, 496 1110, 351 1110" class="dependency-edge" data-source-role="methodology-maintainer" data-target-role="methodology-artifact-reviewer" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 1140 C 508 1140, 508 624, 351 624" class="dependency-edge" data-source-role="methodology-maintainer" data-target-role="dev-verifier" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 978 C 520 978, 520 1008, 351 1008" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="project-configurator" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 978 C 532 978, 532 414, 351 414" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="dev-documentation-writer" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 978 C 544 978, 544 696, 351 696" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="wiki-architect" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 978 C 556 978, 556 906, 351 906" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="wiki-writer" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 978 C 568 978, 568 294, 351 294" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="dev-artifact-reviewer" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 978 C 580 978, 580 726, 351 726" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="wiki-artifact-reviewer" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 978 C 592 978, 592 876, 351 876" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="wiki-topic-verifier" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 978 C 604 978, 604 756, 351 756" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="wiki-ingester" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 978 C 616 978, 616 444, 351 444" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="dev-merge-coordinator" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 978 C 628 978, 628 624, 351 624" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="dev-verifier" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 756 C 640 756, 640 876, 351 876" class="dependency-edge" data-source-role="wiki-ingester" data-target-role="wiki-topic-verifier" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 906 C 652 906, 652 876, 351 876" class="dependency-edge" data-source-role="wiki-writer" data-target-role="wiki-topic-verifier" marker-end="url(#dependency-arrow)"/>
+<path d="M 350 294 C 500 294, 620 2250, 760 2250" class="edge" data-role="dev-artifact-reviewer" data-skill="review-structured-artifact"/>
+<path d="M 350 294 C 500 294, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="organise-project-files"/>
+<path d="M 350 294 C 500 294, 620 2160, 760 2160" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-functional-spec"/>
+<path d="M 350 294 C 500 294, 620 2130, 760 2130" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-architecture"/>
+<path d="M 350 294 C 500 294, 620 2190, 760 2190" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-high-level-design"/>
+<path d="M 350 294 C 500 294, 620 2220, 760 2220" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-module-design"/>
+<path d="M 350 294 C 500 294, 620 2472, 760 2472" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="object-creation-patterns"/>
+<path d="M 350 294 C 500 294, 620 2532, 760 2532" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="singleton-pattern"/>
+<path d="M 350 294 C 500 294, 620 2412, 760 2412" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="interface-patterns"/>
+<path d="M 350 294 C 500 294, 620 2382, 760 2382" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="composition-patterns"/>
+<path d="M 350 294 C 500 294, 620 2562, 760 2562" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="state-strategy-patterns"/>
+<path d="M 350 294 C 500 294, 620 2502, 760 2502" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="request-patterns"/>
+<path d="M 350 294 C 500 294, 620 2352, 760 2352" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="collaboration-patterns"/>
+<path d="M 350 294 C 500 294, 620 2592, 760 2592" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="traversal-patterns"/>
+<path d="M 350 294 C 500 294, 620 2442, 760 2442" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="interpreter-pattern"/>
+<path d="M 350 294 C 500 294, 620 2280, 760 2280" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-unit-test-plan"/>
+<path d="M 350 294 C 500 294, 620 1746, 760 1746" class="edge" data-role="dev-artifact-reviewer" data-skill="documentation-page-verify"/>
+<path d="M 350 192 C 500 192, 620 1182, 760 1182" class="edge" data-role="dev-backlog-coordinator" data-skill="structured-explanation"/>
+<path d="M 350 192 C 500 192, 620 522, 760 522" class="edge conditional-edge" data-role="dev-backlog-coordinator" data-skill="codex-workitem-coordination"/>
+<path d="M 350 222 C 500 222, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-backlog-steward" data-skill="organise-project-files"/>
+<path d="M 350 222 C 500 222, 620 1182, 760 1182" class="edge" data-role="dev-backlog-steward" data-skill="structured-explanation"/>
+<path d="M 350 324 C 500 324, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-browser-operator" data-skill="organise-project-files"/>
+<path d="M 350 324 C 500 324, 620 822, 760 822" class="edge" data-role="dev-browser-operator" data-skill="end-to-end-verification"/>
+<path d="M 350 324 C 500 324, 620 1182, 760 1182" class="edge" data-role="dev-browser-operator" data-skill="structured-explanation"/>
+<path d="M 350 354 C 500 354, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-code-reviewer" data-skill="organise-project-files"/>
+<path d="M 350 354 C 500 354, 620 492, 760 492" class="edge" data-role="dev-code-reviewer" data-skill="code-review-evidence"/>
+<path d="M 350 354 C 500 354, 620 2250, 760 2250" class="edge" data-role="dev-code-reviewer" data-skill="review-structured-artifact"/>
+<path d="M 350 354 C 500 354, 620 372, 760 372" class="edge" data-role="dev-code-reviewer" data-skill="careful-coding"/>
+<path d="M 350 354 C 500 354, 620 402, 760 402" class="edge" data-role="dev-code-reviewer" data-skill="code-comments"/>
+<path d="M 350 384 C 500 384, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-coder" data-skill="organise-project-files"/>
+<path d="M 350 384 C 500 384, 620 372, 760 372" class="edge" data-role="dev-coder" data-skill="careful-coding"/>
+<path d="M 350 384 C 500 384, 620 402, 760 402" class="edge" data-role="dev-coder" data-skill="code-comments"/>
+<path d="M 350 384 C 500 384, 620 1212, 760 1212" class="edge conditional-edge" data-role="dev-coder" data-skill="test-driven-development"/>
+<path d="M 350 384 C 500 384, 620 432, 760 432" class="edge" data-role="dev-coder" data-skill="code-discovery"/>
+<path d="M 350 384 C 500 384, 620 852, 760 852" class="edge" data-role="dev-coder" data-skill="fix-explanation"/>
+<path d="M 350 414 C 500 414, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="organise-project-files"/>
+<path d="M 350 414 C 500 414, 620 1686, 760 1686" class="edge" data-role="dev-documentation-writer" data-skill="development-methodology"/>
+<path d="M 350 414 C 500 414, 620 1968, 760 1968" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="create-functional-spec"/>
+<path d="M 350 414 C 500 414, 620 1938, 760 1938" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="create-architecture"/>
+<path d="M 350 414 C 500 414, 620 1998, 760 1998" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="create-high-level-design"/>
+<path d="M 350 414 C 500 414, 620 2028, 760 2028" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="create-module-design"/>
+<path d="M 350 414 C 500 414, 620 2472, 760 2472" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="object-creation-patterns"/>
+<path d="M 350 414 C 500 414, 620 2532, 760 2532" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="singleton-pattern"/>
+<path d="M 350 414 C 500 414, 620 2412, 760 2412" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="interface-patterns"/>
+<path d="M 350 414 C 500 414, 620 2382, 760 2382" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="composition-patterns"/>
+<path d="M 350 414 C 500 414, 620 2562, 760 2562" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="state-strategy-patterns"/>
+<path d="M 350 414 C 500 414, 620 2502, 760 2502" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="request-patterns"/>
+<path d="M 350 414 C 500 414, 620 2352, 760 2352" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="collaboration-patterns"/>
+<path d="M 350 414 C 500 414, 620 2592, 760 2592" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="traversal-patterns"/>
+<path d="M 350 414 C 500 414, 620 2442, 760 2442" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="interpreter-pattern"/>
+<path d="M 350 414 C 500 414, 620 2058, 760 2058" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="create-unit-test-plan"/>
+<path d="M 350 414 C 500 414, 620 1716, 760 1716" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="documentation-bootstrap"/>
+<path d="M 350 414 C 500 414, 620 1776, 760 1776" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="documentation-reverse-engineer"/>
+<path d="M 350 414 C 500 414, 620 1746, 760 1746" class="edge conditional-edge" data-role="dev-documentation-writer" data-skill="documentation-page-verify"/>
+<path d="M 350 444 C 500 444, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-merge-coordinator" data-skill="organise-project-files"/>
+<path d="M 350 444 C 500 444, 620 282, 760 282" class="edge" data-role="dev-merge-coordinator" data-skill="agent-work-merge"/>
+<path d="M 350 444 C 500 444, 620 2250, 760 2250" class="edge" data-role="dev-merge-coordinator" data-skill="review-structured-artifact"/>
+<path d="M 350 444 C 500 444, 620 852, 760 852" class="edge" data-role="dev-merge-coordinator" data-skill="fix-explanation"/>
+<path d="M 350 474 C 500 474, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-orchestrator" data-skill="organise-project-files"/>
+<path d="M 350 474 C 500 474, 620 1152, 760 1152" class="edge" data-role="dev-orchestrator" data-skill="structured-design"/>
+<path d="M 350 474 C 500 474, 620 1182, 760 1182" class="edge" data-role="dev-orchestrator" data-skill="structured-explanation"/>
+<path d="M 350 504 C 500 504, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-prompt-reviewer" data-skill="organise-project-files"/>
+<path d="M 350 504 C 500 504, 620 1062, 760 1062" class="edge" data-role="dev-prompt-reviewer" data-skill="prompt-contracts"/>
+<path d="M 350 504 C 500 504, 620 2250, 760 2250" class="edge" data-role="dev-prompt-reviewer" data-skill="review-structured-artifact"/>
+<path d="M 350 534 C 500 534, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-runtime-diagnostician" data-skill="organise-project-files"/>
+<path d="M 350 534 C 500 534, 620 432, 760 432" class="edge" data-role="dev-runtime-diagnostician" data-skill="code-discovery"/>
+<path d="M 350 534 C 500 534, 620 1242, 760 1242" class="edge" data-role="dev-runtime-diagnostician" data-skill="test-strategy"/>
+<path d="M 350 534 C 500 534, 620 1092, 760 1092" class="edge" data-role="dev-runtime-diagnostician" data-skill="root-cause-analysis"/>
+<path d="M 350 534 C 500 534, 620 1122, 760 1122" class="edge conditional-edge" data-role="dev-runtime-diagnostician" data-skill="runtime-evidence-collection"/>
+<path d="M 350 534 C 500 534, 620 462, 760 462" class="edge" data-role="dev-runtime-diagnostician" data-skill="code-execution-tracing"/>
+<path d="M 350 534 C 500 534, 620 1182, 760 1182" class="edge" data-role="dev-runtime-diagnostician" data-skill="structured-explanation"/>
+<path d="M 350 534 C 500 534, 620 372, 760 372" class="edge conditional-edge" data-role="dev-runtime-diagnostician" data-skill="careful-coding"/>
+<path d="M 350 564 C 500 564, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-security-reviewer" data-skill="organise-project-files"/>
+<path d="M 350 564 C 500 564, 620 312, 760 312" class="edge" data-role="dev-security-reviewer" data-skill="application-security"/>
+<path d="M 350 564 C 500 564, 620 2250, 760 2250" class="edge" data-role="dev-security-reviewer" data-skill="review-structured-artifact"/>
+<path d="M 350 564 C 500 564, 620 1182, 760 1182" class="edge" data-role="dev-security-reviewer" data-skill="structured-explanation"/>
+<path d="M 350 594 C 500 594, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-ux-specialist" data-skill="organise-project-files"/>
+<path d="M 350 594 C 500 594, 620 1272, 760 1272" class="edge" data-role="dev-ux-specialist" data-skill="user-experience-review"/>
+<path d="M 350 594 C 500 594, 620 822, 760 822" class="edge" data-role="dev-ux-specialist" data-skill="end-to-end-verification"/>
+<path d="M 350 594 C 500 594, 620 2250, 760 2250" class="edge" data-role="dev-ux-specialist" data-skill="review-structured-artifact"/>
+<path d="M 350 624 C 500 624, 620 1032, 760 1032" class="edge conditional-edge" data-role="dev-verifier" data-skill="organise-project-files"/>
+<path d="M 350 624 C 500 624, 620 1242, 760 1242" class="edge" data-role="dev-verifier" data-skill="test-strategy"/>
+<path d="M 350 624 C 500 624, 620 822, 760 822" class="edge conditional-edge" data-role="dev-verifier" data-skill="end-to-end-verification"/>
+<path d="M 350 624 C 500 624, 620 1092, 760 1092" class="edge conditional-edge" data-role="dev-verifier" data-skill="root-cause-analysis"/>
+<path d="M 350 624 C 500 624, 620 1122, 760 1122" class="edge conditional-edge" data-role="dev-verifier" data-skill="runtime-evidence-collection"/>
+<path d="M 350 624 C 500 624, 620 462, 760 462" class="edge conditional-edge" data-role="dev-verifier" data-skill="code-execution-tracing"/>
+<path d="M 350 624 C 500 624, 620 1062, 760 1062" class="edge conditional-edge" data-role="dev-verifier" data-skill="prompt-contracts"/>
+<path d="M 350 624 C 500 624, 620 2250, 760 2250" class="edge" data-role="dev-verifier" data-skill="review-structured-artifact"/>
+<path d="M 350 624 C 500 624, 620 1182, 760 1182" class="edge" data-role="dev-verifier" data-skill="structured-explanation"/>
+<path d="M 350 1110 C 500 1110, 620 1032, 760 1032" class="edge conditional-edge" data-role="methodology-artifact-reviewer" data-skill="organise-project-files"/>
+<path d="M 350 1110 C 500 1110, 620 2250, 760 2250" class="edge" data-role="methodology-artifact-reviewer" data-skill="review-structured-artifact"/>
+<path d="M 350 1110 C 500 1110, 620 1866, 760 1866" class="edge" data-role="methodology-artifact-reviewer" data-skill="skill-authoring"/>
+<path d="M 350 1110 C 500 1110, 620 1626, 760 1626" class="edge" data-role="methodology-artifact-reviewer" data-skill="agent-role-authoring"/>
+<path d="M 350 1110 C 500 1110, 620 1836, 760 1836" class="edge" data-role="methodology-artifact-reviewer" data-skill="name-methodology-artifacts"/>
+<path d="M 350 1110 C 500 1110, 620 1746, 760 1746" class="edge" data-role="methodology-artifact-reviewer" data-skill="documentation-page-verify"/>
+<path d="M 350 1110 C 500 1110, 620 1686, 760 1686" class="edge" data-role="methodology-artifact-reviewer" data-skill="development-methodology"/>
+<path d="M 350 1140 C 500 1140, 620 1032, 760 1032" class="edge conditional-edge" data-role="methodology-maintainer" data-skill="organise-project-files"/>
+<path d="M 350 1140 C 500 1140, 620 1806, 760 1806" class="edge" data-role="methodology-maintainer" data-skill="maintain-methodology-documentation"/>
+<path d="M 350 1140 C 500 1140, 620 1866, 760 1866" class="edge" data-role="methodology-maintainer" data-skill="skill-authoring"/>
+<path d="M 350 1140 C 500 1140, 620 1626, 760 1626" class="edge" data-role="methodology-maintainer" data-skill="agent-role-authoring"/>
+<path d="M 350 1140 C 500 1140, 620 1836, 760 1836" class="edge" data-role="methodology-maintainer" data-skill="name-methodology-artifacts"/>
+<path d="M 350 1140 C 500 1140, 620 1686, 760 1686" class="edge" data-role="methodology-maintainer" data-skill="development-methodology"/>
+<path d="M 350 1140 C 500 1140, 620 1152, 760 1152" class="edge conditional-edge" data-role="methodology-maintainer" data-skill="structured-design"/>
+<path d="M 350 1140 C 500 1140, 620 1182, 760 1182" class="edge" data-role="methodology-maintainer" data-skill="structured-explanation"/>
+<path d="M 350 978 C 500 978, 620 1032, 760 1032" class="edge conditional-edge" data-role="project-bootstrapper" data-skill="organise-project-files"/>
+<path d="M 350 978 C 500 978, 620 1716, 760 1716" class="edge" data-role="project-bootstrapper" data-skill="documentation-bootstrap"/>
+<path d="M 350 978 C 500 978, 620 1686, 760 1686" class="edge" data-role="project-bootstrapper" data-skill="development-methodology"/>
+<path d="M 350 1008 C 500 1008, 620 1032, 760 1032" class="edge conditional-edge" data-role="project-configurator" data-skill="organise-project-files"/>
+<path d="M 350 1008 C 500 1008, 620 792, 760 792" class="edge" data-role="project-configurator" data-skill="detect-technology-skills"/>
+<path d="M 350 1008 C 500 1008, 620 1656, 760 1656" class="edge" data-role="project-configurator" data-skill="create-project-configuration"/>
+<path d="M 350 1008 C 500 1008, 620 1686, 760 1686" class="edge" data-role="project-configurator" data-skill="development-methodology"/>
+<path d="M 350 1008 C 500 1008, 620 1716, 760 1716" class="edge conditional-edge" data-role="project-configurator" data-skill="documentation-bootstrap"/>
+<path d="M 350 1008 C 500 1008, 620 1746, 760 1746" class="edge" data-role="project-configurator" data-skill="documentation-page-verify"/>
+<path d="M 350 1038 C 500 1038, 620 1032, 760 1032" class="edge" data-role="project-organiser" data-skill="organise-project-files"/>
+<path d="M 350 1038 C 500 1038, 620 1152, 760 1152" class="edge" data-role="project-organiser" data-skill="structured-design"/>
+<path d="M 350 1038 C 500 1038, 620 1182, 760 1182" class="edge" data-role="project-organiser" data-skill="structured-explanation"/>
+<path d="M 350 696 C 500 696, 620 1032, 760 1032" class="edge conditional-edge" data-role="wiki-architect" data-skill="organise-project-files"/>
+<path d="M 350 696 C 500 696, 620 1374, 760 1374" class="edge" data-role="wiki-architect" data-skill="project-wiki"/>
+<path d="M 350 696 C 500 696, 620 1404, 760 1404" class="edge conditional-edge" data-role="wiki-architect" data-skill="project-wiki-create"/>
+<path d="M 350 696 C 500 696, 620 1716, 760 1716" class="edge conditional-edge" data-role="wiki-architect" data-skill="documentation-bootstrap"/>
+<path d="M 350 726 C 500 726, 620 1032, 760 1032" class="edge conditional-edge" data-role="wiki-artifact-reviewer" data-skill="organise-project-files"/>
+<path d="M 350 726 C 500 726, 620 1494, 760 1494" class="edge" data-role="wiki-artifact-reviewer" data-skill="project-wiki-review"/>
+<path d="M 350 726 C 500 726, 620 1746, 760 1746" class="edge" data-role="wiki-artifact-reviewer" data-skill="documentation-page-verify"/>
+<path d="M 350 756 C 500 756, 620 1032, 760 1032" class="edge conditional-edge" data-role="wiki-ingester" data-skill="organise-project-files"/>
+<path d="M 350 756 C 500 756, 620 1374, 760 1374" class="edge" data-role="wiki-ingester" data-skill="project-wiki"/>
+<path d="M 350 756 C 500 756, 620 1554, 760 1554" class="edge" data-role="wiki-ingester" data-skill="project-wiki-topic-write"/>
+<path d="M 350 756 C 500 756, 620 1344, 760 1344" class="edge conditional-edge" data-role="wiki-ingester" data-skill="code-project-wiki"/>
+<path d="M 350 786 C 500 786, 620 1434, 760 1434" class="edge" data-role="wiki-query-responder" data-skill="project-wiki-query"/>
+<path d="M 350 816 C 500 816, 620 1032, 760 1032" class="edge conditional-edge" data-role="wiki-researcher" data-skill="organise-project-files"/>
+<path d="M 350 816 C 500 816, 620 1434, 760 1434" class="edge" data-role="wiki-researcher" data-skill="project-wiki-query"/>
+<path d="M 350 816 C 500 816, 620 1464, 760 1464" class="edge" data-role="wiki-researcher" data-skill="project-wiki-research"/>
+<path d="M 350 846 C 500 846, 620 1032, 760 1032" class="edge conditional-edge" data-role="wiki-source-collector" data-skill="organise-project-files"/>
+<path d="M 350 846 C 500 846, 620 1464, 760 1464" class="edge" data-role="wiki-source-collector" data-skill="project-wiki-research"/>
+<path d="M 350 846 C 500 846, 620 1374, 760 1374" class="edge" data-role="wiki-source-collector" data-skill="project-wiki"/>
+<path d="M 350 846 C 500 846, 620 1182, 760 1182" class="edge" data-role="wiki-source-collector" data-skill="structured-explanation"/>
+<path d="M 350 876 C 500 876, 620 1524, 760 1524" class="edge" data-role="wiki-topic-verifier" data-skill="project-wiki-topic-verify"/>
+<path d="M 350 906 C 500 906, 620 1032, 760 1032" class="edge conditional-edge" data-role="wiki-writer" data-skill="organise-project-files"/>
+<path d="M 350 906 C 500 906, 620 1374, 760 1374" class="edge" data-role="wiki-writer" data-skill="project-wiki"/>
+<path d="M 350 906 C 500 906, 620 1554, 760 1554" class="edge" data-role="wiki-writer" data-skill="project-wiki-topic-write"/>
+<path d="M 350 906 C 500 906, 620 1344, 760 1344" class="edge conditional-edge" data-role="wiki-writer" data-skill="code-project-wiki"/>
+<text x="30" y="168" class="group">Backlog Management</text>
+<g class="role-node" data-role="dev-backlog-coordinator" data-display-name="Dev Backlog Coordinator" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Backlog Coordinator"><title>Select Dev Backlog Coordinator to isolate its skills and dependencies</title><rect x="30" y="180" width="320" height="24" rx="5" class="node role"/><text x="42" y="196">dev-backlog-coordinator</text><text x="338" y="196" text-anchor="end" class="secondary">2 skills · 1 conditional · 2 dependencies</text></g>
+<g class="role-node" data-role="dev-backlog-steward" data-display-name="Dev Backlog Steward" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Backlog Steward"><title>Select Dev Backlog Steward to isolate its skills and dependencies</title><rect x="30" y="210" width="320" height="24" rx="5" class="node role"/><text x="42" y="226">dev-backlog-steward</text><text x="338" y="226" text-anchor="end" class="secondary">2 skills · 1 conditional</text></g>
+<text x="30" y="270" class="group">Dev Activities</text>
+<g class="role-node" data-role="dev-artifact-reviewer" data-display-name="Dev Artifact Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Artifact Reviewer"><title>Select Dev Artifact Reviewer to isolate its skills and dependencies</title><rect x="30" y="282" width="320" height="24" rx="5" class="node role"/><text x="42" y="298">dev-artifact-reviewer</text><text x="338" y="298" text-anchor="end" class="secondary">17 skills · 15 conditional</text></g>
+<g class="role-node" data-role="dev-browser-operator" data-display-name="Dev Browser Operator" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Browser Operator"><title>Select Dev Browser Operator to isolate its skills and dependencies</title><rect x="30" y="312" width="320" height="24" rx="5" class="node role"/><text x="42" y="328">dev-browser-operator</text><text x="338" y="328" text-anchor="end" class="secondary">3 skills · 1 conditional</text></g>
+<g class="role-node" data-role="dev-code-reviewer" data-display-name="Dev Code Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Code Reviewer"><title>Select Dev Code Reviewer to isolate its skills and dependencies</title><rect x="30" y="342" width="320" height="24" rx="5" class="node role"/><text x="42" y="358">dev-code-reviewer</text><text x="338" y="358" text-anchor="end" class="secondary">5 skills · 1 conditional</text></g>
+<g class="role-node" data-role="dev-coder" data-display-name="Dev Coder" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Coder"><title>Select Dev Coder to isolate its skills and dependencies</title><rect x="30" y="372" width="320" height="24" rx="5" class="node role"/><text x="42" y="388">dev-coder</text><text x="338" y="388" text-anchor="end" class="secondary">6 skills · 2 conditional</text></g>
+<g class="role-node" data-role="dev-documentation-writer" data-display-name="Dev Documentation Writer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Documentation Writer"><title>Select Dev Documentation Writer to isolate its skills and dependencies</title><rect x="30" y="402" width="320" height="24" rx="5" class="node role"/><text x="42" y="418">dev-documentation-writer</text><text x="338" y="418" text-anchor="end" class="secondary">19 skills · 18 conditional</text></g>
+<g class="role-node" data-role="dev-merge-coordinator" data-display-name="Dev Merge Coordinator" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Merge Coordinator"><title>Select Dev Merge Coordinator to isolate its skills and dependencies</title><rect x="30" y="432" width="320" height="24" rx="5" class="node role"/><text x="42" y="448">dev-merge-coordinator</text><text x="338" y="448" text-anchor="end" class="secondary">4 skills · 1 conditional</text></g>
+<g class="role-node" data-role="dev-orchestrator" data-display-name="Dev Orchestrator" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Orchestrator"><title>Select Dev Orchestrator to isolate its skills and dependencies</title><rect x="30" y="462" width="320" height="24" rx="5" class="node role"/><text x="42" y="478">dev-orchestrator</text><text x="338" y="478" text-anchor="end" class="secondary">3 skills · 1 conditional · 5 dependencies</text></g>
+<g class="role-node" data-role="dev-prompt-reviewer" data-display-name="Dev Prompt Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Prompt Reviewer"><title>Select Dev Prompt Reviewer to isolate its skills and dependencies</title><rect x="30" y="492" width="320" height="24" rx="5" class="node role"/><text x="42" y="508">dev-prompt-reviewer</text><text x="338" y="508" text-anchor="end" class="secondary">3 skills · 1 conditional</text></g>
+<g class="role-node" data-role="dev-runtime-diagnostician" data-display-name="Dev Runtime Diagnostician" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Runtime Diagnostician"><title>Select Dev Runtime Diagnostician to isolate its skills and dependencies</title><rect x="30" y="522" width="320" height="24" rx="5" class="node role"/><text x="42" y="538">dev-runtime-diagnostician</text><text x="338" y="538" text-anchor="end" class="secondary">8 skills · 3 conditional</text></g>
+<g class="role-node" data-role="dev-security-reviewer" data-display-name="Dev Security Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Security Reviewer"><title>Select Dev Security Reviewer to isolate its skills and dependencies</title><rect x="30" y="552" width="320" height="24" rx="5" class="node role"/><text x="42" y="568">dev-security-reviewer</text><text x="338" y="568" text-anchor="end" class="secondary">4 skills · 1 conditional</text></g>
+<g class="role-node" data-role="dev-ux-specialist" data-display-name="Dev UX Specialist" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev UX Specialist"><title>Select Dev UX Specialist to isolate its skills and dependencies</title><rect x="30" y="582" width="320" height="24" rx="5" class="node role"/><text x="42" y="598">dev-ux-specialist</text><text x="338" y="598" text-anchor="end" class="secondary">4 skills · 1 conditional</text></g>
+<g class="role-node" data-role="dev-verifier" data-display-name="Dev Verifier" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Verifier"><title>Select Dev Verifier to isolate its skills and dependencies</title><rect x="30" y="612" width="320" height="24" rx="5" class="node role"/><text x="42" y="628">dev-verifier</text><text x="338" y="628" text-anchor="end" class="secondary">9 skills · 6 conditional</text></g>
+<text x="30" y="672" class="group">Wiki Activities</text>
+<g class="role-node" data-role="wiki-architect" data-display-name="Wiki Architect" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Architect"><title>Select Wiki Architect to isolate its skills and dependencies</title><rect x="30" y="684" width="320" height="24" rx="5" class="node role"/><text x="42" y="700">wiki-architect</text><text x="338" y="700" text-anchor="end" class="secondary">4 skills · 3 conditional</text></g>
+<g class="role-node" data-role="wiki-artifact-reviewer" data-display-name="Wiki Artifact Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Artifact Reviewer"><title>Select Wiki Artifact Reviewer to isolate its skills and dependencies</title><rect x="30" y="714" width="320" height="24" rx="5" class="node role"/><text x="42" y="730">wiki-artifact-reviewer</text><text x="338" y="730" text-anchor="end" class="secondary">3 skills · 1 conditional</text></g>
+<g class="role-node" data-role="wiki-ingester" data-display-name="Wiki Ingester" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Ingester"><title>Select Wiki Ingester to isolate its skills and dependencies</title><rect x="30" y="744" width="320" height="24" rx="5" class="node role"/><text x="42" y="760">wiki-ingester</text><text x="338" y="760" text-anchor="end" class="secondary">4 skills · 2 conditional · 1 dependencies</text></g>
+<g class="role-node" data-role="wiki-query-responder" data-display-name="Wiki Query Responder" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Query Responder"><title>Select Wiki Query Responder to isolate its skills and dependencies</title><rect x="30" y="774" width="320" height="24" rx="5" class="node role"/><text x="42" y="790">wiki-query-responder</text><text x="338" y="790" text-anchor="end" class="secondary">1 skills</text></g>
+<g class="role-node" data-role="wiki-researcher" data-display-name="Wiki Researcher" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Researcher"><title>Select Wiki Researcher to isolate its skills and dependencies</title><rect x="30" y="804" width="320" height="24" rx="5" class="node role"/><text x="42" y="820">wiki-researcher</text><text x="338" y="820" text-anchor="end" class="secondary">3 skills · 1 conditional</text></g>
+<g class="role-node" data-role="wiki-source-collector" data-display-name="Wiki Source Collector" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Source Collector"><title>Select Wiki Source Collector to isolate its skills and dependencies</title><rect x="30" y="834" width="320" height="24" rx="5" class="node role"/><text x="42" y="850">wiki-source-collector</text><text x="338" y="850" text-anchor="end" class="secondary">4 skills · 1 conditional</text></g>
+<g class="role-node" data-role="wiki-topic-verifier" data-display-name="Wiki Topic Verifier" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Topic Verifier"><title>Select Wiki Topic Verifier to isolate its skills and dependencies</title><rect x="30" y="864" width="320" height="24" rx="5" class="node role"/><text x="42" y="880">wiki-topic-verifier</text><text x="338" y="880" text-anchor="end" class="secondary">1 skills</text></g>
+<g class="role-node" data-role="wiki-writer" data-display-name="Wiki Writer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Writer"><title>Select Wiki Writer to isolate its skills and dependencies</title><rect x="30" y="894" width="320" height="24" rx="5" class="node role"/><text x="42" y="910">wiki-writer</text><text x="338" y="910" text-anchor="end" class="secondary">4 skills · 2 conditional · 1 dependencies</text></g>
+<text x="30" y="954" class="group">Project Setup</text>
+<g class="role-node" data-role="project-bootstrapper" data-display-name="Project Bootstrapper" role="button" tabindex="0" aria-pressed="false" aria-label="Select Project Bootstrapper"><title>Select Project Bootstrapper to isolate its skills and dependencies</title><rect x="30" y="966" width="320" height="24" rx="5" class="node role"/><text x="42" y="982">project-bootstrapper</text><text x="338" y="982" text-anchor="end" class="secondary">3 skills · 1 conditional · 10 dependencies</text></g>
+<g class="role-node" data-role="project-configurator" data-display-name="Project Configurator" role="button" tabindex="0" aria-pressed="false" aria-label="Select Project Configurator"><title>Select Project Configurator to isolate its skills and dependencies</title><rect x="30" y="996" width="320" height="24" rx="5" class="node role"/><text x="42" y="1012">project-configurator</text><text x="338" y="1012" text-anchor="end" class="secondary">6 skills · 2 conditional</text></g>
+<g class="role-node" data-role="project-organiser" data-display-name="Project Organiser" role="button" tabindex="0" aria-pressed="false" aria-label="Select Project Organiser"><title>Select Project Organiser to isolate its skills and dependencies</title><rect x="30" y="1026" width="320" height="24" rx="5" class="node role"/><text x="42" y="1042">project-organiser</text><text x="338" y="1042" text-anchor="end" class="secondary">3 skills</text></g>
+<text x="30" y="1086" class="group">Methodology Maintenance</text>
+<g class="role-node" data-role="methodology-artifact-reviewer" data-display-name="Methodology Artifact Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Methodology Artifact Reviewer"><title>Select Methodology Artifact Reviewer to isolate its skills and dependencies</title><rect x="30" y="1098" width="320" height="24" rx="5" class="node role"/><text x="42" y="1114">methodology-artifact-reviewer</text><text x="338" y="1114" text-anchor="end" class="secondary">7 skills · 1 conditional</text></g>
+<g class="role-node" data-role="methodology-maintainer" data-display-name="Methodology Maintainer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Methodology Maintainer"><title>Select Methodology Maintainer to isolate its skills and dependencies</title><rect x="30" y="1128" width="320" height="24" rx="5" class="node role"/><text x="42" y="1144">methodology-maintainer</text><text x="338" y="1144" text-anchor="end" class="secondary">8 skills · 2 conditional · 2 dependencies</text></g>
 <text x="760" y="168" class="group">Development Practice</text>
 <g class="skill-node" data-skill="agent-claim" role="button" tabindex="0" aria-pressed="false" aria-label="Select skill agent-claim"><title>Select agent-claim to isolate the agents using it</title><rect x="760" y="180" width="360" height="24" rx="5" class="node skill"/><path d="M 761 185 V 199" class="selection-marker"/><text x="772" y="196">agent-claim</text><text x="1108" y="196" text-anchor="end" class="secondary">unassigned</text></g>
 <g class="skill-node" data-skill="agent-claim-command" role="button" tabindex="0" aria-pressed="false" aria-label="Select skill agent-claim-command"><title>Select agent-claim-command to isolate the agents using it</title><rect x="760" y="210" width="360" height="24" rx="5" class="node skill"/><path d="M 761 215 V 229" class="selection-marker"/><text x="772" y="226">agent-claim-command</text><text x="1108" y="226" text-anchor="end" class="secondary">unassigned</text></g>

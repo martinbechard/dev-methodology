@@ -266,8 +266,8 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertIn("let showAgentDependencies = true", self.rendered)
         self.assertIn("toggleAgentDependencies", self.rendered)
 
-    def test_agent_groups_follow_the_role_schema_order(self) -> None:
-        """The visual reading order should match the maintained definition-group contract."""
+    def test_agent_groups_follow_the_catalog_group_source(self) -> None:
+        """The visual reading order should match the maintained catalog-group source."""
         group_nodes = self.root.findall(
             f".//{{{SVG_NAMESPACE}}}text[@class='group']"
         )
@@ -278,6 +278,7 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         ]
         self.assertEqual(
             [
+                "Backlog Management",
                 "Dev Activities",
                 "Wiki Activities",
                 "Project Setup",
@@ -285,6 +286,12 @@ class AgentSkillHierarchyTests(unittest.TestCase):
             ],
             role_group_labels,
         )
+        backlog_group_start = self.rendered.index(">Backlog Management</text>")
+        dev_group_start = self.rendered.index(">Dev Activities</text>")
+        backlog_group = self.rendered[backlog_group_start:dev_group_start]
+        self.assertEqual(1, backlog_group.count('data-role="dev-backlog-coordinator"'))
+        self.assertEqual(1, backlog_group.count('data-role="dev-backlog-steward"'))
+        self.assertNotIn('data-role="dev-orchestrator"', backlog_group)
 
     def test_skill_groups_start_with_development_then_wiki(self) -> None:
         """The skill reading order should mirror the first two agent categories."""
@@ -309,14 +316,14 @@ class AgentSkillHierarchyTests(unittest.TestCase):
             skill_group_labels,
         )
 
-    def test_role_cards_follow_the_role_schema_order(self) -> None:
-        """The reader-facing conceptual agent definition cards follow group order."""
+    def test_role_cards_follow_the_catalog_group_order(self) -> None:
+        """The reader-facing conceptual agent definition cards follow catalog group order."""
         role_map = ROLE_MAP_PATH.read_text(encoding="utf-8")
         group_markers = [
-            f'data-role-group="{group}"'
+            f'data-role-group="{group["id"]}"'
             for group in self.module._load_yaml(
-                self.module.ROLE_SCHEMA_PATH
-            )["roleGroups"]
+                self.module.ROLE_CATALOG_GROUPS_PATH
+            )["groups"]
         ]
 
         self.assertEqual(

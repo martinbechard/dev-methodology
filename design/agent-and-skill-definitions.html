@@ -648,6 +648,11 @@
     </object>
   </section>
 
+  <section class="section" aria-labelledby="backlog-management-title">
+    <h2 id="backlog-management-title">Agents for Backlog Management</h2>
+    <div class="grid agent-grid" data-role-group="backlog-management"></div>
+  </section>
+
   <section class="section" aria-labelledby="dev-activities-title">
     <h2 id="dev-activities-title">Agents for Dev Activities</h2>
     <div class="grid agent-grid" data-role-group="dev-activities"></div>
@@ -793,7 +798,7 @@
       document.querySelectorAll("[data-role-group]").forEach((container) => {
         const group = container.dataset.roleGroup;
         const roles = Object.values(roleData.roles)
-          .filter((role) => role.group === group)
+          .filter((role) => (role.catalogGroup || role.group) === group)
           .sort((left, right) => left.displayName.localeCompare(right.displayName));
         roles.forEach((role) => container.appendChild(createRoleCard(role)));
       });

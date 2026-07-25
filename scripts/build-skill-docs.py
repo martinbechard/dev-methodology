@@ -22,6 +22,7 @@ import yaml
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SKILLS_ROOT = REPOSITORY_ROOT / "skills"
 CATEGORIES_PATH = REPOSITORY_ROOT / "design" / "skill-categories.yaml"
+ROLE_CATALOG_GROUPS_PATH = REPOSITORY_ROOT / "design" / "role-catalog-groups.yaml"
 OUTPUT_PATH = REPOSITORY_ROOT / "design" / "generated" / "skill-definitions.js"
 TEMPLATE_ROOT = SKILLS_ROOT / "development-methodology" / "assets" / "templates"
 TEMPLATE_OUTPUT_PATH = REPOSITORY_ROOT / "design" / "generated" / "template-definitions.js"
@@ -1109,11 +1110,17 @@ def render_template_javascript(payload: dict[str, object]) -> str:
 
 
 def build_role_payload(roles: Sequence[RoleDefinition]) -> dict[str, object]:
+    catalog_groups, catalog_group_by_role = load_role_catalog_groups(roles)
+    catalog_labels = {
+        group["id"]: group["label"]
+        for group in catalog_groups
+    }
     return {
         "groups": [
             {"id": group_id, "label": group_label}
             for group_id, group_label in ROLE_GROUP_LABELS.items()
         ],
+        "catalogGroups": catalog_groups,
         "roles": {
             role.name: {
                 "name": role.name,
@@ -1132,6 +1139,10 @@ def build_role_payload(roles: Sequence[RoleDefinition]) -> dict[str, object]:
                 "examples": list(role.examples),
                 "group": role.group,
                 "groupLabel": role.group_label,
+                "catalogGroup": catalog_group_by_role.get(role.name, role.group),
+                "catalogGroupLabel": catalog_labels[
+                    catalog_group_by_role.get(role.name, role.group)
+                ],
                 "sourcePath": role.source_path,
                 "yaml": role.yaml,
                 ROLE_MODEL_PROFILE_FIELD_NAME: role.model_profile,
@@ -1141,6 +1152,81 @@ def build_role_payload(roles: Sequence[RoleDefinition]) -> dict[str, object]:
             for role in roles
         },
     }
+
+
+def load_role_catalog_groups(
+    roles: Sequence[RoleDefinition],
+) -> tuple[list[dict[str, str]], dict[str, str]]:
+    """Load and validate the presentation-only role grouping source."""
+
+    payload = read_yaml_object(ROLE_CATALOG_GROUPS_PATH)
+    if payload.get("schema") != "agent-catalog-groups" or payload.get("version") != 1:
+        raise ValueError("Role catalog groups must use agent-catalog-groups schema version 1.")
+    raw_groups = payload.get("groups")
+    if not isinstance(raw_groups, list) or not raw_groups:
+        raise ValueError("Role catalog groups must be a non-empty list.")
+
+    groups: list[dict[str, str]] = []
+    for item in raw_groups:
+        if not isinstance(item, dict):
+            raise ValueError("Each role catalog group must be an object.")
+        group_id = item.get("id")
+        label = item.get("label")
+        if not isinstance(group_id, str) or not group_id.strip():
+            raise ValueError("Each role catalog group must have a non-empty id.")
+        if not isinstance(label, str) or not label.strip():
+            raise ValueError(f"Role catalog group {group_id} must have a non-empty label.")
+        groups.append({"id": group_id.strip(), "label": label.strip()})
+
+    group_ids = [group["id"] for group in groups]
+    if len(group_ids) != len(set(group_ids)):
+        raise ValueError("Role catalog group ids must be unique.")
+    missing_conceptual_groups = set(ROLE_GROUP_LABELS) - set(group_ids)
+    if missing_conceptual_groups:
+        raise ValueError(
+            "Role catalog groups omit conceptual groups: "
+            + ", ".join(sorted(missing_conceptual_groups))
+        )
+    labels_by_id = {group["id"]: group["label"] for group in groups}
+    for group_id, expected_label in ROLE_GROUP_LABELS.items():
+        if labels_by_id[group_id] != expected_label:
+            raise ValueError(
+                f"Role catalog group {group_id} must retain label {expected_label}."
+            )
+
+    raw_overrides = payload.get("role_overrides", {})
+    if not isinstance(raw_overrides, dict):
+        raise ValueError("Role catalog role_overrides must be an object.")
+    roles_by_name = {role.name: role for role in roles}
+    unknown_roles = set(raw_overrides) - set(roles_by_name)
+    if unknown_roles:
+        raise ValueError(
+            "Role catalog overrides reference unknown roles: "
+            + ", ".join(sorted(unknown_roles))
+        )
+
+    assignments: dict[str, str] = {}
+    for role_name, override in raw_overrides.items():
+        if not isinstance(override, dict):
+            raise ValueError(f"Role catalog override {role_name} must be an object.")
+        group_id = override.get("group")
+        source = override.get("source")
+        evidence = override.get("evidence")
+        if group_id not in labels_by_id:
+            raise ValueError(
+                f"Role catalog override {role_name} references unknown group {group_id}."
+            )
+        if source != roles_by_name[role_name].source_path:
+            raise ValueError(
+                f"Role catalog override {role_name} must cite its conceptual source path."
+            )
+        if not isinstance(evidence, str) or not evidence.strip():
+            raise ValueError(
+                f"Role catalog override {role_name} must include source-backed evidence."
+            )
+        assignments[role_name] = str(group_id)
+
+    return groups, assignments
 
 
 def render_role_javascript(roles: Sequence[RoleDefinition]) -> str:

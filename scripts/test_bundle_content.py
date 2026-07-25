@@ -492,6 +492,7 @@ CORE_PATTERN_SKILLS = (
     "interpreter-pattern",
 )
 AGENT_ROLE_MAP_REQUIRED_PHRASES = (
+    "Agents for Backlog Management",
     "Agents for Methodology Maintenance",
     "Agents for Project Setup",
     "Agents for Wiki Activities",
@@ -7309,6 +7310,46 @@ class BundleContentTests(unittest.TestCase):
                 )
                 self.assertNotIn("agent", segments)
                 self.assertIn(segments[-1], build_skill_docs.ROLE_ACTOR_SUFFIXES)
+
+    def test_backlog_management_catalog_group_preserves_conceptual_role_identity(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        payload = build_skill_docs.build_role_payload(roles)
+
+        self.assertEqual(
+            [
+                "backlog-management",
+                "dev-activities",
+                "wiki-activities",
+                "project-setup",
+                "methodology-maintenance",
+            ],
+            [group["id"] for group in payload["catalogGroups"]],
+        )
+        backlog_roles = {
+            role["name"]
+            for role in payload["roles"].values()
+            if role["catalogGroup"] == "backlog-management"
+        }
+        self.assertEqual(
+            {"dev-backlog-coordinator", "dev-backlog-steward"},
+            backlog_roles,
+        )
+        for role_name in backlog_roles:
+            with self.subTest(role=role_name):
+                role = payload["roles"][role_name]
+                self.assertEqual("dev-activities", role["group"])
+                self.assertEqual("Dev Activities", role["groupLabel"])
+                self.assertEqual("Backlog Management", role["catalogGroupLabel"])
+                self.assertEqual(
+                    f"agents/roles/dev-activities/{role_name}.role.yaml",
+                    role["sourcePath"],
+                )
+        self.assertEqual(
+            "dev-activities",
+            payload["roles"]["dev-orchestrator"]["catalogGroup"],
+        )
 
     def test_wiki_skills_are_owned_by_wiki_activity_roles(self) -> None:
         build_skill_docs = load_build_skill_docs_module()

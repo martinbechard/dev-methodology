@@ -58,6 +58,7 @@ Project-specific evaluation skills may freeze inputs and compare completed candi
 - backlog contains the repository's typed active work, user-action-required queue, holding state, lightweight future-ideas area, and outcome archives. It is available only from the primary worktree.
 - .worktrees contains ignored linked agent checkouts beneath the primary worktree. It is operational state rather than distributable project source.
 - design/generated/technology-skill-detection-registry.js exposes the same detection registry for documentation and the interactive agent-skill explorer.
+- design/role-catalog-groups.yaml owns presentation-only role group order, source-backed role overrides, and labels shared by the role cards and hierarchy diagram.
 - scripts/openai_metadata.py refreshes derived Codex interface fields from SKILL.md while preserving hand-authored policy and dependencies.
 - scripts contains regression tests for installer behavior and bundle content.
 - AGENTS.md contains repo-local maintenance directives for agents working on this source repository.
@@ -70,7 +71,7 @@ Reusable templates live inside the development-methodology skill assets so there
 python3 scripts/build-skill-docs.py
 ```
 
-The script reads each bundled SKILL.md file, the distributed methodology templates, adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, agents/role-schema.yaml, agents/model-profiles.yaml, adapter model mappings, adapter-owned skill sources, and conceptual agent definition sources. It writes design/generated/skill-definitions.js, design/generated/template-definitions.js, design/generated/role-definitions.js, native definitions under generated/adapters, and agent-generation-manifest.json. By default, generated agents reference unconditional core skills. Conditional request-specific skills retain their conditions. Pass the inline-core-skills option as true only when self-contained generated instructions are explicitly required.
+The script reads each bundled SKILL.md file, the distributed methodology templates, adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, the presentation-only design/role-catalog-groups.yaml catalog, agents/role-schema.yaml, agents/model-profiles.yaml, adapter model mappings, adapter-owned skill sources, and conceptual agent definition sources. It writes design/generated/skill-definitions.js, design/generated/template-definitions.js, design/generated/role-definitions.js, native definitions under generated/adapters, and agent-generation-manifest.json. By default, generated agents reference unconditional core skills. Conditional request-specific skills retain their conditions. Pass the inline-core-skills option as true only when self-contained generated instructions are explicitly required.
 
 ```bash
 python3 scripts/build-skill-docs.py --inline-core-skills true

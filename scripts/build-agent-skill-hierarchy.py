@@ -17,6 +17,7 @@ ROLES_ROOT = ROOT / "agents" / "roles"
 ROLE_SCHEMA_PATH = ROOT / "agents" / "role-schema.yaml"
 SKILLS_ROOT = ROOT / "skills"
 CATEGORIES_PATH = ROOT / "design" / "skill-categories.yaml"
+ROLE_CATALOG_GROUPS_PATH = ROOT / "design" / "role-catalog-groups.yaml"
 OUTPUT_PATH = ROOT / "design" / "agent-skill-hierarchy.svg"
 STACK_AND_DOMAIN_CATEGORY = "stack-and-domain"
 HIERARCHY_SKILL_CATEGORY_PRIORITY = (
@@ -102,6 +103,74 @@ def _display_name(identifier: str) -> str:
         ROLE_DISPLAY_ACRONYMS.get(word, word.title())
         for word in identifier.split("-")
     )
+
+
+def _load_role_catalog_groups(
+    roles: list[dict[str, object]],
+    conceptual_group_order: list[str],
+) -> tuple[list[dict[str, str]], dict[str, str]]:
+    payload = _load_yaml(ROLE_CATALOG_GROUPS_PATH)
+    if payload.get("schema") != "agent-catalog-groups" or payload.get("version") != 1:
+        raise ValueError("Role catalog groups must use agent-catalog-groups schema version 1.")
+    raw_groups = payload.get("groups")
+    if not isinstance(raw_groups, list) or not raw_groups:
+        raise ValueError("Role catalog groups must be a non-empty list.")
+
+    groups: list[dict[str, str]] = []
+    for item in raw_groups:
+        if not isinstance(item, dict):
+            raise ValueError("Each role catalog group must be an object.")
+        group_id = item.get("id")
+        label = item.get("label")
+        if not isinstance(group_id, str) or not group_id.strip():
+            raise ValueError("Each role catalog group must have a non-empty id.")
+        if not isinstance(label, str) or not label.strip():
+            raise ValueError(f"Role catalog group {group_id} must have a non-empty label.")
+        groups.append({"id": group_id.strip(), "label": label.strip()})
+
+    group_ids = [group["id"] for group in groups]
+    if len(group_ids) != len(set(group_ids)):
+        raise ValueError("Role catalog group ids must be unique.")
+    missing_conceptual_groups = set(conceptual_group_order) - set(group_ids)
+    if missing_conceptual_groups:
+        raise ValueError(
+            "Role catalog groups omit conceptual groups: "
+            + ", ".join(sorted(missing_conceptual_groups))
+        )
+
+    raw_overrides = payload.get("role_overrides", {})
+    if not isinstance(raw_overrides, dict):
+        raise ValueError("Role catalog role_overrides must be an object.")
+    roles_by_name = {str(role["name"]): role for role in roles}
+    unknown_roles = set(raw_overrides) - set(roles_by_name)
+    if unknown_roles:
+        raise ValueError(
+            "Role catalog overrides reference unknown roles: "
+            + ", ".join(sorted(unknown_roles))
+        )
+
+    assignments: dict[str, str] = {}
+    for role_name, override in raw_overrides.items():
+        if not isinstance(override, dict):
+            raise ValueError(f"Role catalog override {role_name} must be an object.")
+        group_id = override.get("group")
+        source = override.get("source")
+        evidence = override.get("evidence")
+        if group_id not in group_ids:
+            raise ValueError(
+                f"Role catalog override {role_name} references unknown group {group_id}."
+            )
+        if source != roles_by_name[role_name]["sourcePath"]:
+            raise ValueError(
+                f"Role catalog override {role_name} must cite its conceptual source path."
+            )
+        if not isinstance(evidence, str) or not evidence.strip():
+            raise ValueError(
+                f"Role catalog override {role_name} must include source-backed evidence."
+            )
+        assignments[role_name] = str(group_id)
+
+    return groups, assignments
 
 
 def _visible_skill_categories(
@@ -190,6 +259,7 @@ def build_svg() -> str:
     for path in sorted(ROLES_ROOT.glob("*/*.role.yaml")):
         role = _load_yaml(path)
         role["group"] = path.parent.name
+        role["sourcePath"] = str(path.relative_to(ROOT))
         roles.append(role)
 
     role_names = {str(role["name"]) for role in roles}
@@ -216,6 +286,10 @@ def build_svg() -> str:
         isinstance(group, str) for group in role_group_order
     ):
         raise ValueError("Conceptual agent definition groups must be a list of identifiers.")
+    catalog_groups, catalog_group_by_role = _load_role_catalog_groups(
+        roles,
+        role_group_order,
+    )
 
     skills_by_category: dict[str, list[str]] = {}
     for path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):
@@ -228,13 +302,18 @@ def build_svg() -> str:
     grouped_roles: dict[str, list[dict[str, object]]] = {}
     roles_by_group: dict[str, list[dict[str, object]]] = {}
     for role in roles:
-        roles_by_group.setdefault(str(role["group"]), []).append(role)
-    unknown_role_groups = set(roles_by_group) - set(role_group_order)
+        catalog_group = catalog_group_by_role.get(
+            str(role["name"]),
+            str(role["group"]),
+        )
+        roles_by_group.setdefault(catalog_group, []).append(role)
+    catalog_group_order = [group["id"] for group in catalog_groups]
+    unknown_role_groups = set(roles_by_group) - set(catalog_group_order)
     if unknown_role_groups:
         raise ValueError(
-            "Conceptual agent definitions reference unknown groups: " + ", ".join(sorted(unknown_role_groups))
+            "Catalog roles reference unknown groups: " + ", ".join(sorted(unknown_role_groups))
         )
-    for group in role_group_order:
+    for group in catalog_group_order:
         group_roles = roles_by_group.get(group)
         if group_roles:
             grouped_roles[group] = group_roles
@@ -329,10 +408,14 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
             )
 
     current_y = TOP
+    catalog_group_labels = {
+        group["id"]: group["label"]
+        for group in catalog_groups
+    }
     for group, group_roles in grouped_roles.items():
         parts.append(
             f'<text x="{ROLE_X}" y="{current_y + 18}" class="group">'
-            f'{_escape(group.replace("-", " ").title())}</text>'
+            f'{_escape(catalog_group_labels[group])}</text>'
         )
         current_y += ROW_HEIGHT
         for role in group_roles:
