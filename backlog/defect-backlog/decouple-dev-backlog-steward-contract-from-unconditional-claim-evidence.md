@@ -1,10 +1,10 @@
 # Decouple Dev Backlog Steward Contract From Unconditional Claim Evidence
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
@@ -15,9 +15,9 @@ Completion: direct-main
 ## Launch Reservation
 
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
-- Reservation: One same-task resumption launch reserved by the parent Dev Backlog Coordinator.
+- Reservation: One parent-owned same-task resumption launch reservation.
 - Normalized Objective: Decouple Dev Backlog Steward contracts from unconditional claim evidence.
-- Dispatched At: 2026-07-25T02:43:56Z
+- Dispatched At: 2026-07-25T04:08:26Z
 - Intended Root Role: Dev Orchestrator
 - Runtime Thread And Task Id: Existing canonical work-item Thread 019f96f1-1a19-7b01-b166-c5948a50fff5 is retained; no replacement task was created.
 
@@ -27,7 +27,7 @@ Completion: direct-main
 - Prior Root Owner: Dev Orchestrator
 - Delivery Branch: Detached pending delivery claim.
 - Delivery Worktree: /Users/martinbechard/.codex/worktrees/ecbc/dev-methodology
-- Phase: Fresh renderer and portable-contract discovery.
+- Phase: Awaiting same-root Starting -> Running acceptance.
 - Started At: 2026-07-25T02:46:17Z
 
 ## Coordination Evidence
