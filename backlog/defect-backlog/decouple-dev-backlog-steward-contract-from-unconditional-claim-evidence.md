@@ -1,6 +1,6 @@
 # Decouple Dev Backlog Steward Contract From Unconditional Claim Evidence
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/decouple-dev-backlog-steward-contract-from-unconditional-claim-evidence.md
+Provider Reference: backlog/defect-backlog/decouple-dev-backlog-steward-contract-from-unconditional-claim-evidence.md
 
 Completion: direct-main
 
@@ -36,26 +36,25 @@ Completion: direct-main
 - Direct Release Baton: running-backlog-lifecycle-019f96f0 was released after primary-main backlog transaction 766464a894ab3427d8eebc3aa28bc865119e199b; release event 5f486be7-acea-4f90-a200-75dcbe75fd43.
 - Prior Release Baton: decouple-dev-orchestrator-eval-correction1-019f96ce released event c1cd5671-52fe-468f-a363-c561e7e0140f.
 
-## User Action Required
+## Prior User Action Resolution
 
-Question: Do you approve mutation of the single governed canonical definition path agents/roles/dev-activities/dev-backlog-steward.role.yaml to make claim-specific evidence wording conditional/neutral for resource_coordination none while retaining strict agent-claim-selected acquisition, committed mutation, and release behavior?
+Prior Requested Approval: NOT APPROVED. The user explicitly rejected the single canonical-role path as the solution.
 
-Why Input Is Required: The repository definition_change_authority precheck returned BLOCKED_APPROVAL_REQUIRED. Failing tests and a repair assignment are not scope-specific user approval.
+Resolution Provenance: Current user message in canonical Thread 019f96f1-1a19-7b01-b166-c5948a50fff5.
 
-### Governed Canonical Approval Scope
+Corrected Architectural Direction:
 
-- agents/roles/dev-activities/dev-backlog-steward.role.yaml
+- PROJECT.yaml -> AGENTS.md conversion adds the selected resource-coordination skill by reference or inline only when the selection is other than none.
+- When the selection is none, AGENTS.md mentions no coordination skill or lifecycle.
+- Portable Dev Backlog Steward contracts do not embed claim mechanics.
 
-### Dependent Generated Mirrors (Not Approval Scope)
+Resumption Requirement: Perform fresh discovery of the renderer, generated AGENTS.md, portable-role neutrality, and the exact governed approval manifest before requesting any new scope-specific approval.
 
-- generated/adapters/**
-- design/generated/role-definitions.js
+Prior Discovery Evidence Retained: The definition_change_authority precheck returned BLOCKED_APPROVAL_REQUIRED; failing tests and a repair assignment were not approval. Five exact test_role_mutation_policy failures concerned one canonical role and generated Claude, Codex, Gemini, and Junie adapters. Supported mirrors remain generated/adapters/** and design/generated/role-definitions.js; two unrelated broad failures remain outside this item.
 
-Prohibited Unattended Action: Do not mutate the governed canonical role or regenerate its mirrors before explicit scope-specific approval.
+Unattended Work Boundary: Do not mutate a governed definition or regenerate a mirror until the fresh discovery identifies an exact governed scope and a successful user-approved manifest check exists.
 
-Permitted Resumption: Record the user's answer in this canonical Thread, restore User Action Required -> Ready through the file provider, have the parent Coordinator reserve Ready -> Starting, then have this same root Dev Orchestrator record Starting -> Running before delivery work resumes.
-
-Resolution: Pending explicit user answer to the recorded question.
+Lifecycle Resumption: This answer restores the item to Ready only. The parent Coordinator must reserve Ready -> Starting, then the same root Dev Orchestrator must record Starting -> Running before delivery work resumes.
 
 ## Summary
 
