@@ -1,14 +1,14 @@
 # Reconcile Dev Coder Native Skill Binding With Suite Manifest
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/reconcile-dev-coder-native-skill-binding-with-suite-manifest.md
+Provider Reference: backlog/completed-backlog/defects/reconcile-dev-coder-native-skill-binding-with-suite-manifest.md
 
 Completion: direct-main
 
@@ -121,3 +121,17 @@ This transaction records the defect only. It does not authorize implementation, 
 - Generated Documentation Boundary: design/agent-and-skill-evaluations.html may be produced only by scripts/build-agent-skill-evaluation-docs.py after the source correction. Focused coverage changes may occur only inside the existing evals/agent-tests/dev-coder/test_fixtures.py.
 - Exclusions: No governed source, generated adapter, other generated mirror, backlog implementation, or other path is authorized.
 - Next Runnable Action: Dev Orchestrator performs correction attempt 1 within the exact authorized scope, obtains fresh review, and preserves required verification and delivery evidence before any lifecycle transition.
+
+## Completion — 2026-07-25
+
+- Completion Disposition: READY for lifecycle COMPLETED under the direct-main contract.
+- Completed Phase: direct-main delivery, independent review, verification, integration observation, and terminal file-provider archival are complete.
+- Accepted Source Commit: 6d61b5abb94b11cfa6be0a9f02fd000f672ecad3 (fresh review ACCEPT with no material findings).
+- Independent Verification: PASS. The accepted evidence includes the four fixture cases, Dev Coder validate-only, suite-skill validation, evaluation-document freshness, 26 evaluation-document tests, build-skill-docs check, focused role-policy check, and diff check.
+- Integration Evidence: c0916072a3ee9af8207b41257e0f971c225a2716 was integrated as c095a7867270580a7a722adbe48dea840b99f4a4; 6d61b5abb94b11cfa6be0a9f02fd000f672ecad3 was integrated as 4bab2a264c5327c2a5e66b3499c391eb6ae82f54. Commit bc67dec01fa95c20200d59a34199aa86bbea9a51 refreshed only the supported evaluation HTML and is an ancestor of the observed main tip.
+- Delivered Paths: evals/agent-tests/dev-coder/suite.yaml; evals/agent-tests/dev-coder/skills/dev-coder-suite-contract/SKILL.md; evals/agent-tests/dev-coder/test_fixtures.py; design/agent-and-skill-evaluations.html.
+- Main Observation: primary main was clean at 0e1432e1561d11b957609164e013d6d8205e0c65. Both integration commits c095a7867270580a7a722adbe48dea840b99f4a4 and 4bab2a264c5327c2a5e66b3499c391eb6ae82f54, and the evaluation HTML refresh bc67dec01fa95c20200d59a34199aa86bbea9a51, are reachable from that observed main tip.
+- Integration Coordination Release: integration claim acquired journal event bb6f30c2-abd1-4333-be70-f0806a1ccd3 and released journal event e59e8bd2-72c9-48dc-94fe-fc098f99b5f3.
+- Separate Defects: newly exposed all-suite defects were recorded independently: Project Bootstrapper is completed, and Dev Merge Coordinator remains Ready at canonical task 0e1432e1. They are not part of this completion.
+- Terminal Provider Transaction: backlog claim complete-dev-coder-suite-binding-019f9907 acquired on primary main at 2026-07-25T12:21:42.125887Z; acquisition journal event 79102887-045b-4f30-bba4-e4cabc9a23a3. This archive path is the terminal provider reference.
+- Cleanup Eligibility: the delivered candidate and primary worktrees were clean before this transaction, the delivery is preserved on main, and the canonical delivery worktree/branch are eligible for normal cleanup after this terminal transaction's claim is released.
