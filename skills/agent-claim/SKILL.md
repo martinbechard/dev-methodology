@@ -52,7 +52,7 @@ An existing directory is not a valid exact-file scope, and an existing file is n
 
 The repository-root backlog directory and all-files ownership are shared-checkout-only. When another claim already owns that checkout, acquisition returns SHARED_CHECKOUT_RELEASE_REQUIRED and preserves the live registry unchanged. An isolated claim extension into backlog returns SHARED_CHECKOUT_REQUIRED because the operation must be handed to the shared checkout. Project-files claims remain eligible for canonical isolated worktrees.
 
-Every claim and scope result records file_domain as project_files, backlog, all_files, or none and records the matching broad booleans. Existing no-file-scope callers retain complete-worktree clean-release compatibility.
+Every claim and scope result records file_domain as project_files, backlog, all_files, or none and records the matching broad booleans. Explicit resource-only claims own no file domain and ignore unrelated worktree or index dirtiness. Legacy claims without a trustworthy file-domain baseline retain complete-worktree clean-release compatibility.
 
 Status normalizes active claims written by an earlier registry schema for display without silently rewriting the registry. A legacy claim with paths in both domains is reported as legacy_mixed, cannot extend into another file scope, and retains complete-worktree release rules. A claim that lacks a trustworthy out-of-domain baseline also retains complete-worktree release rules.
 
@@ -98,7 +98,7 @@ Request only the narrow scope currently supported by evidence. When no other cla
 
 ### Isolated Checkout Acquisition
 
-When another non-overlapping claim is active and isolation arguments were not supplied, acquisition returns ISOLATED_CHECKOUT_SETUP_REQUIRED without creating a claim. Repeat the same claim identifier with a unique branch and the required base. Successful isolation returns ISOLATED_CHECKOUT_ACQUIRED and the canonical target beneath the primary worktree's .worktrees directory.
+When another non-overlapping file-writer claim is active and a new file-writer request lacks isolation arguments, acquisition returns ISOLATED_CHECKOUT_SETUP_REQUIRED without creating a claim. Repeat the same claim identifier with a unique branch and the required base. Successful isolation returns ISOLATED_CHECKOUT_ACQUIRED and the canonical target beneath the primary worktree's .worktrees directory.
 
 The target is derived rather than caller-selected. Worktree-specific sparse checkout omits backlog without changing primary-worktree status. Isolation is rejected until the canonical worktree root is ignored. Isolation arguments never bypass overlapping scope.
 
@@ -167,13 +167,14 @@ The shared Git operation is integration into a target branch. Acquire a target-s
 
 ## Overlap And Isolation
 
-- Any active writer claim causes a later non-overlapping independent writer to use an isolated branch and worktree.
+- Any active file-writer claim causes a later non-overlapping independent file writer to use an isolated branch and worktree.
 - Every isolated checkout is derived beneath the primary worktree's .worktrees directory.
 - The canonical worktree root must be ignored, and double-force Git clean is prohibited while linked checkouts exist.
 - Exact files overlap only the same exact file.
 - Trees overlap descendants and intersecting ancestor or descendant trees.
 - All-files overlaps every exact file and tree.
 - Identical exclusive resources overlap even when file scope differs.
+- Resource-only claims serialize only exact resource overlaps and never occupy a file, backlog, or shared-checkout lane.
 - Backlog paths are never materialized in isolated worktrees and may only be claimed from the primary worktree.
 - Overlap waits. Worktree isolation does not make conflicting changes logically safe.
 - Never stage, commit, revert, or clean another claim owner's files unless acting as the explicit integration owner.

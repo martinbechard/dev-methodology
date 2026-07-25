@@ -732,6 +732,139 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
         self.assertEqual(str(self.repository.resolve()), result["target"]["worktree"])
 
+    def test_resource_only_claim_does_not_force_unrelated_file_claim_into_isolation(self) -> None:
+        resource = self.claim(
+            *self.acquire_arguments("resource"),
+            *self.timed_resource_arguments(),
+        )
+
+        completed = self.claim(
+            *self.acquire_arguments("file"),
+            "--file",
+            "src/one.py",
+        )
+
+        self.assertEqual(0, resource.returncode, resource.stderr)
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        result = self.output(completed)
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
+        self.assertEqual(str(self.repository.resolve()), result["target"]["worktree"])
+
+    def test_primary_resource_only_claim_cannot_extend_into_an_occupied_file_lane(self) -> None:
+        self.claim(*self.acquire_arguments("file"), "--file", "README.md")
+        resource = self.claim(
+            *self.acquire_arguments("resource"),
+            *self.timed_resource_arguments(),
+        )
+
+        extended = self.claim(
+            "extend",
+            "--claim-id",
+            "resource",
+            "--file",
+            "src/one.py",
+        )
+
+        self.assertEqual(0, resource.returncode, resource.stderr)
+        self.assertEqual(3, extended.returncode)
+        result = self.output(extended)
+        self.assertEqual("SHARED_CHECKOUT_RELEASE_REQUIRED", result["outcome"])
+        status = self.output(self.claim("status"))["claims"]
+        stored = next(claim for claim in status if claim["claim_id"] == "resource")
+        self.assertEqual("none", stored["file_domain"])
+        self.assertEqual([], stored["files"])
+
+    def test_resource_only_claim_does_not_block_unrelated_primary_integration(self) -> None:
+        resource = self.claim(
+            *self.acquire_arguments("resource"),
+            *self.timed_resource_arguments(),
+        )
+
+        completed = self.claim(
+            *self.acquire_arguments("integration"),
+            "--file",
+            "skills/codex-workitem-coordination/SKILL.md",
+            "--file",
+            "design/generated/skill-definitions.js",
+            *self.timed_resource_arguments(
+                resource="merge:integration:main",
+                resource_class="main-integration",
+            ),
+        )
+
+        self.assertEqual(0, resource.returncode, resource.stderr)
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        result = self.output(completed)
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
+        self.assertEqual(str(self.repository.resolve()), result["target"]["worktree"])
+
+    def test_resource_only_claim_ignores_unrelated_dirty_files(self) -> None:
+        source_path = self.repository / "src" / "one.py"
+        source_path.write_text("private worktree edit\n", encoding="utf-8")
+
+        acquired = self.claim(
+            *self.acquire_arguments("resource"),
+            *self.timed_resource_arguments(),
+        )
+        source_path.write_text("continued private worktree edit\n", encoding="utf-8")
+        released = self.claim("release", "--claim-id", "resource", "--no-change")
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(0, released.returncode, released.stderr)
+        self.assertEqual("RELEASED", self.output(released)["outcome"])
+        self.assertEqual(
+            "continued private worktree edit\n",
+            source_path.read_text(encoding="utf-8"),
+        )
+
+    def test_private_resource_only_claim_does_not_serialize_file_or_integration_claims(self) -> None:
+        self.claim(*self.acquire_arguments("primary-file"), "--file", "README.md")
+        isolated_arguments, isolated_path = self.isolated_arguments("isolated-file")
+        isolated = self.claim(
+            *self.acquire_arguments("isolated-file"),
+            "--file",
+            "src/one.py",
+            *isolated_arguments,
+        )
+        self.assertEqual(0, isolated.returncode, isolated.stderr)
+        self.claim("release", "--claim-id", "isolated-file", "--no-change")
+
+        resource = self.claim(
+            *self.acquire_arguments("private-resource"),
+            *self.timed_resource_arguments(resource="test:e2e"),
+            repo=isolated_path,
+        )
+        self.assertEqual(0, resource.returncode, resource.stderr)
+        self.assertEqual(
+            isolated_path.resolve(),
+            Path(self.output(resource)["target"]["worktree"]).resolve(),
+        )
+        self.claim("release", "--claim-id", "primary-file", "--no-change")
+
+        integration = self.claim(
+            *self.acquire_arguments("five-file-integration"),
+            "--file",
+            "README.md",
+            "--file",
+            "src/one.py",
+            "--file",
+            "docs/guide.md",
+            "--file",
+            "docs/future.md",
+            "--file",
+            "src/future.py",
+            *self.timed_resource_arguments(
+                resource="merge:integration:main",
+                resource_class="main-integration",
+            ),
+        )
+
+        self.assertEqual(0, integration.returncode, integration.stderr)
+        result = self.output(integration)
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
+        self.assertEqual(str(self.repository.resolve()), result["target"]["worktree"])
+        self.assertFalse((self.repository / ".worktrees" / "five-file-integration").exists())
+
     def test_primary_git_index_resource_uses_available_primary_while_isolated_claim_remains(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
         isolated, _isolated_path = self.isolated_arguments("isolated")
@@ -894,13 +1027,14 @@ class AgentClaimTests(unittest.TestCase):
             "--scope-reason",
             "repository migration",
         )
-        blocked = self.claim(
+        resource = self.claim(
             *self.acquire_arguments("other"),
             *self.timed_resource_arguments(),
         )
         exact = self.claim(*self.acquire_arguments("exact"), "--file", "docs/guide.md")
         self.assertEqual(0, all_files.returncode, all_files.stderr)
-        self.assertEqual(4, blocked.returncode)
+        self.assertEqual(0, resource.returncode, resource.stderr)
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", self.output(resource)["outcome"])
         self.assertEqual(3, exact.returncode)
 
     def test_project_files_and_backlog_are_separate_broad_domains(self) -> None:

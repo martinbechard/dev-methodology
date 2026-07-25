@@ -236,7 +236,7 @@ agents:
       - codex
       - junie
     outputContractFields:
-      - backlog item or status update
+      - backlog item, Future Idea, or status update
       - ownership record
       - completion or blocked summary
     judgePlan:
@@ -594,7 +594,7 @@ agents:
       - integrated changes
       - conflict resolution record
       - verification evidence
-      - commit and claim closeout
+      - commit and delivery closeout
     judgePlan:
       deterministicChecks:
         - harness-agent-identity
@@ -1508,16 +1508,18 @@ agents:
   - id: wiki-ingester
     source: agents/roles/wiki-activities/wiki-ingester.role.yaml
     scenarioFamily: wiki-lifecycle
-    repositoryMutation: required
+    repositoryMutation: conditional
     harnesses:
       - codex
       - junie
     outputContractFields:
       - status
+      - result inventories
       - durable wiki pages
       - processed-source links
       - lint and verifier evidence
-      - claim closeout
+      - ingest commit closeout
+      - final evidence audit
     judgePlan:
       deterministicChecks:
         - harness-agent-identity
@@ -1827,7 +1829,7 @@ agents:
       - durable wiki changes
       - source traceability
       - lint and verifier evidence
-      - claim closeout
+      - delivery closeout
     judgePlan:
       deterministicChecks:
         - harness-agent-identity

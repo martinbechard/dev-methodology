@@ -104,7 +104,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         self.assertEqual(124, summary["probeCount"])
         self.assertEqual(27, summary["roleCount"])
         self.assertEqual(27, summary["suiteCount"])
-        self.assertEqual(88, summary["currentScenarioCount"])
+        self.assertEqual(89, summary["currentScenarioCount"])
         self.assertEqual(26, campaign["suiteCount"])
         self.assertEqual(78, campaign["scenarioCount"])
         self.assertEqual({"PASS": 52, "BLOCKED": 17, "FAIL": 9}, campaign["verdicts"])
@@ -115,7 +115,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         summary = self.model["summary"]
         agents = {agent["id"]: agent for agent in self.model["agents"]}
 
-        self.assertEqual(10, summary["missingScenarioResults"])
+        self.assertEqual(11, summary["missingScenarioResults"])
         self.assertEqual(78, summary["historicalIdOnlyResults"])
         self.assertEqual(0, summary["snapshotAlignedResults"])
         self.assertEqual(0, summary["definitionDriftResults"])
