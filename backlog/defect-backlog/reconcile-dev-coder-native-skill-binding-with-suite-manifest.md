@@ -19,7 +19,7 @@ Completion: direct-main
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
 - Canonical Branch: codex/reconcile-dev-coder-suite-binding-019f9907
 - Canonical Worktree: /Users/martinbechard/.codex/worktrees/f0c1/dev-methodology
-- Phase: candidate implementation
+- Phase: correction attempt 1
 - Coordination Evidence: Backlog claim reconcile-dev-coder-suite-binding-running-019f9907 acquired on primary main at 2026-07-25T11:29:47.398158Z; acquisition journal event eb6dd5b3-d1e1-4e17-91ed-341d4e873e22.
 
 ## Launch Reservation
@@ -109,3 +109,15 @@ None.
 ## Notes
 
 This transaction records the defect only. It does not authorize implementation, governed-definition mutation, generated-output edits, or changes to either separate active runner defect.
+
+## Correction Attempt 1 Plan — 2026-07-25
+
+- Authorization: Parent-authorized correction plan for this canonical Running item. Status remains Running; Owner remains Dev Orchestrator; Canonical Thread And Task Identity, Parent Coordination Thread, Canonical Branch, and Canonical Worktree remain unchanged.
+- Rejected Candidate: c0916072a3ee9af8207b41257e0f971c225a2716.
+- Fresh Review: REJECT.
+- Medium Finding: The suite-wide claim contract must preserve enabled ownership release or an explicit handoff. Release-only evidence remains only in scenarios that require it.
+- High Finding: The suite.yaml source digest requires a candidate-owned supported generated documentation refresh.
+- Authorized Correction Scope: evals/agent-tests/dev-coder/suite.yaml; evals/agent-tests/dev-coder/skills/dev-coder-suite-contract/SKILL.md; evals/agent-tests/dev-coder/test_fixtures.py; and design/agent-and-skill-evaluations.html.
+- Generated Documentation Boundary: design/agent-and-skill-evaluations.html may be produced only by scripts/build-agent-skill-evaluation-docs.py after the source correction. Focused coverage changes may occur only inside the existing evals/agent-tests/dev-coder/test_fixtures.py.
+- Exclusions: No governed source, generated adapter, other generated mirror, backlog implementation, or other path is authorized.
+- Next Runnable Action: Dev Orchestrator performs correction attempt 1 within the exact authorized scope, obtains fresh review, and preserves required verification and delivery evidence before any lifecycle transition.
