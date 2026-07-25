@@ -1,10 +1,10 @@
 # Decouple Dev Backlog Steward Contract From Unconditional Claim Evidence
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
@@ -37,6 +37,18 @@ Completion: direct-main
 - Prior Release Baton: decouple-dev-orchestrator-eval-correction1-019f96ce released event c1cd5671-52fe-468f-a363-c561e7e0140f.
 - Current Backlog Claim: 019f96f1-running-discovery-transition acquired on primary main at 2026-07-25T02:46:17.204850Z; acquisition journal event ef354e4e-41bb-46ea-a849-1c1287ca8eac.
 - Approved-Implementation Backlog Claim: 019f96f1-running-approved-implementation acquired on primary main at 2026-07-25T04:09:25.562855Z; acquisition journal event 0f745454-173b-4c39-8c9c-71a0544f447e.
+
+## Blocked Handoff
+
+Blocker: After two bounded correction rounds, fresh final artifact review is NOT APPROVED on FIND-1 (Medium). The mechanically fresh generator-owned design/agent-and-skill-evaluations.html unconditionally requires a claim or new claim in the Dev Backlog Steward scenario rows because evals/agent-tests/dev-backlog-steward/scenarios.yaml remains unchanged. The approved canonical role is neutral and delegates coordination to project guidance.
+
+Required Resolution: Correct the scenario source so claim behavior is explicitly conditional on resource_coordination: agent-claim, add equivalent resource_coordination: none coverage, regenerate the page, and run page-level regression. No third correction is authorized in this candidate lifecycle.
+
+Preserved Candidate Chain: 9b746336b6663eee9cfb0124a99780482392f1d2 -> 32396d241493f3ef542b633b6f28d335e3fd5dab -> f30bbb84c47359a84f7e798c3a875b5657f0f923 on branch codex/decouple-backlog-steward-correction2-019f96f1. The preserved worktree is clean at /Users/martinbechard/dev/dev-methodology/.worktrees/019f96f1-steward-correction2-isolated, and all project claims are released.
+
+Passing Evidence: Role and renderer tests passed (116); full scripts passed (697); generator freshness, skill validation, and git diff --check passed; fresh code review approved. Final artifact review remains blocked only on FIND-1.
+
+Unblock Condition And Recovery Owner: A separately authorized or resumed lifecycle must correct the evaluation scenario, obtain fresh review and verification, then reuse the preserved commits without reimplementation. Until then, Owner remains Unowned.
 
 ## Prior User Action Resolution
 
