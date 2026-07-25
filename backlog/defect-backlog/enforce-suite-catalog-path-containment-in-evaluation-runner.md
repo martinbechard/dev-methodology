@@ -1,16 +1,29 @@
 # Enforce Suite-Catalog Path Containment In Evaluation Runner
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
-Owner: Unassigned
+Owner: Dev Orchestrator
 
 Provider: file
 
 Provider Reference: backlog/defect-backlog/enforce-suite-catalog-path-containment-in-evaluation-runner.md
 
 Completion: direct-main
+
+## Launch Reservation
+
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
+- Reservation: One parent-owned launch reservation for the selected higher-risk runner item.
+- Intended Root Role: Dev Orchestrator
+- Phase: Awaiting canonical task creation/root acceptance.
+- Dispatched At: 2026-07-25T06:40:40Z
+- Task Creation Boundary: The parent will create exactly one canonical task immediately after this durable reservation. Its identity will be recorded only by that task's own Starting -> Running transaction.
+
+## Coordination Evidence
+
+- Reservation Backlog Claim: reserve-runner-suite-catalog-containment-019f95a9 acquired on primary main at 2026-07-25T06:40:40.196731Z; acquisition journal event 92fdfab9-ec67-428c-bba2-5ed873f50900.
 
 ## Summary
 
