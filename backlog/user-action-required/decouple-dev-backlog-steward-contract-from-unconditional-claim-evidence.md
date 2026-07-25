@@ -1,12 +1,14 @@
 # Decouple Dev Backlog Steward Contract From Unconditional Claim Evidence
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
+Owner: Unowned
+
 Provider: file
 
-Provider Reference: backlog/defect-backlog/decouple-dev-backlog-steward-contract-from-unconditional-claim-evidence.md
+Provider Reference: backlog/user-action-required/decouple-dev-backlog-steward-contract-from-unconditional-claim-evidence.md
 
 Completion: direct-main
 
@@ -19,10 +21,10 @@ Completion: direct-main
 - Intended Root Role: Dev Orchestrator
 - Runtime Thread And Task Id: Not created; the root Dev Orchestrator must accept ownership before a canonical identity is recorded.
 
-## Execution Ownership
+## Prior Execution Ownership
 
 - Canonical Work-item Thread And Task Id: 019f96f1-1a19-7b01-b166-c5948a50fff5
-- Root Owner: Dev Orchestrator
+- Prior Root Owner: Dev Orchestrator
 - Delivery Branch: Detached pending delivery claim.
 - Delivery Worktree: /Users/martinbechard/.codex/worktrees/ecbc/dev-methodology
 - Phase: Discovery and approval manifest.
@@ -33,6 +35,27 @@ Completion: direct-main
 - Backlog Claim: 019f96f1-running-transition acquired on primary main at 2026-07-25T02:05:01.221304Z; acquisition journal event 48f71097-1095-4071-9b12-165048f4e832.
 - Direct Release Baton: running-backlog-lifecycle-019f96f0 was released after primary-main backlog transaction 766464a894ab3427d8eebc3aa28bc865119e199b; release event 5f486be7-acea-4f90-a200-75dcbe75fd43.
 - Prior Release Baton: decouple-dev-orchestrator-eval-correction1-019f96ce released event c1cd5671-52fe-468f-a363-c561e7e0140f.
+
+## User Action Required
+
+Question: Do you approve mutation of the single governed canonical definition path agents/roles/dev-activities/dev-backlog-steward.role.yaml to make claim-specific evidence wording conditional/neutral for resource_coordination none while retaining strict agent-claim-selected acquisition, committed mutation, and release behavior?
+
+Why Input Is Required: The repository definition_change_authority precheck returned BLOCKED_APPROVAL_REQUIRED. Failing tests and a repair assignment are not scope-specific user approval.
+
+### Governed Canonical Approval Scope
+
+- agents/roles/dev-activities/dev-backlog-steward.role.yaml
+
+### Dependent Generated Mirrors (Not Approval Scope)
+
+- generated/adapters/**
+- design/generated/role-definitions.js
+
+Prohibited Unattended Action: Do not mutate the governed canonical role or regenerate its mirrors before explicit scope-specific approval.
+
+Permitted Resumption: Record the user's answer in this canonical Thread, restore User Action Required -> Ready through the file provider, have the parent Coordinator reserve Ready -> Starting, then have this same root Dev Orchestrator record Starting -> Running before delivery work resumes.
+
+Resolution: Pending explicit user answer to the recorded question.
 
 ## Summary
 
@@ -45,6 +68,8 @@ Candidate cb5c7725 reproduced five broad scripts-gate failures that map to one d
 ## Source Evidence
 
 The candidate cb5c7725 broad scripts gate reproduced the five related failures. The user policy in parent Thread 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a requires every confirmed defect to be durably logged rather than treated as a warning.
+
+Discovery evidence: five exact test_role_mutation_policy failures concern one canonical role and the generated Claude, Codex, Gemini, and Junie adapters. The supported generated mirrors are generated/adapters/** and design/generated/role-definitions.js. Two unrelated broad failures are outside this item.
 
 ## Requirements
 
