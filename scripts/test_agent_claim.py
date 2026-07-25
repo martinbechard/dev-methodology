@@ -4,13 +4,16 @@
 
 from __future__ import annotations
 
+import base64
 import gzip
+import hashlib
 import json
 import os
 import subprocess
 import sys
 import tempfile
 import unittest
+from collections.abc import Mapping
 from pathlib import Path
 
 
@@ -186,6 +189,37 @@ class AgentClaimTests(unittest.TestCase):
             events.extend(json.loads(line) for line in path.read_text(encoding="utf-8").splitlines())
         return events
 
+    def journal_bytes(self) -> dict[str, bytes]:
+        """Return exact hot-journal bytes keyed by repository-relative journal path."""
+        return {
+            str(path.relative_to(self.common_directory())): path.read_bytes()
+            for path in sorted(self.hot_directory().glob("*.jsonl"))
+        }
+
+    def downgrade_claim_incarnations_to_legacy_fixture(self) -> None:
+        """Remove incarnation fields from temporary registry and journal fixtures."""
+        registry = json.loads(self.registry_path().read_text(encoding="utf-8"))
+        for claim in registry["claims"]:
+            claim.pop("incarnation_id", None)
+        self.registry_path().write_text(
+            json.dumps(registry, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        for path in sorted(self.hot_directory().glob("*.jsonl")):
+            events = [
+                json.loads(line)
+                for line in path.read_text(encoding="utf-8").splitlines()
+            ]
+            for event in events:
+                event.pop("incarnation_id", None)
+            path.write_text(
+                "".join(
+                    json.dumps(event, sort_keys=True, separators=(",", ":")) + "\n"
+                    for event in events
+                ),
+                encoding="utf-8",
+            )
+
     def write_daily_events(self, day: str, events: list[dict[str, object]]) -> Path:
         """Write a deterministic historical hot file for archive and report tests."""
         self.hot_directory().mkdir(parents=True, exist_ok=True)
@@ -215,6 +249,42 @@ class AgentClaimTests(unittest.TestCase):
         event.update(values)
         return event
 
+    def release_reconciliation_fixture(
+        self,
+        claim_id: str = "project",
+    ) -> dict[str, str]:
+        """Create one rejected release whose baseline dirtiness was preserved by a peer commit."""
+        backlog_path = self.repository / "backlog" / "feature-backlog" / "queued.md"
+        backlog_path.write_text("pre-existing peer work\n", encoding="utf-8")
+        acquired = self.claim(
+            *self.acquire_arguments(claim_id),
+            "--project-files",
+            "--scope-reason",
+            "project work",
+        )
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        baseline_commit = self.output(acquired)["claim"]["baseline_commit"]
+
+        self.git("add", "backlog/feature-backlog/queued.md")
+        self.git("commit", "-m", "preserve peer backlog work")
+        peer_commit = self.git("rev-parse", "HEAD").stdout.strip()
+
+        (self.repository / "src" / "one.py").write_text("claimed work\n", encoding="utf-8")
+        self.git("add", "src/one.py")
+        self.git("commit", "-m", "complete claimed project work")
+        head_commit = self.git("rev-parse", "HEAD").stdout.strip()
+
+        rejected = self.claim("release", "--claim-id", claim_id)
+        self.assertEqual(1, rejected.returncode, rejected.stderr)
+        rejection = self.output(rejected)
+        self.assertEqual("out_of_domain_changes", rejection["reason"])
+        return {
+            "baseline_commit": str(baseline_commit),
+            "head_commit": head_commit,
+            "peer_commit": peer_commit,
+            "prior_rejected_release_reference": str(rejection["journal"]["event_id"]),
+        }
+
     def test_first_writer_claims_clean_primary_worktree(self) -> None:
         completed = self.claim(*self.acquire_arguments("first"), "--file", "README.md")
 
@@ -231,6 +301,24 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("primary", event["checkout_topology"])
         self.assertEqual("primary", event["worktree_id"])
         self.assertNotIn(str(self.temporary_directory.name), json.dumps(event))
+
+    def test_new_claim_events_share_one_immutable_incarnation_id(self) -> None:
+        acquired = self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+        heartbeat = self.claim("heartbeat", "--claim-id", "first")
+        released = self.claim("release", "--claim-id", "first", "--no-change")
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(0, heartbeat.returncode, heartbeat.stderr)
+        self.assertEqual(0, released.returncode, released.stderr)
+        incarnation_id = self.output(acquired)["claim"]["incarnation_id"]
+        self.assertRegex(
+            incarnation_id,
+            r"^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+        )
+        self.assertEqual(
+            [incarnation_id, incarnation_id, incarnation_id],
+            [event["incarnation_id"] for event in self.journal_events()],
+        )
 
     def test_first_writer_in_existing_linked_checkout_reports_linked_topology(self) -> None:
         linked_path = self.existing_linked_worktree()
@@ -1297,6 +1385,1470 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual(0, released.returncode, released.stderr)
         self.assertEqual("RELEASED", self.output(released)["outcome"])
 
+    def test_release_reconciles_exact_peer_commit_after_dirty_out_of_domain_baseline(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        auxiliary = self.claim(
+            *self.acquire_arguments("auxiliary"),
+            *self.timed_resource_arguments(),
+        )
+        self.assertEqual(0, auxiliary.returncode, auxiliary.stderr)
+
+        released = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+
+        self.assertEqual(0, released.returncode, released.stderr)
+        result = self.output(released)
+        self.assertEqual("RELEASED", result["outcome"])
+        self.assertEqual(
+            ["auxiliary"],
+            [
+                claim["claim_id"]
+                for claim in self.output(self.claim("status"))["claims"]
+            ],
+        )
+        evidence = result["reconciliation"]
+        self.assertEqual(fixture["baseline_commit"], evidence["baseline_commit"])
+        self.assertEqual(fixture["peer_commit"], evidence["peer_commit"])
+        self.assertEqual(
+            ["backlog/feature-backlog/queued.md"],
+            evidence["reconciled_out_of_domain_paths"],
+        )
+        self.assertEqual(
+            fixture["prior_rejected_release_reference"],
+            evidence["prior_rejected_release_reference"],
+        )
+        event = self.journal_events()[-1]
+        self.assertEqual("RELEASED", event["outcome"])
+        self.assertEqual(fixture["head_commit"], event["resulting_commit"])
+        self.assertEqual(evidence, event["reconciliation"])
+        self.assertEqual(
+            [{"path": "backlog/feature-backlog/queued.md", "status": " M"}],
+            evidence["baseline_out_of_domain_status"],
+        )
+        baseline_state = evidence["baseline_out_of_domain_state"]
+        self.assertEqual(
+            ["backlog/feature-backlog/queued.md"],
+            sorted(baseline_state),
+        )
+        self.assertEqual(" M", baseline_state["backlog/feature-backlog/queued.md"]["status"])
+        self.assertTrue(
+            baseline_state["backlog/feature-backlog/queued.md"]["index_entry"].startswith("100644 ")
+        )
+        self.assertEqual(
+            64,
+            len(baseline_state["backlog/feature-backlog/queued.md"]["worktree_sha256"]),
+        )
+
+    def test_release_reconciliation_requires_full_sha_exclusive_mode_and_prior_evidence(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        registry_bytes = self.registry_path().read_bytes()
+
+        abbreviated = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"][:8],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+        self.assertEqual(2, abbreviated.returncode)
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+        mutually_exclusive = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--no-change",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+        self.assertEqual(2, mutually_exclusive.returncode)
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+        missing_prior_evidence = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+        )
+        self.assertEqual(1, missing_prior_evidence.returncode)
+        self.assertEqual(
+            "reconciliation_prior_rejection_required",
+            self.output(missing_prior_evidence)["reason"],
+        )
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+        wrong_prior_evidence = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            self.journal_events()[0]["event_id"],
+        )
+        self.assertEqual(1, wrong_prior_evidence.returncode)
+        self.assertEqual(
+            "reconciliation_prior_rejection_mismatch",
+            self.output(wrong_prior_evidence)["reason"],
+        )
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+        reference_without_commit = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+        self.assertEqual(1, reference_without_commit.returncode)
+        self.assertEqual(
+            "prior_rejection_requires_reconciliation_commit",
+            self.output(reference_without_commit)["reason"],
+        )
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+        for mode in ((), ("--no-change",)):
+            with self.subTest(mode=mode):
+                rejected = self.claim("release", "--claim-id", "project", *mode)
+                self.assertEqual(1, rejected.returncode)
+                self.assertEqual("out_of_domain_changes", self.output(rejected)["reason"])
+                self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+    def test_release_reconciliation_rejects_wrong_and_nonancestor_commits_without_registry_change(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        registry_bytes = self.registry_path().read_bytes()
+        original_branch = self.git("branch", "--show-current").stdout.strip()
+
+        wrong_commits = (
+            (fixture["baseline_commit"], "reconciliation_commit_not_after_baseline"),
+            ("f" * 40, "reconciliation_commit_not_found"),
+        )
+        for commit, reason in wrong_commits:
+            with self.subTest(reason=reason):
+                rejected = self.claim(
+                    "release",
+                    "--claim-id",
+                    "project",
+                    "--reconcile-out-of-domain-commit",
+                    commit,
+                    "--prior-rejected-release-reference",
+                    fixture["prior_rejected_release_reference"],
+                )
+                self.assertEqual(1, rejected.returncode)
+                self.assertEqual(reason, self.output(rejected)["reason"])
+                self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+        self.git("checkout", "-b", "unrelated-peer", fixture["baseline_commit"])
+        (self.repository / "backlog" / "feature-backlog" / "queued.md").write_text(
+            "unrelated peer work\n",
+            encoding="utf-8",
+        )
+        self.git("add", "backlog/feature-backlog/queued.md")
+        self.git("commit", "-m", "unrelated peer commit")
+        unrelated_commit = self.git("rev-parse", "HEAD").stdout.strip()
+        self.git("checkout", original_branch)
+
+        nonancestor = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            unrelated_commit,
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+        self.assertEqual(1, nonancestor.returncode)
+        self.assertEqual(
+            "reconciliation_commit_not_ancestor_of_head",
+            self.output(nonancestor)["reason"],
+        )
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+    def test_release_reconciliation_rejects_nonprimary_claim(self) -> None:
+        (self.repository / "README.md").write_text("recovery work\n", encoding="utf-8")
+        acquired = self.claim(
+            *self.acquire_arguments("recovery"),
+            "--all-files",
+            "--scope-reason",
+            "preserve recovery state",
+            "--allow-recovery",
+        )
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        baseline_commit = self.output(acquired)["claim"]["baseline_commit"]
+        self.git("add", "README.md")
+        self.git("commit", "-m", "recovery checkpoint")
+        checkpoint = self.git("rev-parse", "HEAD").stdout.strip()
+        self.assertNotEqual(baseline_commit, checkpoint)
+        registry_bytes = self.registry_path().read_bytes()
+
+        reconciled = self.claim(
+            "release",
+            "--claim-id",
+            "recovery",
+            "--reconcile-out-of-domain-commit",
+            checkpoint,
+            "--prior-rejected-release-reference",
+            "00000000-0000-0000-0000-000000000000",
+        )
+
+        self.assertEqual(1, reconciled.returncode)
+        self.assertEqual(
+            "reconciliation_requires_primary_scoped_claim",
+            self.output(reconciled)["reason"],
+        )
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+    def test_release_reconciliation_rejects_peer_commit_with_claimed_domain_path(self) -> None:
+        backlog_path = self.repository / "backlog" / "feature-backlog" / "queued.md"
+        backlog_path.write_text("pre-existing peer work\n", encoding="utf-8")
+        acquired = self.claim(
+            *self.acquire_arguments("project"),
+            "--project-files",
+            "--scope-reason",
+            "project work",
+        )
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        backlog_path.write_text("peer backlog work\n", encoding="utf-8")
+        (self.repository / "src" / "one.py").write_text("mixed peer work\n", encoding="utf-8")
+        self.git("add", "backlog/feature-backlog/queued.md", "src/one.py")
+        self.git("commit", "-m", "mixed peer commit")
+        peer_commit = self.git("rev-parse", "HEAD").stdout.strip()
+        (self.repository / "docs" / "guide.md").write_text("claimed work\n", encoding="utf-8")
+        self.git("add", "docs/guide.md")
+        self.git("commit", "-m", "complete claimed work")
+        rejected_release = self.claim("release", "--claim-id", "project")
+        prior_reference = self.output(rejected_release)["journal"]["event_id"]
+        registry_bytes = self.registry_path().read_bytes()
+
+        reconciled = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            peer_commit,
+            "--prior-rejected-release-reference",
+            prior_reference,
+        )
+
+        self.assertEqual(1, reconciled.returncode)
+        result = self.output(reconciled)
+        self.assertEqual("reconciliation_commit_changed_claimed_domain", result["reason"])
+        self.assertEqual(["src/one.py"], result["claimed_domain_paths"])
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+    def test_release_reconciliation_rejects_dirty_claimed_and_out_of_domain_state(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        registry_bytes = self.registry_path().read_bytes()
+        (self.repository / "src" / "one.py").write_text("dirty claimed work\n", encoding="utf-8")
+
+        dirty_claimed = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+
+        self.assertEqual(1, dirty_claimed.returncode)
+        self.assertEqual("worktree_not_clean", self.output(dirty_claimed)["reason"])
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+        self.git("restore", "src/one.py")
+        (self.repository / "backlog" / "feature-backlog" / "queued.md").write_text(
+            "dirty current peer work\n",
+            encoding="utf-8",
+        )
+
+        dirty_outside = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+
+        self.assertEqual(1, dirty_outside.returncode)
+        self.assertEqual(
+            "reconciliation_out_of_domain_not_clean",
+            self.output(dirty_outside)["reason"],
+        )
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+    def test_release_reconciliation_rejects_claim_with_resource(self) -> None:
+        backlog_path = self.repository / "backlog" / "feature-backlog" / "queued.md"
+        backlog_path.write_text("pre-existing peer work\n", encoding="utf-8")
+        acquired = self.claim(
+            *self.acquire_arguments("project"),
+            "--project-files",
+            "--scope-reason",
+            "project work",
+            *self.timed_resource_arguments(),
+        )
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.git("add", "backlog/feature-backlog/queued.md")
+        self.git("commit", "-m", "preserve peer backlog work")
+        peer_commit = self.git("rev-parse", "HEAD").stdout.strip()
+        (self.repository / "src" / "one.py").write_text("claimed work\n", encoding="utf-8")
+        self.git("add", "src/one.py")
+        self.git("commit", "-m", "complete claimed work")
+        rejected_release = self.claim("release", "--claim-id", "project")
+        prior_reference = self.output(rejected_release)["journal"]["event_id"]
+        registry_bytes = self.registry_path().read_bytes()
+
+        reconciled = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            peer_commit,
+            "--prior-rejected-release-reference",
+            prior_reference,
+        )
+
+        self.assertEqual(1, reconciled.returncode)
+        self.assertEqual("reconciliation_resources_present", self.output(reconciled)["reason"])
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+    def test_release_reconciliation_requires_exact_peer_paths_and_current_tree(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        registry_bytes = self.registry_path().read_bytes()
+        extra_path = self.repository / "backlog" / "feature-backlog" / "extra.md"
+        extra_path.write_text("extra committed peer work\n", encoding="utf-8")
+        self.git("add", "backlog/feature-backlog/extra.md")
+        self.git("commit", "-m", "unrelated later peer path")
+        wrong_paths_commit = self.git("rev-parse", "HEAD").stdout.strip()
+
+        wrong_paths = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            wrong_paths_commit,
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+
+        self.assertEqual(1, wrong_paths.returncode)
+        self.assertEqual("reconciliation_commit_paths_mismatch", self.output(wrong_paths)["reason"])
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+        queued_path = self.repository / "backlog" / "feature-backlog" / "queued.md"
+        queued_path.write_text("later committed peer value\n", encoding="utf-8")
+        self.git("add", "backlog/feature-backlog/queued.md")
+        self.git("commit", "-m", "change reconciled path after peer")
+
+        tree_mismatch = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+
+        self.assertEqual(1, tree_mismatch.returncode)
+        self.assertEqual(
+            "reconciliation_current_tree_mismatch",
+            self.output(tree_mismatch)["reason"],
+        )
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+    def test_release_reconciliation_rejects_stale_prior_event_from_reused_claim_identity(self) -> None:
+        backlog_path = self.repository / "backlog" / "feature-backlog" / "queued.md"
+        backlog_path.write_text("pre-existing peer work\n", encoding="utf-8")
+        acquired = self.claim(
+            *self.acquire_arguments("project"),
+            "--project-files",
+            "--scope-reason",
+            "project work",
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-25T12:00:00Z"},
+        )
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        baseline_commit = self.output(acquired)["claim"]["baseline_commit"]
+        original_branch = self.git("branch", "--show-current").stdout.strip()
+
+        self.git("add", "backlog/feature-backlog/queued.md")
+        self.git("commit", "-m", "preserve peer backlog work")
+        peer_commit = self.git("rev-parse", "HEAD").stdout.strip()
+        (self.repository / "src" / "one.py").write_text("claimed work\n", encoding="utf-8")
+        self.git("add", "src/one.py")
+        self.git("commit", "-m", "complete claimed project work")
+        claimed_head = self.git("rev-parse", "HEAD").stdout.strip()
+        old_rejection = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-25T12:01:00Z"},
+        )
+        old_reference = self.output(old_rejection)["journal"]["event_id"]
+        old_release = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            peer_commit,
+            "--prior-rejected-release-reference",
+            old_reference,
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-25T12:02:00Z"},
+        )
+        self.assertEqual(0, old_release.returncode, old_release.stderr)
+
+        self.git("checkout", "--detach", baseline_commit)
+        self.git("branch", "-f", original_branch, baseline_commit)
+        self.git("checkout", original_branch)
+        backlog_path.write_text("pre-existing peer work\n", encoding="utf-8")
+        reacquired = self.claim(
+            *self.acquire_arguments("project"),
+            "--project-files",
+            "--scope-reason",
+            "project work",
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-25T11:00:00Z"},
+        )
+        self.assertEqual(0, reacquired.returncode, reacquired.stderr)
+        self.assertEqual(baseline_commit, self.output(reacquired)["claim"]["baseline_commit"])
+        self.git("restore", "backlog/feature-backlog/queued.md")
+        self.git("merge", "--ff-only", peer_commit)
+        self.git("merge", "--ff-only", claimed_head)
+        self.downgrade_claim_incarnations_to_legacy_fixture()
+        registry_bytes = self.registry_path().read_bytes()
+
+        stale_reconciliation = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            peer_commit,
+            "--prior-rejected-release-reference",
+            old_reference,
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-25T10:00:00Z"},
+        )
+
+        self.assertEqual(1, stale_reconciliation.returncode)
+        self.assertEqual(
+            "reconciliation_legacy_incarnation_mismatch",
+            self.output(stale_reconciliation)["reason"],
+        )
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+        self.assertEqual(
+            ["project"],
+            [claim["claim_id"] for claim in self.output(self.claim("status"))["claims"]],
+        )
+
+    def test_release_reconciliation_resolves_one_legacy_acquisition_event_identity(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        acquisition_event_id = self.journal_events()[0]["event_id"]
+        self.downgrade_claim_incarnations_to_legacy_fixture()
+
+        released = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+
+        self.assertEqual(0, released.returncode, released.stderr)
+        evidence = self.output(released)["reconciliation"]["claim_incarnation"]
+        self.assertEqual(
+            {
+                "id": acquisition_event_id,
+                "source": "legacy_acquisition_event",
+            },
+            evidence,
+        )
+        self.assertEqual(
+            acquisition_event_id,
+            self.journal_events()[-1]["incarnation_id"],
+        )
+
+    def test_release_reconciliation_carries_legacy_lifecycle_across_hot_utc_midnight(
+        self,
+    ) -> None:
+        fixture = self.release_reconciliation_fixture()
+        self.downgrade_claim_incarnations_to_legacy_fixture()
+        events = self.journal_events()
+        acquisition = dict(events[0], timestamp="2026-07-24T23:59:59.000000Z")
+        later_events = [
+            dict(event, timestamp="2026-07-25T00:00:00.000000Z")
+            for event in events[1:]
+        ]
+        for path in self.hot_directory().glob("*.jsonl"):
+            path.unlink()
+        self.write_daily_events("2026-07-24", [acquisition])
+        self.write_daily_events("2026-07-25", later_events)
+
+        released = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-25T00:00:01Z"},
+        )
+
+        self.assertEqual(0, released.returncode, released.stderr)
+        self.assertEqual(
+            acquisition["event_id"],
+            self.output(released)["reconciliation"]["claim_incarnation"]["id"],
+        )
+
+    def test_release_reconciliation_carries_legacy_lifecycle_from_archive_to_hot(
+        self,
+    ) -> None:
+        fixture = self.release_reconciliation_fixture()
+        self.downgrade_claim_incarnations_to_legacy_fixture()
+        events = self.journal_events()
+        acquisition = dict(events[0], timestamp="2026-07-24T23:59:59.000000Z")
+        later_events = [
+            dict(event, timestamp="2026-07-25T00:00:00.000000Z")
+            for event in events[1:]
+        ]
+        for path in self.hot_directory().glob("*.jsonl"):
+            path.unlink()
+        self.write_daily_events("2026-07-25", later_events)
+        archive_path = (
+            self.common_directory()
+            / "agent-claim-events"
+            / "archive"
+            / "2026"
+            / "07"
+            / "2026-07-24.jsonl.gz"
+        )
+        archive_path.parent.mkdir(parents=True)
+        archive_path.write_bytes(
+            gzip.compress(
+                (
+                    json.dumps(acquisition, sort_keys=True, separators=(",", ":"))
+                    + "\n"
+                ).encode("utf-8"),
+                mtime=0,
+            )
+        )
+
+        released = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-25T00:00:01Z"},
+        )
+
+        self.assertEqual(0, released.returncode, released.stderr)
+        self.assertEqual(
+            acquisition["event_id"],
+            self.output(released)["reconciliation"]["claim_incarnation"]["id"],
+        )
+
+    def test_release_reconciliation_rejects_ambiguous_legacy_acquisition_sequence(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        self.downgrade_claim_incarnations_to_legacy_fixture()
+        journal_path = next(self.hot_directory().glob("*.jsonl"))
+        events = [
+            json.loads(line)
+            for line in journal_path.read_text(encoding="utf-8").splitlines()
+        ]
+        events.insert(1, dict(events[0]))
+        journal_path.write_text(
+            "".join(
+                json.dumps(event, sort_keys=True, separators=(",", ":")) + "\n"
+                for event in events
+            ),
+            encoding="utf-8",
+        )
+        registry_bytes = self.registry_path().read_bytes()
+
+        released = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+
+        self.assertEqual(1, released.returncode)
+        self.assertEqual(
+            "reconciliation_legacy_duplicate_event_id",
+            self.output(released)["reason"],
+        )
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+    def test_release_reconciliation_rejects_reused_legacy_event_id_across_lifecycles(
+        self,
+    ) -> None:
+        fixture = self.release_reconciliation_fixture()
+        self.downgrade_claim_incarnations_to_legacy_fixture()
+        events = self.journal_events()
+        acquisition = events[0]
+        rejection = events[-1]
+        released = self.synthetic_event(
+            "old-release",
+            "2026-07-25T12:01:00Z",
+            "release",
+            "RELEASED",
+            "project",
+        )
+        for path in self.hot_directory().glob("*.jsonl"):
+            path.unlink()
+        self.write_daily_events(
+            "2026-07-24",
+            [
+                dict(acquisition, timestamp="2026-07-25T12:00:00Z"),
+                released,
+            ],
+        )
+        self.write_daily_events(
+            "2026-07-25",
+            [
+                dict(acquisition, timestamp="2026-07-25T12:00:00Z"),
+                dict(rejection, timestamp="2026-07-25T10:00:00Z"),
+            ],
+        )
+        registry_bytes = self.registry_path().read_bytes()
+
+        completed = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+
+        self.assertEqual(1, completed.returncode)
+        self.assertEqual(
+            "reconciliation_legacy_duplicate_event_id",
+            self.output(completed)["reason"],
+        )
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+    def test_release_reconciliation_rejects_invalid_utf8_legacy_journal_structurally(
+        self,
+    ) -> None:
+        fixture = self.release_reconciliation_fixture()
+        self.downgrade_claim_incarnations_to_legacy_fixture()
+        journal_path = next(self.hot_directory().glob("*.jsonl"))
+        journal_path.write_bytes(journal_path.read_bytes() + b"\xff\n")
+        registry_bytes = self.registry_path().read_bytes()
+
+        completed = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+
+        self.assertEqual(1, completed.returncode)
+        self.assertEqual("", completed.stderr)
+        self.assertEqual(
+            "reconciliation_legacy_journal_invalid",
+            self.output(completed)["reason"],
+        )
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+    def test_release_reconciliation_rejects_malformed_legacy_journal_structurally(
+        self,
+    ) -> None:
+        fixture = self.release_reconciliation_fixture()
+        self.downgrade_claim_incarnations_to_legacy_fixture()
+        journal_path = next(self.hot_directory().glob("*.jsonl"))
+        journal_path.write_bytes(journal_path.read_bytes() + b"{malformed}\n")
+        registry_bytes = self.registry_path().read_bytes()
+
+        completed = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+
+        self.assertEqual(1, completed.returncode)
+        self.assertEqual("", completed.stderr)
+        self.assertEqual(
+            "reconciliation_legacy_journal_invalid",
+            self.output(completed)["reason"],
+        )
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+    def test_release_reconciliation_rejects_unresolvable_legacy_acquisition_sequence(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        self.downgrade_claim_incarnations_to_legacy_fixture()
+        journal_path = next(self.hot_directory().glob("*.jsonl"))
+        events = [
+            json.loads(line)
+            for line in journal_path.read_text(encoding="utf-8").splitlines()
+        ]
+        journal_path.write_text(
+            "".join(
+                json.dumps(event, sort_keys=True, separators=(",", ":")) + "\n"
+                for event in events
+                if event["action"] != "acquire"
+            ),
+            encoding="utf-8",
+        )
+        registry_bytes = self.registry_path().read_bytes()
+
+        released = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+
+        self.assertEqual(1, released.returncode)
+        self.assertEqual(
+            "reconciliation_legacy_incarnation_unresolvable",
+            self.output(released)["reason"],
+        )
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+
+    def test_release_reconciliation_requires_durable_released_journal_event(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        registry_bytes = self.registry_path().read_bytes()
+        journal_bytes = self.journal_bytes()
+        failures: Mapping[str, str] = {
+            "AGENT_CLAIM_TEST_FAIL_JOURNAL_WRITE": "before_write",
+            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_JOURNAL_AFTER_WRITE": "after_write",
+            "AGENT_CLAIM_TEST_SHORT_RECONCILIATION_JOURNAL_WRITE": "short_write",
+            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_JOURNAL_FSYNC": "fsync",
+            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_JOURNAL_REPLACE": "replace",
+            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_JOURNAL_DIRECTORY_FSYNC": (
+                "journal_directory_fsync"
+            ),
+            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_REGISTRY_WRITE": (
+                "registry_write"
+            ),
+            "AGENT_CLAIM_TEST_SHORT_RECONCILIATION_REGISTRY_WRITE": (
+                "registry_short_write"
+            ),
+            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_REGISTRY_AFTER_WRITE": (
+                "registry_after_write"
+            ),
+            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_REGISTRY_FSYNC": (
+                "registry_fsync"
+            ),
+            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_REGISTRY_REPLACE": (
+                "registry_replace"
+            ),
+            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_REGISTRY_DIRECTORY_FSYNC": (
+                "registry_directory_fsync"
+            ),
+        }
+
+        for variable, boundary in failures.items():
+            with self.subTest(boundary=boundary):
+                released = self.claim(
+                    "release",
+                    "--claim-id",
+                    "project",
+                    "--reconcile-out-of-domain-commit",
+                    fixture["peer_commit"],
+                    "--prior-rejected-release-reference",
+                    fixture["prior_rejected_release_reference"],
+                    environment={variable: "1"},
+                )
+
+                self.assertEqual(1, released.returncode)
+                result = self.output(released)
+                self.assertEqual("RELEASE_REJECTED", result["outcome"])
+                self.assertEqual("reconciliation_journal_not_durable", result["reason"])
+                self.assertFalse(result["journal"]["persisted"])
+                self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+                self.assertEqual(journal_bytes, self.journal_bytes())
+                self.assertEqual(
+                    ["project"],
+                    [
+                        claim["claim_id"]
+                        for claim in self.output(self.claim("status"))["claims"]
+                    ],
+                )
+
+    def test_release_reconciliation_restore_failures_leave_recoverable_ownership(
+        self,
+    ) -> None:
+        fixture = self.release_reconciliation_fixture()
+        registry_bytes = self.registry_path().read_bytes()
+        journal_bytes = self.journal_bytes()
+        pending_path = (
+            self.common_directory() / "agent-claim-reconciliation-pending.json"
+        )
+        restore_failures: Mapping[str, str] = {
+            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_REGISTRY_RESTORE_WRITE": (
+                "restore_write"
+            ),
+            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_REGISTRY_RESTORE_REPLACE": (
+                "restore_replace"
+            ),
+            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_REGISTRY_RESTORE_FSYNC": (
+                "restore_fsync"
+            ),
+            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_REGISTRY_RESTORE_DIRECTORY_FSYNC": (
+                "restore_directory_fsync"
+            ),
+        }
+
+        for variable, boundary in restore_failures.items():
+            with self.subTest(boundary=boundary):
+                released = self.claim(
+                    "release",
+                    "--claim-id",
+                    "project",
+                    "--reconcile-out-of-domain-commit",
+                    fixture["peer_commit"],
+                    "--prior-rejected-release-reference",
+                    fixture["prior_rejected_release_reference"],
+                    environment={
+                        "AGENT_CLAIM_TEST_FAIL_JOURNAL_WRITE": "1",
+                        variable: "1",
+                    },
+                )
+
+                self.assertEqual(1, released.returncode)
+                result = self.output(released)
+                self.assertEqual("RELEASE_REJECTED", result["outcome"])
+                self.assertEqual("reconciliation_restore_pending", result["reason"])
+                self.assertEqual("pending_marker", result["ownership_authority"])
+                self.assertTrue(pending_path.exists())
+                pending = json.loads(pending_path.read_text(encoding="utf-8"))
+                original_registry = json.loads(
+                    base64.b64decode(pending["registry"]["original"]["base64"])
+                )
+                self.assertEqual(
+                    ["project"],
+                    [claim["claim_id"] for claim in original_registry["claims"]],
+                )
+                self.assertEqual(journal_bytes, self.journal_bytes())
+
+                blocked_acquisition = self.claim(
+                    *self.acquire_arguments("intruder"),
+                    "--file",
+                    "README.md",
+                    environment={variable: "1"},
+                )
+
+                self.assertEqual(1, blocked_acquisition.returncode)
+                blocked_result = self.output(blocked_acquisition)
+                self.assertEqual(
+                    "RECONCILIATION_RECOVERY_REQUIRED",
+                    blocked_result["outcome"],
+                )
+                self.assertEqual(
+                    "pending_marker",
+                    blocked_result["ownership_authority"],
+                )
+                self.assertTrue(pending_path.exists())
+
+                recovered_status = self.claim("status")
+
+                self.assertEqual(0, recovered_status.returncode, recovered_status.stderr)
+                self.assertEqual(
+                    ["project"],
+                    [
+                        claim["claim_id"]
+                        for claim in self.output(recovered_status)["claims"]
+                    ],
+                )
+                self.assertFalse(pending_path.exists())
+                self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+                self.assertEqual(journal_bytes, self.journal_bytes())
+
+    def test_release_reconciliation_recovers_committed_marker_without_duplicate_event(
+        self,
+    ) -> None:
+        fixture = self.release_reconciliation_fixture()
+        pending_path = (
+            self.common_directory() / "agent-claim-reconciliation-pending.json"
+        )
+
+        interrupted = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+            environment={
+                "AGENT_CLAIM_TEST_STOP_AFTER_RECONCILIATION_COMMIT_MARKER": "1"
+            },
+        )
+
+        self.assertEqual(1, interrupted.returncode)
+        result = self.output(interrupted)
+        self.assertEqual("RECONCILIATION_RECOVERY_REQUIRED", result["outcome"])
+        self.assertEqual("committed_marker", result["ownership_authority"])
+        self.assertTrue(pending_path.exists())
+        self.assertEqual(
+            0,
+            sum(
+                event["outcome"] == "RELEASED"
+                and event["claim_id"] == "project"
+                for event in self.journal_events()
+            ),
+        )
+        self.assertEqual(
+            1,
+            sum(
+                event["outcome"] == "RELEASE_PENDING"
+                and event["claim_id"] == "project"
+                for event in self.journal_events()
+            ),
+        )
+
+        recovered_status = self.claim("status")
+
+        self.assertEqual(0, recovered_status.returncode, recovered_status.stderr)
+        self.assertEqual([], self.output(recovered_status)["claims"])
+        self.assertFalse(pending_path.exists())
+        self.assertEqual(
+            1,
+            sum(
+                event["outcome"] == "RELEASED"
+                and event["claim_id"] == "project"
+                for event in self.journal_events()
+            ),
+        )
+        self.assertEqual(
+            0,
+            sum(
+                event["outcome"] == "RELEASE_PENDING"
+                and event["claim_id"] == "project"
+                for event in self.journal_events()
+            ),
+        )
+
+    def test_report_blocks_read_only_when_committed_marker_exists(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        interrupted = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+            environment={
+                "AGENT_CLAIM_TEST_STOP_AFTER_RECONCILIATION_COMMIT_MARKER": "1"
+            },
+        )
+        self.assertEqual(1, interrupted.returncode)
+        marker_path = (
+            self.common_directory() / "agent-claim-reconciliation-pending.json"
+        )
+        marker_bytes = marker_path.read_bytes()
+        registry_bytes = self.registry_path().read_bytes()
+        journal_bytes = self.journal_bytes()
+
+        reported = self.claim("report", "--since", "2d")
+
+        self.assertEqual(1, reported.returncode)
+        self.assertEqual(
+            "RECONCILIATION_RECOVERY_REQUIRED",
+            self.output(reported)["outcome"],
+        )
+        self.assertEqual(marker_bytes, marker_path.read_bytes())
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+        self.assertEqual(journal_bytes, self.journal_bytes())
+
+    def test_report_blocks_read_only_when_prepared_marker_exists(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        interrupted = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+            environment={
+                "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_JOURNAL_DIRECTORY_FSYNC": "1",
+                "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_JOURNAL_RESTORE_WRITE": "1",
+            },
+        )
+        self.assertEqual(1, interrupted.returncode)
+        marker_path = (
+            self.common_directory() / "agent-claim-reconciliation-pending.json"
+        )
+        marker_bytes = marker_path.read_bytes()
+        registry_bytes = self.registry_path().read_bytes()
+        journal_bytes = self.journal_bytes()
+
+        reported = self.claim("report", "--since", "2d")
+
+        self.assertEqual(1, reported.returncode)
+        self.assertEqual(
+            "RECONCILIATION_RECOVERY_REQUIRED",
+            self.output(reported)["outcome"],
+        )
+        self.assertEqual(marker_bytes, marker_path.read_bytes())
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+        self.assertEqual(journal_bytes, self.journal_bytes())
+
+    def test_corrupt_marker_schema_is_retained_without_target_mutation(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        interrupted = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+            environment={
+                "AGENT_CLAIM_TEST_STOP_AFTER_RECONCILIATION_COMMIT_MARKER": "1"
+            },
+        )
+        self.assertEqual(1, interrupted.returncode)
+        marker_path = (
+            self.common_directory() / "agent-claim-reconciliation-pending.json"
+        )
+        marker = json.loads(marker_path.read_text(encoding="utf-8"))
+        marker["schema_version"] = 999
+        marker_path.write_text(
+            json.dumps(marker, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        marker_bytes = marker_path.read_bytes()
+        registry_bytes = self.registry_path().read_bytes()
+        journal_bytes = self.journal_bytes()
+
+        status = self.claim("status")
+
+        self.assertEqual(1, status.returncode)
+        self.assertEqual("", status.stderr)
+        self.assertEqual(
+            "RECONCILIATION_RECOVERY_REQUIRED",
+            self.output(status)["outcome"],
+        )
+        self.assertEqual(marker_bytes, marker_path.read_bytes())
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+        self.assertEqual(journal_bytes, self.journal_bytes())
+
+    def test_marker_cannot_redirect_registry_snapshot_to_sentinel(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        interrupted = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+            environment={
+                "AGENT_CLAIM_TEST_STOP_AFTER_RECONCILIATION_COMMIT_MARKER": "1"
+            },
+        )
+        self.assertEqual(1, interrupted.returncode)
+        marker_path = (
+            self.common_directory() / "agent-claim-reconciliation-pending.json"
+        )
+        marker = json.loads(marker_path.read_text(encoding="utf-8"))
+        marker["registry"]["path"] = "sentinel.txt"
+        marker_path.write_text(
+            json.dumps(marker, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        sentinel = self.common_directory() / "sentinel.txt"
+        sentinel.write_bytes(b"sentinel\n")
+        registry_bytes = self.registry_path().read_bytes()
+        journal_bytes = self.journal_bytes()
+
+        status = self.claim("status")
+
+        self.assertEqual(1, status.returncode)
+        self.assertEqual(
+            "RECONCILIATION_RECOVERY_REQUIRED",
+            self.output(status)["outcome"],
+        )
+        self.assertEqual(b"sentinel\n", sentinel.read_bytes())
+        self.assertTrue(marker_path.exists())
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+        self.assertEqual(journal_bytes, self.journal_bytes())
+
+    def test_marker_rejects_swapped_and_duplicate_targets(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        interrupted = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+            environment={
+                "AGENT_CLAIM_TEST_STOP_AFTER_RECONCILIATION_COMMIT_MARKER": "1"
+            },
+        )
+        self.assertEqual(1, interrupted.returncode)
+        marker_path = (
+            self.common_directory() / "agent-claim-reconciliation-pending.json"
+        )
+        original_marker = json.loads(marker_path.read_text(encoding="utf-8"))
+        registry_bytes = self.registry_path().read_bytes()
+        journal_bytes = self.journal_bytes()
+        registry_target = original_marker["registry"]["path"]
+        journal_target = original_marker["journal"]["path"]
+        target_cases = {
+            "swapped": (journal_target, registry_target),
+            "duplicate": (registry_target, registry_target),
+        }
+
+        for label, (registry_path, journal_path) in target_cases.items():
+            with self.subTest(label=label):
+                marker = json.loads(json.dumps(original_marker))
+                marker["registry"]["path"] = registry_path
+                marker["journal"]["path"] = journal_path
+                marker_path.write_text(
+                    json.dumps(marker, indent=2, sort_keys=True) + "\n",
+                    encoding="utf-8",
+                )
+                status = self.claim("status")
+                self.assertEqual(1, status.returncode)
+                self.assertEqual(
+                    "RECONCILIATION_RECOVERY_REQUIRED",
+                    self.output(status)["outcome"],
+                )
+                self.assertTrue(marker_path.exists())
+                self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+                self.assertEqual(journal_bytes, self.journal_bytes())
+
+    def test_forged_self_consistent_marker_snapshots_are_rejected(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        interrupted = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+            environment={
+                "AGENT_CLAIM_TEST_STOP_AFTER_RECONCILIATION_COMMIT_MARKER": "1"
+            },
+        )
+        self.assertEqual(1, interrupted.returncode)
+        marker_path = (
+            self.common_directory() / "agent-claim-reconciliation-pending.json"
+        )
+        marker = json.loads(marker_path.read_text(encoding="utf-8"))
+        original = base64.b64decode(marker["registry"]["original"]["base64"])
+        marker["registry"]["released"] = {
+            "exists": True,
+            "sha256": hashlib.sha256(original).hexdigest(),
+            "base64": base64.b64encode(original).decode("ascii"),
+        }
+        marker_path.write_text(
+            json.dumps(marker, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        marker_bytes = marker_path.read_bytes()
+        registry_bytes = self.registry_path().read_bytes()
+        journal_bytes = self.journal_bytes()
+
+        status = self.claim("status")
+
+        self.assertEqual(1, status.returncode)
+        self.assertEqual(
+            "RECONCILIATION_RECOVERY_REQUIRED",
+            self.output(status)["outcome"],
+        )
+        self.assertEqual(marker_bytes, marker_path.read_bytes())
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+        self.assertEqual(journal_bytes, self.journal_bytes())
+
+    def test_marker_target_symlink_is_rejected_without_following_it(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        interrupted = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+            environment={
+                "AGENT_CLAIM_TEST_STOP_AFTER_RECONCILIATION_COMMIT_MARKER": "1"
+            },
+        )
+        self.assertEqual(1, interrupted.returncode)
+        marker_path = (
+            self.common_directory() / "agent-claim-reconciliation-pending.json"
+        )
+        marker_bytes = marker_path.read_bytes()
+        registry_bytes = self.registry_path().read_bytes()
+        event_root = self.common_directory() / "agent-claim-events"
+        hot = event_root / "hot"
+        real_hot = event_root / "real-hot"
+        hot.rename(real_hot)
+        hot.symlink_to(real_hot, target_is_directory=True)
+        real_bytes = {
+            path.name: path.read_bytes()
+            for path in real_hot.glob("*.jsonl")
+        }
+
+        status = self.claim("status")
+
+        self.assertEqual(1, status.returncode)
+        self.assertEqual(
+            "RECONCILIATION_RECOVERY_REQUIRED",
+            self.output(status)["outcome"],
+        )
+        self.assertEqual(marker_bytes, marker_path.read_bytes())
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+        self.assertEqual(
+            real_bytes,
+            {path.name: path.read_bytes() for path in real_hot.glob("*.jsonl")},
+        )
+
+    def test_invalid_utf8_marker_returns_structured_recovery_required(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        interrupted = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+            environment={
+                "AGENT_CLAIM_TEST_STOP_AFTER_RECONCILIATION_COMMIT_MARKER": "1"
+            },
+        )
+        self.assertEqual(1, interrupted.returncode)
+        marker_path = (
+            self.common_directory() / "agent-claim-reconciliation-pending.json"
+        )
+        marker_path.write_bytes(b"\xff\n")
+        registry_bytes = self.registry_path().read_bytes()
+        journal_bytes = self.journal_bytes()
+
+        status = self.claim("status")
+
+        self.assertEqual(1, status.returncode)
+        self.assertEqual("", status.stderr)
+        self.assertEqual(
+            "RECONCILIATION_RECOVERY_REQUIRED",
+            self.output(status)["outcome"],
+        )
+        self.assertEqual(b"\xff\n", marker_path.read_bytes())
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+        self.assertEqual(journal_bytes, self.journal_bytes())
+
+    def test_reconciliation_preserves_registry_and_journal_file_modes(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        journal_path = next(self.hot_directory().glob("*.jsonl"))
+        self.registry_path().chmod(0o640)
+        journal_path.chmod(0o640)
+
+        released = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+        )
+
+        self.assertEqual(0, released.returncode, released.stderr)
+        self.assertEqual(0o640, self.registry_path().stat().st_mode & 0o777)
+        self.assertEqual(0o640, journal_path.stat().st_mode & 0o777)
+
+    def test_committed_marker_delete_failure_is_recoverable_without_duplicate_release(
+        self,
+    ) -> None:
+        fixture = self.release_reconciliation_fixture()
+        marker_path = (
+            self.common_directory() / "agent-claim-reconciliation-pending.json"
+        )
+
+        interrupted = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+            environment={
+                "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_MARKER_REMOVE": "1"
+            },
+        )
+
+        self.assertEqual(1, interrupted.returncode)
+        self.assertEqual(
+            "committed_reconciliation_cleanup_pending",
+            self.output(interrupted)["reason"],
+        )
+        self.assertTrue(marker_path.exists())
+        recovered = self.claim("status")
+        self.assertEqual(0, recovered.returncode, recovered.stderr)
+        self.assertFalse(marker_path.exists())
+        self.assertEqual([], self.output(recovered)["claims"])
+        self.assertEqual(
+            1,
+            sum(
+                event["outcome"] == "RELEASED"
+                and event["claim_id"] == "project"
+                for event in self.journal_events()
+            ),
+        )
+
+    def test_release_reconciliation_restore_failure_never_exposes_false_released_event(
+        self,
+    ) -> None:
+        fixture = self.release_reconciliation_fixture()
+        registry_bytes = self.registry_path().read_bytes()
+        journal_bytes = self.journal_bytes()
+        pending_path = (
+            self.common_directory() / "agent-claim-reconciliation-pending.json"
+        )
+        environment = {
+            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_JOURNAL_DIRECTORY_FSYNC": "1",
+            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_JOURNAL_RESTORE_WRITE": "1",
+        }
+
+        interrupted = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+            environment=environment,
+        )
+
+        self.assertEqual(1, interrupted.returncode)
+        result = self.output(interrupted)
+        self.assertEqual("reconciliation_restore_pending", result["reason"])
+        self.assertEqual("pending_marker", result["ownership_authority"])
+        self.assertTrue(pending_path.exists())
+        self.assertEqual(
+            0,
+            sum(
+                event["outcome"] == "RELEASED"
+                and event["claim_id"] == "project"
+                for event in self.journal_events()
+            ),
+        )
+        self.assertEqual(
+            1,
+            sum(
+                event["outcome"] == "RELEASE_PENDING"
+                and event["claim_id"] == "project"
+                for event in self.journal_events()
+            ),
+        )
+
+        blocked_acquisition = self.claim(
+            *self.acquire_arguments("intruder"),
+            "--file",
+            "README.md",
+            environment={
+                "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_JOURNAL_RESTORE_WRITE": "1"
+            },
+        )
+
+        self.assertEqual(1, blocked_acquisition.returncode)
+        self.assertEqual(
+            "RECONCILIATION_RECOVERY_REQUIRED",
+            self.output(blocked_acquisition)["outcome"],
+        )
+
+        recovered_status = self.claim("status")
+
+        self.assertEqual(0, recovered_status.returncode, recovered_status.stderr)
+        self.assertEqual(
+            ["project"],
+            [claim["claim_id"] for claim in self.output(recovered_status)["claims"]],
+        )
+        self.assertFalse(pending_path.exists())
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+        self.assertEqual(journal_bytes, self.journal_bytes())
+
+    def test_release_reconciliation_recovers_final_journal_directory_failure(
+        self,
+    ) -> None:
+        fixture = self.release_reconciliation_fixture()
+        pending_path = (
+            self.common_directory() / "agent-claim-reconciliation-pending.json"
+        )
+
+        released = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+            environment={
+                "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_FINAL_JOURNAL_DIRECTORY_FSYNC": (
+                    "1"
+                )
+            },
+        )
+
+        self.assertEqual(0, released.returncode, released.stderr)
+        result = self.output(released)
+        self.assertEqual("RELEASED", result["outcome"])
+        self.assertEqual(
+            "reconciliation_cleanup_recovered",
+            result["warnings"][0]["code"],
+        )
+        self.assertFalse(pending_path.exists())
+        self.assertEqual(
+            1,
+            sum(
+                event["outcome"] == "RELEASED"
+                and event["claim_id"] == "project"
+                for event in self.journal_events()
+            ),
+        )
+        self.assertEqual(
+            0,
+            sum(
+                event["outcome"] == "RELEASE_PENDING"
+                and event["claim_id"] == "project"
+                for event in self.journal_events()
+            ),
+        )
+
     def test_project_claim_release_ignores_merge_parent_history(self) -> None:
         source_branch = "project-source"
         target_branch = self.git("branch", "--show-current").stdout.strip()
@@ -1991,6 +3543,106 @@ class AgentClaimTests(unittest.TestCase):
             self.assertEqual([f"event-{day}"], [event["event_id"] for event in events])
             self.assertEqual(1, json.loads(summary.read_text(encoding="utf-8"))["raw_event_count"])
         self.assertEqual([], self.output(rerun)["archived"])
+
+    def test_maintenance_recovers_prepared_marker_before_hot_day_rollover(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        registry_bytes = self.registry_path().read_bytes()
+        original_journal = self.journal_bytes()
+        interrupted = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+            environment={
+                "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_JOURNAL_DIRECTORY_FSYNC": "1",
+                "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_JOURNAL_RESTORE_WRITE": "1",
+            },
+        )
+        self.assertEqual(1, interrupted.returncode)
+        marker_path = (
+            self.common_directory() / "agent-claim-reconciliation-pending.json"
+        )
+        self.assertEqual("prepared", json.loads(marker_path.read_text())["state"])
+
+        maintained = self.claim(
+            "maintain-journal",
+            "--hot-days",
+            "1",
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-26T00:01:00Z"},
+        )
+
+        self.assertEqual(0, maintained.returncode, maintained.stderr)
+        self.assertFalse(marker_path.exists())
+        self.assertEqual(registry_bytes, self.registry_path().read_bytes())
+        archived_bytes: dict[str, bytes] = {}
+        archive_root = self.common_directory() / "agent-claim-events" / "archive"
+        for path in archive_root.glob("**/*.jsonl.gz"):
+            archived_bytes[
+                f"agent-claim-events/hot/{path.name.removesuffix('.gz')}"
+            ] = gzip.decompress(path.read_bytes())
+        self.assertEqual(original_journal, archived_bytes)
+        self.assertFalse(
+            any(
+                event["outcome"] in {"RELEASE_PENDING", "RELEASED"}
+                and event["claim_id"] == "project"
+                for raw in archived_bytes.values()
+                for event in (
+                    json.loads(line)
+                    for line in raw.decode("utf-8").splitlines()
+                )
+            )
+        )
+
+    def test_maintenance_finalizes_committed_marker_before_hot_day_rollover(self) -> None:
+        fixture = self.release_reconciliation_fixture()
+        interrupted = self.claim(
+            "release",
+            "--claim-id",
+            "project",
+            "--reconcile-out-of-domain-commit",
+            fixture["peer_commit"],
+            "--prior-rejected-release-reference",
+            fixture["prior_rejected_release_reference"],
+            environment={
+                "AGENT_CLAIM_TEST_STOP_AFTER_RECONCILIATION_COMMIT_MARKER": "1"
+            },
+        )
+        self.assertEqual(1, interrupted.returncode)
+        marker_path = (
+            self.common_directory() / "agent-claim-reconciliation-pending.json"
+        )
+        self.assertEqual("committed", json.loads(marker_path.read_text())["state"])
+
+        maintained = self.claim(
+            "maintain-journal",
+            "--hot-days",
+            "1",
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-26T00:01:00Z"},
+        )
+
+        self.assertEqual(0, maintained.returncode, maintained.stderr)
+        self.assertFalse(marker_path.exists())
+        self.assertEqual([], self.output(self.claim("status"))["claims"])
+        archive_root = self.common_directory() / "agent-claim-events" / "archive"
+        archived_events = [
+            json.loads(line)
+            for path in archive_root.glob("**/*.jsonl.gz")
+            for line in gzip.decompress(path.read_bytes()).decode("utf-8").splitlines()
+        ]
+        self.assertEqual(
+            1,
+            sum(
+                event["outcome"] == "RELEASED"
+                and event["claim_id"] == "project"
+                for event in archived_events
+            ),
+        )
+        self.assertFalse(
+            any(event["outcome"] == "RELEASE_PENDING" for event in archived_events)
+        )
 
     def test_archive_interruption_leaves_hot_file_for_safe_rerun(self) -> None:
         event = self.synthetic_event("old", "2026-07-10T12:00:00Z", "acquire", "PRIMARY", "old")

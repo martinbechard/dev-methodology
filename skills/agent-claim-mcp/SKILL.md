@@ -30,7 +30,7 @@ Use exactly the tool matching the intended operation:
 | Extend scope | claim_extend | repository, claim_id, and net-new scope |
 | Extend a deadline | claim_extend_deadline | repository, claim_id, requested_hard_stop_duration_seconds, and extension_evidence |
 | Refresh heartbeat | claim_heartbeat | repository, claim_id |
-| Release ownership | claim_release | repository, claim_id; no_change only for a truthful no-change release |
+| Release ownership | claim_release | repository, claim_id; no_change only for a truthful no-change release, or the mutually exclusive reconcile_out_of_domain_commit and matching prior_rejected_release_reference |
 | Maintain journal | claim_maintain_journal | repository; hot_days defaults to 2 |
 | Report contention | claim_report | repository; since defaults to 2d |
 
@@ -43,6 +43,14 @@ The required future parity contract permits at most one resource value per claim
 Each completed tool call returns one structured wrapper with exit_code and result. Inspect result.outcome before taking the next action. Preserve result.schema_version, result.legacy_outcome when present, warnings, conflicts, claim data, and target data as coordination evidence.
 
 Do not treat a nonzero exit_code as a protocol failure. CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, SHARED_CHECKOUT_REQUIRED, SHARED_CHECKOUT_RELEASE_REQUIRED, ISOLATED_CHECKOUT_SETUP_REQUIRED, DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED, and every structured rejection are completed coordination results. Follow agent-claim without repeating the operation through another transport.
+
+The required future parity contract must also return RECONCILIATION_RECOVERY_REQUIRED when a durable pending reconciliation marker controls transaction recovery. A prepared marker protects the exact original registry and journal snapshots; RELEASE_PENDING is not a release. A committed marker makes the exact released registry authoritative and finalizes exactly one RELEASED journal event. Scoped operations and journal maintenance must attempt validated deterministic recovery under the registry lock. Reporting must remain read-only and return this outcome before loading journal events when a marker exists.
+
+When this outcome appears:
+
+1. Call claim_status through this same configured MCP transport.
+2. If the outcome persists, preserve the marker, registry, journal, tool result, and relevant filesystem evidence.
+3. Escalate that evidence. Do not manually edit or remove the marker, registry, journal, or protected claim.
 
 ## Exact Call Shapes
 
@@ -155,6 +163,17 @@ Heartbeat, release, journal maintenance, and reporting use these respective argu
 
 ```json
 {"repository": "/workspace/project", "claim_id": "task-123", "no_change": false}
+```
+
+The required future evidence-gated reconciliation shape is:
+
+```json
+{
+  "repository": "/workspace/project",
+  "claim_id": "task-123",
+  "reconcile_out_of_domain_commit": "0123456789abcdef0123456789abcdef01234567",
+  "prior_rejected_release_reference": "12345678-1234-1234-1234-123456789abc"
+}
 ```
 
 ```json

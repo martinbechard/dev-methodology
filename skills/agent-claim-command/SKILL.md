@@ -48,11 +48,19 @@ Stable process exit codes are:
 
 Several outcomes share one exit code. Never branch on the process code alone. A completed structured rejection is a valid coordination result; do not switch transports or retry it through MCP.
 
+RECONCILIATION_RECOVERY_REQUIRED means a durable pending reconciliation marker still controls transaction recovery. A prepared marker protects the exact original registry and journal snapshots; its RELEASE_PENDING line is not a release. A committed marker makes the exact released registry authoritative and finalizes exactly one RELEASED journal event. Scoped commands and journal maintenance attempt validated deterministic recovery under the registry lock. Report remains read-only and returns this outcome before journal loading when a marker exists.
+
+When this outcome appears:
+
+1. Invoke status through this same CLAIM_SCRIPT path.
+2. If the outcome persists, preserve the marker, registry, journal, command result, and relevant filesystem evidence.
+3. Escalate that evidence. Do not manually edit or remove the marker, registry, journal, or protected claim.
+
 ## Command Arguments
 
 Acquire requires claim-id, agent, task, and root-task-id. Scope arguments are repeatable file and tree values, at most one resource value, or one mutually exclusive broad selector: project-files, backlog, or all-files. Tree, project-files, and all-files require scope-reason. A named resource also requires resource-class, resource-id, expected-duration-seconds, and requested-hard-stop-duration-seconds; the command resolves configured maximum and cleanup grace from PROJECT.yaml. Optional acquisition arguments are parent-claim-id, branch, base, allow-recovery, and the compatibility-only worktree-path and compat-file-directories options.
 
-Extend requires claim-id plus net-new scope and uses the same complete timing arguments when adding the claim's one named resource. Extend-deadline requires claim-id, requested-hard-stop-duration-seconds, and extension-evidence. Heartbeat and release require claim-id. Release accepts no-change only for a truthful no-change result. Journal maintenance accepts hot-days, defaulting to 2. Reporting accepts since and format; use JSON output for automation.
+Extend requires claim-id plus net-new scope and uses the same complete timing arguments when adding the claim's one named resource. Extend-deadline requires claim-id, requested-hard-stop-duration-seconds, and extension-evidence. Heartbeat and release require claim-id. Release accepts no-change only for a truthful no-change result. The mutually exclusive reconciliation variant accepts reconcile-out-of-domain-commit with one full 40-character SHA and requires prior-rejected-release-reference for the matching rejected release event. Journal maintenance accepts hot-days, defaulting to 2. Reporting accepts since and format; use JSON output for automation.
 
 ## Exact Invocations
 
@@ -151,6 +159,15 @@ Declare a clean no-change result:
 python3 "$CLAIM_SCRIPT" --repo . release \
   --claim-id task-123 \
   --no-change
+```
+
+Reconcile one retained primary scoped claim only after verifying the supplied peer commit and prior rejected release reference:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . release \
+  --claim-id task-123 \
+  --reconcile-out-of-domain-commit 0123456789abcdef0123456789abcdef01234567 \
+  --prior-rejected-release-reference 12345678-1234-1234-1234-123456789abc
 ```
 
 Maintain the journal and report contention:
