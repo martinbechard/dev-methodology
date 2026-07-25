@@ -738,6 +738,52 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
             self.assertEqual([suite_root / "suite-index.yaml"], loaded_paths)
 
+    def test_catalog_rejects_linked_yaml_files_before_loading_either_file(self) -> None:
+        """A contained suite cannot redirect either catalog YAML read through a linked endpoint."""
+        for linked_name in ("suite.yaml", "scenarios.yaml"):
+            with self.subTest(linked_name=linked_name), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                suite_root = root / "agent-tests"
+                suite_path = suite_root / "safe-suite"
+                suite_path.mkdir(parents=True)
+                (suite_root / "suite-index.yaml").write_text(
+                    "suites:\n"
+                    "  - id: safe-suite\n"
+                    "    priority: 1\n"
+                    "    path: safe-suite\n",
+                    encoding="utf-8",
+                )
+                outside = root / "outside"
+                outside.mkdir()
+                outside_file = outside / linked_name
+                outside_file.write_text(
+                    "id: safe-suite\n" if linked_name == "suite.yaml" else "scenarios: []\n",
+                    encoding="utf-8",
+                )
+                for file_name, content in (
+                    ("suite.yaml", "id: safe-suite\n"),
+                    ("scenarios.yaml", "scenarios: []\n"),
+                ):
+                    target = suite_path / file_name
+                    if file_name == linked_name:
+                        target.symlink_to(outside_file)
+                    else:
+                        target.write_text(content, encoding="utf-8")
+                loaded_paths: list[Path] = []
+                original_load_yaml = runner._load_yaml
+
+                def observe_load(path: Path) -> dict[str, object]:
+                    loaded_paths.append(path)
+                    return original_load_yaml(path)
+
+                with (
+                    mock.patch.object(runner, "_load_yaml", side_effect=observe_load),
+                    self.assertRaisesRegex(ValueError, "symbolic link"),
+                ):
+                    runner._load_catalog(suite_root)
+
+                self.assertEqual([suite_root / "suite-index.yaml"], loaded_paths)
+
     def test_catalog_loads_valid_contained_suite_directory(self) -> None:
         """A real contained suite directory remains loadable through the catalog boundary."""
         with tempfile.TemporaryDirectory() as temporary:

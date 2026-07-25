@@ -458,6 +458,25 @@ def _contained_suite_path(suite_root: Path, value: object) -> Path:
     return canonical
 
 
+def _contained_suite_file(suite_root: Path, suite_path: Path, file_name: str) -> Path:
+    """Return one real, non-symlink suite catalog file contained by the canonical suite root."""
+    candidate = suite_path / file_name
+    try:
+        metadata = candidate.lstat()
+    except FileNotFoundError as error:
+        raise ValueError(f"Suite catalog file is missing: {candidate}") from error
+    if stat.S_ISLNK(metadata.st_mode):
+        raise ValueError(f"Suite catalog file must not be a symbolic link: {candidate}")
+    if not stat.S_ISREG(metadata.st_mode):
+        raise ValueError(f"Suite catalog file is not a regular file: {candidate}")
+
+    boundary = suite_root.resolve(strict=True)
+    canonical = candidate.resolve(strict=True)
+    if not canonical.is_relative_to(boundary):
+        raise ValueError(f"Suite catalog file escapes the canonical suite root: {candidate}")
+    return canonical
+
+
 def _load_catalog(
     suite_root: Path = _SUITE_ROOT,
     include_ids: set[str] | None = None,
@@ -481,8 +500,10 @@ def _load_catalog(
     for suite_id, suite_path, entry in validated_entries:
         if include_ids is not None and suite_id not in include_ids:
             continue
-        manifest = _load_yaml(suite_path / "suite.yaml")
-        scenario_document = _load_yaml(suite_path / "scenarios.yaml")
+        manifest_path = _contained_suite_file(suite_root, suite_path, "suite.yaml")
+        scenarios_path = _contained_suite_file(suite_root, suite_path, "scenarios.yaml")
+        manifest = _load_yaml(manifest_path)
+        scenario_document = _load_yaml(scenarios_path)
         suite = _Suite(
             suite_id=suite_id,
             priority=int(entry["priority"]),
