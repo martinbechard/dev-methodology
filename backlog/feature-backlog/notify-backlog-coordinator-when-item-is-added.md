@@ -1,10 +1,10 @@
 # Notify the Backlog Coordinator When a Work Item Is Added
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
@@ -101,6 +101,21 @@ None.
 - Approved Governed Sources: agents/roles/dev-activities/dev-backlog-steward.role.yaml; agents/roles/dev-activities/dev-backlog-coordinator.role.yaml; skills/codex-workitem-coordination/SKILL.md.
 - Prior Approval And Resumption Evidence: user answer approved on 2026-07-26 in canonical Thread /root; Ready approval commit 2f24e29234d7348f13dcc81827cbf057afb63c81; preserved same-task resumption requirement.
 - Backlog Claim Evidence: acquired Event 1 exact-path claim running-notify-backlog-coordinator-019f9ea6; event 37a60e7e-0664-42c6-9de8-50056af17fee.
+
+## Current Blocked Handoff
+
+- Transition: Running -> Blocked after two bounded correction attempts.
+- Canonical Task And Root: 019f9ea6-b3bd-7551-ad1f-5a862f768313.
+- Owner Of Next Action: explicit user authorization for a fresh bounded recovery plan.
+- Preserved Unintegrated Candidate Chain: 2b255e1a -> 5cf8d456 -> 12e0615b on branch codex/notify-backlog-coordinator-019f9ea6; clean worktree.
+- Approved Governed Sources: agents/roles/dev-activities/dev-backlog-steward.role.yaml; agents/roles/dev-activities/dev-backlog-coordinator.role.yaml; skills/codex-workitem-coordination/SKILL.md.
+- Prompt Review: NOT ACCEPTED, HIGH. The exact four-string event key cannot deterministically encode GitHub repository plus issue and GitLab instance plus namespace plus project plus IID without defined serialization.
+- Methodology Review: NOT GOOD, MEDIUM, for the same event-key defect; also MEDIUM because the Steward condition loads Codex-only codex-workitem-coordination in generated Claude, Gemini, and Junie adapters.
+- Verified Candidate Gates: 23/23 focused checks; skill validation; generated freshness; git diff --check; clean worktree.
+- Not Run By Design: verifier, integration, and publication.
+- Unblock Condition: explicit authorization for a fresh bounded recovery plan that (1) selects one provider-returned canonical creation-evidence string or defines and tests exact serialization for GitHub and GitLab, and (2) scopes Codex-only notification loading and operation to Codex or defines tested harness-specific delivery contracts.
+- Permitted Resumption: preserve this same task and use only Blocked -> Ready -> Starting -> Running.
+- Backlog Claim Evidence: acquired Event 1 exact-path claim blocked-notify-backlog-coordinator-019f9ea6; event 8705a27c-41d2-4ac3-b89b-6ed4a2d7cdce.
 
 ## Current Running Acceptance
 
