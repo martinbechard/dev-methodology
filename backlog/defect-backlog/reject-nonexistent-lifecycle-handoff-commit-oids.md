@@ -1,16 +1,30 @@
 # Reject Nonexistent Lifecycle Handoff Commit OIDs
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
-Owner: Dev Orchestrator /root/resume_blocked_after_claim_publication/oid_delivery_recovery
+Owner: Unowned
 
 Provider: file
 
 Provider Reference: backlog/defect-backlog/reject-nonexistent-lifecycle-handoff-commit-oids.md
 
 Completion: direct-main
+
+## Final Blocked Disposition
+
+- Canonical Task/Thread: 019f978e-28b7-7561-be38-b535ab26850f, its worktree, and all prior candidate evidence remain preserved.
+- Final Rejected Candidate: da09f3d922b14e3c137edf1419e67b7bbfb1d8a4.
+- Hard Stop: No third correction is authorized in this prior correction loop. Do not integrate the rejected candidate or archive this item.
+- Finding 1: The runner accepts an unconfigured handoffReceipts lane when required lanes or fields are empty because audits skip before exact-set validation.
+- Finding 2: The helper accepts a completed claim segment after later same-ID reuse, while the runner counts successful releases across all incarnations and rejects the valid receipt.
+- Unblock Condition: A newly authorized bounded plan must validate the exact configured lane set before skip logic and make release cardinality incarnation and segment aware consistently with the helper.
+- Required Future Gates: fresh full code and prompt reviews plus independent verification before delivery or terminal closure.
+
+## Blocked Coordination Evidence
+
+- Exact-file claim block-lifecycle-handoff-oid-20260726 acquired on primary main at 2026-07-26T10:02:45.912420Z; acquisition journal event 445aa9ff-5696-4377-9545-718a30c568fc.
 
 ## Resumption Reservation
 
