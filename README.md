@@ -61,7 +61,7 @@ Project-specific evaluation skills may freeze inputs and compare completed candi
 - design/role-catalog-groups.yaml owns presentation-only role group order, source-backed role overrides, and labels shared by the role cards and hierarchy diagram.
 - scripts/openai_metadata.py refreshes derived Codex interface fields from SKILL.md while preserving hand-authored policy and dependencies.
 - scripts contains regression tests for installer behavior and bundle content.
-- AGENTS.md contains repo-local maintenance directives for agents working on this source repository.
+- AGENTS.md references the repository-local maintenance skill at .agents/skills/dev-methodology-repository-maintenance/SKILL.md.
 
 Reusable templates live inside the development-methodology skill assets so there is one distribution surface for agents. Target projects may copy individual template files when they need local editable documents, but the methodology itself is delivered through skills.
 

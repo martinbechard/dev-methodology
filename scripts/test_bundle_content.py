@@ -26,6 +26,13 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 README_PATH = REPOSITORY_ROOT / "README.md"
 AGENTS_PATH = REPOSITORY_ROOT / "AGENTS.md"
 GITIGNORE_PATH = REPOSITORY_ROOT / ".gitignore"
+REPOSITORY_MAINTENANCE_SKILL_PATH = (
+    REPOSITORY_ROOT
+    / ".agents"
+    / "skills"
+    / "dev-methodology-repository-maintenance"
+    / "SKILL.md"
+)
 SKILLS_ROOT = REPOSITORY_ROOT / "skills"
 ROLES_ROOT = REPOSITORY_ROOT / "agents" / "roles"
 SKILL_CATEGORIES_PATH = REPOSITORY_ROOT / "design" / "skill-categories.yaml"
@@ -821,15 +828,16 @@ DOCUMENTATION_PAGE_VERIFIER_REVIEW_PHRASES = (
     "When a specific structure or format is indicated, that structure is authoritative.",
     "Do not require shared page sections unless the selected artifact is a docs/wiki page",
 )
-AGENTS_REQUIRED_PHRASES = (
-    "repo-local operating contract",
-    "Do not create separate skill files for repo-local maintenance procedures.",
-    "Update README.md when the public skill inventory",
-    "Update the design HTML files that describe skills, conceptual agent definitions",
-    "Keep Codex openai.yaml metadata beside each source SKILL.md",
-    "Run scripts/openai_metadata.py skills after skill name or description changes so derived Codex interface fields stay aligned while policy and dependencies remain hand-authored.",
-    "Select tests from the changed behavior and its actual dependency paths.",
-    "A tier identifies the affected surface; it never triggers a full repository regression.",
+REPOSITORY_MAINTENANCE_REQUIRED_PHRASES = (
+    "Keep repository-only maintenance rules in this project skill.",
+    "Do not put repository-specific procedures in distributed skills.",
+    "Update README.md when the public inventory, setup, verification, or bundle purpose changes.",
+    "Update affected design HTML.",
+    "Keep agents/openai.yaml beside the skill when Codex metadata, invocation policy, or tool dependencies are required.",
+    "Run scripts/openai_metadata.py skills after changing a skill name or description.",
+    "Choose tests from changed behavior and actual dependency paths.",
+    "A tier identifies the affected surface; it does not trigger a full repository regression.",
+    ".worktrees contains ignored operational checkouts under the primary worktree. Resolve this directory from the primary worktree, never from another linked checkout.",
 )
 
 
@@ -5902,10 +5910,6 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("needs no claim", readme_text)
         self.assertNotIn("claim-free", readme_text)
         self.assertNotIn("Agent Claims And Worktrees", AGENTS_PATH.read_text(encoding="utf-8"))
-        self.assertIn(
-            ".worktrees contains ignored linked agent checkouts rooted at the primary worktree",
-            AGENTS_PATH.read_text(encoding="utf-8"),
-        )
         self.assertIn("/.worktrees/", GITIGNORE_PATH.read_text(encoding="utf-8").splitlines())
 
     def test_event_driven_claim_and_current_main_reconciliation_contracts(self) -> None:
@@ -8711,14 +8715,20 @@ class BundleContentTests(unittest.TestCase):
     def test_agents_guidance_keeps_repo_maintenance_local(self) -> None:
         agents_text = AGENTS_PATH.read_text(encoding="utf-8")
         readme_text = README_PATH.read_text(encoding="utf-8")
+        maintenance_skill_text = REPOSITORY_MAINTENANCE_SKILL_PATH.read_text(
+            encoding="utf-8"
+        )
 
         self.assertIn(
-            "AGENTS.md contains repo-local maintenance directives",
+            "AGENTS.md references the repository-local maintenance skill at "
+            ".agents/skills/dev-methodology-repository-maintenance/SKILL.md.",
             readme_text,
         )
-        for phrase in AGENTS_REQUIRED_PHRASES:
+        self.assertIn("- dev-methodology-repository-maintenance", agents_text)
+        for phrase in REPOSITORY_MAINTENANCE_REQUIRED_PHRASES:
             with self.subTest(phrase=phrase):
-                self.assertIn(phrase, agents_text)
+                self.assertIn(phrase, maintenance_skill_text)
+                self.assertNotIn(phrase, agents_text)
 
     def test_development_methodology_guides_skill_rename_cleanup(self) -> None:
         skill_text = (
