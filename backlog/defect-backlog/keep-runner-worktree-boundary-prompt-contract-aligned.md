@@ -1,10 +1,10 @@
 # Keep Runner Worktree Boundary Prompt Contract Aligned
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
-Owner: Dev Backlog Coordinator (reservation pending root acceptance)
+Owner: Dev Orchestrator (canonical root task 019f9f5f-8959-7b72-a67e-38f843e9e720)
 
 Provider: file
 
@@ -63,6 +63,19 @@ None.
 - Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
 - Coordination Classification: The Dependencies entry is a coordination-only overlap note. Its referenced item is Blocked and Unowned, and the preflight registry has no live claim. Private-worktree implementation may begin; exact overlap scope and integration must be reconciled before the conflicting integration event.
 - Next Lifecycle Owner: The root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
+
+## Current Running Acceptance
+
+- Transition: Starting -> Running.
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a (preserved from the Starting reservation).
+- Root Dev Orchestrator Thread: 019f9f5f-8959-7b72-a67e-38f843e9e720.
+- Canonical Root Agent Task Id: 019f9f5f-8959-7b72-a67e-38f843e9e720.
+- Accepted At: 2026-07-26T17:03:23Z.
+- Phase: Implementation accepted; no repository artifact mutation is included in this provider transaction.
+- Branch: Detached HEAD at 51132889f3453a1196457713bea55c01878a175b.
+- Worktree: /Users/martinbechard/.codex/worktrees/5766/dev-methodology (private worktree).
+- Primary Main Observation: main at ba80dd685ab78d131349c028d06025fc06c207d0 when this acceptance was recorded.
+- Claim Evidence: running-keep-runner-worktree-boundary-019f9f5f, acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-26T17:03:23.140010Z; claim event 45ae4143-9ef4-4aaf-8139-48c456ff0640.
 
 ## Notes
 
