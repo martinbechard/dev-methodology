@@ -1,8 +1,10 @@
 # Create an Effective Agent Communication Skill
 
-Status: Ready
+Status: Starting
 
 Type: Feature
+
+Owner: Unowned
 
 Provider: file
 
@@ -73,6 +75,18 @@ None.
 
 - Determine through implementation discovery which agent definitions or shared generation surfaces should reference the communication skill.
 - Determine whether existing writing guidance should remain as specialized extensions or be replaced by references to the canonical communication skill.
+
+## Current Starting Reservation
+
+- Parent Coordination Thread: /root.
+- Reservation: One parent-owned Ready -> Starting launch reservation.
+- Normalized Objective: Create an effective agent communication skill.
+- Intended Root Role: Dev Orchestrator.
+- Persistence And Completion: file provider; direct-main completion.
+- Dispatched At: 2026-07-26T13:37:13Z.
+- Launch Evidence: Parent Coordinator authorized this exact-item reservation. Runtime task creation and acceptance remain pending.
+- Backlog Claim Event: 67199e90-0a97-446b-8dcb-a10a1f2bc149.
+- Next Lifecycle Owner: the root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
 
 ## Notes
 
