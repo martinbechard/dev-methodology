@@ -1,6 +1,6 @@
-# Enforce Agent-Claim Lifecycle Evidence In Runner Resource Scenarios
+# Restrict Coordination Lifecycle Evaluation To Coordination Skills
 
-Status: Blocked
+Status: Ready
 
 Type: Defect
 
@@ -12,200 +12,56 @@ Provider Reference: backlog/defect-backlog/enforce-agent-claim-lifecycle-evidenc
 
 Completion: direct-main
 
-## Execution Acceptance
-
-- Canonical Work-Item Thread: 019f981c-4fea-7b83-b8d2-0b254ff45f0c
-- Canonical Task Id: 019f981c-4fea-7b83-b8d2-0b254ff45f0c
-- Root Role: Dev Orchestrator
-- Root Orchestrator Task: /root/resume_blocked_after_claim_publication/runner_lifecycle_recovery
-- Delivery Worktree: /Users/martinbechard/.codex/worktrees/e8bc/dev-methodology
-- Delivery Branch: codex/enforce-agent-claim-lifecycle-evidence-019f981c
-- Delivery Commit At Acceptance: 4778fd4435c50cc8a282a6a505eb41b061374278
-- Phase: Final fresh-recovery correction hard stop.
-- Exact Implementation Scope: evals/agent-tests/runner.py and evals/agent-tests/test_runner.py.
-- Reservation Commit: 94405248e0b73c38da0121f06b1d566fcece4577.
-- Started At: 2026-07-26T11:06:09Z
-
-## Execution Coordination Evidence
-
-- Backlog Claim: runner-starting-to-running-019f981c-4fea-7b83-b8d2-0b254ff45f0c acquired on primary main at 2026-07-26T11:05:42.371076Z; acquisition journal event e7f0ccbc-1c10-47cc-90e8-38bbe4f8f843.
-- Claim-Free Private-Lane Evidence: This transaction acquired only the exact primary backlog-file claim. The preserved delivery worktree is private, and no project-files or resource claim was acquired for source work during this lifecycle acceptance.
-
-## Launch Reservation
-
-- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
-- Reservation: One parent-owned launch reservation.
-- Normalized Objective: Enforce agent-claim lifecycle evidence in runner resource scenarios.
-- Dispatched At: 2026-07-25T07:09:27Z
-- Intended Root Role: Dev Orchestrator
-- Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
-
-## Reservation Coordination Evidence
-
-- Backlog Claim: reserve-agent-claim-lifecycle-runner-defect-20260725 acquired on primary main at 2026-07-25T07:09:27.159466Z; acquisition journal event cf71e7da-e29c-45dd-bf1f-f3e30f6643c3.
-
 ## Summary
 
-Make the evaluation runner prove that an agent-claim resource-coordination scenario performed the required claim lifecycle, rather than accepting envelope-shaped receipts with no actual repository, registry, journal, acquisition, or release activity.
+Evaluate ordinary skills in single-user mode without testing claim acquisition, release, or other coordination behavior. Use coordination scenarios only when evaluating coordination skills.
 
-## Context
+## Problem
 
-In `evals/agent-tests/runner.py`, the resource-coordination scenario path, handoff audit, and deterministic receipt validation accept a direct agent-claim scenario when its target trace is blank and it has no repository, claim registry, journal, acquisition, or release activity. The generic claim-lifecycle receipt checks validate the receipt envelope only; they do not bind its contents to the scenario actor or commit. This defect is distinct from candidate-only none-audit bypasses and records current-main behavior only.
+The previous work-item design attempted to make the general evaluation runner prove agent-claim lifecycle behavior whenever a scenario selected agent-claim. That approach puts coordination concerns into evaluations for skills whose behavior does not depend on coordination.
 
-## Source Evidence
-
-- Canonical user direction in task `019f979e-5330-7501-8340-92dfd593f6ef` requires every additional confirmed distinct defect to be logged durably.
-- Fresh code review of candidate `75390715` examined `_scenario_resource_coordination`, the handoff audit, and deterministic receipt validation in `evals/agent-tests/runner.py`.
-- A direct reproducer was accepted despite absent claim activity and a blank target trace.
+It would also create unnecessary duplicate coverage by making every skill support both coordinated and solo evaluation modes. Ordinary skill evaluations should test the skill's own behavior, not whether an unrelated coordination system was applied.
 
 ## Requirements
 
-- For scenarios that select `resource_coordination: agent-claim`, require lifecycle evidence from the scenario execution rather than generic receipt shape alone.
-- Bind required claim evidence to the scenario actor and the relevant committed execution state.
-- Preserve distinct behavior for scenarios that select a different coordination provider or none.
-- Do not treat candidate-only none-audit observations as current-main defects.
+- Run ordinary skill evaluations in single-user mode with resource coordination set to none.
+- Do not require ordinary skill evaluations to acquire claims, release claims, inspect a claim registry, or produce claim lifecycle evidence.
+- Use coordination scenarios only for skills whose purpose includes coordination behavior, such as agent-claim, agent-claim-command, agent-claim-mcp, and work-item coordination skills.
+- Test claim acquisition, conflict handling, release, and related evidence in the focused suites owned by those coordination skills.
+- Do not add coordinated and solo variants to every skill evaluation.
+- Do not require every skill to support both coordinated and solo evaluation modes.
+- Keep coordination infrastructure available to coordination-focused suites without making it a general skill-evaluation requirement.
 
 ## Acceptance Criteria
 
-- A selected agent-claim scenario retains contained registry and journal evidence for an acquisition and a normal release.
-- The retained lifecycle evidence is bound to the scenario actor and commit used by the audited scenario.
-- A scenario with no claim activity, an absent registry or journal record, a blank target trace, or a missing normal release is rejected deterministically.
-- A negative regression test proves that envelope-valid generic receipts cannot satisfy the lifecycle requirement when claim activity is absent.
+- An ordinary skill suite runs successfully without claim calls or claim lifecycle evidence.
+- An ordinary skill suite is not rejected because an empty shared claim registry or pre-existing claim-event history exists.
+- A focused coordination-skill suite can explicitly select coordination mode and test its expected claim behavior.
+- Runner tests prove that coordination checks are activated by a coordination-focused suite, not merely by evaluating an arbitrary skill.
+- No general requirement is introduced for every skill to have both coordinated and solo scenarios.
+
+## Implementation Guidance
+
+- Identify the explicit suite or scenario metadata that marks a coordination-focused evaluation.
+- Default ordinary skill evaluations to single-user mode.
+- Keep claim lifecycle assertions within focused coordination tests.
+- Remove or revise runner assertions that treat claim evidence as a general evaluation requirement.
+- Do not change unrelated skill definitions merely to add coordination variants.
+
+## Verification
+
+- Run targeted runner tests for ordinary single-user skill evaluation.
+- Run targeted coordination-skill tests that intentionally exercise claim behavior.
+- Add one negative regression proving that an ordinary skill does not need claim evidence.
+- Add one positive regression proving that an explicitly coordination-focused suite can still test claim lifecycle behavior.
+- Run git diff --check.
 
 ## Dependencies
 
 None.
 
-## Verification
+## Superseded Recovery History
 
-- Run focused runner resource-coordination, handoff-audit, and deterministic-receipt tests.
-- Run direct disposable scenario reproductions for valid acquisition-and-release evidence and absent claim activity.
-- Run `git diff --check` and obtain fresh independent review.
+The rejected candidates e437702d, 446371ff, 4778fd44, b22704da, and ac579e7c attempted to strengthen general runner validation of claim lifecycle evidence. They remain historical review evidence and must not be integrated or reused as the implementation plan for this revised item.
 
-## Open Questions
-
-- Which existing receipt field can carry the contained registry and journal references without duplicating the claim engine's durable event model?
-
-## Coordination Evidence
-
-- Backlog claim `record-runner-review-defects-019f979e` acquired on primary main at 2026-07-25T05:39:43.871470Z; acquisition journal event `29dc95c6-c2ba-473b-8034-3420d7eecd6b`.
-
-## Candidate And Review Evidence
-
-- Candidate: e437702d2c0119c6641caca52fb7561348086568 on `codex/enforce-agent-claim-lifecycle-evidence-019f981c`.
-- Coder claim: released at journal event 1308c17c-e1a5-48db-9649-c919bc49bbfe.
-- Candidate checks: 14 focused claim, handoff, and receipt checks passed; four provider-none checks passed; valid lifecycle evidence passed and was verified; absent activity was blocked and invalid; `py_compile` and `git diff --check` passed; 123 non-browser checks passed; 13 browser checks were unavailable because Playwright is absent.
-- Fresh Dev Code Reviewer disposition: REJECT.
-
-## Review Findings
-
-- HIGH: Target-trace binding is token-only and does not bind repository, actor, claim, event, output, or success state.
-- HIGH: Stale evidence commits are accepted when they are merely ancestors of a later unclaimed HEAD.
-- HIGH: A truthful no-change release is incorrectly rejected.
-- HIGH: An external symlinked `agent-claims.json` is accepted.
-- MEDIUM: Duplicate successful lifecycle events and malformed journal lines do not fail closed.
-
-## Replacement Candidate And Review Evidence
-
-- Replacement candidate: 446371ff424d2ab2e3da53c72396dde356c36bcb.
-- Correction claim: released at journal event b5c7f352-8fd0-4517-84ac-bde8c032b914.
-- Replacement checks: seven focused checks passed; 126 non-browser runner checks passed; four provider-none checks passed; `py_compile`, `git diff --check`, catalog, generator, and project-wiki checks passed; 13 Playwright checks were unavailable; the scripts baseline failure is already tracked.
-- Fresh Dev Code Reviewer disposition: REJECT.
-
-## Replacement Candidate Review Findings
-
-- HIGH: A counterfeit claim executable is accepted because suffix-only script identity can forge matched structured outputs instead of binding the configured trusted adapter.
-- MEDIUM: Changed-state release accepts missing, null, or non-boolean `no_change` because it rejects only literal `True`.
-
-## Final Correction Plan And Hard Stop
-
-- Preserve rejected candidates e437702d2c0119c6641caca52fb7561348086568 and 446371ff424d2ab2e3da53c72396dde356c36bcb as review evidence.
-- Reuse canonical task 019f981c-4fea-7b83-b8d2-0b254ff45f0c, the original Dev Coder, and the existing branch and worktree. The correction lane is exactly `evals/agent-tests/runner.py` and `evals/agent-tests/test_runner.py`; do not create a task or worktree or expand into governed, generated, unrelated, or newly discovered defect scope.
-- Write red adversarial regressions before correction work.
-- Bind executable identity for the evaluated target to the exact configured agent-claim command adapter path through canonical resolved identity plus containment and regular-file checks. Reject suffix lookalikes, sibling counterfeits, and symlink substitutions; basename and suffix are not authority.
-- Treat release `no_change` as a required typed journal field bound exactly to the retained adapter result and scenario disposition. Reject missing, malformed, or contradictory values while preserving valid committed normal release and truthful normal no-change behavior.
-- Complete the prior seven-finding adversarial matrix, provider-none checks, non-browser runner checks, `py_compile`, diff hygiene, and the cheapest disposable valid and invalid scenarios. Reconcile owned baseline failures without duplicates; Playwright absence may remain an unchanged omission.
-- Produce one clean replacement commit and truthful claim release. Require a brand-new fresh independent full-candidate review, then independent verifier work only after review acceptance; do not integrate before both succeed.
-- Hard stop: any material fresh-review finding, repeated evidence-binding bypass, or scope expansion after attempt 2 prohibits correction 3. Preserve the candidate and have Dev Backlog Steward transition this item from Running to Blocked with Owner: Unowned, the exact unblock condition, and complete evidence.
-
-## Final Candidate And Review Evidence
-
-- Final candidate: 4778fd4435c50cc8a282a6a505eb41b061374278 on `codex/enforce-agent-claim-lifecycle-evidence-019f981c`; its private worktree was clean.
-- Coder claim: released at journal event 618bb101-5770-4227-8619-aaedea6e954d. The claim registry was empty after release.
-- Fresh Dev Code Reviewer disposition: REJECT.
-- HIGH: A different executable named `python` or `python3` can emit accepted results while the exact configured `claim.py` is only inert `argv[1]`; selected adapter execution is not proven.
-- HIGH: Real acquire and release plus a later unclaimed commit and rewrite of the target-writable journal release `resulting_commit` is accepted because retained release output lacks independent commit identity.
-- HIGH: Repository alias and contained journal symlink substitutions are accepted because relevant paths resolve without rejecting symlink components.
-- Supported verification: exact HEAD and clean checks, unique ordered events, actor/claim/event matching, typed no-change, configured adapter path checks, provider-none checks, and headers; eight focused checks passed; runner checks passed 128 with 13 known Playwright checks unavailable; `git diff --check` passed; worktree was clean; no new baseline defect was identified.
-
-## Blocked Handoff
-
-- Exact blocker: The runner lacks runner-owned immutable proof that the configured interpreter and adapter actually executed, release commit identity cannot be rewritten, and repository and journal component symlinks are rejected.
-- Next Action Owner: Dev Backlog Coordinator for future resumption routing. No active implementation owner exists.
-- Unblock Condition: Explicit authorization and a fresh bounded design and implementation plan must provide trusted interpreter-and-adapter execution identity, runner-owned immutable release-to-commit binding or an authoritative adapter result field, and component-wise repository and journal symlink rejection, with red regressions for all three. Resume only through the normal Blocked -> Ready -> Starting -> Running lifecycle; correction attempt 3 in this canonical run is prohibited.
-
-## Current-Main Recovery
-
-- Reconciliation Date: 2026-07-26.
-- Recovery Authority: Parent Coordinator previously explicitly authorized this runner lifecycle-evidence recovery among six named correction recoveries and now authorized this exact lifecycle resumption.
-- Preserved Canonical Identity: Work-Item Thread and task 019f981c-4fea-7b83-b8d2-0b254ff45f0c remain authoritative; no replacement identity is created.
-- Preserved Candidate Evidence: Rejected candidates e437702d2c0119c6641caca52fb7561348086568, 446371ff424d2ab2e3da53c72396dde356c36bcb, and 4778fd4435c50cc8a282a6a505eb41b061374278 remain review evidence only and are not integrated.
-- Authorized Scope: A new bounded design-and-recovery plan, not correction attempt 3 in the prior loop. The plan remains exactly `evals/agent-tests/runner.py` and `evals/agent-tests/test_runner.py`; it must establish trusted interpreter-and-adapter execution identity, immutable release-to-commit binding, component-wise repository and journal symlink rejection, and red regressions before implementation.
-- Current-Main Overlap Reconciliation: Decouple and OID candidates have no source integrated on current main. Before source mutation, reconcile any exact overlap against their current Blocked records and preserve their candidate evidence; no overlap authorizes taking or changing their work.
-- Transition: Blocked -> Ready. Owner remains Unowned. This provider transition does not grant implementation ownership.
-- Next Lifecycle Owner: the parent Dev Backlog Coordinator may separately reserve Ready -> Starting for this same canonical item.
-
-## Current Starting Reservation
-
-- Parent Coordination Thread: /root/resume_blocked_after_claim_publication.
-- Canonical Thread/Task: 019f981c-4fea-7b83-b8d2-0b254ff45f0c; no replacement canonical identity is created.
-- Reservation: One parent-owned Ready -> Starting launch reservation.
-- Normalized Objective: Enforce agent-claim lifecycle evidence in runner resource scenarios.
-- Intended Root Role: Dev Orchestrator.
-- Codex Resumption Task: /root/resume_blocked_after_claim_publication/runner_lifecycle_recovery.
-- Persistence And Completion: file provider; direct-main completion.
-- Preserved Evidence: candidates e437702d2c0119c6641caca52fb7561348086568, 446371ff424d2ab2e3da53c72396dde356c36bcb, and 4778fd4435c50cc8a282a6a505eb41b061374278 remain rejected and unintegrated; their prior correction loop is not reopened.
-- Authorized Bounded Scope: exactly `evals/agent-tests/runner.py` and `evals/agent-tests/test_runner.py`, with current-main overlap reconciliation before source mutation.
-- Dispatched At: 2026-07-26T11:02:31Z.
-- Launch Evidence: Parent Coordinator authorized this exact fresh recovery reservation. Runtime acceptance remains pending.
-- Next Lifecycle Owner: the root Dev Orchestrator must record a distinct Starting -> Running acceptance for this same canonical identity before repository mutation.
-
-## Notes
-
-This item is ready for independently scoped implementation. It does not authorize unrelated runner changes or governed-definition mutation without required approval evidence.
-
-## Fresh Recovery Final Hard Stop
-
-- Fresh recovery candidate: b22704dabc96f34a57709308259ebaa2302c7fde.
-- Corrected replacement: ac579e7c8d98e00ddc209b20558da5b29d662e30.
-- Candidate scope: evals/agent-tests/runner.py and evals/agent-tests/test_runner.py only.
-- Candidate checks: 23 focused tests passed; both Python files compiled under Python 3.11; git diff --check passed.
-- Fresh Dev Code Reviewer disposition: REJECT.
-- Fresh Dev Prompt Reviewer disposition: REJECT.
-- Verifier disposition: not dispatched because both required reviews rejected the candidate.
-- Integration disposition: prohibited; neither recovery candidate is on main.
-
-### Final Review Findings
-
-- A reconciliation-style release command can satisfy evidence that promises a normal release. The broker and audit must allow only the claim identifier and the optional no-change flag for this scenario and must reject reconciliation arguments and results.
-- Shutdown of an adapter process that ignores SIGTERM raises before the runner kills and reaps the process, joins the serving thread, and removes the socket.
-- A provider-none scenario can copy the readable broker client and token to another path. The broker records a request only after successful adapter execution, and the trace audit relies on a client-name match, so an authenticated rejected request can escape the attempt census.
-
-### Unblock Condition
-
-Start another correction cycle only after explicit authorization of a new bounded plan. The plan must:
-
-- restrict the expected release command to the normal-release argument contract;
-- implement TERM grace, KILL, reap, thread join, and socket cleanup for an unresponsive adapter;
-- immutably record every authenticated broker request before validation and reject every unauthorized request sequence;
-- retain focused red regressions for all three findings; and
-- obtain fresh code and prompt reviews plus independent verification before integration.
-
-Do not resume through a direct Blocked-to-Running transition. Preserve the canonical task, worktree, branch, candidate chain, and review evidence through Blocked -> Ready -> Starting -> Running.
-
-## Coordinator Disposition — 2026-07-26
-
-- Disposition: continuing Blocked with Owner Unowned. Preserve canonical task 019f981c-4fea-7b83-b8d2-0b254ff45f0c and all prior task, candidate, and review evidence.
-- Concrete Dependencies: wait for (a) accepted delivery of the cleanup-only claim contract from canonical task 019f9fef-1edc-7ea1-a058-bf8dfddcd2fb, because release validation, no-change, and reconciliation assumptions are changing; and (b) accepted delivery or an exact non-overlap mapping for serialized runner items add-structured-commit-disposition-to-orchestrator-evaluation-contract and decouple-dev-orchestrator-suite-from-agent-claim, in that order.
-- Next Owner And Action: after both observable triggers, the parent Dev Backlog Coordinator must derive a new two-file current-main plan from surviving findings only.
-- Rejected Candidates And Authority: do not import, reuse, or integrate e437702d, 446371ff, 4778fd44, b22704da, or ac579e7c. No user action is required now. Permitted resumption remains Blocked -> Ready -> Starting -> Running.
+The previous exhausted-correction and blocker records are superseded because they addressed trusted adapters, release-to-commit binding, journal integrity, and process cleanup under the former general coordination-evaluation model. The revised work must begin from current main and follow the single-user-by-default model above.
