@@ -1,6 +1,6 @@
 # Prevent Unauthorized Contract Narrowing
 
-Status: Done
+Status: Completed
 
 Type: Defect
 
