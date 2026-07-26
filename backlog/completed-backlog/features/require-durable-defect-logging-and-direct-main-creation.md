@@ -1,10 +1,18 @@
 # Require Durable Defect Logging And Direct-Main Work-Item Creation
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
-Owner: Dev Orchestrator (canonical Thread/task 019f96cf-226c-7f62-9d66-7d31cead822e)
+Provider: file
+
+Provider Reference: backlog/completed-backlog/features/require-durable-defect-logging-and-direct-main-creation.md
+
+Completion: direct-main
+
+Owner: Unowned
+
+Claim: None
 
 ## Launch Reservation
 
@@ -149,6 +157,19 @@ None.
 - Supersession Boundary: The historical four-path claim-free candidate remains superseded and must not be integrated or revived.
 - Remaining Scope: Only the approved durable confirmed-defect logging and no-warning-downgrade policy in dev-orchestrator source, its supported mirrors and tests, and current-main verification remain.
 - Approval And Recovery Context: The exact prior user approval and all recovery history remain authoritative.
+
+## Completion Evidence
+
+- Canonical Thread And Task: 019f96cf-226c-7f62-9d66-7d31cead822e; parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Accepted Source Candidate: 503de4bc4cfd28155f6f4e2c020581889a24687e.
+- Direct-Main Delivery: 190579d539b621fe8beebc658692c282d140c0c4, then final policy commit 637760d006058eac74f7b2b65622f7f67a18a6ad.
+- Main Observation: the delivery is in current main ancestry, including watchdog merge 410438f99dd403caca699e7834a2493c09025467; terminal observation before this provider transaction is 942bac974d87d7b7c7a11ee724b80c0d91c3d0e6.
+- Review And Verification: fresh methodology review GOOD; independent verifier GOOD/READY; focused checks 2/2, definition precheck ALLOWED, YAML checks 3/3, generator freshness, validate-agent-skills, hierarchy/support, and diff checks passed.
+- Full Bundle Result: 121-test bundle verification retained nine confirmed unrelated baseline root-AGENTS drift failures; they were durably recorded rather than downgraded.
+- Confirmed Defect Records: backlog/defect-backlog/update-role-mutation-test-for-schema-v5.md (creation main 6b753d26); backlog/defect-backlog/preserve-terminal-closure-verification-in-dev-orchestrator-example.md (creation 4671fc6a, evidence update bcd28d44); backlog/defect-backlog/reconcile-root-agents-with-bundle-content-contract.md (creation 9f7033f5).
+- Publication: shared-install acquisition event 0c114853-0680-49d5-9f46-e4f044cc7548; installed user-scope Codex agent bytes SHA-256 4c9f079d9c9e8cf94ebdbac79982695c4e74222fffba13028a4eb61ad6661d3f match generated source; ownership manifests report 126 skills and 28 agents; live catalog revision 315175aaf588dbb422d7be93770436da48062301e800f4469f330533683a32e8; truthful repo-no-change release event 12cc7eeb-4ec3-400a-9329-b9ff2cf5e07b.
+- Integration Claim: project-files release event 7bbd09b7-cbc8-4542-b7fb-1eadb86beda3.
+- Superseded Candidate Boundary: commits 4f47fea9 and 957c9337 remain superseded and unintegrated; their four paths have zero net diff.
 
 ## Verification
 
