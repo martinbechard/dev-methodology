@@ -1,6 +1,6 @@
 # Add Dedicated Watchdog And Stalled Lifecycle
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -146,6 +146,19 @@ The permanent contract must parameterize the parent task identifier and reposito
 - Delivery Identity: Branch codex/watchdog-stalled-lifecycle-019f9a91 at f1c8c04c4a24be8e48579fc997d1a6f09daacf88; private worktree .worktrees/watchdog-stalled-lifecycle-019f9a91.
 - Backlog Acceptance Claim Event: 0076f5f9-410a-4410-8f1d-c5018477f457.
 - Next Lifecycle Owner: the root Dev Orchestrator owns delivery; Dev Backlog Steward performs its later provider transitions on the canonical item.
+
+## Current Starting Reservation
+
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Canonical Thread/Task: 019f9a91-b1a9-7ea0-9c90-35f0ed78c1be; the preserved canonical identity is reserved and no replacement Thread is authorized.
+- Lifecycle Reservation: Ready -> Starting recorded by the parent Dev Backlog Coordinator through its Dev Backlog Steward child.
+- Normalized Objective: Add dedicated watchdog and stalled lifecycle.
+- Dispatched At: 2026-07-26T15:41:04.169467Z.
+- Launch Reservation: one parent-owned launch reservation; capacity was available at reservation time.
+- Reservation Evidence: parent instruction for the distinct Ready -> Starting transaction after the approved User Action Required -> Ready transaction committed and released; backlog claim event c89fe91b-dc00-45e8-898f-7d3adeb11213.
+- Intended Root Dev Orchestrator: Dev Orchestrator for canonical task 019f9a91-b1a9-7ea0-9c90-35f0ed78c1be.
+- Next Lifecycle Owner: the same root Dev Orchestrator must accept Starting -> Running before implementation or further repository mutation.
+- Owner: Unowned pending root Dev Orchestrator acceptance.
 
 ## Definition Change Approval
 
