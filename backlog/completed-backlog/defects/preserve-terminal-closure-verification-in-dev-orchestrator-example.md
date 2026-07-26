@@ -1,14 +1,18 @@
 # Preserve Terminal Closure Verification In Dev Orchestrator Example
 
-Status: Ready
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/preserve-terminal-closure-verification-in-dev-orchestrator-example.md
+Provider Reference: backlog/completed-backlog/defects/preserve-terminal-closure-verification-in-dev-orchestrator-example.md
 
 Completion: direct-main
+
+Owner: Unowned
+
+Claim: close-preserve-terminal-closure-defect-019f95a9 (acquire event 497d9c91-94ed-427d-b494-e42e5735f4bf)
 
 ## Summary
 
@@ -54,6 +58,16 @@ None.
 - Run python3.11 -m unittest scripts.test_bundle_content.
 - Run the applicable role-generation freshness checks.
 - Obtain an independent verifier rerun.
+
+## Completion Evidence
+
+- Terminal Reconciliation: already delivered; no new source implementation or dispatch was performed for this record.
+- Accepted Delivery Commit: 637760d006058eac74f7b2b65622f7f67a18a6ad, Preserve terminal closure ordering.
+- Commit READY Mapping: the accepted correction maps directly to the existing canonical Dev Orchestrator role, its supported generated role definition, and the focused bundle regression; no new source commit is required.
+- Main Observation: on 2026-07-26, 637760d006058eac74f7b2b65622f7f67a18a6ad is an ancestor of current primary main at 1679704a3d623185d26c7d36255dab856a727743.
+- Review And Verification: fresh methodology review GOOD; independent verifier GOOD/READY; focused candidate-review ordering and confirmed-defect policy tests passed 2/2 in 0.087 seconds; applicable generator and validation checks and git diff --check passed.
+- Related Accepted Feature Evidence: backlog/completed-backlog/features/require-durable-defect-logging-and-direct-main-creation.md records accepted source 503de4bc4cfd28155f6f4e2c020581889a24687e, direct-main final policy 637760d006058eac74f7b2b65622f7f67a18a6ad, and the independent completion gates.
+- Archive Transaction: this short primary-main provider transaction moves this completed defect record to its Provider Reference. The terminal backlog commit is the commit that contains this exact archive move.
 
 ## Open Questions
 
