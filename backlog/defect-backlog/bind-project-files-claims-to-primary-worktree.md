@@ -1,6 +1,6 @@
 # Bind Project-Files Claims to the Primary Worktree
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -51,6 +51,18 @@ None.
 ## Open Questions
 
 None.
+
+## Current Starting Reservation
+
+- Transition: Ready -> Starting.
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Reservation: One parent-owned launch reservation.
+- Normalized Objective: Bind Event-2 project-files claims to the primary worktree and prevent unreleasable non-ancestral integrations.
+- Dispatched At: 2026-07-26T19:36:56Z.
+- Intended Root Role: Dev Orchestrator.
+- Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
+- Coordination Note: Integration and recovery of the live claim integrate-reconcile-root-agents-019f9fd6 remain deferred until this candidate is accepted.
+- Next Lifecycle Owner: The root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
 
 ## Notes
 
