@@ -1220,7 +1220,11 @@ def _deduplicate(values: Sequence[str]) -> list[str]:
     return list(dict.fromkeys(values))
 
 
-def _normalize_repository_path(repository: Path, value: str) -> str:
+def _normalize_repository_path(
+    repository: Path,
+    value: str,
+    case_sensitive: bool,
+) -> str:
     stripped = value.strip()
     if not stripped:
         raise _ScopeError("Scope paths cannot be empty.", value, "provide a repository-relative path")
@@ -1230,23 +1234,31 @@ def _normalize_repository_path(repository: Path, value: str) -> str:
             stripped,
             "use --tree <path> or --all-files",
         )
-    candidate = Path(stripped)
+    candidate = Path(os.path.normpath(str(Path(stripped))))
     if candidate.is_absolute():
-        try:
-            candidate = candidate.resolve().relative_to(repository)
-        except ValueError as error:
+        repository_parts = repository.parts
+        candidate_parts = candidate.parts
+        if case_sensitive:
+            contained = candidate_parts[: len(repository_parts)] == repository_parts
+        else:
+            contained = tuple(part.casefold() for part in candidate_parts[: len(repository_parts)]) == tuple(
+                part.casefold() for part in repository_parts
+            )
+        if not contained:
             raise _ScopeError(
                 "Scope paths must remain inside the repository.",
                 stripped,
                 "provide a repository-relative path",
-            ) from error
-    normalized = Path(os.path.normpath(str(candidate))).as_posix()
+            )
+        candidate = Path(*candidate_parts[len(repository_parts):])
+    normalized = candidate.as_posix()
     if normalized == ".." or normalized.startswith("../"):
         raise _ScopeError(
             "Scope paths must remain inside the repository.",
             stripped,
             "provide a repository-relative path",
         )
+    normalized = normalized if case_sensitive else normalized.casefold()
     if _path_is_within(normalized, WORKTREE_ROOT_DIRECTORY):
         raise _ScopeError(
             "Ignored operational worktree state is outside file ownership domains.",
@@ -1274,16 +1286,28 @@ def _scope_from_args(args: argparse.Namespace, repository: Path) -> tuple[dict[s
     scope = _empty_scope()
     warnings: list[dict[str, str]] = []
     compatibility = bool(getattr(args, "compat_file_directories", False))
+    raw_files = list(getattr(args, "file", []))
+    raw_trees = list(getattr(args, "tree", []))
+    case_sensitive = (
+        _filesystem_is_case_sensitive(_primary_worktree(repository))
+        if raw_files or raw_trees
+        else True
+    )
 
-    for raw_file in getattr(args, "file", []):
-        normalized = _normalize_repository_path(repository, raw_file)
+    for raw_file in raw_files:
+        normalized = _normalize_repository_path(
+            repository,
+            raw_file,
+            case_sensitive,
+        )
         if normalized == ".":
             raise _ScopeError(
                 "Repository-wide ownership cannot be requested through --file.",
                 raw_file,
                 "use --all-files with --scope-reason",
             )
-        if (repository / normalized).is_dir():
+        candidate = repository / normalized
+        if not candidate.is_symlink() and candidate.is_dir():
             if not compatibility:
                 raise _ScopeError(
                     "Existing directories cannot be requested through --file.",
@@ -1300,15 +1324,20 @@ def _scope_from_args(args: argparse.Namespace, repository: Path) -> tuple[dict[s
         else:
             scope["files"].append(normalized)
 
-    for raw_tree in getattr(args, "tree", []):
-        normalized = _normalize_repository_path(repository, raw_tree)
+    for raw_tree in raw_trees:
+        normalized = _normalize_repository_path(
+            repository,
+            raw_tree,
+            case_sensitive,
+        )
         if normalized == ".":
             raise _ScopeError(
                 "Repository root cannot be requested as a tree.",
                 raw_tree,
                 "use --all-files with --scope-reason",
             )
-        if (repository / normalized).is_file():
+        candidate = repository / normalized
+        if not candidate.is_symlink() and candidate.is_file():
             raise _ScopeError(
                 "Existing files cannot be requested through --tree.",
                 normalized,
@@ -1373,11 +1402,17 @@ def _scope_from_args(args: argparse.Namespace, repository: Path) -> tuple[dict[s
                 reason,
                 "provide a short coordination-only --scope-reason",
             )
-    if (scope["trees"] or scope["project_files"] or scope["all_files"]) and not reason:
+    if (
+        scope["trees"]
+        or scope["project_files"]
+        or scope["backlog"]
+        or scope["all_files"]
+    ) and not reason:
         raise _ScopeError(
-            "Broad tree and repository-wide scopes require a reason.",
-            ", ".join(scope["trees"]) or ".",
+            "Broad tree and file-domain scopes require a reason.",
+            ", ".join(scope["trees"]) or scope["file_domain"],
             "add --scope-reason with bounded coordination-only text",
+            "scope_reason_required",
         )
     scope["scope_reason"] = reason
     return scope, warnings
@@ -1436,6 +1471,85 @@ def _claim_for_output(
 
 def _path_is_within(path: str, tree: str) -> bool:
     return path == tree or path.startswith(tree + "/")
+
+
+def _filesystem_is_case_sensitive(directory: Path) -> bool:
+    entries = set(os.listdir(directory))
+    for entry in entries:
+        variant = _single_character_case_variant(entry)
+        if variant is None or variant in entries:
+            continue
+        return not os.path.lexists(directory / variant)
+    raise OSError(f"Unable to establish filesystem case sensitivity for {directory}")
+
+
+def _single_character_case_variant(value: str) -> str | None:
+    for index, character in enumerate(value):
+        if "a" <= character <= "z":
+            return f"{value[:index]}{character.upper()}{value[index + 1:]}"
+        if "A" <= character <= "Z":
+            return f"{value[:index]}{character.lower()}{value[index + 1:]}"
+    return None
+
+
+def _claim_scope_for_comparison(
+    claim: dict[str, Any],
+    repository: Path,
+) -> dict[str, Any]:
+    raw_files = claim.get("files", [])
+    raw_trees = claim.get("trees", [])
+    try:
+        if not isinstance(raw_files, list) or not all(
+            isinstance(path, str) for path in raw_files
+        ):
+            raise _ScopeError(
+                "Stored file scopes must be repository-relative path strings.",
+                str(raw_files),
+                "release or reconcile the invalid legacy claim",
+                "invalid_stored_scope",
+            )
+        if not isinstance(raw_trees, list) or not all(
+            isinstance(path, str) for path in raw_trees
+        ):
+            raise _ScopeError(
+                "Stored tree scopes must be repository-relative path strings.",
+                str(raw_trees),
+                "release or reconcile the invalid legacy claim",
+                "invalid_stored_scope",
+            )
+        scope = _claim_scope(claim)
+        if not raw_files and not raw_trees:
+            return scope
+        case_sensitive = _filesystem_is_case_sensitive(_primary_worktree(repository))
+        scope["files"] = _deduplicate(
+            _normalize_repository_path(repository, path, case_sensitive)
+            for path in raw_files
+        )
+        scope["trees"] = _deduplicate(
+            _normalize_repository_path(repository, path, case_sensitive)
+            for path in raw_trees
+        )
+        if "." in scope["files"] or "." in scope["trees"]:
+            raise _ScopeError(
+                "Stored exact path scopes cannot represent the repository root.",
+                ".",
+                "release or reconcile the invalid legacy claim",
+                "invalid_stored_scope",
+            )
+        if "file_domain" not in claim:
+            scope["file_domain"] = _legacy_file_domain(scope)
+    except (OSError, _ScopeError):
+        scope = _empty_scope()
+        raw_resources = claim.get("resources", [])
+        if isinstance(raw_resources, list):
+            scope["resources"] = [str(resource) for resource in raw_resources]
+        scope["files"] = []
+        scope["trees"] = []
+        scope["project_files"] = False
+        scope["backlog"] = False
+        scope["all_files"] = True
+        scope["file_domain"] = "all_files"
+    return scope
 
 
 def _path_scope_overlap(
@@ -1503,11 +1617,19 @@ def _scope_is_resource_only(scope: dict[str, Any]) -> bool:
     return _scope_file_domain(scope) == "none" and bool(scope.get("resources"))
 
 
-def _overlap_details(requested: dict[str, Any], claimed: dict[str, Any]) -> list[dict[str, str]]:
+def _overlap_details(
+    requested: dict[str, Any],
+    claimed: dict[str, Any],
+) -> list[dict[str, str]]:
     details: list[dict[str, str]] = []
     for requested_kind, requested_path in _path_scopes(requested):
         for claimed_kind, claimed_path in _path_scopes(claimed):
-            if _path_scope_overlap(requested_kind, requested_path, claimed_kind, claimed_path):
+            if _path_scope_overlap(
+                requested_kind,
+                requested_path,
+                claimed_kind,
+                claimed_path,
+            ):
                 details.append(
                     {
                         "scope_kind": "path",
@@ -1535,13 +1657,17 @@ def _overlap_details(requested: dict[str, Any], claimed: dict[str, Any]) -> list
 def _conflicts(
     claims: list[dict[str, Any]],
     requested: dict[str, Any],
+    repository: Path,
     excluded_claim_id: str | None = None,
 ) -> list[dict[str, Any]]:
     conflicts: list[dict[str, Any]] = []
     for claim in claims:
         if claim.get("claim_id") == excluded_claim_id:
             continue
-        details = _overlap_details(requested, _claim_scope(claim))
+        details = _overlap_details(
+            requested,
+            _claim_scope_for_comparison(claim, repository),
+        )
         if details:
             conflicts.append({"claim_id": claim["claim_id"], "overlaps": details})
     return conflicts
@@ -1561,8 +1687,12 @@ def _scope_reasons(scope: dict[str, Any]) -> dict[str, str]:
     return reasons
 
 
-def _owned_and_added_scope(claim: dict[str, Any], requested: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
-    current = _claim_scope(claim)
+def _owned_and_added_scope(
+    claim: dict[str, Any],
+    requested: dict[str, Any],
+    repository: Path,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    current = _claim_scope_for_comparison(claim, repository)
     added = _empty_scope()
     owned = _empty_scope()
 
@@ -1874,16 +2004,17 @@ def _invalid_scope_result(
     args: argparse.Namespace,
     error: _ScopeError,
 ) -> int:
+    rejection = {
+        "message": str(error),
+        "offending_scope": error.offending_scope,
+        "replacement": error.replacement,
+        "reason": error.reason,
+    }
     event = _event(
         action,
         "INVALID_SCOPE",
         args,
-        rejection={
-            "message": str(error),
-            "offending_scope": error.offending_scope,
-            "replacement": error.replacement,
-            "reason": error.reason,
-        },
+        rejection=rejection,
     )
     return _journaled_result(
         ERROR,
@@ -2032,6 +2163,14 @@ def _acquire(args: argparse.Namespace) -> int:
             requested_scope, scope_warnings = _scope_from_args(args, repository)
         except _ScopeError as error:
             return _invalid_scope_result(common_directory, "acquire", args, error)
+        if not _scope_has_values(requested_scope):
+            error = _ScopeError(
+                "Acquisition requires at least one file, tree, broad file domain, or named resource.",
+                "none",
+                "provide an Event Contract scope",
+                "missing_scope",
+            )
+            return _invalid_scope_result(common_directory, "acquire", args, error)
         try:
             deadline_request = _deadline_request_from_args(
                 args,
@@ -2048,7 +2187,7 @@ def _acquire(args: argparse.Namespace) -> int:
             event = _event("acquire", "CLAIM_ID_EXISTS", args, requested_scope=requested_scope)
             return _journaled_result(ERROR, common_directory, event, claim_id=args.claim_id)
 
-        conflicts = _conflicts(claims, requested_scope)
+        conflicts = _conflicts(claims, requested_scope, repository)
         if conflicts:
             event = _event(
                 "acquire",
@@ -2228,6 +2367,17 @@ def _extend(args: argparse.Namespace) -> int:
         if claim is None:
             event = _event("extend", "CLAIM_NOT_FOUND", args, requested_scope=requested_scope)
             return _journaled_result(ERROR, common_directory, event, claim_id=args.claim_id)
+        if (
+            _scope_is_resource_only(_claim_scope(claim))
+            and requested_scope["file_domain"] in {"backlog", "all_files"}
+        ):
+            error = _ScopeError(
+                "A resource-only claim cannot be extended into backlog ownership.",
+                requested_scope["file_domain"],
+                "acquire a separate backlog claim from the primary worktree",
+                "resource_only_backlog_extension",
+            )
+            return _invalid_scope_result(common_directory, "extend", args, error)
 
         current_resources = [str(resource) for resource in claim.get("resources", [])]
         requested_resources = requested_scope["resources"]
@@ -2268,10 +2418,23 @@ def _extend(args: argparse.Namespace) -> int:
             )
 
         try:
-            already_owned, added = _owned_and_added_scope(claim, requested_scope)
+            already_owned, added = _owned_and_added_scope(
+                claim,
+                requested_scope,
+                repository,
+            )
         except _ScopeError as error:
             return _invalid_scope_result(common_directory, "extend", args, error)
-        conflicts = _conflicts(claims, added, excluded_claim_id=args.claim_id) if _scope_has_values(added) else []
+        conflicts = (
+            _conflicts(
+                claims,
+                added,
+                repository,
+                excluded_claim_id=args.claim_id,
+            )
+            if _scope_has_values(added)
+            else []
+        )
         if conflicts:
             event = _event(
                 "extend",
@@ -3369,6 +3532,7 @@ def _aggregate(
     broad_scope_count = 0
     broad_file_domains: Counter[str] = Counter()
     integration_resources: Counter[str] = Counter()
+    successful_exact_file_adoptions: Counter[str] = Counter()
     journal_warning_count = 0
 
     for index, event in enumerate(ordered):
@@ -3421,6 +3585,13 @@ def _aggregate(
 
         requested = event.get("requested_scopes") or {}
         if outcome in {*successful_outcomes, "EXTENDED"}:
+            adopted_scope = (
+                requested
+                if outcome in successful_outcomes
+                else event.get("added_scope") or {}
+            )
+            for file_path in adopted_scope.get("files", []):
+                successful_exact_file_adoptions[str(file_path)] += 1
             if (
                 requested.get("trees")
                 or requested.get("project_files")
@@ -3483,6 +3654,9 @@ def _aggregate(
                 for domain in ("all_files", "backlog", "project_files")
             },
             "reasons": _top_counts(broad_reasons),
+        },
+        "successful_scope_adoptions": {
+            "exact_files": _top_counts(successful_exact_file_adoptions),
         },
         "open_claim_ids": sorted(live_by_id),
         "claims_with_missing_release": missing_releases,
@@ -3623,6 +3797,11 @@ def _since_delta(value: str) -> timedelta:
 def _render_text_report(report: dict[str, Any]) -> str:
     metrics = report["metrics"]
     acquisitions = metrics["successful_acquisitions"]
+    exact_file_adoptions = metrics["successful_scope_adoptions"]["exact_files"]
+    rendered_exact_file_adoptions = ", ".join(
+        f"{item['scope']}={item['count']}"
+        for item in exact_file_adoptions
+    ) or "none"
     durations = metrics["claim_duration_seconds"]
     return "\n".join(
         (
@@ -3630,6 +3809,7 @@ def _render_text_report(report: dict[str, Any]) -> str:
             f"Events: {report['event_count']}",
             "Acquisitions: "
             f"primary={acquisitions['primary']} isolated={acquisitions['isolated']} recovery={acquisitions['recovery']}",
+            f"Successful exact-file adoptions: {rendered_exact_file_adoptions}",
             f"Wait attempts: {metrics['wait_attempt_count']} in {len(metrics['wait_episodes'])} episodes",
             "Claim duration seconds: "
             f"median={durations['median']} p95={durations['p95']} maximum={durations['maximum']}",
@@ -3718,7 +3898,7 @@ def _add_resource_timing_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--resource", action="append", default=[], help="Exclusive repository-global runtime resource.")
     parser.add_argument(
         "--scope-reason",
-        help="Bounded coordination-only reason required for tree, project-files, or all-files scope.",
+        help="Bounded coordination-only reason required for tree or broad file-domain scope.",
     )
     parser.add_argument(
         "--compat-file-directories",

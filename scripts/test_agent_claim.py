@@ -179,6 +179,28 @@ class AgentClaimTests(unittest.TestCase):
         """Return the repository-global live registry path."""
         return self.common_directory() / "agent-claims.json"
 
+    def rewrite_claim_paths_as_legacy(
+        self,
+        claim_id: str,
+        *,
+        files: list[str] | None = None,
+        trees: list[str] | None = None,
+    ) -> None:
+        """Replace stored paths and remove current file-domain metadata for a legacy fixture."""
+        registry = json.loads(self.registry_path().read_text(encoding="utf-8"))
+        claim = next(item for item in registry["claims"] if item["claim_id"] == claim_id)
+        if files is not None:
+            claim["files"] = files
+        if trees is not None:
+            claim["trees"] = trees
+        claim.pop("file_domain", None)
+        claim.pop("project_files", None)
+        claim.pop("backlog", None)
+        self.registry_path().write_text(
+            json.dumps(registry, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+
     def hot_directory(self) -> Path:
         """Return the repository-global hot journal directory."""
         return self.common_directory() / "agent-claim-events" / "hot"
@@ -1138,7 +1160,18 @@ class AgentClaimTests(unittest.TestCase):
         )
 
     def test_simultaneous_nonoverlapping_claims_can_both_use_primary(self) -> None:
-        commands = [self.claim_command(*self.acquire_arguments(claim_id)) for claim_id in ("first", "second")]
+        files_by_claim = {
+            "first": "src/one.py",
+            "second": "docs/guide.md",
+        }
+        commands = [
+            self.claim_command(
+                *self.acquire_arguments(claim_id),
+                "--file",
+                file_path,
+            )
+            for claim_id, file_path in files_by_claim.items()
+        ]
         processes = [
             subprocess.Popen(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             for command in commands
@@ -1149,6 +1182,312 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual([0, 0], return_codes)
         self.assertEqual({"SHARED_CHECKOUT_ACQUIRED"}, outcomes)
+
+    def test_case_variant_exact_file_alias_conflicts_on_case_insensitive_filesystem(self) -> None:
+        case_variant = self.repository / "readme.md"
+        if not case_variant.exists():
+            self.skipTest("requires a case-insensitive filesystem")
+
+        first = self.claim(
+            *self.acquire_arguments("canonical"),
+            "--file",
+            "README.md",
+        )
+        alias = self.claim(
+            *self.acquire_arguments("alias"),
+            "--file",
+            "readme.md",
+        )
+
+        self.assertEqual(0, first.returncode, first.stderr)
+        self.assertEqual(3, alias.returncode)
+        result = self.output(alias)
+        self.assertEqual("CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED", result["outcome"])
+        self.assertEqual("readme.md", result["overlaps"][0]["requested"])
+        self.assertEqual("readme.md", result["overlaps"][0]["claimed"])
+        self.assertEqual(
+            ["canonical"],
+            [claim["claim_id"] for claim in self.output(self.claim("status"))["claims"]],
+        )
+        self.assertEqual(
+            ["readme.md"],
+            self.output(self.claim("status"))["claims"][0]["files"],
+        )
+
+    def test_future_case_variant_exact_file_alias_conflicts_on_case_insensitive_filesystem(self) -> None:
+        case_variant = self.repository / "SRC"
+        if not case_variant.exists():
+            self.skipTest("requires a case-insensitive filesystem")
+
+        first = self.claim(
+            *self.acquire_arguments("canonical"),
+            "--file",
+            "src/FutureClaim.py",
+        )
+        alias = self.claim(
+            *self.acquire_arguments("alias"),
+            "--file",
+            "SRC/futureclaim.py",
+        )
+
+        self.assertFalse((self.repository / "src" / "FutureClaim.py").exists())
+        self.assertEqual(0, first.returncode, first.stderr)
+        self.assertEqual(3, alias.returncode)
+        self.assertEqual(
+            "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
+            self.output(alias)["outcome"],
+        )
+        self.assertEqual(
+            ["canonical"],
+            [claim["claim_id"] for claim in self.output(self.claim("status"))["claims"]],
+        )
+
+    def test_legacy_case_variant_file_blocks_new_acquire_without_registry_mutation(self) -> None:
+        if not (self.repository / "readme.md").exists():
+            self.skipTest("requires a case-insensitive filesystem")
+
+        owner = self.claim(
+            *self.acquire_arguments("owner"),
+            "--file",
+            "README.md",
+        )
+        self.assertEqual(0, owner.returncode, owner.stderr)
+        self.rewrite_claim_paths_as_legacy("owner", files=["README.md"])
+        registry_before = self.registry_path().read_bytes()
+
+        competitor = self.claim(
+            *self.acquire_arguments("competitor"),
+            "--file",
+            "readme.md",
+        )
+
+        self.assertEqual(3, competitor.returncode)
+        self.assertEqual(
+            "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
+            self.output(competitor)["outcome"],
+        )
+        self.assertEqual(registry_before, self.registry_path().read_bytes())
+        claims = self.output(self.claim("status"))["claims"]
+        self.assertEqual(["owner"], [claim["claim_id"] for claim in claims])
+        self.assertEqual(["README.md"], claims[0]["files"])
+
+    def test_legacy_case_variant_file_blocks_new_extend_without_registry_mutation(self) -> None:
+        if not (self.repository / "readme.md").exists():
+            self.skipTest("requires a case-insensitive filesystem")
+
+        owner = self.claim(
+            *self.acquire_arguments("owner"),
+            "--file",
+            "README.md",
+        )
+        extender = self.claim(
+            *self.acquire_arguments("extender"),
+            "--file",
+            "src/one.py",
+        )
+        self.assertEqual(0, owner.returncode, owner.stderr)
+        self.assertEqual(0, extender.returncode, extender.stderr)
+        self.rewrite_claim_paths_as_legacy("owner", files=["README.md"])
+        registry_before = self.registry_path().read_bytes()
+
+        extended = self.claim(
+            "extend",
+            "--claim-id",
+            "extender",
+            "--file",
+            "readme.md",
+        )
+
+        self.assertEqual(3, extended.returncode)
+        self.assertEqual(
+            "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
+            self.output(extended)["outcome"],
+        )
+        self.assertEqual(registry_before, self.registry_path().read_bytes())
+        claims = {
+            claim["claim_id"]: claim["files"]
+            for claim in self.output(self.claim("status"))["claims"]
+        }
+        self.assertEqual(
+            {"owner": ["README.md"], "extender": ["src/one.py"]},
+            claims,
+        )
+
+    def test_legacy_owner_extend_preserves_stored_case_variant(self) -> None:
+        if not (self.repository / "readme.md").exists():
+            self.skipTest("requires a case-insensitive filesystem")
+
+        owner = self.claim(
+            *self.acquire_arguments("owner"),
+            "--file",
+            "README.md",
+        )
+        self.assertEqual(0, owner.returncode, owner.stderr)
+        self.rewrite_claim_paths_as_legacy("owner", files=["README.md"])
+        registry_before = self.registry_path().read_bytes()
+
+        extended = self.claim(
+            "extend",
+            "--claim-id",
+            "owner",
+            "--file",
+            "readme.md",
+        )
+
+        self.assertEqual(0, extended.returncode, extended.stderr)
+        result = self.output(extended)
+        self.assertEqual([], result["added_scope"]["files"])
+        self.assertEqual(["readme.md"], result["already_owned_scope"]["files"])
+        self.assertEqual(["README.md"], result["claim"]["files"])
+        self.assertEqual(registry_before, self.registry_path().read_bytes())
+
+    def test_legacy_case_variant_tree_blocks_descendant_without_registry_mutation(self) -> None:
+        if not (self.repository / "SRC").exists():
+            self.skipTest("requires a case-insensitive filesystem")
+
+        owner = self.claim(
+            *self.acquire_arguments("owner"),
+            "--tree",
+            "src",
+            "--scope-reason",
+            "source ownership",
+        )
+        self.assertEqual(0, owner.returncode, owner.stderr)
+        self.rewrite_claim_paths_as_legacy("owner", trees=["SRC"])
+        registry_before = self.registry_path().read_bytes()
+
+        competitor = self.claim(
+            *self.acquire_arguments("competitor"),
+            "--file",
+            "src/one.py",
+        )
+
+        self.assertEqual(3, competitor.returncode)
+        self.assertEqual(
+            "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
+            self.output(competitor)["outcome"],
+        )
+        self.assertEqual(registry_before, self.registry_path().read_bytes())
+        claims = self.output(self.claim("status"))["claims"]
+        self.assertEqual(["owner"], [claim["claim_id"] for claim in claims])
+        self.assertEqual(["SRC"], claims[0]["trees"])
+
+    def test_unsafe_legacy_path_fails_closed_without_registry_mutation(self) -> None:
+        owner = self.claim(
+            *self.acquire_arguments("owner"),
+            "--file",
+            "README.md",
+        )
+        self.assertEqual(0, owner.returncode, owner.stderr)
+        self.rewrite_claim_paths_as_legacy("owner", files=["../outside.py"])
+        registry_before = self.registry_path().read_bytes()
+
+        competitor = self.claim(
+            *self.acquire_arguments("competitor"),
+            "--file",
+            "docs/guide.md",
+        )
+
+        self.assertEqual(3, competitor.returncode)
+        self.assertEqual(
+            "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
+            self.output(competitor)["outcome"],
+        )
+        self.assertEqual(registry_before, self.registry_path().read_bytes())
+        self.assertEqual(
+            ["owner"],
+            [
+                claim["claim_id"]
+                for claim in self.output(self.claim("status"))["claims"]
+            ],
+        )
+
+    def test_dangling_symlink_and_missing_target_remain_distinct_stable_paths(self) -> None:
+        alias_path = self.repository / "src" / "future-alias.py"
+        target_path = self.repository / "src" / "future-target.py"
+        alias_path.symlink_to(target_path.name)
+        self.git("add", "src/future-alias.py")
+        self.git("commit", "-m", "add dangling symlink fixture")
+
+        acquired = self.claim(
+            *self.acquire_arguments("dangling"),
+            "--file",
+            "src/future-alias.py",
+            "--file",
+            "src/future-target.py",
+        )
+
+        self.assertFalse(target_path.exists())
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(
+            ["src/future-alias.py", "src/future-target.py"],
+            self.output(acquired)["claim"]["files"],
+        )
+
+    def test_absolute_symlink_scope_preserves_lexical_path_without_following_target(self) -> None:
+        alias_path = self.repository / "src" / "guide-alias.md"
+        alias_path.symlink_to("../docs/guide.md")
+        self.git("add", "src/guide-alias.md")
+        self.git("commit", "-m", "add symlink fixture")
+
+        alias = self.claim(
+            *self.acquire_arguments("alias"),
+            "--file",
+            str(self.repository.resolve() / "src" / "guide-alias.md"),
+        )
+        target = self.claim(
+            *self.acquire_arguments("target"),
+            "--file",
+            "docs/guide.md",
+        )
+
+        self.assertEqual(0, alias.returncode, alias.stderr)
+        self.assertEqual(
+            ["src/guide-alias.md"],
+            self.output(alias)["claim"]["files"],
+        )
+        self.assertEqual(0, target.returncode, target.stderr)
+
+    def test_exact_file_symlink_does_not_inherit_target_directory_kind(self) -> None:
+        alias_path = self.repository / "src" / "docs-alias"
+        alias_path.symlink_to("../docs")
+        self.git("add", "src/docs-alias")
+        self.git("commit", "-m", "add directory symlink fixture")
+
+        acquired = self.claim(
+            *self.acquire_arguments("alias"),
+            "--file",
+            "src/docs-alias",
+        )
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(
+            ["src/docs-alias"],
+            self.output(acquired)["claim"]["files"],
+        )
+
+    def test_distinct_hard_link_paths_can_be_claimed_concurrently(self) -> None:
+        alias_path = self.repository / "README-alias.md"
+        try:
+            os.link(self.repository / "README.md", alias_path)
+        except OSError as error:
+            self.skipTest(f"hard links unavailable: {error}")
+        self.git("add", "README-alias.md")
+        self.git("commit", "-m", "add hard-link alias fixture")
+
+        first = self.claim(
+            *self.acquire_arguments("canonical"),
+            "--file",
+            "README.md",
+        )
+        alias = self.claim(
+            *self.acquire_arguments("alias"),
+            "--file",
+            "README-alias.md",
+        )
+
+        self.assertEqual(0, first.returncode, first.stderr)
+        self.assertEqual(0, alias.returncode, alias.stderr)
 
     def test_exact_files_do_not_use_ancestry_overlap(self) -> None:
         first = self.claim(*self.acquire_arguments("first"), "--file", "future")
@@ -1256,7 +1595,12 @@ class AgentClaimTests(unittest.TestCase):
         )
 
     def test_backlog_broad_scope_does_not_overlap_project_paths(self) -> None:
-        backlog = self.claim(*self.acquire_arguments("backlog"), "--backlog")
+        backlog = self.claim(
+            *self.acquire_arguments("backlog"),
+            "--backlog",
+            "--scope-reason",
+            "backlog maintenance",
+        )
         self.assertEqual(0, backlog.returncode, backlog.stderr)
         self.assertEqual("backlog", self.output(backlog)["claim"]["file_domain"])
         self.claim("release", "--claim-id", "backlog", "--no-change")
@@ -3081,7 +3425,7 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual(["src/one.py"], claim["files"])
         self.assertEqual(["port:3000"], claim["resources"])
 
-    def test_legacy_resource_only_claim_accepts_backlog_domain(self) -> None:
+    def test_legacy_resource_only_claim_rejects_backlog_domain_without_mutation(self) -> None:
         legacy_claim = {
             "agent": "legacy",
             "all_files": False,
@@ -3103,13 +3447,51 @@ class AgentClaimTests(unittest.TestCase):
         }
         self.registry_path().write_text(json.dumps({"claims": [legacy_claim]}), encoding="utf-8")
 
-        extended = self.claim("extend", "--claim-id", "legacy-resource", "--backlog")
+        registry_before = self.registry_path().read_bytes()
+        extended = self.claim(
+            "extend",
+            "--claim-id",
+            "legacy-resource",
+            "--backlog",
+            "--scope-reason",
+            "backlog maintenance",
+        )
 
-        self.assertEqual(0, extended.returncode, extended.stderr)
-        claim = self.output(extended)["claim"]
-        self.assertEqual("backlog", claim["file_domain"])
-        self.assertTrue(claim["backlog"])
-        self.assertEqual(["database:seed"], claim["resources"])
+        self.assertEqual(1, extended.returncode)
+        result = self.output(extended)
+        self.assertEqual("INVALID_SCOPE", result["outcome"])
+        self.assertEqual("resource_only_backlog_extension", result["rejection"]["reason"])
+        self.assertEqual(registry_before, self.registry_path().read_bytes())
+
+    def test_linked_resource_only_claim_rejects_exact_backlog_extension_without_mutation(self) -> None:
+        linked = self.existing_linked_worktree("resource-owner")
+        acquired = self.claim(
+            *self.acquire_arguments("resource"),
+            *self.timed_resource_arguments(),
+            repo=linked,
+        )
+        registry_before = self.registry_path().read_bytes()
+
+        extended = self.claim(
+            "extend",
+            "--claim-id",
+            "resource",
+            "--file",
+            "backlog/feature-backlog/queued.md",
+            repo=linked,
+        )
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(1, extended.returncode)
+        result = self.output(extended)
+        self.assertEqual("INVALID_SCOPE", result["outcome"])
+        self.assertEqual("resource_only_backlog_extension", result["rejection"]["reason"])
+        self.assertEqual(registry_before, self.registry_path().read_bytes())
+        stored = self.output(self.claim("status"))["claims"][0]
+        self.assertEqual("none", stored["file_domain"])
+        self.assertEqual([], stored["files"])
+        self.assertFalse(stored["backlog"])
+        self.assertEqual(["port:3000"], stored["resources"])
 
     def test_legacy_complete_worktree_release_allows_opposite_domain_commit_after_extension(self) -> None:
         legacy_claim = {
@@ -3145,7 +3527,12 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("RELEASED", self.output(released)["outcome"])
 
     def test_backlog_claim_release_rejects_project_change(self) -> None:
-        acquired = self.claim(*self.acquire_arguments("backlog"), "--backlog")
+        acquired = self.claim(
+            *self.acquire_arguments("backlog"),
+            "--backlog",
+            "--scope-reason",
+            "backlog maintenance",
+        )
         self.assertEqual(0, acquired.returncode, acquired.stderr)
         (self.repository / "src" / "one.py").write_text("changed\n", encoding="utf-8")
 
@@ -3160,7 +3547,12 @@ class AgentClaimTests(unittest.TestCase):
         project_path = self.repository / "src" / "one.py"
         project_path.write_text("preexisting\n", encoding="utf-8")
 
-        acquired = self.claim(*self.acquire_arguments("backlog"), "--backlog")
+        acquired = self.claim(
+            *self.acquire_arguments("backlog"),
+            "--backlog",
+            "--scope-reason",
+            "backlog maintenance",
+        )
         released = self.claim("release", "--claim-id", "backlog", "--no-change")
 
         self.assertEqual(0, acquired.returncode, acquired.stderr)
@@ -3215,6 +3607,53 @@ class AgentClaimTests(unittest.TestCase):
 
         future = self.claim(*self.acquire_arguments("future"), "--file", "not-created-yet.py")
         self.assertEqual(0, future.returncode, future.stderr)
+
+    def test_acquire_requires_scope_without_mutating_registry(self) -> None:
+        completed = self.claim(*self.acquire_arguments("scope-less"))
+
+        self.assertEqual(1, completed.returncode)
+        result = self.output(completed)
+        self.assertEqual("INVALID_SCOPE", result["outcome"])
+        self.assertEqual("missing_scope", result["rejection"]["reason"])
+        self.assertEqual([], self.output(self.claim("status"))["claims"])
+
+    def test_broad_backlog_scope_requires_and_retains_reason(self) -> None:
+        rejected = self.claim(
+            *self.acquire_arguments("missing-reason"),
+            "--backlog",
+        )
+
+        self.assertEqual(1, rejected.returncode)
+        rejected_result = self.output(rejected)
+        self.assertEqual("INVALID_SCOPE", rejected_result["outcome"])
+        self.assertEqual("scope_reason_required", rejected_result["rejection"]["reason"])
+        self.assertEqual([], self.output(self.claim("status"))["claims"])
+
+        acquired = self.claim(
+            *self.acquire_arguments("reasoned"),
+            "--backlog",
+            "--scope-reason",
+            "bounded backlog maintenance",
+        )
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(
+            {"backlog:backlog": "bounded backlog maintenance"},
+            self.output(acquired)["claim"]["scope_reasons"],
+        )
+        event = next(
+            event
+            for event in self.journal_events()
+            if event["claim_id"] == "reasoned" and event["outcome"] == "PRIMARY"
+        )
+        self.assertEqual(
+            "bounded backlog maintenance",
+            event["requested_scopes"]["scope_reason"],
+        )
+        self.assertEqual(
+            {"backlog:backlog": "bounded backlog maintenance"},
+            event["scopes"]["scope_reasons"],
+        )
 
     def test_compatibility_mode_converts_directory_file_scope_with_warning(self) -> None:
         completed = self.claim(
@@ -3437,6 +3876,8 @@ class AgentClaimTests(unittest.TestCase):
         required = self.claim(
             *self.acquire_arguments("backlog"),
             "--backlog",
+            "--scope-reason",
+            "backlog maintenance",
             repo=isolated_path,
         )
         report = self.claim("report", "--since", "2d")
@@ -3550,7 +3991,11 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual(self.git("rev-parse", "HEAD").stdout.strip(), events[-1]["resulting_commit"])
 
     def test_release_requires_clean_commit_or_explicit_no_change(self) -> None:
-        acquired = self.claim(*self.acquire_arguments("first"))
+        acquired = self.claim(
+            *self.acquire_arguments("first"),
+            "--file",
+            "README.md",
+        )
         rejected = self.claim("release", "--claim-id", "first")
         (self.repository / "README.md").write_text("committed\n", encoding="utf-8")
         self.git("add", "README.md")
@@ -3565,7 +4010,12 @@ class AgentClaimTests(unittest.TestCase):
 
     def test_recovery_claim_preserves_dirty_baseline_until_checkpoint_commit(self) -> None:
         (self.repository / "README.md").write_text("recovery\n", encoding="utf-8")
-        acquired = self.claim(*self.acquire_arguments("recovery"), "--allow-recovery")
+        acquired = self.claim(
+            *self.acquire_arguments("recovery"),
+            "--file",
+            "README.md",
+            "--allow-recovery",
+        )
         rejected = self.claim("release", "--claim-id", "recovery")
         self.git("add", "README.md")
         self.git("commit", "-m", "recovery checkpoint")
@@ -3970,6 +4420,50 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual(1, metrics["journal_warning_count"])
         self.assertEqual(registry_before, self.registry_path().read_bytes() if self.registry_path().exists() else None)
         self.assertEqual(journal_before, (self.hot_directory() / "2026-07-12.jsonl").read_bytes())
+
+    def test_report_exposes_successful_exact_file_adoption_in_json_and_text(self) -> None:
+        environment = {"AGENT_CLAIM_TEST_NOW": "2026-07-13T10:00:00Z"}
+        acquired = self.claim(
+            *self.acquire_arguments("exact-file"),
+            "--file",
+            "src/one.py",
+            environment=environment,
+        )
+        released = self.claim(
+            "release",
+            "--claim-id",
+            "exact-file",
+            "--no-change",
+            environment=environment,
+        )
+
+        json_report = self.claim(
+            "report",
+            "--since",
+            "2d",
+            environment=environment,
+        )
+        text_report = self.claim(
+            "report",
+            "--since",
+            "2d",
+            "--format",
+            "text",
+            environment=environment,
+        )
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(0, released.returncode, released.stderr)
+        self.assertEqual(0, json_report.returncode, json_report.stderr)
+        self.assertEqual(
+            [{"count": 1, "scope": "src/one.py"}],
+            self.output(json_report)["metrics"]["successful_scope_adoptions"]["exact_files"],
+        )
+        self.assertEqual(0, text_report.returncode, text_report.stderr)
+        self.assertIn(
+            "Successful exact-file adoptions: src/one.py=1",
+            text_report.stdout,
+        )
 
     def test_report_keeps_ambiguous_legacy_primary_required_outcome_raw(self) -> None:
         event = self.synthetic_event(
