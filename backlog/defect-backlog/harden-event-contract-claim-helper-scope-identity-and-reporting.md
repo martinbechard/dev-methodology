@@ -107,6 +107,17 @@ None.
 - Correction Attempt: 1, assigned to the original Dev Coder against the same candidate scope.
 - Integration And Verification: no integration or final verification has been accepted; correction and fresh review remain required.
 
+## Stable-Path Candidate Review
+
+- Candidate: 437ad55782223b2f9c7f443c44254c3028ede6ce.
+- Candidate Paths: scripts/test_agent_claim.py and skills/agent-claim-command/scripts/claim.py only.
+- Evidence: 24 focused and edge tests passed, together with compilation and git diff --check.
+- Fresh Review Disposition: REJECTED.
+- Review Finding: HIGH — new requests are normalized and casefolded, but pre-upgrade live claim files and trees are compared verbatim; on an insensitive filesystem, a legacy README.md claim and a new readme.md request can coexist.
+- Correction Attempt: 1, assigned to the original Dev Coder. Normalize stored file and tree identities for comparison only using the same lexical and case rules; do not resolve targets or inodes and do not mutate the registry.
+- Required Regression: add a public regression that seeds a legacy stored claim and then submits the new request.
+- Verifier And Integration: no verifier or integration has been accepted.
+
 ## Replacement Candidate Review
 
 - Replacement Candidate: b803c1ba70db747915218e08ecd64de8c059555e, atop rejected candidate 9ae3dd286490e3f3e8dd14066d1c72676d86c3d4.
