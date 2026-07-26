@@ -1,10 +1,10 @@
 # Use Exact Work-Item Claims For Lifecycle Updates
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
@@ -22,6 +22,19 @@ Completion: direct-main
 - Parent Reservation Claim: exact-work-item-claims-ready-starting-20260726; acquisition event 646681cd-18e8-4266-84e4-714ba7cb29a4.
 - Runtime Thread And Task Id: Pending root Dev Orchestrator acceptance; no new root identity has been created by this reservation.
 - Historical Canonical Work-Item Thread/Task: 019f9783-31a0-7e91-9704-08cde7886b3a remains preserved for recovery evidence and must not be replaced.
+
+## Current Running Acceptance
+
+- Root Dev Orchestrator: Dev Orchestrator
+- Historical Canonical Work-Item Thread/Task: 019f9783-31a0-7e91-9704-08cde7886b3a remains the preserved canonical identity; this current adoption does not replace it.
+- Current Adoption Task: /root/resume_blocked_after_claim_publication/exact_claims_delivery_reconcile.
+- Parent Coordinator: /root/resume_blocked_after_claim_publication.
+- Delivery Branch: main.
+- Delivery Worktree: /Users/martinbechard/dev/dev-methodology.
+- Started At: 2026-07-26T07:20:28.319561Z.
+- Phase: Current-main audit, review, verification, and direct-main delivery observation; no implementation lane or private-worktree mutation is dispatched.
+- Claim Evidence: No project-files claim was triggered because the root has performed read-only audit only; claim-free private-lane evidence is not applicable.
+- Backlog Claim: exact-work-item-claims-starting-running-steward-20260726; acquisition event 94d21867-6123-40ae-957a-9b1b70dc376c.
 
 ## Recovery Resumption
 
