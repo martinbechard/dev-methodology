@@ -1,6 +1,6 @@
 # Normalize Legacy Completed Work-Item Status
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -49,6 +49,18 @@ None.
 ## Open Questions
 
 None.
+
+## Current Starting Reservation
+
+- Parent Coordination Thread: /root.
+- Reservation: One parent-owned Ready -> Starting launch reservation.
+- Normalized Objective: Normalize legacy completed work-item status.
+- Intended Root Role: Dev Orchestrator.
+- Persistence And Completion: file provider; direct-main completion.
+- Dispatched At: 2026-07-26T13:36:00Z.
+- Launch Evidence: Parent Coordinator authorized this exact-item reservation. Runtime task creation and acceptance remain pending.
+- Backlog Claim Event: b46fc80f-fe6c-4061-9ae1-0e2637771fe8.
+- Next Lifecycle Owner: the root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
 
 ## Notes
 
