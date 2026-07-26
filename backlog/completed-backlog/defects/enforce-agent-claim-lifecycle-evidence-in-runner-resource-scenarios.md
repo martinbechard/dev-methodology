@@ -1,14 +1,14 @@
 # Restrict Coordination Lifecycle Evaluation To Coordination Skills
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/enforce-agent-claim-lifecycle-evidence-in-runner-resource-scenarios.md
+Provider Reference: backlog/completed-backlog/defects/enforce-agent-claim-lifecycle-evidence-in-runner-resource-scenarios.md
 
 Completion: direct-main
 
@@ -79,3 +79,16 @@ The previous exhausted-correction and blocker records are superseded because the
 ## Delivery Mode
 
 The user directed temporary single-task delivery without claims or delegated agents.
+
+## Completion Evidence
+
+- Implementation commit: 572cd8f8.
+- Ordinary scenarios now default to resource coordination none.
+- A scenario explicitly targeting agent-claim activates claim coordination.
+- A fixture explicitly selecting agent-claim still activates its focused checks.
+- Two targeted runner tests passed.
+- All 27 focused Dev Orchestrator fixture tests passed, including the no-claim and
+  agent-claim companion cases.
+- Python compilation and git diff --check passed.
+- No claim was acquired.
+- No publication was needed because no distributed skill or agent definition changed.
