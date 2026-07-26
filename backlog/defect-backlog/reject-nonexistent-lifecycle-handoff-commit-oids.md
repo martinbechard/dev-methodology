@@ -281,3 +281,8 @@ None.
 ## Notes
 
 This record captures the confirmed defect only. Do not implement unrelated lifecycle corrections or mutate governed definitions without the required exact approval evidence.
+
+## Coordinator Disposition — 2026-07-26
+
+- Disposition: continuing Blocked until direct preserved-candidate or blocker batons arrive from disable replace refs 019f9f66-7522, unconfigured lanes 019f9f67-1259, malformed checkpoint 019f9f60, and structure-non-UTF8 019f9f66-52ad. No rejected candidate ancestry 85e, 1eab, or da09 may be imported.
+- Next Owner: parent Dev Backlog Coordinator for a newly authorized bounded combined current-main foundation plan in canonical task 019f978e-28b7-7561-be38-b535ab26850f. Reuse preserved behavior and deltas only; no user action is required now. Resumption remains Blocked -> Ready -> Starting -> Running.

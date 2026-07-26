@@ -179,3 +179,9 @@ No governed source, generated mirror, implementation, integration, publication, 
 ## Notes
 
 This item authorizes delivery of the coordinator-notification behavior. It does not pre-approve mutation of any governed agent or skill definition; implementation must discover and request the exact required scope.
+
+## Coordinator Disposition — 2026-07-26
+
+- Disposition: continuing Blocked. Existing three-path approval is sufficient, but this overlaps current Coordinator and Steward work. No rejected candidate may be integrated as-is.
+- Trigger: terminal accepted-main or release batons from 019f9f67-4487 and 019f9a91.
+- Next Owner: parent Dev Backlog Coordinator for a fresh deterministic-provider-evidence and harness-scoped plan. No user action is required now. Resumption remains Blocked -> Ready -> Starting -> Running.

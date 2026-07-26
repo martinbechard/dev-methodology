@@ -202,3 +202,9 @@ Start another correction cycle only after explicit authorization of a new bounde
 - obtain fresh code and prompt reviews plus independent verification before integration.
 
 Do not resume through a direct Blocked-to-Running transition. Preserve the canonical task, worktree, branch, candidate chain, and review evidence through Blocked -> Ready -> Starting -> Running.
+
+## Coordinator Disposition — 2026-07-26
+
+- Disposition: continuing Blocked. A fresh bounded two-file recovery is agent-actionable under existing authority, but overlaps active runner and receipt work. No rejected candidate may be integrated as-is.
+- Trigger: terminal accepted-main or release batons from 019f9f5f, 019f9f67-1259, 019f9f66-7522, and 019f9f60.
+- Next Owner: parent Dev Backlog Coordinator. No user action is required now. Resumption remains Blocked -> Ready -> Starting -> Running.

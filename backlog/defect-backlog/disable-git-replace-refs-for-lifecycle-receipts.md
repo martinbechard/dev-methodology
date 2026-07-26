@@ -70,8 +70,8 @@ None.
 
 - Transition: Starting -> Running.
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a (preserved from the Starting reservation).
-- Canonical Work-Item Thread: /root/accept_running (stable assignment identifier; no runtime UUID was available in the acceptance context).
-- Canonical Root Agent Task: /root/accept_running.
+- Canonical Work-Item Thread: 019f9f66-7522-72d1-a673-227a6b0f3ed9.
+- Canonical Root Agent Task: 019f9f66-7522-72d1-a673-227a6b0f3ed9.
 - Root Dev Orchestrator: /root.
 - Delivery Branch: Detached HEAD at 9ce6fd7c72f157f143a4ca159f3380f1452d0263.
 - Delivery Worktree: /Users/martinbechard/.codex/worktrees/6767/dev-methodology.
@@ -80,6 +80,10 @@ None.
 - Parent Reservation Commit: 1c6cc7c42eb2f14917ac78a28ddad73968c47111.
 - Claim Evidence: accept-running-disable-git-replace-refs-019f95a9; acquire outcome SHARED_CHECKOUT_ACQUIRED; claim event 29e2ddf8-410d-49c7-b980-48ea2dabab6c.
 - Dependency Classification: coordination-only. Reconcile exact overlapping implementation scope before integration.
+
+## Identity Reconciliation — 2026-07-26
+
+- Reconciled the placeholder Running identity to canonical work-item Thread and root Agent Task 019f9f66-7522-72d1-a673-227a6b0f3ed9. This corrects identity evidence only; it is not a lifecycle transition and preserves the existing Running acceptance evidence.
 
 ## Notes
 

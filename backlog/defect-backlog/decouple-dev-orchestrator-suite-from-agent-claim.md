@@ -133,3 +133,9 @@ None.
 ## Notes
 
 This item records a confirmed defect only. Do not weaken the independent resource-coordination contract or change governed definition sources without an exact canonical-path approval manifest.
+
+## Coordinator Disposition — 2026-07-26
+
+- Disposition: continuing Blocked. Existing governed approval is sufficient, but sources overlap the OID and receipt lane and current Coordinator and Orchestrator work. No rejected candidate may be integrated as-is.
+- Trigger: terminal accepted-main or release batons from 019f978e-28b7-7561-be38-b535ab26850f, 019f9f67-4487-75b3-89c4-3cbfbd83b640, 019f9a91-b1a9-7ea0-9c90-35f0ed78c1be, and 019f96cf-226c-7f62-9d66-7d31cead822e.
+- Next Owner: parent Dev Backlog Coordinator for a fresh current-main plan. No new definition approval is required unless scope expands; no user action is required now. Resumption remains Blocked -> Ready -> Starting -> Running.

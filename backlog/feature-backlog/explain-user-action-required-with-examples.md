@@ -195,3 +195,9 @@ None.
 ## Notes
 
 Discovery may identify governed canonical sources; any such source change requires an exact canonical-path approval record before mutation. This creation transaction authorizes backlog capture only and does not authorize delivery.
+
+## Coordinator Disposition — 2026-07-26
+
+- Disposition: continuing Blocked. Existing exact approval is sufficient, but this overlaps current Coordinator, Orchestrator, and Steward work. No rejected candidate may be integrated as-is.
+- Trigger: terminal accepted-main or release batons from 019f9f67-4487, 019f9a91, and 019f96cf-226c.
+- Next Owner: parent Dev Backlog Coordinator for a fresh semantic-evaluator plan. No user action is required now. Resumption remains Blocked -> Ready -> Starting -> Running.

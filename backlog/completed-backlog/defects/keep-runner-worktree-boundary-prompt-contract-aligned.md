@@ -1,14 +1,14 @@
 # Keep Runner Worktree Boundary Prompt Contract Aligned
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
-Owner: Dev Orchestrator (canonical root task 019f9f5f-8959-7b72-a67e-38f843e9e720)
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/keep-runner-worktree-boundary-prompt-contract-aligned.md
+Provider Reference: backlog/completed-backlog/defects/keep-runner-worktree-boundary-prompt-contract-aligned.md
 
 Completion: direct-main
 
@@ -76,6 +76,19 @@ None.
 - Worktree: /Users/martinbechard/.codex/worktrees/5766/dev-methodology (private worktree).
 - Primary Main Observation: main at ba80dd685ab78d131349c028d06025fc06c207d0 when this acceptance was recorded.
 - Claim Evidence: running-keep-runner-worktree-boundary-019f9f5f, acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-26T17:03:23.140010Z; claim event 45ae4143-9ef4-4aaf-8139-48c456ff0640.
+
+## Completion Evidence
+
+- Completed At: 2026-07-26T17:30:57Z.
+- Completion Disposition: READY for direct-main closure.
+- Accepted Candidate: 83e31b98e98d061bee7139d8e8b6c2a68db5e7e8.
+- Main Delivery: the candidate was integrated as b1e3743201ff1e8de53f7eb1f27feb0d89209f2b, with parent f58290fac280b58d2ef7aa6a8338b28e5ba5781d. The delivery commit changed only evals/agent-tests/test_runner.py.
+- Main Observation: b1e3743201ff1e8de53f7eb1f27feb0d89209f2b is an ancestor of primary main 6b753d2601bc3a3b8f6a23c2c5005068d5d180ed at the terminal provider preflight.
+- Independent Review: the candidate Dev Code Review ACCEPTED with no findings. Fresh post-integration Dev Code Review ACCEPTED with no findings.
+- Verification: final Dev Verifier PASS: 2/2 focused prompt regressions, 2/2 compile targets, exact sentence source/test match, and diff check. Broad suites were intentionally omitted as unrelated.
+- Integration: Dev Merge Coordinator reconciled the conflict by retaining current-main scenarioRoots assertion and the candidate's exact full boundary sentence.
+- Claim Evidence: the Running provider claim released at event 5e02fda3-c5e8-4bb4-b30b-ed883a3246f0. The integration project-files claim acquired at event 0720300b-91e8-4ca2-b3c0-5ef3d1003d70 and released normally at event e11c09f2-c0f7-4592-a527-7deccaa913c0. The terminal backlog claim complete-keep-runner-worktree-boundary-019f9f5f acquired at event caed3e1c-f7bb-4ec3-813e-639886c32839.
+- Terminal Archive Path: backlog/completed-backlog/defects/keep-runner-worktree-boundary-prompt-contract-aligned.md.
 
 ## Notes
 

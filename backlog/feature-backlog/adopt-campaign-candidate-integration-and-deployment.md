@@ -111,3 +111,9 @@ None.
 ## Notes
 
 This feature changes delivery coordination, not the authority of canonical definitions. Any governed definition mutation still requires an exact canonical-path approval manifest before editing.
+
+## Coordinator Disposition — 2026-07-26
+
+- Disposition: continuing Blocked. Existing four-path approval is sufficient, but this overlaps current Coordinator and Orchestrator work. No rejected candidate may be integrated as-is.
+- Trigger: terminal accepted-main or release batons from 019f9f67-4487, 019f9a91, and 019f96cf-226c.
+- Next Owner: parent Dev Backlog Coordinator for a fresh relational-receipt plan. No new user authority is required unless scope expands. Resumption remains Blocked -> Ready -> Starting -> Running.

@@ -129,3 +129,9 @@ Do not implement this finding as part of unrelated candidate work. Governed-defi
   - The promised AWAITING_REVIEW-to-READY same-delivery continuity is not executable across distinct nonterminal and terminal provider updates.
 - Recorded Checks: 38/38 fixtures passed; staging 2/2 passed; schema, bundle, skill, validate, py_compile, and diff checks passed. The broad runner result was 107/120, with the same 13 baseline Playwright environment failures.
 - Unblock Condition: Authorize and resume a fresh bounded correction that evidence-binds file-provider state and archive bytes to retained Dev Backlog Steward execution, fixes the prompt empty-session rule, and adds executable phase continuity. It must then receive fresh independent code and prompt review plus verification.
+
+## Coordinator Disposition — 2026-07-26
+
+- Disposition: continuing Blocked. A fresh bounded recovery is agent-actionable under the existing ordinary evaluation authority, but shares runner and receipt scope. No rejected candidate may be integrated as-is.
+- Trigger: terminal accepted-main or release batons from 019f9f5f-8959-7b72-a67e-38f843e9e720, 019f9f67-1259-73a1-a9f2-1c6ce447903e, 019f9f66-7522-72d1-a673-227a6b0f3ed9, and 019f9f60-097d-7392-813d-801c9d058683.
+- Next Owner: parent Dev Backlog Coordinator to map current main and create one new bounded plan. No user action is required now. Resumption remains Blocked -> Ready -> Starting -> Running.
