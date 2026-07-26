@@ -1,10 +1,10 @@
 # Notify the Backlog Coordinator When a Work Item Is Added
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
@@ -82,6 +82,17 @@ None.
 - Launch Evidence: Parent Coordinator authorized this exact-item reservation. Runtime task creation and acceptance remain pending.
 - Backlog Claim Event: 9dc49f0c-98c2-415b-8947-f42452ac19d2.
 - Next Lifecycle Owner: the root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
+
+## Current Running Acceptance
+
+- Canonical Work-Item Thread: /root.
+- Canonical Root Dev Orchestrator Task: /root.
+- Owner: Dev Orchestrator.
+- Delivery Branch: main.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/e98b/dev-methodology.
+- Phase: provider-neutral and governed-source discovery.
+- Started At: 2026-07-26T13:51:19Z.
+- Backlog Claim Evidence: acquired Event 1 exact-path claim start-running-notify-backlog-coordinator-019f9ea6; event f66b3763-7931-40b0-91f8-f0330f68ac6c.
 
 ## Notes
 
