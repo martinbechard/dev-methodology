@@ -68,12 +68,13 @@ instructions:
   - Search only the selected operation's authoritative scope for an existing match before
     creating another record.
   - Before promotion writes, preflight target collisions and apply resource_coordination. When
-    agent-claim is selected, claim the exact existing source record and associated destination.
-    When none is selected, perform no claim discovery, call, registry mutation, release, or
-    claim evidence. In either mode, remain on primary main and snapshot the exact source idea
-    bytes, target existence, exact target bytes when present, and exact full Git index file
-    bytes and existence. Keep the snapshots as recovery evidence until commit verification
-    or verified rollback.
+    agent-claim is selected, apply Event 1 by claiming only the exact current Future Idea path.
+    Create the unique promoted target atomically with no overwrite and no target claim; an
+    existing target blocks promotion. When none is selected, perform no claim discovery, call,
+    registry mutation, release, or claim evidence. In either mode, remain on primary main and
+    snapshot the exact source idea bytes, target existence, exact target bytes when present,
+    and exact full Git index file bytes and existence. Keep the snapshots as recovery evidence
+    until commit verification or verified rollback.
   - Validate the complete target and reciprocal provenance, stage only the idea and target,
     and use a path-limited commit preserving unrelated staged state. Capture the new commit OID
     and confirm that exact immutable object contains exactly both reciprocal records and bytes

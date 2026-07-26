@@ -140,7 +140,7 @@ checks:
   - id: bounded-claim-retry
     type: deterministic
     critical: true
-    description: Delivery and provider-completion resource waits use separate windows with one immediate attempt plus retries at five, ten, fifteen, twenty, twenty-five, and thirty minutes, stop after acquisition, and trigger parent investigation at thirty minutes.
+    description: Delivery and provider-completion claim contention records one immediate attempt, performs no polling or time-driven retry, retries only after a direct release or recovery notification, stops after acquisition, and leaves stale-ownership investigation to the watchdog.
   - id: selected-commit-routing
     type: deterministic
     critical: true
@@ -196,11 +196,11 @@ checks:
   - id: committed-handoffs
     type: deterministic
     critical: true
-    description: Every modifying contribution and integration handoff is bound to a commit from a clean claimed worktree before downstream work begins.
+    description: Every modifying contribution and integration handoff is bound to a commit from a clean worktree before downstream work begins; private source and documentation lanes remain file-claim-free.
   - id: structured-handoff-receipts
     type: deterministic
     critical: true
-    description: Source, documentation, integration, and closeout handoff receipts each record lane, role, commit, review, verification, and claim-release evidence; prose summaries do not substitute for receipts.
+    description: Source, documentation, integration, and closeout handoff receipts each record lane, role, commit, review, and verification; only integration and closeout receipts record claim-release evidence when their Event Contract claims are triggered, and prose summaries do not substitute for receipts.
   - id: post-integration-reviews
     type: deterministic
     critical: true

@@ -138,13 +138,13 @@ agents:
         kind: boundary-failure
         fixtureProfile: backlog-state-machine
         promptIntent: Reconcile file, GitHub, GitLab, placeholder, none, and UNSET provider boundaries while recovering an ambiguous dispatch and a selected-delivery resource wait.
-        expectedOutcome: Provider-native identities, no fallback or shadow records, bounded dispatch reconciliation, one canonical task id, six recorded five-minute retries, parent investigation at thirty minutes, and a truthful disposition or capacity replacement.
+        expectedOutcome: Provider-native identities, no fallback or shadow records, bounded dispatch reconciliation, one canonical task id, one immediate claim attempt followed only by notification-driven retry, watchdog-only stale investigation, and a truthful disposition or capacity replacement.
         requiredBehaviors:
           - Reconcile active and archived tasks by parent id, provider identifier and reference, normalized objective, creation time, and status.
           - Preserve file, GitHub, and GitLab manager routing and native identities without shadow records.
           - Preserve Azure DevOps and Jira placeholder BLOCKED results, provider-none non-durable state, and UNSET without fallback.
-          - Record the immediate resource attempt and retries at five, ten, fifteen, twenty, twenty-five, and thirty minutes in provider or task-local evidence.
-          - Investigate the blocking owner and exact scope at thirty minutes without stealing unpreserved work.
+          - Record one immediate structured conflict outcome in task-local evidence and request a direct release or recovery handoff without provider mutation or registry polling.
+          - Retry only when that release or recovery notification arrives and leave stale-ownership investigation to the watchdog.
           - Route a genuine unresolved authority or decision blocker truthfully and fill the Running vacancy.
           - Accept completion only with effective Commit READY, focused tests, required provider completion, released claims, and cleanup evidence.
         forbiddenBehaviors:
@@ -257,7 +257,7 @@ agents:
         expectedOutcome: One authoritative provider record with durable source, dependency, ownership, claim, delivery, verification, recovery, completion or failure, and archive evidence without a duplicate shadow queue.
         requiredBehaviors:
           - Use only the configured backend and ask when no backend is selected.
-          - For provider file, create only under backlog in the primary main worktree through a short backlog claim.
+          - For provider file, create only under backlog in the primary main worktree through atomic no-overwrite creation without a claim.
           - Detect matching active items before creation and preserve related-series index and child links.
           - Record explicit Ready or claimed state and dependency evidence.
           - Keep dispatched mutable work isolated from other concurrent items and separate from backlog mutation ownership.

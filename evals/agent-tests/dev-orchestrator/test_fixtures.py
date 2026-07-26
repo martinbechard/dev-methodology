@@ -44,7 +44,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         self.assertNotIn("claimRelease", scenario["requiredHandoffReceiptFields"])
 
     def test_resource_coordination_contract_keeps_both_selections(self) -> None:
-        """The fixture keeps private lanes claim-free and primary events scoped."""
+        """The fixture keeps private file lanes claim-free and Event Contract claims scoped."""
         contract = runner._load_yaml(
             _SUITE_ROOT / "fixtures" / "dependency-routing" / "fixture-contract.yaml"
         )
@@ -58,7 +58,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             coordination["cases"]["none"]["requiredHandoffReceiptFields"],
         )
         agent_claim = coordination["cases"]["agent-claim"]
-        self.assertEqual(["source", "documentation"], agent_claim["claimFreeLanes"])
+        self.assertEqual(["source", "documentation"], agent_claim["claimFreeFileLanes"])
         self.assertEqual(["integration", "closeout"], agent_claim["claimedLanes"])
         self.assertEqual("project-files", agent_claim["integrationScope"])
         self.assertNotIn("integrationResource", agent_claim)
@@ -232,15 +232,95 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             )
             self.assertEqual([], registry["claims"])
 
+    def test_agent_claim_companion_allows_released_named_resource_event(self) -> None:
+        """A resource-only Event Contract claim remains independent of private file lanes."""
+        with tempfile.TemporaryDirectory() as directory:
+            run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
+            candidate = (
+                fixture_root
+                / "dev-orchestrator"
+                / "dependency-routing"
+                / "candidate"
+            )
+            journal = (
+                candidate
+                / ".git"
+                / "agent-claim-events"
+                / "hot"
+                / "2026-07-19.jsonl"
+            )
+            events = [
+                json.loads(line)
+                for line in journal.read_text(encoding="utf-8").splitlines()
+            ]
+            resource_scopes = {
+                "files": [],
+                "trees": [],
+                "project_files": False,
+                "backlog": False,
+                "all_files": False,
+                "file_domain": "none",
+                "resources": ["browser-test:fixture"],
+            }
+            events.extend(
+                (
+                    {
+                        "schema_version": 1,
+                        "action": "acquire",
+                        "outcome": "PRIMARY",
+                        "event_id": "acquire-browser",
+                        "claim_id": "browser-claim",
+                        "agent": "dev_coder",
+                        "baseline_commit": None,
+                        "resulting_commit": None,
+                        "scopes": resource_scopes,
+                    },
+                    {
+                        "schema_version": 1,
+                        "action": "release",
+                        "outcome": "RELEASED",
+                        "event_id": "release-browser",
+                        "claim_id": "browser-claim",
+                        "agent": "dev_coder",
+                        "baseline_commit": None,
+                        "resulting_commit": None,
+                        "scopes": resource_scopes,
+                    },
+                )
+            )
+            journal.write_text(
+                "".join(json.dumps(event) + "\n" for event in events),
+                encoding="utf-8",
+            )
+
+            runner._audit_handoff_evidence(
+                (run,),
+                report,
+                sessions,
+                fixture_root,
+            )
+
     def test_agent_claim_companion_rejects_lifecycle_breaks(self) -> None:
         """The selected provider rejects missing, late, mis-scoped, or dirty claims."""
         cases = {
-            "missing-acquire": "has no matching acquisition",
+            "missing-acquire": "has no matching PRIMARY acquisition",
             "acquire-after-release": "acquisition does not precede release",
             "acquire-after-mutation": "acquisition does not precede mutation",
+            "early-integration-claim": "acquisition does not precede mutation",
             "wrong-integration-scope": "scope disagrees with configured integration scope",
             "unexpected-integration-resource": "unexpected claim resource",
-            "private-lane-claim": "private source or documentation lane acquired a claim",
+            "unsupported-schema": "Unsupported claim journal schema",
+            "isolated-integration-acquire": "no matching PRIMARY acquisition",
+            "duplicate-release-event-ids": "exactly one claim release event",
+            "multiple-release-event-ids": "exactly one claim release event",
+            "surplus-bound-successful-release": "exactly one successful release",
+            "surplus-private-file-claim": "unbound file-scope acquisition",
+            "second-repository-surplus-claim": "unbound file-scope acquisition",
+            "duplicate-claim-id-across-repositories": "unbound file-scope acquisition",
+            "unrecognized-named-resource": "outside the Event Contract",
+            "unreleased-named-resource": "lacks one later release",
+            "resource-file-domain": "noncanonical file domain",
+            "malformed-journal-json": "Malformed claim journal JSON",
             "active-registry": "retains active claims",
         }
         for case, diagnostic in cases.items():
@@ -301,6 +381,20 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                         and event["claim_id"] == "integration-claim"
                     )
                     integration_acquire["baseline_commit"] = integration_release["resulting_commit"]
+                elif case == "early-integration-claim":
+                    integration_acquire = next(
+                        event
+                        for event in events
+                        if event["action"] == "acquire"
+                        and event["claim_id"] == "integration-claim"
+                    )
+                    integration_acquire["baseline_commit"] = subprocess.run(
+                        ["git", "rev-parse", f"{integration_acquire['baseline_commit']}^"],
+                        cwd=candidate,
+                        check=True,
+                        text=True,
+                        capture_output=True,
+                    ).stdout.strip()
                 elif case == "wrong-integration-scope":
                     integration_acquire = next(
                         event
@@ -320,24 +414,200 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                     integration_acquire["scopes"]["resources"] = [
                         "merge:integration:fixture-main"
                     ]
-                elif case == "private-lane-claim":
+                elif case == "unsupported-schema":
                     integration_acquire = next(
                         event
                         for event in events
                         if event["action"] == "acquire"
                         and event["claim_id"] == "integration-claim"
                     )
-                    integration_acquire["agent"] = "dev_coder"
+                    integration_acquire["schema_version"] = 999
+                elif case == "isolated-integration-acquire":
+                    integration_acquire = next(
+                        event
+                        for event in events
+                        if event["action"] == "acquire"
+                        and event["claim_id"] == "integration-claim"
+                    )
+                    integration_acquire["outcome"] = "ISOLATE"
+                elif case in {
+                    "duplicate-release-event-ids",
+                    "multiple-release-event-ids",
+                }:
+                    integration_receipt = next(
+                        receipt
+                        for receipt in report["runs"][0]["scenarioResults"][0][
+                            "handoffReceipts"
+                        ]
+                        if receipt["lane"] == "integration"
+                    )
+                    release_event_id = integration_receipt["claimRelease"]["eventIds"][0]
+                    if case == "duplicate-release-event-ids":
+                        integration_receipt["claimRelease"]["eventIds"] = [
+                            release_event_id,
+                            release_event_id,
+                        ]
+                    else:
+                        integration_acquire = next(
+                            event
+                            for event in events
+                            if event["action"] == "acquire"
+                            and event["claim_id"] == "integration-claim"
+                        )
+                        integration_release = next(
+                            event
+                            for event in events
+                            if event["action"] == "release"
+                            and event["claim_id"] == "integration-claim"
+                        )
+                        second_acquire = json.loads(json.dumps(integration_acquire))
+                        second_acquire.update(
+                            {
+                                "event_id": "acquire-integration-second",
+                                "claim_id": "integration-claim-second",
+                            }
+                        )
+                        second_release = json.loads(json.dumps(integration_release))
+                        second_release.update(
+                            {
+                                "event_id": "release-integration-second",
+                                "claim_id": "integration-claim-second",
+                            }
+                        )
+                        events.extend((second_acquire, second_release))
+                        integration_receipt["claimRelease"]["eventIds"] = [
+                            release_event_id,
+                            "release-integration-second",
+                        ]
+                elif case == "surplus-bound-successful-release":
+                    integration_release = next(
+                        event
+                        for event in events
+                        if event["action"] == "release"
+                        and event["claim_id"] == "integration-claim"
+                    )
+                    second_release = json.loads(json.dumps(integration_release))
+                    second_release["event_id"] = "release-integration-surplus"
+                    events.append(second_release)
+                elif case == "surplus-private-file-claim":
+                    events.append(
+                        {
+                            "schema_version": 1,
+                            "action": "acquire",
+                            "outcome": "PRIMARY",
+                            "event_id": "acquire-private-source",
+                            "claim_id": "private-source-claim",
+                            "agent": "dev_code_reviewer",
+                            "baseline_commit": None,
+                            "resulting_commit": None,
+                            "scopes": {
+                                "files": ["src/dependency_status.py"],
+                                "trees": [],
+                                "project_files": False,
+                                "backlog": False,
+                                "all_files": False,
+                                "file_domain": "project_files",
+                                "resources": [],
+                            },
+                        }
+                    )
+                elif case in {
+                    "second-repository-surplus-claim",
+                    "duplicate-claim-id-across-repositories",
+                }:
+                    second_repository = candidate.parent / "second-candidate"
+                    second_repository.mkdir()
+                    subprocess.run(
+                        ["git", "init", "--quiet"],
+                        cwd=second_repository,
+                        check=True,
+                    )
+                    second_common = second_repository / ".git"
+                    second_event_root = (
+                        second_common / "agent-claim-events" / "hot"
+                    )
+                    second_event_root.mkdir(parents=True)
+                    second_claim_id = (
+                        "integration-claim"
+                        if case == "duplicate-claim-id-across-repositories"
+                        else "second-repository-claim"
+                    )
+                    second_event = {
+                        "schema_version": 1,
+                        "action": "acquire",
+                        "outcome": "PRIMARY",
+                        "event_id": f"acquire-{case}",
+                        "claim_id": second_claim_id,
+                        "agent": "dev_code_reviewer",
+                        "baseline_commit": None,
+                        "resulting_commit": None,
+                        "scopes": {
+                            "files": ["unbound.txt"],
+                            "trees": [],
+                            "project_files": False,
+                            "backlog": False,
+                            "all_files": False,
+                            "file_domain": "project_files",
+                            "resources": [],
+                        },
+                    }
+                    (second_event_root / "2026-07-19.jsonl").write_text(
+                        json.dumps(second_event) + "\n",
+                        encoding="utf-8",
+                    )
+                    (second_common / "agent-claims.json").write_text(
+                        json.dumps({"claims": []}) + "\n",
+                        encoding="utf-8",
+                    )
+                elif case in {
+                    "unrecognized-named-resource",
+                    "unreleased-named-resource",
+                    "resource-file-domain",
+                }:
+                    resource = (
+                        "merge:integration:fixture-main"
+                        if case == "unrecognized-named-resource"
+                        else "browser-test:fixture"
+                    )
+                    events.append(
+                        {
+                            "schema_version": 1,
+                            "action": "acquire",
+                            "outcome": "PRIMARY",
+                            "event_id": f"acquire-{case}",
+                            "claim_id": f"{case}-claim",
+                            "agent": "dev_code_reviewer",
+                            "baseline_commit": None,
+                            "resulting_commit": None,
+                            "scopes": {
+                                "files": [],
+                                "trees": [],
+                                "project_files": False,
+                                "backlog": False,
+                                "all_files": False,
+                                "file_domain": (
+                                    "project_files"
+                                    if case == "resource-file-domain"
+                                    else "none"
+                                ),
+                                "resources": [resource],
+                            },
+                        }
+                    )
+                elif case == "malformed-journal-json":
+                    pass
                 else:
                     (candidate / ".git" / "agent-claims.json").write_text(
                         json.dumps({"claims": [{"claim_id": "retained"}]}) + "\n",
                         encoding="utf-8",
                     )
                 if case != "active-registry":
-                    journal.write_text(
-                        "".join(json.dumps(event) + "\n" for event in events),
-                        encoding="utf-8",
+                    serialized_events = "".join(
+                        json.dumps(event) + "\n" for event in events
                     )
+                    if case == "malformed-journal-json":
+                        serialized_events += "{malformed\n"
+                    journal.write_text(serialized_events, encoding="utf-8")
 
                 with self.assertRaisesRegex(RuntimeError, diagnostic):
                     runner._audit_handoff_evidence(
@@ -809,6 +1079,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 events.extend(
                     (
                         {
+                            "schema_version": 1,
                             "action": "acquire",
                             "outcome": "PRIMARY",
                             "event_id": f"acquire-{lane}",
@@ -819,6 +1090,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                             "scopes": event_scopes,
                         },
                         {
+                            "schema_version": 1,
                             "action": "release",
                             "outcome": "RELEASED",
                             "event_id": event_id,

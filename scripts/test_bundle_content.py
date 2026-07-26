@@ -3706,7 +3706,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("ordered project_skill_extensions list", readme_text)
         self.assertIn("final root-only section", readme_text)
         self.assertIn(
-            "Treat missing MCP deadline parity, a missing conceptual agent definition, selected skill, adapter, or command as BLOCKED",
+            "Treat missing MCP deadline parity, a missing conceptual agent definition, selected skill, claim-helper interface, or command as BLOCKED",
             skill_text,
         )
         self.assertIn("agent-claim", skill_text)
@@ -4044,7 +4044,7 @@ class BundleContentTests(unittest.TestCase):
             "Keep revisit triggers as free text",
             "Retain the original idea in backlog/future-ideas",
             "preflight target collisions before any promotion write",
-            "snapshot the exact pre-attempt source idea bytes",
+            "Snapshot the exact pre-attempt source idea bytes",
             "including Open Questions",
             "one failure-atomic promotion",
             "remove only the target newly created by this promotion attempt",
@@ -5024,7 +5024,9 @@ class BundleContentTests(unittest.TestCase):
             "manage-file-work-items": (
                 "The only authoritative file-provider storage root is backlog in the primary worktree while that worktree is on main.",
                 "must not create, transition, or archive the canonical record",
-            "updating an existing item claims its exact current path and also its destination for a move or rename",
+                "updating an existing item claims its exact current path and also its destination for a move or rename",
+                "claim only the exact existing idea path under Event 1",
+                "Create the unique destination atomically without overwrite and without a target claim",
                 "AWAITING_REVIEW",
                 "same delivery identity remains lifecycle AWAITING_REVIEW",
                 "Do not change lifecycle back to RUNNING for same-delivery corrections.",
@@ -5045,7 +5047,7 @@ class BundleContentTests(unittest.TestCase):
                     self.assertIn("atomic no-overwrite creation", frontmatter["description"])
                 else:
                     self.assertIn(
-                        "while none uses no claim lifecycle or evidence",
+                        "atomic unique creation and private delivery remain claim-free",
                         frontmatter["description"],
                     )
                 for required_contract in required_contracts:
@@ -6406,6 +6408,45 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(retired_wait_contract=retired_wait_contract):
                 self.assertNotIn(retired_wait_contract, role_text)
+
+    def test_event_driven_claim_catalogs_reject_retired_polling_and_broad_backlog_claims(
+        self,
+    ) -> None:
+        """Operational catalogs retain the Event Contract and file-provider boundaries."""
+        paths = (
+            REPOSITORY_ROOT / "evals" / "skill-probes.yaml",
+            REPOSITORY_ROOT / "evals" / "agent-scenarios.yaml",
+            REPOSITORY_ROOT / "evals" / "judges.yaml",
+            AGENT_TEST_SUITES_ROOT
+            / "dev-backlog-steward"
+            / "skills"
+            / "dev-backlog-steward-suite-contract"
+            / "SKILL.md",
+        )
+        texts = {
+            path.relative_to(REPOSITORY_ROOT).as_posix(): path.read_text(encoding="utf-8")
+            for path in paths
+        }
+        combined = "\n".join(texts.values())
+
+        for retired_contract in (
+            "six five-minute",
+            "retries at five",
+            "adaptive backoff",
+            "short primary-main backlog claim",
+            "through a short backlog claim",
+            "serialized backlog claim",
+        ):
+            with self.subTest(retired_contract=retired_contract):
+                self.assertNotIn(retired_contract, combined)
+        self.assertIn("release or recovery notification", combined)
+        self.assertIn("atomic no-overwrite creation without a claim", combined)
+        steward_contract = texts[
+            "evals/agent-tests/dev-backlog-steward/skills/"
+            "dev-backlog-steward-suite-contract/SKILL.md"
+        ]
+        self.assertIn("claiming only the exact current Future Idea path", steward_contract)
+        self.assertIn("no overwrite and no target claim", steward_contract)
 
     def test_wiki_ingester_continues_substantiated_ingest_after_verifier_interruption(
         self,

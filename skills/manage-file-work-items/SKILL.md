@@ -1,6 +1,6 @@
 ---
 name: manage-file-work-items
-description: Manage authoritative repository-backed work items through inventory, dispatch, lifecycle, recovery, completion, failure, and archival with project-selected resource coordination. Use when the effective provider is file or the user explicitly requests management of file-backed items; agent-claim uses short primary-main backlog claims, while none uses no claim lifecycle or evidence.
+description: Manage authoritative repository-backed work items through inventory, dispatch, lifecycle, recovery, completion, failure, and archival with project-selected resource coordination. Use when the effective provider is file or the user explicitly requests management of file-backed items; agent-claim protects exact existing paths and move destinations, while atomic unique creation and private delivery remain claim-free.
 metadata:
   category: development-practice
 ---
@@ -121,7 +121,7 @@ Do not move an independently identified defect, enhancement, or idea into a type
 - Treat only a resolved regular work-item file contained by its canonical backlog queue as a promotion target. Reject a symlinked or otherwise resolved target that escapes authority without reading external bytes.
 - Include the exact retained idea path in the promoted work item's Source Evidence section, and add Promoted To with the canonical work-item reference to the original idea.
 - Preserve the original idea in place after promotion. Do not archive or delete it merely because typed work now exists.
-- Apply the reciprocal provenance update as one primary-main transaction and commit only after duplicate detection succeeds. When resource_coordination selects agent-claim, claim the existing idea path and the destination path under Agent Claim's Event Contract. When resource_coordination selects none, preserve the same snapshots, exact-pair commit, verification, rollback, and truthful BLOCKED recovery ownership without claim evidence.
+- Apply the reciprocal provenance update as one primary-main transaction and commit only after duplicate detection succeeds. When resource_coordination selects agent-claim, claim only the exact existing idea path under Event 1. Create the unique destination atomically without overwrite and without a target claim; an existing destination blocks promotion. When resource_coordination selects none, preserve the same snapshots, exact-pair commit, verification, rollback, and truthful BLOCKED recovery ownership without claim evidence.
 
 ## Transition Evidence
 
@@ -153,7 +153,7 @@ Resume blocked work through the same provider and startup boundaries as new work
 5. Reconcile the Starting reservation against active and archived runtime Threads. Create at most one canonical work-item Thread. After an error, timeout, disconnect, or ambiguous response, do not retry creation; perform the bounded settlement read and either adopt the one matching Thread, restore Ready when no root Agent accepted ownership and no Thread exists, or record Blocked or User Action Required when ownership or evidence cannot safely be discarded.
 6. Only after the work-item Thread's root Dev Orchestrator Agent accepts ownership may that Orchestrator use its own Dev Backlog Steward child for the atomic Starting -> Running transaction. Record the canonical Thread identifier, canonical root Agent Task id when applicable, owner, branch, worktree, and claim-free private-lane evidence.
 
-Blocked, Ready, or satisfaction of an unblock condition never authorizes a direct transition to Running. Under enabled coordination, each provider mutation uses its own short backlog ownership transaction and cannot substitute for delivery ownership. With coordination none, preserve the same provider transactions and state sequence without coordination operations or evidence.
+Blocked, Ready, or satisfaction of an unblock condition never authorizes a direct transition to Running. Under enabled coordination, each existing-item provider mutation claims its exact current path and any move or rename destination for only that transaction; unique atomic creation remains claim-free. Provider mutation protection cannot substitute for delivery ownership. With coordination none, preserve the same provider transactions and state sequence without coordination operations or evidence.
 
 ## User Action Required Workflow
 

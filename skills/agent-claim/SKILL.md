@@ -36,6 +36,12 @@ Acquire immediately before the event and release at the stated boundary.
 
 Creating a uniquely named new work-item file needs no claim and must use atomic no-overwrite creation.
 
+For Event 1 only, an existing retained Future Idea is an existing work-item record when
+promotion updates its Promoted To field. Claim only that exact current idea path. The
+uniquely named promoted target remains claim-free and must use atomic no-overwrite creation;
+an existing target blocks promotion before mutation. This coordination classification does
+not make a Future Idea runnable work or a provider lifecycle item.
+
 Private-worktree editing, generation, build, test, commit, and rebase need no claim. Build outputs and caches must remain worktree-local, and unique work-item remote branches need no claim.
 
 Live claims are presumed valid; only the watchdog investigates stale ownership. Interrupted private-worktree changes belong to their work item and are resumed there.

@@ -7,6 +7,7 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Sequence
@@ -14,6 +15,12 @@ from typing import Sequence
 
 RUNNING_TARGET = 10
 CLAIM_KINDS = ("integration", "completion")
+CLAIM_ATTEMPT_OUTCOMES = frozenset(
+    {"ACQUIRED", "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED"}
+)
+RELEASE_OR_RECOVERY_NOTIFICATION = re.compile(
+    r"(?:release|recovery):[A-Za-z0-9][A-Za-z0-9._/-]*"
+)
 SHARED_CLAIM_OPERATIONS = frozenset(
     {
         "primary main integration",
@@ -357,11 +364,11 @@ class CoordinationSimulator:
 
         if claim_kind not in CLAIM_KINDS:
             raise ValueError(f"unsupported claim kind: {claim_kind}")
+        if outcome not in CLAIM_ATTEMPT_OUTCOMES:
+            raise ValueError(f"unsupported claim attempt outcome: {outcome}")
         item = self._item(item_id)
         if item.status != "Running":
             raise ValueError("only a Running work item may attempt an Event Contract claim")
-        if claim_kind == "completion" and "integration" not in item.acquired_claims:
-            raise ValueError("completion claim requires acquired integration evidence")
         if claim_kind in item.acquired_claims:
             raise ValueError(f"{claim_kind} claim is already acquired")
         attempts = item.claim_attempts.setdefault(claim_kind, [])
@@ -370,6 +377,16 @@ class CoordinationSimulator:
         if attempts and not release_or_recovery_notification:
             raise ValueError(
                 f"{claim_kind} claim retry requires a release or recovery notification"
+            )
+        if (
+            release_or_recovery_notification is not None
+            and RELEASE_OR_RECOVERY_NOTIFICATION.fullmatch(
+                release_or_recovery_notification
+            )
+            is None
+        ):
+            raise ValueError(
+                "claim retry notification must be a direct release or recovery notification"
             )
         used_notifications = {
             attempt["releaseOrRecoveryNotification"]

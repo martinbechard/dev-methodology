@@ -14,6 +14,7 @@ import sys
 import tempfile
 import unittest
 from collections.abc import Mapping
+from datetime import date, timedelta
 from pathlib import Path
 
 
@@ -2513,6 +2514,10 @@ class AgentClaimTests(unittest.TestCase):
         marker_path = (
             self.common_directory() / "agent-claim-reconciliation-pending.json"
         )
+        self.assertTrue(
+            marker_path.exists(),
+            interrupted.stdout + interrupted.stderr,
+        )
         marker_bytes = marker_path.read_bytes()
         registry_bytes = self.registry_path().read_bytes()
         journal_bytes = self.journal_bytes()
@@ -2539,6 +2544,7 @@ class AgentClaimTests(unittest.TestCase):
             "--prior-rejected-release-reference",
             fixture["prior_rejected_release_reference"],
             environment={
+                "AGENT_CLAIM_TEST_NOW": "2026-07-25T12:01:00Z",
                 "AGENT_CLAIM_TEST_STOP_AFTER_RECONCILIATION_COMMIT_MARKER": "1"
             },
         )
@@ -3674,13 +3680,25 @@ class AgentClaimTests(unittest.TestCase):
         marker_path = (
             self.common_directory() / "agent-claim-reconciliation-pending.json"
         )
+        self.assertTrue(
+            marker_path.exists(),
+            interrupted.stdout + interrupted.stderr,
+        )
         self.assertEqual("prepared", json.loads(marker_path.read_text())["state"])
+        latest_hot_day = max(
+            date.fromisoformat(path.stem)
+            for path in self.hot_directory().glob("*.jsonl")
+        )
 
         maintained = self.claim(
             "maintain-journal",
             "--hot-days",
             "1",
-            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-26T00:01:00Z"},
+            environment={
+                "AGENT_CLAIM_TEST_NOW": (
+                    f"{(latest_hot_day + timedelta(days=1)).isoformat()}T00:01:00Z"
+                )
+            },
         )
 
         self.assertEqual(0, maintained.returncode, maintained.stderr)
@@ -3723,13 +3741,25 @@ class AgentClaimTests(unittest.TestCase):
         marker_path = (
             self.common_directory() / "agent-claim-reconciliation-pending.json"
         )
+        self.assertTrue(
+            marker_path.exists(),
+            interrupted.stdout + interrupted.stderr,
+        )
         self.assertEqual("committed", json.loads(marker_path.read_text())["state"])
+        latest_hot_day = max(
+            date.fromisoformat(path.stem)
+            for path in self.hot_directory().glob("*.jsonl")
+        )
 
         maintained = self.claim(
             "maintain-journal",
             "--hot-days",
             "1",
-            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-26T00:01:00Z"},
+            environment={
+                "AGENT_CLAIM_TEST_NOW": (
+                    f"{(latest_hot_day + timedelta(days=1)).isoformat()}T00:01:00Z"
+                )
+            },
         )
 
         self.assertEqual(0, maintained.returncode, maintained.stderr)

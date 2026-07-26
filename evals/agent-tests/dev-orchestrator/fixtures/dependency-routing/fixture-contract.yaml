@@ -21,8 +21,8 @@ resourceCoordination:
       claimEvidence: absent
       requiredHandoffReceiptFields: [lane, role, commit, review, verification]
     agent-claim:
-      claimLifecycle: [private lanes remain claim-free, acquire immediately before a primary event, release at the event boundary]
-      claimFreeLanes: [source, documentation]
+      claimLifecycle: [private file lanes remain claim-free, acquire immediately before an Event Contract event, release at the event boundary]
+      claimFreeFileLanes: [source, documentation]
       claimedLanes: [integration, closeout]
       integrationScope: project-files
       closeoutScope: [backlog/feature-backlog/update-dependency-health-summary.md]

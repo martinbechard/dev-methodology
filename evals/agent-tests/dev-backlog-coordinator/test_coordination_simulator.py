@@ -458,6 +458,19 @@ class CoordinationSimulatorTests(unittest.TestCase):
             outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
             blocking_claim_id="shared-generator",
         )
+        with self.assertRaisesRegex(ValueError, "unsupported claim attempt outcome"):
+            simulator.record_claim_attempt(
+                "integration",
+                claim_kind="integration",
+                outcome="UNRELATED_FAILURE",
+            )
+        with self.assertRaisesRegex(ValueError, "direct release or recovery"):
+            simulator.record_claim_attempt(
+                "integration",
+                claim_kind="integration",
+                outcome="ACQUIRED",
+                release_or_recovery_notification="timer:5m",
+            )
         with self.assertRaisesRegex(ValueError, "requires a release or recovery notification"):
             simulator.record_claim_attempt(
                 "integration",
@@ -520,8 +533,8 @@ class CoordinationSimulatorTests(unittest.TestCase):
                 outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
             )
 
-    def test_claim_events_reject_notified_initial_attempt_and_separate_completion(self) -> None:
-        """Keep the first attempt immediate and completion after integration."""
+    def test_claim_events_reject_notified_initial_attempt_and_keep_events_independent(self) -> None:
+        """Keep the first attempt immediate and each named event independent."""
 
         item = WorkItem("delivery", "Running")
         simulator = CoordinationSimulator((item,))
@@ -532,17 +545,6 @@ class CoordinationSimulatorTests(unittest.TestCase):
                 outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
                 release_or_recovery_notification="release:not-yet-waiting",
             )
-        with self.assertRaisesRegex(ValueError, "requires acquired integration"):
-            simulator.record_claim_attempt(
-                "delivery",
-                claim_kind="completion",
-                outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
-            )
-        simulator.record_claim_attempt(
-            "delivery",
-            claim_kind="integration",
-            outcome="ACQUIRED",
-        )
         simulator.record_claim_attempt(
             "delivery",
             claim_kind="completion",
@@ -553,6 +555,11 @@ class CoordinationSimulatorTests(unittest.TestCase):
             claim_kind="completion",
             outcome="ACQUIRED",
             release_or_recovery_notification="release:completion-owner",
+        )
+        simulator.record_claim_attempt(
+            "delivery",
+            claim_kind="integration",
+            outcome="ACQUIRED",
         )
 
         self.assertEqual({"integration", "completion"}, item.acquired_claims)
