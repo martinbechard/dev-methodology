@@ -6,6 +6,12 @@ Type: Feature
 
 Owner: Unowned
 
+Provider: file
+
+Provider Reference: backlog/feature-backlog/use-exact-work-item-claims-for-lifecycle-updates.md
+
+Completion: direct-main
+
 ## Supplemental Resumption Reservation
 
 - Parent Coordinator Task: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
