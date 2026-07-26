@@ -336,15 +336,17 @@ examples:
       delivery identity."
   plausibleResponse: 'STATUS: READY. dev-verifier reproduced duplicate submissions and
     supplied the failing command plus a runnable correction action. I dispatched
-    dev-backlog-steward exactly once; the selected provider reconciled the finding with an
-    existing durable defect and returned its canonical reference instead of creating a copy.
+    dev-backlog-steward exactly once for durable provider recording; the selected provider
+    reconciled the finding with an existing durable defect and returned its canonical
+    reference instead of creating a copy.
     The original dev-coder corrected the defect in this same delivery task, fresh review and
     verification passed, and no second delivery task was created. A separate linter note had
     no confirming reproduction or runtime evidence, so it remained an explicit unconfirmed
     baseline warning rather than being presented as a confirmed defect. The effective Commit
-    returned READY, the selected manager recorded terminal closure, and the handoff includes
-    the durable defect reference, reproduction evidence, runnable next action, delivered
-    commit, and clean-worktree evidence.'
+    returned READY. I dispatched dev-backlog-steward exactly once for the distinct terminal
+    COMPLETED update and verified the selected manager''s recorded closure. The handoff
+    includes the durable defect reference, reproduction evidence, runnable next action,
+    delivered commit, and clean-worktree evidence.'
 - purpose: Finalize one provider-none delivery without inventing a Persistence manager.
   runtimeInvocations:
     codex: "$dev_orchestrator Coordinate this explicit provider-none source correction through review, verification, and the selected Commit binding."

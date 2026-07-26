@@ -1847,9 +1847,14 @@ class BundleContentTests(unittest.TestCase):
                 if "provider none" in response:
                     finalization_index = response.index("task-local COMPLETED finalization")
                 else:
-                    self.assertIn("dev-backlog-steward exactly once", response)
+                    terminal_dispatch = "dev-backlog-steward exactly once"
+                    self.assertIn(terminal_dispatch, response)
                     self.assertIn("verified the selected manager's recorded closure", response)
-                    finalization_index = response.index("dev-backlog-steward exactly once")
+                    finalization_index = response.rindex(terminal_dispatch)
+                    closure_index = response.index(
+                        "verified the selected manager's recorded closure"
+                    )
+                    self.assertLess(finalization_index, closure_index)
                 self.assertLess(commit_ready_index, finalization_index)
 
         provider_contract = (
