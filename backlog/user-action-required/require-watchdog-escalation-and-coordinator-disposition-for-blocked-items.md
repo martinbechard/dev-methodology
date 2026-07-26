@@ -1,6 +1,6 @@
 # Require Watchdog Escalation And Coordinator Disposition For Blocked Items
 
-Status: Running
+Status: User Action Required
 
 Owner: Dev Orchestrator (canonical work-item Thread 019f9fb0-41c4-7892-a0bb-c641e53d8cea; root Agent Task 019f9fb0-41c4-7892-a0bb-c641e53d8cea)
 
@@ -8,7 +8,7 @@ Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/require-watchdog-escalation-and-coordinator-disposition-for-blocked-items.md
+Provider Reference: backlog/user-action-required/require-watchdog-escalation-and-coordinator-disposition-for-blocked-items.md
 
 Completion: direct-main
 
@@ -94,6 +94,34 @@ Direct user request in the watchdog task on 2026-07-26: log an improvement work 
 - Branch and Commit State: detached HEAD at 4733705ac28f0a3dae8e6bb577ab9d9836b9605e; no branch has been created.
 - Started At: 2026-07-26T18:32:09Z, recorded by this primary-main lifecycle transaction after the root Dev Orchestrator accepted ownership.
 - Separate Starting -> Running Claim Evidence: claim starting-to-running-019f9fb0 acquired by dev-backlog-steward for this exact backlog file at 2026-07-26T18:31:57.086198Z; outcome SHARED_CHECKOUT_ACQUIRED; acquisition event 36365d64-d472-492a-ad94-47d9c4ad0bd9.
+
+## Definition Change Approval Needed
+
+Question: "Do you approve changing exactly these four governed canonical definitions for this item: agents/roles/dev-activities/dev-backlog-watchdog.role.yaml; agents/roles/dev-activities/dev-backlog-coordinator.role.yaml; skills/codex-workitem-coordination/SKILL.md; and skills/manage-file-work-items/SKILL.md?"
+
+Why Input Is Required: Repository policy requires direct exact-path approval, and read-only tracing shows these are the smallest definitions needed for per-item Blocked reconciliation, watchdog escalation, Coordinator disposition, and durable file-provider evidence.
+
+Options And Tradeoffs:
+
+- Approve permits only these four definitions plus their supported generated mirrors and directly dependent focused tests/docs.
+- Narrow requires revising the implementation plan and rechecking scope.
+- Defer leaves the item in User Action Required.
+- Decline ends this implementation direction without governed changes.
+
+Unattended-Work Boundary: No governed definition, supported mirror, implementation, test, or documentation mutation will occur until the answer is durably recorded and this same canonical task resumes through User Action Required -> Ready -> Starting -> Running.
+
+Discovered Dependent Artifacts, Non-Governed:
+
+- Supported generated/adapters mirrors for the two roles and two skills.
+- design/generated/role-definitions.js.
+- design/generated/skill-definitions.js.
+- design/orchestrated-development-lifecycle.html.
+- scripts/test_codex_workitem_coordination.py.
+- scripts/test_bundle_content.py.
+- evals/agent-tests/dev-backlog-watchdog/{scenarios.yaml,requirements-matrix.md,fixtures/cases.yaml,watchdog_simulator.py,test_watchdog_simulator.py}.
+- evals/agent-tests/dev-backlog-coordinator/{scenarios.yaml,requirements-matrix.md,fixtures/cases.yaml,coordination_simulator.py,test_coordination_simulator.py}.
+
+Excluded Governed Definitions: dev-orchestrator and dev-backlog-steward roles already enforce blocker handoff and authority separation, so they are not in scope.
 
 ## Notes
 
