@@ -1,6 +1,6 @@
 # Decouple Dev Backlog Steward Contract From Unconditional Claim Evidence
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Dev Orchestrator
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/decouple-dev-backlog-steward-contract-from-unconditional-claim-evidence.md
+Provider Reference: backlog/completed-backlog/defects/decouple-dev-backlog-steward-contract-from-unconditional-claim-evidence.md
 
 Completion: direct-main
 
@@ -128,6 +128,19 @@ Resolution: Approved as recorded above. Before mutation, create and pass the exa
 ## Summary
 
 Make Dev Backlog Steward’s canonical and generated contracts honor resource_coordination none without requiring claim calls or claim evidence, while preserving strict claim behavior when agent-claim is selected.
+
+## Terminal Completion
+
+- Completed At: 2026-07-26T08:01:11Z.
+- Accepted Delivery: source commit 4e8428146414ec3431374383d848b426671a0b33 from clean branch codex/steward-neutrality-current-main-coder/worktree .worktrees/current-main-steward-neutrality-coder; integration commit 320e416581f8fb5b89fa3720187b81f97395aac6 on main by cherry-pick. The source is non-ancestral, and exact 10-path source-to-integration content mapping passed.
+- Main Observation: be56bfeeb514cef82bac6d481334e618d5e99a79 before this provider transaction; integration commit is an ancestor of that main tip.
+- Independent Gates: fresh dev_code_reviewer ACCEPTED; fresh methodology_artifact_reviewer ACCEPTED; Dev Verifier PASS (56/56 focused tests: role 13, evaluation docs 26, renderer 3, Steward contract 13, bundle neutrality 1), build-skill-docs freshness PASS, evaluation-docs freshness PASS, and git diff --check PASS. The mixed bundle method has the same 12 pre-existing failures on base 77ad0ec and the candidate, with no candidate regression. Full repository, live-model, browser, and installer checks were excluded by parent scope.
+- Post-Integration: the same 56/56 focused tests, both freshness checks, and git diff --check passed; primary main was clean.
+- Integration Claim: steward-contract-direct-main-20260726 acquired event 81f47af5-e279-4e01-af62-44a6787b3170 and released event b5a969b8-7959-4e40-8d2e-8454bf7ff856.
+- Running Transition Claim: acquisition d7b452ae-0de9-4c22-b856-ea0e9f91b9b2 and release e4ebfe56-9d62-4ab7-a898-440910bcef24.
+- Terminal Provider Claim: steward-contract-terminal-20260726 acquired event cf53117f-6d9e-4d75-9d79-f05a2f03923f for the exact active and archive paths; release evidence follows this terminal backlog commit.
+- Recovery History: the prior blocker is resolved by current-main scenarios and the accepted role-neutrality correction. Historical canonical work-item Thread/Task 019f96f1-1a19-7b01-b166-c5948a50fff5 and current resumed root /root/resume_blocked_after_claim_publication/steward_none_claim_recovery are retained.
+- Remote Publication: not required or configured.
 
 ## Context
 
