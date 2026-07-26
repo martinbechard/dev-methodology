@@ -233,7 +233,7 @@
     .definition-list dt { color: var(--ink); font-weight: 850; }
     .definition-list dd { margin: 0; color: var(--muted); }
     .status-figure, .branch-figure, .resource-figure, .sequence-figure,
-    .thread-model-figure, .steward-sequence-figure {
+    .thread-model-figure, .steward-sequence-figure, .watchdog-cycle-figure {
       margin: 2rem 0 0;
       padding: clamp(1.2rem, 3vw, 2rem);
       border: 1px solid var(--line);
@@ -581,15 +581,17 @@
     </div>
     <figure class="status-figure" aria-labelledby="status-title">
       <figcaption id="status-title">Work-Item Status<span>Type stays stable; status changes as authority, dependencies, execution, and delivery change.</span></figcaption>
-      <div class="state-map" role="img" aria-label="Ready moves to Starting, then Running, then Awaiting Review, then Completed. Starting and Running are active states. User Action Required and Holding pause before Ready. Blocked can return active work to Ready. Failed and Abandoned are terminal outcomes.">
+      <div class="state-map" role="img" aria-label="Ready moves to Starting, then Running, then Awaiting Review, then Completed. Starting and Running are active states. Stalled records stopped progress with an unknown cause outside capacity. User Action Required and Holding pause before Ready. Blocked records a known cause and can return work to Ready. Failed and Abandoned are terminal outcomes.">
         <div class="state-node active">Ready</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Starting</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Running</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Awaiting Review</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Completed</div>
       </div>
       <p class="source-note">After completion, a file provider may move the item to its archive location. Archive placement is not another lifecycle status.</p>
       <div class="state-branches">
         <div><strong>User Action Required</strong><p>A concrete user-owned decision must be answered before work becomes Ready.</p></div>
-        <div><strong>Blocked</strong><p>A fixed dependency or exhausted correction boundary stops useful execution until its condition changes.</p></div>
+        <div><strong>Stalled</strong><p>Progress stopped for an unknown reason. The owner and diagnostic next action remain recorded, but the item leaves Starting-plus-Running capacity while the Coordinator investigates.</p></div>
+        <div><strong>Blocked</strong><p>The Coordinator identified the preventing cause and recorded an observable unblock condition.</p></div>
         <div><strong>Holding · Failed · Abandoned</strong><p>Holding defers real work. Failed and Abandoned are truthful terminal outcomes, not hidden retries.</p></div>
       </div>
+      <p class="source-note">From Stalled, the Coordinator restores Running only for demonstrably resumed same-owner work, restores Ready after ownership ends, records Blocked for a known cause, records User Action Required for one exact user-owned action, or selects a terminal outcome from evidence.</p>
     </figure>
   </section>
 
@@ -628,6 +630,7 @@
       <figcaption id="agent-role-title">Lifecycle Roles<span>A Role defines authority; an Agent is the runtime instance applying that Role in one Thread.</span></figcaption>
       <div class="role-cards">
         <article class="role-card"><h3>Dev Backlog Coordinator</h3><p>The parent coordination Agent reserves capacity, dispatches one Thread per Work item, reconciles duplicates, and cleans up terminal execution contexts.</p></article>
+        <article class="role-card"><h3>Dev Backlog Watchdog</h3><p>A standing read-only Agent observes provider and execution evidence, stays quiet on healthy cycles, and alerts the Coordinator only when investigation or disposition is required.</p></article>
         <article class="role-card"><h3>Dev Orchestrator</h3><p>The root Agent in a work-item Thread owns production, review, verification, integration, and the terminal provider request.</p></article>
         <article class="role-card"><h3>Dev Backlog Steward</h3><p>A child Agent performs atomic provider lifecycle updates for its Coordinator or Orchestrator without taking over delivery.</p></article>
         <article class="role-card"><h3>Production And Implementation Agents</h3><p>These child Agents complete bounded coding, writing, design, or other production assignments and return committed evidence.</p></article>
@@ -638,11 +641,12 @@
     </figure>
     <figure class="thread-model-figure" aria-labelledby="thread-model-title">
       <figcaption id="thread-model-title">Threads Contain Agents<span>Roles describe responsibility. Agents perform bounded assignments inside execution Threads.</span></figcaption>
-      <div class="thread-map" role="img" aria-label="A parent coordination Thread contains a Coordinator Agent and a Steward Agent. It dispatches one work item to a work-item Thread, which contains a root Orchestrator Agent and child Producer, Reviewer, Verifier, and Steward Agents. Each Agent applies a Role and receives bounded assignments.">
+      <div class="thread-map" role="img" aria-label="A parent coordination Thread contains a Coordinator Agent, a standing read-only Watchdog Agent, and a Steward Agent. It dispatches one work item to a work-item Thread, which contains a root Orchestrator Agent and child Producer, Reviewer, Verifier, and Steward Agents. Each Agent applies a Role and receives bounded assignments.">
         <section class="thread-box" aria-label="Parent coordination Thread">
           <strong>Parent Coordination Thread</strong>
           <div class="agent-stack">
             <div class="agent-node"><b>Coordinator Agent</b><span>Role · Dev Backlog Coordinator</span><span>Assignment · select and dispatch work</span></div>
+            <div class="agent-node"><b>Watchdog Agent</b><span>Role · Dev Backlog Watchdog</span><span>Assignment · observe and alert without mutation</span></div>
             <div class="agent-node"><b>Steward Agent</b><span>Role · Dev Backlog Steward</span><span>Assignment · reserve one work item</span></div>
           </div>
         </section>
@@ -663,7 +667,19 @@
         <div><dt>Claim</dt><dd>Conditional temporary protection when agent-claim is selected.</dd></div>
       </dl>
     </figure>
-    <aside class="thread-context"><h3>Execution Contexts</h3><p>The Dev Backlog Steward is a child Agent, not another work-item Thread or queue entry. An Assignment is bounded work sent to an Agent; it does not create another work-item Thread. A runtime may retain a child execution context for that Agent, but the methodology still treats it as part of the owning parent or work-item Thread.</p></aside>
+    <aside class="thread-context"><h3>Execution Contexts</h3><p>The Dev Backlog Watchdog is a standing read-only child Agent outside delivery capacity. The Dev Backlog Steward is a child Agent, not another work-item Thread or queue entry. It performs only explicitly delegated provider mutations.</p><p>An Assignment is bounded work sent to an Agent; it does not create another work-item Thread. A runtime may retain a child execution context for that Agent, but the methodology still treats it as part of the owning parent or work-item Thread.</p></aside>
+    <figure class="watchdog-cycle-figure" aria-labelledby="watchdog-cycle-title">
+      <figcaption id="watchdog-cycle-title">Watchdog Observation Is Read-Only<span>The Watchdog reports evidence; the Coordinator decides and the Steward records any lifecycle change.</span></figcaption>
+      <div class="assignment-flow" role="img" aria-label="The Watchdog observes provider, execution, progress, estimate, hard-stop, Stalled, and Blocked exit-condition evidence. Healthy cycles return no action. Actionable anomalies alert the Coordinator, which investigates and chooses a disposition. The Steward then performs an authorized provider mutation.">
+        <div class="assignment-step"><strong>Observe</strong><p>Read provider, execution, progress, timing, and exit-condition evidence.</p></div>
+        <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
+        <div class="assignment-step idle"><strong>Quiet Or Alert</strong><p>Return no action when healthy; otherwise send one actionable alert.</p></div>
+        <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
+        <div class="assignment-step"><strong>Coordinator Decides</strong><p>Investigate the cause and choose the evidence-backed disposition.</p></div>
+        <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
+        <div class="assignment-step"><strong>Steward Records</strong><p>Mutate the selected provider only after explicit delegation.</p></div>
+      </div>
+    </figure>
     <figure class="steward-sequence-figure" aria-labelledby="steward-sequence-title">
       <figcaption id="steward-sequence-title">Steward Assignments Are Sequential<span>One retained Steward Agent may receive multiple assignments, but only one mutating assignment may be active or queued at a time.</span></figcaption>
       <div class="assignment-flow" role="img" aria-label="Assignment A performs and commits one lifecycle update. The parent confirms that the Steward Agent is idle before Assignment B begins.">
@@ -739,6 +755,7 @@
         <li><span class="number">9</span><span class="actor">Coordinator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Cleanup</span><p>Verify the integration branch is merged, remove the clean worktree, delete the merged branch, close the Thread, prune metadata, and refill queue capacity through a recount and replacement dispatch.</p></li>
       </ol>
     </figure>
+    <aside class="thread-context"><h3>Known Blocker Handoff</h3><p>A Root Orchestrator that recognizes a concrete blocker stops unsafe work, preserves commits and evidence, resolves resource ownership truthfully, and immediately sends the exact blocker, owner, unblock condition, requested action, canonical identities, and resume safety to the Coordinator. The Coordinator acknowledges the handoff, decides recovery and lifecycle disposition, and delegates any provider mutation to the Steward.</p></aside>
     <details><summary>Execution Safeguards</summary><div><p>Findings return to the original producer. After two failed correction attempts for the same criterion, a repeated failure signature, or an unavailable fixed dependency, preserve the candidate and record a truthful blocker.</p><p>Before a phase expected to exceed five minutes, publish the active unit, estimate, hard stop, retained evidence path, and distinct acceptance criterion. After an expensive failure, classify retained evidence, add the smallest offline regression, and run one cheapest representative first.</p></div></details>
     <p class="source-note">Direct-main and pull-request details are defined by <a href="../skills/complete-work-item-direct-main/SKILL.md">Direct-Main Completion</a>, <a href="../skills/complete-work-item-feature-branch/SKILL.md">Feature-Branch Completion</a>, and <a href="../skills/create-pull-request/SKILL.md">Create Pull Request</a>.</p>
   </section>
@@ -748,6 +765,7 @@
       <span class="chapter-number">Chapter 07</span>
       <div><h2 id="decisions-title">User Decision Gates</h2><p>Agents resolve technical questions from evidence. A work item moves to User Action Required only when the next safe step depends on authority, intent, risk acceptance, or information that belongs to the user.</p></div>
     </div>
+    <p class="source-note">Coordinator inability alone does not manufacture a user obligation. A technical or external cause remains Blocked with an exact owner and observable unblock condition until one concrete action genuinely belongs to the user.</p>
     <div class="decision-band" aria-label="User decision lifecycle">
       <div><strong>1 · User Question</strong><p>Record one concrete question, why it is needed, and the exact unattended boundary.</p></div>
       <div><strong>2 · Preserved Context</strong><p>Keep the requirements, scope, options, and discovered evidence in the item.</p></div>

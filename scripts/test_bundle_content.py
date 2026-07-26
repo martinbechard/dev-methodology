@@ -6053,7 +6053,7 @@ class BundleContentTests(unittest.TestCase):
         }
 
         self.assertEqual(
-            {"wiki-query-responder", "wiki-topic-verifier"},
+            {"dev-backlog-watchdog", "wiki-query-responder", "wiki-topic-verifier"},
             read_only_roles,
         )
         for role in roles:
@@ -6186,6 +6186,7 @@ class BundleContentTests(unittest.TestCase):
         roles_by_name = {role.name: role for role in roles}
         expected_dependencies = {
             "dev-backlog-coordinator": (
+                "dev-backlog-watchdog",
                 "dev-orchestrator",
                 "dev-backlog-steward",
             ),
@@ -6921,12 +6922,14 @@ class BundleContentTests(unittest.TestCase):
             "Investigation",
             "User Action Required",
             "Holding",
+            "Stalled",
             "Blocked",
             "Completed",
             "Awaiting Review",
             "Archive placement is not another lifecycle status",
             "The Work item is the only durable provider record",
             "Backlog Coordinator",
+            "Backlog Watchdog",
             "Backlog Steward",
             "Dev Orchestrator",
             "Independent Reviewers",
@@ -7930,10 +7933,11 @@ class BundleContentTests(unittest.TestCase):
             "methodology-maintainer",
             "methodology-artifact-reviewer",
             "dev-backlog-coordinator",
+            "dev-backlog-watchdog",
         ]
         suite_entries = index["suites"]
         self.assertEqual(expected_suites, [entry["id"] for entry in suite_entries])
-        self.assertEqual(list(range(1, 28)), [entry["priority"] for entry in suite_entries])
+        self.assertEqual(list(range(1, 29)), [entry["priority"] for entry in suite_entries])
         suite_directories = {
             path.name
             for path in AGENT_TEST_SUITES_ROOT.iterdir()
@@ -8042,10 +8046,24 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue((REPOSITORY_ROOT / target["nativeAgent"]).is_file())
                 self.assertEqual(1, suite["execution"]["maximumActiveChildren"])
                 self.assertTrue(suite["execution"]["requireCodexIdentityEvidence"])
-                self.assertEqual(
-                    role.get("agentDependencies", []),
-                    target["allowedAgentDependencies"],
-                )
+                if entry["id"] == "dev-backlog-coordinator":
+                    self.assertEqual(
+                        ["dev-orchestrator", "dev-backlog-steward"],
+                        target["allowedAgentDependencies"],
+                    )
+                    self.assertEqual(
+                        ["dev-backlog-watchdog"],
+                        [
+                            dependency
+                            for dependency in role.get("agentDependencies", [])
+                            if dependency not in target["allowedAgentDependencies"]
+                        ],
+                    )
+                else:
+                    self.assertEqual(
+                        role.get("agentDependencies", []),
+                        target["allowedAgentDependencies"],
+                    )
                 self.assertEqual(entry["id"], scenarios["suite"])
                 if entry["id"] == "dev-code-reviewer":
                     self.assertEqual(4, len(scenarios["scenarios"]))
@@ -8093,6 +8111,8 @@ class BundleContentTests(unittest.TestCase):
                     )
                 elif entry["id"] == "dev-backlog-coordinator":
                     self.assertEqual(5, len(scenarios["scenarios"]))
+                elif entry["id"] == "dev-backlog-watchdog":
+                    self.assertEqual(3, len(scenarios["scenarios"]))
                 else:
                     self.assertEqual(3, len(scenarios["scenarios"]))
 

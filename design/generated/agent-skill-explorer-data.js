@@ -392,6 +392,16 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "structured-explanation"
     },
     {
+      "kind": "fixed",
+      "role": "dev-backlog-watchdog",
+      "skill": "codex-workitem-coordination"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-backlog-watchdog",
+      "skill": "effective-communication"
+    },
+    {
       "condition": "when the requested browser workflow creates a new project file or directory.",
       "kind": "conditional",
       "role": "dev-browser-operator",
@@ -3825,7 +3835,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "caseBackedAgentCount": 6,
     "caseBackedWorkflowPackCount": 5,
     "codexRunnableCaseCount": 12,
-    "declaredScenarioCount": 61,
+    "declaredScenarioCount": 64,
     "endToEndFixtureBackedWorkflowPackCount": 0,
     "executableCaseCount": 12,
     "executableFixtureAgentCount": 1,
@@ -3846,7 +3856,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "modelJudgeCalibratedSkillCount": 0,
     "modelJudgeNotRequiredAgentCount": 0,
     "modelJudgeNotRequiredSkillCount": 23,
-    "modelJudgePendingAgentCount": 27,
+    "modelJudgePendingAgentCount": 28,
     "modelJudgePendingSkillCount": 102,
     "negativeCaseBackedSkillCount": 0,
     "ordinaryLocalCaseCount": 12,
@@ -3860,14 +3870,14 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "positiveStaleByDigestSkillCount": 0,
     "positiveVerifiedSkillCount": 0,
     "probeDeclaredSkillCount": 125,
-    "scenarioDeclaredAgentCount": 27,
+    "scenarioDeclaredAgentCount": 28,
     "securityContainedAgentCount": 0,
     "securityContainedRunCount": 0,
     "securityContainedSkillCount": 0,
     "staleByDigestAgentCount": 0,
     "staleByDigestRunCount": 0,
     "staleByDigestSkillCount": 0,
-    "structuralAgentCount": 27,
+    "structuralAgentCount": 28,
     "structuralSkillCount": 125,
     "verifiedAgentCount": 0,
     "verifiedRunCount": 0,
@@ -4269,7 +4279,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [],
-      "description": "Acts as the parent backlog coordinator across the effective work-item provider, sustaining ten Starting or Running items when durable inventory exists, recovering stalled delivery, and cleaning up terminal tasks without taking over provider lifecycle or per-item delivery.",
+      "description": "Acts as the parent backlog coordinator across the effective work-item provider, sustaining ten Starting or Running items when durable inventory exists, deciding Stalled and Blocked recovery, and cleaning up terminal tasks without taking over provider lifecycle or per-item delivery.",
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
@@ -4435,6 +4445,94 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "securityContainedCases": [],
       "skillAvailability": [],
       "sourcePath": "agents/roles/dev-activities/dev-backlog-steward.role.yaml",
+      "verifiedCases": []
+    },
+    {
+      "conditionalSkills": {},
+      "coverage": {
+        "caseBacked": false,
+        "caseBackedCases": [],
+        "caseBackedScenarioIds": [],
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "partialScenarioCoverage": false,
+        "scenarioCoverage": {
+          "dev-backlog-watchdog-boundary": {
+            "caseBacked": false,
+            "executableCases": [],
+            "executableFixture": false
+          },
+          "dev-backlog-watchdog-exit-condition": {
+            "caseBacked": false,
+            "executableCases": [],
+            "executableFixture": false
+          },
+          "dev-backlog-watchdog-happy": {
+            "caseBacked": false,
+            "executableCases": [],
+            "executableFixture": false
+          }
+        },
+        "scenarioDeclared": true,
+        "scenarioIds": [
+          "dev-backlog-watchdog-boundary",
+          "dev-backlog-watchdog-exit-condition",
+          "dev-backlog-watchdog-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "backlog"
+        ]
+      },
+      "declaredCases": [],
+      "description": "Observes a sustained Codex work-item queue on a schedule and reports only actionable evidence or one concise healthy-cycle result without mutating coordination state.",
+      "dynamicFolderSkills": false,
+      "executedCases": [],
+      "fixedSkills": [
+        "effective-communication",
+        "codex-workitem-coordination"
+      ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "fable-5",
+          "modelProfile": "simple",
+          "path": "generated/adapters/claude/agents/dev-backlog-watchdog.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-luna",
+          "modelProfile": "simple",
+          "path": "generated/adapters/codex/agents/dev-backlog-watchdog.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "flash",
+          "modelProfile": "simple",
+          "path": "generated/adapters/gemini/agents/dev-backlog-watchdog.md"
+        },
+        {
+          "harness": "junie",
+          "model": "gemini-flash",
+          "modelProfile": "simple",
+          "path": "generated/adapters/junie/agents/dev-backlog-watchdog.md"
+        }
+      ],
+      "id": "dev-backlog-watchdog",
+      "judgePassedCases": [],
+      "label": "dev-backlog-watchdog",
+      "modelProfile": "simple",
+      "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml",
       "verifiedCases": []
     },
     {
@@ -7861,7 +7959,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ],
         "scenarioAssociations": [
           "dev-backlog-coordinator-boundary",
-          "dev-backlog-coordinator-happy"
+          "dev-backlog-coordinator-happy",
+          "dev-backlog-watchdog-boundary",
+          "dev-backlog-watchdog-exit-condition",
+          "dev-backlog-watchdog-happy"
         ],
         "securityContainedCases": [],
         "staleByDigestCases": [],
@@ -16955,7 +17056,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "backlog": {
       "agents": [
         "dev-backlog-coordinator",
-        "dev-backlog-steward"
+        "dev-backlog-steward",
+        "dev-backlog-watchdog"
       ],
       "caseBacked": true,
       "caseBackedCases": [

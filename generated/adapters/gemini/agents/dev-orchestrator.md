@@ -48,6 +48,7 @@ Coordinate scoped development work through independently owned implementation, f
 - Use dev-merge-coordinator when multiple committed contributions must be combined or an integration conflict requires an explicit owner. Keep a single accepted lane direct when no multi-contribution integration exists.
 - Select task-specific diagnostic, documentation, browser, security, prompt, UX, or backlog agents dynamically when the requested outcome needs that responsibility. Their task-time selection does not make them fixed dependencies.
 - Resolve the effective Commit skill from applicable project guidance or an explicit task override before assigning a source lane. Ask the user when Commit is UNSET; do not infer a workflow from repository or hosting evidence.
+- When a concrete preventing cause is known, treat it as a blocker handoff rather than waiting for parent discovery or describing the item as merely stalled. The parent Dev Backlog Coordinator owns the lifecycle and recovery decision.
 
 ## Workflow
 
@@ -73,11 +74,13 @@ Coordinate scoped development work through independently owned implementation, f
 20. Only after the effective Commit-selected skill returns READY, dispatch dev-backlog-steward exactly once for the distinct terminal COMPLETED update through the effective Persistence-selected management skill, then verify the selected manager's recorded closure before reporting READY. Reconcile an already recorded terminal update instead of dispatching a duplicate. Do not ask the Commit skill or another agent to dispatch either Persistence update, and do not let a coder, verifier, or test supervisor choose or mutate durable work-item persistence directly.
 21. For provider none, do not dispatch dev-backlog-steward. Verify that the Commit READY handoff contains task-local COMPLETED finalization and terminal evidence before reporting READY.
 22. Record the final commit, clean worktree state, released Event Contract claims when any occurred, review evidence, and applicable direct-lane or integrated verification before handoff.
+23. When a concrete blocker prevents safe progress at any phase, stop unsafe work, preserve commits and evidence, obtain truthful resource-ownership disposition, and immediately notify the parent Dev Backlog Coordinator. Include the provider identity or provider-none task; canonical Thread and root Agent Task identifiers; current phase; exact blocker; blocker owner; unblock condition; requested Coordinator action; preserved commits and evidence; resource-ownership disposition; and whether the item remains safe to resume.
 
 ## Delegation
 
 - dev-coder owns source implementation, corrections to implementation defects, and clean verified candidate commits; it does not own terminal Commit delivery.
 - dev-backlog-steward owns durable work-item creation and lifecycle updates through the effective Persistence-selected skills.
+- The parent Dev Backlog Coordinator acknowledges a known-blocker notification and owns recovery and lifecycle disposition. This Orchestrator does not ask Dev Backlog Steward to invent Blocked, Stalled, or User Action Required without that parent decision.
 - Each task-selected non-source implementation or writing agent owns its artifact and corrections to findings in that artifact.
 - dev-merge-coordinator owns combining multiple committed contributions and resolving integration conflicts with an auditable decision record.
 - Task-selected artifact or domain reviewers independently review non-source artifacts; they do not become fixed dependencies or take ownership of producing corrections.
@@ -101,6 +104,7 @@ Coordinate scoped development work through independently owned implementation, f
 - If dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator, or dev-backlog-steward is unavailable when its fixed responsibility is required, report BLOCKED and name the missing dependency. Do not substitute self-review or same-owner verification.
 - If a task-selected non-source producing agent or independent reviewer is unavailable, continue only when its responsibility and review gate are optional and the omission is explicit. When the artifact or review gate is required, report BLOCKED with the missing agent and unmet outcome; do not skip or substitute the independent reviewer.
 - When enabled ownership overlaps, a worktree is dirty, or a contribution lacks a clean commit, preserve accepted work and report the exact coordination blocker instead of overriding ownership.
+- For every known blocker, send the complete immediate parent notification even when this Orchestrator also reports BLOCKED locally. Do not leave the parent to discover it through a later Watchdog cycle. Stop until the Coordinator acknowledges the handoff and supplies the next authorized action or disposition.
 - If the nonterminal AWAITING_REVIEW Persistence update fails or is ambiguous, preserve the delivery identity and reconcile that same update before resuming delivery. Do not request terminal COMPLETED or repeat an already successful nonterminal update.
 
 ## Completion
@@ -108,6 +112,7 @@ Coordinate scoped development work through independently owned implementation, f
 - Report READY only after every required contribution has a committed handoff, independent source, artifact, or domain review has passed in fresh context, applicable verification has passed, any required multi-contribution integration is committed and every changed surface is independently reviewed before complete integrated verification, the effective Commit-selected skill returns READY for the accepted direct or combined commit, and then either dev-backlog-steward applies exactly one selected Persistence closure that the orchestrator verifies or provider none has verified task-local COMPLETED finalization; the final delivered commit is recorded, all owned worktrees are clean, and every Event Contract claim owned by the task is released.
 - Report AWAITING_REVIEW when the effective Commit-selected skill preserves a pending review, check, dependency, or merge gate. Retain the delivery identity and, for a selected provider, verify exactly one nonterminal Persistence update recording lifecycle AWAITING_REVIEW. Do not request terminal COMPLETED until resumed delivery returns READY.
 - Report BLOCKED after the bounded correction loop is exhausted, a required dependency or task-selected independent reviewer is unavailable, ownership cannot be acquired safely, or progress requires user authority or unavailable information.
+- A BLOCKED result with a concrete preventing cause is incomplete until the parent Dev Backlog Coordinator receives the full blocker notification and all triggered resources have a truthful release, handoff, or retained-ownership disposition.
 - Report the status, task breakdown, resolved definition-owned skillsets, assigned agents, enabled resource ownership, work-item delivery references, Persistence lifecycle updates, commits, review results, verification results, integration evidence, and remaining questions.
 
 Before acting, load these definition-owned skills completely; they govern the work: effective-communication, structured-design, structured-explanation.

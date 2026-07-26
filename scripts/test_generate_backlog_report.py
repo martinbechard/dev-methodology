@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
 # Summary: Verifies backlog report inventory, Future Ideas authority, reconciliation, ordering, and offline HTML output.
-# Governing backlog items: backlog/feature-backlog/add-styled-backlog-report-with-user-input.md and backlog/feature-backlog/add-lightweight-future-ideas-capture.md
+# Governing backlog items: backlog/feature-backlog/add-styled-backlog-report-with-user-input.md, backlog/feature-backlog/add-lightweight-future-ideas-capture.md, and backlog/feature-backlog/add-dedicated-watchdog-and-stalled-lifecycle.md
 
 """Focused tests for the styled backlog report generator."""
 
@@ -49,6 +49,9 @@ class BacklogReportTest(unittest.TestCase):
         context: str = "Fixture context.",
         completion: str = "direct-main",
         include_open_questions: bool = True,
+        owner: str = "",
+        diagnostic_owner: str = "",
+        next_investigation_action: str = "",
         extra: str = "",
     ) -> None:
         """Write one complete backlog item with optional queue-specific sections."""
@@ -56,6 +59,17 @@ class BacklogReportTest(unittest.TestCase):
         path.parent.mkdir(parents=True, exist_ok=True)
         open_questions = (
             "## Open Questions\n\nNone\n\n" if include_open_questions else ""
+        )
+        lifecycle_fields = "".join(
+            (
+                f"\nOwner: {owner}\n" if owner else "",
+                f"\nDiagnostic Owner: {diagnostic_owner}\n"
+                if diagnostic_owner
+                else "",
+                f"\nNext Investigation Action: {next_investigation_action}\n"
+                if next_investigation_action
+                else "",
+            )
         )
         path.write_text(
             f"""# {title}
@@ -69,6 +83,7 @@ Provider: file
 Provider Reference: {relative}
 
 Completion: {completion}
+{lifecycle_fields}
 
 ## Summary
 
@@ -534,6 +549,42 @@ Do not implement.
         self.assertIn("backlog/user-action-required/choose.md", rendered)
         self.assertNotIn("<script", rendered.lower())
         self.assertNotIn("https://", rendered.lower())
+
+    def test_stalled_inventory_is_separate_and_shows_diagnostic_action(self) -> None:
+        """Stalled work must not be rendered as runnable or Blocked inventory."""
+
+        self.write_item(
+            "backlog/feature-backlog/suspected-stall.md",
+            title="Suspected Stall",
+            status="Stalled",
+            item_type="Feature",
+            owner="Dev Orchestrator task-17",
+            diagnostic_owner="Dev Backlog Coordinator",
+            next_investigation_action="Inspect the last retained test output.",
+        )
+        self.write_item(
+            "backlog/defect-backlog/known-blocker.md",
+            title="Known Blocker",
+            status="Blocked",
+            item_type="Defect",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("<span>Stalled</span><strong>1</strong>", rendered)
+        stalled_start = rendered.index("Stalled Work")
+        blocked_start = rendered.index("Blocked Work")
+        stalled = rendered[stalled_start:blocked_start]
+        blocked = rendered[blocked_start:rendered.index("Holding", blocked_start)]
+        runnable = rendered[rendered.index("Runnable Work"):stalled_start]
+        self.assertIn("Suspected Stall", stalled)
+        self.assertIn("Diagnostic Owner", stalled)
+        self.assertIn("Dev Backlog Coordinator", stalled)
+        self.assertIn("Next Investigation Action", stalled)
+        self.assertIn("Inspect the last retained test output.", stalled)
+        self.assertNotIn("Suspected Stall", runnable)
+        self.assertNotIn("Suspected Stall", blocked)
+        self.assertIn("Known Blocker", blocked)
 
     def test_external_prerequisites_remain_complete_unmet_and_non_runnable(self) -> None:
         """Plain-language prerequisites retain their text and require manual satisfaction."""

@@ -168,6 +168,97 @@ agents:
         executableCases: []
         coverageStatus: declared
     coverageStatus: declared
+  - id: dev-backlog-watchdog
+    source: agents/roles/dev-activities/dev-backlog-watchdog.role.yaml
+    scenarioFamily: backlog
+    repositoryMutation: never
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - cycle result
+      - actionable parent alert
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - suite-simulator-tests
+        - no-forbidden-mutation
+        - task-identity-fields
+        - provider-selector-routing
+        - output-contract-presence
+      modelRubric: workflow-quality
+    workflowAssociations:
+      - backlog
+    scenarios:
+      - id: dev-backlog-watchdog-happy
+        kind: happy-path
+        fixtureProfile: backlog-state-machine
+        promptIntent: Run one canonical scheduled cycle while active work remains healthy and no parent action is needed.
+        expectedOutcome: One concise no-action cycle result, no parent interruption, and unchanged provider, claim, task, Git, branch, worktree, and resource state.
+        requiredBehaviors:
+          - Identify as Dev Backlog Watchdog.
+          - Use the canonical standing and heartbeat prompt templates with only resolved parent-task and repository-root substitutions.
+          - Treat active quiet work as healthy inside explicit estimate, hard-stop, and evidence-progress boundaries.
+          - Keep provider-none evidence task-local and omit claim-registry work when resource coordination is disabled.
+        forbiddenBehaviors:
+          - Notify the parent without an actionable condition.
+          - Infer failure from silence or title age.
+          - Mutate lifecycle, coordination, delivery, or cleanup state.
+        judgePlan:
+          deterministicChecks:
+            - suite-simulator-tests
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: dev-backlog-watchdog-boundary
+        kind: boundary-failure
+        fixtureProfile: backlog-state-machine
+        promptIntent: Observe a Running item that crossed a declared progress boundary while its preventing cause remains unknown.
+        expectedOutcome: One actionable alert with the provider identity, exact evidence, reason attention is required, and smallest recommended Coordinator action, with no lifecycle mutation.
+        requiredBehaviors:
+          - Distinguish suspected lack of progress from a known Blocked cause.
+          - Report the canonical Thread and root Agent Task evidence.
+          - Recommend Coordinator investigation without choosing Stalled.
+          - Preserve byte-identical observed state.
+        forbiddenBehaviors:
+          - Set Stalled, Blocked, User Action Required, or a terminal state.
+          - Dispatch replacement work or recover a task.
+          - Run expensive or live verification.
+        judgePlan:
+          deterministicChecks:
+            - suite-simulator-tests
+            - no-forbidden-mutation
+            - task-identity-fields
+            - output-contract-presence
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: dev-backlog-watchdog-exit-condition
+        kind: recovery
+        fixtureProfile: backlog-state-machine
+        promptIntent: Observe a satisfied Stalled or Blocked exit condition and recommend the smallest Coordinator action.
+        expectedOutcome: One actionable alert that leaves Running, Ready, Blocked, User Action Required, and terminal disposition to the Coordinator and Steward.
+        requiredBehaviors:
+          - Identify the affected provider identity or provider-none task.
+          - Report the satisfied exit evidence and why attention is required.
+          - Recommend Coordinator validation and one authorized disposition decision.
+          - Leave provider mutation to Dev Backlog Steward after the Coordinator decides.
+        forbiddenBehaviors:
+          - Choose the lifecycle result.
+          - Create a synthetic inventory or second registry.
+          - Mutate a provider record, task, claim, branch, or worktree.
+        judgePlan:
+          deterministicChecks:
+            - suite-simulator-tests
+            - provider-selector-routing
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+    coverageStatus: declared
   - id: dev-artifact-reviewer
     source: agents/roles/dev-activities/dev-artifact-reviewer.role.yaml
     scenarioFamily: documentation-methodology

@@ -120,3 +120,7 @@ suites:
     priority: 27
     path: dev-backlog-coordinator
     rationale: Coordinates just-in-time Codex backlog tasks, serialized lifecycle batons, and bounded artifact campaigns.
+  - id: dev-backlog-watchdog
+    priority: 28
+    path: dev-backlog-watchdog
+    rationale: Observes sustained backlog coordination without mutation and alerts only on actionable evidence.

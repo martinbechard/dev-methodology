@@ -2,7 +2,7 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
 # Summary: Generates a deterministic, self-contained HTML view of repository work items and explicitly requested Future Ideas.
-# Governing backlog items: backlog/feature-backlog/add-styled-backlog-report-with-user-input.md and backlog/feature-backlog/add-lightweight-future-ideas-capture.md
+# Governing backlog items: backlog/feature-backlog/add-styled-backlog-report-with-user-input.md, backlog/feature-backlog/add-lightweight-future-ideas-capture.md, and backlog/feature-backlog/add-dedicated-watchdog-and-stalled-lifecycle.md
 
 """Generate an offline HTML report from the repository backlog."""
 
@@ -62,6 +62,7 @@ ALLOWED_STATUSES = {
     "Starting",
     "Claimed",
     "Running",
+    "Stalled",
     "Blocked",
     "User Action Required",
     "Awaiting Review",
@@ -95,6 +96,9 @@ class _Item:
     provider: str = ""
     provider_reference: str = ""
     completion: str = ""
+    owner: str = ""
+    diagnostic_owner: str = ""
+    next_investigation_action: str = ""
     source_evidence: str = ""
     missing: list[str] = field(default_factory=list)
     anomalies: list[str] = field(default_factory=list)
@@ -378,6 +382,12 @@ def _read_items(
                 provider=fields.get("Provider", ""),
                 provider_reference=fields.get("Provider Reference", ""),
                 completion=fields.get("Completion", ""),
+                owner=fields.get("Owner", ""),
+                diagnostic_owner=fields.get("Diagnostic Owner", ""),
+                next_investigation_action=fields.get(
+                    "Next Investigation Action",
+                    "",
+                ),
                 source_evidence=sections.get("Source Evidence", ""),
                 missing=missing,
             )
@@ -439,6 +449,7 @@ def _read_items(
                             "Starting",
                             "Claimed",
                             "Running",
+                            "Stalled",
                             "Blocked",
                             "Awaiting Review",
                             "Target Merge Pending",
@@ -689,6 +700,12 @@ def _item_card(item: _Item) -> str:
             f'<dl class="interaction"><dt>Question for the User</dt><dd>{_escape(item.question or "Missing")}</dd>'
             f'<dt>Resolution</dt><dd>{_escape(item.resolution or "Missing")}</dd></dl>'
         )
+    elif item.status == "Stalled":
+        detail = (
+            f'<dl class="interaction"><dt>Diagnostic Owner</dt><dd>{_escape(item.diagnostic_owner or "Missing")}</dd>'
+            f'<dt>Next Investigation Action</dt><dd>{_escape(item.next_investigation_action or "Missing")}</dd>'
+            f'<dt>Preserved Owner</dt><dd>{_escape(item.owner or "Unowned")}</dd></dl>'
+        )
     return (
         '<article class="item">'
         f'<div class="badges">{"".join(metadata)}</div>'
@@ -768,7 +785,13 @@ def _render_report(
     active = [item for item in ordered if item.queue == "active"]
     needs_input = [item for item in ordered if item.queue == "user-action-required"]
     runnable = [item for item in active if item.eligible]
-    blocked = [item for item in active if item.unmet_dependencies or item.status == "Blocked"]
+    stalled = [item for item in active if item.status == "Stalled"]
+    blocked = [
+        item
+        for item in active
+        if item.status == "Blocked"
+        or (item.unmet_dependencies and item.status != "Stalled")
+    ]
     holding = [item for item in ordered if item.queue == "holding"]
     completed = [item for item in ordered if item.queue == "completed"]
     failed = [item for item in ordered if item.queue == "failed"]
@@ -782,6 +805,7 @@ def _render_report(
         ("Active typed items", len(active)),
         ("Runnable now", len(runnable)),
         ("Needs your input", len(needs_input)),
+        ("Stalled", len(stalled)),
         ("Holding", len(holding)),
         ("Completed archive", len(completed)),
         ("Failed archive", len(failed)),
@@ -844,6 +868,7 @@ def _render_report(
 <section aria-labelledby="summary-title"><h2 id="summary-title">Summary</h2><div class="metric-grid">{metrics_html}</div><div class="count-grid"><div class="panel"><h3>Underlying type counts</h3><table><tbody>{count_rows}</tbody></table></div><div class="panel"><h3>Declared status counts</h3><table><tbody>{status_rows}</tbody></table></div></div></section>
 {_section("Needs Your Input", "Waiting for a decision, approval, action, or information from you. These items retain Status: User Action Required and are excluded from unattended work.", needs_input, "No user action is currently required.")}
 {_section("Runnable Work", "Ready items whose declared dependencies are satisfied. Workspace claims do not change this lifecycle classification.", runnable, "No items are effectively eligible for dispatch.")}
+{_section("Stalled Work", "Active items with evidence that progress has stopped while the cause remains unknown. Each item names its diagnostic owner and next investigation action.", stalled, "No stalled active items.")}
 {_section("Blocked Work", "Active items with unmet dependencies or a declared Blocked status.", blocked, "No blocked active items.")}
 {_section("Holding", "Visible work intentionally excluded from unattended dispatch.", holding, "No holding items.")}
 {_future_ideas_section(future_ideas) if include_future_ideas else ""}

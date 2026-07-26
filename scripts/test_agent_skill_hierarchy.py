@@ -167,6 +167,7 @@ class AgentSkillHierarchyTests(unittest.TestCase):
             {
                 "dev-backlog-coordinator",
                 "dev-backlog-steward",
+                "dev-backlog-watchdog",
                 "dev-orchestrator",
                 "dev-coder",
                 "dev-code-reviewer",
@@ -175,7 +176,7 @@ class AgentSkillHierarchyTests(unittest.TestCase):
             },
             expected_focus_roles,
         )
-        self.assertEqual(7, len(expected_dependency_edges))
+        self.assertEqual(8, len(expected_dependency_edges))
         self.assertIn(
             "const hasDefinitionSelection = Boolean(selectedRole || selectedSkill)",
             self.rendered,

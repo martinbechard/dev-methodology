@@ -1,7 +1,7 @@
 {
   "adapters": {
     "claude": {
-      "agentCount": 27,
+      "agentCount": 28,
       "agents": [
         {
           "name": "dev-artifact-reviewer",
@@ -21,7 +21,7 @@
             "effective-communication",
             "structured-explanation"
           ],
-          "sha256": "0958ec214e10f523ec75d0056082bccc292329e118b51cc80fead26da0d0f56a",
+          "sha256": "b3abbe5d0bd799c836be42ad8e12ff25675c0698ba12707d78ef69f9292a0f1e",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -31,8 +31,18 @@
             "effective-communication",
             "structured-explanation"
           ],
-          "sha256": "4a9c6e3ef8864a27b504dfd1338ce364157ee6f623ff6d064d3b036fb9c58f77",
+          "sha256": "f34ea363c98dd1dbafae381f055e090113b0f30a2c5bcb343122406405e3e793",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
+        },
+        {
+          "name": "dev-backlog-watchdog",
+          "output": "generated/adapters/claude/agents/dev-backlog-watchdog.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "codex-workitem-coordination"
+          ],
+          "sha256": "10a56856823bbf9cc310aebe1613541b24f7f89c098a53f4fe99005c67d0cb82",
+          "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
           "name": "dev-browser-operator",
@@ -101,7 +111,7 @@
             "structured-design",
             "structured-explanation"
           ],
-          "sha256": "d84a09d7899d722ea981c782c0c8b5cd1bb5a78f72a574091816a293f0e9e6c9",
+          "sha256": "80defd60f32f8de4d62e79632bc5efa1a2564f86a51f0d86ea3a26954c8ef79a",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -323,7 +333,7 @@
       "outputRoot": "generated/adapters/claude/agents"
     },
     "codex": {
-      "agentCount": 27,
+      "agentCount": 28,
       "agents": [
         {
           "name": "dev-artifact-reviewer",
@@ -345,7 +355,7 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "7d469f2fca49cc2b100546afd682865beb0492ae136ff309b73ed27b414da064",
+          "sha256": "440eff67d6a9e57c79536bd67d266f179b7063dcf992bc186b2aeacbb0c2fd45",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -356,8 +366,18 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "baf6a7faf11c563ee1709dde6e579b7bd5e0846424b71cb69366f48d86d224b3",
+          "sha256": "bd0b850e39a8ac8303622cce262eb81a0d7a39a8f32e8d07ff69929ef2a0aaa5",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
+        },
+        {
+          "name": "dev-backlog-watchdog",
+          "output": "generated/adapters/codex/agents/dev-backlog-watchdog.toml",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "codex-workitem-coordination"
+          ],
+          "sha256": "7c870ee13fe97b4ddd932e6887267038778367b7fde2ee7f930c61030900afee",
+          "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
           "name": "dev-browser-operator",
@@ -432,7 +452,7 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "fdb5f9c0547e69d27119a5ffd5a2f83018a5154db8a62aa15a73a8c4796f2ba8",
+          "sha256": "baaa64047545293667f7932ed3528846ae39ff19bba067c8da32fd9653b34202",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -676,7 +696,7 @@
       "outputRoot": "generated/adapters/codex/agents"
     },
     "gemini": {
-      "agentCount": 27,
+      "agentCount": 28,
       "agents": [
         {
           "name": "dev-artifact-reviewer",
@@ -696,7 +716,7 @@
             "effective-communication",
             "structured-explanation"
           ],
-          "sha256": "c826888f2d28a2cb8ec3b8a9291506a991e8298029a04872708635c2717e846c",
+          "sha256": "1dc557b1cbe37cd640ace7e65270c127fed96b617ff9ccc9b454b03d85eb8470",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -706,8 +726,18 @@
             "effective-communication",
             "structured-explanation"
           ],
-          "sha256": "9d703f1e833b3f7e45a72df3642eb07542259f894449fc3fdc297bad9d4b0413",
+          "sha256": "2284d20a3318032e86bdec9cd9c6709860cf2349e58e48f2c3ceacc0649ef48c",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
+        },
+        {
+          "name": "dev-backlog-watchdog",
+          "output": "generated/adapters/gemini/agents/dev-backlog-watchdog.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "codex-workitem-coordination"
+          ],
+          "sha256": "370c9b944c88b0165b10297af1dbc143865f596cf9dc5d3066847bc127e10a8e",
+          "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
           "name": "dev-browser-operator",
@@ -776,7 +806,7 @@
             "structured-design",
             "structured-explanation"
           ],
-          "sha256": "c6b230cd8415a5cc39e188faed517bedc926f1f8fc6a5c4980c170f258cf371c",
+          "sha256": "e907975c6be1a610cde2a5d1b5acd83d633964f04e070cf015b8322090b7273c",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -998,7 +1028,7 @@
       "outputRoot": "generated/adapters/gemini/agents"
     },
     "junie": {
-      "agentCount": 27,
+      "agentCount": 28,
       "agents": [
         {
           "name": "dev-artifact-reviewer",
@@ -1018,7 +1048,7 @@
             "effective-communication",
             "structured-explanation"
           ],
-          "sha256": "4f82facb0eb564e396816402f516bebc76e1a8ccde94bd0440f7f41bd320a7bb",
+          "sha256": "201d93f11690bcf95d10148e16993cb290fe802bce36156a862835e0e846c3d6",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -1028,8 +1058,18 @@
             "effective-communication",
             "structured-explanation"
           ],
-          "sha256": "9528dcead6307f5f68a422b17fe9ccbb281a0062e9589e94c6cdc51864aa88ab",
+          "sha256": "bf8abc77b4d844b3698f6565974979abe74304676deecb80981907d2c781d726",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
+        },
+        {
+          "name": "dev-backlog-watchdog",
+          "output": "generated/adapters/junie/agents/dev-backlog-watchdog.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "codex-workitem-coordination"
+          ],
+          "sha256": "0ca06b4e4050c1293767d3048029b6b0cc369bc734442a6adfdd17635d80a652",
+          "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
           "name": "dev-browser-operator",
@@ -1098,7 +1138,7 @@
             "structured-design",
             "structured-explanation"
           ],
-          "sha256": "15a1d51a2c5a29becf628cc7cda2c8991f126a3a5cd2643d16de1690413c5c9f",
+          "sha256": "5ac0be097a15ca9e1da73a4caee17c2dffc4e96447d06411bc80502a714511ed",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -1320,7 +1360,7 @@
       "outputRoot": "generated/adapters/junie/agents"
     }
   },
-  "canonicalRoleCount": 27,
+  "canonicalRoleCount": 28,
   "generationOptions": {
     "coreSkillDelivery": "by-reference",
     "inlineCoreSkills": false

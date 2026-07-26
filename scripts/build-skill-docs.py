@@ -155,6 +155,7 @@ ROLE_ACTOR_SUFFIXES = {
     "specialist",
     "steward",
     "verifier",
+    "watchdog",
     "writer",
 }
 SKILL_ACTOR_SUFFIXES = {
