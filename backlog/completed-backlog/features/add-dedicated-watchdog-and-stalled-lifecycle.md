@@ -260,10 +260,13 @@ The required answer is recorded. The preserved canonical task 019f9a91-b1a9-7ea0
 ## Terminal Provider Completion — 2026-07-26
 
 - Completion disposition: Ready through the configured direct-main completion route.
-- Accepted delivery candidate: 55b27975c40f673a2e0048d7865f40573f3da4da.
-- Main integration: 410438f99dd403caca699e7834a2493c09025467, a merge of 637760d006058eac74f7b2b65622f7f67a18a6ad and the accepted candidate, is observed on primary main.
-- Independent source, methodology, artifact, and UX reviews accepted the exact delivery. The delivery verifier reported Ready.
-- Verification evidence: 260 focused checks, 15 simulator checks, 11 YAML checks, four freshness checks, and exact approval of 54 paths; integration checks passed 133 checks plus 15 simulator checks, and post-commit checks passed 7 checks plus 15 simulator checks.
-- Known baseline drift: eight AGENTS phrase checks reproduced unchanged before integration and do not block this completed delivery.
+- Final independently accepted delivery candidate: 24e9d1ec520e2fae93d7e40c7693893ecbe003a7.
+- Direct-main integration and current primary main: 4d05920e44292e691d426e7e0b0c9401b5fc4f61.
+- Independent source, methodology, artifact, and UX reviews accepted the exact final candidate. The delivery verifier reported PASS.
+- Final-candidate verification evidence: 246 focused tests, 16 simulator checks, five explicit negative or prompt regressions, Codex and Junie validate-only checks, four freshness gates, and exact approval of 54 paths.
+- Current-main reconciliation: 75 post-main tests passed and all freshness gates passed.
+- Integration claim evidence: acquisition d65b688e-37c4-4289-a98a-becc39b9dd35; release 7a4dfa51-c9e1-4c46-b687-99a2b47d9d8d.
+- Superseded historical delivery evidence: rejected pre-correction candidate 55b27975c40f673a2e0048d7865f40573f3da4da and prior main merge 410438f99dd403caca699e7834a2493c09025467 remain historical only; neither is accepted final delivery evidence.
+- Known unrelated baseline debt: nine broad bundle failures and a catalog mismatch reproduce on pre-integration current main. They are not attributed to this completed delivery and do not supersede the focused acceptance evidence.
 - Terminal provider transaction: the root Dev Orchestrator's Dev Backlog Steward child moved this canonical file-provider item from the active feature backlog to this completed feature archive under exact-file claim archive-watchdog-stalled-019f9a91 (acquisition event 7a0c234f-60af-4c25-910a-aaf42bf0185d).
 - Archive path: backlog/completed-backlog/features/add-dedicated-watchdog-and-stalled-lifecycle.md.
