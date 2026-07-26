@@ -306,6 +306,12 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             "repository is relative to the active scenario's scenarioRoots[scenario] directory",
             prompt,
         )
+        self.assertIn(
+            "create every candidate repository, worktree, or fixture beneath the active "
+            "scenario's scenarioRoots[scenario] directory, never directly beneath "
+            "fixtureRoot or beneath a sibling scenario root",
+            prompt,
+        )
         self.assertIn("Keep fixtureRoot only as the parent containment boundary", prompt)
         self.assertIn("never under /tmp or /private/tmp", prompt)
         self.assertIn("path strings alone are invalid", prompt)
