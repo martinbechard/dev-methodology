@@ -79,9 +79,9 @@ Use explicit provider lifecycle states and never infer success from silence:
 - FAILED: delivery ended without satisfying completion and terminal failure evidence is recorded.
 - ABANDONED: authorized direction ends the work without delivery.
 
-READY as a completion disposition is not lifecycle READY. Starting, Running, Stalled, and
-Blocked remain active typed work items in their existing type folder; none moves to a holding
-or terminal queue solely because of that state. A file item remains in its current nonterminal
+READY as a completion disposition is not lifecycle READY. Starting, Running, unknown-cause
+Stalled, and known-cause Blocked remain active typed work items in their existing type folder;
+none moves to a holding or terminal queue solely because of that state. A file item remains in its current nonterminal
 lifecycle until manage-file-work-items records an authorized transition. Once AWAITING_REVIEW
 is recorded for a feature-branch delivery, the same delivery identity remains lifecycle
 AWAITING_REVIEW through review corrections and merge preparation. A provider terminal-update
@@ -178,8 +178,11 @@ eligible Ready work.
 The Coordinator chooses one deterministic disposition and its Steward child performs the
 provider mutation:
 
-1. Stalled -> Running only when the same canonical owner demonstrably resumes safely. Record
-   the new productive evidence and keep the existing canonical identities.
+1. Stalled -> Running only when the same canonical owner demonstrably resumes safely and the
+   Starting-plus-Running count is below ten. In the same serialized provider transaction,
+   reconcile that current count, reject the transition and preserve Stalled when no slot is
+   available, and otherwise record the new productive evidence without exceeding capacity
+   while keeping the existing canonical identities.
 2. Stalled -> Ready when ownership has ended and normal redispatch is required. Set Owner to
    Unowned, retain the diagnostic history, and require the later Ready -> Starting -> Running
    sequence.
@@ -190,6 +193,8 @@ provider mutation:
    contract is independently satisfied.
 
 Neither a watchdog observation nor Stalled state alone authorizes a lifecycle mutation.
+A retained Stalled owner must not resume repository or provider mutation until Dev Backlog
+Coordinator decides Stalled -> Running and Dev Backlog Steward records that transition.
 Do not jump from Stalled to Running for a new owner, after ownership ended, or without
 demonstrated resumed progress.
 

@@ -7,9 +7,9 @@
 | Standing and heartbeat prompts render byte-identically | Coordination canonical templates | focused coordination template tests |
 | Observation is strictly read-only | Watchdog role authority and coordination boundaries | no-forbidden-mutation and quiet-cycle deep-copy assertion |
 | Healthy cycles return one concise no-action result | Watchdog output contract | healthy-cycle-stays-quiet and test_quiet_work_returns_no_action_without_mutation |
-| Suspected lack of progress remains distinct from a known blocker | Stalled and Blocked semantics | suspected-stall-alert and test_suspected_stall_alerts_parent_without_setting_stalled |
-| Alerts include provider identity, evidence, reason, and smallest Coordinator action | Watchdog output contract | suspected-stall-alert and alert field assertions |
-| Stalled and Blocked exit conditions are observed without disposition | Watchdog workflow | satisfied-exit-condition-alert and exit-condition simulator cases |
+| Suspected lack of progress remains distinct from a known blocker | Stalled and Blocked semantics | suspected-stall-alert, test_suspected_stall_alerts_parent_without_setting_stalled, and test_known_preventing_cause_recommends_blocked_not_stalled |
+| Every actionable cycle emits exactly one aggregate parent alert with provider identity, evidence, reason, and smallest Coordinator action | Watchdog output contract | suspected-stall-alert, satisfied-exit-condition-alert, and singular alert assertions |
+| Stalled and Blocked exit conditions are observed without disposition | Watchdog workflow | satisfied-exit-condition-alert and aggregate exit-condition simulator cases |
 | Starting and Running alone consume capacity | Coordinator capacity contract | test_stalled_is_outside_starting_plus_running_capacity |
 | Coordinator owns every Stalled disposition | Coordinator role and coordination workflow | test_coordinator_dispositions_are_evidence_gated |
 | Stalled remains nonterminal and separate in series state | File provider lifecycle contract | test_series_and_archive_rules_keep_stalled_nonterminal |

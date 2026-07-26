@@ -19,10 +19,21 @@ cases:
       last_productive_evidence: candidate commit preserved
       hard_stop_crossed: true
       progress_gap: true
-      preventing_cause: unknown
     expectedProviderIdentity: backlog/feature-backlog/suspected.md
     expectedReason: progress boundary crossed while the cause remains unknown
     expectedAction: Coordinator investigates and delegates Stalled only if the evidence justifies it
+  known-cause-alert:
+    item:
+      provider_identity: backlog/defect-backlog/known-cause.md
+      status: Running
+      phase: integration
+      canonical_thread: thread-known-cause
+      root_task: task-known-cause
+      last_productive_evidence: upstream API returned a permanent authorization error
+      progress_gap: true
+      preventing_cause: upstream credential is unavailable
+    expectedReason: progress boundary crossed with a known preventing cause
+    expectedAction: Coordinator validates the cause and chooses the Blocked disposition
   capacity:
     statuses: [Starting, Running, Stalled, Blocked, User Action Required, Holding]
     expectedActiveCount: 2
@@ -30,7 +41,6 @@ cases:
     items:
       - provider_identity: backlog/feature-backlog/stalled.md
         status: Stalled
-        preventing_cause: unknown
         stalled_exit_satisfied: true
       - provider_identity: backlog/defect-backlog/blocked.md
         status: Blocked
@@ -42,6 +52,10 @@ cases:
   stalled-dispositions:
     sameOwnerResumed:
       same_owner_resumed: true
+      active_capacity_count: 9
+    sameOwnerResumedAfterRefill:
+      same_owner_resumed: true
+      active_capacity_count: 10
     ownershipEnded:
       ownership_ended: true
     knownBlocker:
@@ -49,5 +63,8 @@ cases:
     userAction:
       user_action_required: true
     terminalFailure:
+      terminal_status: Failed
+      terminal_evidence: true
+    terminalWithoutEvidence:
       terminal_status: Failed
     insufficientEvidence: {}

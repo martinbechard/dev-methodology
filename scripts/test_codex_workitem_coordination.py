@@ -11,6 +11,7 @@ import yaml
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+README_PATH = REPOSITORY_ROOT / "README.md"
 SKILL_PATH = REPOSITORY_ROOT / "skills" / "codex-workitem-coordination" / "SKILL.md"
 MANAGE_FILE_WORK_ITEMS_PATH = REPOSITORY_ROOT / "skills" / "manage-file-work-items" / "SKILL.md"
 COORDINATOR_ROLE_PATH = (
@@ -167,6 +168,11 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
         for clause in required:
             with self.subTest(clause=clause):
                 self.assertIn(clause, self.watchdog_section)
+
+        self.assertIn(
+            "When a progress anomaly has a known preventing cause, recommend the Blocked path rather than Stalled.",
+            self.watchdog_section,
+        )
 
     def test_watchdog_alerts_only_for_actionable_attention(self) -> None:
         required = (
@@ -447,6 +453,46 @@ class StartingLifecycleContractTests(unittest.TestCase):
             "Starting counts against capacity exactly like Running",
             self.provider_dispatch_section,
         )
+
+    def test_stalled_resume_reconciles_capacity_atomically(self) -> None:
+        """A refilled vacancy cannot become an eleventh active work item."""
+
+        required = (
+            "Stalled -> Running",
+            "same serialized provider transaction",
+            "Starting-plus-Running count is below ten",
+            "preserve Stalled",
+        )
+        stalled_sections = "\n".join((self.coordination, self.provider))
+        for clause in required:
+            with self.subTest(clause=clause):
+                self.assertIn(clause, stalled_sections)
+
+    def test_retained_stalled_owner_cannot_resume_before_recorded_decision(self) -> None:
+        """Retained execution identity is recovery context, not mutation authority."""
+
+        required = (
+            "A retained Stalled owner must not resume repository or provider mutation",
+            "Coordinator decides Stalled -> Running",
+            "Dev Backlog Steward records that transition",
+        )
+        for source in (self.coordination, self.provider):
+            for clause in required:
+                with self.subTest(source=source[:20], clause=clause):
+                    self.assertIn(clause, source)
+
+    def test_readme_states_the_exact_lifecycle_authority_split(self) -> None:
+        """The public overview must not assign every disposition to one role."""
+
+        readme = README_PATH.read_text(encoding="utf-8")
+        for clause in (
+            "Dev Backlog Coordinator owns queue decisions, Ready -> Starting reservations, and Stalled or Blocked dispositions",
+            "root Dev Orchestrator owns Starting -> Running acceptance and terminal closure requests",
+            "Dev Backlog Steward performs each authorized provider mutation",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, readme)
+        self.assertNotIn("owns every lifecycle disposition", readme)
 
     def test_start_acceptance_and_recovery_preserve_ownership_evidence(self) -> None:
         required = (

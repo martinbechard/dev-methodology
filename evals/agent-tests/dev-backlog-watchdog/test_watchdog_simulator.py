@@ -2,6 +2,8 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
 # Summary: Verifies read-only watchdog alerts and Coordinator-owned Stalled dispositions.
+# Governing design: design/orchestrated-development-lifecycle.html
+# Governing test plan: evals/agent-tests/dev-backlog-watchdog/requirements-matrix.md
 
 from __future__ import annotations
 
@@ -22,6 +24,7 @@ from watchdog_simulator import (
 
 
 CASES_PATH = Path(__file__).with_name("fixtures") / "cases.yaml"
+SUITE_PATH = Path(__file__).parent
 
 
 class WatchdogSimulatorTests(unittest.TestCase):
@@ -44,7 +47,7 @@ class WatchdogSimulatorTests(unittest.TestCase):
 
         self.assertEqual("NO_ACTION", result.status)
         self.assertEqual(case["expectedMessage"], result.message)
-        self.assertEqual([], result.alerts)
+        self.assertIsNone(result.alert)
         self.assertEqual(before, items)
 
     def test_suspected_stall_alerts_parent_without_setting_stalled(self) -> None:
@@ -58,13 +61,51 @@ class WatchdogSimulatorTests(unittest.TestCase):
 
         self.assertEqual("ALERT", result.status)
         self.assertEqual(before, item)
-        self.assertEqual(1, len(result.alerts))
-        alert = result.alerts[0]
+        self.assertIsNotNone(result.alert)
+        alert = result.alert
+        assert alert is not None
         self.assertEqual(case["expectedProviderIdentity"], alert.provider_identity)
         self.assertEqual(case["expectedReason"], alert.reason)
         self.assertEqual(case["expectedAction"], alert.recommended_action)
-        self.assertEqual("unknown", alert.preventing_cause)
+        self.assertEqual("", alert.preventing_cause)
         self.assertFalse(result.mutated)
+
+    def test_known_preventing_cause_recommends_blocked_not_stalled(self) -> None:
+        """A known cause follows the Blocked route without a lifecycle mutation."""
+
+        case = self.cases["known-cause-alert"]
+        item = WorkItem(**case["item"])
+        before = deepcopy(item)
+
+        result = WatchdogCycle().evaluate([item])
+
+        self.assertEqual("ALERT", result.status)
+        self.assertEqual(before, item)
+        self.assertIsNotNone(result.alert)
+        alert = result.alert
+        assert alert is not None
+        self.assertEqual(case["expectedReason"], alert.reason)
+        self.assertEqual(case["expectedAction"], alert.recommended_action)
+        self.assertNotIn("Stalled", alert.recommended_action)
+        self.assertFalse(result.mutated)
+
+    def test_whitespace_only_cause_remains_unknown(self) -> None:
+        """A blank cause is the only route to unknown-cause Stalled investigation."""
+
+        item = WorkItem(
+            provider_identity="backlog/feature-backlog/blank-cause.md",
+            status="Running",
+            progress_gap=True,
+            preventing_cause=" \t ",
+        )
+
+        result = WatchdogCycle().evaluate([item])
+
+        self.assertIsNotNone(result.alert)
+        alert = result.alert
+        assert alert is not None
+        self.assertIn("cause remains unknown", alert.reason)
+        self.assertIn("Stalled", alert.recommended_action)
 
     def test_stalled_is_outside_starting_plus_running_capacity(self) -> None:
         """Only Starting and Running consume the durable active-capacity target."""
@@ -86,10 +127,18 @@ class WatchdogSimulatorTests(unittest.TestCase):
 
         self.assertEqual("ALERT", result.status)
         self.assertEqual(before, items)
-        self.assertEqual(case["expectedReasons"], [alert.reason for alert in result.alerts])
-        self.assertTrue(
-            all("Coordinator" in alert.recommended_action for alert in result.alerts)
-        )
+        self.assertIsNotNone(result.alert)
+        alert = result.alert
+        assert alert is not None
+        for reason in case["expectedReasons"]:
+            with self.subTest(reason=reason):
+                self.assertIn(reason, alert.reason)
+        for item in case["items"]:
+            with self.subTest(provider_identity=item["provider_identity"]):
+                self.assertIn(item["provider_identity"], alert.provider_identity)
+        self.assertIn(" | ", alert.reason)
+        self.assertIn("Coordinator", alert.recommended_action)
+        self.assertIn("one aggregate parent alert", result.message)
         self.assertFalse(result.mutated)
 
     def test_coordinator_dispositions_are_evidence_gated(self) -> None:
@@ -105,6 +154,10 @@ class WatchdogSimulatorTests(unittest.TestCase):
             disposition.choose(**cases["userAction"]),
         )
         self.assertEqual("Failed", disposition.choose(**cases["terminalFailure"]))
+        with self.assertRaisesRegex(ValueError, "terminal evidence"):
+            disposition.choose(**cases["terminalWithoutEvidence"])
+        with self.assertRaisesRegex(ValueError, "active-capacity slot"):
+            disposition.choose(**cases["sameOwnerResumedAfterRefill"])
         with self.assertRaisesRegex(ValueError, "no evidence-backed Stalled disposition"):
             disposition.choose(**cases["insufficientEvidence"])
 
@@ -114,9 +167,15 @@ class WatchdogSimulatorTests(unittest.TestCase):
         self.assertEqual("stalled", series_state(["Stalled", "Stalled"]))
         self.assertEqual("blocked", series_state(["Blocked", "Blocked"]))
         self.assertEqual("active", series_state(["Running", "Stalled"]))
+        self.assertEqual("stalled", series_state(["Completed", "Stalled"]))
+        self.assertEqual("blocked", series_state(["Completed", "Blocked"]))
+        self.assertEqual("completed", series_state(["Completed", "Abandoned"]))
+        self.assertEqual("completed", series_state(["Abandoned", "Abandoned"]))
+        self.assertEqual("stalled", series_state(["Abandoned", "Stalled"]))
+        self.assertEqual("blocked", series_state(["Abandoned", "Blocked"]))
         self.assertEqual(
             "mixed:Blocked,Stalled",
-            series_state(["Blocked", "Stalled"]),
+            series_state(["Completed", "Abandoned", "Blocked", "Stalled"]),
         )
         with self.assertRaisesRegex(ValueError, "Stalled is nonterminal"):
             terminal_archive_destination("Feature", "Stalled", True)
@@ -124,6 +183,20 @@ class WatchdogSimulatorTests(unittest.TestCase):
             "backlog/failed-backlog/features",
             terminal_archive_destination("Feature", "Failed", True),
         )
+
+    def test_python_artifacts_name_their_governing_sources(self) -> None:
+        """The simulator and test retain direct design and test-plan traceability."""
+
+        expected = (
+            "Governing design: design/orchestrated-development-lifecycle.html",
+            "Governing test plan: "
+            "evals/agent-tests/dev-backlog-watchdog/requirements-matrix.md",
+        )
+        for filename in ("watchdog_simulator.py", "test_watchdog_simulator.py"):
+            source = (SUITE_PATH / filename).read_text(encoding="utf-8")
+            for reference in expected:
+                with self.subTest(filename=filename, reference=reference):
+                    self.assertIn(reference, source)
 
 
 if __name__ == "__main__":

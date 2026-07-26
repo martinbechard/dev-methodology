@@ -147,7 +147,7 @@ A Codex user-level installation uses the installed copy:
 python3 "${HOME}/.agents/skills/agent-claim-command/scripts/claim.py" --help
 ```
 
-For coordinated multi-item work, Dev Backlog Coordinator dispatches one Dev Orchestrator task per active work item and owns every lifecycle disposition. Dev Backlog Watchdog performs periodic read-only observation and reports only actionable anomalies or satisfied exit conditions to the Coordinator. Dev Backlog Steward records the Coordinator's lifecycle changes. Each agent follows Agent Claim when its work reaches an event in the Claim Events table.
+For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, Ready -> Starting reservations, and Stalled or Blocked dispositions. The root Dev Orchestrator owns Starting -> Running acceptance and terminal closure requests for its work item. Dev Backlog Steward performs each authorized provider mutation for either owner. Dev Backlog Watchdog performs periodic read-only observation and reports only actionable anomalies or satisfied exit conditions to the Coordinator. Each agent follows Agent Claim when its work reaches an event in the Claim Events table.
 
 ## Backlog Report
 

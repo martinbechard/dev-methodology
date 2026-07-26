@@ -2,6 +2,8 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
 # Summary: Simulates read-only watchdog observations and Coordinator-owned Stalled dispositions.
+# Governing design: design/orchestrated-development-lifecycle.html
+# Governing test plan: evals/agent-tests/dev-backlog-watchdog/requirements-matrix.md
 
 from __future__ import annotations
 
@@ -10,6 +12,7 @@ from typing import Iterable
 
 
 ACTIVE_CAPACITY_STATUSES = {"Starting", "Running"}
+ACTIVE_CAPACITY_LIMIT = 10
 ACTIVE_SERIES_STATUSES = {"Ready", "Starting", "Running", "Awaiting Review"}
 TERMINAL_STATUSES = {"Completed", "Failed", "Abandoned"}
 
@@ -34,7 +37,7 @@ class WorkItem:
     hard_stop_crossed: bool = False
     progress_gap: bool = False
     task_state: str = "active"
-    preventing_cause: str = "unknown"
+    preventing_cause: str = ""
     stalled_exit_satisfied: bool = False
     blocker_exit_satisfied: bool = False
 
@@ -52,11 +55,11 @@ class WatchdogAlert:
 
 @dataclass(frozen=True)
 class CycleResult:
-    """Return one no-action result or one collection of actionable alerts."""
+    """Return one no-action result or one aggregate actionable alert."""
 
     status: str
     message: str
-    alerts: list[WatchdogAlert]
+    alert: WatchdogAlert | None
     mutated: bool = False
 
 
@@ -71,23 +74,30 @@ class WatchdogCycle:
         at least one anomaly or satisfied exit condition requires parent action.
         """
 
-        alerts: list[WatchdogAlert] = []
+        observations: list[WatchdogAlert] = []
         for item in items:
             if item.status == "Running" and self._suspected_stall(item):
-                alerts.append(
+                cause_is_known = self._known_preventing_cause(item)
+                observations.append(
                     WatchdogAlert(
                         provider_identity=item.provider_identity,
                         evidence=self._stall_evidence(item),
-                        reason="progress boundary crossed while the cause remains unknown",
+                        reason=(
+                            "progress boundary crossed with a known preventing cause"
+                            if cause_is_known
+                            else "progress boundary crossed while the cause remains unknown"
+                        ),
                         recommended_action=(
-                            "Coordinator investigates and delegates Stalled only if "
+                            "Coordinator validates the cause and chooses the Blocked disposition"
+                            if cause_is_known
+                            else "Coordinator investigates and delegates Stalled only if "
                             "the evidence justifies it"
                         ),
                         preventing_cause=item.preventing_cause,
                     )
                 )
             elif item.status == "Stalled" and item.stalled_exit_satisfied:
-                alerts.append(
+                observations.append(
                     WatchdogAlert(
                         provider_identity=item.provider_identity,
                         evidence="the recorded Stalled exit condition is now satisfied",
@@ -100,7 +110,7 @@ class WatchdogCycle:
                     )
                 )
             elif item.status == "Blocked" and item.blocker_exit_satisfied:
-                alerts.append(
+                observations.append(
                     WatchdogAlert(
                         provider_identity=item.provider_identity,
                         evidence="the recorded Blocked unblock condition is now satisfied",
@@ -113,16 +123,19 @@ class WatchdogCycle:
                     )
                 )
 
-        if not alerts:
+        if not observations:
             return CycleResult(
                 "NO_ACTION",
                 "No actionable watchdog condition observed.",
-                [],
+                None,
             )
         return CycleResult(
             "ALERT",
-            f"{len(alerts)} actionable watchdog condition(s) observed.",
-            alerts,
+            (
+                f"{len(observations)} actionable watchdog condition(s) observed "
+                "in one aggregate parent alert."
+            ),
+            self._aggregate_alert(observations),
         )
 
     @staticmethod
@@ -132,6 +145,28 @@ class WatchdogCycle:
             or item.hard_stop_crossed
             or item.progress_gap
             or item.task_state in {"stopped", "missing"}
+        )
+
+    @staticmethod
+    def _known_preventing_cause(item: WorkItem) -> bool:
+        return bool(item.preventing_cause.strip())
+
+    @staticmethod
+    def _aggregate_alert(observations: list[WatchdogAlert]) -> WatchdogAlert:
+        """Combine all actionable observations into exactly one parent alert."""
+
+        def combine(field: str, *, include_empty: bool = False) -> str:
+            values = [getattr(observation, field) for observation in observations]
+            if not include_empty:
+                values = [value for value in values if value]
+            return " | ".join(values)
+
+        return WatchdogAlert(
+            provider_identity=combine("provider_identity"),
+            evidence=combine("evidence"),
+            reason=combine("reason"),
+            recommended_action=combine("recommended_action"),
+            preventing_cause=combine("preventing_cause", include_empty=True),
         )
 
     @staticmethod
@@ -157,25 +192,35 @@ class CoordinatorDisposition:
         known_blocker: bool = False,
         user_action_required: bool = False,
         terminal_status: str = "",
+        terminal_evidence: bool = False,
+        active_capacity_count: int = 0,
     ) -> str:
         """Return the one lifecycle state supported by the supplied evidence.
 
         Boolean inputs identify the mutually exclusive safe-resumption,
         redispatch, blocker, and user-action boundaries. terminal_status may be
-        Completed, Failed, or Abandoned. Missing or conflicting evidence raises
-        ValueError so no default lifecycle mutation can be inferred.
+        Completed, Failed, or Abandoned only with terminal_evidence. A direct
+        resumption also needs an available Starting-plus-Running slot. Missing
+        or conflicting evidence raises ValueError so no default lifecycle
+        mutation can be inferred.
         """
 
+        if terminal_status and terminal_status not in TERMINAL_STATUSES:
+            raise ValueError(f"invalid terminal Stalled disposition: {terminal_status}")
+        if terminal_status and not terminal_evidence:
+            raise ValueError("terminal Stalled disposition requires terminal evidence")
+        if same_owner_resumed and active_capacity_count >= ACTIVE_CAPACITY_LIMIT:
+            raise ValueError(
+                "Stalled -> Running requires an available active-capacity slot"
+            )
         choices = [
             ("Running", same_owner_resumed),
             ("Ready", ownership_ended),
             ("Blocked", known_blocker),
             ("User Action Required", user_action_required),
-            (terminal_status, bool(terminal_status)),
+            (terminal_status, bool(terminal_status and terminal_evidence)),
         ]
         selected = [status for status, enabled in choices if enabled]
-        if terminal_status and terminal_status not in TERMINAL_STATUSES:
-            raise ValueError(f"invalid terminal Stalled disposition: {terminal_status}")
         if len(selected) != 1:
             raise ValueError("no evidence-backed Stalled disposition")
         return selected[0]
@@ -188,22 +233,27 @@ def active_capacity(items: Iterable[WorkItem]) -> int:
 
 
 def series_state(statuses: Iterable[str]) -> str:
-    """Derive one deterministic series state without collapsing mixed pauses."""
+    """Derive series state from required children without collapsing mixed pauses."""
 
     materialized = list(statuses)
     if not materialized:
         raise ValueError("series requires at least one child state")
-    if all(status == "Completed" for status in materialized):
-        return "completed"
     if any(status == "Failed" for status in materialized):
         return "failed"
-    if any(status in ACTIVE_SERIES_STATUSES for status in materialized):
+    nonterminal = [
+        status
+        for status in materialized
+        if status not in {"Completed", "Abandoned"}
+    ]
+    if not nonterminal:
+        return "completed"
+    if any(status in ACTIVE_SERIES_STATUSES for status in nonterminal):
         return "active"
-    if all(status == "Stalled" for status in materialized):
+    if all(status == "Stalled" for status in nonterminal):
         return "stalled"
-    if all(status == "Blocked" for status in materialized):
+    if all(status == "Blocked" for status in nonterminal):
         return "blocked"
-    return "mixed:" + ",".join(sorted(set(materialized)))
+    return "mixed:" + ",".join(sorted(set(nonterminal)))
 
 
 def terminal_archive_destination(

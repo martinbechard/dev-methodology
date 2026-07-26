@@ -72,6 +72,11 @@ ALLOWED_STATUSES = {
     "Abandoned",
     "Holding",
 }
+SEMANTIC_STATUS_CLASSES = {
+    "Stalled": "stalled",
+    "Blocked": "blocked",
+    "User Action Required": "user-action-required",
+}
 DEPENDENCY_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 MARKDOWN_LINK_PATTERN = re.compile(r"\[[^]]+\]\(([^)#?]+\.md)(?:#[^)]*)?\)")
 DEPENDENCY_LINK_PATTERN = re.compile(r"\[[^]\r\n]+\]\(([^)\r\n]+)\)")
@@ -100,6 +105,7 @@ class _Item:
     diagnostic_owner: str = ""
     next_investigation_action: str = ""
     source_evidence: str = ""
+    stalled_evidence_missing: list[str] = field(default_factory=list)
     missing: list[str] = field(default_factory=list)
     anomalies: list[str] = field(default_factory=list)
     unmet_dependencies: list[str] = field(default_factory=list)
@@ -363,6 +369,20 @@ def _read_items(
             series, series_order = series_orders.get(relative_text, (fallback_series, 10**9))
             priority_text = fields.get("Priority", "")
             priority = int(priority_text) if priority_text.isdigit() else 10**9
+            stalled_evidence_missing: list[str] = []
+            if fields.get("Status") == "Stalled":
+                stalled_evidence_missing = [
+                    name
+                    for name, value in (
+                        ("Diagnostic Owner", fields.get("Diagnostic Owner", "")),
+                        (
+                            "Next Investigation Action",
+                            fields.get("Next Investigation Action", ""),
+                        ),
+                        ("Source Evidence", sections.get("Source Evidence", "")),
+                    )
+                    if not value.strip()
+                ]
             item = _Item(
                 path=relative_text,
                 slug=path.stem,
@@ -389,6 +409,7 @@ def _read_items(
                     "",
                 ),
                 source_evidence=sections.get("Source Evidence", ""),
+                stalled_evidence_missing=stalled_evidence_missing,
                 missing=missing,
             )
             expected_type = _expected_type(relative, queue)
@@ -408,6 +429,11 @@ def _read_items(
                 item.anomalies.append("Migration anomaly: Status Proposed is not an operational state.")
             if item.missing:
                 item.anomalies.append("Missing required fields: " + ", ".join(item.missing) + ".")
+            if item.stalled_evidence_missing:
+                item.anomalies.extend(
+                    f"Missing Stalled evidence: {name}."
+                    for name in item.stalled_evidence_missing
+                )
             absent: list[str] = []
             if queue == "user-action-required":
                 absent = [name for name in USER_SECTIONS if not sections.get(name)]
@@ -433,6 +459,7 @@ def _read_items(
             )
             item.promotion_complete = (
                 not item.missing
+                and not item.stalled_evidence_missing
                 and promotion_type_valid
                 and item.provider == "file"
                 and item.provider_reference == item.path
@@ -682,9 +709,18 @@ def _badge(text: str, style: str = "neutral") -> str:
     return f'<span class="badge badge-{_escape(style)}">{_escape(text or "Missing")}</span>'
 
 
+def _status_badge(status: str) -> str:
+    """Render a labelled status badge with semantic styling where required."""
+    classes = ["badge", "badge-status"]
+    semantic_class = SEMANTIC_STATUS_CLASSES.get(status)
+    if semantic_class:
+        classes.append(f"badge-status-{semantic_class}")
+    return f'<span class="{" ".join(classes)}">{_escape(status or "Missing")}</span>'
+
+
 def _item_card(item: _Item) -> str:
     """Render a traceable backlog item card with lifecycle and dependency evidence."""
-    metadata = [_badge(item.declared_type, "type"), _badge(item.status, "status")]
+    metadata = [_badge(item.declared_type, "type"), _status_badge(item.status)]
     if item.series:
         metadata.append(_badge(f"Series: {item.series}", "neutral"))
     if item.series_order < 10**9:
@@ -855,9 +891,9 @@ def _render_report(
     scope_rows = "".join(f'<li><code>{_escape(path)}</code></li>' for path in scanned)
     ignored_rows = "".join(f'<li><code>{_escape(path)}</code></li>' for path in ignored) or '<li>None</li>'
     css = """
-    :root{color-scheme:light dark;--page:#f7f7f5;--surface:#fff;--soft:#ededeb;--text:#202124;--muted:#62666d;--line:#d6d7d4;--accent:#164f86;--accent-bg:#e8f2ff;--warn:#8a4318;--warn-bg:#fff0e6;--input:#5c3cad;--input-bg:#f0ebff}
-    @media(prefers-color-scheme:dark){:root{--page:#171819;--surface:#222426;--soft:#303235;--text:#f4f5f6;--muted:#b4b7bc;--line:#414449;--accent:#b9dcff;--accent-bg:#173653;--warn:#ffc39c;--warn-bg:#4e2b18;--input:#d0c1ff;--input-bg:#35265b}}
-    *{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--text);font:16px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}main{width:min(100%,1120px);margin:auto;padding:clamp(1rem,3vw,2.5rem)}h1,h2,h3,p{margin-top:0}h1{max-width:20ch;font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;letter-spacing:-.035em}h2{font-size:clamp(1.35rem,3vw,1.75rem)}h3{margin:.6rem 0 .35rem;font-size:1.05rem}.lede,.meta,.section-head p,.detail,.source{color:var(--muted)}.meta,.detail,.findings li,.snapshot{overflow-wrap:anywhere}.meta{font-size:.85rem}.metric-grid,.item-grid,.count-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:.75rem}.metric,.item,.panel{min-width:0;padding:1rem;border:1px solid var(--line);border-radius:.9rem;background:var(--surface)}.metric span,.metric strong{display:block}.metric strong{font-size:2rem;line-height:1.1}.section{margin-top:2.5rem}.section-head{margin-bottom:.9rem}.section-head p{max-width:75ch;margin:.25rem 0 0}.badges{display:flex;flex-wrap:wrap;gap:.4rem}.badge{display:inline-block;padding:.14rem .5rem;border:1px solid var(--line);border-radius:999px;font-size:.76rem;font-weight:650}.badge-status{color:var(--accent);background:var(--accent-bg)}.badge-type{color:var(--input);background:var(--input-bg)}code{overflow-wrap:anywhere}.interaction{margin:.75rem 0;padding:.75rem;border-left:4px solid var(--input);background:var(--input-bg)}.interaction dt{font-weight:700}.interaction dd{margin:0 0 .55rem}.interaction dd:last-child{margin-bottom:0}.source{margin-bottom:0;font-size:.82rem}.empty{padding:1rem;border:1px dashed var(--line);border-radius:.9rem}.count-grid table{width:100%;border-collapse:collapse}.count-grid th{text-align:left;font-weight:500}.count-grid td{text-align:right}.count-grid th,.count-grid td{padding:.35rem;border-bottom:1px solid var(--line)}.findings{padding-left:1.25rem}.findings li{margin:.5rem 0}.snapshot{border-left:4px solid var(--accent)}a{color:inherit;text-underline-offset:.18em}a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}@media(max-width:420px){main{padding:.75rem}.metric,.item,.panel{padding:.8rem}.badges{align-items:flex-start}}
+    :root{color-scheme:light dark;--page:#f7f7f5;--surface:#fff;--soft:#ededeb;--text:#202124;--muted:#62666d;--line:#d6d7d4;--accent:#164f86;--accent-bg:#e8f2ff;--warn:#8a4318;--warn-bg:#fff0e6;--input:#5c3cad;--input-bg:#f0ebff;--stalled:#7a3a0c;--stalled-bg:#fff0df;--blocked:#8c1d2c;--blocked-bg:#fdebed;--user-action:#5c3cad;--user-action-bg:#f0ebff}
+    @media(prefers-color-scheme:dark){:root{--page:#171819;--surface:#222426;--soft:#303235;--text:#f4f5f6;--muted:#b4b7bc;--line:#414449;--accent:#b9dcff;--accent-bg:#173653;--warn:#ffc39c;--warn-bg:#4e2b18;--input:#d0c1ff;--input-bg:#35265b;--stalled:#ffc39c;--stalled-bg:#4e2b18;--blocked:#ffb3bd;--blocked-bg:#541f29;--user-action:#d0c1ff;--user-action-bg:#35265b}}
+    *{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--text);font:16px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}main{width:min(100%,1120px);margin:auto;padding:clamp(1rem,3vw,2.5rem)}h1,h2,h3,p{margin-top:0}h1{max-width:20ch;font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;letter-spacing:-.035em}h2{font-size:clamp(1.35rem,3vw,1.75rem)}h3{margin:.6rem 0 .35rem;font-size:1.05rem}.lede,.meta,.section-head p,.detail,.source{color:var(--muted)}.meta,.detail,.findings li,.snapshot{overflow-wrap:anywhere}.meta{font-size:.85rem}.metric-grid,.item-grid,.count-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:.75rem}.metric,.item,.panel{min-width:0;padding:1rem;border:1px solid var(--line);border-radius:.9rem;background:var(--surface)}.metric span,.metric strong{display:block}.metric strong{font-size:2rem;line-height:1.1}.section{margin-top:2.5rem}.section-head{margin-bottom:.9rem}.section-head p{max-width:75ch;margin:.25rem 0 0}.badges{display:flex;flex-wrap:wrap;gap:.4rem}.badge{display:inline-block;padding:.14rem .5rem;border:1px solid var(--line);border-radius:999px;font-size:.76rem;font-weight:650}.badge-status{color:var(--accent);background:var(--accent-bg)}.badge-status-stalled{color:var(--stalled);background:var(--stalled-bg);border-color:var(--stalled)}.badge-status-blocked{color:var(--blocked);background:var(--blocked-bg);border-color:var(--blocked)}.badge-status-user-action-required{color:var(--user-action);background:var(--user-action-bg);border-color:var(--user-action)}.badge-type{color:var(--input);background:var(--input-bg)}code{overflow-wrap:anywhere}.interaction{margin:.75rem 0;padding:.75rem;border-left:4px solid var(--input);background:var(--input-bg)}.interaction dt{font-weight:700}.interaction dd{margin:0 0 .55rem}.interaction dd:last-child{margin-bottom:0}.source{margin-bottom:0;font-size:.82rem}.empty{padding:1rem;border:1px dashed var(--line);border-radius:.9rem}.count-grid table{width:100%;border-collapse:collapse}.count-grid th{text-align:left;font-weight:500}.count-grid td{text-align:right}.count-grid th,.count-grid td{padding:.35rem;border-bottom:1px solid var(--line)}.findings{padding-left:1.25rem}.findings li{margin:.5rem 0}.snapshot{border-left:4px solid var(--accent)}a{color:inherit;text-underline-offset:.18em}a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}@media(max-width:420px){main{padding:.75rem}.metric,.item,.panel{padding:.8rem}.badges{align-items:flex-start}}
     @media print{body{background:#fff;color:#111}.metric,.item,.panel{break-inside:avoid}}
     """
     return f"""<!doctype html>

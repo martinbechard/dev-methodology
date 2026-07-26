@@ -192,7 +192,9 @@ evidence remain recovery context rather than active-capacity authority.
 Dev Backlog Coordinator chooses exactly one evidence-backed disposition:
 
 1. Restore Running only when the same canonical owner demonstrably resumes safely and the
-   provider transition records the renewed evidence.
+   Starting-plus-Running count is below ten. In the same serialized provider transaction,
+   reconcile that current count, reject the transition and preserve Stalled when no slot is
+   available, and otherwise record the renewed evidence without exceeding capacity.
 2. Restore Ready when ownership has ended and normal redispatch is required. Any later
    execution proceeds through Ready -> Starting -> Running.
 3. Set Blocked when a concrete cause and Coordinator-owned next action are known.
@@ -200,6 +202,9 @@ Dev Backlog Coordinator chooses exactly one evidence-backed disposition:
    contains the exact question and unattended-work boundary.
 5. Record an applicable terminal disposition when delivery or failure evidence satisfies
    that terminal contract.
+
+A retained Stalled owner must not resume repository or provider mutation until Dev Backlog
+Coordinator decides Stalled -> Running and Dev Backlog Steward records that transition.
 
 Blocked is a known preventing cause awaiting Coordinator-owned coordination, recovery, or
 disposition. Dev Backlog Coordinator is the lifecycle decision owner for Blocked. Dev
@@ -279,6 +284,10 @@ When the watchdog runs, it reads provider inventory, Git state, and task state. 
 - stale, unsafe, or unnecessarily broad claims when agent-claim is loaded
 
 The Watchdog is read-only. It reports evidence and recommended actions. It must not change repository files, provider records, lifecycle state, claims, task state, branches, worktrees, or shared resources. It must not dispatch work, integrate changes, perform cleanup, or run expensive or live verification.
+
+When a progress anomaly has a known preventing cause, recommend the Blocked path rather than
+Stalled. Recommend Stalled investigation only while the causal blocker or unblock condition
+remains unknown.
 
 Notify the parent only when action is required. Identify the affected provider identity or
 task, observed evidence, reason attention is required, and smallest recommended Coordinator

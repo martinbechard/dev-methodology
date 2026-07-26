@@ -236,7 +236,7 @@ agents:
         executableCases: []
         coverageStatus: declared
       - id: dev-backlog-watchdog-exit-condition
-        kind: recovery
+        kind: boundary-failure
         fixtureProfile: backlog-state-machine
         promptIntent: Observe a satisfied Stalled or Blocked exit condition and recommend the smallest Coordinator action.
         expectedOutcome: One actionable alert that leaves Running, Ready, Blocked, User Action Required, and terminal disposition to the Coordinator and Steward.
