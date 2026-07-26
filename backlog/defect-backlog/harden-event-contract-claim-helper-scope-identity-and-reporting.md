@@ -1,10 +1,10 @@
 # Harden Event Contract Claim-Helper Scope Identity And Reporting
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
@@ -78,7 +78,7 @@ None.
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
 - Worktree: /Users/martinbechard/.codex/worktrees/8b79/dev-methodology.
 - Intended Candidate Branch: codex/harden-event-contract-claim-helper-019f9ea6.
-- Phase: final authorized correction plan.
+- Phase: hard-stop blocked.
 - Started At: 2026-07-26T13:45:21Z; root Orchestrator accepted the reserved work item before implementation mutation.
 - Backlog Claim Acquisition: claim start-running-harden-event-contract-019f9ea6; event e5a63bff-dc75-462b-8104-5b17da793a4c; acquired from primary main at f1c8c04c4a24be8e48579fc997d1a6f09daacf88.
 - Backlog Claim Release: due immediately after this short provider commit; release evidence is retained in the claim journal.
@@ -114,6 +114,17 @@ None.
 - Permitted Checks: cumulative targeted tests, compilation, and git diff --check only.
 - Required Gates: a brand-new review and verifier must both pass before any integration.
 - Retry Boundary: any fresh material finding prohibits further Dev Coder retry and requires Running -> Blocked with Owner: Unowned.
+
+## Blocked Final Review Handoff
+
+- Canonical Execution Identity Preserved: Thread and task 019f9ea6-6328-7580-9213-6e60b3a9de76; parent thread 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a; worktree /Users/martinbechard/.codex/worktrees/8b79/dev-methodology; branch codex/harden-event-contract-claim-helper-019f9ea6.
+- Rejected Candidate Chain: 9ae3dd286490e3f3e8dd14066d1c72676d86c3d4 -> b803c1ba70db747915218e08ecd64de8c059555e -> 0c8eb0af7b1286e63d1a4607c16d49f41a4dddac.
+- Final Fresh Review: REJECTED, HIGH — _normalize_repository_path checks only the final requested-path symlink. A dangling parent component (dangling-dir -> missing-dir) permits concurrent exact claims for dangling-dir/child.py and missing-dir/child.py, which become aliases when the target directory exists.
+- Evidence: material checks passed, including targeted review tests, py_compile, git diff --check, and clean candidate branch observation.
+- Delivery State: no verifier, no integration or main artifact claim, no accepted candidate, and no completion or archive.
+- Claims: None after this provider transaction's truthful release.
+- Exact Unblock: explicit authorization plus a fresh bounded design and implementation plan that inspects every requested path component and rejects unresolved symlink components; adds a public-command regression for the nested dangling alias and target; and re-runs a new independent review and verifier.
+- Resumption: only Blocked -> Ready -> Starting -> Running in this same canonical task. No correction attempt 3 is authorized under this lifecycle.
 
 ## Notes
 
