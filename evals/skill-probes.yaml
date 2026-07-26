@@ -1661,6 +1661,20 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: sql}
+  - id: probe-effective-communication
+    skill: effective-communication
+    source: skills/effective-communication/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: answer-contract
+    activationCondition: An agent communicates an outcome, decision, blocker, approval question, or handoff to a user or another agent.
+    negativeCondition: Clear communication does not invent evidence, decisions, authority, options, or completed work.
+    expectedBehavior: Lead with the outcome, use plain language and short sentences, explain specialized terms, keep needed evidence and identifiers, state direct questions and consequences, and provide actionable blocker reports and handoffs without routine tool narration.
+    judgePlan: {deterministicChecks: [skill-read-trace, contradiction-scan, readiness-consistency, no-sensitive-output], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-orchestrator-happy, dev-backlog-coordinator-happy, dev-documentation-writer-happy, wiki-query-responder-happy]
+    workflowAssociations: [code-delivery, documentation-methodology, project-setup, wiki-lifecycle, backlog]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: sql}
   - id: probe-tailwind-design-system
     skill: tailwind-design-system
     source: skills/tailwind-design-system/SKILL.md

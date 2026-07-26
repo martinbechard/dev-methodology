@@ -5323,6 +5323,11 @@ class BundleContentTests(unittest.TestCase):
             "string-list",
             role_schema["properties"]["agentDependencies"],
         )
+        shared_role_skills = [
+            next(iter(entry))
+            for entry in role_schema["fixedBehavior"]["sharedSkills"]
+        ]
+        self.assertEqual(["effective-communication"], shared_role_skills)
         self.assertEqual(
             expected_outputs[ROLE_DEFINITIONS_PATH],
             ROLE_DEFINITIONS_PATH.read_text(encoding="utf-8"),
@@ -5398,9 +5403,13 @@ class BundleContentTests(unittest.TestCase):
                 role_source = yaml.safe_load(role.yaml)
                 self.assertNotIn("skillComments", role_source)
                 self.assertNotIn("outputComments", role_source)
+                declared_role_skills = [
+                    next(iter(entry)) for entry in role_source["skills"]
+                ]
+                self.assertTrue(set(shared_role_skills).isdisjoint(declared_role_skills))
                 self.assertEqual(
                     list(role.skills),
-                    [next(iter(entry)) for entry in role_source["skills"]],
+                    shared_role_skills + declared_role_skills,
                 )
                 self.assertEqual(
                     role_source.get("agentDependencies", []),

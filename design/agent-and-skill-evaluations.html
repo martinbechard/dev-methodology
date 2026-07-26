@@ -129,15 +129,15 @@
       <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
       <div><dt>Documentation snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>2b175c482d504891ac210145cdb55b9ab4b7fe3772eb685a65bec652c7d48d54</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source snapshot</dt><dd><code>ac07418ab696df0c806c9e0dbaa6a9ecbdb1dd7450397efe10fd857676c28463</code>; regenerated and compared by the focused check</dd></div>
     </dl>
   </section>
 
   <section class="section" id="summary" aria-labelledby="summary-title">
     <div class="section-heading"><h2 id="summary-title">Global reconciliation</h2><p>Campaign verdict totals describe the historical 78-scenario campaign. Current catalog coverage and evidence alignment are calculated separately against 27 suites and 90 current scenarios.</p></div>
     <div class="grid">
-      <article class="metric"><strong>124</strong><span>Bundled skills</span></article>
-      <article class="metric"><strong>124</strong><span>Diagnostic probe records</span></article>
+      <article class="metric"><strong>125</strong><span>Bundled skills</span></article>
+      <article class="metric"><strong>125</strong><span>Diagnostic probe records</span></article>
       <article class="metric"><strong>27</strong><span>Conceptual agents</span></article>
       <article class="metric"><strong>26 / 27</strong><span>Campaign suites / current suites (96.3%)</span></article>
       <article class="metric"><strong>78 / 90</strong><span>Campaign outcomes / current scenarios (86.7%)</span></article>
@@ -153,7 +153,7 @@
 
     </div>
     <div class="grid" style="margin-top:1rem">
-      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed skill result.</li><li>124 skills have a direct diagnostic probe declaration but no direct skill verdict.</li><li>0 skills have only indirect current-suite coverage without a direct probe or skill result.</li><li>0 skills have no recorded evaluation evidence.</li><li>52 skills are named by at least one selected-campaign scenario; 72 are not.</li></ul><p><strong>No skill-level verdict:</strong> the selected campaign publishes no skill receipts, so linked PASS outcomes remain agent-scenario evidence.</p></article>
+      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed skill result.</li><li>125 skills have a direct diagnostic probe declaration but no direct skill verdict.</li><li>0 skills have only indirect current-suite coverage without a direct probe or skill result.</li><li>0 skills have no recorded evaluation evidence.</li><li>52 skills are named by at least one selected-campaign scenario; 73 are not.</li></ul><p><strong>No skill-level verdict:</strong> the selected campaign publishes no skill receipts, so linked PASS outcomes remain agent-scenario evidence.</p></article>
       <article class="method-card"><h3>Evidence alignment states</h3><ul><li>78 verdicts have only historical id alignment; definition freshness is unknown.</li><li>0 verdicts are aligned to a retained definition snapshot.</li><li>0 verdicts have proved definition-field drift.</li><li>0 campaign verdicts are campaign-only / removed from the current catalog.</li><li>12 current scenarios have missing campaign evidence.</li><li>26 suites are historical-unknown, 0 snapshot-aligned, 0 drifted, and 1 missing.</li></ul></article>
       <article class="method-card"><h3>Not verified passes</h3><ul><li>17 BLOCKED outcomes are governed boundaries or unavailable semantic acceptance, not PASS or FAIL.</li><li>9 FAIL outcomes are reproducible defects, not verified passes.</li><li>Missing, historical-only, removed, or drifted current-catalog evidence does not inherit a current PASS.</li><li>Manual observations and uncalibrated semantic Judge outputs are excluded from verified-pass totals.</li></ul></article>
       <article class="method-card"><h3>Harness and evidence breakdown</h3><ul><li>78 campaign scenarios: Codex, Governed agent-suite campaign.</li><li>12 current scenarios: no selected-campaign evidence level or harness outcome.</li><li>Per-scenario functional-isolation and security-containment fields are not published in the selected report; the report states clean suite-owned closeout globally.</li></ul></article>
@@ -1835,7 +1835,7 @@
       <label class="field" for="skill-status">Coverage status<select id="skill-status" data-filter-status="skill"><option value="all">All statuses</option><option value="direct-governed">Direct governed result</option><option value="direct-probe">Direct diagnostic probe</option><option value="indirect-only">Indirect suite only</option><option value="none">No recorded evidence</option></select></label>
       <button type="button" data-filter-clear="skill">Clear skill filters</button>
     </div>
-    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 124 skills.</p>
+    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 125 skills.</p>
     <noscript><p class="scope-note">JavaScript is disabled. All skill entries remain visible; text and status filtering are optional enhancements.</p></noscript>
     <div class="catalog" id="skill-catalog">
     <article class="evaluation-card skill-card" id="skill-agent-claim"
@@ -2973,6 +2973,36 @@
       <ul class="link-list"><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / source-gaps</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
       <dl class="compact-list">
         <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: BLOCKED</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-effective-communication"
+      data-kind="skill" data-status="direct-probe" data-search="effective-communication communicate clearly with users and other agents through plain language, concise evidence, explicit decisions, and actionable handoffs. development-practice probe-effective-communication no governed campaign link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>effective-communication</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Communicate clearly with users and other agents through plain language, concise evidence, explicit decisions, and actionable handoffs.</p>
+      <p class="source-row"><a href="../skills/effective-communication/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-effective-communication</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>answer-contract</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-orchestrator-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-coordinator-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-documentation-writer-happy</a>, <a href="../evals/agent-scenarios.yaml">wiki-query-responder-happy</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a>, <a href="../evals/workflow-packs.yaml">documentation-methodology</a>, <a href="../evals/workflow-packs.yaml">project-setup</a>, <a href="../evals/workflow-packs.yaml">wiki-lifecycle</a>, <a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, contradiction-scan, readiness-consistency, no-sensitive-output</dd></div>
+          <div><dt>Model rubric</dt><dd>source-faithfulness</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
         <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
       </dl>

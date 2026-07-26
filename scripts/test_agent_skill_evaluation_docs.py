@@ -103,8 +103,8 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         summary = self.model["summary"]
         campaign = self.model["campaign"]
 
-        self.assertEqual(124, summary["skillCount"])
-        self.assertEqual(124, summary["probeCount"])
+        self.assertEqual(125, summary["skillCount"])
+        self.assertEqual(125, summary["probeCount"])
         self.assertEqual(27, summary["roleCount"])
         self.assertEqual(27, summary["suiteCount"])
         self.assertEqual(90, summary["currentScenarioCount"])
@@ -365,7 +365,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             by_skill = {skill["id"]: skill for skill in model["skills"]}
             self.assertEqual("indirect-only", by_skill[linked_skill]["classification"])
             self.assertEqual("none", by_skill[unlinked_skill]["classification"])
-            self.assertEqual(122, model["summary"]["probeCount"])
+            self.assertEqual(123, model["summary"]["probeCount"])
             page = self.generator.render_page(model)
             self.assertRegex(
                 page,
@@ -395,9 +395,9 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
 
     def test_skill_entries_separate_probe_declarations_from_governed_outcomes(self) -> None:
         """Every skill must retain probe, indirect coverage, and outcome limitations separately."""
-        self.assertEqual(124, len(self.model["skills"]))
+        self.assertEqual(125, len(self.model["skills"]))
         self.assertTrue(all(skill["probe"] is not None for skill in self.model["skills"]))
-        self.assertEqual(124, self.model["summary"]["directProbeSkillCount"])
+        self.assertEqual(125, self.model["summary"]["directProbeSkillCount"])
         self.assertEqual(0, self.model["summary"]["indirectOnlySkillCount"])
         self.assertEqual(0, self.model["summary"]["noRecordedEvidenceSkillCount"])
         self.assertTrue(
@@ -434,7 +434,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
 
     def test_static_page_contains_every_entry_without_javascript(self) -> None:
         """Generated details must remain complete when the optional filter script is absent."""
-        self.assertEqual(124, self.page.count('class="evaluation-card skill-card"'))
+        self.assertEqual(125, self.page.count('class="evaluation-card skill-card"'))
         self.assertEqual(27, self.page.count('class="evaluation-card agent-card"'))
         self.assertNotRegex(self.page, r'<(?:article|section)[^>]+\shidden(?:\s|>)')
         self.assertIn('<script src="documentation-settings.js"></script>', self.page)

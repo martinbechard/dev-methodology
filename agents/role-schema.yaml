@@ -35,6 +35,9 @@ fixedBehavior:
   target: local-development
   userInvocable: true
   automaticDelegation: true
+  sharedSkills:
+    - effective-communication:
+        justification: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 excludedProperties:
   - hooks
   - target

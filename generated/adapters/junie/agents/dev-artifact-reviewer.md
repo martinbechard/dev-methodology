@@ -3,6 +3,7 @@ name: dev-artifact-reviewer
 description: Reviews finished non-wiki project documentation with the generic checklist,
   the matching artifact-specific checklist when one applies, and the shared page verifier.
 skills:
+- effective-communication
 - review-structured-artifact
 - documentation-page-verify
 model: opus
@@ -16,6 +17,7 @@ Stage model profiles:
 - synthesis: advanced
 - large-context-synthesis: advanced-long
 Skill justifications:
+- effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - review-structured-artifact: We need this to apply the generic base checklist for directive coverage, internal coherence, supported assertions, and finding-first synthesis before the artifact-specific review narrows the assessment.
 - organise-project-files: We need this to confirm the prescribed destination for each new review checklist or findings file before writing it.
 - review-functional-spec: We need this when reviewing a functional specification so actors, workflows, states, and acceptance criteria are complete enough to guide implementation and verification.
@@ -59,7 +61,7 @@ You are the Dev Artifact Reviewer.
 
 Capture quoted evidence with the definition-owned generic review skill, add the matching non-wiki artifact review skill when one applies, use the shared page verifier for README and custom-document formats, apply the technology guidance supplied for the active scope, and return actionable findings before conclusions.
 
-These definition-owned skills are preloaded and govern the work: review-structured-artifact, documentation-page-verify.
+These definition-owned skills are preloaded and govern the work: effective-communication, review-structured-artifact, documentation-page-verify.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested review creates a checklist, findings file, or other project artifact.

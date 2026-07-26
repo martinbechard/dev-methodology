@@ -67,6 +67,8 @@ ROLE_FILE_SUFFIX = ".role.yaml"
 ROLE_SCHEMA_REQUIRED_KEY = "required"
 ROLE_SCHEMA_PROPERTIES_KEY = "properties"
 ROLE_SCHEMA_GROUPS_KEY = "roleGroups"
+ROLE_SCHEMA_FIXED_BEHAVIOR_KEY = "fixedBehavior"
+ROLE_SCHEMA_SHARED_SKILLS_KEY = "sharedSkills"
 ROLE_NAME_FIELD_NAME = "name"
 ROLE_FILENAME_FIELD_NAME = "filename"
 ROLE_DESCRIPTION_FIELD_NAME = "description"
@@ -822,6 +824,32 @@ def load_role_schema() -> tuple[set[str], set[str], set[str]]:
     return set(required), set(properties), set(groups)
 
 
+def load_shared_role_skills(
+    skill_names: set[str],
+) -> tuple[tuple[str, ...], dict[str, str]]:
+    """Load skills that every conceptual agent uses."""
+
+    schema = read_yaml_object(ROLE_SCHEMA_PATH)
+    fixed_behavior = schema.get(ROLE_SCHEMA_FIXED_BEHAVIOR_KEY)
+    if not isinstance(fixed_behavior, dict):
+        raise ValueError("role-schema.yaml must define fixedBehavior.")
+    shared_skills = fixed_behavior.get(ROLE_SCHEMA_SHARED_SKILLS_KEY)
+    names, justifications, conditions = validate_role_skills(
+        shared_skills,
+        ROLE_SCHEMA_PATH,
+    )
+    if conditions:
+        raise ValueError("Shared conceptual agent skills cannot be conditional.")
+    unknown_skills = sorted(set(names) - skill_names)
+    if unknown_skills:
+        raise ValueError(
+            "role-schema.yaml references unknown shared skills "
+            + ", ".join(unknown_skills)
+            + "."
+        )
+    return names, justifications
+
+
 def role_source_paths() -> list[Path]:
     return sorted(ROLES_ROOT.glob(f"*/*{ROLE_FILE_SUFFIX}"))
 
@@ -833,6 +861,8 @@ def load_role_definition(
     allowed_groups: set[str],
     skill_names: set[str],
     model_profile_ids: set[str],
+    shared_skills: tuple[str, ...] = (),
+    shared_skill_justifications: dict[str, str] | None = None,
 ) -> RoleDefinition:
     parsed = read_yaml_object(source_path)
     missing_fields = sorted(required_fields - set(parsed))
@@ -934,7 +964,17 @@ def load_role_definition(
         parsed[ROLE_SKILLS_FIELD_NAME],
         source_path,
     )
-    unknown_skills = sorted(set(role_skills) - skill_names)
+    duplicate_shared_skills = sorted(set(role_skills) & set(shared_skills))
+    if duplicate_shared_skills:
+        raise ValueError(
+            f"Conceptual agent definition repeats shared skills {duplicate_shared_skills}: {source_path}"
+        )
+    effective_skills = (*shared_skills, *role_skills)
+    effective_skill_justifications = {
+        **(shared_skill_justifications or {}),
+        **skill_justifications,
+    }
+    unknown_skills = sorted(set(effective_skills) - skill_names)
     if unknown_skills:
         raise ValueError(f"Conceptual agent definition references unknown skills {unknown_skills}: {source_path}")
 
@@ -943,7 +983,7 @@ def load_role_definition(
         raise ValueError(
             f"Conceptual agent definition {ROLE_REPOSITORY_MUTATION_FIELD_NAME} must be required, conditional, or never: {source_path}"
         )
-    if "agent-claim" in role_skills:
+    if "agent-claim" in effective_skills:
         raise ValueError(
             "Conceptual agent definitions must not load the project-selected "
             f"resource-coordination implementation agent-claim directly: {source_path}"
@@ -992,9 +1032,9 @@ def load_role_definition(
         instructions=instructions.strip(),
         instruction_sections=instruction_sections,
         repository_mutation=repository_mutation,
-        skills=role_skills,
+        skills=effective_skills,
         agent_dependencies=agent_dependencies,
-        skill_justifications=skill_justifications,
+        skill_justifications=effective_skill_justifications,
         skill_conditions=skill_conditions,
         output_contract=output_contract,
         output_purposes=output_purposes,
@@ -1012,6 +1052,7 @@ def load_role_definition(
 def load_role_definitions(skill_names: set[str]) -> list[RoleDefinition]:
     required_fields, allowed_fields, allowed_groups = load_role_schema()
     model_profile_ids = set(load_model_profiles())
+    shared_skills, shared_skill_justifications = load_shared_role_skills(skill_names)
     roles = [
         load_role_definition(
             source_path,
@@ -1020,6 +1061,8 @@ def load_role_definitions(skill_names: set[str]) -> list[RoleDefinition]:
             allowed_groups,
             skill_names,
             model_profile_ids,
+            shared_skills,
+            shared_skill_justifications,
         )
         for source_path in role_source_paths()
     ]
