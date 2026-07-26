@@ -1,12 +1,12 @@
 # Add Dedicated Watchdog And Stalled Lifecycle
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/add-dedicated-watchdog-and-stalled-lifecycle.md
+Provider Reference: backlog/completed-backlog/features/add-dedicated-watchdog-and-stalled-lifecycle.md
 
 Completion: direct-main
 
@@ -256,3 +256,14 @@ The required answer is recorded. The preserved canonical task 019f9a91-b1a9-7ea0
 
 - The canonical task identity, root Dev Orchestrator, parent coordination thread, branch, private worktree, existing commits, approval evidence, and current running acceptance above are preserved as out-of-sequence evidence.
 - This transition does not create a replacement Thread or discard prior delivery evidence.
+
+## Terminal Provider Completion — 2026-07-26
+
+- Completion disposition: Ready through the configured direct-main completion route.
+- Accepted delivery candidate: 55b27975c40f673a2e0048d7865f40573f3da4da.
+- Main integration: 410438f99dd403caca699e7834a2493c09025467, a merge of 637760d006058eac74f7b2b65622f7f67a18a6ad and the accepted candidate, is observed on primary main.
+- Independent source, methodology, artifact, and UX reviews accepted the exact delivery. The delivery verifier reported Ready.
+- Verification evidence: 260 focused checks, 15 simulator checks, 11 YAML checks, four freshness checks, and exact approval of 54 paths; integration checks passed 133 checks plus 15 simulator checks, and post-commit checks passed 7 checks plus 15 simulator checks.
+- Known baseline drift: eight AGENTS phrase checks reproduced unchanged before integration and do not block this completed delivery.
+- Terminal provider transaction: the root Dev Orchestrator's Dev Backlog Steward child moved this canonical file-provider item from the active feature backlog to this completed feature archive under exact-file claim archive-watchdog-stalled-019f9a91 (acquisition event 7a0c234f-60af-4c25-910a-aaf42bf0185d).
+- Archive path: backlog/completed-backlog/features/add-dedicated-watchdog-and-stalled-lifecycle.md.
