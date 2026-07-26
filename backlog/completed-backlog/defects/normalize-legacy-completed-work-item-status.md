@@ -1,14 +1,14 @@
 # Normalize Legacy Completed Work-Item Status
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/normalize-legacy-completed-work-item-status.md
+Provider Reference: backlog/completed-backlog/defects/normalize-legacy-completed-work-item-status.md
 
 Completion: direct-main
 
@@ -71,6 +71,21 @@ None.
 - Started At: 2026-07-26T13:45:50Z.
 - Parent Reservation Evidence: f4049a929f1889c346753c308664d72eaa5a64d5.
 - Backlog Claim Acquisition Event: f260f5d9-2213-4ba6-913c-9f953802642b.
+
+## Completion Evidence
+
+- Terminal Lifecycle: Completed on 2026-07-26T14:00:17Z.
+- Running Lifecycle Commit: b2a6b060566f55fb3a1e108d115bbf5545e69d68.
+- Accepted Delivery Commit: 1e20f503dd5afdd946564eb069934b980a81020b.
+- Delivery: Changed only `Status: Done` to `Status: Completed` in `backlog/completed-backlog/defects/prevent-unauthorized-contract-narrowing.md`.
+- Independent Review: ACCEPT.
+- Independent Verification: VERIFIED/PASS.
+- Focused Validation: generated report classified Prevent Unauthorized Contract Narrowing as Defect/Completed with no target archive anomaly; `python3 -m unittest scripts.test_generate_backlog_report.BacklogReportTest.test_lifecycle_and_metadata_anomalies_are_visible` passed 1/1; duplicate scan found only this canonical normalization item; `git diff --check` passed.
+- Main Observation: 1e20f503dd5afdd946564eb069934b980a81020b is an ancestor of observed main 0ba56245bf332eceea27d393d5b12e9568178c72; the archived target blob exactly matches the accepted delivery commit.
+- Running Claim: acquired f260f5d9-2213-4ba6-913c-9f953802642b and released cd354202-7968-46ce-9391-d052bcdd93b0.
+- Delivery Claim: acquired 38ab3b3a-462e-473b-b2f3-df33bbb944cc and released 8ddbcee5-c646-4de7-b68a-7c084f5c966b.
+- Terminal Claim Acquisition: 52f2afe4-f42c-4960-a19a-3c9041091ace.
+- Completion Disposition: READY; no integration commit was needed because the accepted delivery was already represented on main.
 
 ## Notes
 
