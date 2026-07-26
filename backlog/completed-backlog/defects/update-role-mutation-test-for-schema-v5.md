@@ -1,12 +1,12 @@
 # Update Role-Mutation Test For Schema V5
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/update-role-mutation-test-for-schema-v5.md
+Provider Reference: backlog/completed-backlog/defects/update-role-mutation-test-for-schema-v5.md
 
 Completion: direct-main
 
@@ -81,3 +81,17 @@ Runnable next action: inspect the accepted schema-v5 migration, update the stale
 - Started At: 2026-07-26T18:01:34Z.
 - Claim Evidence: starting-to-running-schema-v5-019f9f93; acquire outcome SHARED_CHECKOUT_ACQUIRED; claim event a4720a64-af29-4b8c-9bc7-86bfb2d98e6f.
 - Next Lifecycle Owner: The root Dev Orchestrator owns delivery. Its Dev Backlog Steward child performs later provider transitions on this canonical item.
+
+## Completion Evidence
+
+- Completed At: 2026-07-26T18:23:19Z.
+- Canonical work-item Thread and root Agent Task: 019f9f93-bf1a-7d20-9ab1-b184f9c39088. No replacement task or Thread was created.
+- Accepted source candidate: 4d20d431db826212a48c17ef9806e9b67a4540da on branch codex/schema-v5-role-mutation-test-019f9f93. Its only change updates scripts/test_role_mutation_policy.py from schema-version assertion 4 to 5 while preserving repositoryMutation assertions.
+- Independent review: GOOD with no findings.
+- Source verification: /opt/homebrew/bin/python3.11 -m unittest scripts.test_role_mutation_policy passed 13 tests; BundleContentTests.test_source_roles_generate_current_documentation_and_adapters passed 1 test; Git diff check passed; the source worktree was clean.
+- Direct-main integration: 410438f99dd403caca699e7834a2493c09025467. The accepted hunk was already represented on main through 38cfa95989f33769a4cbe745b8e10f52eb397b82, proven by non-ancestral content mapping and reverse-application checking while preserving the newer main role count.
+- Post-integration verification: focused mutation-policy test passed 1 test; role-generation check passed 1 test; Git diff checks were clean.
+- Main observation: 410438f99dd403caca699e7834a2493c09025467 is reachable from main. Descendant 942bac974d87d7b7c7a11ee724b80c0d91c3d0e6 preserved it, and the terminal transaction started from clean primary main at fb18e79d09faefe7036146aef758f0e212d7917a.
+- Lifecycle and integration claims: Starting-to-Running commit 1814e2875c80c9a0e6f5b81073a216066ea56998; claim acquire event a4720a64-af29-4b8c-9bc7-86bfb2d98e6f and release event ccfb2b14-f1b4-41a1-aba4-aa4573429672. Direct-main integration claim direct-main-schema-v5-019f9f93 acquired in event 55f1c8d6-274c-4019-beaa-0d66e8ca745b and released with no-change mapping in event 3698d833-835f-49c5-917c-2e9eb451b435. Terminal archive claim complete-schema-v5-role-mutation-test-019f9f93 acquired in event 7259797d-ccf3-4842-a140-f29c65bdcfa5.
+- Publication: no remote publication is configured; no push was attempted.
+- Archive path: backlog/completed-backlog/defects/update-role-mutation-test-for-schema-v5.md.
