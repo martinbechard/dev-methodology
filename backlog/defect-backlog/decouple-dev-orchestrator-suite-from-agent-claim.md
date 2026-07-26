@@ -140,3 +140,21 @@ This item records a confirmed defect only. Do not weaken the independent resourc
 - Concrete Serialization Dependency: wait until add-structured-commit-disposition-to-orchestrator-evaluation-contract has an accepted current-main delivery or an exact non-overlap mapping, because both items alter runner and evaluator paths.
 - Next Owner And Action: after that observable trigger, the parent Dev Backlog Coordinator must create a new current-main-native bounded plan for the recorded producer/consumer, eager helper resolution, pre-classification bijection, and provider-none classifier/digest findings.
 - Rejected Candidates And Authority: do not import, reuse, or integrate any rejected candidate. No user action or new definition approval is required unless scope expands. Permitted resumption remains Blocked -> Ready -> Starting -> Running.
+
+## Current-Main Change Reconciliation — 2026-07-26
+
+Current main already contains the intended configuration split:
+
+- evals/agent-tests/dev-orchestrator/suite.yaml lists agent-claim as conditional rather than required.
+- The dependency-routing scenario does not select agent-claim and requires no claim calls or claim evidence.
+- The dependency-routing PROJECT.yaml selects resource_coordination none.
+- The fixture contract defines separate none and agent-claim cases.
+- The Dev Orchestrator role applies claims only when an Event Contract event occurs.
+- The generated Codex Dev Orchestrator reflects the canonical role.
+
+The remaining correction is limited to these files:
+
+- evals/agent-tests/runner.py: stop treating the presence of repository-wide agent-claims.json or agent-claim journal history as proof that a none-coordination scenario used claims. Continue rejecting an actual agent-claim invocation and claim evidence produced by the evaluated scenario.
+- evals/agent-tests/dev-orchestrator/test_fixtures.py: replace the cases that reject an empty registry or pre-existing journal. Add a positive case proving that a none-coordination scenario succeeds when those repository-wide files already exist. Preserve the negative case that rejects an actual agent-claim command in the scenario rollout.
+
+No suite.yaml, scenarios.yaml, fixture PROJECT.yaml, fixture-contract.yaml, Dev Orchestrator role, or generated adapter change is currently required. Reconcile these current-main facts again immediately before implementation.
