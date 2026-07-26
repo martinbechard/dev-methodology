@@ -1,10 +1,10 @@
 # Distinguish Coordination Notes From Unmet Dispatch Dependencies
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
-Owner: Dev Backlog Coordinator (reservation pending root acceptance)
+Owner: Root Dev Orchestrator
 
 Provider: file
 
@@ -67,6 +67,19 @@ None.
 - Intended Root Role: Dev Orchestrator.
 - Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
 - Next Lifecycle Owner: The root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
+
+## Current Running Acceptance
+
+- Transition: Starting -> Running.
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a (preserved from the Starting reservation).
+- Canonical Work-Item Thread: 019f9f67-4487-75b3-89c4-3cbfbd83b640.
+- Canonical Root Agent Task: /root.
+- Root Dev Orchestrator: /root.
+- Delivery Branch: Detached worktree base 7422fe5337f1b37cb9a1a6c1ec62580933db2e7c.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/6804/dev-methodology.
+- Phase: Delivery accepted; this provider transaction contains no implementation artifact mutation.
+- Started At: 2026-07-26T17:12:06Z.
+- Claim Evidence: accept-running-distinguish-coordination-notes-019f95a9; acquire outcome SHARED_CHECKOUT_ACQUIRED; claim event 05d29f2c-e791-4a4a-a231-cd635a426cc1.
 
 ## Notes
 
