@@ -1,14 +1,14 @@
 # Harden Event Contract Claim-Helper Scope Identity And Reporting
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/harden-event-contract-claim-helper-scope-identity-and-reporting.md
+Provider Reference: backlog/completed-backlog/defects/harden-event-contract-claim-helper-scope-identity-and-reporting.md
 
 Completion: direct-main
 
@@ -167,3 +167,18 @@ None.
 - Reproduction 4: invoke acquire with --backlog but no --scope-reason; broad backlog ownership needs the documented justification required by the Event Contract.
 - Reproduction 5: acquire and release one exact file successfully, then run report --format json; report output must retain a distinguishable successful exact-file adoption signal.
 - Creation authority is the parent-authorized grouped-defect request. This direct-main Ready record is unowned until normal Coordinator dispatch. Claim evidence for creation: None; Event Contract creation is claim-free.
+
+## Completion Evidence
+
+- Canonical Execution Identity: task 019f9ea6-6328-7580-9213-6e60b3a9de76; worktree /Users/martinbechard/.codex/worktrees/8b79/dev-methodology; branch codex/harden-event-contract-claim-helper-019f9ea6.
+- Completion: direct-main.
+- Accepted Source: ac421aaa48406fa13b11c978f33583a136deba83.
+- Independent Code Review: ACCEPTED.
+- Independent Verification: VERIFIED/PASS.
+- Integration Baseline: 2209ccc6170c9afb7267237f7de236f864250456.
+- Integration Commit And Observed Main Tip: dbb3f43b6ec26b59a6ed64dbcad653a870b90721 on main.
+- Source-To-Integration Content Equality: skills/agent-claim-command/scripts/claim.py blob 141b47bdbc2918047a3801c610b9ea6891bc4d6f and scripts/test_agent_claim.py blob d0c0cc0d552877a660af8b4dd27426670cc98e2e are identical in the accepted source and integration commits.
+- Integration Claim: acquired event b262ab9f-02d1-4c74-a115-fdd127d6eba0; released event dab717c1-0176-4350-9efd-e5e5678193a2.
+- Post-Integration Checks: 16 focused tests PASS in 7.503s; py_compile PASS using a temporary pycache; git diff --check PASS; main clean.
+- Lexical Authority: normalized repository-relative paths with filesystem casefold only when the repository filesystem is case-insensitive. No mutable symlink, hard-link, or inode guarantee applies.
+- Terminal Provider Commit: recorded by this completion archive transaction; all applicable backlog claims are released after commit verification.
