@@ -1,6 +1,6 @@
 # Add Dedicated Watchdog And Stalled Lifecycle
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -128,6 +128,21 @@ The permanent contract must parameterize the parent task identifier and reposito
 - Confirm during implementation whether Stalled retains the same owner while diagnosis proceeds or always ends ownership and returns through Ready before resumption. The selected behavior must preserve duplicate-start prevention and make capacity accounting deterministic.
 - Confirm whether the deterministic backlog report needs a dedicated Stalled section or a distinct Stalled badge within active non-runnable work. The report must not merge Stalled into Blocked.
 - Select an existing model profile for Dev Backlog Watchdog from live model-profile evidence; do not add or change a model profile unless separately approved.
+
+## Definition Change Approval
+
+## Current Starting Reservation
+
+- Parent Coordination Thread: /root.
+- Canonical Thread/Task: 019f9a91-b1a9-7ea0-9c90-35f0ed78c1be; preserved as resumption evidence and no replacement canonical identity is created.
+- Reservation: One parent-owned Ready -> Starting launch reservation.
+- Normalized Objective: Add dedicated watchdog and stalled lifecycle.
+- Intended Root Role: Dev Orchestrator.
+- Persistence And Completion: file provider; direct-main completion.
+- Dispatched At: 2026-07-26T13:36:31Z.
+- Launch Evidence: Parent Coordinator authorized this same-canonical-item reservation. Runtime acceptance remains pending.
+- Backlog Claim Event: e62b9d25-dafc-43a1-bc3e-10d9f0764e24.
+- Next Lifecycle Owner: the root Dev Orchestrator must record a distinct Starting -> Running acceptance for this same canonical identity before repository mutation.
 
 ## Definition Change Approval
 
