@@ -1,8 +1,10 @@
 # Notify the Backlog Coordinator When a Work Item Is Added
 
-Status: Ready
+Status: Starting
 
 Type: Feature
+
+Owner: Unowned
 
 Provider: file
 
@@ -68,6 +70,18 @@ None.
 - Determine how the active coordinator identity is resolved for each supported provider and runtime.
 - Determine the durable event identity and acknowledgement evidence used to make coordinator notification idempotent.
 - Determine whether an unreachable-coordinator result needs a separate recovery queue or can rely on provider inventory reconciliation at the next coordinator start.
+
+## Current Starting Reservation
+
+- Parent Coordination Thread: /root.
+- Reservation: One parent-owned Ready -> Starting launch reservation.
+- Normalized Objective: Notify the Backlog Coordinator when a work item is added.
+- Intended Root Role: Dev Orchestrator.
+- Persistence And Completion: file provider; direct-main completion.
+- Dispatched At: 2026-07-26T13:37:41Z.
+- Launch Evidence: Parent Coordinator authorized this exact-item reservation. Runtime task creation and acceptance remain pending.
+- Backlog Claim Event: 9dc49f0c-98c2-415b-8947-f42452ac19d2.
+- Next Lifecycle Owner: the root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
 
 ## Notes
 
