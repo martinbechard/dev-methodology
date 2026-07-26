@@ -1,6 +1,6 @@
 # Reject Unconfigured Lifecycle Handoff Receipt Lanes
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/reject-unconfigured-lifecycle-handoff-receipt-lanes.md
+Provider Reference: backlog/defect-backlog/reject-unconfigured-lifecycle-handoff-receipt-lanes.md
 
 Completion: direct-main
 
@@ -92,7 +92,7 @@ None.
 - Claim Evidence: accept-running-reject-unconfigured-lifecycle-handoff-receipt-lanes-019f9f67; acquire outcome SHARED_CHECKOUT_ACQUIRED; claim event d218ea59-03d1-4be9-8002-09de3cc43d8a.
 - Dependency Classification: coordination-only. Reconcile exact overlapping implementation scope before integration.
 
-## Current User Action Required
+## Resolved User Action Required
 
 - Transition: Running -> User Action Required.
 - Owner: Unowned.
@@ -107,7 +107,19 @@ None.
 - Question: Approve cherry-picking c1e861e75996a4758dfc95c6ec054fce2744a74a then 7a57ca305c5bcf0573ae0be5c52322a086fa0547 onto primary main for task 019f9f67-1259-73a1-a9f2-1c6ce447903e.
 - Why Input Is Required: The approval reviewer rejected Git mutation without explicit authorization.
 - Prohibited Until Answered: No unattended cherry-pick, alternate merge strategy, integration, publication, or terminal closure may occur.
-- Resolution: Pending explicit user answer in the preserved canonical work-item Thread or parent coordination Thread.
+- Resolution: Recorded below. The preserved canonical work-item Thread remains the only valid Thread for resumption.
+
+## Resolution
+
+- Date: 2026-07-26.
+- User Answer: Get on with it.
+- Provenance: The user gave this answer in the canonical task after the redundant approval question was explained. It authorized continuing direct-main delivery.
+- Accepted Source Commits: c1e861e75996a4758dfc95c6ec054fce2744a74a, then 7a57ca305c5bcf0573ae0be5c52322a086fa0547.
+- Primary Main Mapping: c1e861e75996a4758dfc95c6ec054fce2744a74a was integrated as ebcdcf29825ddfd6306ddcfa5fd190603609a45a; 7a57ca305c5bcf0573ae0be5c52322a086fa0547 was integrated as e73fbd58757a6e033b5af6f9c2a5eb4fdbc8e3e8.
+- Verification: The post-integration verifier returned explicit PASS on clean main 9ade1276 with 12 focused tests. Main has since advanced cleanly; preflight for this provider transaction observed clean main 24edce42bb343467d22743ff226c180d190d85d8.
+- Resulting Disposition: User Action Required -> Ready. Owner: Unowned. This transaction records no Starting -> Running transition and creates no replacement Thread.
+- Preserved Canonical Identity: Work-item Thread and root Agent Task 019f9f67-1259-73a1-a9f2-1c6ce447903e.
+- Next Lifecycle Owner: The parent Dev Backlog Coordinator may make a distinct Ready -> Starting reservation against the preserved canonical Thread. Its root Dev Orchestrator must make any later distinct Starting -> Running acceptance.
 
 ## Notes
 
