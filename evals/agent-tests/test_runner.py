@@ -312,8 +312,11 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             "fixtureRoot or beneath a sibling scenario root",
             prompt,
         )
-        self.assertIn("Keep fixtureRoot only as the parent containment boundary", prompt)
-        self.assertIn("never under /tmp or /private/tmp", prompt)
+        self.assertIn(
+            "Candidate paths are never under /tmp or /private/tmp. "
+            "Keep fixtureRoot only as the parent containment boundary.",
+            prompt,
+        )
         self.assertIn("path strings alone are invalid", prompt)
         self.assertIn("objects, never prose strings", prompt)
         self.assertIn("structurally identical values", prompt)
