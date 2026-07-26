@@ -6302,6 +6302,124 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("enabled resource-coordination evidence", normalized_response)
                 self.assertNotIn("released the ingest claim", normalized_response)
 
+    def test_dev_orchestrator_durably_records_every_confirmed_defect(self) -> None:
+        """Source and native roles preserve mandatory duplicate-reconciled defect evidence."""
+
+        role_path = (
+            ROLES_ROOT / "dev-activities" / "dev-orchestrator.role.yaml"
+        )
+        role = load_yaml_object(role_path)
+        normalized_source = " ".join(role_path.read_text(encoding="utf-8").split())
+        instruction_sections = role["instructions"]
+        normalized_boundaries = " ".join(
+            " ".join(instruction_sections["boundaries"]).split()
+        )
+        normalized_decisions = " ".join(
+            " ".join(instruction_sections["decisions"]).split()
+        )
+        normalized_workflow = " ".join(
+            " ".join(instruction_sections["workflow"]).split()
+        )
+        normalized_failure = " ".join(
+            " ".join(instruction_sections["failureHandling"]).split()
+        )
+        self.assertIn(
+            "Route every defect confirmed by an independent reviewer, verifier, runtime "
+            "evidence, or accepted reproduction through dev-backlog-steward exactly once "
+            "for durable provider recording.",
+            normalized_boundaries,
+        )
+        self.assertIn(
+            "For each confirmed defect, dispatch dev-backlog-steward exactly once with "
+            "the reproduction evidence and a runnable next action.",
+            normalized_workflow,
+        )
+        self.assertIn(
+            "If provider none, UNSET, an unsupported provider, or missing user authority "
+            "prevents durable recording",
+            normalized_decisions,
+        )
+        self.assertIn(
+            "preserve the finding and report BLOCKED for the required selection or authority",
+            normalized_decisions,
+        )
+        self.assertIn(
+            "If durable recording of a confirmed defect fails, is ambiguous, lacks a usable "
+            "provider, or cannot reconcile a duplicate safely",
+            normalized_failure,
+        )
+        self.assertIn(
+            "preserve the finding, provider attempt, and correction evidence and report BLOCKED",
+            normalized_failure,
+        )
+        required_policy = (
+            "every defect confirmed by an independent reviewer, verifier, runtime evidence, or accepted reproduction",
+            "reproduction evidence and a runnable next action",
+            "reconcile duplicates instead of creating copies",
+            "Never omit, relabel, or downgrade a confirmed defect as a warning",
+            "unconfirmed observation or baseline warning",
+            "Do not create a second delivery task",
+        )
+        for phrase in required_policy:
+            with self.subTest(source_policy=phrase):
+                self.assertIn(phrase.lower(), normalized_source.lower())
+
+        output_names = {next(iter(entry)) for entry in role["outputContract"]}
+        self.assertIn("confirmed defect records", output_names)
+        defect_example = next(
+            example
+            for example in role["examples"]
+            if "confirmed verifier defect" in example["purpose"]
+        )
+        normalized_example = " ".join(
+            defect_example["plausibleResponse"].split()
+        ).lower()
+        for phrase in (
+            "dispatched dev-backlog-steward exactly once",
+            "existing durable defect",
+            "no second delivery task was created",
+            "unconfirmed baseline warning",
+            "reproduction evidence",
+            "runnable next action",
+        ):
+            with self.subTest(example_evidence=phrase):
+                self.assertIn(phrase, normalized_example)
+
+        adapter_paths = {
+            "codex": GENERATED_ADAPTERS_ROOT
+            / "codex"
+            / "agents"
+            / "dev-orchestrator.toml",
+            "claude": GENERATED_ADAPTERS_ROOT
+            / "claude"
+            / "agents"
+            / "dev-orchestrator.md",
+            "gemini": GENERATED_ADAPTERS_ROOT
+            / "gemini"
+            / "agents"
+            / "dev-orchestrator.md",
+            "junie": GENERATED_ADAPTERS_ROOT
+            / "junie"
+            / "agents"
+            / "dev-orchestrator.md",
+        }
+        for adapter, adapter_path in adapter_paths.items():
+            normalized_adapter = " ".join(
+                adapter_path.read_text(encoding="utf-8").split()
+            ).lower()
+            adapter_required_policy = (
+                *required_policy,
+                "exactly once for durable provider recording",
+                "if provider none, unset, an unsupported provider, or missing user authority prevents durable recording",
+                "preserve the finding and report blocked for the required selection or authority",
+                "if durable recording of a confirmed defect fails, is ambiguous, lacks a usable provider, or cannot reconcile a duplicate safely",
+                "preserve the finding, provider attempt, and correction evidence and report blocked",
+            )
+            for phrase in adapter_required_policy:
+                with self.subTest(adapter=adapter, rendered_policy=phrase):
+                    self.assertIn(phrase.lower(), normalized_adapter)
+            self.assertIn("confirmed defect records", normalized_adapter)
+
     def test_dev_backlog_coordinator_uses_selected_provider_and_completion_routes(self) -> None:
         """The coordinator should supervise provider-neutral state and selected delivery."""
         role = yaml.safe_load(

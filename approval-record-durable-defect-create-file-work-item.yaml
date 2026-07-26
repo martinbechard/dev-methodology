@@ -1,0 +1,5 @@
+basis: explicit-user-direction
+definition_scope: skills/create-file-work-item/SKILL.md
+provenance:
+  source: user-message
+  reference: thread:019f96cf-226c-7f62-9d66-7d31cead822e/message:approved
