@@ -1,6 +1,6 @@
 # Harden Event Contract Claim-Helper Scope Identity And Reporting
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -66,12 +66,14 @@ None.
 - Normalized Objective: Harden Event Contract claim-helper scope identity and reporting.
 - Intended Root Role: Dev Orchestrator.
 - Persistence And Completion: file provider; direct-main completion.
-- Dispatched At: 2026-07-26T13:35:13Z.
+- Dispatched At: 2026-07-26T14:49:01Z.
 - Launch Evidence: Parent Coordinator authorized this exact-item reservation. Runtime task creation and acceptance remain pending.
-- Backlog Claim Event: 754cf797-6b1e-4bf0-9de5-c7f53132d6e4.
-- Next Lifecycle Owner: the root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
+- Backlog Claim: reserve-starting-harden-event-contract-019f9ea6.
+- Backlog Claim Event: 177de9e2-aade-4273-9025-67083bab0cde.
+- Canonical Execution Identity: Thread and task 019f9ea6-6328-7580-9213-6e60b3a9de76; parent coordination thread /root; worktree /Users/martinbechard/.codex/worktrees/8b79/dev-methodology; intended candidate branch codex/harden-event-contract-claim-helper-019f9ea6.
+- Next Lifecycle Owner: the same root Dev Orchestrator must record a distinct Starting -> Running acceptance before artifact mutation.
 
-## Current Running Acceptance
+## Prior Running Acceptance Evidence (Superseded)
 
 - Canonical Thread: 019f9ea6-6328-7580-9213-6e60b3a9de76.
 - Canonical Root Agent Task: 019f9ea6-6328-7580-9213-6e60b3a9de76.
@@ -79,7 +81,7 @@ None.
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
 - Worktree: /Users/martinbechard/.codex/worktrees/8b79/dev-methodology.
 - Intended Candidate Branch: codex/harden-event-contract-claim-helper-019f9ea6.
-- Phase: awaiting same-task reservation.
+- Phase: superseded by the later Ready state and retained as recovery history.
 - Started At: 2026-07-26T13:45:21Z; root Orchestrator accepted the reserved work item before implementation mutation.
 - Backlog Claim Acquisition: claim start-running-harden-event-contract-019f9ea6; event e5a63bff-dc75-462b-8104-5b17da793a4c; acquired from primary main at f1c8c04c4a24be8e48579fc997d1a6f09daacf88.
 - Backlog Claim Release: due immediately after this short provider commit; release evidence is retained in the claim journal.
