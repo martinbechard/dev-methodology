@@ -81,21 +81,37 @@ class WatchdogCycle:
         observations: list[WatchdogAlert] = []
         for item in items:
             if (
-                item.status == "Starting"
+                item.status in ACTIVE_CAPACITY_STATUSES
                 and item.task_state in _TASK_ANOMALY_STATES
             ):
+                cause_is_known = self._known_preventing_cause(item)
+                provider_boundary = (
+                    "provider reservation"
+                    if item.status == "Starting"
+                    else "provider record"
+                )
+                reason = (
+                    f"{item.status} canonical task {item.task_state}; task-state "
+                    "boundary requires Coordinator attention"
+                )
+                recommended_action = (
+                    f"Coordinator reconciles the {item.status} task, "
+                    f"{provider_boundary}, and ownership before choosing any "
+                    "lifecycle disposition"
+                )
+                if cause_is_known:
+                    reason += " with a known preventing cause"
+                    recommended_action = (
+                        f"Coordinator reconciles the {item.status} task, "
+                        f"{provider_boundary}, and ownership, then validates the "
+                        "known cause before choosing the Blocked disposition"
+                    )
                 observations.append(
                     WatchdogAlert(
                         provider_identity=item.provider_identity,
                         evidence=self._stall_evidence(item),
-                        reason=(
-                            "Starting task-state anomaly requires Coordinator attention"
-                        ),
-                        recommended_action=(
-                            "Coordinator performs bounded startup and ownership "
-                            "reconciliation before choosing an authorized provider "
-                            "disposition"
-                        ),
+                        reason=reason,
+                        recommended_action=recommended_action,
                         preventing_cause=item.preventing_cause,
                     )
                 )
@@ -167,7 +183,6 @@ class WatchdogCycle:
             item.estimate_boundary_crossed
             or item.hard_stop_crossed
             or item.progress_gap
-            or item.task_state in _TASK_ANOMALY_STATES
         )
 
     @staticmethod

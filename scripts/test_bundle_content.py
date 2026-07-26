@@ -6420,9 +6420,11 @@ class BundleContentTests(unittest.TestCase):
             "toward ten active items."
         )
         failed_task_contract = "failed, stopped, or missing canonical tasks"
-        starting_reconciliation_contract = (
-            "For a Starting task anomaly, recommend bounded startup and ownership "
-            "reconciliation rather than Stalled."
+        task_reconciliation_contract = (
+            "For a failed, stopped, or missing Starting or Running canonical task, "
+            "recommend task, provider, and ownership reconciliation before any "
+            "lifecycle choice; preserve known explicit preventing-cause Blocked "
+            "routing and never classify the task-state anomaly itself as Stalled."
         )
 
         self.assertIn(recount_contract, coordinator_workflow)
@@ -6431,7 +6433,7 @@ class BundleContentTests(unittest.TestCase):
             coordinator_workflow,
         )
         self.assertIn(failed_task_contract, watchdog_workflow)
-        self.assertIn(starting_reconciliation_contract, watchdog_workflow)
+        self.assertIn(task_reconciliation_contract, watchdog_workflow)
         self.assertIn(
             "dev-backlog-watchdog",
             coordinator_role["agentDependencies"],
@@ -6464,7 +6466,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(recount_contract, coordinator_generated)
                 self.assertIn(failed_task_contract, watchdog_generated)
                 self.assertIn(
-                    starting_reconciliation_contract,
+                    task_reconciliation_contract,
                     watchdog_generated,
                 )
 

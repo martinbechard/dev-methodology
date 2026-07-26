@@ -120,17 +120,9 @@ class WatchdogSimulatorTests(unittest.TestCase):
     def test_task_state_anomalies_use_status_specific_actions(self) -> None:
         """All six task anomalies alert without confusing startup with Stalled."""
 
-        expectations = {
-            "Starting": (
-                "Starting task-state anomaly requires Coordinator attention",
-                "Coordinator performs bounded startup and ownership reconciliation "
-                "before choosing an authorized provider disposition",
-            ),
-            "Running": (
-                "progress boundary crossed while the cause remains unknown",
-                "Coordinator investigates and delegates Stalled only if the "
-                "evidence justifies it",
-            ),
+        provider_boundaries = {
+            "Starting": "provider reservation",
+            "Running": "provider record",
         }
         for status in ("Starting", "Running"):
             for task_state in ("stopped", "failed", "missing"):
@@ -154,7 +146,15 @@ class WatchdogSimulatorTests(unittest.TestCase):
                     self.assertIsNotNone(result.alert)
                     alert = result.alert
                     assert alert is not None
-                    expected_reason, expected_action = expectations[status]
+                    expected_reason = (
+                        f"{status} canonical task {task_state}; task-state "
+                        "boundary requires Coordinator attention"
+                    )
+                    expected_action = (
+                        f"Coordinator reconciles the {status} task, "
+                        f"{provider_boundaries[status]}, and ownership before "
+                        "choosing any lifecycle disposition"
+                    )
                     self.assertEqual(item.provider_identity, alert.provider_identity)
                     self.assertIn("task_boundary_crossed=true", alert.evidence)
                     self.assertIn(f"task_state={task_state}", alert.evidence)
@@ -165,9 +165,41 @@ class WatchdogSimulatorTests(unittest.TestCase):
                     self.assertIn(f"root_task=task-{identity}", alert.evidence)
                     self.assertEqual(expected_reason, alert.reason)
                     self.assertEqual(expected_action, alert.recommended_action)
-                    if status == "Starting":
-                        self.assertNotIn("Stalled", alert.recommended_action)
+                    self.assertNotIn("Stalled", alert.recommended_action)
                     self.assertFalse(result.mutated)
+
+    def test_task_state_anomaly_preserves_known_cause_blocked_route(self) -> None:
+        """Mechanical reconciliation precedes the known-cause Blocked choice."""
+
+        item = WorkItem(
+            provider_identity="backlog/defect-backlog/running-failed-known.md",
+            status="Running",
+            task_state="failed",
+            canonical_thread="thread-running-failed-known",
+            root_task="task-running-failed-known",
+            preventing_cause="upstream credential is unavailable",
+        )
+
+        result = WatchdogCycle().evaluate([item])
+
+        self.assertIsNotNone(result.alert)
+        alert = result.alert
+        assert alert is not None
+        self.assertEqual(
+            "Running canonical task failed; task-state boundary requires "
+            "Coordinator attention with a known preventing cause",
+            alert.reason,
+        )
+        self.assertEqual(
+            "Coordinator reconciles the Running task, provider record, and "
+            "ownership, then validates the known cause before choosing the "
+            "Blocked disposition",
+            alert.recommended_action,
+        )
+        self.assertEqual(
+            "upstream credential is unavailable",
+            alert.preventing_cause,
+        )
 
     def test_estimate_boundary_evidence_names_observed_value(self) -> None:
         """Crossed estimates identify both the boundary and its observed value."""
