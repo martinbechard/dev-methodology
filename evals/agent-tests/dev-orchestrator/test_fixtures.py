@@ -87,8 +87,8 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         )
         self.assertIn("must not invoke agent-claim", prompt)
 
-    def test_none_coordination_rejects_claim_release_on_an_extra_lane(self) -> None:
-        """Provider-none rejects claim evidence even outside its required lanes."""
+    def test_none_coordination_rejects_extra_lane_with_claim_evidence(self) -> None:
+        """Exact lane authority rejects an extra receipt carrying claim evidence."""
         run, report = self._complete_dependency_routing_report()
         report["runs"][0]["scenarioResults"][0]["handoffReceipts"].append(
             {
@@ -101,8 +101,128 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             }
         )
 
-        with self.assertRaisesRegex(RuntimeError, "unexpected claimRelease evidence"):
+        with self.assertRaisesRegex(
+            RuntimeError,
+            r"handoff receipt lanes mismatch: expected "
+            r"\['closeout', 'documentation', 'integration', 'source'\], "
+            r"observed \['closeout', 'documentation', 'extra', 'integration', 'source'\]",
+        ):
             runner._audit_report((run,), report)
+
+    def test_evidence_audit_rejects_extra_lane_with_or_without_claims(self) -> None:
+        """Repository evidence cannot legitimize an unconfigured receipt lane."""
+        for claim_release in (False, True):
+            with (
+                self.subTest(claim_release=claim_release),
+                tempfile.TemporaryDirectory() as directory,
+            ):
+                run, report, sessions, fixture_root = self._evidence_fixture(
+                    Path(directory),
+                    claim_release=claim_release,
+                )
+                source = report["runs"][0]["scenarioResults"][0][
+                    "handoffReceipts"
+                ][0]
+                extra = json.loads(json.dumps(source))
+                extra["lane"] = "extra"
+                report["runs"][0]["scenarioResults"][0][
+                    "handoffReceipts"
+                ].append(extra)
+
+                with self.assertRaisesRegex(
+                    RuntimeError,
+                    r"handoff receipt lanes mismatch: expected "
+                    r"\['closeout', 'documentation', 'integration', 'source'\], "
+                    r"observed "
+                    r"\['closeout', 'documentation', 'extra', 'integration', 'source'\]",
+                ):
+                    runner._audit_handoff_evidence(
+                        (run,),
+                        report,
+                        sessions,
+                        fixture_root,
+                    )
+
+    def test_evidence_audit_preserves_missing_and_duplicate_lane_errors(self) -> None:
+        """Exact-set enforcement retains distinct missing and duplicate diagnostics."""
+        for case, diagnostic in (
+            ("missing", "missing handoff receipt lane source"),
+            ("duplicate", "duplicate handoff receipt lane source"),
+        ):
+            with (
+                self.subTest(case=case),
+                tempfile.TemporaryDirectory() as directory,
+            ):
+                run, report, sessions, fixture_root = self._evidence_fixture(
+                    Path(directory),
+                    claim_release=False,
+                )
+                receipts = report["runs"][0]["scenarioResults"][0][
+                    "handoffReceipts"
+                ]
+                if case == "missing":
+                    receipts[:] = [
+                        receipt
+                        for receipt in receipts
+                        if receipt["lane"] != "source"
+                    ]
+                else:
+                    source = next(
+                        receipt
+                        for receipt in receipts
+                        if receipt["lane"] == "source"
+                    )
+                    receipts.append(json.loads(json.dumps(source)))
+
+                with self.assertRaisesRegex(RuntimeError, diagnostic):
+                    runner._audit_handoff_evidence(
+                        (run,),
+                        report,
+                        sessions,
+                        fixture_root,
+                    )
+
+    def test_evidence_audit_rejects_receipt_for_empty_lane_set(self) -> None:
+        """None and claim-bound scenarios reject receipts when no lanes are configured."""
+        for claim_release in (False, True):
+            with (
+                self.subTest(claim_release=claim_release),
+                tempfile.TemporaryDirectory() as directory,
+            ):
+                run, report, sessions, fixture_root = self._evidence_fixture(
+                    Path(directory),
+                    claim_release=claim_release,
+                )
+                scenario = dict(run.suite.scenarios[0])
+                scenario["requiredHandoffReceiptLanes"] = []
+                scenario["requiredHandoffReceiptFields"] = []
+                suite = runner.dataclasses.replace(
+                    run.suite,
+                    scenarios=(scenario,),
+                )
+                run = runner.dataclasses.replace(run, suite=suite)
+                report["runs"][0]["scenarioResults"][0][
+                    "handoffReceipts"
+                ] = [
+                    {
+                        "lane": "fabricated",
+                        "claimRelease": {
+                            "eventIds": ["fabricated-release"],
+                        },
+                    }
+                ]
+
+                with self.assertRaisesRegex(
+                    RuntimeError,
+                    r"handoff receipt lanes mismatch: expected \[\], "
+                    r"observed \['fabricated'\]",
+                ):
+                    runner._audit_handoff_evidence(
+                        (run,),
+                        report,
+                        sessions,
+                        fixture_root,
+                    )
 
     def test_none_coordination_evidence_needs_no_claim_journal(self) -> None:
         """Provider-none handoffs validate without claim events or a claim registry."""

@@ -3113,6 +3113,22 @@ def _attach_receipt_audits(
                 scenario["receiptAudit"] = json.loads(json.dumps(receipt_audit))
 
 
+def _require_exact_handoff_lanes(
+    identity: str,
+    required_lanes: Sequence[str],
+    observed_lanes: Sequence[str],
+) -> None:
+    """Require every configured lane exactly once and reject unconfigured lanes."""
+    for lane in required_lanes:
+        if lane not in observed_lanes:
+            raise RuntimeError(f"{identity} missing handoff receipt lane {lane}")
+    if set(observed_lanes) != set(required_lanes):
+        raise RuntimeError(
+            f"{identity} handoff receipt lanes mismatch: "
+            f"expected {sorted(required_lanes)}, observed {sorted(observed_lanes)}"
+        )
+
+
 def _audit_report(
     batch: Sequence[_RunSpec],
     report: dict[str, Any],
@@ -3238,6 +3254,22 @@ def _audit_report(
                 raise RuntimeError(f"Cleanup failed for {suite_id}:{scenario_result.get('scenario')}")
             required_lanes = scenario.get("requiredHandoffReceiptLanes", [])
             required_fields = scenario.get("requiredHandoffReceiptFields", [])
+            handoff_receipts = scenario_result.get("handoffReceipts", [])
+            if not isinstance(handoff_receipts, list):
+                raise RuntimeError(f"{suite_id}:{scenario_id} handoffReceipts must be a list")
+            receipts_by_lane: dict[str, dict[str, Any]] = {}
+            for receipt in handoff_receipts:
+                if not isinstance(receipt, dict):
+                    raise RuntimeError(f"{suite_id}:{scenario_id} handoff receipt must be an object")
+                lane = str(receipt.get("lane", ""))
+                if lane in receipts_by_lane:
+                    raise RuntimeError(f"{suite_id}:{scenario_id} duplicate handoff receipt lane {lane}")
+                receipts_by_lane[lane] = receipt
+            _require_exact_handoff_lanes(
+                f"{suite_id}:{scenario_id}",
+                required_lanes,
+                tuple(receipts_by_lane),
+            )
             if required_lanes or required_fields:
                 selected_coordination, coordination_case = _scenario_resource_coordination(
                     suites[suite_id],
@@ -3248,25 +3280,12 @@ def _audit_report(
                     if selected_coordination == "agent-claim"
                     else set()
                 )
-                handoff_receipts = scenario_result.get("handoffReceipts", [])
-                if not isinstance(handoff_receipts, list):
-                    raise RuntimeError(f"{suite_id}:{scenario_id} handoffReceipts must be a list")
-                receipts_by_lane: dict[str, dict[str, Any]] = {}
-                for receipt in handoff_receipts:
-                    if not isinstance(receipt, dict):
-                        raise RuntimeError(f"{suite_id}:{scenario_id} handoff receipt must be an object")
-                    lane = str(receipt.get("lane", ""))
-                    if lane in receipts_by_lane:
-                        raise RuntimeError(f"{suite_id}:{scenario_id} duplicate handoff receipt lane {lane}")
-                    receipts_by_lane[lane] = receipt
                 for lane, receipt in receipts_by_lane.items():
                     if lane not in claimed_lanes and "claimRelease" in receipt:
                         raise RuntimeError(
                             f"{suite_id}:{scenario_id} handoff receipt {lane} has unexpected claimRelease evidence"
                         )
                 for lane in required_lanes:
-                    if lane not in receipts_by_lane:
-                        raise RuntimeError(f"{suite_id}:{scenario_id} missing handoff receipt lane {lane}")
                     lane_required_fields = [
                         *required_fields,
                         *(["claimRelease"] if lane in claimed_lanes else []),
@@ -4321,19 +4340,7 @@ def _audit_handoff_evidence(
                 raise RuntimeError(
                     f"{run.suite.suite_id}:{scenario_id} is absent from the selected scenario contract"
                 )
-            if not scenario.get("requiredHandoffReceiptFields"):
-                continue
             identity = f"{run.suite.suite_id}:{scenario_id}"
-            target = target_bindings.get((run.suite.suite_id, scenario_id))
-            if target is None:
-                raise RuntimeError(f"{identity} has no target session for handoff evidence")
-            nested = sorted(
-                (session for session in sessions if session.parent_thread_id == target.session_id),
-                key=lambda session: session.started_at,
-            )
-            sessions_by_role: dict[str, list[_Session]] = {}
-            for session in nested:
-                sessions_by_role.setdefault(str(session.invocation), []).append(session)
             reported_result = report_results.get((run.suite.suite_id, scenario_id))
             if not isinstance(reported_result, Mapping):
                 raise RuntimeError(f"{identity} has no retained scenario result for handoff evidence")
@@ -4349,7 +4356,29 @@ def _audit_handoff_evidence(
                     raise RuntimeError(
                         f"{identity} malformed handoff receipt lane: expected a non-empty string"
                     )
+                if receipt_lane in receipts:
+                    raise RuntimeError(
+                        f"{identity} duplicate handoff receipt lane {receipt_lane}"
+                    )
                 receipts[receipt_lane] = receipt
+            required_lanes = scenario.get("requiredHandoffReceiptLanes", [])
+            _require_exact_handoff_lanes(
+                identity,
+                required_lanes,
+                tuple(receipts),
+            )
+            if not scenario.get("requiredHandoffReceiptFields"):
+                continue
+            target = target_bindings.get((run.suite.suite_id, scenario_id))
+            if target is None:
+                raise RuntimeError(f"{identity} has no target session for handoff evidence")
+            nested = sorted(
+                (session for session in sessions if session.parent_thread_id == target.session_id),
+                key=lambda session: session.started_at,
+            )
+            sessions_by_role: dict[str, list[_Session]] = {}
+            for session in nested:
+                sessions_by_role.setdefault(str(session.invocation), []).append(session)
             scenario_fixture_root = scenario_roots[(run.suite.suite_id, scenario_id)]
             selected_coordination, coordination_case = _scenario_resource_coordination(
                 run.suite,
@@ -4369,9 +4398,7 @@ def _audit_handoff_evidence(
                         )
                 _audit_no_claim_repository_evidence(scenario_fixture_root, identity)
                 _audit_no_claim_session_activity(target, sessions, identity)
-            for lane in scenario.get("requiredHandoffReceiptLanes", []):
-                if lane not in receipts:
-                    raise RuntimeError(f"{identity} missing handoff receipt lane {lane}")
+            for lane in required_lanes:
                 receipt = receipts[lane]
                 claim_release_required = lane in claimed_lanes
                 if lane not in lane_roles:

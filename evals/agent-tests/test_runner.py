@@ -4732,6 +4732,80 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "unexpected claimRelease evidence"):
             runner._audit_report((run,), report)
 
+    def test_report_rejects_extra_handoff_lane_without_claim_evidence(self) -> None:
+        """Observed receipt lanes must exactly equal the configured lane set."""
+        suite = self._suite("dependency-routing")
+        scenario = dict(suite.scenarios[0])
+        scenario["requiredHandoffReceiptFields"] = [
+            "lane",
+            "role",
+            "commit",
+            "review",
+            "verification",
+        ]
+        scenario["requiredHandoffReceiptLanes"] = ["source"]
+        suite = runner._Suite(
+            suite.suite_id,
+            suite.priority,
+            suite.path,
+            suite.manifest,
+            (scenario,),
+        )
+        run = runner._RunSpec(suite=suite, scenario_ids=("happy",))
+        report = {
+            "runs": [self._suite_report("dependency-routing", "BLOCKED")],
+            "batchCleanup": "clean",
+            "residualRisk": "",
+        }
+        source = {
+            "lane": "source",
+            "role": {
+                "invocation": "dev-coder",
+                "sessionIds": ["source-session"],
+            },
+            "commit": {
+                "repository": "candidate",
+                "sha": "a" * 40,
+            },
+            "review": {"sessionIds": ["review-session"]},
+            "verification": {"sessionIds": ["verification-session"]},
+        }
+        extra = json.loads(json.dumps(source))
+        extra["lane"] = "extra"
+        report["runs"][0]["scenarioResults"][0]["handoffReceipts"] = [
+            source,
+            extra,
+        ]
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            r"dependency-routing:happy handoff receipt lanes mismatch: "
+            r"expected \['source'\], observed \['extra', 'source'\]",
+        ):
+            runner._audit_report((run,), report)
+
+    def test_report_rejects_receipt_when_configured_lane_set_is_empty(self) -> None:
+        """An empty configured set cannot be bypassed with fabricated claim evidence."""
+        run = self._run_spec("empty-lanes", 1)
+        report = {
+            "runs": [self._suite_report("empty-lanes", "BLOCKED")],
+            "batchCleanup": "clean",
+            "residualRisk": "",
+        }
+        report["runs"][0]["scenarioResults"][0]["handoffReceipts"] = [
+            {
+                "lane": "fabricated",
+                "claimRelease": {"eventIds": ["fabricated-release"]},
+            }
+        ]
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            r"empty-lanes:happy handoff receipt lanes mismatch: "
+            r"expected \[\], observed \['fabricated'\]",
+        ):
+            runner._audit_report((run,), report)
+
     def test_dependency_receipt_schema_requires_and_rejects_missing_lane(self) -> None:
         """Dependency receipts cannot satisfy the schema or report contract without a lane."""
         handoff_schema = runner._coordinator_schema()["properties"]["runs"]["items"][
