@@ -1,12 +1,12 @@
 # Explain User Action Required Requests With Examples
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
-Owner: Parent Dev Backlog Coordinator reservation pending root acceptance
+Owner: Dev Orchestrator /root/resume_blocked_after_claim_publication/uar_examples_recovery
 
-Claim: None
+Claim: Exact backlog-file claim 019f9722-uar-examples-current-main-starting-running acquired by Dev Backlog Steward (event 960fc538-ef8a-4dc9-b5d0-396e48351563) for this provider transaction.
 
 Provider: file
 
@@ -30,7 +30,7 @@ Completion: direct-main
 - Normalized Objective: Reconcile current-main semantics first; make a bounded correction if needed; obtain fresh prompt, methodology, and source review; run focused verification; deliver directly on main and close the provider record only if acceptance evidence supports it; do not run a full repository regression.
 - Dispatched At: 2026-07-26T07:24:06Z.
 - Intended Root Role: Dev Orchestrator.
-- Root Acceptance: Pending. No Starting -> Running transition, root task identifier, branch/worktree assignment, or delivery ownership has been recorded by this reservation.
+- Root Acceptance: Accepted by Dev Orchestrator /root/resume_blocked_after_claim_publication/uar_examples_recovery through its Dev Backlog Steward child. The preserved canonical work-item Thread/task remains 019f9722-61cb-7190-8a6d-21c5ab319339; no replacement Thread is authorized.
 
 ## Prior Launch Reservation
 
@@ -49,8 +49,13 @@ Completion: direct-main
 - Checkout: /Users/martinbechard/.codex/worktrees/a8df/dev-methodology
 - Branch: HEAD
 - Checkout State: Detached HEAD at 271c0fe1a12d9c720fca3c041eb79a6f5ec422bb.
-- Current Phase: Starting under the current parent reservation; root acceptance remains pending.
-- Transition Evidence: Parent Coordinator 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a provided the direct baton after the prior backlog transaction released. The file provider was reconciled as Starting at main commit 49c78f81a91c3eccab21e50a7413d707b7fe3938, then this serialized backlog claim was acquired as 019f9722-user-action-required-starting-running (claim event 5fa1c816-7d42-4fd0-9724-a13f5bbe6587). After the same-task approval was recorded, the provider was reconciled as Starting at main commit ef9efa60914050236ba2a409abe505eeea1c34d6 and claim 019f9722-approved-starting-running was acquired for this Starting to Running transition (claim event 0f5c6788-42bc-4f4d-bd24-25967053830d).
+- Current Root Dev Orchestrator Task: /root/resume_blocked_after_claim_publication/uar_examples_recovery.
+- Current Parent Coordination Thread: /root/resume_blocked_after_claim_publication.
+- Current Phase: Current-main semantic reconciliation.
+- Delivery Branch: codex/uar-examples-current-main-recovery.
+- Delivery Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/uar-examples-current-main-recovery.
+- Started At: 2026-07-26T07:26:33Z.
+- Transition Evidence: The parent recorded the current Ready -> Starting reservation in main commit 29a1d183519a3ffeca80d409c906b3ec74c86533. Root acceptance was reconciled against current main 77ad0ec396c28f6ae0530e381e3359e01a6561b6. The preserved canonical Dev Orchestrator Thread/task is 019f9722-61cb-7190-8a6d-21c5ab319339, while the current parent coordination Thread and delegated root identities are recorded above. Dev Backlog Steward acquired exact-file claim 019f9722-uar-examples-current-main-starting-running (claim event 960fc538-ef8a-4dc9-b5d0-396e48351563) before this atomic provider update. Parent Coordinator 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a provided the earlier direct baton after the prior backlog transaction released. The file provider was previously reconciled as Starting at main commit 49c78f81a91c3eccab21e50a7413d707b7fe3938, then serialized claim 019f9722-user-action-required-starting-running was acquired (claim event 5fa1c816-7d42-4fd0-9724-a13f5bbe6587). After the same-task approval, it was reconciled as Starting at main commit ef9efa60914050236ba2a409abe505eeea1c34d6 and claim 019f9722-approved-starting-running was acquired (claim event 0f5c6788-42bc-4f4d-bd24-25967053830d).
 
 ## Blocked Handoff
 
