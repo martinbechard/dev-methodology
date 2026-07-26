@@ -28,7 +28,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "3a63c29fc7b328a3dc59f7d55fb0e4325283b27c062757c00ab8baf7bb18c9b9",
+          "sha256": "7921cac65fedd909e7930d37abdda9f76f246289da292a9c913e4c2363e0827a",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -326,7 +326,7 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "3f75a7d56cd9c2df3ecf6644222c0a838c9c9e22339fe2174c40879548e75e77",
+          "sha256": "7b7003fd2081a4a944e3936f7e76e9aa769c71d6daf0d4052872dff1f4821beb",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -649,7 +649,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "e2290f5d67fedcef82b4fe31c12e87f18321d23a16baf1515b380151c73237e2",
+          "sha256": "437da8dabff358d27827b7c1c25949871f1722c802836025e3b6030db22c14c4",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -944,7 +944,7 @@
           "referencedFixedSkills": [
             "structured-explanation"
           ],
-          "sha256": "e3333695f4032d5e620a55ad85715181fe1691cad5d8b773d1e07eb2da311195",
+          "sha256": "1d1b3054809f4debb6e570ab468e6690e52f5b534b9026132b3b26a6051d186d",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {

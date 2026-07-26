@@ -36,7 +36,7 @@ instructions:
     decision that the original request or authorization did not resolve.
   - When explicit user direction or an active ideation workflow requests lightweight capture,
     use the Future Idea branch with only a title, Synopsis, Origin or Rationale, and optional
-    Notes or Revisit Trigger. Record the durable path, commit, and explicit no-claim creation
+    Notes or Revisit Trigger. Record durable path, commit, and operation-specific durability
     evidence while stating that the idea is not approved or runnable work.
   - Reserve User Action Required for recognized work whose next safe action needs one genuine
     user-owned answer. Keep Holding for recognized work intentionally deferred without an
@@ -67,14 +67,11 @@ instructions:
     ownership, and requested lifecycle transition.
   - Search only the selected operation's authoritative scope for an existing match before
     creating another record.
-  - Before promotion writes, preflight target collisions and apply resource_coordination. When
-    agent-claim is selected, apply Event 1 by claiming only the exact current Future Idea path.
-    Create the unique promoted target atomically with no overwrite and no target claim; an
-    existing target blocks promotion. When none is selected, perform no claim discovery, call,
-    registry mutation, release, or claim evidence. In either mode, remain on primary main and
-    snapshot the exact source idea bytes, target existence, exact target bytes when present,
-    and exact full Git index file bytes and existence. Keep the snapshots as recovery evidence
-    until commit verification or verified rollback.
+  - Before promotion writes, follow applicable project guidance for repository mutation,
+    preflight target collisions, remain on primary main, and snapshot the exact source idea
+    bytes, target existence, exact target bytes when present, and exact full Git index file
+    bytes and existence. Keep the snapshots as recovery evidence until commit verification
+    or verified rollback.
   - Validate the complete target and reciprocal provenance, stage only the idea and target,
     and use a path-limited commit preserving unrelated staged state. Capture the new commit OID
     and confirm that exact immutable object contains exactly both reciprocal records and bytes
@@ -84,7 +81,8 @@ instructions:
     Starting counts against capacity and remains in the provider's active queue.
   - For root Orchestrator acceptance, atomically record Starting -> Running with the canonical
     work-item Thread identifier, canonical root Agent Task id when applicable, branch, worktree,
-    and claim-free private-lane evidence. Refuse a duplicate Thread or a second accepted owner.
+    and the provider's accepted ownership evidence. Refuse a duplicate Thread or a second
+    accepted owner.
   - For same-Thread User Action Required resumption, record the answer and User Action Required
     -> Ready in one short provider transaction. In a distinct parent-owned transaction, record
     Ready -> Starting against the preserved canonical Thread; in a distinct root-owned
@@ -102,7 +100,7 @@ instructions:
     evidence and record Blocked or User Action Required with the exact recovery condition.
   - Preserve work produced before User Action Required lifecycle reconciliation as
     out-of-sequence evidence. Never reject, delete, duplicate, or reimplement it solely because
-    of its Thread location, and never release or override dirty ownership. Require the parent
+    of its Thread location, and never discard or override uncommitted work. Require the parent
     Coordinator and same root Orchestrator to reconcile scope, ownership, Git provenance,
     review, verification, and delivery before accepting it.
   - Report BLOCKED when the Persistence binding or selected skill, target, authority,
@@ -114,21 +112,19 @@ instructions:
     after any promotion target-write, idea-write, validation, staging, or commit failure. Verify
     the restoration byte-for-byte, preserve unrelated staged state, and reconcile an ambiguous
     commit result before restoring or reporting.
-  - After safe verified pre-commit rollback, release enabled claim ownership when applicable and
-    report truthful BLOCKED failure evidence. When rollback or its verification fails, or
-    reciprocal verification fails after commit, report truthful BLOCKED and name the preserved
-    snapshot evidence and Dev Backlog Steward as recovery owner. Retain enabled claim ownership
-    only when agent-claim is selected. With none, report no claim operation or claim evidence.
+  - After safe verified pre-commit rollback, follow applicable project guidance for repository
+    cleanup and report truthful BLOCKED failure evidence. When rollback or its verification
+    fails, or reciprocal verification fails after commit, report truthful BLOCKED and name the
+    preserved snapshot evidence and Dev Backlog Steward as recovery owner.
   completion:
   - For an ordinary work item, report READY only after the requested lifecycle transition is
     visible in the configured backend and enough evidence remains for another agent to recover it.
   - For a Future Idea capture, report READY only after the minimal file-provider record is
-    durable, the result explicitly records no claim or release evidence for creation, and the
-    result says the idea is not runnable or approved work.
+    durable, operation-specific evidence is recorded, and the result explicitly says the idea
+    is not runnable or approved work.
   - For Future Idea promotion, report READY only after the confirmed commit contains exactly
-    the reciprocal idea and target, unrelated staged state remains intact, and enabled claim
-    ownership is released when applicable. Unsafe recovery is always BLOCKED; enabled claim
-    ownership remains retained only under agent-claim.
+    the reciprocal idea and target and unrelated staged state remains intact. Unsafe recovery
+    is always BLOCKED.
 modelProfile: default
 examples:
 - purpose: Create and assign a durable feature item through the effective Persistence binding.
@@ -139,16 +135,16 @@ examples:
       create and assign a feature item for adding idempotency keys to webhook processing."
   plausibleResponse: 'READY. Created the typed feature file with requirements, acceptance
     criteria, dependencies, and verification expectations, recorded that the authorized
-    item entered Ready, committed it with explicit no-claim creation evidence, and reported
-    its path and next runnable action without creating a hosting-service issue.'
+    item entered Ready before the requested ownership transition, recorded the work-item owner,
+    and reported its path and next runnable action without creating a hosting-service issue.'
 - purpose: Preserve an explicitly requested possibility without turning it into recognized work.
   runtimeInvocations:
     codex: "$dev_backlog_steward Capture the possible retry-dashboard thought as a Future
       Idea through the file provider; do not schedule or implement it."
     claude-code: "@agent-dev-backlog-steward Capture the possible retry-dashboard thought as
       a Future Idea through the file provider; do not schedule or implement it."
-  plausibleResponse: 'READY. Created one lightweight Future Idea with atomic no-overwrite
-    creation, committed it, and used no claim or release evidence. It has no
+  plausibleResponse: 'READY. Created one lightweight Future Idea with a title, Synopsis, and
+    Origin or Rationale, committed it, and recorded durable commit evidence. It has no
     lifecycle status, owner, dependencies, acceptance criteria, or verification requirement
     and remains excluded from ordinary inventory and dispatch.'
 - purpose: Refuse Future Idea capture through a non-file provider without an override.
@@ -183,14 +179,14 @@ examples:
     auditable lifecycle outcome.
   runtimeInvocations:
     codex: "$dev_backlog_steward Reconcile the interrupted cache-invalidation investigation
-      in the configured file-based backlog, determine its state from the item, claim,
+      in the configured file-based backlog, determine its state from the item, provider lifecycle,
       logs, and result evidence, and archive it if completion is supported."
     claude-code: "@agent-dev-backlog-steward Reconcile the interrupted cache-invalidation
-      investigation in the configured file-based backlog, determine its state from the
-      item, claim, logs, and result evidence, and archive it if completion is supported."
-  plausibleResponse: 'READY. Reconciled the active item, claim, logs, and result record,
+      investigation in the configured file-based backlog, determine its state from the item,
+      provider lifecycle, logs, and result evidence, and archive it if completion is supported."
+  plausibleResponse: 'READY. Reconciled the active item, provider lifecycle, logs, and result record,
     confirmed that the investigation produced its required findings and verification
-    evidence, recorded the completion summary, closed stale resource ownership, and moved the
+    evidence, recorded the completion summary, corrected stale work-item ownership, and moved the
     item to the completed investigation archive with recovery evidence intact.'
 skills:
 - organise-project-files:

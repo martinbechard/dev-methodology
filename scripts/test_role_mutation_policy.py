@@ -50,6 +50,34 @@ def _load_build_skill_docs():
 class RoleMutationPolicyTests(unittest.TestCase):
     """Protect the conceptual definition mutation contract and project-file boundary."""
 
+    def test_backlog_steward_leaves_resource_coordination_to_project_guidance(self) -> None:
+        """Keep provider lifecycle authority portable while project guidance owns coordination."""
+
+        build_skill_docs = _load_build_skill_docs()
+        roles = build_skill_docs.load_role_definitions(
+            set(build_skill_docs.build_payload()["skills"])
+        )
+        steward = next(role for role in roles if role.name == "dev-backlog-steward")
+        contract = yaml.safe_dump(
+            {
+                "instructions": steward.instruction_sections,
+                "examples": steward.examples,
+                "outputContract": steward.output_contract,
+            },
+            sort_keys=False,
+        )
+
+        self.assertNotIn("resource_coordination", contract)
+        self.assertNotIn("agent-claim", contract)
+        self.assertNotIn("claim", contract.lower())
+        self.assertIn(
+            "follow applicable project guidance for repository mutation",
+            contract,
+        )
+        self.assertIn("provider's accepted ownership evidence", contract)
+        self.assertIn("operation-specific evidence is recorded", contract)
+        self.assertIn("provider lifecycle", contract)
+
     def test_repository_mutation_does_not_load_resource_coordination(self) -> None:
         """Keep mutation capability independent from the project-selected coordination skill."""
         build_skill_docs = _load_build_skill_docs()

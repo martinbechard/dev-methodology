@@ -4106,13 +4106,22 @@ class BundleContentTests(unittest.TestCase):
             "bytes and existence",
             "preserving unrelated staged state",
             "Capture the new commit OID",
-            "Retain enabled claim ownership",
-            "only when agent-claim is selected",
-            "With none, report no claim operation",
-            "or claim evidence",
+            "follow applicable project guidance for repository mutation",
+            "provider's accepted ownership evidence",
+            "operation-specific evidence is recorded",
+            "provider lifecycle",
         ):
             with self.subTest(steward_future_ideas_branch=required_phrase):
                 self.assertIn(required_phrase, role_text)
+        for retired_coordination_phrase in (
+            "resource_coordination",
+            "agent-claim",
+            "claim-free",
+            "enabled claim",
+            "claim evidence",
+        ):
+            with self.subTest(steward_coordination_phrase=retired_coordination_phrase):
+                self.assertNotIn(retired_coordination_phrase, role_text)
         for documentation_text in (readme_text, provider_contract_text):
             for required_phrase in (
                 "exact full Git index file bytes and existence",
