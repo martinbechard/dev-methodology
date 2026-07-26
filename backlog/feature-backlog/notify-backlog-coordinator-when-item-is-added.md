@@ -1,6 +1,6 @@
 # Notify the Backlog Coordinator When a Work Item Is Added
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -182,6 +182,7 @@ This item authorizes delivery of the coordinator-notification behavior. It does 
 
 ## Coordinator Disposition — 2026-07-26
 
-- Disposition: continuing Blocked. Existing three-path approval is sufficient, but this overlaps current Coordinator and Steward work. No rejected candidate may be integrated as-is.
-- Trigger: terminal accepted-main or release batons from 019f9f67-4487 and 019f9a91.
-- Next Owner: parent Dev Backlog Coordinator for a fresh deterministic-provider-evidence and harness-scoped plan. No user action is required now. Resumption remains Blocked -> Ready -> Starting -> Running.
+- Disposition: Ready. Terminal triggers 019f9f67-4487 and 019f9a91 are satisfied, and current main e09230a2 is reconciled. Owner remains Unowned; canonical task 019f9ea6-b3bd-7551-ad1f-5a862f768313 remains preserved.
+- Authorized Plan: a new current-main-native bounded plan under the existing exact three-definition approval. It must use one provider-returned canonical creation-evidence value or a fully specified and tested provider serialization, and make notification delivery harness-scoped so Codex-only operations do not leak into non-Codex adapters.
+- Rejected Candidates: do not import, reuse, or integrate 2b255e1a, 5cf8d456, or 12e0615b.
+- Next Action: the parent Dev Backlog Coordinator may perform the normal Ready -> Starting reservation for the preserved canonical task.

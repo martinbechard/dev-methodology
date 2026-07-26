@@ -136,6 +136,7 @@ This item records a confirmed defect only. Do not weaken the independent resourc
 
 ## Coordinator Disposition — 2026-07-26
 
-- Disposition: continuing Blocked. Existing governed approval is sufficient, but sources overlap the OID and receipt lane and current Coordinator and Orchestrator work. No rejected candidate may be integrated as-is.
-- Trigger: terminal accepted-main or release batons from 019f978e-28b7-7561-be38-b535ab26850f, 019f9f67-4487-75b3-89c4-3cbfbd83b640, 019f9a91-b1a9-7ea0-9c90-35f0ed78c1be, and 019f96cf-226c-7f62-9d66-7d31cead822e.
-- Next Owner: parent Dev Backlog Coordinator for a fresh current-main plan. No new definition approval is required unless scope expands; no user action is required now. Resumption remains Blocked -> Ready -> Starting -> Running.
+- Disposition: continuing Blocked with Owner Unowned. Preserve canonical task 019f96ce-b1a0-7633-97ab-336ba7d188e4 and all prior task, candidate, and review evidence.
+- Concrete Serialization Dependency: wait until add-structured-commit-disposition-to-orchestrator-evaluation-contract has an accepted current-main delivery or an exact non-overlap mapping, because both items alter runner and evaluator paths.
+- Next Owner And Action: after that observable trigger, the parent Dev Backlog Coordinator must create a new current-main-native bounded plan for the recorded producer/consumer, eager helper resolution, pre-classification bijection, and provider-none classifier/digest findings.
+- Rejected Candidates And Authority: do not import, reuse, or integrate any rejected candidate. No user action or new definition approval is required unless scope expands. Permitted resumption remains Blocked -> Ready -> Starting -> Running.

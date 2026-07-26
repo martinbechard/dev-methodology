@@ -1,6 +1,6 @@
 # Add Structured Commit Disposition To Orchestrator Evaluation Contract
 
-Status: Blocked
+Status: Ready
 
 Type: Defect
 
@@ -132,6 +132,7 @@ Do not implement this finding as part of unrelated candidate work. Governed-defi
 
 ## Coordinator Disposition — 2026-07-26
 
-- Disposition: continuing Blocked. A fresh bounded recovery is agent-actionable under the existing ordinary evaluation authority, but shares runner and receipt scope. No rejected candidate may be integrated as-is.
-- Trigger: terminal accepted-main or release batons from 019f9f5f-8959-7b72-a67e-38f843e9e720, 019f9f67-1259-73a1-a9f2-1c6ce447903e, 019f9f66-7522-72d1-a673-227a6b0f3ed9, and 019f9f60-097d-7392-813d-801c9d058683.
-- Next Owner: parent Dev Backlog Coordinator to map current main and create one new bounded plan. No user action is required now. Resumption remains Blocked -> Ready -> Starting -> Running.
+- Disposition: Ready. All prior serialization triggers are terminal, and current main e09230a2 is reconciled. Owner remains Unowned; canonical task 019f970d-1e68-7563-b840-a18765cfb70a remains preserved.
+- Authorized Plan: one new current-main-native bounded plan, first in the serialized runner/evidence sequence. Address only the recorded final findings: bind selected file-provider closeout state and archive bytes to retained Dev Backlog Steward execution; align empty sessionIds for provider-none and BLOCKED; and make AWAITING_REVIEW-to-READY same-delivery continuity executable.
+- Rejected Candidates: do not import, reuse, or integrate a0449317, 33521020, 9f0aafce, or 13277e49.
+- Approval And Next Action: no user action or new definition approval is required unless scope expands. The parent Dev Backlog Coordinator may perform the normal Ready -> Starting reservation for the preserved canonical task.

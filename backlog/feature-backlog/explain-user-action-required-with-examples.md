@@ -1,6 +1,6 @@
 # Explain User Action Required Requests With Examples
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -198,6 +198,7 @@ Discovery may identify governed canonical sources; any such source change requir
 
 ## Coordinator Disposition — 2026-07-26
 
-- Disposition: continuing Blocked. Existing exact approval is sufficient, but this overlaps current Coordinator, Orchestrator, and Steward work. No rejected candidate may be integrated as-is.
-- Trigger: terminal accepted-main or release batons from 019f9f67-4487, 019f9a91, and 019f96cf-226c.
-- Next Owner: parent Dev Backlog Coordinator for a fresh semantic-evaluator plan. No user action is required now. Resumption remains Blocked -> Ready -> Starting -> Running.
+- Disposition: Ready. Terminal triggers 019f9f67-4487, 019f9a91, and 019f96cf-226c are satisfied, and current main e09230a2 is reconciled. Owner remains Unowned; canonical task 019f9722-61cb-7190-8a6d-21c5ab319339 remains preserved.
+- Authorized Plan: a new current-main-native bounded semantic-evaluator plan under the existing exact two-definition approval. Require unseen paraphrase tests for the four recorded contradiction classes and fresh prompt, code, and methodology review and verification.
+- Rejected Candidates: do not import, reuse, or integrate 31e52b0e, 0aa3d90f, or aec92b11.
+- Next Action: the parent Dev Backlog Coordinator may perform the normal Ready -> Starting reservation for the preserved canonical task.

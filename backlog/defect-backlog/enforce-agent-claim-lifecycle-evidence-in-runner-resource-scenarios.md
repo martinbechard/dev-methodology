@@ -205,6 +205,7 @@ Do not resume through a direct Blocked-to-Running transition. Preserve the canon
 
 ## Coordinator Disposition — 2026-07-26
 
-- Disposition: continuing Blocked. A fresh bounded two-file recovery is agent-actionable under existing authority, but overlaps active runner and receipt work. No rejected candidate may be integrated as-is.
-- Trigger: terminal accepted-main or release batons from 019f9f5f, 019f9f67-1259, 019f9f66-7522, and 019f9f60.
-- Next Owner: parent Dev Backlog Coordinator. No user action is required now. Resumption remains Blocked -> Ready -> Starting -> Running.
+- Disposition: continuing Blocked with Owner Unowned. Preserve canonical task 019f981c-4fea-7b83-b8d2-0b254ff45f0c and all prior task, candidate, and review evidence.
+- Concrete Dependencies: wait for (a) accepted delivery of the cleanup-only claim contract from canonical task 019f9fef-1edc-7ea1-a058-bf8dfddcd2fb, because release validation, no-change, and reconciliation assumptions are changing; and (b) accepted delivery or an exact non-overlap mapping for serialized runner items add-structured-commit-disposition-to-orchestrator-evaluation-contract and decouple-dev-orchestrator-suite-from-agent-claim, in that order.
+- Next Owner And Action: after both observable triggers, the parent Dev Backlog Coordinator must derive a new two-file current-main plan from surviving findings only.
+- Rejected Candidates And Authority: do not import, reuse, or integrate e437702d, 446371ff, 4778fd44, b22704da, or ac579e7c. No user action is required now. Permitted resumption remains Blocked -> Ready -> Starting -> Running.
