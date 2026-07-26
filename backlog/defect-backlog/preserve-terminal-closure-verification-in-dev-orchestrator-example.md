@@ -22,10 +22,16 @@ An independent verifier evaluated immutable candidate dce1fc7f12dd20f6e2292f4c85
 
 The user’s standing direction authorizes durable Ready logging of confirmed defects. Fresh independent verification of candidate dce1fc7f12dd20f6e2292f4c85f16425745c80ff ran the full command python3.11 -m unittest scripts.test_bundle_content and observed the candidate-specific failure scripts.test_bundle_content.BundleContentTests.test_dev_coder_and_orchestrator_preserve_candidate_review_commit_order. The verifier identified the missing explicit verification phrase in the Dev Orchestrator READY example.
 
+## Further Reproduction And Root Cause
+
+The corrected example legitimately dispatches dev-backlog-steward exactly once for confirmed-defect durable recording before Commit returned READY, as the current policy requires. Existing scripts/test_bundle_content.py lines 1843-1853 select finalization_index with the first occurrence of dev-backlog-steward exactly once and then require Commit returned READY before it, producing 665 not less than 142. The focused policy test simultaneously requires the early defect dispatch. The regression therefore selects the early defect-recording dispatch instead of the later terminal-closure dispatch and verified selected-manager closure after Commit returned READY.
+
 ## Requirements
 
 - Update the existing Dev Orchestrator canonical role example to state explicit verification of the selected manager's recorded terminal closure.
 - Preserve the normative terminal closure contract and candidate-review commit-order behavior.
+- Preserve the explicit early confirmed-defect-recording dispatch and the later post-Commit terminal closure verification in the example.
+- Change the order-test semantics to locate terminal closure dispatch and verification after Commit returned READY rather than the first dev-backlog-steward occurrence.
 - Regenerate only the supported role mirrors after the canonical correction.
 - Keep this correction within the current assigned delivery; do not create a second delivery task.
 
@@ -33,6 +39,7 @@ The user’s standing direction authorizes durable Ready logging of confirmed de
 
 - The READY example explicitly preserves verification of the selected manager's recorded closure.
 - The focused candidate-review ordering regression passes without weakening terminal persistence evidence.
+- The correction preserves both the early durable-defect dispatch and later verified terminal closure ordering.
 - Supported role mirrors are regenerated from the corrected canonical source only.
 - Focused and full bundle tests, applicable generator freshness checks, and an independent verifier rerun pass.
 
@@ -43,6 +50,7 @@ None.
 ## Verification
 
 - Run the focused candidate-review ordering regression.
+- Run the focused confirmed-defect policy regression.
 - Run python3.11 -m unittest scripts.test_bundle_content.
 - Run the applicable role-generation freshness checks.
 - Obtain an independent verifier rerun.
