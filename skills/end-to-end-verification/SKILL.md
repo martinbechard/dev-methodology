@@ -13,13 +13,13 @@ Prove the complete workflow with explicit environment ownership and observable a
 
 1. Identify the authoritative workflow, actors, starting state, dependencies, and expected result.
 2. Route specialized automation guidance when the project provides it.
-3. Make service, process, session, identity, data, and cleanup ownership explicit; when agent-claim is selected, use Agent Claim's owning Event Contract for shared browsers, databases, ports, live models, installed runtimes, and deployments.
+3. Make service, process, session, identity, data, and cleanup ownership explicit. Apply agent-claim when verification triggers a claim event.
 4. Exercise success and material failure paths through real public boundaries.
 5. Prefer stable user-visible or contract-level observations over timing assumptions.
 6. Capture reproducible steps, assertions, runtime errors, and diagnostic artifacts.
 7. Distinguish product failures from environment, identity, data, or runtime setup blockers.
 
-Private-worktree build and test activity needs no claim when its outputs and caches remain worktree-local. Before finish, release, or handoff, commit completed work and prove the applicable worktree clean.
+Before finish or handoff, commit completed work and prove the applicable worktree clean.
 
 ## Review Evidence
 

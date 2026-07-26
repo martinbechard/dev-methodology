@@ -69,10 +69,10 @@ resource_coordination:
 # Required only when resource_coordination.selected is agent-claim. Omit this complete
 # mapping when resource coordination is none.
 agent_claim_transport:
-  selected: "TODO: mcp or command. Select exactly one claim-helper interface from target-runtime evidence."
+  selected: "TODO: mcp or command. Select exactly one claim helper from target-runtime evidence."
   availability: "TODO: AVAILABLE or UNAVAILABLE. Rendering requires AVAILABLE."
   verification:
-    - "TODO: Record the setup-time tool-surface or command-package evidence that verifies the selected claim-helper interface."
+    - "TODO: Record the setup-time tool or command-package evidence that verifies the selected claim helper."
 
 authoritative_sources:
   readme_files:

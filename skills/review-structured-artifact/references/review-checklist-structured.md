@@ -55,6 +55,11 @@ Do not mark pass without evidence. The label Quoted evidence: is not an addition
 
 ## Writing And Section Model Questions
 
+- For every prose sentence, record all three checks below. Apply the same checks to a table row or list item when it makes a complete claim or gives a complete instruction.
+  - Needed: Does the sentence add information or an action that the document requires?
+  - Clear: Does the sentence use familiar words and explain every necessary technical term?
+  - Definite reference: When the sentence uses “the” before a common noun, has an earlier sentence introduced that specific instance?
+- For each failed sentence check, quote the sentence, name the failed check, and state a direct correction.
 - Question: Does the document use plain English, short sentences, and simple words?
 - Question: Are jargon, buzzwords, and abstract phrasing avoided unless clearly needed?
 - Question: Are technical terms defined once when first introduced?

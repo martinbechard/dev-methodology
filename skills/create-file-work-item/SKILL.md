@@ -21,13 +21,13 @@ Create one durable file-provider work item that is clear, typed, and safe to man
 
 ## File Authority
 
-The only authoritative file-provider storage root is backlog in the primary worktree while that worktree is on main. The repository-relative backlog path is both work_item_id and provider_reference. A filename slug is only a display shorthand when it is unambiguous.
+Only the primary worktree on main may create canonical files under backlog. The repository-relative backlog path is both work_item_id and provider_reference.
 
-An isolated worktree, a linked worktree other than the primary worktree, or a primary worktree not on main has no authority to create the item. Return BLOCKED with the observed worktree and branch, the required primary-main authority, and the next handoff. Do not write a shadow queue elsewhere.
+Another worktree may inspect backlog but must not create the item. If the primary worktree is not on main, it must not create the item. Return BLOCKED with the observed worktree, branch, and required handoff. Do not create another queue elsewhere.
 
-Creating a uniquely named new work-item file uses no claim. Resolve the final canonical path first, then create it with the platform's exclusive-create operation so the write fails when the path already exists. Never preflight with an existence check followed by an ordinary overwrite-capable write. Write the complete intended bytes through that exclusive descriptor, synchronize and close it, validate the created item, and remove only that newly created path if validation or commit fails. An existing target means duplicate reconciliation is required; do not overwrite or retry with a different name.
+Resolve the final canonical path first, then create it with the platform's exclusive-create operation so the write fails when the path already exists. Never preflight with an existence check followed by an ordinary overwrite-capable write. Write the complete intended bytes through that exclusive descriptor, synchronize and close it, validate the created item, and remove only that newly created path if validation or commit fails. An existing target means duplicate reconciliation is required; do not overwrite or retry with a different name.
 
-Keep backlog creation separate from implementation ownership. When creation immediately authorizes delivery, record and commit the READY item first, then apply the Event Contract independently to later implementation or existing-item updates.
+Keep backlog creation separate from implementation ownership. When creation immediately authorizes delivery, record and commit the READY item first.
 
 ## Template Workflow
 
@@ -79,18 +79,20 @@ Promote an idea only through a deliberate user-authorized operation:
 
 1. Read the retained source idea, resolve its canonical regular-file authority, and search ordinary queues for an existing matching work item.
 2. Resolve the intended canonical target path and preflight target collisions before any promotion write. An existing target or matching ordinary work item blocks promotion without changing either record.
-3. Remain on primary main. When agent-claim is selected, apply Event 1 to the retained Future Idea update and claim only its exact current path. Create the uniquely named promoted target with atomic no-overwrite semantics and no target claim; an existing target blocks promotion before mutation. Snapshot the exact pre-attempt source idea bytes, target existence, exact target bytes when it exists, and exact full Git index file bytes and existence before mutation. With coordination none, make no claim call or claim evidence. Preserve the snapshots as recovery evidence until commit verification or verified rollback.
+3. Remain on primary main. Follow the Claim Events table in agent-claim for the retained Future Idea update. Create the promoted file with an exclusive create operation. Stop if the target already exists. Before editing, save the source idea, target, and Git index state needed to restore the attempt.
 4. Create one complete typed work item in its applicable active, Holding, or User Action Required destination with every field and section required by Required Item Shape, including Open Questions, and any destination-specific sections. Holding may retain its underlying dispatchable Type or declare Type: Holding; User Action Required must retain its underlying dispatchable Type.
 5. Set Completion to exactly direct-main, feature-branch, or UNSET.
 6. Include the exact canonical source idea path in the promoted work item's Source Evidence section.
 7. Retain the original idea in backlog/future-ideas and add Promoted To with the promoted item's canonical provider reference.
-8. Validate both resolved regular files, complete item shape, destination rules, and reciprocal provenance.
+8. Validate both files, the complete item shape, destination rules, and links in both directions.
 9. Stage exactly the idea and target paths without clearing, replacing, or committing unrelated staged state. Use a path-limited commit for exactly those two paths.
 10. Capture the new commit OID immediately after commit creation. Re-read that exact immutable object rather than mutable HEAD and require its changed-path set and reciprocal record bytes to contain exactly the intended pair. Verify unrelated staged state remains staged before reporting success.
 
-Treat the writes, validation, index changes, commit, and reciprocal commit verification as one failure-atomic promotion. On any target write, idea write, post-write validation, staging, or pre-commit failure, restore the source idea to its exact pre-attempt bytes. Restore an existing target to its exact pre-attempt bytes, or remove only the target newly created by this promotion attempt. Restore the exact pre-attempt Git index file bytes and existence so unrelated staged state is byte-for-byte preserved. Verify every restored path and the Git index against the snapshots. When agent-claim is selected, release the enabled claim only after promotion success or a safe verified pre-commit rollback. When none is selected, perform the same restoration and verification without a claim call or claim evidence. When commit dispatch is ambiguous, reconcile repository history and capture the exact resulting commit OID before deciding whether restoration is required.
+The promotion must either succeed completely or restore the previous state. If writing, validation, staging, or the pre-commit step fails, restore the source idea and Git index. Remove only the new target created by this attempt. Verify the restored state before returning.
 
-If restoration or its verification fails, or if reciprocal verification fails after a commit exists, return truthful BLOCKED and name the preserved snapshot evidence and the Dev Backlog Steward recovery owner. When agent-claim is selected, retain enabled claim ownership and do not report release. When none is selected, report no claim operation or claim evidence; BLOCKED recovery ownership remains necessary even without a registry claim. Do not report promotion success until the captured immutable commit OID contains exactly both reciprocal records, unrelated staged state remains intact, and enabled claim ownership is released when applicable.
+If the commit result is unknown, inspect Git history before deciding whether to restore files. Read the resulting commit ID directly from Git.
+
+If restoration fails, or if the commit does not contain the two linked records, return BLOCKED. Identify the saved recovery evidence and the Dev Backlog Steward responsible for recovery. Do not report success until the commit contains exactly those two files and unrelated staged files remain unchanged.
 
 Promotion does not copy the idea's optional revisit trigger into lifecycle scheduling. The promoted work item receives Status: Ready in its typed active folder when promotion authorizes active work, Status: Holding when the user deliberately defers the recognized work, or Status: User Action Required when a separate genuine user-owned question prevents safe work.
 
@@ -151,7 +153,7 @@ Treat a question as an invalid User Action Required classification when an agent
 
 Before requesting approval for a governed definition change, use source discovery to identify the smallest required governed sources and produce an exact canonical-path manifest. Record that manifest in the work-item body before asking the user. Do not substitute a directory, wildcard, artifact category, or general permission for exact path-specific approval.
 
-Record the exact approval scope, exact user wording, date, and exact user-message provenance durably in the work-item body. List any allowed generated mirrors or other dependent artifacts separately from the governed canonical sources. A pre-mutation checker YAML file is derived operational evidence rather than approval authority; it may cite the durable record but cannot create, widen, or replace user approval.
+Record the exact approval scope, exact user wording, date, and exact user-message provenance durably in the work-item body. List any allowed generated mirrors or other dependent artifacts separately from the governed canonical sources.
 
 Keep change-control manifests out of Design Principles. They are approval evidence, not design rules. Do not mutate a governed definition until the applicable project check accepts an approval record for that exact canonical path.
 
@@ -190,7 +192,7 @@ For an item in backlog/user-action-required, also include:
 - Resolution, initially Pending.
 - Unattended Work Boundary.
 
-The creation commit and result must preserve work_item_id, provider_reference, source evidence, provider selection, completion selection, creation authority, creation time when the repository records it, and enabled resource-coordination evidence. Keep Requirements, Acceptance Criteria, Dependencies, and Verification so the item remains complete after it moves into an active typed backlog.
+The creation commit and result must preserve work_item_id, provider_reference, source evidence, provider selection, completion selection, creation authority, creation time when the repository records it, and applicable claim evidence. Keep Requirements, Acceptance Criteria, Dependencies, and Verification so the item remains complete after it moves into an active typed backlog.
 
 ## Writing Rules
 
@@ -208,7 +210,7 @@ The creation commit and result must preserve work_item_id, provider_reference, s
 Before reporting completion:
 
 - Confirm the effective provider is file and the mutation occurred only under backlog in the primary main worktree.
-- Confirm uniquely named atomic no-overwrite creation used no claim and produced no release evidence; if another Event Contract event occurred, keep its claim evidence separate from creation and implementation ownership.
+- Confirm uniquely named atomic no-overwrite creation succeeded.
 - Confirm the item is in the right typed folder and has a stable unique path.
 - Confirm related multi-item goals have an index.md and linked independently runnable children.
 - Confirm the complete required item shape, source evidence, dependencies, and verification expectations are present.
@@ -218,7 +220,7 @@ Before reporting completion:
 - For Future Ideas, confirm the minimal idea shape, exclusion from ordinary work-item scans, resolved regular-file authority within backlog/future-ideas, and any reciprocal Promoted To and exact Source Evidence link.
 - Confirm no provider issue, mirror, shadow queue, or duplicate file was created.
 
-For an ordinary work item, return provider file, work_item_id and provider_reference, item type, lifecycle status, source evidence, dependencies, completion selection, creation commit, explicit no-claim creation evidence, and next runnable action. For a Future Idea, return its path, synopsis, origin or rationale, optional revisit trigger, capture commit, explicit no-claim creation evidence, and the fact that it is not runnable or approved work.
+For an ordinary work item, return provider file, work_item_id and provider_reference, item type, lifecycle status, source evidence, dependencies, completion selection, creation commit, and next runnable action. For a Future Idea, return its path, synopsis, origin or rationale, optional revisit trigger, capture commit, and the fact that it is not runnable or approved work.
 
 ## Migration
 

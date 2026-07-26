@@ -1,28 +1,27 @@
 ---
 name: agent-work-merge
-description: Use when integrating work from multiple agents, linked git worktrees, parallel task branches, resource-coordinated repositories, subagent outputs, or concurrent implementation lanes.
+description: Use when combining accepted work from multiple branches, worktrees, or agents.
 metadata:
   category: development-practice
 ---
 
 # Agent Work Merge
 
-Use this skill when multiple agents complete work in separate git worktrees or branches and their results need to be merged into the main integration checkout.
+Use this skill when accepted work from separate branches or worktrees must be combined and merged into main.
 
 ## Goal
 
-Keep parallel work isolated during implementation, then merge only verified and committed work into the integration lane. The merge agent owns coordination, conflict resolution, final verification, and cleanup. When resource coordination is enabled, it also preserves the selected policy's ownership and release contract.
+Keep work separate during implementation. Merge only reviewed, verified, and committed changes. The merge agent resolves conflicts, verifies the combined result, and records cleanup eligibility.
 
 ## Preconditions
 
 Before merging a worktree:
 
-- When agent-claim is selected, claim project-files for non-backlog integration in the primary worktree and use only the named shared-resource events in Agent Claim's complete Event Contract. Private reconciliation-branch preparation needs no claim.
+- Follow the Claim Events table in agent-claim during integration.
 - Confirm the source worktree has no uncommitted task changes unless the handoff explicitly says how to handle them.
 - Confirm the source branch has a meaningful commit for the completed unit.
 - Read the source agent status, final notes, verification results, and known risks.
-- Confirm the integration checkout is the intended target lane.
-- When resource coordination is enabled, confirm every Event Contract claim used by the source task was released after a clean commit or explicitly handed to the integration owner.
+- Confirm the integration worktree is the intended target.
 
 ## Merge Workflow
 
@@ -31,19 +30,19 @@ Before merging a worktree:
 3. For each source, inspect status, recent commits, and changed files.
 4. Reconcile one source at a time on a fresh branch based on current main, applying only the accepted file content or explicitly selected commits required by the work item.
 5. Resolve conflicts by preserving the intended steady-state behavior, not by blindly choosing either side.
-6. Run focused verification after each risky merge.
+6. Run focused verification when a merge can affect behavior.
 7. Commit each coherent merged unit before starting the next source.
 8. Regenerate shared outputs only after the branches containing their source changes are integrated.
-9. Run final repository verification required by the project.
-10. When resource coordination is enabled, release owned integration resources only after verification and a clean integration commit are complete.
+9. Run the smallest post-integration tests that prove the merged behavior.
+10. Record the source commits, resulting integration commits, and cleanup eligibility.
 
 ## Fresh Current-Main Reconciliation
 
-Prefer a fresh reconciliation branch from current main when a candidate branch contains cumulative, unrelated, or out-of-scope ancestry. Apply the exact accepted paths, or cherry-pick only the explicitly selected commits whose complete changes are in scope. Do not merge cumulative feature-branch history merely to preserve provenance.
+When a candidate branch contains unrelated commits, create a new integration branch from current main. Apply only the accepted files or commits. Do not merge unrelated branch history merely to preserve it.
 
-Record every source commit identifier, accepted path set, and any non-ancestral content mapping in the reconciliation commit message and durable work item. That evidence preserves provenance without making unrelated history reachable from main. Use a full-history merge only when the complete imported history is intentional, reviewed, and inside the integration ownership scope.
+Record the source commit IDs and accepted files in the integration commit and work item. If integration changes a commit ID, record the source-to-integration mapping.
 
-When current main and an accepted contribution both contain contracts that must survive, reconcile their semantic union on the fresh branch. Regenerate only supported outputs, review the complete reconciled diff in a fresh context, and verify the bounded result before integration. Content equivalence and durable source mapping are valid provenance evidence; a two-parent merge is not required.
+If current main and the accepted contribution both contain required changes, combine those changes on the new branch. Regenerate only affected outputs. Review and verify the complete result before integration.
 
 ## Commands
 
@@ -64,7 +63,7 @@ git merge --no-ff source-branch
 
 If the project prefers rebased or squash integration, follow the repository instructions instead.
 
-The default ancestry-bounded path is a fresh branch from current main with exact accepted content or selected commits applied according to the repository's supported workflow. The resulting commit must identify its source commits and accepted paths.
+By default, create a new branch from current main and apply only the accepted content. Identify the source commits and accepted files in the resulting commit.
 
 ## Conflict Handling
 
@@ -76,12 +75,12 @@ The default ancestry-bounded path is a fresh branch from current main with exact
 
 ## Verification
 
-Run the project-required checks for the merged surface. At minimum:
+Select tests from the merged files, changed behavior, and actual dependency paths:
 
-- Syntax or build verification when code changed.
-- Focused unit tests for changed units.
-- E2E or smoke tests when routing, auth, UI workflows, middleware, server startup, generated output, or shared runtime behavior changed.
-- Diff hygiene before commit when broad or conflict-heavy changes were made.
+- Run focused unit or contract tests for the changed behavior.
+- Run an integration test only when the merge crosses a real component boundary.
+- Run an end-to-end test only when the changed behavior is observable only through that workflow.
+- Run git diff --check before committing.
 
 Never treat a clean merge as proof that the merged application works.
 
@@ -90,12 +89,9 @@ Never treat a clean merge as proof that the merged application works.
 After a source is merged and verified:
 
 - Record the merge commit or integration commit.
-- Remove or release only coordination state owned by the merge task when coordination is enabled.
 - Stop or hand off runtime resources.
 - Remove completed worktrees only when the repository policy allows it and the branch has been safely integrated.
 - Leave failed or blocked worktrees intact with a clear status note.
-- Never release enabled integration ownership while newly created uncommitted work remains.
-- Keep claim release, Git integration, and terminal backlog closeout as distinct operations with separate evidence.
 
 ## Final Report
 
@@ -104,5 +100,5 @@ Report:
 - Source branches or worktrees merged.
 - Commit hashes created.
 - Verification commands and outcomes.
-- Resource-coordination releases when enabled, or remaining blockers.
+- Claim results or remaining blockers.
 - Worktrees removed or intentionally kept.
