@@ -152,7 +152,11 @@ checks:
   - id: focused-item-verification
     type: deterministic
     critical: true
-    description: Each item runs the smallest project-native tests covering changed behavior and credible regression risk; the complete agent catalog is reserved for the final integrated campaign state.
+    description: Each item runs the smallest project-native tests covering changed behavior and direct consumers. An accepted item merges independently. Explicitly related items may receive one combined regression after all selected items are present on a recorded main commit.
+  - id: combined-regression-scheduling
+    type: deterministic
+    critical: true
+    description: A combined regression records its selected work items, waits until every selected item is present on main, runs once against the exact combined main commit, and routes a distinct failure without automatically invalidating unrelated focused evidence.
   - id: workitem-completion-handoff
     type: deterministic
     critical: true

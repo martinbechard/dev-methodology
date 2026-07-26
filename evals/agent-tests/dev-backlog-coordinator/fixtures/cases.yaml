@@ -57,7 +57,13 @@ cases:
     sharedOperations: [primary main integration, existing backlog update, shared browser, shared database, shared port, shared live model, shared install, shared deployment]
     perItemVerification: [focused tests]
     expandedVerification: [focused tests, expanded regression]
-    finalCampaignVerification: [complete agent catalog]
+    combinedRegressionVerification: [system-wide regression]
+    combinedRegression:
+      selectedItems: [api-a, api-b, api-c]
+      incompleteMergedItems: [api-a, api-b]
+      completeMergedItems: [api-a, api-b, api-c]
+      mainCommit: abc123
+      distinctFailure: api-c rejects a valid request
     postFactoOptions: [narrow claim paths, split named resources, sequence only shared finalization]
     selectedPostFactoOption: split named resources
   provider-selector-boundaries:

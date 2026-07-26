@@ -159,6 +159,14 @@ If the nonterminal AWAITING_REVIEW update fails or its result is ambiguous, pres
 
 Follow the project's targeted-test policy. Select tests from the changed behavior and its actual dependency paths. Do not add a broad suite merely because several work items were delivered together.
 
+## Combined Regression Sets
+
+Run focused tests, review, and verification for each work item. Merge each accepted item independently. Do not delay an accepted merge for a later system-wide regression.
+
+The Dev Backlog Coordinator may group explicitly related work items into one combined regression set. Record the selected work items. After every selected item is present on main, run the system-wide regression once against the main commit that contains them all. Record that commit with the result.
+
+If the combined regression finds a distinct defect, record the defect against the tested main commit and route it normally. Do not automatically invalidate focused evidence for unrelated work items.
+
 ## Long-Running Task Control
 
 When a command or phase is expected to take more than five minutes, the Dev Orchestrator exposes before starting it:

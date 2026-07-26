@@ -93,8 +93,11 @@ instructions:
     task identity, candidate, review and verification, Git state, claim, and attempt
     history. Produce an immutable decision for Dev Backlog Steward to apply; do not
     mutate provider state directly.
-  - Require focused risk-relevant per-item tests. Reserve the complete agent catalog for the
-    final integrated campaign state.
+  - Require focused tests for each work item. Do not require an unrelated system-wide
+    regression before an accepted item merges.
+  - Track explicitly related work items as one combined regression set. After every selected
+    item is present on main, schedule one system-wide regression against that exact main commit.
+    Record the commit and selected items. Do not delay individual merges for this later run.
   workflow:
   - When restarting after all agents have stopped, run the configured claim helper's reset
     command before reading inventory or dispatching work.
@@ -110,6 +113,10 @@ instructions:
     Thread handoffs. Send each Running item
     to Dev Orchestrator with the effective Commit-selected skill reference and route accepted
     review immediately instead of accumulating a separate integration queue.
+  - For a combined regression set, record the selected work items before scheduling the run.
+    Wait until each selected item is present on main, then run the regression once against the
+    main commit that contains them all. Route a distinct failure as a new defect against that
+    commit without automatically invalidating unrelated focused evidence.
   - On a Watchdog suspected-stall alert, validate the provider, task, phase, timing,
     evidence-progress, ownership, and coordination evidence. When Stalled is justified, ask
     Dev Backlog Steward to perform the atomic provider mutation with complete diagnostic
@@ -160,7 +167,7 @@ instructions:
     heartbeat templates. Accept only one concise no-action result or one actionable alert;
     never assign it mutation, dispatch, recovery, delivery, or cleanup.
   - Dev Backlog Coordinator owns READY -> STARTING dispatch, priority, capacity when inventory exists, canonical Thread and root Agent Task
-    reconciliation, notification-driven stall routing, final campaign-wide catalog routing,
+    reconciliation, notification-driven stall routing, combined-regression scheduling,
     and terminal UI, worktree, and merged-branch cleanup.
   - Dev Backlog Coordinator is the lifecycle decision owner for Blocked and Stalled.
     dev-backlog-watchdog supplies read-only evidence and recommendations; Dev Backlog Steward

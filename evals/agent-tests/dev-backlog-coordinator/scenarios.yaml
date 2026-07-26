@@ -86,3 +86,17 @@ scenarios:
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, exhausted-correction-disposition, provider-selected-workitem-ownership]
     expectedOutputs: [status, provider lifecycle snapshot, stalled delivery actions]
     expectedTerminalStatus: PASS
+  - id: combined-regression-after-independent-merges
+    priority: 7
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Run focused verification per item and one combined regression after all selected items reach main.
+    initialState: Three related work items have independent focused delivery evidence, but only two are initially present on main.
+    task: Keep individual merges independent, wait for all selected items, then run the system-wide regression once against the exact combined main commit.
+    targetSkills: [structured-explanation, codex-workitem-coordination]
+    allowedAgentDependencies: [dev-orchestrator]
+    requiredBehaviors: [Record the selected work items, Keep each accepted merge independent, Wait until every selected item is on main, Record the tested main commit, Run one combined regression, Route a distinct failure as a defect against tested main]
+    forbiddenBehaviors: [Run the system-wide regression for every item, Delay an accepted item for the combined regression, Run before every selected item reaches main, Run the same combined regression twice, Invalidate unrelated focused evidence automatically]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, focused-item-verification, combined-regression-scheduling, output-contract-presence]
+    expectedOutputs: [status, provider lifecycle snapshot, combined regression set and tested main commit, defect routing when applicable]
+    expectedTerminalStatus: PASS

@@ -1037,6 +1037,41 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, skill_text)
 
+    def test_combined_regression_runs_once_after_independent_merges(self) -> None:
+        """Protect focused per-item delivery and one later combined regression."""
+
+        skill_text = (
+            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        role_text = (
+            ROLES_ROOT / "dev-activities" / "dev-backlog-coordinator.role.yaml"
+        ).read_text(encoding="utf-8")
+        readme_text = README_PATH.read_text(encoding="utf-8")
+        lifecycle_text = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        ).read_text(encoding="utf-8")
+
+        for phrase in (
+            "Merge each accepted item independently.",
+            "After every selected item is present on main",
+            "run the system-wide regression once",
+            "Record that commit with the result.",
+            "Do not automatically invalidate focused evidence for unrelated work items.",
+        ):
+            with self.subTest(skill_contract=phrase):
+                self.assertIn(phrase, skill_text)
+
+        for phrase in (
+            "Do not delay individual merges for this later run.",
+            "Record the commit and selected items.",
+            "without automatically invalidating unrelated focused evidence",
+        ):
+            with self.subTest(role_contract=phrase):
+                self.assertIn(phrase, role_text)
+
+        self.assertIn("one combined regression", readme_text)
+        self.assertIn("One Combined Regression After Independent Merges", lifecycle_text)
+
     def test_user_action_resumes_in_the_existing_canonical_thread(self) -> None:
         """The user may answer in place without losing lifecycle or delivery gates."""
 

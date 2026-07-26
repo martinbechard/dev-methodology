@@ -861,8 +861,51 @@ class CoordinationSimulatorTests(unittest.TestCase):
             CoordinationSimulator.verification_plan(cross_cutting_risk=True),
         )
         self.assertEqual(
-            tuple(case["finalCampaignVerification"]),
-            CoordinationSimulator.verification_plan(final_campaign=True),
+            tuple(case["combinedRegressionVerification"]),
+            CoordinationSimulator.verification_plan(combined_regression=True),
+        )
+        regression = case["combinedRegression"]
+        self.assertIsNone(
+            CoordinationSimulator.combined_regression_run(
+                selected_items=regression["selectedItems"],
+                merged_items=regression["incompleteMergedItems"],
+                main_commit=regression["mainCommit"],
+            )
+        )
+        expected_run = (
+            regression["mainCommit"],
+            tuple(regression["selectedItems"]),
+        )
+        self.assertEqual(
+            expected_run,
+            CoordinationSimulator.combined_regression_run(
+                selected_items=regression["selectedItems"],
+                merged_items=regression["completeMergedItems"],
+                main_commit=regression["mainCommit"],
+            ),
+        )
+        self.assertIsNone(
+            CoordinationSimulator.combined_regression_run(
+                selected_items=regression["selectedItems"],
+                merged_items=regression["completeMergedItems"],
+                main_commit=regression["mainCommit"],
+                recorded_runs=[expected_run],
+            )
+        )
+        self.assertEqual(
+            (regression["mainCommit"], regression["distinctFailure"]),
+            CoordinationSimulator.combined_regression_failure(
+                main_commit=regression["mainCommit"],
+                failure=regression["distinctFailure"],
+                distinct_defect=True,
+            ),
+        )
+        self.assertIsNone(
+            CoordinationSimulator.combined_regression_failure(
+                main_commit=regression["mainCommit"],
+                failure=regression["distinctFailure"],
+                distinct_defect=False,
+            )
         )
         self.assertIsNone(
             CoordinationSimulator.post_facto_reduction(

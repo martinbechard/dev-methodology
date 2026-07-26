@@ -762,6 +762,15 @@
         <span class="branch-label">main</span><div class="branch-line"><strong>Item C · branch C</strong><p>Investigation and correction in worktree C.</p></div>
       </div>
     </figure>
+    <figure class="sequence-figure" aria-labelledby="combined-regression-title">
+      <figcaption id="combined-regression-title">One Combined Regression After Independent Merges<span>Focused verification proves each item. The later system-wide run checks their combined main state.</span></figcaption>
+      <ol class="sequence-list">
+        <li><span class="number">1</span><span class="actor">Item A</span><span class="direction" role="img" aria-label="merges into">&rarr;</span><span class="actor">main</span><p>Run focused tests, review, verify, and merge independently.</p></li>
+        <li><span class="number">2</span><span class="actor">Item B</span><span class="direction" role="img" aria-label="merges into">&rarr;</span><span class="actor">main</span><p>Use the same per-item delivery path without waiting for Item C.</p></li>
+        <li><span class="number">3</span><span class="actor">Item C</span><span class="direction" role="img" aria-label="completes the selected set">&rarr;</span><span class="actor">Coordinator</span><p>After every selected item is on main, schedule one combined regression.</p></li>
+        <li><span class="number">4</span><span class="actor">Regression</span><span class="direction" role="img" aria-label="records">&rarr;</span><span class="actor">Evidence</span><p>Record the exact main commit and selected work items. Route a distinct failure as a new defect.</p></li>
+      </ol>
+    </figure>
     <div class="delivery-paths">
       <article class="delivery-path"><h3>Direct-main delivery</h3><ol><li>Review and verify the private candidate.</li><li>Follow <a href="../skills/agent-claim/SKILL.md">Agent Claim</a> when it is loaded.</li><li>Refresh current main and create a fresh reconciliation branch from that exact commit.</li><li>Apply only the accepted paths; do not import unrelated ancestry merely to preserve history. Verify the integrated result, update main, and complete delivery closeout.</li></ol></article>
       <article class="delivery-path"><h3>Feature-branch delivery</h3><ol><li>Review and verify the feature branch.</li><li>The Commit skill publishes a GitHub pull request or GitLab merge request and returns Commit AWAITING_REVIEW without Persistence mutation.</li><li>Dev Orchestrator separately dispatches Dev Backlog Steward exactly once for the nonterminal AWAITING_REVIEW update; repeated observation reconciles that update.</li><li>Resume the same delivery identity through provider-accurate review, checks, merge, and main observation until Commit READY, then dispatch exactly once for the distinct terminal Persistence closure. Provider none keeps both states thread-local.</li></ol></article>

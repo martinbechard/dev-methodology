@@ -107,7 +107,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         self.assertEqual(125, summary["probeCount"])
         self.assertEqual(28, summary["roleCount"])
         self.assertEqual(28, summary["suiteCount"])
-        self.assertEqual(93, summary["currentScenarioCount"])
+        self.assertEqual(96, summary["currentScenarioCount"])
         self.assertEqual(26, campaign["suiteCount"])
         self.assertEqual(78, campaign["scenarioCount"])
         self.assertEqual({"PASS": 52, "BLOCKED": 17, "FAIL": 9}, campaign["verdicts"])
@@ -118,14 +118,14 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         summary = self.model["summary"]
         agents = {agent["id"]: agent for agent in self.model["agents"]}
 
-        self.assertEqual(15, summary["missingScenarioResults"])
+        self.assertEqual(18, summary["missingScenarioResults"])
         self.assertEqual(78, summary["historicalIdOnlyResults"])
         self.assertEqual(0, summary["snapshotAlignedResults"])
         self.assertEqual(0, summary["definitionDriftResults"])
         self.assertEqual(0, summary["removedCampaignResults"])
         coordinator = agents["dev-backlog-coordinator"]
         self.assertEqual("missing", coordinator["freshness"])
-        self.assertEqual(5, coordinator["missingScenarioCount"])
+        self.assertEqual(7, coordinator["missingScenarioCount"])
         self.assertTrue(all(item["campaignVerdict"] is None for item in coordinator["scenarios"]))
         self.assertTrue(all(item["evidenceState"] == "missing" for item in coordinator["scenarios"]))
         coder = agents["dev-coder"]

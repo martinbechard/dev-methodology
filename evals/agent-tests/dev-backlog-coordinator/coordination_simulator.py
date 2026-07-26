@@ -744,16 +744,51 @@ class CoordinationSimulator:
         *,
         focused_failure: bool = False,
         cross_cutting_risk: bool = False,
-        final_campaign: bool = False,
+        combined_regression: bool = False,
     ) -> tuple[str, ...]:
-        """Select focused item checks and reserve the complete catalog for final state."""
+        """Select focused item checks or the one combined regression."""
 
-        if final_campaign:
-            return ("complete agent catalog",)
+        if combined_regression:
+            return ("system-wide regression",)
         checks = ["focused tests"]
         if focused_failure or cross_cutting_risk:
             checks.append("expanded regression")
         return tuple(checks)
+
+    @staticmethod
+    def combined_regression_run(
+        *,
+        selected_items: Sequence[str],
+        merged_items: Sequence[str],
+        main_commit: str,
+        recorded_runs: Sequence[tuple[str, tuple[str, ...]]] = (),
+    ) -> tuple[str, tuple[str, ...]] | None:
+        """Schedule one run after every selected item is present on main."""
+
+        selected = tuple(selected_items)
+        if not selected or len(selected) != len(set(selected)):
+            raise ValueError("selected work items must be non-empty and unique")
+        if not main_commit.strip():
+            raise ValueError("the tested main commit is required")
+        if not set(selected).issubset(set(merged_items)):
+            return None
+        run = (main_commit, selected)
+        return None if run in recorded_runs else run
+
+    @staticmethod
+    def combined_regression_failure(
+        *,
+        main_commit: str,
+        failure: str,
+        distinct_defect: bool,
+    ) -> tuple[str, str] | None:
+        """Route a distinct combined-regression failure against tested main."""
+
+        if not distinct_defect:
+            return None
+        if not main_commit.strip() or not failure.strip():
+            raise ValueError("a tested main commit and failure are required")
+        return (main_commit, failure)
 
     @staticmethod
     def post_facto_reduction(

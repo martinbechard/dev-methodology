@@ -147,11 +147,13 @@ agents:
           - Retry only when that release or recovery notification arrives and leave stale-ownership investigation to the watchdog.
           - Route a genuine unresolved authority or decision blocker truthfully and fill the Running vacancy.
           - Accept completion only with effective Commit READY, focused tests, required provider completion, released claims, and cleanup evidence.
+          - Group explicitly related items only when one combined regression is required, and run it once after all selected items reach main.
         forbiddenBehaviors:
           - Infer task absence from one immediate list read.
           - Infer or fall back to a provider from repository or hosting evidence.
           - Ask the user to approve ordinary Git, shell, review, test, integration, or cleanup operations.
           - Run the complete agent catalog for an individual work item when focused risk-relevant tests are available.
+          - Delay an accepted item's merge until a later combined regression.
         judgePlan:
           deterministicChecks:
             - delayed-visibility-settlement

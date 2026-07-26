@@ -1,10 +1,10 @@
 # Run Focused Tests Per Work Item And One Combined Regression
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
