@@ -1,6 +1,6 @@
 # Reject Unconfigured Lifecycle Handoff Receipt Lanes
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -65,7 +65,7 @@ The approval reviewer rejected the first cherry-pick before any Git mutation bec
 
 None.
 
-## Current Starting Reservation
+## Preserved Pre-Reconciliation Starting Reservation
 
 - Transition: Ready -> Starting.
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
@@ -120,6 +120,21 @@ None.
 - Resulting Disposition: User Action Required -> Ready. Owner: Unowned. This transaction records no Starting -> Running transition and creates no replacement Thread.
 - Preserved Canonical Identity: Work-item Thread and root Agent Task 019f9f67-1259-73a1-a9f2-1c6ce447903e.
 - Next Lifecycle Owner: The parent Dev Backlog Coordinator may make a distinct Ready -> Starting reservation against the preserved canonical Thread. Its root Dev Orchestrator must make any later distinct Starting -> Running acceptance.
+
+## Current Starting Reservation
+
+- Transition: Ready -> Starting.
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Canonical Work-Item Thread: 019f9f67-1259-73a1-a9f2-1c6ce447903e. This reservation preserves that valid canonical Thread and creates no replacement Thread.
+- Owner: Unowned pending root Dev Orchestrator acceptance.
+- Reservation: One parent-owned launch reservation.
+- Normalized Objective: Reject unconfigured lifecycle handoff receipt lanes.
+- Dispatched At: 2026-07-26T18:47:45.852560Z.
+- Intended Root Role: Dev Orchestrator.
+- Runtime Thread And Task Id: No new runtime task was created by this provider transaction; the parent must adopt the preserved canonical Thread.
+- Capacity And Eligibility: Fresh reconciliation found zero Starting or Running items, no live claim conflict, and no unmet hard dependency. The recorded dependency remains a coordination-only overlap note.
+- Launch Evidence: Parent Coordinator instruction for this distinct reservation; backlog claim acquire outcome SHARED_CHECKOUT_ACQUIRED with event 844a386c-2997-42fc-9330-215fd8aed360.
+- Next Lifecycle Owner: The root Dev Orchestrator for the preserved canonical Thread must record a distinct Starting -> Running acceptance before any further repository mutation.
 
 ## Notes
 
