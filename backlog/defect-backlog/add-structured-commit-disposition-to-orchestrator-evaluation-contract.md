@@ -1,6 +1,6 @@
 # Add Structured Commit Disposition To Orchestrator Evaluation Contract
 
-Status: Blocked
+Status: Ready
 
 Type: Defect
 
@@ -9,6 +9,15 @@ Provider: file
 Provider Reference: backlog/defect-backlog/add-structured-commit-disposition-to-orchestrator-evaluation-contract.md
 
 Completion: direct-main
+
+## Recovery Resumption
+
+- Transition: Blocked -> Ready.
+- Recovery Authority: The user's explicit restart-blocked request for a fresh bounded recovery.
+- Preserved Canonical Work-Item Thread/Task: 019f970d-1e68-7563-b840-a18765cfb70a. Retain all candidate, review, blocker, and approval history.
+- Authority Boundary: Existing exact governed-definition approvals and User Action Required boundaries remain unchanged; this resumption grants no expanded definition authority.
+- Required Sequence: Reconcile current-main semantics first, then make a bounded correction only if necessary; obtain fresh independent review and focused verification before direct-main delivery and provider closure. No full repository regression is required.
+- Next Lifecycle Owner: Parent Dev Backlog Coordinator reserves Ready -> Starting; root Dev Orchestrator acceptance remains required before Running.
 
 ## Launch Reservation
 
