@@ -1,10 +1,10 @@
 # Enforce Agent-Claim Lifecycle Evidence In Runner Resource Scenarios
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
@@ -21,7 +21,7 @@ Completion: direct-main
 - Delivery Worktree: /Users/martinbechard/.codex/worktrees/e8bc/dev-methodology
 - Delivery Branch: codex/enforce-agent-claim-lifecycle-evidence-019f981c
 - Delivery Commit At Acceptance: 4778fd4435c50cc8a282a6a505eb41b061374278
-- Phase: Fresh bounded recovery plan; not correction attempt 3 in the prior loop.
+- Phase: Final fresh-recovery correction hard stop.
 - Exact Implementation Scope: evals/agent-tests/runner.py and evals/agent-tests/test_runner.py.
 - Reservation Commit: 94405248e0b73c38da0121f06b1d566fcece4577.
 - Started At: 2026-07-26T11:06:09Z
@@ -173,3 +173,32 @@ None.
 ## Notes
 
 This item is ready for independently scoped implementation. It does not authorize unrelated runner changes or governed-definition mutation without required approval evidence.
+
+## Fresh Recovery Final Hard Stop
+
+- Fresh recovery candidate: b22704dabc96f34a57709308259ebaa2302c7fde.
+- Corrected replacement: ac579e7c8d98e00ddc209b20558da5b29d662e30.
+- Candidate scope: evals/agent-tests/runner.py and evals/agent-tests/test_runner.py only.
+- Candidate checks: 23 focused tests passed; both Python files compiled under Python 3.11; git diff --check passed.
+- Fresh Dev Code Reviewer disposition: REJECT.
+- Fresh Dev Prompt Reviewer disposition: REJECT.
+- Verifier disposition: not dispatched because both required reviews rejected the candidate.
+- Integration disposition: prohibited; neither recovery candidate is on main.
+
+### Final Review Findings
+
+- A reconciliation-style release command can satisfy evidence that promises a normal release. The broker and audit must allow only the claim identifier and the optional no-change flag for this scenario and must reject reconciliation arguments and results.
+- Shutdown of an adapter process that ignores SIGTERM raises before the runner kills and reaps the process, joins the serving thread, and removes the socket.
+- A provider-none scenario can copy the readable broker client and token to another path. The broker records a request only after successful adapter execution, and the trace audit relies on a client-name match, so an authenticated rejected request can escape the attempt census.
+
+### Unblock Condition
+
+Start another correction cycle only after explicit authorization of a new bounded plan. The plan must:
+
+- restrict the expected release command to the normal-release argument contract;
+- implement TERM grace, KILL, reap, thread join, and socket cleanup for an unresponsive adapter;
+- immutably record every authenticated broker request before validation and reject every unauthorized request sequence;
+- retain focused red regressions for all three findings; and
+- obtain fresh code and prompt reviews plus independent verification before integration.
+
+Do not resume through a direct Blocked-to-Running transition. Preserve the canonical task, worktree, branch, candidate chain, and review evidence through Blocked -> Ready -> Starting -> Running.
