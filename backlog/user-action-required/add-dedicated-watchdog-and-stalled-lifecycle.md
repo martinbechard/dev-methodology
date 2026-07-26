@@ -1,16 +1,16 @@
 # Add Dedicated Watchdog And Stalled Lifecycle
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/add-dedicated-watchdog-and-stalled-lifecycle.md
+Provider Reference: backlog/user-action-required/add-dedicated-watchdog-and-stalled-lifecycle.md
 
 Completion: direct-main
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 ## Summary
 
@@ -203,3 +203,29 @@ The answer approves exactly the six paths in Governed Canonical Sources and only
 - Approval provenance: the parent Dev Backlog Coordinator relayed the user’s exact answer for the canonical 019f9a91 work-item context on 2026-07-25.
 - Duplicate check: the completed predecessor introduced generic read-only watchdog behavior but did not define a Watchdog Role, Stalled lifecycle state, or universal Orchestrator-to-Coordinator blocked notification.
 - Non-goal: the Watchdog does not become an autonomous recovery, dispatch, integration, cleanup, or lifecycle-mutation agent.
+
+## User Action Required
+
+### Exact Question
+
+Do you approve adding exactly these seven dependent artifacts to this item's scope: scripts/build-skill-docs.py; scripts/build-agent-skill-hierarchy.py; scripts/test_role_mutation_policy.py; scripts/test_agent_skill_hierarchy.py; design/agent-skill-hierarchy.svg; design/agent-skill-test-coverage-checklist.md; and design/generated/agent-skill-explorer-data.js?
+
+### Why Input Is Required
+
+The original approval covers exactly six governed canonical sources and the listed dependent artifacts. Live catalog tracing shows these seven additional paths are required for actor-suffix loader acceptance, the required Backlog Management focus and Coordinator-to-Watchdog edge, the hard-coded 27-role mutation-policy count, focused hierarchy role-and-edge assertions, and the three supported generated freshness outputs. No other source expansion is required.
+
+### Options And Tradeoffs
+
+- Approve: resume the same canonical task with the seven paths added to its dependent-artifact scope.
+- Narrow: revise the role identity or implementation plan, then recheck the approval scope.
+- Defer: leave the feature unimplemented in User Action Required.
+- Decline: do not add the Watchdog role.
+
+### Unattended-Work Boundary
+
+Unattended work cannot mutate the six governed canonical sources or these seven dependent artifacts until this answer is recorded. After an answer, the preserved canonical task 019f9a91-b1a9-7ea0-9c90-35f0ed78c1be must resume through User Action Required -> Ready -> Starting -> Running before implementation continues.
+
+### Preserved Running Evidence
+
+- The canonical task identity, root Dev Orchestrator, parent coordination thread, branch, private worktree, existing commits, approval evidence, and current running acceptance above are preserved as out-of-sequence evidence.
+- This transition does not create a replacement Thread or discard prior delivery evidence.
