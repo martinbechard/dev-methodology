@@ -1,10 +1,10 @@
 # Explain User Action Required Requests With Examples
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator reservation pending root acceptance
 
 Claim: None
 
@@ -21,6 +21,16 @@ Completion: direct-main
 - Preserved Canonical Thread/Task: 019f9722-61cb-7190-8a6d-21c5ab319339. No replacement Thread or task is authorized.
 - Recovery Scope: Reconcile current-main semantics first; make a bounded correction only if needed; obtain fresh prompt, methodology, and source review; run focused verification; deliver directly on main and close the provider record only if acceptance evidence supports it. A full repository regression is not requested.
 - Ready Evidence: The prior two-cycle correction exhaustion and all candidate, review, verification, approval, and blocked-handoff evidence below remain durable recovery context. The parent Dev Backlog Coordinator may now make a distinct Ready -> Starting reservation for the preserved canonical Thread.
+
+## Current Launch Reservation
+
+- Transition: Ready -> Starting.
+- Parent Coordination Thread: /root/resume_blocked_after_claim_publication.
+- Reservation: One recovery launch is reserved for the preserved canonical work-item Thread 019f9722-61cb-7190-8a6d-21c5ab319339; no replacement Thread is authorized.
+- Normalized Objective: Reconcile current-main semantics first; make a bounded correction if needed; obtain fresh prompt, methodology, and source review; run focused verification; deliver directly on main and close the provider record only if acceptance evidence supports it; do not run a full repository regression.
+- Dispatched At: 2026-07-26T07:24:06Z.
+- Intended Root Role: Dev Orchestrator.
+- Root Acceptance: Pending. No Starting -> Running transition, root task identifier, branch/worktree assignment, or delivery ownership has been recorded by this reservation.
 
 ## Prior Launch Reservation
 
@@ -39,7 +49,7 @@ Completion: direct-main
 - Checkout: /Users/martinbechard/.codex/worktrees/a8df/dev-methodology
 - Branch: HEAD
 - Checkout State: Detached HEAD at 271c0fe1a12d9c720fca3c041eb79a6f5ec422bb.
-- Current Phase: Ready for parent-coordinated recovery reservation under the same canonical task; root acceptance remains pending.
+- Current Phase: Starting under the current parent reservation; root acceptance remains pending.
 - Transition Evidence: Parent Coordinator 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a provided the direct baton after the prior backlog transaction released. The file provider was reconciled as Starting at main commit 49c78f81a91c3eccab21e50a7413d707b7fe3938, then this serialized backlog claim was acquired as 019f9722-user-action-required-starting-running (claim event 5fa1c816-7d42-4fd0-9724-a13f5bbe6587). After the same-task approval was recorded, the provider was reconciled as Starting at main commit ef9efa60914050236ba2a409abe505eeea1c34d6 and claim 019f9722-approved-starting-running was acquired for this Starting to Running transition (claim event 0f5c6788-42bc-4f4d-bd24-25967053830d).
 
 ## Blocked Handoff
