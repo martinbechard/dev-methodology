@@ -18,25 +18,27 @@ Make project-files claim acquisition and release safe for direct-main delivery w
 
 ## Context
 
-The canonical root-AGENTS task 019f9fd6-d7c1-7902-bf33-e10883383b7e delivered accepted candidate 71387a2968d3f879e12d599887bc2981e1bb7144 through non-ancestral primary-main integration 1dded7f556cf4270e2a0bff12178382eac17c3c4. Its live project-files claim, integrate-reconcile-root-agents-019f9fd6, was acquired from linked worktree /Users/martinbechard/.codex/worktrees/9188/dev-methodology. The helper permits that acquisition because project_files is excluded from the primary-worktree scope check, but release validates the claimant worktree HEAD and cannot observe the primary-main integration. The release was rejected as missing_commit_or_no_change.
+The canonical root-AGENTS task 019f9fd6-d7c1-7902-bf33-e10883383b7e delivered accepted candidate 71387a2968d3f879e12d599887bc2981e1bb7144 through non-ancestral primary-main integration 1dded7f556cf4270e2a0bff12178382eac17c3c4. Its live project-files claim, integrate-reconcile-root-agents-019f9fd6, was acquired from linked worktree /Users/martinbechard/.codex/worktrees/9188/dev-methodology. The helper permits that acquisition because project_files is excluded from the primary-worktree scope check, but release validates the claimant worktree HEAD and cannot observe the primary-main integration. The release was rejected as missing_commit_or_no_change. The revised direction is that ordinary claim release removes only the exact claim while holding the registry lock and appends RELEASED evidence; it performs no Git or delivery validation.
 
 ## Source Evidence
 
-The Parent Coordinator explicitly directed durable Ready logging of this distinct confirmed defect after reviewing the accepted candidate, integration, claim registry, rejected-release event 0abe6b25-19f3-4635-bb38-15769a7861ec, and helper behavior. The defect is separate from the root-AGENTS correction and requires no runtime task at creation.
+The Parent Coordinator explicitly directed durable Ready logging of this distinct confirmed defect after reviewing the accepted candidate, integration, claim registry, rejected-release event 0abe6b25-19f3-4635-bb38-15769a7861ec, and helper behavior. The defect is separate from the root-AGENTS correction and requires no runtime task at creation. In the canonical task on 2026-07-26, the user said: “Ok do it and add a directive that before putting an item in user action required you should check the agent-claim skill”. This approves the revised direction, but it does not satisfy the repository's exact-scope definition approval requirement for all six newly discovered governed definitions.
 
 ## Requirements
 
 - Require Event-2 project-files claims to bind to the primary worktree, or return a clear primary-required outcome when requested from a linked worktree.
-- Align release validation with that binding so an accepted non-ancestral primary-main integration can be observed safely.
-- Preserve the existing claim-event contract and unrelated claim scopes.
-- Add a focused public-command regression covering linked acquisition and non-ancestral primary-main integration.
+- Make normal release remove only the exact claim under the registry lock and append RELEASED evidence, with no Git or delivery validation.
+- Remove normal-release no_change and out-of-domain reconciliation contracts from the command and MCP surfaces.
+- Before creating or transitioning an item to User Action Required, when agent-claim is loaded, apply it to the blocker and confirm that a genuine user-owned decision remains.
+- Preserve unrelated claim scopes and the existing claim-event contract outside the revised release semantics.
 
 ## Acceptance Criteria
 
 - A linked-worktree project-files acquisition either binds safely to primary-main delivery or returns a clear primary-required outcome.
-- Release validation recognizes the supported binding and does not falsely require the linked worktree HEAD to contain a non-ancestral primary-main integration.
-- The focused public-command regression passes and proves the linked-acquisition and non-ancestral-integration behavior.
-- Existing event-contract coverage remains valid.
+- Normal release removes only its exact claim while holding the registry lock and records RELEASED evidence without Git or delivery validation.
+- Command and MCP normal-release surfaces no longer expose no_change or out-of-domain reconciliation contracts.
+- User Action Required creation and transition guidance applies agent-claim to the blocker when loaded and only proceeds when a genuine user-owned decision remains.
+- Focused helper and contract tests cover the revised behavior, and only supported generated skill mirrors are refreshed.
 
 ## Dependencies
 
@@ -44,13 +46,14 @@ None.
 
 ## Verification
 
-- Run the focused public-command regression for linked project-files acquisition and non-ancestral primary-main integration.
-- Run directly affected helper and event-contract tests.
-- Obtain independent review of the claim lifecycle change.
+- Run focused helper, command/MCP surface, and User Action Required workflow tests.
+- Run directly affected event-contract tests.
+- Validate supported generated-skill mirror freshness.
+- Obtain independent review of the governed-definition and helper changes.
 
 ## Open Questions
 
-Do you approve expanding this same task to add a targeted administrative recovery operation by changing the governed definition skills/agent-claim-command/SKILL.md, its implementation skills/agent-claim-command/scripts/claim.py, focused tests, and only the supported generated mirrors? The operation will require the exact claim ID and incarnation, acquisition and rejected-release event IDs, integrated commit, and verified content mapping; it will lock the registry, remove only that claim, and append a durable recovery-release event.
+Do you approve changing exactly these six governed definitions to implement the revised claim-cleanup and User Action Required rules: skills/agent-claim/SKILL.md; skills/agent-claim-command/SKILL.md; skills/agent-claim-mcp/SKILL.md; skills/create-file-work-item/SKILL.md; skills/manage-file-work-items/SKILL.md; skills/codex-workitem-coordination/SKILL.md?
 
 ## User Action Required
 
@@ -58,22 +61,22 @@ The same canonical task needs one explicit user decision before any new recovery
 
 ## Question for the User
 
-Do you approve expanding this same task to add a targeted administrative recovery operation by changing the governed definition skills/agent-claim-command/SKILL.md, its implementation skills/agent-claim-command/scripts/claim.py, focused tests, and only the supported generated mirrors? The operation will require the exact claim ID and incarnation, acquisition and rejected-release event IDs, integrated commit, and verified content mapping; it will lock the registry, remove only that claim, and append a durable recovery-release event.
+Do you approve changing exactly these six governed definitions to implement the revised claim-cleanup and User Action Required rules: skills/agent-claim/SKILL.md; skills/agent-claim-command/SKILL.md; skills/agent-claim-mcp/SKILL.md; skills/create-file-work-item/SKILL.md; skills/manage-file-work-items/SKILL.md; skills/codex-workitem-coordination/SKILL.md?
 
 Options:
 
-- Approve: bounded implementation, review, and verification; recover only this claim; then integrate 682f521c49e1f6200e7ddcbcba1d19dad7a6c32b.
-- Narrow: provide a revised plan.
-- Defer: preserve all state.
-- Decline: leave both items blocked with no new capability.
+- Approve exact six paths: authorize only the six listed governed definitions; dependent ordinary scope after approval is skills/agent-claim-command/scripts/claim.py, focused tests, and only supported generated skill mirrors.
+- Narrow: provide a smaller exact-path approval scope.
+- Defer: preserve all evidence and do not resume work.
+- Decline: end this revised direction without mutation.
 
 ## Why User Input Is Required
 
-The requested capability changes a governed skill definition and the claim-helper implementation. The project requires explicit, scope-specific user approval before either surface is changed.
+The revised direction requires changes to six governed skill definitions. The project requires explicit, scope-specific approval naming each canonical definition before any governed definition can be changed. The user's recorded wording approves the direction but not this exact six-path scope.
 
 ## Unattended Work Boundary
 
-No governed definition, helper, registry, journal, integration, closeout, or cleanup mutation may occur before an answer.
+No governed definition, helper, test, or generated-mirror mutation; claim release; candidate integration; provider resumption; or cleanup may occur until exact approval is recorded and User Action Required -> Ready -> Starting -> Running is durable.
 
 ## Resolution
 
@@ -82,12 +85,12 @@ Pending user answer.
 ## Preserved Recovery Evidence
 
 - Canonical Work-Item Thread And Root Agent Task: 019f9fef-1edc-7ea1-a058-bf8dfddcd2fb.
-- Accepted Prevention Candidate: 682f521c49e1f6200e7ddcbcba1d19dad7a6c32b. It remains preserved and unintegrated pending the requested approval and a supported recovery operation.
+- Accepted Prevention Candidate: 682f521c49e1f6200e7ddcbcba1d19dad7a6c32b. It remains preserved as evidence pending revised-objective reconciliation; this record does not assert that it will necessarily be integrated.
 - Rejected Candidate: c604e237865c3e20739e61e6c12e8eae568040d9. Preserve it as rejected recovery history; do not integrate it.
 - Review And Verification: Retain the accepted prevention candidate's review and verification evidence in the canonical task context. This lifecycle transition does not accept, rerun, replace, or discard that evidence.
 - Retained Live Claim: integrate-reconcile-root-agents-019f9fd6, incarnation 475d66c7-a792-434b-bdaf-1b0f8a6bccfb, remains a live project-files claim. Its baseline and linked-worktree HEAD are 71387a2968d3f879e12d599887bc2981e1bb7144; its linked worktree is /Users/martinbechard/.codex/worktrees/9188/dev-methodology.
-- Project Configurator Conclusion: No current command or MCP helper supports targeted administrative recovery for this claim.
-- Prohibited Recovery Shortcuts: Do not use normal release, no-change release, out-of-domain reconciliation, registry or journal editing, candidate integration, closeout, or cleanup.
+- Project Configurator Conclusion: The revised semantics require exact governed-definition approval before any command or MCP release-surface change can be made.
+- Prohibited Recovery Shortcuts: Do not release the retained claim, edit the registry or journal, integrate either candidate, resume the provider, close out, or clean up before the recorded approval and lifecycle resumption are durable.
 
 ## Starting Reservation
 
@@ -116,4 +119,4 @@ Pending user answer.
 
 ## Notes
 
-This item is not runnable or approved for unattended work until the user answers the exact question above. The retained live project-files claim remains outside this backlog transaction.
+This item remains Status: User Action Required with Owner: Unowned and is not runnable or approved for unattended work until the user answers the exact question above. The retained live project-files claim remains unchanged and outside this backlog transaction.
