@@ -1,6 +1,6 @@
 # Reject Unconfigured Lifecycle Handoff Receipt Lanes
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Root Dev Orchestrator
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/reject-unconfigured-lifecycle-handoff-receipt-lanes.md
+Provider Reference: backlog/completed-backlog/defects/reject-unconfigured-lifecycle-handoff-receipt-lanes.md
 
 Completion: direct-main
 
@@ -152,6 +152,21 @@ None.
 - User Authorization: The user answered "Get on with it." The parent delegated this distinct Starting -> Running reconciliation to the preserved canonical Thread.
 - Accepted Delivery Evidence: c1e861e75996a4758dfc95c6ec054fce2744a74a integrated as ebcdcf29825ddfd6306ddcfa5fd190603609a45a; 7a57ca305c5bcf0573ae0be5c52322a086fa0547 integrated as e73fbd58757a6e033b5af6f9c2a5eb4fdbc8e3e8. An independent post-integration verifier returned PASS on clean main 9ade1276 with 12 focused tests.
 - Dependency Classification: coordination-only. No implementation work is authorized by this provider acceptance.
+
+## Completion Evidence
+
+- Completion Disposition: READY.
+- Completed At: 2026-07-26T18:57:35Z.
+- Completion Selector: direct-main.
+- Canonical Work-Item Thread And Root Agent Task: 019f9f67-1259-73a1-a9f2-1c6ce447903e.
+- Accepted Source Commits: c1e861e75996a4758dfc95c6ec054fce2744a74a and 7a57ca305c5bcf0573ae0be5c52322a086fa0547.
+- Direct-Main Integration: c1e861e75996a4758dfc95c6ec054fce2744a74a integrated as ebcdcf29825ddfd6306ddcfa5fd190603609a45a; 7a57ca305c5bcf0573ae0be5c52322a086fa0547 integrated as e73fbd58757a6e033b5af6f9c2a5eb4fdbc8e3e8. Their reachability and integrated bytes were accepted without drift.
+- Independent Gates: Fresh review PASS; pre-integration verifier PASS; post-integration verifier explicit PASS with 12 focused tests and git diff --check.
+- Main Observation: The accepted integrations were verified on clean main. The last Running provider transaction committed at ac0bd3b564543bb316b4f3cc36fedcb61eba3e0c; this archive transaction starts from that clean main observation and does not repeat integration or verification.
+- Closure Claim Evidence: complete-reject-unconfigured-lifecycle-handoff-receipt-lanes-019f9f67; acquire outcome SHARED_CHECKOUT_ACQUIRED; claim event e6235e59-19e2-405d-bcec-9e21692c54a2. Claim release is recorded by the configured claim helper after this archive commit.
+- Terminal Backlog Commit: The commit carrying this exact active-to-archive move.
+- Omitted Work: No implementation, governed-definition change, integration, or test rerun occurred in this terminal provider transaction.
+- Cleanup Eligibility: The active record is removed by this archive move. The claim is eligible for release after the commit and final clean-main verification.
 
 ## Notes
 
