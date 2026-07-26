@@ -1,0 +1,76 @@
+# Require Watchdog Escalation And Coordinator Disposition For Blocked Items
+
+Status: Ready
+
+Type: Feature
+
+Provider: file
+
+Provider Reference: backlog/feature-backlog/require-watchdog-escalation-and-coordinator-disposition-for-blocked-items.md
+
+Completion: direct-main
+
+## Summary
+
+Make the Dev Backlog Watchdog account explicitly for every Blocked work item and require the Dev Backlog Coordinator to choose and record an evidence-backed unblocking disposition when correction attempts are exhausted.
+
+## Context
+
+The read-only watchdog previously counted eight Blocked items but reported only that no unblock condition was satisfied. It did not expose the item-by-item reconciliation and missed one item whose recorded dependency had already completed and whose next action belonged to the Coordinator.
+
+Several other Blocked records preserve rejected candidate chains after bounded correction attempts were exhausted. Leaving those records indefinitely Blocked without an explicit Coordinator decision makes recoverable work invisible and allows active capacity to remain unused.
+
+The watchdog must remain read-only. It reports the condition and prompts the Coordinator; the Coordinator owns diagnosis, lifecycle choice, retry authorization within its authority, and user escalation.
+
+## Source Evidence
+
+Direct user request in the watchdog task on 2026-07-26: log an improvement work item so Blocked items cannot be silently suppressed; when correction attempts are exhausted, require the Coordinator to provide an unblocking action, authorize more retries when evidence indicates another bounded attempt is likely to resolve the findings, or convert the item to User Action Required when agents cannot safely resolve the needed decision or authority. The user also directed the watchdog to prompt the Coordinator when the current queue exhibits this condition.
+
+## Requirements
+
+- Require each watchdog cycle to reconcile every Blocked item against its exact blocker, unblock condition, next-action owner, dependencies, candidate and review evidence, canonical task state, Git state, and applicable live claims.
+- Include a concise per-item disposition in watchdog evidence even when only actionable conditions are sent to the Coordinator.
+- Alert the Coordinator when a Blocked item has a satisfied dependency, an agent-actionable recovery step, exhausted correction attempts without a current disposition, stale or contradictory lifecycle evidence, or an incorrect next-action owner.
+- When correction attempts are exhausted, require the Coordinator to choose and record one of these outcomes:
+  - provide a concrete evidence-backed unblocking action and owner;
+  - authorize a fresh bounded retry plan when the remaining findings are specific and another attempt is reasonably likely to resolve them;
+  - convert the item to User Action Required with one exact question, options and tradeoffs, and an unattended-work boundary when a genuine user-owned decision or authority grant prevents further agent action;
+  - preserve Blocked with a concrete external or technical dependency and an observable unblock condition when neither retry nor user action is currently appropriate.
+- Prohibit indefinite Blocked status whose only next action is vague authorization, reconsideration, or future recovery without an assigned owner and observable trigger.
+- Require the Coordinator to preserve canonical task identity, candidate commits, review and verification evidence, claims, and prior attempt history across any resumption.
+- Preserve the separation between watchdog advice, Coordinator scheduling and lifecycle decisions, Dev Backlog Steward provider mutation, and Dev Orchestrator delivery ownership.
+- Discover the smallest governed agent and skill definition paths required for implementation and obtain exact scope-specific approval before mutating them.
+
+## Acceptance Criteria
+
+- A watchdog fixture with multiple Blocked items emits an evidence-backed reconciliation result for every item rather than only a count.
+- A Blocked item whose dependency has completed produces an actionable Coordinator alert naming the evidence and smallest next action.
+- An item with exhausted corrections cannot remain silently Blocked: the Coordinator records an unblocking action, a justified fresh bounded retry, a valid User Action Required transition, or a concrete continuing dependency.
+- A retry is authorized only with a bounded plan tied to unresolved review findings and evidence that another attempt is likely to help.
+- A User Action Required transition contains one exact user-owned question, explanation, options and tradeoffs when known, and the prohibited unattended action.
+- A technical or external dependency remains Blocked and is not incorrectly converted to User Action Required.
+- No watchdog path mutates provider records, tasks, claims, branches, or worktrees.
+- Focused tests prevent regression to count-only Blocked reporting or indefinite exhausted-correction suppression.
+
+## Dependencies
+
+- backlog/feature-backlog/add-dedicated-watchdog-and-stalled-lifecycle.md
+
+## Verification
+
+- Add focused watchdog simulations for satisfied dependencies, exhausted retries, justified additional retries, User Action Required conversion, and continuing technical blockers.
+- Add Coordinator contract tests proving that each exhausted-correction alert receives one explicit disposition.
+- Validate affected work-item lifecycle and generated Coordinator snapshot behavior.
+- Run targeted skill, role, and generated-output freshness checks for each approved governed source that changes.
+- Run git diff --check.
+- Obtain fresh independent methodology and prompt-contract review.
+
+## Open Questions
+
+- Which durable field should distinguish a newly authorized bounded recovery from another attempt in the exhausted correction loop?
+- What evidence threshold should the Coordinator use to conclude that another bounded retry is reasonably likely to resolve the remaining findings?
+- Should healthy-cycle watchdog output list every Blocked item individually or provide a stable digest with item-level details available in retained evidence?
+
+## Notes
+
+This item does not authorize mutation of a governed agent or skill definition by itself. Implementation must identify the exact canonical definition paths and record the direct user direction plus exact-path approval evidence required by the repository definition-change check.
