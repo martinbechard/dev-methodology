@@ -18,7 +18,7 @@ projectSkills:
   suite: [skills/dev-backlog-watchdog-suite-contract/SKILL.md]
 execution:
   maximumActiveChildren: 1
-  nestedAgentLimit: 1
+  nestedAgentLimit: 0
   nestedAgentConcurrency: 1
   scenarioCatalog: scenarios.yaml
   deterministicSimulator: watchdog_simulator.py

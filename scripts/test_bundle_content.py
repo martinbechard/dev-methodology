@@ -6902,6 +6902,10 @@ class BundleContentTests(unittest.TestCase):
             'aria-label="Task/execution anomaly reconciliation flow">',
             anomaly_section,
         )
+        self.assertIn(
+            ".task-anomaly-flow { grid-template-columns: 1fr; }",
+            lifecycle_text,
+        )
         flow_steps = (
             "Observe anomaly",
             "Reconcile identity",
@@ -8411,6 +8415,77 @@ class BundleContentTests(unittest.TestCase):
                 with self.subTest(suite=entry["id"], project_skill=relative_path):
                     frontmatter = load_yaml_object_from_frontmatter(skill_path)
                     self.assertEqual(skill_path.parent.name, frontmatter["name"])
+
+    def test_watchdog_suite_disables_nested_agents_without_dependencies(self) -> None:
+        """A read-only Watchdog target cannot reserve an unusable child-agent slot."""
+
+        suite_root = AGENT_TEST_SUITES_ROOT / "dev-backlog-watchdog"
+        suite = load_yaml_object(suite_root / "suite.yaml")
+        role = load_yaml_object(
+            REPOSITORY_ROOT / suite["target"]["conceptualRole"]
+        )
+        supervisor = tomllib.loads(
+            (suite_root / suite["projectAgents"]["supervisor"]).read_text(
+                encoding="utf-8"
+            )
+        )
+
+        self.assertEqual([], suite["target"]["allowedAgentDependencies"])
+        self.assertEqual([], role.get("agentDependencies", []))
+        self.assertEqual(0, suite["execution"]["nestedAgentLimit"])
+        self.assertIn(
+            "permit no child agents",
+            supervisor["developer_instructions"],
+        )
+
+    def test_coordinator_happy_scenario_counts_starting_plus_running_capacity(
+        self,
+    ) -> None:
+        """The Coordinator scenario must use the same active-capacity contract."""
+
+        catalog = load_yaml_object(
+            REPOSITORY_ROOT / "evals" / "agent-scenarios.yaml"
+        )
+        coordinator = next(
+            entry
+            for entry in catalog["agents"]
+            if entry["id"] == "dev-backlog-coordinator"
+        )
+        scenario = next(
+            entry
+            for entry in coordinator["scenarios"]
+            if entry["id"] == "dev-backlog-coordinator-happy"
+        )
+
+        self.assertIn(
+            "restore ten Starting or Running work items",
+            scenario["promptIntent"],
+        )
+        self.assertIn(
+            "Ten provider-backed Starting or Running items",
+            scenario["expectedOutcome"],
+        )
+        for clause in (
+            "Count only lifecycle STARTING and RUNNING items returned by the "
+            "effective Persistence-selected management skill.",
+            "Use one canonical Dev Orchestrator task for each Starting or "
+            "Running work item.",
+            "Recount and refill Starting-plus-Running capacity toward ten "
+            "after every terminal cleanup.",
+        ):
+            with self.subTest(required_behavior=clause):
+                self.assertIn(clause, scenario["requiredBehaviors"])
+        self.assertIn(
+            "Count Stalled, Blocked, User Action Required, Holding, Awaiting "
+            "Review, terminal, or pure waiting tasks as Starting-plus-Running "
+            "capacity.",
+            scenario["forbiddenBehaviors"],
+        )
+        self.assertNotIn(
+            "Count only lifecycle RUNNING items returned by the effective "
+            "Persistence-selected management skill.",
+            scenario["requiredBehaviors"],
+        )
 
     def test_support_checklist_covers_every_agent_and_skill(self) -> None:
         """The generated report must expose every live declaration without inflating evidence."""

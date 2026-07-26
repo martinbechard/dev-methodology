@@ -105,19 +105,19 @@ agents:
       - id: dev-backlog-coordinator-happy
         kind: happy-path
         fixtureProfile: backlog-state-machine
-        promptIntent: Reconcile a selected durable provider, restore ten Running work items, and ensure each canonical Dev Orchestrator applies the effective Commit-selected skill after review and verification.
-        expectedOutcome: Ten provider-backed Running items or an explicit eligible-work shortage, stable canonical task ids recorded through the effective manager, selected-Commit delivery without a separate integration queue, provider completion, and immediate capacity refill after cleanup.
+        promptIntent: Reconcile a selected durable provider, restore ten Starting or Running work items, and ensure each canonical Dev Orchestrator applies the effective Commit-selected skill after review and verification.
+        expectedOutcome: Ten provider-backed Starting or Running items or an explicit eligible-work shortage, stable canonical task ids recorded through the effective manager, selected-Commit delivery without a separate integration queue, provider completion, and immediate capacity refill after cleanup.
         requiredBehaviors:
-          - Count only lifecycle RUNNING items returned by the effective Persistence-selected management skill.
-          - Use one canonical Dev Orchestrator task for each Running work item.
+          - Count only lifecycle STARTING and RUNNING items returned by the effective Persistence-selected management skill.
+          - Use one canonical Dev Orchestrator task for each Starting or Running work item.
           - Delegate lifecycle transitions and provider evidence to Dev Backlog Steward through the effective manager.
           - Record canonical task id, provider identity, branch, worktree, phase, accepted commit, waits, and delivery evidence in the provider record.
           - Route accepted review immediately to that item's Dev Orchestrator with the effective Commit-selected skill.
-          - Recount and refill toward ten after every terminal cleanup.
+          - Recount and refill Starting-plus-Running capacity toward ten after every terminal cleanup.
         forbiddenBehaviors:
           - Treat task title, task status, or messages as provider or delivery authority.
           - Create a separate task ledger, baton registry, waiting-task registry, or placeholder task.
-          - Count Blocked, User Action Required, Holding, or pure waiting tasks as Running capacity.
+          - Count Stalled, Blocked, User Action Required, Holding, Awaiting Review, terminal, or pure waiting tasks as Starting-plus-Running capacity.
           - Reproduce provider or Commit procedures in the coordinator.
         judgePlan:
           deterministicChecks:
