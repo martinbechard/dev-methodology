@@ -1,14 +1,14 @@
 # Run Focused Tests Per Work Item And One Combined Regression
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/adopt-campaign-candidate-integration-and-deployment.md
+Provider Reference: backlog/completed-backlog/features/adopt-campaign-candidate-integration-and-deployment.md
 
 Completion: direct-main
 
@@ -63,3 +63,14 @@ None.
 Candidate 6ab5976a and the previous campaign-finalizer design treated combined delivery as a special integration and deployment transaction with relational receipts, hashes, and deployment sentinels. That design is superseded and must not be reused.
 
 The revised work is about test scope and timing. Individual accepted changes still merge normally. The Coordinator schedules one broader regression only after the related changes are integrated.
+
+## Completion Evidence
+
+- Implementation commit: 99772c1a1022e7caddfc1fb61722edd58c291e8e.
+- The Coordinator role and work-item coordination skill require focused per-item verification, independent merges, and one combined regression after all selected items are present on main.
+- The combined regression records the exact main commit and selected work items, does not run twice for the same recorded set, and routes a distinct failure without invalidating unrelated focused evidence.
+- The Coordinator simulator passed 23 focused tests.
+- The focused bundle contract test passed.
+- The affected evaluation-document test passed after its expected scenario counts were updated.
+- Skill validation, generated-output freshness, Python compilation, and diff checks passed.
+- The Codex user installation was refreshed. The installed coordination skill and Coordinator agent match the committed source bytes.
