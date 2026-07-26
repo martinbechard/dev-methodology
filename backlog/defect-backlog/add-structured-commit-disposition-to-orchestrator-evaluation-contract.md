@@ -1,14 +1,31 @@
 # Add Structured Commit Disposition To Orchestrator Evaluation Contract
 
-Status: Running
+Status: Blocked
 
 Type: Defect
+
+Owner: Unowned
 
 Provider: file
 
 Provider Reference: backlog/defect-backlog/add-structured-commit-disposition-to-orchestrator-evaluation-contract.md
 
 Completion: direct-main
+
+## Final Blocked Disposition
+
+- Canonical Task/Thread: 019f970d-1e68-7563-b840-a18765cfb70a remains preserved.
+- Final Rejected Candidate: 13277e498868e7e2e6f2b9bb40159982112bfd73.
+- Hard Stop: No third correction is authorized in the prior bounded correction loop. Do not integrate the rejected candidate or archive this item.
+- Finding 1: runner.py lines 5633 through 5643 accept any retained verifier as preCommitVerification. That permits Commit before merge, post-integration reviews, and final verifier evidence are bound in the required order.
+- Finding 2: runner.py lines 5688 through 5735 do not require the accepted delivery or application SHA to be an ancestor of the provider closeout commit. A divergent sibling closeout can therefore be merged into HEAD later.
+- Unblock Condition: A newly authorized bounded plan must bind final-verifier identity and order, and prove delivery/application to provider-closeout ancestry before provider success.
+- Serialization: This future recovery must not run concurrently with backlog/defect-backlog/add-structured-commit-disposition-to-agent-claim-commands.md or backlog/defect-backlog/enforce-agent-claim-lifecycle-evidence-in-runner-resource-scenarios.md because they share runner.py scope.
+- Required Future Gates: fresh code review, prompt review, independent verification, direct-main delivery, and terminal provider closure.
+
+## Blocked Coordination Evidence
+
+- Exact-file claim block-structured-commit-disposition-20260726 acquired on primary main at 2026-07-26T09:29:39.233154Z; acquisition journal event 463db330-c4bd-47fd-a94c-8c780d864818.
 
 ## Current Running Acceptance
 
