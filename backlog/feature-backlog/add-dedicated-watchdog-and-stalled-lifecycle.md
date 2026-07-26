@@ -1,6 +1,6 @@
 # Add Dedicated Watchdog And Stalled Lifecycle
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/feature-backlog/add-dedicated-watchdog-and-stalled-l
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 ## Summary
 
@@ -133,19 +133,20 @@ The permanent contract must parameterize the parent task identifier and reposito
 
 ## Current Running Acceptance
 
+- Resumption: User Action Required -> Ready committed at 46f4437dd9aa6fb64275058c820cc2697a83f1f9, then the parent Coordinator recorded the distinct Ready -> Starting reservation at 93d84231d9a22b580ea2522b4101088d9cb83650. This acceptance preserves the same canonical identity and creates no replacement Thread.
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
-- Canonical Thread/Task: 019f9a91-b1a9-7ea0-9c90-35f0ed78c1be; preserved as resumption evidence and no replacement canonical identity is created.
+- Canonical Thread/Task: 019f9a91-b1a9-7ea0-9c90-35f0ed78c1be.
 - Root Agent: Dev Orchestrator for canonical task 019f9a91-b1a9-7ea0-9c90-35f0ed78c1be.
 - Lifecycle Acceptance: Starting -> Running accepted by the root Dev Orchestrator through its Dev Backlog Steward child.
 - Normalized Objective: Add dedicated watchdog and stalled lifecycle.
 - Persistence And Completion: file provider; direct-main completion.
-- Dispatched At: 2026-07-26T13:36:31Z.
-- Started At: 2026-07-26T13:46:23Z.
-- Parent Reservation Evidence: Parent Coordinator authorized this same-canonical-item Ready -> Starting reservation; backlog claim event e62b9d25-dafc-43a1-bc3e-10d9f0764e24.
-- Runtime Evidence: Child runtime pilot PASS for canonical task 019f9ea9-7984-7911-82ac-3b39a605e47f; commit dc718872b9e579682fd0fed229c7cb94803a23f4.
-- Delivery Identity: Branch codex/watchdog-stalled-lifecycle-019f9a91 at f1c8c04c4a24be8e48579fc997d1a6f09daacf88; private worktree .worktrees/watchdog-stalled-lifecycle-019f9a91.
-- Backlog Acceptance Claim Event: 0076f5f9-410a-4410-8f1d-c5018477f457.
-- Next Lifecycle Owner: the root Dev Orchestrator owns delivery; Dev Backlog Steward performs its later provider transitions on the canonical item.
+- Started At: 2026-07-26T15:43:24Z.
+- Parent Reservation Commit: 93d84231d9a22b580ea2522b4101088d9cb83650.
+- Approval Evidence: governed six-source approval recorded at df2d861a715b9563c2b504ef9e674d4918f99055; User Action Required resolution and approved seven-path supplemental scope recorded at 46f4437dd9aa6fb64275058c820cc2697a83f1f9. The user’s exact approvals, scope, and durable provenance remain in Definition Change Approval.
+- Delivery Identity: Branch codex/watchdog-stalled-lifecycle-019f9a91; private worktree .worktrees/watchdog-stalled-lifecycle-019f9a91.
+- Backlog Acceptance Claim: c6d1dc57-43bf-4b8d-adb1-2bf4c77bbE53; acquisition event bbab86e4-fb17-4264-bdaa-853f4b77f69e.
+- Prior Reservation Claim Evidence: Ready -> Starting acquisition and release events c89fe91b-dc00-45e8-898f-7d3adeb11213 and 2407e33c-b8e0-4d3a-835f-5267feae2d1c.
+- Next Lifecycle Owner: the root Dev Orchestrator owns delivery; Dev Backlog Steward performs later provider transitions on this canonical item.
 
 ## Current Starting Reservation
 
