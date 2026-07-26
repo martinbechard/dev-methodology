@@ -27,13 +27,13 @@ Direct user request in the active coordinator task on 2026-07-25: “we need to 
 ## Requirements
 
 - Create one reusable communication skill for all agents.
-- Define principles for plain language, concise sentences, concrete terminology, and outcome-first reporting.
-- Require agents to explain specialized or project-specific terms when they are first used.
+- Use plain language and short sentences. Put one rule or idea in each sentence.
+- Use technical terms only when they name an actual command, field, outcome, file, or resource. Explain specialized or project-specific terms when they are first used.
+- Define principles for concrete terminology and outcome-first reporting.
 - Prefer familiar words over abstract labels. For example, say “claim helper” and “claim command-line interface” instead of unexplained “engine” or “transport”.
 - Separate outcomes, evidence, blockers, decisions, and next actions so each is easy to identify.
 - Keep user-facing messages understandable without requiring the user to know internal lifecycle, claim, task, or implementation terminology.
 - Define concise agent-to-agent handoff content: exact identity, current state, preserved work, evidence, blocker, and next action.
-- Avoid long sentences that combine multiple rules, exceptions, and consequences.
 - Avoid redundant status narration and procedural detail that does not help the recipient decide or act.
 - Use tables or lists only when they make repeated mappings or choices clearer than prose.
 - Align existing shared communication guidance with the new skill and remove material duplication where appropriate.
