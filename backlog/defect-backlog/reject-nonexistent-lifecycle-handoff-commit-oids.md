@@ -1,10 +1,10 @@
 # Reject Nonexistent Lifecycle Handoff Commit OIDs
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Orchestrator /root/resume_blocked_after_claim_publication/oid_delivery_recovery
 
 Provider: file
 
@@ -59,6 +59,19 @@ Completion: direct-main
 - Dispatched At: 2026-07-26T07:56:54Z.
 - Launch Evidence: Parent Coordinator authorization received for this exact same-canonical-item reservation; runtime acceptance has not occurred.
 - Next Lifecycle Owner: the root Dev Orchestrator must accept this preserved canonical item through a distinct Starting -> Running transaction before further repository mutation.
+
+## Current Running Acceptance
+
+- Transition: Starting -> Running.
+- Accepted By: Root Dev Orchestrator /root/resume_blocked_after_claim_publication/oid_delivery_recovery.
+- Parent Coordination Thread: /root/resume_blocked_after_claim_publication.
+- Canonical Thread/Task: 019f978e-28b7-7561-be38-b535ab26850f; the preserved canonical identity remains authoritative and no replacement Thread is created.
+- Reservation Commit: 45212a3282a98ef81714c4f84c255b2cae710640, verified as a commit containing the current Starting reservation for this exact provider path.
+- Branch And Worktree: Preserve branch `codex/reject-nonexistent-lifecycle-handoff-oids-019f978e` and worktree `/Users/martinbechard/.codex/worktrees/215b/dev-methodology`.
+- Accepted Candidate: a12babfc3b919b5e5334821703c8549fe40aa82a remains the preserved candidate evidence.
+- Claim Evidence: Claim-free private-lane delivery evidence remains applicable; this provider-only acceptance does not claim, alter, or release the private worktree lane.
+- Phase: Correction attempt 1 for governed/executable release-chain finding.
+- Started At: 2026-07-26T07:59:26Z.
 
 ## Preserved Governed Diff
 
