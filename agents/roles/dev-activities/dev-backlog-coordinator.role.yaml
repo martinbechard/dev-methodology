@@ -85,6 +85,8 @@ instructions:
   - Require focused risk-relevant per-item tests. Reserve the complete agent catalog for the
     final integrated campaign state.
   workflow:
+  - When restarting after all agents have stopped, run the configured claim helper's reset
+    command before reading inventory or dispatching work.
   - Rebuild current work from the effective Persistence-selected management skill, Git, enabled
     resource coordination, worktrees, active and archived Threads, and unread handoffs. Resume
     valid Starting or Running ownership

@@ -127,6 +127,8 @@ When a request mixes types, split it only when the parts can be completed indepe
 
 ## User Action Required Classification
 
+Before creating a User Action Required item, when agent-claim is loaded, apply agent-claim to the blocking condition and confirm that a separate genuine user-owned decision remains. Structured claim outcomes and technical claim cleanup or recovery remain agent-owned and do not justify User Action Required.
+
 Do not use User Action Required merely to preserve an independently identified possibility. If the active workflow explicitly authorizes idea capture, place that possibility in backlog/future-ideas without asking for approval to perform work. Otherwise report it ephemerally rather than creating an unauthorized durable record.
 
 Also use User Action Required when all of these are true:

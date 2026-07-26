@@ -255,6 +255,8 @@ technical or external blocker in Blocked with an exact owner and unblock conditi
 
 ## User Action Required Workflow
 
+Before transitioning an item to User Action Required, when agent-claim is loaded, apply agent-claim to the blocking condition and confirm that a separate genuine user-owned decision remains. Structured claim outcomes and technical claim cleanup or recovery remain agent-owned and do not justify User Action Required.
+
 1. Read the item and current Resolution.
 2. Ask the user the exact question recorded in the item and include stated options and tradeoffs.
 3. Do not infer approval from silence, unrelated decisions, repository access, or technical plausibility.

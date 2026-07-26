@@ -7,7 +7,7 @@ metadata:
 
 # Agent Claim
 
-Claims prevent two agents from changing the same shared file or resource at the same time. A claim does not prove that work is complete.
+Claims prevent two agents from changing the same shared file or resource at the same time. A claim and its release do not prove that work is complete.
 
 Git provides one primary worktree for a repository. The primary worktree owns the backlog and the main branch. Other worktrees are private working copies.
 
@@ -17,8 +17,8 @@ Acquire a claim only for an event in this table. Acquire it immediately before s
 
 | No. | Event | Claim | Release |
 |---:|---|---|---|
-| 1 | Edit or move an existing backlog item in the primary worktree | Each current backlog path and each destination path. | After the backlog commit succeeds, or after a verified no-change result. |
-| 2 | Perform any non-backlog work in the primary worktree | project-files: every path in the primary worktree except backlog. | After changes are committed or a verified no-change result is recorded. |
+| 1 | Edit or move an existing backlog item in the primary worktree | Each current backlog path and each destination path. | After the backlog mutation event ends or ownership is handed off. |
+| 2 | Perform any non-backlog work in the primary worktree | project-files: every path in the primary worktree except backlog. | After the primary-worktree event ends or ownership is handed off. |
 | 3 | Use a shared browser session or its shared server | browser-test:&lt;id&gt;. | After the claimed session or server stops or is handed off. |
 | 4 | Use a shared database | database:&lt;id&gt;. | After database work finishes and the claimed database is restored, stopped, or handed off. |
 | 5 | Start or use a shared network listener | port:&lt;number&gt;. | After the claimed listener stops or is handed off. |
@@ -35,6 +35,8 @@ Git stores repository-wide metadata in a directory called the Git common directo
 For example, &lt;project-root&gt; and &lt;project-root&gt;/.worktrees/task-123 both use &lt;project-root&gt;/.git.
 
 Store a claim registry named agent-claims.json in the Git common directory. Every worktree connected to that Git common directory uses this registry.
+
+Apply the exclusive OS lock directly to agent-claims.json. Read and update the registry through that locked file without replacing its inode. Do not create a separate claim lock file.
 
 Store claim history in an agent-claim-events directory next to the registry. For example:
 
@@ -98,8 +100,10 @@ Extend a resource deadline only when concrete evidence explains why more time is
 
 Claim status is read-only. It reports overdue resource claims but never releases one. A configured watchdog investigates an overdue claim whose owner has stopped.
 
-## Claim Helper Recovery
+## Release Cleanup
 
-RECONCILIATION_RECOVERY_REQUIRED means that an earlier claim operation did not finish safely.
+Release is claim cleanup only. While holding the registry lock, locate the exact named live claim, remove only that claim, persist the registry through the locked file, and append a RELEASED journal event.
 
-Run claim status once. If the same result returns, stop claim mutations. Send that status result, the claim registry, and claim history to Project Configurator. Do not edit or remove those records or the protected claim.
+Release does not inspect or gate on worktree cleanliness, branches, baseline or current HEAD, ancestry, commits, file contents, delivery state, no-change evidence, or out-of-domain changes. Keep completion, delivery, provider lifecycle, and claim cleanup as separate operations.
+
+Structured claim outcomes and technical claim cleanup or recovery remain agent-owned. Do not turn them into User Action Required unless a separate genuine user-owned decision remains after applying this skill.

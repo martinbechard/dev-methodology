@@ -602,6 +602,7 @@ class StartingLifecycleContractTests(unittest.TestCase):
             "Count work items whose provider lifecycle state is Starting or Running.",
             self.queue_section,
         )
+
         self.assertIn(
             "create at most one user-visible work-item Thread for the Starting work item",
             self.queue_section,
@@ -617,6 +618,13 @@ class StartingLifecycleContractTests(unittest.TestCase):
         self.assertIn(
             "Starting counts against capacity exactly like Running",
             self.provider_dispatch_section,
+        )
+
+    def test_restarted_coordinator_resets_claims_before_dispatch(self) -> None:
+        self.assertIn(
+            "When restarting after all agents have stopped, run the configured "
+            "claim helper's reset command before reading inventory or dispatching work.",
+            self.coordinator_workflow,
         )
 
     def test_stalled_resume_reconciles_capacity_atomically(self) -> None:

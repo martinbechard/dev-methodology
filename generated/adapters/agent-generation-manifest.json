@@ -21,7 +21,7 @@
             "effective-communication",
             "structured-explanation"
           ],
-          "sha256": "37de84a62b9b43b4ada63588be9a6863f2c1584f38b95a9cadfadb5474ec044d",
+          "sha256": "f7ac208d5675f740297c2ef5c7934989f87f1947a0b7f15fc0c93485ac07a975",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -355,7 +355,7 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "a3faf5a301c28e7aa086ef80edc24c5f18ef45b8ea46101fab6dd2008f270795",
+          "sha256": "6724e852f7478212f29f1bdf6b03719934eddb04722cf5ed990c76054bec8d4d",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -716,7 +716,7 @@
             "effective-communication",
             "structured-explanation"
           ],
-          "sha256": "b78977761798c97c27b0e2c76ea1fe436ebf4f074aae7140efe2870deda1ec88",
+          "sha256": "e5c7d4214692c3609edc97271fc5a48469370b01ea2a02505a418c012cc6887f",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -1048,7 +1048,7 @@
             "effective-communication",
             "structured-explanation"
           ],
-          "sha256": "8c2367024332d72b1425df48e617186c88417bcbf5c94e1af4d6f3f86cfbc352",
+          "sha256": "3ab07e8e5f373732972289563f524a7b4aa358246c1298fd77e5e1c8448b1984",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {

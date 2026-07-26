@@ -28,6 +28,8 @@ Do not create a separate parent ledger, baton registry, waiting-Task registry, o
 
 When agent-claim is loaded, use its Claim Events table and supporting rules. Do not define claim behavior in this skill.
 
+Before creating or transitioning work to User Action Required, apply agent-claim to the blocking condition and confirm that a separate genuine user-owned decision remains. Structured claim outcomes and technical claim cleanup or recovery remain agent-owned and do not justify User Action Required.
+
 ## Work-Item Execution Record
 
 For a selected Persistence provider, use its management skill to record these phase-appropriate facts in the provider's supported ownership, open-issues, and evidence fields. For provider none, retain them in the canonical Codex Thread result without creating a shadow record:

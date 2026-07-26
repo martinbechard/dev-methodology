@@ -34,7 +34,7 @@ Use exactly the tool matching the intended operation:
 | Extend scope | claim_extend | repository, claim_id, and net-new scope |
 | Extend a deadline | claim_extend_deadline | repository, claim_id, requested_hard_stop_duration_seconds, and extension_evidence |
 | Refresh heartbeat | claim_heartbeat | repository, claim_id |
-| Release ownership | claim_release | repository, claim_id; optional no_change, or the mutually exclusive reconcile_out_of_domain_commit and prior_rejected_release_reference |
+| Release ownership | claim_release | repository and claim_id |
 | Maintain journal | claim_maintain_journal | repository; hot_days defaults to 2 |
 | Report contention | claim_report | repository; since defaults to 2d |
 
@@ -138,19 +138,10 @@ Heartbeat:
 Release:
 
 ```json
-{"repository": "/workspace/project", "claim_id": "task-123", "no_change": false}
+{"repository": "/workspace/project", "claim_id": "task-123"}
 ```
 
-Release after Project Configurator approves reconciliation:
-
-```json
-{
-  "repository": "/workspace/project",
-  "claim_id": "task-123",
-  "reconcile_out_of_domain_commit": "0123456789abcdef0123456789abcdef01234567",
-  "prior_rejected_release_reference": "12345678-1234-1234-1234-123456789abc"
-}
-```
+Release removes only the exact named live claim under the configured helper's registry lock and appends RELEASED journal evidence. Release does not inspect Git state, file contents, delivery evidence, or completion state.
 
 ```json
 {"repository": "/workspace/project", "hot_days": 2}

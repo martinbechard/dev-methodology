@@ -1,0 +1,6 @@
+basis: explicit-user-direction
+definition_scope: skills/agent-claim-mcp/SKILL.md
+direction: "Approved"
+provenance:
+  source: user-message
+  reference: thread:019f9fef-1edc-7ea1-a058-bf8dfddcd2fb/message:exact-six-path-approval

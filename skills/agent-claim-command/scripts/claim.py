@@ -6,8 +6,6 @@
 from __future__ import annotations
 
 import argparse
-import base64
-import binascii
 import fcntl
 import gzip
 import hashlib
@@ -22,7 +20,7 @@ from contextlib import contextmanager
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from statistics import median
-from typing import Any, Iterator, Sequence
+from typing import Any, Iterator, Sequence, TextIO
 from uuid import uuid4
 
 import yaml
@@ -38,8 +36,6 @@ WORKTREE_ROOT_DIRECTORY = ".worktrees"
 WORKTREE_IGNORE_PATTERN = "/.worktrees/"
 ISOLATED_SPARSE_CHECKOUT_PATTERNS = ("/*", "!/backlog/")
 REGISTRY_FILE_NAME = "agent-claims.json"
-LOCK_FILE_NAME = "agent-claims.lock"
-RECONCILIATION_PENDING_FILE_NAME = "agent-claim-reconciliation-pending.json"
 EVENT_DIRECTORY_NAME = "agent-claim-events"
 EVENT_SCHEMA_VERSION = 1
 RESULT_SCHEMA_VERSION = 2
@@ -59,7 +55,6 @@ _RESOURCE_DEADLINE_CLASS_IDS = (
 STALE_HEARTBEAT_HOURS = 24
 UTC_DAY_PATTERN = re.compile(r"^(\d{4}-\d{2}-\d{2})\.jsonl$")
 SINCE_PATTERN = re.compile(r"^(\d+)([dh])$")
-FULL_COMMIT_SHA_PATTERN = re.compile(r"^[0-9a-fA-F]{40}$")
 WORKTREE_COMPONENT_PATTERN = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,198}[A-Za-z0-9_-])?$")
 LEGACY_OUTCOME_ALIASES = {
     "PRIMARY": "SHARED_CHECKOUT_ACQUIRED",
@@ -91,20 +86,6 @@ class _DeadlineError(ValueError):
         super().__init__(message)
         self.field = field
         self.reason = reason
-
-
-class _ReleaseReconciliationError(ValueError):
-    def __init__(self, message: str, reason: str, **details: Any) -> None:
-        super().__init__(message)
-        self.reason = reason
-        self.details = details
-
-
-class _PendingReconciliationError(RuntimeError):
-    def __init__(self, message: str, claim_id: str, marker_path: Path) -> None:
-        super().__init__(message)
-        self.claim_id = claim_id
-        self.marker_path = marker_path
 
 
 def _git(worktree: Path, *arguments: str, check: bool = True) -> subprocess.CompletedProcess[str]:
@@ -181,9 +162,9 @@ def _claim_id_is_safe_worktree_component(claim_id: str) -> bool:
     return bool(WORKTREE_COMPONENT_PATTERN.fullmatch(claim_id))
 
 
-def _registry_paths(repository: Path) -> tuple[Path, Path]:
+def _registry_path(repository: Path) -> Path:
     common_directory = _git_common_directory(repository)
-    return common_directory / REGISTRY_FILE_NAME, common_directory / LOCK_FILE_NAME
+    return common_directory / REGISTRY_FILE_NAME
 
 
 def _journal_paths(common_directory: Path) -> tuple[Path, Path, Path, Path]:
@@ -191,509 +172,39 @@ def _journal_paths(common_directory: Path) -> tuple[Path, Path, Path, Path]:
     return root, root / "hot", root / "archive", root / "journal"
 
 
-def _fsync_directory(directory: Path) -> None:
-    descriptor = os.open(directory, os.O_RDONLY)
-    try:
-        os.fsync(descriptor)
-    finally:
-        os.close(descriptor)
-
-
-def _fault_enabled(faults: dict[str, str] | None, boundary: str) -> bool:
-    environment_name = (faults or {}).get(boundary)
-    return bool(environment_name and os.environ.get(environment_name) == "1")
-
-
-def _durable_atomic_replace(
-    path: Path,
-    content: bytes,
-    *,
-    faults: dict[str, str] | None = None,
-) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(f".{path.name}.{os.getpid()}.{uuid4().hex}.tmp")
-    target_mode = stat.S_IMODE(path.stat().st_mode) if path.exists() else 0o600
-    descriptor: int | None = None
-    replaced = False
-    try:
-        if _fault_enabled(faults, "write"):
-            raise OSError("simulated durable replacement write failure")
-        descriptor = os.open(
-            temporary,
-            os.O_CREAT | os.O_EXCL | os.O_WRONLY,
-            0o600,
-        )
-        os.fchmod(descriptor, target_mode)
-        offset = 0
-        while offset < len(content):
-            remaining = content[offset:]
-            if _fault_enabled(faults, "short_write"):
-                written = os.write(
-                    descriptor,
-                    remaining[: max(1, len(remaining) // 2)],
-                )
-                if written > 0:
-                    offset += written
-                raise OSError("simulated incomplete durable replacement write")
-            written = os.write(descriptor, remaining)
-            if written <= 0:
-                raise OSError("durable replacement write made no progress")
-            offset += written
-        if _fault_enabled(faults, "after_write"):
-            raise OSError("simulated failure after durable replacement write")
-        if _fault_enabled(faults, "fsync"):
-            raise OSError("simulated durable replacement file fsync failure")
-        os.fsync(descriptor)
-        os.close(descriptor)
-        descriptor = None
-        if _fault_enabled(faults, "replace"):
-            raise OSError("simulated durable replacement rename failure")
-        os.replace(temporary, path)
-        replaced = True
-        if _fault_enabled(faults, "directory_fsync"):
-            raise OSError("simulated durable replacement directory fsync failure")
-        _fsync_directory(path.parent)
-    finally:
-        if descriptor is not None:
-            os.close(descriptor)
-        if not replaced:
-            temporary.unlink(missing_ok=True)
-
-
-def _durable_remove(
-    path: Path,
-    *,
-    fault_environment: str | None = None,
-) -> None:
-    if fault_environment and os.environ.get(fault_environment) == "1":
-        raise OSError("simulated durable removal failure")
-    if path.exists():
-        path.unlink()
-        _fsync_directory(path.parent)
-
-
-def _pending_reconciliation_path(common_directory: Path) -> Path:
-    return common_directory / RECONCILIATION_PENDING_FILE_NAME
-
-
-def _encoded_snapshot(content: bytes, exists: bool = True) -> dict[str, Any]:
-    return {
-        "exists": exists,
-        "sha256": hashlib.sha256(content).hexdigest(),
-        "base64": base64.b64encode(content).decode("ascii"),
-    }
-
-
-def _decoded_snapshot(snapshot: dict[str, Any]) -> tuple[bool, bytes]:
-    if not isinstance(snapshot, dict) or set(snapshot) != {
-        "exists",
-        "sha256",
-        "base64",
-    }:
-        raise ValueError("Invalid reconciliation snapshot schema.")
-    exists = snapshot.get("exists")
-    encoded = snapshot.get("base64")
-    digest = snapshot.get("sha256")
-    if (
-        not isinstance(exists, bool)
-        or not isinstance(encoded, str)
-        or not isinstance(digest, str)
-    ):
-        raise ValueError("Invalid reconciliation snapshot.")
-    content = base64.b64decode(encoded, validate=True)
-    if hashlib.sha256(content).hexdigest() != digest:
-        raise ValueError("Reconciliation snapshot digest mismatch.")
-    return exists, content
-
-
-def _required_marker_string(value: Any, field: str) -> str:
-    if not isinstance(value, str) or not value:
-        raise ValueError(f"Invalid pending reconciliation {field}.")
-    return value
-
-
-def _safe_pending_target(
-    common_directory: Path,
-    relative_path: Any,
-    expected_relative_path: str,
-) -> Path:
-    if relative_path != expected_relative_path:
-        raise ValueError("Pending reconciliation target is not canonical.")
-    candidate = common_directory / expected_relative_path
-    current = common_directory
-    for component in Path(expected_relative_path).parts:
-        current = current / component
+@contextmanager
+def _locked_registry_file(
+    repository: Path,
+) -> Iterator[tuple[Path, TextIO]]:
+    registry_path = _registry_path(repository)
+    registry_path.parent.mkdir(parents=True, exist_ok=True)
+    registry_descriptor = os.open(
+        registry_path,
+        os.O_CREAT | os.O_RDWR,
+        0o600,
+    )
+    with os.fdopen(registry_descriptor, "r+", encoding="utf-8") as registry_file:
+        fcntl.flock(registry_file.fileno(), fcntl.LOCK_EX)
         try:
-            mode = os.lstat(current).st_mode
-        except FileNotFoundError:
-            continue
-        if stat.S_ISLNK(mode):
-            raise ValueError("Pending reconciliation target contains a symbolic link.")
-    return candidate
-
-
-def _snapshot_json(snapshot: dict[str, Any], field: str) -> dict[str, Any]:
-    exists, content = _decoded_snapshot(snapshot)
-    if not exists:
-        raise ValueError(f"Pending reconciliation {field} snapshot must exist.")
-    try:
-        value = json.loads(content.decode("utf-8"))
-    except (UnicodeDecodeError, json.JSONDecodeError) as error:
-        raise ValueError(
-            f"Pending reconciliation {field} snapshot is not valid JSON."
-        ) from error
-    if not isinstance(value, dict):
-        raise ValueError(f"Pending reconciliation {field} snapshot is not an object.")
-    return value
-
-
-def _appended_event(
-    original: bytes,
-    replacement: bytes,
-    field: str,
-) -> dict[str, Any]:
-    if not replacement.startswith(original):
-        raise ValueError(
-            f"Pending reconciliation journal {field} does not preserve original bytes."
-        )
-    appended = replacement[len(original) :]
-    if not appended or not appended.endswith(b"\n") or b"\n" in appended[:-1]:
-        raise ValueError(
-            f"Pending reconciliation journal {field} is not one appended event."
-        )
-    try:
-        event = json.loads(appended.decode("utf-8"))
-    except (UnicodeDecodeError, json.JSONDecodeError) as error:
-        raise ValueError(
-            f"Pending reconciliation journal {field} event is invalid."
-        ) from error
-    if not isinstance(event, dict):
-        raise ValueError(
-            f"Pending reconciliation journal {field} event is not an object."
-        )
-    return event
-
-
-def _validated_pending_reconciliation(
-    common_directory: Path,
-    pending: Any,
-) -> dict[str, Any]:
-    if not isinstance(pending, dict) or set(pending) != {
-        "schema_version",
-        "state",
-        "claim_id",
-        "event_id",
-        "incarnation_id",
-        "event_timestamp",
-        "prior_rejected_release_reference",
-        "registry",
-        "journal",
-    }:
-        raise ValueError("Invalid pending reconciliation marker schema.")
-    if type(pending["schema_version"]) is not int or pending["schema_version"] != 1:
-        raise ValueError("Unsupported pending reconciliation marker schema version.")
-    state = pending["state"]
-    if state not in {"prepared", "committed"}:
-        raise ValueError("Invalid pending reconciliation state.")
-    claim_id = _required_marker_string(pending["claim_id"], "claim id")
-    event_id = _required_marker_string(pending["event_id"], "event id")
-    incarnation_id = _required_marker_string(
-        pending["incarnation_id"],
-        "incarnation id",
-    )
-    event_timestamp = _required_marker_string(
-        pending["event_timestamp"],
-        "event timestamp",
-    )
-    prior_reference = _required_marker_string(
-        pending["prior_rejected_release_reference"],
-        "prior rejected release reference",
-    )
-    try:
-        journal_day = _parse_timestamp(event_timestamp).date().isoformat()
-    except (TypeError, ValueError) as error:
-        raise ValueError("Invalid pending reconciliation event timestamp.") from error
-
-    registry = pending["registry"]
-    journal = pending["journal"]
-    if not isinstance(registry, dict) or set(registry) != {
-        "path",
-        "original",
-        "released",
-    }:
-        raise ValueError("Invalid pending reconciliation registry schema.")
-    if not isinstance(journal, dict) or set(journal) != {
-        "path",
-        "original",
-        "prepared",
-        "released",
-    }:
-        raise ValueError("Invalid pending reconciliation journal schema.")
-    registry_path = _safe_pending_target(
-        common_directory,
-        registry["path"],
-        REGISTRY_FILE_NAME,
-    )
-    journal_relative = (
-        f"{EVENT_DIRECTORY_NAME}/hot/{journal_day}.jsonl"
-    )
-    journal_path = _safe_pending_target(
-        common_directory,
-        journal["path"],
-        journal_relative,
-    )
-    if registry_path == journal_path:
-        raise ValueError("Pending reconciliation targets must be distinct.")
-
-    original_registry = _snapshot_json(registry["original"], "original registry")
-    released_registry = _snapshot_json(registry["released"], "released registry")
-    original_claims = original_registry.get("claims")
-    released_claims = released_registry.get("claims")
-    if not isinstance(original_claims, list) or not isinstance(released_claims, list):
-        raise ValueError("Pending reconciliation registry claims are invalid.")
-    matching_indexes = [
-        index
-        for index, claim in enumerate(original_claims)
-        if isinstance(claim, dict) and claim.get("claim_id") == claim_id
-    ]
-    if len(matching_indexes) != 1:
-        raise ValueError(
-            "Pending reconciliation original registry must contain one target claim."
-        )
-    target_index = matching_indexes[0]
-    expected_released_claims = (
-        original_claims[:target_index] + original_claims[target_index + 1 :]
-    )
-    expected_released_registry = dict(original_registry)
-    expected_released_registry["claims"] = expected_released_claims
-    if released_registry != expected_released_registry:
-        raise ValueError(
-            "Pending reconciliation released registry is not target-only removal."
-        )
-    target_claim = original_claims[target_index]
-    target_incarnation = target_claim.get("incarnation_id")
-    if target_incarnation is not None and target_incarnation != incarnation_id:
-        raise ValueError("Pending reconciliation claim incarnation is inconsistent.")
-
-    original_exists, original_journal = _decoded_snapshot(journal["original"])
-    if not original_exists and original_journal:
-        raise ValueError(
-            "Pending reconciliation absent original journal must have empty bytes."
-        )
-    prepared_exists, prepared_journal = _decoded_snapshot(journal["prepared"])
-    released_exists, released_journal = _decoded_snapshot(journal["released"])
-    if not prepared_exists or not released_exists:
-        raise ValueError(
-            "Pending reconciliation prepared and released journals must exist."
-        )
-    prepared_event = _appended_event(
-        original_journal,
-        prepared_journal,
-        "prepared",
-    )
-    released_event = _appended_event(
-        original_journal,
-        released_journal,
-        "released",
-    )
-    if prepared_event.get("outcome") != "RELEASE_PENDING":
-        raise ValueError("Pending reconciliation prepared outcome is invalid.")
-    if prepared_event.get("reconciliation_transaction_state") != "prepared":
-        raise ValueError("Pending reconciliation prepared state is invalid.")
-    if released_event.get("outcome") != "RELEASED":
-        raise ValueError("Pending reconciliation released outcome is invalid.")
-    if "reconciliation_transaction_state" in released_event:
-        raise ValueError("Pending reconciliation released event retains pending state.")
-    normalized_prepared = dict(prepared_event)
-    normalized_prepared["outcome"] = "RELEASED"
-    normalized_prepared.pop("reconciliation_transaction_state", None)
-    if normalized_prepared != released_event:
-        raise ValueError(
-            "Pending reconciliation journal snapshots are not one event transformation."
-        )
-    reconciliation = released_event.get("reconciliation")
-    if (
-        released_event.get("event_id") != event_id
-        or released_event.get("claim_id") != claim_id
-        or released_event.get("incarnation_id") != incarnation_id
-        or released_event.get("timestamp") != event_timestamp
-        or not isinstance(reconciliation, dict)
-        or reconciliation.get("prior_rejected_release_reference") != prior_reference
-        or not isinstance(reconciliation.get("claim_incarnation"), dict)
-        or reconciliation["claim_incarnation"].get("id") != incarnation_id
-        or reconciliation.get("baseline_commit") != target_claim.get("baseline_commit")
-        or not _claim_facts_match(released_event, target_claim)
-    ):
-        raise ValueError("Pending reconciliation event relationships are invalid.")
-
-    registry_current = (
-        registry_path.exists(),
-        registry_path.read_bytes() if registry_path.exists() else b"",
-    )
-    journal_current = (
-        journal_path.exists(),
-        journal_path.read_bytes() if journal_path.exists() else b"",
-    )
-    original_registry_snapshot = _decoded_snapshot(registry["original"])
-    released_registry_snapshot = _decoded_snapshot(registry["released"])
-    original_journal_snapshot = _decoded_snapshot(journal["original"])
-    prepared_journal_snapshot = _decoded_snapshot(journal["prepared"])
-    released_journal_snapshot = _decoded_snapshot(journal["released"])
-    if state == "prepared":
-        registry_allowed = {
-            original_registry_snapshot,
-            released_registry_snapshot,
-        }
-        journal_allowed = {
-            original_journal_snapshot,
-            prepared_journal_snapshot,
-        }
-    else:
-        registry_allowed = {released_registry_snapshot}
-        journal_allowed = {
-            prepared_journal_snapshot,
-            released_journal_snapshot,
-        }
-    if registry_current not in registry_allowed:
-        raise ValueError(
-            "Pending reconciliation registry target does not match an allowed state."
-        )
-    if journal_current not in journal_allowed:
-        raise ValueError(
-            "Pending reconciliation journal target does not match an allowed state."
-        )
-    return {
-        **pending,
-        "registry_path": registry_path,
-        "journal_path": journal_path,
-    }
-
-
-def _write_pending_reconciliation(
-    common_directory: Path,
-    pending: dict[str, Any],
-) -> Path:
-    path = _pending_reconciliation_path(common_directory)
-    _validated_pending_reconciliation(common_directory, pending)
-    content = (json.dumps(pending, indent=2, sort_keys=True) + "\n").encode("utf-8")
-    _durable_atomic_replace(path, content)
-    return path
-
-
-def _restore_faults(target_name: str) -> dict[str, str]:
-    prefix = f"AGENT_CLAIM_TEST_FAIL_RECONCILIATION_{target_name}_RESTORE"
-    return {
-        "write": f"{prefix}_WRITE",
-        "short_write": f"{prefix}_SHORT_WRITE",
-        "after_write": f"{prefix}_AFTER_WRITE",
-        "fsync": f"{prefix}_FSYNC",
-        "replace": f"{prefix}_REPLACE",
-        "directory_fsync": f"{prefix}_DIRECTORY_FSYNC",
-    }
-
-
-def _restore_pending_snapshot(
-    path: Path,
-    snapshot: dict[str, Any],
-    *,
-    faults: dict[str, str] | None = None,
-) -> None:
-    exists, content = _decoded_snapshot(snapshot)
-    if exists:
-        _durable_atomic_replace(path, content, faults=faults)
-    else:
-        _durable_remove(path)
-
-
-def _recover_pending_reconciliation(common_directory: Path) -> dict[str, Any] | None:
-    marker_path = _pending_reconciliation_path(common_directory)
-    if not os.path.lexists(marker_path):
-        return None
-    claim_id = "unknown"
-    try:
-        if stat.S_ISLNK(os.lstat(marker_path).st_mode):
-            raise ValueError("Pending reconciliation marker cannot be a symbolic link.")
-        decoded = marker_path.read_bytes().decode("utf-8")
-        raw_pending = json.loads(decoded)
-        if isinstance(raw_pending, dict) and isinstance(raw_pending.get("claim_id"), str):
-            claim_id = raw_pending["claim_id"]
-        pending = _validated_pending_reconciliation(common_directory, raw_pending)
-        state = pending["state"]
-        registry = pending["registry"]
-        journal = pending["journal"]
-        registry_path = pending["registry_path"]
-        journal_path = pending["journal_path"]
-        if state == "prepared":
-            _restore_pending_snapshot(
-                journal_path,
-                journal["original"],
-                faults=_restore_faults("JOURNAL"),
-            )
-            _restore_pending_snapshot(
-                registry_path,
-                registry["original"],
-                faults=_restore_faults("REGISTRY"),
-            )
-        else:
-            _restore_pending_snapshot(registry_path, registry["released"])
-            _restore_pending_snapshot(journal_path, journal["released"])
-        _durable_remove(
-            marker_path,
-            fault_environment=(
-                "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_MARKER_REMOVE"
-            ),
-        )
-        return {
-            "claim_id": claim_id,
-            "event_id": pending.get("event_id"),
-            "resolved_state": state,
-        }
-    except (
-        AttributeError,
-        binascii.Error,
-        KeyError,
-        OSError,
-        TypeError,
-        UnicodeDecodeError,
-        ValueError,
-        json.JSONDecodeError,
-    ) as error:
-        raise _PendingReconciliationError(
-            f"Pending reconciliation recovery failed: {error}",
-            claim_id,
-            marker_path,
-        ) from error
+            yield registry_path, registry_file
+        finally:
+            fcntl.flock(registry_file.fileno(), fcntl.LOCK_UN)
 
 
 @contextmanager
 def _locked_registry(
     repository: Path,
-    *,
-    recover_pending: bool = True,
-) -> Iterator[tuple[Path, dict[str, Any]]]:
-    registry_path, lock_path = _registry_paths(repository)
-    lock_path.parent.mkdir(parents=True, exist_ok=True)
-    with lock_path.open("a+", encoding="utf-8") as lock_file:
-        fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+) -> Iterator[tuple[Path, dict[str, Any], TextIO]]:
+    with _locked_registry_file(repository) as (registry_path, registry_file):
         try:
-            marker_path = _pending_reconciliation_path(registry_path.parent)
-            if recover_pending:
-                _recover_pending_reconciliation(registry_path.parent)
-            elif os.path.lexists(marker_path):
-                raise _PendingReconciliationError(
-                    "Pending reconciliation requires recovery through the same claim-helper interface before reporting.",
-                    "unknown",
-                    marker_path,
-                )
-            if registry_path.exists():
-                data = json.loads(registry_path.read_text(encoding="utf-8"))
-            else:
-                data = {"claims": []}
+            registry_file.seek(0)
+            raw_registry = registry_file.read()
+            data = json.loads(raw_registry) if raw_registry else {"claims": []}
             if not isinstance(data.get("claims"), list):
                 raise ValueError(f"Invalid claim registry: {registry_path}")
-            yield registry_path, data
+            yield registry_path, data, registry_file
         finally:
-            fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+            pass
 
 
 @contextmanager
@@ -708,10 +219,12 @@ def _maintenance_lock(common_directory: Path) -> Iterator[None]:
             fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
 
 
-def _write_registry(path: Path, data: dict[str, Any]) -> None:
-    temporary_path = path.with_suffix(".tmp")
-    temporary_path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    os.replace(temporary_path, path)
+def _write_registry(registry_file: TextIO, data: dict[str, Any]) -> None:
+    registry_file.seek(0)
+    registry_file.write(json.dumps(data, indent=2, sort_keys=True) + "\n")
+    registry_file.truncate()
+    registry_file.flush()
+    os.fsync(registry_file.fileno())
 
 
 def _now() -> datetime:
@@ -1061,37 +574,6 @@ def _status_entries(paths: dict[str, str]) -> list[dict[str, str]]:
     ]
 
 
-def _status_state(worktree: Path, snapshot: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
-    state: dict[str, dict[str, str]] = {}
-    for paths in snapshot.values():
-        for path, status in paths.items():
-            candidate = worktree / path
-            if candidate.is_symlink():
-                worktree_digest = hashlib.sha256(os.readlink(candidate).encode("utf-8")).hexdigest()
-            elif candidate.is_file():
-                worktree_digest = hashlib.sha256(candidate.read_bytes()).hexdigest()
-            else:
-                worktree_digest = "missing"
-            index_entry = _git(worktree, "ls-files", "--stage", "--", path).stdout.strip()
-            state[path] = {
-                "status": status,
-                "worktree_sha256": worktree_digest,
-                "index_entry": index_entry,
-            }
-    return state
-
-
-def _state_outside_domain(
-    state: dict[str, dict[str, str]],
-    file_domain: str,
-) -> dict[str, dict[str, str]]:
-    return {
-        path: details
-        for path, details in state.items()
-        if not _path_belongs_to_domain(path, file_domain)
-    }
-
-
 def _status_paths(entries: Sequence[dict[str, str]]) -> list[str]:
     return sorted({entry["path"] for entry in entries})
 
@@ -1111,60 +593,8 @@ def _status_for_domain(
     return []
 
 
-def _status_outside_domain(
-    snapshot: dict[str, dict[str, str]],
-    file_domain: str,
-) -> list[dict[str, str]]:
-    if file_domain == "project_files":
-        return _status_entries(snapshot["backlog"])
-    if file_domain == "backlog":
-        return _status_entries(snapshot["project_files"])
-    return []
-
-
-def _path_belongs_to_domain(path: str, file_domain: str) -> bool:
-    return file_domain in {"all_files", "none"} or _path_domain(path) == file_domain
-
-
 def _head(worktree: Path) -> str:
     return _git(worktree, "rev-parse", "HEAD").stdout.strip()
-
-
-def _full_commit_sha(value: str) -> str:
-    normalized = value.strip().lower()
-    if not FULL_COMMIT_SHA_PATTERN.fullmatch(normalized):
-        raise argparse.ArgumentTypeError("commit evidence must be one full 40-character hexadecimal SHA.")
-    return normalized
-
-
-def _commit_changed_paths(worktree: Path, commit: str) -> list[str]:
-    completed = _git(
-        worktree,
-        "diff-tree",
-        "--root",
-        "--no-commit-id",
-        "--name-only",
-        "-r",
-        "-m",
-        "-z",
-        commit,
-    )
-    return sorted({path for path in completed.stdout.split("\0") if path})
-
-
-def _commit_path_sha256(worktree: Path, commit: str, path: str) -> str:
-    object_spec = f"{commit}:{path}"
-    object_type = _git(worktree, "cat-file", "-t", object_spec, check=False)
-    if object_type.returncode != SUCCESS:
-        return "missing"
-    if object_type.stdout.strip() != "blob":
-        return f"non-blob:{object_type.stdout.strip()}"
-    blob = subprocess.run(
-        ["git", "-C", str(worktree), "cat-file", "blob", object_spec],
-        check=True,
-        capture_output=True,
-    ).stdout
-    return hashlib.sha256(blob).hexdigest()
 
 
 def _branch(worktree: Path) -> str:
@@ -1454,15 +884,7 @@ def _claim_for_output(
         rendered["file_domain"] = _legacy_file_domain(claim)
         rendered["project_files"] = False
         rendered["backlog"] = False
-        rendered["compatibility"] = {
-            "legacy_registry_claim": True,
-            "release_policy": "complete_worktree",
-        }
-    elif not isinstance(claim.get("baseline_out_of_domain_state"), dict):
-        rendered["compatibility"] = {
-            "missing_out_of_domain_baseline": True,
-            "release_policy": "complete_worktree",
-        }
+        rendered["compatibility"] = {"legacy_registry_claim": True}
     deadline = claim.get("deadline")
     if isinstance(deadline, dict) and evaluated_at is not None:
         rendered["deadline_status"] = _deadline_status(deadline, evaluated_at)
@@ -1591,7 +1013,10 @@ def _path_scopes(scope: dict[str, Any], include_broad: bool = True) -> list[tupl
 
 
 def _scope_requires_primary_worktree(scope: dict[str, Any]) -> bool:
-    return scope.get("file_domain") in {"backlog", "all_files"}
+    return bool(scope.get("project_files")) or scope.get("file_domain") in {
+        "backlog",
+        "all_files",
+    }
 
 
 def _scope_file_domain(scope: dict[str, Any]) -> str:
@@ -1890,70 +1315,6 @@ def _append_event(common_directory: Path, event: dict[str, Any]) -> Path:
     return path
 
 
-def _reconciliation_journal_state(
-    common_directory: Path,
-    event: dict[str, Any],
-) -> tuple[Path, bytes, bytes, bytes, bool]:
-    _root, hot_directory, _archive, _journal = _journal_paths(common_directory)
-    hot_directory.mkdir(parents=True, exist_ok=True)
-    day = _parse_timestamp(event["timestamp"]).date().isoformat()
-    path = hot_directory / f"{day}.jsonl"
-    existed = path.exists()
-    prior_bytes = path.read_bytes() if existed else b""
-    event_bytes = (
-        json.dumps(event, sort_keys=True, separators=(",", ":")) + "\n"
-    ).encode("utf-8")
-    pending_event = {
-        **event,
-        "outcome": "RELEASE_PENDING",
-        "reconciliation_transaction_state": "prepared",
-    }
-    pending_event_bytes = (
-        json.dumps(pending_event, sort_keys=True, separators=(",", ":")) + "\n"
-    ).encode("utf-8")
-    return (
-        path,
-        prior_bytes,
-        prior_bytes + pending_event_bytes,
-        prior_bytes + event_bytes,
-        existed,
-    )
-
-
-def _append_reconciliation_event(path: Path, replacement_bytes: bytes) -> Path:
-    faults = {
-        "write": "AGENT_CLAIM_TEST_FAIL_JOURNAL_WRITE",
-        "short_write": "AGENT_CLAIM_TEST_SHORT_RECONCILIATION_JOURNAL_WRITE",
-        "after_write": "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_JOURNAL_AFTER_WRITE",
-        "fsync": "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_JOURNAL_FSYNC",
-        "replace": "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_JOURNAL_REPLACE",
-        "directory_fsync": (
-            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_JOURNAL_DIRECTORY_FSYNC"
-        ),
-    }
-    _durable_atomic_replace(path, replacement_bytes, faults=faults)
-    return path
-
-
-def _finalize_reconciliation_event(path: Path, released_bytes: bytes) -> Path:
-    faults = {
-        "write": "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_FINAL_JOURNAL_WRITE",
-        "short_write": (
-            "AGENT_CLAIM_TEST_SHORT_RECONCILIATION_FINAL_JOURNAL_WRITE"
-        ),
-        "after_write": (
-            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_FINAL_JOURNAL_AFTER_WRITE"
-        ),
-        "fsync": "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_FINAL_JOURNAL_FSYNC",
-        "replace": "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_FINAL_JOURNAL_REPLACE",
-        "directory_fsync": (
-            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_FINAL_JOURNAL_DIRECTORY_FSYNC"
-        ),
-    }
-    _durable_atomic_replace(path, released_bytes, faults=faults)
-    return path
-
-
 def _print_result(
     outcome: str,
     *,
@@ -2065,8 +1426,12 @@ def _primary_required_result(
     claim: dict[str, Any] | None = None,
     **details: Any,
 ) -> int:
-    reason = "backlog_requires_primary_worktree"
-    message = "Backlog scope is available only from the primary worktree."
+    if requested_scope.get("project_files"):
+        reason = "project_files_requires_primary_worktree"
+        message = "Project-files scope is available only from the primary worktree."
+    else:
+        reason = "backlog_requires_primary_worktree"
+        message = "Backlog scope is available only from the primary worktree."
     event = _event(
         action,
         "PRIMARY_REQUIRED",
@@ -2157,7 +1522,7 @@ def _worktree_root_not_ignored_result(
 
 def _acquire(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
-    with _locked_registry(repository) as (registry_path, data):
+    with _locked_registry(repository) as (registry_path, data, registry_file):
         common_directory = registry_path.parent
         try:
             requested_scope, scope_warnings = _scope_from_args(args, repository)
@@ -2279,7 +1644,6 @@ def _acquire(args: argparse.Namespace) -> int:
             outcome = "RECOVER" if initial_status else "PRIMARY"
 
         baseline_snapshot = _status_snapshot(target_worktree)
-        baseline_state = _status_state(target_worktree, baseline_snapshot)
         now = _timestamp()
         deadline = (
             _deadline_from_request(deadline_request, now)
@@ -2295,14 +1659,6 @@ def _acquire(args: argparse.Namespace) -> int:
                 baseline_snapshot,
                 requested_scope["file_domain"],
                 resource_only=_scope_is_resource_only(requested_scope),
-            ),
-            "baseline_out_of_domain_status": _status_outside_domain(
-                baseline_snapshot,
-                requested_scope["file_domain"],
-            ),
-            "baseline_out_of_domain_state": _state_outside_domain(
-                baseline_state,
-                requested_scope["file_domain"],
             ),
             "branch": _branch(target_worktree),
             "checkout_topology": (
@@ -2329,7 +1685,7 @@ def _acquire(args: argparse.Namespace) -> int:
         if deadline is not None:
             claim["deadline"] = deadline
         claims.append(claim)
-        _write_registry(registry_path, data)
+        _write_registry(registry_file, data)
         event = _event(
             "acquire",
             outcome,
@@ -2356,7 +1712,7 @@ def _acquire(args: argparse.Namespace) -> int:
 
 def _extend(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
-    with _locked_registry(repository) as (registry_path, data):
+    with _locked_registry(repository) as (registry_path, data, registry_file):
         common_directory = registry_path.parent
         try:
             requested_scope, scope_warnings = _scope_from_args(args, repository)
@@ -2458,7 +1814,7 @@ def _extend(args: argparse.Namespace) -> int:
                 already_owned_scope=already_owned,
             )
 
-        if claim.get("mode") == "isolated" and _scope_requires_primary_worktree(added):
+        if _checkout_topology(claim) == "linked" and _scope_requires_primary_worktree(added):
             return _primary_required_result(
                 common_directory,
                 "extend",
@@ -2476,7 +1832,7 @@ def _extend(args: argparse.Namespace) -> int:
                 if deadline_request is None:
                     raise RuntimeError("Timed resource validation did not produce deadline evidence.")
                 claim["deadline"] = _deadline_from_request(deadline_request, _timestamp())
-            _write_registry(registry_path, data)
+            _write_registry(registry_file, data)
         event = _event(
             "extend",
             "EXTENDED",
@@ -2500,12 +1856,12 @@ def _extend(args: argparse.Namespace) -> int:
 
 def _heartbeat(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
-    with _locked_registry(repository) as (registry_path, data):
+    with _locked_registry(repository) as (registry_path, data, registry_file):
         common_directory = registry_path.parent
         for claim in data["claims"]:
             if claim.get("claim_id") == args.claim_id:
                 claim["heartbeat"] = _timestamp()
-                _write_registry(registry_path, data)
+                _write_registry(registry_file, data)
                 event = _event("heartbeat", "HEARTBEAT", args, claim=claim)
                 return _journaled_result(SUCCESS, common_directory, event, claim=claim)
         event = _event("heartbeat", "CLAIM_NOT_FOUND", args)
@@ -2514,7 +1870,7 @@ def _heartbeat(args: argparse.Namespace) -> int:
 
 def _extend_deadline(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
-    with _locked_registry(repository) as (registry_path, data):
+    with _locked_registry(repository) as (registry_path, data, registry_file):
         common_directory = registry_path.parent
         claim = next(
             (item for item in data["claims"] if item.get("claim_id") == args.claim_id),
@@ -2579,7 +1935,7 @@ def _extend_deadline(args: argparse.Namespace) -> int:
             hard_stop_at + timedelta(seconds=deadline["cleanup_grace_seconds"])
         )
         deadline.setdefault("extensions", []).append(extension)
-        _write_registry(registry_path, data)
+        _write_registry(registry_file, data)
         event = _event(
             "extend-deadline",
             "DEADLINE_EXTENDED",
@@ -2596,834 +1952,81 @@ def _extend_deadline(args: argparse.Namespace) -> int:
         )
 
 
-def _event_sequences(
-    common_directory: Path,
-) -> tuple[list[tuple[str, list[dict[str, Any]]]], list[dict[str, str]]]:
-    """Load each physical journal in line order without trusting event clocks."""
-    _root, hot_directory, archive_directory, _journal = _journal_paths(common_directory)
-    coverage_gaps: list[dict[str, str]] = []
-    sequences: list[tuple[str, list[dict[str, Any]]]] = []
-    hot_paths = sorted(hot_directory.glob("*.jsonl")) if hot_directory.exists() else []
-    archive_paths = (
-        sorted(archive_directory.glob("**/*.jsonl.gz"))
-        if archive_directory.exists()
-        else []
-    )
-    daily_paths = sorted(
-        [*archive_paths, *hot_paths],
-        key=lambda path: (path.name.split(".jsonl", 1)[0], str(path)),
-    )
-    for path in daily_paths:
-        source = str(path)
-        try:
-            raw = (
-                gzip.decompress(path.read_bytes())
-                if path.suffix == ".gz"
-                else path.read_bytes()
-            )
-            sequences.append((source, _read_jsonl(raw, source, coverage_gaps)))
-        except (OSError, EOFError) as error:
-            coverage_gaps.append({"source": source, "detail": str(error)})
-    return sequences, coverage_gaps
-
-
-def _claim_facts_match(event: dict[str, Any], claim: dict[str, Any]) -> bool:
-    expected = {
-        "claim_id": claim.get("claim_id"),
-        "root_task_id": _bounded_identifier(claim.get("root_task_id")),
-        "parent_claim_id": _bounded_identifier(claim.get("parent_claim_id")),
-        "agent": _bounded_identifier(claim.get("agent")),
-        "mode": claim.get("mode"),
-        "scopes": _claim_scope(claim),
-        "branch": claim.get("branch"),
-        "checkout_topology": _checkout_topology(claim),
-        "worktree_id": _worktree_identifier(claim),
-        "baseline_commit": claim.get("baseline_commit"),
-    }
-    return all(event.get(key) == value for key, value in expected.items())
-
-
-def _legacy_claim_segments(
-    sequences: Sequence[tuple[str, list[dict[str, Any]]]],
-    claim_id: str,
-) -> list[dict[str, Any]]:
-    acquisition_outcomes = {
-        "SHARED_CHECKOUT_ACQUIRED",
-        "ISOLATED_CHECKOUT_ACQUIRED",
-        "DIRTY_CHECKOUT_RECOVERY_ACQUIRED",
-    }
-    segments: list[dict[str, Any]] = []
-    current: dict[str, Any] | None = None
-    for source, events in sequences:
-        for event in events:
-            if event.get("claim_id") != claim_id:
-                continue
-            is_acquisition = (
-                event.get("action") == "acquire"
-                and _canonical_outcome(str(event.get("outcome"))) in acquisition_outcomes
-            )
-            if is_acquisition:
-                if current is not None:
-                    segments.append(current)
-                current = {
-                    "source": source,
-                    "acquisition": event,
-                    "events": [event],
-                    "released": False,
-                }
-                continue
-            if current is None:
-                continue
-            current["events"].append(event)
-            if event.get("action") == "release" and event.get("outcome") == "RELEASED":
-                current["released"] = True
-                segments.append(current)
-                current = None
-    if current is not None:
-        segments.append(current)
-    return segments
-
-
-def _resolve_reconciliation_incarnation(
-    common_directory: Path,
-    claim: dict[str, Any],
-    prior_reference: str,
-) -> tuple[dict[str, Any], dict[str, str]]:
-    sequences, coverage_gaps = _event_sequences(common_directory)
-    claim_id = str(claim.get("claim_id") or "")
-    incarnation_id = claim.get("incarnation_id")
-    if incarnation_id is None:
-        if coverage_gaps:
-            raise _ReleaseReconciliationError(
-                "Legacy claim incarnation resolution requires valid complete journal sequences.",
-                "reconciliation_legacy_journal_invalid",
-                journal_coverage_gaps=coverage_gaps,
-            )
-        relevant_event_ids: set[str] = set()
-        duplicate_event_ids: set[str] = set()
-        for _source, events in sequences:
-            for event in events:
-                if event.get("claim_id") != claim_id:
-                    continue
-                event_id = event.get("event_id")
-                if not isinstance(event_id, str) or not event_id:
-                    continue
-                if event_id in relevant_event_ids:
-                    duplicate_event_ids.add(event_id)
-                relevant_event_ids.add(event_id)
-        if duplicate_event_ids:
-            raise _ReleaseReconciliationError(
-                "Legacy claim history reuses an event identifier across lifecycle segments.",
-                "reconciliation_legacy_duplicate_event_id",
-                duplicate_event_ids=sorted(duplicate_event_ids),
-            )
-    prior_matches = [
-        (source, index, event)
-        for source, events in sequences
-        for index, event in enumerate(events)
-        if event.get("event_id") == prior_reference
-    ]
-    if len(prior_matches) > 1:
-        raise _ReleaseReconciliationError(
-            "The prior rejected release event reference is ambiguous.",
-            "reconciliation_prior_rejection_ambiguous",
-            prior_rejected_release_reference=prior_reference,
-        )
-    if not prior_matches:
-        raise _ReleaseReconciliationError(
-            "The prior rejected release event reference was not found.",
-            "reconciliation_prior_rejection_not_found",
-            prior_rejected_release_reference=prior_reference,
-        )
-    _prior_source, _prior_index, prior_event = prior_matches[0]
-
-    if incarnation_id is not None:
-        if not isinstance(incarnation_id, str) or not incarnation_id:
-            raise _ReleaseReconciliationError(
-                "The active claim has an invalid immutable incarnation identifier.",
-                "reconciliation_claim_incarnation_invalid",
-            )
-        if prior_event.get("incarnation_id") != incarnation_id:
-            raise _ReleaseReconciliationError(
-                "The referenced rejection belongs to another claim incarnation.",
-                "reconciliation_claim_incarnation_mismatch",
-                prior_rejected_release_reference=prior_reference,
-            )
-        return prior_event, {"id": incarnation_id, "source": "registry"}
-
-    segments = _legacy_claim_segments(sequences, claim_id)
-    prior_segments = [
-        segment
-        for segment in segments
-        if any(event is prior_event for event in segment["events"])
-    ]
-    if len(prior_segments) != 1:
-        reason = (
-            "reconciliation_legacy_incarnation_ambiguous"
-            if len(prior_segments) > 1
-            else "reconciliation_legacy_incarnation_unresolvable"
-        )
-        raise _ReleaseReconciliationError(
-            "The referenced legacy rejection does not resolve to one acquisition event.",
-            reason,
-            prior_rejected_release_reference=prior_reference,
-        )
-    active_segments = []
-    for segment in segments:
-        if segment["released"]:
-            continue
-        fact_events = [
-            event
-            for event in reversed(segment["events"])
-            if isinstance(event.get("scopes"), dict)
-        ]
-        if fact_events and _claim_facts_match(fact_events[0], claim):
-            active_segments.append(segment)
-    if len(active_segments) != 1:
-        reason = (
-            "reconciliation_legacy_incarnation_ambiguous"
-            if len(active_segments) > 1
-            else "reconciliation_legacy_incarnation_unresolvable"
-        )
-        raise _ReleaseReconciliationError(
-            "The active legacy claim does not resolve to one acquisition event.",
-            reason,
-        )
-    prior_acquisition_id = prior_segments[0]["acquisition"].get("event_id")
-    active_acquisition_id = active_segments[0]["acquisition"].get("event_id")
-    if (
-        not isinstance(prior_acquisition_id, str)
-        or not prior_acquisition_id
-        or not isinstance(active_acquisition_id, str)
-        or not active_acquisition_id
-    ):
-        raise _ReleaseReconciliationError(
-            "Legacy claim acquisition identity is missing.",
-            "reconciliation_legacy_incarnation_unresolvable",
-        )
-    if prior_acquisition_id != active_acquisition_id:
-        raise _ReleaseReconciliationError(
-            "The referenced legacy rejection belongs to another claim incarnation.",
-            "reconciliation_legacy_incarnation_mismatch",
-            active_acquisition_event_id=active_acquisition_id,
-            prior_acquisition_event_id=prior_acquisition_id,
-            prior_rejected_release_reference=prior_reference,
-        )
-    return prior_event, {
-        "id": active_acquisition_id,
-        "source": "legacy_acquisition_event",
-    }
-
-
-def _release_reconciliation_evidence(
-    common_directory: Path,
-    worktree: Path,
-    claim: dict[str, Any],
-    changed_paths: list[str],
-    outside_status: list[dict[str, str]],
-    args: argparse.Namespace,
-) -> dict[str, Any]:
-    file_domain = str(claim.get("file_domain") or _legacy_file_domain(claim))
-    scope = _claim_scope(claim)
-    if claim.get("mode") != "primary" or file_domain not in {"project_files", "backlog"}:
-        raise _ReleaseReconciliationError(
-            "Release reconciliation requires an active primary claim with one scoped file domain.",
-            "reconciliation_requires_primary_scoped_claim",
-        )
-    if not isinstance(claim.get("baseline_out_of_domain_state"), dict):
-        raise _ReleaseReconciliationError(
-            "Release reconciliation requires a trustworthy out-of-domain acquisition baseline.",
-            "reconciliation_baseline_missing",
-        )
-    if scope["resources"]:
-        raise _ReleaseReconciliationError(
-            "Release reconciliation cannot release a claim that still owns resources.",
-            "reconciliation_resources_present",
-            resources=scope["resources"],
-        )
-    if outside_status:
-        raise _ReleaseReconciliationError(
-            "Release reconciliation requires a clean current out-of-domain worktree and index.",
-            "reconciliation_out_of_domain_not_clean",
-            current_out_of_domain_status=outside_status,
-        )
-    if not changed_paths:
-        raise _ReleaseReconciliationError(
-            "Release reconciliation requires baseline-vs-current out-of-domain changes.",
-            "reconciliation_paths_missing",
-        )
-
-    peer_commit = args.reconcile_out_of_domain_commit
-    baseline_commit = str(claim.get("baseline_commit") or "")
-    resulting_commit = _head(worktree)
-    commit_exists = _git(
-        worktree,
-        "cat-file",
-        "-e",
-        f"{peer_commit}^{{commit}}",
-        check=False,
-    )
-    if commit_exists.returncode != SUCCESS:
-        raise _ReleaseReconciliationError(
-            "The supplied peer commit does not resolve to a commit.",
-            "reconciliation_commit_not_found",
-            peer_commit=peer_commit,
-        )
-    baseline_before_peer = _git(
-        worktree,
-        "merge-base",
-        "--is-ancestor",
-        baseline_commit,
-        peer_commit,
-        check=False,
-    )
-    if peer_commit == baseline_commit or baseline_before_peer.returncode != SUCCESS:
-        raise _ReleaseReconciliationError(
-            "The supplied peer commit must be strictly after the claim baseline.",
-            "reconciliation_commit_not_after_baseline",
-            baseline_commit=baseline_commit,
-            peer_commit=peer_commit,
-        )
-    peer_before_head = _git(
-        worktree,
-        "merge-base",
-        "--is-ancestor",
-        peer_commit,
-        resulting_commit,
-        check=False,
-    )
-    if peer_before_head.returncode != SUCCESS:
-        raise _ReleaseReconciliationError(
-            "The supplied peer commit must be an ancestor of the current HEAD.",
-            "reconciliation_commit_not_ancestor_of_head",
-            peer_commit=peer_commit,
-            resulting_commit=resulting_commit,
-        )
-
-    peer_paths = _commit_changed_paths(worktree, peer_commit)
-    claimed_peer_paths = [
-        path for path in peer_paths if _path_belongs_to_domain(path, file_domain)
-    ]
-    if claimed_peer_paths:
-        raise _ReleaseReconciliationError(
-            "The supplied peer commit changes paths inside the claim's file domain.",
-            "reconciliation_commit_changed_claimed_domain",
-            claimed_domain_paths=claimed_peer_paths,
-            peer_commit_paths=peer_paths,
-        )
-    if peer_paths != changed_paths:
-        raise _ReleaseReconciliationError(
-            "The supplied peer commit must change exactly the reconciled out-of-domain paths.",
-            "reconciliation_commit_paths_mismatch",
-            peer_commit_paths=peer_paths,
-            reconciled_out_of_domain_paths=changed_paths,
-        )
-
-    baseline_out_of_domain_state = claim["baseline_out_of_domain_state"]
-    peer_commit_content_sha256: dict[str, str] = {}
-    invalid_baseline_content_paths: list[str] = []
-    content_mismatches: list[dict[str, str]] = []
-    for path in changed_paths:
-        baseline_path_state = baseline_out_of_domain_state.get(path)
-        expected_sha256 = (
-            baseline_path_state.get("worktree_sha256")
-            if isinstance(baseline_path_state, dict)
-            else None
-        )
-        if not isinstance(expected_sha256, str) or (
-            expected_sha256 != "missing"
-            and not re.fullmatch(r"[0-9a-f]{64}", expected_sha256)
-        ):
-            invalid_baseline_content_paths.append(path)
-            continue
-        actual_sha256 = _commit_path_sha256(worktree, peer_commit, path)
-        peer_commit_content_sha256[path] = actual_sha256
-        if actual_sha256 != expected_sha256:
-            content_mismatches.append(
-                {
-                    "path": path,
-                    "acquisition_worktree_sha256": expected_sha256,
-                    "peer_commit_sha256": actual_sha256,
-                }
-            )
-    if invalid_baseline_content_paths:
-        raise _ReleaseReconciliationError(
-            "The acquisition baseline must contain trustworthy content evidence for every reconciled path.",
-            "reconciliation_baseline_content_invalid",
-            invalid_baseline_content_paths=invalid_baseline_content_paths,
-        )
-    if content_mismatches:
-        raise _ReleaseReconciliationError(
-            "The supplied peer commit must preserve the acquisition-time content for every reconciled path.",
-            "reconciliation_commit_content_mismatch",
-            peer_commit=peer_commit,
-            content_mismatches=content_mismatches,
-        )
-
-    prior_reference = args.prior_rejected_release_reference
-    if not prior_reference:
-        raise _ReleaseReconciliationError(
-            "Release reconciliation requires the prior rejected release event reference.",
-            "reconciliation_prior_rejection_required",
-        )
-    prior_event, claim_incarnation = _resolve_reconciliation_incarnation(
-        common_directory,
-        claim,
-        prior_reference,
-    )
-    expected_prior_evidence = {
-        "action": "release",
-        "outcome": "RELEASE_REJECTED",
-        "claim_id": claim.get("claim_id"),
-        "root_task_id": _bounded_identifier(claim.get("root_task_id")),
-        "parent_claim_id": _bounded_identifier(claim.get("parent_claim_id")),
-        "agent": _bounded_identifier(claim.get("agent")),
-        "mode": claim.get("mode"),
-        "scopes": _claim_scope(claim),
-        "branch": claim.get("branch"),
-        "checkout_topology": _checkout_topology(claim),
-        "worktree_id": _worktree_identifier(claim),
-        "reason": "out_of_domain_changes",
-        "baseline_commit": baseline_commit,
-        "out_of_domain_paths": changed_paths,
-    }
-    if any(prior_event.get(key) != value for key, value in expected_prior_evidence.items()):
-        raise _ReleaseReconciliationError(
-            "The referenced event does not prove the matching rejected release.",
-            "reconciliation_prior_rejection_mismatch",
-            prior_rejected_release_reference=prior_reference,
-        )
-
-    return {
-        "baseline_commit": baseline_commit,
-        "baseline_status": claim.get("baseline_status", []),
-        "baseline_out_of_domain_status": claim.get("baseline_out_of_domain_status", []),
-        "baseline_out_of_domain_state": claim["baseline_out_of_domain_state"],
-        "peer_commit": peer_commit,
-        "peer_commit_content_sha256": peer_commit_content_sha256,
-        "reconciled_out_of_domain_paths": changed_paths,
-        "prior_rejected_release_reference": prior_reference,
-        "claim_incarnation": claim_incarnation,
-    }
-
-
 def _release(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
-    with _locked_registry(repository) as (registry_path, data):
+    with _locked_registry(repository) as (registry_path, data, registry_file):
         common_directory = registry_path.parent
         claims: list[dict[str, Any]] = data["claims"]
         for index, claim in enumerate(claims):
             if claim.get("claim_id") != args.claim_id:
                 continue
-            worktree = Path(claim["worktree"])
-            current_snapshot = _status_snapshot(worktree)
-            file_domain = str(claim.get("file_domain") or _legacy_file_domain(claim))
-            compatibility: dict[str, Any] | None = None
-            complete_worktree_release = (
-                "file_domain" not in claim
-                or not isinstance(claim.get("baseline_out_of_domain_state"), dict)
-            )
-            if complete_worktree_release:
-                compatibility = {
-                    "release_policy": "complete_worktree",
-                    "legacy_registry_claim": "file_domain" not in claim,
-                    "missing_out_of_domain_baseline": not isinstance(
-                        claim.get("baseline_out_of_domain_state"),
-                        dict,
-                    ),
-                }
-            owned_status = _status_for_domain(
-                current_snapshot,
-                "all_files" if complete_worktree_release else file_domain,
-                resource_only=(
-                    not complete_worktree_release
-                    and _scope_is_resource_only(_claim_scope(claim))
-                ),
-            )
-            if owned_status:
-                event = _event(
-                    "release",
-                    "RELEASE_REJECTED",
-                    args,
-                    claim=claim,
-                    reason="worktree_not_clean",
-                    compatibility=compatibility,
-                )
-                return _journaled_result(
-                    ERROR,
-                    common_directory,
-                    event,
-                    reason="worktree_not_clean",
-                    dirty_status=owned_status,
-                    compatibility=compatibility,
-                )
-            if not complete_worktree_release and not _scope_is_resource_only(_claim_scope(claim)):
-                outside_status = _status_outside_domain(current_snapshot, file_domain)
-                baseline_outside_status = sorted(
-                    claim.get("baseline_out_of_domain_status", []),
-                    key=lambda entry: entry["path"] if isinstance(entry, dict) else str(entry),
-                )
-                current_outside_state = _state_outside_domain(
-                    _status_state(worktree, current_snapshot),
-                    file_domain,
-                )
-                baseline_outside_state = claim["baseline_out_of_domain_state"]
-                changed_paths = sorted(
-                    path
-                    for path in set(current_outside_state) | set(baseline_outside_state)
-                    if current_outside_state.get(path) != baseline_outside_state.get(path)
-                )
-            else:
-                outside_status = []
-                baseline_outside_status = []
-                changed_paths = []
-            reconciliation: dict[str, Any] | None = None
-            if args.prior_rejected_release_reference and not args.reconcile_out_of_domain_commit:
-                event = _event(
-                    "release",
-                    "RELEASE_REJECTED",
-                    args,
-                    claim=claim,
-                    reason="prior_rejection_requires_reconciliation_commit",
-                )
-                return _journaled_result(
-                    ERROR,
-                    common_directory,
-                    event,
-                    reason="prior_rejection_requires_reconciliation_commit",
-                )
-            if args.reconcile_out_of_domain_commit:
-                try:
-                    reconciliation = _release_reconciliation_evidence(
-                        common_directory,
-                        worktree,
-                        claim,
-                        changed_paths,
-                        outside_status,
-                        args,
-                    )
-                except _ReleaseReconciliationError as error:
-                    event = _event(
-                        "release",
-                        "RELEASE_REJECTED",
-                        args,
-                        claim=claim,
-                        reason=error.reason,
-                        **error.details,
-                    )
-                    return _journaled_result(
-                        ERROR,
-                        common_directory,
-                        event,
-                        reason=error.reason,
-                        message=str(error),
-                        **error.details,
-                    )
-            elif changed_paths:
-                event = _event(
-                    "release",
-                    "RELEASE_REJECTED",
-                    args,
-                    claim=claim,
-                    reason="out_of_domain_changes",
-                    out_of_domain_paths=changed_paths,
-                )
-                return _journaled_result(
-                    ERROR,
-                    common_directory,
-                    event,
-                    reason="out_of_domain_changes",
-                    out_of_domain_paths=changed_paths,
-                    baseline_out_of_domain_status=baseline_outside_status,
-                    current_out_of_domain_status=outside_status,
-                )
-            resulting_commit = _head(worktree)
-            if resulting_commit == claim.get("baseline_commit") and not args.no_change:
-                event = _event(
-                    "release",
-                    "RELEASE_REJECTED",
-                    args,
-                    claim=claim,
-                    resulting_commit=resulting_commit,
-                    reason="missing_commit_or_no_change",
-                )
-                return _journaled_result(ERROR, common_directory, event, reason="missing_commit_or_no_change")
             released = claims.pop(index)
-            event = _event(
-                "release",
-                "RELEASED",
-                args,
-                claim=released,
-                resulting_commit=resulting_commit,
-                no_change=args.no_change,
-                **(
-                    {"incarnation_id": reconciliation["claim_incarnation"]["id"]}
-                    if reconciliation
-                    else {}
-                ),
-                **({"reconciliation": reconciliation} if reconciliation else {}),
-            )
-            if reconciliation is not None:
-                registry_bytes_before_release = registry_path.read_bytes()
-                released_registry_bytes = (
-                    json.dumps(data, indent=2, sort_keys=True) + "\n"
-                ).encode("utf-8")
-                (
-                    journal_path,
-                    journal_bytes_before_release,
-                    prepared_journal_bytes,
-                    released_journal_bytes,
-                    journal_existed,
-                ) = _reconciliation_journal_state(common_directory, event)
-                pending = {
-                    "schema_version": 1,
-                    "state": "prepared",
-                    "claim_id": released.get("claim_id"),
-                    "event_id": event["event_id"],
-                    "incarnation_id": event["incarnation_id"],
-                    "event_timestamp": event["timestamp"],
-                    "prior_rejected_release_reference": reconciliation[
-                        "prior_rejected_release_reference"
-                    ],
-                    "registry": {
-                        "path": str(registry_path.relative_to(common_directory)),
-                        "original": _encoded_snapshot(registry_bytes_before_release),
-                        "released": _encoded_snapshot(released_registry_bytes),
-                    },
-                    "journal": {
-                        "path": str(journal_path.relative_to(common_directory)),
-                        "original": _encoded_snapshot(
-                            journal_bytes_before_release,
-                            exists=journal_existed,
-                        ),
-                        "prepared": _encoded_snapshot(prepared_journal_bytes),
-                        "released": _encoded_snapshot(released_journal_bytes),
-                    },
-                }
-                try:
-                    marker_path = _write_pending_reconciliation(
-                        common_directory,
-                        pending,
-                    )
-                except OSError as error:
-                    claims.insert(index, released)
-                    rejected_event = _event(
-                        "release",
-                        "RELEASE_REJECTED",
-                        args,
-                        claim=released,
-                        reason="reconciliation_marker_not_durable",
-                        reconciliation=reconciliation,
-                    )
-                    _print_result(
-                        rejected_event["outcome"],
-                        journal={
-                            "event_id": rejected_event["event_id"],
-                            "persisted": False,
-                        },
-                        warnings=[
-                            {
-                                "code": "reconciliation_marker_write_failed",
-                                "message": str(error),
-                            }
-                        ],
-                        reason="reconciliation_marker_not_durable",
-                        message=(
-                            "The reconciliation did not start because its "
-                            "recovery marker was not durable."
-                        ),
-                        reconciliation=reconciliation,
-                    )
-                    return ERROR
-                transaction_committed = False
-                try:
-                    registry_faults = {
-                        "write": (
-                            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_REGISTRY_WRITE"
-                        ),
-                        "short_write": (
-                            "AGENT_CLAIM_TEST_SHORT_RECONCILIATION_REGISTRY_WRITE"
-                        ),
-                        "after_write": (
-                            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_REGISTRY_AFTER_WRITE"
-                        ),
-                        "fsync": (
-                            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_REGISTRY_FSYNC"
-                        ),
-                        "replace": (
-                            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_REGISTRY_REPLACE"
-                        ),
-                        "directory_fsync": (
-                            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_REGISTRY_DIRECTORY_FSYNC"
-                        ),
-                    }
-                    _append_reconciliation_event(
-                        journal_path,
-                        prepared_journal_bytes,
-                    )
-                    _durable_atomic_replace(
-                        registry_path,
-                        released_registry_bytes,
-                        faults=registry_faults,
-                    )
-                    pending["state"] = "committed"
-                    _write_pending_reconciliation(common_directory, pending)
-                    transaction_committed = True
-                    if (
-                        os.environ.get(
-                            "AGENT_CLAIM_TEST_STOP_AFTER_RECONCILIATION_COMMIT_MARKER"
-                        )
-                        == "1"
-                    ):
-                        _print_result(
-                            "RECONCILIATION_RECOVERY_REQUIRED",
-                            reason="committed_reconciliation_cleanup_pending",
-                            message=(
-                                "The reconciliation committed and marker cleanup "
-                                "remains pending."
-                            ),
-                            ownership_authority="committed_marker",
-                            pending_transaction={
-                                "claim_id": released.get("claim_id"),
-                                "marker": str(marker_path),
-                                "state": "committed",
-                            },
-                        )
-                        return ERROR
-                    _finalize_reconciliation_event(
-                        journal_path,
-                        released_journal_bytes,
-                    )
-                    _durable_remove(
-                        marker_path,
-                        fault_environment=(
-                            "AGENT_CLAIM_TEST_FAIL_RECONCILIATION_MARKER_REMOVE"
-                        ),
-                    )
-                except OSError as error:
-                    recovery_error: _PendingReconciliationError | None = None
-                    try:
-                        recovered = _recover_pending_reconciliation(common_directory)
-                    except _PendingReconciliationError as pending_error:
-                        recovered = None
-                        recovery_error = pending_error
-                    if recovery_error is not None and transaction_committed:
-                        _print_result(
-                            "RECONCILIATION_RECOVERY_REQUIRED",
-                            warnings=[
-                                {
-                                    "code": "reconciliation_cleanup_failed",
-                                    "message": str(recovery_error),
-                                }
-                            ],
-                            reason="committed_reconciliation_cleanup_pending",
-                            message=(
-                                "The reconciliation committed and deterministic "
-                                "cleanup remains pending."
-                            ),
-                            ownership_authority="committed_marker",
-                            pending_transaction={
-                                "claim_id": released.get("claim_id"),
-                                "marker": str(marker_path),
-                                "state": "committed",
-                            },
-                            reconciliation=reconciliation,
-                        )
-                        return ERROR
-                    if transaction_committed or (
-                        recovered is not None
-                        and recovered.get("resolved_state") == "committed"
-                    ):
-                        _print_result(
-                            event["outcome"],
-                            journal={
-                                "event_id": event["event_id"],
-                                "path": str(journal_path),
-                            },
-                            warnings=[
-                                {
-                                    "code": "reconciliation_cleanup_recovered",
-                                    "message": str(error),
-                                }
-                            ],
-                            claim=released,
-                            reconciliation=reconciliation,
-                        )
-                        return SUCCESS
-                    rejected_event = _event(
-                        "release",
-                        "RELEASE_REJECTED",
-                        args,
-                        claim=released,
-                        reason="reconciliation_journal_not_durable",
-                        reconciliation=reconciliation,
-                    )
-                    if recovery_error is not None:
-                        _print_result(
-                            rejected_event["outcome"],
-                            journal={
-                                "event_id": rejected_event["event_id"],
-                                "persisted": False,
-                            },
-                            warnings=[
-                                {
-                                    "code": "reconciliation_restore_failed",
-                                    "message": str(recovery_error),
-                                }
-                            ],
-                            reason="reconciliation_restore_pending",
-                            message=(
-                                "Reconciliation failed and exact ownership "
-                                "restoration remains pending."
-                            ),
-                            ownership_authority="pending_marker",
-                            pending_transaction={
-                                "claim_id": released.get("claim_id"),
-                                "marker": str(marker_path),
-                                "state": "prepared",
-                            },
-                            reconciliation=reconciliation,
-                        )
-                        return ERROR
-                    _print_result(
-                        rejected_event["outcome"],
-                        journal={
-                            "event_id": rejected_event["event_id"],
-                            "persisted": False,
-                        },
-                        warnings=[
-                            {
-                                "code": "journal_write_failed",
-                                "message": str(error),
-                            }
-                        ],
-                        reason="reconciliation_journal_not_durable",
-                        message="The RELEASED reconciliation event was not durably journaled.",
-                        reconciliation=reconciliation,
-                    )
-                    return ERROR
+            event = _event("release", "RELEASED", args, claim=released)
+            _write_registry(registry_file, data)
+            try:
+                journal_path = _append_event(common_directory, event)
+            except OSError as error:
+                claims.insert(index, released)
+                _write_registry(registry_file, data)
                 _print_result(
-                    event["outcome"],
-                    journal={"event_id": event["event_id"], "path": str(journal_path)},
-                    claim=released,
-                    reconciliation=reconciliation,
+                    "RELEASE_ERROR",
+                    journal={"event_id": event["event_id"], "persisted": False},
+                    reason="journal_write_failed",
+                    message=str(error),
+                    claim_id=args.claim_id,
                 )
-                return SUCCESS
-            _write_registry(registry_path, data)
-            return _journaled_result(
-                SUCCESS,
-                common_directory,
-                event,
+                return ERROR
+            _print_result(
+                event["outcome"],
+                journal={"event_id": event["event_id"], "path": str(journal_path)},
                 claim=released,
-                **({"reconciliation": reconciliation} if reconciliation else {}),
             )
+            return SUCCESS
         event = _event("release", "CLAIM_NOT_FOUND", args)
-        return _journaled_result(ERROR, common_directory, event, claim_id=args.claim_id)
+        return _journaled_result(
+            ERROR,
+            common_directory,
+            event,
+            claim_id=args.claim_id,
+        )
+
+
+def _reset(args: argparse.Namespace) -> int:
+    repository = _repository_root(Path(args.repo).resolve())
+    with _locked_registry_file(repository) as (registry_path, registry_file):
+        previous_valid = True
+        previous_claim_count = 0
+        try:
+            registry_file.seek(0)
+            raw_registry = registry_file.read()
+            previous = json.loads(raw_registry) if raw_registry else {"claims": []}
+            claims = previous.get("claims")
+            if not isinstance(claims, list):
+                raise ValueError
+            previous_claim_count = len(claims)
+        except (json.JSONDecodeError, ValueError):
+            previous_valid = False
+        _write_registry(registry_file, {"claims": []})
+        common_directory = registry_path.parent
+        event = _event(
+            "reset",
+            "RESET",
+            args,
+            previous_registry_valid=previous_valid,
+            removed_claim_count=previous_claim_count if previous_valid else None,
+        )
+        return _journaled_result(
+            SUCCESS,
+            common_directory,
+            event,
+            registry=str(registry_path),
+            claims=[],
+        )
 
 
 def _status_command(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
-    with _locked_registry(repository) as (registry_path, data):
+    with _locked_registry(repository) as (registry_path, data, _registry_file):
         evaluated_at = _now()
         _print_result(
             "STATUS",
@@ -3829,9 +2432,10 @@ def _report(args: argparse.Namespace) -> int:
         return ERROR
     end = _now()
     start = end - delta
-    with _locked_registry(repository, recover_pending=False) as (
+    with _locked_registry(repository) as (
         _registry_path,
         data,
+        _registry_file,
     ):
         events, coverage_gaps = _load_events(common_directory)
         filtered = [
@@ -3952,20 +2556,12 @@ def _parser() -> argparse.ArgumentParser:
     extend_deadline.add_argument("--extension-evidence", required=True)
     extend_deadline.set_defaults(handler=_extend_deadline)
 
-    release = subparsers.add_parser("release", help="Release a committed clean claim or a declared no-change claim.")
+    release = subparsers.add_parser("release", help="Remove one exact live claim and journal its release.")
     release.add_argument("--claim-id", required=True)
-    release_mode = release.add_mutually_exclusive_group()
-    release_mode.add_argument("--no-change", action="store_true")
-    release_mode.add_argument(
-        "--reconcile-out-of-domain-commit",
-        type=_full_commit_sha,
-        help="Release using exact peer-commit proof for a previously rejected out-of-domain change.",
-    )
-    release.add_argument(
-        "--prior-rejected-release-reference",
-        help="Event id for the matching prior RELEASE_REJECTED out-of-domain release.",
-    )
     release.set_defaults(handler=_release)
+
+    reset = subparsers.add_parser("reset", help="Replace the live claim registry with an empty claim list.")
+    reset.set_defaults(handler=_reset)
 
     status = subparsers.add_parser("status", help="Show the repository-global live claim registry.")
     status.set_defaults(handler=_status_command)
@@ -3993,20 +2589,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         or journal according to their documented boundary; report remains read-only.
     """
     args = _parser().parse_args(argv)
-    try:
-        return args.handler(args)
-    except _PendingReconciliationError as error:
-        _print_result(
-            "RECONCILIATION_RECOVERY_REQUIRED",
-            reason="pending_reconciliation_restore_failed",
-            message=str(error),
-            ownership_authority="pending_marker",
-            pending_transaction={
-                "claim_id": error.claim_id,
-                "marker": str(error.marker_path),
-            },
-        )
-        return ERROR
+    return args.handler(args)
 
 
 if __name__ == "__main__":

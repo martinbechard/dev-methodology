@@ -96,7 +96,7 @@ Invoke the script with Python and one operation:
 python3 "$CLAIM_SCRIPT" --repo /absolute/path/to/project OPERATION [ARGUMENTS]
 ```
 
-Supported operations are status, acquire, extend, extend-deadline, heartbeat, release, maintain-journal, and report.
+Supported operations are status, acquire, extend, extend-deadline, heartbeat, release, reset, maintain-journal, and report.
 
 Each completed command writes one JSON document to standard output. Read result.outcome. Do not decide from the process exit code alone.
 
@@ -125,7 +125,8 @@ Other operations require:
 | extend | claim-id and additional scope |
 | extend-deadline | claim-id, requested-hard-stop-duration-seconds, and extension-evidence |
 | heartbeat | claim-id |
-| release | claim-id and any applicable release option |
+| release | claim-id |
+| reset | no arguments |
 | maintain-journal | optional hot-days |
 | report | optional since and format |
 
@@ -196,22 +197,15 @@ python3 "$CLAIM_SCRIPT" --repo . heartbeat --claim-id task-123
 python3 "$CLAIM_SCRIPT" --repo . release --claim-id task-123
 ```
 
-Release a claim after a verified no-change result:
+Release removes only the exact named live claim while the helper holds an exclusive OS lock directly on agent-claims.json. The helper updates that same locked file without replacing its inode and appends RELEASED journal evidence. Release does not inspect Git state, file contents, delivery evidence, or completion state.
+
+Reset the registry after all agents have stopped:
 
 ```bash
-python3 "$CLAIM_SCRIPT" --repo . release \
-  --claim-id task-123 \
-  --no-change
+python3 "$CLAIM_SCRIPT" --repo . reset
 ```
 
-Release after Project Configurator approves reconciliation:
-
-```bash
-python3 "$CLAIM_SCRIPT" --repo . release \
-  --claim-id task-123 \
-  --reconcile-out-of-domain-commit 0123456789abcdef0123456789abcdef01234567 \
-  --prior-rejected-release-reference 12345678-1234-1234-1234-123456789abc
-```
+Reset locks agent-claims.json and replaces its contents with an empty claims list. It also creates the registry when it is missing and replaces malformed contents.
 
 Maintain the journal and report contention:
 

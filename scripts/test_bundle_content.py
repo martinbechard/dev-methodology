@@ -4891,6 +4891,10 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("backlog/user-action-required", skill_text)
                 self.assertNotIn("docs/user-action-required", skill_text)
                 self.assertIn("user action required", skill_text.lower())
+                self.assertIn(
+                    "Structured claim outcomes and technical claim cleanup or recovery remain agent-owned",
+                    skill_text,
+                )
 
         for required_guidance in (
             "User Action Required",
@@ -5796,8 +5800,11 @@ class BundleContentTests(unittest.TestCase):
             "live-model:&lt;provider&gt;:&lt;suite&gt;",
             "shared-install:&lt;target&gt;",
             "deployment:&lt;environment&gt;",
-            "After the backlog commit succeeds, or after a verified no-change result.",
+            "After the backlog mutation event ends or ownership is handed off.",
             "After the claimed deployment or rollback reaches a verified final state.",
+            "Apply the exclusive OS lock directly to agent-claims.json.",
+            "Release is claim cleanup only.",
+            "Release does not inspect or gate on worktree cleanliness",
             "Claim scope is the file, set of files, or shared resource that a claim protects.",
             "Every claim request must specify a scope.",
             "An overlapping request returns CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
@@ -5898,7 +5905,12 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED", command_skill)
         self.assertNotIn("CLAIM_TRANSPORT_UNAVAILABLE", command_skill)
         self.assertNotIn("CLAIM_TRANSPORT_UNAVAILABLE", mcp_skill)
-        self.assertIn("--no-change", command_skill)
+        self.assertNotIn("--no-change", command_skill)
+        self.assertNotIn("no_change", mcp_skill)
+        self.assertIn(
+            "exclusive OS lock directly on agent-claims.json",
+            command_skill,
+        )
         self.assertIn("maintain-journal --hot-days 2", command_skill)
         self.assertIn("report --since 2d", command_skill)
         self.assertNotIn("git:commit", claim_skill)
@@ -5961,14 +5973,15 @@ class BundleContentTests(unittest.TestCase):
 
         for required_contract in (
             "Claims prevent two agents from changing the same shared file or resource at the same time.",
-            "A claim does not prove that work is complete.",
+            "A claim and its release do not prove that work is complete.",
             "Every claim request must specify a scope.",
             "An overlapping request returns CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
             "Ask its owner for a release or recovery notification.",
             "Treat every live claim as valid.",
             "A configured watchdog decides whether a live claim is stale.",
             "A heartbeat does not extend a deadline.",
-            "RECONCILIATION_RECOVERY_REQUIRED means that an earlier claim operation did not finish safely.",
+            "Release is claim cleanup only.",
+            "Keep completion, delivery, provider lifecycle, and claim cleanup as separate operations.",
         ):
             with self.subTest(claim_contract=required_contract):
                 self.assertIn(required_contract, claim_text)
@@ -5986,6 +5999,7 @@ class BundleContentTests(unittest.TestCase):
 
         for required_contract in (
             "When agent-claim is loaded, use its Claim Events table and supporting rules.",
+            "Structured claim outcomes and technical claim cleanup or recovery remain agent-owned",
             "designate this fresh branch as the Work-item integration and cleanup branch",
             "Do not import cumulative branch ancestry merely to preserve provenance",
             "Apply or resume the effective Commit-selected skill only after candidate review and source verification accept the direct or combined commit",

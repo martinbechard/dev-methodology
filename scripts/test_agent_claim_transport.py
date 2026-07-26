@@ -330,7 +330,6 @@ def _run_command_resource_lifecycle(
         "release",
         "--claim-id",
         claim_id,
-        "--no-change",
     ]
     acquire_process = subprocess.run(
         acquire_argv,
@@ -727,8 +726,7 @@ class AgentClaimInterfaceTests(unittest.TestCase):
         self.assertIn("--resource-class", evidence["acquire_argv"])
         self.assertIn("--requested-hard-stop-duration-seconds", evidence["acquire_argv"])
         self.assertNotIn("--configured-maximum-duration-seconds", evidence["acquire_argv"])
-        self.assertEqual("resource-lifecycle-command", evidence["release_argv"][-2])
-        self.assertEqual("--no-change", evidence["release_argv"][-1])
+        self.assertEqual("resource-lifecycle-command", evidence["release_argv"][-1])
 
     def test_claim_command_reports_existing_linked_checkout_topology(self) -> None:
         """Verify the selected command reports physical topology without changing primary state."""
