@@ -1,10 +1,10 @@
 # Disable Git Replace Refs for Lifecycle Receipts
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
@@ -84,6 +84,25 @@ None.
 ## Identity Reconciliation — 2026-07-26
 
 - Reconciled the placeholder Running identity to canonical work-item Thread and root Agent Task 019f9f66-7522-72d1-a673-227a6b0f3ed9. This corrects identity evidence only; it is not a lifecycle transition and preserves the existing Running acceptance evidence.
+
+## Current Blocked Handoff
+
+- Transition: Running -> Blocked.
+- Blocked At: 2026-07-26T17:35:38Z.
+- Canonical Work-Item Thread And Root Agent Task: 019f9f66-7522-72d1-a673-227a6b0f3ed9.
+- Candidate Branch: codex/disable-git-replace-refs-lifecycle-019f9f66.
+- Preserved Accepted Candidate: b2a38f7a73686d8f95f868a525051720cd810db8.
+- Exact Candidate Delta: evals/agent-tests/test_lifecycle_handoff_receipts.py only.
+- Rejected Base: da09f3d9 is non-ancestral to current main and must not be imported.
+- Review Evidence: Fresh Dev Code Reviewer disposition ACCEPTED with no material findings.
+- Verification Evidence: Independent verifier PASS — real-Git replacement 1/1, lifecycle module 19/19, compile 2/2, and diff check.
+- Blocker: Current main at 029a376b546a5800a8c6c5e411ad53d5f691c0ad lacks evals/agent-tests/lifecycle_handoff_receipts.py and evals/agent-tests/test_lifecycle_handoff_receipts.py. No accepted source-to-integration mapping exists.
+- Dependency Handoff: backlog/defect-backlog/reject-nonexistent-lifecycle-handoff-commit-oids.md is waiting for this baton and other sibling batons for the newly authorized bounded combined current-main foundation plan.
+- Provider Closure: Not permitted. The direct-main completion disposition is not READY.
+- Scope Evidence: No governed definitions changed. No implementation claim remains.
+- Recovery Owner: Parent Dev Backlog Coordinator / canonical foundation task 019f978e-28b7-7561-be38-b535ab26850f.
+- Unblock Condition: A direct accepted current-main foundation delivery/content-mapping baton contains the receipt module. Then resume through Blocked -> Ready -> Starting -> Running and replay, review, and verify only this focused delta.
+- Claim Evidence: record-blocked-disable-git-replace-refs-019f9f66; acquire outcome SHARED_CHECKOUT_ACQUIRED; claim event 5aa2c827-a223-4305-aaa5-f1210a0254fe.
 
 ## Notes
 
