@@ -1,10 +1,10 @@
 # Disable Git Replace Refs for Lifecycle Receipts
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
-Owner: Dev Backlog Coordinator (reservation pending root acceptance)
+Owner: Root Dev Orchestrator
 
 Provider: file
 
@@ -65,6 +65,21 @@ None.
 - Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
 - Coordination Classification: The Dependencies entry is a coordination-only overlap note. Its referenced item is Blocked and Unowned, and the preflight registry has no live claim. Private-worktree implementation may begin; exact overlap scope and integration must be reconciled before the conflicting integration event.
 - Next Lifecycle Owner: The root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
+
+## Current Running Acceptance
+
+- Transition: Starting -> Running.
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a (preserved from the Starting reservation).
+- Canonical Work-Item Thread: /root/accept_running (stable assignment identifier; no runtime UUID was available in the acceptance context).
+- Canonical Root Agent Task: /root/accept_running.
+- Root Dev Orchestrator: /root.
+- Delivery Branch: Detached HEAD at 9ce6fd7c72f157f143a4ca159f3380f1452d0263.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/6767/dev-methodology.
+- Phase: Delivery accepted; this provider transaction contains no implementation artifact mutation.
+- Started At: 2026-07-26T17:10:51Z.
+- Parent Reservation Commit: 1c6cc7c42eb2f14917ac78a28ddad73968c47111.
+- Claim Evidence: accept-running-disable-git-replace-refs-019f95a9; acquire outcome SHARED_CHECKOUT_ACQUIRED; claim event 29e2ddf8-410d-49c7-b980-48ea2dabab6c.
+- Dependency Classification: coordination-only. Reconcile exact overlapping implementation scope before integration.
 
 ## Notes
 
