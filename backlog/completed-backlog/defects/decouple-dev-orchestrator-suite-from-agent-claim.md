@@ -1,14 +1,14 @@
 # Decouple The Dev Orchestrator Evaluation From Claim Files
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/decouple-dev-orchestrator-suite-from-agent-claim.md
+Provider Reference: backlog/completed-backlog/defects/decouple-dev-orchestrator-suite-from-agent-claim.md
 
 Completion: direct-main
 
@@ -65,3 +65,15 @@ pre-existing repository files.
 ## Delivery Mode
 
 The user directed temporary single-task delivery without claims or delegated agents.
+
+## Completion Evidence
+
+- Implementation commit: `63cd4fe1`.
+- A no-claim scenario now ignores pre-existing repository claim files.
+- An actual claim-helper invocation by the target or a child still fails.
+- Claim-release data remains invalid in no-claim scenario evidence.
+- The agent-claim companion case remains covered by the focused fixture suite.
+- All 27 focused Dev Orchestrator fixture tests passed.
+- Python compilation and `git diff --check` passed.
+- No claim was acquired.
+- No publication was needed because no distributed skill or agent definition changed.
