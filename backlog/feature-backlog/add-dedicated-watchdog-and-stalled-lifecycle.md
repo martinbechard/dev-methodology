@@ -1,12 +1,12 @@
 # Add Dedicated Watchdog And Stalled Lifecycle
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/add-dedicated-watchdog-and-stalled-lifecycle.md
+Provider Reference: backlog/feature-backlog/add-dedicated-watchdog-and-stalled-lifecycle.md
 
 Completion: direct-main
 
@@ -188,6 +188,13 @@ The user approved the exact governed role and skill sources below for this work 
 - evals/agent-tests/dev-backlog-watchdog/watchdog_simulator.py
 - evals/agent-tests/dev-backlog-watchdog/test_watchdog_simulator.py
 - design/agent-and-skill-evaluations.html
+- scripts/build-skill-docs.py
+- scripts/build-agent-skill-hierarchy.py
+- scripts/test_role_mutation_policy.py
+- scripts/test_agent_skill_hierarchy.py
+- design/agent-skill-hierarchy.svg
+- design/agent-skill-test-coverage-checklist.md
+- design/generated/agent-skill-explorer-data.js
 
 ## Approval Resolution
 
@@ -197,6 +204,12 @@ On 2026-07-25, the user answered exactly:
 
 The answer approves exactly the six paths in Governed Canonical Sources and only the dependent artifacts listed above. The resulting lifecycle disposition is Ready with Owner: Unowned. No Starting reservation or implementation ownership was created by this approval transaction.
 
+On 2026-07-26, the user answered exactly:
+
+> Approved
+
+The answer approves exactly the seven additional dependent artifacts listed above: scripts/build-skill-docs.py; scripts/build-agent-skill-hierarchy.py; scripts/test_role_mutation_policy.py; scripts/test_agent_skill_hierarchy.py; design/agent-skill-hierarchy.svg; design/agent-skill-test-coverage-checklist.md; and design/generated/agent-skill-explorer-data.js. The answer was provided in the canonical task 019f9a91-b1a9-7ea0-9c90-35f0ed78c1be and relayed by the parent Dev Backlog Coordinator. It resolves the recorded question without creating a replacement Thread, Starting reservation, or implementation ownership.
+
 ## Notes
 
 - Creation authority: direct user request on 2026-07-24 to create one or more work items for the supplied watchdog contract, blocker handoff, Stalled state, Coordinator-owned Blocked disposition, and required lifecycle HTML update.
@@ -204,7 +217,7 @@ The answer approves exactly the six paths in Governed Canonical Sources and only
 - Duplicate check: the completed predecessor introduced generic read-only watchdog behavior but did not define a Watchdog Role, Stalled lifecycle state, or universal Orchestrator-to-Coordinator blocked notification.
 - Non-goal: the Watchdog does not become an autonomous recovery, dispatch, integration, cleanup, or lifecycle-mutation agent.
 
-## User Action Required
+## User Action Required Resolution
 
 ### Exact Question
 
@@ -223,7 +236,7 @@ The original approval covers exactly six governed canonical sources and the list
 
 ### Unattended-Work Boundary
 
-Unattended work cannot mutate the six governed canonical sources or these seven dependent artifacts until this answer is recorded. After an answer, the preserved canonical task 019f9a91-b1a9-7ea0-9c90-35f0ed78c1be must resume through User Action Required -> Ready -> Starting -> Running before implementation continues.
+The required answer is recorded. The preserved canonical task 019f9a91-b1a9-7ea0-9c90-35f0ed78c1be must resume through Ready -> Starting -> Running before implementation continues.
 
 ### Preserved Running Evidence
 
