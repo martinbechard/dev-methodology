@@ -1,6 +1,6 @@
 # Require Durable Defect Logging And Direct-Main Work-Item Creation
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -112,6 +112,15 @@ Source Evidence: User direction in Codex thread 019f95a9-7eb5-7bf1-8c1b-bb4a40a8
 ## Dependencies
 
 None.
+
+## Current-Main Recovery
+
+- Reconciliation Date: 2026-07-26.
+- Historical exact-claims dependency is completed at main commit 6e59985b8cd0280e729f56eb8d2d362adf3f4ab6.
+- Current-main mapping confirms primary-main atomic exclusive no-overwrite creation in skills/create-file-work-item/SKILL.md and no claim event for creating a new file in agent-claim.
+- The historical claim-free candidate remains superseded and unintegrated.
+- Remaining delivery scope: the approved dev-orchestrator source must require every confirmed defect to be durably recorded and forbid downgrading it to a warning, followed by current-main verification.
+- Transition: Blocked -> Ready. Owner remains Unowned. The exact two-path approval and canonical Thread 019f96cf-226c-7f62-9d66-7d31cead822e remain authoritative.
 
 ## Verification
 
