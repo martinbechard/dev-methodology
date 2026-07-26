@@ -1,4 +1,4 @@
-# Align Coordinator UNSET Selection With User Action Required Reconciliation
+# Configure Persistence When Backlog Coordination Is First Requested
 
 Status: Ready
 
@@ -16,46 +16,59 @@ Completion: direct-main
 
 ## Summary
 
-Align the Dev Backlog Coordinator behavior for an UNSET Persistence selection with the Coordinator to task-local User Action Required reconciliation and same-task user-question protocol.
+Allow Persistence to remain UNSET while a project performs manual work without a backlog. When the Dev Backlog Coordinator is first asked to manage work items, ask the user whether to configure the available file-backed provider, update PROJECT.yaml after approval, and safely regenerate project guidance without overwriting user-modified AGENTS.md content.
 
 ## Context
 
-A fresh prompt-contract review of User Action Required candidate 331c33eb in canonical task 019f9722-61cb-7190-8a6d-21c5ab319339 found that agents/roles/dev-activities/dev-backlog-coordinator.role.yaml still reports BLOCKED and directly requests provider selection when Persistence is UNSET. That behavior conflicts with the Coordinator to task-local User Action Required reconciliation to same-task question contract.
+A project may be configured before it needs durable work-item management. Requiring a Persistence provider during initial setup would force an unnecessary decision.
 
-## Source Evidence
+Persistence becomes required when the user asks the Dev Backlog Coordinator to create or manage work items. At that point, the Coordinator must not guess a provider. If the file-backed provider is the only available option, it should ask whether to use that provider for now.
 
-The user's original authorized item requires every additional confirmed distinct defect to be logged durably, never as a warning. The fresh independent-review finding described above is a distinct defect.
+Updating PROJECT.yaml may change generated AGENTS.md guidance. AGENTS.md may also contain user-written project directives, so regeneration must not overwrite it blindly.
 
 ## Requirements
 
-- Treat a missing Persistence selection as a genuine user-owned gate.
-- Require the Coordinator to record and verify the complete task-local User Action Required request envelope before the canonical work-item task presents it.
-- Do not mutate a provider or infer a provider selection while Persistence is UNSET.
-- Preserve the same canonical task and record the user answer exactly once.
-- Resume the normal lifecycle only after provider selection is recorded.
+- Permit Persistence to remain UNSET while the project is not using managed work items.
+- Detect UNSET when the Dev Backlog Coordinator is asked to create or manage work items.
+- Ask the user whether to configure the currently available file-backed provider.
+- Do not create work items or infer a provider before the user answers.
+- After approval, update PROJECT.yaml to select the file provider.
+- Generate the proposed AGENTS.md content into a separate candidate file.
+- Diff the candidate against the existing AGENTS.md.
+- Have the agent review and apply the differences while preserving user-written project directives.
+- Move reusable project-specific directives into project-specific configuration or skills when appropriate, then reference them through PROJECT.yaml.
+- Regenerate the candidate after relocating directives and confirm that the resulting AGENTS.md preserves the project's behavior.
+- Apply the reconciled AGENTS.md only after the review is complete.
+- Continue the original Coordinator request after configuration and guidance reconciliation succeed.
 
 ## Acceptance Criteria
 
-1. Coordinator behavior rejects a direct-ask or BLOCKED bypass when Persistence is UNSET.
-2. The canonical work-item task presents the reconciled task-local User Action Required request rather than duplicating or bypassing it.
-3. Tests cover an UNSET selection, an unavailable selected manager, provider none, and ambiguous presentation or answer cases.
-4. Tests reject duplicate or repeated questions and confirm that the same task and answer are retained exactly once.
-5. Provider selection resumes the normal lifecycle only after the recorded user answer resolves the gate.
-
-## Dependencies
-
-- explain-user-action-required-with-examples delivery or its accepted protocol.
+1. A project can retain Persistence: UNSET while no backlog operation is requested.
+2. The first backlog-management request produces one clear provider question instead of guessing or reporting an unexplained failure.
+3. Approval updates PROJECT.yaml to select the file-backed provider.
+4. Guidance generation writes to a separate candidate file and does not overwrite AGENTS.md.
+5. The agent receives a clear diff between the existing AGENTS.md and the generated candidate.
+6. User-written project directives remain present after reconciliation.
+7. Project-specific directives that should survive future regeneration are represented through project-specific configuration or skills referenced by PROJECT.yaml.
+8. The final AGENTS.md is generated and applied only after the agent verifies the reconciliation.
+9. The original Coordinator request resumes without requiring the user to repeat the provider decision.
+10. An explicit Persistence value of none remains distinct from UNSET and is not silently changed to file.
 
 ## Verification
 
-- Run focused Coordinator prompt and evaluator tests.
-- Run generated-definition freshness checks for the approved implementation scope.
-- Obtain fresh independent review.
+- Test project setup with Persistence left UNSET and no backlog operation.
+- Test the first Coordinator backlog request with approval of the file provider.
+- Test decline or deferral without changing PROJECT.yaml or AGENTS.md.
+- Test candidate-file generation and diff production.
+- Test an existing AGENTS.md containing user-written project directives and prove they survive reconciliation.
+- Test explicit Persistence: none separately from UNSET.
+- Run the focused project-configuration and Coordinator tests affected by the change.
+- Run git diff --check.
 
-## Open Questions
+## Dependencies
 
-- The exact governed canonical implementation scope and its supported mirrors require separate explicit user approval at execution time; this creation does not approve them.
+None.
 
 ## Notes
 
-This file-provider creation records the defect only. It does not authorize artifact mutation, provider mutation, or work-item dispatch.
+This work item does not authorize blind regeneration of AGENTS.md. The generated candidate is review input. The agent owns the semantic reconciliation and must preserve project-specific behavior before applying the final file.
