@@ -1,14 +1,14 @@
 # Distinguish Coordination Notes From Unmet Dispatch Dependencies
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
-Owner: Root Dev Orchestrator
+Owner: Dev Orchestrator
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/distinguish-coordination-notes-from-unmet-dispatch-dependencies.md
+Provider Reference: backlog/completed-backlog/defects/distinguish-coordination-notes-from-unmet-dispatch-dependencies.md
 
 Completion: direct-main
 
@@ -80,6 +80,23 @@ None.
 - Phase: Delivery accepted; this provider transaction contains no implementation artifact mutation.
 - Started At: 2026-07-26T17:12:06Z.
 - Claim Evidence: accept-running-distinguish-coordination-notes-019f95a9; acquire outcome SHARED_CHECKOUT_ACQUIRED; claim event 05d29f2c-e791-4a4a-a231-cd635a426cc1.
+
+## Completion Evidence
+
+- Transition: Running -> Completed.
+- Canonical Work-Item Thread: 019f9f67-4487-75b3-89c4-3cbfbd83b640.
+- Canonical Root Agent Task: /root.
+- Completion Selector: direct-main returned READY.
+- Accepted Replacement Candidate: 4a1928f9647868f5d9f7a9171059a58b43df8e37 over base 7422fe5337f1b37cb9a1a6c1ec62580933db2e7c.
+- Main Delivery Commits: 93eb9efb and 4bb07ee4 replay six exact source blobs to main.
+- Review Evidence: Fresh source review ACCEPTED; prompt review ACCEPTED and GOOD; verifier VERIFIED and PASS.
+- Verification: 22 coordination tests PASS; 3 provider and mirror tests PASS under Python 3.11; build-skill-docs --check current; both definition gates ALLOWED_APPROVED_DEFINITION_CHANGE; git diff --check PASS; six source-to-main blobs exact.
+- Main Observation: 4bb07ee4 is an ancestor of clean observed main tip 62295a36f2ef2a784943cb6a95a7ca2af7e78b19.
+- Integration Claim Evidence: acquire fb62bc1f-a162-4efd-a4ee-a6218bd4e674; release 6fde8165-e6ea-4f58-96fd-b664d9e55baf.
+- Publication Evidence: User-level Codex publication completed at catalog revision be760a7e038e952fc6dd1bec29298ec889f5f0de5ae045999ba2dd52e7123440; installed codex-workitem-coordination and manage-file-work-items validate and byte-match main.
+- Shared-Install Claim Evidence: acquire fc9c9ae7-6f44-4175-83ba-2c60b690db7d; initial release 55cd3d23-7e51-40e2-9212-9cbc69d88d33 rejected for missing Git or no-change evidence; documented no-change release a56957a9-7629-4b71-83d5-6664a1fdfbb6 succeeded.
+- Correction History: Initial candidate 0c342461 had a medium review gap and was corrected by the same coder before the accepted replacement candidate.
+- Terminal Provider Claim: complete-distinguish-coordination-notes-019f9f67; acquire outcome SHARED_CHECKOUT_ACQUIRED; claim event 6c37a8cd-6ff5-48dc-b04f-1107bd2d8b8a.
 
 ## Notes
 
