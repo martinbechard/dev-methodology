@@ -44,3 +44,17 @@ scenarios:
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, provider-selector-routing, no-forbidden-mutation, output-contract-presence]
     expectedOutputs: [actionable parent alert]
     expectedTerminalStatus: PASS
+  - id: blocked-inventory-reconciliation
+    priority: 4
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Retain one complete reconciliation for every Blocked item while alerting only on actionable evidence.
+    initialState: Two Blocked items retain blocker, ownership, dependency, delivery, task, Git, claim, attempt-history, and structured-disposition evidence; one has exhausted corrections without a disposition.
+    task: Reconcile both items read-only, retain both per-item results, and send one aggregate alert containing only the actionable item.
+    targetSkills: [codex-workitem-coordination]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Reconcile every Blocked item, Retain one per-item result for each, Alert on exhausted corrections without a disposition, Alert on malformed or inconsistent disposition receipts, Preserve candidate review verification Git task claim attempt and disposition evidence, Leave lifecycle outcome selection to Dev Backlog Coordinator]
+    forbiddenBehaviors: [Omit a quiet Blocked item from retained results, Treat vague disposition text as healthy, Alert on a healthy continuing Blocked item, Choose a lifecycle outcome, Mutate provider task claim Git branch worktree or resource state]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, blocked-reconciliation-results, singular-alert]
+    expectedOutputs: [blocked reconciliation results, actionable parent alert]
+    expectedTerminalStatus: PASS

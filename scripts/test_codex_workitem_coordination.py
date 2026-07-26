@@ -1,6 +1,7 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
 # Summary: Verifies constraint taxonomy, Starting, watchdog, and two-phase Persistence behavior in coordination contracts.
+# Governing design: design/orchestrated-development-lifecycle.html
 
 import json
 from pathlib import Path
@@ -442,9 +443,72 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
         self.assertIn("outside provider queue and Starting-plus-Running capacity", role_text)
         self.assertIn("canonical standing and heartbeat prompt templates", role_text)
         self.assertEqual(
-            {"cycle result", "actionable parent alert"},
+            {
+                "cycle result",
+                "blocked reconciliation results",
+                "actionable parent alert",
+            },
             {next(iter(entry)) for entry in role["outputContract"]},
         )
+
+    def test_blocked_watchdog_reconciliation_retains_results_and_alerts_only_actionable(
+        self,
+    ) -> None:
+        """Keep every Blocked reconciliation while preserving Coordinator authority."""
+
+        role = " ".join(
+            WATCHDOG_ROLE_PATH.read_text(encoding="utf-8").split()
+        )
+        skill = " ".join(self.skill_text.split())
+        for clause in (
+            "every Blocked item",
+            "exact blocker",
+            "unblock condition",
+            "next-action owner",
+            "dependencies",
+            "candidate",
+            "review and verification evidence",
+            "canonical task state",
+            "Git state",
+            "applicable live claims",
+            "concise per-item reconciliation result",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, f"{role} {skill}")
+        for alert_condition in (
+            "satisfied dependency or unblock evidence",
+            "agent-actionable recovery",
+            "exhausted correction attempts without a current disposition",
+            "stale or contradictory lifecycle evidence",
+            "incorrect next-action owner",
+        ):
+            with self.subTest(alert_condition=alert_condition):
+                self.assertIn(alert_condition, f"{role} {skill}")
+        self.assertIn(
+            "never chooses a lifecycle outcome",
+            f"{role} {skill}",
+        )
+
+    def test_exhausted_corrections_have_four_exact_non_vague_outcomes(self) -> None:
+        """Require one concrete Coordinator disposition and retained resume evidence."""
+
+        coordinator = " ".join(
+            COORDINATOR_ROLE_PATH.read_text(encoding="utf-8").split()
+        )
+        contract = f"{coordinator} {' '.join(self.skill_text.split())}"
+        for clause in (
+            "concrete recovery action, owner, evidence, and links to every unresolved finding",
+            "one fresh bounded retry plan",
+            "evidence linked to every specific unresolved finding",
+            "explanation, genuine user-owned decision, exact User Action Required question",
+            "concrete external or technical dependency and observable trigger",
+            "Reject a vague or indefinite Blocked outcome",
+            "canonical task identity, candidate, review and verification, Git state, claim, and attempt history",
+            "immutable decision",
+            "Dev Backlog Steward",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, contract)
 
     def test_stalled_and_known_blocker_authority_stays_with_coordinator_and_steward(self) -> None:
         """Observation, disposition, and provider mutation remain separate authorities."""

@@ -45,6 +45,10 @@ For a selected Persistence provider, use its management skill to record these ph
 - for Stalled, last productive evidence, phase estimate and hard stop when present, anomaly
   or progress gap, canonical Thread and root Agent Task identities, current ownership and
   coordination state, diagnostic owner, and next investigation action
+- for Blocked, exact blocker, blocker owner, unblock condition, next-action owner,
+  dependencies and their current evidence, preserved candidate, review and verification
+  evidence, canonical task state, Git state, applicable live claims, current disposition,
+  and correction-attempt history
 
 Use the effective Persistence-selected management skill to update a provider record when a material phase changes. Preserve the same canonical Thread identifier, root Agent assignment, and provider identity through corrections, delivery, and closeout. Never infer identity from the Thread title alone.
 
@@ -248,6 +252,42 @@ until the blocker is resolved, routed to User Action Required, or terminally dis
 Coordinator inability alone does not create a user obligation; an unresolved technical or
 external blocker remains Blocked with an exact owner and unblock condition.
 
+### Blocked Reconciliation And Disposition
+
+On every Watchdog cycle, reconcile every Blocked item against its exact blocker, unblock
+condition, next-action owner, dependencies, candidate, review and verification evidence,
+canonical task state, Git state, and applicable live claims. Retain one concise per-item
+reconciliation result for every Blocked item even when the parent receives only
+the single aggregate actionable alert. The Watchdog never chooses a lifecycle outcome.
+
+Alert the Coordinator when the reconciliation identifies:
+
+- satisfied dependency or unblock evidence
+- agent-actionable recovery
+- exhausted correction attempts without a current disposition
+- a missing, vague, malformed, expired, consumed, or lifecycle-inconsistent disposition receipt
+- stale or contradictory lifecycle evidence
+- an incorrect next-action owner
+
+The Coordinator validates the retained evidence and chooses the smallest authorized route.
+When correction attempts are exhausted, record exactly one evidence-backed outcome:
+
+1. A concrete recovery action, owner, evidence, and links to every unresolved finding.
+2. One fresh bounded retry plan with evidence linked to every specific unresolved finding.
+   This is one new bounded attempt, not an indefinite correction loop. Consume its result
+   before reconciling again, and never authorize a second retry from the same exhausted loop.
+3. An explanation, genuine user-owned decision, exact User Action Required question,
+   options, tradeoffs, and unattended-work boundary.
+4. Continuing Blocked with a concrete external or technical dependency, its owner, and an
+   observable trigger for reconciliation.
+
+Reject a vague or indefinite Blocked outcome. A generic instruction to wait, keep trying,
+investigate later, or ask the user without an exact user-owned decision is not a disposition.
+Across resumption, preserve canonical task identity, candidate, review and verification,
+Git state, claim, and attempt history. Dev Backlog Coordinator returns one immutable
+decision without changing provider state. Dev Backlog Steward records only that delegated
+decision through the already-selected Persistence manager.
+
 ## Fifteen-Minute Parent Review
 
 Dev Backlog Coordinator obtains fresh inventory and reviews the queue when:
@@ -294,7 +334,9 @@ When the watchdog runs, it reads provider inventory, Git state, and task state. 
 
 - every Running phase against its published estimate, hard stop, and latest evidence-bearing progress
 - every suspected stall and every Stalled item's diagnostic evidence and exit conditions
-- every Blocked item's exact blocker and unblock condition against current evidence
+- every Blocked item's exact blocker and unblock condition, next-action owner, dependencies,
+  candidate, review and verification evidence, canonical task state, Git state, applicable
+  live claims, correction-attempt history, and current disposition
 - accepted work stranded before Commit delivery, READY Commit delivery awaiting provider closeout, and terminal work awaiting cleanup
 - stale, unsafe, or unnecessarily broad claims when agent-claim is loaded
 
@@ -307,9 +349,11 @@ remains unknown.
 Notify the parent only when action is required. Identify the affected provider identity or
 task, observed evidence, reason attention is required, and smallest recommended Coordinator
 action. Examples include suspected Stalled work, a satisfied Stalled or Blocked exit
-condition, unused capacity with eligible Ready work, overdue work, stranded accepted work,
-pending terminal closeout, an unsafe claim, or a task-identity or cleanup problem. The
-Watchdog recommends action but never chooses the lifecycle result.
+condition, agent-actionable recovery, exhausted correction attempts without a disposition,
+stale or contradictory lifecycle evidence, an incorrect next-action owner, unused capacity
+with eligible Ready work, overdue work, stranded accepted work, pending terminal closeout,
+an unsafe claim, or a task-identity or cleanup problem. The Watchdog recommends action but
+never chooses the lifecycle result.
 
 Treat active quiet tasks as healthy absent an explicit deadline or hard stop. Silence, title age, or lack of a recent message is not evidence of failure. When a configured hard stop is overdue, report the read-only deadline and cleanup-grace evidence without deciding delivery state.
 

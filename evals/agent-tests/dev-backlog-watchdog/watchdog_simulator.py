@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Simulates read-only watchdog observations and Coordinator-owned Stalled dispositions.
+# Summary: Simulates read-only watchdog observations and retained Blocked reconciliation evidence.
 # Governing design: design/orchestrated-development-lifecycle.html
 # Governing test plan: evals/agent-tests/dev-backlog-watchdog/requirements-matrix.md
 
@@ -16,6 +16,18 @@ ACTIVE_CAPACITY_LIMIT = 10
 ACTIVE_SERIES_STATUSES = {"Ready", "Starting", "Running", "Awaiting Review"}
 TERMINAL_STATUSES = {"Completed", "Failed", "Abandoned"}
 _TASK_ANOMALY_STATES = {"failed", "stopped", "missing"}
+
+
+@dataclass(frozen=True)
+class DispositionReceipt:
+    """Describe a structured disposition already recorded for a Blocked item."""
+
+    outcome: str
+    state: str
+    owner: str
+    evidence: str
+    observable_trigger: str
+    unresolved_findings: tuple[str, ...] = ()
 
 
 @dataclass
@@ -42,8 +54,45 @@ class WorkItem:
     progress_gap: bool = False
     task_state: str = "active"
     preventing_cause: str = ""
+    blocker_owner: str = ""
+    unblock_condition: str = ""
+    next_action_owner: str = ""
+    dependencies: tuple[str, ...] = ()
+    dependency_evidence: tuple[str, ...] = ()
+    candidate_evidence: tuple[str, ...] = ()
+    review_verification_evidence: tuple[str, ...] = ()
+    git_state: str = ""
+    live_claims: tuple[str, ...] = ()
+    dependency_or_unblock_satisfied: bool = False
+    agent_actionable_recovery: str = ""
+    correction_attempts_exhausted: bool = False
+    correction_attempt_history: tuple[str, ...] = ()
+    current_disposition: DispositionReceipt | None = None
+    lifecycle_evidence_issue: str = ""
+    next_action_owner_correct: bool = True
     stalled_exit_satisfied: bool = False
     blocker_exit_satisfied: bool = False
+
+
+@dataclass(frozen=True)
+class BlockedReconciliation:
+    """Retain one complete read-only reconciliation result for a Blocked item."""
+
+    provider_identity: str
+    exact_blocker: str
+    blocker_owner: str
+    unblock_condition: str
+    next_action_owner: str
+    dependencies: tuple[str, ...]
+    dependency_evidence: tuple[str, ...]
+    candidate_evidence: tuple[str, ...]
+    review_verification_evidence: tuple[str, ...]
+    canonical_task_state: str
+    git_state: str
+    live_claims: tuple[str, ...]
+    correction_attempt_history: tuple[str, ...]
+    current_disposition: DispositionReceipt | None
+    actionable_reasons: tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -59,11 +108,12 @@ class WatchdogAlert:
 
 @dataclass(frozen=True)
 class CycleResult:
-    """Return one no-action result or one aggregate actionable alert."""
+    """Return retained Blocked results plus one no-action or aggregate alert outcome."""
 
     status: str
     message: str
     alert: WatchdogAlert | None
+    blocked_reconciliations: tuple[BlockedReconciliation, ...] = ()
     mutated: bool = False
 
 
@@ -79,8 +129,33 @@ class WatchdogCycle:
         """
 
         observations: list[WatchdogAlert] = []
+        blocked_reconciliations: list[BlockedReconciliation] = []
         for item in items:
-            if (
+            if item.status == "Blocked":
+                reconciliation = self._reconcile_blocked(item)
+                blocked_reconciliations.append(reconciliation)
+                if reconciliation.actionable_reasons:
+                    reasons = "; ".join(reconciliation.actionable_reasons)
+                    exit_only = reconciliation.actionable_reasons == (
+                        "dependency or unblock evidence is satisfied",
+                    )
+                    observations.append(
+                        WatchdogAlert(
+                            provider_identity=item.provider_identity,
+                            evidence=self._blocked_evidence(reconciliation),
+                            reason=(
+                                "Blocked recovery requires Coordinator attention"
+                                if exit_only
+                                else f"Blocked reconciliation requires Coordinator attention: {reasons}"
+                            ),
+                            recommended_action=(
+                                "Coordinator validates the complete reconciliation "
+                                "evidence and chooses exactly one authorized disposition"
+                            ),
+                            preventing_cause=item.preventing_cause,
+                        )
+                    )
+            elif (
                 item.status in ACTIVE_CAPACITY_STATUSES
                 and item.task_state in _TASK_ANOMALY_STATES
             ):
@@ -151,25 +226,12 @@ class WatchdogCycle:
                         preventing_cause=item.preventing_cause,
                     )
                 )
-            elif item.status == "Blocked" and item.blocker_exit_satisfied:
-                observations.append(
-                    WatchdogAlert(
-                        provider_identity=item.provider_identity,
-                        evidence="the recorded Blocked unblock condition is now satisfied",
-                        reason="Blocked recovery requires Coordinator attention",
-                        recommended_action=(
-                            "Coordinator validates the unblock evidence and chooses "
-                            "the authorized provider disposition"
-                        ),
-                        preventing_cause=item.preventing_cause,
-                    )
-                )
-
         if not observations:
             return CycleResult(
                 "NO_ACTION",
                 "No actionable watchdog condition observed.",
                 None,
+                tuple(blocked_reconciliations),
             )
         return CycleResult(
             "ALERT",
@@ -178,6 +240,106 @@ class WatchdogCycle:
                 "in one aggregate parent alert."
             ),
             self._aggregate_alert(observations),
+            tuple(blocked_reconciliations),
+        )
+
+    @staticmethod
+    def _reconcile_blocked(item: WorkItem) -> BlockedReconciliation:
+        """Compare all required Blocked evidence and retain actionable reasons."""
+
+        reasons: list[str] = []
+        if item.blocker_exit_satisfied or item.dependency_or_unblock_satisfied:
+            reasons.append("dependency or unblock evidence is satisfied")
+        if item.agent_actionable_recovery.strip():
+            reasons.append("agent-actionable recovery is available")
+        disposition_issue = WatchdogCycle._disposition_issue(item)
+        if disposition_issue:
+            reasons.append(disposition_issue)
+        if item.lifecycle_evidence_issue.strip():
+            reasons.append("lifecycle evidence is stale or contradictory")
+        if not item.next_action_owner_correct:
+            reasons.append("next-action owner is incorrect")
+        missing_evidence = tuple(
+            name
+            for name, value in (
+                ("blocker", item.preventing_cause),
+                ("blocker owner", item.blocker_owner),
+                ("unblock condition", item.unblock_condition),
+                ("next-action owner", item.next_action_owner),
+                ("Git state", item.git_state),
+            )
+            if not value.strip()
+        )
+        if missing_evidence:
+            reasons.append(
+                "Blocked evidence is incomplete: " + ", ".join(missing_evidence)
+            )
+        return BlockedReconciliation(
+            provider_identity=item.provider_identity,
+            exact_blocker=item.preventing_cause,
+            blocker_owner=item.blocker_owner,
+            unblock_condition=item.unblock_condition,
+            next_action_owner=item.next_action_owner,
+            dependencies=tuple(item.dependencies),
+            dependency_evidence=tuple(item.dependency_evidence),
+            candidate_evidence=tuple(item.candidate_evidence),
+            review_verification_evidence=tuple(
+                item.review_verification_evidence
+            ),
+            canonical_task_state=item.task_state,
+            git_state=item.git_state,
+            live_claims=tuple(item.live_claims),
+            correction_attempt_history=tuple(item.correction_attempt_history),
+            current_disposition=item.current_disposition,
+            actionable_reasons=tuple(reasons),
+        )
+
+    @staticmethod
+    def _disposition_issue(item: WorkItem) -> str:
+        """Return why a current Blocked disposition needs Coordinator attention."""
+
+        receipt = item.current_disposition
+        if receipt is None:
+            return (
+                "correction attempts exhausted without current disposition"
+                if item.correction_attempts_exhausted
+                else ""
+            )
+        if not isinstance(receipt, DispositionReceipt):
+            return "current disposition receipt is malformed"
+        if (
+            receipt.outcome != "CONTINUING_BLOCKED"
+            or receipt.state != "APPLIED"
+            or not receipt.owner.strip()
+            or not receipt.evidence.strip()
+            or not receipt.observable_trigger.strip()
+            or not receipt.unresolved_findings
+        ):
+            return "current disposition receipt is missing, vague, expired, or inconsistent"
+        return ""
+
+    @staticmethod
+    def _blocked_evidence(reconciliation: BlockedReconciliation) -> str:
+        """Render one concise complete Blocked reconciliation for an alert."""
+
+        return "; ".join(
+            (
+                f"blocker={reconciliation.exact_blocker or 'missing'}",
+                f"blocker_owner={reconciliation.blocker_owner or 'missing'}",
+                f"unblock_condition={reconciliation.unblock_condition or 'missing'}",
+                f"next_action_owner={reconciliation.next_action_owner or 'missing'}",
+                f"dependencies={reconciliation.dependencies or ('none',)}",
+                f"dependency_evidence={reconciliation.dependency_evidence or ('none',)}",
+                f"candidate_evidence={reconciliation.candidate_evidence or ('none',)}",
+                "review_verification_evidence="
+                f"{reconciliation.review_verification_evidence or ('none',)}",
+                f"canonical_task_state={reconciliation.canonical_task_state}",
+                f"git_state={reconciliation.git_state or 'missing'}",
+                f"live_claims={reconciliation.live_claims or ('none',)}",
+                "correction_attempt_history="
+                f"{reconciliation.correction_attempt_history or ('none',)}",
+                f"current_disposition={reconciliation.current_disposition or 'none'}",
+            )
         )
 
     @staticmethod

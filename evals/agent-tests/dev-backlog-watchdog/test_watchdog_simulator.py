@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies read-only watchdog alerts and Coordinator-owned Stalled dispositions.
+# Summary: Verifies read-only watchdog alerts plus retained Stalled and Blocked reconciliation evidence.
 # Governing design: design/orchestrated-development-lifecycle.html
 # Governing test plan: evals/agent-tests/dev-backlog-watchdog/requirements-matrix.md
 
@@ -15,6 +15,7 @@ import yaml
 
 from watchdog_simulator import (
     CoordinatorDisposition,
+    DispositionReceipt,
     WorkItem,
     WatchdogCycle,
     active_capacity,
@@ -290,6 +291,138 @@ class WatchdogSimulatorTests(unittest.TestCase):
         self.assertIn("Coordinator", alert.recommended_action)
         self.assertIn("one aggregate parent alert", result.message)
         self.assertFalse(result.mutated)
+
+    def test_every_blocked_item_retains_reconciliation_even_when_only_one_alerts(
+        self,
+    ) -> None:
+        """Retain complete per-item evidence while alerting only actionable Blocked work."""
+
+        case = self.cases["blocked-reconciliation-cycle"]
+        items = [WorkItem(**item) for item in case["items"]]
+        before = deepcopy(items)
+
+        result = WatchdogCycle().evaluate(items)
+
+        self.assertEqual(before, items)
+        self.assertEqual("ALERT", result.status)
+        self.assertEqual(2, len(result.blocked_reconciliations))
+        self.assertEqual(
+            tuple(item.provider_identity for item in items),
+            tuple(
+                reconciliation.provider_identity
+                for reconciliation in result.blocked_reconciliations
+            ),
+        )
+        quiet, actionable = result.blocked_reconciliations
+        self.assertFalse(quiet.actionable_reasons)
+        self.assertEqual(
+            tuple(case["expectedActionableReasons"]),
+            actionable.actionable_reasons,
+        )
+        self.assertIn("candidate def456 preserved", actionable.candidate_evidence)
+        self.assertIn(
+            "correction attempts exhausted without current disposition",
+            result.alert.reason if result.alert else "",
+        )
+        self.assertNotIn(
+            "provider:quiet-blocked",
+            result.alert.provider_identity if result.alert else "",
+        )
+        for provider in case["expectedAlertProviders"]:
+            self.assertIn(
+                provider,
+                result.alert.provider_identity if result.alert else "",
+            )
+
+    def test_malformed_disposition_alerts_and_preserves_attempt_history(self) -> None:
+        """A vague receipt cannot suppress an exhausted-correction alert."""
+
+        item = WorkItem(
+            provider_identity="provider:malformed-disposition",
+            status="Blocked",
+            preventing_cause="review finding F-17 remains",
+            blocker_owner="dev-backlog-coordinator",
+            unblock_condition="record one complete disposition",
+            next_action_owner="dev-backlog-coordinator",
+            git_state="candidate abc123 is preserved",
+            correction_attempts_exhausted=True,
+            correction_attempt_history=("attempt 1", "attempt 2"),
+            current_disposition=DispositionReceipt(
+                outcome="CONTINUING_BLOCKED",
+                state="APPLIED",
+                owner="",
+                evidence="wait later",
+                observable_trigger="",
+                unresolved_findings=("F-17",),
+            ),
+        )
+
+        result = WatchdogCycle().evaluate((item,))
+
+        self.assertEqual("ALERT", result.status)
+        reconciliation = result.blocked_reconciliations[0]
+        self.assertEqual(
+            ("attempt 1", "attempt 2"),
+            reconciliation.correction_attempt_history,
+        )
+        self.assertIs(item.current_disposition, reconciliation.current_disposition)
+        self.assertIn(
+            "missing, vague, expired, or inconsistent",
+            result.alert.reason if result.alert else "",
+        )
+
+    def test_each_blocked_alert_trigger_is_observable(self) -> None:
+        """Exercise every reason that requires Coordinator reconciliation."""
+
+        base = {
+            "status": "Blocked",
+            "preventing_cause": "delivery cannot continue",
+            "blocker_owner": "external owner",
+            "unblock_condition": "blocking evidence changes",
+            "next_action_owner": "dev-backlog-coordinator",
+            "git_state": "candidate abc123 is preserved",
+            "current_disposition": DispositionReceipt(
+                outcome="CONTINUING_BLOCKED",
+                state="APPLIED",
+                owner="dev-backlog-coordinator",
+                evidence="external dependency remains unavailable",
+                observable_trigger="dependency health check passes",
+                unresolved_findings=("F-17",),
+            ),
+        }
+        cases = (
+            (
+                "dependency",
+                {"dependency_or_unblock_satisfied": True},
+                "Blocked recovery requires Coordinator attention",
+            ),
+            (
+                "recovery",
+                {"agent_actionable_recovery": "restore the fixture"},
+                "agent-actionable recovery is available",
+            ),
+            (
+                "lifecycle",
+                {"lifecycle_evidence_issue": "provider and task disagree"},
+                "lifecycle evidence is stale or contradictory",
+            ),
+            (
+                "owner",
+                {"next_action_owner_correct": False},
+                "next-action owner is incorrect",
+            ),
+        )
+
+        for name, overrides, expected in cases:
+            with self.subTest(name=name):
+                item = WorkItem(
+                    provider_identity=f"provider:{name}",
+                    **base,
+                    **overrides,
+                )
+                result = WatchdogCycle().evaluate((item,))
+                self.assertEqual("ALERT", result.status)
+                self.assertIn(expected, result.alert.reason if result.alert else "")
 
     def test_aggregate_alert_keeps_all_unknown_causes_blank(self) -> None:
         """Several unknown-cause observations must not fabricate cause content."""

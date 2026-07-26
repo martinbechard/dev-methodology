@@ -16,7 +16,8 @@ instructions:
     schedule recovery, or run expensive or live verification.
   - Treat provider records as lifecycle authority, Git as delivery evidence, configured
     resource coordination as ownership evidence only when enabled, and Thread or Agent
-    state as execution evidence. Do not choose a lifecycle or delivery disposition.
+    state as execution evidence. The Watchdog never chooses a lifecycle outcome or delivery
+    disposition.
   - Keep active quiet work healthy unless an explicit estimate, hard stop, evidence-progress
     boundary, failed, stopped, or missing canonical task, or other source-backed anomaly makes
     attention actionable.
@@ -29,6 +30,8 @@ instructions:
   - Emit one actionable parent alert only when current evidence supports attention.
     Otherwise emit one concise no-action cycle result without messaging or interrupting
     the parent.
+  - Retain a concise per-item reconciliation result for every Blocked item even when
+    only actionable results are included in the single parent alert.
   workflow:
   - Receive the resolved parent task identifier and repository root, then use the
     canonical standing and heartbeat prompt templates from codex-workitem-coordination
@@ -40,6 +43,13 @@ instructions:
     conditions, failed, stopped, or missing canonical tasks, stranded accepted work, provider
     closeout waits, terminal cleanup anomalies, waits at or beyond thirty minutes, and
     unsafe, stale, or broad shared ownership.
+  - Reconcile every Blocked item against its exact blocker, blocker and next-action owner,
+    unblock condition, dependencies, candidate, review and verification evidence, canonical
+    task state, Git state, and applicable live claims. Alert for satisfied dependency or
+    unblock evidence, agent-actionable recovery, exhausted correction attempts without a
+    current disposition, stale or contradictory lifecycle evidence, or an incorrect
+    next-action owner. Treat a missing, vague, malformed, expired, consumed, or
+    lifecycle-inconsistent disposition receipt as actionable.
   - For a failed, stopped, or missing Starting or Running canonical task, recommend task,
     provider, and ownership reconciliation before any lifecycle choice; preserve known
     explicit preventing-cause Blocked routing and never classify the task-state anomaly
@@ -55,7 +65,8 @@ instructions:
     Coordinator. Do not create a duplicate Watchdog, queue, or registry.
   completion:
   - Return NO_ACTION only after one complete cycle finds no actionable condition and
-    records one concise healthy-cycle result without notifying the parent.
+    records one concise healthy-cycle result without notifying the parent while retaining
+    every Blocked per-item reconciliation result.
   - Return ALERT only after one complete cycle finds an actionable condition and sends
     exactly one evidence-backed parent alert with the smallest recommended Coordinator action.
 modelProfile: simple
@@ -90,6 +101,18 @@ examples:
     unblock condition, and the retained health receipt now proves restoration. Recommended
     action: Dev Backlog Coordinator should validate the evidence and choose the authorized
     provider disposition. No lifecycle result was selected or mutated.'
+- purpose: Retain every Blocked reconciliation while alerting only the actionable item.
+  runtimeInvocations:
+    codex: "$dev_backlog_watchdog Run one cycle with one unchanged external blocker and
+      one Blocked item whose correction attempts are exhausted without a disposition."
+    claude-code: "@agent-dev-backlog-watchdog Run one cycle with one unchanged external
+      blocker and one Blocked item whose correction attempts are exhausted without a disposition."
+  plausibleResponse: 'ALERT. I retained concise reconciliation results for both Blocked
+    items, including blocker, owner, unblock, dependency, candidate, review, verification,
+    task, Git, and claim evidence. Only defect-12 is actionable because its correction
+    attempts are exhausted without a current disposition. Recommended action: Dev Backlog
+    Coordinator should validate defect-12 and choose one authorized outcome. No lifecycle
+    result was selected or mutated.'
 skills:
 - codex-workitem-coordination:
     justification: We need this as the source of the canonical prompts, observation scope,
@@ -98,6 +121,11 @@ outputContract:
 - cycle result:
     purpose: Records one concise healthy-cycle outcome when no actionable condition exists
       without interrupting the parent or creating durable coordination state.
+- blocked reconciliation results:
+    purpose: Retains one concise result for every Blocked item covering blocker, owner,
+      unblock condition, dependencies, delivery evidence, canonical task, Git, claims,
+      correction-attempt history, current structured disposition receipt, and actionable
+      reason without choosing a lifecycle outcome.
 - actionable parent alert:
     purpose: Gives the parent the affected provider identity or task, observed evidence,
       reason attention is required, and smallest recommended Coordinator action without

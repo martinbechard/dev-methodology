@@ -1,0 +1,5 @@
+basis: explicit-user-direction
+definition_scope: agents/roles/dev-activities/dev-backlog-coordinator.role.yaml
+provenance:
+  source: user-message
+  reference: thread:019f9fb0-41c4-7892-a0bb-c641e53d8cea/message:item-1

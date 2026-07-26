@@ -72,3 +72,17 @@ scenarios:
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, task-identity-fields, provider-selected-workitem-ownership, workitem-completion-handoff, output-contract-presence]
     expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
     expectedTerminalStatus: PASS
+  - id: exhausted-correction-disposition
+    priority: 6
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: End exhausted correction loops with exactly one concrete evidence-backed disposition.
+    initialState: A Blocked item retains its canonical task, candidate, review, verification, Git, claim, unresolved-finding, and two-attempt history without a current disposition.
+    task: Produce exactly one recovery action, bounded retry, genuine User Action Required decision, or continuing external or technical dependency decision, then have a distinct Steward operation apply it.
+    targetSkills: [structured-explanation, codex-workitem-coordination]
+    allowedAgentDependencies: [dev-backlog-steward]
+    requiredBehaviors: [Preserve canonical task and candidate evidence, Preserve review verification Git claim and attempt history, Link recovery and retry evidence to every unresolved finding, Consume the one bounded retry before a new reconciliation, Record an explanation exact user options and tradeoffs only for a genuine user-owned decision, Keep concrete technical or external dependencies Blocked with an observable trigger, Apply provider state only through the Steward operation]
+    forbiddenBehaviors: [Record more than one active outcome, Wait indefinitely, Repeat the bounded retry, Ask the user without an exact user-owned decision, Discard candidate review verification Git claim or attempt evidence, Mutate a provider from the Coordinator decision operation]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, exhausted-correction-disposition, provider-selected-workitem-ownership]
+    expectedOutputs: [status, provider lifecycle snapshot, stalled delivery actions]
+    expectedTerminalStatus: PASS

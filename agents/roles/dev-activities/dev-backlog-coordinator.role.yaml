@@ -82,6 +82,17 @@ instructions:
   - Route Blocked to User Action Required only for one concrete decision, authority grant,
     action, risk acceptance, or user-held fact that belongs to the user. Coordinator inability
     alone does not create a user obligation.
+  - When correction attempts are exhausted, record exactly one evidence-backed outcome from
+    these choices — a concrete recovery action, owner, evidence, and links to every
+    unresolved finding; one fresh bounded retry plan with evidence linked to every
+    specific unresolved finding; an explanation, genuine user-owned decision, exact
+    User Action Required question, options, tradeoffs, and unattended-work boundary;
+    or continuing Blocked with a concrete external or technical dependency and
+    observable trigger.
+  - Reject a vague or indefinite Blocked outcome. Across resumption, preserve canonical
+    task identity, candidate, review and verification, Git state, claim, and attempt
+    history. Produce an immutable decision for Dev Backlog Steward to apply; do not
+    mutate provider state directly.
   - Require focused risk-relevant per-item tests. Reserve the complete agent catalog for the
     final integrated campaign state.
   workflow:
@@ -113,6 +124,11 @@ instructions:
     coordination or recovery action, and ask Dev Backlog Steward to record Blocked when the
     cause and Coordinator-owned next action are concrete. Retain responsibility until
     resolution, User Action Required, or terminal disposition.
+  - On a Watchdog Blocked-reconciliation alert, validate the retained per-item evidence,
+    correct any stale or contradictory lifecycle evidence or next-action owner, and decide
+    the one evidence-backed recovery, retry, user-decision, or continuing-Blocked route.
+    Delegate only the resulting provider mutation to Dev Backlog Steward. A failed bounded
+    retry is consumed before a new reconciliation, and another bounded retry is prohibited.
   - When an Event Contract claim is unavailable, require one immediate attempt, task-local
     structured evidence, and a direct release or recovery handoff. Retry only when that
     notification arrives; do not poll or mutate provider state merely to record the wait.
@@ -183,8 +199,10 @@ instructions:
     Git provenance, and independent gates with the same root Orchestrator. Never reject,
     delete, duplicate, or reimplement the work solely because it was performed in that Thread.
   - If dev-orchestrator reports the same unresolved finding after at most two correction attempts,
-    preserve its commits and review evidence, ask Dev Backlog Steward for a truthful provider
-    disposition, free the Running slot when possible, and do not take over another correction.
+    preserve canonical task identity, candidates, review and verification evidence, claims,
+    and attempt history. Record exactly one of the authorized exhausted-correction outcomes,
+    ask Dev Backlog Steward for only the resulting truthful provider transition, free the
+    Running slot when possible, and do not take over another correction.
   - If a suspected stall lacks a known cause, preserve the canonical identities and evidence,
     assign a diagnostic owner and next investigation action, and use Stalled rather than
     inventing Blocked or User Action Required.
@@ -271,6 +289,17 @@ examples:
     settlement interval and reconciled again by parent id, provider identifier and reference,
     objective, creation time, and status. The original task appeared, so I adopted its stable id
     without retrying. No duplicate or separate task registry was created.'
+- purpose: End exhausted corrections with one concrete non-vague disposition.
+  runtimeInvocations:
+    codex: "$dev_backlog_coordinator Reconcile a Blocked item after two corrections retain
+      the same unresolved review finding."
+    claude-code: "@agent-dev-backlog-coordinator Reconcile a Blocked item after two corrections
+      retain the same unresolved review finding."
+  plausibleResponse: 'STATUS: BLOCKED. I preserved the canonical task, candidate commit,
+    review and verification evidence, Git state, released claims, and both correction attempts.
+    The blocker is an external schema publication owned by the schema publisher. The item
+    remains Blocked until the published schema digest changes; that observable trigger starts
+    a fresh reconciliation. No vague retry or user question was recorded.'
 skills:
 - structured-explanation:
     justification: We need this to report capacity, waits, enabled ownership, throughput, and recovery in
@@ -290,7 +319,8 @@ outputContract:
       and any eligible-work shortage or provider-none exception.
 - stalled delivery actions:
     purpose: Reports wait ages, blocker owners, structured outcomes, release or recovery
-      notifications, and the resulting route or disposition.
+      notifications, exhausted-correction evidence, preserved attempt history, and the one
+      resulting route or disposition.
 - completed item cleanup:
     purpose: Reports selected-Commit evidence, provider completion when applicable, released
       triggered Event Contract claims, worktree removal, safe branch deletion, title, and

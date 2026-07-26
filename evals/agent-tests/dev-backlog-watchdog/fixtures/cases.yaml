@@ -48,10 +48,43 @@ cases:
       - provider_identity: backlog/defect-backlog/blocked.md
         status: Blocked
         preventing_cause: unavailable upstream fixture
+        blocker_owner: fixture publisher
+        unblock_condition: upstream fixture is published
+        next_action_owner: dev-backlog-coordinator
+        git_state: no candidate changes are pending
         blocker_exit_satisfied: true
     expectedReasons:
       - Stalled disposition requires Coordinator attention
       - Blocked recovery requires Coordinator attention
+  blocked-reconciliation-cycle:
+    items:
+      - provider_identity: provider:quiet-blocked
+        status: Blocked
+        preventing_cause: external signing service is unavailable
+        blocker_owner: signing service operator
+        unblock_condition: signed health receipt reports available
+        next_action_owner: signing service operator
+        dependencies: [signing-service]
+        dependency_evidence: [signing-service:unavailable]
+        candidate_evidence: [candidate abc123 preserved]
+        review_verification_evidence: [review correction attempt 2 retained]
+        git_state: branch feature/signing at abc123
+        live_claims: [integration-claim:released]
+      - provider_identity: provider:exhausted-without-disposition
+        status: Blocked
+        preventing_cause: review finding remains unresolved
+        blocker_owner: dev-backlog-coordinator
+        unblock_condition: one concrete disposition is recorded
+        next_action_owner: dev-backlog-coordinator
+        dependencies: [review-finding-17]
+        dependency_evidence: [review-finding-17:open]
+        candidate_evidence: [candidate def456 preserved]
+        review_verification_evidence: [two correction attempts returned the same finding]
+        git_state: branch feature/review at def456
+        correction_attempts_exhausted: true
+    expectedActionableReasons:
+      - correction attempts exhausted without current disposition
+    expectedAlertProviders: [provider:exhausted-without-disposition]
   stalled-dispositions:
     sameOwnerResumed:
       same_owner_resumed: true

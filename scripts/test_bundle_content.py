@@ -8521,9 +8521,9 @@ class BundleContentTests(unittest.TestCase):
                         },
                     )
                 elif entry["id"] == "dev-backlog-coordinator":
-                    self.assertEqual(5, len(scenarios["scenarios"]))
+                    self.assertEqual(6, len(scenarios["scenarios"]))
                 elif entry["id"] == "dev-backlog-watchdog":
-                    self.assertEqual(3, len(scenarios["scenarios"]))
+                    self.assertEqual(4, len(scenarios["scenarios"]))
                 else:
                     self.assertEqual(3, len(scenarios["scenarios"]))
 

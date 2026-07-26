@@ -19,6 +19,10 @@
 | Ambiguous dispatch settles before one possible retry | Coordination dispatch reconciliation | test_settled_dispatch_contains_duplicate_without_retry |
 | Delivery and provider-completion contention uses one immediate attempt plus notification-driven retry while named events remain independent | Event Contract contention protocol | test_claim_retry_requires_release_or_recovery_notification, test_release_notification_can_trigger_successful_retry, and test_claim_events_reject_notified_initial_attempt_and_keep_events_independent |
 | Parent frees an unresolved durable slot truthfully only after notified recovery remains unavailable | Event Contract recovery handoff and parent role workflow | test_unresolved_notified_claim_frees_capacity_only_after_recovery |
+| Exhausted corrections produce exactly one recovery, bounded retry, genuine user decision, or concrete continuing dependency decision for separate Steward application | Blocked disposition contract | exhausted-correction-disposition and test_exhausted_corrections_require_exactly_one_concrete_disposition |
+| One bounded retry is consumed before a new non-retry reconciliation and cannot repeat | Blocked disposition contract | test_retry_is_consumed_before_a_new_non_retry_disposition |
+| User Action Required includes an explanation and genuine user-owned decision | Blocked disposition contract | test_user_action_requires_a_genuine_user_owned_decision |
+| Blocked resumption preserves canonical task, candidate, review, verification, Git, claim, and attempt evidence | Blocked resumption contract | exhausted-correction-disposition preserved-evidence assertions |
 | Effective Commit owns delivery after review and verification | Work-item completion contract and parent role delegation | selected-commit-retry-and-closeout and selected-commit-routing |
 | Completion precedes task cleanup | Coordination terminal cleanup | test_completion_handoff_precedes_parent_cleanup |
 | Private-work claims and tiered verification remain scoped | Agent claim and validation tiers | test_private_work_claims_tiered_tests_and_post_facto_audits_are_executable |

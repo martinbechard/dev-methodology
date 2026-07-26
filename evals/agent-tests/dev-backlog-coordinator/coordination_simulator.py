@@ -1,6 +1,7 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Simulates provider-selected capacity, same-thread resumption, notification-driven claims, and terminal cleanup.
+# Summary: Simulates provider-selected capacity, blocked dispositions, claims, and terminal cleanup.
+# Governing design: design/orchestrated-development-lifecycle.html
 # Test plan: evals/agent-tests/dev-backlog-coordinator/requirements-matrix.md
 
 """Provide deterministic state transitions for parent backlog coordination."""
@@ -8,7 +9,7 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime
 from typing import Sequence
 
@@ -63,6 +64,13 @@ class WorkItem:
     branch: str | None = None
     worktree: str | None = None
     candidate_commit: str | None = None
+    git_state: str = ""
+    review_verification_evidence: tuple[str, ...] = ()
+    live_claims: tuple[str, ...] = ()
+    correction_attempt_history: list[str] = field(default_factory=list)
+    blocked_disposition: BlockedDisposition | None = None
+    disposition_history: list[BlockedDisposition] = field(default_factory=list)
+    bounded_retry_used: bool = False
     claim_attempts: dict[str, list[dict[str, object]]] = field(default_factory=dict)
     acquired_claims: set[str] = field(default_factory=set)
     open_issues: list[str] = field(default_factory=list)
@@ -106,6 +114,37 @@ class DispatchReconciliation:
     canonical_task_id: str
     contained_duplicates: tuple[TaskCandidate, ...]
     retry_count: int
+
+
+@dataclass(frozen=True)
+class BlockedDisposition:
+    """Record one immutable Coordinator outcome after corrections are exhausted.
+
+    Exactly one outcome family carries content. The unresolved findings and all
+    outcome-specific evidence remain available across later resumption.
+    """
+
+    outcome: str
+    unresolved_findings: tuple[str, ...]
+    state: str = "PROPOSED"
+    recovery_action: str = ""
+    recovery_owner: str = ""
+    recovery_evidence: str = ""
+    recovery_findings: tuple[str, ...] = ()
+    retry_plan: str = ""
+    retry_evidence: str = ""
+    retry_findings: tuple[str, ...] = ()
+    retry_limit: int = 0
+    user_explanation: str = ""
+    user_owned_decision: str = ""
+    user_question: str = ""
+    user_options: tuple[str, ...] = ()
+    user_tradeoffs: tuple[str, ...] = ()
+    unattended_work_boundary: str = ""
+    dependency_kind: str = ""
+    dependency: str = ""
+    dependency_owner: str = ""
+    observable_trigger: str = ""
 
 
 @dataclass(frozen=True)
@@ -440,6 +479,233 @@ class CoordinationSimulator:
         item.phase = None
         self.events.append(
             {"event": "wait-disposed", "item": item_id, "status": item.status}
+        )
+
+    def record_exhausted_correction_disposition(
+        self,
+        item_id: str,
+        *,
+        unresolved_findings: Sequence[str],
+        recovery_action: str = "",
+        recovery_owner: str = "",
+        recovery_evidence: str = "",
+        recovery_findings: Sequence[str] = (),
+        retry_plan: str = "",
+        retry_evidence: str = "",
+        retry_findings: Sequence[str] = (),
+        retry_limit: int = 0,
+        user_explanation: str = "",
+        user_owned_decision: str = "",
+        user_question: str = "",
+        user_options: Sequence[str] = (),
+        user_tradeoffs: Sequence[str] = (),
+        unattended_work_boundary: str = "",
+        dependency_kind: str = "",
+        dependency: str = "",
+        dependency_owner: str = "",
+        observable_trigger: str = "",
+    ) -> BlockedDisposition:
+        """Return one immutable Coordinator decision after corrections are exhausted.
+
+        The Coordinator does not mutate provider state. A separate Steward-model
+        operation applies the returned decision.
+        """
+
+        item = self._item(item_id)
+        if item.status != "Blocked":
+            raise ValueError("exhausted correction disposition requires Blocked")
+        if item.blocked_disposition is not None:
+            raise ValueError("Blocked item already has an active disposition")
+        findings = tuple(finding.strip() for finding in unresolved_findings if finding.strip())
+        if not findings:
+            raise ValueError("disposition requires specific unresolved findings")
+        if len(item.correction_attempt_history) < 2:
+            raise ValueError("disposition requires retained exhausted correction history")
+
+        recovery_links = tuple(
+            finding.strip() for finding in recovery_findings if finding.strip()
+        )
+        retry_links = tuple(
+            finding.strip() for finding in retry_findings if finding.strip()
+        )
+        recovery_selected = bool(
+            recovery_action.strip()
+            or recovery_owner.strip()
+            or recovery_evidence.strip()
+            or recovery_links
+        )
+        retry_selected = bool(
+            retry_plan.strip()
+            or retry_evidence.strip()
+            or retry_links
+            or retry_limit
+        )
+        user_selected = bool(
+            user_explanation.strip()
+            or user_owned_decision.strip()
+            or user_question.strip()
+            or user_options
+            or user_tradeoffs
+            or unattended_work_boundary.strip()
+        )
+        dependency_selected = bool(
+            dependency_kind.strip()
+            or dependency.strip()
+            or dependency_owner.strip()
+            or observable_trigger.strip()
+        )
+        selected = (
+            recovery_selected,
+            retry_selected,
+            user_selected,
+            dependency_selected,
+        )
+        if sum(selected) != 1:
+            raise ValueError("exhausted corrections require exactly one concrete disposition")
+
+        options = tuple(option.strip() for option in user_options if option.strip())
+        tradeoffs = tuple(tradeoff.strip() for tradeoff in user_tradeoffs if tradeoff.strip())
+        if recovery_selected and not (
+            recovery_action.strip()
+            and recovery_owner.strip()
+            and recovery_evidence.strip()
+            and set(recovery_links) == set(findings)
+        ):
+            raise ValueError(
+                "recovery disposition requires an action, owner, evidence, "
+                "and links to every unresolved finding"
+            )
+        if retry_selected and not (
+            retry_plan.strip()
+            and retry_evidence.strip()
+            and set(retry_links) == set(findings)
+            and retry_limit == 1
+            and not item.bounded_retry_used
+        ):
+            raise ValueError(
+                "retry disposition requires one unused bounded attempt with a plan, "
+                "evidence, and links to every unresolved finding"
+            )
+        if user_selected and not (
+            user_explanation.strip()
+            and user_owned_decision.strip()
+            and user_question.strip()
+            and len(options) >= 2
+            and len(options) == len(tradeoffs)
+            and unattended_work_boundary.strip()
+        ):
+            raise ValueError(
+                "User Action Required requires an explanation, genuine user-owned "
+                "decision, exact question, options, tradeoffs, and unattended-work boundary"
+            )
+        if dependency_selected and not (
+            dependency_kind in {"external", "technical"}
+            and dependency.strip()
+            and dependency_owner.strip()
+            and observable_trigger.strip()
+        ):
+            raise ValueError(
+                "continuing Blocked requires an external or technical dependency, "
+                "owner, and observable trigger"
+            )
+
+        outcome = (
+            "RECOVERY_ACTION"
+            if recovery_selected
+            else "BOUNDED_RETRY"
+            if retry_selected
+            else "USER_ACTION_REQUIRED"
+            if user_selected
+            else "CONTINUING_BLOCKED"
+        )
+        disposition = BlockedDisposition(
+            outcome=outcome,
+            unresolved_findings=findings,
+            recovery_action=recovery_action.strip(),
+            recovery_owner=recovery_owner.strip(),
+            recovery_evidence=recovery_evidence.strip(),
+            recovery_findings=recovery_links,
+            retry_plan=retry_plan.strip(),
+            retry_evidence=retry_evidence.strip(),
+            retry_findings=retry_links,
+            retry_limit=retry_limit,
+            user_explanation=user_explanation.strip(),
+            user_owned_decision=user_owned_decision.strip(),
+            user_question=user_question.strip(),
+            user_options=options,
+            user_tradeoffs=tradeoffs,
+            unattended_work_boundary=unattended_work_boundary.strip(),
+            dependency_kind=dependency_kind.strip(),
+            dependency=dependency.strip(),
+            dependency_owner=dependency_owner.strip(),
+            observable_trigger=observable_trigger.strip(),
+        )
+        self.events.append(
+            {
+                "event": "exhausted-correction-disposition-proposed",
+                "item": item_id,
+                "outcome": outcome,
+                "unresolvedFindings": findings,
+                "canonicalTask": item.canonical_task_id,
+                "candidateCommit": item.candidate_commit,
+                "reviewVerificationEvidence": item.review_verification_evidence,
+                "gitState": item.git_state,
+                "liveClaims": item.live_claims,
+                "correctionAttemptHistory": tuple(item.correction_attempt_history),
+            }
+        )
+        return disposition
+
+    def apply_blocked_disposition(
+        self,
+        item_id: str,
+        disposition: BlockedDisposition,
+    ) -> BlockedDisposition:
+        """Model the distinct Steward operation that applies a Coordinator decision."""
+
+        item = self._item(item_id)
+        if item.status != "Blocked" or disposition.state != "PROPOSED":
+            raise ValueError("Steward applies one proposed disposition to a Blocked item")
+        if item.blocked_disposition is not None:
+            raise ValueError("Blocked item already has an active disposition")
+        applied = replace(disposition, state="APPLIED")
+        item.blocked_disposition = applied
+        item.disposition_history.append(applied)
+        if applied.outcome == "USER_ACTION_REQUIRED":
+            item.status = "User Action Required"
+        elif applied.outcome in {"RECOVERY_ACTION", "BOUNDED_RETRY"}:
+            item.status = "Running"
+        self.events.append(
+            {
+                "event": "steward-applied-blocked-disposition",
+                "item": item_id,
+                "outcome": applied.outcome,
+            }
+        )
+        return applied
+
+    def finish_bounded_retry(self, item_id: str, *, resolved: bool) -> None:
+        """Consume the single extra retry and reopen reconciliation only on failure."""
+
+        item = self._item(item_id)
+        active = item.blocked_disposition
+        if (
+            active is None
+            or active.outcome != "BOUNDED_RETRY"
+            or active.state != "APPLIED"
+        ):
+            raise ValueError("no applied bounded retry is active")
+        consumed = replace(active, state="CONSUMED")
+        item.disposition_history[-1] = consumed
+        item.blocked_disposition = None
+        item.bounded_retry_used = True
+        item.status = "Running" if resolved else "Blocked"
+        self.events.append(
+            {
+                "event": "bounded-retry-finished",
+                "item": item_id,
+                "resolved": resolved,
+            }
         )
 
     @staticmethod

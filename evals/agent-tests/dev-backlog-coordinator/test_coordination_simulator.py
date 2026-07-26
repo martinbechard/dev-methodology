@@ -1,6 +1,7 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies provider-selected capacity, same-thread resumption, claims, and cleanup.
+# Summary: Verifies provider-selected capacity, blocked dispositions, claims, and cleanup.
+# Governing design: design/orchestrated-development-lifecycle.html
 # Test plan: evals/agent-tests/dev-backlog-coordinator/requirements-matrix.md
 
 """Verify the deterministic parent backlog coordination simulator."""
@@ -583,6 +584,196 @@ class CoordinationSimulatorTests(unittest.TestCase):
         self.assertEqual("Blocked", stalled.status)
         self.assertEqual(("replacement",), simulator.dispatch_to_target())
         self.assertEqual(10, simulator.running_count())
+
+    def test_exhausted_corrections_require_exactly_one_concrete_disposition(
+        self,
+    ) -> None:
+        """Reject indefinite Blocked while preserving evidence for one exact outcome."""
+
+        case = _fixture_cases()["exhausted-correction-dispositions"]
+        shared = {
+            "status": "Blocked",
+            "canonical_task_id": "task-original",
+            "canonical_thread_id": "thread-original",
+            "candidate_commit": "abc123",
+            "branch": "feature/original",
+            "git_state": "candidate abc123 remains reachable",
+            "review_verification_evidence": (
+                "review finding F-17 remained after correction attempt 2",
+            ),
+            "live_claims": ("integration-claim:released",),
+            "correction_attempt_history": case["correctionAttemptHistory"],
+        }
+        items = [
+            WorkItem("recovery", **shared),
+            WorkItem("retry", **shared),
+            WorkItem("user-action", **shared),
+            WorkItem("dependency", **shared),
+            WorkItem("vague", **shared),
+            WorkItem("multiple", **shared),
+        ]
+        simulator = CoordinationSimulator(items)
+
+        recovery = simulator.record_exhausted_correction_disposition(
+                "recovery",
+                unresolved_findings=("F-17",),
+                recovery_action="restore the missing validation fixture",
+                recovery_owner="dev-coder",
+                recovery_evidence="the missing fixture causes finding F-17",
+                recovery_findings=("F-17",),
+            )
+        retry = simulator.record_exhausted_correction_disposition(
+                "retry",
+                unresolved_findings=("F-17",),
+                retry_plan="retry only the failing validation case once",
+                retry_evidence="fixture restoration directly addresses F-17",
+                retry_findings=("F-17",),
+                retry_limit=1,
+            )
+        user_action = simulator.record_exhausted_correction_disposition(
+                "user-action",
+                unresolved_findings=("F-17",),
+                user_explanation="Only the user can select the compatibility policy.",
+                user_owned_decision="choose the supported compatibility policy",
+                user_question="Which compatibility behavior should remain supported?",
+                user_options=("preserve legacy", "adopt corrected contract"),
+                user_tradeoffs=(
+                    "preserve legacy keeps compatibility but retains complexity",
+                    "adopt corrected contract simplifies behavior but drops legacy input",
+                ),
+                unattended_work_boundary="No contract mutation continues until answered.",
+            )
+        dependency = simulator.record_exhausted_correction_disposition(
+                "dependency",
+                unresolved_findings=("F-17",),
+                dependency_kind="external",
+                dependency="upstream schema publication",
+                dependency_owner="schema publisher",
+                observable_trigger="published schema digest changes",
+            )
+        outcomes = {
+            recovery.outcome,
+            retry.outcome,
+            user_action.outcome,
+            dependency.outcome,
+        }
+
+        self.assertTrue(all(item.status == "Blocked" for item in items))
+        self.assertTrue(all(item.blocked_disposition is None for item in items))
+        self.assertEqual(
+            set(case["expectedOutcomes"]),
+            outcomes,
+        )
+        simulator.apply_blocked_disposition("recovery", recovery)
+        simulator.apply_blocked_disposition("retry", retry)
+        simulator.apply_blocked_disposition("user-action", user_action)
+        simulator.apply_blocked_disposition("dependency", dependency)
+        self.assertEqual("User Action Required", items[2].status)
+        self.assertEqual("Blocked", items[3].status)
+        self.assertEqual("abc123", items[3].candidate_commit)
+        self.assertEqual("task-original", items[3].canonical_task_id)
+        self.assertEqual(
+            case["correctionAttemptHistory"],
+            items[3].correction_attempt_history,
+        )
+        self.assertEqual("candidate abc123 remains reachable", items[3].git_state)
+        self.assertEqual(
+            ("review finding F-17 remained after correction attempt 2",),
+            items[3].review_verification_evidence,
+        )
+        self.assertEqual(("integration-claim:released",), items[3].live_claims)
+        with self.assertRaisesRegex(ValueError, "exactly one concrete disposition"):
+            simulator.record_exhausted_correction_disposition(
+                "vague",
+                unresolved_findings=("F-17",),
+            )
+        with self.assertRaisesRegex(ValueError, "exactly one concrete disposition"):
+            simulator.record_exhausted_correction_disposition(
+                "multiple",
+                unresolved_findings=("F-17",),
+                recovery_action="restore fixture",
+                recovery_owner="dev-coder",
+                recovery_evidence="fixture evidence for F-17",
+                recovery_findings=("F-17",),
+                dependency_kind="technical",
+                dependency="parser defect",
+                dependency_owner="parser maintainer",
+                observable_trigger="parser regression passes",
+            )
+        with self.assertRaisesRegex(ValueError, "active disposition"):
+            simulator.record_exhausted_correction_disposition(
+                "dependency",
+                unresolved_findings=("F-17",),
+                dependency_kind="external",
+                dependency="upstream schema publication",
+                dependency_owner="schema publisher",
+                observable_trigger="published schema digest changes",
+            )
+
+    def test_retry_is_consumed_before_a_new_non_retry_disposition(self) -> None:
+        """Permit one failed extra attempt, then prohibit another retry."""
+
+        item = WorkItem(
+            "retry",
+            "Blocked",
+            correction_attempt_history=["attempt 1", "attempt 2"],
+        )
+        simulator = CoordinationSimulator((item,))
+        retry = simulator.record_exhausted_correction_disposition(
+            "retry",
+            unresolved_findings=("F-17",),
+            retry_plan="correct the exact F-17 parser boundary once",
+            retry_evidence="the new parser trace identifies the F-17 branch",
+            retry_findings=("F-17",),
+            retry_limit=1,
+        )
+        simulator.apply_blocked_disposition("retry", retry)
+        simulator.finish_bounded_retry("retry", resolved=False)
+
+        self.assertEqual("Blocked", item.status)
+        self.assertTrue(item.bounded_retry_used)
+        self.assertIsNone(item.blocked_disposition)
+        self.assertEqual("CONSUMED", item.disposition_history[-1].state)
+        with self.assertRaisesRegex(ValueError, "one unused bounded attempt"):
+            simulator.record_exhausted_correction_disposition(
+                "retry",
+                unresolved_findings=("F-17",),
+                retry_plan="try F-17 again",
+                retry_evidence="repeat the same trace",
+                retry_findings=("F-17",),
+                retry_limit=1,
+            )
+
+        dependency = simulator.record_exhausted_correction_disposition(
+            "retry",
+            unresolved_findings=("F-17",),
+            dependency_kind="technical",
+            dependency="upstream parser release",
+            dependency_owner="parser maintainer",
+            observable_trigger="the F-17 parser regression passes",
+        )
+        simulator.apply_blocked_disposition("retry", dependency)
+        self.assertEqual("CONTINUING_BLOCKED", item.blocked_disposition.outcome)
+
+    def test_user_action_requires_a_genuine_user_owned_decision(self) -> None:
+        """Reject an agent-actionable question disguised as User Action Required."""
+
+        item = WorkItem(
+            "user-action",
+            "Blocked",
+            correction_attempt_history=["attempt 1", "attempt 2"],
+        )
+        simulator = CoordinationSimulator((item,))
+        with self.assertRaisesRegex(ValueError, "genuine user-owned decision"):
+            simulator.record_exhausted_correction_disposition(
+                "user-action",
+                unresolved_findings=("F-17",),
+                user_explanation="The fixture can be corrected by the coder.",
+                user_question="Should the coder correct the fixture?",
+                user_options=("yes", "no"),
+                user_tradeoffs=("fixes the test", "leaves the test failing"),
+                unattended_work_boundary="Do not edit while waiting.",
+            )
 
     def test_settled_dispatch_contains_duplicate_without_retry(self) -> None:
         """Keep one canonical task and stop, verify, and archive its duplicate."""

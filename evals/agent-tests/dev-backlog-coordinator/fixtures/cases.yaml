@@ -68,3 +68,9 @@ cases:
     unresolvedProviders: [UNSET]
     unavailableSelectedSkill: manage-github-work-items
     fallbackAllowed: false
+  exhausted-correction-dispositions:
+    unresolvedFindings: [F-17]
+    correctionAttemptHistory: [attempt 1 changed validation, attempt 2 retained finding F-17]
+    preservedEvidence: [canonical task, candidate commit, review and verification, Git state, live claims]
+    expectedOutcomes: [RECOVERY_ACTION, BOUNDED_RETRY, USER_ACTION_REQUIRED, CONTINUING_BLOCKED]
+    rejectedOutcomes: [wait indefinitely, keep trying, ask the user without an exact decision]

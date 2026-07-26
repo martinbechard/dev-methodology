@@ -634,7 +634,7 @@
       <div class="state-branches">
         <div><strong>User Action Required</strong><p>A concrete user-owned decision must be answered before work becomes Ready.</p></div>
         <div><strong>Stalled</strong><p>Progress stopped for an unknown reason. The owner and diagnostic next action remain recorded, but the item leaves Starting-plus-Running capacity while the Coordinator investigates.</p></div>
-        <div><strong>Blocked</strong><p>The Coordinator identified the preventing cause and recorded an observable unblock condition.</p></div>
+        <div><strong>Blocked</strong><p>The Coordinator identified the preventing cause, next-action owner, and observable unblock condition. Each Watchdog cycle retains a reconciliation against dependency, candidate, review, verification, task, Git, and live-claim evidence.</p></div>
         <div><strong>Holding · Failed · Abandoned</strong><p>Holding defers real work. Failed and Abandoned are truthful terminal outcomes, not hidden retries.</p></div>
       </div>
       <h3>Stalled Dispositions</h3>
@@ -723,12 +723,12 @@
     <aside class="thread-context"><h3>Execution Contexts</h3><p>The Dev Backlog Watchdog is a standing read-only child Agent outside delivery capacity. The Dev Backlog Steward is a child Agent, not another work-item Thread or queue entry. It performs only explicitly delegated provider mutations.</p><p>An Assignment is bounded work sent to an Agent; it does not create another work-item Thread. A runtime may retain a child execution context for that Agent, but the methodology still treats it as part of the owning parent or work-item Thread.</p></aside>
     <figure class="watchdog-cycle-figure" aria-labelledby="watchdog-cycle-title">
       <figcaption id="watchdog-cycle-title">Watchdog Observation Is Read-Only<span>The Watchdog reports evidence; the Coordinator decides and the Steward records any lifecycle change.</span></figcaption>
-      <div class="assignment-flow" role="img" aria-label="The Watchdog observes provider, execution, progress, estimate, hard-stop, Stalled, and Blocked exit-condition evidence. Healthy cycles return no action. Actionable anomalies alert the Coordinator, which investigates and chooses a disposition. The Steward then performs an authorized provider mutation.">
-        <div class="assignment-step"><strong>Observe</strong><p>Read provider, execution, progress, timing, and exit-condition evidence.</p></div>
+      <div class="assignment-flow" role="img" aria-label="The Watchdog observes provider, execution, progress, estimate, hard-stop, Stalled, and complete Blocked reconciliation evidence. Every Blocked item retains a concise per-item result including attempt history and a structured disposition receipt. Healthy cycles return no action. Only actionable anomalies enter one parent alert. The Coordinator returns an immutable disposition decision. The Steward then performs an authorized provider mutation.">
+        <div class="assignment-step"><strong>Observe And Retain</strong><p>Read provider, execution, progress, timing, exit-condition, attempt-history, and structured-disposition evidence. Retain one complete reconciliation for every Blocked item.</p></div>
         <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
-        <div class="assignment-step idle"><strong>Quiet Or Alert</strong><p>Return no action when healthy; otherwise send one actionable alert.</p></div>
+        <div class="assignment-step idle"><strong>Quiet Or Alert</strong><p>Keep quiet Blocked results local; send one aggregate alert for satisfied exits, actionable recovery, exhausted corrections, contradictory lifecycle evidence, or an incorrect owner.</p></div>
         <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
-        <div class="assignment-step"><strong>Coordinator Decides</strong><p>Investigate the cause and choose the evidence-backed disposition.</p></div>
+        <div class="assignment-step"><strong>Coordinator Decides</strong><p>Investigate the cause and return one immutable evidence-backed decision without changing provider state.</p></div>
         <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
         <div class="assignment-step"><strong>Steward Records</strong><p>Mutate the selected provider only after explicit delegation.</p></div>
       </div>
@@ -812,10 +812,10 @@
       <div class="blocker-handoff-grid">
         <section><h4>Orchestrator Blocker Steps</h4><ol><li>Stop unsafe work.</li><li>Preserve commits and evidence.</li><li>Resolve resource ownership truthfully.</li><li>Notify the Coordinator immediately.</li></ol></section>
         <section><h4>Blocker Notification Fields</h4><dl><dt>Cause</dt><dd>Exact blocker and owner.</dd><dt>Exit</dt><dd>Observable unblock condition and requested action.</dd><dt>Identity</dt><dd>Canonical Thread and root Agent identity.</dd><dt>Resume</dt><dd>Whether resumption is safe.</dd></dl></section>
-        <section><h4>Coordinator Sequence</h4><ol><li>Acknowledge the handoff.</li><li>Choose recovery and lifecycle disposition.</li><li>Delegate any provider mutation to the Steward.</li></ol></section>
+        <section><h4>Coordinator Sequence</h4><ol><li>Acknowledge and reconcile the complete handoff.</li><li>After exhausted corrections, return exactly one immutable decision: a recovery with evidence linked to every finding, one similarly linked bounded retry, one explained genuine user decision with options and tradeoffs, or one continuing external or technical dependency with an observable trigger.</li><li>Reject indefinite Blocked and delegate only the resulting provider mutation to the Steward. Consume a bounded retry before reconciling again, and do not repeat it.</li></ol></section>
       </div>
     </aside>
-    <details><summary>Execution Safeguards</summary><div><p>Findings return to the original producer. After two failed correction attempts for the same criterion, a repeated failure signature, or an unavailable fixed dependency, preserve the candidate and record a truthful blocker.</p><p>Before a phase expected to exceed five minutes, publish the active unit, estimate, hard stop, retained evidence path, and distinct acceptance criterion. After an expensive failure, classify retained evidence, add the smallest offline regression, and run one cheapest representative first.</p></div></details>
+    <details><summary>Execution Safeguards</summary><div><p>Findings return to the original producer. After two failed correction attempts for the same criterion, preserve the canonical task, candidate, review, verification, Git, claim, and attempt history before returning exactly one concrete disposition decision for Steward application. A fresh retry is bounded to one attempt, links its evidence to every unresolved finding, and is consumed before another reconciliation.</p><p>Before a phase expected to exceed five minutes, publish the active unit, estimate, hard stop, retained evidence path, and distinct acceptance criterion. After an expensive failure, classify retained evidence, add the smallest offline regression, and run one cheapest representative first.</p></div></details>
     <p class="source-note">Direct-main and pull-request details are defined by <a href="../skills/complete-work-item-direct-main/SKILL.md">Direct-Main Completion</a>, <a href="../skills/complete-work-item-feature-branch/SKILL.md">Feature-Branch Completion</a>, and <a href="../skills/create-pull-request/SKILL.md">Create Pull Request</a>.</p>
   </section>
 
