@@ -1,6 +1,6 @@
 # Use Exact Work-Item Claims For Lifecycle Updates
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -11,6 +11,15 @@ Provider: file
 Provider Reference: backlog/feature-backlog/use-exact-work-item-claims-for-lifecycle-updates.md
 
 Completion: direct-main
+
+## Recovery Resumption
+
+- Transition: Blocked -> Ready.
+- Recovery Authority: The user's request to restart blocked items and the parent publication baton.
+- Reconciled Main: Published event-driven and exact-file coordination is present at 6e59985b8cd0280e729f56eb8d2d362adf3f4ab6; provider normalization commits continue through 7c49e84180ab4b3c69562bfcf8d16b409b2e52cb.
+- Reconciled State: Primary main is clean, the command claim registry is empty, and the stated user-level installation and catalog refresh are complete.
+- Preserved Canonical Identity: 019f9783-31a0-7e91-9704-08cde7886b3a remains the canonical historical work-item Thread/task. All recorded approval, candidate, review, claim, and recovery evidence remains binding.
+- Next Lifecycle Owner: Parent Dev Backlog Coordinator reserves Ready -> Starting; root Dev Orchestrator acceptance remains required before Running.
 
 ## Supplemental Resumption Reservation
 
