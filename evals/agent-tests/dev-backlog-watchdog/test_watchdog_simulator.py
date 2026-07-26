@@ -68,6 +68,16 @@ class WatchdogSimulatorTests(unittest.TestCase):
         self.assertEqual(case["expectedReason"], alert.reason)
         self.assertEqual(case["expectedAction"], alert.recommended_action)
         self.assertEqual("", alert.preventing_cause)
+        self.assertIn("hard_stop_crossed=true", alert.evidence)
+        self.assertIn(
+            "hard_stop=2026-07-26T16:30:00Z",
+            alert.evidence,
+        )
+        self.assertIn("progress_gap=true", alert.evidence)
+        self.assertIn(
+            "progress_observation=no evidence-bearing output for 18 minutes",
+            alert.evidence,
+        )
         self.assertFalse(result.mutated)
 
     def test_known_preventing_cause_recommends_blocked_not_stalled(self) -> None:
@@ -106,6 +116,88 @@ class WatchdogSimulatorTests(unittest.TestCase):
         assert alert is not None
         self.assertIn("cause remains unknown", alert.reason)
         self.assertIn("Stalled", alert.recommended_action)
+
+    def test_starting_missing_or_stopped_task_alerts_without_mutation(self) -> None:
+        """Starting task disappearance requires the same read-only alert as Running."""
+
+        for task_state in ("missing", "stopped"):
+            item = WorkItem(
+                provider_identity=f"backlog/feature-backlog/starting-{task_state}.md",
+                status="Starting",
+                task_state=task_state,
+                canonical_thread=f"thread-starting-{task_state}",
+                root_task=f"task-starting-{task_state}",
+            )
+            before = deepcopy(item)
+
+            result = WatchdogCycle().evaluate([item])
+
+            with self.subTest(task_state=task_state):
+                self.assertEqual("ALERT", result.status)
+                self.assertEqual(before, item)
+                self.assertIsNotNone(result.alert)
+                alert = result.alert
+                assert alert is not None
+                self.assertIn(item.provider_identity, alert.provider_identity)
+                self.assertIn("task_boundary_crossed=true", alert.evidence)
+                self.assertIn(f"task_state={task_state}", alert.evidence)
+                self.assertFalse(result.mutated)
+
+    def test_estimate_boundary_evidence_names_observed_value(self) -> None:
+        """Crossed estimates identify both the boundary and its observed value."""
+
+        item = WorkItem(
+            provider_identity="backlog/analysis-backlog/estimate-crossed.md",
+            status="Running",
+            phase="focused verification",
+            phase_estimate="12 minutes",
+            estimate_boundary_crossed=True,
+            last_productive_evidence="test process started",
+        )
+
+        result = WatchdogCycle().evaluate([item])
+
+        self.assertIsNotNone(result.alert)
+        alert = result.alert
+        assert alert is not None
+        self.assertIn("estimate_boundary_crossed=true", alert.evidence)
+        self.assertIn("phase_estimate=12 minutes", alert.evidence)
+
+    def test_aggregate_alert_filters_empty_preventing_causes(self) -> None:
+        """Aggregate cause evidence contains only concrete preventing causes."""
+
+        unknown_items = [
+            WorkItem(
+                provider_identity=f"backlog/feature-backlog/unknown-{index}.md",
+                status="Running",
+                progress_gap=True,
+                preventing_cause=cause,
+            )
+            for index, cause in enumerate(("", " \t "))
+        ]
+        unknown_result = WatchdogCycle().evaluate(unknown_items)
+        self.assertIsNotNone(unknown_result.alert)
+        unknown_alert = unknown_result.alert
+        assert unknown_alert is not None
+        self.assertEqual("", unknown_alert.preventing_cause)
+
+        mixed_items = [
+            *unknown_items,
+            WorkItem(
+                provider_identity="backlog/defect-backlog/known-cause.md",
+                status="Running",
+                progress_gap=True,
+                preventing_cause=" upstream credential unavailable ",
+            ),
+        ]
+        mixed_result = WatchdogCycle().evaluate(mixed_items)
+        self.assertIsNotNone(mixed_result.alert)
+        mixed_alert = mixed_result.alert
+        assert mixed_alert is not None
+        self.assertEqual(
+            "upstream credential unavailable",
+            mixed_alert.preventing_cause,
+        )
 
     def test_stalled_is_outside_starting_plus_running_capacity(self) -> None:
         """Only Starting and Running consume the durable active-capacity target."""

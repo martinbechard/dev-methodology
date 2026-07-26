@@ -6351,6 +6351,46 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(retired_wait_contract=retired_wait_contract):
                 self.assertNotIn(retired_wait_contract, role_text)
 
+    def test_dev_backlog_coordinator_snapshot_includes_stalled_state(self) -> None:
+        """Source and generated role outputs must expose Stalled inventory."""
+
+        role_path = (
+            ROLES_ROOT
+            / "dev-activities"
+            / "dev-backlog-coordinator.role.yaml"
+        )
+        role = load_yaml_object(role_path)
+        lifecycle_snapshot = next(
+            entry["provider lifecycle snapshot"]["purpose"]
+            for entry in role["outputContract"]
+            if "provider lifecycle snapshot" in entry
+        )
+        self.assertIn("STALLED", lifecycle_snapshot)
+
+        generated_paths = (
+            GENERATED_ADAPTERS_ROOT
+            / "claude"
+            / "agents"
+            / "dev-backlog-coordinator.md",
+            GENERATED_ADAPTERS_ROOT
+            / "codex"
+            / "agents"
+            / "dev-backlog-coordinator.toml",
+            GENERATED_ADAPTERS_ROOT
+            / "gemini"
+            / "agents"
+            / "dev-backlog-coordinator.md",
+            GENERATED_ADAPTERS_ROOT
+            / "junie"
+            / "agents"
+            / "dev-backlog-coordinator.md",
+        )
+        for generated_path in generated_paths:
+            with self.subTest(generated_path=generated_path):
+                rendered = generated_path.read_text(encoding="utf-8")
+                self.assertIn("provider lifecycle snapshot", rendered)
+                self.assertIn("STALLED", rendered)
+
     def test_claim_related_skills_do_not_copy_claim_events_or_polling_rules(
         self,
     ) -> None:
@@ -6744,6 +6784,10 @@ class BundleContentTests(unittest.TestCase):
             lifecycle_text.index('<section class="section" id="delivery"') :
             lifecycle_text.index('<section class="section" id="decisions"')
         ]
+        backlog_section = lifecycle_text[
+            lifecycle_text.index('<section class="section" id="backlog"') :
+            lifecycle_text.index('<section class="section" id="file-provider"')
+        ]
         self.assertIn('<h2 id="agents-title">Agent Roles</h2>', agents_section)
         self.assertNotIn("Agents And Handoffs", agents_section)
         self.assertNotIn("Lifecycle Handoffs", agents_section)
@@ -6755,6 +6799,27 @@ class BundleContentTests(unittest.TestCase):
             "A Handoff transfers evidence and the next action",
             delivery_section,
         )
+        self.assertIn("<h3>Stalled Dispositions</h3>", backlog_section)
+        self.assertIn('<ol class="stalled-dispositions">', backlog_section)
+        stalled_dispositions = (
+            "Restore Running",
+            "Restore Ready",
+            "Record Blocked",
+            "Record User Action Required",
+            "Select Terminal Outcome",
+        )
+        stalled_positions = tuple(
+            backlog_section.index(f"<strong>{disposition}</strong>")
+            for disposition in stalled_dispositions
+        )
+        self.assertEqual(tuple(sorted(stalled_positions)), stalled_positions)
+        for heading in (
+            "Orchestrator Blocker Steps",
+            "Blocker Notification Fields",
+            "Coordinator Sequence",
+        ):
+            with self.subTest(blocker_handoff_heading=heading):
+                self.assertIn(f"<h4>{heading}</h4>", delivery_section)
         self.assertIn(
             "An Assignment is bounded work sent to an Agent; it does not create another work-item Thread.",
             agents_section,

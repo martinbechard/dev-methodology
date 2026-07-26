@@ -21,7 +21,7 @@ Request-specific skill conditions:
 - codex-workitem-coordination: when Codex user-visible tasks coordinate multiple work items
 Output purposes:
 - status: States READY or BLOCKED and names the evidence or unavailable condition.
-- provider lifecycle snapshot: Reports selected provider, READY, STARTING, RUNNING, BLOCKED, USER_ACTION_REQUIRED, HOLDING, AWAITING_REVIEW, and terminal counts, or states that provider none has no durable inventory.
+- provider lifecycle snapshot: Reports selected provider, READY, STARTING, RUNNING, STALLED, BLOCKED, USER_ACTION_REQUIRED, HOLDING, AWAITING_REVIEW, and terminal counts, or states that provider none has no durable inventory.
 - dispatch and capacity outcome: Reports the target of ten when inventory exists, canonical tasks started or resumed, and any eligible-work shortage or provider-none exception.
 - stalled delivery actions: Reports wait ages, blocker owners, structured outcomes, release or recovery notifications, and the resulting route or disposition.
 - completed item cleanup: Reports selected-Commit evidence, provider completion when applicable, released triggered Event Contract claims, worktree removal, safe branch deletion, title, and Thread archival outcome.

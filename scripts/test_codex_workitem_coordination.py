@@ -352,6 +352,19 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
             with self.subTest(clause=clause):
                 self.assertIn(" ".join(clause.split()), provider)
 
+    def test_file_provider_active_folders_include_stalled_inventory(self) -> None:
+        """Folder guidance must not imply that Stalled leaves typed active work."""
+
+        provider = " ".join(
+            MANAGE_FILE_WORK_ITEMS_PATH.read_text(encoding="utf-8").split()
+        )
+        self.assertIn(
+            "Active typed folders contain dispatchable work, non-dispatchable "
+            "unknown-cause Stalled work, or work Blocked by an explicit "
+            "non-user dependency.",
+            provider,
+        )
+
     def test_orchestrator_known_blocker_handoff_is_immediate_and_complete(self) -> None:
         """A known blocker must be reported rather than left for watchdog discovery."""
 
@@ -486,8 +499,9 @@ class StartingLifecycleContractTests(unittest.TestCase):
 
         normalized_provider = " ".join(self.provider.split())
         self.assertIn(
-            "Active typed folders also retain unknown-cause Stalled items and "
-            "known-cause Blocked items.",
+            "Active typed folders contain dispatchable work, non-dispatchable "
+            "unknown-cause Stalled work, or work Blocked by an explicit non-user "
+            "dependency.",
             normalized_provider,
         )
 

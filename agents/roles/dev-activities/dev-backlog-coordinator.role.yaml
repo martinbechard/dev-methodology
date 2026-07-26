@@ -268,7 +268,7 @@ outputContract:
 - status:
     purpose: States READY or BLOCKED and names the evidence or unavailable condition.
 - provider lifecycle snapshot:
-    purpose: Reports selected provider, READY, STARTING, RUNNING, BLOCKED, USER_ACTION_REQUIRED, HOLDING,
+    purpose: Reports selected provider, READY, STARTING, RUNNING, STALLED, BLOCKED, USER_ACTION_REQUIRED, HOLDING,
       AWAITING_REVIEW, and terminal counts, or states that provider none has no durable inventory.
 - dispatch and capacity outcome:
     purpose: Reports the target of ten when inventory exists, canonical tasks started or resumed,

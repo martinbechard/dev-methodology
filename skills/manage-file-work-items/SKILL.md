@@ -43,9 +43,9 @@ Use these folders when present:
 - backlog/completed-backlog grouped by type for delivered work.
 - backlog/failed-backlog grouped by type for failed, incomplete, abandoned, or blocked terminal work.
 
-Active typed folders contain dispatchable work or work blocked by an explicit non-user
-dependency. Active typed folders also retain unknown-cause Stalled items and known-cause
-Blocked items. User Action Required and Holding are separate non-dispatchable work queues.
+Active typed folders contain dispatchable work, non-dispatchable unknown-cause Stalled
+work, or work Blocked by an explicit non-user dependency. User Action Required and Holding
+are separate non-dispatchable work queues.
 Future Ideas is not a work queue or lifecycle state. Completed and failed archives are
 durable history, not fresh work.
 
@@ -166,6 +166,29 @@ Record durable evidence appropriate to every transition:
 - ABANDONED: abandonment authority, preserved context, relevant claim results, terminal commit, and failed archive path.
 
 Keep wait_started_at, attempt_count, last_attempt, next_attempt, open issues, and accepted_candidate_commit when bounded retry or interrupted recovery needs them.
+
+For Status Stalled, record the evidence in this stable section:
+
+```markdown
+## Stalled Evidence
+
+Last Known Productive Evidence: [exact evidence]
+Phase Estimate: [estimate or Not present]
+Hard Stop: [hard stop or Not present]
+Anomaly or Progress Gap: [source-backed observation]
+Canonical Thread: [canonical Thread identity]
+Root Agent Task: [root Agent Task identity]
+Current Ownership and Coordination State: [owner and coordination state]
+Diagnostic Owner: [diagnostic owner]
+Next Investigation Action: [next action]
+```
+
+Every label is required and its value must be nonempty. When no phase estimate or hard stop
+exists, write Not present rather than omitting the field. Source Evidence remains general
+provenance and does not substitute for any Stalled Evidence field. Legacy top-level
+Diagnostic Owner and Next Investigation Action values remain report-display compatibility
+inputs, but do not satisfy Stalled validation; migrate current Stalled items to the canonical
+section.
 
 ## Stalled Investigation And Disposition
 

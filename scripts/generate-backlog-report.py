@@ -77,6 +77,17 @@ SEMANTIC_STATUS_CLASSES = {
     "Blocked": "blocked",
     "User Action Required": "user-action-required",
 }
+STALLED_EVIDENCE_FIELDS = (
+    "Last Known Productive Evidence",
+    "Phase Estimate",
+    "Hard Stop",
+    "Anomaly or Progress Gap",
+    "Canonical Thread",
+    "Root Agent Task",
+    "Current Ownership and Coordination State",
+    "Diagnostic Owner",
+    "Next Investigation Action",
+)
 DEPENDENCY_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 MARKDOWN_LINK_PATTERN = re.compile(r"\[[^]]+\]\(([^)#?]+\.md)(?:#[^)]*)?\)")
 DEPENDENCY_LINK_PATTERN = re.compile(r"\[[^]\r\n]+\]\(([^)\r\n]+)\)")
@@ -105,6 +116,7 @@ class _Item:
     diagnostic_owner: str = ""
     next_investigation_action: str = ""
     source_evidence: str = ""
+    stalled_evidence: dict[str, str] = field(default_factory=dict)
     stalled_evidence_missing: list[str] = field(default_factory=list)
     missing: list[str] = field(default_factory=list)
     anomalies: list[str] = field(default_factory=list)
@@ -164,6 +176,16 @@ def _parse_document(path: Path) -> tuple[str, dict[str, str], dict[str, str]]:
         if match:
             fields[match.group(1)] = match.group(2)
     return title, fields, {name: "\n".join(lines).strip() for name, lines in sections.items()}
+
+
+def _parse_labeled_section(section: str) -> dict[str, str]:
+    """Parse one-line label and value pairs from a Markdown section."""
+    fields: dict[str, str] = {}
+    for line in section.splitlines():
+        match = re.fullmatch(r"([A-Za-z][A-Za-z ]+):\s*(.*?)\s*", line.strip())
+        if match:
+            fields[match.group(1)] = match.group(2)
+    return fields
 
 
 def _external_uri(value: str) -> bool:
@@ -369,19 +391,15 @@ def _read_items(
             series, series_order = series_orders.get(relative_text, (fallback_series, 10**9))
             priority_text = fields.get("Priority", "")
             priority = int(priority_text) if priority_text.isdigit() else 10**9
+            stalled_evidence = _parse_labeled_section(
+                sections.get("Stalled Evidence", "")
+            )
             stalled_evidence_missing: list[str] = []
             if fields.get("Status") == "Stalled":
                 stalled_evidence_missing = [
                     name
-                    for name, value in (
-                        ("Diagnostic Owner", fields.get("Diagnostic Owner", "")),
-                        (
-                            "Next Investigation Action",
-                            fields.get("Next Investigation Action", ""),
-                        ),
-                        ("Source Evidence", sections.get("Source Evidence", "")),
-                    )
-                    if not value.strip()
+                    for name in STALLED_EVIDENCE_FIELDS
+                    if not stalled_evidence.get(name, "").strip()
                 ]
             item = _Item(
                 path=relative_text,
@@ -409,6 +427,7 @@ def _read_items(
                     "",
                 ),
                 source_evidence=sections.get("Source Evidence", ""),
+                stalled_evidence=stalled_evidence,
                 stalled_evidence_missing=stalled_evidence_missing,
                 missing=missing,
             )
@@ -737,10 +756,25 @@ def _item_card(item: _Item) -> str:
             f'<dt>Resolution</dt><dd>{_escape(item.resolution or "Missing")}</dd></dl>'
         )
     elif item.status == "Stalled":
+        stalled_evidence = dict(item.stalled_evidence)
+        if not stalled_evidence.get("Current Ownership and Coordination State", ""):
+            stalled_evidence["Current Ownership and Coordination State"] = (
+                item.owner or "Unowned"
+            )
+        if not stalled_evidence.get("Diagnostic Owner", ""):
+            stalled_evidence["Diagnostic Owner"] = item.diagnostic_owner
+        if not stalled_evidence.get("Next Investigation Action", ""):
+            stalled_evidence["Next Investigation Action"] = (
+                item.next_investigation_action
+            )
         detail = (
-            f'<dl class="interaction"><dt>Diagnostic Owner</dt><dd>{_escape(item.diagnostic_owner or "Missing")}</dd>'
-            f'<dt>Next Investigation Action</dt><dd>{_escape(item.next_investigation_action or "Missing")}</dd>'
-            f'<dt>Preserved Owner</dt><dd>{_escape(item.owner or "Unowned")}</dd></dl>'
+            '<dl class="interaction">'
+            + "".join(
+                f"<dt>{_escape(field_name)}</dt>"
+                f"<dd>{_escape(stalled_evidence.get(field_name, '') or 'Missing')}</dd>"
+                for field_name in STALLED_EVIDENCE_FIELDS
+            )
+            + "</dl>"
         )
     return (
         '<article class="item">'

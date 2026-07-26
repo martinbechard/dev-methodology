@@ -17,8 +17,10 @@ cases:
       canonical_thread: thread-suspected
       root_task: task-suspected
       last_productive_evidence: candidate commit preserved
+      hard_stop: "2026-07-26T16:30:00Z"
       hard_stop_crossed: true
       progress_gap: true
+      progress_observation: no evidence-bearing output for 18 minutes
     expectedProviderIdentity: backlog/feature-backlog/suspected.md
     expectedReason: progress boundary crossed while the cause remains unknown
     expectedAction: Coordinator investigates and delegates Stalled only if the evidence justifies it
@@ -31,6 +33,7 @@ cases:
       root_task: task-known-cause
       last_productive_evidence: upstream API returned a permanent authorization error
       progress_gap: true
+      progress_observation: retry produced the same authorization error
       preventing_cause: upstream credential is unavailable
     expectedReason: progress boundary crossed with a known preventing cause
     expectedAction: Coordinator validates the cause and chooses the Blocked disposition

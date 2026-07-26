@@ -258,6 +258,9 @@
     .state-branches div { padding: 1rem; border-top: 0.28rem solid var(--amber); background: var(--soft-amber); }
     .state-branches div:nth-child(2) { border-color: var(--coral); background: var(--soft-coral); }
     .state-branches div:nth-child(3) { border-color: var(--violet); background: var(--soft-violet); }
+    .stalled-dispositions { display: grid; gap: 0.5rem; margin: 1rem 0 0; padding-left: 1.4rem; }
+    .stalled-dispositions li { padding-left: 0.35rem; color: var(--muted); }
+    .stalled-dispositions strong { color: var(--ink); }
     .state-branches strong { display: block; margin-bottom: 0.3rem; }
     .folder-tree {
       margin: 0;
@@ -292,6 +295,12 @@
     .role-card:nth-child(3n) { border-color: var(--violet); background: var(--soft-violet); }
     .role-card h3 { margin-bottom: 0.35rem; }
     .thread-context { margin-top: 1rem; padding: 1rem 1.2rem; border-left: 0.3rem solid var(--blue); background: var(--soft-blue); }
+    .blocker-handoff-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; }
+    .blocker-handoff-grid h4 { margin-bottom: 0.45rem; }
+    .blocker-handoff-grid ol, .blocker-handoff-grid dl { margin: 0; padding-left: 1.2rem; }
+    .blocker-handoff-grid li { margin-bottom: 0.35rem; }
+    .blocker-handoff-grid dt { color: var(--ink); font-weight: 800; }
+    .blocker-handoff-grid dd { margin: 0 0 0.35rem; color: var(--muted); }
     .thread-map {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 5rem minmax(0, 1fr);
@@ -424,7 +433,7 @@
       .lifecycle-rail ol::before { display: none; }
       .state-map { grid-template-columns: 1fr; }
       .state-arrow { transform: rotate(90deg); }
-      .state-branches, .delivery-paths, .design-progression { grid-template-columns: 1fr; }
+      .state-branches, .delivery-paths, .design-progression, .blocker-handoff-grid { grid-template-columns: 1fr; }
       .thread-map { grid-template-columns: 1fr; }
       .thread-dispatch b { transform: rotate(90deg); }
       .terminology-key { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -591,7 +600,14 @@
         <div><strong>Blocked</strong><p>The Coordinator identified the preventing cause and recorded an observable unblock condition.</p></div>
         <div><strong>Holding · Failed · Abandoned</strong><p>Holding defers real work. Failed and Abandoned are truthful terminal outcomes, not hidden retries.</p></div>
       </div>
-      <p class="source-note">From Stalled, the Coordinator restores Running only for demonstrably resumed same-owner work, restores Ready after ownership ends, records Blocked for a known cause, records User Action Required for one exact user-owned action, or selects a terminal outcome from evidence.</p>
+      <h3>Stalled Dispositions</h3>
+      <ol class="stalled-dispositions">
+        <li><strong>Restore Running</strong> only when same-owner work demonstrably resumed and capacity permits.</li>
+        <li><strong>Restore Ready</strong> after execution ownership ends.</li>
+        <li><strong>Record Blocked</strong> when the preventing cause and unblock condition are known.</li>
+        <li><strong>Record User Action Required</strong> for one exact user-owned action.</li>
+        <li><strong>Select Terminal Outcome</strong> only from sufficient failure or abandonment evidence.</li>
+      </ol>
     </figure>
   </section>
 
@@ -755,7 +771,13 @@
         <li><span class="number">9</span><span class="actor">Coordinator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Cleanup</span><p>Verify the integration branch is merged, remove the clean worktree, delete the merged branch, close the Thread, prune metadata, and refill queue capacity through a recount and replacement dispatch.</p></li>
       </ol>
     </figure>
-    <aside class="thread-context"><h3>Known Blocker Handoff</h3><p>A Root Orchestrator that recognizes a concrete blocker stops unsafe work, preserves commits and evidence, resolves resource ownership truthfully, and immediately sends the exact blocker, owner, unblock condition, requested action, canonical identities, and resume safety to the Coordinator. The Coordinator acknowledges the handoff, decides recovery and lifecycle disposition, and delegates any provider mutation to the Steward.</p></aside>
+    <aside class="thread-context"><h3>Known Blocker Handoff</h3>
+      <div class="blocker-handoff-grid">
+        <section><h4>Orchestrator Blocker Steps</h4><ol><li>Stop unsafe work.</li><li>Preserve commits and evidence.</li><li>Resolve resource ownership truthfully.</li><li>Notify the Coordinator immediately.</li></ol></section>
+        <section><h4>Blocker Notification Fields</h4><dl><dt>Cause</dt><dd>Exact blocker and owner.</dd><dt>Exit</dt><dd>Observable unblock condition and requested action.</dd><dt>Identity</dt><dd>Canonical Thread and root Agent identity.</dd><dt>Resume</dt><dd>Whether resumption is safe.</dd></dl></section>
+        <section><h4>Coordinator Sequence</h4><ol><li>Acknowledge the handoff.</li><li>Choose recovery and lifecycle disposition.</li><li>Delegate any provider mutation to the Steward.</li></ol></section>
+      </div>
+    </aside>
     <details><summary>Execution Safeguards</summary><div><p>Findings return to the original producer. After two failed correction attempts for the same criterion, a repeated failure signature, or an unavailable fixed dependency, preserve the candidate and record a truthful blocker.</p><p>Before a phase expected to exceed five minutes, publish the active unit, estimate, hard stop, retained evidence path, and distinct acceptance criterion. After an expensive failure, classify retained evidence, add the smallest offline regression, and run one cheapest representative first.</p></div></details>
     <p class="source-note">Direct-main and pull-request details are defined by <a href="../skills/complete-work-item-direct-main/SKILL.md">Direct-Main Completion</a>, <a href="../skills/complete-work-item-feature-branch/SKILL.md">Feature-Branch Completion</a>, and <a href="../skills/create-pull-request/SKILL.md">Create Pull Request</a>.</p>
   </section>

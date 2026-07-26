@@ -33,6 +33,9 @@ class WorkItem:
     canonical_thread: str = ""
     root_task: str = ""
     last_productive_evidence: str = ""
+    phase_estimate: str = ""
+    hard_stop: str = ""
+    progress_observation: str = ""
     estimate_boundary_crossed: bool = False
     hard_stop_crossed: bool = False
     progress_gap: bool = False
@@ -76,7 +79,13 @@ class WatchdogCycle:
 
         observations: list[WatchdogAlert] = []
         for item in items:
-            if item.status == "Running" and self._suspected_stall(item):
+            if (
+                (item.status == "Running" and self._suspected_stall(item))
+                or (
+                    item.status == "Starting"
+                    and item.task_state in {"stopped", "missing"}
+                )
+            ):
                 cause_is_known = self._known_preventing_cause(item)
                 observations.append(
                     WatchdogAlert(
@@ -165,7 +174,11 @@ class WatchdogCycle:
             evidence=combine("evidence"),
             reason=combine("reason"),
             recommended_action=combine("recommended_action"),
-            preventing_cause=combine("preventing_cause"),
+            preventing_cause=" | ".join(
+                cause
+                for observation in observations
+                if (cause := observation.preventing_cause.strip())
+            ),
         )
 
     @staticmethod
@@ -175,8 +188,35 @@ class WatchdogCycle:
             f"last_productive_evidence={item.last_productive_evidence or 'missing'}",
             f"canonical_thread={item.canonical_thread or 'missing'}",
             f"root_task={item.root_task or 'missing'}",
-            f"task_state={item.task_state}",
         ]
+        if item.estimate_boundary_crossed:
+            evidence.extend(
+                (
+                    "estimate_boundary_crossed=true",
+                    f"phase_estimate={item.phase_estimate or 'missing'}",
+                )
+            )
+        if item.hard_stop_crossed:
+            evidence.extend(
+                (
+                    "hard_stop_crossed=true",
+                    f"hard_stop={item.hard_stop or 'missing'}",
+                )
+            )
+        if item.progress_gap:
+            evidence.extend(
+                (
+                    "progress_gap=true",
+                    f"progress_observation={item.progress_observation or 'missing'}",
+                )
+            )
+        if item.task_state in {"stopped", "missing"}:
+            evidence.extend(
+                (
+                    "task_boundary_crossed=true",
+                    f"task_state={item.task_state}",
+                )
+            )
         return "; ".join(evidence)
 
 
