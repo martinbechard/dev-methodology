@@ -1,6 +1,6 @@
 # Enforce Agent-Claim Lifecycle Evidence In Runner Resource Scenarios
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -150,6 +150,21 @@ None.
 - Current-Main Overlap Reconciliation: Decouple and OID candidates have no source integrated on current main. Before source mutation, reconcile any exact overlap against their current Blocked records and preserve their candidate evidence; no overlap authorizes taking or changing their work.
 - Transition: Blocked -> Ready. Owner remains Unowned. This provider transition does not grant implementation ownership.
 - Next Lifecycle Owner: the parent Dev Backlog Coordinator may separately reserve Ready -> Starting for this same canonical item.
+
+## Current Starting Reservation
+
+- Parent Coordination Thread: /root/resume_blocked_after_claim_publication.
+- Canonical Thread/Task: 019f981c-4fea-7b83-b8d2-0b254ff45f0c; no replacement canonical identity is created.
+- Reservation: One parent-owned Ready -> Starting launch reservation.
+- Normalized Objective: Enforce agent-claim lifecycle evidence in runner resource scenarios.
+- Intended Root Role: Dev Orchestrator.
+- Codex Resumption Task: /root/resume_blocked_after_claim_publication/runner_lifecycle_recovery.
+- Persistence And Completion: file provider; direct-main completion.
+- Preserved Evidence: candidates e437702d2c0119c6641caca52fb7561348086568, 446371ff424d2ab2e3da53c72396dde356c36bcb, and 4778fd4435c50cc8a282a6a505eb41b061374278 remain rejected and unintegrated; their prior correction loop is not reopened.
+- Authorized Bounded Scope: exactly `evals/agent-tests/runner.py` and `evals/agent-tests/test_runner.py`, with current-main overlap reconciliation before source mutation.
+- Dispatched At: 2026-07-26T11:02:31Z.
+- Launch Evidence: Parent Coordinator authorized this exact fresh recovery reservation. Runtime acceptance remains pending.
+- Next Lifecycle Owner: the root Dev Orchestrator must record a distinct Starting -> Running acceptance for this same canonical identity before repository mutation.
 
 ## Notes
 
