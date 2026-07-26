@@ -1,14 +1,14 @@
 # Reject Unconfigured Lifecycle Handoff Receipt Lanes
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/reject-unconfigured-lifecycle-handoff-receipt-lanes.md
+Provider Reference: backlog/user-action-required/reject-unconfigured-lifecycle-handoff-receipt-lanes.md
 
 Completion: direct-main
 
@@ -27,6 +27,10 @@ With configured lanes and fields empty, _audit_report conditionally calls its ex
 Fresh review of candidate 1eab8bb66c2eb24d841d53c4b136f0638527c1c3 in canonical task 019f978e-28b7-7561-be38-b535ab26850f confirmed this distinct defect on 2026-07-25. Standing user direction requires each additional confirmed defect to be logged durably.
 
 Fresh review of candidate 988bc4b2 in canonical task 019f978e-28b7-7561-be38-b535ab26850f confirmed the empty-configured-set reproduction and returned the correction attempt to the original Dev Coder on 2026-07-25.
+
+The canonical task and work-item Thread is 019f9f67-1259-73a1-a9f2-1c6ce447903e. Its accepted source commits are c1e861e75996a4758dfc95c6ec054fce2744a74a and 7a57ca305c5bcf0573ae0be5c52322a086fa0547. Fresh independent review and verification accepted those source commits before the requested primary-main integration.
+
+The approval reviewer rejected the first cherry-pick before any Git mutation because explicit authorization for that primary-main mutation was absent. The canonical claim was released with no-change evidence under claim-release event f6c30422-2c80-406a-b9b1-c96817d4e9e9. Primary main remained unchanged by that rejected integration attempt.
 
 ## Requirements
 
@@ -73,7 +77,7 @@ None.
 - Coordination Classification: The Dependencies entry is a coordination-only overlap note. Its referenced item is Blocked and Unowned, and the preflight registry has no live claim. Private-worktree implementation may begin; exact overlap scope and integration must be reconciled before the conflicting integration event.
 - Next Lifecycle Owner: The root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
 
-## Current Running Acceptance
+## Preserved Running Acceptance
 
 - Transition: Starting -> Running.
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a (preserved from the Starting reservation).
@@ -87,6 +91,23 @@ None.
 - Parent Reservation Commit: 503a8f9ebcd1efa922c452e2a1dd492eed023ef7.
 - Claim Evidence: accept-running-reject-unconfigured-lifecycle-handoff-receipt-lanes-019f9f67; acquire outcome SHARED_CHECKOUT_ACQUIRED; claim event d218ea59-03d1-4be9-8002-09de3cc43d8a.
 - Dependency Classification: coordination-only. Reconcile exact overlapping implementation scope before integration.
+
+## Current User Action Required
+
+- Transition: Running -> User Action Required.
+- Owner: Unowned.
+- Canonical Work-Item Thread: 019f9f67-1259-73a1-a9f2-1c6ce447903e. Preserve this Thread for any later resumption; do not create a replacement Thread.
+- Delivery Branch: codex/reject-unconfigured-lifecycle-handoff-lanes-019f9f67.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/9d57/dev-methodology.
+- Accepted Source Commits: c1e861e75996a4758dfc95c6ec054fce2744a74a, then 7a57ca305c5bcf0573ae0be5c52322a086fa0547.
+- Review And Verification: Fresh independent review and verification accepted the source commits.
+- Rejected Integration Attempt: The approval reviewer rejected the first cherry-pick before mutation because explicit authorization for Git mutation was not present.
+- No-Change Claim Release: f6c30422-2c80-406a-b9b1-c96817d4e9e9.
+- Primary Main Evidence: The rejected integration attempt left primary main unchanged.
+- Question: Approve cherry-picking c1e861e75996a4758dfc95c6ec054fce2744a74a then 7a57ca305c5bcf0573ae0be5c52322a086fa0547 onto primary main for task 019f9f67-1259-73a1-a9f2-1c6ce447903e.
+- Why Input Is Required: The approval reviewer rejected Git mutation without explicit authorization.
+- Prohibited Until Answered: No unattended cherry-pick, alternate merge strategy, integration, publication, or terminal closure may occur.
+- Resolution: Pending explicit user answer in the preserved canonical work-item Thread or parent coordination Thread.
 
 ## Notes
 
