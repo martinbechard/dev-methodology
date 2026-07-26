@@ -97,7 +97,10 @@ If closed items remain in active folders, explicit status is the open or closed 
 - Prefer unfinished owned work over new work.
 - Apply configured priority; otherwise prefer defects, features, investigations, then analyses.
 - Exclude User Action Required, Holding, and Future Ideas from runnable selection and unattended counts.
-- Do not dispatch items with unmet dependencies or duplicate ownership.
+- Classify a candidate constraint as a hard prerequisite only when no bounded delivery phase can begin safely before it is satisfied. Treat a note that only predicts later overlap on an exact path, shared resource, or integration lane as coordination-only.
+- An unmet hard prerequisite makes the item dispatch-ineligible. A coordination-only overlap note does not block a safe private-worktree start.
+- Before dispatch, reconcile duplicate ownership or implementation evidence, preserve one canonical effort, and stop an additional duplicate launch.
+- Coordinate an exact-path conflict at the relevant edit, shared-resource, or integration event named by the selected coordination procedure. Defer only that event; continue non-conflicting work in isolated private worktrees.
 - Ready -> Starting is the parent Dev Backlog Coordinator's dispatch and capacity-reservation decision. Its Steward child records the parent coordination Thread, one launch reservation, normalized objective, dispatch time, and available launch evidence atomically before the runtime Thread is created.
 - Starting counts against capacity exactly like Running, so ambiguous or slow startup cannot cause over-dispatch.
 - Before creating a work-item Thread, reconcile the item, parent Thread, runtime task inventory, reservation evidence, and any canonical task id. The Coordinator must not create a duplicate after an ambiguous startup or timeout.
@@ -204,6 +207,8 @@ Record the destination as the terminal provider_reference. Preserve claim eviden
 - Ask for human direction only when state and evidence cannot determine the next safe action.
 
 ## Reporting
+
+For each considered work item, report dispatch eligibility, any unmet hard blocker, any coordination-only overlap constraint, and any deferred edit, shared-resource, or integration event as distinct facts.
 
 Return the provider file, canonical active or archive path, lifecycle counts, User Action Required questions, next runnable items, dependencies, blockers, owner, canonical task, delivery evidence, review and check results, main observation, archive evidence, claim and commit references, invalid or duplicate records, and the next safe action. For an explicit Future Ideas operation, also return the idea paths, validation findings, revisit triggers, and promotion links without adding them to work-item counts.
 

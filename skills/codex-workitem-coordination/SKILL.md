@@ -51,6 +51,10 @@ Obtain queue inventory, lifecycle counts, provider identities, and dispatchable 
 - Provider none: do not inventory, count, create, transition, or close durable provider records; coordinate only the explicit task and retain task-local evidence.
 - Provider UNSET or an unavailable selected skill: stop before durable inventory or mutation and request the missing project selection or capability.
 
+Classify a candidate constraint as a hard prerequisite only when no bounded delivery phase can begin safely before it is satisfied. Treat a note that only predicts later overlap on an exact path, shared resource, or integration lane as coordination-only. An unmet hard prerequisite makes the item dispatch-ineligible. A coordination-only overlap note does not block a safe private-worktree start.
+
+Before dispatch, reconcile duplicate ownership or implementation evidence, preserve one canonical effort, and stop an additional duplicate launch. Coordinate an exact-path conflict at the relevant edit, shared-resource, or integration event named by the selected coordination procedure. Defer only that event; continue non-conflicting work in isolated private worktrees.
+
 For a provider that supports queue inventory and lifecycle transitions:
 
 1. Count work items whose provider lifecycle state is Starting or Running.
@@ -200,3 +204,7 @@ If the canonical Thread produced work before lifecycle reconciliation completed,
 Completed requires effective Commit disposition READY, required independent review, focused verification, and terminal evidence recorded through the effective Persistence-selected management skill when a provider exists. Provider none records the equivalent terminal evidence in the task result without a provider operation. Dev Orchestrator supplies the selected Commit skill's cleanup eligibility and candidate-to-delivery provenance. An idle, stopped, titled, or archived Codex task proves none of those facts.
 
 Archive a terminal Thread only after the provider disposition is recorded, the worktree is removed or deliberately preserved, the delivery branch is safely deleted when eligible, and no unresolved notification remains. If archival fails, record the limitation and do not report success.
+
+## Reporting
+
+For each considered work item, report dispatch eligibility, any unmet hard blocker, any coordination-only overlap constraint, and any deferred edit, shared-resource, or integration event as distinct facts. Also return the provider identity, lifecycle state, owner and canonical task, dependency and claim evidence, current phase, branch and worktree, accepted commit, review and verification results, Commit and Persistence dispositions, cleanup eligibility, and next safe action.

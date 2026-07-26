@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Verifies Starting, watchdog, and two-phase Persistence behavior in coordination contracts.
+# Summary: Verifies constraint taxonomy, Starting, watchdog, and two-phase Persistence behavior in coordination contracts.
 
 import json
 from pathlib import Path
@@ -89,6 +89,10 @@ def _present_retired_clauses(text: str, clauses: tuple[str, ...]) -> tuple[str, 
     return tuple(clause for clause in clauses if clause in text)
 
 
+def _missing_contract_clauses(text: str, clauses: tuple[str, ...]) -> tuple[str, ...]:
+    return tuple(clause for clause in clauses if clause not in text)
+
+
 def _watchdog_authority_violations(text: str) -> tuple[tuple[str, str], ...]:
     violations: list[tuple[str, str]] = []
     for sentence in re.split(r"(?<=[.!?])\s+", text):
@@ -101,6 +105,108 @@ def _watchdog_authority_violations(text: str) -> tuple[tuple[str, str], ...]:
                 if not _NEGATED_AUTHORITY.search(prefix):
                     violations.append((label, sentence))
     return tuple(violations)
+
+
+class CoordinationConstraintTaxonomyTests(unittest.TestCase):
+    """Keep hard prerequisites separate from event-scoped overlap constraints."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.coordination = SKILL_PATH.read_text(encoding="utf-8")
+        cls.provider = MANAGE_FILE_WORK_ITEMS_PATH.read_text(encoding="utf-8")
+        cls.queue_section = _markdown_section(
+            cls.coordination,
+            "Queue Target And Dispatch",
+        )
+        cls.coordination_reporting = _markdown_section(
+            cls.coordination,
+            "Reporting",
+        )
+        cls.provider_dispatch = _markdown_section(
+            cls.provider,
+            "Dispatch Workflow",
+        )
+        cls.provider_reporting = _markdown_section(
+            cls.provider,
+            "Reporting",
+        )
+
+    def test_hard_prerequisites_block_dispatch_but_overlap_notes_do_not(self) -> None:
+        required = (
+            "An unmet hard prerequisite makes the item dispatch-ineligible.",
+            "A coordination-only overlap note does not block a safe private-worktree start.",
+        )
+        for section in (self.queue_section, self.provider_dispatch):
+            with self.subTest(section=section[:40]):
+                self.assertEqual((), _missing_contract_clauses(section, required))
+
+    def test_duplicate_ownership_and_implementation_are_reconciled_before_dispatch(
+        self,
+    ) -> None:
+        required = (
+            "Before dispatch, reconcile duplicate ownership or implementation",
+            "one canonical effort",
+        )
+        for section in (self.queue_section, self.provider_dispatch):
+            with self.subTest(section=section[:40]):
+                self.assertEqual((), _missing_contract_clauses(section, required))
+
+    def test_overlap_coordination_defers_only_the_relevant_event(self) -> None:
+        required = (
+            "Coordinate an exact-path conflict at the relevant edit, shared-resource, or integration event",
+            "Defer only that event",
+        )
+        for section in (self.queue_section, self.provider_dispatch):
+            with self.subTest(section=section[:40]):
+                self.assertEqual((), _missing_contract_clauses(section, required))
+
+    def test_reporting_distinguishes_each_constraint_dimension(self) -> None:
+        required = (
+            "dispatch eligibility",
+            "unmet hard blocker",
+            "coordination-only overlap constraint",
+            "deferred edit, shared-resource, or integration event",
+        )
+        for section in (self.coordination_reporting, self.provider_reporting):
+            with self.subTest(section=section[:40]):
+                self.assertEqual((), _missing_contract_clauses(section, required))
+
+    def test_taxonomy_guards_are_mutation_sensitive(self) -> None:
+        cases = (
+            (
+                self.queue_section,
+                "An unmet hard prerequisite makes the item dispatch-ineligible.",
+            ),
+            (
+                self.provider_dispatch,
+                "A coordination-only overlap note does not block a safe private-worktree start.",
+            ),
+            (
+                self.queue_section,
+                "Before dispatch, reconcile duplicate ownership or implementation",
+            ),
+            (
+                self.provider_dispatch,
+                "Coordinate an exact-path conflict at the relevant edit, shared-resource, or integration event",
+            ),
+            (
+                self.coordination_reporting,
+                "coordination-only overlap constraint",
+            ),
+            (
+                self.provider_reporting,
+                "deferred edit, shared-resource, or integration event",
+            ),
+        )
+        for section, clause in cases:
+            with self.subTest(clause=clause):
+                self.assertEqual((), _missing_contract_clauses(section, (clause,)))
+                mutated = section.replace(clause, "", 1)
+                with self.assertRaises(AssertionError):
+                    self.assertEqual(
+                        (),
+                        _missing_contract_clauses(mutated, (clause,)),
+                    )
 
 
 class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
