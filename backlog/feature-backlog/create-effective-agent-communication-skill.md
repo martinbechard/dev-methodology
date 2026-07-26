@@ -35,6 +35,7 @@ Direct user request in the active coordinator task on 2026-07-25: “we need to 
 - Keep user-facing messages understandable without requiring the user to know internal lifecycle, claim, task, or implementation terminology.
 - Define concise agent-to-agent handoff content: exact identity, current state, preserved work, evidence, blocker, and next action.
 - Avoid redundant status narration and procedural detail that does not help the recipient decide or act.
+- Prefer a concrete example over a bare inventory when the example makes a structure, workflow, or file layout easier to understand.
 - Use tables or lists only when they make repeated mappings or choices clearer than prose.
 - Align existing shared communication guidance with the new skill and remove material duplication where appropriate.
 - Perform exact governed-source discovery before implementation and obtain scope-specific approval for every governed definition that must change.
