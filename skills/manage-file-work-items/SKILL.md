@@ -293,6 +293,11 @@ Record the destination as the terminal provider_reference. Preserve claim eviden
 - Read visible active items first.
 - Reconcile owner, parent and work-item Thread identifiers, canonical task, Starting reservation, claims, branch, worktree, accepted candidate commit, logs, results, checks, delivery references, waits, and archive locations.
 - For a Starting item, adopt one matching Thread when evidence proves it exists; restore Ready only when no ownership was accepted; otherwise preserve ownership evidence and use Blocked or User Action Required. Never create a replacement until duplicate reconciliation proves there is no accepted canonical Thread.
+- A failed, stopped, or missing canonical task in Starting or Running is an execution-identity
+  anomaly, not Stalled evidence. Before any lifecycle choice, reconcile the canonical task,
+  provider reservation or record, and ownership. The anomaly alone never authorizes Stalled
+  or release of Starting-plus-Running capacity. Only after that reconciliation validates a
+  separate known preventing cause may the Coordinator route Blocked.
 - Classify stale running state as resumable, Stalled, Blocked, crashed, Failed, or already
   delivered but pending provider update from concrete evidence. Use Stalled only while the
   cause remains unknown and Blocked only after the preventing cause is known.

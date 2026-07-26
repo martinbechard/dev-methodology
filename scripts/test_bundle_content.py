@@ -6394,7 +6394,7 @@ class BundleContentTests(unittest.TestCase):
     def test_backlog_roles_preserve_terminal_recount_and_failed_task_alerts(
         self,
     ) -> None:
-        """Source and generated roles must retain both lifecycle corrections."""
+        """Source and generated roles must retain the lifecycle corrections."""
 
         coordinator_path = (
             ROLES_ROOT
@@ -6426,8 +6426,20 @@ class BundleContentTests(unittest.TestCase):
             "lifecycle choice; preserve known explicit preventing-cause Blocked "
             "routing and never classify the task-state anomaly itself as Stalled."
         )
+        coordinator_task_reconciliation_contract = (
+            "When a Starting or Running canonical task is failed, stopped, or "
+            "missing, reconcile the canonical task, provider reservation or record, "
+            "and ownership before any lifecycle choice. Do not ask Dev Backlog "
+            "Steward to record Stalled or release capacity from the anomaly itself. "
+            "Only after reconciliation validates a separate known preventing cause "
+            "may the Coordinator ask Dev Backlog Steward to record Blocked."
+        )
 
         self.assertIn(recount_contract, coordinator_workflow)
+        self.assertIn(
+            coordinator_task_reconciliation_contract,
+            coordinator_workflow,
+        )
         self.assertNotIn(
             "immediately recount Running items",
             coordinator_workflow,
@@ -6464,6 +6476,10 @@ class BundleContentTests(unittest.TestCase):
             ).read_text(encoding="utf-8")
             with self.subTest(runtime=runtime):
                 self.assertIn(recount_contract, coordinator_generated)
+                self.assertIn(
+                    coordinator_task_reconciliation_contract,
+                    coordinator_generated,
+                )
                 self.assertIn(failed_task_contract, watchdog_generated)
                 self.assertIn(
                     task_reconciliation_contract,

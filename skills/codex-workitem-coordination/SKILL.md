@@ -169,8 +169,14 @@ If the active unit reaches its hard stop, repeats the same failure, or stops pro
 Stalled is a nonterminal provider lifecycle state for evidence that an item is not making
 progress while the causal blocker or unblock condition remains unknown. Quiet or apparently
 slow work is not Stalled by itself. A source-backed progress gap, crossed estimate or hard
-stop, stopped or missing canonical task, or other observed anomaly must support the
-classification.
+stop, or other observed progress anomaly must support the classification.
+
+A failed, stopped, or missing canonical task in Starting or Running is an
+execution-identity anomaly, not Stalled evidence. Before any lifecycle choice, reconcile the
+canonical task, provider reservation or record, and ownership. The anomaly alone never
+authorizes Stalled or release of Starting-plus-Running capacity. Only after that
+reconciliation validates a separate known preventing cause may the Coordinator route
+Blocked.
 
 The Dev Backlog Watchdog reports suspected Stalled evidence but never chooses or mutates
 the lifecycle result. Dev Backlog Coordinator decides whether the evidence justifies

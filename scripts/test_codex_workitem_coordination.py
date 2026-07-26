@@ -433,6 +433,23 @@ class StartingLifecycleContractTests(unittest.TestCase):
             cls.provider,
             "Blocked Handoff And Resumption",
         )
+        cls.stalled_investigation_section = _markdown_section(
+            cls.coordination,
+            "Stalled Investigation And Blocker Handoff",
+        )
+        cls.provider_recovery_section = _markdown_section(
+            cls.provider,
+            "Recovery Workflow",
+        )
+        coordinator_role = yaml.safe_load(
+            COORDINATOR_ROLE_PATH.read_text(encoding="utf-8")
+        )
+        cls.coordinator_decisions = " ".join(
+            " ".join(coordinator_role["instructions"]["decisions"]).split()
+        )
+        cls.coordinator_workflow = " ".join(
+            " ".join(coordinator_role["instructions"]["workflow"]).split()
+        )
 
     def test_starting_counts_against_capacity_and_prevents_duplicate_start(self) -> None:
         required = (
@@ -493,6 +510,43 @@ class StartingLifecycleContractTests(unittest.TestCase):
             for clause in required:
                 with self.subTest(source=source[:20], clause=clause):
                     self.assertIn(clause, source)
+
+    def test_task_anomalies_require_reconciliation_before_lifecycle_choice(self) -> None:
+        """Task-state anomalies cannot supply Stalled evidence or release capacity."""
+
+        required_contract = (
+            "A failed, stopped, or missing canonical task in Starting or Running "
+            "is an execution-identity anomaly, not Stalled evidence.",
+            "Before any lifecycle choice, reconcile the canonical task, provider "
+            "reservation or record, and ownership.",
+            "The anomaly alone never authorizes Stalled or release of "
+            "Starting-plus-Running capacity.",
+            "Only after that reconciliation validates a separate known preventing "
+            "cause may the Coordinator route Blocked.",
+        )
+        canonical_sources = {
+            "coordination Stalled branch": " ".join(
+                self.stalled_investigation_section.split()
+            ),
+            "file-provider recovery": " ".join(
+                self.provider_recovery_section.split()
+            ),
+            "Coordinator decisions": self.coordinator_decisions,
+        }
+        for source_name, source in canonical_sources.items():
+            for clause in required_contract:
+                with self.subTest(source=source_name, clause=clause):
+                    self.assertIn(clause, source)
+
+        workflow_contract = (
+            "When a Starting or Running canonical task is failed, stopped, or "
+            "missing, reconcile the canonical task, provider reservation or record, "
+            "and ownership before any lifecycle choice. Do not ask Dev Backlog "
+            "Steward to record Stalled or release capacity from the anomaly itself. "
+            "Only after reconciliation validates a separate known preventing cause "
+            "may the Coordinator ask Dev Backlog Steward to record Blocked."
+        )
+        self.assertIn(workflow_contract, self.coordinator_workflow)
 
     def test_active_folder_model_names_stalled_and_blocked_items(self) -> None:
         """Active typed folders retain both causal states without misclassification."""
