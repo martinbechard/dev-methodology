@@ -1,6 +1,6 @@
 # Require Watchdog Escalation And Coordinator Disposition For Blocked Items
 
-Status: Ready
+Status: Starting
 
 Owner: Unowned
 
@@ -78,16 +78,17 @@ Direct user request in the watchdog task on 2026-07-26: log an improvement work 
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
 - Lifecycle Reservation: Ready -> Starting recorded by the parent Dev Backlog Coordinator through its Dev Backlog Steward child.
 - Normalized Objective: Require per-item watchdog escalation and evidence-backed Coordinator disposition for Blocked work.
-- Dispatched At: 2026-07-26T18:28:15.761081Z.
-- Launch Reservation: one parent-owned launch reservation; active Starting-plus-Running capacity was 0 of 10 at reservation preflight.
-- Intended Root Dev Orchestrator: Dev Orchestrator; runtime task identity pending creation.
+- Dispatched At: 2026-07-26T21:07:34.874791Z.
+- Launch Reservation: one parent-owned launch reservation; active Starting-plus-Running capacity was 1 of 10 at reservation preflight.
+- Provider Mutation Claim Evidence: Event-1 exact-file claim reserve-watchdog-escalation-starting-019f9fb0 acquired by dev-backlog-steward; acquisition event 00d2b85d-19d4-4fb1-a06c-ab3b26aa1b29.
+- Intended Root Dev Orchestrator: Dev Orchestrator; preserved canonical work-item Thread and root Agent Task 019f9fb0-41c4-7892-a0bb-c641e53d8cea; no replacement task was created.
 - Dependency Satisfaction Evidence: backlog/completed-backlog/features/add-dedicated-watchdog-and-stalled-lifecycle.md is present at its required terminal commit 942bac974d87d7b7c7a11ee724b80c0d91c3d0e6; its current blob is 86f1abb7edff36dc26a738e807a4749644a69977, matching that commit.
 - Governed Definition Boundary: No governed definition mutation is authorized until direct user direction and exact scope-specific approval evidence pass the repository definition-change check.
 - Next Lifecycle Owner: the eventual root Dev Orchestrator must record a distinct Starting -> Running acceptance before any implementation or further repository mutation.
 
-## Current Running Acceptance
+## Historical Running Acceptance
 
-- Lifecycle Transition: Starting -> Running accepted by the root Dev Orchestrator through its Dev Backlog Steward child.
+- Lifecycle Transition: Prior Starting -> Running acceptance retained as historical evidence only; it is not the current lifecycle state.
 - Canonical Work-item Thread: 019f9fb0-41c4-7892-a0bb-c641e53d8cea.
 - Canonical Root Agent Task: 019f9fb0-41c4-7892-a0bb-c641e53d8cea.
 - Root Dev Orchestrator Worktree: /Users/martinbechard/.codex/worktrees/dbb1/dev-methodology.
