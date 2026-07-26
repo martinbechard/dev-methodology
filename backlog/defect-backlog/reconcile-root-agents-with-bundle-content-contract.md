@@ -1,10 +1,10 @@
 # Reconcile Root AGENTS With Bundle-Content Contract
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
-Owner: /root (Dev Orchestrator)
+Owner: Unowned
 
 Provider: file
 
@@ -86,6 +86,26 @@ Determine from current repository evidence whether root AGENTS.md guidance or bu
 - Acceptance Evidence: The canonical root Dev Orchestrator accepted ownership after the parent-owned Starting reservation.
 - Claim Evidence: accept-running-019f9fd6-d7c1-7902-bf33-e10883383b7e; SHARED_CHECKOUT_ACQUIRED; claim event 5d2b6720-e3c3-4e4c-97be-8586fe802c7a.
 
+## Blocked Handoff
+
+Blocker: The live project-files claim integrate-reconcile-root-agents-019f9fd6 cannot be released after the accepted non-ancestral primary-main integration. The helper validates the claimant linked-worktree HEAD at 71387a2968d3f879e12d599887bc2981e1bb7144 instead of the primary-main integration 1dded7f556cf4270e2a0bff12178382eac17c3c4, and rejected normal release as missing_commit_or_no_change in event 0abe6b25-19f3-4635-bb38-15769a7861ec.
+
+Blocker Owner: Parent Coordinator 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a, with the delivery and recovery owner for backlog/defect-backlog/bind-project-files-claims-to-primary-worktree.md.
+
+Coordinator Next Action: Preserve the canonical task, accepted delivery, live claim, and claim history while the new helper defect is delivered and independently reviewed.
+
+Unblock Condition: A supported helper release becomes available and safely releases this exact claim, integrate-reconcile-root-agents-019f9fd6, while preserving its ordered claim evidence.
+
+Preserved Canonical Identity: Work-item Thread and Root Agent Task 019f9fd6-d7c1-7902-bf33-e10883383b7e; branch codex/reconcile-root-agents-bundle-contract; linked worktree /Users/martinbechard/.codex/worktrees/9188/dev-methodology.
+
+Preserved Delivery Evidence: Accepted candidate 71387a2968d3f879e12d599887bc2981e1bb7144; accepted non-ancestral primary-main integration 1dded7f556cf4270e2a0bff12178382eac17c3c4; independent review PASS; focused verification 2/2 PASS; full bundle verification 126/126 PASS; renderer byte-equal; post-main checks PASS; primary and integration worktrees clean when observed.
+
+Live Claim Evidence: integrate-reconcile-root-agents-019f9fd6 is a project-files claim with baseline 71387a2968d3f879e12d599887bc2981e1bb7144, linked checkout topology, and worktree /Users/martinbechard/.codex/worktrees/9188/dev-methodology. Its current task-worktree HEAD remains 71387a2968d3f879e12d599887bc2981e1bb7144.
+
+Prohibited Actions: Do not use no-change release, out-of-domain reconciliation, claim-registry editing, duplicate integration, provider completion, or cleanup. Do not release, extend, edit, or take over the live project-files claim.
+
+Safe Resumption: Only after the unblock condition, transition Blocked -> Ready -> Starting -> Running in the same canonical task before any terminal completion. The Parent Coordinator owns Ready -> Starting; the same root Dev Orchestrator owns Starting -> Running.
+
 ## Notes
 
-Runnable next action: inspect the committed guidance, its source boundaries, and the assertions; reconcile the non-authoritative surface; then run both focused tests and the full bundle-content suite. Do not change project files as part of this record-creation task.
+The root-AGENTS delivery is preserved as accepted out-of-sequence evidence pending claim recovery. Do not reimplement it or discard its uncommitted, committed, review, verification, integration, or claim evidence.
