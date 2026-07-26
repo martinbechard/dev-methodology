@@ -132,5 +132,6 @@ If this repository later adds a build script, run the build after changing code,
 ## Commits
 
 - Commit coherent, verified maintenance work before completion.
+- Unrelated changes do not block a scoped commit. Commit only the intended files and leave unrelated changes untouched.
 - Exclude unrelated untracked files.
 - Keep related README, generated AGENTS.md, design HTML, tests, Codex metadata, and deployment behavior in the same change.
