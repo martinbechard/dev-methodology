@@ -1,6 +1,6 @@
 # Add Structured Commit Disposition To Orchestrator Evaluation Contract
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,16 +10,19 @@ Provider Reference: backlog/defect-backlog/add-structured-commit-disposition-to-
 
 Completion: direct-main
 
-## Current Starting Reservation
+## Current Running Acceptance
 
-- Parent Coordination Thread: /root/resume_blocked_after_claim_publication
-- Reservation: One parent-owned launch reservation.
-- Normalized Objective: Reconcile current-main semantics first, then make a bounded correction only if needed, obtain fresh independent review and focused verification, complete direct-main delivery and provider closure, and avoid a full repository regression.
-- Dispatched At: 2026-07-26T07:19:53Z
-- Intended Root Role: Dev Orchestrator
-- Parent Reservation Claim: structured-commit-ready-starting-20260726; acquisition event c007a46a-01d7-4b3e-8c26-ca8e352499fe.
-- Runtime Thread And Task Id: Pending root Dev Orchestrator acceptance; no new root identity has been created by this reservation.
-- Historical Canonical Work-Item Thread/Task: 019f970d-1e68-7563-b840-a18765cfb70a remains preserved and must not be replaced.
+- Owner: root Dev Orchestrator.
+- Current Root Dev Orchestrator Agent Task: /root/resume_blocked_after_claim_publication/structured_commit_recovery.
+- Parent Coordination Thread: /root/resume_blocked_after_claim_publication.
+- Historical Canonical Work-Item Thread/Task: 019f970d-1e68-7563-b840-a18765cfb70a remains preserved and is not replaced.
+- Branch: main.
+- Primary Worktree: /Users/martinbechard/dev/dev-methodology.
+- Phase: Current-main semantic reconciliation and read-only acceptance audit.
+- Started At: 2026-07-26T07:23:02Z.
+- Parent Reservation: One parent-owned launch reservation recorded at 2026-07-26T07:19:53Z under claim structured-commit-ready-starting-20260726 (acquisition event c007a46a-01d7-4b3e-8c26-ca8e352499fe).
+- Claim-Free Private-Lane Evidence: No implementation lane exists yet; the live claim registry was empty before dispatch, and implementation has no active claim.
+- Provider Mutation Claim: Exact-file lifecycle mutation acquired under structured-commit-disposition-running-20260726 (event 3002fe60-720e-4040-87bf-4a64ea2a1d9e); it protects only this provider record and does not grant implementation ownership.
 
 ## Recovery Resumption
 
