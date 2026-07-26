@@ -29,6 +29,7 @@ Direct user request in the active coordinator task on 2026-07-25: “we need to 
 - Create one reusable communication skill for all agents.
 - Use plain language and short sentences. Put one rule or idea in each sentence.
 - Use technical terms only when they name an actual command, field, outcome, file, or resource. Explain specialized or project-specific terms when they are first used.
+- Introduce a specific instance before referring to it with “the”. For example, introduce “a claim result” before writing “the result”.
 - Define principles for concrete terminology and outcome-first reporting.
 - Prefer familiar words over abstract labels. For example, say “claim helper” and “claim command-line interface” instead of unexplained “engine” or “transport”.
 - Separate outcomes, evidence, blockers, decisions, and next actions so each is easy to identify.
@@ -49,6 +50,7 @@ Direct user request in the active coordinator task on 2026-07-25: “we need to 
 - Agent definitions or shared dispatch guidance cause every applicable agent to use the skill without copying its full procedure.
 - Examples demonstrate clear user-facing explanations, status updates, approval questions, blocker reports, and agent handoffs.
 - Tests confirm that covered fixtures use explained terminology, explicit outcomes and questions, concise status narration, direct explanations, and one-rule sentences.
+- Tests reject unexplained uses of “the” before the referenced common-noun instance has been introduced in context.
 - Tests preserve exact identifiers, paths, commits, claim references, and error outcomes when those details are operationally necessary.
 - Relevant README, agent-and-skill HTML documentation, generated mirrors, and bundle assertions remain source-aligned.
 - Independent review confirms that the skill improves clarity without removing required evidence or authority boundaries.
