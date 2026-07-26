@@ -7004,13 +7004,17 @@ class BundleContentTests(unittest.TestCase):
         state_map_label = state_map_match.group(1)
         for clause in (
             "A failed, stopped, or missing Starting or Running canonical task "
-            "is a Task/execution anomaly, not a lifecycle state.",
-            "Reconcile the canonical task, provider record or reservation, and "
-            "ownership before any lifecycle choice.",
-            "The anomaly alone does not release Starting-plus-Running capacity "
-            "or justify Stalled.",
+            "is a Task/execution anomaly, not lifecycle evidence.",
+            "Preserve its current state and Starting-plus-Running capacity while "
+            "reconciling the canonical task, provider record or reservation, and "
+            "ownership.",
+            "The anomaly alone authorizes neither Stalled, Blocked, User Action "
+            "Required, nor capacity release.",
             "Only a separately proved unknown progress gap may become Stalled.",
-            "Only a separately validated known cause may become Blocked.",
+            "Blocked requires a separately validated known cause and "
+            "Coordinator-owned action.",
+            "User Action Required requires one separately identified concrete "
+            "user-owned action.",
         ):
             with self.subTest(aria_clause=clause):
                 self.assertIn(clause, state_map_label)
@@ -7043,15 +7047,33 @@ class BundleContentTests(unittest.TestCase):
         for clause in (
             "failed, stopped, or missing canonical task for a Starting or "
             "Running item",
-            "Reconcile the canonical task, provider record or reservation, "
-            "and ownership before any lifecycle choice.",
-            "The anomaly alone does not release Starting-plus-Running capacity "
-            "or justify Stalled.",
+            "execution evidence, not lifecycle evidence",
+            "Preserve the current lifecycle state and Starting-plus-Running "
+            "capacity while reconciling the canonical task, provider record or "
+            "reservation, and ownership.",
+            "The anomaly alone authorizes neither Stalled, Blocked, User Action "
+            "Required, nor capacity release.",
             "Only a separately proved unknown progress gap may become Stalled.",
-            "Only a separately validated known cause may become Blocked.",
+            "Blocked requires a separately validated known cause and "
+            "Coordinator-owned action.",
+            "User Action Required requires one separately identified concrete "
+            "user-owned action.",
         ):
             with self.subTest(visible_clause=clause):
                 self.assertIn(clause, anomaly_section)
+
+        retired_shortcuts = (
+            "is a Task/execution anomaly, not a lifecycle state.",
+            "Reconcile the canonical task, provider record or reservation, and "
+            "ownership before any lifecycle choice.",
+            "The anomaly alone does not release Starting-plus-Running capacity "
+            "or justify Stalled.",
+            "Only a separately validated known cause may become Blocked.",
+        )
+        for clause in retired_shortcuts:
+            with self.subTest(retired_clause=clause):
+                self.assertNotIn(clause, state_map_label)
+                self.assertNotIn(clause, anomaly_section)
 
     def test_lifecycle_documents_simplified_coordination_and_delivery_sequences(self) -> None:
         """The lifecycle should teach concepts progressively without runtime-specific clutter."""
