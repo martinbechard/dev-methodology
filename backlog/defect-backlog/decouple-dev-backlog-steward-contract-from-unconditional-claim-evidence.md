@@ -1,10 +1,10 @@
 # Decouple Dev Backlog Steward Contract From Unconditional Claim Evidence
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
@@ -20,7 +20,7 @@ Completion: direct-main
 - Dispatched At: 2026-07-26T07:21:34Z
 - Intended Root Role: Dev Orchestrator
 - Parent Reservation Claim: steward-contract-starting-20260726; acquisition event d71e9210-8237-4620-8828-9888ba8568be.
-- Runtime Thread And Task Id: Pending root Dev Orchestrator acceptance; no new root identity has been created.
+- Runtime Thread And Task Id: Accepted by current resumed root Dev Orchestrator identity /root/resume_blocked_after_claim_publication/steward_none_claim_recovery; no replacement of the historical canonical work-item Thread/Task has been created.
 - Historical Canonical Work-Item Thread/Task: 019f96f1-1a19-7b01-b166-c5948a50fff5 remains preserved and must not be replaced.
 
 ## Recovery Resumption
@@ -43,10 +43,11 @@ Completion: direct-main
 
 - Canonical Work-item Thread And Task Id: 019f96f1-1a19-7b01-b166-c5948a50fff5
 - Root Owner: Dev Orchestrator
-- Delivery Branch: Detached pending delivery claim.
-- Delivery Worktree: /Users/martinbechard/.codex/worktrees/ecbc/dev-methodology
-- Phase: Approved implementation and focused coordination matrix.
-- Started At: 2026-07-25T04:09:25Z
+- Current Resumed Root Identity: /root/resume_blocked_after_claim_publication/steward_none_claim_recovery
+- Delivery Branch: main
+- Delivery Worktree: /Users/martinbechard/dev/dev-methodology
+- Phase: Current-main semantic reconciliation and bounded correction.
+- Started At: 2026-07-26T07:24:38Z
 
 ## Coordination Evidence
 
@@ -55,6 +56,7 @@ Completion: direct-main
 - Prior Release Baton: decouple-dev-orchestrator-eval-correction1-019f96ce released event c1cd5671-52fe-468f-a363-c561e7e0140f.
 - Current Backlog Claim: 019f96f1-running-discovery-transition acquired on primary main at 2026-07-25T02:46:17.204850Z; acquisition journal event ef354e4e-41bb-46ea-a849-1c1287ca8eac.
 - Approved-Implementation Backlog Claim: 019f96f1-running-approved-implementation acquired on primary main at 2026-07-25T04:09:25.562855Z; acquisition journal event 0f745454-173b-4c39-8c9c-71a0544f447e.
+- Current Resumption Backlog Claim: steward-contract-running-20260726 acquired on primary main at 2026-07-26T07:24:38.578300Z; acquisition journal event d7b452ae-0de9-4c22-b856-ea0e9f91b9b2.
 
 ## Blocked Handoff
 
