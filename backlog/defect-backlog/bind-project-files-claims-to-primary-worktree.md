@@ -1,10 +1,10 @@
 # Bind Project-Files Claims to the Primary Worktree
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
-Owner: Unowned
+Owner: root Dev Orchestrator
 
 Provider: file
 
@@ -107,8 +107,23 @@ Exact approval is recorded and User Action Required -> Ready is now durable. A p
 - Normalized Objective: Make claim release exact-claim cleanup only, remove no-change/out-of-domain release contracts, and require applying agent-claim before User Action Required.
 - Dispatched At: 2026-07-26T21:05:46Z.
 - Intended Root Role: Dev Orchestrator.
-- Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
+- Runtime Thread And Task Id: 019f9fef-1edc-7ea1-a058-bf8dfddcd2fb, accepted by the preserved root Dev Orchestrator.
 - Coordination Note: Integration and recovery of the live claim integrate-reconcile-root-agents-019f9fd6 remain deferred until this candidate is accepted.
+
+## Running Acceptance
+
+- Transition: Starting -> Running.
+- Canonical Work-Item Thread: 019f9fef-1edc-7ea1-a058-bf8dfddcd2fb.
+- Canonical Root Agent Task: 019f9fef-1edc-7ea1-a058-bf8dfddcd2fb.
+- Owner: root Dev Orchestrator.
+- Parent Coordinator: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Branch: codex/bind-project-files-primary-019f9fef.
+- Worktree: /Users/martinbechard/.codex/worktrees/aa2f/dev-methodology.
+- Phase: Root-cause reproduction and candidate implementation.
+- Started-At Evidence: Root Dev Orchestrator accepted the preserved canonical Thread on 2026-07-26; this primary-main transaction records that acceptance.
+- Claim Evidence: SHARED_CHECKOUT_ACQUIRED event 3ab5a83d-f658-436a-877b-ea4e86c92dcd protected this exact backlog file for this acceptance transaction.
+- Reservation Evidence: Ready -> Starting commit daa13c0adeb48e37f0ea1b56bc364e7f461deff2, following Ready approval commit 40cc7744e88dc15af04739a96ff3c37e4857ef51; reservation events a972a346-943c-45a0-ba40-0e234683513d and e6898101-147a-4cf9-87fd-791eacbf17ac.
+- Preserved Constraint: The live claim integrate-reconcile-root-agents-019f9fd6 and its recovery remain untouched.
 
 ## Preserved Running Acceptance
 
@@ -126,4 +141,4 @@ Exact approval is recorded and User Action Required -> Ready is now durable. A p
 
 ## Notes
 
-This item is Status: Ready with Owner: Unowned. It is eligible only for the separate parent-owned Ready -> Starting reservation and root-owned Starting -> Running acceptance using the preserved canonical Thread. The retained live project-files claim remains unchanged and outside this backlog transaction.
+This item is Status: Running with Owner: root Dev Orchestrator. The preserved canonical Thread is the sole accepted execution identity. The retained live project-files claim remains unchanged and outside this backlog transaction.
