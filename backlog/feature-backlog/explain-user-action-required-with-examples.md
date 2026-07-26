@@ -1,6 +1,6 @@
 # Explain User Action Required Requests With Examples
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -14,7 +14,15 @@ Provider Reference: backlog/feature-backlog/explain-user-action-required-with-ex
 
 Completion: direct-main
 
-## Launch Reservation
+## Recovery Resumption
+
+- Transition: Blocked -> Ready.
+- Recovery Authority: The user's current request explicitly authorizes this fresh bounded recovery; all prior exact governed-definition approvals and the canonical work-item identity remain preserved.
+- Preserved Canonical Thread/Task: 019f9722-61cb-7190-8a6d-21c5ab319339. No replacement Thread or task is authorized.
+- Recovery Scope: Reconcile current-main semantics first; make a bounded correction only if needed; obtain fresh prompt, methodology, and source review; run focused verification; deliver directly on main and close the provider record only if acceptance evidence supports it. A full repository regression is not requested.
+- Ready Evidence: The prior two-cycle correction exhaustion and all candidate, review, verification, approval, and blocked-handoff evidence below remain durable recovery context. The parent Dev Backlog Coordinator may now make a distinct Ready -> Starting reservation for the preserved canonical Thread.
+
+## Prior Launch Reservation
 
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
 - Reservation: One same-task resumption launch reserved by the parent Dev Backlog Coordinator.
@@ -31,7 +39,7 @@ Completion: direct-main
 - Checkout: /Users/martinbechard/.codex/worktrees/a8df/dev-methodology
 - Branch: HEAD
 - Checkout State: Detached HEAD at 271c0fe1a12d9c720fca3c041eb79a6f5ec422bb.
-- Current Phase: Blocked pending parent-coordinated recovery under the same canonical task.
+- Current Phase: Ready for parent-coordinated recovery reservation under the same canonical task; root acceptance remains pending.
 - Transition Evidence: Parent Coordinator 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a provided the direct baton after the prior backlog transaction released. The file provider was reconciled as Starting at main commit 49c78f81a91c3eccab21e50a7413d707b7fe3938, then this serialized backlog claim was acquired as 019f9722-user-action-required-starting-running (claim event 5fa1c816-7d42-4fd0-9724-a13f5bbe6587). After the same-task approval was recorded, the provider was reconciled as Starting at main commit ef9efa60914050236ba2a409abe505eeea1c34d6 and claim 019f9722-approved-starting-running was acquired for this Starting to Running transition (claim event 0f5c6788-42bc-4f4d-bd24-25967053830d).
 
 ## Blocked Handoff
