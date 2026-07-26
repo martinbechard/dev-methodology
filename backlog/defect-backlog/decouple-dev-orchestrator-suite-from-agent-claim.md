@@ -1,6 +1,6 @@
 # Decouple Dev Orchestrator Suite From Agent Claim When Resource Coordination Is None
 
-Status: Blocked
+Status: Ready
 
 Type: Defect
 
@@ -44,6 +44,16 @@ Completion: direct-main
 - Delivery State: No Commit READY disposition, integration, or terminal closure exists.
 - Unblock Condition: A fresh authorized dispatch after the parent reconciles this exhausted-loop evidence, with a new bounded correction owner to bind release-journal identity and preserve provider-none fixture configuration; then obtain fresh code and prompt review, verification, direct-main delivery, and terminal closure.
 - Permitted Resumption: Blocked to Ready through the parent Dev Backlog Coordinator, followed by a new Starting to Running acceptance transaction. This record grants no implementation ownership.
+
+## Current-Main Recovery
+
+- Reconciliation Date: 2026-07-26.
+- Recovery Authority: Parent explicitly authorized a fresh dispatch after the structured Blocked handoff.
+- Reconciled Main: primary main at 5de927545882fab3e301a0bc748b683446f1ea1c was clean; the configured command helper reported an empty live registry.
+- Preserved Canonical Identity: Work-Item Thread and root task 019f96ce-b1a0-7633-97ab-336ba7d188e4 remain authoritative. Candidate 2be3274a869355a9078d81b918700909006db652 and its clean preserved worktree remain recovery evidence only.
+- Transition: Blocked -> Ready. Owner remains Unowned. This transition does not grant implementation ownership.
+- Sequencing Constraint: The active OID item has known overlapping source scope. The root Dev Orchestrator may audit current main, but must not mutate an overlapping source until the OID item has terminal delivery and a release baton.
+- Next Lifecycle Owner: the parent Dev Backlog Coordinator may separately reserve Ready -> Starting for this same canonical identity.
 
 ## Summary
 
