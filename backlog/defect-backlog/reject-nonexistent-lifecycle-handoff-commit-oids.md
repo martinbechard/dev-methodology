@@ -1,6 +1,6 @@
 # Reject Nonexistent Lifecycle Handoff Commit OIDs
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -45,6 +45,20 @@ Completion: direct-main
 - Claim Reconciliation: the configured command helper reported an empty live registry before this transition; no overlapping claim blocks the record.
 - Transition: Blocked -> Ready. Owner remains Unowned. The preserved canonical Thread/Task 019f978e-28b7-7561-be38-b535ab26850f remains authoritative.
 - Next Lifecycle Owner: the parent Dev Backlog Coordinator may separately reserve Ready -> Starting for the preserved canonical Thread. This recovery does not record Starting or Running.
+
+## Current Starting Reservation
+
+- Parent Coordination Thread: /root/resume_blocked_after_claim_publication.
+- Canonical Thread/Task: 019f978e-28b7-7561-be38-b535ab26850f; no replacement canonical UUID is created.
+- Reservation: One parent-owned Ready -> Starting launch reservation.
+- Normalized Objective: Reject nonexistent lifecycle handoff commit OIDs.
+- Intended Root Role: Dev Orchestrator.
+- Codex Resumption Subtask: /root/resume_blocked_after_claim_publication/oid_delivery_recovery.
+- Branch And Worktree: Preserve branch `codex/reject-nonexistent-lifecycle-handoff-oids-019f978e`, worktree `/Users/martinbechard/.codex/worktrees/215b/dev-methodology`, and accepted candidate `a12babfc3b919b5e5334821703c8549fe40aa82a` as existing evidence.
+- Persistence And Completion: file provider; direct-main completion.
+- Dispatched At: 2026-07-26T07:56:54Z.
+- Launch Evidence: Parent Coordinator authorization received for this exact same-canonical-item reservation; runtime acceptance has not occurred.
+- Next Lifecycle Owner: the root Dev Orchestrator must accept this preserved canonical item through a distinct Starting -> Running transaction before further repository mutation.
 
 ## Preserved Governed Diff
 
