@@ -58,7 +58,7 @@ class EffectiveCommunicationContractTests(unittest.TestCase):
             "Keep sentences short",
             "Put one rule or idea in each sentence",
             "Explain a specialized or project-specific term when it first appears",
-            "Introduce a specific instance before referring to it with the",
+            "Introduce a specific instance before later referring to it with “the.”",
             "State an approval question directly",
             "Explain the practical consequence of each option",
             "State the blocker, its evidence, the owner of the next action",

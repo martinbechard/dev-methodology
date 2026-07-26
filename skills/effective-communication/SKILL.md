@@ -16,12 +16,12 @@ Start with the outcome that matters to the recipient.
 - Put one rule or idea in each sentence.
 - Use a technical term only when it names a real command, field, outcome, file, or resource.
 - Explain a specialized or project-specific term when it first appears.
-- Introduce a specific instance before referring to it with the.
+- Introduce a specific instance before later referring to it with “the.”
 - Prefer a concrete example when it explains a structure or workflow better than an inventory.
 - Use a list or table only when it makes repeated items, mappings, or choices easier to compare.
-- Keep exact identifiers, paths, commits, claim references, and error outcomes when the recipient needs them to act or verify.
+- Keep exact identifiers, paths, commits, claim references (identifiers for temporary ownership records), and error outcomes when the recipient needs them to act or verify.
 
-For example, first write “A claim result identifies the owner.” You may then write “The result also identifies the protected file.”
+For example, first write “A task result identifies the owner.” You may then write “The result also identifies the affected file.”
 
 ## Organize The Message
 
