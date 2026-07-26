@@ -1,6 +1,6 @@
 # Notify the Backlog Coordinator When a Work Item Is Added
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -74,14 +74,20 @@ None.
 ## Current Starting Reservation
 
 - Parent Coordination Thread: /root.
+- Preserved Canonical Work-Item Thread: /root.
+- Canonical Task: 019f9ea6-b3bd-7551-ad1f-5a862f768313.
+- Preserved Canonical Root Dev Orchestrator Task: /root.
+- Preserved Delivery Branch: main.
+- Preserved Delivery Worktree: /Users/martinbechard/.codex/worktrees/e98b/dev-methodology.
 - Reservation: One parent-owned Ready -> Starting launch reservation.
 - Normalized Objective: Notify the Backlog Coordinator when a work item is added.
 - Intended Root Role: Dev Orchestrator.
 - Persistence And Completion: file provider; direct-main completion.
-- Dispatched At: 2026-07-26T13:37:41Z.
-- Launch Evidence: Parent Coordinator authorized this exact-item reservation. Runtime task creation and acceptance remain pending.
-- Backlog Claim Event: 9dc49f0c-98c2-415b-8947-f42452ac19d2.
-- Next Lifecycle Owner: the root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
+- Prior Ready Evidence: commit 2f24e29234d7348f13dcc81827cbf057afb63c81, Status Ready, Owner Unowned, and the exact three-path approval recorded below.
+- Dispatched At: 2026-07-26T14:40:19Z.
+- Launch Evidence: Parent Coordinator reconciled the current primary main state at a9571e8569fad51b82eb4460316359827d7f101f, found this item Ready and Unowned, found one other Starting-or-Running item against capacity ten, and authorized this exact-item reservation. Runtime acceptance remains pending.
+- Backlog Claim Event: 41561b06-848d-4365-86a9-ae07b1631354.
+- Next Lifecycle Owner: the preserved root Dev Orchestrator must use its own distinct Dev Backlog Steward transaction to record Starting -> Running before repository mutation. This reservation neither records Running nor creates a replacement Thread.
 
 ## Current Running Acceptance
 
