@@ -1,10 +1,10 @@
 # Distinguish Coordination Notes From Unmet Dispatch Dependencies
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Backlog Coordinator (reservation pending root acceptance)
 
 Provider: file
 
@@ -56,6 +56,17 @@ None.
 ## Open Questions
 
 None.
+
+## Current Starting Reservation
+
+- Transition: Ready -> Starting.
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Reservation: One parent-owned launch reservation.
+- Normalized Objective: Distinguish coordination notes from unmet dispatch dependencies.
+- Dispatched At: 2026-07-26T17:08:29Z.
+- Intended Root Role: Dev Orchestrator.
+- Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
+- Next Lifecycle Owner: The root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
 
 ## Notes
 
