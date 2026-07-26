@@ -15,8 +15,9 @@ scenarios:
     requiredDependencyOrder: [dev-coder, dev-code-reviewer, dev-documentation-writer, dev-artifact-reviewer, dev-verifier, dev-merge-coordinator, dev-code-reviewer, dev-artifact-reviewer, dev-verifier, dev-backlog-steward]
     requiredHandoffReceiptLanes: [source, documentation, integration, closeout]
     requiredHandoffReceiptFields: [lane, role, commit, review, verification]
-    requiredBehaviors: [Assign bounded lanes, Keep review ownership independent, Verify before and after required integration, Apply Commit only after review and verification, Preserve AWAITING_REVIEW without Persistence, Dispatch Dev Backlog Steward exactly once after Commit READY, Verify Persistence closure, Make no agent-claim call or claim evidence when resource coordination is none, Record commits and closeout]
-    forbiddenBehaviors: [Implement child work directly, Self-review, Run dependencies concurrently, Skip post-integration gates, Dispatch Persistence before Commit READY, Duplicate the selected manager call]
+    requiredDeliveryResultFields: [status]
+    requiredBehaviors: [Assign bounded lanes, Keep review ownership independent, Verify before and after required integration, Return one structured delivery result, Dispatch Dev Backlog Steward exactly once after delivery COMPLETED, Leave the work item open after delivery NEEDS_REVIEW or BLOCKED, Verify Persistence closure, Make no agent-claim call or claim evidence when resource coordination is none, Record commits and closeout]
+    forbiddenBehaviors: [Implement child work directly, Self-review, Run dependencies concurrently, Skip post-integration gates, Close the work item before delivery COMPLETED, Treat NEEDS_REVIEW or BLOCKED as completed, Duplicate the selected manager call]
     deterministicChecks: [harness-agent-identity, dependency-identity-and-order, one-nested-dependency-at-a-time, committed-handoffs, structured-handoff-receipts, post-integration-reviews, output-contract-presence, readiness-consistency]
     expectedOutputs: [status, task breakdown, resolved definition-owned skillsets, assigned agents, handoff plan, integrated verification, committed integration, work-item delivery]
     expectedTerminalStatus: PASS
@@ -44,7 +45,7 @@ scenarios:
     targetSkills: [structured-design, structured-explanation, agent-claim]
     allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator, dev-backlog-steward]
     requiredBehaviors: [Name the missing dependency, Preserve the clean commit, Leave downstream gates pending, Return BLOCKED]
-    forbiddenBehaviors: [Substitute self-review, Invoke verification before review, Report READY]
+    forbiddenBehaviors: [Substitute self-review, Invoke verification before review, Report COMPLETED]
     deterministicChecks: [harness-agent-identity, dependency-availability, no-substitution, output-contract-presence, readiness-consistency]
     expectedOutputs: [status, task breakdown, assigned agents, handoff plan, work-item delivery, remaining questions]
     expectedTerminalStatus: BLOCKED

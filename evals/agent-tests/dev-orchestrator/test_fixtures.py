@@ -1047,6 +1047,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                             "cleanup": "clean",
                             "evidence": ["synthetic"],
                             "handoffReceipts": receipts,
+                            "deliveryResult": {"status": "COMPLETED"},
                         }
                     ],
                     "maximumActiveChildrenObserved": 1,
@@ -1057,6 +1058,75 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             "residualRisk": "",
         }
         return run, report
+
+    def test_delivery_result_controls_provider_closeout(self) -> None:
+        """Only COMPLETED permits the retained closeout lane."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            run, report, sessions, fixture_root = self._evidence_fixture(
+                Path(directory),
+                claim_release=False,
+            )
+            report["runs"][0]["scenarioResults"][0]["status"] = "PASS"
+            runner._audit_handoff_evidence(
+                (run,),
+                report,
+                sessions,
+                fixture_root,
+            )
+
+            scenario_result = report["runs"][0]["scenarioResults"][0]
+            invalid_cases = (
+                (None, "missing the structured deliveryResult"),
+                ({"status": "UNKNOWN"}, "unknown status"),
+            )
+            for delivery_result, diagnostic in invalid_cases:
+                with self.subTest(delivery_result=delivery_result):
+                    if delivery_result is None:
+                        scenario_result.pop("deliveryResult", None)
+                    else:
+                        scenario_result["deliveryResult"] = delivery_result
+                    with self.assertRaisesRegex(RuntimeError, diagnostic):
+                        runner._audit_handoff_evidence(
+                            (run,),
+                            report,
+                            sessions,
+                            fixture_root,
+                        )
+
+            receipts = scenario_result["handoffReceipts"]
+            closeout = next(
+                receipt for receipt in receipts if receipt["lane"] == "closeout"
+            )
+            scenario_result["handoffReceipts"] = [
+                receipt for receipt in receipts if receipt["lane"] != "closeout"
+            ]
+            for status in ("NEEDS_REVIEW", "BLOCKED"):
+                with self.subTest(status=status):
+                    scenario_result["status"] = "BLOCKED"
+                    scenario_result["deliveryResult"] = {"status": status}
+                    runner._audit_handoff_evidence(
+                        (run,),
+                        report,
+                        sessions,
+                        fixture_root,
+                    )
+                    scenario_result["handoffReceipts"].append(closeout)
+                    with self.assertRaisesRegex(
+                        RuntimeError,
+                        "handoff receipt lanes mismatch",
+                    ):
+                        runner._audit_handoff_evidence(
+                            (run,),
+                            report,
+                            sessions,
+                            fixture_root,
+                        )
+                    scenario_result["handoffReceipts"].remove(closeout)
+
+            scenario_result["deliveryResult"] = {"status": "COMPLETED"}
+            scenario_result["status"] = "PASS"
+            scenario_result["handoffReceipts"].append(closeout)
 
     @classmethod
     def _evidence_fixture(

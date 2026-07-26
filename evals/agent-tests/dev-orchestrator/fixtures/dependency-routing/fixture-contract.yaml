@@ -7,8 +7,8 @@ surfaces:
   documentation: [docs/operator-runbook.md]
   generatedReadOnly: [agents/roles, skills, generated/adapters, design/generated]
   report:
-    checkpoint: handoffReceipts
-    coordinator: handoffReceipts
+    checkpoint: [handoffReceipts, deliveryResult]
+    coordinator: [handoffReceipts, deliveryResult]
 repository:
   project: PROJECT.yaml
   guidance: AGENTS.md
@@ -72,13 +72,20 @@ orchestration:
     owner: dev-verifier
     command: python3 validate_fixture.py
     requiresAcceptedPostIntegrationReviews: true
+  deliveryResult:
+    completedStatus: COMPLETED
+    before: closeout
   closeout:
     owner: dev-backlog-steward
     item: backlog/feature-backlog/update-dependency-health-summary.md
     terminalState: Complete
+    requiresDeliveryStatus: COMPLETED
 handoffReceipt:
   requiredLanes: [source, documentation, integration, closeout]
   requiredFields: [lane, role, commit, review, verification]
+deliveryResult:
+  requiredFields: [status]
+  statuses: [COMPLETED, NEEDS_REVIEW, BLOCKED]
 runtimeResources:
   python: Python 3.11 or newer
   model: Current app-bundled Codex runtime with staged custom agents

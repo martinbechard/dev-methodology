@@ -321,6 +321,15 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertIn("objects, never prose strings", prompt)
         self.assertIn("structurally identical values", prompt)
         self.assertIn(
+            "Use COMPLETED only after delivery finishes successfully.",
+            prompt,
+        )
+        self.assertIn(
+            "Do not invoke Dev Backlog Steward closeout unless "
+            "deliveryResult.status is COMPLETED.",
+            prompt,
+        )
+        self.assertIn(
             '"resourceCoordinationByScenario": {"happy": "unspecified"}',
             prompt,
         )
@@ -355,6 +364,12 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             handoff_schema["required"],
         )
         self.assertIn("claimRelease", handoff_schema["properties"])
+        delivery_schema = scenario_schema["properties"]["deliveryResult"]
+        self.assertEqual(["status"], delivery_schema["required"])
+        self.assertEqual(
+            ["BLOCKED", "COMPLETED", "NEEDS_REVIEW"],
+            delivery_schema["properties"]["status"]["enum"],
+        )
 
     def test_cleanup_audit_rejects_active_claim_in_nested_fixture_repository(self) -> None:
         """A candidate repository cannot retain a claim outside the workspace registry."""

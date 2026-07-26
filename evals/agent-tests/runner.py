@@ -44,6 +44,7 @@ _RUNTIME_NAME = re.compile(r"^[a-z][a-z0-9_]*$")
 _SCENARIO_ROOT_COMPONENT = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 _TERMINAL_STATUSES = frozenset({"PASS", "FAIL", "BLOCKED", "STALE"})
 _REPORT_STATUSES = frozenset((*_TERMINAL_STATUSES, "INFRASTRUCTURE_FAILED"))
+_DELIVERY_STATUSES = frozenset({"COMPLETED", "NEEDS_REVIEW", "BLOCKED"})
 _EXECUTABLE_STATUSES = frozenset({"executable", "fixture-backed"})
 _RUNTIME_CAPABILITIES = frozenset(
     {
@@ -130,9 +131,12 @@ _DEPENDENCY_ROUTING_FIXTURE_FIELDS = (
     "orchestration.integration",
     "orchestration.postIntegrationReviews",
     "orchestration.finalVerification",
+    "orchestration.deliveryResult",
     "orchestration.closeout",
     "handoffReceipt.requiredLanes",
     "handoffReceipt.requiredFields",
+    "deliveryResult.requiredFields",
+    "deliveryResult.statuses",
     "runtimeResources.python",
     "runtimeResources.model",
     "runtimeResources.externalNetwork",
@@ -246,6 +250,19 @@ def _validate_fixture_contract(suite: _Suite, scenario: dict[str, Any]) -> None:
     expected_fields = scenario.get("requiredHandoffReceiptFields", [])
     if expected_fields and contract["handoffReceipt"]["requiredFields"] != expected_fields:
         raise ValueError(f"{identity} fixture handoffReceipt.requiredFields disagrees with scenario")
+    expected_delivery_fields = scenario.get(
+        "requiredDeliveryResultFields", []
+    )
+    if expected_delivery_fields and contract["deliveryResult"][
+        "requiredFields"
+    ] != expected_delivery_fields:
+        raise ValueError(
+            f"{identity} fixture deliveryResult.requiredFields disagrees with scenario"
+        )
+    if set(contract["deliveryResult"]["statuses"]) != _DELIVERY_STATUSES:
+        raise ValueError(
+            f"{identity} fixture deliveryResult.statuses is invalid"
+        )
     project_path = (path.parent / str(contract["repository"]["project"])).resolve()
     if suite.path.resolve() not in project_path.parents or not project_path.is_file():
         raise ValueError(f"{identity} has no fixture project configuration: {project_path}")
@@ -288,7 +305,10 @@ def _validate_fixture_contract(suite: _Suite, scenario: dict[str, Any]) -> None:
         if "integrationResource" in coordination_case:
             raise ValueError(f"{identity} integration adds a forbidden merge resource")
     expected_order = scenario.get("requiredDependencyOrder", [])
-    observed_order = [str(item.get("role", "")) for item in contract["orchestration"]["dependencyOrder"]]
+    observed_order = [
+        str(item.get("role", ""))
+        for item in contract["orchestration"]["dependencyOrder"]
+    ]
     if expected_order and observed_order != expected_order:
         raise ValueError(f"{identity} fixture orchestration.dependencyOrder disagrees with scenario")
 
@@ -622,6 +642,7 @@ def _validate_suite(suite: _Suite, require_executable: bool = True) -> None:
             "requiredDependencyOrder",
             "requiredHandoffReceiptLanes",
             "requiredHandoffReceiptFields",
+            "requiredDeliveryResultFields",
         ):
             values = scenario.get(field, [])
             if not isinstance(values, list) or not all(isinstance(value, str) and value for value in values):
@@ -1470,6 +1491,22 @@ def _stage_junie_batch(batch: Sequence[_RunSpec], run_root: Path) -> tuple[Path,
     return workspace, junie_home, skill_root, tuple(staged.values())
 
 
+def _delivery_result_schema() -> dict[str, Any]:
+    """Return the configured delivery workflow's result schema."""
+
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["status"],
+        "properties": {
+            "status": {
+                "type": "string",
+                "enum": sorted(_DELIVERY_STATUSES),
+            },
+        },
+    }
+
+
 def _coordinator_schema() -> dict[str, Any]:
     return {
         "type": "object",
@@ -1610,6 +1647,7 @@ def _coordinator_schema() -> dict[str, Any]:
                                             },
                                         },
                                     },
+                                    "deliveryResult": _delivery_result_schema(),
                                 },
                             },
                         },
@@ -2236,6 +2274,13 @@ def _coordinator_prompt(
                     for scenario in run.suite.scenarios
                     if str(scenario["id"]) in set(run.scenario_ids)
                 },
+                "requiredDeliveryResultFieldsByScenario": {
+                    str(scenario["id"]): list(
+                        scenario.get("requiredDeliveryResultFields", [])
+                    )
+                    for scenario in run.suite.scenarios
+                    if str(scenario["id"]) in set(run.scenario_ids)
+                },
                 "resourceCoordinationByScenario": {
                     str(scenario["id"]): _scenario_resource_coordination(
                         run.suite,
@@ -2282,7 +2327,11 @@ def _coordinator_prompt(
         "repository is relative to the active scenario's scenarioRoots[scenario] directory, every sessionIds and "
         "eventIds value is a "
         "non-empty string array, "
-        "and the commit sha must be an ancestor. The final coordinator scenario result must repeat the checkpoint's status, "
+        "and the commit sha must be an ancestor. When requiredDeliveryResultFieldsByScenario names status, include "
+        "deliveryResult as an object containing exactly status. Use COMPLETED only after delivery finishes successfully. "
+        "Use NEEDS_REVIEW when required review or a user decision remains. Use BLOCKED for a stated technical or external "
+        "blocker. Do not invoke Dev Backlog Steward closeout unless deliveryResult.status is COMPLETED. "
+        "The final coordinator scenario result must repeat the checkpoint's status, "
         "targetInvoked, judgeInvoked, evidenceReceipts, handoffReceipts, and cleanup with structurally identical values. "
         "When required, successful claim-release eventIds must bind a resulting commit and agent matching the receipt. "
         "For agent-claim scenarios, keep each clean candidate repository, clean claim registry, and Git claim journal "
@@ -2983,6 +3032,18 @@ def _load_checkpoint_report(
                 isinstance(receipt, dict) for receipt in handoff_receipts
             ):
                 raise RuntimeError(f"Scenario checkpoint handoffReceipts must be an array of objects: {path}")
+            scenario_contract = next(
+                scenario
+                for scenario in run.suite.scenarios
+                if str(scenario["id"]) == scenario_id
+            )
+            delivery_result = loaded.get("deliveryResult")
+            if scenario_contract.get("requiredDeliveryResultFields") and not isinstance(
+                delivery_result, dict
+            ):
+                raise RuntimeError(
+                    f"Scenario checkpoint deliveryResult must be an object: {path}"
+                )
             if loaded.get("status") not in _TERMINAL_STATUSES:
                 raise RuntimeError(f"Scenario checkpoint status must be terminal: {path}")
             if type(loaded.get("targetInvoked")) is not bool or type(loaded.get("judgeInvoked")) is not bool:
@@ -3029,6 +3090,11 @@ def _load_checkpoint_report(
                     "cleanup": loaded["cleanup"],
                     "evidence": retained_evidence,
                     "handoffReceipts": handoff_receipts,
+                    **(
+                        {"deliveryResult": delivery_result}
+                        if delivery_result is not None
+                        else {}
+                    ),
                 }
             )
             if loaded.get("residualRisk"):
@@ -3089,6 +3155,8 @@ def _audit_checkpoint_agreement(
         ]
         if scenarios[identity].get("requiredHandoffReceiptFields"):
             compared_fields.append("handoffReceipts")
+        if scenarios[identity].get("requiredDeliveryResultFields"):
+            compared_fields.append("deliveryResult")
         if any(final_results[identity].get(field) != checkpoints[identity].get(field) for field in compared_fields):
             raise RuntimeError(f"Final report disagrees with checkpoint for {identity[0]}:{identity[1]}")
 
@@ -4304,6 +4372,35 @@ def _audit_unbound_claim_acquisitions(
             )
 
 
+def _audit_delivery_result(
+    identity: str,
+    scenario: Mapping[str, Any],
+    scenario_result: Mapping[str, Any],
+) -> str | None:
+    """Return the validated delivery status required by one scenario."""
+
+    required_fields = scenario.get("requiredDeliveryResultFields", [])
+    result = scenario_result.get("deliveryResult")
+    if not required_fields:
+        if result is not None:
+            raise RuntimeError(f"{identity} has an unexpected deliveryResult")
+        return None
+    if not isinstance(result, Mapping):
+        raise RuntimeError(f"{identity} is missing the structured deliveryResult")
+    if set(result) != set(required_fields):
+        raise RuntimeError(
+            f"{identity} deliveryResult must contain exactly {required_fields}"
+        )
+    status = result.get("status")
+    if status not in _DELIVERY_STATUSES:
+        raise RuntimeError(f"{identity} deliveryResult has an unknown status")
+    if status != "COMPLETED" and scenario_result.get("status") == "PASS":
+        raise RuntimeError(
+            f"{identity} cannot PASS before delivery COMPLETED"
+        )
+    return str(status)
+
+
 def _audit_handoff_evidence(
     batch: Sequence[_RunSpec],
     report: dict[str, Any],
@@ -4361,7 +4458,18 @@ def _audit_handoff_evidence(
                         f"{identity} duplicate handoff receipt lane {receipt_lane}"
                     )
                 receipts[receipt_lane] = receipt
-            required_lanes = scenario.get("requiredHandoffReceiptLanes", [])
+            delivery_status = _audit_delivery_result(
+                identity,
+                scenario,
+                reported_result,
+            )
+            required_lanes = list(
+                scenario.get("requiredHandoffReceiptLanes", [])
+            )
+            if delivery_status in {"NEEDS_REVIEW", "BLOCKED"}:
+                required_lanes = [
+                    lane for lane in required_lanes if lane != "closeout"
+                ]
             _require_exact_handoff_lanes(
                 identity,
                 required_lanes,
