@@ -78,7 +78,7 @@ None.
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
 - Worktree: /Users/martinbechard/.codex/worktrees/8b79/dev-methodology.
 - Intended Candidate Branch: codex/harden-event-contract-claim-helper-019f9ea6.
-- Phase: focused helper implementation.
+- Phase: final authorized correction plan.
 - Started At: 2026-07-26T13:45:21Z; root Orchestrator accepted the reserved work item before implementation mutation.
 - Backlog Claim Acquisition: claim start-running-harden-event-contract-019f9ea6; event e5a63bff-dc75-462b-8104-5b17da793a4c; acquired from primary main at f1c8c04c4a24be8e48579fc997d1a6f09daacf88.
 - Backlog Claim Release: due immediately after this short provider commit; release evidence is retained in the claim journal.
@@ -102,6 +102,18 @@ None.
 - Rejection History: two candidate attempts have now been rejected.
 - Current Disposition: artifact mutation is paused for parent investigation and a revised plan.
 - Verifier And Integration: no verifier result or integration has been accepted.
+
+## Parent Investigation And Final Correction Contract
+
+- Parent ACK: 2026-07-26 acknowledgement from parent coordination thread 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a authorizes one final correction attempt under this contract.
+- Identity Contract: every identity comparison must return explicit SAME, DIFFERENT, or ERROR.
+- Identity Error Handling: an ERROR during normalization rejects the whole acquire as INVALID_SCOPE, preserves registry and journal bytes unchanged, and drops no requested path.
+- Conflict Error Handling: an ERROR during conflict comparison is treated as overlap.
+- Dangling Symlink Handling: reject a dangling symlink until its target exists, including when the target is a sibling requested in the same acquire.
+- Mandatory Public Command Regressions: prove atomicity, no live claim, unchanged bytes, dangling-symlink target behavior, existing aliases, hard-link aliases, and injected samefile OSError behavior.
+- Permitted Checks: cumulative targeted tests, compilation, and git diff --check only.
+- Required Gates: a brand-new review and verifier must both pass before any integration.
+- Retry Boundary: any fresh material finding prohibits further Dev Coder retry and requires Running -> Blocked with Owner: Unowned.
 
 ## Notes
 
