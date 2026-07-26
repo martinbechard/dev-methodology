@@ -1,10 +1,10 @@
 # Require Durable Defect Logging And Direct-Main Work-Item Creation
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
-Owner: Dev Backlog Coordinator (reservation pending root acceptance)
+Owner: Dev Orchestrator (canonical Thread/task 019f96cf-226c-7f62-9d66-7d31cead822e)
 
 ## Launch Reservation
 
@@ -133,6 +133,22 @@ None.
 - Intended Root Role: Dev Orchestrator.
 - Runtime Thread And Task Id: The preserved canonical Thread is pending root acceptance.
 - Next Lifecycle Owner: The root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
+
+## Current Running Acceptance
+
+- Transition: Starting -> Running.
+- Owner: Dev Orchestrator (canonical Thread/task 019f96cf-226c-7f62-9d66-7d31cead822e).
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Delivery Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/durable-defect-creation-coder-019f96cf.
+- Delivery Branch: codex/durable-defect-creation-coder-019f96cf.
+- Preserved Historical Branch HEAD: 32212af7d6751e3dd89d43485e2a355c1b3e3288.
+- Preserved Commits: 4f47fea91dc6f49b4f36d5c1360bf414fce2d852 and 957c93370c476bb3296151f979b5f1407362e7be.
+- Preserved Untracked Approval Records: approval-record-durable-defect-create-file-work-item.yaml and approval-record-durable-defect-dev-orchestrator.yaml remain only in the delivery worktree.
+- Phase: Current-main durable confirmed-defect logging policy reconciliation and implementation.
+- Current-Main Creation Policy: Main publication 6e59985b8cd0280e729f56eb8d2d362adf3f4ab6 delivered atomic exclusive no-overwrite creation with no claim event for new-file creation.
+- Supersession Boundary: The historical four-path claim-free candidate remains superseded and must not be integrated or revived.
+- Remaining Scope: Only the approved durable confirmed-defect logging and no-warning-downgrade policy in dev-orchestrator source, its supported mirrors and tests, and current-main verification remain.
+- Approval And Recovery Context: The exact prior user approval and all recovery history remain authoritative.
 
 ## Verification
 
