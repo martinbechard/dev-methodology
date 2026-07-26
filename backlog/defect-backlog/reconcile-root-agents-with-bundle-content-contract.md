@@ -1,8 +1,10 @@
 # Reconcile Root AGENTS With Bundle-Content Contract
 
-Status: Ready
+Status: Starting
 
 Type: Defect
+
+Owner: Unowned
 
 Provider: file
 
@@ -59,6 +61,17 @@ None.
 ## Open Questions
 
 Determine from current repository evidence whether root AGENTS.md guidance or bundle-content assertions are authoritative; this is an agent-resolvable technical authority question, not a user-action gate.
+
+## Current Starting Reservation
+
+- Transition: Ready -> Starting.
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Reservation: One parent-owned launch reservation.
+- Normalized Objective: Reconcile root AGENTS.md with the bundle-content contract without weakening the repository-maintenance, source-boundary, metadata, or verification requirements.
+- Dispatched At: 2026-07-26T19:10:06Z.
+- Intended Root Role: Dev Orchestrator.
+- Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
+- Next Lifecycle Owner: The root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
 
 ## Notes
 
