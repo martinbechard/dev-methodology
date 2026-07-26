@@ -1,10 +1,10 @@
 # Reject Unconfigured Lifecycle Handoff Receipt Lanes
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Backlog Coordinator (reservation pending root acceptance)
 
 Provider: file
 
@@ -60,6 +60,18 @@ Fresh review of candidate 988bc4b2 in canonical task 019f978e-28b7-7561-be38-b53
 ## Open Questions
 
 None.
+
+## Current Starting Reservation
+
+- Transition: Ready -> Starting.
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Reservation: One parent-owned launch reservation.
+- Normalized Objective: Reject unconfigured lifecycle handoff receipt lanes.
+- Dispatched At: 2026-07-26T17:08:03Z.
+- Intended Root Role: Dev Orchestrator.
+- Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
+- Coordination Classification: The Dependencies entry is a coordination-only overlap note. Its referenced item is Blocked and Unowned, and the preflight registry has no live claim. Private-worktree implementation may begin; exact overlap scope and integration must be reconciled before the conflicting integration event.
+- Next Lifecycle Owner: The root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
 
 ## Notes
 
