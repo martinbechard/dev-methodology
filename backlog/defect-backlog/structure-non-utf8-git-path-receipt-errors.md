@@ -1,10 +1,10 @@
 # Structure Non-UTF-8 Git Path Receipt Errors
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
@@ -76,6 +76,23 @@ None.
 - Phase: Implementation accepted.
 - Started At: 2026-07-26T17:10:26Z.
 - Claim Evidence: accept-running-019f9f66-structure-non-utf8; acquire event e701b26c-3db7-40c6-b164-a0eaafe232c0.
+
+## Current Blocked Handoff
+
+- Transition: Running -> Blocked.
+- Recorded At: 2026-07-26T17:34:16Z.
+- Canonical Work-Item Thread: 019f9f66-52ad-7963-88e3-8b4b7d72f2f6.
+- Parent Coordinator: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Owner: Unowned.
+- Preserved Candidate: 00f6aa59a060c4b16e08723b6bf5423259654283 on codex/structure-non-utf8-git-path-receipts-019f9f66, based on 85e6a31db1dcd144b5d0bfed84f218fb2905d726.
+- Delivery Evidence: Fresh Dev Code Reviewer result GOOD with no material findings. Dev Verifier result PASS: 9/9 focused tests, 1/1 runner consumer, real-Git both decode boundaries, py_compile, diff check, and JSON roundtrip. The candidate changes two files only and is clean. No governed definitions changed.
+- Blocker: No authorized accepted lifecycle-receipt foundation exists on main. Main at c0a4774afa5c2170e31c0aaf21d0d21d522eaff0 contains neither evals/agent-tests/lifecycle_handoff_receipts.py nor evals/agent-tests/test_lifecycle_handoff_receipts.py, and neither 00f6aa59a060c4b16e08723b6bf5423259654283 nor 85e6a31db1dcd144b5d0bfed84f218fb2905d726 is ancestral to main. Direct-main integration would import rejected ancestry.
+- Canonical Lifecycle Evidence: Task 019f978e-28b7-7561-be38-b535ab26850f confirms 85e6a31 was never accepted and prohibits merge, cherry-pick, reconstruction, or import of 85e6a31, 1eab8bb6, or da09f3d9.
+- Recovery Owner: Parent Coordinator plus the canonical lifecycle-receipt foundation task.
+- Unblock Trigger: A newly authorized, accepted lifecycle-receipt foundation commit is on main and contains the two callable receipt files.
+- Permitted Resumption: Parent-owned Blocked -> Ready -> Starting on this same canonical task, followed by root-owned Starting -> Running. Combine the exact 00f6aa59 behavior and test with the accepted foundation, then obtain fresh combined review and verification before direct-main delivery.
+- Disposition: This is not a failed correction or terminal completion. Preserve the candidate and all review and verification evidence.
+- Backlog Claim Evidence: record-blocked-structure-non-utf8-019f9f66; acquire event 6ea8608e-861d-442b-af45-f08b2fefc4aa.
 
 ## Notes
 
