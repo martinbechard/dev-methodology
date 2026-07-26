@@ -1,10 +1,10 @@
 # Require Durable Defect Logging And Direct-Main Work-Item Creation
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
-Owner: Unowned
+Owner: Dev Backlog Coordinator (reservation pending root acceptance)
 
 ## Launch Reservation
 
@@ -121,6 +121,18 @@ None.
 - The historical claim-free candidate remains superseded and unintegrated.
 - Remaining delivery scope: the approved dev-orchestrator source must require every confirmed defect to be durably recorded and forbid downgrading it to a warning, followed by current-main verification.
 - Transition: Blocked -> Ready. Owner remains Unowned. The exact two-path approval and canonical Thread 019f96cf-226c-7f62-9d66-7d31cead822e remain authoritative.
+
+## Current Starting Reservation
+
+- Transition: Ready -> Starting.
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Canonical Thread/Task: 019f96cf-226c-7f62-9d66-7d31cead822e; no replacement Thread is created.
+- Reservation: One parent-owned same-task launch reservation.
+- Normalized Objective: Require durable defect logging and direct-main work-item creation.
+- Dispatched At: 2026-07-26T17:09:30Z.
+- Intended Root Role: Dev Orchestrator.
+- Runtime Thread And Task Id: The preserved canonical Thread is pending root acceptance.
+- Next Lifecycle Owner: The root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
 
 ## Verification
 
