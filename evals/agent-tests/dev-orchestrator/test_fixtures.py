@@ -87,27 +87,38 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         )
         self.assertIn("must not invoke agent-claim", prompt)
 
-    def test_none_coordination_rejects_extra_lane_with_claim_evidence(self) -> None:
-        """Exact lane authority rejects an extra receipt carrying claim evidence."""
-        run, report = self._complete_dependency_routing_report()
-        report["runs"][0]["scenarioResults"][0]["handoffReceipts"].append(
-            {
-                "lane": "extra",
-                "role": {"invocation": "extra", "sessionIds": ["extra"]},
-                "commit": {"repository": "candidate", "sha": "a" * 40},
-                "review": {"sessionIds": ["extra-review"]},
-                "verification": {"sessionIds": ["extra-verification"]},
-                "claimRelease": {"eventIds": ["extra-release"]},
-            }
-        )
+    def test_report_rejects_extra_lane_with_or_without_claims(self) -> None:
+        """None and agent-claim report configurations reject extra receipt lanes."""
+        for claim_release in (False, True):
+            with (
+                self.subTest(claim_release=claim_release),
+                tempfile.TemporaryDirectory() as directory,
+            ):
+                run, report, _, _ = self._evidence_fixture(
+                    Path(directory),
+                    claim_release=claim_release,
+                )
+                source = report["runs"][0]["scenarioResults"][0][
+                    "handoffReceipts"
+                ][0]
+                extra = json.loads(json.dumps(source))
+                extra["lane"] = "extra"
+                if claim_release:
+                    extra["claimRelease"] = {
+                        "eventIds": ["fabricated-release"],
+                    }
+                report["runs"][0]["scenarioResults"][0][
+                    "handoffReceipts"
+                ].append(extra)
 
-        with self.assertRaisesRegex(
-            RuntimeError,
-            r"handoff receipt lanes mismatch: expected "
-            r"\['closeout', 'documentation', 'integration', 'source'\], "
-            r"observed \['closeout', 'documentation', 'extra', 'integration', 'source'\]",
-        ):
-            runner._audit_report((run,), report)
+                with self.assertRaisesRegex(
+                    RuntimeError,
+                    r"handoff receipt lanes mismatch: expected "
+                    r"\['closeout', 'documentation', 'integration', 'source'\], "
+                    r"observed "
+                    r"\['closeout', 'documentation', 'extra', 'integration', 'source'\]",
+                ):
+                    runner._audit_report((run,), report)
 
     def test_evidence_audit_rejects_extra_lane_with_or_without_claims(self) -> None:
         """Repository evidence cannot legitimize an unconfigured receipt lane."""
@@ -125,6 +136,10 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 ][0]
                 extra = json.loads(json.dumps(source))
                 extra["lane"] = "extra"
+                if claim_release:
+                    extra["claimRelease"] = {
+                        "eventIds": ["fabricated-release"],
+                    }
                 report["runs"][0]["scenarioResults"][0][
                     "handoffReceipts"
                 ].append(extra)
@@ -142,6 +157,41 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                         sessions,
                         fixture_root,
                     )
+
+    def test_report_rejects_receipt_for_empty_lane_set(self) -> None:
+        """None and agent-claim report configurations reject unconfigured receipts."""
+        for claim_release in (False, True):
+            with (
+                self.subTest(claim_release=claim_release),
+                tempfile.TemporaryDirectory() as directory,
+            ):
+                run, report, _, _ = self._evidence_fixture(
+                    Path(directory),
+                    claim_release=claim_release,
+                )
+                scenario = dict(run.suite.scenarios[0])
+                scenario["requiredHandoffReceiptLanes"] = []
+                scenario["requiredHandoffReceiptFields"] = []
+                suite = runner.dataclasses.replace(
+                    run.suite,
+                    scenarios=(scenario,),
+                )
+                run = runner.dataclasses.replace(run, suite=suite)
+                fabricated_receipt = {"lane": "fabricated"}
+                if claim_release:
+                    fabricated_receipt["claimRelease"] = {
+                        "eventIds": ["fabricated-release"],
+                    }
+                report["runs"][0]["scenarioResults"][0][
+                    "handoffReceipts"
+                ] = [fabricated_receipt]
+
+                with self.assertRaisesRegex(
+                    RuntimeError,
+                    r"handoff receipt lanes mismatch: expected \[\], "
+                    r"observed \['fabricated'\]",
+                ):
+                    runner._audit_report((run,), report)
 
     def test_evidence_audit_preserves_missing_and_duplicate_lane_errors(self) -> None:
         """Exact-set enforcement retains distinct missing and duplicate diagnostics."""
@@ -201,16 +251,14 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                     scenarios=(scenario,),
                 )
                 run = runner.dataclasses.replace(run, suite=suite)
+                fabricated_receipt = {"lane": "fabricated"}
+                if claim_release:
+                    fabricated_receipt["claimRelease"] = {
+                        "eventIds": ["fabricated-release"],
+                    }
                 report["runs"][0]["scenarioResults"][0][
                     "handoffReceipts"
-                ] = [
-                    {
-                        "lane": "fabricated",
-                        "claimRelease": {
-                            "eventIds": ["fabricated-release"],
-                        },
-                    }
-                ]
+                ] = [fabricated_receipt]
 
                 with self.assertRaisesRegex(
                     RuntimeError,

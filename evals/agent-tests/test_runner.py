@@ -2716,17 +2716,51 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
     def test_malformed_checkpoint_receipts_retain_bounded_live_batch_evidence(self) -> None:
         """Checkpoint fallback reports malformed receipts without losing retained evidence paths."""
-        malformed_receipts = {
-            "missing-lane": {},
-            "wrong-type-lane": {"lane": []},
-            "missing-role": {"lane": "source"},
-            "wrong-type-role": {"lane": "source", "role": []},
-            "missing-commit": {
-                "lane": "source",
-                "role": {"invocation": "dev_coder", "sessionIds": ["producer"]},
-            },
+        structured_source = {
+            "lane": "source",
+            "role": {"invocation": "dev_coder", "sessionIds": ["producer"]},
+            "commit": {"repository": "candidate", "sha": "a" * 40},
+            "review": {"sessionIds": ["review"]},
+            "verification": {"sessionIds": ["verification"]},
         }
-        for name, receipt in malformed_receipts.items():
+        structured_extra = json.loads(json.dumps(structured_source))
+        structured_extra["lane"] = "extra"
+        structured_extra_with_claim = json.loads(json.dumps(structured_extra))
+        structured_extra_with_claim["claimRelease"] = {
+            "eventIds": ["extra-release"],
+        }
+        malformed_receipts = {
+            "missing-lane": ([{}], "handoff receipt"),
+            "wrong-type-lane": ([{"lane": []}], "handoff receipt"),
+            "missing-role": ([{"lane": "source"}], "handoff receipt"),
+            "wrong-type-role": (
+                [{"lane": "source", "role": []}],
+                "handoff receipt",
+            ),
+            "missing-commit": (
+                [
+                    {
+                        "lane": "source",
+                        "role": {
+                            "invocation": "dev_coder",
+                            "sessionIds": ["producer"],
+                        },
+                    }
+                ],
+                "handoff receipt",
+            ),
+            "extra-lane-without-claim": (
+                [structured_source, structured_extra],
+                "checkpoint-suite:happy handoff receipt lanes mismatch: "
+                "expected ['source'], observed ['extra', 'source']",
+            ),
+            "extra-lane-with-claim": (
+                [structured_source, structured_extra_with_claim],
+                "checkpoint-suite:happy handoff receipt lanes mismatch: "
+                "expected ['source'], observed ['extra', 'source']",
+            ),
+        }
+        for name, (receipts, diagnostic) in malformed_receipts.items():
             with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 result_root = root / "results"
@@ -2766,7 +2800,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                                 "evidence": ["receipt"],
                                 "cleanup": "clean",
                                 "residualRisk": "none",
-                                "handoffReceipts": [receipt],
+                                "handoffReceipts": receipts,
                             }
                         ),
                         encoding="utf-8",
@@ -2803,7 +2837,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 self.assertEqual("infrastructure-failed", result["status"])
                 self.assertNotIn("error", result)
                 self.assertIn("checkpoint", " ".join(result["infrastructureErrors"]))
-                self.assertIn("handoff receipt", " ".join(result["infrastructureErrors"]))
+                self.assertIn(diagnostic, " ".join(result["infrastructureErrors"]))
                 for evidence_name, evidence_path in result["evidence"].items():
                     if evidence_name.endswith("Sha256"):
                         continue
@@ -4730,80 +4764,6 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             "claimRelease"
         ] = {"eventIds": ["unexpected-release"]}
         with self.assertRaisesRegex(RuntimeError, "unexpected claimRelease evidence"):
-            runner._audit_report((run,), report)
-
-    def test_report_rejects_extra_handoff_lane_without_claim_evidence(self) -> None:
-        """Observed receipt lanes must exactly equal the configured lane set."""
-        suite = self._suite("dependency-routing")
-        scenario = dict(suite.scenarios[0])
-        scenario["requiredHandoffReceiptFields"] = [
-            "lane",
-            "role",
-            "commit",
-            "review",
-            "verification",
-        ]
-        scenario["requiredHandoffReceiptLanes"] = ["source"]
-        suite = runner._Suite(
-            suite.suite_id,
-            suite.priority,
-            suite.path,
-            suite.manifest,
-            (scenario,),
-        )
-        run = runner._RunSpec(suite=suite, scenario_ids=("happy",))
-        report = {
-            "runs": [self._suite_report("dependency-routing", "BLOCKED")],
-            "batchCleanup": "clean",
-            "residualRisk": "",
-        }
-        source = {
-            "lane": "source",
-            "role": {
-                "invocation": "dev-coder",
-                "sessionIds": ["source-session"],
-            },
-            "commit": {
-                "repository": "candidate",
-                "sha": "a" * 40,
-            },
-            "review": {"sessionIds": ["review-session"]},
-            "verification": {"sessionIds": ["verification-session"]},
-        }
-        extra = json.loads(json.dumps(source))
-        extra["lane"] = "extra"
-        report["runs"][0]["scenarioResults"][0]["handoffReceipts"] = [
-            source,
-            extra,
-        ]
-
-        with self.assertRaisesRegex(
-            RuntimeError,
-            r"dependency-routing:happy handoff receipt lanes mismatch: "
-            r"expected \['source'\], observed \['extra', 'source'\]",
-        ):
-            runner._audit_report((run,), report)
-
-    def test_report_rejects_receipt_when_configured_lane_set_is_empty(self) -> None:
-        """An empty configured set cannot be bypassed with fabricated claim evidence."""
-        run = self._run_spec("empty-lanes", 1)
-        report = {
-            "runs": [self._suite_report("empty-lanes", "BLOCKED")],
-            "batchCleanup": "clean",
-            "residualRisk": "",
-        }
-        report["runs"][0]["scenarioResults"][0]["handoffReceipts"] = [
-            {
-                "lane": "fabricated",
-                "claimRelease": {"eventIds": ["fabricated-release"]},
-            }
-        ]
-
-        with self.assertRaisesRegex(
-            RuntimeError,
-            r"empty-lanes:happy handoff receipt lanes mismatch: "
-            r"expected \[\], observed \['fabricated'\]",
-        ):
             runner._audit_report((run,), report)
 
     def test_dependency_receipt_schema_requires_and_rejects_missing_lane(self) -> None:
