@@ -1,6 +1,6 @@
 # Harden Event Contract Claim-Helper Scope Identity And Reporting
 
-Status: Blocked
+Status: Ready
 
 Type: Defect
 
@@ -14,7 +14,7 @@ Completion: direct-main
 
 ## Summary
 
-Correct five verified claim-helper defects so an Event Contract claim has one filesystem-aware identity, cannot cross from a resource-only claim into the primary backlog, cannot be acquired without scope, requires a reason for broad backlog ownership, and appears as a successful exact-file adoption in reporting.
+Correct five verified claim-helper defects so an Event Contract claim has one stable normalized repository-relative path identity, cannot cross from a resource-only claim into the primary backlog, cannot be acquired without scope, requires a reason for broad backlog ownership, and appears as a successful exact-file adoption in reporting.
 
 ## Context
 
@@ -28,12 +28,13 @@ The command helper implements claim scope parsing, acquisition, extension, confl
 
 ## Requirements
 
-- Treat path aliases that resolve to the same primary-worktree file as overlapping claim identities, including case variants on case-insensitive filesystems.
+- Treat a claim identity as its stable normalized repository-relative path, with case normalization when required by the repository filesystem; the recorded active scope remains unchanged after acquisition.
+- Do not promise or test detection of mutable symlink, hard-link, inode, mount, or post-acquisition alias changes.
 - Reject an extension from a resource-only claim into any backlog scope, including an exact backlog file, without mutating the existing claim.
 - Reject acquisition with no file, tree, broad-domain, or named-resource scope.
 - Require a non-empty documented scope reason for a broad backlog claim and retain that reason in durable claim and journal evidence.
 - Extend report data and rendering so a successful exact-file claim can be identified as adopted successfully rather than disappearing into only generic primary acquisition totals.
-- Add focused regressions for each defect and preserve valid non-overlapping exact-file concurrency.
+- Add focused regressions for each defect and preserve valid non-overlapping stable-path exact-file concurrency.
 
 ## Acceptance Criteria
 
@@ -42,7 +43,7 @@ The command helper implements claim scope parsing, acquisition, extension, confl
 - An acquire command with required identity arguments but no scope returns a structured invalid-scope outcome and writes no live claim.
 - A broad --backlog acquire without --scope-reason returns a structured invalid-scope outcome; with a reason, the reason is present in the claim and journal event.
 - A report covering a successful exact-file acquire and release exposes that successful exact-file adoption in machine-readable output and any matching text rendering.
-- Focused tests pass without weakening existing Event Contract assertions.
+- Focused tests pass without weakening the stable-path Event Contract assertions.
 
 ## Dependencies
 
@@ -51,7 +52,7 @@ None.
 ## Verification
 
 - Run the focused scripts/test_agent_claim.py cases for the five reproductions and the non-overlapping exact-file control.
-- Add and run focused unit tests for path identity, resource-only extension, empty scope acquisition, broad backlog reason validation, and report adoption output.
+- Add and run focused unit tests for stable path normalization, resource-only extension, empty scope acquisition, broad backlog reason validation, and report adoption output; exclude mutable filesystem-alias detection from the verification boundary.
 - Run git diff --check and an independent review of the changed helper and tests.
 
 ## Open Questions
@@ -78,7 +79,7 @@ None.
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
 - Worktree: /Users/martinbechard/.codex/worktrees/8b79/dev-methodology.
 - Intended Candidate Branch: codex/harden-event-contract-claim-helper-019f9ea6.
-- Phase: hard-stop blocked.
+- Phase: awaiting same-task reservation.
 - Started At: 2026-07-26T13:45:21Z; root Orchestrator accepted the reserved work item before implementation mutation.
 - Backlog Claim Acquisition: claim start-running-harden-event-contract-019f9ea6; event e5a63bff-dc75-462b-8104-5b17da793a4c; acquired from primary main at f1c8c04c4a24be8e48579fc997d1a6f09daacf88.
 - Backlog Claim Release: due immediately after this short provider commit; release evidence is retained in the claim journal.
@@ -114,6 +115,14 @@ None.
 - Permitted Checks: cumulative targeted tests, compilation, and git diff --check only.
 - Required Gates: a brand-new review and verifier must both pass before any integration.
 - Retry Boundary: any fresh material finding prohibits further Dev Coder retry and requires Running -> Blocked with Owner: Unowned.
+
+## User-Authorized Blocked Resolution
+
+- User Answer: on 2026-07-26, in canonical task 019f9ea6-6328-7580-9213-6e60b3a9de76, the user explicitly corrected the contract after the filesystem-alias explanation and said, "ok carry on."
+- Provenance: user direction relayed through the parent coordination thread 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Revised Authority: symlinks may be rewritten after acquisition. Mutable symlink, hard-link, inode, mount, and post-acquisition alias guarantees and tests are logically unhelpful and disproportionate; changing filesystem aliases does not alter recorded active scope.
+- Superseded Recovery Evidence: the prior candidate and review history, including the alias-specific findings and final-correction contract, remains preserved as superseded recovery evidence only.
+- Resumption Authority: the item is Ready and awaits a separate same-task parent-owned Ready -> Starting reservation, followed by root-owned Starting -> Running acceptance. This transaction does not reserve or dispatch it.
 
 ## Blocked Final Review Handoff
 
