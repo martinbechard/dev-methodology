@@ -1,10 +1,10 @@
 # Restrict Coordination Lifecycle Evaluation To Coordination Skills
 
-Status: Ready
+Status: Running
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
@@ -42,11 +42,21 @@ It would also create unnecessary duplicate coverage by making every skill suppor
 
 ## Implementation Guidance
 
-- Identify the explicit suite or scenario metadata that marks a coordination-focused evaluation.
+- Use the targetSkills list as the explicit scenario marker. A scenario that lists
+  agent-claim is coordination-focused.
+- Treat a fixture that explicitly selects agent-claim as coordination-focused.
 - Default ordinary skill evaluations to single-user mode.
 - Keep claim lifecycle assertions within focused coordination tests.
 - Remove or revise runner assertions that treat claim evidence as a general evaluation requirement.
 - Do not change unrelated skill definitions merely to add coordination variants.
+
+## Scope
+
+- evals/agent-tests/runner.py
+- evals/agent-tests/test_runner.py
+
+No scenario catalog, skill definition, conceptual agent, or generated file change is
+required.
 
 ## Verification
 
@@ -65,3 +75,7 @@ None.
 The rejected candidates e437702d, 446371ff, 4778fd44, b22704da, and ac579e7c attempted to strengthen general runner validation of claim lifecycle evidence. They remain historical review evidence and must not be integrated or reused as the implementation plan for this revised item.
 
 The previous exhausted-correction and blocker records are superseded because they addressed trusted adapters, release-to-commit binding, journal integrity, and process cleanup under the former general coordination-evaluation model. The revised work must begin from current main and follow the single-user-by-default model above.
+
+## Delivery Mode
+
+The user directed temporary single-task delivery without claims or delegated agents.

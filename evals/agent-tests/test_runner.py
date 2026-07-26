@@ -330,10 +330,37 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             prompt,
         )
         self.assertIn(
-            '"resourceCoordinationByScenario": {"happy": "unspecified"}',
+            '"resourceCoordinationByScenario": {"happy": "none"}',
             prompt,
         )
         self.assertIn("must not invoke agent-claim", prompt)
+
+    def test_claim_checks_require_an_explicit_claim_focused_scenario(self) -> None:
+        """Ordinary scenarios default to none even when another check has a claim-like name."""
+        ordinary_suite = self._suite("ordinary")
+        ordinary_scenario = {
+            **ordinary_suite.scenarios[0],
+            "deterministicChecks": ["claim-lifecycle"],
+        }
+        self.assertEqual(
+            ("none", {}),
+            runner._scenario_resource_coordination(
+                ordinary_suite,
+                ordinary_scenario,
+            ),
+        )
+
+        coordination_scenario = {
+            **ordinary_scenario,
+            "targetSkills": ["agent-claim"],
+        }
+        self.assertEqual(
+            ("agent-claim", {}),
+            runner._scenario_resource_coordination(
+                ordinary_suite,
+                coordination_scenario,
+            ),
+        )
 
     def test_governed_result_contract_separates_identity_deterministic_and_judge_evidence(self) -> None:
         """Coordinator output cannot substitute identity strings for Judge or deterministic evidence."""

@@ -317,7 +317,7 @@ def _scenario_resource_coordination(
     suite: _Suite,
     scenario: Mapping[str, Any],
 ) -> tuple[str, Mapping[str, Any]]:
-    """Return the scenario's explicit coordination selection and selected fixture case."""
+    """Return explicit claim focus, otherwise single-user mode."""
     relative = scenario.get("fixtureContract")
     if isinstance(relative, str) and relative.strip():
         path = (suite.path / relative).resolve()
@@ -330,10 +330,9 @@ def _scenario_resource_coordination(
                     selected_case = cases.get(selected)
                     if isinstance(selected_case, Mapping):
                         return str(selected), selected_case
-    selected = "agent-claim" if "claimRelease" in scenario.get(
-        "requiredHandoffReceiptFields", []
-    ) else "unspecified"
-    return selected, {}
+    if "agent-claim" in scenario.get("targetSkills", []):
+        return "agent-claim", {}
+    return "none", {}
 
 
 def _agent_dependencies(run: _RunSpec) -> tuple[str, ...]:
