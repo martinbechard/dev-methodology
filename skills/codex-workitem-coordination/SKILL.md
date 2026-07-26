@@ -53,7 +53,9 @@ Obtain queue inventory, lifecycle counts, provider identities, and dispatchable 
 
 Classify a candidate constraint as a hard prerequisite only when no bounded delivery phase can begin safely before it is satisfied. Treat a note that only predicts later overlap on an exact path, shared resource, or integration lane as coordination-only. An unmet hard prerequisite makes the item dispatch-ineligible. A coordination-only overlap note does not block a safe private-worktree start.
 
-Before dispatch, reconcile duplicate ownership or implementation evidence, preserve one canonical effort, and stop an additional duplicate launch. Coordinate an exact-path conflict at the relevant edit, shared-resource, or integration event named by the selected coordination procedure. Defer only that event; continue non-conflicting work in isolated private worktrees.
+When a coordination-only note references a Blocked or Unowned item and no live claim protects the relevant exact conflict, the candidate remains dispatch-eligible; the referenced lifecycle and ownership state do not create a hard prerequisite.
+
+Before dispatch, reconcile duplicate ownership or implementation evidence, preserve one canonical effort, and stop an additional duplicate launch. Coordinate an exact-path conflict at the relevant edit, shared-resource, or integration event named by the selected coordination procedure. Defer only that event; continue non-conflicting work in isolated private worktrees. A live exact conflict may defer only its relevant event; it does not defer unrelated private-worktree work.
 
 For a provider that supports queue inventory and lifecycle transitions:
 

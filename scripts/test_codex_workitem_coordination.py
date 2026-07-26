@@ -140,6 +140,34 @@ class CoordinationConstraintTaxonomyTests(unittest.TestCase):
             with self.subTest(section=section[:40]):
                 self.assertEqual((), _missing_contract_clauses(section, required))
 
+    def test_blocked_or_unowned_reference_without_live_claim_remains_eligible(
+        self,
+    ) -> None:
+        scenario = (
+            "When a coordination-only note references a Blocked or Unowned item "
+            "and no live claim protects the relevant exact conflict, the candidate "
+            "remains dispatch-eligible"
+        )
+        for section in (self.queue_section, self.provider_dispatch):
+            with self.subTest(section=section[:40]):
+                self.assertEqual(
+                    (),
+                    _missing_contract_clauses(section, (scenario,)),
+                )
+                for old, replacement in (
+                    ("Blocked or Unowned", "Blocked"),
+                    ("Blocked or Unowned", "Unowned"),
+                    ("no live claim", "a live claim"),
+                    ("remains dispatch-eligible", "becomes dispatch-ineligible"),
+                ):
+                    mutated = section.replace(old, replacement, 1)
+                    with self.subTest(mutation=f"{old} -> {replacement}"):
+                        with self.assertRaises(AssertionError):
+                            self.assertEqual(
+                                (),
+                                _missing_contract_clauses(mutated, (scenario,)),
+                            )
+
     def test_duplicate_ownership_and_implementation_are_reconciled_before_dispatch(
         self,
     ) -> None:
@@ -155,6 +183,7 @@ class CoordinationConstraintTaxonomyTests(unittest.TestCase):
         required = (
             "Coordinate an exact-path conflict at the relevant edit, shared-resource, or integration event",
             "Defer only that event",
+            "A live exact conflict may defer only its relevant event",
         )
         for section in (self.queue_section, self.provider_dispatch):
             with self.subTest(section=section[:40]):
