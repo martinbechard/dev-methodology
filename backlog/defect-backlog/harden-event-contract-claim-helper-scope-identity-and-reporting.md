@@ -1,10 +1,10 @@
 # Harden Event Contract Claim-Helper Scope Identity And Reporting
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
@@ -85,6 +85,17 @@ None.
 - Started At: 2026-07-26T13:45:21Z; root Orchestrator accepted the reserved work item before implementation mutation.
 - Backlog Claim Acquisition: claim start-running-harden-event-contract-019f9ea6; event e5a63bff-dc75-462b-8104-5b17da793a4c; acquired from primary main at f1c8c04c4a24be8e48579fc997d1a6f09daacf88.
 - Backlog Claim Release: due immediately after this short provider commit; release evidence is retained in the claim journal.
+
+## Current Running Acceptance
+
+- Canonical Thread And Root Agent Task: 019f9ea6-6328-7580-9213-6e60b3a9de76.
+- Root Role: Dev Orchestrator.
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Worktree: /Users/martinbechard/.codex/worktrees/8b79/dev-methodology.
+- Intended Candidate Branch: codex/harden-event-contract-claim-helper-019f9ea6.
+- Phase: user-corrected stable-path implementation.
+- Started At: 2026-07-26T14:50:37Z; the root Orchestrator accepted the durable Starting reservation before artifact mutation.
+- Backlog Claim Acquisition: claim accept-stable-path-harden-event-contract-019f9ea6; event 5460f6f6-76e9-412a-95a0-1a54d7aa9090; acquired on primary main at 28839ee0484e236de15aed3268506097ee37b8ab.
 
 ## Material Phase Evidence
 
