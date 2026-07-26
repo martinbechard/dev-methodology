@@ -40,13 +40,17 @@ authoritative_sources:
       evidence: "Defines the bundle purpose, repository shape, generation workflow, explicit target deployment workflow, and verification commands."
   agents_files:
     - path: AGENTS.md
-      evidence: "Defines repository-local source boundaries, catalog maintenance rules, generated-file ownership, validation commands, and commit expectations."
+      evidence: "Generated operational guidance references project skills, workflow skills, resource coordination, and folder technology skills."
+    - path: .agents/skills/dev-methodology-repository-maintenance/SKILL.md
+      evidence: "Defines repository-specific source boundaries, catalog maintenance, documentation alignment, targeted verification, and commit expectations."
   package_and_build_files:
     - path: evals/projects/python-inventory/pyproject.toml
       evidence: "Declares the plain-Python inventory fixture and Python 3.11 or newer."
     - path: evals/projects/fastapi-orders/pyproject.toml
       evidence: "Declares the FastAPI evaluation fixture and its FastAPI dependency."
   source_roots:
+    - path: .agents/skills
+      evidence: "Contains checked-in skills used only to maintain this repository."
     - path: scripts
       evidence: "Contains Python maintenance, generation, installation, detection, evaluation, and regression-test tooling."
     - path: skills/project-wiki/scripts
@@ -144,9 +148,9 @@ project_taxonomy:
 
 root_agents_reference:
   file: AGENTS.md
-  purpose: "Tell agents how to maintain source files and generated outputs, which checks to run, and which Python technology skills must be loaded for each executable scope."
+  purpose: "Reference project-specific maintenance, workflow, resource coordination, and folder technology skills generated from PROJECT.yaml."
   required_content:
-    - "Repository-wide source boundaries, privacy constraints, generation ownership, validation commands, and commit expectations."
+    - "Reference the repository-specific dev-methodology-repository-maintenance skill without copying its body."
     - "Explicit user-approval authority for every agent or skill definition change, including governed sources, generated-mirror ownership, auditable evidence, and the incorrect-test boundary."
     - "Unconditional folder technology skillsets generated from this plan and their required-load failure policy."
 
@@ -295,6 +299,12 @@ role_agent_set:
       - structured-explanation
     completion_checks:
       - "Run applicable commands from AGENTS.md without weakening gates."
+
+project_skill_extensions:
+  - skill: dev-methodology-repository-maintenance
+    registration: registered
+    availability: AVAILABLE
+    catalog: "codex-project:.agents/skills"
 
 technology_skill_loadouts:
   - scope: "Repository maintenance automation"
@@ -455,7 +465,9 @@ nested_agents_files:
 
 documentation_and_file_contracts:
   - path: AGENTS.md
-    purpose: "Operational routing reference loaded by agents."
+    purpose: "Generated operational routing reference loaded by agents."
+  - path: .agents/skills/dev-methodology-repository-maintenance/SKILL.md
+    purpose: "Project-specific repository maintenance contract referenced from generated AGENTS.md."
   - path: PROJECT.yaml
     purpose: "Single project-wide setup and validation artifact for conceptual agent definitions, skillsets, folder routing, nested AGENTS.md placement, and evidence."
   - path: "Not applicable"
@@ -525,6 +537,8 @@ open_questions:
     impact: "Rerun setup-time detection and revise only the affected skillset when technology boundaries change."
 
 maintenance_notes:
+  - "Keep repository-specific directives in .agents/skills/dev-methodology-repository-maintenance/SKILL.md and reference them through project_skill_extensions."
+  - "Regenerate AGENTS.md from PROJECT.yaml instead of manually editing generated guidance."
   - "Keep PROJECT.yaml and the generated workflow reference and Technology Skills sections in AGENTS.md aligned."
   - "Keep the generated Agent And Skill Definition Approval section in AGENTS.md aligned with definition_change_authority through scripts/render-agents-technology-skills.py."
   - "Rerun technology detection only when Python ownership, manifests, dependencies, or framework boundaries change."
