@@ -1,14 +1,14 @@
 # Require Watchdog Escalation And Coordinator Disposition For Blocked Items
 
-Status: Running
+Status: Completed
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/require-watchdog-escalation-and-coordinator-disposition-for-blocked-items.md
+Provider Reference: backlog/completed-backlog/features/require-watchdog-escalation-and-coordinator-disposition-for-blocked-items.md
 
 Completion: direct-main
 
@@ -141,3 +141,12 @@ Historical Evidence Retained: The prior User Action Required question, Starting 
 ## Notes
 
 This item does not authorize mutation of a governed agent or skill definition by itself. Implementation must identify the exact canonical definition paths and record the direct user direction plus exact-path approval evidence required by the repository definition-change check.
+
+## Completion Evidence
+
+- Accepted direct-main commit: `ab23eb7d44f878a866fe6f0286fb6b2c9a731626`.
+- Delivered behavior: every Blocked item receives a retained reconciliation result; actionable disposition gaps alert the Coordinator; exhausted correction outcomes require complete evidence; Coordinator decisions remain separate from Steward provider mutation; and a failed extra retry is consumed and cannot repeat.
+- Focused verification: Watchdog simulator 19/19, Coordinator simulator 23/23, coordination contracts 36/36, and the affected bundle catalog test 1/1.
+- Source checks: all three definition-change checks returned `ALLOWED_APPROVED_DEFINITION_CHANGE`; skill validation, Python compilation, generator freshness, and `git diff --check` passed.
+- Publication: the Codex user-level bundle was replaced from the accepted main source. Installed Coordinator, Watchdog, and `codex-workitem-coordination` bytes match the repository sources.
+- Claim evidence: none. The user directed temporary single-task delivery without claims.
