@@ -1,14 +1,14 @@
 # Create an Effective Agent Communication Skill
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/create-effective-agent-communication-skill.md
+Provider Reference: backlog/user-action-required/create-effective-agent-communication-skill.md
 
 Completion: direct-main
 
@@ -99,6 +99,44 @@ None.
 - Starting Reservation Evidence: commit 6f803e5d36e7239495ed3c6e15bcdce7a83284f4 and the Current Starting Reservation above.
 - Backlog Claim Evidence: Event 1 exact-file claim acquired as starting-running-effective-agent-communication-019f9ea6; acquisition event b620f13d-87ca-4b90-8437-700bfef41e51.
 - Provider Transaction: primary main at baseline 1e20f503dd5afdd946564eb069934b980a81020b.
+
+## User Action Required
+
+- Canonical Work-Item Thread And Root Agent Task: 019f9ea6-9f90-7551-835c-f35a5d5ed471.
+- Preserved Root Branch: codex/effective-agent-communication-019f9ea6.
+- Preserved Root Worktree: /Users/martinbechard/.codex/worktrees/a68c/dev-methodology.
+- Phase: exact governed-definition approval.
+- Same-Task Resumption: after an answer, preserve this canonical Thread and resume through User Action Required -> Ready -> Starting -> Running.
+- Claim State After This Transaction: None after the Event 1 claim is released.
+- Prohibited Unattended Action: do not mutate artifacts, generate outputs, integrate, or publish until the user answers this question.
+
+### Approval Question
+
+Do you approve changing these three canonical definitions so every generated conceptual agent uses the new effective-communication skill?
+
+### Reason
+
+The requested capability is itself a new governed skill and making it universal needs one governed shared role default; unattended implementation cannot safely choose or mutate those definitions.
+
+### Governed Definition Approval Manifest
+
+1. skills/effective-communication/SKILL.md — a new shared communication contract.
+2. skills/effective-communication/agents/openai.yaml — its Codex catalog metadata.
+3. agents/role-schema.yaml — a shared fixed-skill default that makes every conceptual agent use effective-communication without editing all 28 role files.
+
+No other canonical definition is included in this approval request.
+
+### Supported Dependent Artifacts
+
+These are ordinary implementation or generation outputs, not additional approval: scripts/build-skill-docs.py; focused communication and bundle tests; README.md; design/generic-agent-definitions-source.html; design/agent-and-skill-definitions.html; supported generated skill, role, native-adapter, hierarchy, explorer, and coverage outputs.
+
+### Illustrative Options And Tradeoffs
+
+- Approve (recommended): central shared default with no 28 repetitive role edits.
+- Request role-by-role wiring: requires a separate much wider 28-role approval and repetitive source changes.
+- Decline/defer: preserve discovery and make no definition changes.
+
+These options are illustrative and are not an inferred answer.
 
 ## Notes
 
