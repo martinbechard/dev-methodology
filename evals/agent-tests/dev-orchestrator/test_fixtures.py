@@ -291,78 +291,93 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             self.assertFalse((candidate / ".git" / "agent-claim-events").exists())
             self.assertFalse((candidate / ".git" / "agent-claims.json").exists())
 
-    def test_none_coordination_rejects_registry_journal_and_claim_invocation(self) -> None:
-        """Provider-none rejects every retained form of claim activity."""
-        for case in ("empty-registry", "release-journal", "claim-invocation"):
-            with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
+    def test_none_coordination_ignores_pre_existing_claim_files(self) -> None:
+        """Repository-wide claim files do not prove that this scenario used claims."""
+        with tempfile.TemporaryDirectory() as directory:
+            run, report, sessions, fixture_root = self._evidence_fixture(
+                Path(directory),
+                claim_release=False,
+            )
+            candidate = (
+                fixture_root
+                / "dev-orchestrator"
+                / "dependency-routing"
+                / "candidate"
+            )
+            (candidate / ".git" / "agent-claims.json").write_text(
+                json.dumps({"claims": []}) + "\n",
+                encoding="utf-8",
+            )
+            journal = (
+                candidate
+                / ".git"
+                / "agent-claim-events"
+                / "hot"
+                / "2026-07-19.jsonl"
+            )
+            journal.parent.mkdir(parents=True)
+            journal.write_text(
+                json.dumps(
+                    {
+                        "action": "release",
+                        "outcome": "RELEASED",
+                        "event_id": "pre-existing-release",
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            runner._audit_handoff_evidence(
+                (run,),
+                report,
+                sessions,
+                fixture_root,
+            )
+
+    def test_none_coordination_rejects_claim_invocation(self) -> None:
+        """An actual claim-helper call by the scenario remains invalid."""
+        for session_id in ("target", "coder"):
+            with (
+                self.subTest(session_id=session_id),
+                tempfile.TemporaryDirectory() as directory,
+            ):
                 run, report, sessions, fixture_root = self._evidence_fixture(
                     Path(directory),
                     claim_release=False,
                 )
-                candidate = (
-                    fixture_root
-                    / "dev-orchestrator"
-                    / "dependency-routing"
-                    / "candidate"
+                rollout = Path(directory) / f"rollout-{session_id}.jsonl"
+                rollout.write_text(
+                    json.dumps(
+                        {
+                            "timestamp": "2026-07-19T00:00:00Z",
+                            "type": "response_item",
+                            "payload": {
+                                "type": "custom_tool_call",
+                                "name": "exec",
+                                "input": (
+                                    "python3 /bundle/agent-claim-command/scripts/claim.py "
+                                    "--repo . status"
+                                ),
+                            },
+                        }
+                    )
+                    + "\n",
+                    encoding="utf-8",
                 )
-                if case == "empty-registry":
-                    (candidate / ".git" / "agent-claims.json").write_text(
-                        json.dumps({"claims": []}) + "\n",
-                        encoding="utf-8",
+                sessions = tuple(
+                    (
+                        runner.dataclasses.replace(session, rollout_path=rollout)
+                        if session.session_id == session_id
+                        else session
                     )
-                    diagnostic = "unexpected agent-claims registry"
-                elif case == "release-journal":
-                    journal = (
-                        candidate
-                        / ".git"
-                        / "agent-claim-events"
-                        / "hot"
-                        / "2026-07-19.jsonl"
-                    )
-                    journal.parent.mkdir(parents=True)
-                    journal.write_text(
-                        json.dumps(
-                            {
-                                "action": "release",
-                                "outcome": "RELEASED",
-                                "event_id": "unexpected-release",
-                            }
-                        )
-                        + "\n",
-                        encoding="utf-8",
-                    )
-                    diagnostic = "unexpected agent-claim journal"
-                else:
-                    rollout = Path(directory) / "rollout-target.jsonl"
-                    rollout.write_text(
-                        json.dumps(
-                            {
-                                "timestamp": "2026-07-19T00:00:00Z",
-                                "type": "response_item",
-                                "payload": {
-                                    "type": "custom_tool_call",
-                                    "name": "exec",
-                                    "input": (
-                                        "python3 /bundle/agent-claim-command/scripts/claim.py "
-                                        "--repo . status"
-                                    ),
-                                },
-                            }
-                        )
-                        + "\n",
-                        encoding="utf-8",
-                    )
-                    sessions = tuple(
-                        (
-                            runner.dataclasses.replace(session, rollout_path=rollout)
-                            if session.session_id == "target"
-                            else session
-                        )
-                        for session in sessions
-                    )
-                    diagnostic = "unexpected agent-claim invocation"
+                    for session in sessions
+                )
 
-                with self.assertRaisesRegex(RuntimeError, diagnostic):
+                with self.assertRaisesRegex(
+                    RuntimeError,
+                    "unexpected agent-claim invocation",
+                ):
                     runner._audit_handoff_evidence(
                         (run,),
                         report,

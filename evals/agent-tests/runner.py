@@ -2321,8 +2321,8 @@ def _coordinator_prompt(
         "verification must each contain exactly sessionIds. claimRelease is required only when the scenario's "
         "requiredHandoffReceiptFieldsByScenario includes it, must then contain exactly eventIds, and must otherwise be "
         "omitted. A scenario whose resourceCoordinationByScenario value is none must not invoke agent-claim through a "
-        "script or tool, must not create an agent-claims registry or agent-claim-events journal, and must not report "
-        "claim evidence on any receipt, including an extra lane. A scenario whose value is agent-claim must retain its "
+        "script or tool and must not report claim evidence on any receipt, including an extra lane. Pre-existing "
+        "repository claim files do not count as scenario activity. A scenario whose value is agent-claim must retain its "
         "configured acquisition and normal-release evidence. The "
         "repository is relative to the active scenario's scenarioRoots[scenario] directory, every sessionIds and "
         "eventIds value is a "
@@ -4062,29 +4062,9 @@ def _release_events(repository: Path, fixture_root: Path) -> dict[str, dict[str,
     }
 
 
-def _contained_fixture_git_common_directories(fixture_root: Path) -> tuple[Path, ...]:
-    """Resolve each Git common directory contained beneath one suite fixture root."""
-    common_directories: set[Path] = set()
-    for git_entry in sorted(fixture_root.glob("**/.git")):
-        repository = git_entry.parent
-        common_directories.add(
-            _git_common_directory(repository, fixture_root, "fixture")
-        )
-    return tuple(sorted(common_directories))
-
-
 def _contained_fixture_repositories(fixture_root: Path) -> tuple[Path, ...]:
     """Return every contained Git repository beneath one fixture root."""
     return tuple(sorted(git_entry.parent for git_entry in fixture_root.glob("**/.git")))
-
-
-def _audit_no_claim_repository_evidence(fixture_root: Path, identity: str) -> None:
-    """Reject every retained registry or journal when coordination selects none."""
-    for common in _contained_fixture_git_common_directories(fixture_root):
-        if (common / "agent-claims.json").exists():
-            raise RuntimeError(f"{identity} has unexpected agent-claims registry")
-        if (common / "agent-claim-events").exists():
-            raise RuntimeError(f"{identity} has unexpected agent-claim journal")
 
 
 def _session_agent_claim_invocations(session: _Session) -> tuple[str, ...]:
@@ -4504,7 +4484,6 @@ def _audit_handoff_evidence(
                         raise RuntimeError(
                             f"{identity} malformed handoff receipt {lane}: unexpected claimRelease evidence"
                         )
-                _audit_no_claim_repository_evidence(scenario_fixture_root, identity)
                 _audit_no_claim_session_activity(target, sessions, identity)
             for lane in required_lanes:
                 receipt = receipts[lane]
