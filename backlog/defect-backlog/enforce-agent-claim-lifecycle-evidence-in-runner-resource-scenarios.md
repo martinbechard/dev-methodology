@@ -1,6 +1,6 @@
 # Enforce Agent-Claim Lifecycle Evidence In Runner Resource Scenarios
 
-Status: Blocked
+Status: Ready
 
 Type: Defect
 
@@ -139,6 +139,17 @@ None.
 - Exact blocker: The runner lacks runner-owned immutable proof that the configured interpreter and adapter actually executed, release commit identity cannot be rewritten, and repository and journal component symlinks are rejected.
 - Next Action Owner: Dev Backlog Coordinator for future resumption routing. No active implementation owner exists.
 - Unblock Condition: Explicit authorization and a fresh bounded design and implementation plan must provide trusted interpreter-and-adapter execution identity, runner-owned immutable release-to-commit binding or an authoritative adapter result field, and component-wise repository and journal symlink rejection, with red regressions for all three. Resume only through the normal Blocked -> Ready -> Starting -> Running lifecycle; correction attempt 3 in this canonical run is prohibited.
+
+## Current-Main Recovery
+
+- Reconciliation Date: 2026-07-26.
+- Recovery Authority: Parent Coordinator previously explicitly authorized this runner lifecycle-evidence recovery among six named correction recoveries and now authorized this exact lifecycle resumption.
+- Preserved Canonical Identity: Work-Item Thread and task 019f981c-4fea-7b83-b8d2-0b254ff45f0c remain authoritative; no replacement identity is created.
+- Preserved Candidate Evidence: Rejected candidates e437702d2c0119c6641caca52fb7561348086568, 446371ff424d2ab2e3da53c72396dde356c36bcb, and 4778fd4435c50cc8a282a6a505eb41b061374278 remain review evidence only and are not integrated.
+- Authorized Scope: A new bounded design-and-recovery plan, not correction attempt 3 in the prior loop. The plan remains exactly `evals/agent-tests/runner.py` and `evals/agent-tests/test_runner.py`; it must establish trusted interpreter-and-adapter execution identity, immutable release-to-commit binding, component-wise repository and journal symlink rejection, and red regressions before implementation.
+- Current-Main Overlap Reconciliation: Decouple and OID candidates have no source integrated on current main. Before source mutation, reconcile any exact overlap against their current Blocked records and preserve their candidate evidence; no overlap authorizes taking or changing their work.
+- Transition: Blocked -> Ready. Owner remains Unowned. This provider transition does not grant implementation ownership.
+- Next Lifecycle Owner: the parent Dev Backlog Coordinator may separately reserve Ready -> Starting for this same canonical item.
 
 ## Notes
 
