@@ -1,6 +1,6 @@
 # Disable Git Replace Refs for Lifecycle Receipts
 
-Status: Blocked
+Status: Abandoned
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/disable-git-replace-refs-for-lifecycle-receipts.md
+Provider Reference: backlog/failed-backlog/defects/disable-git-replace-refs-for-lifecycle-receipts.md
 
 Completion: direct-main
 
@@ -107,3 +107,11 @@ None.
 ## Notes
 
 This transaction records the defect only. Do not implement source changes as part of backlog creation.
+
+## Terminal Cancellation — 2026-07-26
+
+- Transition: Blocked -> Abandoned. Owner remains Unowned.
+- Authority: User directed, “Ok we should remove this commit validation it is a big waste of time and serves no purpose” and “Do it now there’s too much confusion.”
+- Canonical Task: 019f978e-28b7-7561-be38-b535ab26850f remains preserved. Preserved candidate b2a38f7a73686d8f95f868a525051720cd810db8 and rejected base da09f3d9 remain historical evidence only.
+- Product Disposition: Replace-ref receipt work is cancelled and superseded with the related validation effort. No code integration, merge, cherry-pick, reconstruction, or further implementation is authorized.
+- Archive: This terminal file-provider record supersedes the former active provider path.

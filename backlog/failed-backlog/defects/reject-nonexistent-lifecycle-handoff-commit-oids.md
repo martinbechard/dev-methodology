@@ -1,6 +1,6 @@
 # Reject Nonexistent Lifecycle Handoff Commit OIDs
 
-Status: Blocked
+Status: Abandoned
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/reject-nonexistent-lifecycle-handoff-commit-oids.md
+Provider Reference: backlog/failed-backlog/defects/reject-nonexistent-lifecycle-handoff-commit-oids.md
 
 Completion: direct-main
 
@@ -286,3 +286,11 @@ This record captures the confirmed defect only. Do not implement unrelated lifec
 
 - Disposition: continuing Blocked until direct preserved-candidate or blocker batons arrive from disable replace refs 019f9f66-7522, unconfigured lanes 019f9f67-1259, malformed checkpoint 019f9f60, and structure-non-UTF8 019f9f66-52ad. No rejected candidate ancestry 85e, 1eab, or da09 may be imported.
 - Next Owner: parent Dev Backlog Coordinator for a newly authorized bounded combined current-main foundation plan in canonical task 019f978e-28b7-7561-be38-b535ab26850f. Reuse preserved behavior and deltas only; no user action is required now. Resumption remains Blocked -> Ready -> Starting -> Running.
+
+## Terminal Cancellation — 2026-07-26
+
+- Transition: Blocked -> Abandoned. Owner remains Unowned.
+- Authority: User directed, “Ok we should remove this commit validation it is a big waste of time and serves no purpose” and “Do it now there’s too much confusion.”
+- Canonical Task: 019f978e-28b7-7561-be38-b535ab26850f remains preserved. Preserved candidate a12babfc3b919b5e5334821703c8549fe40aa82a and rejected candidate ancestry da09f3d922b14e3c137edf1419e67b7bbfb1d8a4 remain historical evidence only.
+- Product Disposition: Commit-validation work is cancelled and superseded. No code integration, merge, cherry-pick, reconstruction, or further implementation is authorized.
+- Archive: This terminal file-provider record supersedes the former active provider path.

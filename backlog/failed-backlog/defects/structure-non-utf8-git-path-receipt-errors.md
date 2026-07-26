@@ -1,6 +1,6 @@
 # Structure Non-UTF-8 Git Path Receipt Errors
 
-Status: Blocked
+Status: Abandoned
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/structure-non-utf8-git-path-receipt-errors.md
+Provider Reference: backlog/failed-backlog/defects/structure-non-utf8-git-path-receipt-errors.md
 
 Completion: direct-main
 
@@ -97,3 +97,11 @@ None.
 ## Notes
 
 This transaction records the defect only. Do not implement source changes as part of backlog creation.
+
+## Terminal Cancellation — 2026-07-26
+
+- Transition: Blocked -> Abandoned. Owner remains Unowned.
+- Authority: User directed, “Ok we should remove this commit validation it is a big waste of time and serves no purpose” and “Do it now there’s too much confusion.”
+- Canonical Task: 019f978e-28b7-7561-be38-b535ab26850f remains preserved. Preserved candidate 00f6aa59a060c4b16e08723b6bf5423259654283 and rejected ancestry 85e6a31db1dcd144b5d0bfed84f218fb2905d726 and da09f3d9 remain historical evidence only.
+- Product Disposition: Non-UTF-8 receipt-path work is cancelled and superseded with the related validation effort. No code integration, merge, cherry-pick, reconstruction, or further implementation is authorized.
+- Archive: This terminal file-provider record supersedes the former active provider path.
