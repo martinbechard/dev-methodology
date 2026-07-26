@@ -1,6 +1,6 @@
 # Use Exact Work-Item Claims For Lifecycle Updates
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -8,9 +8,20 @@ Owner: Dev Orchestrator
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/use-exact-work-item-claims-for-lifecycle-updates.md
+Provider Reference: backlog/completed-backlog/features/use-exact-work-item-claims-for-lifecycle-updates.md
 
 Completion: direct-main
+
+## Terminal Supersession
+
+- Terminal Outcome: Completed — superseded; this archive records a provider disposition, not acceptance of the historical candidate as delivery.
+- Supersession Authority: Parent authoritative direction after publication of the event-driven exact-file policy at 6e59985b8cd0280e729f56eb8d2d362adf3f4ab6.
+- Published Evidence: Commit 6e59985b8cd0280e729f56eb8d2d362adf3f4ab6 is the current published policy/install evidence; its content supersedes the unaccepted correction candidate.
+- Preserved Historical Root Identity: 019f9783-31a0-7e91-9704-08cde7886b3a remains the canonical historical work-item Thread/task.
+- Current Reconciliation Root: /root/resume_blocked_after_claim_publication/exact_claims_delivery_reconcile adopted the record only to reconcile this terminal disposition; it does not replace the historical identity.
+- Candidate And Worktree Evidence: Corrected candidate f412674259b246bb0e3bb11edd569982e60c4c89 remains unaccepted. Its clean correction worktree is stopped; no candidate is accepted or merged through this item.
+- Non-Delivery Dependency Baton: The grouped defect backlog/defect-backlog/harden-event-contract-claim-helper-scope-identity-and-reporting.md owns the five current helper defects. No accepted delivery, implementation, review, or completion claim from this archived item transfers to that defect.
+- Claim Evidence: exact-claims-terminal-supersession-20260726 acquired source and destination paths; acquisition event 5d354ecd-c178-4115-9ffe-05373e12d9d9.
 
 ## Current Starting Reservation
 
