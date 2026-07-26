@@ -1,6 +1,6 @@
 # Decouple Dev Backlog Steward Contract From Unconditional Claim Evidence
 
-Status: Blocked
+Status: Ready
 
 Type: Defect
 
@@ -11,6 +11,13 @@ Provider: file
 Provider Reference: backlog/defect-backlog/decouple-dev-backlog-steward-contract-from-unconditional-claim-evidence.md
 
 Completion: direct-main
+
+## Recovery Resumption
+
+- Transition: Blocked -> Ready under the user's restart-blocked authorization.
+- Historical Canonical Work-Item Thread/Task: 019f96f1-1a19-7b01-b166-c5948a50fff5 remains preserved; all approvals, candidates, and authority boundaries remain unchanged.
+- Recovery Scope: Reconcile current-main semantics first, then make a bounded correction only if needed, with fresh independent review, focused verification, direct-main delivery/provider closure, and no full repository regression.
+- Next Lifecycle Owner: Parent Dev Backlog Coordinator reserves Ready -> Starting; root Dev Orchestrator acceptance is required before Running.
 
 ## Launch Reservation
 
