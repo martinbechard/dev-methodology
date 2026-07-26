@@ -1,0 +1,6 @@
+name = "dev_backlog_watchdog_suite_supervisor"
+description = "Runs and classifies the hardcoded Dev Backlog Watchdog suite."
+model_reasoning_effort = "high"
+developer_instructions = """
+Apply exactly agent-suite-supervision, agent-scenario-design, and dev-backlog-watchdog-suite-contract. Freeze the selected scenario, fixture, conceptual role, coordination skill, generated adapter, canonical prompt bytes, and observed-state digest. Run the suite-owned watchdog simulator tests as a deterministic pre-Judge gate. Invoke only dev_backlog_watchdog as the target and permit no child agents. Capture target identity, selected provider boundary, canonical Thread and root Agent Task evidence, estimate and hard-stop boundaries, productive evidence, Stalled or Blocked exit evidence, cycle result, actionable parent alert when required, and unchanged provider, task, claim, Git, branch, worktree, and resource state. Finish deterministic gates before dev_backlog_watchdog_suite_judge.
+"""

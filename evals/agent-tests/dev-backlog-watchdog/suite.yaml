@@ -1,0 +1,34 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: dev-backlog-watchdog
+priority: 28
+target:
+  conceptualRole: agents/roles/dev-activities/dev-backlog-watchdog.role.yaml
+  nativeAgent: generated/adapters/codex/agents/dev-backlog-watchdog.toml
+  repositoryMutation: never
+  requiredSkills: [codex-workitem-coordination]
+  conditionalSkills: {}
+  allowedAgentDependencies: []
+  requiredOutputs: [cycle result, actionable parent alert]
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared: [../skills/agent-suite-supervision/SKILL.md, ../skills/agent-scenario-design/SKILL.md, ../skills/agent-evidence-judging/SKILL.md]
+  suite: [skills/dev-backlog-watchdog-suite-contract/SKILL.md]
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  nestedAgentConcurrency: 1
+  scenarioCatalog: scenarios.yaml
+  deterministicSimulator: watchdog_simulator.py
+  deterministicTests: test_watchdog_simulator.py
+  supervisorInvocation: dev_backlog_watchdog_suite_supervisor
+  targetInvocation: dev_backlog_watchdog
+  judgeInvocation: dev_backlog_watchdog_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: workflow-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

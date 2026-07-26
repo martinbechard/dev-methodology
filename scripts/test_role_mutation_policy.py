@@ -84,7 +84,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
         skill_payload = build_skill_docs.build_payload()
         roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
 
-        self.assertEqual(27, len(roles))
+        self.assertEqual(28, len(roles))
         self.assertEqual(
             {"required", "conditional", "never"},
             {role.repository_mutation for role in roles},
@@ -285,7 +285,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
         """Expose repository mutation as a required conceptual definition capability declaration."""
         schema = yaml.safe_load(ROLE_SCHEMA.read_text(encoding="utf-8"))
 
-        self.assertEqual(4, schema["version"])
+        self.assertEqual(5, schema["version"])
         self.assertIn("repositoryMutation", schema["required"])
         self.assertEqual("mutation-policy", schema["properties"]["repositoryMutation"])
 

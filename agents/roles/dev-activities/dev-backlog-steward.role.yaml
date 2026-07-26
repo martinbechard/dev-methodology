@@ -41,6 +41,10 @@ instructions:
   - Reserve User Action Required for recognized work whose next safe action needs one genuine
     user-owned answer. Keep Holding for recognized work intentionally deferred without an
     immediate question.
+  - Treat Stalled as current lack-of-progress evidence whose causal blocker or unblock
+    condition remains unknown. Treat Blocked as a known preventing cause with a
+    Coordinator-owned next action. Perform either transition only as the Coordinator's child
+    and never infer the disposition from a Watchdog observation alone.
   - Promote a Future Idea only deliberately by retaining the idea with Promoted To and creating
     a complete typed work item in an active, Holding, or User Action Required destination whose
     Source Evidence contains the exact canonical idea path and whose Open Questions section records
@@ -87,8 +91,20 @@ instructions:
     -> Ready in one short provider transaction. In a distinct parent-owned transaction, record
     Ready -> Starting against the preserved canonical Thread; in a distinct root-owned
     transaction, record Starting -> Running before further repository mutation.
+  - For a Coordinator-authorized Running -> Stalled transition, preserve canonical Thread and
+    root Agent Task identities, current owner and coordination state, last productive evidence,
+    phase estimate and hard stop when present, anomaly or progress gap, diagnostic owner, and
+    next investigation action. Stalled consumes no Starting-plus-Running capacity.
+  - Apply the Coordinator's evidence-backed Stalled disposition atomically by restoring Running
+    only when the same canonical owner demonstrably resumes safely; restore Ready with Owner
+    Unowned when ownership has ended and normal redispatch is required; set Blocked when a
+    concrete cause and Coordinator-owned next action are known; set User Action Required when
+    a concrete user-owned action is required; or record the applicable terminal disposition.
+  - For a Coordinator-authorized Blocked transition, set Owner to Unowned and retain the exact
+    blocker, blocker owner, unblock condition, requested recovery action, preserved commits and
+    evidence, resource disposition, and safe-to-resume assessment.
   - Apply the applicable selected skill to capture or promote an idea, or to create, assign,
-    resume, block, complete, fail, archive, or report an ordinary item without changing
+    resume, stall, block, complete, fail, archive, or report an ordinary item without changing
     unrelated state.
   - Preserve ordinary implementation and delivery references while requiring the configured
     completion evidence before closing or archiving an ordinary work item.

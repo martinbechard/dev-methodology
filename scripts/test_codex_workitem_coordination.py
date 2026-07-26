@@ -11,6 +11,7 @@ import yaml
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
+README_PATH = REPOSITORY_ROOT / "README.md"
 SKILL_PATH = REPOSITORY_ROOT / "skills" / "codex-workitem-coordination" / "SKILL.md"
 MANAGE_FILE_WORK_ITEMS_PATH = REPOSITORY_ROOT / "skills" / "manage-file-work-items" / "SKILL.md"
 COORDINATOR_ROLE_PATH = (
@@ -22,6 +23,17 @@ ORCHESTRATOR_ROLE_PATH = (
 STEWARD_ROLE_PATH = (
     REPOSITORY_ROOT / "agents" / "roles" / "dev-activities" / "dev-backlog-steward.role.yaml"
 )
+WATCHDOG_ROLE_PATH = (
+    REPOSITORY_ROOT / "agents" / "roles" / "dev-activities" / "dev-backlog-watchdog.role.yaml"
+)
+HISTORICAL_PARENT_TASK_ID = "019f8b00-e6d7-7841-854a-40a50ca4e7f2"
+HISTORICAL_REPOSITORY_ROOT = "/Users/martinbechard/dev/dev-methodology"
+HISTORICAL_STANDING_PROMPT = """Act as the dedicated read-only Dev Methodology backlog watchdog for parent task 019f8b00-e6d7-7841-854a-40a50ca4e7f2 in /Users/martinbechard/dev/dev-methodology.
+
+Apply skills/codex-workitem-coordination/SKILL.md, especially Dedicated Read-Only Watchdog and Fifteen-Minute Parent Review. On each cycle, read current file-backed work items, Git state, configured claim registry state, and Codex task state. Evaluate Running capacity and vacancies, phases and age, estimates/hard stops/evidence progress, Blocked unblock conditions, accepted work stranded before integration, integrated work awaiting provider closeout, terminal cleanup anomalies, waits at or beyond 30 minutes, and unsafe/stale/broad shared ownership.
+
+Remain strictly read-only. Do not mutate repository files, lifecycle state, claims, tasks, branches, worktrees, or shared resources; do not dispatch, integrate, clean up, or run expensive/live verification. Notify parent task 019f8b00-e6d7-7841-854a-40a50ca4e7f2 only when an actionable condition exists, with exact evidence and the smallest recommended parent action. When healthy, record only a concise no-action cycle result here."""
+HISTORICAL_HEARTBEAT_PROMPT = """Run one complete read-only watchdog cycle now using the task's standing contract. Notify parent task 019f8b00-e6d7-7841-854a-40a50ca4e7f2 only if an actionable condition exists; otherwise record a concise no-action cycle note here."""
 _GENERATED_COORDINATOR_ADAPTERS = tuple(
     REPOSITORY_ROOT / "generated" / "adapters" / adapter / "agents" / filename
     for adapter, filename in (
@@ -83,6 +95,13 @@ def _markdown_section(text: str, heading: str) -> str:
     if marker not in text:
         raise AssertionError(f"missing coordination section: {marker}")
     return text.split(marker, 1)[1].split("\n## ", 1)[0]
+
+
+def _text_template(text: str, heading: str) -> str:
+    """Return one fenced text template immediately below a named heading."""
+
+    section = text.split(heading, 1)[1]
+    return section.split("```text\n", 1)[1].split("\n```", 1)[0]
 
 
 def _present_retired_clauses(text: str, clauses: tuple[str, ...]) -> tuple[str, ...]:
@@ -247,16 +266,18 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
         heading = "### Dedicated Read-Only Watchdog"
         if heading not in cls.skill_text:
             raise AssertionError(f"missing watchdog section: {heading}")
-        cls.watchdog_section = cls.skill_text.split(heading, 1)[1].split("\n## ", 1)[0]
+        watchdog_section = cls.skill_text.split(heading, 1)[1].split("\n## ", 1)[0]
+        cls.watchdog_section = " ".join(watchdog_section.split())
 
     def test_watchdog_is_one_scheduled_read_only_observer(self) -> None:
         required = (
             "assign one dedicated watchdog Task to an Agent",
+            "Dev Backlog Watchdog Role",
             "never performs scheduling or recovery",
             "observes and reports; it is not a Work-item owner, queue entry, active-capacity slot, durable record, or substitute Coordinator",
-            "The watchdog is read-only.",
-            "must not change backlog, claims, task state, branches, or worktrees",
-            "does not create a replacement ledger or duplicate watchdog",
+            "The Watchdog is read-only.",
+            "must not change repository files, provider records, lifecycle state, claims, task state, branches, worktrees, or shared resources",
+            "does not create a replacement ledger or duplicate Watchdog",
         )
         for clause in required:
             with self.subTest(clause=clause):
@@ -265,7 +286,6 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
         for retired_clause in (
             "one dedicated watchdog task",
             "watchdog Thread",
-            "watchdog Role",
             "work-item owner, queue entry, Running slot",
         ):
             with self.subTest(retired_clause=retired_clause):
@@ -284,10 +304,15 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
             with self.subTest(clause=clause):
                 self.assertIn(clause, self.watchdog_section)
 
+        self.assertIn(
+            "When a progress anomaly has a known preventing cause, recommend the Blocked path rather than Stalled.",
+            self.watchdog_section,
+        )
+
     def test_watchdog_alerts_only_for_actionable_attention(self) -> None:
         required = (
             "Notify the parent only when action is required.",
-            "Identify the item or task, the evidence, and the smallest recommended action.",
+            "Identify the affected provider identity or task, observed evidence, reason attention is required, and smallest recommended Coordinator action.",
             "unused capacity with eligible Ready work",
             "without messaging or interrupting the parent",
             "this self-report is its only task-state exception",
@@ -299,7 +324,7 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
 
     def test_watchdog_never_infers_or_mutates_delivery_semantics(self) -> None:
         required = (
-            "must not change backlog, claims, task state, branches, or worktrees",
+            "must not change repository files, provider records, lifecycle state, claims, task state, branches, worktrees, or shared resources",
             "The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, Commit-application, Persistence-closure, integration, and cleanup decision",
         )
         for clause in required:
@@ -369,6 +394,143 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
                     adapter,
                 )
 
+    def test_canonical_watchdog_templates_render_historical_prompts_byte_for_byte(self) -> None:
+        """Only the approved parent-task and repository-root substitutions may vary."""
+
+        standing = _text_template(
+            self.skill_text,
+            "#### Canonical Standing Prompt Template",
+        )
+        heartbeat = _text_template(
+            self.skill_text,
+            "#### Canonical Heartbeat Prompt Template",
+        )
+
+        self.assertEqual(
+            {"{parent_task_id}", "{repository_root}"},
+            set(re.findall(r"\{[^}]+\}", standing)),
+        )
+        self.assertEqual(
+            {"{parent_task_id}"},
+            set(re.findall(r"\{[^}]+\}", heartbeat)),
+        )
+        self.assertEqual(
+            HISTORICAL_STANDING_PROMPT,
+            standing.replace("{parent_task_id}", HISTORICAL_PARENT_TASK_ID).replace(
+                "{repository_root}",
+                HISTORICAL_REPOSITORY_ROOT,
+            ),
+        )
+        self.assertEqual(
+            HISTORICAL_HEARTBEAT_PROMPT,
+            heartbeat.replace("{parent_task_id}", HISTORICAL_PARENT_TASK_ID),
+        )
+
+    def test_watchdog_role_is_read_only_simple_and_outside_work_item_capacity(self) -> None:
+        """The dedicated role must observe through the coordination contract only."""
+
+        role = yaml.safe_load(WATCHDOG_ROLE_PATH.read_text(encoding="utf-8"))
+        role_text = json.dumps(role, sort_keys=True)
+        self.assertEqual("dev-backlog-watchdog", role["name"])
+        self.assertEqual("never", role["repositoryMutation"])
+        self.assertEqual("read-only", role["isolation"])
+        self.assertEqual("simple", role["modelProfile"])
+        self.assertEqual(
+            {"codex-workitem-coordination"},
+            {next(iter(entry)) for entry in role["skills"]},
+        )
+        self.assertIn("outside provider queue and Starting-plus-Running capacity", role_text)
+        self.assertIn("canonical standing and heartbeat prompt templates", role_text)
+        self.assertEqual(
+            {"cycle result", "actionable parent alert"},
+            {next(iter(entry)) for entry in role["outputContract"]},
+        )
+
+    def test_stalled_and_known_blocker_authority_stays_with_coordinator_and_steward(self) -> None:
+        """Observation, disposition, and provider mutation remain separate authorities."""
+
+        provider = MANAGE_FILE_WORK_ITEMS_PATH.read_text(encoding="utf-8")
+        coordinator = COORDINATOR_ROLE_PATH.read_text(encoding="utf-8")
+        orchestrator = ORCHESTRATOR_ROLE_PATH.read_text(encoding="utf-8")
+        steward = STEWARD_ROLE_PATH.read_text(encoding="utf-8")
+        contract = "\n".join(
+            (self.skill_text, provider, coordinator, orchestrator, steward)
+        )
+        normalized_contract = " ".join(contract.split())
+        for clause in (
+            "STALLED: current evidence indicates that the item is not making progress while the causal blocker or unblock condition remains unknown.",
+            "Stalled does not count toward Starting-plus-Running capacity",
+            "same canonical owner demonstrably resumes safely",
+            "ownership has ended and normal redispatch is required",
+            "concrete cause and Coordinator-owned next action are known",
+            "concrete user-owned action is required",
+            "Dev Backlog Coordinator is the lifecycle decision owner for Blocked",
+            "Dev Backlog Steward performs the atomic provider mutation",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(" ".join(clause.split()), normalized_contract)
+
+    def test_file_provider_series_and_archive_rules_keep_stalled_nonterminal(self) -> None:
+        """Series and archive rules must not collapse Stalled into terminal failure."""
+
+        provider = " ".join(
+            MANAGE_FILE_WORK_ITEMS_PATH.read_text(encoding="utf-8").split()
+        )
+        for clause in (
+            "active while any required child remains Ready, Starting, Running, or Awaiting Review",
+            "stalled when every required nonterminal child is Stalled",
+            "report the exact child-state inventory",
+            "Stalled is nonterminal and cannot be archived directly",
+            "first record Failed or Abandoned with the applicable terminal evidence",
+            "matching backlog/failed-backlog type folder",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(" ".join(clause.split()), provider)
+
+    def test_file_provider_active_folders_include_stalled_inventory(self) -> None:
+        """Folder guidance must not imply that Stalled leaves typed active work."""
+
+        provider = " ".join(
+            MANAGE_FILE_WORK_ITEMS_PATH.read_text(encoding="utf-8").split()
+        )
+        self.assertIn(
+            "Active typed folders contain dispatchable work, non-dispatchable "
+            "unknown-cause Stalled work, or work Blocked by an explicit "
+            "non-user dependency.",
+            provider,
+        )
+
+    def test_orchestrator_known_blocker_handoff_is_immediate_and_complete(self) -> None:
+        """A known blocker must be reported rather than left for watchdog discovery."""
+
+        orchestrator = " ".join(
+            ORCHESTRATOR_ROLE_PATH.read_text(encoding="utf-8").split()
+        )
+        coordinator = " ".join(
+            COORDINATOR_ROLE_PATH.read_text(encoding="utf-8").split()
+        )
+        normalized_orchestrator = " ".join(orchestrator.split())
+        for field in (
+            "provider identity or provider-none task",
+            "canonical Thread",
+            "root Agent Task",
+            "current phase",
+            "exact blocker",
+            "blocker owner",
+            "unblock condition",
+            "requested Coordinator action",
+            "preserved commits and evidence",
+            "resource-ownership disposition",
+            "safe to resume",
+        ):
+            with self.subTest(field=field):
+                self.assertIn(field, normalized_orchestrator)
+        self.assertIn(
+            "immediately notify the parent Dev Backlog Coordinator",
+            orchestrator,
+        )
+        self.assertIn("acknowledge the blocker notification", coordinator)
+
 
 class StartingLifecycleContractTests(unittest.TestCase):
     """Protect the durable startup bridge and mechanical watchdog boundaries."""
@@ -406,6 +568,23 @@ class StartingLifecycleContractTests(unittest.TestCase):
             cls.provider,
             "Blocked Handoff And Resumption",
         )
+        cls.stalled_investigation_section = _markdown_section(
+            cls.coordination,
+            "Stalled Investigation And Blocker Handoff",
+        )
+        cls.provider_recovery_section = _markdown_section(
+            cls.provider,
+            "Recovery Workflow",
+        )
+        coordinator_role = yaml.safe_load(
+            COORDINATOR_ROLE_PATH.read_text(encoding="utf-8")
+        )
+        cls.coordinator_decisions = " ".join(
+            " ".join(coordinator_role["instructions"]["decisions"]).split()
+        )
+        cls.coordinator_workflow = " ".join(
+            " ".join(coordinator_role["instructions"]["workflow"]).split()
+        )
 
     def test_starting_counts_against_capacity_and_prevents_duplicate_start(self) -> None:
         required = (
@@ -439,6 +618,94 @@ class StartingLifecycleContractTests(unittest.TestCase):
             "Starting counts against capacity exactly like Running",
             self.provider_dispatch_section,
         )
+
+    def test_stalled_resume_reconciles_capacity_atomically(self) -> None:
+        """A refilled vacancy cannot become an eleventh active work item."""
+
+        required = (
+            "Stalled -> Running",
+            "same serialized provider transaction",
+            "Starting-plus-Running count is below ten",
+            "preserve Stalled",
+        )
+        stalled_sections = "\n".join((self.coordination, self.provider))
+        for clause in required:
+            with self.subTest(clause=clause):
+                self.assertIn(clause, stalled_sections)
+
+    def test_retained_stalled_owner_cannot_resume_before_recorded_decision(self) -> None:
+        """Retained execution identity is recovery context, not mutation authority."""
+
+        required = (
+            "A retained Stalled owner must not resume repository or provider mutation",
+            "Coordinator decides Stalled -> Running",
+            "Dev Backlog Steward records that transition",
+        )
+        for source in (self.coordination, self.provider):
+            for clause in required:
+                with self.subTest(source=source[:20], clause=clause):
+                    self.assertIn(clause, source)
+
+    def test_task_anomalies_require_reconciliation_before_lifecycle_choice(self) -> None:
+        """Task-state anomalies cannot supply Stalled evidence or release capacity."""
+
+        required_contract = (
+            "A failed, stopped, or missing canonical task in Starting or Running "
+            "is an execution-identity anomaly, not Stalled evidence.",
+            "Before any lifecycle choice, reconcile the canonical task, provider "
+            "reservation or record, and ownership.",
+            "The anomaly alone never authorizes Stalled or release of "
+            "Starting-plus-Running capacity.",
+            "Only after that reconciliation validates a separate known preventing "
+            "cause may the Coordinator route Blocked.",
+        )
+        canonical_sources = {
+            "coordination Stalled branch": " ".join(
+                self.stalled_investigation_section.split()
+            ),
+            "file-provider recovery": " ".join(
+                self.provider_recovery_section.split()
+            ),
+            "Coordinator decisions": self.coordinator_decisions,
+        }
+        for source_name, source in canonical_sources.items():
+            for clause in required_contract:
+                with self.subTest(source=source_name, clause=clause):
+                    self.assertIn(clause, source)
+
+        workflow_contract = (
+            "When a Starting or Running canonical task is failed, stopped, or "
+            "missing, reconcile the canonical task, provider reservation or record, "
+            "and ownership before any lifecycle choice. Do not ask Dev Backlog "
+            "Steward to record Stalled or release capacity from the anomaly itself. "
+            "Only after reconciliation validates a separate known preventing cause "
+            "may the Coordinator ask Dev Backlog Steward to record Blocked."
+        )
+        self.assertIn(workflow_contract, self.coordinator_workflow)
+
+    def test_active_folder_model_names_stalled_and_blocked_items(self) -> None:
+        """Active typed folders retain both causal states without misclassification."""
+
+        normalized_provider = " ".join(self.provider.split())
+        self.assertIn(
+            "Active typed folders contain dispatchable work, non-dispatchable "
+            "unknown-cause Stalled work, or work Blocked by an explicit non-user "
+            "dependency.",
+            normalized_provider,
+        )
+
+    def test_readme_states_the_exact_lifecycle_authority_split(self) -> None:
+        """The public overview must not assign every disposition to one role."""
+
+        readme = README_PATH.read_text(encoding="utf-8")
+        for clause in (
+            "Dev Backlog Coordinator owns queue decisions, Ready -> Starting reservations, and Stalled or Blocked dispositions",
+            "root Dev Orchestrator owns Starting -> Running acceptance and terminal closure requests",
+            "Dev Backlog Steward performs each authorized provider mutation",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, readme)
+        self.assertNotIn("owns every lifecycle disposition", readme)
 
     def test_start_acceptance_and_recovery_preserve_ownership_evidence(self) -> None:
         required = (
@@ -554,12 +821,13 @@ class StartingLifecycleContractTests(unittest.TestCase):
         required = (
             "active quiet tasks",
             "explicit deadline or hard stop",
-            "must not change backlog, claims, task state, branches, or worktrees",
+            "must not change repository files, provider records, lifecycle state, claims, task state, branches, worktrees, or shared resources",
             "The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, Commit-application, Persistence-closure, integration, and cleanup decision",
         )
+        normalized_coordination = " ".join(self.coordination.split())
         for clause in required:
             with self.subTest(clause=clause):
-                self.assertIn(clause, self.coordination)
+                self.assertIn(clause, normalized_coordination)
 
 
 class AwaitingReviewPersistenceContractTests(unittest.TestCase):

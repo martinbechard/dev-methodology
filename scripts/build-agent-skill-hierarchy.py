@@ -35,6 +35,7 @@ ROLE_DISPLAY_ACRONYMS = {"e2e": "E2E", "qa": "QA", "ux": "UX"}
 BACKLOG_MANAGEMENT_ROLES = (
     "dev-backlog-coordinator",
     "dev-backlog-steward",
+    "dev-backlog-watchdog",
     "dev-orchestrator",
 )
 

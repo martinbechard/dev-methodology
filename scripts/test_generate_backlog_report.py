@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
 # Summary: Verifies backlog report inventory, Future Ideas authority, reconciliation, ordering, and offline HTML output.
-# Governing backlog items: backlog/feature-backlog/add-styled-backlog-report-with-user-input.md and backlog/feature-backlog/add-lightweight-future-ideas-capture.md
+# Governing backlog items: backlog/feature-backlog/add-styled-backlog-report-with-user-input.md, backlog/feature-backlog/add-lightweight-future-ideas-capture.md, and backlog/feature-backlog/add-dedicated-watchdog-and-stalled-lifecycle.md
 
 """Focused tests for the styled backlog report generator."""
 
@@ -18,6 +18,20 @@ from unittest import mock
 
 
 SCRIPT_PATH = Path(__file__).with_name("generate-backlog-report.py")
+EXAMPLE_PATH = SCRIPT_PATH.parent.parent / "backlog" / "examples" / "styled-backlog-report.html"
+_COMPLETE_STALLED_EVIDENCE = {
+    "Last Known Productive Evidence": "Candidate commit retained.",
+    "Phase Estimate": "Not present",
+    "Hard Stop": "Not present",
+    "Anomaly or Progress Gap": "No evidence-bearing output after the focused test began.",
+    "Canonical Thread": "thread-stalled-fixture",
+    "Root Agent Task": "task-stalled-fixture",
+    "Current Ownership and Coordination State": (
+        "Dev Orchestrator retains the canonical worktree; no active file claim."
+    ),
+    "Diagnostic Owner": "Dev Backlog Coordinator",
+    "Next Investigation Action": "Inspect the retained focused-test trace.",
+}
 SPEC = importlib.util.spec_from_file_location("generate_backlog_report", SCRIPT_PATH)
 assert SPEC and SPEC.loader
 REPORT = importlib.util.module_from_spec(SPEC)
@@ -49,6 +63,11 @@ class BacklogReportTest(unittest.TestCase):
         context: str = "Fixture context.",
         completion: str = "direct-main",
         include_open_questions: bool = True,
+        owner: str = "",
+        diagnostic_owner: str = "",
+        next_investigation_action: str = "",
+        source_evidence: str = "",
+        stalled_evidence: dict[str, str] | None = None,
         extra: str = "",
     ) -> None:
         """Write one complete backlog item with optional queue-specific sections."""
@@ -57,6 +76,29 @@ class BacklogReportTest(unittest.TestCase):
         open_questions = (
             "## Open Questions\n\nNone\n\n" if include_open_questions else ""
         )
+        lifecycle_fields = "".join(
+            (
+                f"\nOwner: {owner}\n" if owner else "",
+                f"\nDiagnostic Owner: {diagnostic_owner}\n"
+                if diagnostic_owner
+                else "",
+                f"\nNext Investigation Action: {next_investigation_action}\n"
+                if next_investigation_action
+                else "",
+            )
+        )
+        source_evidence_section = (
+            f"## Source Evidence\n\n{source_evidence}\n\n"
+            if source_evidence
+            else ""
+        )
+        stalled_evidence_section = ""
+        if stalled_evidence is not None:
+            stalled_evidence_section = "## Stalled Evidence\n\n"
+            stalled_evidence_section += "\n".join(
+                f"{name}: {value}" for name, value in stalled_evidence.items()
+            )
+            stalled_evidence_section += "\n\n"
         path.write_text(
             f"""# {title}
 
@@ -69,6 +111,7 @@ Provider: file
 Provider Reference: {relative}
 
 Completion: {completion}
+{lifecycle_fields}
 
 ## Summary
 
@@ -94,6 +137,8 @@ Summary for {title}.
 
 - Verify it.
 
+{source_evidence_section}
+{stalled_evidence_section}
 {open_questions}
 {extra}""",
             encoding="utf-8",
@@ -534,6 +579,223 @@ Do not implement.
         self.assertIn("backlog/user-action-required/choose.md", rendered)
         self.assertNotIn("<script", rendered.lower())
         self.assertNotIn("https://", rendered.lower())
+
+    def test_stalled_inventory_is_separate_and_shows_diagnostic_action(self) -> None:
+        """Stalled work must not be rendered as runnable or Blocked inventory."""
+
+        self.write_item(
+            "backlog/feature-backlog/suspected-stall.md",
+            title="Suspected Stall",
+            status="Stalled",
+            item_type="Feature",
+            owner="Dev Orchestrator task-17",
+            source_evidence="Focused test output retained at artifacts/test-output.txt.",
+            stalled_evidence={
+                **_COMPLETE_STALLED_EVIDENCE,
+                "Next Investigation Action": "Inspect the last retained test output.",
+            },
+        )
+        self.write_item(
+            "backlog/defect-backlog/known-blocker.md",
+            title="Known Blocker",
+            status="Blocked",
+            item_type="Defect",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("<span>Stalled</span><strong>1</strong>", rendered)
+        stalled_start = rendered.index("Stalled Work")
+        blocked_start = rendered.index("Blocked Work")
+        stalled = rendered[stalled_start:blocked_start]
+        blocked = rendered[blocked_start:rendered.index("Holding", blocked_start)]
+        runnable = rendered[rendered.index("Runnable Work"):stalled_start]
+        self.assertIn("Suspected Stall", stalled)
+        self.assertIn("Diagnostic Owner", stalled)
+        self.assertIn("Dev Backlog Coordinator", stalled)
+        self.assertIn("Next Investigation Action", stalled)
+        self.assertIn("Inspect the last retained test output.", stalled)
+        field_offsets = [
+            stalled.index(f"<dt>{field}</dt>")
+            for field in _COMPLETE_STALLED_EVIDENCE
+        ]
+        self.assertEqual(sorted(field_offsets), field_offsets)
+        self.assertIn("<dt>Phase Estimate</dt><dd>Not present</dd>", stalled)
+        self.assertIn("<dt>Hard Stop</dt><dd>Not present</dd>", stalled)
+        self.assertNotIn("Missing Stalled evidence", rendered)
+        self.assertNotIn("Suspected Stall", runnable)
+        self.assertNotIn("Suspected Stall", blocked)
+        self.assertIn("Known Blocker", blocked)
+
+    def test_semantic_status_badges_are_distinct_and_wcag_aa_conformant(self) -> None:
+        """Critical lifecycle badges need distinct classes and accessible palettes."""
+
+        self.write_item(
+            "backlog/feature-backlog/stalled.md",
+            title="Stalled Item",
+            status="Stalled",
+            item_type="Feature",
+            source_evidence="Retained trace at artifacts/stalled-trace.txt.",
+            stalled_evidence=_COMPLETE_STALLED_EVIDENCE,
+        )
+        self.write_item(
+            "backlog/defect-backlog/blocked.md",
+            title="Blocked Item",
+            status="Blocked",
+            item_type="Defect",
+        )
+        self.write_item(
+            "backlog/user-action-required/decision.md",
+            title="Decision Item",
+            status="User Action Required",
+            item_type="Analysis",
+            extra="""## User Action Required
+
+### Exact Question
+
+Which option should be selected?
+
+### Why Input Is Required
+
+Only the user owns this choice.
+
+### Unattended-Work Boundary
+
+Do not continue without the answer.
+""",
+        )
+
+        rendered = self.generate()
+
+        expected_badges = {
+            "Stalled": "badge-status-stalled",
+            "Blocked": "badge-status-blocked",
+            "User Action Required": "badge-status-user-action-required",
+        }
+        for label, semantic_class in expected_badges.items():
+            with self.subTest(label=label):
+                self.assertIn(
+                    f'<span class="badge badge-status {semantic_class}">{label}</span>',
+                    rendered,
+                )
+                self.assertIn(f".{semantic_class}", rendered)
+        self.assertEqual(3, len(set(expected_badges.values())))
+
+        palettes = {
+            "stalled-light": ("#7a3a0c", "#fff0df"),
+            "blocked-light": ("#8c1d2c", "#fdebed"),
+            "user-action-light": ("#5c3cad", "#f0ebff"),
+            "stalled-dark": ("#ffc39c", "#4e2b18"),
+            "blocked-dark": ("#ffb3bd", "#541f29"),
+            "user-action-dark": ("#d0c1ff", "#35265b"),
+        }
+
+        def relative_luminance(color: str) -> float:
+            channels = [
+                int(color[index : index + 2], 16) / 255
+                for index in (1, 3, 5)
+            ]
+            linear = [
+                channel / 12.92
+                if channel <= 0.04045
+                else ((channel + 0.055) / 1.055) ** 2.4
+                for channel in channels
+            ]
+            return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
+
+        for name, (foreground, background) in palettes.items():
+            with self.subTest(palette=name):
+                lighter, darker = sorted(
+                    (relative_luminance(foreground), relative_luminance(background)),
+                    reverse=True,
+                )
+                self.assertGreaterEqual((lighter + 0.05) / (darker + 0.05), 4.5)
+                self.assertIn(foreground, rendered)
+                self.assertIn(background, rendered)
+
+    def test_stalled_records_require_complete_diagnostic_evidence(self) -> None:
+        """Validation must identify every absent canonical Stalled evidence field."""
+
+        for index, missing_field in enumerate(_COMPLETE_STALLED_EVIDENCE):
+            evidence = dict(_COMPLETE_STALLED_EVIDENCE)
+            del evidence[missing_field]
+            self.write_item(
+                f"backlog/feature-backlog/missing-{index}.md",
+                title=f"Missing {missing_field}",
+                status="Stalled",
+                item_type="Feature",
+                diagnostic_owner="Legacy Diagnostic Owner",
+                next_investigation_action="Legacy next action.",
+                source_evidence="Arbitrary general provenance that is not Stalled evidence.",
+                stalled_evidence=evidence,
+            )
+
+        rendered = self.generate()
+
+        for missing_field in _COMPLETE_STALLED_EVIDENCE:
+            with self.subTest(missing_field=missing_field):
+                self.assertEqual(
+                    1,
+                    rendered.count(f"Missing Stalled evidence: {missing_field}."),
+                )
+        self.assertNotIn("Missing Stalled evidence: Source Evidence.", rendered)
+
+    def test_legacy_stalled_labels_render_but_do_not_satisfy_validation(self) -> None:
+        """Legacy display fields remain visible without replacing canonical evidence."""
+
+        self.write_item(
+            "backlog/feature-backlog/legacy-stalled.md",
+            title="Legacy Stalled",
+            status="Stalled",
+            item_type="Feature",
+            owner="Dev Orchestrator legacy-task",
+            diagnostic_owner="Legacy Diagnostic Owner",
+            next_investigation_action="Inspect the legacy retained trace.",
+            source_evidence="A general source reference.",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn(
+            "<dt>Diagnostic Owner</dt><dd>Legacy Diagnostic Owner</dd>",
+            rendered,
+        )
+        self.assertIn(
+            "<dt>Next Investigation Action</dt>"
+            "<dd>Inspect the legacy retained trace.</dd>",
+            rendered,
+        )
+        for missing_field in _COMPLETE_STALLED_EVIDENCE:
+            with self.subTest(missing_field=missing_field):
+                self.assertIn(
+                    f"Missing Stalled evidence: {missing_field}.",
+                    rendered,
+                )
+
+    def test_committed_example_remains_a_curated_semantic_reference(self) -> None:
+        """The visual fixture must not become a live operational backlog snapshot."""
+
+        example = EXAMPLE_PATH.read_text(encoding="utf-8")
+
+        self.assertIn(
+            "Deterministic curated visual fixture based on generator output. "
+            "This is not current backlog status.",
+            example,
+        )
+        self.assertIn("This example is not current backlog status.", example)
+        self.assertIn(
+            "synthetic-fixture/user-action-required/example-report-audience.md",
+            example,
+        )
+        self.assertIn(
+            "synthetic-fixture/stalled/retained-verification-gap.md",
+            example,
+        )
+        self.assertIn("<dt>Diagnostic Owner</dt>", example)
+        self.assertIn("<dt>Next Investigation Action</dt>", example)
+        for field in _COMPLETE_STALLED_EVIDENCE:
+            with self.subTest(field=field):
+                self.assertIn(f"<dt>{field}</dt>", example)
 
     def test_external_prerequisites_remain_complete_unmet_and_non_runnable(self) -> None:
         """Plain-language prerequisites retain their text and require manual satisfaction."""

@@ -1,0 +1,73 @@
+schema: synthetic-agent-suite-cases
+cases:
+  healthy-quiet-cycle:
+    items:
+      - provider_identity: backlog/feature-backlog/quiet.md
+        status: Running
+        phase: focused verification
+        canonical_thread: thread-quiet
+        root_task: task-quiet
+        last_productive_evidence: focused test started within estimate
+    expectedMessage: No actionable watchdog condition observed.
+  suspected-stall-alert:
+    item:
+      provider_identity: backlog/feature-backlog/suspected.md
+      status: Running
+      phase: integration
+      canonical_thread: thread-suspected
+      root_task: task-suspected
+      last_productive_evidence: candidate commit preserved
+      hard_stop: "2026-07-26T16:30:00Z"
+      hard_stop_crossed: true
+      progress_gap: true
+      progress_observation: no evidence-bearing output for 18 minutes
+    expectedProviderIdentity: backlog/feature-backlog/suspected.md
+    expectedReason: progress boundary crossed while the cause remains unknown
+    expectedAction: Coordinator investigates and delegates Stalled only if the evidence justifies it
+  known-cause-alert:
+    item:
+      provider_identity: backlog/defect-backlog/known-cause.md
+      status: Running
+      phase: integration
+      canonical_thread: thread-known-cause
+      root_task: task-known-cause
+      last_productive_evidence: upstream API returned a permanent authorization error
+      progress_gap: true
+      progress_observation: retry produced the same authorization error
+      preventing_cause: upstream credential is unavailable
+    expectedReason: progress boundary crossed with a known preventing cause
+    expectedAction: Coordinator validates the cause and chooses the Blocked disposition
+  capacity:
+    statuses: [Starting, Running, Stalled, Blocked, User Action Required, Holding]
+    expectedActiveCount: 2
+  satisfied-exit-conditions:
+    items:
+      - provider_identity: backlog/feature-backlog/stalled.md
+        status: Stalled
+        stalled_exit_satisfied: true
+      - provider_identity: backlog/defect-backlog/blocked.md
+        status: Blocked
+        preventing_cause: unavailable upstream fixture
+        blocker_exit_satisfied: true
+    expectedReasons:
+      - Stalled disposition requires Coordinator attention
+      - Blocked recovery requires Coordinator attention
+  stalled-dispositions:
+    sameOwnerResumed:
+      same_owner_resumed: true
+      active_capacity_count: 9
+    sameOwnerResumedAfterRefill:
+      same_owner_resumed: true
+      active_capacity_count: 10
+    ownershipEnded:
+      ownership_ended: true
+    knownBlocker:
+      known_blocker: true
+    userAction:
+      user_action_required: true
+    terminalFailure:
+      terminal_status: Failed
+      terminal_evidence: true
+    terminalWithoutEvidence:
+      terminal_status: Failed
+    insufficientEvidence: {}

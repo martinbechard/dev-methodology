@@ -15,9 +15,12 @@ Use one Dev Backlog Coordinator as the parent dispatcher. Reserve each selected 
 - Git records branches, commits, delivery, and cleanup eligibility; it is not a work-item provider.
 - PROJECT.yaml may load agent-claim. Its registry records active claims but does not prove review, verification, or delivery.
 - Codex Thread state and title are display and execution state, not lifecycle authority.
-- Dev Backlog Coordinator owns provider-routed queue inventory, priority, dispatch, stalled-delivery investigation, and terminal Thread cleanup.
+- Dev Backlog Coordinator owns provider-routed queue inventory, priority, dispatch, Stalled
+  and Blocked lifecycle decisions, stalled-delivery investigation, and terminal Thread cleanup.
 - Dev Orchestrator owns one work item after its root Agent accepts Starting -> Running through delivery or a truthful terminal outcome. It may assign bounded Tasks to Dev Coder, independent reviewer, and verifier child Agents inside that Thread.
 - Dev Backlog Steward applies the effective Persistence-selected management skill for provider inventory and lifecycle mutation. Dev Orchestrator applies the effective Commit-selected skill only after candidate review and verification accept a direct or combined commit.
+- Dev Backlog Watchdog owns scheduled read-only observation and actionable alerts. It never
+  owns provider lifecycle, dispatch, delivery, recovery, claims, or cleanup.
 
 Do not create a separate parent ledger, baton registry, waiting-Task registry, or Thread database. Do not copy this procedure into AGENTS.md or a Dev Orchestrator definition.
 
@@ -37,6 +40,9 @@ For a selected Persistence provider, use its management skill to record these ph
 - applicable claim result, notification, blocking evidence, and owner
 - open issues and the owner of each next action
 - review, verification, Commit disposition, claim release, provider closure, and cleanup evidence as those events occur
+- for Stalled, last productive evidence, phase estimate and hard stop when present, anomaly
+  or progress gap, canonical Thread and root Agent Task identities, current ownership and
+  coordination state, diagnostic owner, and next investigation action
 
 Use the effective Persistence-selected management skill to update a provider record when a material phase changes. Preserve the same canonical Thread identifier, root Agent assignment, and provider identity through corrections, delivery, and closeout. Never infer identity from the Thread title alone.
 
@@ -67,7 +73,13 @@ For a provider that supports queue inventory and lifecycle transitions:
 6. Dispatch only work that can begin implementation or another bounded delivery phase. Do not create a Thread merely to wait for approval, a dependency, a reviewer, a shared resource, or a delivery window.
 7. When an item leaves Starting or Running, fill the active-capacity vacancy promptly through the same Ready -> Starting reservation sequence.
 
-Blocked, User Action Required, Holding, Awaiting Review, Completed, Failed, Abandoned, and Future Ideas do not count toward ten. Future Ideas are not work-item states and enter coordination only after deliberate promotion creates a complete typed work item. If fewer than ten eligible items exist, activate all eligible items and report the shortage instead of manufacturing placeholder work. Provider none does not synthesize a queue or a target of ten from Thread state.
+Stalled, Blocked, User Action Required, Holding, Awaiting Review, Completed, Failed,
+Abandoned, and Future Ideas do not count toward ten. Stalled does not count toward
+Starting-plus-Running capacity while the Coordinator investigates it. Future Ideas are
+not work-item states and enter coordination only after deliberate promotion creates a
+complete typed work item. If fewer than ten eligible items exist, activate all eligible
+items and report the shortage instead of manufacturing placeholder work. Provider none
+does not synthesize a queue or a target of ten from Thread state.
 
 List or validate backlog/future-ideas only when the parent request explicitly includes ideation or promotion and file Persistence applies to that operation. A revisit trigger is free text and never schedules a Thread, fills capacity, or authorizes unattended work.
 
@@ -98,7 +110,7 @@ Create each Dev Orchestrator work-item Thread in an environment where its root A
 - If an ordinary required operation fails because the Agent environment lacks a capability, the Agent stops immediately, preserves its work, and reports the exact failed operation to the parent. It must not request escalation from the user.
 - The parent promptly re-homes the Thread or replaces its root Agent in a compatible environment, asks Dev Backlog Steward to update canonical identifiers through the selected Persistence manager, and fills any resulting Starting-plus-Running vacancy. For provider none it updates only the task-local identity. Do not leave an approval prompt or an execution-incompatible Agent consuming active capacity.
 
-Set a concise plain-text title when the Thread is created and update it only at material phase changes. Use a phase prefix such as Implementing —, Reviewing —, Verifying —, Integrating —, Waiting for Claim —, Waiting for Help —, Waiting for User —, Done —, Blocked —, Failed —, or Abandoned — followed by a short work-item name. Never use raw prompt text, XML or delegation tags, error output, identifiers, or generic titles as the display title. Preserve the stable Thread identifier; the title remains display state and never becomes lifecycle authority or delivery evidence.
+Set a concise plain-text title when the Thread is created and update it only at material phase changes. Use a phase prefix such as Implementing —, Reviewing —, Verifying —, Integrating —, Waiting for Claim —, Waiting for Help —, Waiting for User —, Stalled —, Done —, Blocked —, Failed —, or Abandoned — followed by a short work-item name. Never use raw prompt text, XML or delegation tags, error output, identifiers, or generic titles as the display title. Preserve the stable Thread identifier; the title remains display state and never becomes lifecycle authority or delivery evidence.
 
 ## Starting And Work-Item Thread Ownership
 
@@ -158,37 +170,147 @@ After an expensive failure, classify its failure signature before repeating anyt
 
 If the active unit reaches its hard stop, repeats the same failure, or stops producing useful evidence, stop that unit. Preserve or commit its work. Stop or hand off its shared resources. Follow agent-claim for any active claim. Two unproductive attempts require parent investigation and a revised plan.
 
-## Parent Review Events
+## Stalled Investigation And Blocker Handoff
+
+Stalled is a nonterminal provider lifecycle state for evidence that an item is not making
+progress while the causal blocker or unblock condition remains unknown. Quiet or apparently
+slow work is not Stalled by itself. A source-backed progress gap, crossed estimate or hard
+stop, or other observed progress anomaly must support the classification.
+
+A failed, stopped, or missing canonical task in Starting or Running is an
+execution-identity anomaly, not Stalled evidence. Before any lifecycle choice, reconcile the
+canonical task, provider reservation or record, and ownership. The anomaly alone never
+authorizes Stalled or release of Starting-plus-Running capacity. Only after that
+reconciliation validates a separate known preventing cause may the Coordinator route
+Blocked.
+
+The Dev Backlog Watchdog reports suspected Stalled evidence but never chooses or mutates
+the lifecycle result. Dev Backlog Coordinator decides whether the evidence justifies
+Stalled and asks Dev Backlog Steward to perform the atomic provider mutation. Preserve:
+
+- last known productive evidence
+- phase estimate and hard stop when present
+- the anomaly or evidence-progress gap
+- canonical Thread and root Agent Task identities
+- current ownership and coordination state
+- diagnostic owner
+- next investigation action
+
+Stalled leaves Starting-plus-Running capacity immediately after the selected provider
+records the transition. Fill the vacancy from fresh provider inventory when eligible Ready
+work exists. The canonical Thread, root Agent Task, branch, worktree, commits, and ownership
+evidence remain recovery context rather than active-capacity authority.
+
+Dev Backlog Coordinator chooses exactly one evidence-backed disposition:
+
+1. Restore Running only when the same canonical owner demonstrably resumes safely and the
+   Starting-plus-Running count is below ten. In the same serialized provider transaction,
+   reconcile that current count, reject the transition and preserve Stalled when no slot is
+   available, and otherwise record the renewed evidence without exceeding capacity.
+2. Restore Ready when ownership has ended and normal redispatch is required. Any later
+   execution proceeds through Ready -> Starting -> Running.
+3. Set Blocked when a concrete cause and Coordinator-owned next action are known.
+4. Set User Action Required when a concrete user-owned action is required and the record
+   contains the exact question and unattended-work boundary.
+5. Record an applicable terminal disposition when delivery or failure evidence satisfies
+   that terminal contract.
+
+A retained Stalled owner must not resume repository or provider mutation until Dev Backlog
+Coordinator decides Stalled -> Running and Dev Backlog Steward records that transition.
+
+Blocked is a known preventing cause awaiting Coordinator-owned coordination, recovery, or
+disposition. Dev Backlog Coordinator is the lifecycle decision owner for Blocked. Dev
+Backlog Steward performs the atomic provider mutation. Do not use Blocked because a task is
+quiet, appears slow, or lacks a recognized cause.
+
+When Dev Orchestrator recognizes a concrete blocker, it stops unsafe work, preserves commits
+and evidence, obtains truthful resource disposition, and immediately notifies the parent Dev
+Backlog Coordinator. The notification contains:
+
+- provider identity or provider-none task
+- canonical Thread and root Agent Task identifiers
+- current phase
+- exact blocker and blocker owner
+- unblock condition
+- requested Coordinator action
+- preserved commits and evidence
+- resource-ownership disposition
+- whether the item remains safe to resume
+
+The Coordinator acknowledges the notification, validates the handoff, chooses an authorized
+coordination or recovery action, and asks Dev Backlog Steward to record Blocked when that is
+the truthful provider disposition. After the provider state changes, remove the item from
+active capacity, dispatch eligible replacement work, and retain Coordinator responsibility
+until the blocker is resolved, routed to User Action Required, or terminally dispositioned.
+Coordinator inability alone does not create a user obligation; an unresolved technical or
+external blocker remains Blocked with an exact owner and unblock condition.
+
+## Fifteen-Minute Parent Review
 
 Dev Backlog Coordinator obtains fresh inventory and reviews the queue when:
 
-- a work item enters or leaves Starting or Running;
+- a work item enters or leaves Starting, Running, Stalled, or Blocked;
 - a task stops, fails, times out, or reports a blocker;
 - a review, verification, Commit, or Persistence result arrives;
 - a user answers a recorded question;
 - a claim owner sends a release or recovery notification; or
 - the watchdog reports an actionable condition.
 
-During that review, reconcile active capacity, eligible Ready work, dependencies, accepted commits awaiting delivery, completed deliveries awaiting closeout, task identity, and applicable claim results. Make any scheduling or recovery adjustment supported by the evidence. The selected provider records hold durable follow-up facts; provider none retains only task-local evidence. Do not create a second registry.
+During that review, reconcile active capacity, eligible Ready work, Stalled and Blocked
+inventory, actionable Stalled evidence, dependencies, accepted commits awaiting delivery,
+completed deliveries awaiting closeout, task identity, and applicable claim results. Make
+any scheduling or recovery adjustment supported by the evidence. The selected provider
+records hold durable follow-up facts; provider none retains only task-local evidence. Do
+not create a second registry.
 
 ### Dedicated Read-Only Watchdog
 
-When the user requests background supervision for a sustained queue, the parent may assign one dedicated watchdog Task to an Agent. The watchdog never performs scheduling or recovery. It observes and reports; it is not a Work-item owner, queue entry, active-capacity slot, durable record, or substitute Coordinator.
+When the user requests background supervision for a sustained queue, the parent may assign one dedicated watchdog Task to an Agent operating under the Dev Backlog Watchdog Role. The watchdog never performs scheduling or recovery. It observes and reports; it is not a Work-item owner, queue entry, active-capacity slot, durable record, or substitute Coordinator.
+
+#### Canonical Standing Prompt Template
+
+```text
+Act as the dedicated read-only Dev Methodology backlog watchdog for parent task {parent_task_id} in {repository_root}.
+
+Apply skills/codex-workitem-coordination/SKILL.md, especially Dedicated Read-Only Watchdog and Fifteen-Minute Parent Review. On each cycle, read current file-backed work items, Git state, configured claim registry state, and Codex task state. Evaluate Running capacity and vacancies, phases and age, estimates/hard stops/evidence progress, Blocked unblock conditions, accepted work stranded before integration, integrated work awaiting provider closeout, terminal cleanup anomalies, waits at or beyond 30 minutes, and unsafe/stale/broad shared ownership.
+
+Remain strictly read-only. Do not mutate repository files, lifecycle state, claims, tasks, branches, worktrees, or shared resources; do not dispatch, integrate, clean up, or run expensive/live verification. Notify parent task {parent_task_id} only when an actionable condition exists, with exact evidence and the smallest recommended parent action. When healthy, record only a concise no-action cycle result here.
+```
+
+#### Canonical Heartbeat Prompt Template
+
+```text
+Run one complete read-only watchdog cycle now using the task's standing contract. Notify parent task {parent_task_id} only if an actionable condition exists; otherwise record a concise no-action cycle note here.
+```
+
+Substitute only the resolved parent task identifier and repository root shown by these
+placeholders. Supply provider and resource-coordination variation through resolved task
+context without rewriting the canonical prompt text.
 
 When the watchdog runs, it reads provider inventory, Git state, and task state. For provider none, it reads only task state. When agent-claim is loaded, it also reads the claim registry. It alerts on every stopped, failed, or missing canonical task for a Starting or Running item, every stopped task with a live claim, and every terminal item with a live claim. It also evaluates:
 
 - every Running phase against its published estimate, hard stop, and latest evidence-bearing progress
+- every suspected stall and every Stalled item's diagnostic evidence and exit conditions
 - every Blocked item's exact blocker and unblock condition against current evidence
 - accepted work stranded before Commit delivery, READY Commit delivery awaiting provider closeout, and terminal work awaiting cleanup
 - stale, unsafe, or unnecessarily broad claims when agent-claim is loaded
 
-The watchdog is read-only. It reports evidence and recommended actions. It must not change backlog, claims, task state, branches, or worktrees; dispatch work; perform cleanup; or run expensive or live verification.
+The Watchdog is read-only. It reports evidence and recommended actions. It must not change repository files, provider records, lifecycle state, claims, task state, branches, worktrees, or shared resources. It must not dispatch work, integrate changes, perform cleanup, or run expensive or live verification.
 
-Notify the parent only when action is required. Identify the item or task, the evidence, and the smallest recommended action. Examples include a satisfied unblock condition, unused capacity with eligible Ready work, overdue work, stranded accepted work, pending terminal closeout, an unsafe claim, or a task-identity or cleanup problem.
+When a progress anomaly has a known preventing cause, recommend the Blocked path rather than
+Stalled. Recommend Stalled investigation only while the causal blocker or unblock condition
+remains unknown.
+
+Notify the parent only when action is required. Identify the affected provider identity or
+task, observed evidence, reason attention is required, and smallest recommended Coordinator
+action. Examples include suspected Stalled work, a satisfied Stalled or Blocked exit
+condition, unused capacity with eligible Ready work, overdue work, stranded accepted work,
+pending terminal closeout, an unsafe claim, or a task-identity or cleanup problem. The
+Watchdog recommends action but never chooses the lifecycle result.
 
 Treat active quiet tasks as healthy absent an explicit deadline or hard stop. Silence, title age, or lack of a recent message is not evidence of failure. When a configured hard stop is overdue, report the read-only deadline and cleanup-grace evidence without deciding delivery state.
 
-When no intervention is needed, the watchdog may emit its own concise no-action cycle result without messaging or interrupting the parent; this self-report is its only task-state exception. The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, Commit-application, Persistence-closure, integration, and cleanup decision. If the watchdog or its schedule is unavailable, the parent performs the review directly; it does not create a replacement ledger or duplicate watchdog.
+When no intervention is needed, the watchdog emits one concise no-action cycle result without messaging or interrupting the parent; this self-report is its only task-state exception. The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, Commit-application, Persistence-closure, integration, and cleanup decision. If the Watchdog or its schedule is unavailable, the parent performs the review directly; it does not create a replacement ledger or duplicate Watchdog.
 
 ## User Decisions And Terminal State
 

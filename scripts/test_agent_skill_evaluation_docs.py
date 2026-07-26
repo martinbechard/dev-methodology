@@ -105,9 +105,9 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
 
         self.assertEqual(125, summary["skillCount"])
         self.assertEqual(125, summary["probeCount"])
-        self.assertEqual(27, summary["roleCount"])
-        self.assertEqual(27, summary["suiteCount"])
-        self.assertEqual(90, summary["currentScenarioCount"])
+        self.assertEqual(28, summary["roleCount"])
+        self.assertEqual(28, summary["suiteCount"])
+        self.assertEqual(93, summary["currentScenarioCount"])
         self.assertEqual(26, campaign["suiteCount"])
         self.assertEqual(78, campaign["scenarioCount"])
         self.assertEqual({"PASS": 52, "BLOCKED": 17, "FAIL": 9}, campaign["verdicts"])
@@ -118,7 +118,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         summary = self.model["summary"]
         agents = {agent["id"]: agent for agent in self.model["agents"]}
 
-        self.assertEqual(12, summary["missingScenarioResults"])
+        self.assertEqual(15, summary["missingScenarioResults"])
         self.assertEqual(78, summary["historicalIdOnlyResults"])
         self.assertEqual(0, summary["snapshotAlignedResults"])
         self.assertEqual(0, summary["definitionDriftResults"])
@@ -435,7 +435,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
     def test_static_page_contains_every_entry_without_javascript(self) -> None:
         """Generated details must remain complete when the optional filter script is absent."""
         self.assertEqual(125, self.page.count('class="evaluation-card skill-card"'))
-        self.assertEqual(27, self.page.count('class="evaluation-card agent-card"'))
+        self.assertEqual(28, self.page.count('class="evaluation-card agent-card"'))
         self.assertNotRegex(self.page, r'<(?:article|section)[^>]+\shidden(?:\s|>)')
         self.assertIn('<script src="documentation-settings.js"></script>', self.page)
         self.assertIn('<script src="agent-and-skill-evaluations.js"></script>', self.page)

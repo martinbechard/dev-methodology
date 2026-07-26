@@ -370,6 +370,7 @@ packs:
     agents:
       - dev-backlog-coordinator
       - dev-backlog-steward
+      - dev-backlog-watchdog
     skillProbes:
       - probe-agent-claim
       - probe-codex-workitem-coordination
@@ -399,6 +400,13 @@ packs:
         requiredEvidence:
           - exact primary baton commits, release events, designated successor, and parent wake obligations
           - three healthy non-overlapping active artifact campaigns before plus-one scaling
+      - id: read-only-watchdog-observation
+        agents:
+          - dev-backlog-watchdog
+        requiredEvidence:
+          - canonical standing and heartbeat prompt rendering
+          - one concise no-action result or one actionable parent alert
+          - unchanged provider, claim, task, Git, branch, worktree, and resource state
       - id: classify-and-create
         agents:
           - dev-backlog-steward

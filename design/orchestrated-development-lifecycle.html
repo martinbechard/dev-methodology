@@ -233,7 +233,7 @@
     .definition-list dt { color: var(--ink); font-weight: 850; }
     .definition-list dd { margin: 0; color: var(--muted); }
     .status-figure, .branch-figure, .resource-figure, .sequence-figure,
-    .thread-model-figure, .steward-sequence-figure {
+    .thread-model-figure, .steward-sequence-figure, .watchdog-cycle-figure {
       margin: 2rem 0 0;
       padding: clamp(1.2rem, 3vw, 2rem);
       border: 1px solid var(--line);
@@ -254,10 +254,41 @@
     .state-node.pause { background: var(--soft-amber); color: #754300; }
     .state-node.stop { background: var(--soft-coral); color: #7d2433; }
     .state-arrow { color: var(--teal-deep); font-size: 1.35rem; font-weight: 900; text-align: center; }
+    .task-execution-anomaly {
+      margin-top: 1rem;
+      padding: 1.1rem;
+      border: 1px solid var(--line);
+      border-left: 0.35rem solid var(--blue);
+      border-radius: 0.55rem;
+      background: var(--soft-blue);
+    }
+    .task-execution-anomaly h3 { display: flex; flex-wrap: wrap; gap: 0.45rem 0.8rem; align-items: baseline; }
+    .task-execution-anomaly h3 span {
+      color: var(--blue);
+      font-family: var(--utility);
+      font-size: 0.7rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .task-anomaly-flow {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.8rem;
+      margin: 1rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .task-anomaly-flow li { padding: 0.9rem; border: 1px solid var(--line); background: var(--panel); }
+    .task-anomaly-flow strong { display: block; margin-bottom: 0.3rem; color: var(--ink); }
+    .task-anomaly-flow p + p { margin-top: 0.5rem; }
     .state-branches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem; }
     .state-branches div { padding: 1rem; border-top: 0.28rem solid var(--amber); background: var(--soft-amber); }
     .state-branches div:nth-child(2) { border-color: var(--coral); background: var(--soft-coral); }
     .state-branches div:nth-child(3) { border-color: var(--violet); background: var(--soft-violet); }
+    .stalled-dispositions { display: grid; gap: 0.5rem; margin: 1rem 0 0; padding-left: 1.4rem; }
+    .stalled-dispositions li { padding-left: 0.35rem; color: var(--muted); }
+    .stalled-dispositions strong { color: var(--ink); }
     .state-branches strong { display: block; margin-bottom: 0.3rem; }
     .folder-tree {
       margin: 0;
@@ -292,6 +323,12 @@
     .role-card:nth-child(3n) { border-color: var(--violet); background: var(--soft-violet); }
     .role-card h3 { margin-bottom: 0.35rem; }
     .thread-context { margin-top: 1rem; padding: 1rem 1.2rem; border-left: 0.3rem solid var(--blue); background: var(--soft-blue); }
+    .blocker-handoff-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; }
+    .blocker-handoff-grid h4 { margin-bottom: 0.45rem; }
+    .blocker-handoff-grid ol, .blocker-handoff-grid dl { margin: 0; padding-left: 1.2rem; }
+    .blocker-handoff-grid li { margin-bottom: 0.35rem; }
+    .blocker-handoff-grid dt { color: var(--ink); font-weight: 800; }
+    .blocker-handoff-grid dd { margin: 0 0 0.35rem; color: var(--muted); }
     .thread-map {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 5rem minmax(0, 1fr);
@@ -424,7 +461,8 @@
       .lifecycle-rail ol::before { display: none; }
       .state-map { grid-template-columns: 1fr; }
       .state-arrow { transform: rotate(90deg); }
-      .state-branches, .delivery-paths, .design-progression { grid-template-columns: 1fr; }
+      .task-anomaly-flow { grid-template-columns: 1fr; }
+      .state-branches, .delivery-paths, .design-progression, .blocker-handoff-grid { grid-template-columns: 1fr; }
       .thread-map { grid-template-columns: 1fr; }
       .thread-dispatch b { transform: rotate(90deg); }
       .terminology-key { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -581,15 +619,32 @@
     </div>
     <figure class="status-figure" aria-labelledby="status-title">
       <figcaption id="status-title">Work-Item Status<span>Type stays stable; status changes as authority, dependencies, execution, and delivery change.</span></figcaption>
-      <div class="state-map" role="img" aria-label="Ready moves to Starting, then Running, then Awaiting Review, then Completed. Starting and Running are active states. User Action Required and Holding pause before Ready. Blocked can return active work to Ready. Failed and Abandoned are terminal outcomes.">
+      <div class="state-map" role="img" aria-label="Ready moves to Starting, then Running, then Awaiting Review, then Completed. Starting and Running are active states. A failed, stopped, or missing Starting or Running canonical task is a Task/execution anomaly, not a lifecycle state. Reconcile the canonical task, provider record or reservation, and ownership before any lifecycle choice. The anomaly alone does not release Starting-plus-Running capacity or justify Stalled. Only a separately proved unknown progress gap may become Stalled. Only a separately validated known cause may become Blocked. User Action Required and Holding pause before Ready. Failed and Abandoned are terminal outcomes.">
         <div class="state-node active">Ready</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Starting</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Running</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Awaiting Review</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Completed</div>
       </div>
       <p class="source-note">After completion, a file provider may move the item to its archive location. Archive placement is not another lifecycle status.</p>
+      <aside class="task-execution-anomaly" aria-labelledby="task-execution-anomaly-title">
+        <h3 id="task-execution-anomaly-title">Task/execution anomaly <span>Not a lifecycle state</span></h3>
+        <ol class="task-anomaly-flow" aria-label="Task/execution anomaly reconciliation flow">
+          <li><strong>Observe anomaly</strong><p>A failed, stopped, or missing canonical task for a Starting or Running item is execution evidence, not a lifecycle state.</p></li>
+          <li><strong>Reconcile identity</strong><p>Reconcile the canonical task, provider record or reservation, and ownership before any lifecycle choice.</p><p>The anomaly alone does not release Starting-plus-Running capacity or justify Stalled.</p></li>
+          <li><strong>Evaluate separate evidence</strong><p>Only a separately proved unknown progress gap may become Stalled.</p><p>Only a separately validated known cause may become Blocked.</p></li>
+        </ol>
+      </aside>
       <div class="state-branches">
         <div><strong>User Action Required</strong><p>A concrete user-owned decision must be answered before work becomes Ready.</p></div>
-        <div><strong>Blocked</strong><p>A fixed dependency or exhausted correction boundary stops useful execution until its condition changes.</p></div>
+        <div><strong>Stalled</strong><p>Progress stopped for an unknown reason. The owner and diagnostic next action remain recorded, but the item leaves Starting-plus-Running capacity while the Coordinator investigates.</p></div>
+        <div><strong>Blocked</strong><p>The Coordinator identified the preventing cause and recorded an observable unblock condition.</p></div>
         <div><strong>Holding · Failed · Abandoned</strong><p>Holding defers real work. Failed and Abandoned are truthful terminal outcomes, not hidden retries.</p></div>
       </div>
+      <h3>Stalled Dispositions</h3>
+      <ol class="stalled-dispositions">
+        <li><strong>Restore Running</strong> only when same-owner work demonstrably resumed and capacity permits.</li>
+        <li><strong>Restore Ready</strong> after execution ownership ends.</li>
+        <li><strong>Record Blocked</strong> when the preventing cause and unblock condition are known.</li>
+        <li><strong>Record User Action Required</strong> for one exact user-owned action.</li>
+        <li><strong>Select Terminal Outcome</strong> only from sufficient evidence for Completed, Failed, or Abandoned.</li>
+      </ol>
     </figure>
   </section>
 
@@ -628,6 +683,7 @@
       <figcaption id="agent-role-title">Lifecycle Roles<span>A Role defines authority; an Agent is the runtime instance applying that Role in one Thread.</span></figcaption>
       <div class="role-cards">
         <article class="role-card"><h3>Dev Backlog Coordinator</h3><p>The parent coordination Agent reserves capacity, dispatches one Thread per Work item, reconciles duplicates, and cleans up terminal execution contexts.</p></article>
+        <article class="role-card"><h3>Dev Backlog Watchdog</h3><p>A standing read-only Agent observes provider and execution evidence, stays quiet on healthy cycles, and alerts the Coordinator only when investigation or disposition is required.</p></article>
         <article class="role-card"><h3>Dev Orchestrator</h3><p>The root Agent in a work-item Thread owns production, review, verification, integration, and the terminal provider request.</p></article>
         <article class="role-card"><h3>Dev Backlog Steward</h3><p>A child Agent performs atomic provider lifecycle updates for its Coordinator or Orchestrator without taking over delivery.</p></article>
         <article class="role-card"><h3>Production And Implementation Agents</h3><p>These child Agents complete bounded coding, writing, design, or other production assignments and return committed evidence.</p></article>
@@ -638,11 +694,12 @@
     </figure>
     <figure class="thread-model-figure" aria-labelledby="thread-model-title">
       <figcaption id="thread-model-title">Threads Contain Agents<span>Roles describe responsibility. Agents perform bounded assignments inside execution Threads.</span></figcaption>
-      <div class="thread-map" role="img" aria-label="A parent coordination Thread contains a Coordinator Agent and a Steward Agent. It dispatches one work item to a work-item Thread, which contains a root Orchestrator Agent and child Producer, Reviewer, Verifier, and Steward Agents. Each Agent applies a Role and receives bounded assignments.">
+      <div class="thread-map" role="img" aria-label="A parent coordination Thread contains a Coordinator Agent, a standing read-only Watchdog Agent, and a Steward Agent. It dispatches one work item to a work-item Thread, which contains a root Orchestrator Agent and child Producer, Reviewer, Verifier, and Steward Agents. Each Agent applies a Role and receives bounded assignments.">
         <section class="thread-box" aria-label="Parent coordination Thread">
           <strong>Parent Coordination Thread</strong>
           <div class="agent-stack">
             <div class="agent-node"><b>Coordinator Agent</b><span>Role · Dev Backlog Coordinator</span><span>Assignment · select and dispatch work</span></div>
+            <div class="agent-node"><b>Watchdog Agent</b><span>Role · Dev Backlog Watchdog</span><span>Assignment · observe and alert without mutation</span></div>
             <div class="agent-node"><b>Steward Agent</b><span>Role · Dev Backlog Steward</span><span>Assignment · reserve one work item</span></div>
           </div>
         </section>
@@ -663,7 +720,19 @@
         <div><dt>Claim</dt><dd>Conditional temporary protection when agent-claim is selected.</dd></div>
       </dl>
     </figure>
-    <aside class="thread-context"><h3>Execution Contexts</h3><p>The Dev Backlog Steward is a child Agent, not another work-item Thread or queue entry. An Assignment is bounded work sent to an Agent; it does not create another work-item Thread. A runtime may retain a child execution context for that Agent, but the methodology still treats it as part of the owning parent or work-item Thread.</p></aside>
+    <aside class="thread-context"><h3>Execution Contexts</h3><p>The Dev Backlog Watchdog is a standing read-only child Agent outside delivery capacity. The Dev Backlog Steward is a child Agent, not another work-item Thread or queue entry. It performs only explicitly delegated provider mutations.</p><p>An Assignment is bounded work sent to an Agent; it does not create another work-item Thread. A runtime may retain a child execution context for that Agent, but the methodology still treats it as part of the owning parent or work-item Thread.</p></aside>
+    <figure class="watchdog-cycle-figure" aria-labelledby="watchdog-cycle-title">
+      <figcaption id="watchdog-cycle-title">Watchdog Observation Is Read-Only<span>The Watchdog reports evidence; the Coordinator decides and the Steward records any lifecycle change.</span></figcaption>
+      <div class="assignment-flow" role="img" aria-label="The Watchdog observes provider, execution, progress, estimate, hard-stop, Stalled, and Blocked exit-condition evidence. Healthy cycles return no action. Actionable anomalies alert the Coordinator, which investigates and chooses a disposition. The Steward then performs an authorized provider mutation.">
+        <div class="assignment-step"><strong>Observe</strong><p>Read provider, execution, progress, timing, and exit-condition evidence.</p></div>
+        <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
+        <div class="assignment-step idle"><strong>Quiet Or Alert</strong><p>Return no action when healthy; otherwise send one actionable alert.</p></div>
+        <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
+        <div class="assignment-step"><strong>Coordinator Decides</strong><p>Investigate the cause and choose the evidence-backed disposition.</p></div>
+        <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
+        <div class="assignment-step"><strong>Steward Records</strong><p>Mutate the selected provider only after explicit delegation.</p></div>
+      </div>
+    </figure>
     <figure class="steward-sequence-figure" aria-labelledby="steward-sequence-title">
       <figcaption id="steward-sequence-title">Steward Assignments Are Sequential<span>One retained Steward Agent may receive multiple assignments, but only one mutating assignment may be active or queued at a time.</span></figcaption>
       <div class="assignment-flow" role="img" aria-label="Assignment A performs and commits one lifecycle update. The parent confirms that the Steward Agent is idle before Assignment B begins.">
@@ -739,6 +808,13 @@
         <li><span class="number">9</span><span class="actor">Coordinator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Cleanup</span><p>Verify the integration branch is merged, remove the clean worktree, delete the merged branch, close the Thread, prune metadata, and refill queue capacity through a recount and replacement dispatch.</p></li>
       </ol>
     </figure>
+    <aside class="thread-context"><h3>Known Blocker Handoff</h3>
+      <div class="blocker-handoff-grid">
+        <section><h4>Orchestrator Blocker Steps</h4><ol><li>Stop unsafe work.</li><li>Preserve commits and evidence.</li><li>Resolve resource ownership truthfully.</li><li>Notify the Coordinator immediately.</li></ol></section>
+        <section><h4>Blocker Notification Fields</h4><dl><dt>Cause</dt><dd>Exact blocker and owner.</dd><dt>Exit</dt><dd>Observable unblock condition and requested action.</dd><dt>Identity</dt><dd>Canonical Thread and root Agent identity.</dd><dt>Resume</dt><dd>Whether resumption is safe.</dd></dl></section>
+        <section><h4>Coordinator Sequence</h4><ol><li>Acknowledge the handoff.</li><li>Choose recovery and lifecycle disposition.</li><li>Delegate any provider mutation to the Steward.</li></ol></section>
+      </div>
+    </aside>
     <details><summary>Execution Safeguards</summary><div><p>Findings return to the original producer. After two failed correction attempts for the same criterion, a repeated failure signature, or an unavailable fixed dependency, preserve the candidate and record a truthful blocker.</p><p>Before a phase expected to exceed five minutes, publish the active unit, estimate, hard stop, retained evidence path, and distinct acceptance criterion. After an expensive failure, classify retained evidence, add the smallest offline regression, and run one cheapest representative first.</p></div></details>
     <p class="source-note">Direct-main and pull-request details are defined by <a href="../skills/complete-work-item-direct-main/SKILL.md">Direct-Main Completion</a>, <a href="../skills/complete-work-item-feature-branch/SKILL.md">Feature-Branch Completion</a>, and <a href="../skills/create-pull-request/SKILL.md">Create Pull Request</a>.</p>
   </section>
@@ -748,6 +824,7 @@
       <span class="chapter-number">Chapter 07</span>
       <div><h2 id="decisions-title">User Decision Gates</h2><p>Agents resolve technical questions from evidence. A work item moves to User Action Required only when the next safe step depends on authority, intent, risk acceptance, or information that belongs to the user.</p></div>
     </div>
+    <p class="source-note">Coordinator inability alone does not manufacture a user obligation. A technical or external cause remains Blocked with an exact owner and observable unblock condition until one concrete action genuinely belongs to the user.</p>
     <div class="decision-band" aria-label="User decision lifecycle">
       <div><strong>1 · User Question</strong><p>Record one concrete question, why it is needed, and the exact unattended boundary.</p></div>
       <div><strong>2 · Preserved Context</strong><p>Keep the requirements, scope, options, and discovered evidence in the item.</p></div>

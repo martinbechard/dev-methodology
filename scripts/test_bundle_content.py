@@ -6058,7 +6058,7 @@ class BundleContentTests(unittest.TestCase):
         }
 
         self.assertEqual(
-            {"wiki-query-responder", "wiki-topic-verifier"},
+            {"dev-backlog-watchdog", "wiki-query-responder", "wiki-topic-verifier"},
             read_only_roles,
         )
         for role in roles:
@@ -6191,6 +6191,7 @@ class BundleContentTests(unittest.TestCase):
         roles_by_name = {role.name: role for role in roles}
         expected_dependencies = {
             "dev-backlog-coordinator": (
+                "dev-backlog-watchdog",
                 "dev-orchestrator",
                 "dev-backlog-steward",
             ),
@@ -6472,6 +6473,141 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(retired_wait_contract=retired_wait_contract):
                 self.assertNotIn(retired_wait_contract, role_text)
+
+    def test_dev_backlog_coordinator_snapshot_includes_stalled_state(self) -> None:
+        """Source and generated role outputs must expose Stalled inventory."""
+
+        role_path = (
+            ROLES_ROOT
+            / "dev-activities"
+            / "dev-backlog-coordinator.role.yaml"
+        )
+        role = load_yaml_object(role_path)
+        lifecycle_snapshot = next(
+            entry["provider lifecycle snapshot"]["purpose"]
+            for entry in role["outputContract"]
+            if "provider lifecycle snapshot" in entry
+        )
+        self.assertIn("STALLED", lifecycle_snapshot)
+
+        generated_paths = (
+            GENERATED_ADAPTERS_ROOT
+            / "claude"
+            / "agents"
+            / "dev-backlog-coordinator.md",
+            GENERATED_ADAPTERS_ROOT
+            / "codex"
+            / "agents"
+            / "dev-backlog-coordinator.toml",
+            GENERATED_ADAPTERS_ROOT
+            / "gemini"
+            / "agents"
+            / "dev-backlog-coordinator.md",
+            GENERATED_ADAPTERS_ROOT
+            / "junie"
+            / "agents"
+            / "dev-backlog-coordinator.md",
+        )
+        for generated_path in generated_paths:
+            with self.subTest(generated_path=generated_path):
+                rendered = generated_path.read_text(encoding="utf-8")
+                self.assertIn("provider lifecycle snapshot", rendered)
+                self.assertIn("STALLED", rendered)
+
+    def test_backlog_roles_preserve_terminal_recount_and_failed_task_alerts(
+        self,
+    ) -> None:
+        """Source and generated roles must retain the lifecycle corrections."""
+
+        coordinator_path = (
+            ROLES_ROOT
+            / "dev-activities"
+            / "dev-backlog-coordinator.role.yaml"
+        )
+        watchdog_path = (
+            ROLES_ROOT
+            / "dev-activities"
+            / "dev-backlog-watchdog.role.yaml"
+        )
+        coordinator_role = load_yaml_object(coordinator_path)
+        watchdog_role = load_yaml_object(watchdog_path)
+        coordinator_workflow = " ".join(
+            " ".join(coordinator_role["instructions"]["workflow"]).split()
+        )
+        watchdog_workflow = " ".join(
+            " ".join(watchdog_role["instructions"]["workflow"]).split()
+        )
+        recount_contract = (
+            "For durable providers, immediately recount Starting-plus-Running "
+            "items through the effective manager and reserve eligible READY work "
+            "toward ten active items."
+        )
+        failed_task_contract = "failed, stopped, or missing canonical tasks"
+        task_reconciliation_contract = (
+            "For a failed, stopped, or missing Starting or Running canonical task, "
+            "recommend task, provider, and ownership reconciliation before any "
+            "lifecycle choice; preserve known explicit preventing-cause Blocked "
+            "routing and never classify the task-state anomaly itself as Stalled."
+        )
+        coordinator_task_reconciliation_contract = (
+            "When a Starting or Running canonical task is failed, stopped, or "
+            "missing, reconcile the canonical task, provider reservation or record, "
+            "and ownership before any lifecycle choice. Do not ask Dev Backlog "
+            "Steward to record Stalled or release capacity from the anomaly itself. "
+            "Only after reconciliation validates a separate known preventing cause "
+            "may the Coordinator ask Dev Backlog Steward to record Blocked."
+        )
+
+        self.assertIn(recount_contract, coordinator_workflow)
+        self.assertIn(
+            coordinator_task_reconciliation_contract,
+            coordinator_workflow,
+        )
+        self.assertNotIn(
+            "immediately recount Running items",
+            coordinator_workflow,
+        )
+        self.assertIn(failed_task_contract, watchdog_workflow)
+        self.assertIn(task_reconciliation_contract, watchdog_workflow)
+        self.assertIn(
+            "dev-backlog-watchdog",
+            coordinator_role["agentDependencies"],
+        )
+
+        generated_roots = ("claude", "codex", "gemini", "junie")
+        generated_suffixes = {
+            "claude": "dev-backlog-coordinator.md",
+            "codex": "dev-backlog-coordinator.toml",
+            "gemini": "dev-backlog-coordinator.md",
+            "junie": "dev-backlog-coordinator.md",
+        }
+        for runtime in generated_roots:
+            coordinator_generated = (
+                GENERATED_ADAPTERS_ROOT
+                / runtime
+                / "agents"
+                / generated_suffixes[runtime]
+            ).read_text(encoding="utf-8")
+            watchdog_generated = (
+                GENERATED_ADAPTERS_ROOT
+                / runtime
+                / "agents"
+                / generated_suffixes[runtime].replace(
+                    "dev-backlog-coordinator",
+                    "dev-backlog-watchdog",
+                )
+            ).read_text(encoding="utf-8")
+            with self.subTest(runtime=runtime):
+                self.assertIn(recount_contract, coordinator_generated)
+                self.assertIn(
+                    coordinator_task_reconciliation_contract,
+                    coordinator_generated,
+                )
+                self.assertIn(failed_task_contract, watchdog_generated)
+                self.assertIn(
+                    task_reconciliation_contract,
+                    watchdog_generated,
+                )
 
     def test_claim_related_skills_do_not_copy_claim_events_or_polling_rules(
         self,
@@ -6834,6 +6970,88 @@ class BundleContentTests(unittest.TestCase):
                     r"(?:the verifier|it) returns GOOD",
                 )
 
+    def test_lifecycle_separates_task_execution_anomalies_from_states(self) -> None:
+        """The state map must reconcile task anomalies before lifecycle routing."""
+
+        lifecycle_text = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        ).read_text(encoding="utf-8")
+        backlog_section = lifecycle_text[
+            lifecycle_text.index('<section class="section" id="backlog"') :
+            lifecycle_text.index('<section class="section" id="file-provider"')
+        ]
+
+        anomaly_label = (
+            '<h3 id="task-execution-anomaly-title">Task/execution anomaly '
+            "<span>Not a lifecycle state</span></h3>"
+        )
+        self.assertIn(anomaly_label, backlog_section)
+        self.assertLess(
+            backlog_section.index(anomaly_label),
+            backlog_section.index("<strong>Stalled</strong>"),
+        )
+        self.assertLess(
+            backlog_section.index(anomaly_label),
+            backlog_section.index("<strong>Blocked</strong>"),
+        )
+
+        state_map_match = re.search(
+            r'<div class="state-map" role="img" aria-label="([^"]+)">',
+            backlog_section,
+        )
+        self.assertIsNotNone(state_map_match)
+        state_map_label = state_map_match.group(1)
+        for clause in (
+            "A failed, stopped, or missing Starting or Running canonical task "
+            "is a Task/execution anomaly, not a lifecycle state.",
+            "Reconcile the canonical task, provider record or reservation, and "
+            "ownership before any lifecycle choice.",
+            "The anomaly alone does not release Starting-plus-Running capacity "
+            "or justify Stalled.",
+            "Only a separately proved unknown progress gap may become Stalled.",
+            "Only a separately validated known cause may become Blocked.",
+        ):
+            with self.subTest(aria_clause=clause):
+                self.assertIn(clause, state_map_label)
+
+        anomaly_section = backlog_section[
+            backlog_section.index(
+                '<aside class="task-execution-anomaly"'
+            ) :
+            backlog_section.index('<div class="state-branches">')
+        ]
+        self.assertIn(
+            '<ol class="task-anomaly-flow" '
+            'aria-label="Task/execution anomaly reconciliation flow">',
+            anomaly_section,
+        )
+        self.assertIn(
+            ".task-anomaly-flow { grid-template-columns: 1fr; }",
+            lifecycle_text,
+        )
+        flow_steps = (
+            "Observe anomaly",
+            "Reconcile identity",
+            "Evaluate separate evidence",
+        )
+        flow_positions = tuple(
+            anomaly_section.index(f"<strong>{step}</strong>")
+            for step in flow_steps
+        )
+        self.assertEqual(tuple(sorted(flow_positions)), flow_positions)
+        for clause in (
+            "failed, stopped, or missing canonical task for a Starting or "
+            "Running item",
+            "Reconcile the canonical task, provider record or reservation, "
+            "and ownership before any lifecycle choice.",
+            "The anomaly alone does not release Starting-plus-Running capacity "
+            "or justify Stalled.",
+            "Only a separately proved unknown progress gap may become Stalled.",
+            "Only a separately validated known cause may become Blocked.",
+        ):
+            with self.subTest(visible_clause=clause):
+                self.assertIn(clause, anomaly_section)
+
     def test_lifecycle_documents_simplified_coordination_and_delivery_sequences(self) -> None:
         """The lifecycle should teach concepts progressively without runtime-specific clutter."""
         lifecycle_path = (
@@ -6866,6 +7084,10 @@ class BundleContentTests(unittest.TestCase):
             lifecycle_text.index('<section class="section" id="delivery"') :
             lifecycle_text.index('<section class="section" id="decisions"')
         ]
+        backlog_section = lifecycle_text[
+            lifecycle_text.index('<section class="section" id="backlog"') :
+            lifecycle_text.index('<section class="section" id="file-provider"')
+        ]
         self.assertIn('<h2 id="agents-title">Agent Roles</h2>', agents_section)
         self.assertNotIn("Agents And Handoffs", agents_section)
         self.assertNotIn("Lifecycle Handoffs", agents_section)
@@ -6877,6 +7099,32 @@ class BundleContentTests(unittest.TestCase):
             "A Handoff transfers evidence and the next action",
             delivery_section,
         )
+        self.assertIn("<h3>Stalled Dispositions</h3>", backlog_section)
+        self.assertIn('<ol class="stalled-dispositions">', backlog_section)
+        stalled_dispositions = (
+            "Restore Running",
+            "Restore Ready",
+            "Record Blocked",
+            "Record User Action Required",
+            "Select Terminal Outcome",
+        )
+        stalled_positions = tuple(
+            backlog_section.index(f"<strong>{disposition}</strong>")
+            for disposition in stalled_dispositions
+        )
+        self.assertEqual(tuple(sorted(stalled_positions)), stalled_positions)
+        self.assertIn(
+            "<strong>Select Terminal Outcome</strong> only from sufficient "
+            "evidence for Completed, Failed, or Abandoned.",
+            backlog_section,
+        )
+        for heading in (
+            "Orchestrator Blocker Steps",
+            "Blocker Notification Fields",
+            "Coordinator Sequence",
+        ):
+            with self.subTest(blocker_handoff_heading=heading):
+                self.assertIn(f"<h4>{heading}</h4>", delivery_section)
         self.assertIn(
             "An Assignment is bounded work sent to an Agent; it does not create another work-item Thread.",
             agents_section,
@@ -6959,7 +7207,7 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertNotIn("Conditional Claim A", agents_section)
         self.assertNotIn("Conditional Claim B", agents_section)
-        self.assertNotRegex(lifecycle_text, r"\b[Tt]asks?\b|task-local")
+        self.assertNotIn("task-local", lifecycle_text)
 
         title_like_labels = (
             "Work-Item Continuity",
@@ -7044,12 +7292,14 @@ class BundleContentTests(unittest.TestCase):
             "Investigation",
             "User Action Required",
             "Holding",
+            "Stalled",
             "Blocked",
             "Completed",
             "Awaiting Review",
             "Archive placement is not another lifecycle status",
             "The Work item is the only durable provider record",
             "Backlog Coordinator",
+            "Backlog Watchdog",
             "Backlog Steward",
             "Dev Orchestrator",
             "Independent Reviewers",
@@ -8053,10 +8303,11 @@ class BundleContentTests(unittest.TestCase):
             "methodology-maintainer",
             "methodology-artifact-reviewer",
             "dev-backlog-coordinator",
+            "dev-backlog-watchdog",
         ]
         suite_entries = index["suites"]
         self.assertEqual(expected_suites, [entry["id"] for entry in suite_entries])
-        self.assertEqual(list(range(1, 28)), [entry["priority"] for entry in suite_entries])
+        self.assertEqual(list(range(1, 29)), [entry["priority"] for entry in suite_entries])
         suite_directories = {
             path.name
             for path in AGENT_TEST_SUITES_ROOT.iterdir()
@@ -8165,10 +8416,24 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue((REPOSITORY_ROOT / target["nativeAgent"]).is_file())
                 self.assertEqual(1, suite["execution"]["maximumActiveChildren"])
                 self.assertTrue(suite["execution"]["requireCodexIdentityEvidence"])
-                self.assertEqual(
-                    role.get("agentDependencies", []),
-                    target["allowedAgentDependencies"],
-                )
+                if entry["id"] == "dev-backlog-coordinator":
+                    self.assertEqual(
+                        ["dev-orchestrator", "dev-backlog-steward"],
+                        target["allowedAgentDependencies"],
+                    )
+                    self.assertEqual(
+                        ["dev-backlog-watchdog"],
+                        [
+                            dependency
+                            for dependency in role.get("agentDependencies", [])
+                            if dependency not in target["allowedAgentDependencies"]
+                        ],
+                    )
+                else:
+                    self.assertEqual(
+                        role.get("agentDependencies", []),
+                        target["allowedAgentDependencies"],
+                    )
                 self.assertEqual(entry["id"], scenarios["suite"])
                 if entry["id"] == "dev-code-reviewer":
                     self.assertEqual(4, len(scenarios["scenarios"]))
@@ -8216,6 +8481,8 @@ class BundleContentTests(unittest.TestCase):
                     )
                 elif entry["id"] == "dev-backlog-coordinator":
                     self.assertEqual(5, len(scenarios["scenarios"]))
+                elif entry["id"] == "dev-backlog-watchdog":
+                    self.assertEqual(3, len(scenarios["scenarios"]))
                 else:
                     self.assertEqual(3, len(scenarios["scenarios"]))
 
@@ -8271,6 +8538,77 @@ class BundleContentTests(unittest.TestCase):
                 with self.subTest(suite=entry["id"], project_skill=relative_path):
                     frontmatter = load_yaml_object_from_frontmatter(skill_path)
                     self.assertEqual(skill_path.parent.name, frontmatter["name"])
+
+    def test_watchdog_suite_disables_nested_agents_without_dependencies(self) -> None:
+        """A read-only Watchdog target cannot reserve an unusable child-agent slot."""
+
+        suite_root = AGENT_TEST_SUITES_ROOT / "dev-backlog-watchdog"
+        suite = load_yaml_object(suite_root / "suite.yaml")
+        role = load_yaml_object(
+            REPOSITORY_ROOT / suite["target"]["conceptualRole"]
+        )
+        supervisor = tomllib.loads(
+            (suite_root / suite["projectAgents"]["supervisor"]).read_text(
+                encoding="utf-8"
+            )
+        )
+
+        self.assertEqual([], suite["target"]["allowedAgentDependencies"])
+        self.assertEqual([], role.get("agentDependencies", []))
+        self.assertEqual(0, suite["execution"]["nestedAgentLimit"])
+        self.assertIn(
+            "permit no child agents",
+            supervisor["developer_instructions"],
+        )
+
+    def test_coordinator_happy_scenario_counts_starting_plus_running_capacity(
+        self,
+    ) -> None:
+        """The Coordinator scenario must use the same active-capacity contract."""
+
+        catalog = load_yaml_object(
+            REPOSITORY_ROOT / "evals" / "agent-scenarios.yaml"
+        )
+        coordinator = next(
+            entry
+            for entry in catalog["agents"]
+            if entry["id"] == "dev-backlog-coordinator"
+        )
+        scenario = next(
+            entry
+            for entry in coordinator["scenarios"]
+            if entry["id"] == "dev-backlog-coordinator-happy"
+        )
+
+        self.assertIn(
+            "restore ten Starting or Running work items",
+            scenario["promptIntent"],
+        )
+        self.assertIn(
+            "Ten provider-backed Starting or Running items",
+            scenario["expectedOutcome"],
+        )
+        for clause in (
+            "Count only lifecycle STARTING and RUNNING items returned by the "
+            "effective Persistence-selected management skill.",
+            "Use one canonical Dev Orchestrator task for each Starting or "
+            "Running work item.",
+            "Recount and refill Starting-plus-Running capacity toward ten "
+            "after every terminal cleanup.",
+        ):
+            with self.subTest(required_behavior=clause):
+                self.assertIn(clause, scenario["requiredBehaviors"])
+        self.assertIn(
+            "Count Stalled, Blocked, User Action Required, Holding, Awaiting "
+            "Review, terminal items, or pure waiting tasks as "
+            "Starting-plus-Running capacity.",
+            scenario["forbiddenBehaviors"],
+        )
+        self.assertNotIn(
+            "Count only lifecycle RUNNING items returned by the effective "
+            "Persistence-selected management skill.",
+            scenario["requiredBehaviors"],
+        )
 
     def test_support_checklist_covers_every_agent_and_skill(self) -> None:
         """The generated report must expose every live declaration without inflating evidence."""
