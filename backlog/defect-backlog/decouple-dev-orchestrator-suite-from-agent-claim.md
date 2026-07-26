@@ -1,6 +1,6 @@
 # Decouple Dev Orchestrator Suite From Agent Claim When Resource Coordination Is None
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -54,6 +54,20 @@ Completion: direct-main
 - Transition: Blocked -> Ready. Owner remains Unowned. This transition does not grant implementation ownership.
 - Sequencing Constraint: The active OID item has known overlapping source scope. The root Dev Orchestrator may audit current main, but must not mutate an overlapping source until the OID item has terminal delivery and a release baton.
 - Next Lifecycle Owner: the parent Dev Backlog Coordinator may separately reserve Ready -> Starting for this same canonical identity.
+
+## Current Starting Reservation
+
+- Parent Coordination Thread: /root/resume_blocked_after_claim_publication.
+- Canonical Thread/Task: 019f96ce-b1a0-7633-97ab-336ba7d188e4; no replacement canonical identity is created.
+- Reservation: One parent-owned Ready -> Starting launch reservation.
+- Normalized Objective: Decouple Dev Orchestrator evaluation from agent-claim when resource coordination is none.
+- Intended Root Role: Dev Orchestrator.
+- Persistence And Completion: file provider; direct-main completion.
+- Preserved Candidate Evidence: candidate 2be3274a869355a9078d81b918700909006db652 and its clean worktree remain preserved evidence; this reservation accepts neither candidate delivery nor implementation ownership.
+- Sequencing Constraint: The root may audit current main but must not mutate a source overlapping the active OID item until its terminal delivery and release baton are recorded.
+- Dispatched At: 2026-07-26T09:31:38Z.
+- Launch Evidence: Parent Coordinator authorized this fresh exact-item dispatch. Runtime acceptance remains pending.
+- Next Lifecycle Owner: the root Dev Orchestrator must record a distinct Starting -> Running acceptance for this same canonical identity before repository mutation.
 
 ## Summary
 
