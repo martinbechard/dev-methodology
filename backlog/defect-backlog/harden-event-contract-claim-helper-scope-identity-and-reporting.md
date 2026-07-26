@@ -1,8 +1,10 @@
 # Harden Event Contract Claim-Helper Scope Identity And Reporting
 
-Status: Ready
+Status: Starting
 
 Type: Defect
+
+Owner: Unowned
 
 Provider: file
 
@@ -55,6 +57,18 @@ None.
 ## Open Questions
 
 None.
+
+## Current Starting Reservation
+
+- Parent Coordination Thread: /root.
+- Reservation: One parent-owned Ready -> Starting launch reservation.
+- Normalized Objective: Harden Event Contract claim-helper scope identity and reporting.
+- Intended Root Role: Dev Orchestrator.
+- Persistence And Completion: file provider; direct-main completion.
+- Dispatched At: 2026-07-26T13:35:13Z.
+- Launch Evidence: Parent Coordinator authorized this exact-item reservation. Runtime task creation and acceptance remain pending.
+- Backlog Claim Event: 754cf797-6b1e-4bf0-9de5-c7f53132d6e4.
+- Next Lifecycle Owner: the root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
 
 ## Notes
 
