@@ -350,8 +350,8 @@ README_REQUIRED_PHRASES = (
     "Unowned skills and agents are never removed.",
     "For a user-scope Codex deployment, the MCP skill root is the resolved absolute path to ~/.agents/skills.",
     "--dest ~/.codex/skills",
-    "claim tools advertise result schema version 2",
-    "Published release 0.4.0 does not contain that claim-result contract",
+    "This repository uses the command helper because the current MCP provider has not been verified for deadline support.",
+    "Published release 0.4.0 does not support the required claim results",
     "fifteen exact MCP operations",
     "one call-bearing MCP process stream",
     "An outcome-less completed call is not semantic evidence.",
@@ -739,8 +739,8 @@ DOCUMENT_REQUIRED_CONTENT_LINKS = {
         "../skills/complete-work-item-direct-main/SKILL.md",
         "../skills/complete-work-item-feature-branch/SKILL.md",
         "../skills/create-pull-request/SKILL.md",
-        "../scripts/test_agent_claim.py",
-        "../README.md#agent-claims-and-worktrees",
+        "../skills/agent-claim-command/SKILL.md",
+        "../skills/agent-claim-mcp/SKILL.md",
         "agent-and-skill-definitions.html#dev-activities-title",
         "documentation-templates.html",
         "wiki-skills-and-project-context.html",
@@ -828,7 +828,8 @@ AGENTS_REQUIRED_PHRASES = (
     "Update the design HTML files that describe skills, conceptual agent definitions",
     "Keep Codex openai.yaml metadata beside each source SKILL.md",
     "Run scripts/openai_metadata.py skills after skill name or description changes so derived Codex interface fields stay aligned while policy and dependencies remain hand-authored.",
-    "python3 scripts/validate-agent-skills.py skills",
+    "Select tests from the changed behavior and its actual dependency paths.",
+    "A tier identifies the affected surface; it never triggers a full repository regression.",
 )
 
 
@@ -1011,7 +1012,6 @@ class BundleContentTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
 
         for phrase in (
-            "Treat a heartbeat as ownership evidence only.",
             "expected to take more than five minutes",
             "the exact currently active unit and any later units that have not started",
             "a hard stop condition and the retained evidence path",
@@ -1022,10 +1022,9 @@ class BundleContentTests(unittest.TestCase):
             "classify its failure signature before repeating anything",
             "add the smallest offline replay or deterministic regression",
             "Run one cheapest representative first.",
-            "prove the applicable worktree clean before releasing enabled ownership",
-            "retain and heartbeat enabled ownership or hand it off explicitly",
-            "Do not let later serial cases start automatically after a shared-boundary failure.",
-            "require immediate parent investigation and a revised plan",
+            "Stop or hand off its shared resources.",
+            "Follow agent-claim for any active claim.",
+            "Two unproductive attempts require parent investigation and a revised plan.",
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, skill_text)
@@ -1049,8 +1048,9 @@ class BundleContentTests(unittest.TestCase):
             "must not require the user to repeat the answer in the parent Thread",
             "User Action Required -> Ready",
             "its Dev Backlog Steward child records Ready -> Starting",
-            "Never reject, delete, or reimplement work solely because it was performed in the User Action Required Thread.",
-            "Dirty ownership is never released or overridden merely to complete reconciliation.",
+            "preserve that work as out-of-sequence evidence",
+            "Do not accept, reject, delete, duplicate, or reimplement it merely because of its timing.",
+            "Resume the same Thread only after Running is durable",
         ):
             with self.subTest(coordination_contract=phrase):
                 self.assertIn(phrase, coordination_text)
@@ -1059,8 +1059,8 @@ class BundleContentTests(unittest.TestCase):
             "Accept the answer in the canonical work-item Thread that asked the question",
             "Do not require the user to switch Threads or repeat the answer.",
             "parent Coordinator reserve Ready -> Starting for the existing canonical Thread",
-            "Work performed before User Action Required -> Ready -> Starting -> Running reconciliation is not automatically accepted and is not automatically discarded.",
-            "Never release or override dirty ownership to force the lifecycle sequence into alignment.",
+            "Work performed before User Action Required -> Ready -> Starting -> Running reconciliation is not automatically accepted or discarded.",
+            "Do not continue delivery until the parent and the same root Orchestrator reconcile",
         ):
             with self.subTest(manage_contract=phrase):
                 self.assertIn(phrase, manage_text)
@@ -3991,12 +3991,12 @@ class BundleContentTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         for required_phrase in (
             "## Blocked Handoff And Resumption",
-            "replace the prior owner with Owner: Unowned",
-            "clear any enabled coordination reference",
+            "Set Status to Blocked and Owner to Unowned",
             "restore Status: Ready with Owner: Unowned",
             "Dev Backlog Steward child atomically records Ready -> Starting reservation and dispatch evidence",
             "Only after the work-item Thread's root Dev Orchestrator Agent accepts ownership",
             "restore the byte-for-byte pre-attempt Blocked item",
+            "Provider mutation protection cannot substitute for delivery ownership.",
         ):
             with self.subTest(manage_file_contract=required_phrase):
                 self.assertIn(required_phrase, manage_file_text)
@@ -4069,18 +4069,15 @@ class BundleContentTests(unittest.TestCase):
             "Keep revisit triggers as free text",
             "Retain the original idea in backlog/future-ideas",
             "preflight target collisions before any promotion write",
-            "Snapshot the exact pre-attempt source idea bytes",
+            "save the source idea, target, and Git index state needed to restore the attempt",
             "including Open Questions",
-            "one failure-atomic promotion",
-            "remove only the target newly created by this promotion attempt",
-            "exact full Git index file",
-            "bytes and existence",
+            "The promotion must either succeed completely or restore the previous state.",
+            "Remove only the new target created by this attempt.",
             "Stage exactly the idea and target paths",
             "path-limited commit",
             "Capture the new commit OID immediately after commit creation",
-            "captured immutable commit OID contains exactly both reciprocal records",
-            "When agent-claim is selected, release the enabled claim only after promotion success or a safe verified pre-commit rollback",
-            "When none is selected, perform the same restoration and verification without a claim call or claim evidence",
+            "require its changed-path set and reciprocal record bytes to contain exactly the intended pair",
+            "Follow the Claim Events table in agent-claim for the retained Future Idea update",
         ):
             with self.subTest(create_future_ideas_contract=required_phrase):
                 self.assertIn(required_phrase, create_file_text)
@@ -4122,19 +4119,25 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(steward_coordination_phrase=retired_coordination_phrase):
                 self.assertNotIn(retired_coordination_phrase, role_text)
-        for documentation_text in (readme_text, provider_contract_text):
-            for required_phrase in (
-                "exact full Git index file bytes and existence",
-                "path-limited commit",
-                "unrelated staged state",
-                "captures the new commit OID",
-                "When resource coordination selects agent-claim",
-                "When none is selected",
-            ):
-                with self.subTest(
-                    future_ideas_documentation=required_phrase
-                ):
-                    self.assertIn(required_phrase, documentation_text)
+        for required_phrase in (
+            "exact full Git index file bytes and existence",
+            "path-limited commit",
+            "unrelated staged state",
+            "captures the new commit OID",
+            "The steward follows [Agent Claim](skills/agent-claim/SKILL.md) when that skill is loaded.",
+        ):
+            with self.subTest(future_ideas_readme=required_phrase):
+                self.assertIn(required_phrase, readme_text)
+        for required_phrase in (
+            "exact full Git index file bytes and existence",
+            "path-limited commit",
+            "unrelated staged state",
+            "captures the new commit OID",
+            "Event 1 protects the retained Future Idea update through a claim on only its exact current path",
+            "uniquely named promoted target uses atomic no-overwrite creation without a target claim",
+        ):
+            with self.subTest(future_ideas_provider_contract=required_phrase):
+                self.assertIn(required_phrase, provider_contract_text)
         self.assertTrue((suite_root / "contract_harness.py").is_file())
         judge_text = (suite_root / "agents" / "judge.toml").read_text(
             encoding="utf-8"
@@ -4972,7 +4975,7 @@ class BundleContentTests(unittest.TestCase):
             "invalid User Action Required classification",
             "exact canonical-path manifest",
             "exact user-message provenance",
-            "derived operational evidence rather than approval authority",
+            "They are approval evidence, not design rules.",
             "Keep change-control manifests out of Design Principles",
         ):
             with self.subTest(required_contract=required_contract):
@@ -6066,7 +6069,6 @@ class BundleContentTests(unittest.TestCase):
         skill_texts = {
             skill: (SKILLS_ROOT / skill / "SKILL.md").read_text(encoding="utf-8")
             for skill in (
-                "agent-claim-mcp",
                 "detect-technology-skills",
                 "create-project-configuration",
                 "skill-authoring",
@@ -6079,6 +6081,19 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(skill=skill):
                 self.assertIn("mcp-agent-ops", text)
                 self.assertIn("rejection", text)
+
+        claim_mcp_text = (SKILLS_ROOT / "agent-claim-mcp" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("mcp-agent-ops", claim_mcp_text)
+        self.assertIn(
+            "Do not configure the current mcp-agent-ops provider as the claim helper yet.",
+            claim_mcp_text,
+        )
+        self.assertIn(
+            "Project Configurator must verify every operation and result field",
+            claim_mcp_text,
+        )
 
         shared_claim_text = (SKILLS_ROOT / "agent-claim" / "SKILL.md").read_text(
             encoding="utf-8"

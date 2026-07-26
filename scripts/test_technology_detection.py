@@ -2005,11 +2005,11 @@ class TechnologyDetectionTests(unittest.TestCase):
             self.assertIn("most-specific matching pattern wins", completed.stdout)
             self.assertNotIn("Agent Claims And Worktrees", completed.stdout)
             self.assertIn(
-                "BEGIN INLINED CLAIM HELPER INTERFACE SKILL: agent-claim-command",
+                "BEGIN INLINED CLAIM HELPER SKILL: agent-claim-command",
                 completed.stdout,
             )
             self.assertNotIn(
-                "BEGIN INLINED CLAIM HELPER INTERFACE SKILL: agent-claim-mcp",
+                "BEGIN INLINED CLAIM HELPER SKILL: agent-claim-mcp",
                 completed.stdout,
             )
 
