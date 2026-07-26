@@ -1,6 +1,6 @@
 # Preserve Malformed Checkpoint Fallback Without Fixture Contract
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Dev Orchestrator (canonical root task 019f9f60-097d-7392-813d-801c9d05868
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/preserve-malformed-checkpoint-fallback-without-fixture-contract.md
+Provider Reference: backlog/completed-backlog/defects/preserve-malformed-checkpoint-fallback-without-fixture-contract.md
 
 Completion: direct-main
 
@@ -39,14 +39,14 @@ Fresh final review of candidate 85e6a31 in canonical task 019f978e-28b7-7561-be3
 
 ## Dependencies
 
-- backlog/defect-backlog/reject-nonexistent-lifecycle-handoff-commit-oids.md: coordinate to avoid duplicate overlapping lifecycle correction edits.
+- backlog/defect-backlog/reject-nonexistent-lifecycle-handoff-commit-oids.md: coordination-only overlap note; exact overlap was reconciled before terminal closure.
 
 ## Verification
 
-- Run the focused five-case regression.
-- Run relevant runner regressions.
-- Run git diff --check.
-- Obtain independent review.
+- Focused five-subcase regression passed on reviewed baseline 503a8f9ebcd1efa922c452e2a1dd492eed023ef7 and again on exact main b1e3743201ff1e8de53f7eb1f27feb0d89209f2b with Python 3.11.10.
+- Fresh independent Dev Code Reviewer result: PASS with no findings.
+- Fresh independent Dev Verifier result: PASS.
+- Git diff checks and relevant worktrees were clean.
 
 ## Open Questions
 
@@ -79,6 +79,20 @@ None.
 - Parent Release Evidence: reserve-malformed-checkpoint-019f95a9 released normally; outcome RELEASED; event bd529c4a-41b6-49e5-b2ca-b87ebaeaf276.
 - Dependency Classification: coordination-only. Reconcile exact overlapping implementation scope before integration.
 
+## Completion Evidence
+
+- Terminal Disposition: COMPLETED as an already-represented no-change outcome. No implementation commit was created or integrated for this item.
+- Canonical Work-Item Thread And Root Task: 019f9f60-097d-7392-813d-801c9d058683.
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Delivery Identity: branch codex/preserve-malformed-checkpoint-fallback-019f9f60; worktree /Users/martinbechard/.codex/worktrees/9914/dev-methodology.
+- Direct-Main Disposition: READY. Reviewed baseline 503a8f9ebcd1efa922c452e2a1dd492eed023ef7 is an ancestor of main b1e3743201ff1e8de53f7eb1f27feb0d89209f2b.
+- Superseded Evidence: historical rejected candidate 85e6a31 exhibited the KeyError; rejected references da09f3d922b14e3c137edf1419e67b7bbfb1d8a4 and 54724c128e11f339866cd02d0717f3c23a36c415 were not integrated.
+- Content Evidence: evals/agent-tests/runner.py has identical blob ea34748a36c2876054d5d04fe19d6e14dc053fb4 on baseline 503a8f9ebcd1efa922c452e2a1dd492eed023ef7 and main b1e3743201ff1e8de53f7eb1f27feb0d89209f2b. The later test_runner.py delta is an unrelated prompt assertion.
+- Review And Verification: original coder returned a clean no-change handoff; fresh Dev Code Reviewer PASS with no findings; independent Dev Verifier PASS; focused five-subcase test passed on baseline and exact main with Python 3.11.10.
+- Governance: no governed definitions or implementation artifacts were mutated for this item.
+- Shared Integration Claim: no project-files claim was needed because this item made no shared source mutation. Competing integration claim acquire event 0720300b-91e8-4ca2-b3c0-5ef3d1003d70 released normally with event e11c09f2-c0f7-4592-a527-7deccaa913c0.
+- Terminal Cleanup: eligible after this completed archive transaction commits and the exact provider claim releases.
+
 ## Notes
 
-This transaction records the defect only. Do not implement source changes as part of backlog creation.
+This archived transaction records the verified already-represented outcome. It does not integrate the rejected references or implement source changes.
