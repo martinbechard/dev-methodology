@@ -6420,6 +6420,10 @@ class BundleContentTests(unittest.TestCase):
             "toward ten active items."
         )
         failed_task_contract = "failed, stopped, or missing canonical tasks"
+        starting_reconciliation_contract = (
+            "For a Starting task anomaly, recommend bounded startup and ownership "
+            "reconciliation rather than Stalled."
+        )
 
         self.assertIn(recount_contract, coordinator_workflow)
         self.assertNotIn(
@@ -6427,6 +6431,7 @@ class BundleContentTests(unittest.TestCase):
             coordinator_workflow,
         )
         self.assertIn(failed_task_contract, watchdog_workflow)
+        self.assertIn(starting_reconciliation_contract, watchdog_workflow)
         self.assertIn(
             "dev-backlog-watchdog",
             coordinator_role["agentDependencies"],
@@ -6458,6 +6463,10 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(runtime=runtime):
                 self.assertIn(recount_contract, coordinator_generated)
                 self.assertIn(failed_task_contract, watchdog_generated)
+                self.assertIn(
+                    starting_reconciliation_contract,
+                    watchdog_generated,
+                )
 
     def test_claim_related_skills_do_not_copy_claim_events_or_polling_rules(
         self,

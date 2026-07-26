@@ -117,77 +117,57 @@ class WatchdogSimulatorTests(unittest.TestCase):
         self.assertIn("cause remains unknown", alert.reason)
         self.assertIn("Stalled", alert.recommended_action)
 
-    def test_starting_missing_or_stopped_task_alerts_without_mutation(self) -> None:
-        """Starting task disappearance requires the same read-only alert as Running."""
+    def test_task_state_anomalies_use_status_specific_actions(self) -> None:
+        """All six task anomalies alert without confusing startup with Stalled."""
 
-        for task_state in ("missing", "stopped"):
-            item = WorkItem(
-                provider_identity=f"backlog/feature-backlog/starting-{task_state}.md",
-                status="Starting",
-                task_state=task_state,
-                canonical_thread=f"thread-starting-{task_state}",
-                root_task=f"task-starting-{task_state}",
-            )
-            before = deepcopy(item)
+        expectations = {
+            "Starting": (
+                "Starting task-state anomaly requires Coordinator attention",
+                "Coordinator performs bounded startup and ownership reconciliation "
+                "before choosing an authorized provider disposition",
+            ),
+            "Running": (
+                "progress boundary crossed while the cause remains unknown",
+                "Coordinator investigates and delegates Stalled only if the "
+                "evidence justifies it",
+            ),
+        }
+        for status in ("Starting", "Running"):
+            for task_state in ("stopped", "failed", "missing"):
+                with self.subTest(status=status, task_state=task_state):
+                    identity = f"{status.lower()}-{task_state}"
+                    item = WorkItem(
+                        provider_identity=(
+                            f"backlog/feature-backlog/{identity}.md"
+                        ),
+                        status=status,
+                        task_state=task_state,
+                        canonical_thread=f"thread-{identity}",
+                        root_task=f"task-{identity}",
+                    )
+                    before = deepcopy(item)
 
-            result = WatchdogCycle().evaluate([item])
+                    result = WatchdogCycle().evaluate([item])
 
-            with self.subTest(task_state=task_state):
-                self.assertEqual("ALERT", result.status)
-                self.assertEqual(before, item)
-                self.assertIsNotNone(result.alert)
-                alert = result.alert
-                assert alert is not None
-                self.assertIn(item.provider_identity, alert.provider_identity)
-                self.assertIn("task_boundary_crossed=true", alert.evidence)
-                self.assertIn(f"task_state={task_state}", alert.evidence)
-                self.assertFalse(result.mutated)
-
-    def test_starting_failed_task_alerts_without_mutation(self) -> None:
-        """A failed Starting task is an actionable execution anomaly."""
-
-        item = WorkItem(
-            provider_identity="backlog/feature-backlog/starting-failed.md",
-            status="Starting",
-            task_state="failed",
-            canonical_thread="thread-starting-failed",
-            root_task="task-starting-failed",
-        )
-        before = deepcopy(item)
-
-        result = WatchdogCycle().evaluate([item])
-
-        self.assertEqual("ALERT", result.status)
-        self.assertEqual(before, item)
-        self.assertIsNotNone(result.alert)
-        alert = result.alert
-        assert alert is not None
-        self.assertIn("task_boundary_crossed=true", alert.evidence)
-        self.assertIn("task_state=failed", alert.evidence)
-        self.assertFalse(result.mutated)
-
-    def test_running_failed_task_alerts_without_mutation(self) -> None:
-        """A failed Running task is an actionable execution anomaly."""
-
-        item = WorkItem(
-            provider_identity="backlog/defect-backlog/running-failed.md",
-            status="Running",
-            task_state="failed",
-            canonical_thread="thread-running-failed",
-            root_task="task-running-failed",
-        )
-        before = deepcopy(item)
-
-        result = WatchdogCycle().evaluate([item])
-
-        self.assertEqual("ALERT", result.status)
-        self.assertEqual(before, item)
-        self.assertIsNotNone(result.alert)
-        alert = result.alert
-        assert alert is not None
-        self.assertIn("task_boundary_crossed=true", alert.evidence)
-        self.assertIn("task_state=failed", alert.evidence)
-        self.assertFalse(result.mutated)
+                    self.assertEqual("ALERT", result.status)
+                    self.assertEqual(before, item)
+                    self.assertIsNotNone(result.alert)
+                    alert = result.alert
+                    assert alert is not None
+                    expected_reason, expected_action = expectations[status]
+                    self.assertEqual(item.provider_identity, alert.provider_identity)
+                    self.assertIn("task_boundary_crossed=true", alert.evidence)
+                    self.assertIn(f"task_state={task_state}", alert.evidence)
+                    self.assertIn(
+                        f"canonical_thread=thread-{identity}",
+                        alert.evidence,
+                    )
+                    self.assertIn(f"root_task=task-{identity}", alert.evidence)
+                    self.assertEqual(expected_reason, alert.reason)
+                    self.assertEqual(expected_action, alert.recommended_action)
+                    if status == "Starting":
+                        self.assertNotIn("Stalled", alert.recommended_action)
+                    self.assertFalse(result.mutated)
 
     def test_estimate_boundary_evidence_names_observed_value(self) -> None:
         """Crossed estimates identify both the boundary and its observed value."""

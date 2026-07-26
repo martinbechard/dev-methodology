@@ -81,12 +81,25 @@ class WatchdogCycle:
         observations: list[WatchdogAlert] = []
         for item in items:
             if (
-                (item.status == "Running" and self._suspected_stall(item))
-                or (
-                    item.status == "Starting"
-                    and item.task_state in _TASK_ANOMALY_STATES
-                )
+                item.status == "Starting"
+                and item.task_state in _TASK_ANOMALY_STATES
             ):
+                observations.append(
+                    WatchdogAlert(
+                        provider_identity=item.provider_identity,
+                        evidence=self._stall_evidence(item),
+                        reason=(
+                            "Starting task-state anomaly requires Coordinator attention"
+                        ),
+                        recommended_action=(
+                            "Coordinator performs bounded startup and ownership "
+                            "reconciliation before choosing an authorized provider "
+                            "disposition"
+                        ),
+                        preventing_cause=item.preventing_cause,
+                    )
+                )
+            elif item.status == "Running" and self._suspected_stall(item):
                 cause_is_known = self._known_preventing_cause(item)
                 observations.append(
                     WatchdogAlert(
