@@ -66,6 +66,43 @@ def _role_skill_entries(role: dict[str, object]) -> list[tuple[str, bool]]:
     return entries
 
 
+def _shared_role_skill_entries() -> list[tuple[str, bool]]:
+    """Return the fixed skills that the role schema adds to every role."""
+
+    schema = _load_yaml(ROLE_SCHEMA_PATH)
+    fixed_behavior = schema.get("fixedBehavior")
+    if not isinstance(fixed_behavior, dict):
+        raise ValueError("Role schema fixedBehavior must be an object.")
+    entries = _role_skill_entries(
+        {
+            "name": "role schema",
+            "skills": fixed_behavior.get("sharedSkills"),
+        }
+    )
+    if any(conditional for _name, conditional in entries):
+        raise ValueError("Role schema shared skills cannot be conditional.")
+    return entries
+
+
+def _effective_role_skill_entries(
+    role: dict[str, object],
+    shared_entries: list[tuple[str, bool]],
+) -> list[tuple[str, bool]]:
+    """Combine schema-owned shared skills with one role's declared skills."""
+
+    role_entries = _role_skill_entries(role)
+    duplicate_names = sorted(
+        {name for name, _conditional in shared_entries}
+        & {name for name, _conditional in role_entries}
+    )
+    if duplicate_names:
+        raise ValueError(
+            f"Conceptual agent definition {role.get('name')} repeats shared skills: "
+            + ", ".join(duplicate_names)
+        )
+    return [*shared_entries, *role_entries]
+
+
 def _role_agent_dependencies(role: dict[str, object]) -> list[str]:
     value = role.get("agentDependencies", [])
     if not isinstance(value, list) or any(
@@ -255,6 +292,7 @@ def _skill_node(
 
 def build_svg() -> str:
     """Render the interactive conceptual-definition-to-skill map from repository sources."""
+    shared_skill_entries = _shared_role_skill_entries()
     roles: list[dict[str, object]] = []
     for path in sorted(ROLES_ROOT.glob("*/*.role.yaml")):
         role = _load_yaml(path)
@@ -394,7 +432,9 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 
     for role in roles:
         y = role_y[str(role["name"])]
-        for skill_name, conditional in _role_skill_entries(role):
+        for skill_name, conditional in _effective_role_skill_entries(
+            role, shared_skill_entries
+        ):
             start_x = ROLE_X + ROLE_WIDTH
             end_x = SKILL_X
             first_control_x = start_x + 150
@@ -419,7 +459,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
         )
         current_y += ROW_HEIGHT
         for role in group_roles:
-            entries = _role_skill_entries(role)
+            entries = _effective_role_skill_entries(role, shared_skill_entries)
             conditional_count = sum(1 for _, conditional in entries if conditional)
             secondary = f"{len(entries)} skills"
             if conditional_count:
@@ -440,7 +480,9 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 
     skill_assignment_kinds: dict[str, set[str]] = {}
     for role in roles:
-        for skill_name, conditional in _role_skill_entries(role):
+        for skill_name, conditional in _effective_role_skill_entries(
+            role, shared_skill_entries
+        ):
             skill_assignment_kinds.setdefault(skill_name, set()).add(
                 "request-specific" if conditional else "definition-owned"
             )

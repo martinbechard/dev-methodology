@@ -627,6 +627,7 @@
           <tr><td><code>fixedBehavior.target</code></td><td>Every conceptual agent definition targets local development.</td><td>Do not emit a remote or cloud execution target unless a future schema version adds one.</td></tr>
           <tr><td><code>fixedBehavior.userInvocable</code></td><td>Every generated native agent definition remains eligible for user invocation.</td><td>Emit the runtime's normal invocation metadata where supported.</td></tr>
           <tr><td><code>fixedBehavior.automaticDelegation</code></td><td>Every generated native agent definition remains eligible for automatic delegation.</td><td>Use descriptions and runtime invocation fields to preserve automatic selection.</td></tr>
+          <tr><td><code>fixedBehavior.sharedSkills</code></td><td>Every conceptual agent uses the listed communication or operating skills.</td><td>Add each shared skill to every generated native agent without repeating it in every role source.</td></tr>
         </tbody>
       </table>
     </section>

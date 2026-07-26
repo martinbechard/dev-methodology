@@ -113,6 +113,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "collaboration-patterns": "We need this when reviewing publisher or peer coordination so delivery, subscription, failure, lifecycle, and mediator ownership are assessed consistently.",
         "composition-patterns": "We need this when reviewing structural indirection so recursive ownership, wrappers, access control, shared state, and substitutability are supported by evidence.",
         "documentation-page-verify": "We need this to apply a shared independent quality gate after the artifact-specific review so acceptance does not depend solely on the focused reviewer.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "interface-patterns": "We need this when reviewing boundary decisions so contract adaptation, independent variation, and subsystem simplification preserve their intended semantics.",
         "interpreter-pattern": "We need this when reviewing a small domain language so grammar, parsing, evaluation, diagnostics, resource limits, and parser-tooling thresholds are supported by evidence.",
         "object-creation-patterns": "We need this when reviewing construction decisions so creation ownership, family compatibility, staged assembly, copying, and simpler alternatives are assessed consistently.",
@@ -129,6 +130,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "traversal-patterns": "We need this when reviewing traversal or external operations so order, mutation, recursion, dispatch coverage, and variation direction are supported by evidence."
       },
       "skills": [
+        "effective-communication",
         "review-structured-artifact",
         "organise-project-files",
         "review-functional-spec",
@@ -305,9 +307,11 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       },
       "skillJustifications": {
         "codex-workitem-coordination": "We need this as the separate parent process for task identity, capacity, delivery-wait recovery, and terminal cleanup.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "structured-explanation": "We need this to report capacity, waits, enabled ownership, throughput, and recovery in a compact evidence-backed form."
       },
       "skills": [
+        "effective-communication",
         "structured-explanation",
         "codex-workitem-coordination"
       ],
@@ -441,10 +445,12 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "organise-project-files": "when the selected persistence operation creates a repository file or directory whose destination is not fixed by its contract"
       },
       "skillJustifications": {
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "organise-project-files": "We need this when the effective Persistence-selected creation skill adds a repository file or directory whose destination is not already fixed by that skill.",
         "structured-explanation": "We need this so status, blocked, completion, and handoff records leave enough context for the next person to make a sound decision."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "structured-explanation"
       ],
@@ -499,11 +505,13 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "organise-project-files": "when the requested browser workflow creates a new project file or directory"
       },
       "skillJustifications": {
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "end-to-end-verification": "We need this to evaluate the complete user workflow across real runtime boundaries so passing component checks do not conceal integration failures.",
         "organise-project-files": "We need this to keep any new screenshots, traces, or browser-run evidence in the repository's declared evidence area.",
         "structured-explanation": "We need this to preserve reproducible steps, observations, and diagnostic context so another person can verify or investigate the same browser behavior."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "end-to-end-verification",
         "structured-explanation"
@@ -570,10 +578,12 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "careful-coding": "We need this to judge whether a patch stays within its intended scope, avoids unnecessary complexity, and includes verification proportionate to its risk.",
         "code-comments": "We need this to verify required code-artifact headers and public construct documentation, and to check that implementation behavior respects the intent claimed by its comments.",
         "code-review-evidence": "We need this to establish a cited evidence packet before synthesis so review findings are grounded in applicable checks instead of reviewer intuition.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "organise-project-files": "We need this to confirm the prescribed destination for each new review evidence packet, checklist, or findings file before writing it.",
         "review-structured-artifact": "We need this to present defects in a finding-first, evidence-disciplined form so the change owner can evaluate and act on them efficiently."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "code-review-evidence",
         "review-structured-artifact",
@@ -672,11 +682,13 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "careful-coding": "We need this to keep implementation scoped to the request, make assumptions explicit, and avoid complexity that is not required for a complete fix.",
         "code-comments": "We need this to maintain required code-artifact headers and public construct documentation, keep comments aligned with behavior, and use structured explanation discipline for non-trivial comment blocks.",
         "code-discovery": "We need this to identify callers, contracts, dependencies, and existing coverage before editing so a local change does not violate a wider runtime path.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "fix-explanation": "We need this to translate the completed patch and its verification into a concise handoff that reviewers and maintainers can evaluate.",
         "organise-project-files": "We need this to choose and audit destinations from live project guidance before adding source, test, fixture, configuration, or generated files.",
         "test-driven-development": "We need this when behavior can be expressed through tests so the implementation is guided by observable outcomes and protected against regression."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "careful-coding",
         "code-comments",
@@ -771,6 +783,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "documentation-bootstrap": "We need this when the target project lacks the methodology structure required to place and maintain the requested documentation correctly.",
         "documentation-page-verify": "We need this when reverse-engineering integration creates or updates a README or custom non-wiki entry document that has no artifact-specific review contract.",
         "documentation-reverse-engineer": "We need this when authoritative documentation is missing or stale so claims can be derived from current code, configuration, and tests.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "interface-patterns": "We need this when a design changes a boundary so contract adaptation, independent variation, and subsystem simplification preserve their intended semantics.",
         "interpreter-pattern": "We need this when a design introduces a small domain language so grammar, parsing, evaluation, diagnostics, and resource limits are explicit before implementation.",
         "object-creation-patterns": "We need this when a design selects construction responsibilities so product creation, family compatibility, staged assembly, and copying remain explicit and language-neutral.",
@@ -781,6 +794,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "traversal-patterns": "We need this when a design separates traversal or type-specific operations from object structure so mutation, dispatch, recursion, and variation direction are explicit."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "development-methodology",
         "create-functional-spec",
@@ -854,11 +868,13 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       },
       "skillJustifications": {
         "agent-work-merge": "We need this to combine independent contributions through an explicit integration workflow that preserves evidence for any conflicts encountered.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "fix-explanation": "We need this to make conflict resolutions and integration decisions understandable to reviewers and the owners of the original contributions.",
         "organise-project-files": "We need this to validate the destination of any new file introduced or created while integrating contributions.",
         "review-structured-artifact": "We need this to evaluate the combined result for regressions and omissions that may only appear after individually valid changes are integrated."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "agent-work-merge",
         "review-structured-artifact",
@@ -1041,11 +1057,13 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "organise-project-files": "when the requested orchestration creates a new project file or directory"
       },
       "skillJustifications": {
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "organise-project-files": "We need this to ensure any new coordination, backlog, or handoff artifact is placed from live repository guidance before it is delegated or written.",
         "structured-design": "We need this to divide complex work into bounded responsibilities and dependencies that can be assigned without losing the intended system outcome.",
         "structured-explanation": "We need this so assignments, decisions, handoffs, and outcomes remain understandable across contributors with separate working contexts."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "structured-design",
         "structured-explanation"
@@ -1101,11 +1119,13 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "organise-project-files": "when the requested review creates a new project file or directory"
       },
       "skillJustifications": {
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "organise-project-files": "We need this to confirm the destination of any new prompt review checklist, findings file, or evaluation artifact before writing it.",
         "prompt-contracts": "We need this to assess the full model-facing contract rather than reviewing prompt wording in isolation from state, tools, authority, and outputs.",
         "review-structured-artifact": "We need this to make contract defects comparable by evidence and severity so maintainers can prioritize actionable corrections."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "prompt-contracts",
         "review-structured-artifact"
@@ -1168,6 +1188,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "careful-coding": "We need this to keep any diagnostic instrumentation or remediation narrowly tied to the reproduced failure and avoid unrelated changes.",
         "code-discovery": "We need this to locate the source, configuration, and tests that define the failing behavior before forming diagnostic hypotheses.",
         "code-execution-tracing": "We need this to map the relevant control flow so runtime observations are interpreted at the correct boundary.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "organise-project-files": "We need this to keep new instrumentation, logs, reproductions, and runtime evidence in their declared project ownership areas.",
         "root-cause-analysis": "We need this to test competing hypotheses and establish the mechanism of failure before recommending remediation.",
         "runtime-evidence-collection": "We need this when the failure mechanism depends on runtime state that cannot be established reliably from source inspection alone.",
@@ -1175,6 +1196,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "test-strategy": "We need this to design a focused reproduction and regression check that can distinguish the suspected cause from nearby behavior."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "code-discovery",
         "test-strategy",
@@ -1236,11 +1258,13 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       },
       "skillJustifications": {
         "application-security": "We need this to examine trust, authority, validation, data, and secret boundaries consistently when determining whether a change is exploitable.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "organise-project-files": "We need this to confirm the destination of any new security review checklist, findings file, or evidence artifact before writing it.",
         "review-structured-artifact": "We need this to separate confirmed exploitable findings from lower-confidence concerns and prioritize remediation by evidence and impact.",
         "structured-explanation": "We need this to communicate attack paths, mitigations, uncertainty, and residual exposure clearly enough for owners to act safely."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "application-security",
         "review-structured-artifact",
@@ -1297,12 +1321,14 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "organise-project-files": "when the requested UX work creates a new project file or directory"
       },
       "skillJustifications": {
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "end-to-end-verification": "We need this to observe the complete interaction flow and its visible states rather than judging isolated screens without workflow evidence.",
         "organise-project-files": "We need this to place new design recommendations, review findings, screenshots, or accessibility evidence in the repository's declared areas.",
         "review-structured-artifact": "We need this to distinguish evidence-backed usability and accessibility issues from preferences and prioritize actionable findings.",
         "user-experience-review": "We need this to evaluate whether people can complete the intended task with clear, accessible feedback and recover from errors across supported layouts."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "user-experience-review",
         "end-to-end-verification",
@@ -1367,6 +1393,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       },
       "skillJustifications": {
         "code-execution-tracing": "We need this to connect observed outcomes to the relevant source paths and identify branches that still require runtime confirmation.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "end-to-end-verification": "We need this when confidence depends on proving that the complete user or system workflow works across its real boundaries.",
         "organise-project-files": "We need this to keep any new verification reports, fixtures, traces, or runtime evidence in the repository's declared ownership areas.",
         "prompt-contracts": "We need this to verify that model-facing instructions, case inputs, evidence schemas, retries, outputs, and consumers agree before their verdicts are accepted.",
@@ -1377,6 +1404,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "test-strategy": "We need this to choose verification that matches the changed behavior and risk instead of relying on a framework-specific default test set."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "test-strategy",
         "end-to-end-verification",
@@ -1443,12 +1471,14 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "agent-role-authoring": "We need this to review conceptual agent definitions for instruction structure, definition-to-skill boundaries, dependency resolution, bounded failure behavior, example distinctness, and output-contract alignment.",
         "development-methodology": "We need this to evaluate artifacts against the bundle's documented routes, templates, and maintenance rules rather than personal preference.",
         "documentation-page-verify": "We need this to judge methodology documentation against its authoritative sources and required page contracts instead of reviewing prose in isolation.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "name-methodology-artifacts": "We need this to verify category prefixes, actor-form conceptual agent definition names, and skill operation names against the catalog naming contract.",
         "organise-project-files": "We need this to confirm the destination of any new methodology review checklist or findings file before writing it.",
         "review-structured-artifact": "We need this to present actionable defects before general observations so artifact owners can prioritize remediation.",
         "skill-authoring": "We need this to review distributed skills against the same harness boundary, portability, dependency, and concision rules used during authoring."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "review-structured-artifact",
         "skill-authoring",
@@ -1560,6 +1590,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "skillJustifications": {
         "agent-role-authoring": "We need this to create and revise conceptual agent definitions with explicit authority, structured instructions, bounded state transitions, distinct examples, and aligned runtime outputs.",
         "development-methodology": "We need this to preserve the bundle's artifact routing and documentation contracts while its own methodology is changed.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "maintain-methodology-documentation": "We need this to keep source files, generated artifacts, adapters, and validation synchronized across a maintenance change without creating user-home copies.",
         "name-methodology-artifacts": "We need this to keep category prefixes, actor-form conceptual agent definition names, and skill operation names consistent whenever the catalog changes.",
         "organise-project-files": "We need this to preserve source, generated, adapter, design, and test ownership boundaries whenever methodology maintenance adds files.",
@@ -1568,6 +1599,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "structured-explanation": "We need this to hand off the changed scope, decisions, verification evidence, and remaining risk without ambiguity."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "maintain-methodology-documentation",
         "skill-authoring",
@@ -1749,9 +1781,11 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "skillJustifications": {
         "development-methodology": "We need this to route each required artifact to exactly one creation and review contract instead of producing an arbitrary or duplicated document set.",
         "documentation-bootstrap": "We need this to choose the smallest complete documentation structure and runtime integration that future agents can maintain reliably.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "organise-project-files": "We need this to place project configuration, documentation, review evidence, and setup records from live repository structure before bootstrap creates them."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "documentation-bootstrap",
         "development-methodology"
@@ -1822,9 +1856,11 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "development-methodology": "We need this to select methodology conceptual agent definitions and artifact routes that fit the target project's actual work and documentation needs.",
         "documentation-bootstrap": "We need this when the target lacks the documentation and routing structure required for agents to load and follow the configuration consistently.",
         "documentation-page-verify": "We need this to confirm that generated guidance and every referenced conceptual agent definition or skill remain grounded in project evidence and bundle contracts.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "organise-project-files": "We need this to validate the location of new root and nested planning or routing files against the target project's live folder boundaries."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "detect-technology-skills",
         "create-project-configuration",
@@ -1880,11 +1916,13 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "repositoryMutation": "conditional",
       "skillConditions": {},
       "skillJustifications": {
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "organise-project-files": "We need this to turn live repository guidance, taxonomy, ownership, lifecycle, naming, and generated-output boundaries into an auditable placement decision.",
         "structured-design": "We need this to ensure each placement decision reinforces a coherent project structure rather than solving one file location in isolation.",
         "structured-explanation": "We need this to make the selected path, evidence, tradeoffs, and audit result clear enough for the requester to review and reuse."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "structured-design",
         "structured-explanation"
@@ -1942,11 +1980,13 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       },
       "skillJustifications": {
         "documentation-bootstrap": "We need this when the repository lacks the documentation roots or ownership decisions required to place and maintain the wiki correctly.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "organise-project-files": "We need this to place new wiki roots, hubs, topic families, and support files within the approved project and federation boundaries.",
         "project-wiki": "We need this to define the standard wiki shape, setup recommendation pack, federation boundaries, source workflow, and validation obligations.",
         "project-wiki-create": "We need this when setup requires a durable project-wiki methodology artifact that explains how the target wiki is structured, sourced, maintained, and verified."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "project-wiki",
         "project-wiki-create",
@@ -2006,10 +2046,12 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       },
       "skillJustifications": {
         "documentation-page-verify": "We need this to independently check the shared page contract, source support, links, diagrams, and steady-state language from the completed wiki review checklist.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "organise-project-files": "We need this to confirm the prescribed destination for each new project-wiki review checklist or findings file before writing it.",
         "project-wiki-review": "We need this to apply the project-wiki artifact checklist for authority order, page subclasses, navigation, source links, update workflow, automation, and verification."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "project-wiki-review",
         "documentation-page-verify"
@@ -2142,11 +2184,13 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       },
       "skillJustifications": {
         "code-project-wiki": "We need this when claims depend on implementation behavior so durable wiki statements remain traceable to authoritative code and tests.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "organise-project-files": "We need this to place new durable leaves, hubs, digests, and processed-source artifacts within the live wiki taxonomy and queue boundaries.",
         "project-wiki": "We need this to preserve queue boundaries, provenance, linking, validation, and closeout obligations throughout the ingest workflow.",
         "project-wiki-topic-write": "We need this to turn approved source material into durable pages whose topic boundaries and navigation remain maintainable over time."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "project-wiki",
         "project-wiki-topic-write",
@@ -2201,9 +2245,11 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "repositoryMutation": "never",
       "skillConditions": {},
       "skillJustifications": {
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "project-wiki-query": "We need this to ground answers in the project's durable knowledge before relying on ad hoc investigation or unsupported recall."
       },
       "skills": [
+        "effective-communication",
         "project-wiki-query"
       ],
       "sourcePath": "agents/roles/wiki-activities/wiki-query-responder.role.yaml",
@@ -2256,11 +2302,13 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "organise-project-files": "when the requested research creates a new raw report or other project file"
       },
       "skillJustifications": {
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "organise-project-files": "We need this to select a collision-safe raw-report path from the project's live source queue and naming conventions.",
         "project-wiki-query": "We need this to determine whether maintained local or federated wiki coverage already answers the request before starting external research.",
         "project-wiki-research": "We need this to research a bounded coverage gap, preserve source provenance and exclusions, and save an ingest-ready report under raw."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "project-wiki-query",
         "project-wiki-research"
@@ -2317,12 +2365,14 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "organise-project-files": "when the requested collection creates a new raw source artifact or other project file"
       },
       "skillJustifications": {
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "organise-project-files": "We need this to select a collision-safe raw-source path from the project's live collection queue and naming conventions.",
         "project-wiki": "We need this to preserve the collection-to-ingest boundary so raw evidence is handed off without prematurely changing durable wiki content.",
         "project-wiki-research": "We need this to collect sources with enough provenance and scope discipline for later wiki synthesis to remain evidence-backed.",
         "structured-explanation": "We need this to make the collection window, exclusions, and handoff unambiguous for the requester and the ingest agent."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "project-wiki-research",
         "project-wiki",
@@ -2380,9 +2430,11 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "repositoryMutation": "never",
       "skillConditions": {},
       "skillJustifications": {
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "project-wiki-topic-verify": "We need this to apply the dedicated read-only acceptance contract for topic pages, leaf granularity, source links, digests, federation, lint, and OKF validation."
       },
       "skills": [
+        "effective-communication",
         "project-wiki-topic-verify"
       ],
       "sourcePath": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml",
@@ -2479,11 +2531,13 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       },
       "skillJustifications": {
         "code-project-wiki": "We need this when wiki maintenance follows code, test, procedure, backlog, or commit changes so durable claims remain synchronized with authoritative project behavior.",
+        "effective-communication": "Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.",
         "organise-project-files": "We need this to place new durable leaves, hubs, and digest files within the live wiki taxonomy before authoring them.",
         "project-wiki": "We need this to preserve the wiki authority order, page contract, topic granularity, navigation, linking, and closeout rules.",
         "project-wiki-topic-write": "We need this to create, rewrite, split, and repair durable topic pages while keeping hubs, leaves, indexes, and digests coherent."
       },
       "skills": [
+        "effective-communication",
         "organise-project-files",
         "project-wiki",
         "project-wiki-topic-write",
