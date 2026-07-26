@@ -36,9 +36,9 @@ Direct user request in the active coordinator task on 2026-07-25: “we need to 
 - Define concise agent-to-agent handoff content: exact identity, current state, preserved work, evidence, blocker, and next action.
 - Avoid redundant status narration and procedural detail that does not help the recipient decide or act.
 - Prefer a concrete example over a bare inventory when the example makes a structure, workflow, or file layout easier to understand.
-- Do not replace a simple explanation with an abstract restatement.
-  - Avoid: “Scope describes a claim already required by the Event Contract. Scope does not authorize a claim.”
-  - Prefer: “The table decides when to get a claim. Scope says what the claim covers.”
+- Explain simple ideas in direct, concrete language.
+  - Write: “The table decides when to get a claim. Scope says what the claim covers.”
+  - This replaces the abstract wording: “Scope describes a claim already required by the Event Contract. Scope does not authorize a claim.”
 - Use tables or lists only when they make repeated mappings or choices clearer than prose.
 - Align existing shared communication guidance with the new skill and remove material duplication where appropriate.
 - Perform exact governed-source discovery before implementation and obtain scope-specific approval for every governed definition that must change.
@@ -48,7 +48,7 @@ Direct user request in the active coordinator task on 2026-07-25: “we need to 
 - One canonical communication skill contains the shared principles used by all agents.
 - Agent definitions or shared dispatch guidance cause every applicable agent to use the skill without copying its full procedure.
 - Examples demonstrate clear user-facing explanations, status updates, approval questions, blocker reports, and agent handoffs.
-- Tests reject unexplained jargon, vague outcomes, hidden questions, redundant procedural narration, abstract restatements, and overly long multi-rule sentences in covered fixtures.
+- Tests confirm that covered fixtures use explained terminology, explicit outcomes and questions, concise status narration, direct explanations, and one-rule sentences.
 - Tests preserve exact identifiers, paths, commits, claim references, and error outcomes when those details are operationally necessary.
 - Relevant README, agent-and-skill HTML documentation, generated mirrors, and bundle assertions remain source-aligned.
 - Independent review confirms that the skill improves clarity without removing required evidence or authority boundaries.
