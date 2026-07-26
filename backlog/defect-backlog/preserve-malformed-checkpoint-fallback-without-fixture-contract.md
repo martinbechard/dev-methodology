@@ -1,10 +1,10 @@
 # Preserve Malformed Checkpoint Fallback Without Fixture Contract
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
-Owner: Dev Backlog Coordinator (reservation pending root acceptance)
+Owner: Dev Orchestrator (canonical root task 019f9f60-097d-7392-813d-801c9d058683)
 
 Provider: file
 
@@ -63,6 +63,21 @@ None.
 - Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
 - Coordination Classification: The Dependencies entry is a coordination-only overlap note. Its referenced item is Blocked and Unowned, and the preflight registry has no live claim. Private-worktree implementation may begin; exact overlap scope and integration must be reconciled before the conflicting integration event.
 - Next Lifecycle Owner: The root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
+
+## Current Running Acceptance
+
+- Transition: Starting -> Running.
+- Canonical Work-Item Thread: 019f9f60-097d-7392-813d-801c9d058683.
+- Canonical Root Agent Task: 019f9f60-097d-7392-813d-801c9d058683.
+- Root Dev Orchestrator: Dev Orchestrator.
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Delivery Branch: codex/preserve-malformed-checkpoint-fallback-019f9f60.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/9914/dev-methodology.
+- Phase: Implementation accepted; this provider transaction contains no implementation artifact mutation.
+- Started At: 2026-07-26T17:05:19.885128Z.
+- Claim Evidence: accept-malformed-checkpoint-running-019f9f60; acquire outcome SHARED_CHECKOUT_ACQUIRED; claim event 37773f64-4806-4827-b3a6-503906b259c6.
+- Parent Release Evidence: reserve-malformed-checkpoint-019f95a9 released normally; outcome RELEASED; event bd529c4a-41b6-49e5-b2ca-b87ebaeaf276.
+- Dependency Classification: coordination-only. Reconcile exact overlapping implementation scope before integration.
 
 ## Notes
 
