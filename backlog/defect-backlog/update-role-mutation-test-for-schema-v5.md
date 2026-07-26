@@ -1,6 +1,6 @@
 # Update Role-Mutation Test For Schema V5
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/update-role-mutation-test-for-schema-
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 ## Summary
 
@@ -67,3 +67,17 @@ Runnable next action: inspect the accepted schema-v5 migration, update the stale
 - Backlog Claim: reserve-schema-v5-test-defect; acquire event bdb2f65b-5831-43fb-a07c-d71bc088cb73.
 - Governed-Definition Mutation Authority: None.
 - Next Lifecycle Owner: The eventual root Dev Orchestrator must record a distinct Starting -> Running acceptance before implementation or further repository mutation.
+
+## Current Running Acceptance
+
+- Transition: Starting -> Running.
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Canonical Work-Item Thread: 019f9f93-bf1a-7d20-9ab1-b184f9c39088.
+- Canonical Root Agent Task: 019f9f93-bf1a-7d20-9ab1-b184f9c39088.
+- Root Dev Orchestrator: Dev Orchestrator.
+- Delivery Branch: codex/schema-v5-role-mutation-test-019f9f93.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/68d2/dev-methodology.
+- Phase: Delivery accepted.
+- Started At: 2026-07-26T18:01:34Z.
+- Claim Evidence: starting-to-running-schema-v5-019f9f93; acquire outcome SHARED_CHECKOUT_ACQUIRED; claim event a4720a64-af29-4b8c-9bc7-86bfb2d98e6f.
+- Next Lifecycle Owner: The root Dev Orchestrator owns delivery. Its Dev Backlog Steward child performs later provider transitions on this canonical item.
