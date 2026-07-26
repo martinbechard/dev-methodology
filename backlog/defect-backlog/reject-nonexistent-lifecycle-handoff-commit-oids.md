@@ -1,6 +1,6 @@
 # Reject Nonexistent Lifecycle Handoff Commit OIDs
 
-Status: Blocked
+Status: Ready
 
 Type: Defect
 
@@ -35,6 +35,16 @@ Completion: direct-main
 - Recovery Owner: Task 019f9783 root/user for approval, then parent Coordinator for Blocked -> Ready -> Starting same-task resumption.
 - Unblock Condition: Direct accepted main-delivery baton from 019f9783 with commit, path mapping, review, verification, and release evidence; primary clean; no overlapping claim.
 - Permitted Resumption: Only Blocked -> Ready parent reservation sequence.
+
+## Current-Contract Recovery
+
+- Reconciliation Date: 2026-07-26.
+- Recovery Authority: Parent-authorized reassessment against the published Event Contract and the prior user approval recorded in this item.
+- Reconciled Publication: commit 6e59985b8cd0280e729f56eb8d2d362adf3f4ab6 is an ancestor of current main and publishes the event-driven claim coordination contract, including the command adapter that was the recorded overlapping governed dependency.
+- Delivery Baton: `backlog/completed-backlog/features/use-exact-work-item-claims-for-lifecycle-updates.md` records that the historical 019f9783 task's unaccepted candidate is superseded by the published policy at that commit; it preserves the historical task identity and assigns the remaining helper defects to a separate active record.
+- Claim Reconciliation: the configured command helper reported an empty live registry before this transition; no overlapping claim blocks the record.
+- Transition: Blocked -> Ready. Owner remains Unowned. The preserved canonical Thread/Task 019f978e-28b7-7561-be38-b535ab26850f remains authoritative.
+- Next Lifecycle Owner: the parent Dev Backlog Coordinator may separately reserve Ready -> Starting for the preserved canonical Thread. This recovery does not record Starting or Running.
 
 ## Preserved Governed Diff
 
