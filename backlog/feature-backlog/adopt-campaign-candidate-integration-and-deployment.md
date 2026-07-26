@@ -4,6 +4,14 @@ Status: Blocked
 
 Type: Feature
 
+Owner: Unowned
+
+Provider: file
+
+Provider Reference: backlog/feature-backlog/adopt-campaign-candidate-integration-and-deployment.md
+
+Completion: direct-main
+
 ## Launch Reservation
 
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a
