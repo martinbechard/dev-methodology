@@ -93,6 +93,16 @@ None.
 - Correction Attempt: 1, assigned to the original Dev Coder against the same candidate scope.
 - Integration And Verification: no integration or final verification has been accepted; correction and fresh review remain required.
 
+## Replacement Candidate Review
+
+- Replacement Candidate: b803c1ba70db747915218e08ecd64de8c059555e, atop rejected candidate 9ae3dd286490e3f3e8dd14066d1c72676d86c3d4.
+- Fresh Review Disposition: REJECTED.
+- Review Finding 1: HIGH — a dangling symlink to a nonexistent target can be claimed concurrently with that target.
+- Review Finding 2: HIGH — the fail-closed boolean identity result silently deduplicates or drops requested ownership during multi-file acquisition.
+- Rejection History: two candidate attempts have now been rejected.
+- Current Disposition: artifact mutation is paused for parent investigation and a revised plan.
+- Verifier And Integration: no verifier result or integration has been accepted.
+
 ## Notes
 
 - Reproduction 1: on a case-insensitive disposable primary checkout, acquire one exact file and then acquire the same file through a case-varied alias; the second claim must conflict.
