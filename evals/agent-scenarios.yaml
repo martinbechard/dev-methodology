@@ -117,7 +117,7 @@ agents:
         forbiddenBehaviors:
           - Treat task title, task status, or messages as provider or delivery authority.
           - Create a separate task ledger, baton registry, waiting-task registry, or placeholder task.
-          - Count Stalled, Blocked, User Action Required, Holding, Awaiting Review, terminal, or pure waiting tasks as Starting-plus-Running capacity.
+          - Count Stalled, Blocked, User Action Required, Holding, Awaiting Review, terminal items, or pure waiting tasks as Starting-plus-Running capacity.
           - Reproduce provider or Commit procedures in the coordinator.
         judgePlan:
           deterministicChecks:

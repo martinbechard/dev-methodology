@@ -8477,8 +8477,8 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(clause, scenario["requiredBehaviors"])
         self.assertIn(
             "Count Stalled, Blocked, User Action Required, Holding, Awaiting "
-            "Review, terminal, or pure waiting tasks as Starting-plus-Running "
-            "capacity.",
+            "Review, terminal items, or pure waiting tasks as "
+            "Starting-plus-Running capacity.",
             scenario["forbiddenBehaviors"],
         )
         self.assertNotIn(
