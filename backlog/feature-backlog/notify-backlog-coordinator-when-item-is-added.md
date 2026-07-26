@@ -1,6 +1,6 @@
 # Notify the Backlog Coordinator When a Work Item Is Added
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -8,7 +8,7 @@ Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/notify-backlog-coordinator-when-item-is-added.md
+Provider Reference: backlog/feature-backlog/notify-backlog-coordinator-when-item-is-added.md
 
 Completion: direct-main
 
@@ -135,7 +135,12 @@ No governed source, generated mirror, implementation, integration, publication, 
 
 ### Resolution
 
-Pending user answer.
+- User Answer: approved.
+- Answered At: 2026-07-26.
+- Answer Provenance: canonical work-item Thread /root.
+- Approved Governed Sources: agents/roles/dev-activities/dev-backlog-steward.role.yaml; agents/roles/dev-activities/dev-backlog-coordinator.role.yaml; skills/codex-workitem-coordination/SKILL.md.
+- Approved Dependent Artifacts: supported generated role and skill mirrors; design/orchestrated-development-lifecycle.html; focused coordination and bundle tests.
+- Same-Task Resumption Requirement: preserve canonical work-item Thread /root and its root Dev Orchestrator task; this Ready transaction does not reserve Starting, record Running, or create a replacement task.
 
 ## Notes
 
