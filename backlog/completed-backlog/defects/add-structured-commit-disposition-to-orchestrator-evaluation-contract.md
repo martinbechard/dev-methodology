@@ -1,14 +1,14 @@
 # Add A Clear Delivery Result To The Orchestrator Evaluation
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/add-structured-commit-disposition-to-orchestrator-evaluation-contract.md
+Provider Reference: backlog/completed-backlog/defects/add-structured-commit-disposition-to-orchestrator-evaluation-contract.md
 
 Completion: direct-main
 
@@ -68,3 +68,16 @@ contract above.
 ## Delivery Mode
 
 The user directed temporary single-task delivery without claims or delegated agents.
+
+## Completion Evidence
+
+- Implementation commit: `10bf58d4`.
+- The evaluator now accepts only `COMPLETED`, `NEEDS_REVIEW`, or `BLOCKED`.
+- Work-item closeout is permitted only for `COMPLETED`.
+- All 26 focused Dev Orchestrator fixture tests passed.
+- Both directly affected evaluator tests passed.
+- Dev Orchestrator validation-only passed.
+- The affected bundle contract test passed.
+- Python compilation and `git diff --check` passed.
+- No claim was acquired.
+- No user-level publication was needed because this change affects only the evaluation suite.
