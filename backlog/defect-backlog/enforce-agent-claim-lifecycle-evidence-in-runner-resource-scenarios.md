@@ -1,10 +1,10 @@
 # Enforce Agent-Claim Lifecycle Evidence In Runner Resource Scenarios
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
-Owner: Unowned
+Owner: Root Dev Orchestrator
 
 Provider: file
 
@@ -17,15 +17,19 @@ Completion: direct-main
 - Canonical Work-Item Thread: 019f981c-4fea-7b83-b8d2-0b254ff45f0c
 - Canonical Task Id: 019f981c-4fea-7b83-b8d2-0b254ff45f0c
 - Root Role: Dev Orchestrator
+- Root Orchestrator Task: /root/resume_blocked_after_claim_publication/runner_lifecycle_recovery
 - Delivery Worktree: /Users/martinbechard/.codex/worktrees/e8bc/dev-methodology
-- Delivery Branch: detached HEAD
-- Delivery Commit At Acceptance: d40de70dcccf484284ce02310c90ad6c5fb89b83
-- Phase: Hard-stop blocked; no active implementation owner.
-- Started At: 2026-07-25T07:12:44Z
+- Delivery Branch: codex/enforce-agent-claim-lifecycle-evidence-019f981c
+- Delivery Commit At Acceptance: 4778fd4435c50cc8a282a6a505eb41b061374278
+- Phase: Fresh bounded recovery plan; not correction attempt 3 in the prior loop.
+- Exact Implementation Scope: evals/agent-tests/runner.py and evals/agent-tests/test_runner.py.
+- Reservation Commit: 94405248e0b73c38da0121f06b1d566fcece4577.
+- Started At: 2026-07-26T11:06:09Z
 
 ## Execution Coordination Evidence
 
-- Backlog Claim: starting-to-running-019f981c-4fea-7b83-b8d2-0b254ff45f0c acquired on primary main at 2026-07-25T07:12:37.538066Z; acquisition journal event f395935f-c596-4d30-acec-1fe10192f1e8.
+- Backlog Claim: runner-starting-to-running-019f981c-4fea-7b83-b8d2-0b254ff45f0c acquired on primary main at 2026-07-26T11:05:42.371076Z; acquisition journal event e7f0ccbc-1c10-47cc-90e8-38bbe4f8f843.
+- Claim-Free Private-Lane Evidence: This transaction acquired only the exact primary backlog-file claim. The preserved delivery worktree is private, and no project-files or resource claim was acquired for source work during this lifecycle acceptance.
 
 ## Launch Reservation
 
