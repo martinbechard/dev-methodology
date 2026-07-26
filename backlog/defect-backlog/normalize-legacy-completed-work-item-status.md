@@ -1,10 +1,10 @@
 # Normalize Legacy Completed Work-Item Status
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
@@ -61,6 +61,16 @@ None.
 - Launch Evidence: Parent Coordinator authorized this exact-item reservation. Runtime task creation and acceptance remain pending.
 - Backlog Claim Event: b46fc80f-fe6c-4061-9ae1-0e2637771fe8.
 - Next Lifecycle Owner: the root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
+
+## Current Running Acceptance
+
+- Canonical Thread And Task: 019f9ea6-73e6-7d93-9974-a2dce2c8651b.
+- Root Role: Dev Orchestrator.
+- Worktree: /Users/martinbechard/.codex/worktrees/be6c/dev-methodology.
+- Delivery Phase: Archived status normalization preparation.
+- Started At: 2026-07-26T13:45:50Z.
+- Parent Reservation Evidence: f4049a929f1889c346753c308664d72eaa5a64d5.
+- Backlog Claim Acquisition Event: f260f5d9-2213-4ba6-913c-9f953802642b.
 
 ## Notes
 
