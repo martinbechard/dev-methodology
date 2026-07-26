@@ -1,6 +1,6 @@
 # Bind Project-Files Claims to the Primary Worktree
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -8,13 +8,13 @@ Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/bind-project-files-claims-to-primary-worktree.md
+Provider Reference: backlog/defect-backlog/bind-project-files-claims-to-primary-worktree.md
 
 Completion: direct-main
 
 ## Summary
 
-Make project-files claim acquisition and release safe for direct-main delivery when the claimant uses a linked worktree.
+Bind Event-2 project-files claim acquisition to the primary worktree and revise normal release cleanup so it removes only its exact claim under the registry lock and appends RELEASED evidence, without Git or delivery validation.
 
 ## Context
 
@@ -23,6 +23,8 @@ The canonical root-AGENTS task 019f9fd6-d7c1-7902-bf33-e10883383b7e delivered ac
 ## Source Evidence
 
 The Parent Coordinator explicitly directed durable Ready logging of this distinct confirmed defect after reviewing the accepted candidate, integration, claim registry, rejected-release event 0abe6b25-19f3-4635-bb38-15769a7861ec, and helper behavior. The defect is separate from the root-AGENTS correction and requires no runtime task at creation. In the canonical task on 2026-07-26, the user said: “Ok do it and add a directive that before putting an item in user action required you should check the agent-claim skill”. This approves the revised direction, but it does not satisfy the repository's exact-scope definition approval requirement for all six newly discovered governed definitions.
+
+On 2026-07-26, in canonical task and work-item Thread 019f9fef-1edc-7ea1-a058-bf8dfddcd2fb, the user answered `Approved`, explicitly authorizing exactly these governed definitions: skills/agent-claim/SKILL.md; skills/agent-claim-command/SKILL.md; skills/agent-claim-mcp/SKILL.md; skills/create-file-work-item/SKILL.md; skills/manage-file-work-items/SKILL.md; and skills/codex-workitem-coordination/SKILL.md. The approval also covers the already-stated dependent ordinary helper code, focused tests, and supported generated skill mirrors.
 
 ## Requirements
 
@@ -53,13 +55,13 @@ None.
 
 ## Open Questions
 
-Do you approve changing exactly these six governed definitions to implement the revised claim-cleanup and User Action Required rules: skills/agent-claim/SKILL.md; skills/agent-claim-command/SKILL.md; skills/agent-claim-mcp/SKILL.md; skills/create-file-work-item/SKILL.md; skills/manage-file-work-items/SKILL.md; skills/codex-workitem-coordination/SKILL.md?
+None. The recorded exact-scope approval resolves the previous governed-definition authorization question.
 
-## User Action Required
+## Resolved User Action Required
 
-The same canonical task needs one explicit user decision before any new recovery capability can be implemented.
+The same canonical task required one explicit user decision before any new recovery capability could be implemented. That decision is now recorded in Resolution.
 
-## Question for the User
+## Resolved Question
 
 Do you approve changing exactly these six governed definitions to implement the revised claim-cleanup and User Action Required rules: skills/agent-claim/SKILL.md; skills/agent-claim-command/SKILL.md; skills/agent-claim-mcp/SKILL.md; skills/create-file-work-item/SKILL.md; skills/manage-file-work-items/SKILL.md; skills/codex-workitem-coordination/SKILL.md?
 
@@ -70,17 +72,22 @@ Options:
 - Defer: preserve all evidence and do not resume work.
 - Decline: end this revised direction without mutation.
 
-## Why User Input Is Required
+## Resolved Approval Basis
 
 The revised direction requires changes to six governed skill definitions. The project requires explicit, scope-specific approval naming each canonical definition before any governed definition can be changed. The user's recorded wording approves the direction but not this exact six-path scope.
 
-## Unattended Work Boundary
+## Post-Resolution Boundary
 
-No governed definition, helper, test, or generated-mirror mutation; claim release; candidate integration; provider resumption; or cleanup may occur until exact approval is recorded and User Action Required -> Ready -> Starting -> Running is durable.
+Exact approval is recorded and User Action Required -> Ready is now durable. A parent Coordinator must separately reserve Ready -> Starting for the preserved canonical Thread, and its root Dev Orchestrator must separately accept Starting -> Running before any governed definition, helper, test, generated-mirror, claim-release, candidate-integration, provider-resumption, or cleanup mutation.
 
 ## Resolution
 
-Pending user answer.
+- User answer: `Approved`.
+- Date: 2026-07-26.
+- Provenance: canonical task and work-item Thread 019f9fef-1edc-7ea1-a058-bf8dfddcd2fb.
+- Exact approval scope: skills/agent-claim/SKILL.md; skills/agent-claim-command/SKILL.md; skills/agent-claim-mcp/SKILL.md; skills/create-file-work-item/SKILL.md; skills/manage-file-work-items/SKILL.md; and skills/codex-workitem-coordination/SKILL.md, plus the already-stated dependent ordinary helper code, focused tests, and supported generated skill mirrors.
+- Resulting disposition: User Action Required -> Ready in backlog/defect-backlog, with Owner: Unowned.
+- Canonical identity: preserve canonical Work-Item Thread and Root Agent Task 019f9fef-1edc-7ea1-a058-bf8dfddcd2fb. No replacement Thread is authorized.
 
 ## Preserved Recovery Evidence
 
@@ -119,4 +126,4 @@ Pending user answer.
 
 ## Notes
 
-This item remains Status: User Action Required with Owner: Unowned and is not runnable or approved for unattended work until the user answers the exact question above. The retained live project-files claim remains unchanged and outside this backlog transaction.
+This item is Status: Ready with Owner: Unowned. It is eligible only for the separate parent-owned Ready -> Starting reservation and root-owned Starting -> Running acceptance using the preserved canonical Thread. The retained live project-files claim remains unchanged and outside this backlog transaction.
