@@ -6847,6 +6847,84 @@ class BundleContentTests(unittest.TestCase):
                     r"(?:the verifier|it) returns GOOD",
                 )
 
+    def test_lifecycle_separates_task_execution_anomalies_from_states(self) -> None:
+        """The state map must reconcile task anomalies before lifecycle routing."""
+
+        lifecycle_text = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        ).read_text(encoding="utf-8")
+        backlog_section = lifecycle_text[
+            lifecycle_text.index('<section class="section" id="backlog"') :
+            lifecycle_text.index('<section class="section" id="file-provider"')
+        ]
+
+        anomaly_label = (
+            '<h3 id="task-execution-anomaly-title">Task/execution anomaly '
+            "<span>Not a lifecycle state</span></h3>"
+        )
+        self.assertIn(anomaly_label, backlog_section)
+        self.assertLess(
+            backlog_section.index(anomaly_label),
+            backlog_section.index("<strong>Stalled</strong>"),
+        )
+        self.assertLess(
+            backlog_section.index(anomaly_label),
+            backlog_section.index("<strong>Blocked</strong>"),
+        )
+
+        state_map_match = re.search(
+            r'<div class="state-map" role="img" aria-label="([^"]+)">',
+            backlog_section,
+        )
+        self.assertIsNotNone(state_map_match)
+        state_map_label = state_map_match.group(1)
+        for clause in (
+            "A failed, stopped, or missing Starting or Running canonical task "
+            "is a Task/execution anomaly, not a lifecycle state.",
+            "Reconcile the canonical task, provider record or reservation, and "
+            "ownership before any lifecycle choice.",
+            "The anomaly alone does not release Starting-plus-Running capacity "
+            "or justify Stalled.",
+            "Only a separately proved unknown progress gap may become Stalled.",
+            "Only a separately validated known cause may become Blocked.",
+        ):
+            with self.subTest(aria_clause=clause):
+                self.assertIn(clause, state_map_label)
+
+        anomaly_section = backlog_section[
+            backlog_section.index(
+                '<aside class="task-execution-anomaly"'
+            ) :
+            backlog_section.index('<div class="state-branches">')
+        ]
+        self.assertIn(
+            '<ol class="task-anomaly-flow" '
+            'aria-label="Task/execution anomaly reconciliation flow">',
+            anomaly_section,
+        )
+        flow_steps = (
+            "Observe anomaly",
+            "Reconcile identity",
+            "Evaluate separate evidence",
+        )
+        flow_positions = tuple(
+            anomaly_section.index(f"<strong>{step}</strong>")
+            for step in flow_steps
+        )
+        self.assertEqual(tuple(sorted(flow_positions)), flow_positions)
+        for clause in (
+            "failed, stopped, or missing canonical task for a Starting or "
+            "Running item",
+            "Reconcile the canonical task, provider record or reservation, "
+            "and ownership before any lifecycle choice.",
+            "The anomaly alone does not release Starting-plus-Running capacity "
+            "or justify Stalled.",
+            "Only a separately proved unknown progress gap may become Stalled.",
+            "Only a separately validated known cause may become Blocked.",
+        ):
+            with self.subTest(visible_clause=clause):
+                self.assertIn(clause, anomaly_section)
+
     def test_lifecycle_documents_simplified_coordination_and_delivery_sequences(self) -> None:
         """The lifecycle should teach concepts progressively without runtime-specific clutter."""
         lifecycle_path = (
@@ -7002,7 +7080,7 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertNotIn("Conditional Claim A", agents_section)
         self.assertNotIn("Conditional Claim B", agents_section)
-        self.assertNotRegex(lifecycle_text, r"\b[Tt]asks?\b|task-local")
+        self.assertNotIn("task-local", lifecycle_text)
 
         title_like_labels = (
             "Work-Item Continuity",
