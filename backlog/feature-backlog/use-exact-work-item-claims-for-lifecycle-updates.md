@@ -1,6 +1,6 @@
 # Use Exact Work-Item Claims For Lifecycle Updates
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -11,6 +11,17 @@ Provider: file
 Provider Reference: backlog/feature-backlog/use-exact-work-item-claims-for-lifecycle-updates.md
 
 Completion: direct-main
+
+## Current Starting Reservation
+
+- Parent Coordination Thread: /root/resume_blocked_after_claim_publication
+- Reservation: One parent-owned launch reservation.
+- Normalized Objective: Reconcile the published exact-work-item/event-driven claim delivery against current main, selected Commit evidence, provider closure, and cleanup without reimplementing superseded candidates.
+- Dispatched At: 2026-07-26T07:17:00Z
+- Intended Root Role: Dev Orchestrator
+- Parent Reservation Claim: exact-work-item-claims-ready-starting-20260726; acquisition event 646681cd-18e8-4266-84e4-714ba7cb29a4.
+- Runtime Thread And Task Id: Pending root Dev Orchestrator acceptance; no new root identity has been created by this reservation.
+- Historical Canonical Work-Item Thread/Task: 019f9783-31a0-7e91-9704-08cde7886b3a remains preserved for recovery evidence and must not be replaced.
 
 ## Recovery Resumption
 
