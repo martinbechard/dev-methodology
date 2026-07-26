@@ -1,16 +1,27 @@
 # Decouple Dev Orchestrator Suite From Agent Claim When Resource Coordination Is None
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Provider: file
 
 Provider Reference: backlog/defect-backlog/decouple-dev-orchestrator-suite-from-agent-claim.md
 
 Completion: direct-main
+
+## Current Running Acceptance
+
+- Canonical Task/Thread: 019f96ce-b1a0-7633-97ab-336ba7d188e4; no replacement identity is created.
+- Root Owner: Dev Orchestrator.
+- Parent Coordination Thread: /root/resume_blocked_after_claim_publication.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/e5ea/dev-methodology.
+- Delivery Branch: Detached at reservation commit 97e8e20761619518d37ca5a17310836b4f4bf3b6; implementation branch remains pending.
+- Phase: Fresh bounded recovery discovery. No artifact mutation is authorized by this lifecycle transaction.
+- Started At: 2026-07-26T09:34:50Z.
+- Exact-File Claim: decouple-orchestrator-none-running-019f96ce acquired on primary main at 2026-07-26T09:34:50.323082Z; acquisition journal event 0eb37c91-f939-421e-ae40-7362aceb99f7.
 
 ## Launch Reservation
 
