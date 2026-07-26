@@ -1,10 +1,10 @@
 # Bind Project-Files Claims to the Primary Worktree
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
-Owner: Unowned
+Owner: root Dev Orchestrator
 
 Provider: file
 
@@ -52,7 +52,7 @@ None.
 
 None.
 
-## Current Starting Reservation
+## Starting Reservation
 
 - Transition: Ready -> Starting.
 - Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
@@ -62,7 +62,20 @@ None.
 - Intended Root Role: Dev Orchestrator.
 - Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
 - Coordination Note: Integration and recovery of the live claim integrate-reconcile-root-agents-019f9fd6 remain deferred until this candidate is accepted.
-- Next Lifecycle Owner: The root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
+
+## Current Running Acceptance
+
+- Transition: Starting -> Running.
+- Canonical Work-Item Thread: 019f9fef-1edc-7ea1-a058-bf8dfddcd2fb.
+- Canonical Root Agent Task: 019f9fef-1edc-7ea1-a058-bf8dfddcd2fb.
+- Owner: root Dev Orchestrator.
+- Parent Coordinator: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Branch: codex/bind-project-files-primary-019f9fef.
+- Worktree: /Users/martinbechard/.codex/worktrees/aa2f/dev-methodology.
+- Phase: Root-cause reproduction and candidate implementation.
+- Started-At Evidence: Root Dev Orchestrator acceptance recorded by the primary-main file provider transaction on 2026-07-26.
+- Claim Evidence: SHARED_CHECKOUT_ACQUIRED event 52d1510e-a5b9-4b4e-b402-3e0cfa145ed3 protected this exact backlog file for the acceptance transaction.
+- Coordination Note: Recovery and integration of the live claim integrate-reconcile-root-agents-019f9fd6 remain deferred.
 
 ## Notes
 
