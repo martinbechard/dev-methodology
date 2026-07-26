@@ -1,6 +1,6 @@
 # Decouple Dev Backlog Steward Contract From Unconditional Claim Evidence
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -11,6 +11,17 @@ Provider: file
 Provider Reference: backlog/defect-backlog/decouple-dev-backlog-steward-contract-from-unconditional-claim-evidence.md
 
 Completion: direct-main
+
+## Current Starting Reservation
+
+- Parent Coordination Thread: /root/resume_blocked_after_claim_publication
+- Reservation: One parent-owned launch reservation.
+- Normalized Objective: Reconcile current-main semantics first, then make a bounded correction only if needed, obtain fresh independent review and focused verification, complete direct-main delivery and provider closure, and avoid a full repository regression.
+- Dispatched At: 2026-07-26T07:21:34Z
+- Intended Root Role: Dev Orchestrator
+- Parent Reservation Claim: steward-contract-starting-20260726; acquisition event d71e9210-8237-4620-8828-9888ba8568be.
+- Runtime Thread And Task Id: Pending root Dev Orchestrator acceptance; no new root identity has been created.
+- Historical Canonical Work-Item Thread/Task: 019f96f1-1a19-7b01-b166-c5948a50fff5 remains preserved and must not be replaced.
 
 ## Recovery Resumption
 
