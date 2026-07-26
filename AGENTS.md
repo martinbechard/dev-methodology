@@ -527,70 +527,26 @@ If a change affects the skill catalog, adapter shape, conceptual agent definitio
 
 ## Validation
 
-Before finishing changes to this repository, select the lowest verification tier supported by the affected surfaces and risks. The verification plan must identify those surfaces and map every check to a concrete risk. Record why the task selected a higher tier whenever it escalates beyond the lowest applicable tier.
+Select tests from the changed behavior and its actual dependency paths. Run the smallest relevant test first. A tier identifies the affected surface; it never triggers a full repository regression.
 
-Escalate only when affected-surface evidence, a failed focused check, a shared generator or runner change, or a final-campaign requirement justifies it.
+| Tier | Change event | Required tests | Explicit exclusions |
+| --- | --- | --- | --- |
+| 1 | Documentation-only change with no executable contract change | Documentation validation for the changed files; applicable link or markup checks; git diff --check | No unit suites, agent catalog, browser tests, or unrelated documentation checks |
+| 2 | Skill, role, configuration, template, or metadata contract change | Targeted contract tests that directly assert the changed statements; validation for each changed source; generated-output freshness for affected outputs; git diff --check | No full repository suite, project-wiki suite, browser tests, or live-model tests |
+| 3 | Generated output changes from an approved source change | The source's targeted tests; regenerate only supported outputs; freshness check for that generator; exact source-to-output consistency check; git diff --check | No unrelated generators or broad regression suites |
+| 4 | Test fixture, expected result, assertion, or test data change | Tests that consume the changed fixture, result, assertion, or data; one focused negative case when needed to prove that the test detects the intended defect; git diff --check | No unrelated module tests; no production or canonical contract changes merely to satisfy the test |
+| 5 | Helper, parser, simulator, runner, installer, or generator implementation change | Targeted unit tests for the changed functions and failure boundaries; a targeted integration test only when the changed function crosses a real component boundary; git diff --check | No full repository suite solely because the file is shared |
+| 6 | Product or methodology implementation change | Unit tests for changed behavior; directly affected component tests; a focused regression for the reported defect; git diff --check | No tests for components that do not call, consume, or depend on the changed behavior |
+| 7 | Primary-main integration of an already reviewed candidate | Re-run the smallest tests that prove the integrated bytes and affected behavior; verify candidate-to-main content mapping; git diff --check | Do not repeat unchanged pre-integration tests without evidence of integration-sensitive behavior |
+| 8 | User-level installation or publication | Targeted installer or publication tests; verify installed bytes or digests against the accepted source; refresh and inspect affected catalog entries | No full repository suite or complete catalog evaluation |
+| 9 | Focused testing reveals a distinct cross-component failure | Add only the newly implicated component's targeted tests after recording the concrete failure and dependency path | Do not escalate based only on file size, file location, a shared classification, or hypothetical risk |
+| 10 | User explicitly requests broader verification | Run exactly the broader scope requested by the user and state its expected cost before starting | Do not infer permission for additional suites beyond the requested scope |
 
-### Tier 1: Small Bounded Skill Or Catalog Changes
+When a targeted test fails, determine whether the implementation or the test is wrong. If the fixture, assertion, expected result, test data, or other test-support code is incorrect, fix that test-related file within the current change and rerun only the tests that consume it. Do not change correct production behavior or a canonical contract merely to make an incorrect test pass.
 
-For bounded skill wording, metadata, detection, or catalog additions:
+Run broader tests only when the user explicitly requests them or a focused failure identifies a concrete affected dependency. A failing focused test may justify additional targeted tests; it does not authorize an automatic full-suite escalation.
 
-- Run the exact governed-definition approval check before mutation when the changed source is governed.
-- Validate the changed source and metadata.
-- Run focused behavior, detection, and bundle tests that exercise the changed surface.
-- Run applicable generator freshness checks without regenerating unrelated output.
-- Run git diff --check.
-- Obtain an independent review of the exact change.
-
-Do not require the full scripts regression, project-wiki regression, or live agent catalog solely because a skill was added or changed.
-
-### Tier 2: Generated Definition Changes
-
-For generated-definition changes:
-
-- Run focused tests for the approved canonical source.
-- Regenerate only the supported mirrors from approved sources.
-- Run the relevant generator freshness checks.
-- Run git diff --check.
-- Obtain an independent review of the exact source and generated diff.
-
-### Tier 3: Shared Infrastructure Changes
-
-For shared runner, claim engine, cleanup, installer, generator framework, or other broad infrastructure changes, run the full applicable deterministic regression and appropriate live verification. Keep the checks tied to the affected execution paths and declared risks.
-
-### Tier 4: Campaign Or Release Gates
-
-Run the full scripts, project-wiki, and agent catalog regression as a campaign final-state gate, a release gate, or an evidence-backed broad-impact gate. It is not the default per-item gate. The final campaign full-agent-catalog gate remains required.
-
-The full deterministic repository regression is:
-
-```bash
-python3 scripts/validate-agent-skills.py skills
-python3 scripts/build-technology-detection.py --check
-python3 scripts/build-skill-docs.py --check
-python3 scripts/build-agent-skill-hierarchy.py --check
-python3 scripts/build-support-checklist.py --check
-python3 -m unittest discover scripts
-PYTHONPATH=skills/project-wiki/scripts python3 -m unittest discover skills/project-wiki/scripts
-```
-
-For wiki or OKF changes at a tier that requires the affected wiki surface, also run:
-
-```bash
-python3 skills/project-wiki/scripts/wiki_ops.py status
-python3 skills/project-wiki/scripts/wiki_ops.py lint
-python3 skills/project-wiki/scripts/wiki_ops.py okf-validate
-```
-
-For any tracked-file change, run:
-
-```bash
-git diff --check
-```
-
-Do not rerun an unchanged expensive full suite after integration when the integrated bytes are identical to an independently reviewed contribution and fresh pre-integration full evidence exists. Run focused post-integration checks plus integrity and provenance checks instead.
-
-Reproduce an unrelated baseline failure on the baseline and route it as a warning or follow-up. Do not use an unrelated confirmed baseline failure to keep an otherwise bounded item open.
+Log a distinct defect when testing exposes an unrelated problem. Do not fix that unrelated problem under the current scope and do not keep the current item open solely because of it.
 
 If a build script is introduced later, run the repository build after code, imports, generated artifacts, or project metadata changes.
 
