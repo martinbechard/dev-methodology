@@ -1,6 +1,6 @@
 # Update Role-Mutation Test For Schema V5
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -9,6 +9,8 @@ Provider: file
 Provider Reference: backlog/defect-backlog/update-role-mutation-test-for-schema-v5.md
 
 Completion: direct-main
+
+Owner: Unowned
 
 ## Summary
 
@@ -52,3 +54,16 @@ None.
 ## Notes
 
 Runnable next action: inspect the accepted schema-v5 migration, update the stale ordinary regression assertion and coupled version-specific expectations, then run the listed verification. Do not implement the correction as part of this creation task.
+
+## Current Starting Reservation
+
+- Transition: Ready -> Starting.
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Reservation: One parent-owned launch reservation.
+- Normalized Objective: Update the stale role-schema version assertion to version 5 while preserving repositoryMutation coverage.
+- Dispatched At: 2026-07-26T17:56:42Z.
+- Intended Root Role: Dev Orchestrator.
+- Runtime Thread And Task Id: Pending creation.
+- Backlog Claim: reserve-schema-v5-test-defect; acquire event bdb2f65b-5831-43fb-a07c-d71bc088cb73.
+- Governed-Definition Mutation Authority: None.
+- Next Lifecycle Owner: The eventual root Dev Orchestrator must record a distinct Starting -> Running acceptance before implementation or further repository mutation.
