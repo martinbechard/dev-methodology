@@ -1,14 +1,14 @@
 # Notify the Backlog Coordinator When a Work Item Is Added
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/notify-backlog-coordinator-when-item-is-added.md
+Provider Reference: backlog/user-action-required/notify-backlog-coordinator-when-item-is-added.md
 
 Completion: direct-main
 
@@ -93,6 +93,49 @@ None.
 - Phase: provider-neutral and governed-source discovery.
 - Started At: 2026-07-26T13:51:19Z.
 - Backlog Claim Evidence: acquired Event 1 exact-path claim start-running-notify-backlog-coordinator-019f9ea6; event f66b3763-7931-40b0-91f8-f0330f68ac6c.
+- Running Lifecycle Commit: defff7a0689f7ded1345e52c4cbb29154a19590d.
+- Running Claim Release Evidence: Event 02423e62-c38e-4b3f-afb9-c12a058776c6.
+
+## User Action Required
+
+- Transition: Running -> User Action Required.
+- Canonical Work-Item Thread: /root.
+- Canonical Root Dev Orchestrator Task: /root.
+- Discovery Outcome: the proposed protocol requires changes to governed definitions, so exact scope-specific user approval is required before implementation.
+
+### Exact Governed-Source Manifest
+
+- agents/roles/dev-activities/dev-backlog-steward.role.yaml.
+- agents/roles/dev-activities/dev-backlog-coordinator.role.yaml.
+- skills/codex-workitem-coordination/SKILL.md.
+
+### Provider Create Skills
+
+Provider create skills need no mutation because their existing successful results already supply provider identity and evidence that the Steward can normalize.
+
+### Dependent Artifacts
+
+- Supported generated role and skill mirrors.
+- design/orchestrated-development-lifecycle.html.
+- Focused coordination and bundle tests.
+
+### Exact Question
+
+Do you approve changing exactly these three governed definitions so that, after a work item is successfully created and verified, Dev Backlog Steward sends one provider-neutral, idempotent creation notification to the existing Dev Backlog Coordinator, and the Coordinator wakes or resumes, reconciles inventory before dispatch, and reports an explicit unreachable result without changing the new item or creating a duplicate task?
+
+### Options And Tradeoffs
+
+- Approve: implement this exact protocol and supported mirrors/tests.
+- Decline: keep current behavior and leave this feature unimplemented.
+- Narrow/change: user specifies the permitted paths or behavior and the item remains User Action Required until reconciled.
+
+### Unattended Boundary
+
+No governed source, generated mirror, implementation, integration, publication, reservation, or new runtime task for this item may proceed until the user answers. Read-only reconciliation may continue.
+
+### Resolution
+
+Pending user answer.
 
 ## Notes
 
