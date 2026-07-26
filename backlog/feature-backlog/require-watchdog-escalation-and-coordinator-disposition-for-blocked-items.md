@@ -1,6 +1,8 @@
 # Require Watchdog Escalation And Coordinator Disposition For Blocked Items
 
-Status: Ready
+Status: Starting
+
+Owner: Unowned
 
 Type: Feature
 
@@ -70,6 +72,18 @@ Direct user request in the watchdog task on 2026-07-26: log an improvement work 
 - Which durable field should distinguish a newly authorized bounded recovery from another attempt in the exhausted correction loop?
 - What evidence threshold should the Coordinator use to conclude that another bounded retry is reasonably likely to resolve the remaining findings?
 - Should healthy-cycle watchdog output list every Blocked item individually or provide a stable digest with item-level details available in retained evidence?
+
+## Current Starting Reservation
+
+- Parent Coordination Thread: 019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a.
+- Lifecycle Reservation: Ready -> Starting recorded by the parent Dev Backlog Coordinator through its Dev Backlog Steward child.
+- Normalized Objective: Require per-item watchdog escalation and evidence-backed Coordinator disposition for Blocked work.
+- Dispatched At: 2026-07-26T18:28:15.761081Z.
+- Launch Reservation: one parent-owned launch reservation; active Starting-plus-Running capacity was 0 of 10 at reservation preflight.
+- Intended Root Dev Orchestrator: Dev Orchestrator; runtime task identity pending creation.
+- Dependency Satisfaction Evidence: backlog/completed-backlog/features/add-dedicated-watchdog-and-stalled-lifecycle.md is present at its required terminal commit 942bac974d87d7b7c7a11ee724b80c0d91c3d0e6; its current blob is 86f1abb7edff36dc26a738e807a4749644a69977, matching that commit.
+- Governed Definition Boundary: No governed definition mutation is authorized until direct user direction and exact scope-specific approval evidence pass the repository definition-change check.
+- Next Lifecycle Owner: the eventual root Dev Orchestrator must record a distinct Starting -> Running acceptance before any implementation or further repository mutation.
 
 ## Notes
 
