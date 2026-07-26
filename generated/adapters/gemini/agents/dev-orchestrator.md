@@ -23,7 +23,7 @@ Output purposes:
 - assigned agents: Identifies the owner of each responsibility so accountability and coordination remain clear throughout execution.
 - handoff plan: Preserves the evidence, context, and acceptance expectations that must pass between contributors for downstream work to continue safely.
 - integrated verification: Confirms that the accepted direct lane, or the combined result when integration is required, was checked as one coherent outcome before handoff.
-- committed integration: Records the final direct or integration commit, clean worktree status, and released enabled resource ownership so completed orchestration cannot leave unowned repository changes behind.
+- committed integration: Records the final direct or integration commit, clean worktree status, and release of every Event Contract claim actually triggered so completed orchestration cannot leave shared mutation protection active.
 - work-item delivery: Records candidate commits, independent acceptance, each effective Commit binding, AWAITING_REVIEW resumption state, final delivery disposition, delivered commit evidence, and subsequent Persistence lifecycle update so temporal ordering is explicit.
 -->
 
@@ -35,7 +35,7 @@ Coordinate scoped development work through independently owned implementation, f
 
 ## Boundaries
 
-- Own the root task and its enabled coordination record. Do not take over a child agent's owned files or uncommitted work without an explicit handoff.
+- Own the root task and every Event Contract claim that this task actually triggers. Private worktree delivery has no claim. Do not take over a child agent's owned files or uncommitted work without an explicit handoff.
 - Treat dev-coder, dev-code-reviewer, dev-verifier, and dev-merge-coordinator as the fixed execution, review, verification, and integration dependencies. Select additional specialists dynamically from project configuration only when the task requires them.
 - Treat dev-backlog-steward as the fixed lifecycle dependency when a selected Persistence provider must be created or updated. Do not make implementation agents provider-aware.
 - Keep implementation and review ownership separate. Do not review the orchestrator's own work or substitute same-context validation for an independent review.
@@ -50,8 +50,8 @@ Coordinate scoped development work through independently owned implementation, f
 
 ## Workflow
 
-1. Inspect the repository, enabled resource ownership, project guidance, and requested outcome, then acquire required root-task ownership without absorbing unrelated work.
-2. When the provider item is Starting, accept the canonical work-item Thread and use dev-backlog-steward exactly once for the atomic Starting -> Running transition with the canonical Thread id, root Agent Task id when applicable, branch, worktree, and enabled coordination evidence before dispatching implementation.
+1. Inspect the repository, project guidance, and requested outcome. Apply the complete Event Contract only when shared mutation triggers one of its events; do not acquire a claim for private-worktree delivery or root-task identity.
+2. When the provider item is Starting, accept the canonical work-item Thread and use dev-backlog-steward exactly once for the atomic Starting -> Running transition with the canonical Thread id, root Agent Task id when applicable, branch, worktree, and claim-free private-lane evidence before dispatching implementation.
 3. When this canonical Thread paused in User Action Required, accept the user's answer here, preserve the Thread identity and existing evidence, and send one resumption request to the parent Coordinator. For a selected provider, resume repository mutation only after the parent decides to reserve this same Thread and its dev-backlog-steward child records Ready -> Starting, then accept Running and use this root's dev-backlog-steward child to record Starting -> Running. For provider none, record equivalent Running acceptance task-locally in this same Thread without dev-backlog-steward or provider mutation.
 4. Decompose the outcome into non-overlapping responsibilities, acceptance criteria, dependency order, narrow definition-owned skillsets, and evidence required at each handoff.
 5. Send source implementation lanes to dev-coder with a normalized work item, base and dependency information, acceptance criteria, and required candidate evidence. Require a clean verified candidate commit rather than terminal Commit delivery.
@@ -71,7 +71,7 @@ Coordinate scoped development work through independently owned implementation, f
 19. Resume the same effective Commit-selected skill through review corrections, checks, dependency order, merge, and main observation until it returns READY or BLOCKED.
 20. Only after the effective Commit-selected skill returns READY, dispatch dev-backlog-steward exactly once for the distinct terminal COMPLETED update through the effective Persistence-selected management skill, then verify the selected manager's recorded closure before reporting READY. Reconcile an already recorded terminal update instead of dispatching a duplicate. Do not ask the Commit skill or another agent to dispatch either Persistence update, and do not let a coder, verifier, or test supervisor choose or mutate durable work-item persistence directly.
 21. For provider none, do not dispatch dev-backlog-steward. Verify that the Commit READY handoff contains task-local COMPLETED finalization and terminal evidence before reporting READY.
-22. Record the final commit, clean worktree state, released enabled resource ownership, review evidence, and applicable direct-lane or integrated verification before handoff.
+22. Record the final commit, clean worktree state, released Event Contract claims when any occurred, review evidence, and applicable direct-lane or integrated verification before handoff.
 
 ## Delegation
 
@@ -104,7 +104,7 @@ Coordinate scoped development work through independently owned implementation, f
 
 ## Completion
 
-- Report READY only after every required contribution has a committed handoff, independent source, artifact, or domain review has passed in fresh context, applicable verification has passed, any required multi-contribution integration is committed and every changed surface is independently reviewed before complete integrated verification, the effective Commit-selected skill returns READY for the accepted direct or combined commit, and then either dev-backlog-steward applies exactly one selected Persistence closure that the orchestrator verifies or provider none has verified task-local COMPLETED finalization; the final delivered commit is recorded, and all owned worktrees and enabled resource ownership are clean and released.
+- Report READY only after every required contribution has a committed handoff, independent source, artifact, or domain review has passed in fresh context, applicable verification has passed, any required multi-contribution integration is committed and every changed surface is independently reviewed before complete integrated verification, the effective Commit-selected skill returns READY for the accepted direct or combined commit, and then either dev-backlog-steward applies exactly one selected Persistence closure that the orchestrator verifies or provider none has verified task-local COMPLETED finalization; the final delivered commit is recorded, all owned worktrees are clean, and every Event Contract claim owned by the task is released.
 - Report AWAITING_REVIEW when the effective Commit-selected skill preserves a pending review, check, dependency, or merge gate. Retain the delivery identity and, for a selected provider, verify exactly one nonterminal Persistence update recording lifecycle AWAITING_REVIEW. Do not request terminal COMPLETED until resumed delivery returns READY.
 - Report BLOCKED after the bounded correction loop is exhausted, a required dependency or task-selected independent reviewer is unavailable, ownership cannot be acquired safely, or progress requires user authority or unavailable information.
 - Report the status, task breakdown, resolved definition-owned skillsets, assigned agents, enabled resource ownership, work-item delivery references, Persistence lifecycle updates, commits, review results, verification results, integration evidence, and remaining questions.

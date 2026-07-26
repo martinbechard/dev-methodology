@@ -23,16 +23,17 @@ instructions:
   - Normalize the interactive, file-backed, or issue-backed request into an identifier,
     source reference, title, requirements, acceptance criteria, dependencies, and verification
     expectations.
-  - Acquire implementation ownership before branch creation or source mutation only when
-    the project-selected resource-coordination policy requires it.
+  - Keep private-worktree branch creation and source mutation claim-free. Apply the
+    project-selected resource-coordination policy only when an Event Contract event occurs.
   - Inspect callers, contracts, dependencies, repository patterns, and existing tests,
     then implement the smallest complete change and regression coverage.
   - Run the focused tests and applicable build, lint, type, or integration checks without
     weakening gates.
-  - Commit the verified change, confirm the candidate worktree is clean, and complete
-    the release of enabled resource ownership or truthfully hand it off.
+  - Commit the verified change, confirm the candidate worktree is clean, and release or
+    truthfully hand off every Event Contract claim the task actually triggered.
   - Return the candidate commit, branch and changed paths, focused checks, omissions,
-    clean-worktree evidence, and enabled resource-coordination state to Dev Orchestrator.
+    clean-worktree evidence, and disposition of every Event Contract claim actually triggered
+    to Dev Orchestrator.
   failureHandling:
   - Stop and report BLOCKED when the work item is materially incomplete, ownership overlaps,
     a dependency is unresolved, verification cannot complete safely, or a clean candidate
@@ -42,7 +43,7 @@ instructions:
     expanding the contribution.
   completion:
   - Report READY only as a candidate handoff after the source patch is committed, focused
-    verification passes, the worktree is clean, and any enabled implementation ownership
+    verification passes, the worktree is clean, and every triggered Event Contract claim
     is released or explicitly handed off. Candidate READY is not Commit delivery READY.
   - Report BLOCKED with preserved commits and exact evidence when a safe candidate handoff
     cannot be reached.
@@ -56,8 +57,8 @@ examples:
       a clean verified candidate commit with regression evidence."
   plausibleResponse: 'READY. Implemented the existing service boundary and regression
     coverage, passed the focused tests and build, committed the candidate, confirmed its
-    worktree clean, closed any enabled implementation ownership, and returned the commit and changed
-    paths for independent review. This is candidate evidence, not terminal delivery.'
+    worktree clean, confirmed the private lane was claim-free, and returned the commit and
+    changed paths for independent review. This is candidate evidence, not terminal delivery.'
 - purpose: Stop before publication when focused verification cannot establish a safe candidate.
   runtimeInvocations:
     codex: "$dev_coder Implement issue 42, but stop safely if its focused regression cannot
@@ -66,7 +67,8 @@ examples:
       cannot establish a reviewable candidate."
   plausibleResponse: 'BLOCKED. Preserved the candidate commit and clean worktree, but the
     required configuration regression still fails. Returned the command, failure evidence,
-    enabled resource-coordination state, and one next action without publishing or claiming delivery.'
+    disposition of every triggered Event Contract claim, and one next action without publishing
+    or claiming delivery.'
 - purpose: Return an accepted review correction as a replacement candidate commit.
   runtimeInvocations:
     codex: "$dev_coder Resume issue 42 and address the accepted validation correction
@@ -110,6 +112,6 @@ outputContract:
       so they can assess impact and navigate the implementation quickly.
 - candidate handoff status:
     purpose: Records the work-item reference, candidate commit and branch, changed paths,
-      verification evidence, clean worktree, and implementation ownership disposition for
-      independent review and downstream orchestration.
+      verification evidence, clean worktree, and disposition of any Event Contract claim
+      actually triggered for independent review and downstream orchestration.
 dynamicFolderSkills: true

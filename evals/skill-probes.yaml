@@ -70,9 +70,9 @@ probes:
     source: skills/agent-claim-mcp/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
-    activationCondition: PROJECT.yaml selects and verifies the MCP claim transport for a repository coordination operation.
-    negativeCondition: A project configured for the command transport does not load or probe the MCP adapter.
-    expectedBehavior: Invoke the exact configured claim tool, preserve exit_code and result.outcome, treat structured rejections as completed coordination results, and reconcile ambiguous mutation through claim_status on the same transport.
+    activationCondition: PROJECT.yaml selects and verifies the MCP claim-helper interface for a repository coordination operation.
+    negativeCondition: A project configured for the claim command-line interface does not load or probe the MCP adapter.
+    expectedBehavior: Invoke the exact configured claim tool, preserve exit_code and result.outcome, treat structured rejections as completed coordination results, and reconcile ambiguous mutation through claim_status on the same claim-helper interface.
     judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, required-command-outcome, allowed-paths-only], modelRubric: null}
     scenarioAssociations: [project-configurator-happy]
     workflowAssociations: [project-setup]
@@ -84,9 +84,9 @@ probes:
     source: skills/agent-claim-command/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
-    activationCondition: PROJECT.yaml selects and verifies the bundled command claim transport for a repository coordination operation.
-    negativeCondition: A project configured for the MCP transport does not load or probe the command adapter.
-    expectedBehavior: Invoke the adapter-bundled command, preserve exit_code and result.outcome, treat structured rejections as completed coordination results, and reconcile ambiguous mutation through status on the same command path.
+    activationCondition: PROJECT.yaml selects and verifies the bundled claim command-line interface for a repository coordination operation.
+    negativeCondition: A project configured for the MCP claim-helper interface does not load or probe the command package.
+    expectedBehavior: Invoke the package-bundled command, preserve exit_code and result.outcome, treat structured rejections as completed coordination results, and reconcile ambiguous mutation through status on the same command path.
     judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, required-command-outcome, allowed-paths-only], modelRubric: null}
     scenarioAssociations: [project-configurator-happy]
     workflowAssociations: [project-setup]

@@ -11,9 +11,10 @@ cases:
   selected-commit-retry-and-closeout:
     workItemStatus: Running
     candidateReview: accepted
-    claimAttemptMinutes: [0, 5, 10, 15, 20, 25, 30]
-    maximumRetries: 6
-    investigationMinute: 30
+    initialAttempts: 1
+    notifiedRetry:
+      notification: release:shared-generator
+    maximumUnnotifiedRetries: 0
     deliveryOwner: dev-orchestrator
     completionRoute: effective Commit-selected skill
     claimKinds: [integration, completion]
@@ -52,8 +53,8 @@ cases:
     rootAccepts: true
     expectedStatusSequence: [User Action Required, Ready, Starting, Running]
   private-worktree-and-tiered-verification:
-    privateOperations: [implementation, correction, independent review, focused local tests]
-    sharedOperations: [main integration, backlog mutation, generated output, exclusive resource]
+    privateOperations: [implementation, correction, private generation, independent review, focused local tests]
+    sharedOperations: [primary main integration, existing backlog update, shared browser, shared database, shared port, shared live model, shared install, shared deployment]
     perItemVerification: [focused tests]
     expandedVerification: [focused tests, expanded regression]
     finalCampaignVerification: [complete agent catalog]

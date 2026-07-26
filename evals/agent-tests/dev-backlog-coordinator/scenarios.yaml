@@ -22,12 +22,12 @@ scenarios:
     executableCase: fixtures/cases.yaml
     purpose: Recover an unavailable delivery resource and complete through the effective Commit skill.
     initialState: One reviewed candidate is Running and a resource required by its selected completion skill is unavailable.
-    task: Record bounded retries, investigate at thirty minutes, recover safely, and require selected-Commit, provider-completion, test, and cleanup evidence.
+    task: Record one immediate claim attempt, retry only after a release or recovery notification, and require selected-Commit, provider-completion, test, and cleanup evidence.
     targetSkills: [structured-explanation, codex-workitem-coordination, agent-claim]
     allowedAgentDependencies: [dev-orchestrator, dev-backlog-steward]
-    requiredBehaviors: [Attempt immediately, Retry every five minutes through thirty minutes, Record attempts in the selected provider record, Investigate the blocking owner at thirty minutes, Route delivery through Dev Orchestrator with the effective Commit-selected skill, Run focused tests, Require Persistence completion only after Commit READY, Remove clean worktree, Safely delete merged branch]
-    forbiddenBehaviors: [Create a waiting task, Poll more frequently, Steal active unpreserved work, Reproduce the selected completion procedure, Run the complete agent catalog for one item, Report Done before provider completion and cleanup evidence]
-    deterministicChecks: [harness-agent-identity, suite-simulator-tests, claim-lifecycle, bounded-claim-retry, selected-commit-routing, focused-item-verification, workitem-completion-handoff, done-success-title, output-contract-presence]
+    requiredBehaviors: [Attempt immediately, Preserve the structured conflict outcome task-locally, Request a direct release or recovery handoff, Retry only after that notification, Leave stale-ownership investigation to the watchdog, Route delivery through Dev Orchestrator with the effective Commit-selected skill, Run focused tests, Require Persistence completion only after Commit READY, Remove clean worktree, Safely delete merged branch]
+    forbiddenBehaviors: [Create a waiting task, Poll the claim registry, Retry because time elapsed, Mutate provider state merely to wait, Steal active unpreserved work, Reproduce the selected completion procedure, Run the complete agent catalog for one item, Report Done before provider completion and cleanup evidence]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, claim-lifecycle, notification-driven-claim-retry, selected-commit-routing, focused-item-verification, workitem-completion-handoff, done-success-title, output-contract-presence]
     expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
     expectedTerminalStatus: PASS
   - id: ambiguous-dispatch-and-user-decision-integrity

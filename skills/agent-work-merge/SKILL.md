@@ -22,7 +22,7 @@ Before merging a worktree:
 - Confirm the source branch has a meaningful commit for the completed unit.
 - Read the source agent status, final notes, verification results, and known risks.
 - Confirm the integration checkout is the intended target lane.
-- When resource coordination is enabled, confirm source ownership was released after a clean commit or explicitly handed to the integration owner.
+- When resource coordination is enabled, confirm every Event Contract claim used by the source task was released after a clean commit or explicitly handed to the integration owner.
 
 ## Merge Workflow
 

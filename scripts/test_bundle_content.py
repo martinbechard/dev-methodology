@@ -3622,14 +3622,23 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("selected: \"TODO: none or agent-claim", template_text)
         self.assertIn("agent_claim_transport:", template_text)
         self.assertIn("selected: \"TODO: mcp or command", template_text)
+        self.assertIn("claim-helper interface from target-runtime evidence", template_text)
+        self.assertIn(
+            "verifies the selected claim-helper interface",
+            template_text,
+        )
+        self.assertNotIn("verifies the selected transport", template_text)
         self.assertIn("has no compatibility default, and has no folder overrides", skill_text)
         self.assertIn(
-            "resource-coordination selection and, for agent-claim, one verified claim transport",
+            "resource-coordination selection and, for agent-claim, one verified claim-helper interface",
             skill_text,
         )
         self.assertIn("Only when resource_coordination selects agent-claim", skill_text)
-        self.assertIn("inline exactly the selected transport adapter", skill_text)
-        self.assertIn("For none, render no coordination skill, procedure, transport, or evidence", skill_text)
+        self.assertIn("inline exactly the selected claim-helper interface", skill_text)
+        self.assertIn(
+            "For none, render no coordination skill, procedure, claim-helper interface, or evidence",
+            skill_text,
+        )
         self.assertIn("workflow_selection:", template_text)
         self.assertIn("project_skill_extensions: []", template_text)
         self.assertIn("file, github, gitlab, azure-devops, jira, none, or UNSET", template_text)
@@ -5723,14 +5732,18 @@ class BundleContentTests(unittest.TestCase):
 
         for required_contract in (
             "This table is the complete event-to-claim contract.",
-            "Update an existing work item | Claim the exact current backlog path and, for a move or rename, the destination path.",
-            "Perform any non-backlog work in the primary worktree | Claim project-files.",
+            "Acquire immediately before the event and release at the stated boundary.",
+            "| No. | Event | Claim | Release |",
+            "| 1 | Update an existing work item | Exact current backlog path and any move or rename destination.",
+            "| 2 | Perform any non-backlog work in the primary worktree | project-files.",
             "browser-test:&lt;id&gt;",
             "database:&lt;id&gt;",
             "port:&lt;number&gt;",
             "live-model:&lt;provider&gt;:&lt;suite&gt;",
             "shared-install:&lt;target&gt;",
             "deployment:&lt;environment&gt;",
+            "After the one-item update or move commit succeeds and primary main is clean, or after verified no-change.",
+            "After deployment reaches a verified terminal state or rollback completes.",
             "Creating a uniquely named new work-item file needs no claim and must use atomic no-overwrite creation.",
             "Private-worktree editing, generation, build, test, commit, and rebase need no claim.",
             "Build outputs and caches must remain worktree-local",
@@ -5756,7 +5769,7 @@ class BundleContentTests(unittest.TestCase):
             "Different exact backlog item claims may coexist",
             "Project-files owns the repository file tree except backlog and ignored operational state",
             "Backlog owns only the complete primary-worktree backlog subtree",
-            "All-files is their deliberate union for recovery and true repository-wide work",
+            "All-files is their deliberate union for explicitly authorized recovery",
             "only the watchdog investigates stale ownership",
         ):
             with self.subTest(readme_contract=required_contract):
@@ -5764,6 +5777,7 @@ class BundleContentTests(unittest.TestCase):
 
         for required_contract in (
             "Complete Event-To-Claim Contract",
+            '<th scope="col">No.</th><th scope="col">Event</th><th scope="col">Claim</th><th scope="col">Release</th>',
             "Update an existing work item",
             "Perform any non-backlog work in the primary worktree",
             "browser-test:&lt;id&gt;",
@@ -5772,6 +5786,10 @@ class BundleContentTests(unittest.TestCase):
             "live-model:&lt;provider&gt;:&lt;suite&gt;",
             "shared-install:&lt;target&gt;",
             "deployment:&lt;environment&gt;",
+            "<tr><td>1</td><td>Update an existing work item</td>",
+            "<tr><td>8</td><td>Change a shared deployment</td>",
+            "After the shared browser or server stops or is explicitly handed off.",
+            "After deployment reaches a verified terminal state or rollback completes.",
             "Different exact backlog item claims may coexist",
             "Non-overlapping primary claims coexist without checkout-occupancy serialization.",
         ):
@@ -5811,8 +5829,33 @@ class BundleContentTests(unittest.TestCase):
             "verified, committed, clean, and with enabled resource-coordination closeout complete",
             orchestrator.instructions,
         )
+        orchestrator_source = yaml.safe_load(
+            (
+                ROLES_ROOT / "dev-activities" / "dev-orchestrator.role.yaml"
+            ).read_text(encoding="utf-8")
+        )
+        orchestrator_examples = json.dumps(orchestrator_source["examples"], sort_keys=True)
+        orchestrator_outputs = json.dumps(
+            orchestrator_source["outputContract"],
+            sort_keys=True,
+        )
+        self.assertIn("claim-free private worktrees", orchestrator_examples)
+        self.assertNotIn("non-overlapping claims", orchestrator_examples)
+        self.assertIn(
+            "release of every Event Contract claim actually triggered",
+            orchestrator_outputs,
+        )
+        self.assertNotIn("unowned repository changes", orchestrator_outputs)
         self.assertIn("committed clean contributions", merge_coordinator.instructions)
-        self.assertIn("release enabled ownership only from a clean worktree", merge_coordinator.instructions)
+        self.assertIn(
+            "acquire project-files immediately before that event",
+            merge_coordinator.instructions,
+        )
+        self.assertIn(
+            "release the triggered claim at its clean committed boundary",
+            merge_coordinator.instructions,
+        )
+        self.assertNotIn("integration-resource ownership", merge_coordinator.instructions)
         claim_skill = (SKILLS_ROOT / "agent-claim" / "SKILL.md").read_text(encoding="utf-8")
         mcp_skill = (SKILLS_ROOT / "agent-claim-mcp" / "SKILL.md").read_text(encoding="utf-8")
         command_skill = (SKILLS_ROOT / "agent-claim-command" / "SKILL.md").read_text(encoding="utf-8")
@@ -5839,6 +5882,18 @@ class BundleContentTests(unittest.TestCase):
             "SHARED_CHECKOUT_RELEASE_REQUIRED",
         ):
             self.assertIn(required_outcome, claim_skill)
+        self.assertIn(
+            "current acquisition does not emit this outcome",
+            claim_skill,
+        )
+        self.assertIn(
+            "Do not treat another non-overlapping primary claim as a wait trigger.",
+            claim_skill,
+        )
+        self.assertNotIn(
+            "another claim currently owns the shared checkout",
+            claim_skill,
+        )
         self.assertIn("canonical linked-checkout root is the .worktrees directory", claim_skill)
         self.assertIn("CLAIM_TRANSPORT_UNAVAILABLE", mcp_skill)
         self.assertIn("CLAIM_TRANSPORT_UNAVAILABLE", command_skill)
@@ -5856,15 +5911,19 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("3 for CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED", command_skill)
         self.assertIn("5 for DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED", command_skill)
         self.assertIn("### Shared Checkout Acquisition", claim_skill)
-        self.assertIn("### Isolated Checkout Acquisition", claim_skill)
+        self.assertIn("### Compatibility Isolation Outcome", claim_skill)
         self.assertIn("primary worktree's .worktrees directory", claim_skill)
         self.assertIn("INVALID_WORKTREE_PATH", claim_skill)
         self.assertIn("WORKTREE_ROOT_NOT_IGNORED", claim_skill)
         self.assertNotIn("--worktree-path ../project-task-123", command_skill)
         self.assertIn("repository-root backlog directory", claim_skill)
-        self.assertIn("Explicit isolation arguments may create an isolated claimed checkout", claim_skill)
+        self.assertIn(
+            "Isolation and exact project-file or tree acquisition outcomes remain visible for compatibility",
+            claim_skill,
+        )
         self.assertIn("### Claim Scope Conflict Wait", claim_skill)
-        self.assertIn("--base main", command_skill)
+        self.assertNotIn("Repeat an isolation-required acquisition", command_skill)
+        self.assertNotIn("src/feature.py", command_skill)
         self.assertIn("## Heartbeat", claim_skill)
         self.assertIn("### No-Change Release", claim_skill)
         self.assertIn("--no-change", command_skill)
@@ -5884,7 +5943,11 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn(".worktrees contains ignored linked agent checkouts beneath the primary worktree", readme_text)
         self.assertIn("Double-force Git clean is prohibited", readme_text)
         self.assertNotIn("Agent Claims And Worktrees", AGENTS_PATH.read_text(encoding="utf-8"))
-        self.assertIn("## Agent Claim Transport", AGENTS_PATH.read_text(encoding="utf-8"))
+        self.assertIn("## Agent Claim Helper", AGENTS_PATH.read_text(encoding="utf-8"))
+        self.assertIn(
+            "BEGIN INLINED CLAIM HELPER INTERFACE SKILL: agent-claim-command",
+            AGENTS_PATH.read_text(encoding="utf-8"),
+        )
         self.assertIn(
             ".worktrees contains ignored linked agent checkouts rooted at the primary worktree",
             AGENTS_PATH.read_text(encoding="utf-8"),
@@ -5894,6 +5957,12 @@ class BundleContentTests(unittest.TestCase):
     def test_event_driven_claim_and_current_main_reconciliation_contracts(self) -> None:
         """Protect event ownership and ancestry-bounded integration guidance."""
         claim_text = (SKILLS_ROOT / "agent-claim" / "SKILL.md").read_text(encoding="utf-8")
+        command_text = (
+            SKILLS_ROOT / "agent-claim-command" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        mcp_text = (SKILLS_ROOT / "agent-claim-mcp" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
         merge_text = (SKILLS_ROOT / "agent-work-merge" / "SKILL.md").read_text(encoding="utf-8")
         coordination_text = (
             SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
@@ -5901,6 +5970,35 @@ class BundleContentTests(unittest.TestCase):
         design_text = (
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
         ).read_text(encoding="utf-8")
+        probe_text = (
+            REPOSITORY_ROOT / "evals" / "skill-probes.yaml"
+        ).read_text(encoding="utf-8")
+        renderer_text = (
+            REPOSITORY_ROOT / "scripts" / "render-agents-technology-skills.py"
+        ).read_text(encoding="utf-8")
+
+        event_contract = claim_text.split("## Event Contract", 1)[1].split(
+            "## Coordination Registry Authority", 1
+        )[0]
+        self.assertIn(
+            "Acquire immediately before the event and release at the stated boundary.",
+            event_contract,
+        )
+        event_rows = [
+            line
+            for line in event_contract.splitlines()
+            if re.match(r"^\| [1-8] \|", line)
+        ]
+        self.assertEqual(8, len(event_rows))
+        self.assertEqual(
+            [f"| {number} |" for number in range(1, 9)],
+            ["|".join(row.split("|")[:2]) + "|" for row in event_rows],
+        )
+        for adapter_text in (command_text, mcp_text):
+            self.assertNotIn("src/feature.py", adapter_text)
+            self.assertNotIn("Repeat an isolation-required acquisition", adapter_text)
+            self.assertIn("Update an existing work item", adapter_text)
+            self.assertIn("Perform non-backlog work in the primary worktree", adapter_text)
 
         for required_contract in (
             "temporary conflict protection for shared mutation",
@@ -5910,6 +6008,12 @@ class BundleContentTests(unittest.TestCase):
             "Independent review and integration own committed-content, changed-path, and provenance decisions",
             "Live claims are presumed valid; only the watchdog investigates stale ownership.",
             "Non-overlapping primary-worktree claims may coexist.",
+            "They are not ordinary trigger choices.",
+            "Attempt once and retain the structured outcome as local execution evidence.",
+            "Request or subscribe to a direct release or recovery handoff",
+            "retry only when that notification arrives.",
+            "Do not mutate durable work-item state or acquire a backlog claim merely to record the wait.",
+            "only the configured watchdog investigates stale ownership on its normal cycle.",
             "preserve the acquisition-time content for every reconciled path",
             "Accepted descendant commits may later change those paths",
         ):
@@ -5938,7 +6042,11 @@ class BundleContentTests(unittest.TestCase):
             "Preserve AWAITING_REVIEW with the same delivery identity",
             "Only after the effective Commit-selected skill returns READY",
             "Keep enabled claim release, Commit delivery, and Persistence closure as distinct operations",
-            "Only the watchdog investigates stale ownership",
+            "Request or subscribe to a direct release or recovery handoff",
+            "Retry only when that release or recovery notification arrives.",
+            "Do not poll or retry on a schedule.",
+            "Do not create a provider update or backlog claim merely to record the wait.",
+            "Only the dedicated read-only watchdog investigates stale ownership on its normal cycle",
             "fresh Work-item integration branch is fully merged",
             "prior candidate branch used only as a non-ancestral content source is not the Work-item cleanup branch",
             "GitHub and GitLab closure use their own provider identities",
@@ -5946,6 +6054,25 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(coordination_contract=required_contract):
                 self.assertIn(required_contract, coordination_text)
+
+        self.assertNotIn("Retry at five", coordination_text)
+        self.assertNotIn(
+            "one initial attempt plus no more than six retries",
+            coordination_text,
+        )
+        self.assertIn(
+            "Acquire immediately before the event and release at the stated boundary.",
+            design_text,
+        )
+        for active_term in (
+            "MCP claim-helper interface",
+            "claim command-line interface",
+            "same claim-helper interface",
+        ):
+            self.assertIn(active_term, probe_text)
+        self.assertNotIn("claim transport for a repository coordination operation", probe_text)
+        self.assertIn("claim-helper interface is embedded only", renderer_text)
+        self.assertNotIn("selected transport adapter is embedded", renderer_text)
 
         for required_contract in (
             "fresh reconciliation branch from that exact commit",
@@ -6254,7 +6381,8 @@ class BundleContentTests(unittest.TestCase):
             "effective Commit-selected skill",
             "Do not reproduce provider or Commit procedures",
             "ten Starting or Running items",
-            "six five-minute retries",
+            "Retry only when that notification arrives",
+            "Only the watchdog investigates stale claim ownership",
             "Every fifteen minutes",
             "canonical task id",
             "remove the clean worktree",
@@ -6271,6 +6399,13 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(contract=obsolete_contract):
                 self.assertNotIn(obsolete_contract, role_text)
+        for retired_wait_contract in (
+            "six five-minute retries",
+            "thirty-minute retry window",
+            "delivery-resource wait that reached thirty minutes",
+        ):
+            with self.subTest(retired_wait_contract=retired_wait_contract):
+                self.assertNotIn(retired_wait_contract, role_text)
 
     def test_wiki_ingester_continues_substantiated_ingest_after_verifier_interruption(
         self,
@@ -6922,7 +7057,7 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertIn('table class="evidence-table" aria-labelledby=', lifecycle_text)
         self.assertIn("<caption id=", lifecycle_text)
-        self.assertEqual(5, lifecycle_text.count('<th scope="col">'))
+        self.assertEqual(7, lifecycle_text.count('<th scope="col">'))
         self.assertGreater(lifecycle_text.count('role="img" aria-label="sends to"'), 0)
         self.assertIn("position: static; flex-wrap: wrap", lifecycle_text)
 

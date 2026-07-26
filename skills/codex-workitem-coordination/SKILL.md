@@ -34,7 +34,8 @@ For a selected Persistence provider, use its management skill to record these ph
 - current phase
 - accepted candidate commit
 - delivery-wait or provider-closure-wait start time
-- enabled resource-coordination attempt count, last outcome, next attempt time, and blocking ownership identifiers
+- triggered Event Contract claim outcome, release or recovery notification, and blocking
+  ownership identifiers
 - open issues and the owner of each next action
 - review, verification, Commit disposition, enabled coordination release, provider closure, and cleanup evidence as those events occur
 
@@ -57,7 +58,7 @@ For a provider that supports queue inventory and lifecycle transitions:
 2. When the count is below ten, select enough eligible Ready items to fill available capacity without exceeding ten active items.
 3. For each selection, have the parent Coordinator's Dev Backlog Steward child atomically record the Ready -> Starting reservation and dispatch evidence through the effective Persistence-selected management skill before creating a runtime Thread.
 4. Reconcile the reservation and existing runtime evidence, then create at most one user-visible work-item Thread for the Starting work item. When the item already has one canonical Thread preserved from a prior Running to User Action Required transition, adopt that same Thread instead of creating a replacement.
-5. After the Thread's root Dev Orchestrator Agent accepts ownership, have that Orchestrator's Dev Backlog Steward child atomically record Starting -> Running with the canonical Thread identifier, root Agent Task identifier when applicable, branch, worktree, and enabled coordination evidence.
+5. After the Thread's root Dev Orchestrator Agent accepts ownership, have that Orchestrator's Dev Backlog Steward child atomically record Starting -> Running with the canonical Thread identifier, root Agent Task identifier when applicable, branch, worktree, and claim-free private-lane evidence.
 6. Dispatch only work that can begin implementation or another bounded delivery phase. Do not create a Thread merely to wait for approval, a dependency, a reviewer, resource ownership, or a delivery window.
 7. When an item leaves Starting or Running, fill the active-capacity vacancy promptly through the same Ready -> Starting reservation sequence.
 
@@ -104,7 +105,7 @@ Ready -> Starting is the parent Coordinator's dispatch and capacity-reservation 
 
 When a Running work item pauses in User Action Required, preserve its canonical work-item Thread, root Agent Task identity, branch, worktree, clean commits, and unresolved question as non-owning resumption evidence. The user may answer and continue the conversation in that canonical Thread. The parent must reuse it after the answer is durably routed through Ready -> Starting; it must not require the user to repeat the answer in the parent Thread or create a replacement work-item Thread.
 
-After the work-item Thread's root Dev Orchestrator Agent accepts ownership, it uses its Dev Backlog Steward child for the atomic Starting -> Running transition. The record includes the canonical Thread identifier, canonical root Agent Task id when applicable, branch, worktree, and enabled coordination evidence. If launch fails and no owner accepted, restore Ready. If ownership was accepted or evidence cannot safely be discarded, record Blocked or User Action Required with the exact recovery condition. Starting and Running stay in the provider's active queue.
+After the work-item Thread's root Dev Orchestrator Agent accepts ownership, it uses its Dev Backlog Steward child for the atomic Starting -> Running transition. The record includes the canonical Thread identifier, canonical root Agent Task id when applicable, branch, worktree, and claim-free private-lane evidence. If launch fails and no owner accepted, restore Ready. If ownership was accepted or evidence cannot safely be discarded, record Blocked or User Action Required with the exact recovery condition. Starting and Running stay in the provider's active queue.
 
 The work-item Orchestrator owns candidate production, review, verification, Commit delivery, and terminal Persistence request. Its Steward child records the selected provider lifecycle changes. The parent Coordinator never performs per-item delivery or completion; after the terminal Handoff it cleans the runtime Thread and worktree, recounts Starting plus Running capacity, and dispatches replacement work.
 
@@ -137,18 +138,18 @@ Keep enabled claim release, Commit delivery, and Persistence closure as distinct
 
 If the nonterminal AWAITING_REVIEW update fails or its result is ambiguous, preserve the Commit handoff and reconcile that same Persistence transaction before resuming delivery. Do not request terminal COMPLETED, repeat an already successful nonterminal update, or reinterpret the Commit disposition as terminal.
 
-## Agent-Claim Retry Window
+## Event-Claim Release Handoff
 
-This section applies only when resource_coordination selects agent-claim. When a shared Commit resource, file-provider backlog claim, or selected provider mutation guard is unavailable, Dev Orchestrator asks Dev Backlog Steward to record the wait through the effective Persistence management skill when a provider exists, retains task-local evidence for provider none, and owns this bounded retry schedule:
+This section applies only when resource_coordination selects agent-claim and one Event Contract claim is unavailable. Dev Orchestrator owns the release-event wait:
 
-1. Attempt immediately.
-2. Retry at five, ten, fifteen, twenty, twenty-five, and thirty minutes.
-3. Before each retry, inspect the blocker and update the selected provider record, or the provider-none task result, with the outcome and next attempt.
-4. Stop retrying as soon as the claim succeeds.
+1. Attempt once and retain the structured outcome as task-local evidence.
+2. Request or subscribe to a direct release or recovery handoff from the owning claim.
+3. Retry only when that release or recovery notification arrives.
+4. If the notified retry still conflicts, retain the new structured outcome and wait for another direct handoff.
 
-This is one initial attempt plus no more than six retries. Do not create a waiting Task, transfer the wait through a Task chain, poll more frequently, or ask the user to approve ordinary Git or shell commands already covered by the work item. Under resource coordination none, this entire retry and registry-recovery section is inapplicable.
+Do not poll or retry on a schedule. Do not create a provider update or backlog claim merely to record the wait. Persist the wait at the next already-authorized material provider transition. Do not create a waiting Task, transfer the wait through a Task chain, or ask the user to approve ordinary Git or shell commands already covered by the work item. Under resource coordination none, this entire release-handoff and registry-recovery section is inapplicable.
 
-At thirty minutes, treat the live claim as valid and route the wait evidence to the dedicated read-only watchdog. Only the watchdog investigates stale ownership and alerts the parent with evidence; no delivery Agent overrides or releases another owner's claim.
+Treat the live claim as valid. Only the dedicated read-only watchdog investigates stale ownership on its normal cycle and alerts the parent with evidence; no delivery Agent overrides or releases another owner's claim.
 
 If the wait remains unresolved after investigation, record the precise open issue through the selected Persistence manager and request the truthful Blocked or User Action Required transition so it no longer consumes active Starting-plus-Running capacity. For provider none, preserve the BLOCKED Thread result without a provider mutation. Reserve and dispatch a replacement Ready item through Ready -> Starting from fresh selected-provider inventory when available.
 

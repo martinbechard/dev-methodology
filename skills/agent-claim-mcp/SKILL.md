@@ -34,7 +34,7 @@ Use exactly the tool matching the intended operation:
 | Maintain journal | claim_maintain_journal | repository; hot_days defaults to 2 |
 | Report contention | claim_report | repository; since defaults to 2d |
 
-The repository and worktree_path arguments are absolute paths accepted by the configured server workspace roots. Files and trees are lists. The mutually exclusive broad selectors are project_files, backlog, and all_files. Project-files and all-files require scope_reason. Acquisition also accepts parent_claim_id, branch, base, allow_recovery, and the compatibility-only worktree_path and compat_file_directories inputs.
+The repository and worktree_path arguments are absolute paths accepted by the configured server workspace roots. Ordinary callers pass only the scope selected by Agent Claim's Event Contract: exact backlog files, project_files, or one named resource. The future interface retains trees, backlog, all_files, branch, base, worktree_path, and compat_file_directories only for schema compatibility or explicitly authorized recovery. Project_files and all_files require scope_reason. Acquisition also accepts parent_claim_id and allow_recovery.
 
 The required future parity contract permits at most one resource value per claim. A named-resource acquisition or scope extension must also send resource_class, resource_id, expected_duration_seconds, and requested_hard_stop_duration_seconds. The provider must resolve configured_maximum_duration_seconds and cleanup_grace_seconds from the project's exact class or resource-id override, validate expected <= requested <= maximum, and return expected_release_at, hard_stop_at, cleanup_grace_ends_at, and extension history. Callers never supply the configured maximum or cleanup grace. Status must report deadline_status read-only, heartbeat must not change the hard stop, and overdue state must never auto-release ownership.
 
@@ -60,20 +60,20 @@ Read live ownership:
 {"repository": "/workspace/project"}
 ```
 
-Acquire one exact file:
+Update an existing work item:
 
 ```json
 {
   "repository": "/workspace/project",
-  "claim_id": "task-123",
-  "agent": "implementation-agent",
-  "task": "task-123",
-  "root_task_id": "task-123",
-  "files": ["src/feature.py"]
+  "claim_id": "update-work-item-123",
+  "agent": "backlog-steward",
+  "task": "update-work-item-123",
+  "root_task_id": "work-item-123",
+  "files": ["backlog/feature-backlog/work-item-123.md"]
 }
 ```
 
-Acquire broad project ownership:
+Perform non-backlog work in the primary worktree:
 
 ```json
 {
@@ -84,21 +84,6 @@ Acquire broad project ownership:
   "root_task_id": "task-123",
   "project_files": true,
   "scope_reason": "project implementation"
-}
-```
-
-Repeat an isolation-required acquisition with the same claim identity:
-
-```json
-{
-  "repository": "/workspace/project",
-  "claim_id": "task-123",
-  "agent": "implementation-agent",
-  "task": "task-123",
-  "root_task_id": "task-123",
-  "files": ["src/feature.py"],
-  "branch": "codex/task-123",
-  "base": "main"
 }
 ```
 
@@ -119,13 +104,17 @@ Required future timed-resource acquisition shape:
 }
 ```
 
-Extend one claim:
+Extend with a newly triggered shared-port event:
 
 ```json
 {
   "repository": "/workspace/project",
   "claim_id": "task-123",
-  "files": ["tests/test_feature.py"]
+  "resources": ["port:3000"],
+  "resource_class": "database-port",
+  "resource_id": "port:3000",
+  "expected_duration_seconds": 600,
+  "requested_hard_stop_duration_seconds": 1200
 }
 ```
 

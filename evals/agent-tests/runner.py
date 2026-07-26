@@ -271,8 +271,22 @@ def _validate_fixture_contract(suite: _Suite, scenario: dict[str, Any]) -> None:
     else:
         if "agent-claim" not in target_skills or "claim-lifecycle" not in deterministic_checks:
             raise ValueError(f"{identity} agent-claim resource coordination omits configured behavior")
-        if "claimRelease" not in expected_fields:
-            raise ValueError(f"{identity} agent-claim resource coordination omits claim release evidence")
+        claim_free_lanes = coordination_case.get("claimFreeLanes")
+        claimed_lanes = coordination_case.get("claimedLanes")
+        if (
+            not isinstance(claim_free_lanes, list)
+            or not isinstance(claimed_lanes, list)
+            or set(claim_free_lanes) != {"source", "documentation"}
+            or set(claimed_lanes) != {"integration", "closeout"}
+            or set(claim_free_lanes) & set(claimed_lanes)
+        ):
+            raise ValueError(f"{identity} agent-claim resource coordination has invalid lane ownership")
+        if "claimRelease" in expected_fields:
+            raise ValueError(f"{identity} agent-claim uses global rather than event-lane release evidence")
+        if coordination_case.get("integrationScope") != "project-files":
+            raise ValueError(f"{identity} integration does not use project-files")
+        if "integrationResource" in coordination_case:
+            raise ValueError(f"{identity} integration adds a forbidden merge resource")
     expected_order = scenario.get("requiredDependencyOrder", [])
     observed_order = [str(item.get("role", "")) for item in contract["orchestration"]["dependencyOrder"]]
     if expected_order and observed_order != expected_order:
@@ -3223,6 +3237,15 @@ def _audit_report(
             required_lanes = scenario.get("requiredHandoffReceiptLanes", [])
             required_fields = scenario.get("requiredHandoffReceiptFields", [])
             if required_lanes or required_fields:
+                selected_coordination, coordination_case = _scenario_resource_coordination(
+                    suites[suite_id],
+                    scenario,
+                )
+                claimed_lanes = (
+                    set(coordination_case.get("claimedLanes", []))
+                    if selected_coordination == "agent-claim"
+                    else set()
+                )
                 handoff_receipts = scenario_result.get("handoffReceipts", [])
                 if not isinstance(handoff_receipts, list):
                     raise RuntimeError(f"{suite_id}:{scenario_id} handoffReceipts must be a list")
@@ -3234,16 +3257,19 @@ def _audit_report(
                     if lane in receipts_by_lane:
                         raise RuntimeError(f"{suite_id}:{scenario_id} duplicate handoff receipt lane {lane}")
                     receipts_by_lane[lane] = receipt
-                if "claimRelease" not in required_fields:
-                    for lane, receipt in receipts_by_lane.items():
-                        if "claimRelease" in receipt:
-                            raise RuntimeError(
-                                f"{suite_id}:{scenario_id} handoff receipt {lane} has unexpected claimRelease evidence"
-                            )
+                for lane, receipt in receipts_by_lane.items():
+                    if lane not in claimed_lanes and "claimRelease" in receipt:
+                        raise RuntimeError(
+                            f"{suite_id}:{scenario_id} handoff receipt {lane} has unexpected claimRelease evidence"
+                        )
                 for lane in required_lanes:
                     if lane not in receipts_by_lane:
                         raise RuntimeError(f"{suite_id}:{scenario_id} missing handoff receipt lane {lane}")
-                    for field in required_fields:
+                    lane_required_fields = [
+                        *required_fields,
+                        *(["claimRelease"] if lane in claimed_lanes else []),
+                    ]
+                    for field in lane_required_fields:
                         value = receipts_by_lane[lane].get(field)
                         if value is None or value == "" or value == [] or value == {}:
                             raise RuntimeError(
@@ -3272,7 +3298,7 @@ def _audit_report(
                         )
                     for field, key in (("review", "sessionIds"), ("verification", "sessionIds"), ("claimRelease", "eventIds")):
                         evidence_value = receipts_by_lane[lane].get(field)
-                        if field not in required_fields:
+                        if field not in lane_required_fields:
                             continue
                         values = evidence_value.get(key) if isinstance(evidence_value, dict) else None
                         if not isinstance(values, list) or not values or not all(
@@ -4036,14 +4062,13 @@ def _audit_claim_lifecycle(
     events = _claim_events(repository, fixture_root)
     indexed_events = tuple(enumerate(events))
     configured_scope_keys = {
-        "source": "sourceScope",
-        "documentation": "documentationScope",
         "integration": "integrationScope",
         "closeout": "closeoutScope",
     }
     expected_scope = coordination_case.get(configured_scope_keys[lane])
-    if not isinstance(expected_scope, list) or not all(
-        isinstance(path, str) and path for path in expected_scope
+    if expected_scope != "project-files" and (
+        not isinstance(expected_scope, list)
+        or not all(isinstance(path, str) and path for path in expected_scope)
     ):
         raise RuntimeError(f"{identity} has no configured {lane} scope")
     configured_scopes = [
@@ -4058,11 +4083,6 @@ def _audit_claim_lifecycle(
     ]
     if len(flattened_scopes) != len(set(flattened_scopes)):
         raise RuntimeError(f"{identity} configured claim scopes overlap")
-    expected_resource = (
-        coordination_case.get("integrationResource")
-        if lane == "integration"
-        else None
-    )
     for release_event_id in release_event_ids:
         release_matches = [
             (index, event)
@@ -4121,17 +4141,20 @@ def _audit_claim_lifecycle(
                 f"{identity} handoff receipt {lane} acquisition agent disagrees with producer"
             )
         scopes = acquisition.get("scopes")
-        if not isinstance(scopes, Mapping) or scopes.get("files") != expected_scope:
+        if not isinstance(scopes, Mapping):
+            raise RuntimeError(
+                f"{identity} handoff receipt {lane} scope disagrees with configured {lane} scope"
+            )
+        if expected_scope == "project-files":
+            scope_matches = scopes.get("project_files") is True and scopes.get("files") == []
+        else:
+            scope_matches = scopes.get("project_files") is False and scopes.get("files") == expected_scope
+        if not scope_matches:
             raise RuntimeError(
                 f"{identity} handoff receipt {lane} scope disagrees with configured {lane} scope"
             )
         resources = scopes.get("resources")
-        if lane == "integration":
-            if resources != [expected_resource]:
-                raise RuntimeError(
-                    f"{identity} handoff receipt integration resource disagrees with configuration"
-                )
-        elif resources != []:
+        if resources != []:
             raise RuntimeError(
                 f"{identity} handoff receipt {lane} has unexpected claim resource"
             )
@@ -4207,9 +4230,26 @@ def _audit_handoff_evidence(
                 run.suite,
                 scenario,
             )
-            claim_release_required = "claimRelease" in scenario.get(
-                "requiredHandoffReceiptFields", []
+            claimed_lanes = set(
+                coordination_case.get("claimedLanes", [])
+                if selected_coordination == "agent-claim"
+                else []
             )
+            if selected_coordination == "agent-claim":
+                claim_free_lanes = set(coordination_case.get("claimFreeLanes", []))
+                claim_free_roles = {
+                    lane_roles[lane][0]
+                    for lane in claim_free_lanes
+                    if lane in lane_roles
+                }
+                if any(
+                    event.get("action") == "acquire"
+                    and event.get("agent") in claim_free_roles
+                    for event in _claim_events(scenario_fixture_root / "candidate", scenario_fixture_root)
+                ):
+                    raise RuntimeError(
+                        f"{identity} private source or documentation lane acquired a claim"
+                    )
             if selected_coordination == "none":
                 for lane, receipt in receipts.items():
                     if "claimRelease" in receipt:
@@ -4222,6 +4262,7 @@ def _audit_handoff_evidence(
                 if lane not in receipts:
                     raise RuntimeError(f"{identity} missing handoff receipt lane {lane}")
                 receipt = receipts[lane]
+                claim_release_required = lane in claimed_lanes
                 if lane not in lane_roles:
                     raise RuntimeError(f"{identity} has no evidence binding for handoff lane {lane}")
                 producer_role, review_spec, verification_spec = lane_roles[lane]

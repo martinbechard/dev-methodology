@@ -27,7 +27,7 @@ An isolated worktree, another linked worktree, or a primary worktree not on main
 
 Apply the project-wide resource_coordination selection independently from this provider. When agent-claim is selected, use Agent Claim's owning Event Contract: creating a uniquely named new work-item file uses atomic no-overwrite creation without a claim, while updating an existing item claims its exact current path and also its destination for a move or rename. Different exact work-item claims may coexist. When none is selected, perform no claim operation and require no claim evidence.
 
-Each startup or terminal transition remains its own short primary-main provider transaction. Delivery in a private worktree needs no claim unless it triggers a named shared-resource event. Before finish, release, or handoff, commit completed work and prove the applicable worktree clean.
+Each startup or terminal transition remains its own short primary-main provider transaction. Delivery in a private worktree needs no claim unless it triggers a named shared-resource event. Before finish or handoff, commit completed work and prove the applicable worktree clean. Release only claims created by an Event Contract event.
 
 ## Folder Model
 
@@ -151,7 +151,7 @@ Resume blocked work through the same provider and startup boundaries as new work
 3. In one short provider transaction, restore Status: Ready with Owner: Unowned while retaining the blocker, unblock condition, evidence, and acceptance criteria as recovery history. When coordination is enabled, claim the item's exact current path under Agent Claim's Event Contract. If this transaction fails, restore the byte-for-byte pre-attempt Blocked item and do not infer execution ownership.
 4. Let the parent Dev Backlog Coordinator select the Ready item through normal priority and Starting-plus-Running capacity rules. Its Dev Backlog Steward child atomically records Ready -> Starting reservation and dispatch evidence; this transaction does not grant delivery ownership.
 5. Reconcile the Starting reservation against active and archived runtime Threads. Create at most one canonical work-item Thread. After an error, timeout, disconnect, or ambiguous response, do not retry creation; perform the bounded settlement read and either adopt the one matching Thread, restore Ready when no root Agent accepted ownership and no Thread exists, or record Blocked or User Action Required when ownership or evidence cannot safely be discarded.
-6. Only after the work-item Thread's root Dev Orchestrator Agent accepts ownership may that Orchestrator use its own Dev Backlog Steward child for the atomic Starting -> Running transaction. Record the canonical Thread identifier, canonical root Agent Task id when applicable, owner, branch, worktree, and enabled coordination evidence.
+6. Only after the work-item Thread's root Dev Orchestrator Agent accepts ownership may that Orchestrator use its own Dev Backlog Steward child for the atomic Starting -> Running transaction. Record the canonical Thread identifier, canonical root Agent Task id when applicable, owner, branch, worktree, and claim-free private-lane evidence.
 
 Blocked, Ready, or satisfaction of an unblock condition never authorizes a direct transition to Running. Under enabled coordination, each provider mutation uses its own short backlog ownership transaction and cannot substitute for delivery ownership. With coordination none, preserve the same provider transactions and state sequence without coordination operations or evidence.
 

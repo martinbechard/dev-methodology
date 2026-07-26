@@ -220,15 +220,15 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
             with self.subTest(clause=clause):
                 self.assertIn(clause, self.watchdog_section)
 
-    def test_registry_cleanup_and_generated_coordinators_remain_conditional(self) -> None:
-        """Keep registry cleanup out of none and preserve conditional adapter wording."""
+    def test_coordination_selection_and_generated_coordinators_remain_conditional(self) -> None:
+        """Keep none claim-free and preserve conditional adapter wording."""
 
         self.assertIn(
-            "When resource coordination selects agent-claim, keep administrative coordination-registry cleanup",
+            "When PROJECT.yaml selects agent-claim, apply Agent Claim's owning Event Contract exactly.",
             self.skill_text,
         )
         self.assertIn(
-            "When none is selected, omit coordination-registry cleanup and coordination evidence.",
+            "When PROJECT.yaml selects none, perform no claim operation and omit claim evidence",
             self.skill_text,
         )
         for adapter_path in _GENERATED_COORDINATOR_ADAPTERS:
@@ -318,7 +318,7 @@ class StartingLifecycleContractTests(unittest.TestCase):
             "Starting -> Running",
             "restore Ready",
             "Blocked or User Action Required",
-            "branch, worktree, and claim evidence",
+            "branch, worktree, and claim-free private-lane evidence",
             "root Dev Orchestrator",
             "Dev Backlog Steward child",
         )

@@ -375,7 +375,7 @@ def load_renderer_module():
 
 
 def project_with_transport(selected: str, availability: str = "AVAILABLE") -> dict[str, object]:
-    """Return the smallest renderable project fixture with one verified claim transport."""
+    """Return the smallest project fixture with one verified claim-helper interface."""
 
     return {
         "resource_coordination": {
@@ -409,7 +409,7 @@ def project_with_transport(selected: str, availability: str = "AVAILABLE") -> di
         "agent_claim_transport": {
             "selected": selected,
             "availability": availability,
-            "verification": [f"{selected} transport fixture evidence"],
+            "verification": [f"{selected} claim-helper fixture evidence"],
         },
         "workflow_selection": {
             "provider": {"default": "UNSET"},
@@ -435,13 +435,13 @@ class AgentClaimInterfaceTests(unittest.TestCase):
 
                 self.assertIn("## Resource Coordination Skill Reference", rendered)
                 self.assertIn("selected resource-coordination skill agent-claim", rendered)
-                self.assertIn("## Agent Claim Transport", rendered)
+                self.assertIn("## Agent Claim Helper", rendered)
                 self.assertIn(
-                    f"BEGIN INLINED CLAIM TRANSPORT SKILL: {included}",
+                    f"BEGIN INLINED CLAIM HELPER INTERFACE SKILL: {included}",
                     rendered,
                 )
                 self.assertNotIn(excluded, rendered)
-                self.assertIn("does not probe or switch to another transport", rendered)
+                self.assertIn("does not probe or switch claim-helper interfaces", rendered)
 
     def test_renderer_validates_and_renders_deadline_classes_and_exact_id_overrides(self) -> None:
         """Expose every configured deadline value without hidden class inference."""
@@ -560,10 +560,10 @@ class AgentClaimInterfaceTests(unittest.TestCase):
         rendered = renderer.render(project)
 
         self.assertNotIn("## Resource Coordination Skill Reference", rendered)
-        self.assertNotIn("## Agent Claim Transport", rendered)
+        self.assertNotIn("## Agent Claim Helper", rendered)
         self.assertNotIn("agent-claim", rendered)
         self.assertNotIn("CLAIM_TRANSPORT", rendered)
-        self.assertNotIn("transport fixture evidence", rendered)
+        self.assertNotIn("claim-helper fixture evidence", rendered)
 
     def test_none_rejects_every_present_claim_interface_value(self) -> None:
         """Reject a stale claim-helper interface selection instead of ignoring it."""
@@ -918,7 +918,7 @@ class AgentClaimInterfaceTests(unittest.TestCase):
             renderer.render(missing)
         with self.assertRaisesRegex(
             ValueError,
-            "configured claim transport mcp is unavailable; run Project Configurator",
+            "configured claim-helper interface mcp is unavailable; run Project Configurator",
         ):
             renderer.render(project)
 
@@ -1049,9 +1049,12 @@ class AgentClaimInterfaceTests(unittest.TestCase):
         ).read_text(encoding="utf-8").splitlines()
         task = (PROJECT_CONFIGURATION_FIXTURE / "TASK.md").read_text(encoding="utf-8")
         self.assertIn("agent-claim-mcp", available)
-        self.assertIn("Select the MCP claim transport", task)
+        self.assertIn("Select the MCP claim-helper interface", task)
         self.assertIn("result schema version 2", task)
-        self.assertIn("Do not probe or fall back to the command transport", task)
+        self.assertIn("Do not probe or fall back to the claim command-line interface", task)
+        self.assertIn("Acquire one project-files claim", task)
+        self.assertIn("Omit exact files", task)
+        self.assertNotIn("Extend the same claim", task)
 
     def test_mcp_eval_contract_pins_canonical_schema_v2_runtime(self) -> None:
         """Replace the retired MCP fixture identity and legacy acquisition outcome."""
@@ -1078,6 +1081,10 @@ class AgentClaimInterfaceTests(unittest.TestCase):
             ["SHARED_CHECKOUT_ACQUIRED"],
             contract["requiredToolOutcomes"]["claim_acquire"],
         )
+        self.assertTrue(contract["requiredToolArguments"]["claim_acquire"]["project_files"])
+        self.assertNotIn("files", contract["requiredToolArguments"]["claim_acquire"])
+        self.assertNotIn("claim_extend", contract["requiredToolOutcomes"])
+        self.assertNotIn("claim_extend", contract["requiredToolArguments"])
 
 
 if __name__ == "__main__":

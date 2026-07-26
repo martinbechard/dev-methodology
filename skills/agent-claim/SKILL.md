@@ -1,6 +1,6 @@
 ---
 name: agent-claim
-description: Use when PROJECT.yaml selects agent-claim for repository paths or exclusive resources, including atomic scope extension, journals, contention reporting, worktree isolation, recovery, and clean release.
+description: Use when PROJECT.yaml selects agent-claim and an Event Contract trigger needs temporary protection, including atomic scope extension, notification-driven contention, recovery, and clean release.
 metadata:
   category: development-practice
 ---
@@ -21,16 +21,18 @@ Start with the narrow scope supported by current evidence. Extend the same claim
 
 This table is the complete event-to-claim contract.
 
-| Event | Claim rule |
-|---|---|
-| Update an existing work item | Claim the exact current backlog path and, for a move or rename, the destination path. |
-| Perform any non-backlog work in the primary worktree | Claim project-files. |
-| Use a shared browser | Claim browser-test:&lt;id&gt;. |
-| Use a shared database | Claim database:&lt;id&gt;. |
-| Use a shared port | Claim port:&lt;number&gt;. |
-| Use a shared live model | Claim live-model:&lt;provider&gt;:&lt;suite&gt;. |
-| Change a shared installed runtime | Claim shared-install:&lt;target&gt;. |
-| Change a shared deployment | Claim deployment:&lt;environment&gt;. |
+Acquire immediately before the event and release at the stated boundary.
+
+| No. | Event | Claim | Release |
+|---:|---|---|---|
+| 1 | Update an existing work item | Exact current backlog path and any move or rename destination. | After the one-item update or move commit succeeds and primary main is clean, or after verified no-change. |
+| 2 | Perform any non-backlog work in the primary worktree | project-files. | After changes are committed, or verified no-change is recorded, and primary main is clean. |
+| 3 | Use a shared browser | browser-test:&lt;id&gt;. | After the shared browser or server stops or is explicitly handed off. |
+| 4 | Use a shared database | database:&lt;id&gt;. | After database operations finish and the shared database is restored, stopped, or handed off. |
+| 5 | Use a shared port | port:&lt;number&gt;. | After the listener stops or is handed off. |
+| 6 | Use a shared live model | live-model:&lt;provider&gt;:&lt;suite&gt;. | After the suite or call finishes or is cancelled and evidence is saved. |
+| 7 | Change a shared installed runtime | shared-install:&lt;target&gt;. | After the installed-runtime change is verified and installed state is stable. |
+| 8 | Change a shared deployment | deployment:&lt;environment&gt;. | After deployment reaches a verified terminal state or rollback completes. |
 
 Creating a uniquely named new work-item file needs no claim and must use atomic no-overwrite creation.
 
@@ -60,7 +62,7 @@ Resolve the primary worktree from Git worktree metadata, even when the operation
 
 ## Claim Scope
 
-Use one scope form for each intended ownership kind:
+The claim helper accepts these scope forms:
 
 - file names one exact intended file. A future file that does not exist yet is valid.
 - tree names one directory subtree and overlaps its descendants.
@@ -68,6 +70,13 @@ Use one scope form for each intended ownership kind:
 - backlog names the complete repository-root backlog subtree.
 - all-files names the explicit union of project-files and backlog.
 - resource names one exclusive repository-global runtime or integration resource.
+
+The Event Contract decides which form an ordinary caller may use:
+
+- Existing work-item updates use exact backlog files.
+- Non-backlog primary-worktree work uses project-files.
+- Shared runtime, install, and deployment events use the named resource.
+- Exact project files, project trees, broad backlog, all-files, and isolated claimed checkouts remain helper compatibility or explicitly authorized recovery surfaces. They are not ordinary trigger choices.
 
 Tree, project-files, and all-files scope require a short coordination-only scope reason. Do not put prompts, sensitive company information, or personal information in the reason.
 
@@ -98,25 +107,25 @@ The structured outcome is authoritative. Result schema version 2 uses the canoni
 | DIRTY_CHECKOUT_RECOVERY_ACQUIRED | Recovery ownership was acquired over explicitly authorized dirty state. | Preserve the state in a checkpoint commit before cleanup. | RECOVER |
 | CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED | No ownership was acquired because requested scope overlaps another owner. | Wait for a handoff or choose genuinely non-overlapping scope. | WAIT |
 | SHARED_CHECKOUT_REQUIRED | No ownership was acquired because the operation must run from the shared checkout. | Hand the operation to that checkout and reconcile status there. | PRIMARY_REQUIRED |
-| SHARED_CHECKOUT_RELEASE_REQUIRED | No ownership was acquired because another claim currently owns the shared checkout. | Wait for its release notification before retrying there. | PRIMARY_REQUIRED |
+| SHARED_CHECKOUT_RELEASE_REQUIRED | Historical schema compatibility for checkout-occupancy events; current acquisition does not emit this outcome. | Normalize historical evidence only. Do not treat another non-overlapping primary claim as a wait trigger. | PRIMARY_REQUIRED |
 | ISOLATED_CHECKOUT_SETUP_REQUIRED | No ownership was acquired because an isolated branch and checkout must be prepared. | Repeat the acquisition with the required isolation arguments. | ISOLATE_REQUIRED |
 | DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED | No ownership was acquired because dirty state requires explicit recovery authority. | Obtain authority before repeating with recovery enabled. | RECOVERY_REQUIRED |
 
 Structured rejections such as INVALID_SCOPE, INVALID_IDENTIFIER, INVALID_WORKTREE_PATH, WORKTREE_ROOT_NOT_IGNORED, CLAIM_NOT_FOUND, and RELEASE_REJECTED are valid coordination results. Do not reinterpret an ownership state or rejection as an implementation-interface failure.
 
-Schema version 1 journal events remain append-only and retain the original outcome strings. New PRIMARY_REQUIRED events include shared_checkout_claimed so reporting can distinguish the two canonical states. Historical PRIMARY_REQUIRED events without that field remain raw PRIMARY_REQUIRED and appear in outcome_normalization_gaps because active claim counts do not prove shared-checkout ownership.
+Schema version 1 journal events remain append-only and retain the original outcome strings. Historical PRIMARY_REQUIRED events with shared_checkout_claimed true normalize to the historical-only SHARED_CHECKOUT_RELEASE_REQUIRED compatibility result. Current acquisition never emits checkout-occupancy events. Historical PRIMARY_REQUIRED events without that field remain raw PRIMARY_REQUIRED and appear in outcome_normalization_gaps because active claim counts do not prove shared-checkout ownership.
 
 ## Acquisition Workflow
 
-Acquisition uses an exclusive registry lock. Its result includes the claim mode, branch, and target worktree.
+Acquisition uses an exclusive registry lock. Its result includes the claim mode, branch, and target worktree. Ordinary callers request only an Event Contract scope. Isolation and exact project-file or tree acquisition outcomes remain visible for compatibility and explicit recovery diagnostics; they do not add trigger events.
 
 ### Shared Checkout Acquisition
 
 Request only the scope selected by the Event Contract. Acquisition returns SHARED_CHECKOUT_ACQUIRED when no active claim overlaps that scope or names the same resource.
 
-### Isolated Checkout Acquisition
+### Compatibility Isolation Outcome
 
-Explicit isolation arguments may create an isolated claimed checkout beneath the primary worktree's .worktrees directory. The target is derived rather than caller-selected, and isolation arguments never bypass overlapping scope.
+Legacy or explicitly authorized recovery calls may supply isolation arguments and create an isolated claimed checkout beneath the primary worktree's .worktrees directory. The target is derived rather than caller-selected. Isolation arguments never bypass overlapping scope. Distributed callers do not use this path for ordinary private-worktree delivery.
 
 ### Shared-Checkout-Only Backlog Acquisition
 
@@ -124,13 +133,13 @@ Updates and moves of existing work items run from the primary worktree under the
 
 ### Claim Scope Conflict Wait
 
-Overlapping scope returns CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED with the conflicting claim identifiers and exact overlap pairs. Do not edit, create a competing worktree, or add isolation arguments. Wait, coordinate a handoff, or choose genuinely non-overlapping scope.
+Overlapping scope returns CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED with the conflicting claim identifiers and exact overlap pairs. Attempt once and retain the structured outcome as local execution evidence. Do not edit, create a competing worktree, add isolation arguments, poll, or retry on a schedule. Request or subscribe to a direct release or recovery handoff, then retry only when that notification arrives. Do not mutate durable work-item state or acquire a backlog claim merely to record the wait. Treat a live claim as valid; only the configured watchdog investigates stale ownership on its normal cycle.
 
 ## Atomic Scope Extension
 
 Stop before touching newly discovered scope. Extend the existing claim while its original ownership remains active. Extension checks only net-new scope against every other active claim under the registry lock. All requested additions succeed together or a wait result leaves the live claim unchanged. Repeating scope already owned succeeds idempotently and separates added scope from already-owned scope.
 
-Extension preserves the original worktree, branch, mode, baseline commit, and claim timestamp. An isolated claim cannot extend into backlog; SHARED_CHECKOUT_REQUIRED leaves the claim unchanged so that work can be handed to the primary worktree. Scope contraction is not supported.
+Extension preserves the original worktree, branch, mode, baseline commit, and claim timestamp. Add only a net-new scope produced by another Event Contract event. A compatibility isolated claim cannot extend into backlog; SHARED_CHECKOUT_REQUIRED leaves the claim unchanged so that work can be handed to the primary worktree. Scope contraction is not supported.
 
 ## Heartbeat
 
@@ -220,15 +229,17 @@ When RECONCILIATION_RECOVERY_REQUIRED appears:
 
 ## Completion And Release
 
-A modifying task is not complete merely because implementation or tests are complete. A clean finish includes:
+A task that triggered an Event Contract claim is not complete merely because implementation or tests are complete. Its clean finish includes:
 
 - Required verification passed or the blocker is documented.
 - Task changes are committed, or the task explicitly produced no changes.
-- The claimed worktree is clean.
+- The applicable worktree is clean.
 - Long-running resources are stopped or explicitly handed off.
-- The claim is released through the configured adapter.
-- A clean released isolated checkout is removed only after its verified commit is preserved on a branch or integrated into the target.
+- Every Event Contract claim owned by the task is released through the configured adapter.
+- A compatibility isolated checkout is removed only after its verified commit is preserved on a branch or integrated into the target.
 - The final response reports the commit hash, verification, and terminal status.
+
+Claim-free private-worktree work finishes with the same commit, verification, and clean-worktree evidence but has no claim or release evidence.
 
 Release validates operational coordination state, not committed content. It checks current owned-domain cleanliness and compares current out-of-domain worktree and index state with the acquisition baseline. Status inspection uses NUL-delimited records so spaces, quotes, non-ASCII text, newlines, rename records, and text resembling a rename arrow remain exact paths. Unchanged pre-existing out-of-domain dirtiness does not become owned work and does not block release. A changed staged, unstaged, or untracked out-of-domain path returns RELEASE_REJECTED with reason out_of_domain_changes and reports only paths whose current state differs from the baseline. The claim helper records the resulting commit and requires either a commit change or an explicit no-change declaration. Normal release does not traverse commit history, audit committed paths, enforce contribution scope, or interpret merge ancestry. The evidence-gated reconciliation variant performs only the bounded commit and ancestry proof described below. Independent review and integration own committed-content, changed-path, and provenance decisions beyond this bounded proof. The configured claim-helper interface never stages, commits, reverts, or cleans project paths.
 
@@ -240,7 +251,7 @@ Contention reports count broad events by project_files, backlog, and all_files d
 
 ### Committed Release
 
-After the claimed worktree is clean and contains the verified task commit, release normally. After the commit is preserved and the claim is released, the orchestration owner removes the isolated checkout from the primary worktree and prunes stale Git worktree metadata. Never remove a dirty, active, uncommitted, or unpreserved checkout.
+After the applicable worktree is clean and contains the verified task commit, release the Event Contract claim normally. For a compatibility isolated checkout, the orchestration owner removes it from the primary worktree and prunes stale Git worktree metadata only after the commit is preserved and the claim is released. Never remove a dirty, active, uncommitted, or unpreserved checkout.
 
 ### No-Change Release
 

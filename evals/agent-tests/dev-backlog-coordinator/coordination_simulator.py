@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Simulates provider-selected capacity, same-thread resumption, claim retries, and terminal cleanup.
+# Summary: Simulates provider-selected capacity, same-thread resumption, notification-driven claims, and terminal cleanup.
 # Test plan: evals/agent-tests/dev-backlog-coordinator/requirements-matrix.md
 
 """Provide deterministic state transitions for parent backlog coordination."""
@@ -13,10 +13,18 @@ from typing import Sequence
 
 
 RUNNING_TARGET = 10
-CLAIM_ATTEMPT_MINUTES = (0, 5, 10, 15, 20, 25, 30)
 CLAIM_KINDS = ("integration", "completion")
 SHARED_CLAIM_OPERATIONS = frozenset(
-    {"main integration", "backlog mutation", "generated output", "exclusive resource"}
+    {
+        "primary main integration",
+        "existing backlog update",
+        "shared browser",
+        "shared database",
+        "shared port",
+        "shared live model",
+        "shared install",
+        "shared deployment",
+    }
 )
 PERSISTENCE_MANAGERS = {
     "file": "manage-file-work-items",
@@ -48,7 +56,6 @@ class WorkItem:
     branch: str | None = None
     worktree: str | None = None
     candidate_commit: str | None = None
-    wait_started_minute: int | None = None
     claim_attempts: dict[str, list[dict[str, object]]] = field(default_factory=dict)
     acquired_claims: set[str] = field(default_factory=set)
     open_issues: list[str] = field(default_factory=list)
@@ -342,66 +349,76 @@ class CoordinationSimulator:
         item_id: str,
         *,
         claim_kind: str,
-        elapsed_minutes: int,
         outcome: str,
         blocking_claim_id: str | None = None,
+        release_or_recovery_notification: str | None = None,
     ) -> None:
-        """Record the next permitted attempt in one bounded claim window."""
+        """Record an immediate claim attempt or a notification-triggered retry."""
 
         if claim_kind not in CLAIM_KINDS:
             raise ValueError(f"unsupported claim kind: {claim_kind}")
         item = self._item(item_id)
         if item.status != "Running":
-            raise ValueError("only a Running work item may own a claim retry window")
+            raise ValueError("only a Running work item may attempt an Event Contract claim")
         if claim_kind == "completion" and "integration" not in item.acquired_claims:
             raise ValueError("completion claim requires acquired integration evidence")
         if claim_kind in item.acquired_claims:
             raise ValueError(f"{claim_kind} claim is already acquired")
         attempts = item.claim_attempts.setdefault(claim_kind, [])
-        if len(attempts) >= len(CLAIM_ATTEMPT_MINUTES):
-            raise ValueError(f"{claim_kind} claim retry window is exhausted")
-        expected_minute = CLAIM_ATTEMPT_MINUTES[len(attempts)]
-        if elapsed_minutes != expected_minute:
+        if not attempts and release_or_recovery_notification:
+            raise ValueError("the immediate attempt cannot consume a release notification")
+        if attempts and not release_or_recovery_notification:
             raise ValueError(
-                f"{claim_kind} claim attempt must occur at minute {expected_minute}"
+                f"{claim_kind} claim retry requires a release or recovery notification"
             )
-        if item.wait_started_minute is None:
-            item.wait_started_minute = 0
+        used_notifications = {
+            attempt["releaseOrRecoveryNotification"]
+            for attempt in attempts
+            if attempt["releaseOrRecoveryNotification"]
+        }
+        if release_or_recovery_notification in used_notifications:
+            raise ValueError("one release or recovery notification may trigger only one retry")
         phase_name = "Integration" if claim_kind == "integration" else "Completion"
         item.phase = phase_name if outcome == "ACQUIRED" else f"{phase_name} Wait"
         attempts.append(
             {
                 "claimKind": claim_kind,
-                "elapsedMinutes": elapsed_minutes,
                 "outcome": outcome,
                 "blockingClaimId": blocking_claim_id,
+                "releaseOrRecoveryNotification": release_or_recovery_notification,
             }
         )
         if outcome == "ACQUIRED":
             item.acquired_claims.add(claim_kind)
-        elif elapsed_minutes == 30:
-            item.phase = f"{phase_name} Investigation"
+        else:
             item.open_issues.append(
-                f"{claim_kind} claim wait reached 30 minutes: "
-                f"{blocking_claim_id or 'unknown owner'}"
+                (
+                    f"{claim_kind} claim remained unavailable after "
+                    f"{release_or_recovery_notification}: "
+                    if release_or_recovery_notification
+                    else f"{claim_kind} claim awaits a direct release or recovery notification: "
+                )
+                + f"{blocking_claim_id or 'unknown owner'}"
             )
+            if release_or_recovery_notification:
+                item.phase = f"{phase_name} Recovery"
 
-    def waits_requiring_investigation(self) -> tuple[str, ...]:
-        """Return Running work items whose bounded claim window expired."""
+    def claims_requiring_recovery(self) -> tuple[str, ...]:
+        """Return Running work items whose notified retry still conflicts."""
 
         return tuple(
             item.item_id
             for item in self.items
             if item.status == "Running"
-            and item.phase in {"Integration Investigation", "Completion Investigation"}
+            and item.phase in {"Integration Recovery", "Completion Recovery"}
         )
 
-    def dispose_unresolved_wait(self, item_id: str, *, user_decision: bool) -> None:
-        """Free one active slot through a truthful unresolved-wait disposition."""
+    def dispose_unresolved_claim(self, item_id: str, *, user_decision: bool) -> None:
+        """Free one active slot after a notified recovery remains unresolved."""
 
         item = self._item(item_id)
-        if item.phase not in {"Integration Investigation", "Completion Investigation"}:
-            raise ValueError("the thirty-minute investigation must occur first")
+        if item.phase not in {"Integration Recovery", "Completion Recovery"}:
+            raise ValueError("a notified release or recovery attempt must remain unresolved")
         item.status = "User Action Required" if user_decision else "Blocked"
         item.phase = None
         self.events.append(

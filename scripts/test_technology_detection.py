@@ -128,7 +128,7 @@ def explicit_user_approval(path: str) -> dict[str, object]:
 
 
 def with_unset_workflows(value: dict[str, object]) -> dict[str, object]:
-    """Add one verified claim transport and explicit deferred Persistence and Commit selectors."""
+    """Add one verified claim-helper interface and deferred workflow selectors."""
 
     return {
         **with_claim_transport({}),
@@ -2005,11 +2005,11 @@ class TechnologyDetectionTests(unittest.TestCase):
             self.assertIn("most-specific matching pattern wins", completed.stdout)
             self.assertNotIn("Agent Claims And Worktrees", completed.stdout)
             self.assertIn(
-                "BEGIN INLINED CLAIM TRANSPORT SKILL: agent-claim-command",
+                "BEGIN INLINED CLAIM HELPER INTERFACE SKILL: agent-claim-command",
                 completed.stdout,
             )
             self.assertNotIn(
-                "BEGIN INLINED CLAIM TRANSPORT SKILL: agent-claim-mcp",
+                "BEGIN INLINED CLAIM HELPER INTERFACE SKILL: agent-claim-mcp",
                 completed.stdout,
             )
 

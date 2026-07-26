@@ -62,7 +62,7 @@ When this outcome appears:
 
 ## Command Arguments
 
-Acquire requires claim-id, agent, task, and root-task-id. Scope arguments are repeatable file and tree values, at most one resource value, or one mutually exclusive broad selector: project-files, backlog, or all-files. Tree, project-files, and all-files require scope-reason. A named resource also requires resource-class, resource-id, expected-duration-seconds, and requested-hard-stop-duration-seconds; the command resolves configured maximum and cleanup grace from PROJECT.yaml. Optional acquisition arguments are parent-claim-id, branch, base, allow-recovery, and the compatibility-only worktree-path and compat-file-directories options.
+Acquire requires claim-id, agent, task, and root-task-id. Ordinary callers pass only the scope selected by Agent Claim's Event Contract: exact backlog files, project-files, or one named resource. The command retains tree, backlog, all-files, branch, base, worktree-path, and compat-file-directories inputs only for schema compatibility or explicitly authorized recovery. Tree, project-files, and all-files require scope-reason. A named resource also requires resource-class, resource-id, expected-duration-seconds, and requested-hard-stop-duration-seconds; the command resolves configured maximum and cleanup grace from PROJECT.yaml. Parent-claim-id and allow-recovery remain optional.
 
 Extend requires claim-id plus net-new scope and uses the same complete timing arguments when adding the claim's one named resource. Extend-deadline requires claim-id, requested-hard-stop-duration-seconds, and extension-evidence. Heartbeat and release require claim-id. Release accepts no-change only for a truthful no-change result. The mutually exclusive reconciliation variant accepts reconcile-out-of-domain-commit with one full 40-character SHA and requires prior-rejected-release-reference for the matching rejected release event. Journal maintenance accepts hot-days, defaulting to 2. Reporting accepts since and format; use JSON output for automation.
 
@@ -74,18 +74,18 @@ Read live ownership:
 python3 "$CLAIM_SCRIPT" --repo . status
 ```
 
-Acquire one exact file:
+Update an existing work item:
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . acquire \
-  --claim-id task-123 \
-  --agent implementation-agent \
-  --task task-123 \
-  --root-task-id task-123 \
-  --file src/feature.py
+  --claim-id update-work-item-123 \
+  --agent backlog-steward \
+  --task update-work-item-123 \
+  --root-task-id work-item-123 \
+  --file backlog/feature-backlog/work-item-123.md
 ```
 
-Acquire broad project ownership:
+Perform non-backlog work in the primary worktree:
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . acquire \
@@ -95,19 +95,6 @@ python3 "$CLAIM_SCRIPT" --repo . acquire \
   --root-task-id task-123 \
   --project-files \
   --scope-reason "project implementation"
-```
-
-Repeat an isolation-required acquisition with the same claim identity:
-
-```bash
-python3 "$CLAIM_SCRIPT" --repo . acquire \
-  --claim-id task-123 \
-  --agent implementation-agent \
-  --task task-123 \
-  --root-task-id task-123 \
-  --file src/feature.py \
-  --branch codex/task-123 \
-  --base main
 ```
 
 Acquire one deadline-bound resource. The project policy, not this command, supplies the configured maximum and cleanup grace:
@@ -125,12 +112,16 @@ python3 "$CLAIM_SCRIPT" --repo . acquire \
   --requested-hard-stop-duration-seconds 1800
 ```
 
-Extend scope, explicitly extend a resource deadline, heartbeat, and release:
+Extend with a newly triggered shared-port event, explicitly extend a resource deadline, heartbeat, and release:
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . extend \
   --claim-id task-123 \
-  --file tests/test_feature.py
+  --resource port:3000 \
+  --resource-class database-port \
+  --resource-id port:3000 \
+  --expected-duration-seconds 600 \
+  --requested-hard-stop-duration-seconds 1200
 
 python3 "$CLAIM_SCRIPT" --repo . extend-deadline \
   --claim-id browser-check-123 \

@@ -7,7 +7,7 @@ metadata:
 
 # Complete Work Item Direct Main
 
-Complete delivery only after the accepted behavior is verified on the configured main branch. Direct main describes the observed final state; implementation may occur in an authorized primary or isolated worktree.
+Complete delivery only after the accepted behavior is verified on the configured main branch. Direct main describes the observed final state; implementation may occur in the primary worktree or a private worktree.
 
 ## Inputs
 
@@ -37,7 +37,7 @@ This skill owns Git delivery and main observation. It also owns terminal handoff
 Before shared mutation:
 
 1. Confirm the source commit exists and represents the reviewed, verified contribution.
-2. Confirm the source worktree is clean. When resource coordination is enabled, confirm implementation ownership is released or explicitly handed to the integration owner.
+2. Confirm the source worktree is clean. When resource coordination is enabled, confirm every Event Contract claim used during candidate production is released or explicitly handed to the integration owner.
 3. Confirm every required review finding is resolved and every accepted source check names its command or provider check and outcome.
 4. Record the source commit and changed paths before refreshing main so later evidence cannot silently substitute another contribution.
 
@@ -107,7 +107,7 @@ When a provider is selected, prepare one terminal update containing:
 - clean worktree and enabled integration-release evidence; and
 - completion disposition READY with requested lifecycle COMPLETED.
 
-Return the prepared terminal handoff to the caller after the integration claim is released. The owning orchestrator decides whether and when to dispatch the selected provider manager. This skill neither performs that dispatch nor waits for its result. The provider-backed item remains nonterminal until the separate Persistence update succeeds. Do not report a provider-backed item as completed before that succeeds.
+Return the prepared terminal handoff to the caller after the project-files integration claim is released when agent-claim is selected. The owning orchestrator decides whether and when to dispatch the selected provider manager. This skill neither performs that dispatch nor waits for its result. The provider-backed item remains nonterminal until the separate Persistence update succeeds. Do not report a provider-backed item as completed before that succeeds.
 
 ## Result
 

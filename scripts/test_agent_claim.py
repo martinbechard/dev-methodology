@@ -743,6 +743,7 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual(0, completed.returncode, completed.stderr)
         result = self.output(completed)
         self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
+        self.assertNotEqual("SHARED_CHECKOUT_RELEASE_REQUIRED", result["outcome"])
         self.assertEqual("primary", result["claim"]["checkout_topology"])
         self.assertEqual(
             ["first", "second"],
