@@ -4950,7 +4950,10 @@ class BundleContentTests(unittest.TestCase):
 
         for required_guidance in (
             "Do not own, dispatch, implement, or resolve user-action-required work",
-            "Ask the user the exact question recorded in the item",
+            "Ask one plain-language question",
+            "Explain why the user owns the answer",
+            "State the practical consequence of each option",
+            "State the unattended-work boundary",
             "Move an approved or answered item into its typed active backlog folder",
             "set Status: Ready before any separately requested resource-coordination or running transition",
             "backlog/holding is for intentionally deferred work",

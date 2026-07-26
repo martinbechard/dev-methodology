@@ -596,6 +596,46 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
         self.assertIn("acknowledge the blocker notification", coordinator)
 
 
+class UserActionRequiredExplanationContractTests(unittest.TestCase):
+    """Protect clear user-owned questions without false technical gates."""
+
+    def test_user_request_is_explained_after_provider_reconciliation(self) -> None:
+        provider = MANAGE_FILE_WORK_ITEMS_PATH.read_text(encoding="utf-8")
+        orchestrator = ORCHESTRATOR_ROLE_PATH.read_text(encoding="utf-8")
+        contract = " ".join(f"{provider} {orchestrator}".split())
+
+        required = (
+            "the provider records that state before presenting the request to the user",
+            "Ask one plain-language question.",
+            "Explain why the user owns the answer.",
+            "an illustrative example",
+            "practical consequence",
+            "State the unattended-work boundary.",
+            "Name the work that must stop",
+            "independent work that may safely continue",
+        )
+        for clause in required:
+            with self.subTest(clause=clause):
+                self.assertIn(clause, contract)
+
+    def test_vague_fabricated_repeated_and_false_requests_are_rejected(self) -> None:
+        provider = MANAGE_FILE_WORK_ITEMS_PATH.read_text(encoding="utf-8")
+        orchestrator = ORCHESTRATOR_ROLE_PATH.read_text(encoding="utf-8")
+        contract = " ".join(f"{provider} {orchestrator}".split())
+
+        rejected = (
+            "Do not hide it inside background information.",
+            "Do not invent options, risks, or consequences",
+            "do not ask it again",
+            "Do not turn a technical dependency, missing tool, implementation failure, or agent-resolvable question into a user choice.",
+            "turn an agent-resolvable technical problem into a user choice",
+            "repeat a recorded answer",
+        )
+        for clause in rejected:
+            with self.subTest(clause=clause):
+                self.assertIn(clause, contract)
+
+
 class StartingLifecycleContractTests(unittest.TestCase):
     """Protect the durable startup bridge and mechanical watchdog boundaries."""
 

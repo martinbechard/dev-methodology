@@ -67,6 +67,13 @@ instructions:
     Ready -> Starting, then accept Running and use this root's dev-backlog-steward child to
     record Starting -> Running. For provider none, record equivalent Running acceptance
     task-locally in this same Thread without dev-backlog-steward or provider mutation.
+  - When progress needs a genuine user-owned decision, notify the parent Coordinator with the
+    exact blocker before asking the user. Wait until the Coordinator selects User Action Required
+    and the provider records that state. Then use the canonical Thread to ask one plain-language
+    question, explain why the user owns the answer, give evidence-backed options or an
+    illustrative example with practical consequences, and state exactly what unattended work
+    stops and what independent work may continue. Do not hide the question, fabricate options,
+    turn an agent-resolvable technical problem into a user choice, or repeat a recorded answer.
   - Decompose the outcome into non-overlapping responsibilities, acceptance criteria,
     dependency order, narrow definition-owned skillsets, and evidence required at each handoff.
   - Send source implementation lanes to dev-coder with a normalized work item, base and

@@ -258,14 +258,19 @@ technical or external blocker in Blocked with an exact owner and unblock conditi
 Before transitioning an item to User Action Required, when agent-claim is loaded, apply agent-claim to the blocking condition and confirm that a separate genuine user-owned decision remains. Structured claim outcomes and technical claim cleanup or recovery remain agent-owned and do not justify User Action Required.
 
 1. Read the item and current Resolution.
-2. Ask the user the exact question recorded in the item and include stated options and tradeoffs.
-3. Do not infer approval from silence, unrelated decisions, repository access, or technical plausibility.
-4. Accept the answer in the canonical work-item Thread that asked the question or in the parent coordination Thread. Record the dated answer, provenance, resulting disposition, and existing canonical Thread identity exactly once.
-5. When the answer arrives in the canonical work-item Thread, keep that Thread as the resumption context and send one lifecycle resumption request to the parent Coordinator. Do not require the user to switch Threads or repeat the answer.
-6. Move an approved or answered item into its typed active backlog folder and set Status: Ready before any separately requested resource-coordination or running transition.
-7. If the item is eligible under current priority and capacity, have the parent Coordinator reserve Ready -> Starting for the existing canonical Thread. After that Thread's root Dev Orchestrator accepts ownership, record Starting -> Running for the same Thread before further repository mutation or delivery.
-8. Move a deferred item to backlog/holding. Archive a clearly rejected or abandoned item under the matching failed type.
-9. Keep a partially answered item in User Action Required with a narrowed question.
+2. If the Resolution already answers the question, do not ask it again. Route the recorded answer through normal resumption.
+3. Confirm that the Coordinator selected User Action Required and that the provider records that state before presenting the request to the user.
+4. Ask one plain-language question. Explain why the user owns the answer. Give real options or an illustrative example when they clarify the choice. State the practical consequence of each option.
+5. State the unattended-work boundary. Name the work that must stop and any independent work that may safely continue.
+6. Put the exact question first. Do not hide it inside background information. Do not invent options, risks, or consequences that current evidence does not support.
+7. Do not turn a technical dependency, missing tool, implementation failure, or agent-resolvable question into a user choice.
+8. Do not infer approval from silence, unrelated decisions, repository access, or technical plausibility.
+9. Accept the answer in the canonical work-item Thread that asked the question or in the parent coordination Thread. Record the dated answer, provenance, resulting disposition, and existing canonical Thread identity exactly once.
+10. When the answer arrives in the canonical work-item Thread, keep that Thread as the resumption context and send one lifecycle resumption request to the parent Coordinator. Do not require the user to switch Threads or repeat the answer.
+11. Move an approved or answered item into its typed active backlog folder and set Status: Ready before any separately requested resource-coordination or running transition.
+12. If the item is eligible under current priority and capacity, have the parent Coordinator reserve Ready -> Starting for the existing canonical Thread. After that Thread's root Dev Orchestrator accepts ownership, record Starting -> Running for the same Thread before further repository mutation or delivery.
+13. Move a deferred item to backlog/holding. Archive a clearly rejected or abandoned item under the matching failed type.
+14. Keep a partially answered item in User Action Required with a narrowed question.
 
 Work performed before User Action Required -> Ready -> Starting -> Running reconciliation is not automatically accepted or discarded. Preserve its diff, commits, branch, worktree, claims, review, verification, and delivery evidence. Report the sequence problem to the parent. Do not continue delivery until the parent and the same root Orchestrator reconcile the provider state, applicable claims, commits, independent gates, and delivery state.
 

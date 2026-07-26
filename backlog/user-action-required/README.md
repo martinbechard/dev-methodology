@@ -6,6 +6,12 @@ This directory contains backlog work whose next safe step requires a decision, a
 
 Items here are visible but not dispatchable. An agent reading this queue asks the exact recorded question and does not claim or implement the underlying work until the user answers.
 
+The Coordinator selects this state and the provider records it before the responsible agent presents the request. The request starts with one plain-language question. It explains why the user owns the answer, gives evidence-backed options or an illustrative example when helpful, states each practical consequence, and names exactly what unattended work stops.
+
+Example:
+
+> Do you approve publishing this accepted release to production? Production publication requires your authority. Approve means the release is published; defer means production remains unchanged. No publication may run while this question is pending, but read-only release-note review may continue.
+
 ## Item Contract
 
 Each item keeps its underlying work Type and uses Status: User Action Required. It contains the normal backlog sections plus:
