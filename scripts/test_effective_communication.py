@@ -6,9 +6,11 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import re
 import sys
 import unittest
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import yaml
@@ -18,6 +20,9 @@ ROOT = Path(__file__).resolve().parents[1]
 BUILD_SCRIPT = ROOT / "scripts" / "build-skill-docs.py"
 SKILL_PATH = ROOT / "skills" / "effective-communication" / "SKILL.md"
 ROLE_SCHEMA_PATH = ROOT / "agents" / "role-schema.yaml"
+HIERARCHY_PATH = ROOT / "design" / "agent-skill-hierarchy.svg"
+EXPLORER_PATH = ROOT / "design" / "generated" / "agent-skill-explorer-data.js"
+ROLES_ROOT = ROOT / "agents" / "roles"
 
 
 def load_build_module():
@@ -101,6 +106,42 @@ class EffectiveCommunicationContractTests(unittest.TestCase):
             with self.subTest(role=role.name):
                 self.assertIn("effective-communication", role.skills)
                 self.assertNotIn("effective-communication", role.skill_conditions)
+
+    def test_generated_relationship_views_assign_communication_to_every_role(self) -> None:
+        role_count = len(list(ROLES_ROOT.glob("*/*.role.yaml")))
+
+        hierarchy = ET.parse(HIERARCHY_PATH).getroot()
+        hierarchy_edges = [
+            edge
+            for edge in hierarchy.iter("{http://www.w3.org/2000/svg}path")
+            if edge.attrib.get("data-skill") == "effective-communication"
+        ]
+        self.assertEqual(role_count, len(hierarchy_edges))
+        self.assertTrue(
+            all(
+                "conditional-edge" not in edge.attrib["class"]
+                for edge in hierarchy_edges
+            )
+        )
+        communication_node = next(
+            node
+            for node in hierarchy.iter("{http://www.w3.org/2000/svg}g")
+            if node.attrib.get("data-skill") == "effective-communication"
+        )
+        self.assertNotIn(
+            "unassigned",
+            " ".join(text.strip() for text in communication_node.itertext()),
+        )
+
+        explorer_text = EXPLORER_PATH.read_text(encoding="utf-8")
+        explorer_payload = json.loads(explorer_text.split(" = ", 1)[1].rstrip(";\n"))
+        explorer_edges = [
+            edge
+            for edge in explorer_payload["edges"]
+            if edge["skill"] == "effective-communication"
+        ]
+        self.assertEqual(role_count, len(explorer_edges))
+        self.assertTrue(all(edge["kind"] == "fixed" for edge in explorer_edges))
 
 
 if __name__ == "__main__":

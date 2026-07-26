@@ -1,5 +1,5 @@
 schema: dev-methodology-role
-version: 4
+version: 5
 required:
   - name
   - filename

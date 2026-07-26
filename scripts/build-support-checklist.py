@@ -120,9 +120,33 @@ def load_skills(root: Path = ROOT) -> dict[str, str]:
 
 def load_roles(root: Path = ROOT) -> dict[str, dict[str, object]]:
     """Load the live conceptual agent inventory."""
+    role_schema = load_yaml(root / "agents" / "role-schema.yaml")
+    fixed_behavior = role_schema.get("fixedBehavior")
+    if not isinstance(fixed_behavior, dict):
+        raise ValueError("Role schema fixedBehavior must be a mapping")
+    shared_value = fixed_behavior.get("sharedSkills")
+    shared_entries = role_skill_entries(
+        {"name": "role schema", "skills": shared_value}
+    )
+    if any(condition is not None for _name, condition in shared_entries):
+        raise ValueError("Role schema shared skills cannot be conditional")
+    shared_names = {name for name, _condition in shared_entries}
+    if not isinstance(shared_value, list):
+        raise ValueError("Role schema sharedSkills must be a list")
+
     roles: dict[str, dict[str, object]] = {}
     for path in sorted((root / "agents" / "roles").glob("*/*.role.yaml")):
         role = load_yaml(path)
+        role_entries = role_skill_entries(role)
+        duplicate_names = sorted(
+            shared_names & {name for name, _condition in role_entries}
+        )
+        if duplicate_names:
+            raise ValueError(
+                f"Conceptual agent definition {role.get('name')} repeats shared skills: "
+                + ", ".join(duplicate_names)
+            )
+        role["skills"] = [*shared_value, *role["skills"]]
         role["_sourcePath"] = str(path.relative_to(root))
         roles[str(role["name"])] = role
     return roles

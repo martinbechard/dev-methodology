@@ -5306,7 +5306,7 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertTrue(ROLE_SCHEMA_PATH.is_file())
         role_schema = load_yaml_object(ROLE_SCHEMA_PATH)
-        self.assertEqual(4, role_schema["version"])
+        self.assertEqual(5, role_schema["version"])
         self.assertEqual(
             "instruction-content",
             role_schema["properties"]["instructions"],

@@ -352,6 +352,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "dev-artifact-reviewer",
+      "skill": "effective-communication"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-artifact-reviewer",
       "skill": "review-structured-artifact"
     },
     {
@@ -363,6 +368,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "dev-backlog-coordinator",
+      "skill": "effective-communication"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-backlog-coordinator",
       "skill": "structured-explanation"
     },
     {
@@ -370,6 +380,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "conditional",
       "role": "dev-backlog-steward",
       "skill": "organise-project-files"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-backlog-steward",
+      "skill": "effective-communication"
     },
     {
       "kind": "fixed",
@@ -631,6 +646,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "detected-folder",
       "role": "dev-browser-operator",
       "skill": "vitest"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-browser-operator",
+      "skill": "effective-communication"
     },
     {
       "kind": "fixed",
@@ -916,6 +936,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "dev-code-reviewer",
+      "skill": "effective-communication"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-code-reviewer",
       "skill": "review-structured-artifact"
     },
     {
@@ -1194,6 +1219,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "dev-coder",
       "skill": "code-discovery"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-coder",
+      "skill": "effective-communication"
     },
     {
       "kind": "fixed",
@@ -1564,6 +1594,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "development-methodology"
     },
     {
+      "kind": "fixed",
+      "role": "dev-documentation-writer",
+      "skill": "effective-communication"
+    },
+    {
       "condition": "when the requested integration creates or introduces a new project file or directory.",
       "kind": "conditional",
       "role": "dev-merge-coordinator",
@@ -1573,6 +1608,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "dev-merge-coordinator",
       "skill": "agent-work-merge"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-merge-coordinator",
+      "skill": "effective-communication"
     },
     {
       "kind": "fixed",
@@ -1589,6 +1629,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "conditional",
       "role": "dev-orchestrator",
       "skill": "organise-project-files"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-orchestrator",
+      "skill": "effective-communication"
     },
     {
       "kind": "fixed",
@@ -1855,6 +1900,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "detected-folder",
       "role": "dev-prompt-reviewer",
       "skill": "vitest"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-prompt-reviewer",
+      "skill": "effective-communication"
     },
     {
       "kind": "fixed",
@@ -2147,6 +2197,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "dev-runtime-diagnostician",
+      "skill": "effective-communication"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-runtime-diagnostician",
       "skill": "root-cause-analysis"
     },
     {
@@ -2423,6 +2478,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "dev-security-reviewer",
+      "skill": "effective-communication"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-security-reviewer",
       "skill": "review-structured-artifact"
     },
     {
@@ -2685,6 +2745,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "detected-folder",
       "role": "dev-ux-specialist",
       "skill": "vitest"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-ux-specialist",
+      "skill": "effective-communication"
     },
     {
       "kind": "fixed",
@@ -2990,6 +3055,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "dev-verifier",
+      "skill": "effective-communication"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-verifier",
       "skill": "review-structured-artifact"
     },
     {
@@ -3022,6 +3092,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "methodology-artifact-reviewer",
       "skill": "documentation-page-verify"
+    },
+    {
+      "kind": "fixed",
+      "role": "methodology-artifact-reviewer",
+      "skill": "effective-communication"
     },
     {
       "kind": "fixed",
@@ -3063,6 +3138,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "methodology-maintainer",
+      "skill": "effective-communication"
+    },
+    {
+      "kind": "fixed",
+      "role": "methodology-maintainer",
       "skill": "maintain-methodology-documentation"
     },
     {
@@ -3097,6 +3177,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "documentation-bootstrap"
     },
     {
+      "kind": "fixed",
+      "role": "project-bootstrapper",
+      "skill": "effective-communication"
+    },
+    {
       "condition": "when the target lacks the documentation and routing structure needed for agents to load and follow the configuration consistently",
       "kind": "conditional",
       "role": "project-configurator",
@@ -3127,6 +3212,16 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "project-configurator",
       "skill": "documentation-page-verify"
+    },
+    {
+      "kind": "fixed",
+      "role": "project-configurator",
+      "skill": "effective-communication"
+    },
+    {
+      "kind": "fixed",
+      "role": "project-organiser",
+      "skill": "effective-communication"
     },
     {
       "kind": "fixed",
@@ -3164,6 +3259,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "wiki-architect",
+      "skill": "effective-communication"
+    },
+    {
+      "kind": "fixed",
+      "role": "wiki-architect",
       "skill": "project-wiki"
     },
     {
@@ -3176,6 +3276,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "wiki-artifact-reviewer",
       "skill": "documentation-page-verify"
+    },
+    {
+      "kind": "fixed",
+      "role": "wiki-artifact-reviewer",
+      "skill": "effective-communication"
     },
     {
       "kind": "fixed",
@@ -3197,12 +3302,22 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "wiki-ingester",
+      "skill": "effective-communication"
+    },
+    {
+      "kind": "fixed",
+      "role": "wiki-ingester",
       "skill": "project-wiki"
     },
     {
       "kind": "fixed",
       "role": "wiki-ingester",
       "skill": "project-wiki-topic-write"
+    },
+    {
+      "kind": "fixed",
+      "role": "wiki-query-responder",
+      "skill": "effective-communication"
     },
     {
       "kind": "fixed",
@@ -3214,6 +3329,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "conditional",
       "role": "wiki-researcher",
       "skill": "organise-project-files"
+    },
+    {
+      "kind": "fixed",
+      "role": "wiki-researcher",
+      "skill": "effective-communication"
     },
     {
       "kind": "fixed",
@@ -3234,6 +3354,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "wiki-source-collector",
+      "skill": "effective-communication"
+    },
+    {
+      "kind": "fixed",
+      "role": "wiki-source-collector",
       "skill": "project-wiki"
     },
     {
@@ -3245,6 +3370,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "wiki-source-collector",
       "skill": "structured-explanation"
+    },
+    {
+      "kind": "fixed",
+      "role": "wiki-topic-verifier",
+      "skill": "effective-communication"
     },
     {
       "kind": "fixed",
@@ -3512,6 +3642,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "detected-folder",
       "role": "wiki-writer",
       "skill": "vitest"
+    },
+    {
+      "kind": "fixed",
+      "role": "wiki-writer",
+      "skill": "effective-communication"
     },
     {
       "kind": "fixed",
@@ -4053,6 +4188,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": true,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "review-structured-artifact",
         "documentation-page-verify"
       ],
@@ -4137,6 +4273,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "structured-explanation"
       ],
       "generatedAdapters": [
@@ -4262,6 +4399,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "structured-explanation"
       ],
       "generatedAdapters": [
@@ -4345,6 +4483,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": true,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "end-to-end-verification",
         "structured-explanation"
       ],
@@ -4439,6 +4578,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": true,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "code-review-evidence",
         "review-structured-artifact",
         "careful-coding",
@@ -4540,6 +4680,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": true,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "careful-coding",
         "code-comments",
         "code-discovery",
@@ -4654,6 +4795,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": true,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "development-methodology"
       ],
       "generatedAdapters": [
@@ -4738,6 +4880,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "agent-work-merge",
         "review-structured-artifact",
         "fix-explanation"
@@ -4823,6 +4966,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "structured-design",
         "structured-explanation"
       ],
@@ -4907,6 +5051,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": true,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "prompt-contracts",
         "review-structured-artifact"
       ],
@@ -4993,6 +5138,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": true,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "code-discovery",
         "test-strategy",
         "root-cause-analysis",
@@ -5080,6 +5226,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": true,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "application-security",
         "review-structured-artifact",
         "structured-explanation"
@@ -5165,6 +5312,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": true,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "user-experience-review",
         "end-to-end-verification",
         "review-structured-artifact"
@@ -5257,6 +5405,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": true,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "test-strategy",
         "review-structured-artifact",
         "structured-explanation"
@@ -5342,6 +5491,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "review-structured-artifact",
         "skill-authoring",
         "agent-role-authoring",
@@ -5431,6 +5581,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "maintain-methodology-documentation",
         "skill-authoring",
         "agent-role-authoring",
@@ -5519,6 +5670,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "documentation-bootstrap",
         "development-methodology"
       ],
@@ -5650,6 +5802,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "detect-technology-skills",
         "create-project-configuration",
         "development-methodology",
@@ -5734,6 +5887,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "organise-project-files",
         "structured-design",
         "structured-explanation"
@@ -5821,6 +5975,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "project-wiki"
       ],
       "generatedAdapters": [
@@ -5904,6 +6059,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "project-wiki-review",
         "documentation-page-verify"
       ],
@@ -5999,6 +6155,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "project-wiki",
         "project-wiki-topic-write"
       ],
@@ -6081,6 +6238,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "project-wiki-query"
       ],
       "generatedAdapters": [
@@ -6164,6 +6322,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "project-wiki-query",
         "project-wiki-research"
       ],
@@ -6248,6 +6407,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "project-wiki-research",
         "project-wiki",
         "structured-explanation"
@@ -6331,6 +6491,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "project-wiki-topic-verify"
       ],
       "generatedAdapters": [
@@ -6415,6 +6576,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": true,
       "executedCases": [],
       "fixedSkills": [
+        "effective-communication",
         "project-wiki",
         "project-wiki-topic-write"
       ],
