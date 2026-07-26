@@ -1,12 +1,12 @@
 # Explain User Action Required Requests With Examples
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
-Owner: Dev Orchestrator /root/resume_blocked_after_claim_publication/uar_examples_recovery
+Owner: Unowned
 
-Claim: Exact backlog-file claim 019f9722-uar-examples-current-main-starting-running acquired by Dev Backlog Steward (event 960fc538-ef8a-4dc9-b5d0-396e48351563) for this provider transaction.
+Claim: None.
 
 Provider: file
 
@@ -14,7 +14,7 @@ Provider Reference: backlog/feature-backlog/explain-user-action-required-with-ex
 
 Completion: direct-main
 
-## Recovery Resumption
+## Prior Recovery Resumption
 
 - Transition: Blocked -> Ready.
 - Recovery Authority: The user's current request explicitly authorizes this fresh bounded recovery; all prior exact governed-definition approvals and the canonical work-item identity remain preserved.
@@ -22,7 +22,7 @@ Completion: direct-main
 - Recovery Scope: Reconcile current-main semantics first; make a bounded correction only if needed; obtain fresh prompt, methodology, and source review; run focused verification; deliver directly on main and close the provider record only if acceptance evidence supports it. A full repository regression is not requested.
 - Ready Evidence: The prior two-cycle correction exhaustion and all candidate, review, verification, approval, and blocked-handoff evidence below remain durable recovery context. The parent Dev Backlog Coordinator may now make a distinct Ready -> Starting reservation for the preserved canonical Thread.
 
-## Current Launch Reservation
+## Prior Launch Reservation
 
 - Transition: Ready -> Starting.
 - Parent Coordination Thread: /root/resume_blocked_after_claim_publication.
@@ -42,7 +42,7 @@ Completion: direct-main
 - Runtime Thread And Task Id at reservation: Existing canonical work-item Thread 019f9722-61cb-7190-8a6d-21c5ab319339 is retained; no replacement task was created.
 - Approval Provenance: The same canonical task recorded the example-backed exact `ok approved` answer for agents/roles/dev-activities/dev-orchestrator.role.yaml and skills/manage-file-work-items/SKILL.md before this resumption reservation.
 
-## Active Ownership
+## Prior Active Ownership
 
 - Canonical Dev Orchestrator Task/Thread: 019f9722-61cb-7190-8a6d-21c5ab319339
 - Canonical Owner: Dev Orchestrator
@@ -61,43 +61,47 @@ Completion: direct-main
 
 ### Exact Blocker
 
-The bounded correction loop is exhausted after two correction cycles. Final fresh prompt-contract review and fresh source and test review did not accept candidate 12721aaf54ae680671596a1ee934e0fa45d30a05.
+After correction attempt 2, a brand-new prompt review did not accept the clean candidate aec92b112e4730d2ffe309d322a52f4a079043dd. The semantic evaluator remains lexical and missed four fresh contradictions, even though positive controls passed.
 
 ### Persistent Findings
 
-- Replay versus repeated-request wording remains contradictory.
-- Stable envelope normalization and state transitions are insufficiently deterministic.
-- Semantic adversarial tests still accept synonym and negated contradictions and weak task-local durability.
-- skills/manage-file-work-items/SKILL.md still contains a direct UNSET ask bypass.
-- The User Action Required resume example and status conflict with the existing RUNNING output contract.
+- When delivery is uncertain, it is acceptable to show the recorded prompt one more time.
+- A malformed snapshot is still acceptable for display.
+- Edits to the payload under its original request identifier can count as an idempotent retry.
+- Unavailable tooling stays within the set of user-owned gates.
 
 ### Review Disposition
 
-Methodology review v3 was GOOD, but it cannot override the prompt-contract and source and test review rejection gates.
+The fresh prompt review is NOT ACCEPTED. Positive controls passed, but they do not override the four unseen semantic contradictions. Prompt, code, methodology, verifier, integration, and Commit acceptance for this recovery remain incomplete.
 
 ### Candidate Chain
 
-- Initial: 59e9938810c9a498f3264f00a75d1424ed1deac4, base 1d909c76.
-- Correction 1: 331c33eb402853b08105cdc65dfdd4a2311050b5, base campaign 21737be5.
-- Correction 2 and final: 12721aaf54ae680671596a1ee934e0fa45d30a05, same base.
-- Branch: codex/uar-protocol-correction1-a8df.
-- Private worktree: /Users/martinbechard/.codex/worktrees/a8df/dev-methodology, clean.
+- Initial review candidate: 31e52b0eff1ab14b0a0e9e3a5a3373ed63c5eeff, NEEDS_CORRECTION.
+- Correction 1 candidate: 0aa3d90fb8ef11c11772741e3272e89e10e816e5, NEEDS_CORRECTION.
+- Correction 2 and final candidate: aec92b112e4730d2ffe309d322a52f4a079043dd, repeated material semantic-evaluator failure.
+- Branch: codex/uar-examples-current-main-recovery.
+- Private worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/uar-examples-current-main-recovery, clean and source-claim-free.
+- Earlier candidate-chain evidence remains preserved above as historical recovery context; it is not accepted delivery evidence.
 
 ### Verification Evidence
 
-Candidate-focused verification had 23 passing checks, and skill validation, YAML, and diff checks passed. Fresh prompt and source reviews returned NEEDS_CORRECTION. Verifier, integration, generation, documentation, and direct-main delivery were not run because review acceptance failed.
-
-### Related Defect
-
-backlog/defect-backlog/align-coordinator-unset-selection-with-user-action-required-reconciliation.md was separately logged as Ready in commit 8b8f575e. It is related evidence, not a substitute for resolving this blocked item.
+The latest User Action Required checks passed 10 of 10. Targeted skill validation, generator freshness, and diff check also passed. No code review, methodology review, verifier, integration, or direct-main Commit was run after the fresh prompt gate failed.
 
 ### Next Action Owner
 
-The parent Dev Backlog Coordinator must choose a recovery or resumption strategy under canonical task/thread 019f9722-61cb-7190-8a6d-21c5ab319339. Do not create a replacement task.
+Unowned. A newly authorized bounded recovery must be assigned through the preserved canonical work-item Thread 019f9722-61cb-7190-8a6d-21c5ab319339. Do not create a replacement Thread or task.
 
 ### Unblock Condition
 
-An authorized bounded recovery addresses every exact review finding, passes new fresh prompt, methodology, and source review plus independent verification, reconciles the campaign base and main with supported mirrors and documentation, then resumes through Blocked to Ready to Starting to Running normally.
+A newly authorized bounded recovery replaces or materially strengthens the semantic evaluator so fresh unseen paraphrases in all four contradiction classes are rejected without false positives. It must then obtain fresh prompt, code, and methodology reviews, focused verifier evidence, current-main reconciliation, and direct-main Commit evidence. No new governed path is assumed. Resume only through Blocked to Ready to Starting to Running with the preserved canonical Thread.
+
+### Recovery Note
+
+This is a non-terminal blocked handoff after two bounded correction attempts. Preserve the clean candidate chain and private-worktree evidence. Do not archive, discard, duplicate, or reimplement it solely because the status is Blocked.
+
+### Provider Transition Evidence
+
+Dev Backlog Steward acquired exact backlog-file claim 019f9722-uar-examples-running-blocked-unowned for this Running to Blocked and Unowned provider transaction. Claim acquisition event: 58f32fc7-d168-4607-8cdc-a02c4055b9a2. The claim is released after this path-limited provider commit.
 
 ## Approval Resolution
 
