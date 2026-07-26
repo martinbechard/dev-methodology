@@ -1,8 +1,8 @@
 # Require Watchdog Escalation And Coordinator Disposition For Blocked Items
 
-Status: Starting
+Status: Running
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Type: Feature
 
@@ -95,6 +95,22 @@ Direct user request in the watchdog task on 2026-07-26: log an improvement work 
 - Branch and Commit State: detached HEAD at 4733705ac28f0a3dae8e6bb577ab9d9836b9605e; no branch has been created.
 - Started At: 2026-07-26T18:32:09Z, recorded by this primary-main lifecycle transaction after the root Dev Orchestrator accepted ownership.
 - Separate Starting -> Running Claim Evidence: claim starting-to-running-019f9fb0 acquired by dev-backlog-steward for this exact backlog file at 2026-07-26T18:31:57.086198Z; outcome SHARED_CHECKOUT_ACQUIRED; acquisition event 36365d64-d472-492a-ad94-47d9c4ad0bd9.
+
+## Current Running Acceptance
+
+- Lifecycle Transition: Starting -> Running accepted by the root Dev Orchestrator in a distinct transaction after the parent reservation.
+- Canonical Work-item Thread: 019f9fb0-41c4-7892-a0bb-c641e53d8cea.
+- Canonical Root Agent Task: 019f9fb0-41c4-7892-a0bb-c641e53d8cea.
+- Owner: Dev Orchestrator, tied to the preserved canonical work-item Thread and root Agent Task.
+- Phase: Ownership accepted; implementation has not started.
+- Started At: 2026-07-26T21:10:10.433723Z.
+- Root Dev Orchestrator Worktree: /Users/martinbechard/.codex/worktrees/dbb1/dev-methodology.
+- Branch and Commit State: detached HEAD at 4733705ac28f0a3dae8e6bb577ab9d9836b9605e; after this Running acceptance is durable, the root Dev Orchestrator will create branch codex/watchdog-blocked-disposition-019f9fb0 from current primary main.
+- Parent Reservation Commit: 1e994fd079a96a75b83fc825b727ee0957676975.
+- Parent Reservation Claim Evidence: claim reserve-watchdog-escalation-starting-019f9fb0; acquisition event 00d2b85d-19d4-4fb1-a06c-ab3b26aa1b29; release event a9021acd-6652-464b-a1ac-3706c41b1981.
+- Approved Governed Definition Scope: agents/roles/dev-activities/dev-backlog-watchdog.role.yaml, agents/roles/dev-activities/dev-backlog-coordinator.role.yaml, and skills/codex-workitem-coordination/SKILL.md, as recorded in the user approval and resumption evidence below.
+- Explicit Exclusion: skills/manage-file-work-items/SKILL.md remains excluded from the approved definition scope and may not be changed.
+- Separate Starting -> Running Claim Evidence: claim starting-to-running-watchdog-blocked-disposition-019f9fb0 acquired by dev-backlog-steward for this exact backlog file; outcome SHARED_CHECKOUT_ACQUIRED; acquisition event 578dc92c-459d-490b-a8ed-fac8b3deb47f.
 
 ## Recorded User Approval And Resumption
 
