@@ -83,6 +83,16 @@ None.
 - Backlog Claim Acquisition: claim start-running-harden-event-contract-019f9ea6; event e5a63bff-dc75-462b-8104-5b17da793a4c; acquired from primary main at f1c8c04c4a24be8e48579fc997d1a6f09daacf88.
 - Backlog Claim Release: due immediately after this short provider commit; release evidence is retained in the claim journal.
 
+## Material Phase Evidence
+
+- Candidate: 9ae3dd286490e3f3e8dd14066d1c72676d86c3d4.
+- Candidate Paths: scripts/test_agent_claim.py and skills/agent-claim-command/scripts/claim.py only.
+- Dev Coder Red/Green Evidence: the candidate adds focused reproductions for each of the five assigned Event Contract defects and the valid non-overlapping exact-file control; the red reproductions were used to drive the correction and the focused suite was green for the submitted candidate.
+- Fresh Review Disposition: REJECTED.
+- Review Finding: HIGH — future nonexistent case aliases and unexpected samefile OSError paths fail open, so a conflicting exact-file claim can be admitted.
+- Correction Attempt: 1, assigned to the original Dev Coder against the same candidate scope.
+- Integration And Verification: no integration or final verification has been accepted; correction and fresh review remain required.
+
 ## Notes
 
 - Reproduction 1: on a case-insensitive disposable primary checkout, acquire one exact file and then acquire the same file through a case-varied alias; the second claim must conflict.
