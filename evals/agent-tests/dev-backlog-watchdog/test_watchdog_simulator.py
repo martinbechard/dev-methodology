@@ -141,6 +141,53 @@ class WatchdogSimulatorTests(unittest.TestCase):
         self.assertIn("one aggregate parent alert", result.message)
         self.assertFalse(result.mutated)
 
+    def test_aggregate_alert_keeps_all_unknown_causes_blank(self) -> None:
+        """Several unknown-cause observations must not fabricate cause content."""
+
+        items = [
+            WorkItem(
+                provider_identity=f"backlog/feature-backlog/unknown-{index}.md",
+                status="Stalled",
+                stalled_exit_satisfied=True,
+            )
+            for index in range(2)
+        ]
+
+        result = WatchdogCycle().evaluate(items)
+
+        self.assertIsNotNone(result.alert)
+        alert = result.alert
+        assert alert is not None
+        self.assertEqual("", alert.preventing_cause)
+        self.assertFalse(alert.preventing_cause)
+
+    def test_aggregate_alert_preserves_only_meaningful_known_causes(self) -> None:
+        """Mixed observations retain known causes without empty separators."""
+
+        items = [
+            WorkItem(
+                provider_identity="backlog/feature-backlog/unknown.md",
+                status="Stalled",
+                stalled_exit_satisfied=True,
+            ),
+            WorkItem(
+                provider_identity="backlog/defect-backlog/known.md",
+                status="Blocked",
+                preventing_cause="upstream release is unavailable",
+                blocker_exit_satisfied=True,
+            ),
+        ]
+
+        result = WatchdogCycle().evaluate(items)
+
+        self.assertIsNotNone(result.alert)
+        alert = result.alert
+        assert alert is not None
+        self.assertEqual(
+            "upstream release is unavailable",
+            alert.preventing_cause,
+        )
+
     def test_coordinator_dispositions_are_evidence_gated(self) -> None:
         """Every Stalled exit has one deterministic evidence boundary."""
 

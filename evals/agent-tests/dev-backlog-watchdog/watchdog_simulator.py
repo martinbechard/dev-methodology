@@ -155,10 +155,9 @@ class WatchdogCycle:
     def _aggregate_alert(observations: list[WatchdogAlert]) -> WatchdogAlert:
         """Combine all actionable observations into exactly one parent alert."""
 
-        def combine(field: str, *, include_empty: bool = False) -> str:
+        def combine(field: str) -> str:
             values = [getattr(observation, field) for observation in observations]
-            if not include_empty:
-                values = [value for value in values if value]
+            values = [value for value in values if value]
             return " | ".join(values)
 
         return WatchdogAlert(
@@ -166,7 +165,7 @@ class WatchdogCycle:
             evidence=combine("evidence"),
             reason=combine("reason"),
             recommended_action=combine("recommended_action"),
-            preventing_cause=combine("preventing_cause", include_empty=True),
+            preventing_cause=combine("preventing_cause"),
         )
 
     @staticmethod

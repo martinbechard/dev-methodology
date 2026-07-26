@@ -43,7 +43,11 @@ Use these folders when present:
 - backlog/completed-backlog grouped by type for delivered work.
 - backlog/failed-backlog grouped by type for failed, incomplete, abandoned, or blocked terminal work.
 
-Active typed folders contain only dispatchable work or work blocked by an explicit non-user dependency. User Action Required and Holding are separate non-dispatchable work queues. Future Ideas is not a work queue or lifecycle state. Completed and failed archives are durable history, not fresh work.
+Active typed folders contain dispatchable work or work blocked by an explicit non-user
+dependency. Active typed folders also retain unknown-cause Stalled items and known-cause
+Blocked items. User Action Required and Holding are separate non-dispatchable work queues.
+Future Ideas is not a work queue or lifecycle state. Completed and failed archives are
+durable history, not fresh work.
 
 backlog/holding is for intentionally deferred work without an immediate user question. It contains already-recognized work; backlog/future-ideas contains possibilities that have not become recognized work.
 

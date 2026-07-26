@@ -481,6 +481,16 @@ class StartingLifecycleContractTests(unittest.TestCase):
                 with self.subTest(source=source[:20], clause=clause):
                     self.assertIn(clause, source)
 
+    def test_active_folder_model_names_stalled_and_blocked_items(self) -> None:
+        """Active typed folders retain both causal states without misclassification."""
+
+        normalized_provider = " ".join(self.provider.split())
+        self.assertIn(
+            "Active typed folders also retain unknown-cause Stalled items and "
+            "known-cause Blocked items.",
+            normalized_provider,
+        )
+
     def test_readme_states_the_exact_lifecycle_authority_split(self) -> None:
         """The public overview must not assign every disposition to one role."""
 
