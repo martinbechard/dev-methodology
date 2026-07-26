@@ -255,19 +255,14 @@ If the same command transport cannot provide status, preserve the ambiguous stat
 Both configured transports expose the same engine outcomes and next-action semantics. Their invocation envelopes differ, but this adapter never renames, suppresses, retries, or translates a structured coordination outcome.
 ----- END INLINED CLAIM TRANSPORT SKILL: agent-claim-command -----
 
-## Agent And Skill Definition Approval
+## Skill Definition Approval
 
-Every change to an agent definition or skill definition requires explicit, scope-specific user approval before mutation. Record the user's direction, the exact definition scope it authorizes, and the approval evidence in the work lifecycle. Silence, unrelated prior approval, and broad repository mutation authority are insufficient.
+Get explicit, scope-specific user approval before changing a skill definition when:
 
-Repository access, a failing test, a repair assignment, general write authority, review work, verification work, and a desire to make validation pass do not authorize a definition change.
+- Testing reveals a defect in the skill and fixing the defect requires changing the skill.
+- Changing the skill is necessary to complete other authorized work.
 
-The harness-loaded directive is the project authority boundary. Before mutating a governed canonical source, run the supported pre-mutation check with an approval record that cites existing explicit user direction:
-
-```bash
-python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change path/to/definition --approval-record path/to/approval-record.yaml
-```
-
-The check validates the configured path boundary, exact scope, basis, and provenance record. It does not enforce filesystem permissions, create approval, or let an agent manufacture user-direction provenance.
+A direct user instruction to change a named skill is approval for that named scope. Do not infer approval from a failing test, a repair assignment, repository access, or general permission to complete related work.
 
 Governed canonical definition surfaces:
 
