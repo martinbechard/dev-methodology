@@ -1086,7 +1086,10 @@ Do not continue without the answer.
         )
         self.assertNotIn("Status: Proposed appears only here", rendered)
         self.assertIn("Invalid dependency identifier: bad_slug.", rendered)
-        self.assertIn("Stale blocked status: all declared dependencies are satisfied.", rendered)
+        self.assertNotIn(
+            "Stale blocked status: all declared dependencies are satisfied.",
+            rendered,
+        )
         self.assertIn("Completed item remains in an active folder.", rendered)
         self.assertIn("Unmet dependency: closed is not in the completed archive.", rendered)
         self.assertIn("Completed archive contains an item not declared Completed.", rendered)
@@ -1094,6 +1097,29 @@ Do not continue without the answer.
         self.assertIn("Missing required fields: Summary, Context, Requirements, Acceptance Criteria, Dependencies, Verification.", rendered)
         self.assertIn("Unreadable item: UnicodeDecodeError", rendered)
         self.assertIn("<span>Runnable now</span><strong>0</strong>", rendered)
+
+    def test_non_dependency_blocker_is_not_reported_as_stale(self) -> None:
+        """Blocked may describe a cause independent of declared dependencies."""
+
+        self.write_item(
+            "backlog/defect-backlog/provider-outage.md",
+            title="Provider Outage",
+            status="Blocked",
+            item_type="Defect",
+            dependencies="None",
+            extra="""## Blocker
+
+Cause: Provider API is unavailable.
+Owner: Provider operator.
+Unblock Condition: Provider health check succeeds.
+Coordinator Action: Recheck the provider health endpoint.
+""",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("Provider Outage", rendered)
+        self.assertNotIn("Stale blocked status", rendered)
 
     def test_missing_context_is_anomalous_and_not_runnable(self) -> None:
         """An otherwise complete Ready item without Context cannot be dispatched."""

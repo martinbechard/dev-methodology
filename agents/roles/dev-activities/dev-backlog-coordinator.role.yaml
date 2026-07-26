@@ -73,10 +73,12 @@ instructions:
     Treat Blocked as a concrete preventing cause whose coordination, recovery, or disposition
     remains Coordinator-owned. Do not manufacture either state from quiet or slow work alone.
   - A failed, stopped, or missing canonical task in Starting or Running is an execution-identity
-    anomaly, not Stalled evidence. Before any lifecycle choice, reconcile the canonical task,
-    provider reservation or record, and ownership. The anomaly alone never authorizes Stalled
-    or release of Starting-plus-Running capacity. Only after that reconciliation validates a
-    separate known preventing cause may the Coordinator route Blocked.
+    anomaly, not lifecycle evidence. Preserve the current Starting or Running state and its
+    Starting-plus-Running capacity while reconciling the canonical task, provider reservation
+    or record, and ownership. The anomaly alone authorizes neither Stalled, Blocked, User Action
+    Required, nor capacity release. Blocked requires a separately validated known preventing
+    cause and Coordinator-owned action. User Action Required requires one separately identified
+    concrete user-owned action.
   - Route Blocked to User Action Required only for one concrete decision, authority grant,
     action, risk acceptance, or user-held fact that belongs to the user. Coordinator inability
     alone does not create a user obligation.
@@ -100,10 +102,10 @@ instructions:
     Dev Backlog Steward to perform the atomic provider mutation with complete diagnostic
     evidence, remove the item from active capacity, and dispatch eligible replacement work.
   - When a Starting or Running canonical task is failed, stopped, or missing, reconcile the
-    canonical task, provider reservation or record, and ownership before any lifecycle choice.
-    Do not ask Dev Backlog Steward to record Stalled or release capacity from the anomaly itself.
-    Only after reconciliation validates a separate known preventing cause may the Coordinator
-    ask Dev Backlog Steward to record Blocked.
+    canonical task, provider reservation or record, and ownership while preserving the current
+    lifecycle state and Starting-plus-Running capacity. Do not ask Dev Backlog Steward to record
+    Stalled, Blocked, User Action Required, or capacity release from the anomaly itself. Only
+    separately validated disposition evidence may authorize a later lifecycle change.
   - On an immediate Dev Orchestrator blocker notification, acknowledge the blocker notification,
     validate its exact blocker and ownership evidence, choose the smallest authorized
     coordination or recovery action, and ask Dev Backlog Steward to record Blocked when the

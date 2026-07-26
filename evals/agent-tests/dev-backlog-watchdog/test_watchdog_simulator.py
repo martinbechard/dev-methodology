@@ -192,8 +192,8 @@ class WatchdogSimulatorTests(unittest.TestCase):
         )
         self.assertEqual(
             "Coordinator reconciles the Running task, provider record, and "
-            "ownership, then validates the known cause before choosing the "
-            "Blocked disposition",
+            "ownership, then validates the separate known cause and "
+            "Coordinator-owned action before choosing the Blocked disposition",
             alert.recommended_action,
         )
         self.assertEqual(
@@ -358,6 +358,43 @@ class WatchdogSimulatorTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "no evidence-backed Stalled disposition"):
             disposition.choose(**cases["insufficientEvidence"])
 
+    def test_blocked_and_user_action_dispositions_reject_incomplete_evidence(self) -> None:
+        """Each nonterminal disposition requires its complete durable evidence."""
+
+        disposition = CoordinatorDisposition()
+        cases = self.cases["stalled-dispositions"]
+        evidence_cases = (
+            (
+                "knownBlocker",
+                (
+                    "blocker_cause",
+                    "blocker_owner",
+                    "unblock_condition",
+                    "coordinator_action",
+                ),
+                "Blocked disposition requires",
+            ),
+            (
+                "userAction",
+                (
+                    "user_owned_action",
+                    "user_question",
+                    "unattended_work_boundary",
+                ),
+                "User Action Required disposition requires",
+            ),
+        )
+        for case_name, fields, error in evidence_cases:
+            for missing_field in fields:
+                with self.subTest(
+                    case_name=case_name,
+                    missing_field=missing_field,
+                ):
+                    incomplete = dict(cases[case_name])
+                    incomplete[missing_field] = " \t "
+                    with self.assertRaisesRegex(ValueError, error):
+                        disposition.choose(**incomplete)
+
     def test_series_and_archive_rules_keep_stalled_nonterminal(self) -> None:
         """Series state and terminal archival must not collapse Stalled into Blocked."""
 
@@ -376,10 +413,14 @@ class WatchdogSimulatorTests(unittest.TestCase):
         )
         with self.assertRaisesRegex(ValueError, "Stalled is nonterminal"):
             terminal_archive_destination("Feature", "Stalled", True)
-        self.assertEqual(
-            "backlog/failed-backlog/features",
-            terminal_archive_destination("Feature", "Failed", True),
-        )
+        for status in ("Failed", "Abandoned"):
+            with self.subTest(status=status):
+                with self.assertRaisesRegex(ValueError, "terminal status and evidence"):
+                    terminal_archive_destination("Feature", status, False)
+                self.assertEqual(
+                    "backlog/failed-backlog/features",
+                    terminal_archive_destination("Feature", status, True),
+                )
 
     def test_python_artifacts_name_their_governing_sources(self) -> None:
         """The simulator and test retain direct design and test-plan traceability."""

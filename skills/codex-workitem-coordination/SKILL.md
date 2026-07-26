@@ -95,7 +95,7 @@ Reconcile active and archived Threads using all available identity evidence:
 - creation time
 - Thread status
 
-If exactly one match exists, adopt it as the canonical work-item Thread. If multiple matches exist, preserve one canonical Thread, stop every duplicate before mutation, verify no unique work is lost, and archive the duplicates when supported. If no match is immediately visible, allow one bounded settlement interval and reconcile once more. When the settled read still shows no Thread and no root Agent accepted ownership, ask the parent Coordinator's Steward child to restore Ready and clear only failed reservation fields through the effective Persistence-selected management skill. When ownership was accepted or evidence remains inconsistent, preserve the evidence and record Blocked or User Action Required with the exact recovery owner. Never retry Thread creation after an ambiguous response.
+If exactly one match exists, adopt it as the canonical work-item Thread. If multiple matches exist, preserve one canonical Thread, stop every duplicate before mutation, verify no unique work is lost, and archive the duplicates when supported. If no match is immediately visible, allow one bounded settlement interval and reconcile once more. When the settled read still shows no Thread and no root Agent accepted ownership, ask the parent Coordinator's Steward child to restore Ready and clear only failed reservation fields through the effective Persistence-selected management skill. When ownership was accepted or evidence remains inconsistent, preserve the current Starting or Running state and its Starting-plus-Running capacity while reconciling the canonical task, provider reservation or record, and ownership. The startup anomaly alone authorizes neither Stalled, Blocked, User Action Required, nor capacity release. Blocked requires a separately validated known preventing cause and Coordinator-owned action. User Action Required requires one separately identified concrete user-owned action. Never retry Thread creation after an ambiguous response.
 
 ## Thread Execution Compatibility And Titles
 
@@ -122,7 +122,7 @@ Ready -> Starting is the parent Coordinator's dispatch and capacity-reservation 
 
 When a Running work item pauses in User Action Required, preserve its canonical work-item Thread, root Agent Task identity, branch, worktree, clean commits, and unresolved question as non-owning resumption evidence. The user may answer and continue the conversation in that canonical Thread. The parent must reuse it after the answer is durably routed through Ready -> Starting; it must not require the user to repeat the answer in the parent Thread or create a replacement work-item Thread.
 
-After the work-item Thread's root Dev Orchestrator Agent accepts ownership, it uses its Dev Backlog Steward child for the atomic Starting -> Running transition. The record includes the canonical Thread identifier, canonical root Agent Task id when applicable, branch, worktree, and applicable claim evidence. If launch fails and no owner accepted, restore Ready. If ownership was accepted or evidence cannot safely be discarded, record Blocked or User Action Required with the exact recovery condition. Starting and Running stay in the provider's active queue.
+After the work-item Thread's root Dev Orchestrator Agent accepts ownership, it uses its Dev Backlog Steward child for the atomic Starting -> Running transition. The record includes the canonical Thread identifier, canonical root Agent Task id when applicable, branch, worktree, and applicable claim evidence. If launch fails and no owner accepted, restore Ready. If ownership was accepted or evidence cannot safely be discarded, preserve the current Starting or Running state and its Starting-plus-Running capacity while reconciling the canonical task, provider reservation or record, and ownership. The launch anomaly alone authorizes neither Stalled, Blocked, User Action Required, nor capacity release. Blocked requires a separately validated known preventing cause and Coordinator-owned action. User Action Required requires one separately identified concrete user-owned action. Starting and Running stay in the provider's active queue.
 
 The work-item Orchestrator owns candidate production, review, verification, Commit delivery, and terminal Persistence request. Its Steward child records the selected provider lifecycle changes. The parent Coordinator never performs per-item delivery or completion; after the terminal Handoff it cleans the runtime Thread and worktree, recounts Starting plus Running capacity, and dispatches replacement work.
 
@@ -178,11 +178,12 @@ slow work is not Stalled by itself. A source-backed progress gap, crossed estima
 stop, or other observed progress anomaly must support the classification.
 
 A failed, stopped, or missing canonical task in Starting or Running is an
-execution-identity anomaly, not Stalled evidence. Before any lifecycle choice, reconcile the
-canonical task, provider reservation or record, and ownership. The anomaly alone never
-authorizes Stalled or release of Starting-plus-Running capacity. Only after that
-reconciliation validates a separate known preventing cause may the Coordinator route
-Blocked.
+execution-identity anomaly, not lifecycle evidence. Preserve the current Starting or Running
+state and its Starting-plus-Running capacity while reconciling the canonical task, provider
+reservation or record, and ownership. The anomaly alone authorizes neither Stalled, Blocked,
+User Action Required, nor capacity release. Blocked requires a separately validated known
+preventing cause and Coordinator-owned action. User Action Required requires one separately
+identified concrete user-owned action.
 
 The Dev Backlog Watchdog reports suspected Stalled evidence but never chooses or mutates
 the lifecycle result. Dev Backlog Coordinator decides whether the evidence justifies

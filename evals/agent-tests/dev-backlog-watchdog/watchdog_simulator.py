@@ -104,7 +104,8 @@ class WatchdogCycle:
                     recommended_action = (
                         f"Coordinator reconciles the {item.status} task, "
                         f"{provider_boundary}, and ownership, then validates the "
-                        "known cause before choosing the Blocked disposition"
+                        "separate known cause and Coordinator-owned action before "
+                        "choosing the Blocked disposition"
                     )
                 observations.append(
                     WatchdogAlert(
@@ -127,7 +128,9 @@ class WatchdogCycle:
                             else "progress boundary crossed while the cause remains unknown"
                         ),
                         recommended_action=(
-                            "Coordinator validates the cause and chooses the Blocked disposition"
+                            "Coordinator validates the cause, blocker owner, unblock "
+                            "condition, and Coordinator-owned action before choosing "
+                            "the Blocked disposition"
                             if cause_is_known
                             else "Coordinator investigates and delegates Stalled only if "
                             "the evidence justifies it"
@@ -257,20 +260,27 @@ class CoordinatorDisposition:
         *,
         same_owner_resumed: bool = False,
         ownership_ended: bool = False,
-        known_blocker: bool = False,
-        user_action_required: bool = False,
+        blocker_cause: str = "",
+        blocker_owner: str = "",
+        unblock_condition: str = "",
+        coordinator_action: str = "",
+        user_owned_action: str = "",
+        user_question: str = "",
+        unattended_work_boundary: str = "",
         terminal_status: str = "",
         terminal_evidence: bool = False,
         active_capacity_count: int = 0,
     ) -> str:
         """Return the one lifecycle state supported by the supplied evidence.
 
-        Boolean inputs identify the mutually exclusive safe-resumption,
-        redispatch, blocker, and user-action boundaries. terminal_status may be
-        Completed, Failed, or Abandoned only with terminal_evidence. A direct
-        resumption also needs an available Starting-plus-Running slot. Missing
-        or conflicting evidence raises ValueError so no default lifecycle
-        mutation can be inferred.
+        Boolean inputs identify the mutually exclusive safe-resumption and
+        redispatch boundaries. Blocked requires its exact cause, owner, unblock
+        condition, and Coordinator action. User Action Required requires its
+        exact user-owned action, question, and unattended-work boundary.
+        terminal_status may be Completed, Failed, or Abandoned only with
+        terminal_evidence. A direct resumption also needs an available
+        Starting-plus-Running slot. Missing or conflicting evidence raises
+        ValueError so no default lifecycle mutation can be inferred.
         """
 
         if terminal_status and terminal_status not in TERMINAL_STATUSES:
@@ -281,11 +291,38 @@ class CoordinatorDisposition:
             raise ValueError(
                 "Stalled -> Running requires an available active-capacity slot"
             )
+        blocker_evidence = (
+            blocker_cause,
+            blocker_owner,
+            unblock_condition,
+            coordinator_action,
+        )
+        blocker_fields_present = tuple(
+            bool(value.strip()) for value in blocker_evidence
+        )
+        if any(blocker_fields_present) and not all(blocker_fields_present):
+            raise ValueError(
+                "Blocked disposition requires exact cause, blocker owner, "
+                "unblock condition, and Coordinator action"
+            )
+        user_action_evidence = (
+            user_owned_action,
+            user_question,
+            unattended_work_boundary,
+        )
+        user_action_fields_present = tuple(
+            bool(value.strip()) for value in user_action_evidence
+        )
+        if any(user_action_fields_present) and not all(user_action_fields_present):
+            raise ValueError(
+                "User Action Required disposition requires exact user-owned "
+                "action, question, and unattended-work boundary"
+            )
         choices = [
             ("Running", same_owner_resumed),
             ("Ready", ownership_ended),
-            ("Blocked", known_blocker),
-            ("User Action Required", user_action_required),
+            ("Blocked", all(blocker_fields_present)),
+            ("User Action Required", all(user_action_fields_present)),
             (terminal_status, bool(terminal_status and terminal_evidence)),
         ]
         selected = [status for status, enabled in choices if enabled]

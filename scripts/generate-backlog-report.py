@@ -651,8 +651,6 @@ def _reconcile(items: list[_Item]) -> None:
                 item.anomalies.append(
                     f"Unmet dependency: {dependency} is not in the completed archive."
                 )
-        if item.queue == "active" and item.status == "Blocked" and not item.unmet_dependencies:
-            item.anomalies.append("Stale blocked status: all declared dependencies are satisfied.")
         if item.queue == "active" and item.status == "Ready" and item.unmet_dependencies:
             item.anomalies.append("Ready status has unmet dependencies and is not effectively eligible.")
         item.eligible = (

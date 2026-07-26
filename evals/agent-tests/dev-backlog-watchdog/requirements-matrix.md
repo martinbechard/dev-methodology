@@ -11,6 +11,6 @@
 | Every actionable cycle emits exactly one aggregate parent alert with provider identity, exact crossed boundaries and observed values, reason, and smallest Coordinator action | Watchdog output contract | suspected-stall-alert, test_task_state_anomalies_use_status_specific_actions covering mechanical reconciliation for Starting and Running stopped, failed, and missing states, known-cause Blocked preservation, estimate-boundary case, satisfied-exit-condition-alert, and singular alert assertions |
 | Stalled and Blocked exit conditions are observed without disposition | Watchdog workflow | satisfied-exit-condition-alert and aggregate exit-condition simulator cases |
 | Starting and Running alone consume capacity | Coordinator capacity contract | test_stalled_is_outside_starting_plus_running_capacity |
-| Coordinator owns every Stalled disposition | Coordinator role and coordination workflow | test_coordinator_dispositions_are_evidence_gated |
+| Coordinator owns every Stalled disposition | Coordinator role and coordination workflow | test_coordinator_dispositions_are_evidence_gated and test_blocked_and_user_action_dispositions_reject_incomplete_evidence |
 | Stalled remains nonterminal and separate in series state | File provider lifecycle contract | test_series_and_archive_rules_keep_stalled_nonterminal |
 | Failed and Abandoned archive only with terminal evidence | File provider lifecycle contract | terminal_archive_destination simulator assertions |

@@ -6552,10 +6552,11 @@ class BundleContentTests(unittest.TestCase):
         coordinator_task_reconciliation_contract = (
             "When a Starting or Running canonical task is failed, stopped, or "
             "missing, reconcile the canonical task, provider reservation or record, "
-            "and ownership before any lifecycle choice. Do not ask Dev Backlog "
-            "Steward to record Stalled or release capacity from the anomaly itself. "
-            "Only after reconciliation validates a separate known preventing cause "
-            "may the Coordinator ask Dev Backlog Steward to record Blocked."
+            "and ownership while preserving the current lifecycle state and "
+            "Starting-plus-Running capacity. Do not ask Dev Backlog Steward to "
+            "record Stalled, Blocked, User Action Required, or capacity release "
+            "from the anomaly itself. Only separately validated disposition "
+            "evidence may authorize a later lifecycle change."
         )
 
         self.assertIn(recount_contract, coordinator_workflow)

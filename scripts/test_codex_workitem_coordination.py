@@ -647,17 +647,20 @@ class StartingLifecycleContractTests(unittest.TestCase):
                     self.assertIn(clause, source)
 
     def test_task_anomalies_require_reconciliation_before_lifecycle_choice(self) -> None:
-        """Task-state anomalies cannot supply Stalled evidence or release capacity."""
+        """Task anomalies preserve lifecycle until separate evidence supports a change."""
 
         required_contract = (
             "A failed, stopped, or missing canonical task in Starting or Running "
-            "is an execution-identity anomaly, not Stalled evidence.",
-            "Before any lifecycle choice, reconcile the canonical task, provider "
-            "reservation or record, and ownership.",
-            "The anomaly alone never authorizes Stalled or release of "
-            "Starting-plus-Running capacity.",
-            "Only after that reconciliation validates a separate known preventing "
-            "cause may the Coordinator route Blocked.",
+            "is an execution-identity anomaly, not lifecycle evidence.",
+            "Preserve the current Starting or Running state and its "
+            "Starting-plus-Running capacity while reconciling the canonical task, "
+            "provider reservation or record, and ownership.",
+            "The anomaly alone authorizes neither Stalled, Blocked, User Action "
+            "Required, nor capacity release.",
+            "Blocked requires a separately validated known preventing cause and "
+            "Coordinator-owned action.",
+            "User Action Required requires one separately identified concrete "
+            "user-owned action.",
         )
         canonical_sources = {
             "coordination Stalled branch": " ".join(
@@ -673,15 +676,21 @@ class StartingLifecycleContractTests(unittest.TestCase):
                 with self.subTest(source=source_name, clause=clause):
                     self.assertIn(clause, source)
 
-        workflow_contract = (
-            "When a Starting or Running canonical task is failed, stopped, or "
-            "missing, reconcile the canonical task, provider reservation or record, "
-            "and ownership before any lifecycle choice. Do not ask Dev Backlog "
-            "Steward to record Stalled or release capacity from the anomaly itself. "
-            "Only after reconciliation validates a separate known preventing cause "
-            "may the Coordinator ask Dev Backlog Steward to record Blocked."
+        steward = " ".join(
+            STEWARD_ROLE_PATH.read_text(encoding="utf-8").split()
         )
-        self.assertIn(workflow_contract, self.coordinator_workflow)
+        for clause in required_contract[1:]:
+            with self.subTest(source="Steward failure handling", clause=clause):
+                self.assertIn(clause.lower(), steward.lower())
+
+        for stale_shortcut in (
+            "preserve the evidence and record Blocked or User Action Required",
+            "preserve it and record Blocked or User Action Required",
+            "preserve ownership evidence and use Blocked or User Action Required",
+            "otherwise preserve evidence and record Blocked or User Action Required",
+        ):
+            with self.subTest(stale_shortcut=stale_shortcut):
+                self.assertNotIn(stale_shortcut, self.contract)
 
     def test_active_folder_model_names_stalled_and_blocked_items(self) -> None:
         """Active typed folders retain both causal states without misclassification."""
@@ -711,7 +720,7 @@ class StartingLifecycleContractTests(unittest.TestCase):
         required = (
             "Starting -> Running",
             "restore Ready",
-            "Blocked or User Action Required",
+            "preserve the current Starting or Running state",
             "branch, worktree, and applicable claim evidence",
             "root Dev Orchestrator",
             "Dev Backlog Steward child",

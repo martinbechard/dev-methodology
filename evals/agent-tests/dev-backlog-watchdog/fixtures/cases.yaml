@@ -36,7 +36,7 @@ cases:
       progress_observation: retry produced the same authorization error
       preventing_cause: upstream credential is unavailable
     expectedReason: progress boundary crossed with a known preventing cause
-    expectedAction: Coordinator validates the cause and chooses the Blocked disposition
+    expectedAction: Coordinator validates the cause, blocker owner, unblock condition, and Coordinator-owned action before choosing the Blocked disposition
   capacity:
     statuses: [Starting, Running, Stalled, Blocked, User Action Required, Holding]
     expectedActiveCount: 2
@@ -62,9 +62,14 @@ cases:
     ownershipEnded:
       ownership_ended: true
     knownBlocker:
-      known_blocker: true
+      blocker_cause: upstream credential is unavailable
+      blocker_owner: credential provider
+      unblock_condition: credential provider restores access
+      coordinator_action: verify access restoration and choose the provider transition
     userAction:
-      user_action_required: true
+      user_owned_action: choose whether to accept the credential rotation
+      user_question: Should the credential rotation be accepted?
+      unattended_work_boundary: Do not rotate the credential without the user's answer.
     terminalFailure:
       terminal_status: Failed
       terminal_evidence: true
