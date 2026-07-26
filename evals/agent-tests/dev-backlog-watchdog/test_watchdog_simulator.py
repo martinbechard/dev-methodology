@@ -143,6 +143,52 @@ class WatchdogSimulatorTests(unittest.TestCase):
                 self.assertIn(f"task_state={task_state}", alert.evidence)
                 self.assertFalse(result.mutated)
 
+    def test_starting_failed_task_alerts_without_mutation(self) -> None:
+        """A failed Starting task is an actionable execution anomaly."""
+
+        item = WorkItem(
+            provider_identity="backlog/feature-backlog/starting-failed.md",
+            status="Starting",
+            task_state="failed",
+            canonical_thread="thread-starting-failed",
+            root_task="task-starting-failed",
+        )
+        before = deepcopy(item)
+
+        result = WatchdogCycle().evaluate([item])
+
+        self.assertEqual("ALERT", result.status)
+        self.assertEqual(before, item)
+        self.assertIsNotNone(result.alert)
+        alert = result.alert
+        assert alert is not None
+        self.assertIn("task_boundary_crossed=true", alert.evidence)
+        self.assertIn("task_state=failed", alert.evidence)
+        self.assertFalse(result.mutated)
+
+    def test_running_failed_task_alerts_without_mutation(self) -> None:
+        """A failed Running task is an actionable execution anomaly."""
+
+        item = WorkItem(
+            provider_identity="backlog/defect-backlog/running-failed.md",
+            status="Running",
+            task_state="failed",
+            canonical_thread="thread-running-failed",
+            root_task="task-running-failed",
+        )
+        before = deepcopy(item)
+
+        result = WatchdogCycle().evaluate([item])
+
+        self.assertEqual("ALERT", result.status)
+        self.assertEqual(before, item)
+        self.assertIsNotNone(result.alert)
+        alert = result.alert
+        assert alert is not None
+        self.assertIn("task_boundary_crossed=true", alert.evidence)
+        self.assertIn("task_state=failed", alert.evidence)
+        self.assertFalse(result.mutated)
+
     def test_estimate_boundary_evidence_names_observed_value(self) -> None:
         """Crossed estimates identify both the boundary and its observed value."""
 

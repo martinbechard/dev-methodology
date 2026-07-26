@@ -110,8 +110,9 @@ instructions:
     none, require the completion skill's full task-local terminal result.
   - After terminal handoff, verify the branch is fully merged when one existed, remove the clean
     worktree, safely delete the merged branch, prune worktree metadata, title the task Done —
-    item, and archive it when supported. For durable providers, immediately recount Running
-    items through the effective manager and reserve eligible READY work toward ten active items.
+    item, and archive it when supported. For durable providers, immediately recount
+    Starting-plus-Running items through the effective manager and reserve eligible READY work
+    toward ten active items.
   - Every fifteen minutes, report Starting-plus-Running capacity when durable inventory exists,
     phase ages, delivery waits, enabled ownership pressure, accepted work awaiting delivery, delivered work awaiting
     provider closeout, task anomalies, interval gate throughput, completed-item throughput, and

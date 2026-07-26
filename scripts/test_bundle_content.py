@@ -6391,6 +6391,74 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("provider lifecycle snapshot", rendered)
                 self.assertIn("STALLED", rendered)
 
+    def test_backlog_roles_preserve_terminal_recount_and_failed_task_alerts(
+        self,
+    ) -> None:
+        """Source and generated roles must retain both lifecycle corrections."""
+
+        coordinator_path = (
+            ROLES_ROOT
+            / "dev-activities"
+            / "dev-backlog-coordinator.role.yaml"
+        )
+        watchdog_path = (
+            ROLES_ROOT
+            / "dev-activities"
+            / "dev-backlog-watchdog.role.yaml"
+        )
+        coordinator_role = load_yaml_object(coordinator_path)
+        watchdog_role = load_yaml_object(watchdog_path)
+        coordinator_workflow = " ".join(
+            " ".join(coordinator_role["instructions"]["workflow"]).split()
+        )
+        watchdog_workflow = " ".join(
+            " ".join(watchdog_role["instructions"]["workflow"]).split()
+        )
+        recount_contract = (
+            "For durable providers, immediately recount Starting-plus-Running "
+            "items through the effective manager and reserve eligible READY work "
+            "toward ten active items."
+        )
+        failed_task_contract = "failed, stopped, or missing canonical tasks"
+
+        self.assertIn(recount_contract, coordinator_workflow)
+        self.assertNotIn(
+            "immediately recount Running items",
+            coordinator_workflow,
+        )
+        self.assertIn(failed_task_contract, watchdog_workflow)
+        self.assertIn(
+            "dev-backlog-watchdog",
+            coordinator_role["agentDependencies"],
+        )
+
+        generated_roots = ("claude", "codex", "gemini", "junie")
+        generated_suffixes = {
+            "claude": "dev-backlog-coordinator.md",
+            "codex": "dev-backlog-coordinator.toml",
+            "gemini": "dev-backlog-coordinator.md",
+            "junie": "dev-backlog-coordinator.md",
+        }
+        for runtime in generated_roots:
+            coordinator_generated = (
+                GENERATED_ADAPTERS_ROOT
+                / runtime
+                / "agents"
+                / generated_suffixes[runtime]
+            ).read_text(encoding="utf-8")
+            watchdog_generated = (
+                GENERATED_ADAPTERS_ROOT
+                / runtime
+                / "agents"
+                / generated_suffixes[runtime].replace(
+                    "dev-backlog-coordinator",
+                    "dev-backlog-watchdog",
+                )
+            ).read_text(encoding="utf-8")
+            with self.subTest(runtime=runtime):
+                self.assertIn(recount_contract, coordinator_generated)
+                self.assertIn(failed_task_contract, watchdog_generated)
+
     def test_claim_related_skills_do_not_copy_claim_events_or_polling_rules(
         self,
     ) -> None:
@@ -6813,6 +6881,11 @@ class BundleContentTests(unittest.TestCase):
             for disposition in stalled_dispositions
         )
         self.assertEqual(tuple(sorted(stalled_positions)), stalled_positions)
+        self.assertIn(
+            "<strong>Select Terminal Outcome</strong> only from sufficient "
+            "evidence for Completed, Failed, or Abandoned.",
+            backlog_section,
+        )
         for heading in (
             "Orchestrator Blocker Steps",
             "Blocker Notification Fields",

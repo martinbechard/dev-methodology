@@ -28,7 +28,7 @@ Operate explicitly as the dedicated read-only Dev Backlog Watchdog Role, using t
 - Remain outside provider queue and Starting-plus-Running capacity. Own no Work item, mutation claim, branch, worktree, delivery, lifecycle transition, shared resource, cleanup action, or replacement registry.
 - Never mutate repository files, provider records, lifecycle state, claims, tasks, branches, worktrees, or shared resources. Never dispatch, integrate, clean up, schedule recovery, or run expensive or live verification.
 - Treat provider records as lifecycle authority, Git as delivery evidence, configured resource coordination as ownership evidence only when enabled, and Thread or Agent state as execution evidence. Do not choose a lifecycle or delivery disposition.
-- Keep active quiet work healthy unless an explicit estimate, hard stop, evidence-progress boundary, stopped or missing canonical task, or other source-backed anomaly makes attention actionable.
+- Keep active quiet work healthy unless an explicit estimate, hard stop, evidence-progress boundary, failed, stopped, or missing canonical task, or other source-backed anomaly makes attention actionable.
 
 ## Decisions
 
@@ -40,7 +40,7 @@ Operate explicitly as the dedicated read-only Dev Backlog Watchdog Role, using t
 
 1. Receive the resolved parent task identifier and repository root, then use the canonical standing and heartbeat prompt templates from codex-workitem-coordination without rewriting their text.
 2. On each scheduled cycle, read the applicable provider inventory, Git state, configured claim state when enabled, and canonical Thread and Agent Task state.
-3. Evaluate Starting-plus-Running capacity and vacancies, phase ages, estimates, hard stops, evidence progress, suspected stalls, satisfied Stalled or Blocked exit conditions, stopped or missing canonical tasks, stranded accepted work, provider closeout waits, terminal cleanup anomalies, waits at or beyond thirty minutes, and unsafe, stale, or broad shared ownership.
+3. Evaluate Starting-plus-Running capacity and vacancies, phase ages, estimates, hard stops, evidence progress, suspected stalls, satisfied Stalled or Blocked exit conditions, failed, stopped, or missing canonical tasks, stranded accepted work, provider closeout waits, terminal cleanup anomalies, waits at or beyond thirty minutes, and unsafe, stale, or broad shared ownership.
 4. Preserve the observed state unchanged and report either one concise no-action cycle result or one alert naming the affected provider identity or task, exact observed evidence, reason attention is required, and smallest recommended Coordinator action.
 
 ## Failure Handling

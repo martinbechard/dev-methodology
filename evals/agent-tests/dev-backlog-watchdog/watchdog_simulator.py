@@ -15,6 +15,7 @@ ACTIVE_CAPACITY_STATUSES = {"Starting", "Running"}
 ACTIVE_CAPACITY_LIMIT = 10
 ACTIVE_SERIES_STATUSES = {"Ready", "Starting", "Running", "Awaiting Review"}
 TERMINAL_STATUSES = {"Completed", "Failed", "Abandoned"}
+_TASK_ANOMALY_STATES = {"failed", "stopped", "missing"}
 
 
 @dataclass
@@ -83,7 +84,7 @@ class WatchdogCycle:
                 (item.status == "Running" and self._suspected_stall(item))
                 or (
                     item.status == "Starting"
-                    and item.task_state in {"stopped", "missing"}
+                    and item.task_state in _TASK_ANOMALY_STATES
                 )
             ):
                 cause_is_known = self._known_preventing_cause(item)
@@ -153,7 +154,7 @@ class WatchdogCycle:
             item.estimate_boundary_crossed
             or item.hard_stop_crossed
             or item.progress_gap
-            or item.task_state in {"stopped", "missing"}
+            or item.task_state in _TASK_ANOMALY_STATES
         )
 
     @staticmethod
@@ -210,7 +211,7 @@ class WatchdogCycle:
                     f"progress_observation={item.progress_observation or 'missing'}",
                 )
             )
-        if item.task_state in {"stopped", "missing"}:
+        if item.task_state in _TASK_ANOMALY_STATES:
             evidence.extend(
                 (
                     "task_boundary_crossed=true",

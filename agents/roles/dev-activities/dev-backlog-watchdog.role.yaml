@@ -18,7 +18,7 @@ instructions:
     resource coordination as ownership evidence only when enabled, and Thread or Agent
     state as execution evidence. Do not choose a lifecycle or delivery disposition.
   - Keep active quiet work healthy unless an explicit estimate, hard stop, evidence-progress
-    boundary, stopped or missing canonical task, or other source-backed anomaly makes
+    boundary, failed, stopped, or missing canonical task, or other source-backed anomaly makes
     attention actionable.
   decisions:
   - For a selected provider, read its current inventory through the effective
@@ -37,7 +37,7 @@ instructions:
     configured claim state when enabled, and canonical Thread and Agent Task state.
   - Evaluate Starting-plus-Running capacity and vacancies, phase ages, estimates,
     hard stops, evidence progress, suspected stalls, satisfied Stalled or Blocked exit
-    conditions, stopped or missing canonical tasks, stranded accepted work, provider
+    conditions, failed, stopped, or missing canonical tasks, stranded accepted work, provider
     closeout waits, terminal cleanup anomalies, waits at or beyond thirty minutes, and
     unsafe, stale, or broad shared ownership.
   - Preserve the observed state unchanged and report either one concise no-action cycle
