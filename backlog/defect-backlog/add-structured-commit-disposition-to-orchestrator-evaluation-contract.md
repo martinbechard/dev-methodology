@@ -1,6 +1,6 @@
 # Add Structured Commit Disposition To Orchestrator Evaluation Contract
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -9,6 +9,17 @@ Provider: file
 Provider Reference: backlog/defect-backlog/add-structured-commit-disposition-to-orchestrator-evaluation-contract.md
 
 Completion: direct-main
+
+## Current Starting Reservation
+
+- Parent Coordination Thread: /root/resume_blocked_after_claim_publication
+- Reservation: One parent-owned launch reservation.
+- Normalized Objective: Reconcile current-main semantics first, then make a bounded correction only if needed, obtain fresh independent review and focused verification, complete direct-main delivery and provider closure, and avoid a full repository regression.
+- Dispatched At: 2026-07-26T07:19:53Z
+- Intended Root Role: Dev Orchestrator
+- Parent Reservation Claim: structured-commit-ready-starting-20260726; acquisition event c007a46a-01d7-4b3e-8c26-ca8e352499fe.
+- Runtime Thread And Task Id: Pending root Dev Orchestrator acceptance; no new root identity has been created by this reservation.
+- Historical Canonical Work-Item Thread/Task: 019f970d-1e68-7563-b840-a18765cfb70a remains preserved and must not be replaced.
 
 ## Recovery Resumption
 
