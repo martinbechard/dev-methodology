@@ -1,10 +1,10 @@
 # Decouple Dev Orchestrator Suite From Agent Claim When Resource Coordination Is None
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
@@ -22,6 +22,21 @@ Completion: direct-main
 - Phase: Fresh bounded recovery discovery. No artifact mutation is authorized by this lifecycle transaction.
 - Started At: 2026-07-26T09:34:50Z.
 - Exact-File Claim: decouple-orchestrator-none-running-019f96ce acquired on primary main at 2026-07-26T09:34:50.323082Z; acquisition journal event 0eb37c91-f939-421e-ae40-7362aceb99f7.
+
+## Final Blocked Disposition
+
+- Canonical Task/Thread 019f96ce-b1a0-7633-97ab-336ba7d188e4, its worktree, and the complete candidate chain remain preserved recovery evidence.
+- Final Rejected Candidate: 06f4c34b8e438833086359c682aa4be6063889b1.
+- Hard Stop: No third correction is authorized in this prior correction loop. Do not integrate the rejected candidate or archive this item.
+- Finding 1: The producer and consumer argv plus identifier contract is incomplete.
+- Finding 2: Provider-none eagerly resolves the helper.
+- Finding 3: Call and output bijection is enforced only after classification.
+- Finding 4: The none-mode classifier misses relative, alternate, installed, wrapper, and result-shaped attempts, and it lacks immutable digest binding.
+- Unblock Condition: A newly authorized bounded plan must resolve all four findings exactly, then obtain fresh full code and prompt reviews plus independent verification before delivery or terminal closure.
+
+## Blocked Coordination Evidence
+
+- Exact-file claim block-decouple-orchestrator-none-20260726 acquired on primary main at 2026-07-26T11:00:01.377810Z; acquisition journal event 9496c9ac-3e7a-4ba2-bbf5-49f26985f73d.
 
 ## Launch Reservation
 
