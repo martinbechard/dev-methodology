@@ -7,7 +7,7 @@ metadata:
 
 # Complete Work Item Direct Main
 
-Complete delivery only after the accepted behavior is verified on the configured main branch. Direct main describes the observed final state; implementation may occur in an authorized primary or isolated worktree.
+Complete delivery only after the accepted behavior is verified on the configured main branch. Direct main describes the observed final state; implementation may occur in the primary worktree or a private worktree.
 
 ## Inputs
 
@@ -37,17 +37,15 @@ This skill owns Git delivery and main observation. It also owns terminal handoff
 Before shared mutation:
 
 1. Confirm the source commit exists and represents the reviewed, verified contribution.
-2. Confirm the source worktree is clean. When resource coordination is enabled, confirm implementation ownership is released or explicitly handed to the integration owner.
+2. Confirm the source worktree is clean.
 3. Confirm every required review finding is resolved and every accepted source check names its command or provider check and outcome.
 4. Record the source commit and changed paths before refreshing main so later evidence cannot silently substitute another contribution.
 
 A branch name, pushed branch, patch file, detached checkout, pull request, merge request, or clean source worktree is not completion evidence.
 
-## Integration Authority
+## Claims
 
-When agent-claim is selected, apply Agent Claim's owning Event Contract. Any non-backlog work in the primary worktree uses project-files, while a named shared runtime or deployment uses only its event-specific resource claim. Provider closure remains a separate Persistence transaction.
-
-Private-worktree integration preparation, commit, and rebase need no claim. A unique work-item remote branch also needs no claim. If an applicable event claim is unavailable, preserve the accepted source commit and do not mutate that shared surface. When none is selected, require no claim evidence.
+Follow the Claim Events table in agent-claim during integration. Provider closure remains a separate Persistence transaction.
 
 ## Main Reconciliation
 
@@ -90,9 +88,7 @@ Then collect all of these observations from the clean integration checkout:
 
 Use graph reachability for ancestral delivery, such as Git's merge-base ancestor check against the configured main reference. For a non-ancestral replay or squash, record the source commit, integration commit, chosen strategy, content-equivalence evidence, and the integration commit's reachability from main. Never accept branch labels or working-tree similarity in place of commit evidence.
 
-## Release And Lifecycle Handoff
-
-When resource coordination is enabled, release applicable event ownership only after main is clean, required checks pass, and all local and configured remote observations are recorded. A failed release returns BLOCKED until ownership is reconciled; do not hide live ownership behind READY. When coordination is none, main cleanliness and verification still apply without release evidence.
+## Lifecycle Handoff
 
 When a provider is selected, prepare one terminal update containing:
 
@@ -104,10 +100,10 @@ When a provider is selected, prepare one terminal update containing:
 - review and source-check evidence;
 - post-integration checks and any scoped omissions;
 - required remote observation;
-- clean worktree and enabled integration-release evidence; and
+- clean worktree and applicable claim results; and
 - completion disposition READY with requested lifecycle COMPLETED.
 
-Return the prepared terminal handoff to the caller after the integration claim is released. The owning orchestrator decides whether and when to dispatch the selected provider manager. This skill neither performs that dispatch nor waits for its result. The provider-backed item remains nonterminal until the separate Persistence update succeeds. Do not report a provider-backed item as completed before that succeeds.
+Return the prepared terminal handoff to the caller after integration is complete. The owning orchestrator decides whether and when to dispatch the selected provider manager. This skill neither performs that dispatch nor waits for its result. The provider-backed item remains nonterminal until the separate Persistence update succeeds. Do not report a provider-backed item as completed before that succeeds.
 
 ## Result
 
@@ -119,9 +115,9 @@ Return READY only when the complete direct-main delivery proof exists. Return:
 - exact reachability or integration-mapping evidence;
 - review, source-check, and post-integration verification evidence;
 - required local and remote observations;
-- clean-state and enabled resource-coordination release evidence; and
+- clean-state and applicable claim results; and
 - the provider lifecycle update or provider-none terminal result.
 
-Return BLOCKED with the preserved source commit, exact failed gate, current ownership state, recovery evidence, and one next action when integration, conflict resolution, verification, publication, main observation, or enabled resource-coordination release cannot finish safely. A later provider recording failure is a Persistence failure and does not change Commit READY into BLOCKED.
+Return BLOCKED with the preserved source commit, failed check, relevant claim result, recovery evidence, and one next action when integration, conflict resolution, verification, publication, main observation, or a claim operation cannot finish safely. A later provider recording failure is a Persistence failure and does not change Commit READY into BLOCKED.
 
 An unmerged temporary branch can never return READY or cause lifecycle COMPLETED.

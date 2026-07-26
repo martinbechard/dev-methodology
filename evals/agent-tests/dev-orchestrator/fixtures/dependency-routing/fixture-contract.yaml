@@ -21,13 +21,12 @@ resourceCoordination:
       claimEvidence: absent
       requiredHandoffReceiptFields: [lane, role, commit, review, verification]
     agent-claim:
-      claimLifecycle: [acquire before mutation, release after clean committed handoff]
-      sourceScope: [src/dependency_status.py, tests/test_dependency_status.py]
-      documentationScope: [docs/operator-runbook.md]
-      integrationScope: [integration.txt]
-      integrationResource: merge:integration:fixture-main
-      closeoutScope: [closeout.txt]
-      requiredHandoffReceiptFields: [lane, role, commit, review, verification, claimRelease]
+      claimLifecycle: [private file lanes remain claim-free, acquire immediately before an Event Contract event, release at the event boundary]
+      claimFreeFileLanes: [source, documentation]
+      claimedLanes: [integration, closeout]
+      integrationScope: project-files
+      closeoutScope: [backlog/feature-backlog/update-dependency-health-summary.md]
+      requiredHandoffReceiptFields: [lane, role, commit, review, verification]
 lanes:
   source:
     owner: dev-coder

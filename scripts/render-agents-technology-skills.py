@@ -23,7 +23,7 @@ SKILL_FILE_NAME = "SKILL.md"
 FRONTMATTER_DELIMITER = "---"
 SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 AUTHORITY_HEADING = "## Agent And Skill Definition Approval"
-CLAIM_TRANSPORT_HEADING = "## Agent Claim Transport"
+CLAIM_TRANSPORT_HEADING = "## Agent Claim Helper"
 RESOURCE_COORDINATION_HEADING = "## Resource Coordination Skill Reference"
 _RESOURCE_DEADLINE_CLASS_IDS = (
     "backlog-mutation",
@@ -1214,7 +1214,7 @@ def resource_coordination_lines(value: dict[str, object]) -> list[str]:
 
 
 def claim_transport_lines(value: dict[str, object]) -> list[str]:
-    """Render the one setup-verified claim transport selected by Project Configurator.
+    """Render the setup-verified claim helper selected by Project Configurator.
 
     The input must contain agent_claim_transport with exactly selected, availability,
     and verification. selected is mcp or command, availability is AVAILABLE, and
@@ -1252,20 +1252,20 @@ def claim_transport_lines(value: dict[str, object]) -> list[str]:
         )
     if availability == "UNAVAILABLE":
         raise ValueError(
-            f"configured claim transport {selected} is unavailable; run Project Configurator to select and verify one available transport"
+            f"configured claim helper {selected} is unavailable; run Project Configurator to select and verify one available helper"
         )
 
     skill_name = CLAIM_TRANSPORT_SKILLS[selected]
     return [
         CLAIM_TRANSPORT_HEADING,
         "",
-        f"Project Configurator selected and verified the {selected} transport. Apply the shared agent-claim semantics and the inlined {skill_name} adapter for every claim operation.",
+        f"Project Configurator selected and verified the {selected} claim helper. Apply agent-claim for claim rules and use the inlined {skill_name} skill to run the helper.",
         "",
-        "Invoke this configured adapter directly. Runtime work does not probe or switch to another transport. If it is unavailable, report CLAIM_TRANSPORT_UNAVAILABLE and request Project Configurator reconfiguration.",
+        "Use only this configured claim helper. If it cannot start, ask Project Configurator to configure a working helper.",
         "",
-        f"----- BEGIN INLINED CLAIM TRANSPORT SKILL: {skill_name} -----",
+        f"----- BEGIN INLINED CLAIM HELPER SKILL: {skill_name} -----",
         inlined_skill_body(skill_name),
-        f"----- END INLINED CLAIM TRANSPORT SKILL: {skill_name} -----",
+        f"----- END INLINED CLAIM HELPER SKILL: {skill_name} -----",
         "",
     ]
 
@@ -1619,7 +1619,7 @@ def render(
     agree with project_setup.technology_skill_delivery when setup metadata exists. With no
     setup metadata or explicit request, delivery defaults to by-reference. Inline delivery
     embeds each referenced bundled skill body. agent-claim is referenced and its selected
-    transport adapter is embedded only when resource coordination selects agent-claim.
+    claim helper is embedded only when resource coordination selects agent-claim.
 
     The return value is the complete generated Markdown text and ends with a newline.
     Rendering does not write an output file, but inlined rendering reads bundled SKILL.md

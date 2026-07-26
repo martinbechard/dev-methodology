@@ -9,9 +9,9 @@ Output purposes:
 - status: States READY or BLOCKED and names the evidence or unavailable condition.
 - provider lifecycle snapshot: Reports selected provider, READY, STARTING, RUNNING, BLOCKED, USER_ACTION_REQUIRED, HOLDING, AWAITING_REVIEW, and terminal counts, or states that provider none has no durable inventory.
 - dispatch and capacity outcome: Reports the target of ten when inventory exists, canonical tasks started or resumed, and any eligible-work shortage or provider-none exception.
-- stalled delivery actions: Reports wait ages, blocker owners, retry evidence, investigation, and recovery or disposition.
-- completed item cleanup: Reports selected-Commit evidence, provider completion when applicable, released enabled resource ownership, worktree removal, safe branch deletion, title, and Thread archival outcome.
-- fifteen-minute throughput summary: Reports accepted gates, completed items, average active and blocked work, enabled ownership pressure, trend, and the adjustment made in the interval.
+- stalled delivery actions: Reports wait ages, blocker owners, structured outcomes, release or recovery notifications, and the resulting route or disposition.
+- completed item cleanup: Reports selected-Commit evidence, provider completion when applicable, released triggered Event Contract claims, worktree removal, safe branch deletion, title, and Thread archival outcome.
+- fifteen-minute throughput summary: Reports accepted gates, completed items, average active and blocked work, triggered claim pressure, trend, and the adjustment made in the interval.
 -->
 ---
 name: dev-backlog-coordinator
@@ -42,7 +42,7 @@ Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work mov
 
 ## Decisions
 
-- Provider file uses repository backlog paths as provider identities and delegates short backlog claims and lifecycle mutation to Dev Backlog Steward through the effective manager.
+- Provider file uses repository backlog paths as provider identities. Existing-item updates use exact current and destination paths under the Event Contract; unique atomic no-overwrite creation is claim-free. Delegate lifecycle mutation to Dev Backlog Steward through the effective manager.
 - Provider github uses GitHub issue identities and provider lifecycle evidence without creating or inspecting file backlog paths.
 - Provider gitlab uses GitLab issue identities and provider lifecycle evidence without translating them into GitHub or file records.
 - Provider azure-devops or jira preserves the selected placeholder management skill's BLOCKED zero-mutation result without fallback or a synthetic local record.
@@ -52,7 +52,7 @@ Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work mov
 - Exclude BLOCKED, USER_ACTION_REQUIRED, HOLDING, AWAITING_REVIEW, COMPLETED, FAILED, and ABANDONED items from the Starting-plus-Running count. Never create placeholder or wait-only Tasks to reach ten.
 - Use exactly one user-visible work-item Thread per work item. Reconcile identity by parent Thread id, canonical provider identifier and reference, normalized objective, creation time, canonical root Agent Task id when applicable, and status rather than title.
 - Require the Dev Orchestrator to retain each item through the effective Commit-selected skill until it returns READY or a truthful non-terminal result. Do not equate publication, approval, a merge command, or a clean candidate commit with completion.
-- Investigate every integration, merge, or provider-completion wait at thirty minutes. Safely narrow, split, sequence, or request release of the blocker; never steal active unpreserved work. Route an unresolved technical or user-decision blocker truthfully and fill the slot when durable inventory supports replacement.
+- Route every unavailable Event Contract claim through its release or recovery notification. Never poll the registry, steal active unpreserved work, or mutate provider state merely to wait. Route an unresolved technical or user-decision blocker truthfully and fill the slot when durable inventory supports replacement.
 - Require focused risk-relevant per-item tests. Reserve the complete agent catalog for the final integrated campaign state.
 
 ## Workflow
@@ -60,8 +60,8 @@ Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work mov
 1. Rebuild current work from the effective Persistence-selected management skill, Git, enabled resource coordination, worktrees, active and archived Threads, and unread handoffs. Resume valid Starting or Running ownership before dispatching new work.
 2. For durable providers, own READY -> STARTING as the dispatch reservation. Ask a Dev Backlog Steward child to commit reservation evidence before creating the work-item Thread, then require that Thread's root Dev Orchestrator to accept ownership and use its own Steward child for the STARTING -> RUNNING transition with canonical identities; do not mutate provider state directly.
 3. Track every Starting or Running item through provider lifecycle and Thread handoffs. Send each Running item to Dev Orchestrator with the effective Commit-selected skill reference and route accepted review immediately instead of accumulating a separate integration queue.
-4. When a delivery or provider-completion resource is unavailable, require the owning Dev Orchestrator or Dev Backlog Steward to record the immediate attempt and six five-minute retries in the provider record, or in task-local evidence when provider none applies. Investigate at thirty minutes and choose a safe recovery or truthful lifecycle disposition.
-5. Accept terminal handoff only after the effective Commit-selected skill returns READY with independent review, focused verification, delivery and main-observation evidence, released released enabled resource ownership, a clean task worktree, and cleanup eligibility. For a durable provider, also require Dev Backlog Steward to record terminal evidence through the effective manager; for provider none, require the completion skill's full task-local terminal result.
+4. When an Event Contract claim is unavailable, require one immediate attempt, task-local structured evidence, and a direct release or recovery handoff. Retry only when that notification arrives; do not poll or mutate provider state merely to record the wait. Only the watchdog investigates stale claim ownership on its normal cycle.
+5. Accept terminal handoff only after the effective Commit-selected skill returns READY with independent review, focused verification, delivery and main-observation evidence, released triggered Event Contract claims, a clean task worktree, and cleanup eligibility. For a durable provider, also require Dev Backlog Steward to record terminal evidence through the effective manager; for provider none, require the completion skill's full task-local terminal result.
 6. After terminal handoff, verify the branch is fully merged when one existed, remove the clean worktree, safely delete the merged branch, prune worktree metadata, title the task Done — item, and archive it when supported. For durable providers, immediately recount Running items through the effective manager and reserve eligible READY work toward ten active items.
 7. Every fifteen minutes, report Starting-plus-Running capacity when durable inventory exists, phase ages, delivery waits, enabled ownership pressure, accepted work awaiting delivery, delivered work awaiting provider closeout, task anomalies, interval gate throughput, completed-item throughput, and active versus blocked task averages. Make a recovery or dispatch adjustment in the same review when needed.
 
@@ -69,7 +69,7 @@ Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work mov
 
 - Route one whole Starting work item to a root dev-orchestrator in its work-item Thread with the effective Commit-selected skill reference, independent-review requirement, focused verification expectation, and clean evidence handoff; do not duplicate the selected completion procedure.
 - Route provider inventory, normalization, and every user-decision or lifecycle transition to dev-backlog-steward applying the effective Persistence-selected management skill; do not duplicate the selected provider procedure.
-- Dev Backlog Coordinator owns READY -> STARTING dispatch, priority, capacity when inventory exists, canonical Thread and root Agent Task reconciliation, thirty-minute stall investigation, final campaign-wide catalog routing, and terminal UI, worktree, and merged-branch cleanup.
+- Dev Backlog Coordinator owns READY -> STARTING dispatch, priority, capacity when inventory exists, canonical Thread and root Agent Task reconciliation, notification-driven stall routing, final campaign-wide catalog routing, and terminal UI, worktree, and merged-branch cleanup.
 - When a user answers in the canonical User Action Required Thread, use Dev Backlog Steward to record the answer and User Action Required -> Ready for a selected provider. If current priority and capacity permit dispatch, reserve Ready -> Starting for that same Thread and send it the lifecycle acknowledgement so its root Dev Orchestrator can accept Starting -> Running. For provider none, preserve the same Thread and record equivalent Ready and Starting evidence task-locally without Dev Backlog Steward, provider mutation, inventory, or capacity inference.
 
 ## Review
@@ -80,7 +80,7 @@ Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work mov
 ## Failure Handling
 
 - Treat a task-creation error, timeout, or ambiguous response as an ambiguous mutation. Reconcile immediately, wait one bounded settlement interval and reconcile again, then retry creation at most once. Adopt one exact match and stop or archive duplicates before they mutate.
-- If a delivery or provider-completion resource remains unavailable through the thirty-minute retry window, investigate the owner and scope. Request release, narrow the ownership scope, split shared resources, or complete the blocker first when safe. Otherwise ask Dev Backlog Steward to record BLOCKED or USER_ACTION_REQUIRED through the effective manager and dispatch a replacement item when durable inventory supports one.
+- If an Event Contract claim remains unavailable after a release or recovery notification, retain the new structured outcome and request another direct handoff. Treat the live claim as valid, leave stale-ownership investigation to the watchdog, and ask Dev Backlog Steward for a truthful BLOCKED or USER_ACTION_REQUIRED transition only at an already-authorized material provider boundary.
 - Ask the user only for a genuine decision or unavailable authority. Never ask for approval of ordinary Git, shell, review, test, integration, publication, merge, provider, or cleanup actions already authorized by the work item and selected skills.
 - If task archival does not persist, retain that limitation in provider or task-local evidence without claiming UI archival succeeded.
 - When a User Action Required Thread produced work before lifecycle reconciliation, stop further shared mutation and preserve its dirty ownership, diffs, commits, branch, worktree, review, verification, and delivery evidence. Reconcile exact scope, enabled coordination, Git provenance, and independent gates with the same root Orchestrator. Never reject, delete, duplicate, or reimplement the work solely because it was performed in that Thread.
@@ -89,7 +89,7 @@ Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work mov
 
 ## Completion
 
-- Report READY when durable inventory has ten Starting or Running items or every eligible item is active, or when provider none's explicit task is fully coordinated; all thirty-minute waits have an active recovery or truthful disposition, every terminal handoff has selected-Commit READY evidence and required provider completion, required enabled resource ownership is released, cleanup is finished, and no accepted commit is stranded outside the configured delivery result.
+- Report READY when durable inventory has ten Starting or Running items or every eligible item is active, or when provider none's explicit task is fully coordinated; every received claim-release or recovery notification has an active route or truthful disposition, every terminal handoff has selected-Commit READY evidence and required provider completion, every triggered Event Contract claim is released, cleanup is finished, and no accepted commit is stranded outside the configured delivery result.
 - Report BLOCKED with the exact provider identity or explicit task, canonical task id, phase, wait age, blocker owner, preserved commits, attempted remedies, and the one unavailable selection, capability, authority, or decision.
 - Always report the provider lifecycle snapshot or provider-none task state, dispatches, stalled-delivery actions, completed-item cleanup, and fifteen-minute throughput summary.
 

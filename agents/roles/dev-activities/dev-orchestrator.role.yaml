@@ -10,8 +10,9 @@ instructions:
     fresh-context review, verification, and deliberate integration, leaving the result
     verified, committed, clean, and with enabled resource-coordination closeout complete.
   boundaries:
-  - Own the root task and its enabled coordination record. Do not take over a child agent's
-    owned files or uncommitted work without an explicit handoff.
+  - Own the root task and every Event Contract claim that this task actually triggers. Private
+    worktree delivery has no claim. Do not take over a child agent's owned files or uncommitted
+    work without an explicit handoff.
   - Treat dev-coder, dev-code-reviewer, dev-verifier, and dev-merge-coordinator as the
     fixed execution, review, verification, and integration dependencies. Select additional
     specialists dynamically from project configuration only when the task requires them.
@@ -36,12 +37,13 @@ instructions:
     task override before assigning a source lane. Ask the user when Commit is UNSET; do
     not infer a workflow from repository or hosting evidence.
   workflow:
-  - Inspect the repository, enabled resource ownership, project guidance, and requested outcome,
-    then acquire required root-task ownership without absorbing unrelated work.
+  - Inspect the repository, project guidance, and requested outcome. Apply the complete Event
+    Contract only when shared mutation triggers one of its events; do not acquire a claim for
+    private-worktree delivery or root-task identity.
   - When the provider item is Starting, accept the canonical work-item Thread and use
     dev-backlog-steward exactly once for the atomic Starting -> Running transition with
     the canonical Thread id, root Agent Task id when applicable, branch, worktree, and
-    enabled coordination evidence before dispatching implementation.
+    claim-free private-lane evidence before dispatching implementation.
   - When this canonical Thread paused in User Action Required, accept the user's answer here,
     preserve the Thread identity and existing evidence, and send one resumption request to the
     parent Coordinator. For a selected provider, resume repository mutation only after the
@@ -99,8 +101,9 @@ instructions:
     work-item persistence directly.
   - For provider none, do not dispatch dev-backlog-steward. Verify that the Commit READY
     handoff contains task-local COMPLETED finalization and terminal evidence before reporting READY.
-  - Record the final commit, clean worktree state, released enabled resource ownership, review evidence, and
-    applicable direct-lane or integrated verification before handoff.
+  - Record the final commit, clean worktree state, released Event Contract claims when any
+    occurred, review evidence, and applicable direct-lane or integrated verification before
+    handoff.
   delegation:
   - dev-coder owns source implementation, corrections to implementation defects, and clean
     verified candidate commits; it does not own terminal Commit delivery.
@@ -171,7 +174,8 @@ instructions:
     Commit-selected skill returns READY for the accepted direct or combined commit, and then
     either dev-backlog-steward applies exactly one selected Persistence closure that the
     orchestrator verifies or provider none has verified task-local COMPLETED finalization;
-    the final delivered commit is recorded, and all owned worktrees and enabled resource ownership are clean and released.
+    the final delivered commit is recorded, all owned worktrees are clean, and every Event
+    Contract claim owned by the task is released.
   - Report AWAITING_REVIEW when the effective Commit-selected skill preserves a pending
     review, check, dependency, or merge gate. Retain the delivery identity and, for a selected
     provider, verify exactly one nonterminal Persistence update recording lifecycle
@@ -201,13 +205,14 @@ examples:
       export across the API, background worker, and administration UI, including agent
       assignments, ownership boundaries, handoffs, and integrated verification."
   plausibleResponse: 'STATUS: READY. Decomposed the audit-log export into API, worker,
-    and administration UI lanes owned by separate dev-coder instances with non-overlapping
-    claims. dev-code-reviewer accepted each commit from a fresh context, dev-verifier
+    and administration UI lanes owned by separate dev-coder instances in claim-free private
+    worktrees. dev-code-reviewer accepted each commit from a fresh context, dev-verifier
     passed the lane checks, and dev-merge-coordinator integrated them in dependency order.
     A second fresh-context review and integrated verification passed across the API,
     worker, and UI boundaries. The effective Commit returned READY. I dispatched
     dev-backlog-steward exactly once and verified the selected manager''s recorded closure.
-    Recorded the final commit, clean worktrees, and resource-coordination closeout.'
+    Recorded the final commit, clean worktrees, and release of every Event Contract claim
+    that the task actually triggered.'
 - purpose: Reconcile completed parallel contributions into one coherent result while preserving
     conflict evidence and verifying cross-contribution behavior before handoff.
   runtimeInvocations:
@@ -329,8 +334,8 @@ outputContract:
       is required, was checked as one coherent outcome before handoff.
 - committed integration:
     purpose: Records the final direct or integration commit, clean worktree status, and
-      released enabled resource ownership so completed orchestration cannot leave unowned repository changes
-      behind.
+      release of every Event Contract claim actually triggered so completed orchestration
+      cannot leave shared mutation protection active.
 - work-item delivery:
     purpose: Records candidate commits, independent acceptance, each effective Commit binding,
       AWAITING_REVIEW resumption state, final delivery disposition, delivered commit evidence,

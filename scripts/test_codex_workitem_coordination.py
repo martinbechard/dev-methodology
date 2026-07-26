@@ -117,11 +117,10 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
     def test_watchdog_is_one_scheduled_read_only_observer(self) -> None:
         required = (
             "assign one dedicated watchdog Task to an Agent",
-            "schedule it to observe the fifteen-minute review checks",
-            "never performs the parent review's scheduling or recovery adjustment",
-            "observer, not a Work-item owner, queue entry, active-capacity slot, durable record, or substitute Coordinator",
-            "must remain read-only",
-            "does not mutate repository files or lifecycle state",
+            "never performs scheduling or recovery",
+            "observes and reports; it is not a Work-item owner, queue entry, active-capacity slot, durable record, or substitute Coordinator",
+            "The watchdog is read-only.",
+            "must not change backlog, claims, task state, branches, or worktrees",
             "does not create a replacement ledger or duplicate watchdog",
         )
         for clause in required:
@@ -144,7 +143,7 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
             "accepted work stranded before Commit delivery",
             "READY Commit delivery awaiting provider closeout",
             "terminal work awaiting cleanup",
-            "stale, unsafe, or unnecessarily broad shared-resource ownership",
+            "stale, unsafe, or unnecessarily broad claims",
         )
         for clause in required:
             with self.subTest(clause=clause):
@@ -152,12 +151,9 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
 
     def test_watchdog_alerts_only_for_actionable_attention(self) -> None:
         required = (
-            "Notify the parent only when an actionable condition exists",
-            "affected item or task",
-            "observed evidence",
-            "why attention is required now",
-            "smallest recommended parent action",
-            "a Starting-plus-Running vacancy with eligible Ready work",
+            "Notify the parent only when action is required.",
+            "Identify the item or task, the evidence, and the smallest recommended action.",
+            "unused capacity with eligible Ready work",
             "without messaging or interrupting the parent",
             "this self-report is its only task-state exception",
             "The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, Commit-application, Persistence-closure, integration, and cleanup decision",
@@ -168,8 +164,7 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
 
     def test_watchdog_never_infers_or_mutates_delivery_semantics(self) -> None:
         required = (
-            "must not mutate backlog, claims, or task state",
-            "must not infer integration readiness, accepted delivery, or completion readiness",
+            "must not change backlog, claims, task state, branches, or worktrees",
             "The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, Commit-application, Persistence-closure, integration, and cleanup decision",
         )
         for clause in required:
@@ -212,25 +207,22 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
             self.watchdog_section,
         )
         for clause in (
-            "When resource coordination selects agent-claim, it also reads coordination-registry state and evaluates shared-resource ownership.",
-            "When resource coordination selects none, it omits coordination-registry reads, shared-resource ownership evaluation, and coordination alerts or evidence.",
-            "when resource coordination selects agent-claim, stale, unsafe, or unnecessarily broad shared-resource ownership",
-            "unsafe coordination state when resource coordination selects agent-claim",
+            "When agent-claim is loaded, it also reads the claim registry.",
+            "stale, unsafe, or unnecessarily broad claims when agent-claim is loaded",
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause, self.watchdog_section)
 
-    def test_registry_cleanup_and_generated_coordinators_remain_conditional(self) -> None:
-        """Keep registry cleanup out of none and preserve conditional adapter wording."""
+    def test_coordination_delegates_claim_rules_to_agent_claim(self) -> None:
+        """Keep claim behavior in the owning skill."""
 
         self.assertIn(
-            "When resource coordination selects agent-claim, keep administrative coordination-registry cleanup",
+            "When agent-claim is loaded, use its Claim Events table and supporting rules.",
             self.skill_text,
         )
-        self.assertIn(
-            "When none is selected, omit coordination-registry cleanup and coordination evidence.",
-            self.skill_text,
-        )
+        self.assertNotIn("claim-free", self.skill_text)
+        self.assertNotIn("needs no claim", self.skill_text)
+        self.assertNotIn("exact existing-path and move-destination rule", self.skill_text)
         for adapter_path in _GENERATED_COORDINATOR_ADAPTERS:
             adapter = adapter_path.read_text(encoding="utf-8")
             with self.subTest(adapter=adapter_path.parent.parent.name):
@@ -318,7 +310,7 @@ class StartingLifecycleContractTests(unittest.TestCase):
             "Starting -> Running",
             "restore Ready",
             "Blocked or User Action Required",
-            "branch, worktree, and claim evidence",
+            "branch, worktree, and applicable claim evidence",
             "root Dev Orchestrator",
             "Dev Backlog Steward child",
         )
@@ -416,9 +408,8 @@ class StartingLifecycleContractTests(unittest.TestCase):
         required = (
             "stopped, failed, or missing canonical task",
             "Starting or Running",
-            "stopped task that retains a live coordination entry",
-            "terminal item that retains a live coordination entry",
-            "no extra grace timeout",
+            "every stopped task with a live claim",
+            "every terminal item with a live claim",
         )
         for clause in required:
             with self.subTest(clause=clause):
@@ -428,10 +419,8 @@ class StartingLifecycleContractTests(unittest.TestCase):
         required = (
             "active quiet tasks",
             "explicit deadline or hard stop",
-            "must not infer integration readiness",
-            "accepted delivery",
-            "completion readiness",
-            "must not mutate backlog, claims, or task state",
+            "must not change backlog, claims, task state, branches, or worktrees",
+            "The parent retains every scheduling, lifecycle, ownership, recovery, dispatch, Commit-application, Persistence-closure, integration, and cleanup decision",
         )
         for clause in required:
             with self.subTest(clause=clause):

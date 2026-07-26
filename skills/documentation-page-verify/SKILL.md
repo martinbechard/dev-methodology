@@ -33,6 +33,23 @@ When a specific structure or format is indicated, that structure is authoritativ
 
 Examples of format-owned artifacts include design HTML pages, README files, runtime adapter profiles, generated data files, native agent definition files, package metadata, and vendor schema documents.
 
+## Sentence Review
+
+Review every prose sentence separately. Apply the same review to a table row or list item when it makes a complete claim or gives a complete instruction.
+
+Record these three checks for each sentence:
+
+1. Needed: Does the sentence add information or an action that the document requires?
+2. Clear: Does the sentence use familiar words and explain every necessary technical term?
+3. Definite reference: When the sentence uses “the” before a common noun, has an earlier sentence introduced that specific instance?
+
+For example:
+
+- Unclear: “The result identifies the conflict.” No earlier sentence introduced a result.
+- Clear: “A command returns a result. The result identifies the conflict.”
+
+Quote each sentence that fails a check. Name the failed check and give a direct correction.
+
 ## Completed Review Checklist Evidence
 
 When a completed review checklist is available, use it as the evidence record for verification.

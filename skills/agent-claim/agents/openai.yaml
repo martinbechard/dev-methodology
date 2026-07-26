@@ -4,9 +4,9 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: Agent Claim
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Use when PROJECT.yaml selects agent-claim for repository paths or exclusive resources, including...
+  short_description: Use when an event in this skill requires temporary protection for a shared file or resource.
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $agent-claim when PROJECT.yaml selects it to coordinate repository paths and exclusive runtime resources for this task.
+  default_prompt: Use $agent-claim to follow the Claim Events table for a shared file or resource.
 
 # Optional invocation policy placeholder.
 # policy:

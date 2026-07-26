@@ -36,7 +36,7 @@ instructions:
     decision that the original request or authorization did not resolve.
   - When explicit user direction or an active ideation workflow requests lightweight capture,
     use the Future Idea branch with only a title, Synopsis, Origin or Rationale, and optional
-    Notes or Revisit Trigger. Record durable path, commit, and enabled coordination release
+    Notes or Revisit Trigger. Record the durable path, commit, and explicit no-claim creation
     evidence while stating that the idea is not approved or runnable work.
   - Reserve User Action Required for recognized work whose next safe action needs one genuine
     user-owned answer. Keep Holding for recognized work intentionally deferred without an
@@ -68,12 +68,13 @@ instructions:
   - Search only the selected operation's authoritative scope for an existing match before
     creating another record.
   - Before promotion writes, preflight target collisions and apply resource_coordination. When
-    agent-claim is selected, claim the exact existing source record and associated destination.
-    When none is selected, perform no claim discovery, call, registry mutation, release, or
-    claim evidence. In either mode, remain on primary main and snapshot the exact source idea
-    bytes, target existence, exact target bytes when present, and exact full Git index file
-    bytes and existence. Keep the snapshots as recovery evidence until commit verification
-    or verified rollback.
+    agent-claim is selected, apply Event 1 by claiming only the exact current Future Idea path.
+    Create the unique promoted target atomically with no overwrite and no target claim; an
+    existing target blocks promotion. When none is selected, perform no claim discovery, call,
+    registry mutation, release, or claim evidence. In either mode, remain on primary main and
+    snapshot the exact source idea bytes, target existence, exact target bytes when present,
+    and exact full Git index file bytes and existence. Keep the snapshots as recovery evidence
+    until commit verification or verified rollback.
   - Validate the complete target and reciprocal provenance, stage only the idea and target,
     and use a path-limited commit preserving unrelated staged state. Capture the new commit OID
     and confirm that exact immutable object contains exactly both reciprocal records and bytes
@@ -83,7 +84,7 @@ instructions:
     Starting counts against capacity and remains in the provider's active queue.
   - For root Orchestrator acceptance, atomically record Starting -> Running with the canonical
     work-item Thread identifier, canonical root Agent Task id when applicable, branch, worktree,
-    and enabled coordination evidence. Refuse a duplicate Thread or a second accepted owner.
+    and claim-free private-lane evidence. Refuse a duplicate Thread or a second accepted owner.
   - For same-Thread User Action Required resumption, record the answer and User Action Required
     -> Ready in one short provider transaction. In a distinct parent-owned transaction, record
     Ready -> Starting against the preserved canonical Thread; in a distinct root-owned
@@ -122,8 +123,8 @@ instructions:
   - For an ordinary work item, report READY only after the requested lifecycle transition is
     visible in the configured backend and enough evidence remains for another agent to recover it.
   - For a Future Idea capture, report READY only after the minimal file-provider record is
-    durable, enabled coordination is released when applicable, and the result explicitly says
-    the idea is not runnable or approved work.
+    durable, the result explicitly records no claim or release evidence for creation, and the
+    result says the idea is not runnable or approved work.
   - For Future Idea promotion, report READY only after the confirmed commit contains exactly
     the reciprocal idea and target, unrelated staged state remains intact, and enabled claim
     ownership is released when applicable. Unsafe recovery is always BLOCKED; enabled claim
@@ -138,8 +139,8 @@ examples:
       create and assign a feature item for adding idempotency keys to webhook processing."
   plausibleResponse: 'READY. Created the typed feature file with requirements, acceptance
     criteria, dependencies, and verification expectations, recorded that the authorized
-    item entered Ready before the requested ownership transition, established exclusive ownership,
-    and reported its path and next runnable action without creating a hosting-service issue.'
+    item entered Ready, committed it with explicit no-claim creation evidence, and reported
+    its path and next runnable action without creating a hosting-service issue.'
 - purpose: Preserve an explicitly requested possibility without turning it into recognized work.
   runtimeInvocations:
     codex: "$dev_backlog_steward Capture the possible retry-dashboard thought as a Future

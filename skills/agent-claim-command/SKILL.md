@@ -1,33 +1,37 @@
 ---
 name: agent-claim-command
-description: Invoke the agent-claim contract through the adapter-bundled claim command-line interface without runtime probing or interface fallback.
+description: Use the configured command-line claim helper.
 metadata:
   category: development-practice
 ---
 
 # Agent Claim Command
 
-Apply this adapter only when Project Configurator selected command in the compatibility field agent_claim_transport and verified this package, Python, and its executable script. That field selects how the claim helper is invoked. Apply agent-claim for scope, ownership, state, recovery, heartbeat, release, and completion semantics.
+Use this skill to run the command-line claim helper selected in PROJECT.yaml.
 
-The command-line implementation flow is Python claim command -> claim helper -> claim registry and journal. The command parser and helper functions are implemented together in scripts/claim.py inside this adapter; the helper writes repository-global registry and journal state under the Git common directory.
+Follow agent-claim for all claim rules. This skill explains only how to run the configured command-line helper.
 
-## Availability Boundary
+## Helper Setup
 
-Resolve the adapter-bundled script once before the first operation and reuse that exact path for the task. Do not search for MCP tools or change the configured claim-helper interface. Do not assume the target repository contains the adapter package.
+Find the configured script before the first claim operation. Use that script for every claim operation in the task.
 
-Use an explicit path supplied by configured project guidance when present. Otherwise use the scripts/claim.py file beside this loaded SKILL.md. Inside the dev-methodology source checkout, the bundle-owned path is:
+Use the script path in the project instructions when one is provided. Otherwise, use the scripts/claim.py file beside this SKILL.md.
+
+In the dev-methodology source checkout:
 
 ```bash
 CLAIM_SCRIPT=skills/agent-claim-command/scripts/claim.py
 ```
 
-For a normal Codex user-level installation, the default is:
+In a Codex user-level installation:
 
 ```bash
 CLAIM_SCRIPT="${HOME}/.agents/skills/agent-claim-command/scripts/claim.py"
 ```
 
-If the configured script or Python interpreter is absent, unreadable, or cannot start before dispatch, stop with CLAIM_TRANSPORT_UNAVAILABLE and request Project Configurator reconfiguration. Do not switch claim-helper interfaces. An argument, path, root, authorization, input-policy, or other structured rejection returned by the command is not unavailability.
+If the script or Python cannot start, ask Project Configurator to configure a working claim helper.
+
+If the script returns JSON with result.outcome, the helper ran. Follow agent-claim for that outcome.
 
 ## Command Contract
 
@@ -37,36 +41,40 @@ Invoke the script with Python and one operation:
 python3 "$CLAIM_SCRIPT" --repo /absolute/path/to/project OPERATION [ARGUMENTS]
 ```
 
-Supported operations are status, acquire, extend, extend-deadline, heartbeat, release, maintain-journal, and report. Each completed invocation writes one JSON document to standard output. Decode it and inspect result.outcome. The top-level exit_code and process exit code are stable automation aids; the structured outcome is authoritative.
+Supported operations are status, acquire, extend, extend-deadline, heartbeat, release, maintain-journal, and report.
 
-Stable process exit codes are:
+Each completed command writes one JSON document to standard output. Read result.outcome. Do not decide from the process exit code alone.
 
-- 0 for successful execution, including acquired ownership and read-only operations.
-- 1 for a structured rejection such as INVALID_SCOPE, INVALID_IDENTIFIER, INVALID_WORKTREE_PATH, WORKTREE_ROOT_NOT_IGNORED, CLAIM_NOT_FOUND, or RELEASE_REJECTED.
-- 3 for CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, SHARED_CHECKOUT_REQUIRED, or SHARED_CHECKOUT_RELEASE_REQUIRED.
-- 4 for ISOLATED_CHECKOUT_SETUP_REQUIRED.
-- 5 for DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED.
-- 2 for command-line parsing failure before coordination dispatch.
-
-Several outcomes share one exit code. Never branch on the process code alone. A completed structured rejection is a valid coordination result; do not switch claim-helper interfaces or retry it through MCP.
-
-RECONCILIATION_RECOVERY_REQUIRED means a durable pending reconciliation marker still controls transaction recovery. A prepared marker protects the exact original registry and journal snapshots; its RELEASE_PENDING line is not a release. A committed marker makes the exact released registry authoritative and finalizes exactly one RELEASED journal event. Scoped commands and journal maintenance attempt validated deterministic recovery under the registry lock. Report remains read-only and returns this outcome before journal loading when a marker exists.
-
-Release reconciliation requires the claim baseline to precede the exact peer commit and the peer commit to be an ancestor of current HEAD. That peer commit must change exactly the rejected out-of-domain path set, exclude the claimed domain, and match the acquisition-time content for every reconciled path. Later descendant commits may change those paths without invalidating the bounded peer snapshot. The cited rejection must resolve to the same acquisition identity and evidence.
-
-When this outcome appears:
-
-1. Invoke status through this same CLAIM_SCRIPT path.
-2. If the outcome persists, preserve the marker, registry, journal, command result, and relevant filesystem evidence.
-3. Escalate that evidence. Do not manually edit or remove the marker, registry, journal, or protected claim.
+Several outcomes share an exit code. The JSON outcome, not the exit code, identifies the result. Do not switch helpers because a command rejected a request.
 
 ## Command Arguments
 
-Acquire requires claim-id, agent, task, and root-task-id. Scope arguments are repeatable file and tree values, at most one resource value, or one mutually exclusive broad selector: project-files, backlog, or all-files. Tree, project-files, and all-files require scope-reason. A named resource also requires resource-class, resource-id, expected-duration-seconds, and requested-hard-stop-duration-seconds; the command resolves configured maximum and cleanup grace from PROJECT.yaml. Optional acquisition arguments are parent-claim-id, branch, base, allow-recovery, and the compatibility-only worktree-path and compat-file-directories options.
+Acquire requires:
 
-Extend requires claim-id plus net-new scope and uses the same complete timing arguments when adding the claim's one named resource. Extend-deadline requires claim-id, requested-hard-stop-duration-seconds, and extension-evidence. Heartbeat and release require claim-id. Release accepts no-change only for a truthful no-change result. The mutually exclusive reconciliation variant accepts reconcile-out-of-domain-commit with one full 40-character SHA and requires prior-rejected-release-reference for the matching rejected release event. Journal maintenance accepts hot-days, defaulting to 2. Reporting accepts since and format; use JSON output for automation.
+- claim-id;
+- agent;
+- task;
+- root-task-id;
+- the scope selected through agent-claim.
 
-## Exact Invocations
+Use file, project-files, or resource for the scope chosen from the Claim Events table.
+
+A project-files request also requires scope-reason.
+
+A resource request also requires resource-class, resource-id, expected-duration-seconds, and requested-hard-stop-duration-seconds.
+
+Other operations require:
+
+| Operation | Arguments |
+|---|---|
+| extend | claim-id and additional scope |
+| extend-deadline | claim-id, requested-hard-stop-duration-seconds, and extension-evidence |
+| heartbeat | claim-id |
+| release | claim-id and any applicable release option |
+| maintain-journal | optional hot-days |
+| report | optional since and format |
+
+## Command Examples
 
 Read live ownership:
 
@@ -74,18 +82,18 @@ Read live ownership:
 python3 "$CLAIM_SCRIPT" --repo . status
 ```
 
-Acquire one exact file:
+File-scope acquisition:
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . acquire \
-  --claim-id task-123 \
-  --agent implementation-agent \
-  --task task-123 \
-  --root-task-id task-123 \
-  --file src/feature.py
+  --claim-id update-work-item-123 \
+  --agent backlog-steward \
+  --task update-work-item-123 \
+  --root-task-id work-item-123 \
+  --file backlog/feature-backlog/work-item-123.md
 ```
 
-Acquire broad project ownership:
+Project-files acquisition:
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . acquire \
@@ -97,20 +105,7 @@ python3 "$CLAIM_SCRIPT" --repo . acquire \
   --scope-reason "project implementation"
 ```
 
-Repeat an isolation-required acquisition with the same claim identity:
-
-```bash
-python3 "$CLAIM_SCRIPT" --repo . acquire \
-  --claim-id task-123 \
-  --agent implementation-agent \
-  --task task-123 \
-  --root-task-id task-123 \
-  --file src/feature.py \
-  --branch codex/task-123 \
-  --base main
-```
-
-Acquire one deadline-bound resource. The project policy, not this command, supplies the configured maximum and cleanup grace:
+Resource acquisition:
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . acquire \
@@ -125,12 +120,16 @@ python3 "$CLAIM_SCRIPT" --repo . acquire \
   --requested-hard-stop-duration-seconds 1800
 ```
 
-Extend scope, explicitly extend a resource deadline, heartbeat, and release:
+Extend a claim, extend a resource deadline, send a heartbeat, and release a claim:
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . extend \
   --claim-id task-123 \
-  --file tests/test_feature.py
+  --resource port:3000 \
+  --resource-class database-port \
+  --resource-id port:3000 \
+  --expected-duration-seconds 600 \
+  --requested-hard-stop-duration-seconds 1200
 
 python3 "$CLAIM_SCRIPT" --repo . extend-deadline \
   --claim-id browser-check-123 \
@@ -142,9 +141,7 @@ python3 "$CLAIM_SCRIPT" --repo . heartbeat --claim-id task-123
 python3 "$CLAIM_SCRIPT" --repo . release --claim-id task-123
 ```
 
-Heartbeat is liveness only and never extends a deadline. Extend-deadline succeeds only when the evidence is non-empty, the requested duration increases, and it stays within the immutable configured maximum recorded at acquisition. Status reports overdue and cleanup-grace state without auto-release or delivery inference.
-
-Declare a clean no-change result:
+Release a claim after a verified no-change result:
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . release \
@@ -152,7 +149,7 @@ python3 "$CLAIM_SCRIPT" --repo . release \
   --no-change
 ```
 
-Reconcile one retained primary scoped claim only after verifying the supplied peer commit and prior rejected release reference:
+Release after Project Configurator approves reconciliation:
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . release \
@@ -168,12 +165,10 @@ python3 "$CLAIM_SCRIPT" --repo . maintain-journal --hot-days 2
 python3 "$CLAIM_SCRIPT" --repo . report --since 2d --format json
 ```
 
-## Ambiguous Dispatch
+## Uncertain Command Outcome
 
-When process control or output capture fails after submitting a mutating command, the dispatch is ambiguous. Do not repeat the mutation or change the claim-helper interface. Invoke status through the same CLAIM_SCRIPT path and reconcile the live registry before continuing.
+If the process stops after sending a command that changes claim state, the operation may have completed. Do not repeat it.
 
-If the same claim command-line interface cannot provide status, preserve the ambiguous state, report CLAIM_TRANSPORT_UNAVAILABLE, and request Project Configurator reconfiguration or an explicit ownership handoff. Never invoke the MCP adapter to guess whether the command mutation succeeded.
+Run status through the same script. Continue from the reported claim state.
 
-## Behavioral Equivalence
-
-Both configured claim-helper interfaces expose the same helper outcomes and next-action semantics. Their invocation envelopes differ, but this adapter never renames, suppresses, retries, or translates a structured coordination outcome.
+If the script cannot return status, ask Project Configurator for help. Do not use another helper to guess what happened.

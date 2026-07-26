@@ -433,7 +433,7 @@ cases:
         detect-technology-skills: [references/technology-skill-detection-registry.yaml]
         development-methodology: [assets/templates/project-template.yaml]
       requiredToolSequences:
-        - [skill_list, skill_load, skill_resource_load, skill_validate, skill_refresh, detect_technology_skills, claim_acquire, claim_status, claim_extend, claim_heartbeat, verify_yaml, verify_markdown_links, claim_release]
+        - [skill_list, skill_load, skill_resource_load, skill_validate, skill_refresh, detect_technology_skills, claim_acquire, claim_status, claim_heartbeat, verify_yaml, verify_markdown_links, claim_release]
       requiredToolOutcomes:
         skill_list: [CATALOG]
         skill_load: [LOADED]
@@ -443,7 +443,6 @@ cases:
         detect_technology_skills: [READY, NO_VARIANT]
         claim_acquire: [SHARED_CHECKOUT_ACQUIRED]
         claim_status: [STATUS]
-        claim_extend: [EXTENDED]
         claim_heartbeat: [HEARTBEAT]
         verify_yaml: [OK]
         verify_markdown_links: [OK]
@@ -468,14 +467,10 @@ cases:
           agent: project-configurator
           task: project-configuration-routing
           root_task_id: project-configuration-routing
-          files: [PROJECT.yaml, AGENTS.md, services/api/AGENTS.md, apps/web/AGENTS.md, automation/AGENTS.md, eval-result.md]
+          project_files: true
           scope_reason: evaluation output ownership
         claim_status:
           repository: $WORKSPACE
-        claim_extend:
-          repository: $WORKSPACE
-          claim_id: project-configuration-routing
-          files: [mcp-operation-evidence.md]
         claim_heartbeat:
           repository: $WORKSPACE
           claim_id: project-configuration-routing

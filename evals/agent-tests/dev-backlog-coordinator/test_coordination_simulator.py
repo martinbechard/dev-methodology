@@ -12,7 +12,6 @@ import unittest
 import yaml
 
 from coordination_simulator import (
-    CLAIM_ATTEMPT_MINUTES,
     CoordinationSimulator,
     DeliveryEvidence,
     TaskCleanupEvidence,
@@ -445,120 +444,142 @@ class CoordinationSimulatorTests(unittest.TestCase):
         self.assertEqual("BLOCKED", unavailable.status)
         self.assertTrue(unavailable.zero_mutation)
 
-    def test_claim_retry_window_is_bounded_to_thirty_minutes(self) -> None:
-        """Record one immediate attempt and six five-minute retries in the work item."""
+    def test_claim_retry_requires_release_or_recovery_notification(self) -> None:
+        """Reject time-driven polling and consume each notification at most once."""
 
         case = _fixture_cases()["selected-commit-retry-and-closeout"]
         item = WorkItem("integration", "Running")
         simulator = CoordinationSimulator((item,))
+        notified_retry = case["notifiedRetry"]
 
-        for elapsed in case["claimAttemptMinutes"]:
+        simulator.record_claim_attempt(
+            "integration",
+            claim_kind="integration",
+            outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
+            blocking_claim_id="shared-generator",
+        )
+        with self.assertRaisesRegex(ValueError, "unsupported claim attempt outcome"):
             simulator.record_claim_attempt(
                 "integration",
                 claim_kind="integration",
-                elapsed_minutes=elapsed,
-                outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
-                blocking_claim_id="shared-generator",
+                outcome="UNRELATED_FAILURE",
             )
+        with self.assertRaisesRegex(ValueError, "direct release or recovery"):
+            simulator.record_claim_attempt(
+                "integration",
+                claim_kind="integration",
+                outcome="ACQUIRED",
+                release_or_recovery_notification="timer:5m",
+            )
+        with self.assertRaisesRegex(ValueError, "requires a release or recovery notification"):
+            simulator.record_claim_attempt(
+                "integration",
+                claim_kind="integration",
+                outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
+            )
+        simulator.record_claim_attempt(
+            "integration",
+            claim_kind="integration",
+            outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
+            blocking_claim_id="replacement-owner",
+            release_or_recovery_notification=notified_retry["notification"],
+        )
 
-        self.assertEqual(list(CLAIM_ATTEMPT_MINUTES), [
-            attempt["elapsedMinutes"]
-            for attempt in item.claim_attempts["integration"]
-        ])
-        self.assertEqual(case["maximumRetries"], len(item.claim_attempts["integration"]) - 1)
-        self.assertEqual("Integration Investigation", item.phase)
-        self.assertEqual(("integration",), simulator.waits_requiring_investigation())
+        self.assertEqual(
+            [None, notified_retry["notification"]],
+            [
+                attempt["releaseOrRecoveryNotification"]
+                for attempt in item.claim_attempts["integration"]
+            ],
+        )
+        self.assertEqual(case["initialAttempts"], 1)
+        self.assertEqual(case["maximumUnnotifiedRetries"], 0)
+        self.assertEqual("Integration Recovery", item.phase)
+        self.assertEqual(("integration",), simulator.claims_requiring_recovery())
         self.assertIn("shared-generator", item.open_issues[0])
-        with self.assertRaisesRegex(ValueError, "retry window is exhausted"):
+        self.assertIn("replacement-owner", item.open_issues[-1])
+        with self.assertRaisesRegex(ValueError, "only one retry"):
             simulator.record_claim_attempt(
                 "integration",
                 claim_kind="integration",
-                elapsed_minutes=30,
                 outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
+                release_or_recovery_notification=notified_retry["notification"],
             )
 
-    def test_successful_retry_stops_the_wait_window(self) -> None:
-        """Move directly into integration as soon as the exact claim succeeds."""
+    def test_release_notification_can_trigger_successful_retry(self) -> None:
+        """Move directly into integration when a notified exact claim succeeds."""
 
         item = WorkItem("integration", "Running")
         simulator = CoordinationSimulator((item,))
         simulator.record_claim_attempt(
             "integration",
             claim_kind="integration",
-            elapsed_minutes=0,
             outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
             blocking_claim_id="owner",
         )
         simulator.record_claim_attempt(
             "integration",
             claim_kind="integration",
-            elapsed_minutes=5,
             outcome="ACQUIRED",
+            release_or_recovery_notification="release:owner",
         )
 
         self.assertEqual("Integration", item.phase)
-        self.assertEqual((), simulator.waits_requiring_investigation())
+        self.assertEqual((), simulator.claims_requiring_recovery())
         with self.assertRaisesRegex(ValueError, "already acquired"):
             simulator.record_claim_attempt(
                 "integration",
                 claim_kind="integration",
-                elapsed_minutes=10,
                 outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
             )
 
-    def test_claim_windows_reject_out_of_order_and_separate_completion(self) -> None:
-        """Reject reordered attempts and start completion only after integration acquisition."""
+    def test_claim_events_reject_notified_initial_attempt_and_keep_events_independent(self) -> None:
+        """Keep the first attempt immediate and each named event independent."""
 
         item = WorkItem("delivery", "Running")
         simulator = CoordinationSimulator((item,))
-        with self.assertRaisesRegex(ValueError, "minute 0"):
+        with self.assertRaisesRegex(ValueError, "immediate attempt cannot consume"):
             simulator.record_claim_attempt(
                 "delivery",
                 claim_kind="integration",
-                elapsed_minutes=5,
                 outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
+                release_or_recovery_notification="release:not-yet-waiting",
             )
-        with self.assertRaisesRegex(ValueError, "requires acquired integration"):
-            simulator.record_claim_attempt(
-                "delivery",
-                claim_kind="completion",
-                elapsed_minutes=0,
-                outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
-            )
-        simulator.record_claim_attempt(
-            "delivery",
-            claim_kind="integration",
-            elapsed_minutes=0,
-            outcome="ACQUIRED",
-        )
         simulator.record_claim_attempt(
             "delivery",
             claim_kind="completion",
-            elapsed_minutes=0,
             outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
         )
         simulator.record_claim_attempt(
             "delivery",
             claim_kind="completion",
-            elapsed_minutes=5,
+            outcome="ACQUIRED",
+            release_or_recovery_notification="release:completion-owner",
+        )
+        simulator.record_claim_attempt(
+            "delivery",
+            claim_kind="integration",
             outcome="ACQUIRED",
         )
 
         self.assertEqual({"integration", "completion"}, item.acquired_claims)
-        self.assertEqual([0, 5], [
-            attempt["elapsedMinutes"]
-            for attempt in item.claim_attempts["completion"]
-        ])
+        self.assertEqual(
+            [None, "release:completion-owner"],
+            [
+                attempt["releaseOrRecoveryNotification"]
+                for attempt in item.claim_attempts["completion"]
+            ],
+        )
 
-    def test_unresolved_wait_frees_capacity_only_after_investigation(self) -> None:
-        """Route an exhausted wait truthfully before dispatching a replacement."""
+    def test_unresolved_notified_claim_frees_capacity_only_after_recovery(self) -> None:
+        """Route an unresolved notified claim before dispatching a replacement."""
 
-        stalled = WorkItem("stalled", "Running", phase="Integration Investigation")
+        stalled = WorkItem("stalled", "Running", phase="Integration Recovery")
         replacement = WorkItem("replacement", "Ready")
         running = [WorkItem(f"running-{index}", "Running") for index in range(9)]
         simulator = CoordinationSimulator((stalled, replacement, *running))
 
-        simulator.dispose_unresolved_wait("stalled", user_decision=False)
+        simulator.dispose_unresolved_claim("stalled", user_decision=False)
         self.assertEqual("Blocked", stalled.status)
         self.assertEqual(("replacement",), simulator.dispatch_to_target())
         self.assertEqual(10, simulator.running_count())

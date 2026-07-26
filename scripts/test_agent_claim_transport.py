@@ -375,7 +375,7 @@ def load_renderer_module():
 
 
 def project_with_transport(selected: str, availability: str = "AVAILABLE") -> dict[str, object]:
-    """Return the smallest renderable project fixture with one verified claim transport."""
+    """Return the smallest project fixture with one verified claim helper."""
 
     return {
         "resource_coordination": {
@@ -409,7 +409,7 @@ def project_with_transport(selected: str, availability: str = "AVAILABLE") -> di
         "agent_claim_transport": {
             "selected": selected,
             "availability": availability,
-            "verification": [f"{selected} transport fixture evidence"],
+            "verification": [f"{selected} claim-helper fixture evidence"],
         },
         "workflow_selection": {
             "provider": {"default": "UNSET"},
@@ -420,7 +420,7 @@ def project_with_transport(selected: str, availability: str = "AVAILABLE") -> di
 
 
 class AgentClaimInterfaceTests(unittest.TestCase):
-    """Protect standalone claim-helper interface composition and failure behavior."""
+    """Protect standalone claim-helper composition and failure behavior."""
 
     def test_renderer_inlines_only_selected_claim_helper_adapter(self) -> None:
         """Compose shared role semantics with exactly one setup-selected adapter."""
@@ -435,13 +435,13 @@ class AgentClaimInterfaceTests(unittest.TestCase):
 
                 self.assertIn("## Resource Coordination Skill Reference", rendered)
                 self.assertIn("selected resource-coordination skill agent-claim", rendered)
-                self.assertIn("## Agent Claim Transport", rendered)
+                self.assertIn("## Agent Claim Helper", rendered)
                 self.assertIn(
-                    f"BEGIN INLINED CLAIM TRANSPORT SKILL: {included}",
+                    f"BEGIN INLINED CLAIM HELPER SKILL: {included}",
                     rendered,
                 )
                 self.assertNotIn(excluded, rendered)
-                self.assertIn("does not probe or switch to another transport", rendered)
+                self.assertIn("Use only this configured claim helper", rendered)
 
     def test_renderer_validates_and_renders_deadline_classes_and_exact_id_overrides(self) -> None:
         """Expose every configured deadline value without hidden class inference."""
@@ -560,10 +560,10 @@ class AgentClaimInterfaceTests(unittest.TestCase):
         rendered = renderer.render(project)
 
         self.assertNotIn("## Resource Coordination Skill Reference", rendered)
-        self.assertNotIn("## Agent Claim Transport", rendered)
+        self.assertNotIn("## Agent Claim Helper", rendered)
         self.assertNotIn("agent-claim", rendered)
         self.assertNotIn("CLAIM_TRANSPORT", rendered)
-        self.assertNotIn("transport fixture evidence", rendered)
+        self.assertNotIn("claim-helper fixture evidence", rendered)
 
     def test_none_rejects_every_present_claim_interface_value(self) -> None:
         """Reject a stale claim-helper interface selection instead of ignoring it."""
@@ -903,8 +903,8 @@ class AgentClaimInterfaceTests(unittest.TestCase):
                     ):
                         renderer.render(project)
 
-    def test_agent_claim_rejects_missing_or_unavailable_interface(self) -> None:
-        """Require a verified claim-helper interface only when agent-claim is selected."""
+    def test_agent_claim_rejects_missing_or_unavailable_helper(self) -> None:
+        """Require a verified claim helper only when agent-claim is selected."""
 
         renderer = load_renderer_module()
         project = project_with_transport("mcp", availability="UNAVAILABLE")
@@ -918,7 +918,7 @@ class AgentClaimInterfaceTests(unittest.TestCase):
             renderer.render(missing)
         with self.assertRaisesRegex(
             ValueError,
-            "configured claim transport mcp is unavailable; run Project Configurator",
+            "configured claim helper mcp is unavailable; run Project Configurator",
         ):
             renderer.render(project)
 
@@ -937,22 +937,22 @@ class AgentClaimInterfaceTests(unittest.TestCase):
         self.assertIn("CLAIM_SCRIPT", command)
         self.assertNotIn("claim_status", command)
         self.assertIn("exit_code", mcp)
-        self.assertIn("exit_code", command)
+        self.assertIn("process exit code", command)
         self.assertIn("result.outcome", mcp)
         self.assertIn("result.outcome", command)
 
-    def test_adapters_preserve_rejections_and_reconcile_ambiguous_dispatch_in_place(self) -> None:
-        """Prohibit fallback both for valid rejections and uncertain mutating dispatches."""
+    def test_adapters_read_results_and_reconcile_uncertain_calls_in_place(self) -> None:
+        """Keep result handling and uncertain-call recovery with the configured helper."""
 
         for path in (MCP_SKILL, COMMAND_SKILL):
             with self.subTest(adapter=path.parent.name):
                 adapter = path.read_text(encoding="utf-8")
 
-                self.assertIn("structured rejection", adapter)
-                self.assertIn("do not switch claim-helper interfaces", adapter)
-                self.assertIn("ambiguous", adapter)
+                self.assertIn("result.outcome", adapter)
+                self.assertIn("Do not repeat", adapter)
+                self.assertIn("Uncertain", adapter)
                 self.assertIn("status", adapter)
-                self.assertIn("CLAIM_TRANSPORT_UNAVAILABLE", adapter)
+                self.assertIn("Do not use another helper", adapter)
 
     def test_portable_command_is_owned_by_command_adapter(self) -> None:
         """Ship the command implementation only with its independently distributable adapter."""
@@ -1049,9 +1049,12 @@ class AgentClaimInterfaceTests(unittest.TestCase):
         ).read_text(encoding="utf-8").splitlines()
         task = (PROJECT_CONFIGURATION_FIXTURE / "TASK.md").read_text(encoding="utf-8")
         self.assertIn("agent-claim-mcp", available)
-        self.assertIn("Select the MCP claim transport", task)
+        self.assertIn("Select the MCP claim-helper interface", task)
         self.assertIn("result schema version 2", task)
-        self.assertIn("Do not probe or fall back to the command transport", task)
+        self.assertIn("Do not probe or fall back to the claim command-line interface", task)
+        self.assertIn("Acquire one project-files claim", task)
+        self.assertIn("Omit exact files", task)
+        self.assertNotIn("Extend the same claim", task)
 
     def test_mcp_eval_contract_pins_canonical_schema_v2_runtime(self) -> None:
         """Replace the retired MCP fixture identity and legacy acquisition outcome."""
@@ -1078,6 +1081,10 @@ class AgentClaimInterfaceTests(unittest.TestCase):
             ["SHARED_CHECKOUT_ACQUIRED"],
             contract["requiredToolOutcomes"]["claim_acquire"],
         )
+        self.assertTrue(contract["requiredToolArguments"]["claim_acquire"]["project_files"])
+        self.assertNotIn("files", contract["requiredToolArguments"]["claim_acquire"])
+        self.assertNotIn("claim_extend", contract["requiredToolOutcomes"])
+        self.assertNotIn("claim_extend", contract["requiredToolArguments"])
 
 
 if __name__ == "__main__":

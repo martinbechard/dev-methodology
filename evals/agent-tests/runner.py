@@ -271,8 +271,22 @@ def _validate_fixture_contract(suite: _Suite, scenario: dict[str, Any]) -> None:
     else:
         if "agent-claim" not in target_skills or "claim-lifecycle" not in deterministic_checks:
             raise ValueError(f"{identity} agent-claim resource coordination omits configured behavior")
-        if "claimRelease" not in expected_fields:
-            raise ValueError(f"{identity} agent-claim resource coordination omits claim release evidence")
+        claim_free_lanes = coordination_case.get("claimFreeFileLanes")
+        claimed_lanes = coordination_case.get("claimedLanes")
+        if (
+            not isinstance(claim_free_lanes, list)
+            or not isinstance(claimed_lanes, list)
+            or set(claim_free_lanes) != {"source", "documentation"}
+            or set(claimed_lanes) != {"integration", "closeout"}
+            or set(claim_free_lanes) & set(claimed_lanes)
+        ):
+            raise ValueError(f"{identity} agent-claim resource coordination has invalid lane ownership")
+        if "claimRelease" in expected_fields:
+            raise ValueError(f"{identity} agent-claim uses global rather than event-lane release evidence")
+        if coordination_case.get("integrationScope") != "project-files":
+            raise ValueError(f"{identity} integration does not use project-files")
+        if "integrationResource" in coordination_case:
+            raise ValueError(f"{identity} integration adds a forbidden merge resource")
     expected_order = scenario.get("requiredDependencyOrder", [])
     observed_order = [str(item.get("role", "")) for item in contract["orchestration"]["dependencyOrder"]]
     if expected_order and observed_order != expected_order:
@@ -1587,6 +1601,8 @@ def _coordinator_schema() -> dict[str, Any]:
                                                         "eventIds": {
                                                             "type": "array",
                                                             "minItems": 1,
+                                                            "maxItems": 1,
+                                                            "uniqueItems": True,
                                                             "items": {"type": "string"},
                                                         }
                                                     },
@@ -3223,6 +3239,15 @@ def _audit_report(
             required_lanes = scenario.get("requiredHandoffReceiptLanes", [])
             required_fields = scenario.get("requiredHandoffReceiptFields", [])
             if required_lanes or required_fields:
+                selected_coordination, coordination_case = _scenario_resource_coordination(
+                    suites[suite_id],
+                    scenario,
+                )
+                claimed_lanes = (
+                    set(coordination_case.get("claimedLanes", []))
+                    if selected_coordination == "agent-claim"
+                    else set()
+                )
                 handoff_receipts = scenario_result.get("handoffReceipts", [])
                 if not isinstance(handoff_receipts, list):
                     raise RuntimeError(f"{suite_id}:{scenario_id} handoffReceipts must be a list")
@@ -3234,16 +3259,19 @@ def _audit_report(
                     if lane in receipts_by_lane:
                         raise RuntimeError(f"{suite_id}:{scenario_id} duplicate handoff receipt lane {lane}")
                     receipts_by_lane[lane] = receipt
-                if "claimRelease" not in required_fields:
-                    for lane, receipt in receipts_by_lane.items():
-                        if "claimRelease" in receipt:
-                            raise RuntimeError(
-                                f"{suite_id}:{scenario_id} handoff receipt {lane} has unexpected claimRelease evidence"
-                            )
+                for lane, receipt in receipts_by_lane.items():
+                    if lane not in claimed_lanes and "claimRelease" in receipt:
+                        raise RuntimeError(
+                            f"{suite_id}:{scenario_id} handoff receipt {lane} has unexpected claimRelease evidence"
+                        )
                 for lane in required_lanes:
                     if lane not in receipts_by_lane:
                         raise RuntimeError(f"{suite_id}:{scenario_id} missing handoff receipt lane {lane}")
-                    for field in required_fields:
+                    lane_required_fields = [
+                        *required_fields,
+                        *(["claimRelease"] if lane in claimed_lanes else []),
+                    ]
+                    for field in lane_required_fields:
                         value = receipts_by_lane[lane].get(field)
                         if value is None or value == "" or value == [] or value == {}:
                             raise RuntimeError(
@@ -3272,7 +3300,7 @@ def _audit_report(
                         )
                     for field, key in (("review", "sessionIds"), ("verification", "sessionIds"), ("claimRelease", "eventIds")):
                         evidence_value = receipts_by_lane[lane].get(field)
-                        if field not in required_fields:
+                        if field not in lane_required_fields:
                             continue
                         values = evidence_value.get(key) if isinstance(evidence_value, dict) else None
                         if not isinstance(values, list) or not values or not all(
@@ -3914,13 +3942,25 @@ def _claim_events(repository: Path, fixture_root: Path) -> tuple[dict[str, Any],
         resolved_journal = journal.resolve()
         if common not in resolved_journal.parents:
             raise RuntimeError(f"Claim release journal escapes fixture containment: {journal}")
-        for line in journal.read_text(encoding="utf-8").splitlines():
+        for line_number, line in enumerate(
+            journal.read_text(encoding="utf-8").splitlines(),
+            start=1,
+        ):
             try:
                 event = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-            if isinstance(event, dict):
-                events.append(event)
+            except json.JSONDecodeError as error:
+                raise RuntimeError(
+                    f"Malformed claim journal JSON at {journal}:{line_number}"
+                ) from error
+            if not isinstance(event, dict):
+                raise RuntimeError(
+                    f"Malformed claim journal event at {journal}:{line_number}"
+                )
+            if event.get("schema_version") != 1:
+                raise RuntimeError(
+                    f"Unsupported claim journal schema at {journal}:{line_number}"
+                )
+            events.append(event)
     return tuple(events)
 
 
@@ -3944,6 +3984,11 @@ def _contained_fixture_git_common_directories(fixture_root: Path) -> tuple[Path,
             _git_common_directory(repository, fixture_root, "fixture")
         )
     return tuple(sorted(common_directories))
+
+
+def _contained_fixture_repositories(fixture_root: Path) -> tuple[Path, ...]:
+    """Return every contained Git repository beneath one fixture root."""
+    return tuple(sorted(git_entry.parent for git_entry in fixture_root.glob("**/.git")))
 
 
 def _audit_no_claim_repository_evidence(fixture_root: Path, identity: str) -> None:
@@ -4029,21 +4074,20 @@ def _audit_claim_lifecycle(
     lane: str,
     producer_role: str,
     resulting_commit: str,
-    release_event_ids: Sequence[str],
+    release_event_id: str,
     coordination_case: Mapping[str, Any],
-) -> None:
+) -> str:
     """Bind one selected-provider receipt to its configured acquire and release lifecycle."""
     events = _claim_events(repository, fixture_root)
     indexed_events = tuple(enumerate(events))
     configured_scope_keys = {
-        "source": "sourceScope",
-        "documentation": "documentationScope",
         "integration": "integrationScope",
         "closeout": "closeoutScope",
     }
     expected_scope = coordination_case.get(configured_scope_keys[lane])
-    if not isinstance(expected_scope, list) or not all(
-        isinstance(path, str) and path for path in expected_scope
+    if expected_scope != "project-files" and (
+        not isinstance(expected_scope, list)
+        or not all(isinstance(path, str) and path for path in expected_scope)
     ):
         raise RuntimeError(f"{identity} has no configured {lane} scope")
     configured_scopes = [
@@ -4058,82 +4102,186 @@ def _audit_claim_lifecycle(
     ]
     if len(flattened_scopes) != len(set(flattened_scopes)):
         raise RuntimeError(f"{identity} configured claim scopes overlap")
-    expected_resource = (
-        coordination_case.get("integrationResource")
-        if lane == "integration"
-        else None
+    release_matches = [
+        (index, event)
+        for index, event in indexed_events
+        if event.get("event_id") == release_event_id
+    ]
+    if len(release_matches) != 1:
+        raise RuntimeError(
+            f"{identity} handoff receipt {lane} claim release lacks fixture lifecycle evidence"
+        )
+    release_index, release = release_matches[0]
+    if (
+        release.get("action") != "release"
+        or release.get("outcome") != "RELEASED"
+        or release.get("resulting_commit") != resulting_commit
+        or release.get("agent") != producer_role
+    ):
+        raise RuntimeError(
+            f"{identity} handoff receipt {lane} claim release lacks fixture lifecycle evidence"
+        )
+    claim_id = release.get("claim_id")
+    successful_releases = [
+        (index, event)
+        for index, event in indexed_events
+        if event.get("action") == "release"
+        and event.get("outcome") == "RELEASED"
+        and event.get("claim_id") == claim_id
+    ]
+    if len(successful_releases) != 1:
+        raise RuntimeError(
+            f"{identity} handoff receipt {lane} claim must have exactly one successful release"
+        )
+    acquisitions = [
+        (index, event)
+        for index, event in indexed_events
+        if event.get("action") == "acquire"
+        and event.get("claim_id") == claim_id
+        and event.get("outcome") == "PRIMARY"
+    ]
+    if not acquisitions:
+        raise RuntimeError(
+            f"{identity} handoff receipt {lane} has no matching PRIMARY acquisition"
+        )
+    if len(acquisitions) != 1 or acquisitions[0][0] >= release_index:
+        raise RuntimeError(
+            f"{identity} handoff receipt {lane} acquisition does not precede release"
+        )
+    acquisition = acquisitions[0][1]
+    parent = subprocess.run(
+        ["git", "rev-parse", f"{resulting_commit}^"],
+        cwd=repository,
+        check=False,
+        text=True,
+        capture_output=True,
     )
-    for release_event_id in release_event_ids:
-        release_matches = [
-            (index, event)
-            for index, event in indexed_events
-            if event.get("event_id") == release_event_id
-        ]
-        if len(release_matches) != 1:
-            raise RuntimeError(
-                f"{identity} handoff receipt {lane} claim release lacks fixture lifecycle evidence"
-            )
-        release_index, release = release_matches[0]
+    baseline_commit = acquisition.get("baseline_commit")
+    if (
+        parent.returncode != 0
+        or not isinstance(baseline_commit, str)
+        or baseline_commit != parent.stdout.strip()
+    ):
+        raise RuntimeError(
+            f"{identity} handoff receipt {lane} acquisition does not precede mutation"
+        )
+    if acquisition.get("agent") != producer_role:
+        raise RuntimeError(
+            f"{identity} handoff receipt {lane} acquisition agent disagrees with producer"
+        )
+    scopes = acquisition.get("scopes")
+    if not isinstance(scopes, Mapping):
+        raise RuntimeError(
+            f"{identity} handoff receipt {lane} scope disagrees with configured {lane} scope"
+        )
+    if expected_scope == "project-files":
+        scope_matches = scopes.get("project_files") is True and scopes.get("files") == []
+    else:
+        scope_matches = scopes.get("project_files") is False and scopes.get("files") == expected_scope
+    if not scope_matches:
+        raise RuntimeError(
+            f"{identity} handoff receipt {lane} scope disagrees with configured {lane} scope"
+        )
+    if scopes.get("resources") != []:
+        raise RuntimeError(
+            f"{identity} handoff receipt {lane} has unexpected claim resource"
+        )
+    if not isinstance(claim_id, str) or not claim_id:
+        raise RuntimeError(
+            f"{identity} handoff receipt {lane} claim release lacks a claim id"
+        )
+    return claim_id
+
+
+def _has_file_claim_scope(scopes: Mapping[str, Any]) -> bool:
+    """Return whether one acquisition owns any repository file domain."""
+    return bool(
+        scopes.get("files")
+        or scopes.get("trees")
+        or scopes.get("project_files")
+        or scopes.get("backlog")
+        or scopes.get("all_files")
+    )
+
+
+def _is_event_contract_resource(resource: object) -> bool:
+    """Recognize one supported exact or deadline-bound Event Contract resource."""
+    if not isinstance(resource, str):
+        return False
+    return any(
+        re.fullmatch(pattern, resource) is not None
+        for pattern in (
+            r"browser-test:[^:\s]+",
+            r"database:[^:\s]+",
+            r"port:[0-9]+",
+            r"live-model:[^:\s]+:[^:\s]+",
+            r"shared-install:[^:\s]+",
+            r"deployment:[^:\s]+",
+        )
+    )
+
+
+def _audit_unbound_claim_acquisitions(
+    repository: Path,
+    fixture_root: Path,
+    identity: str,
+    bound_file_claim_ids: set[str],
+) -> None:
+    """Reject surplus file claims and validate independent named-resource events."""
+    events = _claim_events(repository, fixture_root)
+    for acquisition_index, acquisition in enumerate(events):
         if (
-            release.get("action") != "release"
-            or release.get("outcome") != "RELEASED"
-            or release.get("resulting_commit") != resulting_commit
-            or release.get("agent") != producer_role
+            acquisition.get("action") != "acquire"
+            or acquisition.get("outcome") not in {"PRIMARY", "ISOLATE"}
         ):
-            raise RuntimeError(
-                f"{identity} handoff receipt {lane} claim release lacks fixture lifecycle evidence"
-            )
-        claim_id = release.get("claim_id")
-        acquisitions = [
-            (index, event)
-            for index, event in indexed_events
-            if event.get("action") == "acquire"
-            and event.get("claim_id") == claim_id
-            and event.get("outcome") in {"PRIMARY", "ISOLATE"}
-        ]
-        if not acquisitions:
-            raise RuntimeError(
-                f"{identity} handoff receipt {lane} has no matching acquisition"
-            )
-        if len(acquisitions) != 1 or acquisitions[0][0] >= release_index:
-            raise RuntimeError(
-                f"{identity} handoff receipt {lane} acquisition does not precede release"
-            )
-        acquisition = acquisitions[0][1]
-        baseline_commit = acquisition.get("baseline_commit")
-        if (
-            not isinstance(baseline_commit, str)
-            or baseline_commit == resulting_commit
-            or subprocess.run(
-                ["git", "merge-base", "--is-ancestor", baseline_commit, resulting_commit],
-                cwd=repository,
-                check=False,
-                text=True,
-                capture_output=True,
-            ).returncode
-            != 0
-        ):
-            raise RuntimeError(
-                f"{identity} handoff receipt {lane} acquisition does not precede mutation"
-            )
-        if acquisition.get("agent") != producer_role:
-            raise RuntimeError(
-                f"{identity} handoff receipt {lane} acquisition agent disagrees with producer"
-            )
+            continue
+        if acquisition.get("outcome") != "PRIMARY":
+            raise RuntimeError(f"{identity} has a noncanonical acquisition outcome")
+        claim_id = acquisition.get("claim_id")
+        if not isinstance(claim_id, str) or not claim_id:
+            raise RuntimeError(f"{identity} has an unbound acquisition without a claim id")
+        if claim_id in bound_file_claim_ids:
+            continue
         scopes = acquisition.get("scopes")
-        if not isinstance(scopes, Mapping) or scopes.get("files") != expected_scope:
+        if not isinstance(scopes, Mapping):
+            raise RuntimeError(f"{identity} has an unbound acquisition with malformed scopes")
+        if _has_file_claim_scope(scopes):
+            raise RuntimeError(f"{identity} has an unbound file-scope acquisition")
+        if scopes.get("file_domain") != "none":
             raise RuntimeError(
-                f"{identity} handoff receipt {lane} scope disagrees with configured {lane} scope"
+                f"{identity} named-resource acquisition has a noncanonical file domain"
             )
         resources = scopes.get("resources")
-        if lane == "integration":
-            if resources != [expected_resource]:
-                raise RuntimeError(
-                    f"{identity} handoff receipt integration resource disagrees with configuration"
-                )
-        elif resources != []:
+        if (
+            not isinstance(resources, list)
+            or len(resources) != 1
+            or not _is_event_contract_resource(resources[0])
+        ):
             raise RuntimeError(
-                f"{identity} handoff receipt {lane} has unexpected claim resource"
+                f"{identity} has an unbound acquisition outside the Event Contract"
+            )
+        releases = [
+            event
+            for release_index, event in enumerate(events)
+            if release_index > acquisition_index
+            and event.get("action") == "release"
+            and event.get("outcome") == "RELEASED"
+            and event.get("claim_id") == claim_id
+        ]
+        if len(releases) != 1:
+            raise RuntimeError(
+                f"{identity} named-resource acquisition lacks one later release"
+            )
+        release_scopes = releases[0].get("scopes")
+        if (
+            releases[0].get("agent") != acquisition.get("agent")
+            or not isinstance(release_scopes, Mapping)
+            or release_scopes.get("file_domain") != "none"
+            or release_scopes.get("resources") != resources
+            or _has_file_claim_scope(release_scopes)
+        ):
+            raise RuntimeError(
+                f"{identity} named-resource release disagrees with its acquisition"
             )
 
 
@@ -4207,9 +4355,12 @@ def _audit_handoff_evidence(
                 run.suite,
                 scenario,
             )
-            claim_release_required = "claimRelease" in scenario.get(
-                "requiredHandoffReceiptFields", []
+            claimed_lanes = set(
+                coordination_case.get("claimedLanes", [])
+                if selected_coordination == "agent-claim"
+                else []
             )
+            bound_file_claim_ids: dict[Path, set[str]] = {}
             if selected_coordination == "none":
                 for lane, receipt in receipts.items():
                     if "claimRelease" in receipt:
@@ -4222,6 +4373,7 @@ def _audit_handoff_evidence(
                 if lane not in receipts:
                     raise RuntimeError(f"{identity} missing handoff receipt lane {lane}")
                 receipt = receipts[lane]
+                claim_release_required = lane in claimed_lanes
                 if lane not in lane_roles:
                     raise RuntimeError(f"{identity} has no evidence binding for handoff lane {lane}")
                 producer_role, review_spec, verification_spec = lane_roles[lane]
@@ -4364,20 +4516,65 @@ def _audit_handoff_evidence(
                     )
 
                 if claim_release_required:
+                    release_event_ids = claim_release["eventIds"]
+                    if len(release_event_ids) != 1:
+                        raise RuntimeError(
+                            f"{identity} handoff receipt {lane} must name exactly one claim release event"
+                        )
                     _audit_clean_claim_registry(
                         repository,
                         scenario_fixture_root,
                         identity,
                     )
-                    _audit_claim_lifecycle(
+                    common = _git_common_directory(
+                        repository,
+                        scenario_fixture_root,
+                        "fixture",
+                    )
+                    claim_id = _audit_claim_lifecycle(
                         repository,
                         scenario_fixture_root,
                         identity,
                         lane,
                         producer_role,
                         sha,
-                        claim_release["eventIds"],
+                        release_event_ids[0],
                         coordination_case,
+                    )
+                    repository_bound_ids = bound_file_claim_ids.setdefault(common, set())
+                    if claim_id in repository_bound_ids:
+                        raise RuntimeError(
+                            f"{identity} reuses one claim lifecycle across handoff receipts"
+                        )
+                    repository_bound_ids.add(claim_id)
+            if selected_coordination == "agent-claim":
+                audited_common_directories: set[Path] = set()
+                for repository in _contained_fixture_repositories(
+                    scenario_fixture_root
+                ):
+                    common = _git_common_directory(
+                        repository,
+                        scenario_fixture_root,
+                        "fixture",
+                    )
+                    if common in audited_common_directories:
+                        continue
+                    audited_common_directories.add(common)
+                    if not (
+                        (common / "agent-claims.json").exists()
+                        or (common / "agent-claim-events").exists()
+                    ):
+                        continue
+                    _audit_clean_claim_registry(
+                        repository,
+                        scenario_fixture_root,
+                        identity,
+                    )
+                    _audit_unbound_claim_acquisitions(
+                        repository,
+                        scenario_fixture_root,
+                        identity,
+                        bound_file_claim_ids.get(common, set()),
                     )
 
 

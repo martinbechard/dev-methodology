@@ -56,9 +56,9 @@ probes:
     source: skills/agent-claim/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
-    activationCondition: Repository mutation, claim extension, recovery, integration, or exclusive runtime resources are required.
-    negativeCondition: Pure read-only inspection with no exclusive resource does not acquire a writer claim.
-    expectedBehavior: Acquire the narrow supported scope, isolate non-overlapping writers, wait on overlap, journal transitions, and finish with a committed or truthful no-change clean release.
+    activationCondition: The loaded agent-claim skill identifies a matching row in its Claim Events table.
+    negativeCondition: No row in the Claim Events table matches the work.
+    expectedBehavior: Use the matching row for acquisition timing, scope, and release timing; preserve non-overlapping owners; wait for a direct release or recovery notification after a conflict; and retain claim history.
     judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, allowed-paths-only], modelRubric: null}
     scenarioAssociations: [dev-coder-happy, dev-orchestrator-boundary, dev-backlog-steward-happy, wiki-ingester-happy]
     workflowAssociations: [code-delivery, documentation-methodology, project-setup, wiki-lifecycle, backlog]
@@ -70,9 +70,9 @@ probes:
     source: skills/agent-claim-mcp/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
-    activationCondition: PROJECT.yaml selects and verifies the MCP claim transport for a repository coordination operation.
-    negativeCondition: A project configured for the command transport does not load or probe the MCP adapter.
-    expectedBehavior: Invoke the exact configured claim tool, preserve exit_code and result.outcome, treat structured rejections as completed coordination results, and reconcile ambiguous mutation through claim_status on the same transport.
+    activationCondition: PROJECT.yaml selects and verifies the MCP claim helper.
+    negativeCondition: PROJECT.yaml selects the command-line claim helper.
+    expectedBehavior: Call the configured MCP tool, read result.outcome, and use claim_status after an uncertain mutating call.
     judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, required-command-outcome, allowed-paths-only], modelRubric: null}
     scenarioAssociations: [project-configurator-happy]
     workflowAssociations: [project-setup]
@@ -84,9 +84,9 @@ probes:
     source: skills/agent-claim-command/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
-    activationCondition: PROJECT.yaml selects and verifies the bundled command claim transport for a repository coordination operation.
-    negativeCondition: A project configured for the MCP transport does not load or probe the command adapter.
-    expectedBehavior: Invoke the adapter-bundled command, preserve exit_code and result.outcome, treat structured rejections as completed coordination results, and reconcile ambiguous mutation through status on the same command path.
+    activationCondition: PROJECT.yaml selects and verifies the command-line claim helper.
+    negativeCondition: PROJECT.yaml selects the MCP claim helper.
+    expectedBehavior: Run the configured script, read result.outcome, and run status through the same script after an uncertain mutating command.
     judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, required-command-outcome, allowed-paths-only], modelRubric: null}
     scenarioAssociations: [project-configurator-happy]
     workflowAssociations: [project-setup]
@@ -98,9 +98,9 @@ probes:
     source: skills/codex-workitem-coordination/SKILL.md
     evaluationCategory: prompt-and-agent
     evaluationKind: workflow-invariant
-    activationCondition: A parent Codex coordinator is explicitly asked to coordinate multiple user-visible backlog tasks through lifecycle batons, claims, wakes, and terminal housekeeping.
+    activationCondition: A parent Codex coordinator is explicitly asked to coordinate multiple user-visible backlog tasks through lifecycle handoffs, notifications, and terminal housekeeping.
     negativeCondition: One self-contained task or a parked preflight that cannot enter its current lifecycle or artifact window does not start a coordination campaign.
-    expectedBehavior: Reconcile canonical task identities and live repository state, serialize primary backlog mutations, coordinate just-in-time non-overlapping artifact campaigns with parent-only wakes and adaptive backoff, and close only from durable review verification integration release lifecycle and housekeeping evidence.
+    expectedBehavior: Reconcile canonical task identities and live repository state, follow agent-claim when it is loaded, leave stale-claim investigation to the watchdog, and close only from durable review, verification, integration, lifecycle, and cleanup evidence.
     judgePlan: {deterministicChecks: [skill-read-trace, suite-simulator-tests, phase-order, lifecycle-baton-evidence, task-identity-fields, delayed-visibility-settlement, settled-zero-retry, retry-limit, duplicate-containment, canonical-id-persistence, done-success-title, just-in-time-dispatch, fifteen-minute-wake-audit, concrete-successor-chain, completion-evidence-gate, archive-eligibility], modelRubric: workflow-quality}
     scenarioAssociations: [dev-backlog-coordinator-happy, dev-backlog-coordinator-boundary]
     workflowAssociations: [backlog]
@@ -310,7 +310,7 @@ probes:
     evaluationKind: artifact-contract
     activationCondition: The effective provider is file and one requested or independently identified defect, feature, analysis, or investigation must become a durable work item.
     negativeCondition: Non-file providers, isolated worktrees, non-main authorities, completed archives, and duplicate outcomes receive no new backlog file or shadow queue.
-    expectedBehavior: Require file provider authority and a short primary-main backlog claim; reject context-only source evidence; keep authorized agent-resolvable uncertainty Ready under Open Questions; use complete User Action Required fields only for a genuine user-owned blocker; accept explicit Holding and series shapes; and reject governed-definition work without exact canonical paths, separately allowed dependents, and exact user-message provenance while treating checker YAML as derived evidence that cannot widen approval.
+    expectedBehavior: Require file provider authority and create a uniquely named item atomically without a claim; reject context-only source evidence; keep authorized agent-resolvable uncertainty Ready under Open Questions; use complete User Action Required fields only for a genuine user-owned blocker; accept explicit Holding and series shapes; and reject governed-definition work without exact canonical paths, separately allowed dependents, and exact user-message provenance while treating checker YAML as derived evidence that cannot widen approval.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, queue-state-transition, claim-lifecycle, tool-authority], modelRubric: null}
     scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary, dev-backlog-steward-provider-boundary]
     workflowAssociations: [backlog]
@@ -1022,9 +1022,9 @@ probes:
     source: skills/manage-file-work-items/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
-    activationCondition: The effective provider is file and work-item inventory, dispatch, claim, resume, blocking, completion, failure, archive, or recovery is requested.
+    activationCondition: The effective provider is file and work-item inventory, dispatch, resume, blocking, completion, failure, archive, or recovery is requested.
     negativeCondition: Non-file providers, isolated worktrees, and non-main authorities cannot mutate backlog; holding and archived items are not dispatched; publication, missing logs, and silence never imply completion.
-    expectedBehavior: Require primary-main file authority, reconcile visible items and durable state, respect typed folders, series and dependencies, use short backlog claims separate from delivery, enforce explicit transitions, and preserve source, ownership, review, checks, main observation, delivery, recovery, and archive evidence.
+    expectedBehavior: Require primary-main file authority, reconcile visible items and durable state, respect typed folders, series and dependencies, follow agent-claim when it is loaded, enforce explicit transitions, and preserve source, ownership, review, checks, main observation, delivery, recovery, and archive evidence.
     judgePlan: {deterministicChecks: [skill-read-trace, queue-state-transition, claim-lifecycle, artifact-structure], modelRubric: workflow-quality}
     scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary, dev-backlog-steward-provider-boundary]
     workflowAssociations: [backlog]

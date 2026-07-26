@@ -11,7 +11,7 @@ Carry one accepted candidate from branch publication through host review and obs
 
 ## Dependencies
 
-- Apply Agent Claim only for an event in its complete Event Contract. Private feature-branch publication work needs no claim; shared browser, database, port, live-model, installed-runtime, or deployment events use their exact named resources.
+- Follow the Claim Events table in agent-claim during publication.
 - Apply [create-pull-request](../create-pull-request/SKILL.md) only for GitHub or another configured host whose contract accurately uses pull-request terminology.
 - Use the configured GitLab merge-request capability and GitLab tools for GitLab publication, review, pipeline, and merge evidence. If no accurate capability exists, return BLOCKED instead of substituting create-pull-request or GitHub-shaped evidence.
 - Prepare the final lifecycle update for the caller. This skill must not dispatch a provider manager, Dev Backlog Steward, or any Persistence mutation.
@@ -34,10 +34,9 @@ Consume an already accepted, independently reviewed and verified candidate commi
 ## Branch And Ownership
 
 1. Inspect the configured base, work-item scope, dependency branches, existing publication, commits, worktree state, and remote state.
-2. Keep branch preparation, commit, rebase, and unique remote-branch publication claim-free. Apply only event-specific shared-resource claims and stop on identical-resource conflicts.
-3. Create or reuse the intended feature branch for the accepted candidate. When the selected coordination policy creates the delivery branch, use that same branch instead of adding a parallel coordination branch.
-4. Preserve the same work item, feature branch, publication record, and delivery identity across correction cycles. A correction that changes the independent work-item boundary returns to the coordinator before scope expands.
-5. Release any event-specific shared-resource claim after that resource use is complete. Preserve the same commit, verification, cleanliness, and publication gates without a private-branch claim.
+2. Create or reuse the intended feature branch for the accepted candidate.
+3. Preserve the same work item, feature branch, publication record, and delivery identity across correction cycles.
+4. Return a correction that changes the work-item boundary to the coordinator before expanding scope.
 
 ## Candidate Publication
 
@@ -107,7 +106,7 @@ When the configured strategy rebases or squashes, record the provider-observed m
 
 A closed-unmerged, abandoned, replaced, or superseded publication cannot return READY. Follow an explicit replacement only after its relationship to the same work item and branch history is verified; otherwise return BLOCKED with both references.
 
-After the merge gate passes, prepare the work-item reference, completion disposition READY, branch and publication reference, final merged base commit, approvals, checks, dependencies, merge evidence, enabled resource-coordination releases, and requested terminal lifecycle update. Return the prepared terminal handoff to the caller; the owning orchestrator decides whether and when to dispatch the selected provider manager. This skill neither performs that dispatch nor waits for its result. The provider-backed item remains nonterminal until the separate Persistence phase records lifecycle COMPLETED. When the selected provider is none, record lifecycle COMPLETED in the task-local result before returning READY, together with the complete terminal evidence.
+After the merge gate passes, prepare the work-item reference, completion disposition READY, branch and publication reference, final merged base commit, approvals, checks, dependencies, merge evidence, applicable claim results, and requested terminal lifecycle update. Return the prepared terminal handoff to the caller; the owning orchestrator decides whether and when to dispatch the selected provider manager. This skill neither performs that dispatch nor waits for its result. The provider-backed item remains nonterminal until the separate Persistence phase records lifecycle COMPLETED. When the selected provider is none, record lifecycle COMPLETED in the task-local result before returning READY, together with the complete terminal evidence.
 
 A provider-backed Persistence recording failure happens after this skill returns. It does not change Commit READY into BLOCKED or erase the delivery evidence; the owning orchestrator reports and reconciles the Persistence failure separately.
 
@@ -116,7 +115,7 @@ A provider-backed Persistence recording failure happens after this skill returns
 Return exactly one disposition with deciding evidence:
 
 - AWAITING_REVIEW: canonical work-item identifier and provider reference, branch, pushed commit, pull-request or merge-request URL, base and head, ready or draft state, review and dependency order, completed checks, and every outstanding review, check, dependency, or merge gate.
-- READY: all publication evidence plus required approvals and checks, merged state, final merge commit, configured base-branch reachability, enabled resource-coordination release evidence, and the provider lifecycle update this evidence authorizes.
-- BLOCKED: preserved branch, commits, publication URL when one exists, provider-accurate state, enabled resource-coordination disposition, exact missing evidence or authority, and the next safe action.
+- READY: all publication evidence plus required approvals and checks, merged state, final merge commit, configured base-branch reachability, applicable claim results, and the provider lifecycle update this evidence authorizes.
+- BLOCKED: preserved branch, commits, publication URL when one exists, provider-accurate state, applicable claim results, exact missing evidence or authority, and the next safe action.
 
 Never report READY from branch publication alone. The owning orchestrator may later select a provider manager for Persistence; only that manager or the provider-none task result records lifecycle COMPLETED. This skill does not dispatch the manager.

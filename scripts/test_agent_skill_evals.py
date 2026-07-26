@@ -2038,7 +2038,6 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     "detect_technology_skills": "NO_VARIANT",
                     "claim_acquire": contract["requiredToolOutcomes"]["claim_acquire"][0],
                     "claim_status": "STATUS",
-                    "claim_extend": "EXTENDED",
                     "claim_heartbeat": "HEARTBEAT",
                     "verify_yaml": "OK",
                     "verify_markdown_links": "OK",
@@ -3870,7 +3869,6 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 "skill_validate",
                 "skill_refresh",
                 "claim_status",
-                "claim_extend",
                 "claim_heartbeat",
             }.issubset(required)
         )
@@ -3880,7 +3878,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
         )
         self.assertTrue(required.issubset(set(contract["enabledTools"])))
         self.assertEqual(
-            {"claim_maintain_journal", "claim_report"},
+            {"claim_extend", "claim_maintain_journal", "claim_report"},
             set(contract["enabledTools"]) - required,
         )
         self.assertEqual(
@@ -3893,7 +3891,6 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 "detect_technology_skills",
                 "claim_acquire",
                 "claim_status",
-                "claim_extend",
                 "claim_heartbeat",
                 "verify_yaml",
                 "verify_markdown_links",
@@ -4153,7 +4150,6 @@ class HarnessAndJudgeTests(unittest.TestCase):
             "detect_technology_skills": "READY",
             "claim_acquire": contract["requiredToolOutcomes"]["claim_acquire"][0],
             "claim_status": "STATUS",
-            "claim_extend": "EXTENDED",
             "claim_heartbeat": "HEARTBEAT",
             "verify_yaml": "OK",
             "verify_markdown_links": "OK",

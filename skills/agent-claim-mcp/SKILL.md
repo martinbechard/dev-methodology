@@ -1,23 +1,27 @@
 ---
 name: agent-claim-mcp
-description: Invoke the agent-claim contract through one setup-verified MCP claim-helper interface without runtime probing or interface fallback.
+description: Use the configured MCP claim helper.
 metadata:
   category: development-practice
 ---
 
 # Agent Claim MCP
 
-Apply this adapter only when Project Configurator selected mcp in the compatibility field agent_claim_transport and verified the complete claim tool surface. That field selects how the claim helper is invoked. Apply agent-claim for scope, ownership, state, recovery, heartbeat, release, and completion semantics.
+Use this skill to call the MCP claim helper selected in PROJECT.yaml.
 
-## Deadline Parity Boundary
+Follow agent-claim for all claim rules. This skill explains only how to call the configured MCP helper.
 
-This adapter defines the MCP contract required for interface parity, but the live external mcp-agent-ops provider has not been verified to supply the deadline fields and claim_extend_deadline operation below. The bundle records this state as UNRESOLVED_EXTERNAL_PROVIDER. Project Configurator must not select MCP for agent-claim until setup evidence verifies the complete future surface and result schema. Do not claim current live MCP support, emulate the missing operation with another tool, or switch to the command-line interface at runtime.
+## Current Availability
 
-## Availability Boundary
+Do not configure the current mcp-agent-ops provider as the claim helper yet. It has not been verified to support claim deadlines or claim_extend_deadline.
 
-Project Configurator verifies the configured server before rendering this adapter. Runtime agents invoke the named tools directly. Do not list tools to rediscover the configured claim-helper interface, inspect another interface, execute a claim command, or infer availability from package versions.
+## Helper Setup
 
-If any required claim tool is absent, disconnected, or cannot initialize before dispatch, stop with CLAIM_TRANSPORT_UNAVAILABLE and request Project Configurator reconfiguration. Do not switch claim-helper interfaces. A path, root, authorization, input-policy, schema, or other structured rejection is a valid tool result, not unavailability.
+Project Configurator must verify every operation and result field in this skill before selecting an MCP server. After selection, use only that server for claim operations.
+
+If a required tool is missing or the server cannot start, ask Project Configurator to configure a working claim helper.
+
+If a tool returns result.outcome, the helper ran. Follow agent-claim for that outcome.
 
 ## MCP Operations
 
@@ -30,29 +34,25 @@ Use exactly the tool matching the intended operation:
 | Extend scope | claim_extend | repository, claim_id, and net-new scope |
 | Extend a deadline | claim_extend_deadline | repository, claim_id, requested_hard_stop_duration_seconds, and extension_evidence |
 | Refresh heartbeat | claim_heartbeat | repository, claim_id |
-| Release ownership | claim_release | repository, claim_id; no_change only for a truthful no-change release, or the mutually exclusive reconcile_out_of_domain_commit and matching prior_rejected_release_reference |
+| Release ownership | claim_release | repository, claim_id; optional no_change, or the mutually exclusive reconcile_out_of_domain_commit and prior_rejected_release_reference |
 | Maintain journal | claim_maintain_journal | repository; hot_days defaults to 2 |
 | Report contention | claim_report | repository; since defaults to 2d |
 
-The repository and worktree_path arguments are absolute paths accepted by the configured server workspace roots. Files and trees are lists. The mutually exclusive broad selectors are project_files, backlog, and all_files. Project-files and all-files require scope_reason. Acquisition also accepts parent_claim_id, branch, base, allow_recovery, and the compatibility-only worktree_path and compat_file_directories inputs.
+Pass the absolute project-root path in repository.
 
-The required future parity contract permits at most one resource value per claim. A named-resource acquisition or scope extension must also send resource_class, resource_id, expected_duration_seconds, and requested_hard_stop_duration_seconds. The provider must resolve configured_maximum_duration_seconds and cleanup_grace_seconds from the project's exact class or resource-id override, validate expected <= requested <= maximum, and return expected_release_at, hard_stop_at, cleanup_grace_ends_at, and extension history. Callers never supply the configured maximum or cleanup grace. Status must report deadline_status read-only, heartbeat must not change the hard stop, and overdue state must never auto-release ownership.
+Use files, project_files, or resources for the scope chosen from the Claim Events table.
 
-## Dispatch Contract
+Project_files also requires scope_reason.
 
-Each completed tool call returns one structured wrapper with exit_code and result. Inspect result.outcome before taking the next action. Preserve result.schema_version, result.legacy_outcome when present, warnings, conflicts, claim data, and target data as coordination evidence.
+A resource request accepts one resources value plus resource_class, resource_id, expected_duration_seconds, and requested_hard_stop_duration_seconds. The result includes the configured limits and calculated deadlines.
 
-Do not treat a nonzero exit_code as a protocol failure. CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, SHARED_CHECKOUT_REQUIRED, SHARED_CHECKOUT_RELEASE_REQUIRED, ISOLATED_CHECKOUT_SETUP_REQUIRED, DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED, and every structured rejection are completed coordination results. Follow agent-claim without repeating the operation through another claim-helper interface.
+## Tool Results
 
-The required future parity contract must also return RECONCILIATION_RECOVERY_REQUIRED when a durable pending reconciliation marker controls transaction recovery. A prepared marker protects the exact original registry and journal snapshots; RELEASE_PENDING is not a release. A committed marker makes the exact released registry authoritative and finalizes exactly one RELEASED journal event. Scoped operations and journal maintenance must attempt validated deterministic recovery under the registry lock. Reporting must remain read-only and return this outcome before loading journal events when a marker exists.
+Each completed tool call returns exit_code and result. Read result.outcome before deciding what to do next.
 
-When this outcome appears:
+A nonzero exit_code can still contain a valid claim outcome. Follow agent-claim for that outcome. Do not repeat the operation through another claim helper.
 
-1. Call claim_status through this same configured MCP claim-helper interface.
-2. If the outcome persists, preserve the marker, registry, journal, tool result, and relevant filesystem evidence.
-3. Escalate that evidence. Do not manually edit or remove the marker, registry, journal, or protected claim.
-
-## Exact Call Shapes
+## Tool Examples
 
 Read live ownership:
 
@@ -60,20 +60,20 @@ Read live ownership:
 {"repository": "/workspace/project"}
 ```
 
-Acquire one exact file:
+File-scope acquisition:
 
 ```json
 {
   "repository": "/workspace/project",
-  "claim_id": "task-123",
-  "agent": "implementation-agent",
-  "task": "task-123",
-  "root_task_id": "task-123",
-  "files": ["src/feature.py"]
+  "claim_id": "update-work-item-123",
+  "agent": "backlog-steward",
+  "task": "update-work-item-123",
+  "root_task_id": "work-item-123",
+  "files": ["backlog/feature-backlog/work-item-123.md"]
 }
 ```
 
-Acquire broad project ownership:
+Project-files acquisition:
 
 ```json
 {
@@ -87,22 +87,7 @@ Acquire broad project ownership:
 }
 ```
 
-Repeat an isolation-required acquisition with the same claim identity:
-
-```json
-{
-  "repository": "/workspace/project",
-  "claim_id": "task-123",
-  "agent": "implementation-agent",
-  "task": "task-123",
-  "root_task_id": "task-123",
-  "files": ["src/feature.py"],
-  "branch": "codex/task-123",
-  "base": "main"
-}
-```
-
-Required future timed-resource acquisition shape:
+Resource acquisition:
 
 ```json
 {
@@ -119,17 +104,21 @@ Required future timed-resource acquisition shape:
 }
 ```
 
-Extend one claim:
+Resource-scope extension:
 
 ```json
 {
   "repository": "/workspace/project",
   "claim_id": "task-123",
-  "files": ["tests/test_feature.py"]
+  "resources": ["port:3000"],
+  "resource_class": "database-port",
+  "resource_id": "port:3000",
+  "expected_duration_seconds": 600,
+  "requested_hard_stop_duration_seconds": 1200
 }
 ```
 
-Required future evidence-backed deadline extension shape:
+Deadline extension:
 
 ```json
 {
@@ -140,17 +129,19 @@ Required future evidence-backed deadline extension shape:
 }
 ```
 
-Heartbeat, release, journal maintenance, and reporting use these respective argument shapes:
+Heartbeat:
 
 ```json
 {"repository": "/workspace/project", "claim_id": "task-123"}
 ```
 
+Release:
+
 ```json
 {"repository": "/workspace/project", "claim_id": "task-123", "no_change": false}
 ```
 
-The required future evidence-gated reconciliation shape is:
+Release after Project Configurator approves reconciliation:
 
 ```json
 {
@@ -165,16 +156,16 @@ The required future evidence-gated reconciliation shape is:
 {"repository": "/workspace/project", "hot_days": 2}
 ```
 
+Report:
+
 ```json
 {"repository": "/workspace/project", "since": "2d"}
 ```
 
-## Ambiguous Dispatch
+## Uncertain Tool Outcome
 
-When a mutating MCP dispatch is ambiguous because the connection breaks after submission, do not repeat the mutation and do not switch claim-helper interfaces. Reconnect to the same configured MCP interface and call claim_status for the same repository. Continue only from the observed registry state.
+If the connection fails after sending a tool call that changes claim state, the operation may have completed. Do not repeat it.
 
-If the same claim-helper interface cannot provide status, preserve the ambiguous state, report CLAIM_TRANSPORT_UNAVAILABLE, and request Project Configurator reconfiguration or an explicit ownership handoff. Never use the command adapter to guess whether the mutation succeeded.
+Reconnect to the same server. Call claim_status for the same repository. Continue from the reported claim state.
 
-## Behavioral Equivalence
-
-Both configured claim-helper interfaces expose the same helper outcomes and next-action semantics. Their invocation envelopes differ, but this adapter never renames, suppresses, retries, or translates a structured coordination outcome.
+If the server cannot return status, ask Project Configurator for help. Do not use another helper to guess what happened.

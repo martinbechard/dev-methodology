@@ -4,9 +4,9 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: Agent Claim Command
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Invoke the agent-claim contract through the adapter-bundled claim command-line interface without...
+  short_description: Use the configured command-line claim helper.
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $agent-claim-command with $agent-claim to perform this claim through the configured claim command-line interface.
+  default_prompt: Use $agent-claim-command with $agent-claim to run the configured command-line claim helper.
 
 # Optional invocation policy placeholder.
 # policy:

@@ -14,7 +14,7 @@ Output purposes:
 - source patch: Provides the requested behavior change in a reviewable form that can be integrated into the repository.
 - test and build evidence: Demonstrates that the changed behavior and its surrounding contracts passed the applicable checks before the requester relies on the patch.
 - changed-file summary: Gives the requester and reviewers a concise inventory of the affected scope so they can assess impact and navigate the implementation quickly.
-- candidate handoff status: Records the work-item reference, candidate commit and branch, changed paths, verification evidence, clean worktree, and implementation ownership disposition for independent review and downstream orchestration.
+- candidate handoff status: Records the work-item reference, candidate commit and branch, changed paths, verification evidence, clean worktree, and disposition of any Event Contract claim actually triggered for independent review and downstream orchestration.
 -->
 ---
 name: dev-coder
@@ -48,11 +48,11 @@ Implement one normalized work item as the smallest complete source change, verif
 ## Workflow
 
 1. Normalize the interactive, file-backed, or issue-backed request into an identifier, source reference, title, requirements, acceptance criteria, dependencies, and verification expectations.
-2. Acquire implementation ownership before branch creation or source mutation only when the project-selected resource-coordination policy requires it.
+2. Keep private-worktree branch creation and source mutation claim-free. Apply the project-selected resource-coordination policy only when an Event Contract event occurs.
 3. Inspect callers, contracts, dependencies, repository patterns, and existing tests, then implement the smallest complete change and regression coverage.
 4. Run the focused tests and applicable build, lint, type, or integration checks without weakening gates.
-5. Commit the verified change, confirm the candidate worktree is clean, and complete the release of enabled resource ownership or truthfully hand it off.
-6. Return the candidate commit, branch and changed paths, focused checks, omissions, clean-worktree evidence, and enabled resource-coordination state to Dev Orchestrator.
+5. Commit the verified change, confirm the candidate worktree is clean, and release or truthfully hand off every Event Contract claim the task actually triggered.
+6. Return the candidate commit, branch and changed paths, focused checks, omissions, clean-worktree evidence, and disposition of every Event Contract claim actually triggered to Dev Orchestrator.
 
 ## Failure Handling
 
@@ -61,7 +61,7 @@ Implement one normalized work item as the smallest complete source change, verif
 
 ## Completion
 
-- Report READY only as a candidate handoff after the source patch is committed, focused verification passes, the worktree is clean, and any enabled implementation ownership is released or explicitly handed off. Candidate READY is not Commit delivery READY.
+- Report READY only as a candidate handoff after the source patch is committed, focused verification passes, the worktree is clean, and every triggered Event Contract claim is released or explicitly handed off. Candidate READY is not Commit delivery READY.
 - Report BLOCKED with preserved commits and exact evidence when a safe candidate handoff cannot be reached.
 
 These definition-owned skills are preloaded and govern the work: careful-coding, code-comments, code-discovery, fix-explanation.

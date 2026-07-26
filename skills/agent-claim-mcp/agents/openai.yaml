@@ -4,9 +4,9 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: Agent Claim Mcp
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Invoke the agent-claim contract through one setup-verified MCP claim-helper interface without...
+  short_description: Use the configured MCP claim helper.
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $agent-claim-mcp with $agent-claim to perform this claim through the configured MCP claim-helper interface.
+  default_prompt: Use $agent-claim-mcp with $agent-claim to call the configured MCP claim helper.
 
 # Optional invocation policy placeholder.
 # policy:

@@ -130,6 +130,10 @@ text after the fact.
 
 Evidence extraction records quotes, locations, status, and uncertainty without deciding final severity. Synthesis reconciles conflicting evidence, identifies the correction, and assigns severity from user, correctness, security, data, operability, or maintainability impact. Do not use writing preference alone as severity evidence.
 
+### 2C. Review every sentence
+
+Use documentation-page-verify to review every prose sentence. Apply its three sentence checks to complete claims and instructions in tables and lists as well. Record the results in the completed checklist before extracting findings.
+
 ### 3. Review directive coverage
 
 For every structured input directive or requirement that the target was
@@ -382,6 +386,7 @@ Check all of these:
 13. If there were no material findings, the checklist still exists.
 14. Every exact quotation resolves against its named source after line-ending normalization and any omission uses the literal [omitted] marker.
 15. Summaries, assessments, and not-applicable explanations are not presented as exact quotations.
+16. The completed checklist records the shared three-part sentence review from documentation-page-verify.
 
 ## Do not
 

@@ -2,10 +2,11 @@ name: dev-merge-coordinator
 filename: dev-merge-coordinator
 repositoryMutation: required
 description: Integrates work from multiple agents or worktrees while preserving resource ownership, verification, and conflict evidence.
-instructions: Apply the project-selected resource-coordination policy to shared integration
-  state when enabled, accept only committed clean contributions, reconcile conflicts intentionally,
-  regenerate shared outputs after source integration, run integrated verification, commit the
-  combined result, and release enabled ownership only from a clean worktree.
+instructions: Keep private-branch preparation claim-free. When integration mutates the primary
+  worktree and agent-claim is selected, acquire project-files immediately before that event.
+  Accept only committed clean contributions, reconcile conflicts intentionally, regenerate
+  shared outputs after source integration, run integrated verification, commit the combined
+  result, and release the triggered claim at its clean committed boundary.
 modelProfile: advanced
 examples:
 - purpose: Integrate committed contributions from dependent worktrees in the order required
@@ -18,11 +19,11 @@ examples:
       client worktrees into the integration branch, respecting enabled resource ownership and verifying
       the combined workflow."
   plausibleResponse: Confirmed both worktrees were clean, committed, and supported by
-    handoff evidence. With agent-claim selected, acquired the integration-resource ownership, merged the service contract
-    before the dependent client, and recorded both integration commits with no content
-    conflicts. Ran the contract tests, client tests, and repository build successfully,
-    then completed delivery closeout with the enabled resource-coordination evidence and reported the integrated changes and verification
-    evidence.
+    handoff evidence. With agent-claim selected, acquired project-files immediately before
+    primary-worktree integration, merged the service contract before the dependent client,
+    and recorded both integration commits with no content conflicts. Ran the contract tests,
+    client tests, and repository build successfully, then released project-files at the clean
+    committed boundary and reported the integrated changes and verification evidence.
 - purpose: Reconcile overlapping contributions against documented behavior, preserve
     the intent that survives integration, and leave an auditable conflict decision.
   runtimeInvocations:
@@ -63,4 +64,6 @@ outputContract:
     purpose: Shows that the integrated result passed its applicable checks so the requester
       can distinguish successful merging from verified compatibility.
 - commit and delivery closeout:
-    purpose: Records integration commit hashes and clean source and target worktrees, plus release evidence when resource coordination is enabled, so merged work remains durable and recoverable.
+    purpose: Records integration commit hashes and clean source and target worktrees, plus
+      release evidence for every Event Contract claim actually triggered, so merged work
+      remains durable and recoverable.

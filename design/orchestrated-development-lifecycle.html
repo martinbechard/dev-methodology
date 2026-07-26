@@ -362,7 +362,6 @@
       border-top: 0.28rem solid var(--teal);
       background: var(--soft-teal);
     }
-    .assignment-step.claim { border-color: var(--amber); background: var(--soft-amber); }
     .assignment-step.idle { border-color: var(--blue); background: var(--soft-blue); }
     .assignment-step strong { display: block; margin-bottom: 0.3rem; color: var(--ink); }
     .assignment-step p { font-size: 0.8rem; }
@@ -666,21 +665,17 @@
     </figure>
     <aside class="thread-context"><h3>Execution Contexts</h3><p>The Dev Backlog Steward is a child Agent, not another work-item Thread or queue entry. An Assignment is bounded work sent to an Agent; it does not create another work-item Thread. A runtime may retain a child execution context for that Agent, but the methodology still treats it as part of the owning parent or work-item Thread.</p></aside>
     <figure class="steward-sequence-figure" aria-labelledby="steward-sequence-title">
-      <figcaption id="steward-sequence-title">Steward Assignments Are Sequential<span>One retained Steward Agent may receive multiple assignments, but only one mutating assignment may be active or queued at a time. When agent-claim is selected, only Event Contract triggers acquire and release temporary protection.</span></figcaption>
-      <div class="assignment-flow" role="img" aria-label="Assignment A performs and commits one lifecycle update. When agent-claim is selected, it acquires and releases conditional Claim A. The parent confirms the Steward Agent is idle before Assignment B begins and, when enabled, acquires conditional Claim B.">
+      <figcaption id="steward-sequence-title">Steward Assignments Are Sequential<span>One retained Steward Agent may receive multiple assignments, but only one mutating assignment may be active or queued at a time.</span></figcaption>
+      <div class="assignment-flow" role="img" aria-label="Assignment A performs and commits one lifecycle update. The parent confirms that the Steward Agent is idle before Assignment B begins.">
         <div class="assignment-step"><strong>Assignment A</strong><p>One exact lifecycle update.</p></div>
         <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
-        <div class="assignment-step claim"><strong>Conditional Claim A</strong><p>Only when agent-claim is selected.</p></div>
-        <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
-        <div class="assignment-step"><strong>Commit And Finish</strong><p>Preserve the result; release its claim when enabled.</p></div>
+        <div class="assignment-step"><strong>Commit And Finish</strong><p>Preserve the result and finish the assignment.</p></div>
         <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
         <div class="assignment-step idle"><strong>Confirm Idle</strong><p>No active or queued assignment remains.</p></div>
         <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
         <div class="assignment-step"><strong>Assignment B</strong><p>A distinct lifecycle update.</p></div>
-        <div class="assignment-arrow" aria-hidden="true">&rarr;</div>
-        <div class="assignment-step claim"><strong>Conditional Claim B</strong><p>Only when agent-claim is selected.</p></div>
       </div>
-      <p class="sequence-warning"><strong>Do not infer Agent idleness from an earlier result.</strong> A final assignment result proves only that assignment finished. When agent-claim is selected, the owning Agent releases its claim; another Agent must not remove it merely because the repository has not changed yet. With no coordination mechanism, the same assignments remain sequential but no Claim A or Claim B exists.</p>
+      <p class="sequence-warning"><strong>Do not infer Agent idleness from an earlier result.</strong> A final assignment result proves only that assignment finished.</p>
     </figure>
     <p class="source-note">The <a href="agent-and-skill-definitions.html#dev-activities-title">development-agent catalog</a> owns the complete Role definitions. <a href="../skills/codex-workitem-coordination/SKILL.md">Work-item coordination</a> owns the execution-context model.</p>
   </section>
@@ -688,7 +683,7 @@
   <section class="section" id="private-work" aria-labelledby="private-work-title">
     <div class="section-heading">
       <span class="chapter-number">Chapter 04</span>
-      <div><h2 id="private-work-title">Private Workspaces And Delivery Paths</h2><p>Starting and Running Work items do not share a mutable checkout. Private-worktree editing, generation, build, test, commit, and rebase need no claim; outputs and caches stay worktree-local, and unique work-item remote branches also need no claim.</p></div>
+      <div><h2 id="private-work-title">Private Workspaces And Delivery Paths</h2><p>Starting and Running Work items use separate worktrees. Their files, outputs, and caches remain separate until delivery.</p></div>
     </div>
     <figure class="branch-figure" aria-labelledby="branch-title">
       <figcaption id="branch-title">Parallel Workspaces<span>A worktree is a separate checkout. A branch records that item's commits.</span></figcaption>
@@ -699,7 +694,7 @@
       </div>
     </figure>
     <div class="delivery-paths">
-      <article class="delivery-path"><h3>Direct-main delivery</h3><ol><li>Review and verify the private candidate.</li><li>When agent-claim is selected, claim project-files before non-backlog primary-worktree integration; with none, enter the serialized integration transaction without claim operations or evidence.</li><li>Refresh current main and create a fresh reconciliation branch from that exact commit.</li><li>Apply only the accepted paths; do not import unrelated ancestry merely for provenance. Verify the integrated result, update main, and complete delivery closeout with coordination evidence only when enabled.</li></ol></article>
+      <article class="delivery-path"><h3>Direct-main delivery</h3><ol><li>Review and verify the private candidate.</li><li>Follow <a href="../skills/agent-claim/SKILL.md">Agent Claim</a> when it is loaded.</li><li>Refresh current main and create a fresh reconciliation branch from that exact commit.</li><li>Apply only the accepted paths; do not import unrelated ancestry merely to preserve history. Verify the integrated result, update main, and complete delivery closeout.</li></ol></article>
       <article class="delivery-path"><h3>Feature-branch delivery</h3><ol><li>Review and verify the feature branch.</li><li>The Commit skill publishes a GitHub pull request or GitLab merge request and returns Commit AWAITING_REVIEW without Persistence mutation.</li><li>Dev Orchestrator separately dispatches Dev Backlog Steward exactly once for the nonterminal AWAITING_REVIEW update; repeated observation reconciles that update.</li><li>Resume the same delivery identity through provider-accurate review, checks, merge, and main observation until Commit READY, then dispatch exactly once for the distinct terminal Persistence closure. Provider none keeps both states thread-local.</li></ol></article>
     </div>
   </section>
@@ -707,10 +702,10 @@
   <section class="section" id="coordination" aria-labelledby="coordination-title">
     <div class="section-heading">
       <span class="chapter-number">Chapter 05</span>
-      <div><h2 id="coordination-title">Shared-Resource Coordination</h2><p>PROJECT.yaml selects resource coordination independently as none or agent-claim. Agent Claim maps only named shared-mutation events to temporary protection; private work remains claim-free and the registry never becomes delivery authority.</p></div>
+      <div><h2 id="coordination-title">Shared-Resource Coordination</h2><p>PROJECT.yaml may load Agent Claim when the project needs temporary protection for shared files or resources. The claim registry records temporary ownership; it does not prove review, delivery, or completion.</p></div>
     </div>
     <figure class="resource-figure" aria-labelledby="resource-title">
-      <figcaption id="resource-title">Shared Resource Gate<span>With agent-claim, protect the smallest path or named resource and release promptly. With none, serialize the delivery transaction without coordination operations or evidence.</span></figcaption>
+      <figcaption id="resource-title">Shared Resource Gate<span>The Agent Claim skill defines every event that requires a claim, the scope to request, and when to release it.</span></figcaption>
       <div class="resource-lanes">
         <div class="private-lanes"><div class="private-lane">Worktree A remains private</div><div class="private-lane">Worktree B remains private</div><div class="private-lane">Worktree C remains private</div></div>
         <div class="gate">exact shared gate</div>
@@ -718,29 +713,11 @@
       </div>
       <div class="resource-examples" aria-label="Examples of exclusive resources"><span>browser</span><span>database</span><span>port</span><span>live model</span><span>shared install</span><span>deployment</span></div>
     </figure>
-    <table class="evidence-table" aria-labelledby="claim-event-table-caption">
-      <caption id="claim-event-table-caption">Complete Event-To-Claim Contract</caption>
-      <thead><tr><th scope="col">Event</th><th scope="col">Claim rule</th></tr></thead>
-      <tbody>
-        <tr><td>Update an existing work item</td><td>Claim the exact current backlog path and, for a move or rename, the destination path.</td></tr>
-        <tr><td>Perform any non-backlog work in the primary worktree</td><td>Claim project-files.</td></tr>
-        <tr><td>Use a shared browser</td><td>Claim browser-test:&lt;id&gt;.</td></tr>
-        <tr><td>Use a shared database</td><td>Claim database:&lt;id&gt;.</td></tr>
-        <tr><td>Use a shared port</td><td>Claim port:&lt;number&gt;.</td></tr>
-        <tr><td>Use a shared live model</td><td>Claim live-model:&lt;provider&gt;:&lt;suite&gt;.</td></tr>
-        <tr><td>Change a shared installed runtime</td><td>Claim shared-install:&lt;target&gt;.</td></tr>
-        <tr><td>Change a shared deployment</td><td>Claim deployment:&lt;environment&gt;.</td></tr>
-      </tbody>
-    </table>
-    <p>Creating a uniquely named new work-item file uses atomic no-overwrite creation without a claim. Different exact backlog item claims may coexist, and one project-files claim may coexist with exact backlog item claims.</p>
     <div class="two-column">
-      <div><h3>Claim Outcomes</h3><dl class="definition-list"><div><dt>Acquired</dt><dd>The named owner may use the recorded event scope.</dd></div><div><dt>Wait required</dt><dd>An exact path, tree, broad domain, or identical resource overlaps another live claim.</dd></div><div><dt>Coexistence</dt><dd>Non-overlapping primary claims coexist without checkout-occupancy serialization.</dd></div><div><dt>Stale investigation</dt><dd>Live claims are presumed valid; only the watchdog investigates stale ownership.</dd></div></dl></div>
-      <div><h3>Claim Limits</h3><dl class="definition-list"><div><dt>Quality</dt><dd>It is not proof of review, verification, delivery, or work-item completion.</dd></div><div><dt>Commit scope</dt><dd>It does not audit commit history or decide whether committed paths belong to the contribution. Normal release does not inspect history; reconciliation checks only bounded commit existence, ancestry, exact paths, claimed-domain exclusion, acquisition-snapshot content, and event identity. Accepted descendant commits may later change a reconciled path.</dd></div><div><dt>Integration</dt><dd>Independent review and integration own committed-content, changed-path, and provenance decisions.</dd></div><div><dt>Lifecycle</dt><dd>Registry cleanup, Git integration, and backlog closeout are distinct operations.</dd></div></dl></div>
+      <div><h3>Claim Results</h3><p>The configured claim helper returns the owner, protected scope, and any conflict. Agents follow the next step defined by Agent Claim.</p></div>
+      <div><h3>Claim Limits</h3><p>A claim records temporary ownership. Review, verification, Git delivery, and work-item completion require separate evidence.</p></div>
     </div>
-    <details><summary>Resource Deadlines</summary><div><p>Each named resource records its exact class and id, expected duration (the planned working time), requested hard stop (the owner-requested latest finish), configured maximum (the immutable project-policy cap), expected release (acquisition time plus expected duration), absolute hard stop (acquisition time plus the accepted requested duration), and cleanup grace (the bounded post-stop shutdown window). The initial maximum/grace defaults in seconds are backlog mutation 600/120, main integration 2700/600, browser or server 3600/600, database or port 1800/300, and live or model evaluation 14400/1800. Exact-id overrides are explicit project policy.</p><p>Heartbeat reports liveness and never extends the hard stop. An evidence-backed extension stays within the immutable maximum. Status is read-only, overdue state never auto-releases ownership, and a stopped owner is immediately actionable. Cleanup grace is for shutdown and evidence preservation, not continued work.</p></div></details>
-    <details><summary>Release Reconciliation Recovery</summary><div><p>The durable transaction marker binds the canonical registry target to exact original and released snapshots and the canonical journal target to exact original, prepared, and released snapshots. A prepared marker protects the original claim; its RELEASE_PENDING line is pending evidence only. A committed marker makes the released registry authoritative and finalizes exactly one RELEASED event. Recovery validates the complete marker, snapshot relationships, allowed target states, and every non-symbolic-link target component before writing.</p><p>Status and journal maintenance enter the registry recovery gate first. Maintenance acquires its journal lock only after marker recovery succeeds. Report remains read-only and returns RECONCILIATION_RECOVERY_REQUIRED before journal loading when a marker exists.</p><ol><li>Invoke status through the same configured claim-helper interface.</li><li>If recovery still cannot complete, preserve the marker, registry, journal, structured result, and filesystem evidence.</li><li>Escalate the evidence without manually editing or removing transaction or claim state.</li></ol></div></details>
-    <details><summary>Shared-Resource Contention</summary><div><p>Keep the existing Work item and delivery lane. Request direct release notification, retry only on the documented bounded schedule, and investigate the real owner and scope when the wait exceeds its limit. Never create a wait-only Work item, release protection for dirty unpreserved work, or treat a heartbeat as proof of useful progress.</p></div></details>
-    <p class="source-note">The portable <a href="../skills/agent-claim/SKILL.md">Agent Claim</a> contract owns event selection, overlap, reconciliation, and clean release. <a href="../scripts/test_agent_claim.py">Focused claim tests</a> and <a href="../README.md#agent-claims-and-worktrees">operator guidance</a> provide executable and operational detail.</p>
+    <p class="source-note"><a href="../skills/agent-claim/SKILL.md">Agent Claim</a> is the only source for claim events, scopes, conflicts, deadlines, recovery, and release timing. The <a href="../skills/agent-claim-command/SKILL.md">command helper</a> and <a href="../skills/agent-claim-mcp/SKILL.md">MCP helper</a> describe only how to invoke the configured helper.</p>
   </section>
 
   <section class="section" id="delivery" aria-labelledby="delivery-title">
@@ -752,7 +729,7 @@
       <figcaption id="delivery-sequence-title">Lifecycle Handoffs<span>A Handoff transfers evidence and the next action; it never lets one Role silently absorb another Role's authority.</span></figcaption>
       <ol class="sequence-list">
         <li><span class="number">1</span><span class="actor">Coordinator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Steward</span><p>Reserve one Ready Work item as Starting with dispatch evidence before Thread creation.</p></li>
-        <li><span class="number">2</span><span class="actor">Root Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Steward</span><p>Accept the Work item and atomically record Running with the canonical Thread, assigned Agent, branch, worktree, and enabled coordination evidence.</p></li>
+        <li><span class="number">2</span><span class="actor">Root Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Steward</span><p>Accept the Work item and atomically record Running with the canonical Thread, assigned Agent, branch, and worktree.</p></li>
         <li><span class="number">3</span><span class="actor">Producer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Reviewer</span><p>Submit a committed, clean contribution with focused implementation evidence.</p></li>
         <li><span class="number">4</span><span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Producer</span><p>Accept or return actionable findings; corrected work receives a fresh independent review.</p></li>
         <li><span class="number">5</span><span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Dev Verifier</span><p>After review acceptance, run checks proportional to affected behavior and risk.</p></li>
@@ -797,7 +774,7 @@
       </tbody>
     </table>
     <aside class="not-a-record"><strong>Thread Evidence Boundary:</strong> Its Agent messages, title, and live state help people observe execution. Durable facts still belong in the Work item, Git, review outputs, and the coordination registry when enabled. With none, registry evidence is absent.</aside>
-    <details><summary>Integration Cleanup</summary><div><p>Create a fresh reconciliation branch from current main for integration; this becomes the work-item Thread's integration and cleanup branch. An older candidate branch retained only as a non-ancestral content source is handled separately.</p><p>Before finish, release, or handoff, commit completed work and prove the applicable worktree clean.</p></div></details>
+    <details><summary>Integration Cleanup</summary><div><p>Create a fresh reconciliation branch from current main for integration; this becomes the work-item Thread's integration and cleanup branch. An older candidate branch retained only as a non-ancestral content source is handled separately.</p><p>Before handoff, commit completed work and prove the applicable worktree clean.</p></div></details>
   </section>
 
   <section class="section" id="design-work" aria-labelledby="design-work-title">
