@@ -12,7 +12,7 @@ Completion: direct-main
 
 ## Summary
 
-Create a portable Simplified Technical English (STE) skill for all technical documentation. Integrate the skill with documentation writing, technical reasoning, communication, review, verification, generated adapters, and public methodology documentation.
+Create a portable Simplified Technical English (STE) skill for all technical documentation. Integrate the skill with documentation writing, technical reasoning, communication, review, verification, generated adapters, and public methodology documentation. Use GPT-5.5 with medium reasoning effort for dedicated Codex documentation authors and the Dev Artifact Reviewer.
 
 ## Context
 
@@ -38,13 +38,15 @@ On 2026-07-27, the user resolved both open questions with this direction: “We 
 
 On 2026-07-27, the user set the documentation-authoring model with this direction: “We should change all Documentation writing agents to use GPT-5.5 medium - add that to the work item.”
 
+On 2026-07-27, the user set the documentation reviewer model with this direction: “Add in the workitem to also have a 5.5 reviewer agent.”
+
 The current portable contracts are `skills/effective-communication/SKILL.md`, `skills/structured-explanation/SKILL.md`, `agents/role-schema.yaml`, `agents/roles/dev-activities/dev-documentation-writer.role.yaml`, and `skills/documentation-page-verify/SKILL.md`.
 
 The approval covers every exact skill and agent definition in the governed-definition scope below. It does not cover a later addition to that scope.
 
 The direction to cover any agent that creates technical documentation authorizes `agents/role-schema.yaml` as the exact shared-skill binding source.
 
-The GPT-5.5 direction authorizes `adapters/codex/model-profiles.yaml` and the exact documentation-authoring role paths in the governed-definition scope below.
+The GPT-5.5 directions authorize `adapters/codex/model-profiles.yaml`, the exact documentation-authoring role paths, and `agents/roles/dev-activities/dev-artifact-reviewer.role.yaml` in the governed-definition scope below.
 
 ## STE Principles For This Work Item
 
@@ -112,9 +114,9 @@ Use these same principles as the initial content contract for the new portable S
 - Do not apply STE rules to executable code, machine-readable data, exact technical tokens, verbatim quotations, or ordinary communication envelopes.
 - Keep `effective-communication` responsible for ordinary user and agent messages.
 
-### Documentation Authoring Model
+### Documentation Authoring And Review Model
 
-- Use the existing semantic `documentation` model profile for dedicated documentation-authoring roles.
+- Use the existing semantic `documentation` model profile for dedicated documentation-authoring roles and the Dev Artifact Reviewer.
 - Map the Codex `documentation` profile to model `gpt-5.5`.
 - Set the Codex reasoning effort for that profile to `medium`.
 - Keep other harness mappings native to their supported model catalogs.
@@ -125,7 +127,8 @@ Use these same principles as the initial content contract for the new portable S
 - Set `modelProfile: documentation` on the Wiki Researcher.
 - Set `modelProfile: documentation` on the Wiki Source Collector.
 - Set `modelProfile: documentation` on the Wiki Writer.
-- Keep review-only, verification-only, query-response, and general implementation roles on their existing profiles unless their own approved scope changes.
+- Set `modelProfile: documentation` on the Dev Artifact Reviewer.
+- Keep other review-only, verification-only, query-response, and general implementation roles on their existing profiles unless their own approved scope changes.
 
 ### Documentation Writer
 
@@ -140,6 +143,7 @@ Use these same principles as the initial content contract for the new portable S
 ### Documentation Review And Verification
 
 - Supply `ste-technical-writing` to the Dev Artifact Reviewer and wiki review roles through the shared role schema.
+- Use the existing Dev Artifact Reviewer as the GPT-5.5 medium reviewer for technical documentation.
 - Update `skills/documentation-page-verify/SKILL.md` to verify applicable STE principles in README files and custom non-wiki technical documents.
 - Require review findings for semantic changes caused by mechanical STE application.
 - Detect descriptions that were incorrectly changed into instructions.
@@ -181,6 +185,7 @@ Approval is granted for these exact governed canonical sources:
 - `agents/role-schema.yaml`
 - `adapters/codex/model-profiles.yaml`
 - `agents/roles/dev-activities/dev-documentation-writer.role.yaml`
+- `agents/roles/dev-activities/dev-artifact-reviewer.role.yaml`
 - `agents/roles/wiki-activities/wiki-architect.role.yaml`
 - `agents/roles/wiki-activities/wiki-ingester.role.yaml`
 - `agents/roles/wiki-activities/wiki-researcher.role.yaml`
@@ -209,6 +214,7 @@ Discovery may identify another required skill or agent definition. Do not mutate
 - Agents apply STE only when they write, rewrite, or review technical-document prose.
 - The Codex `documentation` profile uses `gpt-5.5` with `medium` reasoning effort.
 - Every dedicated documentation-authoring role uses the semantic `documentation` profile.
+- The Dev Artifact Reviewer uses the semantic `documentation` profile and resolves to GPT-5.5 with medium reasoning effort in Codex.
 - Non-Codex harnesses retain supported native model mappings.
 - All technical documentation created by the Dev Documentation Writer uses STE principles.
 - Durable technical wiki content created by wiki agents uses STE principles.
@@ -241,6 +247,7 @@ None.
 - Add focused model-profile tests for the exact Codex `gpt-5.5` and `medium` mapping.
 - Add focused role tests for the Documentation Writer, Wiki Architect, Wiki Ingester, Wiki Researcher, Wiki Source Collector, and Wiki Writer.
 - Verify that each dedicated documentation-authoring role resolves to the Codex `documentation` profile.
+- Add a focused role test that proves the Dev Artifact Reviewer resolves to the Codex `documentation` profile.
 - Verify that non-Codex adapters retain valid native mappings.
 - Add focused role tests for conditional Documentation Writer `structured-explanation` loading.
 - Add focused boundary tests for `effective-communication`, `structured-explanation`, and `documentation-page-verify`.
@@ -266,5 +273,6 @@ None.
 - “All technical documentation” applies to explanatory technical prose. It does not authorize changes to executable code, machine-readable syntax, exact identifiers, or quoted evidence.
 - Wiki roles retain their source, federation, ingest, and verification contracts. STE changes the clarity of their technical prose, not those ownership boundaries.
 - GPT-5.5 with medium effort is the Codex mapping for documentation-authoring roles. Other harnesses use their supported native model mappings.
+- The existing Dev Artifact Reviewer is the GPT-5.5 medium reviewer. This item does not create a second documentation-review role.
 - Formal ASD-STE100 compliance and certification are non-goals.
 - A sentence-length target must never cause loss of meaning or alteration of a technical token.
