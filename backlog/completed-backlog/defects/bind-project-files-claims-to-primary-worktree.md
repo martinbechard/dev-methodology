@@ -1,14 +1,14 @@
 # Bind Project-Files Claims to the Primary Worktree
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
-Owner: root Dev Orchestrator
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/bind-project-files-claims-to-primary-worktree.md
+Provider Reference: backlog/completed-backlog/defects/bind-project-files-claims-to-primary-worktree.md
 
 Completion: direct-main
 
@@ -141,4 +141,15 @@ Exact approval is recorded and User Action Required -> Ready is now durable. A p
 
 ## Notes
 
-This item is Status: Running with Owner: root Dev Orchestrator. The preserved canonical Thread is the sole accepted execution identity. The retained live project-files claim remains unchanged and outside this backlog transaction.
+This item is completed. The preserved canonical Thread remains the execution identity.
+
+## Completion Evidence
+
+- Accepted delivery on main: cd11437ecc922e89e57d6cb996b098437306d9cd.
+- Main includes cleanup-only release, registry reset, linked-worktree project-files rejection, revised User Action Required guidance, focused tests, and generated mirrors.
+- The former retained claim integrate-reconcile-root-agents-019f9fd6 is absent from the live registry.
+- Ten focused helper, command, transport, and contract tests passed.
+- The focused Coordinator reset test passed.
+- Generated-output freshness, six-skill validation, and Git diff check passed.
+- Installed agent-claim, agent-claim-command, and helper bytes match main.
+- Independent-review omission: the user directed direct single-task completion without delegation; this terminal verification reviewed the delivered main behavior directly.
