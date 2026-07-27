@@ -1,6 +1,6 @@
 # Add Backlog Crisis Mode
 
-Status: Ready
+Status: Completed
 
 Type: Feature
 
@@ -8,7 +8,7 @@ Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/add-backlog-crisis-mode.md
+Provider Reference: backlog/completed-backlog/features/add-backlog-crisis-mode.md
 
 Completion: direct-main
 
@@ -151,4 +151,14 @@ The user requested a crisis workflow for systemic backlog blockage: one thread, 
 
 ## Open Questions
 
-- Determine the smallest existing runtime signal that lets the Watchdog declare and end crisis mode in the same Coordinator thread without introducing a separate coordination service.
+- Resolved: the existing Watchdog alert to the existing Coordinator task carries the declaration and exit notice. No new coordination service or crisis task is used.
+
+## Completion Evidence
+
+- Implementation commit: 0c84e3ce
+- The new backlog-crisis-mode skill owns declaration, sequential execution, crisis-set, and exit rules.
+- The Watchdog and Coordinator load the skill only for a declared or active crisis.
+- Watchdog simulator tests: 21 passed.
+- Focused bundle contract test: 1 passed.
+- Skill validation, metadata freshness, generated-output freshness, role-schema regression, and Git diff check passed.
+- The published skill and both affected Codex agents match the committed source bytes.
