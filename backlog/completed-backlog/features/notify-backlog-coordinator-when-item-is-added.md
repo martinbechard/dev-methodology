@@ -1,6 +1,6 @@
 # Notify the Backlog Coordinator When a Work Item Is Added
 
-Status: Ready
+Status: Completed
 
 Type: Feature
 
@@ -8,7 +8,7 @@ Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/notify-backlog-coordinator-when-item-is-added.md
+Provider Reference: backlog/completed-backlog/features/notify-backlog-coordinator-when-item-is-added.md
 
 Completion: direct-main
 
@@ -64,3 +64,15 @@ Direct user request: “when adding a new item to the backlog, advise the Backlo
 ## Superseded Implementation History
 
 Candidates 2b255e1a, 5cf8d456, and 12e0615b attempted to define a universal provider-neutral event identity and cross-runtime delivery protocol. They remain historical evidence and must not be reused as the implementation plan for this simplified item.
+
+## Completion Evidence
+
+- Implementation commit: 1f8906d8
+- A successfully committed file work item sends its provider reference to the existing Coordinator task through the runtime's normal task-message feature.
+- Failed creation, duplicate no-op creation, and an unavailable Coordinator send no message.
+- The Coordinator rereads provider inventory before any reservation or dispatch decision.
+- The notification changes no lifecycle state and creates no delivery task.
+- Coordinator simulator tests: 24 passed.
+- Focused bundle contract test: 1 passed.
+- Skill validation, metadata freshness, generated-output freshness, and Git diff check passed.
+- The published skills and Coordinator agent match the committed source bytes.
