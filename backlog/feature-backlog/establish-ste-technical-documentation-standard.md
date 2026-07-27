@@ -16,7 +16,7 @@ Create a portable Simplified Technical English (STE) skill for all technical doc
 
 ## Context
 
-The repository has no distributed STE skill. The current STE rules exist only in the ignored project-local agent at `.codex/agents/ste_writer.toml`. That agent uses `gpt-5.3-codex-spark` and applies a best-effort subset of ASD-STE100 principles.
+The repository has no distributed STE skill. It also has no canonical portable contract that applies STE principles to technical-document prose.
 
 The conceptual Dev Documentation Writer does not load STE guidance. It uses artifact-specific creation skills to control document structure. The Dev Artifact Reviewer and `documentation-page-verify` do not verify STE usage.
 
@@ -32,7 +32,7 @@ On 2026-07-27, the user directed: “All technical documentation should comply w
 
 On 2026-07-27, the user then directed: “Create a workitem for all this. In the workitem list the STE principles we want to use during the execution of the work item, as well as in creating the STE skill. include the other changes.”
 
-The current local baseline is `.codex/agents/ste_writer.toml`. The current portable contracts are `skills/effective-communication/SKILL.md`, `skills/structured-explanation/SKILL.md`, `agents/roles/dev-activities/dev-documentation-writer.role.yaml`, `agents/roles/dev-activities/dev-artifact-reviewer.role.yaml`, and `skills/documentation-page-verify/SKILL.md`.
+The current portable contracts are `skills/effective-communication/SKILL.md`, `skills/structured-explanation/SKILL.md`, `agents/roles/dev-activities/dev-documentation-writer.role.yaml`, `agents/roles/dev-activities/dev-artifact-reviewer.role.yaml`, and `skills/documentation-page-verify/SKILL.md`.
 
 This request authorizes creation of this Ready work item. It does not by itself authorize mutation of an agent or skill definition. Obtain exact, scope-specific approval before each governed definition change.
 
@@ -126,13 +126,6 @@ Use these same principles as the initial content contract for the new portable S
 - Apply STE to the prose inside its items.
 - Keep `effective-communication` responsible for the surrounding message and handoff.
 
-### Local Agent Migration
-
-- Treat `.codex/agents/ste_writer.toml` as source and evaluation evidence, not as the canonical STE contract.
-- After the portable skill is accepted and installed, either make the local agent a thin consumer of `ste-technical-writing` or retire the local agent.
-- Remove duplicated STE rule ownership from the local agent if it remains.
-- Do not include the ignored local agent in the repository delivery commit.
-
 ### Catalog, Generated Output, And Documentation
 
 - Add the portable skill to the public skill inventory in `README.md`.
@@ -154,10 +147,6 @@ Before mutation, obtain explicit approval for these exact governed canonical sou
 - `skills/documentation-page-verify/SKILL.md`
 - `agents/roles/dev-activities/dev-documentation-writer.role.yaml`
 - `agents/roles/dev-activities/dev-artifact-reviewer.role.yaml`
-
-Obtain separate explicit approval before changing this local agent definition:
-
-- `.codex/agents/ste_writer.toml`
 
 Record the exact approval wording, date, and user-message provenance. Run the supported pre-mutation definition check for each governed canonical path.
 
@@ -194,7 +183,6 @@ Discovery may identify another required governed canonical source. Do not mutate
 - Tests accept necessary technical terms, code, commands, schemas, fixed labels, and exact quotations without forced rewriting.
 - Documentation says “repository STE principles” or equivalent unless formal compliance is verified against the applicable issue and dictionary.
 - README, design pages, generated definitions, native adapters, and installed behavior agree with the canonical sources.
-- The local `ste_writer` agent is not the canonical source after delivery.
 - Independent review confirms that the new skill does not duplicate artifact structure, communication procedure, or structured-explanation ownership.
 - The verified direct-main commit contains only the intended work-item delivery and preserves unrelated worktree state.
 
@@ -233,4 +221,3 @@ None.
 - “All technical documentation” applies to explanatory technical prose. It does not authorize changes to executable code, machine-readable syntax, exact identifiers, or quoted evidence.
 - This item establishes non-wiki technical-document integration first because the Dev Documentation Writer owns that artifact family. Wiki roles have different source, federation, and ingest contracts. The open question keeps that possible extension explicit without silently expanding this item.
 - A sentence-length target must never cause loss of meaning or alteration of a technical token.
-- The local Spark agent and prior model experiments are evaluation evidence. They are not proof of formal ASD-STE100 compliance.
