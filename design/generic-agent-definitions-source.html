@@ -408,7 +408,8 @@
         </div>
         <div class="flow-row">
           <div><span class="name">3. Render Each Harness Format</span></div>
-          <p><code>scripts/build-skill-docs.py</code> converts the conceptual values into native property names and file structures. For example, conceptual <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude Code, Gemini CLI, or Junie CLI agent. The generator emits native or instruction-driven core-skill references by default and preserves conditional request-specific selection instructions. The Codex adapter includes <code>codex-harness-directives</code> in that required core set when <code>repositoryMutation</code> is required or conditional. Passing <code>--inline-core-skills true</code> explicitly embeds required core skill bodies. The <a href="skills-modularization.html#skill-lifecycle-title">cross-harness skill lifecycle</a> owns the preload, dynamic invocation, content-read, application, and proof distinctions.</p>
+          <p><code>scripts/build-skill-docs.py</code> converts the conceptual values into native property names and file structures. For example, conceptual <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude Code, Gemini CLI, or Junie CLI agent. The generator emits native or instruction-driven core-skill references by default and preserves conditional request-specific selection instructions.</p>
+          <p>The Codex adapter includes <code>codex-harness-directives</code> in that required core set when <code>repositoryMutation</code> is required or conditional. Passing <code>--inline-core-skills true</code> explicitly embeds required core skill bodies. The <a href="skills-modularization.html#skill-lifecycle-title">cross-harness skill lifecycle</a> owns the preload, dynamic invocation, content-read, application, and proof distinctions.</p>
         </div>
         <div class="flow-row">
           <div><span class="name">4. Use Generated Native Agent Definition Files</span></div>
@@ -478,7 +479,8 @@
         </table>
       </div>
       <p class="note">The <a href="skills-modularization.html">skills modularization page</a> explains always-used, rule-selected, and setup-bound folder skills. This page maps the resulting conceptual agent definition fields; it does not redefine selection policy.</p>
-      <p class="note">Delivery policy remains modular: Dev Coder returns clean verified candidates, Dev Orchestrator applies the effective Commit-selected skill only after independent review and verification, and Dev Backlog Steward applies Persistence closure only after Commit READY. PROJECT.yaml selects Persistence and Commit independently, and applicable AGENTS.md guidance references the effective create, manage, and completion skills without copying their procedures into conceptual definitions. create-pull-request remains a subordinate dependency of feature-branch completion rather than a Dev Coder skill. Dev Backlog Coordinator conditionally declares codex-workitem-coordination for explicitly requested multi-item Codex task campaigns, obtains inventory through the effective Persistence manager, and routes delivery through the effective Commit skill while delegating durable lifecycle mutations and preserving none, UNSET, unavailable-skill, and placeholder boundaries without fallback.</p>
+      <p class="note">Delivery policy remains modular. Dev Coder returns clean verified candidates. Dev Orchestrator applies the effective Commit-selected skill only after independent review and verification. Dev Backlog Steward applies Persistence closure only after Commit READY. PROJECT.yaml selects Persistence and Commit independently. Applicable AGENTS.md guidance references the effective create, manage, and completion skills without copying their procedures into conceptual definitions.</p>
+      <p class="note">create-pull-request remains a subordinate dependency of feature-branch completion rather than a Dev Coder skill. Dev Backlog Coordinator conditionally declares codex-workitem-coordination for explicitly requested multi-item Codex task campaigns. It obtains inventory through the effective Persistence manager and routes delivery through the effective Commit skill. It delegates durable lifecycle mutations and preserves none, UNSET, unavailable-skill, and placeholder boundaries without fallback.</p>
     </section>
     <section class="section" aria-labelledby="information-model-title">
       <h2 id="information-model-title">Conceptual Agent Definition Properties</h2>
@@ -585,7 +587,7 @@
           <tr>
             <td><span class="name">Isolation</span></td>
             <td><code>isolation</code></td>
-            <td>Controls filesystem, network, or workspace isolation where supported. Keep it separate from permission mode because sandboxing changes what the agent can reach, not only what it may ask to do. Read-only isolation is valid only when repository mutation is never allowed. Conditional reviewers retain a writable sandbox so they can claim and save scoped review evidence while remaining prohibited from modifying the artifact under review.</td>
+            <td>Controls filesystem, network, or workspace isolation where supported. Keep it separate from permission mode because sandboxing changes what the agent can reach, not only what it may ask to do. Read-only isolation is valid only when repository mutation is never allowed. Conditional reviewers retain a writable sandbox so they can claim and save scoped review evidence. They remain prohibited from modifying the artifact under review.</td>
           </tr>
           <tr>
             <td><span class="name">Memory</span></td>
