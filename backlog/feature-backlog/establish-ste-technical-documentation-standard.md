@@ -36,11 +36,15 @@ On 2026-07-27, the user granted definition-change approval with this direction: 
 
 On 2026-07-27, the user resolved both open questions with this direction: “We are not getting formal-compliance verification, this is only to try to create clearer artifacts and documentation. The wiki writer agents should also use STE - basically any agents creating technical documentation.”
 
+On 2026-07-27, the user set the documentation-authoring model with this direction: “We should change all Documentation writing agents to use GPT-5.5 medium - add that to the work item.”
+
 The current portable contracts are `skills/effective-communication/SKILL.md`, `skills/structured-explanation/SKILL.md`, `agents/role-schema.yaml`, `agents/roles/dev-activities/dev-documentation-writer.role.yaml`, and `skills/documentation-page-verify/SKILL.md`.
 
 The approval covers every exact skill and agent definition in the governed-definition scope below. It does not cover a later addition to that scope.
 
 The direction to cover any agent that creates technical documentation authorizes `agents/role-schema.yaml` as the exact shared-skill binding source.
+
+The GPT-5.5 direction authorizes `adapters/codex/model-profiles.yaml` and the exact documentation-authoring role paths in the governed-definition scope below.
 
 ## STE Principles For This Work Item
 
@@ -108,6 +112,21 @@ Use these same principles as the initial content contract for the new portable S
 - Do not apply STE rules to executable code, machine-readable data, exact technical tokens, verbatim quotations, or ordinary communication envelopes.
 - Keep `effective-communication` responsible for ordinary user and agent messages.
 
+### Documentation Authoring Model
+
+- Use the existing semantic `documentation` model profile for dedicated documentation-authoring roles.
+- Map the Codex `documentation` profile to model `gpt-5.5`.
+- Set the Codex reasoning effort for that profile to `medium`.
+- Keep other harness mappings native to their supported model catalogs.
+- Do not invent a GPT model mapping for a harness that does not support that model.
+- Keep `modelProfile: documentation` on the Dev Documentation Writer.
+- Set `modelProfile: documentation` on the Wiki Architect.
+- Set `modelProfile: documentation` on the Wiki Ingester.
+- Set `modelProfile: documentation` on the Wiki Researcher.
+- Set `modelProfile: documentation` on the Wiki Source Collector.
+- Set `modelProfile: documentation` on the Wiki Writer.
+- Keep review-only, verification-only, query-response, and general implementation roles on their existing profiles unless their own approved scope changes.
+
 ### Documentation Writer
 
 - Supply `ste-technical-writing` to the Dev Documentation Writer through the shared role schema.
@@ -160,7 +179,13 @@ Approval is granted for these exact governed canonical sources:
 - `skills/structured-explanation/SKILL.md`
 - `skills/documentation-page-verify/SKILL.md`
 - `agents/role-schema.yaml`
+- `adapters/codex/model-profiles.yaml`
 - `agents/roles/dev-activities/dev-documentation-writer.role.yaml`
+- `agents/roles/wiki-activities/wiki-architect.role.yaml`
+- `agents/roles/wiki-activities/wiki-ingester.role.yaml`
+- `agents/roles/wiki-activities/wiki-researcher.role.yaml`
+- `agents/roles/wiki-activities/wiki-source-collector.role.yaml`
+- `agents/roles/wiki-activities/wiki-writer.role.yaml`
 
 No additional approval request is necessary for these exact paths. Use the approval evidence in Source Evidence for each required pre-mutation definition check.
 
@@ -182,6 +207,9 @@ Discovery may identify another required skill or agent definition. Do not mutate
 - The portable skill contains the STE principles and semantic-preservation boundaries from this item.
 - Every conceptual agent receives the shared STE skill.
 - Agents apply STE only when they write, rewrite, or review technical-document prose.
+- The Codex `documentation` profile uses `gpt-5.5` with `medium` reasoning effort.
+- Every dedicated documentation-authoring role uses the semantic `documentation` profile.
+- Non-Codex harnesses retain supported native model mappings.
 - All technical documentation created by the Dev Documentation Writer uses STE principles.
 - Durable technical wiki content created by wiki agents uses STE principles.
 - The Dev Documentation Writer still selects one artifact-specific structure owner.
@@ -210,6 +238,10 @@ None.
 - Add focused contract tests for the portable STE skill and its metadata.
 - Add focused role-schema tests that prove every conceptual agent receives `ste-technical-writing`.
 - Add focused boundary tests that prove STE applies to technical documentation but not to ordinary communication or non-document artifacts.
+- Add focused model-profile tests for the exact Codex `gpt-5.5` and `medium` mapping.
+- Add focused role tests for the Documentation Writer, Wiki Architect, Wiki Ingester, Wiki Researcher, Wiki Source Collector, and Wiki Writer.
+- Verify that each dedicated documentation-authoring role resolves to the Codex `documentation` profile.
+- Verify that non-Codex adapters retain valid native mappings.
 - Add focused role tests for conditional Documentation Writer `structured-explanation` loading.
 - Add focused boundary tests for `effective-communication`, `structured-explanation`, and `documentation-page-verify`.
 - Test descriptive prose, normative requirements, ordered procedures, unordered rules, conditions, code blocks, commands, identifiers, configuration values, fixed labels, quotations, headings, tables, and structured-explanation items.
@@ -233,5 +265,6 @@ None.
 
 - “All technical documentation” applies to explanatory technical prose. It does not authorize changes to executable code, machine-readable syntax, exact identifiers, or quoted evidence.
 - Wiki roles retain their source, federation, ingest, and verification contracts. STE changes the clarity of their technical prose, not those ownership boundaries.
+- GPT-5.5 with medium effort is the Codex mapping for documentation-authoring roles. Other harnesses use their supported native model mappings.
 - Formal ASD-STE100 compliance and certification are non-goals.
 - A sentence-length target must never cause loss of meaning or alteration of a technical token.
