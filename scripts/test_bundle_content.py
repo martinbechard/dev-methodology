@@ -7369,7 +7369,7 @@ class BundleContentTests(unittest.TestCase):
             "Steward Assignments Are Sequential",
             "Parallel Workspaces",
             "Shared Resource Gate",
-            "Claim Results",
+            "Claim Cleanup",
             "Claim Limits",
             "Lifecycle Handoffs",
             "Execution Safeguards",
@@ -7484,6 +7484,41 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("@media (prefers-reduced-motion: reduce)", lifecycle_text)
         self.assertIn("@media (prefers-color-scheme: dark)", lifecycle_text)
         self.assertIn("overflow-x: auto", lifecycle_text)
+
+    def test_completed_work_items_are_reflected_in_human_facing_documentation(self) -> None:
+        """Document the delivered Persistence, notification, crisis, and claim behavior."""
+
+        lifecycle_text = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        ).read_text(encoding="utf-8")
+        configuration_text = (
+            REPOSITORY_ROOT / "design" / "agentic-configuration.html"
+        ).read_text(encoding="utf-8")
+        readme_text = README_PATH.read_text(encoding="utf-8")
+
+        for phrase in (
+            "After a new work-item file is committed",
+            "It does not reserve capacity, change lifecycle state, create a delivery task, or start implementation.",
+            "The existing Coordinator pauses normal dispatch and claim operations",
+            "Each item must become Completed, Abandoned, or Superseded before the next begins.",
+            "Release removes the named live claim while the registry is locked",
+            "reset creates an empty claim registry before new work is dispatched.",
+        ):
+            with self.subTest(lifecycle_phrase=phrase):
+                self.assertIn(phrase, lifecycle_text)
+
+        for text in (readme_text, configuration_text):
+            with self.subTest(persistence_document=text[:40]):
+                self.assertIn("durable work-item management is first requested", text)
+                self.assertIn("AGENTS.md.candidate", text)
+                self.assertIn("Deferral leaves Persistence", text)
+
+        for phrase in (
+            "After a new file-backed work item is committed",
+            "pauses normal dispatch and claim operations",
+        ):
+            with self.subTest(readme_phrase=phrase):
+                self.assertIn(phrase, readme_text)
 
     def test_lifecycle_routes_direct_main_and_pull_request_completion_paths(self) -> None:
         """The lifecycle should distinguish direct-main and feature-branch delivery."""

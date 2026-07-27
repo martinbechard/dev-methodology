@@ -672,6 +672,7 @@
       </div>
     </div>
     <p class="source-note">The Work item is the only durable provider record. File-provider creation and lifecycle procedures are defined by <a href="../skills/create-file-work-item/SKILL.md">Create File Work Item</a> and <a href="../skills/manage-file-work-items/SKILL.md">Manage File Work Items</a>.</p>
+    <aside class="thread-context"><h3>New Work-Item Notification</h3><p>After a new work-item file is committed, its creator sends the provider reference to the existing Coordinator task. The message prompts a fresh inventory read. It does not reserve capacity, change lifecycle state, create a delivery task, or start implementation. If no Coordinator task is available, the committed item remains in the backlog for the next inventory read.</p></aside>
   </section>
 
   <section class="section" id="agents" aria-labelledby="agents-title">
@@ -733,6 +734,7 @@
         <div class="assignment-step"><strong>Steward Records</strong><p>Mutate the selected provider only after explicit delegation.</p></div>
       </div>
     </figure>
+    <aside class="thread-context"><h3>Backlog Crisis Mode</h3><p>The user or Watchdog may declare a crisis when the queue meets the documented crisis conditions. The existing Coordinator pauses normal dispatch and claim operations, then completes one crisis item at a time. Each item must become Completed, Abandoned, or Superseded before the next begins. Normal dispatch resumes only after every crisis item is terminal, no Blocked item remains, all crisis changes are committed, and required focused verification is recorded.</p></aside>
     <figure class="steward-sequence-figure" aria-labelledby="steward-sequence-title">
       <figcaption id="steward-sequence-title">Steward Assignments Are Sequential<span>One retained Steward Agent may receive multiple assignments, but only one mutating assignment may be active or queued at a time.</span></figcaption>
       <div class="assignment-flow" role="img" aria-label="Assignment A performs and commits one lifecycle update. The parent confirms that the Steward Agent is idle before Assignment B begins.">
@@ -792,7 +794,7 @@
       <div class="resource-examples" aria-label="Examples of exclusive resources"><span>browser</span><span>database</span><span>port</span><span>live model</span><span>shared install</span><span>deployment</span></div>
     </figure>
     <div class="two-column">
-      <div><h3>Claim Results</h3><p>The configured claim helper returns the owner, protected scope, and any conflict. Agents follow the next step defined by Agent Claim.</p></div>
+      <div><h3>Claim Cleanup</h3><p>Release removes the named live claim while the registry is locked and records a RELEASED event. It does not inspect Git state or decide whether delivery completed. After a Coordinator restart with all prior agents stopped, reset creates an empty claim registry before new work is dispatched.</p></div>
       <div><h3>Claim Limits</h3><p>A claim records temporary ownership. Review, verification, Git delivery, and work-item completion require separate evidence.</p></div>
     </div>
     <p class="source-note"><a href="../skills/agent-claim/SKILL.md">Agent Claim</a> is the only source for claim events, scopes, conflicts, deadlines, recovery, and release timing. The <a href="../skills/agent-claim-command/SKILL.md">command helper</a> and <a href="../skills/agent-claim-mcp/SKILL.md">MCP helper</a> describe only how to invoke the configured helper.</p>
