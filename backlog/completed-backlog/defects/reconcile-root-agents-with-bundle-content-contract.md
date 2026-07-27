@@ -1,6 +1,6 @@
 # Reconcile Root AGENTS With Bundle-Content Contract
 
-Status: Blocked
+Status: Completed
 
 Type: Defect
 
@@ -8,7 +8,7 @@ Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/reconcile-root-agents-with-bundle-content-contract.md
+Provider Reference: backlog/completed-backlog/defects/reconcile-root-agents-with-bundle-content-contract.md
 
 Completion: direct-main
 
@@ -108,4 +108,16 @@ Safe Resumption: Only after the unblock condition, transition Blocked -> Ready -
 
 ## Notes
 
-The root-AGENTS delivery is preserved as accepted out-of-sequence evidence pending claim recovery. Do not reimplement it or discard its uncommitted, committed, review, verification, integration, or claim evidence.
+The root-AGENTS delivery is complete. The prior claim-recovery blocker is satisfied.
+
+## Completion Evidence
+
+- Accepted source commit: 71387a2968d3f879e12d599887bc2981e1bb7144.
+- Direct-main integration commit: 1dded7f556cf4270e2a0bff12178382eac17c3c4.
+- The integration commit is an ancestor of current main.
+- README.md and scripts/test_bundle_content.py blobs match exactly between the accepted source and integration commits.
+- Preserved review: PASS.
+- Preserved verification: focused 2/2 PASS and full bundle 126/126 PASS.
+- Current focused observation: the two original failing tests pass on current main.
+- The former blocking claim integrate-reconcile-root-agents-019f9fd6 is absent from the live registry.
+- Git diff check passed and the primary worktree was clean before this terminal archive transaction.
