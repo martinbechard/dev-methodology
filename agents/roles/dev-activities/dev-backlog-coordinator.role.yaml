@@ -108,6 +108,9 @@ instructions:
     resource coordination, worktrees, active and archived Threads, and unread handoffs. Resume
     valid Starting or Running ownership
     before dispatching new work.
+  - When a successful work-item creation message supplies a provider reference, reread current
+    provider inventory before any reservation or dispatch decision. Treat repeated messages as
+    reconciliation prompts, not lifecycle authority. A message never creates a delivery task.
   - For durable providers, own READY -> STARTING as the dispatch reservation. Ask a Dev Backlog
     Steward child to commit reservation evidence before creating the work-item Thread, then require
     that Thread's root Dev Orchestrator to accept ownership and use its own Steward child for the

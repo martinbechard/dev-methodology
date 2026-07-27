@@ -207,6 +207,14 @@ The creation commit and result must preserve work_item_id, provider_reference, s
 - Keep completed or failed outcomes out of newly created active items.
 - Use imperative, steady-state language.
 
+## Coordinator Notification
+
+After a new work-item file is committed successfully, use the current runtime's normal task-message feature to send its provider reference to the existing Dev Backlog Coordinator task.
+
+The message only reports that the backlog changed. It does not reserve capacity, change lifecycle state, create a delivery task, or start implementation.
+
+Send no message when creation fails or when duplicate reconciliation creates no item. If no Coordinator task is available, leave the committed item unchanged. The Coordinator will discover it during its next inventory read.
+
 ## Final Check And Result
 
 Before reporting completion:

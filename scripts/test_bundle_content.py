@@ -1011,6 +1011,35 @@ class BundleContentTests(unittest.TestCase):
             self.assertEqual(1, len(crisis_entries))
             self.assertIn("condition", crisis_entries[0])
 
+    def test_new_file_item_notifies_coordinator_without_dispatch(self) -> None:
+        create_skill = (
+            SKILLS_ROOT / "create-file-work-item" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        coordination_skill = (
+            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn(
+            "After a new work-item file is committed successfully",
+            create_skill,
+        )
+        self.assertIn(
+            "send its provider reference to the existing Dev Backlog Coordinator task",
+            create_skill,
+        )
+        self.assertIn(
+            "Send no message when creation fails or when duplicate reconciliation creates no item.",
+            create_skill,
+        )
+        self.assertIn(
+            "reread current provider inventory before deciding whether to reserve or dispatch anything",
+            coordination_skill,
+        )
+        self.assertIn(
+            "The message is not lifecycle authority",
+            coordination_skill,
+        )
+
     def test_redundant_root_manuals_are_removed(self) -> None:
         for file_name in REMOVED_ROOT_FILES:
             with self.subTest(file_name=file_name):

@@ -89,6 +89,14 @@ does not synthesize a queue or a target of ten from Thread state.
 
 List or validate backlog/future-ideas only when the parent request explicitly includes ideation or promotion and file Persistence applies to that operation. A revisit trigger is free text and never schedules a Thread, fills capacity, or authorizes unattended work.
 
+## New Work-Item Notification
+
+After a provider creates a new work item successfully, it may send the provider reference to the existing Coordinator task through the runtime's normal task-message feature.
+
+On receipt, reread current provider inventory before deciding whether to reserve or dispatch anything. Reconcile dependencies, capacity, lifecycle state, and existing canonical tasks. The message is not lifecycle authority and does not itself reserve capacity, create a delivery task, or start implementation.
+
+Repeated messages are harmless because each message triggers the same fresh inventory reconciliation. A failed or duplicate no-op creation sends no message. When no Coordinator task is available, the committed provider item remains discoverable during the next Coordinator start.
+
 ## Dispatch Reconciliation
 
 Treat a Thread-creation error, timeout, disconnect, or ambiguous response as an ambiguous mutation. Do not retry creation.

@@ -160,6 +160,16 @@ class PersistenceRoute:
 
 
 @dataclass(frozen=True)
+class NewItemNotification:
+    """Describe the runtime message emitted after file-provider creation."""
+
+    sent: bool
+    provider_reference: str | None
+    coordinator_reconciles_inventory: bool
+    lifecycle_mutated: bool = False
+
+
+@dataclass(frozen=True)
 class DeliveryEvidence:
     """Represent a completed work item that is eligible for parent cleanup.
 
@@ -400,6 +410,20 @@ class CoordinationSimulator:
                 True,
             )
         return PersistenceRoute(normalized, management_skill, True, "READY", False)
+
+    @staticmethod
+    def new_item_notification(
+        provider_reference: str,
+        *,
+        creation_succeeded: bool,
+        item_created: bool,
+        coordinator_available: bool,
+    ) -> NewItemNotification:
+        """Notify an existing Coordinator only after a successful new creation."""
+
+        if not creation_succeeded or not item_created or not coordinator_available:
+            return NewItemNotification(False, None, False)
+        return NewItemNotification(True, provider_reference, True)
 
     def record_claim_attempt(
         self,

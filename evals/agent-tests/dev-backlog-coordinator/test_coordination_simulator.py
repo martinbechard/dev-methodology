@@ -457,6 +457,42 @@ class CoordinationSimulatorTests(unittest.TestCase):
         self.assertEqual("BLOCKED", unavailable.status)
         self.assertTrue(unavailable.zero_mutation)
 
+    def test_new_item_notification_only_prompts_inventory_reconciliation(self) -> None:
+        """Only a successful new item wakes the existing Coordinator."""
+
+        reference = "backlog/feature-backlog/new-item.md"
+        sent = CoordinationSimulator.new_item_notification(
+            reference,
+            creation_succeeded=True,
+            item_created=True,
+            coordinator_available=True,
+        )
+        self.assertTrue(sent.sent)
+        self.assertEqual(reference, sent.provider_reference)
+        self.assertTrue(sent.coordinator_reconciles_inventory)
+        self.assertFalse(sent.lifecycle_mutated)
+
+        for creation_succeeded, item_created, coordinator_available in (
+            (False, False, True),
+            (True, False, True),
+            (True, True, False),
+        ):
+            with self.subTest(
+                creation_succeeded=creation_succeeded,
+                item_created=item_created,
+                coordinator_available=coordinator_available,
+            ):
+                skipped = CoordinationSimulator.new_item_notification(
+                    reference,
+                    creation_succeeded=creation_succeeded,
+                    item_created=item_created,
+                    coordinator_available=coordinator_available,
+                )
+                self.assertFalse(skipped.sent)
+                self.assertIsNone(skipped.provider_reference)
+                self.assertFalse(skipped.coordinator_reconciles_inventory)
+                self.assertFalse(skipped.lifecycle_mutated)
+
     def test_claim_retry_requires_release_or_recovery_notification(self) -> None:
         """Reject time-driven polling and consume each notification at most once."""
 
