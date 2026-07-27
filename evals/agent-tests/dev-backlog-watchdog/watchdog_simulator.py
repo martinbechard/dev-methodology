@@ -15,6 +15,12 @@ ACTIVE_CAPACITY_STATUSES = {"Starting", "Running"}
 ACTIVE_CAPACITY_LIMIT = 10
 ACTIVE_SERIES_STATUSES = {"Ready", "Starting", "Running", "Awaiting Review"}
 TERMINAL_STATUSES = {"Completed", "Failed", "Abandoned"}
+CRISIS_EXCLUDED_STATUSES = {
+    "User Action Required",
+    "Holding",
+    "Future Idea",
+    *TERMINAL_STATUSES,
+}
 _TASK_ANOMALY_STATES = {"failed", "stopped", "missing"}
 
 
@@ -115,6 +121,36 @@ class CycleResult:
     alert: WatchdogAlert | None
     blocked_reconciliations: tuple[BlockedReconciliation, ...] = ()
     mutated: bool = False
+
+
+def backlog_crisis_reasons(
+    items: Iterable[WorkItem],
+    *,
+    minutes_without_progress: int = 0,
+    user_declared: bool = False,
+) -> tuple[str, ...]:
+    """Return the deterministic reasons that require backlog crisis mode."""
+
+    active = [item for item in items if item.status not in CRISIS_EXCLUDED_STATUSES]
+    blocked = [item for item in active if item.status == "Blocked"]
+    causes: dict[str, int] = {}
+    for item in blocked:
+        cause = item.preventing_cause.strip()
+        if cause:
+            causes[cause] = causes.get(cause, 0) + 1
+
+    reasons: list[str] = []
+    if len(blocked) >= 5:
+        reasons.append("five-or-more-blocked")
+    if active and len(blocked) == len(active):
+        reasons.append("all-active-work-blocked")
+    if any(count >= 3 for count in causes.values()):
+        reasons.append("shared-blocker")
+    if active and minutes_without_progress >= 60:
+        reasons.append("no-progress-for-sixty-minutes")
+    if user_declared:
+        reasons.append("user-declared")
+    return tuple(reasons)
 
 
 class WatchdogCycle:

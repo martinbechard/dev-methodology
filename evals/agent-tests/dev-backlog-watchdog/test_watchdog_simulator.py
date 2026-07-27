@@ -19,6 +19,7 @@ from watchdog_simulator import (
     WorkItem,
     WatchdogCycle,
     active_capacity,
+    backlog_crisis_reasons,
     series_state,
     terminal_archive_destination,
 )
@@ -50,6 +51,67 @@ class WatchdogSimulatorTests(unittest.TestCase):
         self.assertEqual(case["expectedMessage"], result.message)
         self.assertIsNone(result.alert)
         self.assertEqual(before, items)
+
+    def test_backlog_crisis_declaration_criteria_are_deterministic(self) -> None:
+        """Each automatic criterion and the user declaration have a direct result."""
+
+        five_blocked = [
+            WorkItem(f"blocked-{index}", "Blocked", preventing_cause="shared")
+            for index in range(5)
+        ]
+        self.assertEqual(
+            (
+                "five-or-more-blocked",
+                "all-active-work-blocked",
+                "shared-blocker",
+            ),
+            backlog_crisis_reasons(five_blocked),
+        )
+        self.assertEqual(
+            ("all-active-work-blocked",),
+            backlog_crisis_reasons([WorkItem("one", "Blocked")]),
+        )
+        self.assertEqual(
+            ("shared-blocker",),
+            backlog_crisis_reasons(
+                [
+                    WorkItem(
+                        f"blocked-{index}",
+                        "Blocked",
+                        preventing_cause="same dependency",
+                    )
+                    for index in range(3)
+                ]
+                + [WorkItem("ready", "Ready")]
+            ),
+        )
+        self.assertEqual(
+            ("no-progress-for-sixty-minutes",),
+            backlog_crisis_reasons(
+                [WorkItem("ready", "Ready")],
+                minutes_without_progress=60,
+            ),
+        )
+        self.assertEqual(
+            ("user-declared",),
+            backlog_crisis_reasons([], user_declared=True),
+        )
+
+    def test_crisis_counts_exclude_deferred_and_terminal_items(self) -> None:
+        """Deferred and terminal records do not create an automatic crisis."""
+
+        excluded = [
+            WorkItem(status.lower().replace(" ", "-"), status)
+            for status in (
+                "User Action Required",
+                "Holding",
+                "Future Idea",
+                "Completed",
+                "Failed",
+                "Abandoned",
+            )
+        ]
+        self.assertEqual((), backlog_crisis_reasons(excluded))
 
     def test_suspected_stall_alerts_parent_without_setting_stalled(self) -> None:
         """The Watchdog reports evidence while leaving lifecycle state unchanged."""

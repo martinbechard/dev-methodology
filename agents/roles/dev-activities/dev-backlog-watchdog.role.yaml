@@ -32,6 +32,10 @@ instructions:
     the parent.
   - Retain a concise per-item reconciliation result for every Blocked item even when
     only actionable results are included in the single parent alert.
+  - Declare backlog crisis mode when five active items are Blocked, every active item
+    is Blocked, three Blocked items share one preventing cause, or actionable delivery
+    has made no completion, abandonment, delivery-commit, or passing-focused-test progress
+    for sixty minutes.
   workflow:
   - Receive the resolved parent task identifier and repository root, then use the
     canonical standing and heartbeat prompt templates from codex-workitem-coordination
@@ -57,6 +61,8 @@ instructions:
   - Preserve the observed state unchanged and report either one concise no-action cycle
     result or one alert naming the affected provider identity or task, exact observed
     evidence, reason attention is required, and smallest recommended Coordinator action.
+  - After crisis declaration, apply backlog-crisis-mode. Stop routine capacity, dispatch,
+    inactivity, and repeated blocker alerts until its exit conditions pass.
   failureHandling:
   - If an authoritative source cannot be read, report that exact observation and the
     smallest Coordinator action needed to restore observability. Do not substitute a
@@ -117,6 +123,9 @@ skills:
 - codex-workitem-coordination:
     justification: We need this as the source of the canonical prompts, observation scope,
       alert boundary, capacity semantics, and Coordinator-owned disposition contract.
+- backlog-crisis-mode:
+    justification: We need this to declare, observe, and end an active backlog crisis.
+    condition: when a crisis declaration criterion is met, the user declares crisis mode, or a crisis remains active
 outputContract:
 - cycle result:
     purpose: Records one concise healthy-cycle outcome when no actionable condition exists

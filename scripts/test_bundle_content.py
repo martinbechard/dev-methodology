@@ -974,6 +974,43 @@ def wcag_contrast_ratio(first_hex: str, second_hex: str) -> float:
 
 
 class BundleContentTests(unittest.TestCase):
+    def test_backlog_crisis_mode_is_conditional_and_sequential(self) -> None:
+        skill_text = (
+            SKILLS_ROOT / "backlog-crisis-mode" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        coordinator = yaml.safe_load(
+            (
+                ROLES_ROOT
+                / "dev-activities"
+                / "dev-backlog-coordinator.role.yaml"
+            ).read_text(encoding="utf-8")
+        )
+        watchdog = yaml.safe_load(
+            (
+                ROLES_ROOT
+                / "dev-activities"
+                / "dev-backlog-watchdog.role.yaml"
+            ).read_text(encoding="utf-8")
+        )
+
+        for phrase in (
+            "Stop ordinary dispatch.",
+            "Stop claim operations.",
+            "Process one crisis item at a time.",
+            "Commit the current item before starting another item.",
+            "Moving an item to Ready does not resolve it.",
+        ):
+            self.assertIn(phrase, skill_text)
+
+        for role in (coordinator, watchdog):
+            crisis_entries = [
+                entry["backlog-crisis-mode"]
+                for entry in role["skills"]
+                if "backlog-crisis-mode" in entry
+            ]
+            self.assertEqual(1, len(crisis_entries))
+            self.assertIn("condition", crisis_entries[0])
+
     def test_redundant_root_manuals_are_removed(self) -> None:
         for file_name in REMOVED_ROOT_FILES:
             with self.subTest(file_name=file_name):
