@@ -966,7 +966,17 @@ def _persistence_reference(label: str, persistence: str) -> str:
     """Render one Persistence selection as create and manage skill references."""
 
     if persistence == "UNSET":
-        return f"- {label} UNSET: the pertinent agent asks for the Persistence decision before a persistence operation."
+        return (
+            f"- {label} UNSET: when durable work-item management is first requested, "
+            "ask whether to select the available file provider. Do not create or manage "
+            "work items before the user answers. After approval, Project Configurator "
+            "updates PROJECT.yaml and renders proposed guidance to AGENTS.md.candidate. "
+            "Compare that candidate with AGENTS.md, preserve project-specific directives, "
+            "move reusable project directives into project skills referenced by PROJECT.yaml "
+            "when appropriate, regenerate the candidate, and apply AGENTS.md only after the "
+            "comparison is complete. Then resume the original work-item request. A deferred "
+            "answer leaves Persistence UNSET; an explicit none selection remains none."
+        )
     if persistence == "none":
         return (
             f"- {label} none: no durable persistence skill; durable create and manage operations are invalid."

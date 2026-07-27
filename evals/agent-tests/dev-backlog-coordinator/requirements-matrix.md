@@ -7,7 +7,7 @@
 | File, GitHub, and GitLab preserve native identifiers | Work-item provider contract | provider-selector-boundaries and provider-selected-workitem-ownership |
 | Azure DevOps and Jira placeholders are BLOCKED with zero mutation | Work-item provider contract | test_persistence_routes_cover_supported_providers_without_fallback |
 | Provider none has no durable inventory or capacity target | Work-item provider contract | test_persistence_routes_cover_supported_providers_without_fallback |
-| UNSET and unavailable selected skills stop without fallback | Selector decision rules | test_persistence_routes_cover_supported_providers_without_fallback |
+| UNSET asks whether to select the available file provider; unavailable selected skills stop without fallback | Selector decision rules | test_persistence_routes_cover_supported_providers_without_fallback |
 | Running capacity target is ten for durable inventory | Coordination queue target and parent role decisions | test_dispatches_ready_items_until_ten_are_running |
 | No placeholder work when fewer than ten eligible items exist | Coordination queue target | test_dispatches_every_ready_item_when_queue_has_less_than_ten |
 | Canonical task id is stored through the provider manager | Coordination execution record and dispatch rules | capacity test plus canonical-id-persistence |

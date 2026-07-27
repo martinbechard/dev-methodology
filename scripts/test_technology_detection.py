@@ -2301,7 +2301,10 @@ class TechnologyDetectionTests(unittest.TestCase):
         }))
 
         self.assertIn("interactive/** persistence none: no durable persistence skill", rendered)
-        self.assertIn("deferred/** persistence UNSET: the pertinent agent asks", rendered)
+        self.assertIn(
+            "deferred/** persistence UNSET: when durable work-item management is first requested",
+            rendered,
+        )
         self.assertIn("jira/** persistence jira: create with create-jira-work-item", rendered)
         self.assertIn("ado/** persistence azure-devops: create with create-azure-devops-work-item", rendered)
         self.assertEqual(2, rendered.count("unsupported placeholder remains selected and reports BLOCKED"))
@@ -2316,7 +2319,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             "azure-devops": "Default persistence azure-devops: create with create-azure-devops-work-item; manage with manage-azure-devops-work-items.",
             "jira": "Default persistence jira: create with create-jira-work-item; manage with manage-jira-work-items.",
             "none": "Default persistence none: no durable persistence skill; durable create and manage operations are invalid.",
-            "UNSET": "Default persistence UNSET: the pertinent agent asks for the Persistence decision before a persistence operation.",
+            "UNSET": "Default persistence UNSET: when durable work-item management is first requested, ask whether to select the available file provider.",
         }
         commit_guidance = {
             "direct-main": "Default commit direct-main: use complete-work-item-direct-main.",

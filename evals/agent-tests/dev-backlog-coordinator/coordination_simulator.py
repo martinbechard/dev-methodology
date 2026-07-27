@@ -156,6 +156,7 @@ class PersistenceRoute:
     durable_inventory: bool
     status: str
     zero_mutation: bool
+    user_question: str | None = None
 
 
 @dataclass(frozen=True)
@@ -369,6 +370,7 @@ class CoordinationSimulator:
         provider: str,
         *,
         selected_skill_available: bool = True,
+        file_provider_available: bool = True,
     ) -> PersistenceRoute:
         """Resolve provider inventory without inferring or falling back to another provider."""
 
@@ -376,6 +378,15 @@ class CoordinationSimulator:
         if normalized == "none":
             return PersistenceRoute(normalized, None, False, "READY", True)
         if normalized == "unset":
+            if file_provider_available:
+                return PersistenceRoute(
+                    normalized,
+                    None,
+                    False,
+                    "USER_ACTION_REQUIRED",
+                    True,
+                    "Do you want to use the available file-backed work-item provider?",
+                )
             return PersistenceRoute(normalized, None, False, "BLOCKED", True)
         if normalized not in PERSISTENCE_MANAGERS:
             raise ValueError(f"unsupported provider: {provider}")

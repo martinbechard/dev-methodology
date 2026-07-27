@@ -48,12 +48,12 @@ scenarios:
     priority: 4
     status: executable
     executableCase: fixtures/cases.yaml
-    purpose: Preserve provider-specific identities, placeholder failures, provider none, and UNSET without fallback.
+    purpose: Preserve provider-specific identities and ask a clear file-provider question when Persistence is UNSET.
     initialState: The request matrix selects file, GitHub, GitLab, Azure DevOps, Jira, none, UNSET, and one unavailable selected manager.
     task: Route each inventory boundary through the effective Persistence manager and report its exact supported or blocked result.
     targetSkills: [structured-explanation, codex-workitem-coordination]
     allowedAgentDependencies: [dev-backlog-steward]
-    requiredBehaviors: [Use the file manager for backlog paths, Use GitHub issue identities, Use GitLab issue identities, Preserve Azure DevOps and Jira placeholder BLOCKED results, Coordinate provider none without durable inventory, Stop at UNSET, Stop when the selected manager is unavailable]
+    requiredBehaviors: [Use the file manager for backlog paths, Use GitHub issue identities, Use GitLab issue identities, Preserve Azure DevOps and Jira placeholder BLOCKED results, Coordinate provider none without durable inventory, Ask whether to select the available file provider when UNSET, Make no work-item mutation before the answer, Stop when the selected manager is unavailable]
     forbiddenBehaviors: [Create shadow files for GitHub or GitLab, Translate GitLab records into GitHub terminology, Fall back from a placeholder, Invent a provider-none queue, Infer UNSET from repository or hosting evidence]
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, provider-selected-workitem-ownership, provider-selector-routing, output-contract-presence]
     expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]

@@ -425,7 +425,7 @@ class CoordinationSimulatorTests(unittest.TestCase):
             ),
             "jira": ("manage-jira-work-items", False, "BLOCKED", True),
             "none": (None, False, "READY", True),
-            "UNSET": (None, False, "BLOCKED", True),
+            "UNSET": (None, False, "USER_ACTION_REQUIRED", True),
         }
 
         for provider, route_contract in expected.items():
@@ -437,6 +437,18 @@ class CoordinationSimulatorTests(unittest.TestCase):
                     route.status,
                     route.zero_mutation,
                 ))
+
+        unset = CoordinationSimulator.persistence_route("UNSET")
+        self.assertEqual(
+            "Do you want to use the available file-backed work-item provider?",
+            unset.user_question,
+        )
+        unavailable_file_provider = CoordinationSimulator.persistence_route(
+            "UNSET",
+            file_provider_available=False,
+        )
+        self.assertEqual("BLOCKED", unavailable_file_provider.status)
+        self.assertIsNone(unavailable_file_provider.user_question)
 
         unavailable = CoordinationSimulator.persistence_route(
             "github", selected_skill_available=False
