@@ -24,7 +24,7 @@ The role schema supplies `effective-communication` to every conceptual agent. Th
 
 Tests with the project setup paragraph showed that STE alone preserved descriptive documentation better than STE combined without a boundary with `effective-communication`. The combined prompt incorrectly changed descriptive information into an ordered procedure. The implementation must prevent this semantic change.
 
-Repository STE principles can be mandatory without claiming certified ASD-STE100 compliance. Formal compliance requires the applicable ASD-STE100 issue and controlled dictionary.
+The purpose is clearer technical documentation. Formal ASD-STE100 verification, certification, issue validation, and controlled-dictionary validation are out of scope.
 
 ## Source Evidence
 
@@ -34,9 +34,13 @@ On 2026-07-27, the user then directed: “Create a workitem for all this. In the
 
 On 2026-07-27, the user granted definition-change approval with this direction: “I give approval for modifying the skills currently listed in the work item, not need to indicate getting approvals for them, only for additional skills or agents beyond them.”
 
-The current portable contracts are `skills/effective-communication/SKILL.md`, `skills/structured-explanation/SKILL.md`, `agents/roles/dev-activities/dev-documentation-writer.role.yaml`, `agents/roles/dev-activities/dev-artifact-reviewer.role.yaml`, and `skills/documentation-page-verify/SKILL.md`.
+On 2026-07-27, the user resolved both open questions with this direction: “We are not getting formal-compliance verification, this is only to try to create clearer artifacts and documentation. The wiki writer agents should also use STE - basically any agents creating technical documentation.”
 
-The approval covers every exact skill and agent definition in the current governed-definition scope. It does not cover an additional skill or agent definition.
+The current portable contracts are `skills/effective-communication/SKILL.md`, `skills/structured-explanation/SKILL.md`, `agents/role-schema.yaml`, `agents/roles/dev-activities/dev-documentation-writer.role.yaml`, and `skills/documentation-page-verify/SKILL.md`.
+
+The approval covers every exact skill and agent definition in the governed-definition scope below. It does not cover a later addition to that scope.
+
+The direction to cover any agent that creates technical documentation authorizes `agents/role-schema.yaml` as the exact shared-skill binding source.
 
 ## STE Principles For This Work Item
 
@@ -47,8 +51,7 @@ Apply these principles to technical prose that is written during execution, incl
 - Preserve exact identifiers, commands, paths, configuration values, code, schema names, fixed labels, and quoted source text.
 - Use the same term for the same item or action.
 - Use one meaning for each word in a given context.
-- Use an approved dictionary term when the applicable ASD-STE100 dictionary is available.
-- When the dictionary is not available, use a common and precise word. Do not claim verified dictionary compliance.
+- Use common and precise words.
 - Define a necessary project-specific or technical term at its first use when the context does not define it.
 - Prefer active voice when the responsible actor is known.
 - Use the imperative form only for an instruction.
@@ -75,7 +78,7 @@ Apply these principles to technical prose that is written during execution, incl
 - Let `effective-communication` control the surrounding outcome, evidence, blocker, decision, next action, and handoff.
 - Prefer semantic accuracy over a mechanical sentence-length or vocabulary rule.
 
-Use these same principles as the initial content contract for the new portable STE skill. Refine a principle only when source evidence shows that it conflicts with the applicable ASD-STE100 issue or with an established repository contract. Record the reason for each refinement.
+Use these same principles as the initial content contract for the new portable STE skill. Refine a principle only when source evidence shows that it conflicts with an established repository contract. Record the reason for each refinement.
 
 ## Requirements
 
@@ -86,9 +89,8 @@ Use these same principles as the initial content contract for the new portable S
 - Give the skill a narrow purpose: write, rewrite, and review technical-document prose with the STE principles in this item.
 - Make the skill portable across supported harnesses.
 - Keep the main workflow concise.
-- Put optional issue-specific or dictionary-specific details in directly referenced resources only when they are available and legally distributable.
 - State that the repository principles are mandatory for technical-document prose.
-- State that verified ASD-STE100 compliance requires the applicable issue and controlled dictionary.
+- State that the skill improves clarity but does not verify or certify formal ASD-STE100 compliance.
 - Require preservation of exact technical content and normative meaning.
 - State the boundary for code, commands, identifiers, schemas, fixed labels, and verbatim quotations.
 - State that the artifact-specific method controls document structure.
@@ -96,9 +98,19 @@ Use these same principles as the initial content contract for the new portable S
 - State that STE does not convert descriptions into instructions or unordered rules into procedures.
 - Validate the complete skill package with the repository-supported skill validator.
 
+### Agent Coverage
+
+- Add `ste-technical-writing` to the unconditional shared skills in `agents/role-schema.yaml`.
+- Give every conceptual agent access to the same STE contract.
+- Apply the contract only when an agent writes, rewrites, or reviews technical-document prose.
+- Apply the contract to durable wiki pages, hubs, digests, architecture, maintenance guidance, technical reports, specifications, designs, plans, README files, and custom technical documents.
+- Include wiki writers, wiki ingesters, wiki architects, methodology maintainers, and other agents when their current work creates or changes technical documentation.
+- Do not apply STE rules to executable code, machine-readable data, exact technical tokens, verbatim quotations, or ordinary communication envelopes.
+- Keep `effective-communication` responsible for ordinary user and agent messages.
+
 ### Documentation Writer
 
-- Add `ste-technical-writing` as an unconditional skill of `agents/roles/dev-activities/dev-documentation-writer.role.yaml`.
+- Supply `ste-technical-writing` to the Dev Documentation Writer through the shared role schema.
 - Require the Dev Documentation Writer to apply STE to all technical-document prose.
 - Keep `development-methodology` responsible for selecting exactly one artifact route.
 - Keep the selected creation skill responsible for artifact structure and required sections.
@@ -108,13 +120,13 @@ Use these same principles as the initial content contract for the new portable S
 
 ### Documentation Review And Verification
 
-- Add `ste-technical-writing` as an unconditional review skill of `agents/roles/dev-activities/dev-artifact-reviewer.role.yaml`.
+- Supply `ste-technical-writing` to the Dev Artifact Reviewer and wiki review roles through the shared role schema.
 - Update `skills/documentation-page-verify/SKILL.md` to verify applicable STE principles in README files and custom non-wiki technical documents.
 - Require review findings for semantic changes caused by mechanical STE application.
 - Detect descriptions that were incorrectly changed into instructions.
 - Detect unordered information that was incorrectly changed into an ordered procedure.
 - Detect changed identifiers, configuration values, modality, or ownership.
-- Distinguish repository STE conformance from verified ASD-STE100 compliance.
+- Do not report formal ASD-STE100 verification or certification.
 
 ### Communication And Explanation Boundaries
 
@@ -132,7 +144,7 @@ Use these same principles as the initial content contract for the new portable S
 
 - Add the portable skill to the public skill inventory in `README.md`.
 - Update `design/skills-modularization.html` with the STE ownership and composition boundaries.
-- Update `design/agent-and-skill-definitions.html` with the Documentation Writer and Artifact Reviewer skill relationships.
+- Update `design/agent-and-skill-definitions.html` with the shared STE relationship and its technical-document boundary.
 - Update `design/documentation-templates.html` to state that artifact templates control structure while STE controls technical prose.
 - Regenerate supported skill-definition, role-definition, explorer, and native-agent artifacts from their canonical sources.
 - Do not edit generated files directly.
@@ -147,8 +159,8 @@ Approval is granted for these exact governed canonical sources:
 - `skills/effective-communication/SKILL.md`
 - `skills/structured-explanation/SKILL.md`
 - `skills/documentation-page-verify/SKILL.md`
+- `agents/role-schema.yaml`
 - `agents/roles/dev-activities/dev-documentation-writer.role.yaml`
-- `agents/roles/dev-activities/dev-artifact-reviewer.role.yaml`
 
 No additional approval request is necessary for these exact paths. Use the approval evidence in Source Evidence for each required pre-mutation definition check.
 
@@ -157,14 +169,10 @@ The approved canonical sources may produce updates to these dependent artifacts 
 - `design/generated/skill-definitions.js`
 - `design/generated/role-definitions.js`
 - `design/generated/agent-skill-explorer-data.js`
-- `generated/adapters/claude/agents/dev-documentation-writer.md`
-- `generated/adapters/codex/agents/dev-documentation-writer.toml`
-- `generated/adapters/gemini/agents/dev-documentation-writer.md`
-- `generated/adapters/junie/agents/dev-documentation-writer.md`
-- `generated/adapters/claude/agents/dev-artifact-reviewer.md`
-- `generated/adapters/codex/agents/dev-artifact-reviewer.toml`
-- `generated/adapters/gemini/agents/dev-artifact-reviewer.md`
-- `generated/adapters/junie/agents/dev-artifact-reviewer.md`
+- Generated role adapters under `generated/adapters/claude/agents`.
+- Generated role adapters under `generated/adapters/codex/agents`.
+- Generated role adapters under `generated/adapters/gemini/agents`.
+- Generated role adapters under `generated/adapters/junie/agents`.
 
 Discovery may identify another required skill or agent definition. Do not mutate it under this item until the work-item manifest records its exact path and the user gives explicit approval for that path.
 
@@ -172,7 +180,10 @@ Discovery may identify another required skill or agent definition. Do not mutate
 
 - A portable `ste-technical-writing` skill exists and passes focused skill validation.
 - The portable skill contains the STE principles and semantic-preservation boundaries from this item.
+- Every conceptual agent receives the shared STE skill.
+- Agents apply STE only when they write, rewrite, or review technical-document prose.
 - All technical documentation created by the Dev Documentation Writer uses STE principles.
+- Durable technical wiki content created by wiki agents uses STE principles.
 - The Dev Documentation Writer still selects one artifact-specific structure owner.
 - The Dev Documentation Writer uses `structured-explanation` only for an applicable technical reasoning or plan-rationale section.
 - The Dev Artifact Reviewer checks STE conformance in every technical document that it reviews.
@@ -183,7 +194,7 @@ Discovery may identify another required skill or agent definition. Do not mutate
 - Tests reject a rewrite that changes unordered rules into an ordered procedure.
 - Tests reject changed identifiers, configuration values, ownership, conditions, or normative force.
 - Tests accept necessary technical terms, code, commands, schemas, fixed labels, and exact quotations without forced rewriting.
-- Documentation says “repository STE principles” or equivalent unless formal compliance is verified against the applicable issue and dictionary.
+- No output claims formal ASD-STE100 verification or certification.
 - README, design pages, generated definitions, native adapters, and installed behavior agree with the canonical sources.
 - Independent review confirms that the new skill does not duplicate artifact structure, communication procedure, or structured-explanation ownership.
 - The verified direct-main commit contains only the intended work-item delivery and preserves unrelated worktree state.
@@ -197,7 +208,8 @@ None.
 - Run the definition-change check for every approved governed canonical path before mutation.
 - Validate the new skill package with the preferred skill validator. Use `scripts/validate-agent-skills.py` only when the preferred validator is unavailable under the skill-authoring fallback rules.
 - Add focused contract tests for the portable STE skill and its metadata.
-- Add focused role tests for unconditional Documentation Writer and Artifact Reviewer STE loading.
+- Add focused role-schema tests that prove every conceptual agent receives `ste-technical-writing`.
+- Add focused boundary tests that prove STE applies to technical documentation but not to ordinary communication or non-document artifacts.
 - Add focused role tests for conditional Documentation Writer `structured-explanation` loading.
 - Add focused boundary tests for `effective-communication`, `structured-explanation`, and `documentation-page-verify`.
 - Test descriptive prose, normative requirements, ordered procedures, unordered rules, conditions, code blocks, commands, identifiers, configuration values, fixed labels, quotations, headings, tables, and structured-explanation items.
@@ -215,11 +227,11 @@ None.
 
 ## Open Questions
 
-- Which ASD-STE100 issue and controlled dictionary can the project legally use for optional formal-compliance verification?
-- Should a later work item extend mandatory STE loading to technical wiki-writing roles after this non-wiki documentation integration is proven?
+None.
 
 ## Notes
 
 - “All technical documentation” applies to explanatory technical prose. It does not authorize changes to executable code, machine-readable syntax, exact identifiers, or quoted evidence.
-- This item establishes non-wiki technical-document integration first because the Dev Documentation Writer owns that artifact family. Wiki roles have different source, federation, and ingest contracts. The open question keeps that possible extension explicit without silently expanding this item.
+- Wiki roles retain their source, federation, ingest, and verification contracts. STE changes the clarity of their technical prose, not those ownership boundaries.
+- Formal ASD-STE100 compliance and certification are non-goals.
 - A sentence-length target must never cause loss of meaning or alteration of a technical token.
