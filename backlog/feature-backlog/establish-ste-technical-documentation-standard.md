@@ -32,9 +32,11 @@ On 2026-07-27, the user directed: “All technical documentation should comply w
 
 On 2026-07-27, the user then directed: “Create a workitem for all this. In the workitem list the STE principles we want to use during the execution of the work item, as well as in creating the STE skill. include the other changes.”
 
+On 2026-07-27, the user granted definition-change approval with this direction: “I give approval for modifying the skills currently listed in the work item, not need to indicate getting approvals for them, only for additional skills or agents beyond them.”
+
 The current portable contracts are `skills/effective-communication/SKILL.md`, `skills/structured-explanation/SKILL.md`, `agents/roles/dev-activities/dev-documentation-writer.role.yaml`, `agents/roles/dev-activities/dev-artifact-reviewer.role.yaml`, and `skills/documentation-page-verify/SKILL.md`.
 
-This request authorizes creation of this Ready work item. It does not by itself authorize mutation of an agent or skill definition. Obtain exact, scope-specific approval before each governed definition change.
+The approval covers every exact skill and agent definition in the current governed-definition scope. It does not cover an additional skill or agent definition.
 
 ## STE Principles For This Work Item
 
@@ -136,9 +138,9 @@ Use these same principles as the initial content contract for the new portable S
 - Do not edit generated files directly.
 - Keep installed and generated agent definitions consistent with the conceptual sources.
 
-### Governed Definition Approval Boundary
+### Governed Definition Approval Scope
 
-Before mutation, obtain explicit approval for these exact governed canonical sources:
+Approval is granted for these exact governed canonical sources:
 
 - `skills/ste-technical-writing/SKILL.md`
 - `skills/ste-technical-writing/agents/openai.yaml`
@@ -148,7 +150,7 @@ Before mutation, obtain explicit approval for these exact governed canonical sou
 - `agents/roles/dev-activities/dev-documentation-writer.role.yaml`
 - `agents/roles/dev-activities/dev-artifact-reviewer.role.yaml`
 
-Record the exact approval wording, date, and user-message provenance. Run the supported pre-mutation definition check for each governed canonical path.
+No additional approval request is necessary for these exact paths. Use the approval evidence in Source Evidence for each required pre-mutation definition check.
 
 The approved canonical sources may produce updates to these dependent artifacts through supported generators:
 
@@ -164,7 +166,7 @@ The approved canonical sources may produce updates to these dependent artifacts 
 - `generated/adapters/gemini/agents/dev-artifact-reviewer.md`
 - `generated/adapters/junie/agents/dev-artifact-reviewer.md`
 
-Discovery may identify another required governed canonical source. Do not mutate it under this item until the work-item manifest records its exact path and the user gives explicit approval for that path.
+Discovery may identify another required skill or agent definition. Do not mutate it under this item until the work-item manifest records its exact path and the user gives explicit approval for that path.
 
 ## Acceptance Criteria
 
