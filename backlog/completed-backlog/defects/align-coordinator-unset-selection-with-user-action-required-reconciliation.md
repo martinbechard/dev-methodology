@@ -1,6 +1,6 @@
 # Configure Persistence When Backlog Coordination Is First Requested
 
-Status: Ready
+Status: Completed
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Claim: None
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/align-coordinator-unset-selection-with-user-action-required-reconciliation.md
+Provider Reference: backlog/completed-backlog/defects/align-coordinator-unset-selection-with-user-action-required-reconciliation.md
 
 Completion: direct-main
 
@@ -72,3 +72,13 @@ None.
 ## Notes
 
 This work item does not authorize blind regeneration of AGENTS.md. The generated candidate is review input. The agent owns the semantic reconciliation and must preserve project-specific behavior before applying the final file.
+
+## Completion Evidence
+
+- Implementation commit: 527334ed
+- Persistence UNSET now produces a direct file-provider question when that provider is available.
+- The generated guidance requires a separate AGENTS.md.candidate, comparison with the existing AGENTS.md, preservation of project directives, and resumption of the original request.
+- Explicit Persistence none remains unchanged.
+- Coordinator simulator tests: 23 passed.
+- Focused renderer tests: 2 passed.
+- Git diff check passed.
