@@ -1,6 +1,6 @@
 ---
 name: create-document-outline
-description: Infer a complete topic hierarchy from a document and evaluate parent containment and sibling sequence.
+description: Infer a complete topic hierarchy from a document and evaluate and justify parent containment and sibling sequence.
 metadata:
   category: documentation-methodology
 ---
@@ -280,19 +280,23 @@ concatenates headings, or excludes a major child topic.
    [100% alignment | root]
 
 6. For the first child in any group, convert its parent-containment score to a
-   percentage of 2 and prefix the topic with:
+   percentage of 2. Add a concise justification that answers why the topic is
+   included in that parent, and prefix the topic with:
 
-   [100% alignment | parent 2/2]
+   [100% alignment | parent 2/2 — why: {parent-containment justification}]
 
 7. For every later child in that group, prefix the topic with its parent
-   containment score and preceding-sibling sequence score. Add the scores,
-   convert the total to a percentage of 4, and prefix the topic with:
+   containment score and preceding-sibling sequence score. Add a concise
+   justification after each component that answers why the topic is included
+   in the parent and why it follows the immediately preceding sibling. Add the
+   scores, convert the total to a percentage of 4, and prefix the topic with:
 
-   [100% alignment | parent 2/2 | sequence 2/2]
+   [100% alignment | parent 2/2 — why: {parent-containment justification} | sequence 2/2 — why: {preceding-sibling justification}]
 
-Use the actual percentage and component values in each prefix. The sequence
-score always compares the current topic with its immediately preceding sibling
-in the same group, not with the preceding topic elsewhere in the outline.
+Use the actual percentage, component values, and justifications in each
+prefix. The sequence score and its justification always compare the current
+topic with its immediately preceding sibling in the same group, not with the
+preceding topic elsewhere in the outline.
 
 ## Evaluate Topic Placement
 
@@ -307,6 +311,23 @@ Score how well the current topic is contained within its parent topic:
 Award 2 points only when the ordinary meaning of the parent fully includes the
 child without relying on a vague or synthetic catch-all interpretation. A
 child that extends beyond the parent receives at most 1 point.
+
+For every parent-containment score, answer:
+
+Why is this topic included in this parent?
+
+Use one concise causal clause that names the semantic relationship. For
+example, identify the topic as a type, part, stage, property, rule, example, or
+other aspect of the parent. Match the justification to the score:
+
+- 2 points: explain why the complete topic falls within the parent's ordinary
+  meaning.
+- 1 point: explain both the aspect that fits and the aspect that extends beyond
+  or only partly fits the parent.
+- 0 points: explain the subject or scope mismatch that prevents containment.
+
+Do not use circular explanations such as it belongs here because it is related
+to the parent.
 
 ### Sibling Sequence
 
@@ -326,6 +347,24 @@ containment but only 1 point for sequence unless the items themselves have an
 ordered scale, chronology, dependency, or progression. A stable catalog order
 alone does not make one parallel case follow logically from another.
 
+For every sibling-sequence score, answer:
+
+Why is this topic a logical successor to the immediately preceding sibling?
+
+Use one concise causal clause that names the transition between the two
+topics. Match the justification to the score:
+
+- 2 points: identify the progression, dependency, chronology, narrowing,
+  contrast, or other strong transition that makes this successor logical.
+- 1 point: explain the limited connection, such as a parallel alternative,
+  loose comparison, or source-order adjacency without an intrinsic
+  progression.
+- 0 points: explain why no meaningful editorial transition connects the
+  siblings.
+
+Do not justify sequence by saying only that the document presents the topics
+in that order.
+
 The first child has no sequence score, so its total is the parent-containment
 score out of 2. Every later child combines both dimensions for a total out of
 4.
@@ -337,6 +376,8 @@ Convert the total to a percentage for the displayed alignment result:
 
 Keep the component scores visible beside the percentage. An alignment
 percentage must not conceal a zero or partial score in either dimension.
+Keep each component's why clause visible beside that component. The aggregate
+percentage does not replace either explanation.
 
 Revise a grouping when parent containment is 0. Reorder, regroup, or explain an
 editorial discontinuity when sibling sequence is 0. Treat any score of 1 as an
@@ -347,7 +388,10 @@ cannot compensate for a missing topic or an incomplete parent.
 
 After scoring, perform a skeptical editorial pass:
 
-- challenge every 2-point component by stating the relationship it represents;
+- challenge every 2-point component by checking whether its why clause names a
+  complete semantic relationship;
+- challenge every 1-point or 0-point component by checking whether its why
+  clause states the exact limitation or mismatch;
 - reduce the score when the relationship depends only on shared words,
   adjacency, or an invented umbrella;
 - revise the grouping when several high scores depend on the same vague parent;
@@ -371,7 +415,11 @@ Confirm that:
 - editorial framing has informed the outline without becoming accidental
   subject matter;
 - every non-root topic has the required parent-containment score;
+- every parent-containment score has a concise explanation of why the topic is
+  included in that parent;
 - every topic after the first sibling has the required sequence score;
+- every sequence score has a concise explanation of why the topic is or is not
+  a logical successor to the immediately preceding sibling;
 - zero and partial component scores are revised or explicitly explained;
 - exclusions and unresolved editorial judgments are stated.
 
@@ -380,6 +428,7 @@ Confirm that:
 Return:
 
 1. the content boundary and exclusions;
-2. the top-down topic outline with placement-score prefixes;
+2. the top-down topic outline with placement-score prefixes and a why clause
+   for every constituent score;
 3. a concise topic-coverage summary;
 4. any unresolved grouping or interpretation concern.
