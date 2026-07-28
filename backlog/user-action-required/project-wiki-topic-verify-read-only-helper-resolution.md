@@ -1,16 +1,16 @@
 # Keep topic verification read-only and make helper checks executable
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/project-wiki-topic-verify-read-only-helper-resolution.md
+Provider Reference: backlog/user-action-required/project-wiki-topic-verify-read-only-helper-resolution.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -26,7 +26,7 @@ Runtime Thread: 019faa18-fde3-7d20-ad68-77bfcf160fbd
 
 Root Agent Task: 019faa18-fde3-7d20-ad68-77bfcf160fbd
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Next Lifecycle Owner: User
 
 Branch: codex/project-wiki-topic-verify-helper-resolution-019faa18
 
@@ -37,6 +37,22 @@ Phase: Read-only analysis
 Started At: 2026-07-28T19:03:33Z
 
 Claim Evidence: running-project-wiki-topic-verify-helper-resolution-019faa18 acquired as SHARED_CHECKOUT_ACQUIRED on primary main at 2026-07-28T19:03:26.668254Z; claim journal event 9df147d9-db17-41a7-a86d-bc5923f35672.
+
+Running Lifecycle Commit: 41e61c0a92fd8fe1d6bfbb696923a4abef8376d8
+
+## User Action Required
+
+Question: Do you approve changing the governed definition skills/project-wiki-topic-verify/SKILL.md to keep verification strictly read-only and resolve its project-wiki helper commands from the loaded installed/source skill location?
+
+Why User Owns It: root AGENTS.md requires explicit exact scope-specific approval for every skill-definition change.
+
+Approval Scope: skills/project-wiki-topic-verify/SKILL.md only.
+
+Exclusions: No approval for any other skill or agent definition, no hand edits to generated mirrors, no cross-family regeneration, and no implementation before approval. Ordinary non-governed test or checklist corrections are not part of this approval grant.
+
+Preflight Evidence: Lines 51-52 and 104 use unresolved project-wiki-skill-root. Line 51 authorizes okf-migrate despite the read-only contract on lines 3, 10, and 53. skills/project-wiki/scripts/test_setup_guidance.py currently codifies these defects; its focused 8-test run passed, proving test drift rather than acceptance.
+
+Unattended Stop: No governed definition mutation, candidate production, integration, or completion may continue until approval is recorded and the supported pre-mutation check passes. Read-only evidence already collected is preserved.
 
 ## Summary
 
