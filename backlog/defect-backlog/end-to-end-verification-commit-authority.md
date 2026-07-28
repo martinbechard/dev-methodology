@@ -1,20 +1,20 @@
 # Route E2E evidence delivery through Commit authority
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/end-to-end-verification-commit-authority.md
+Provider Reference: backlog/defect-backlog/end-to-end-verification-commit-authority.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
-Launch Reservation: reserve-first-eight-lint-defects-019fa9bb
+Prior Launch Reservation: reserve-first-eight-lint-defects-019fa9bb
 
 Normalized Objective: Make end-to-end verification deliver evidence through the selected Commit workflow instead of unconditionally creating a commit.
 
@@ -30,7 +30,7 @@ Branch: codex/end-to-end-verification-commit-authority
 
 Worktree: /Users/martinbechard/.codex/worktrees/06cb/dev-methodology
 
-Phase: Waiting for explicit definition-change approval
+Phase: Ready for parent dispatch reservation; preserved canonical root must accept Starting -> Running before repository mutation.
 
 Started At: 2026-07-28T18:41:57Z
 
@@ -41,6 +41,28 @@ Claim Evidence: lifecycle-running-end-to-end-verification-commit-authority-019fa
 Accepted Candidate Commit: fabb6277f3d2f0f5eb296c1e605cff9d83582aa4
 
 Next Lifecycle Owner: Root Dev Orchestrator
+
+## Resumption Evidence
+
+User Answer: approved
+
+Answered At: 2026-07-28
+
+Answer Provenance: Canonical work-item Thread 019fa9f9-33ef-7c73-872e-bd0bfce5e7bd; exact user message immediately after the recorded User Action Required question.
+
+Disposition: User Action Required -> Ready.
+
+Approved Scope: skills/end-to-end-verification/SKILL.md only.
+
+Approved Semantics: The verifier returns evidence and creates no commit; only the delivery owner uses the selected direct-main or feature-branch Commit route; UNSET stops for Commit selection; evidence-only work applies no Commit workflow.
+
+Exclusions Preserved: No other governed definition, hand-edited generated mirror, probe, or unrelated change.
+
+Preserved Test-Only Candidate: fabb6277f3d2f0f5eb296c1e605cff9d83582aa4.
+
+Approval-Record and Preflight Requirement: Before any governed-definition mutation, create a delegated-user-direction approval record covering skills/end-to-end-verification/SKILL.md and run scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change for that path using the record.
+
+Preserved Canonical Thread and Root Agent Task: 019fa9f9-33ef-7c73-872e-bd0bfce5e7bd.
 
 ## User Action Required
 

@@ -1,12 +1,12 @@
 # Resolve the project-wiki template from the installed skill catalog
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/make-project-wiki-template-resolution-install-portable.md
+Provider Reference: backlog/defect-backlog/make-project-wiki-template-resolution-install-portable.md
 
 Completion: direct-main
 
@@ -14,7 +14,7 @@ Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
-Launch Reservation: reserve-seven-batch2-defects-019fa9bb
+Prior Launch Reservation: reserve-seven-batch2-defects-019fa9bb
 
 Normalized Objective: Resolve the project-wiki template from the installed skill catalog.
 
@@ -30,13 +30,33 @@ Canonical Branch: codex/project-wiki-template-resolution-portable-019faa18
 
 Assigned Worktree: /Users/martinbechard/.codex/worktrees/c5e3/dev-methodology
 
-Current Phase: Awaiting explicit user approval for the governed definition change.
+Current Phase: Ready for parent dispatch reservation; preserved canonical root must accept Starting -> Running before repository mutation.
 
 Started At: 2026-07-28T19:03:10Z
 
 Claim Evidence: running-project-wiki-template-resolution-019faa18 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T19:03:10.486935Z; claim event a7ae62a2-3ac9-411b-bb9a-21601bd1c398.
 
 Next Lifecycle Owner: User approval authority
+
+## Resumption Evidence
+
+User Answer: approved
+
+Answered At: 2026-07-28
+
+Answer Provenance: Canonical work-item Thread 019faa18-fde1-7690-ba81-7eb1a23bf4cf; exact user message immediately after the recorded User Action Required question.
+
+Disposition: User Action Required -> Ready.
+
+Approved Scope: skills/project-wiki-create/SKILL.md only.
+
+Approved Semantics: Its Template section resolves project-wiki-template.md through the installed development-methodology catalog entry and the same catalog-root mechanism in a source checkout.
+
+Exclusions Preserved: No review-routing change, other skill or agent definition, hand-edited generated mirror, or unrelated change.
+
+Approval-Record and Preflight Requirement: Before any governed-definition mutation, create a delegated-user-direction approval record covering skills/project-wiki-create/SKILL.md and run scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change for that path using the record.
+
+Preserved Canonical Thread and Root Agent Task: 019faa18-fde1-7690-ba81-7eb1a23bf4cf.
 
 ## Summary
 

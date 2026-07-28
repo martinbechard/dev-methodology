@@ -1,20 +1,20 @@
 # Restore role-owned wiki verification routing and portable operation paths
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/project-wiki-role-routing-and-operation-paths.md
+Provider Reference: backlog/defect-backlog/project-wiki-role-routing-and-operation-paths.md
 
 Completion: direct-main
 
-Owner: Unowned pending approval/resumption
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
-Launch Reservation: reserve-seven-batch2-defects-019fa9bb
+Prior Launch Reservation: reserve-seven-batch2-defects-019fa9bb
 
 Normalized Objective: Restore role-owned wiki verification routing and portable operation paths.
 
@@ -30,13 +30,33 @@ Branch: codex/project-wiki-role-routing-operation-paths-019faa18
 
 Worktree: /Users/martinbechard/.codex/worktrees/4713/dev-methodology
 
-Phase: Awaiting explicit scope-specific governed-definition approval.
+Phase: Ready for parent dispatch reservation; preserved canonical root must accept Starting -> Running before repository mutation.
 
 Started At: 2026-07-28T19:07:00Z
 
 Claim Evidence: running-project-wiki-role-routing-operation-paths-019faa18-recovery; SHARED_CHECKOUT_ACQUIRED; claim event e64f1eb5-10e8-417f-980b-9e8e8b818b7e; recovery notification followed prior DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED event 38ae895b-7bfa-4366-86bc-a0c17bfa5be9.
 
 Next Lifecycle Owner: Parent Coordinator, then the preserved root Dev Orchestrator
+
+## Resumption Evidence
+
+User Answer: approved
+
+Answered At: 2026-07-28
+
+Answer Provenance: Canonical work-item Thread 019faa18-fe86-7110-9b9e-c7be3bdc8888; exact user message immediately after the recorded User Action Required question.
+
+Disposition: User Action Required -> Ready.
+
+Approved Scope: skills/project-wiki/SKILL.md and agents/roles/wiki-activities/wiki-ingester.role.yaml only.
+
+Approved Semantics: Make verifier dispatch and interruption role-owned, require role-owned BLOCKED evidence before and after a prospective move without bypassing the pre-move GOOD boundary, and resolve helper operations portably from the loaded skill directory.
+
+Exclusions Preserved: No wiki-topic-verifier, wiki-writer, project-wiki-topic-write, project-wiki-topic-verify, other governed definition, or hand-edited generated mirror.
+
+Approval-Record and Preflight Requirement: Before any governed-definition mutation, create a delegated-user-direction approval record covering both exact paths and run scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change separately for each path using that record.
+
+Preserved Canonical Thread and Root Agent Task: 019faa18-fe86-7110-9b9e-c7be3bdc8888.
 
 ## Summary
 

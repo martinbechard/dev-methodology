@@ -1,12 +1,12 @@
 # Prevent sensitive data retention in tool-runtime logs and traces
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/prevent-sensitive-tool-runtime-log-and-trace-retention.md
+Provider Reference: backlog/defect-backlog/prevent-sensitive-tool-runtime-log-and-trace-retention.md
 
 Completion: direct-main
 
@@ -14,7 +14,7 @@ Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
-Launch Reservation: reserve-six-ready-defects-019fa9bb
+Prior Launch Reservation: reserve-six-ready-defects-019fa9bb
 
 Normalized Objective: Prevent sensitive data retention in tool-runtime logs and traces.
 
@@ -30,13 +30,33 @@ Branch: codex/prevent-sensitive-tool-runtime-retention-019faa2d
 
 Worktree: /Users/martinbechard/.codex/worktrees/7f70/dev-methodology
 
-Phase: User approval is required before any governed definition change; implementation has not started.
+Phase: Ready for parent dispatch reservation; preserved canonical root must accept Starting -> Running before repository mutation.
 
 Started At: 2026-07-28T19:27:04.520990Z
 
 Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim starting-to-running-prevent-sensitive-tool-runtime-log-and-trace-retention-019faa2d; incarnation 0776966e-defa-4c1c-b6da-b47126c7dc90; claim journal event 745061b2-a2f9-4482-8e5a-2838e6244720; released with event 8077932f-271b-4c08-97ae-21d207a467a7; exact provider path claimed in the primary main checkout. Prior recovery evidence: the first claim attempt returned DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED, journal event dd77b66a-3524-4331-9fad-f62af96cb695; unrelated TypeScript ESM provider-only acceptance committed at f0f5c17a6af52fdcf332fc7cf48e7c0b49ee98ef; its recovery claim was acquired in event 04eb821a-8352-40b8-b37f-81705e60f4bd and released in event 1828d51c-d8e3-416a-a26a-22a8ac029a6a. The Running acceptance commit 062ca4ecf487dc6d39bf72117e3a733b035e18c0 also included unrelated backlog/defect-backlog/allow-typed-evidence-review-functional-spec.md; the bytes were preserved and no destructive correction was made.
 
 Next Lifecycle Owner: Dev Backlog Coordinator after the user records an answer in the canonical work-item or parent coordination Thread.
+
+## Resumption Evidence
+
+User Answer: approved
+
+Answered At: 2026-07-28
+
+Answer Provenance: Canonical work-item Thread 019faa2d-2ffa-75c0-80d5-e3d3b9f4a851; exact user message immediately after the recorded User Action Required question.
+
+Disposition: User Action Required -> Ready.
+
+Approved Scope: skills/tool-runtime/SKILL.md only.
+
+Approved Semantics: Exclude or redact sensitive values and protected payload or file contents before retained tool-runtime logs and traces for successful, denied, malformed, partial, and retried calls.
+
+Exclusions Preserved: No metadata, other governed skill or agent definition, generated mirror, provider, source report, analysis, or unrelated lifecycle change.
+
+Approval-Record and Preflight Requirement: Before any governed-definition mutation, create a delegated-user-direction approval record covering skills/tool-runtime/SKILL.md and run scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change for that path using the record.
+
+Preserved Canonical Thread and Root Agent Task: 019faa2d-2ffa-75c0-80d5-e3d3b9f4a851.
 
 ## User Action Required
 
