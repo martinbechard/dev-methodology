@@ -27,21 +27,24 @@ The user authorized immediate Ready Defect creation for independently confirmed 
 - Route verification to the role that owns independent verification.
 - Preserve the required verification-before-move boundary.
 - Replace undefined or source-specific operation paths with portable resolution.
+- Define role-owned handling for an interrupted verifier without bypassing the verification-before-move boundary.
 
 ## Acceptance Criteria
 
 - Topic-writing and topic-verification roles have unambiguous separate responsibilities.
 - Verification remains required before a source move that depends on its result.
 - Every documented operation path resolves in source and installed contexts.
+- Pre-move and post-move interruption checks preserve the verification-before-move boundary and record the required role-owned BLOCKED evidence.
 
 ## Dependencies
 
-None. Collision reconciliation before creation found no active item with this provider reference, slug, affected skill, or overlapping accepted outcome.
+None
 
 ## Verification
 
 - Exercise the role-routing workflow with independent verification.
 - Resolve all documented operation paths from source and installed contexts.
+- Simulate verifier interruption before and after a prospective move and confirm the verification-before-move boundary and role-owned BLOCKED evidence.
 - Run focused workflow validation and git diff --check.
 - Obtain independent review of the correction.
 
@@ -50,5 +53,7 @@ None. Collision reconciliation before creation found no active item with this pr
 None.
 
 ## Notes
+
+Collision reconciliation before creation found no active item with this provider reference, slug, affected skill, or overlapping accepted outcome.
 
 This record has one primary affected skill identity: skills/project-wiki/SKILL.md. It does not authorize a skill-definition mutation. If correction changes this governed SKILL.md, later implementation requires explicit scope-specific user approval naming that exact definition, a provenance approval record, and the supported pre-mutation definition-change check.

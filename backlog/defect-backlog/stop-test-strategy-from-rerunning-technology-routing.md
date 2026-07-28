@@ -36,7 +36,7 @@ The user authorized immediate Ready Defect creation for independently confirmed 
 
 ## Dependencies
 
-None. Collision reconciliation before creation found no active item with this provider reference, slug, affected skill, or overlapping accepted outcome.
+None
 
 ## Verification
 
@@ -51,5 +51,7 @@ None. Collision reconciliation before creation found no active item with this pr
 None.
 
 ## Notes
+
+Collision reconciliation before creation found no active item with this provider reference, slug, affected skill, or overlapping accepted outcome.
 
 This record has one primary affected skill identity: skills/test-strategy/SKILL.md. It does not authorize a skill-definition mutation. If correction changes this governed SKILL.md, later implementation requires explicit scope-specific user approval naming that exact definition, a provenance approval record, and the supported pre-mutation definition-change check.

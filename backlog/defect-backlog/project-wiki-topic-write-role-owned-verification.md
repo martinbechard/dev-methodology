@@ -27,21 +27,24 @@ The user authorized immediate Ready Defect creation for independently confirmed 
 - Defer verifier orchestration to the role that owns it.
 - Keep writer responsibilities bounded to topic creation and handoff.
 - Resolve writer helper commands from a documented executable location.
+- Define interruption handling that preserves writer edits, keeps the verifier non-mutating, and leaves verifier orchestration role-owned.
 
 ## Acceptance Criteria
 
 - The topic writer does not claim verifier-orchestration authority.
 - Verification handoff names the role-owned route.
 - Every writer helper command resolves in source and installed contexts.
+- A simulated verifier interruption preserves writer edits, keeps the verifier non-mutating, and produces the required role-owned BLOCKED evidence without moving orchestration into the writer.
 
 ## Dependencies
 
-None. Collision reconciliation before creation found no active item with this provider reference, slug, affected skill, or overlapping accepted outcome.
+None
 
 ## Verification
 
 - Exercise writer creation and handoff without a writer-spawned verifier.
 - Resolve documented helper commands in source and installed contexts.
+- Simulate verifier interruption and confirm preserved edits, non-mutation, and role-owned BLOCKED evidence.
 - Run focused contract validation and git diff --check.
 - Obtain independent review of the correction.
 
@@ -50,5 +53,7 @@ None. Collision reconciliation before creation found no active item with this pr
 None.
 
 ## Notes
+
+Collision reconciliation before creation found no active item with this provider reference, slug, affected skill, or overlapping accepted outcome.
 
 This record has one primary affected skill identity: skills/project-wiki-topic-write/SKILL.md. It does not authorize a skill-definition mutation. If correction changes this governed SKILL.md, later implementation requires explicit scope-specific user approval naming that exact definition, a provenance approval record, and the supported pre-mutation definition-change check.

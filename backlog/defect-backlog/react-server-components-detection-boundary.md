@@ -36,7 +36,7 @@ The user authorized immediate Ready Defect creation for independently confirmed 
 
 ## Dependencies
 
-None. Collision reconciliation before creation found no active item with this provider reference, slug, affected provider identity, or overlapping accepted outcome.
+None
 
 ## Verification
 
@@ -49,5 +49,7 @@ None. Collision reconciliation before creation found no active item with this pr
 None.
 
 ## Notes
+
+Collision reconciliation before creation found no active item with this provider reference, slug, affected provider identity, or overlapping accepted outcome.
 
 This record has one primary affected provider identity: skills/react-server-components. The accepted smallest correction is skills/react-server-components/detection.yaml only, which is not presently a governed definition surface. No governed-definition approval is required unless later discovery changes skills/react-server-components/SKILL.md or skills/react-server-components/agents/openai.yaml; either change would require explicit scope-specific user approval, a provenance approval record, and the supported pre-mutation definition-change check.
