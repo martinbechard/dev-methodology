@@ -11,7 +11,7 @@ Use this skill to create or substantially rewrite one project wiki methodology a
 
 ## Template
 
-Use skills/development-methodology/assets/templates/project-wiki-template.md as the starting asset.
+In an installed catalog, resolve the active skill catalog root from the available development-methodology skill entry. In a development-methodology source checkout, use the repository's skills directory as that catalog root. From either catalog root, use development-methodology/assets/templates/project-wiki-template.md as the starting asset. Do not resolve the template path relative to the target repository.
 
 Copy the template only when a local editable artifact is needed. Replace every TODO instruction with source-backed content from the target repository.
 

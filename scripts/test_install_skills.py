@@ -263,6 +263,57 @@ class InstallSkillsTests(unittest.TestCase):
             self.assertEqual((destination / "beta" / "SKILL.md").read_text(encoding="utf-8"), SECOND_SKILL_FILE_CONTENT)
             self.assertFalse((destination / "alpha" / "__pycache__").exists())
 
+    def test_project_wiki_template_resolves_from_source_and_installed_catalogs(
+        self,
+    ) -> None:
+        """Resolve the project wiki template through one portable catalog path."""
+
+        installer = load_installer()
+        source_catalog_root = REPOSITORY_ROOT / "skills"
+        catalog_relative_template = Path(
+            "development-methodology/assets/templates/project-wiki-template.md"
+        )
+        project_wiki_create_text = (
+            source_catalog_root / "project-wiki-create" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("active skill catalog root", project_wiki_create_text)
+        self.assertIn(
+            "available development-methodology skill entry",
+            project_wiki_create_text,
+        )
+        self.assertIn(
+            "repository's skills directory as that catalog root",
+            project_wiki_create_text,
+        )
+        self.assertNotIn(
+            "skills/development-methodology/assets/templates/project-wiki-template.md",
+            project_wiki_create_text,
+        )
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            installed_catalog_root = Path(temp_dir) / "installed-skills"
+            with redirect_stdout(io.StringIO()):
+                exit_code = installer.main(
+                    [
+                        "--source",
+                        str(source_catalog_root),
+                        "--dest",
+                        str(installed_catalog_root),
+                    ]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            expected_template = (
+                source_catalog_root / catalog_relative_template
+            ).read_bytes()
+            self.assertIn(b"# TODO Project Wiki Methodology", expected_template)
+            for catalog_root in (source_catalog_root, installed_catalog_root):
+                with self.subTest(catalog_root=catalog_root):
+                    template = catalog_root / catalog_relative_template
+                    self.assertTrue(template.is_file())
+                    self.assertEqual(expected_template, template.read_bytes())
+
     def test_skips_existing_skills_unless_replace_is_requested(self) -> None:
         installer = load_installer()
 

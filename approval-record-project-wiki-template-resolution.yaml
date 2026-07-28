@@ -1,0 +1,6 @@
+basis: explicit-user-direction
+definition_scope: skills/project-wiki-create/SKILL.md
+direction: "approved"
+provenance:
+  source: user-message
+  reference: thread:019faa18-fde1-7690-ba81-7eb1a23bf4cf/message:approved
