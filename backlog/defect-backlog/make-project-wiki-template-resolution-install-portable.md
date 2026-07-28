@@ -1,6 +1,6 @@
 # Resolve the project-wiki template from the installed skill catalog
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/make-project-wiki-template-resolution
 
 Completion: direct-main
 
-Owner: Unowned pending root acceptance
+Owner: Dev Orchestrator / root task 019faa18-fde1-7690-ba81-7eb1a23bf4cf
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -22,9 +22,19 @@ Dispatch Time: 2026-07-28T18:56:59Z
 
 Intended Root Role: Dev Orchestrator
 
-Runtime Thread: Pending canonical child Thread creation after this durable reservation.
+Runtime Thread: 019faa18-fde1-7690-ba81-7eb1a23bf4cf
 
-Root Agent Task: Pending canonical root Dev Orchestrator acceptance.
+Root Agent Task: 019faa18-fde1-7690-ba81-7eb1a23bf4cf
+
+Canonical Branch: codex/project-wiki-template-resolution-portable-019faa18
+
+Assigned Worktree: /Users/martinbechard/.codex/worktrees/c5e3/dev-methodology
+
+Current Phase: Read-only analysis pending definition-change authority.
+
+Started At: 2026-07-28T19:03:10Z
+
+Claim Evidence: running-project-wiki-template-resolution-019faa18 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T19:03:10.486935Z; claim event a7ae62a2-3ac9-411b-bb9a-21601bd1c398.
 
 Next Lifecycle Owner: Root Dev Orchestrator
 
