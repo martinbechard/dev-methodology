@@ -1,6 +1,6 @@
 # Allow typed evidence in functional-specification review checklists
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-functiona
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: root Dev Orchestrator
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -22,11 +22,21 @@ Dispatch Time: 2026-07-28T19:19:58Z
 
 Intended Root Role: Dev Orchestrator
 
-Runtime Thread: Pending runtime creation
+Runtime Thread: 019faa2d-300c-7881-8233-115c049c1b8b
 
-Root Agent Task: Pending runtime acceptance
+Root Agent Task: 019faa2d-300c-7881-8233-115c049c1b8b
 
 Next Lifecycle Owner: Root Dev Orchestrator
+
+Branch: codex/allow-typed-evidence-review-functional-spec-019faa2d
+
+Worktree: /Users/martinbechard/.codex/worktrees/cccf/dev-methodology
+
+Current Phase: Read-only diagnosis and approval-scope preparation
+
+Running Started At: 2026-07-28T19:26:59Z
+
+Claim Evidence: starting-running-019faa2d acquired as SHARED_CHECKOUT_ACQUIRED (journal 152d0334-5bfc-4c13-9455-d66dbcc16c2e) for this exact provider file before the transition.
 
 ## Summary
 
