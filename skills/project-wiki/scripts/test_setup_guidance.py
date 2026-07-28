@@ -7,6 +7,10 @@
 
 from __future__ import annotations
 
+import shutil
+import subprocess
+import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -19,7 +23,19 @@ CORE_IMPLEMENTATION = SKILL_ROOT / "scripts" / "project_wiki_ops" / "core.py"
 CONSTANTS_IMPLEMENTATION = SKILL_ROOT / "scripts" / "project_wiki_ops" / "constants.py"
 TOPIC_WRITER_SKILL = SKILL_ROOT.parent / "project-wiki-topic-write" / "SKILL.md"
 TOPIC_VERIFIER_SKILL = SKILL_ROOT.parent / "project-wiki-topic-verify" / "SKILL.md"
-WIKI_OPS_COMMAND_PREFIX = "python3 project-wiki-skill-root/scripts/wiki_ops.py"
+WIKI_OPS_COMMAND_PREFIX = 'python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py"'
+WIKI_OPS_COMMANDS = (
+    ("init",),
+    ("status",),
+    ("suggest", "--changed"),
+    ("lint",),
+    ("okf-migrate",),
+    ("okf-validate",),
+    ("link-leaves",),
+    ("sources", "docs/wiki/topic-index.md"),
+    ("questions",),
+    ("questions", "--format", "json"),
+)
 COMPANY_DIGEST_BOUNDARY_PHRASE = (
     "do not discuss multiple companies in one digest entry unless they are part of the same joint story, "
     "such as a partnership, acquisition, coordinated release, or directly comparative event; appearing "
@@ -207,8 +223,6 @@ class SetupGuidanceTest(unittest.TestCase):
         reference_paths = [
             PAGE_SCHEMA_REFERENCE,
             VERIFICATION_CHECKLIST,
-            TOPIC_WRITER_SKILL,
-            TOPIC_VERIFIER_SKILL,
         ]
 
         for reference_path in reference_paths:
@@ -221,8 +235,6 @@ class SetupGuidanceTest(unittest.TestCase):
         reference_paths = [
             PAGE_SCHEMA_REFERENCE,
             VERIFICATION_CHECKLIST,
-            TOPIC_WRITER_SKILL,
-            TOPIC_VERIFIER_SKILL,
         ]
 
         for reference_path in reference_paths:
@@ -230,6 +242,81 @@ class SetupGuidanceTest(unittest.TestCase):
             for phrase in OKF_GUIDANCE_PHRASES[1:]:
                 with self.subTest(path=reference_path.name, phrase=phrase):
                     self.assertIn(phrase, reference_text)
+
+    def test_project_wiki_package_uses_only_portable_operation_paths(self) -> None:
+        package_paths = (
+            SKILL_DOCUMENT,
+            OPERATIONS_REFERENCE,
+            PAGE_SCHEMA_REFERENCE,
+            VERIFICATION_CHECKLIST,
+            CORE_IMPLEMENTATION,
+        )
+
+        for package_path in package_paths:
+            text = package_path.read_text(encoding="utf-8")
+            with self.subTest(path=package_path.relative_to(SKILL_ROOT)):
+                self.assertNotIn("project-wiki-" + "skill-root", text)
+        skill_text = SKILL_DOCUMENT.read_text(encoding="utf-8")
+        self.assertIn(
+            "the absolute directory containing the loaded project-wiki/SKILL.md",
+            skill_text,
+        )
+        self.assertIn(
+            'test -f "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py"',
+            skill_text,
+        )
+        for arguments in WIKI_OPS_COMMANDS:
+            with self.subTest(arguments=arguments):
+                self.assertIn(
+                    f"{WIKI_OPS_COMMAND_PREFIX} {' '.join(arguments)}",
+                    skill_text,
+                )
+
+    def test_all_operations_resolve_from_source_and_installed_catalogs(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            temporary_root = Path(temporary)
+            installed_root = temporary_root / "catalog" / "project-wiki"
+            shutil.copytree(SKILL_ROOT, installed_root)
+            for catalog_name, skill_root in (
+                ("source", SKILL_ROOT),
+                ("installed", installed_root),
+            ):
+                with self.subTest(catalog=catalog_name):
+                    project_root = temporary_root / f"{catalog_name}-project"
+                    project_root.mkdir()
+                    subprocess.run(
+                        ["git", "init", "-q"],
+                        cwd=project_root,
+                        check=True,
+                        capture_output=True,
+                        text=True,
+                    )
+                    self._assert_all_operations_resolve(skill_root, project_root)
+
+    def _assert_all_operations_resolve(
+        self, loaded_skill_root: Path, project_root: Path
+    ) -> None:
+        skill_document = (loaded_skill_root / "SKILL.md").resolve()
+        project_wiki_skill_root = skill_document.parent
+        wiki_ops = project_wiki_skill_root / "scripts" / "wiki_ops.py"
+        self.assertTrue(skill_document.is_file())
+        self.assertTrue(wiki_ops.is_file())
+        self.assertEqual(loaded_skill_root.resolve(), project_wiki_skill_root)
+        for arguments in WIKI_OPS_COMMANDS:
+            with self.subTest(arguments=arguments):
+                completed = subprocess.run(
+                    [sys.executable, str(wiki_ops), *arguments],
+                    cwd=project_root,
+                    check=False,
+                    capture_output=True,
+                    text=True,
+                )
+                allowed_return_codes = (
+                    {0, 1} if arguments[0] in {"status", "lint"} else {0}
+                )
+                self.assertIn(completed.returncode, allowed_return_codes)
+                self.assertNotIn("Traceback", completed.stderr)
+                self.assertNotIn("No such file or directory", completed.stderr)
 
 
 if __name__ == "__main__":

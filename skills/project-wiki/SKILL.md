@@ -142,11 +142,11 @@ When repairing an existing digest, inspect the current month page for bundled da
 
 Raw-source ingest automation prompts must repeat the digest granularity and ordering rules directly: one digest entry per independently changing item or closely coupled product family; never group digest entries by raw source artifact, collector run, sweep category, or ingestion batch; keep monthly digest Current Understanding entries in reverse chronological order by entry date. When a digest page changes, the automation closeout must report that digest granularity and ordering were checked with the project-wiki-topic-verify checklist, or that the full verifier returned GOOD. High-volume raw sources may update many durable leaves without forcing every touched leaf into the digest; omit low-signal digest mentions rather than compress unrelated entities into a vague grouped bullet.
 
-After each raw source file is synthesized, run an independent topic-page verification loop before treating that source as complete. Spawn a fresh subagent without forking the main context, ask it to use $project-wiki-topic-verify, and pass only the repository root, the complete list of docs/wiki topic pages created or updated for that source, the raw or processed source path as evidence, and any lint output. The verifier must review the topic pages with its own context and return GOOD or NEEDS_CORRECTION about those pages. It must not verify the source material as the target artifact.
+After each raw source file is synthesized, the owning conceptual writer or ingester role must route an independent topic-page verification loop before treating that source as complete. The owning role controls fresh verifier dispatch, correction routing, and interruption evidence under its role definition. Provide the repository root, verification gate, page inventory, source evidence path, current validation output, and correction-attempt count and cap. The verifier reviews the topic pages with read-only authority and returns GOOD or NEEDS_CORRECTION about those pages. It does not verify the source material as the target artifact.
 
-An explicit caller or owning-agent correction-attempt cap governs each verification gate. When no cap is supplied, allow at most two corrected resubmissions after the initial verifier verdict at that gate; the initial verdict does not count as a correction attempt. If the verifier returns NEEDS_CORRECTION and correction attempts remain, the main ingest agent applies the in-scope corrections, reruns lint when files changed, and invokes a fresh verifier with the updated topic-page list. If the verifier still returns NEEDS_CORRECTION after the governing cap is exhausted, stop and report BLOCKED with the unresolved findings, completed correction-attempt count, and governing cap. Do not let the verifier edit files directly.
+An explicit caller or owning-agent correction-attempt cap governs each verification gate. When no cap is supplied, allow at most two corrected resubmissions after the initial verifier verdict at that gate; the initial verdict does not count as a correction attempt. If the verifier returns NEEDS_CORRECTION and correction attempts remain, the owning writer or ingester applies the in-scope corrections, reruns validation when files changed, and routes the corrected page set to a fresh verifier. If the verifier still returns NEEDS_CORRECTION after the governing cap is exhausted, the owning role stops and reports BLOCKED with the unresolved findings, completed correction-attempt count, and governing cap. The verifier remains read-only.
 
-Run the bounded loop before moving the raw source into raw/processed and require GOOD before the move. After the move and source-link updates, rerun lint and invoke a fresh verifier with the updated topic-page list and processed source path as evidence when any docs/wiki link changed. Apply the same governing cap, bounded default, and BLOCKED stop rule independently to this post-move verification gate.
+Run the bounded loop before moving the raw source into raw/processed and require GOOD before the move. An interrupted or unavailable non-verdict at this pre-move gate is role-owned BLOCKED evidence: the source remains in raw and the owning role records the gate, invocation and receipt evidence, page and source inventories, validation output, correction attempts and cap, source location, and exact unresolved interruption. After a GOOD pre-move verdict, move the source and update source links. Rerun validation and route the updated topic-page list and processed source path to a fresh verifier when any docs/wiki link changed. An interrupted or unavailable non-verdict at this post-move gate is also BLOCKED: retain the processed source and its prior GOOD pre-move provenance, and record the same bounded evidence for the unresolved post-move interruption. Apply the same governing cap, bounded default, and BLOCKED stop rule independently to ordinary NEEDS_CORRECTION verdicts at this post-move gate.
 
 After a raw source file has been fully processed into the relevant entity leaves and monthly digest, move it under raw/processed so future ingest passes do not process it again. Preserve useful date or source subfolders when moving files. Update wiki source links to the processed raw path using links relative to each wiki page. Do not move raw files when ingest is incomplete, source links are stale, source links are absolute filesystem paths, or wiki lint has not passed.
 
@@ -232,17 +232,22 @@ For reusable UI, API, data, or operational patterns, classify by pattern first a
 
 Run commands from the repository root. Use python3 unless the environment clearly provides python.
 
+Resolve PROJECT_WIKI_SKILL_ROOT as the absolute directory containing the loaded project-wiki/SKILL.md. Do not assume a source checkout or fixed home catalog. Verify both the loaded skill and operation script before invoking a command:
+
 ```bash
-python3 project-wiki-skill-root/scripts/wiki_ops.py init
-python3 project-wiki-skill-root/scripts/wiki_ops.py status
-python3 project-wiki-skill-root/scripts/wiki_ops.py suggest --changed
-python3 project-wiki-skill-root/scripts/wiki_ops.py lint
-python3 project-wiki-skill-root/scripts/wiki_ops.py okf-migrate
-python3 project-wiki-skill-root/scripts/wiki_ops.py okf-validate
-python3 project-wiki-skill-root/scripts/wiki_ops.py link-leaves
-python3 project-wiki-skill-root/scripts/wiki_ops.py sources docs/wiki/topic-index.md
-python3 project-wiki-skill-root/scripts/wiki_ops.py questions
-python3 project-wiki-skill-root/scripts/wiki_ops.py questions --format json
+PROJECT_WIKI_SKILL_ROOT="/absolute/path/to/the/loaded/project-wiki"
+test -f "$PROJECT_WIKI_SKILL_ROOT/SKILL.md"
+test -f "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py"
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" init
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" status
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" suggest --changed
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" lint
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-migrate
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-validate
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" link-leaves
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" sources docs/wiki/topic-index.md
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" questions
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" questions --format json
 ```
 
 Read references/page-schema.md before creating or substantially rewriting a wiki page.

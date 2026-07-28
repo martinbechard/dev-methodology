@@ -6949,25 +6949,37 @@ class BundleContentTests(unittest.TestCase):
                 self.assertNotIn("retries at five", text)
                 self.assertNotIn("adaptive backoff", text)
 
-    def test_wiki_ingester_continues_substantiated_ingest_after_verifier_interruption(
+    def test_wiki_ingester_blocks_with_role_owned_verifier_interruption_evidence(
         self,
     ) -> None:
-        """Verifier interruption should expose uncertainty without erasing supported work."""
+        """Verifier interruption preserves the applicable gate state and returns BLOCKED."""
         build_skill_docs = load_build_skill_docs_module()
         skill_payload = build_skill_docs.build_payload()
         roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
         role = next(role for role in roles if role.name == "wiki-ingester")
 
+        boundary_text = " ".join(role.instruction_sections["boundaries"])
         workflow_text = " ".join(role.instruction_sections["workflow"])
+        delegation_text = " ".join(role.instruction_sections["delegation"])
         review_text = " ".join(role.instruction_sections["review"])
         failure_text = " ".join(role.instruction_sections["failureHandling"])
         completion_text = " ".join(role.instruction_sections["completion"])
-        interruption_example = next(
+        skill_text = (
+            SKILLS_ROOT / "project-wiki" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        operations_text = (
+            SKILLS_ROOT / "project-wiki" / "references" / "operations.md"
+        ).read_text(encoding="utf-8")
+        verifier_payload = (
+            "Provide the repository root, verification gate, page inventory, source "
+            "evidence path, current validation output, and correction-attempt count and cap."
+        )
+        interruption_examples = [
             example
             for example in role.examples
             if "interruption" in example["purpose"].lower()
-        )
-        interruption_response = interruption_example["plausibleResponse"]
+            or "interrupted" in example["purpose"].lower()
+        ]
 
         for phrase in (
             "substantiated claim and relationship",
@@ -6981,10 +6993,28 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("not a NEEDS_CORRECTION verdict", review_text)
         self.assertIn("before and after the source move", review_text)
         self.assertIn("do not report BLOCKED on the first finding", workflow_text)
-        self.assertIn("Do not roll back substantiated", failure_text)
         self.assertIn("do not restore substantiated content", failure_text)
         self.assertNotIn("restore the source and its page links", failure_text)
-        self.assertIn("verifier interruption", completion_text)
+        self.assertIn("Own fresh wiki-topic-verifier routing", boundary_text)
+        self.assertIn("does not authorize a source move", boundary_text)
+        self.assertIn("Capture the invocation and returned receipt", delegation_text)
+        for surface, text in (
+            ("skill", skill_text),
+            ("operations", operations_text),
+            ("role", delegation_text),
+        ):
+            with self.subTest(verifier_payload_surface=surface):
+                self.assertIn(verifier_payload, " ".join(text.split()))
+        self.assertIn("report role-owned BLOCKED evidence", workflow_text)
+        self.assertIn("At the pre-move gate, keep the source in raw", workflow_text)
+        self.assertIn("At the post-move gate, retain the already-processed source", workflow_text)
+        self.assertIn("verification gate, invocation and receipt evidence", failure_text)
+        self.assertIn("page and source inventories", failure_text)
+        self.assertIn("completed correction attempts and governing cap", failure_text)
+        self.assertIn("current source location", failure_text)
+        self.assertIn("exact unresolved interruption", failure_text)
+        self.assertIn("Report READY only after every assigned source passes", completion_text)
+        self.assertNotIn("completes the verifier interruption workflow", completion_text)
         self.assertIn("labeled ingested or substantiated", completion_text)
         self.assertIn("labeled Open Questions inventory", completion_text)
         self.assertIn("conclusions inventory must contain", completion_text)
@@ -7004,23 +7034,45 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("at least one fact-bearing bullet", completion_text)
         self.assertIn("exactly one most-relevant existing page", workflow_text)
         self.assertIn("only when no appropriate existing page fits", workflow_text)
-        self.assertIn("STATUS: READY", interruption_response)
-        self.assertIn("OPEN QUESTIONS:", interruption_response)
-        self.assertIn(
-            "docs/wiki/retry-policy/request-eligibility.md",
-            interruption_response,
+        self.assertEqual(2, len(interruption_examples))
+        pre_move_example = next(
+            example
+            for example in interruption_examples
+            if "pre-move" in example["purpose"].lower()
         )
-        self.assertIn(
-            "docs/wiki/retry-policy/retry-execution.md",
-            interruption_response,
+        post_move_example = next(
+            example
+            for example in interruption_examples
+            if "post-move" in example["purpose"].lower()
         )
-        self.assertNotIn("docs/wiki/retry-policy/backoff.md", interruption_response)
-        self.assertRegex(
-            interruption_response,
-            r"(?:missing evidence|evidence is\s+missing)",
-        )
-        self.assertNotIn("STATUS: BLOCKED", interruption_response)
-        self.assertNotIn("restore", interruption_response.lower())
+        for example in interruption_examples:
+            response = example["plausibleResponse"]
+            normalized_response = " ".join(response.split())
+            with self.subTest(interruption_example=example["purpose"]):
+                self.assertIn("STATUS: BLOCKED", normalized_response)
+                self.assertNotIn("STATUS: READY", normalized_response)
+                self.assertIn("OPEN QUESTIONS:", normalized_response)
+                self.assertIn("page and source inventories", normalized_response)
+                self.assertIn("validation output", normalized_response)
+                self.assertIn("cap", normalized_response)
+                self.assertIn("exact unresolved interruption", normalized_response)
+                self.assertIn(
+                    "Committed the retained in-scope wiki result",
+                    normalized_response,
+                )
+                self.assertIn("confirmed a clean worktree", normalized_response)
+                self.assertIn(
+                    "resource-coordination release or handoff",
+                    normalized_response,
+                )
+                self.assertIn("recorded the final queue recheck", normalized_response)
+        pre_move_response = " ".join(pre_move_example["plausibleResponse"].split())
+        self.assertIn("source remains at raw/retry-policy.md", pre_move_response)
+        self.assertNotIn("raw/processed/retry-policy.md", pre_move_response)
+        post_move_response = " ".join(post_move_example["plausibleResponse"].split())
+        self.assertIn("returned GOOD", post_move_response)
+        self.assertIn("raw/processed/retry-policy.md", post_move_response)
+        self.assertIn("GOOD pre-move receipt", post_move_response)
         audit_examples = [
             example
             for example in role.examples
@@ -7253,8 +7305,8 @@ class BundleContentTests(unittest.TestCase):
                 )
                 self.assertRegex(
                     normalized_text,
-                    r"(?i)(?:exhausted.{0,180}report BLOCKED|"
-                    r"report BLOCKED.{0,180}exhausted)",
+                    r"(?i)(?:exhausted.{0,180}reports? BLOCKED|"
+                    r"reports? BLOCKED.{0,180}exhausted)",
                 )
                 self.assertRegex(
                     normalized_text,
@@ -7264,19 +7316,19 @@ class BundleContentTests(unittest.TestCase):
                 self.assertRegex(
                     normalized_text,
                     r"(?i)(?:correction-attempt|governing) cap.{0,120}"
-                    r"post-move verification gate",
+                    r"post-move(?: verification)? gate",
                 )
                 self.assertRegex(
                     normalized_text,
-                    r"(?i)(?:bounded default.{0,120}post-move verification gate|"
-                    r"post-move verification gate.{0,320}at most two corrected "
+                    r"(?i)(?:bounded default.{0,120}post-move(?: verification)? gate|"
+                    r"post-move(?: verification)? gate.{0,320}at most two corrected "
                     r"resubmissions after the initial post-move verdict)",
                 )
                 self.assertRegex(
                     normalized_text,
-                    r"(?i)(?:BLOCKED stop rule.{0,120}post-move verification gate|"
-                    r"post-move verification gate.{0,760}exhausted.{0,180}"
-                    r"report BLOCKED)",
+                    r"(?i)(?:BLOCKED stop rule.{0,120}post-move(?: verification)? gate|"
+                    r"post-move(?: verification)? gate.{0,760}exhausted.{0,180}"
+                    r"reports? BLOCKED)",
                 )
                 self.assertNotRegex(
                     normalized_text,

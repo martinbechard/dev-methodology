@@ -118,9 +118,10 @@ During review, audit for bundled leaf concepts before accepting a topic page. A 
 - Mention local files and wiki pages as Markdown links, not as bare filenames or paths.
 - Prefer contextual links where the related concept is discussed.
 - Run the leaf-link pass after creating or updating a durable leaf page.
-- Run python3 project-wiki-skill-root/scripts/wiki_ops.py link-leaves from the repository root for the leaf-link pass.
-- Run python3 project-wiki-skill-root/scripts/wiki_ops.py okf-migrate when concept frontmatter is missing or stale.
-- Run python3 project-wiki-skill-root/scripts/wiki_ops.py okf-validate before finishing wiki maintenance.
+- Resolve PROJECT_WIKI_SKILL_ROOT as the absolute directory containing the loaded project-wiki/SKILL.md and verify scripts/wiki_ops.py exists there before running an operation.
+- Run python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" link-leaves from the repository root for the leaf-link pass.
+- Run python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-migrate when concept frontmatter is missing or stale.
+- Run python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-validate before finishing wiki maintenance.
 - Use repository grep to find existing wiki mentions of each leaf title before finishing.
 - A page that mentions a durable leaf title should link the first unlinked mention to that leaf unless the mention is inside a heading, code fence, or existing link.
 - Move fully processed raw sources under raw/processed and update wiki source links to that processed path.

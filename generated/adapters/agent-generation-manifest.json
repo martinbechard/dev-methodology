@@ -281,7 +281,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "8eb20b0b002c4c9e3e7b7567d1615aea22977e34d0d47a0997d4d5cfbecaae43",
+          "sha256": "59bd38f85cc14386066b90a1be51fc90b1dd6e700655a00dfc2bb6241897aa35",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -647,7 +647,7 @@
             "project-wiki-topic-write",
             "codex-harness-directives"
           ],
-          "sha256": "0341e5d212b8ab93c1587520664d95beb71134b3e004ec110dfce20fd83b9f88",
+          "sha256": "f2eaee91e9851beb804f4324ef1055b2e6626ac726d8d9c8aca63efd53f86478",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -999,7 +999,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "789f15e6d7ded8d2dd4597253efe748d7e181d476f405e76e201c373294c7756",
+          "sha256": "55c14882475cbd8f4968b7357bb0cfd449b68b2c30d4be77bd52c10d90f49c57",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -1342,7 +1342,7 @@
             "project-wiki",
             "project-wiki-topic-write"
           ],
-          "sha256": "23e32d5f09d234aa80a2a4e6e3442f4796452fb27bf25c60327aeb65a914c478",
+          "sha256": "6e1cfbfe72fda78355d06bba7714a813dd7abb9c053791ff2866a530589c9079",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {

@@ -2,6 +2,14 @@
 
 Run commands from the repository root.
 
+Resolve PROJECT_WIKI_SKILL_ROOT as the absolute directory containing the loaded project-wiki/SKILL.md. Do not assume a source checkout or fixed home catalog. Before invoking any operation, verify:
+
+```bash
+PROJECT_WIKI_SKILL_ROOT="/absolute/path/to/the/loaded/project-wiki"
+test -f "$PROJECT_WIKI_SKILL_ROOT/SKILL.md"
+test -f "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py"
+```
+
 ## init
 
 Use init when docs/wiki does not exist or is missing the standard files. It creates only missing pages and does not overwrite existing content.
@@ -79,7 +87,7 @@ Use link-leaves after durable leaf pages are created or updated. Run the leaf-li
 Run:
 
 ```bash
-python3 project-wiki-skill-root/scripts/wiki_ops.py link-leaves
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" link-leaves
 ```
 
 Pass one or more leaf page paths to scope the pass to the pages touched in the current task. Use dry-run first when the expected link volume is uncertain.
@@ -103,19 +111,20 @@ For raw source ingest:
 11. High-volume raw sources may update many durable leaves without forcing every touched leaf into the digest; omit low-signal digest mentions rather than compress unrelated entities into a vague grouped bullet.
 12. Audit the created or updated topic pages for bundled leaf concepts. Split reusable practice patterns, workflows, operating agreements, governance rules, decisions, team structures, source snapshots, and evaluation questions when they can change independently.
 13. Track the complete list of docs/wiki topic pages created or updated for that raw source file.
-14. Run lint, then invoke a fresh no-fork subagent using $project-wiki-topic-verify. Pass only the repository root, the created or updated topic-page list, the current raw source path as evidence, and lint output.
+14. Run lint, then let the owning conceptual ingester role route the page set to a fresh wiki-topic-verifier context. Provide the repository root, verification gate, page inventory, source evidence path, current validation output, and correction-attempt count and cap.
 15. Apply the explicit caller or owning-agent correction-attempt cap to the pre-move verification gate. When no cap is supplied, allow at most two corrected resubmissions after the initial verifier verdict; the initial verdict does not count as a correction attempt.
-16. If the verifier returns NEEDS_CORRECTION and correction attempts remain, apply the in-scope corrections in the main ingest context, rerun lint when files changed, and invoke a fresh verifier again.
+16. If the verifier returns NEEDS_CORRECTION and correction attempts remain, the owning ingester applies the in-scope corrections, reruns validation when files changed, and routes the corrected page set to a fresh verifier.
 17. If the verifier still returns NEEDS_CORRECTION after the governing cap is exhausted, stop and report BLOCKED with the unresolved findings, completed correction-attempt count, and governing cap.
 18. Move fully processed raw files under raw/processed only after the pre-move verifier returns GOOD, preserving useful date or source subfolders.
 19. Update wiki source links to the processed raw paths and add those topic pages to the verification list for that source.
-20. Run lint again, then invoke a fresh no-fork verifier with the updated topic-page list and processed source path as evidence when any docs/wiki link changed.
-21. Apply the same explicit caller or owning-agent correction-attempt cap to the post-move verification gate. When no cap is supplied, allow at most two corrected resubmissions after the initial post-move verdict; the initial verdict does not count as a correction attempt. If the post-move verifier returns NEEDS_CORRECTION and correction attempts remain, apply the in-scope corrections in the main ingest context, rerun lint, and invoke a fresh verifier. If the verdict remains NEEDS_CORRECTION after the governing cap is exhausted, stop and report BLOCKED with the unresolved findings, completed correction-attempt count, and governing cap.
-22. Leave incomplete raw files in place.
+20. Run validation again, then let the owning ingester route the updated topic-page list and processed source path to a fresh verifier when any docs/wiki link changed.
+21. Apply the same explicit caller or owning-agent correction-attempt cap to the post-move verification gate. When no cap is supplied, allow at most two corrected resubmissions after the initial post-move verdict; the initial verdict does not count as a correction attempt. If the post-move verifier returns NEEDS_CORRECTION and correction attempts remain, the owning ingester applies the in-scope corrections, reruns validation, and routes the corrected page set to a fresh verifier. If the verdict remains NEEDS_CORRECTION after the governing cap is exhausted, stop and report BLOCKED with the unresolved findings, completed correction-attempt count, and governing cap.
+22. If a verifier invocation is interrupted or unavailable before the move, report role-owned BLOCKED evidence and leave the source in raw. If it is interrupted or unavailable after a GOOD pre-move verdict and source move, report BLOCKED while retaining the processed source and prior GOOD provenance. At either gate, record the gate, invocation and receipt evidence, page and source inventories, validation output, correction attempts and cap, source location, and exact unresolved interruption.
+23. Leave incomplete raw files in place.
 
 During ingest, use judgement when sources contain synonyms, aliases, overlapping concepts, or conflicting ideas. Normalize synonyms into the best durable entity page when they refer to the same thing. Use the agent's judgement to factor common ideas into the hub or leaf that owns the shared concept. Keep source-specific ideas clearly attributed to their source in the relevant leaf, scan page, digest note, or Maintenance Notes. Record unresolved conflicting ideas as Open Questions instead of flattening them into a false consensus.
 
-The verifier is read-only. It verifies the created or updated topic pages, not the source material. It reports GOOD or NEEDS_CORRECTION and file-specific findings. The ingest agent owns all edits and repeats verification after corrections so the verifier's context remains independent from the main synthesis context.
+The verifier is read-only. It verifies the created or updated topic pages, not the source material. It reports GOOD or NEEDS_CORRECTION and file-specific findings. The owning conceptual ingester role owns fresh verifier routing, all edits and corrections, and interruption evidence so the verifier's context and authority remain independent from the main synthesis context.
 
 ## update-feeds
 
@@ -144,7 +153,7 @@ Use okf-migrate when a wiki needs OKF frontmatter or when topic titles, descript
 Run:
 
 ```bash
-python3 project-wiki-skill-root/scripts/wiki_ops.py okf-migrate
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-migrate
 ```
 
 Use --dry-run first when you want to inspect the number of concept documents that would change.
@@ -156,7 +165,7 @@ Use okf-validate after okf-migrate and before finishing wiki maintenance. It ver
 Run:
 
 ```bash
-python3 project-wiki-skill-root/scripts/wiki_ops.py okf-validate
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-validate
 ```
 
 ## commit handling

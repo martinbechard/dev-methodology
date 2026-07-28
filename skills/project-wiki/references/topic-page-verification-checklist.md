@@ -59,9 +59,10 @@ Use this checklist when verifying created or updated docs/wiki topic pages, espe
 - Monthly digest entries link to the durable leaves that hold the details.
 - The relevant topic-index entry or folder hub links any newly created durable leaf.
 - Run the leaf-link pass after creating or updating a durable leaf page.
-- Run python3 project-wiki-skill-root/scripts/wiki_ops.py link-leaves from the repository root for the leaf-link pass.
-- Run python3 project-wiki-skill-root/scripts/wiki_ops.py okf-migrate when concept frontmatter is missing or stale.
-- Run python3 project-wiki-skill-root/scripts/wiki_ops.py okf-validate before accepting topic pages.
+- Resolve PROJECT_WIKI_SKILL_ROOT as the absolute directory containing the loaded project-wiki/SKILL.md and verify scripts/wiki_ops.py exists there before running an operation.
+- Run python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" link-leaves from the repository root for the leaf-link pass.
+- Run python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-migrate when concept frontmatter is missing or stale.
+- Run python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-validate before accepting topic pages.
 - Use repository grep to find existing wiki mentions of each leaf title before finishing.
 - A page that mentions a durable leaf title should link the first unlinked mention to that leaf unless the mention is inside a heading, code fence, or existing link.
 - No source path, code path, test path, backlog item, behavior, fallback, or compatibility constraint is invented.

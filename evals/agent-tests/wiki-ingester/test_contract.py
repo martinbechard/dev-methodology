@@ -1,9 +1,10 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies Wiki Ingester continuation through the real verifier injection boundary.
+# Summary: Verifies Wiki Ingester blocking behavior through the real verifier injection boundary.
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import inspect
 import json
@@ -48,7 +49,7 @@ MISSING_EVIDENCE_PATTERN = (
     r"(?:missing|absent|unavailable|not (?:been )?(?:identified|found|available))"
 )
 LIVE_CASE_SELECTOR_ENV = "WIKI_INGESTER_LIVE_CASES"
-FOCUSED_LIVE_CASES = frozenset({"pre0", "raw-ingest"})
+FOCUSED_LIVE_CASES = frozenset({"pre0", "post0"})
 
 
 def _load_module(name: str, path: Path):
@@ -431,28 +432,50 @@ def _assert_single_jitter_open_question_page(
 def _validate_control_result(
     test: unittest.TestCase, plan, result: dict[str, object]
 ) -> None:
-    """Assert target-owned continuation and clean closeout for one live control."""
+    """Assert target-owned BLOCKED evidence and gate-specific source preservation."""
     process = result["process"]
     test.assertIsInstance(process, dict)
     test.assertEqual(0, process["exitCode"])
     terminal = str(result["targetTerminalResponse"])
-    test.assertIn("READY", terminal)
-    test.assertNotIn("BLOCKED", terminal)
+    test.assertIn("BLOCKED", terminal)
+    test.assertNotIn("READY", terminal)
     test.assertEqual("", result["gitStatus"])
     test.assertEqual([], result["liveRegistryClaims"])
-    test.assertIs(result["retryRawSourcePresent"], False)
-    test.assertIs(result["retryProcessedSourcePresent"], True)
     result_text = str(result["evaluationResultText"]).lower()
-    with test.subTest(result_disposition="interruption"):
-        test.assertIn("interrupt", result_text)
-    _assert_result_inventory(test, result_text)
+    gate = plan.gate
+    source_path = (
+        "raw/retry-policy.md"
+        if gate == "pre-move"
+        else "raw/processed/retry-policy.md"
+    )
+    for evidence in (
+        "interrupt",
+        gate,
+        "page inventory",
+        "source inventory",
+        "validation",
+        "correction attempts",
+        "cap",
+        "receipt",
+        source_path,
+    ):
+        with test.subTest(blocked_evidence=evidence):
+            test.assertIn(evidence, result_text)
+    test.assertRegex(result_text, r"invocation|receipt")
     _assert_terminal_result_readback(
         test,
         str(result["evaluationResultText"]),
         substantiated_content_written=True,
     )
-    with test.subTest(result_disposition="no-rollback"):
-        test.assertNotIn("restor", result_text)
+    if gate == "pre-move":
+        test.assertIs(result["retryRawSourcePresent"], True)
+        test.assertIs(result["retryProcessedSourcePresent"], False)
+        test.assertNotIn("raw/processed/retry-policy.md", result["committedPaths"])
+    else:
+        test.assertIs(result["retryRawSourcePresent"], False)
+        test.assertIs(result["retryProcessedSourcePresent"], True)
+        test.assertIn("raw/processed/retry-policy.md", result["committedPaths"])
+        test.assertRegex(result_text, r"good.{0,80}pre[- ]move|pre[- ]move.{0,80}good")
     expected = plan.outcomes()
     observed = [
         {
@@ -523,7 +546,6 @@ def _validate_control_result(
     test.assertNotEqual(result["initialOwnedTreeDigest"], result["finalOwnedTreeDigest"])
     committed_paths = set(result["committedPaths"])
     test.assertIn("eval-result.md", committed_paths)
-    test.assertIn("raw/processed/retry-policy.md", committed_paths)
     retry_pages = {
         path: content
         for path, content in result["wikiContent"].items()
@@ -544,7 +566,6 @@ def _validate_control_result(
         test.assertIn(page_path, committed_paths)
         test.assertIn(heading, result["wikiContent"][page_path])
         test.assertIn(statement, result["wikiContent"][page_path])
-    _assert_single_jitter_open_question_page(test, retry_pages)
     _assert_terminal_head(test, result, terminal)
     test.assertIn("RELEASED", terminal.upper())
     test.assertIn("CLEAN", terminal.upper())
@@ -916,35 +937,126 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
     def test_retained_evaluator_artifacts_replay_offline(self) -> None:
         """Sanitized retained evaluator artifacts must replay without live execution."""
         replay = json.loads(RETAINED_REPLAY_PATH.read_text(encoding="utf-8"))
+        provenance = replay["provenance"]
+        self.assertEqual("deterministic-offline-contract-replay", provenance["mode"])
+        self.assertIs(provenance["liveExecution"], False)
+        adapter_path = REPOSITORY_ROOT / provenance["generatedAdapter"]
+        self.assertEqual(self.harness.NATIVE_ADAPTER, adapter_path)
         self.assertEqual(
-            "4e2f8ce5abac470a099b46dcb178c62c4292e1cdea19d3de3c0b7620631a259f",
-            replay["matrixSha256"],
+            provenance["generatedAdapterSha256"],
+            hashlib.sha256(adapter_path.read_bytes()).hexdigest(),
         )
+        adapter = tomllib.loads(adapter_path.read_text(encoding="utf-8"))
+        adapter_instructions = adapter["developer_instructions"]
+        self.assertIn(
+            "Report BLOCKED with the exact unresolved interruption.",
+            adapter_instructions,
+        )
+        self.assertIn(
+            "At the pre-move gate, preserve the raw source location.",
+            adapter_instructions,
+        )
+        self.assertIn(
+            "At the post-move gate, preserve the processed source location",
+            adapter_instructions,
+        )
+
         executions = replay["executions"]
-        _assert_result_inventory(self, executions["02"]["resultText"])
-        _assert_result_inventory(self, executions["06"]["resultText"])
-        self.assertTrue(_contains_missing_evidence(executions["06"]["resultText"]))
+        self.assertNotIn("02", executions)
+        self.assertNotIn("06", executions)
+        self.assertNotIn("post1", executions)
         _assert_collision_no_change(self, executions["08"]["resultText"])
         _assert_provider_result_inventory(self, executions["09"]["resultText"])
         self.assertTrue(_contains_correction_attempt_count(executions["09"]["resultText"]))
-        for execution in ("02", "06", "09"):
-            with self.subTest(retained_execution=execution):
-                _validate_execution_ownership(
-                    self,
-                    _retained_ownership_result(executions[execution]["ownership"]),
+        _validate_execution_ownership(
+            self,
+            _retained_ownership_result(executions["09"]["ownership"]),
+        )
+
+        page_inventory = [
+            "docs/wiki/retry-policy/request-eligibility.md",
+            "docs/wiki/retry-policy/retry-execution.md",
+        ]
+        for name, gate, source_location, source_state, receipts in (
+            (
+                "pre0",
+                "pre-move",
+                "raw/retry-policy.md",
+                {
+                    "rawSourcePresent": True,
+                    "processedSourcePresent": False,
+                },
+                [("pre-move", 0, "VERIFIER_INTERRUPTED")],
+            ),
+            (
+                "post0",
+                "post-move",
+                "raw/processed/retry-policy.md",
+                {
+                    "rawSourcePresent": False,
+                    "processedSourcePresent": True,
+                    "processedLinksResolve": True,
+                },
+                [
+                    ("pre-move", 0, "GOOD"),
+                    ("post-move", 0, "VERIFIER_INTERRUPTED"),
+                ],
+            ),
+        ):
+            with self.subTest(retained_execution=name):
+                execution = executions[name]
+                self.assertEqual("BLOCKED", execution["status"])
+                self.assertEqual(source_state, execution["sourceState"])
+                self.assertEqual(
+                    receipts,
+                    [
+                        (
+                            receipt["gate"],
+                            receipt["invocation"],
+                            receipt["outcome"],
+                        )
+                        for receipt in execution["receipts"]
+                    ],
                 )
-        self.assertTrue(
-            executions["06"]["expectedHead"].startswith(
-                executions["06"]["terminalCommit"]
-            )
+                evidence = execution["blockedEvidence"]
+                self.assertEqual(gate, evidence["gateInvocation"]["gate"])
+                self.assertEqual(0, evidence["gateInvocation"]["invocation"])
+                self.assertEqual(
+                    execution["receipts"][-1],
+                    evidence["gateReceipt"],
+                )
+                self.assertEqual(page_inventory, evidence["pageInventory"])
+                self.assertEqual([source_location], evidence["sourceInventory"])
+                self.assertEqual(
+                    {"lint": "PASS", "okf": "PASS"},
+                    evidence["validation"],
+                )
+                self.assertEqual(0, evidence["correctionAttempts"])
+                self.assertEqual(2, evidence["correctionAttemptCap"])
+                self.assertEqual(source_location, evidence["sourceLocation"])
+                self.assertIn(
+                    "verifier invocation 0 returned no usable verdict",
+                    evidence["unresolvedInterruption"],
+                )
+                result_text = execution["resultText"]
+                self.assertIn("STATUS: BLOCKED", result_text)
+                self.assertNotIn("READY", result_text)
+                self.assertNotIn("Interruption reconciliation", result_text)
+                self.assertIn(source_location, result_text)
+                for page in page_inventory:
+                    self.assertIn(page, result_text)
+                self.assertTrue(
+                    _markdown_section(result_text, "Substantiated Conclusions")
+                )
+                self.assertTrue(_markdown_section(result_text, "Open Questions"))
+
+        self.assertNotIn(
+            "priorPreMoveGoodReceipt",
+            executions["pre0"]["blockedEvidence"],
         )
         self.assertEqual(
-            "6e3cad8d49df63ca055634f3e8940aa93794ba3918ce17928ae088898ae3729c",
-            replay["fiveCaseLogSha256"],
-        )
-        self.assertEqual(
-            "6dc61d29-4cd1-4879-b06f-6d72e1773a5f",
-            replay["fiveCaseResourceReleaseEventId"],
+            executions["post0"]["receipts"][0],
+            executions["post0"]["blockedEvidence"]["priorPreMoveGoodReceipt"],
         )
         page_local_jitter = replay["pageLocalJitterReplay"]
         self.assertEqual(
@@ -957,45 +1069,6 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             page_local_jitter["wikiContent"],
         )
         self.assertEqual(page_local_jitter["expectedPage"], accepted_jitter_page)
-        post1 = executions["post1"]
-        self.assertEqual(
-            [
-                ("pre-move", 0, "GOOD"),
-                ("post-move", 0, "NEEDS_CORRECTION"),
-                ("post-move", 1, "VERIFIER_INTERRUPTED"),
-            ],
-            [
-                (receipt["gate"], receipt["invocation"], receipt["outcome"])
-                for receipt in post1["receipts"]
-            ],
-        )
-        corrected_page = post1["resubmissionPageContents"][
-            "docs/wiki/retry-policy/request-eligibility.md"
-        ]
-        self.assertIn("## Ineligible mutation requests", corrected_page)
-        self.assertIn(
-            "Order creation, cancellation, and payment mutation requests are never retried.",
-            corrected_page,
-        )
-        _assert_result_inventory(self, post1["resultText"])
-        jitter = _markdown_section(
-            post1["wikiContent"]["docs/wiki/retry-policy/retry-execution.md"],
-            "Open Questions",
-        ).lower()
-        self.assertIn("jitter", jitter)
-        self.assertIn("raw/processed/retry-policy.md", jitter)
-        self.assertEqual(
-            {
-                "rawSourcePresent": False,
-                "processedSourcePresent": True,
-                "processedLinksResolve": True,
-            },
-            post1["sourceState"],
-        )
-        self.assertEqual("", post1["gitStatus"])
-        self.assertEqual([], post1["liveRegistryClaims"])
-        self.assertIs(post1["claimReleased"], True)
-        self.assertIs(post1["terminalResultWrittenBeforeCommit"], True)
         for name, capture in replay["terminalResultCaptures"].items():
             with self.subTest(terminal_result_capture=name):
                 if capture["expected"] == "accept":
@@ -1045,7 +1118,7 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
         """Opaque prompts cannot bypass fresh-child, call, or receipt evidence."""
         replay = json.loads(RETAINED_REPLAY_PATH.read_text(encoding="utf-8"))
         baseline = _retained_ownership_result(
-            replay["executions"]["02"]["ownership"]
+            replay["executions"]["09"]["ownership"]
         )
         _validate_execution_ownership(self, baseline)
         mutations = (
@@ -1106,20 +1179,20 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
                     _assert_terminal_head(self, result, terminal)
 
     def test_live_case_selector_is_exact_and_rejects_adversarial_input(self) -> None:
-        """Focused reruns select only named interruption and raw-ingest controls."""
+        """Focused reruns select one interruption at each verification gate."""
         self.assertIsNone(_parse_live_case_selector(None))
         self.assertEqual(
-            frozenset({"pre0", "raw-ingest"}),
-            _parse_live_case_selector("pre0,raw-ingest"),
+            frozenset({"pre0", "post0"}),
+            _parse_live_case_selector("pre0,post0"),
         )
         for invalid in (
             "",
             "pre1",
             "post1",
             "pre2",
-            "post0",
             "pre0,pre0",
-            "pre0, raw-ingest",
+            "pre0, post0",
+            "raw-ingest",
             "all",
         ):
             with self.subTest(invalid=invalid):
@@ -1227,16 +1300,30 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             )
             canonical_instructions = canonical["developer_instructions"]
             for phrase in (
-                "every substantiated claim and relationship",
-                "Open Questions section of exactly one most-relevant existing page",
+                "Own fresh wiki_topic_verifier routing",
+                "An interrupted or unavailable non-verdict does not authorize a source move",
+                "At the pre-move gate, keep the source in raw",
+                "At the post-move gate, retain the already-processed source",
+                "GOOD pre-move provenance",
+                "verification gate, invocation and receipt evidence",
+                "page and source inventories",
+                "completed correction attempts and governing cap",
+                "current source location",
+                "exact unresolved interruption",
                 "not a NEEDS_CORRECTION verdict",
                 "do not invoke wiki_topic_verifier again for that source",
-                "Verifier interruption alone is not a BLOCKED condition",
-                "labeled ingested or substantiated conclusions inventory",
-                "labeled Open Questions inventory",
+                "Report BLOCKED when an actual NEEDS_CORRECTION loop exhausts",
             ):
                 with self.subTest(canonical_phrase=phrase):
                     self.assertIn(phrase, canonical_instructions)
+            for prohibited in (
+                "completed interruption reconciliation",
+                "complete the source move and processed-link updates",
+                "Verifier interruption alone is not a BLOCKED condition",
+                "completes the verifier interruption workflow",
+            ):
+                with self.subTest(prohibited_phrase=prohibited):
+                    self.assertNotIn(prohibited, canonical_instructions)
             staged = tomllib.loads(staged_target.read_text(encoding="utf-8"))
             self.assertEqual(
                 canonical_instructions,
@@ -1255,8 +1342,8 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             _validate_claim_events(self, result, "RELEASED with a clean registry")
 
-    def test_live_validator_accepts_continuation_trace_shape(self) -> None:
-        """A correction followed by interruption retains target-owned ingest evidence."""
+    def test_live_validator_accepts_pre_move_blocked_trace_shape(self) -> None:
+        """A correction followed by interruption retains raw state and BLOCKED evidence."""
         plan = self.harness.VerifierPlan("pre-move", 1)
         trace = [
             {
@@ -1361,20 +1448,25 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
                     "</environment_context>"
                 ],
             ],
-            "targetTerminalResponse": f"READY {head} {release_id} RELEASED CLEAN",
+            "targetTerminalResponse": f"BLOCKED {head} {release_id} RELEASED CLEAN",
             "gitStatus": "",
             "liveRegistryClaims": [],
-            "retryRawSourcePresent": False,
-            "retryProcessedSourcePresent": True,
+            "retryRawSourcePresent": True,
+            "retryProcessedSourcePresent": False,
             "evaluationResultText": (
-                "Interruption continuation completed.\n\n"
+                "STATUS: BLOCKED. The pre-move verifier interruption remains unresolved.\n"
+                "Verification gate: pre-move. Invocation receipt: VERIFIER_INTERRUPTED.\n"
+                "Page inventory: docs/wiki/retry-policy/retry-execution.md.\n"
+                "Source inventory: raw/retry-policy.md.\n"
+                "Validation passed. Correction attempts: one. Governing cap: two.\n"
+                "Current source location: raw/retry-policy.md.\n\n"
                 "## Substantiated Conclusions\n\n"
                 "- docs/wiki/retry-policy/retry-execution.md: idempotent reads "
                 "use retry delays of 200 and 500 milliseconds. Source: "
-                "raw/processed/retry-policy.md.\n\n"
+                "raw/retry-policy.md.\n\n"
                 "## Open Questions\n\n"
                 "- docs/wiki/retry-policy/retry-execution.md: jitter lacks "
-                "authoritative evidence in raw/processed/retry-policy.md.\n"
+                "authoritative evidence in raw/retry-policy.md.\n"
             ),
             "verifierControlTrace": trace,
             "dependencySessionIds": ["verifier-0", "verifier-1"],
@@ -1392,13 +1484,12 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
                 "docs/wiki/retry-policy/retry-execution.md",
                 "docs/wiki/retry-policy/request-eligibility.md",
                 "eval-result.md",
-                "raw/processed/retry-policy.md",
             ],
             "wikiContent": {
                 "docs/wiki/retry-policy/retry-execution.md": (
                     "## Open Questions\n\n"
                     "- Jitter remains unresolved because authoritative retry-policy "
-                    "evidence is missing. Provenance: raw/processed/retry-policy.md.\n"
+                    "evidence is missing. Provenance: raw/retry-policy.md.\n"
                 ),
                 CORRECTION_EXPECTATIONS[0][0]: (
                     f"{CORRECTION_EXPECTATIONS[0][1]}\n\n"
@@ -1571,8 +1662,8 @@ class WikiIngesterLiveInterruptionTests(unittest.TestCase):
             SUITE_ROOT / "executable_harness.py",
         )
 
-    def test_target_continues_and_closes_every_interruption(self) -> None:
-        """Each injected non-verdict preserves supported content and closes cleanly."""
+    def test_target_blocks_and_preserves_gate_state_for_every_interruption(self) -> None:
+        """Each injected non-verdict returns BLOCKED with gate-owned evidence."""
         selected = _selected_live_cases()
         for gate in ("pre-move", "post-move"):
             for interruption in range(3):

@@ -57,11 +57,14 @@ Agents use the project-wiki skill before changing or explaining specs, architect
 Run:
 
 ```bash
-python3 project-wiki-skill-root/scripts/wiki_ops.py status
-python3 project-wiki-skill-root/scripts/wiki_ops.py suggest --changed
-python3 project-wiki-skill-root/scripts/wiki_ops.py link-leaves
-python3 project-wiki-skill-root/scripts/wiki_ops.py lint
-python3 project-wiki-skill-root/scripts/wiki_ops.py questions
+PROJECT_WIKI_SKILL_ROOT="/absolute/path/to/the/loaded/project-wiki"
+test -f "$PROJECT_WIKI_SKILL_ROOT/SKILL.md"
+test -f "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py"
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" status
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" suggest --changed
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" link-leaves
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" lint
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" questions
 ```
 
 ## Pages
@@ -138,7 +141,7 @@ Topic pages should include:
 - Prefer contextual links in the relevant explanation. Use Related Wiki Pages only when a short linked cross-reference adds navigation value.
 - Keep steady-state explanations free of historical comparison unless the page is documenting a migration or maintenance note.
 - Preserve unresolved contradictions in Open Questions.
-- Review unresolved questions with python3 project-wiki-skill-root/scripts/wiki_ops.py questions. Ask one question at a time, update the wiki from the answer, rerun questions to confirm the item is gone, then run lint.
+- Resolve PROJECT_WIKI_SKILL_ROOT as the absolute directory containing the loaded project-wiki/SKILL.md, verify scripts/wiki_ops.py exists there, and review unresolved questions with python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" questions. Ask one question at a time, update the wiki from the answer, rerun questions to confirm the item is gone, then run lint.
 - Never invent source paths, test coverage, backlog status, or fallback behavior.
 """,
     "topic-index.md": """# Topic Index
