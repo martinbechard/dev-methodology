@@ -1,12 +1,12 @@
 # Replace the structured-design chain-of-thought output contract
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/replace-structured-design-chain-of-thought-output-contract.md
+Provider Reference: backlog/user-action-required/replace-structured-design-chain-of-thought-output-contract.md
 
 Completion: direct-main
 
@@ -30,11 +30,40 @@ Branch: codex/replace-structured-design-cot-contract-019faa19
 
 Worktree: /Users/martinbechard/.codex/worktrees/3d44/dev-methodology
 
-Phase: Lifecycle accepted; implementation authorization and source analysis pending.
+Phase: Awaiting explicit scope-specific user approval for governed-definition changes.
 
 Started At: 2026-07-28T19:05:44.790829Z
 
 Claim Evidence: Initial exact-file acquisition was refused with DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED while three other primary backlog transactions were uncommitted. Parent Coordinator recovery committed those transactions through clean primary main 41e61c0a92fd8fe1d6bfbb696923a4abef8376d8 and reconciled claims as STATUS with claims []. Claim running-replace-structured-design-cot-contract-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T19:05:44.790829Z; claim journal event 28c352c9-c935-4650-9b87-23c41d6a2e8e.
+
+## User Action Required
+
+Question: Do you approve changing exactly skills/structured-design/SKILL.md and skills/review-structured-artifact/SKILL.md to replace the public CHAIN-OF-THOUGHT contract and companion review language with concise observable DECISION, EVIDENCE, and UNCERTAINTY artifacts?
+
+Why User Approval Is Required: Both exact paths are governed skill definitions. Only the user can grant the required explicit, scope-specific approval; the existing defect authorization and provider lifecycle authority do not authorize either definition change.
+
+Unattended Work Boundary: Unattended governed-definition mutation must stop while this approval is pending. Read-only evidence preservation may continue.
+
+Resolution: Pending user approval.
+
+## Governed Definition Approval Preflight
+
+Safe Intent: Replace public CHAIN-OF-THOUGHT contract and companion review language with concise observable DECISION, EVIDENCE, and UNCERTAINTY-style output evidence.
+
+- skills/structured-design/SKILL.md: BLOCKED_APPROVAL_REQUIRED.
+- skills/review-structured-artifact/SKILL.md: BLOCKED_APPROVAL_REQUIRED.
+
+## User Action Required Transition Evidence
+
+Transition: Running -> User Action Required.
+
+Canonical Thread: 019faa19-2538-7cd0-832e-62b428886363.
+
+Root Agent Task: 019faa19-2538-7cd0-832e-62b428886363.
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Provider-Mutation Claim Evidence: uar-replace-structured-design-cot-contract-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T19:08:24.910307Z for both exact move paths; claim journal event c9fdefe4-9501-4e30-9610-bb90c1004d1d.
 
 ## Summary
 
