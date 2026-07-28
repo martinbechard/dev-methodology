@@ -1,12 +1,12 @@
 # Stop test-strategy from rerunning technology-skill routing
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/stop-test-strategy-from-rerunning-technology-routing.md
+Provider Reference: backlog/completed-backlog/defects/stop-test-strategy-from-rerunning-technology-routing.md
 
 Completion: direct-main
 
@@ -26,13 +26,13 @@ Runtime Thread: 019faa2d-300b-7012-9a14-03dc3039a7ac
 
 Root Agent Task: 019faa2d-300b-7012-9a14-03dc3039a7ac
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Next Lifecycle Owner: None — Completed
 
 Canonical Branch: codex/stop-test-strategy-routing-019faa2d
 
 Canonical Worktree: /Users/martinbechard/.codex/worktrees/8c28/dev-methodology
 
-Current Phase: Approved definition change pending pre-mutation check
+Current Phase: Completed — direct-main delivery recorded
 
 Started At: 2026-07-28T19:27:05Z
 
@@ -145,6 +145,32 @@ Claim Evidence: SHARED_CHECKOUT_ACQUIRED; claim resumed-starting-to-running-019f
 Exact Approval Provenance: User direction in the preserved canonical Runtime Thread authorizes skills/test-strategy/SKILL.md only: delete current line 10 and Workflow step 3, add no replacement routing language, mechanically renumber remaining workflow steps, and do not broaden policy.
 
 Pre-Mutation Boundary: No governed definition mutation occurs in this lifecycle transaction. Before any approved definition edit, create the exact approval record and pass the supported pre-mutation check for skills/test-strategy/SKILL.md.
+
+## Completion Evidence
+
+Completion Disposition: READY from the configured direct-main completion workflow.
+
+Accepted Source Candidate: d13bb82882ad834265e94b02bd0a5081981d87a7 on codex/stop-test-strategy-routing-019faa2d.
+
+Independent Review: GOOD / APPROVED with no findings, bound to d13bb82882ad834265e94b02bd0a5081981d87a7.
+
+Independent Verification: VERIFIED, bound to d13bb82882ad834265e94b02bd0a5081981d87a7. Definition preflight allowed, generated freshness passed, focused generated-skill Python 3.11 unittest passed, approved deletion and renumbering passed, git checks passed, and configured-root rejection remained preserved without bypass.
+
+Direct-Main Integration: Replay of the accepted candidate only onto codex/stop-test-strategy-routing-integration-019faa2d produced integration commit 8d079200e590825e367c068b97eb17ce36c8334f, the observed main tip.
+
+Source-to-Integration Mapping: d13bb82882ad834265e94b02bd0a5081981d87a7 to 8d079200e590825e367c068b97eb17ce36c8334f. The source is non-ancestral to main; git diff --exit-code passed for approval-record-test-strategy-routing.yaml, skills/test-strategy/SKILL.md, and design/generated/skill-definitions.js. The integration commit is an ancestor of observed main.
+
+Post-Integration Verification: ALLOWED_APPROVED_DEFINITION_CHANGE; build-skill-docs --check current; exact behavior passed; focused Python 3.11 unittest passed; git diff --check passed. System Python 3.9 could not run the validator because tomllib is unavailable; supported Python 3.11 passed.
+
+Remote Observation: Local main is authoritative for configured direct-main workflow. origin/main is behind; no publication was requested or configured.
+
+Integration Claim Evidence: SHARED_CHECKOUT_ACQUIRED event 36598f22-ca5a-4a8d-8af8-8fa9e3aa1788; RELEASED event 5414b159-2af1-49ac-8633-5918965a7456; post-release registry STATUS empty.
+
+Delivered Semantics: Only the former introductory routing sentence and former Workflow step 3 were removed. No replacement routing language was added. Remaining steps were mechanically renumbered. The approved record and supported generated skill-definition mirror were included.
+
+Archive Transition: Running to Completed recorded on 2026-07-28; archived from backlog/defect-backlog/stop-test-strategy-from-rerunning-technology-routing.md.
+
+Terminal Claim Evidence: SHARED_CHECKOUT_ACQUIRED; claim complete-test-strategy-routing-019faa2d-300b-7012-9a14-03dc3039a7ac; event 54f68acc-61a8-4353-8978-e4442dcb4dbd; primary main baseline 8d079200e590825e367c068b97eb17ce36c8334f.
 
 ## Notes
 
