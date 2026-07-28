@@ -476,11 +476,11 @@
       <h2 id="glossary-title">Glossary</h2>
       <p class="lede">These terms separate user-facing coding tools from the internal implementation that generates and installs their files.</p>
       <ul>
-        <li><strong>Coding agent runtime</strong>: a coding-agent environment such as Codex, Claude Code, Gemini CLI, Junie CLI, or GitHub Copilot. Each runtime discovers skills, agent definitions, project instructions, and optional MCP configuration through its own files and rules.</li>
-        <li><strong>Harness</strong>: the runtime-specific loading and execution environment. This page uses harness when it compares file discovery, precedence, and instruction-delivery behavior across coding agent runtimes.</li>
-        <li><strong>Adapter</strong>: the repository's internal generator and installer layer for one coding agent runtime. Keep the term for literal identifiers such as <code>adapters/&lt;runtime&gt;/...</code>, <code>--adapter</code>, and adapter-owned skills. Use coding agent runtime for reader-facing references to Codex, Claude Code, Gemini CLI, Junie CLI, and GitHub Copilot.</li>
-        <li><strong>Bundle installer</strong>: the <code>scripts/install-skills.py</code> command that copies selected shared skills, runtime-specific skills, generated agent definitions, ownership manifests, and optional MCP host configuration into a selected user or project destination.</li>
-        <li><strong>Adapter-owned skill</strong>: a runtime-specific skill source under <code>adapters/&lt;runtime&gt;/skills/</code>. It uses the portable <code>SKILL.md</code> package format but installs only for the coding agent runtime that needs it.</li>
+        <li><strong>Coding agent runtime</strong>: a tool that runs an AI coding agent, such as Codex, Claude Code, Gemini CLI, Junie CLI, or GitHub Copilot. Each runtime has its own files and rules for discovering skills, agent definitions, project instructions, and optional MCP configuration.</li>
+        <li><strong>Harness</strong>: the part of a coding agent runtime that loads files and applies runtime rules. Harness comparisons on this page cover discovery, precedence, and instruction delivery across runtimes.</li>
+        <li><strong>Adapter</strong>: this repository's internal layer for generating and installing files for one coding agent runtime. The term appears in implementation identifiers such as <code>adapters/&lt;runtime&gt;/...</code>, <code>--adapter</code>, and adapter-owned skills.</li>
+        <li><strong>Bundle installer</strong>: the <code>scripts/install-skills.py</code> command. It copies selected shared skills, runtime-specific skills, generated agent definitions, ownership manifests, and optional MCP configuration into a selected user or project destination.</li>
+        <li><strong>Adapter-owned skill</strong>: a runtime-specific skill source under <code>adapters/&lt;runtime&gt;/skills/&lt;skill-name&gt;/SKILL.md</code>. It uses the portable <code>SKILL.md</code> package format but installs only for the runtime that needs it.</li>
       </ul>
     </section>
 
