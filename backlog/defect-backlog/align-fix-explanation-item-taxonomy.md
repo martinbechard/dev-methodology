@@ -1,6 +1,6 @@
 # Align fix-explanation relationship examples with the six-type explanation model
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/align-fix-explanation-item-taxonomy.m
 
 Completion: direct-main
 
-Owner: Unowned pending acceptance
+Owner: Root Dev Orchestrator 019fa9f9-33f0-7db3-90d5-2dc77dd89c06
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -22,11 +22,31 @@ Dispatch Time: 2026-07-28T18:22:25Z
 
 Intended Root Role: Dev Orchestrator
 
-Runtime Thread: Pending
+Runtime Thread: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06
 
-Root Agent Task: Pending
+Root Agent Task: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06
 
 Next Lifecycle Owner: Root Dev Orchestrator
+
+## Running Acceptance
+
+- Transition: Starting -> Running.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06.
+- Canonical Root Agent Task: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06.
+- Owner: Root Dev Orchestrator 019fa9f9-33f0-7db3-90d5-2dc77dd89c06.
+- Branch: codex/align-fix-explanation-item-taxonomy.
+- Worktree: /Users/martinbechard/.codex/worktrees/f57f/dev-methodology.
+- Phase: Read-only source analysis and approval reconciliation.
+- Started At: 2026-07-28T18:42:09Z.
+- Started-At Evidence: The canonical root Dev Orchestrator accepted the parent reservation and authorized this distinct provider transition.
+- Reservation Commit: 48bb5dd691c9763a1fff912ac1ff6200732b4814.
+- Primary Main Reconciliation: main was clean at d794317a6cb4d47175522bb9df765bf654aace19 before this transaction.
+- Initial Claim Status Evidence: The configured helper reported outcome STATUS with claims: [] before acquisition.
+- Provider-Mutation Claim Evidence: running-acceptance-019fa9f9-33f0-7db3-90d5-2dc77dd89c06 acquired by dev-backlog-steward for this exact provider file; outcome SHARED_CHECKOUT_ACQUIRED; claim event 7c942f95-d112-45c5-8310-9557c9e387d3; claimed 2026-07-28T18:42:00.355710Z.
+- Recovery History: An earlier claim attempt was refused with DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED; recovery event 335ebefc-8500-4e69-a6d4-6e58986e1e82. Independent recovery then reconciled primary main clean and the claim registry empty.
+- Acceptance Evidence: Fresh independent exact-commit review was GOOD for batch-1 provider correction 1ef9018bf859607f161ff9a275c336c145b73b9a; promotion_complete: true.
+- Dependencies: None.
 
 ## Summary
 
