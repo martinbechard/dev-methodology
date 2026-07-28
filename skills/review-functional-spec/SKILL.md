@@ -23,11 +23,24 @@ Require an appropriate Mermaid diagram whenever a workflow contains two or more 
 
 For the functional-specification current reverse-engineering pass, accepted architecture and lower-level designs plus source, routes, UI surfaces, commands, jobs, tests, procedures, and runtime evidence are the required inputs. Intentionally absent later wiki pages are not missing mandatory inputs.
 
+## Completed Checklist Evidence
+
+For every applicable question record:
+
+- Status: pass, fail, question, or n/a.
+- Question: the objective question being answered.
+- Evidence type: exact quotation, summary, assessment, or not applicable.
+- Evidence source: the named artifact, input, checklist, or retained response.
+- Evidence: literal source text for an exact quotation, or clearly labeled summary, assessment, or not-applicable explanation.
+- Assessment: the judgment grounded in the recorded evidence.
+
+Use exactly one allowed status and never qualify a status with wording such as pass with finding. When a material finding applies, use fail or question and record any partial strengths in the assessment. Use exact quotation only for literal source text that occurs in the named evidence source. For a mode-dependent n/a, use Evidence type: not applicable and explain why the question does not apply rather than fabricating a quotation. When a required contract is missing, use summary or assessment evidence to describe the gap and mark the item fail; there is no literal source text to quote.
+
 ## Workflow
 
 1. Read the artifact and identify the actor, workflow, operation inventory, surfaces, inputs, permissions, validation, states, ordering, visible outcomes, errors, recovery, persistence outcomes, justified propositions, residual open questions, acceptance scenarios, documentation acceptance, implementation readiness, and verification claims.
 2. Read references/review-checklist-functional-spec.md.
-3. Complete every applicable checklist question with status, quoted evidence, and assessment.
+3. Complete every applicable checklist question with the Completed Checklist Evidence fields.
 4. Save the completed review checklist next to the artifact using this form: artifact-name.review-checklist-functional-spec.md.
 5. Use documentation-page-verify with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
 6. Verify functional sections against the checklist, especially actor goal, entry points, workflow steps, workflow diagrams, states, permissions, edge cases, acceptance behavior, and verification blocks. Perform operation inventory reconciliation across every primary and supporting route, API, command, event, job, notification, and reference-data lookup named by the artifact or authoritative sources.

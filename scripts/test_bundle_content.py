@@ -4035,7 +4035,10 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("completed review checklist", skill_text)
                 self.assertIn("Question:", checklist_text)
                 self.assertIn("Status:", checklist_text)
-                if skill_name == "review-high-level-design":
+                if skill_name in (
+                    "review-functional-spec",
+                    "review-high-level-design",
+                ):
                     self.assertIn("Evidence type:", checklist_text)
                     self.assertIn("Evidence source:", checklist_text)
                     self.assertIn("Evidence:", checklist_text)
@@ -4044,52 +4047,56 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("Assessment:", checklist_text)
                 self.assertIn("?", checklist_text)
 
-    def test_hld_review_uses_typed_evidence_for_each_completion_case(self) -> None:
-        """Keep HLD review evidence honest when literal source text is unavailable."""
-        skill_text = (SKILLS_ROOT / "review-high-level-design" / "SKILL.md").read_text(
-            encoding="utf-8"
-        )
-        checklist_text = (
-            SKILLS_ROOT
-            / "review-high-level-design"
-            / "references"
-            / "review-checklist-high-level-design.md"
-        ).read_text(encoding="utf-8")
+    def test_typed_review_evidence_covers_each_completion_case(self) -> None:
+        """Keep typed review evidence honest when literal source text is unavailable."""
+        for skill_name, review_target in (
+            ("review-functional-spec", "functional-spec"),
+            ("review-high-level-design", "high-level-design"),
+        ):
+            skill_text = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(
+                encoding="utf-8"
+            )
+            checklist_text = (
+                SKILLS_ROOT
+                / skill_name
+                / "references"
+                / review_checklist_name(review_target)
+            ).read_text(encoding="utf-8")
 
-        for text in (skill_text, checklist_text):
-            for field in (
-                "Status:",
-                "Question:",
-                "Evidence type:",
-                "Evidence source:",
-                "Evidence:",
-                "Assessment:",
-            ):
-                with self.subTest(field=field):
-                    self.assertIn(field, text)
+            for text in (skill_text, checklist_text):
+                for field in (
+                    "Status:",
+                    "Question:",
+                    "Evidence type:",
+                    "Evidence source:",
+                    "Evidence:",
+                    "Assessment:",
+                ):
+                    with self.subTest(skill_name=skill_name, field=field):
+                        self.assertIn(field, text)
 
-            cases = {
-                "mode-dependent n/a": (
-                    "mode-dependent n/a",
-                    "Evidence type: not applicable",
-                    "rather than fabricating a quotation",
-                ),
-                "missing contract": (
-                    "required contract is missing",
-                    "summary or assessment evidence",
-                    "mark the item fail",
-                ),
-                "literal quotation": (
-                    "exact quotation only for literal source text",
-                    "occurs in the named evidence source",
-                ),
-            }
-            for case_name, phrases in cases.items():
-                with self.subTest(case=case_name):
-                    for phrase in phrases:
-                        self.assertIn(phrase, text)
+                cases = {
+                    "mode-dependent n/a": (
+                        "mode-dependent n/a",
+                        "Evidence type: not applicable",
+                        "rather than fabricating a quotation",
+                    ),
+                    "missing contract": (
+                        "required contract is missing",
+                        "summary or assessment evidence",
+                        "mark the item fail",
+                    ),
+                    "literal quotation": (
+                        "exact quotation only for literal source text",
+                        "occurs in the named evidence source",
+                    ),
+                }
+                for case_name, phrases in cases.items():
+                    with self.subTest(skill_name=skill_name, case=case_name):
+                        for phrase in phrases:
+                            self.assertIn(phrase, text)
 
-        self.assertNotIn("- Quoted evidence:", checklist_text)
+            self.assertNotIn("- Quoted evidence:", checklist_text)
 
     def test_hld_and_module_reviews_enforce_adequacy_and_security_contracts(self) -> None:
         cases = {
