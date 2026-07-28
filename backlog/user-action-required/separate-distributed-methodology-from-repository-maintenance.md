@@ -1,16 +1,16 @@
 # Separate distributed methodology guidance from repository maintenance procedures
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/separate-distributed-methodology-from-repository-maintenance.md
+Provider Reference: backlog/user-action-required/separate-distributed-methodology-from-repository-maintenance.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned pending user approval
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -26,7 +26,7 @@ Runtime Thread: 019fa9f9-60b1-74a2-998b-6b7efc913f02
 
 Root Agent Task: 019fa9f9-60b1-74a2-998b-6b7efc913f02
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Next Lifecycle Owner: Parent Dev Backlog Coordinator
 
 ## Running Acceptance
 
@@ -41,6 +41,23 @@ Next Lifecycle Owner: Root Dev Orchestrator
 - Started At: 2026-07-28T18:39:39Z.
 - Started-At Evidence: The canonical root Dev Orchestrator accepted the parent-reserved work item and requested this distinct provider transition.
 - Claim Evidence: running-acceptance-019fa9f9-60b1-74a2-998b-6b7efc913f02; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 9b3d677d-bb04-4fed-a4c6-8cbe5e10496b; claimed 2026-07-28T18:39:39.631163Z.
+
+## User Action Required
+
+- Transition: Running -> User Action Required.
+- Coordinator Decision Owner: Parent Dev Backlog Coordinator 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fa9f9-60b1-74a2-998b-6b7efc913f02.
+- Canonical Root Agent Task Id: 019fa9f9-60b1-74a2-998b-6b7efc913f02.
+- Preserved Delivery Branch: codex/separate-distributed-methodology-maintenance-019fa9f9.
+- Preserved Delivery Worktree: /Users/martinbechard/.codex/worktrees/2a2c/dev-methodology.
+- Preserved Phase: Read-only approval-boundary analysis.
+- Question: Do you approve changing only skills/maintain-methodology-documentation/SKILL.md and skills/maintain-methodology-documentation/agents/openai.yaml to remove dev-methodology checkout-specific paths and commands, retain portable methodology source and derived-output alignment guidance, and synchronize its Codex description metadata?
+- Why User Input Is Required: Both paths are governed definition or metadata paths, and the required preflight returned BLOCKED_APPROVAL_REQUIRED.
+- Unattended Boundary: No provider, source, definition, or delivery mutation may continue until explicit approval is recorded, routed User Action Required -> Ready -> Starting -> Running in this same canonical task, and both approval-record preflight checks pass. Read-only evidence is complete.
+- Portability Proof Markers: The read-only analysis identified the dev-methodology checkout-specific paths and commands for removal while preserving portable methodology source and derived-output alignment guidance.
+- Focused Verification Evidence: Three focused tests reported OK during the read-only analysis.
+- Candidate Commit: None.
+- Provider-Mutation Claim Evidence: uar-transition-019fa9f9-60b1-74a2-998b-6b7efc913f02; acquire outcome SHARED_CHECKOUT_ACQUIRED; acquire event 6152a8b5-0928-4ee1-88b9-32c747636027; destination extension outcome EXTENDED; extension event 777c27d4-9a02-4c96-ba6c-50d878a3b43d.
 
 ## Summary
 
