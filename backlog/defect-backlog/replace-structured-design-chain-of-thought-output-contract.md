@@ -1,6 +1,6 @@
 # Replace the structured-design chain-of-thought output contract
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/replace-structured-design-chain-of-th
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator task 019faa19-2538-7cd0-832e-62b428886363
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -30,11 +30,27 @@ Branch: codex/replace-structured-design-cot-contract-019faa19
 
 Worktree: /Users/martinbechard/.codex/worktrees/3d44/dev-methodology
 
-Phase: Approval preflight and implementation preparation.
+Phase: Blocked pending generator-aligned evaluation-page baseline recovery.
 
 Started At: 2026-07-28T19:05:44.790829Z
 
-Claim Evidence: Initial exact-file acquisition was refused with DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED while three other primary backlog transactions were uncommitted. Parent Coordinator recovery committed those transactions through clean primary main 41e61c0a92fd8fe1d6bfbb696923a4abef8376d8 and reconciled claims as STATUS with claims []. Claim running-replace-structured-design-cot-contract-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T19:05:44.790829Z; claim journal event 28c352c9-c935-4650-9b87-23c41d6a2e8e. Resumed acceptance claim running-resumed-structured-design-cot-contract-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T22:00:03.162806Z; claim journal event be6ab282-75ee-4cce-a190-ecc2859f3d90.
+Claim Evidence: Initial exact-file acquisition was refused with DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED while three other primary backlog transactions were uncommitted. Parent Coordinator recovery committed those transactions through clean primary main 41e61c0a92fd8fe1d6bfbb696923a4abef8376d8 and reconciled claims as STATUS with claims []. Claim running-replace-structured-design-cot-contract-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T19:05:44.790829Z; claim journal event 28c352c9-c935-4650-9b87-23c41d6a2e8e. Resumed acceptance claim running-resumed-structured-design-cot-contract-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T22:00:03.162806Z; claim journal event be6ab282-75ee-4cce-a190-ecc2859f3d90. Blocked transition claim blocked-structured-design-cot-contract-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T22:36:10.042601Z; claim journal event 7bfeec36-9314-43c0-963a-faca7d0657f8.
+
+## Blocked Evidence
+
+Known Blocker: The remaining required public evaluation-page contract cannot be delivered from the approved source correction without violating source-attributable generated-output ownership. The supported command python3 scripts/build-agent-skill-evaluation-docs.py --check fails before render with ValueError: Conceptual role and suite inventories differ: roles-only=['dev-skill-lint-reviewer'], suites-only=[]. The last generator-aligned snapshot 93446a49 produces the desired digest and card but also removes the intentional CSS p + p { margin-top: .65rem; } added at e3a20942. Using that snapshot exceeds source-attributable scope; dropping its CSS hunk would hand-edit generated HTML.
+
+Blocker Owner: Evaluation-page/generator baseline plus dev-skill-lint-reviewer role-suite inventory owner, coordinated by Parent Dev Backlog Coordinator.
+
+Unblock Condition: Restore a generator-aligned current baseline including role/suite reconciliation and generator ownership of the intentional CSS, or provide a supported isolated-output route; then regenerate the evaluation page from 9ba55baa and run fresh independent review and verification before any delivery.
+
+Requested Recovery Action: Parent Dev Backlog Coordinator must coordinate the unblock condition. The current canonical task must not resume repository mutation until normal Blocked -> Ready -> Starting -> Running reconciliation after unblock.
+
+Preserved Commits and Evidence: Original candidate 2e7a9b82d02f97801e142cb17c82381c9f931ee5; preserved correction 9ba55baae7b7f621d5c97ead3db67f8dbeb07696; both exact approval preflights ALLOWED_APPROVED_DEFINITION_CHANGE; independent verifier PASS on the original candidate; independent review NEEDS_CORRECTION with a MEDIUM uncertainty finding resolved by 9ba55baa; remaining HIGH stale design/agent-and-skill-evaluations.html public contract; exact remaining focused red assertion for the retired token on the untouched evaluation page. Worktree was clean at 9ba55baa and no live task claim existed.
+
+Resource Disposition: Sensitive runtime completed at 67167fcf17ac018e8d62f2e583f22fc5cb477262; its claim was released with journal event 0c355c09-ef73-4777-a86c-1ef4a2f3fa5e. No live implementation claim remains.
+
+Safe-to-Resume Assessment: Not safe to resume repository mutation until the unblock condition is met and the normal Blocked -> Ready -> Starting -> Running lifecycle sequence completes. No user action is required.
 
 ## Running Acceptance
 
