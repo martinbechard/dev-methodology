@@ -152,33 +152,49 @@ class CoordinationConstraintTaxonomyTests(unittest.TestCase):
         )
 
     def test_hard_prerequisites_block_dispatch_but_overlap_notes_do_not(self) -> None:
-        required = (
-            "An unmet hard prerequisite makes the item dispatch-ineligible.",
-            "A coordination-only overlap note does not block a safe private-worktree start.",
+        common = "An unmet hard prerequisite makes the item dispatch-ineligible."
+        cases = (
+            (
+                self.queue_section,
+                "A coordination-only overlap note does not block a safe private-worktree start.",
+            ),
+            (
+                self.provider_dispatch,
+                "An event-scoped coordination constraint does not block safe bounded work before the affected event.",
+            ),
         )
-        for section in (self.queue_section, self.provider_dispatch):
+        for section, event_constraint in cases:
             with self.subTest(section=section[:40]):
-                self.assertEqual((), _missing_contract_clauses(section, required))
+                self.assertEqual(
+                    (),
+                    _missing_contract_clauses(section, (common, event_constraint)),
+                )
 
-    def test_blocked_or_unowned_reference_without_live_claim_remains_eligible(
+    def test_predicted_overlap_is_an_event_scoped_constraint(
         self,
     ) -> None:
-        scenario = (
-            "When a coordination-only note references a Blocked or Unowned item "
-            "and no live claim protects the relevant exact conflict, the candidate "
-            "remains dispatch-eligible"
+        cases = (
+            (
+                self.queue_section,
+                "Treat a note that only predicts later overlap on an exact path, "
+                "shared resource, or integration lane as coordination-only.",
+            ),
+            (
+                self.provider_dispatch,
+                "Treat a note that only predicts later overlap on an exact path, "
+                "shared resource, or integration lane as an event-scoped coordination constraint.",
+            ),
         )
-        for section in (self.queue_section, self.provider_dispatch):
+        for section, scenario in cases:
             with self.subTest(section=section[:40]):
                 self.assertEqual(
                     (),
                     _missing_contract_clauses(section, (scenario,)),
                 )
                 for old, replacement in (
-                    ("Blocked or Unowned", "Blocked"),
-                    ("Blocked or Unowned", "Unowned"),
-                    ("no live claim", "a live claim"),
-                    ("remains dispatch-eligible", "becomes dispatch-ineligible"),
+                    ("exact path", "path"),
+                    ("shared resource", "resource"),
+                    ("integration lane", "integration"),
                 ):
                     mutated = section.replace(old, replacement, 1)
                     with self.subTest(mutation=f"{old} -> {replacement}"):
@@ -200,12 +216,25 @@ class CoordinationConstraintTaxonomyTests(unittest.TestCase):
                 self.assertEqual((), _missing_contract_clauses(section, required))
 
     def test_overlap_coordination_defers_only_the_relevant_event(self) -> None:
-        required = (
-            "Coordinate an exact-path conflict at the relevant edit, shared-resource, or integration event",
-            "Defer only that event",
-            "A live exact conflict may defer only its relevant event",
+        cases = (
+            (
+                self.queue_section,
+                (
+                    "Coordinate an exact-path conflict at the relevant edit, shared-resource, or integration event",
+                    "Defer only that event",
+                    "A live exact conflict may defer only its relevant event",
+                ),
+            ),
+            (
+                self.provider_dispatch,
+                (
+                    "Handle an overlap constraint at the affected edit, shared-resource, or integration event.",
+                    "Defer only that event; continue non-conflicting work in isolated private worktrees.",
+                    "An active exact conflict may defer only its affected event",
+                ),
+            ),
         )
-        for section in (self.queue_section, self.provider_dispatch):
+        for section, required in cases:
             with self.subTest(section=section[:40]):
                 self.assertEqual((), _missing_contract_clauses(section, required))
 
@@ -228,7 +257,7 @@ class CoordinationConstraintTaxonomyTests(unittest.TestCase):
             ),
             (
                 self.provider_dispatch,
-                "A coordination-only overlap note does not block a safe private-worktree start.",
+                "An event-scoped coordination constraint does not block safe bounded work before the affected event.",
             ),
             (
                 self.queue_section,
@@ -236,7 +265,7 @@ class CoordinationConstraintTaxonomyTests(unittest.TestCase):
             ),
             (
                 self.provider_dispatch,
-                "Coordinate an exact-path conflict at the relevant edit, shared-resource, or integration event",
+                "Handle an overlap constraint at the affected edit, shared-resource, or integration event.",
             ),
             (
                 self.coordination_reporting,

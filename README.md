@@ -123,7 +123,7 @@ python3 scripts/build-skill-docs.py --check
 
 PROJECT.yaml selects agent-claim or none. When agent-claim is selected, Project Configurator records resource deadlines and configures one claim helper. The field agent_claim_transport keeps its historical name but selects that helper. This repository uses the command helper because the current MCP provider has not been verified for deadline support.
 
-[Agent Claim](skills/agent-claim/SKILL.md) is the only source for events that require claims, the scope for each event, conflict handling, and release timing. Workflow skills refer to that table instead of copying its rules.
+[Agent Claim](skills/agent-claim/SKILL.md) is the only source for events that require claims, the scope for each event, conflict handling, and release timing. Skills that apply claims refer to that table instead of copying its rules.
 
 The primary worktree contains main and backlog. Private worktrees are separate checkouts under .worktrees.
 
@@ -458,7 +458,7 @@ The development practice skills are:
 
 create-github-work-item and manage-github-work-items are the canonical split GitHub Persistence skills. They keep GitHub Issues authoritative and never create a shadow repository queue.
 
-create-file-work-item and manage-file-work-items are the canonical file Persistence pair. They keep authoritative records only under backlog in the primary worktree on main and never mirror provider issues into repository files. When Agent Claim is loaded, they follow its Claim Events table instead of defining claim rules themselves. PROJECT.yaml selects Persistence and Commit independently, while AGENTS.md supplies only the corresponding skill references. Conceptual agent definitions remain neutral to both selectors.
+create-file-work-item and manage-file-work-items are the canonical file Persistence pair. They keep authoritative records only under backlog in the primary worktree on main and never mirror provider issues into repository files. Resource coordination is loaded and applied independently from manage-file-work-items; the manager does not define or condition provider lifecycle procedures on claims. PROJECT.yaml selects Persistence and Commit independently, while AGENTS.md supplies only the corresponding skill references. Conceptual agent definitions remain neutral to both selectors.
 
 The stack and project-domain skill packs are:
 

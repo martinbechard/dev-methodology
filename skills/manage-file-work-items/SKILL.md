@@ -9,7 +9,7 @@ metadata:
 
 ## Purpose
 
-Manage file-provider work as a visible queue with explicit lifecycle state. Active folders contain current work. Archive folders contain durable outcomes. Claim records, recovery data, logs, and results are supporting evidence, not work items.
+Manage file-provider work as a visible queue with explicit lifecycle state. Active folders contain current work. Archive folders contain durable outcomes. Recovery data, logs, and results are supporting evidence, not work items.
 
 ## Provider Selection
 
@@ -24,8 +24,6 @@ Manage file-provider work as a visible queue with explicit lifecycle state. Acti
 Only the primary worktree on main may change canonical files under backlog. The repository-relative active or archive path is work_item_id and provider_reference. After archival, the destination path becomes the provider_reference.
 
 Another worktree may inspect backlog but must not create, transition, or archive an item. If the primary worktree is not on main, it must not change the item. Return BLOCKED with the observed worktree, branch, requested transition, and required handoff. Never create another queue elsewhere.
-
-Follow the Claim Events table in agent-claim when changing a provider record.
 
 Each startup or terminal transition remains its own short primary-main provider transaction. Before finish or handoff, commit completed work and prove the applicable worktree clean.
 
@@ -118,17 +116,16 @@ If closed items remain in active folders, explicit status is the open or closed 
 - Prefer unfinished owned work over new work.
 - Apply configured priority; otherwise prefer defects, features, investigations, then analyses.
 - Exclude Stalled, Blocked, User Action Required, Holding, and Future Ideas from runnable selection. Exclude Stalled from Starting-plus-Running active capacity while diagnosis proceeds. Exclude Future Ideas from unattended counts.
-- Classify a candidate constraint as a hard prerequisite only when no bounded delivery phase can begin safely before it is satisfied. Treat a note that only predicts later overlap on an exact path, shared resource, or integration lane as coordination-only.
-- An unmet hard prerequisite makes the item dispatch-ineligible. A coordination-only overlap note does not block a safe private-worktree start.
-- When a coordination-only note references a Blocked or Unowned item and no live claim protects the relevant exact conflict, the candidate remains dispatch-eligible; the referenced lifecycle and ownership state do not create a hard prerequisite.
+- Classify a candidate constraint as a hard prerequisite only when no bounded delivery phase can begin safely before it is satisfied. Treat a note that only predicts later overlap on an exact path, shared resource, or integration lane as an event-scoped coordination constraint.
+- An unmet hard prerequisite makes the item dispatch-ineligible. An event-scoped coordination constraint does not block safe bounded work before the affected event.
 - Before dispatch, reconcile duplicate ownership or implementation evidence, preserve one canonical effort, and stop an additional duplicate launch.
-- Coordinate an exact-path conflict at the relevant edit, shared-resource, or integration event named by the selected coordination procedure. Defer only that event; continue non-conflicting work in isolated private worktrees. A live exact conflict may defer only its relevant event; it does not defer unrelated private-worktree work.
+- Handle an overlap constraint at the affected edit, shared-resource, or integration event. Defer only that event; continue non-conflicting work in isolated private worktrees. An active exact conflict may defer only its affected event; it does not defer unrelated private-worktree work.
 - Do not dispatch items with unmet dependencies or duplicate ownership.
 - Ready -> Starting is the parent Dev Backlog Coordinator's dispatch and capacity-reservation decision. Its Steward child records the parent coordination Thread, one launch reservation, normalized objective, dispatch time, and available launch evidence atomically before the runtime Thread is created.
 - Starting counts against capacity exactly like Running, so ambiguous or slow startup cannot cause over-dispatch.
 - Before creating a work-item Thread, reconcile the item, parent Thread, runtime task inventory, reservation evidence, and any canonical task id. The Coordinator must not create a duplicate after an ambiguous startup or timeout.
 - When a previously Running item entered User Action Required from an existing canonical work-item Thread, preserve and adopt that same Thread after the answer is recorded and the item is reserved as Starting. Do not require the user to repeat the answer in the parent Thread and do not create a replacement Thread.
-- Starting -> Running is owned by the root Dev Orchestrator after it accepts the item. Its Dev Backlog Steward child atomically records the canonical work-item Thread identifier, canonical task id, root Dev Orchestrator, branch, worktree, and applicable claim evidence.
+- Starting -> Running is owned by the root Dev Orchestrator after it accepts the item. Its Dev Backlog Steward child atomically records the canonical work-item Thread identifier, canonical task id, root Dev Orchestrator, branch, and worktree.
 - If startup fails or remains ambiguous, reconcile twice across the bounded settlement interval. When no root Orchestrator accepted ownership and no matching Thread exists, restore Ready and clear only the failed reservation fields. When ownership was accepted or evidence is inconsistent, preserve the current Starting or Running state and its Starting-plus-Running capacity while reconciling the canonical task, provider reservation or record, and ownership. The startup anomaly alone authorizes neither Stalled, Blocked, User Action Required, nor capacity release. Blocked requires a separately validated known preventing cause and Coordinator-owned action. User Action Required requires one separately identified concrete user-owned action.
 - Keep each dispatched item isolated so concurrent work does not share mutable workspace state.
 - Keep delivery ownership isolated from backlog mutation ownership.
@@ -147,7 +144,7 @@ Do not move an independently identified defect, enhancement, or idea into a type
 - Treat only a resolved regular work-item file contained by its canonical backlog queue as a promotion target. Reject a symlinked or otherwise resolved target that escapes authority without reading external bytes.
 - Include the exact retained idea path in the promoted work item's Source Evidence section, and add Promoted To with the canonical work-item reference to the original idea.
 - Preserve the original idea in place after promotion. Do not archive or delete it merely because typed work now exists.
-- Update the idea and promoted item in one primary-main transaction after duplicate detection succeeds. Follow the Claim Events table in agent-claim for the retained idea update. Create the destination with an exclusive create operation and stop if it already exists. Preserve enough file and index state to verify the commit or restore the attempt.
+- Update the idea and promoted item in one primary-main transaction after duplicate detection succeeds. Create the destination with an exclusive create operation and stop if it already exists. Preserve enough file and index state to verify the commit or restore the attempt.
 
 ## Transition Evidence
 
@@ -155,7 +152,7 @@ Record durable evidence appropriate to every transition:
 
 - READY: source evidence, requirements, acceptance criteria, dependencies, verification expectations, provider_reference, and completion selection.
 - STARTING: parent coordination Thread, dispatch reservation, normalized objective, dispatch time, intended root Dev Orchestrator Role, and any observed runtime creation response.
-- RUNNING: owner, canonical task id when applicable, branch or worktree, phase, started-at evidence, and applicable claim evidence.
+- RUNNING: owner, canonical task id when applicable, branch or worktree, phase, and started-at evidence.
 - STALLED: last known productive evidence, phase estimate and hard stop when present,
   anomaly or progress gap, canonical Thread and root Agent Task identities, current ownership
   and coordination state, diagnostic owner, and next investigation action.
@@ -164,9 +161,9 @@ Record durable evidence appropriate to every transition:
 - USER_ACTION_REQUIRED: one exact question, why input is required, prohibited unattended action, and recorded resolution when answered.
 - HOLDING: deferral authority and resumption condition.
 - AWAITING_REVIEW: branch, accepted candidate commit, provider-accurate pull-request or merge-request delivery reference, publication evidence, completed local checks, and pending review or merge requirement.
-- COMPLETED: accepted delivery commit, independent review, checks, merge evidence when applicable, main observation, applicable claim results, terminal backlog commit, completed-at evidence, and the completed archive path.
-- FAILED: failure evidence, preserved source and recovery context, checks attempted, relevant claim results, terminal commit, and failed archive path.
-- ABANDONED: abandonment authority, preserved context, relevant claim results, terminal commit, and failed archive path.
+- COMPLETED: accepted delivery commit, independent review, checks, merge evidence when applicable, main observation, terminal backlog commit, completed-at evidence, and the completed archive path.
+- FAILED: failure evidence, preserved source and recovery context, checks attempted, terminal commit, and failed archive path.
+- ABANDONED: abandonment authority, preserved context, terminal commit, and failed archive path.
 
 Keep wait_started_at, attempt_count, last_attempt, next_attempt, open issues, and accepted_candidate_commit when bounded retry or interrupted recovery needs them.
 
@@ -241,10 +238,10 @@ Resume blocked work through the same provider and startup boundaries as new work
 
 1. Read and retain the complete pre-attempt Blocked item bytes.
 2. Reconcile the blocker and confirm that the recorded unblock condition is satisfied.
-3. In one short provider transaction, restore Status: Ready with Owner: Unowned while retaining the blocker, unblock condition, evidence, and acceptance criteria as recovery history. Follow the Claim Events table in agent-claim for this provider update. If this transaction fails, restore the byte-for-byte pre-attempt Blocked item and do not infer execution ownership.
+3. In one short provider transaction, restore Status: Ready with Owner: Unowned while retaining the blocker, unblock condition, evidence, and acceptance criteria as recovery history. If this transaction fails, restore the byte-for-byte pre-attempt Blocked item and do not infer execution ownership.
 4. Let the parent Dev Backlog Coordinator select the Ready item through normal priority and Starting-plus-Running capacity rules. Its Dev Backlog Steward child atomically records Ready -> Starting reservation and dispatch evidence; this transaction does not grant delivery ownership.
 5. Reconcile the Starting reservation against active and archived runtime Threads. Create at most one canonical work-item Thread. After an error, timeout, disconnect, or ambiguous response, do not retry creation; perform the bounded settlement read and either adopt the one matching Thread or restore Ready when no root Agent accepted ownership and no Thread exists. When ownership or evidence cannot safely be discarded, preserve the current Starting or Running state and its Starting-plus-Running capacity while reconciling the canonical task, provider reservation or record, and ownership. The task anomaly alone authorizes neither Stalled, Blocked, User Action Required, nor capacity release. Blocked requires a separately validated known preventing cause and Coordinator-owned action. User Action Required requires one separately identified concrete user-owned action.
-6. Only after the work-item Thread's root Dev Orchestrator Agent accepts ownership may that Orchestrator use its own Dev Backlog Steward child for the atomic Starting -> Running transaction. Record the canonical Thread identifier, canonical root Agent Task id when applicable, owner, branch, worktree, and applicable claim evidence.
+6. Only after the work-item Thread's root Dev Orchestrator Agent accepts ownership may that Orchestrator use its own Dev Backlog Steward child for the atomic Starting -> Running transaction. Record the canonical Thread identifier, canonical root Agent Task id when applicable, owner, branch, and worktree.
 
 Blocked, Ready, or satisfaction of an unblock condition never authorizes a direct transition to Running. Provider mutation protection cannot substitute for delivery ownership.
 
@@ -254,8 +251,6 @@ user. Coordinator inability alone does not create a user obligation. Keep an unr
 technical or external blocker in Blocked with an exact owner and unblock condition.
 
 ## User Action Required Workflow
-
-Before transitioning an item to User Action Required, when agent-claim is loaded, apply agent-claim to the blocking condition and confirm that a separate genuine user-owned decision remains. Structured claim outcomes and technical claim cleanup or recovery remain agent-owned and do not justify User Action Required.
 
 1. Read the item and current Resolution.
 2. If the Resolution already answers the question, do not ask it again. Route the recorded answer through normal resumption.
@@ -267,12 +262,12 @@ Before transitioning an item to User Action Required, when agent-claim is loaded
 8. Do not infer approval from silence, unrelated decisions, repository access, or technical plausibility.
 9. Accept the answer in the canonical work-item Thread that asked the question or in the parent coordination Thread. Record the dated answer, provenance, resulting disposition, and existing canonical Thread identity exactly once.
 10. When the answer arrives in the canonical work-item Thread, keep that Thread as the resumption context and send one lifecycle resumption request to the parent Coordinator. Do not require the user to switch Threads or repeat the answer.
-11. Move an approved or answered item into its typed active backlog folder and set Status: Ready before any separately requested resource-coordination or running transition.
+11. Move an approved or answered item into its typed active backlog folder and set Status: Ready before any Running transition.
 12. If the item is eligible under current priority and capacity, have the parent Coordinator reserve Ready -> Starting for the existing canonical Thread. After that Thread's root Dev Orchestrator accepts ownership, record Starting -> Running for the same Thread before further repository mutation or delivery.
 13. Move a deferred item to backlog/holding. Archive a clearly rejected or abandoned item under the matching failed type.
 14. Keep a partially answered item in User Action Required with a narrowed question.
 
-Work performed before User Action Required -> Ready -> Starting -> Running reconciliation is not automatically accepted or discarded. Preserve its diff, commits, branch, worktree, claims, review, verification, and delivery evidence. Report the sequence problem to the parent. Do not continue delivery until the parent and the same root Orchestrator reconcile the provider state, applicable claims, commits, independent gates, and delivery state.
+Work performed before User Action Required -> Ready -> Starting -> Running reconciliation is not automatically accepted or discarded. Preserve its diff, commits, branch, worktree, review, verification, and delivery evidence. Report the sequence problem to the parent. Do not continue delivery until the parent and the same root Orchestrator reconcile the provider state, commits, independent gates, and delivery state.
 
 ## Completion And Archive Workflow
 
@@ -296,12 +291,12 @@ Archive movement is explicit and serialized:
   backlog/failed-backlog type folder. Stalled is nonterminal and cannot be archived directly;
   first record Failed or Abandoned with the applicable terminal evidence.
 
-Record the destination as the terminal provider_reference. Preserve claim evidence, review, checks, source evidence, delivery evidence, recovery notes, and failure reasons. A conflict, missing proof, or terminal-update failure prohibits lifecycle COMPLETED.
+Record the destination as the terminal provider_reference. Preserve review, checks, source evidence, delivery evidence, recovery notes, and failure reasons. A conflict, missing proof, or terminal-update failure prohibits lifecycle COMPLETED.
 
 ## Recovery Workflow
 
 - Read visible active items first.
-- Reconcile owner, parent and work-item Thread identifiers, canonical task, Starting reservation, claims, branch, worktree, accepted candidate commit, logs, results, checks, delivery references, waits, and archive locations.
+- Reconcile owner, parent and work-item Thread identifiers, canonical task, Starting reservation, branch, worktree, accepted candidate commit, logs, results, checks, delivery references, waits, and archive locations.
 - For a Starting item, adopt one matching Thread when evidence proves it exists; restore Ready only when no ownership was accepted. Otherwise preserve the current Starting or Running state and its Starting-plus-Running capacity while reconciling the canonical task, provider reservation or record, and ownership. Never create a replacement until duplicate reconciliation proves there is no accepted canonical Thread.
 - A failed, stopped, or missing canonical task in Starting or Running is an execution-identity
   anomaly, not lifecycle evidence. Preserve the current Starting or Running state and its
@@ -324,7 +319,7 @@ Record the destination as the terminal provider_reference. Preserve claim eviden
 
 For each considered work item, report dispatch eligibility, any unmet hard blocker, any coordination-only overlap constraint, and any deferred edit, shared-resource, or integration event as distinct facts.
 
-Return the provider file, canonical active or archive path, lifecycle counts, separate Stalled inventory with diagnostic owners and next investigation actions, User Action Required questions, next runnable items, dependencies, blockers, owner, canonical task, delivery evidence, review and check results, main observation, archive evidence, claim and commit references, invalid or duplicate records, and the next safe action. For an explicit Future Ideas operation, also return the idea paths, validation findings, revisit triggers, and promotion links without adding them to work-item counts.
+Return the provider file, canonical active or archive path, lifecycle counts, separate Stalled inventory with diagnostic owners and next investigation actions, User Action Required questions, next runnable items, dependencies, blockers, owner, canonical task, delivery evidence, review and check results, main observation, archive evidence, commit references, invalid or duplicate records, and the next safe action. For an explicit Future Ideas operation, also return the idea paths, validation findings, revisit triggers, and promotion links without adding them to work-item counts.
 
 Keep the report grounded in current files and state, not prior conversation memory.
 

@@ -5166,10 +5166,10 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("backlog/user-action-required", skill_text)
                 self.assertNotIn("docs/user-action-required", skill_text)
                 self.assertIn("user action required", skill_text.lower())
-                self.assertIn(
-                    "Structured claim outcomes and technical claim cleanup or recovery remain agent-owned",
-                    skill_text,
-                )
+        self.assertIn(
+            "Structured claim outcomes and technical claim cleanup or recovery remain agent-owned",
+            create_text,
+        )
 
         for required_guidance in (
             "User Action Required",
@@ -5195,7 +5195,7 @@ class BundleContentTests(unittest.TestCase):
             "State the practical consequence of each option",
             "State the unattended-work boundary",
             "Move an approved or answered item into its typed active backlog folder",
-            "set Status: Ready before any separately requested resource-coordination or running transition",
+            "set Status: Ready before any Running transition",
             "backlog/holding is for intentionally deferred work",
         ):
             with self.subTest(manage_guidance=required_guidance):
@@ -5356,7 +5356,7 @@ class BundleContentTests(unittest.TestCase):
             "manage-file-work-items": (
                 "Only the primary worktree on main may change canonical files under backlog.",
                 "must not create, transition, or archive an item",
-                "Follow the Claim Events table in agent-claim when changing a provider record.",
+                "Each startup or terminal transition remains its own short primary-main provider transaction.",
                 "Create the destination with an exclusive create operation",
                 "AWAITING_REVIEW",
                 "same delivery identity remains lifecycle AWAITING_REVIEW",
@@ -5383,7 +5383,7 @@ class BundleContentTests(unittest.TestCase):
 
         readme_text = README_PATH.read_text(encoding="utf-8")
         self.assertIn(
-            "they follow its Claim Events table instead of defining claim rules themselves",
+            "Resource coordination is loaded and applied independently from manage-file-work-items",
             readme_text,
         )
         self.assertNotIn("needs no claim", readme_text)
@@ -5491,13 +5491,13 @@ class BundleContentTests(unittest.TestCase):
         self.assertTrue(tracked_backlog, "Canonical primary backlog has no tracked inputs")
         self.assertTrue(all((primary_root / path).is_file() for path in tracked_backlog))
 
-    def test_answered_user_action_enters_ready_before_coordination(self) -> None:
+    def test_answered_user_action_enters_ready_before_running(self) -> None:
         manage_text = (SKILLS_ROOT / "manage-file-work-items" / "SKILL.md").read_text(
             encoding="utf-8"
         )
 
         self.assertIn(
-            "set Status: Ready before any separately requested resource-coordination or running transition",
+            "set Status: Ready before any Running transition",
             manage_text,
         )
         self.assertNotIn(
@@ -6106,7 +6106,7 @@ class BundleContentTests(unittest.TestCase):
             "events that require claims",
             "the scope for each event",
             "release timing",
-            "Workflow skills refer to that table instead of copying its rules.",
+            "Skills that apply claims refer to that table instead of copying its rules.",
         ):
             with self.subTest(readme_contract=required_contract):
                 self.assertIn(required_contract, readme_text)
@@ -6124,24 +6124,40 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("needs no claim", lifecycle_text)
         self.assertNotIn("claim-free", lifecycle_text)
 
-    def test_file_work_item_management_delegates_claim_rules(self) -> None:
+    def test_file_work_item_management_has_no_claim_knowledge(self) -> None:
         manage_text = (SKILLS_ROOT / "manage-file-work-items" / "SKILL.md").read_text(
             encoding="utf-8"
         )
 
-        self.assertIn(
-            "Follow the Claim Events table in agent-claim when changing a provider record.",
-            manage_text,
-        )
-        for duplicated_contract in (
-            "needs no claim",
-            "claim-free",
-            "claims its exact current path",
-            "destination for a move or rename",
-            "release the enabled claim",
+        for provider_contract in (
+            "Only the primary worktree on main may change canonical files under backlog.",
+            "Each startup or terminal transition remains its own short primary-main provider transaction.",
+            "Keep delivery ownership isolated from backlog mutation ownership.",
+            "Provider mutation protection cannot substitute for delivery ownership.",
+            "An event-scoped coordination constraint does not block safe bounded work before the affected event.",
+            "Defer only that event; continue non-conflicting work in isolated private worktrees.",
+            "any deferred edit, shared-resource, or integration event as distinct facts.",
         ):
-            with self.subTest(duplicated_contract=duplicated_contract):
-                self.assertNotIn(duplicated_contract, manage_text)
+            with self.subTest(provider_contract=provider_contract):
+                self.assertIn(provider_contract, manage_text)
+
+        for forbidden_coupling in (
+            "agent-claim",
+            "claim events",
+            "claim evidence",
+            "claim result",
+            "claim outcome",
+            "live claim",
+            "live-claim",
+            "claim helper",
+            "claim transport",
+            "claim registry",
+            "structured claim cleanup",
+            "structured claim outcome",
+            "agent-claims.json",
+        ):
+            with self.subTest(forbidden_coupling=forbidden_coupling):
+                self.assertNotIn(forbidden_coupling, manage_text.casefold())
 
     def test_roles_keep_mutation_independent_from_resource_coordination(self) -> None:
         build_skill_docs = load_build_skill_docs_module()

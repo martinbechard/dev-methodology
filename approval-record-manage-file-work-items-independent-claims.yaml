@@ -1,0 +1,6 @@
+basis: explicit-user-direction
+definition_scope: skills/manage-file-work-items/SKILL.md
+direction: "Remove agent-claim knowledge in every form from manage-file-work-items; claim coordination remains independently loaded by the agent or project definition."
+provenance:
+  source: user-message
+  reference: thread:019fa9f9-9548-7853-9fe3-301c76b94b82/message:2026-07-28-remove-agent-claim-knowledge
