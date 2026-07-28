@@ -1,6 +1,6 @@
 # Replace the structured-design chain-of-thought output contract
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/replace-structured-design-chain-of-th
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator reservation
+Owner: Root Dev Orchestrator task 019faa19-2538-7cd0-832e-62b428886363
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -30,11 +30,33 @@ Branch: codex/replace-structured-design-cot-contract-019faa19
 
 Worktree: /Users/martinbechard/.codex/worktrees/3d44/dev-methodology
 
-Phase: Starting — parent reservation recorded; awaiting preserved root acceptance.
+Phase: Approval preflight and implementation preparation.
 
 Started At: 2026-07-28T19:05:44.790829Z
 
-Claim Evidence: Initial exact-file acquisition was refused with DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED while three other primary backlog transactions were uncommitted. Parent Coordinator recovery committed those transactions through clean primary main 41e61c0a92fd8fe1d6bfbb696923a4abef8376d8 and reconciled claims as STATUS with claims []. Claim running-replace-structured-design-cot-contract-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T19:05:44.790829Z; claim journal event 28c352c9-c935-4650-9b87-23c41d6a2e8e.
+Claim Evidence: Initial exact-file acquisition was refused with DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED while three other primary backlog transactions were uncommitted. Parent Coordinator recovery committed those transactions through clean primary main 41e61c0a92fd8fe1d6bfbb696923a4abef8376d8 and reconciled claims as STATUS with claims []. Claim running-replace-structured-design-cot-contract-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T19:05:44.790829Z; claim journal event 28c352c9-c935-4650-9b87-23c41d6a2e8e. Resumed acceptance claim running-resumed-structured-design-cot-contract-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T22:00:03.162806Z; claim journal event be6ab282-75ee-4cce-a190-ecc2859f3d90.
+
+## Running Acceptance
+
+Transition: Starting -> Running.
+
+Accepted At: 2026-07-28T22:00:03.162806Z.
+
+Canonical Thread and Root Agent Task: 019faa19-2538-7cd0-832e-62b428886363.
+
+Owner: Root Dev Orchestrator.
+
+Branch: codex/replace-structured-design-cot-contract-019faa19.
+
+Worktree: /Users/martinbechard/.codex/worktrees/3d44/dev-methodology.
+
+Approval Provenance: thread:019faa19-2538-7cd0-832e-62b428886363/message:user-approval.
+
+Approved Governed Definition Scope: skills/structured-design/SKILL.md and skills/review-structured-artifact/SKILL.md only.
+
+Approved Intent: Replace public CHAIN-OF-THOUGHT language with observable DECISION, EVIDENCE, and UNCERTAINTY artifacts.
+
+Provider-Mutation Claim Evidence: running-resumed-structured-design-cot-contract-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED; claim journal event be6ab282-75ee-4cce-a190-ecc2859f3d90.
 
 ## User Action Required
 
