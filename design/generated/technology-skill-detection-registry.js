@@ -2710,10 +2710,20 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "activation": {
         "anyOf": [
           {
-            "fileGlob": "**/app/**/*.tsx"
-          },
-          {
-            "fileGlob": "**/app/**/*.jsx"
+            "allOf": [
+              {
+                "fileMatch": {
+                  "extensions": [
+                    ".tsx",
+                    ".jsx"
+                  ],
+                  "glob": "**/app/**/*"
+                }
+              },
+              {
+                "owningDependency": "next"
+              }
+            ]
           }
         ]
       },

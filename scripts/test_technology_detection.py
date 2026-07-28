@@ -1811,6 +1811,28 @@ class TechnologyDetectionTests(unittest.TestCase):
                     result = run_detection(root, "app")
                     self.assertEqual(expected, result["loadouts"][0]["skills"])
 
+    def test_react_server_components_requires_next_app_router_evidence(self) -> None:
+        cases = (
+            ("App.tsx", {"react": "1"}, False),
+            ("page.tsx", {"next": "1"}, True),
+        )
+        for file_name, dependencies, expected in cases:
+            with self.subTest(file_name=file_name, dependencies=dependencies):
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    component = root / "app" / file_name
+                    component.parent.mkdir(parents=True)
+                    component.write_text("export default function Component() { return null; }\n", encoding="utf-8")
+                    (root / "package.json").write_text(
+                        json.dumps({"dependencies": dependencies}) + "\n",
+                        encoding="utf-8",
+                    )
+                    result = run_detection(root, "app")
+                    self.assertEqual(
+                        expected,
+                        "react-server-components" in result["loadouts"][0]["skills"],
+                    )
+
     def test_domain_detector_names_in_non_code_files_do_not_activate_product_skills(self) -> None:
         cases = (
             ("docs/harness-design.md", "agent harness\n"),

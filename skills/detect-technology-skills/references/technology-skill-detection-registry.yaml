@@ -1478,8 +1478,13 @@ skills:
   - server-user-interface
   activation:
     anyOf:
-    - fileGlob: '**/app/**/*.tsx'
-    - fileGlob: '**/app/**/*.jsx'
+    - allOf:
+      - fileMatch:
+          glob: '**/app/**/*'
+          extensions:
+          - .tsx
+          - .jsx
+      - owningDependency: next
   companions: []
   selection: additive
   priority: 100
