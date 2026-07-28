@@ -5,9 +5,13 @@
 For every question record:
 
 - Status: pass, fail, question, or n/a.
-- Question: copy the objective question.
-- Quoted evidence: quote the exact artifact or source text.
-- Assessment: explain the status from that evidence.
+- Question: copy the objective question being answered.
+- Evidence type: exact quotation, summary, assessment, or not applicable.
+- Evidence source: name the plan, authority source, checklist, or retained response used.
+- Evidence: record exact source text for an exact quotation, or clearly labeled summary or derived assessment text.
+- Assessment: explain why the evidence passes, fails, is unclear, or is not applicable.
+
+Do not mark pass without evidence. Every exact quotation must occur in the named source after CRLF and LF normalization. The literal [omitted] marker may replace intervening text only when the retained segments occur exactly and in order. When a source conflict or required text is absent, use assessment or summary evidence with the named sources instead of fabricating a quotation. Label paraphrased source meaning as summary and a derived absence, conflict, duplicate-test, or coverage finding as assessment. For n/a, record not applicable with a reason instead of inventing quoted evidence.
 
 ## Source And Scope
 
