@@ -1,16 +1,16 @@
 # Stop UX review from performing runtime technology routing
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/stop-ux-review-runtime-technology-routing.md
+Provider Reference: backlog/user-action-required/stop-ux-review-runtime-technology-routing.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -39,6 +39,22 @@ Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim starting-to-running-ux-runtime-te
 Recovery Evidence: The prior acceptance attempt was preserved without mutation after DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED, claim journal event 15c488a5-e39b-4f79-9e6b-2259c3b8dcff. Dev Backlog Coordinator recovery notification confirmed the unrelated TypeScript ESM acceptance as provider-only commit f0f5c17a6af52fdcf332fc7cf48e7c0b49ee98ef, with claim acquire event 04eb821a-8352-40b8-b37f-81705e60f4bd and release event 1828d51c-d8e3-416a-a26a-22a8ac029a6a; primary main was then reconciled clean.
 
 Next Lifecycle Owner: Root Dev Orchestrator
+
+## User Action Required
+
+Exact Question: Do you approve changing only skills/user-experience-review/SKILL.md so UX reviewers use technology guidance already supplied for the active folder and report a missing route instead of selecting or loading guidance from repository evidence? This approval covers no other skill or agent definition. Focused tests and supported generated mirrors would follow from that approved source change.
+
+Why User Input Is Required: Supported pre-mutation check python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change skills/user-experience-review/SKILL.md returned {"classification":"governed-definition","outcome":"BLOCKED_APPROVAL_REQUIRED"}; repository policy requires explicit exact user direction and dispatch/repair authority is not approval.
+
+Exact Governed Scope: skills/user-experience-review/SKILL.md, semantically workflow item 2 only.
+
+Exclusions: agents/roles/dev-activities/dev-ux-specialist.role.yaml, skills/user-experience-review/references/review-checklist-user-experience-review.md, skills/user-experience-review/agents/openai.yaml, every other skill/agent definition, design/generated/role-definitions.js, and direct hand edits to all generated mirrors.
+
+Supported Post-Approval Regeneration Only: generated/adapters/** and design/generated/skill-definitions.js from the approved distributed-skill source; regeneration does not broaden approval.
+
+Unattended Stop: Stop governed-definition mutation, test/candidate production that depends on the change, regeneration, delivery, and integration; only read-only preservation/reconciliation may continue.
+
+Evidence: Accepted lint report evals/results/2026-07-28-methodology-skill-lint.md:408-418; source skills/user-experience-review/SKILL.md:15; owning role agents/roles/dev-activities/dev-ux-specialist.role.yaml:6-8,64; bounded read-only reviewer found no code/test-only correction can satisfy acceptance and confirmed exact one-file scope.
 
 ## Summary
 
