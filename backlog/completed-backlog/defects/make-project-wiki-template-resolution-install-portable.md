@@ -1,16 +1,16 @@
 # Resolve the project-wiki template from the installed skill catalog
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/make-project-wiki-template-resolution-install-portable.md
+Provider Reference: backlog/completed-backlog/defects/make-project-wiki-template-resolution-install-portable.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator / canonical task 019faa18-fde1-7690-ba81-7eb1a23bf4cf
+Owner: Completed / Root Dev Orchestrator / canonical task 019faa18-fde1-7690-ba81-7eb1a23bf4cf
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -30,13 +30,15 @@ Canonical Branch: codex/project-wiki-template-resolution-portable-019faa18
 
 Assigned Worktree: /Users/martinbechard/.codex/worktrees/c5e3/dev-methodology
 
-Current Phase: Create the delegated-user-direction approval record and run the exact definition preflight before implementation.
+Current Phase: Completed and archived after verified direct-main delivery.
 
 Started At: 2026-07-28T19:03:10Z
 
 Claim Evidence: running-project-wiki-template-resolution-019faa18 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T19:03:10.486935Z; claim event a7ae62a2-3ac9-411b-bb9a-21601bd1c398.
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Completed At: 2026-07-28T23:19:45Z
+
+Next Lifecycle Owner: None; terminal archive
 
 ## Resumption Evidence
 
@@ -89,6 +91,36 @@ Required Pre-Implementation Gate: Create the delegated-user-direction approval r
 No-Mutation-Before-Preflight Evidence: The approved scope and exclusions remain recorded in Resumption Evidence; no governed definition, approval record, test, generated file, or unrelated path was mutated by this acceptance transaction.
 
 Acceptance Claim Evidence: running-project-wiki-template-approved-019faa18 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T22:59:00.533782Z; claim event 565fba33-65de-4547-bda7-36aeb816855e.
+
+## Completion Evidence
+
+Completion Disposition: READY for direct-main provider closure.
+
+Accepted Source Commit: 4568e98fbd05b69b5aadfe6510eec4b173e5f28c.
+
+Integration and Observed Main Commit: d2aecb0a6216786f105aed7a7dd8e13930724dae on local configured main.
+
+Integration Strategy: cherry-pick -x then fast-forward.
+
+Non-Ancestral Mapping Evidence: The accepted source is non-ancestral. Exact four-path byte mapping was proven, and d2aecb0a6216786f105aed7a7dd8e13930724dae is reachable from main.
+
+Delivered Paths: approval-record-project-wiki-template-resolution.yaml; skills/project-wiki-create/SKILL.md; scripts/test_install_skills.py; design/generated/skill-definitions.js.
+
+Definition Preflight: ALLOWED_APPROVED_DEFINITION_CHANGE.
+
+Independent Review: APPROVED with no findings.
+
+Independent Verification: VERIFIED. Focused source and clean-install regression, single-skill validation, build-skill-docs freshness, and diff checks passed. The reviewer additionally ran the full installer module: 81 tests passed.
+
+Post-Integration Verification: Focused regression, freshness, diff, reachability and content mapping, and clean-state checks passed on primary main.
+
+Remote Publication: No remote push was required; local configured main is the delivery authority.
+
+Integration Claim Evidence: Acquired as SHARED_CHECKOUT_ACQUIRED, event 23b99e11-f146-4334-a23c-bb80f95e53a9; released as RELEASED, event 6abb32c8-5935-4156-9148-1e5c0e4bb5f5.
+
+Cleanup Eligibility: Integration branch and worktree codex/project-wiki-template-resolution-integration-019faa18 at /Users/martinbechard/dev/dev-methodology/.worktrees/project-wiki-template-resolution-integration-019faa18 are cleanup-eligible after provider closure.
+
+Terminal Provider Claim Evidence: complete-project-wiki-template-resolution-019faa18 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T23:19:45.407453Z; claim event ff92ebe6-f51b-4457-bbdd-7b182e89ff02.
 
 ## Summary
 
