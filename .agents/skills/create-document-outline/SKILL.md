@@ -280,18 +280,19 @@ concatenates headings, or excludes a major child topic.
    [100% alignment | root]
 
 6. For the first child in any group, convert its parent-containment score to a
-   percentage of 2. Add a concise justification that answers why the topic is
-   included in that parent, and prefix the topic with:
+   percentage of 2. Add a concise justification that explains why the entire
+   child topic is a subset of the parent topic, and prefix the topic with:
 
-   [100% alignment | parent 2/2 — why: {parent-containment justification}]
+   [100% alignment | parent 2/2 — why: {why the entire child topic is a subset of the parent topic}]
 
 7. For every later child in that group, prefix the topic with its parent
    containment score and preceding-sibling sequence score. Add a concise
-   justification after each component that answers why the topic is included
-   in the parent and why it follows the immediately preceding sibling. Add the
-   scores, convert the total to a percentage of 4, and prefix the topic with:
+   justification after each component that explains why the entire child topic
+   is a subset of the parent and why the current topic is a logical successor
+   to the immediately preceding sibling. Add the scores, convert the total to
+   a percentage of 4, and prefix the topic with:
 
-   [100% alignment | parent 2/2 — why: {parent-containment justification} | sequence 2/2 — why: {preceding-sibling justification}]
+   [100% alignment | parent 2/2 — why: {why the entire child topic is a subset of the parent topic} | sequence 2/2 — why: {why this topic logically succeeds the immediately preceding sibling}]
 
 Use the actual percentage, component values, and justifications in each
 prefix. The sequence score and its justification always compare the current
@@ -308,23 +309,28 @@ Score how well the current topic is contained within its parent topic:
 - 1 point: the topic is partially contained in the parent.
 - 2 points: the topic is completely contained in the parent.
 
-Award 2 points only when the ordinary meaning of the parent fully includes the
-child without relying on a vague or synthetic catch-all interpretation. A
-child that extends beyond the parent receives at most 1 point.
+Treat each topic as the set of subject matter its wording covers. Parent
+containment asks whether the child-topic set is a subset of the parent-topic
+set. Award 2 points only when the ordinary meaning of the parent fully includes
+the entire child-topic set without relying on a vague or synthetic catch-all
+interpretation. A child that extends beyond the parent receives at most 1
+point. Shared vocabulary, association, or relevance does not establish a
+subset relationship.
 
 For every parent-containment score, answer:
 
-Why is this topic included in this parent?
+Why is the entire child topic a subset of the parent topic?
 
 Use one concise causal clause that names the semantic relationship. For
 example, identify the topic as a type, part, stage, property, rule, example, or
 other aspect of the parent. Match the justification to the score:
 
-- 2 points: explain why the complete topic falls within the parent's ordinary
-  meaning.
-- 1 point: explain both the aspect that fits and the aspect that extends beyond
-  or only partly fits the parent.
-- 0 points: explain the subject or scope mismatch that prevents containment.
+- 2 points: explain the type-of, part-of, stage-of, property-of, operation-of,
+  or other relationship that places the complete child scope inside the
+  parent's ordinary scope.
+- 1 point: explain the overlap and identify the child subject matter that falls
+  outside the parent scope.
+- 0 points: explain why the child subject matter is outside the parent scope.
 
 Do not use circular explanations such as it belongs here because it is related
 to the parent.
@@ -342,6 +348,10 @@ Award 2 points only when the order expresses a clear progression, comparison,
 dependency, chronology, or other editorial relationship. Mere adjacency or
 preservation of source order receives at most 1 point.
 
+Treat sibling sequence as a directed relationship from the immediately
+preceding sibling to the current topic. Sharing a parent explains why two
+topics are siblings; it does not explain why one succeeds the other.
+
 A repeated parallel series under one comparison schema has complete parent
 containment but only 1 point for sequence unless the items themselves have an
 ordered scale, chronology, dependency, or progression. A stable catalog order
@@ -349,7 +359,8 @@ alone does not make one parallel case follow logically from another.
 
 For every sibling-sequence score, answer:
 
-Why is this topic a logical successor to the immediately preceding sibling?
+Why is the current topic a logical successor to the immediately preceding
+sibling?
 
 Use one concise causal clause that names the transition between the two
 topics. Match the justification to the score:
@@ -364,6 +375,42 @@ topics. Match the justification to the score:
 
 Do not justify sequence by saying only that the document presents the topics
 in that order.
+
+### Fictitious Scoring Examples
+
+Parent topic: Preparing a Garden Bed
+
+```text
+[100% alignment | parent 2/2 — why: removing weeds is one operation within preparing a garden bed] Removing weeds
+[100% alignment | parent 2/2 — why: loosening soil is one operation within preparing a garden bed | sequence 2/2 — why: loosening operates on the bed cleared by the preceding weed-removal step] Loosening the soil
+[100% alignment | parent 2/2 — why: adding compost is one operation within preparing a garden bed | sequence 2/2 — why: compost is incorporated after the preceding soil-loosening step makes incorporation possible] Adding compost
+```
+
+Parent topic: Types of Cloud
+
+```text
+[100% alignment | parent 2/2 — why: cirrus is a type of cloud] Cirrus
+[75% alignment | parent 2/2 — why: cumulus is a type of cloud | sequence 1/2 — why: cumulus is a parallel cloud type, not a necessary successor to cirrus] Cumulus
+```
+
+Parent topic: Domestic Cats
+
+```text
+[50% alignment | parent 1/2 — why: household pets overlaps domestic cats but also includes dogs, birds, and other subjects outside the parent] Household Pets
+```
+
+Parent topic: Employee Handbook Policies
+
+```text
+[100% alignment | parent 2/2 — why: fire evacuation is a policy covered by an employee handbook] Fire Evacuation
+[50% alignment | parent 2/2 — why: travel reimbursement is a policy covered by an employee handbook | sequence 0/2 — why: travel reimbursement has no meaningful transition from the preceding fire-evacuation policy] Travel Reimbursement
+```
+
+Parent topic: Basic Astronomy
+
+```text
+[0% alignment | parent 0/2 — why: bread fermentation is outside the subject matter of basic astronomy] Bread Fermentation
+```
 
 The first child has no sequence score, so its total is the parent-containment
 score out of 2. Every later child combines both dimensions for a total out of
@@ -415,11 +462,12 @@ Confirm that:
 - editorial framing has informed the outline without becoming accidental
   subject matter;
 - every non-root topic has the required parent-containment score;
-- every parent-containment score has a concise explanation of why the topic is
-  included in that parent;
+- every parent-containment score has a concise explanation of why the entire
+  child-topic scope is or is not a subset of the parent-topic scope;
 - every topic after the first sibling has the required sequence score;
-- every sequence score has a concise explanation of why the topic is or is not
-  a logical successor to the immediately preceding sibling;
+- every sequence score has a concise explanation of the directed relationship
+  that makes the current topic a logical successor, partial successor, or
+  nonsuccessor to the immediately preceding sibling;
 - zero and partial component scores are revised or explicitly explained;
 - exclusions and unresolved editorial judgments are stated.
 
