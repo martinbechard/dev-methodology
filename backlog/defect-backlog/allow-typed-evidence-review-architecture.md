@@ -1,6 +1,6 @@
 # Allow typed evidence in architecture review checklists
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-architect
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator dispatch reservation
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -18,13 +18,23 @@ Runtime Thread: 019faa2d-2ffa-75c0-80d5-e3bd4f7a31fa
 
 Root Agent Task: 019faa2d-2ffa-75c0-80d5-e3bd4f7a31fa
 
-Phase: Ready for the preserved canonical Thread to resume after the exact scope-specific user approval.
+Launch Reservation: resume-allow-typed-evidence-review-architecture-019faa2d
+
+Normalized Objective: Allow typed evidence in architecture review checklists.
+
+Dispatch Time: 2026-07-28T23:01:56.867118Z
+
+Intended Root Role: Dev Orchestrator
+
+Observed Launch Evidence: Parent Dev Backlog Coordinator selected this eligible preserved canonical Thread at 9 Starting-plus-Running items and recorded the tenth-slot reservation before acceptance.
+
+Phase: Starting. The preserved canonical Thread must accept Starting -> Running before any definition, companion, test, generated, or other repository mutation.
 
 Branch: codex/allow-typed-evidence-review-architecture-019faa2d
 
 Worktree: /Users/martinbechard/.codex/worktrees/9954/dev-methodology
 
-Next Lifecycle Owner: Dev Backlog Coordinator
+Next Lifecycle Owner: root Dev Orchestrator for canonical Runtime Thread 019faa2d-2ffa-75c0-80d5-e3bd4f7a31fa
 
 ## User Action Required Resolution
 
