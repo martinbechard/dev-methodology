@@ -1,16 +1,16 @@
 # Prevent sensitive data retention in tool-runtime logs and traces
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/prevent-sensitive-tool-runtime-log-and-trace-retention.md
+Provider Reference: backlog/completed-backlog/defects/prevent-sensitive-tool-runtime-log-and-trace-retention.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator task 019faa2d-2ffa-75c0-80d5-e3d3b9f4a851
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -30,15 +30,41 @@ Branch: codex/prevent-sensitive-tool-runtime-retention-019faa2d
 
 Worktree: /Users/martinbechard/.codex/worktrees/7f70/dev-methodology
 
-Phase: Root Dev Orchestrator accepted preserved delivery ownership; approval-record and preflight work have not started.
+Phase: Completed and archived after direct-main integration, independent review, and verification.
 
 Started At: 2026-07-28T19:27:04.520990Z
 
 Resumed At: 2026-07-28T22:14:19.338336Z
 
-Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim starting-to-running-prevent-sensitive-tool-runtime-log-and-trace-retention-019faa2d-resumption; incarnation 9c931992-ed4c-4a65-a060-a7d58c704364; claim journal event 269b6adc-f20d-438a-b3e1-db4323362d5b; exact provider path claimed in the primary main checkout. Previous Running claim: SHARED_CHECKOUT_ACQUIRED claim starting-to-running-prevent-sensitive-tool-runtime-log-and-trace-retention-019faa2d; incarnation 0776966e-defa-4c1c-b6da-b47126c7dc90; claim journal event 745061b2-a2f9-4482-8e5a-2838e6244720; released with event 8077932f-271b-4c08-97ae-21d207a467a7. Prior recovery evidence: the first claim attempt returned DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED, journal event dd77b66a-3524-4331-9fad-f62af96cb695; unrelated TypeScript ESM provider-only acceptance committed at f0f5c17a6af52fdcf332fc7cf48e7c0b49ee98ef; its recovery claim was acquired in event 04eb821a-8352-40b8-b37f-81705e60f4bd and released in event 1828d51c-d8e3-416a-a26a-22a8ac029a6a. The Running acceptance commit 062ca4ecf487dc6d39bf72117e3a733b035e18c0 also included unrelated backlog/defect-backlog/allow-typed-evidence-review-functional-spec.md; the bytes were preserved and no destructive correction was made.
+Completed At: 2026-07-28T22:32:46Z
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Claim Evidence: Terminal provider claim SHARED_CHECKOUT_ACQUIRED claim complete-prevent-sensitive-tool-runtime-log-and-trace-retention-019faa2d; incarnation 1dff6ed4-bb49-46e8-8733-500a4ede7587; claim journal event d1bb3a80-c3e0-4bad-8d1b-166e774443d3; exact active and completed provider paths claimed in the primary main checkout. Previous Running claim: SHARED_CHECKOUT_ACQUIRED claim starting-to-running-prevent-sensitive-tool-runtime-log-and-trace-retention-019faa2d-resumption; incarnation 9c931992-ed4c-4a65-a060-a7d58c704364; claim journal event 269b6adc-f20d-438a-b3e1-db4323362d5b; released with event e913fd03-eae0-47f3-8a89-0d0db8e4ac22. Earlier Running claim: SHARED_CHECKOUT_ACQUIRED claim starting-to-running-prevent-sensitive-tool-runtime-log-and-trace-retention-019faa2d; incarnation 0776966e-defa-4c1c-b6da-b47126c7dc90; claim journal event 745061b2-a2f9-4482-8e5a-2838e6244720; released with event 8077932f-271b-4c08-97ae-21d207a467a7. Prior recovery evidence: the first claim attempt returned DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED, journal event dd77b66a-3524-4331-9fad-f62af96cb695; unrelated TypeScript ESM provider-only acceptance committed at f0f5c17a6af52fdcf332fc7cf48e7c0b49ee98ef; its recovery claim was acquired in event 04eb821a-8352-40b8-b37f-81705e60f4bd and released in event 1828d51c-d8e3-416a-a26a-22a8ac029a6a. The Running acceptance commit 062ca4ecf487dc6d39bf72117e3a733b035e18c0 also included unrelated backlog/defect-backlog/allow-typed-evidence-review-functional-spec.md; the bytes were preserved and no destructive correction was made.
+
+Next Lifecycle Owner: None; terminal archived record.
+
+## Completion Evidence
+
+Completion Route: direct-main.
+
+Accepted Source Commit: fb9a21adb4674443f60e9eb3e6bdfa95138a41bd.
+
+Integration and Observed Main Commit: 2f211afebd3a9b5fe77f0ff23ac4442a28f8a86b; current on local main and reachable.
+
+Integration Mapping: Non-ancestral mapping by conflict-free exact-four-path cherry-pick.
+
+Integrated Paths: approval-record-sensitive-tool-runtime-retention.yaml; skills/tool-runtime/SKILL.md; scripts/test_bundle_content.py; design/generated/skill-definitions.js.
+
+Review: Source review GOOD with no findings; independent verifier GOOD.
+
+Approval and Preflight: Preflight ALLOWED_APPROVED_DEFINITION_CHANGE; generated-mirror preflight ALLOWED_APPROVED_REGENERATION.
+
+Verification: Focused unittest OK; skill validation passed; build-skill-docs --check current; diff check passed; primary clean.
+
+Runtime Note: The initial Apple Python 3.9 pre-load attempt failed because tomllib was unavailable. The unchanged verification reran successfully with repository Python 3.11.
+
+Integration Claim: Acquired event 79bc0960-05d4-4f2f-ba62-52aa1159b72d, incarnation 2d3fd2a2-664f-4336-af5e-1a3457eff828; released event a72c02d8-3daa-4409-8fa3-1f26482f9dc5.
+
+Publication: Remote publication is not required or configured; local main intentionally remains ahead of origin.
 
 ## Resumption Evidence
 
