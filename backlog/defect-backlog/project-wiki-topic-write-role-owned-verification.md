@@ -1,16 +1,25 @@
 # Defer verifier orchestration to conceptual roles and resolve writer helper commands
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/project-wiki-topic-write-role-owned-verification.md
+Provider Reference: backlog/defect-backlog/project-wiki-topic-write-role-owned-verification.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
+
+## User Action Required Resolution
+
+- Resolved At: 2026-07-28T22:40:09Z.
+- User Answer: `I approve`.
+- User-Message Provenance: Parent Dev Backlog Coordinator task 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Result: Approved only skills/project-wiki-topic-write/SKILL.md to remove direct verifier spawn and retry, hand verification requests and interruption evidence to the owning role, preserve writer and verifier read-only boundaries, and use executable source-and-installed helper resolution. Preserve the existing exclusions.
+- Approval Gate: Before any governed-source mutation, create the exact-scope approval record from this provenance and pass the supported pre-mutation check.
+- Ready Resumption: Preserve canonical Thread and root task 019faa19-0275-7210-aaf6-45931b8079ab, branch, worktree, and history. The parent alone may separately reserve Ready -> Starting; the preserved root alone must separately accept Starting -> Running before repository mutation.
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -54,7 +63,7 @@ Question: Do you approve changing only skills/project-wiki-topic-write/SKILL.md 
 
 Why User Input Is Required: Project guidance requires explicit scope-specific user direction before a governed skill definition can change. The supported pre-mutation check returned BLOCKED_APPROVAL_REQUIRED with exit 3.
 
-Resolution: Pending
+Resolution: User approved the exact governed scope on 2026-07-28; see User Action Required Resolution.
 
 Rationale: The role-owned verification and helper-resolution intent is supported by accepted report candidate 54d860f1978d4cb403e59162cfb209fe45cc06a8 and the completed read-only analysis.
 

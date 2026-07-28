@@ -1,16 +1,25 @@
 # Allow typed evidence in unit-test-plan review checklists
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/allow-typed-evidence-review-unit-test-plan.md
+Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-unit-test-plan.md
 
 Completion: direct-main
 
 Owner: Unowned
+
+## User Action Required Resolution
+
+- Resolved At: 2026-07-28T22:40:09Z.
+- User Answer: `I approve; update the title`.
+- User-Message Provenance: Parent Dev Backlog Coordinator task 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Result: Approved only skills/review-unit-test-plan/SKILL.md for typed evidence: exact quotation, summary, derived assessment, and not applicable. Supported mirrors and the ordinary checklist and focused tests remain within the existing bounded work; no other governed definition is approved. Update the title as part of the bounded correction.
+- Approval Gate: Before any governed-source mutation, create the exact-scope approval record from this provenance and pass the supported pre-mutation check.
+- Ready Resumption: Preserve canonical Thread and root task 019faa83-d3aa-7c61-a6fb-aec4584086bb, branch, worktree, and history. The parent alone may separately reserve Ready -> Starting; the preserved root alone must separately accept Starting -> Running before repository mutation.
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -32,7 +41,7 @@ Branch: codex/allow-typed-evidence-review-unit-test-plan
 
 Worktree: /Users/martinbechard/.codex/worktrees/9beb/dev-methodology
 
-Phase: Waiting for User - definition approval
+Phase: Ready for parent dispatch reservation; preserved canonical root must accept Starting -> Running before repository mutation.
 
 Started At: 2026-07-28T21:00:28Z
 

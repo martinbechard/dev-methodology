@@ -1,16 +1,25 @@
 # Allow typed evidence in functional-specification review checklists
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/allow-typed-evidence-review-functional-spec.md
+Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-functional-spec.md
 
 Completion: direct-main
 
 Owner: Unowned
+
+## User Action Required Resolution
+
+- Resolved At: 2026-07-28T22:40:09Z.
+- User Answer: `I approve`.
+- User-Message Provenance: Parent Dev Backlog Coordinator task 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Result: Approved only skills/review-functional-spec/SKILL.md for typed evidence: exact quotation, summary, assessment, and not applicable. Literal source resolution applies only to exact quotation. The direct checklist and focused tests are ordinary companions; no other governed definition is approved.
+- Approval Gate: Before any governed-source mutation, create the exact-scope approval record from this provenance and pass the supported pre-mutation check.
+- Ready Resumption: Preserve canonical Thread and root task 019faa2d-300c-7881-8233-115c049c1b8b, branch, worktree, and history. The parent alone may separately reserve Ready -> Starting; the preserved root alone must separately accept Starting -> Running before repository mutation.
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 

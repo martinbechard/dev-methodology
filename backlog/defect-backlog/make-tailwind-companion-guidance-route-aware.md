@@ -1,16 +1,25 @@
 # Make Tailwind companion guidance conditional on active-scope routing
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/make-tailwind-companion-guidance-route-aware.md
+Provider Reference: backlog/defect-backlog/make-tailwind-companion-guidance-route-aware.md
 
 Completion: direct-main
 
-Owner: Dev Orchestrator
+Owner: Unowned
+
+## User Action Required Resolution
+
+- Resolved At: 2026-07-28T22:40:09Z.
+- User Answer: `Approve - it should contail all tailwind guidance and not load other skills`.
+- User-Message Provenance: Parent Dev Backlog Coordinator task 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Result: Treat `contail` as `contain`. Approved only skills/tailwind-design-system/SKILL.md. It must contain the Tailwind guidance it needs and must not instruct the reader to load companion or other skills. No other governed definition is approved.
+- Approval Gate: Before any governed-source mutation, create the exact-scope approval record from this provenance and pass the supported pre-mutation check.
+- Ready Resumption: Preserve canonical Thread and root task 019faa83-d3c4-7962-b3f8-f4b1a9845d94, branch, worktree, and history. The parent alone may separately reserve Ready -> Starting; the preserved root alone must separately accept Starting -> Running before repository mutation.
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -32,7 +41,7 @@ Branch: codex/tailwind-companion-route-aware-019faa83
 
 Worktree: /Users/martinbechard/.codex/worktrees/41ca/dev-methodology
 
-Phase: User Action Required; exact governed-definition approval is required before any source mutation.
+Phase: Ready for parent dispatch reservation; preserved canonical root must accept Starting -> Running before repository mutation.
 
 Started At: 2026-07-28T21:00:12Z
 

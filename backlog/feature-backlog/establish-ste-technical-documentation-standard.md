@@ -1,14 +1,23 @@
 # Establish The STE Technical Documentation Standard
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/establish-ste-technical-documentation-standard.md
+Provider Reference: backlog/feature-backlog/establish-ste-technical-documentation-standard.md
 
 Owner: Unowned
+
+## User Action Required Resolution
+
+- Resolved At: 2026-07-28T22:40:09Z.
+- User Answer: `ok I approve`.
+- User-Message Provenance: Parent Dev Backlog Coordinator task 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Result: Approved the exact 14 governed canonical paths already enumerated in this record. The accepted candidate remains a4165c21f464e0cf74d72c6f81b7a64d49c90f62. No scope expansion is authorized.
+- Approval Gate: Before any governed-source mutation, create the exact-scope approval record from this provenance and pass the supported pre-mutation check for every changed governed path.
+- Ready Resumption: Preserve canonical Thread and root task 019fa9be-0083-7542-973f-af103c0c45a5, branch, worktree, candidate, review and verification history. The parent alone may separately reserve Ready -> Starting; the preserved root alone must separately accept Starting -> Running before repository mutation.
 
 Completion: direct-main
 
