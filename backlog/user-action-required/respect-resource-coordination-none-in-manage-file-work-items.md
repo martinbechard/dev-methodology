@@ -1,12 +1,14 @@
 # Make file-provider claim events conditional on configured resource coordination
 
-Status: Running
+Status: User Action Required
+
+User Question: Do you explicitly approve editing the governed canonical definition skills/manage-file-work-items/SKILL.md to make its provider claim directions conditional for resource coordination agent-claim versus none?
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/respect-resource-coordination-none-in-manage-file-work-items.md
+Provider Reference: backlog/user-action-required/respect-resource-coordination-none-in-manage-file-work-items.md
 
 Completion: direct-main
 
@@ -30,13 +32,37 @@ Branch: codex/respect-resource-coordination-none-019fa9f9
 
 Worktree: /Users/martinbechard/.codex/worktrees/c089/dev-methodology
 
-Current Phase: Root Dev Orchestrator accepted delivery ownership; implementation has not started.
+Current Phase: Paused pending scope-specific user authorization for a governed canonical definition change.
 
 Started At Evidence: Root acceptance recorded by Dev Backlog Steward on 2026-07-28T18:39:39Z after the parent reservation, against Runtime Thread and Root Agent Task 019fa9f9-9548-7853-9fe3-301c76b94b82.
 
 Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim running-acceptance-respect-resource-coordination-none-019fa9f9; incarnation a1e091bf-51fe-4f58-a077-b2ead9fe9f49; claim journal event 3d683343-0e55-46fe-b292-421593bcdfdb; exact provider path claimed in the primary main checkout.
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Next Lifecycle Owner: User, then Parent Coordinator and the preserved Root Dev Orchestrator.
+
+## User Action Required
+
+Why User Input Is Required: Only the user can grant the explicit, scope-specific authority required to change a governed canonical definition. Repository access, a defect record, review, testing, or coordinator direction cannot supply that authority.
+
+Prohibited Unattended Actions: Do not mutate the definition, tests, generated mirrors, integration state, or delivery artifacts until the user grants the requested approval.
+
+Required After Approval: Record the exact approval evidence for skills/manage-file-work-items/SKILL.md, then run the supported pre-mutation definition-change check before any definition mutation.
+
+Approval Scope: skills/manage-file-work-items/SKILL.md
+
+Parent Coordinator Task: 019fa9bb-1423-7e80-bcde-3caa765e3758
+
+## Recovery Evidence
+
+Prior Claim Rejection: DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED
+
+Prior Claim Journal Event: 4e21cbb8-b901-4079-8977-303417ab7d58
+
+Recovery Authorization: Parent Coordinator confirmed that concurrent User Action Required moves committed through a4d13eae514829047b61a25e77272ec886d00e06, primary main was clean, and the claim registry was empty before this one retry.
+
+## Read-Only Findings
+
+No candidate or implementation change exists. The active record's source evidence identifies the governed definition and requires explicit user approval before any correction work.
 
 ## Summary
 
