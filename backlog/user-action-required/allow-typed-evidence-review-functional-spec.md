@@ -1,16 +1,16 @@
 # Allow typed evidence in functional-specification review checklists
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-functional-spec.md
+Provider Reference: backlog/user-action-required/allow-typed-evidence-review-functional-spec.md
 
 Completion: direct-main
 
-Owner: root Dev Orchestrator
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -37,6 +37,24 @@ Current Phase: Read-only diagnosis and approval-scope preparation
 Running Started At: 2026-07-28T19:26:59Z
 
 Claim Evidence: starting-running-019faa2d acquired as SHARED_CHECKOUT_ACQUIRED (journal 152d0334-5bfc-4c13-9455-d66dbcc16c2e) for this exact provider file before the transition.
+
+Prior Running and Anomaly Evidence: Starting -> Running was recorded in commit 062ca4ecf487dc6d39bf72117e3a733b035e18c0. That immutable commit also contained another backlog record, prevent-sensitive-tool-runtime-log-and-trace-retention.md; the functional-spec record bytes were verified and preserved without rewrite.
+
+User Action Required Question: Do you explicitly approve changing skills/review-functional-spec/SKILL.md so functional-spec review checklists use typed evidence (exact quotation, summary, assessment, or not applicable) and require literal source resolution only for exact quotations?
+
+Why User Input Is Required: skills/review-functional-spec/SKILL.md is a governed canonical skill definition. Its change requires explicit scope-specific user approval. Existing work authorization and evidence do not authorize that definition change.
+
+Unattended Work Boundary: Do not change the governed skill, its checklist, tests, metadata, approval provenance, generated mirrors, or generated output. Do not regenerate, implement, integrate, or deliver this correction until the answer is durably recorded and the same canonical Thread completes User Action Required -> Ready -> Starting -> Running.
+
+Governed Definition Scope: skills/review-functional-spec/SKILL.md only.
+
+Ordinary Companion Scope: skills/review-functional-spec/references/review-checklist-functional-spec.md and scripts/test_bundle_content.py.
+
+Exclusions: No other skill or agent definition; no metadata; no approval provenance invention; no test or reference mutation before approval; no generated mirror; no regeneration; no implementation; no integration; no delivery.
+
+Preflight Evidence: {"classification":"governed-definition","outcome":"BLOCKED_APPROVAL_REQUIRED"}
+
+Same-Thread Resumption: After the user answer is durably recorded, reuse Runtime Thread and Root Agent Task 019faa2d-300c-7881-8233-115c049c1b8b for User Action Required -> Ready -> Starting -> Running. Only then create an exact-scope approval record from real user provenance and run the supported pre-mutation definition-change check before any governed definition edit.
 
 ## Summary
 
