@@ -1,6 +1,6 @@
 # Make Tailwind companion guidance conditional on active-scope routing
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -9,6 +9,28 @@ Provider: file
 Provider Reference: backlog/defect-backlog/make-tailwind-companion-guidance-route-aware.md
 
 Completion: direct-main
+
+Owner: Unowned
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
+
+Parent Agent Task: 019fa9bb-1423-7e80-bcde-3caa765e3758
+
+Launch Reservation: reserve-six-ready-refill-019fa9bb
+
+Normalized Objective: Make Tailwind companion guidance conditional on active-scope routing.
+
+Dispatch Time: 2026-07-28T20:53:27Z
+
+Intended Root Role: Dev Orchestrator
+
+Runtime Thread: Pending
+
+Root Agent Task: Pending
+
+Phase: Ready -> Starting reserved by the parent Dev Backlog Coordinator; pending root Dev Orchestrator acceptance.
+
+Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim reserve-six-ready-refill-tailwind-019fa9bb-retry; acquisition journal event d7b2246e-4e09-43df-a8f7-a5a04455a0d9.
 
 ## Summary
 

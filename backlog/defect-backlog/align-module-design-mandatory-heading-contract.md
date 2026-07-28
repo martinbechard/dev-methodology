@@ -1,6 +1,6 @@
 # Align module-design optional-section instructions with the mandatory heading contract
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -9,6 +9,28 @@ Provider: file
 Provider Reference: backlog/defect-backlog/align-module-design-mandatory-heading-contract.md
 
 Completion: direct-main
+
+Owner: Unowned
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
+
+Parent Agent Task: 019fa9bb-1423-7e80-bcde-3caa765e3758
+
+Launch Reservation: reserve-six-ready-refill-019fa9bb
+
+Normalized Objective: Align module-design optional-section instructions with the mandatory heading contract.
+
+Dispatch Time: 2026-07-28T20:53:27Z
+
+Intended Root Role: Dev Orchestrator
+
+Runtime Thread: Pending
+
+Root Agent Task: Pending
+
+Phase: Ready -> Starting reserved by the parent Dev Backlog Coordinator; pending root Dev Orchestrator acceptance.
+
+Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim reserve-six-ready-refill-module-heading-019fa9bb-retry; acquisition journal event 827364ca-c7e4-44ab-869e-5a55c5892d58.
 
 ## Summary
 
