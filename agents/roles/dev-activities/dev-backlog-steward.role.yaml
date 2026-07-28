@@ -100,6 +100,9 @@ instructions:
     Unowned when ownership has ended and normal redispatch is required; set Blocked when a
     concrete cause and Coordinator-owned next action are known; set User Action Required when
     a concrete user-owned action is required; or record the applicable terminal disposition.
+  - After any successful transition into User Action Required, send the canonical work-item
+    Thread's root Dev Orchestrator a direct follow-up with the instruction "Please create and
+    present the user action brief next."
   - For a Coordinator-authorized Blocked transition, set Owner to Unowned and retain the exact
     blocker, blocker owner, unblock condition, requested recovery action, preserved commits and
     evidence, resource disposition, and safe-to-resume assessment.

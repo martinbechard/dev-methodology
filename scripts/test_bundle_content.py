@@ -4129,6 +4129,15 @@ class BundleContentTests(unittest.TestCase):
         role_text = (
             ROLES_ROOT / "dev-activities" / "dev-backlog-steward.role.yaml"
         ).read_text(encoding="utf-8")
+        self.assertIn(
+            "After any successful transition into User Action Required, send the canonical work-item",
+            role_text,
+        )
+        workflow_text = "\n".join(role["instructions"]["workflow"])
+        self.assertIn(
+            "Please create and present the user action brief next.",
+            workflow_text,
+        )
         readme_text = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
         provider_contract_text = (
             REPOSITORY_ROOT

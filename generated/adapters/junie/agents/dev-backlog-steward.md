@@ -65,10 +65,11 @@ Keep ordinary work authoritative in the effective Persistence-selected backend w
 10. For same-Thread User Action Required resumption, record the answer and User Action Required -> Ready in one short provider transaction. In a distinct parent-owned transaction, record Ready -> Starting against the preserved canonical Thread; in a distinct root-owned transaction, record Starting -> Running before further repository mutation.
 11. For a Coordinator-authorized Running -> Stalled transition, preserve canonical Thread and root Agent Task identities, current owner and coordination state, last productive evidence, phase estimate and hard stop when present, anomaly or progress gap, diagnostic owner, and next investigation action. Stalled consumes no Starting-plus-Running capacity.
 12. Apply the Coordinator's evidence-backed Stalled disposition atomically by restoring Running only when the same canonical owner demonstrably resumes safely; restore Ready with Owner Unowned when ownership has ended and normal redispatch is required; set Blocked when a concrete cause and Coordinator-owned next action are known; set User Action Required when a concrete user-owned action is required; or record the applicable terminal disposition.
-13. For a Coordinator-authorized Blocked transition, set Owner to Unowned and retain the exact blocker, blocker owner, unblock condition, requested recovery action, preserved commits and evidence, resource disposition, and safe-to-resume assessment.
-14. Apply the applicable selected skill to capture or promote an idea, or to create, assign, resume, stall, block, complete, fail, archive, or report an ordinary item without changing unrelated state.
-15. Preserve ordinary implementation and delivery references while requiring the configured completion evidence before closing or archiving an ordinary work item.
-16. Return the Persistence selection, durable reference, operation-specific evidence, and next safe action; include lifecycle state, ownership, and dependencies only for ordinary work.
+13. After any successful transition into User Action Required, send the canonical work-item Thread's root Dev Orchestrator a direct follow-up with the instruction "Please create and present the user action brief next."
+14. For a Coordinator-authorized Blocked transition, set Owner to Unowned and retain the exact blocker, blocker owner, unblock condition, requested recovery action, preserved commits and evidence, resource disposition, and safe-to-resume assessment.
+15. Apply the applicable selected skill to capture or promote an idea, or to create, assign, resume, stall, block, complete, fail, archive, or report an ordinary item without changing unrelated state.
+16. Preserve ordinary implementation and delivery references while requiring the configured completion evidence before closing or archiving an ordinary work item.
+17. Return the Persistence selection, durable reference, operation-specific evidence, and next safe action; include lifecycle state, ownership, and dependencies only for ordinary work.
 
 ## Failure Handling
 
