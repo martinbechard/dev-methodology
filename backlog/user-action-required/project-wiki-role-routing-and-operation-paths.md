@@ -1,16 +1,16 @@
 # Restore role-owned wiki verification routing and portable operation paths
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/project-wiki-role-routing-and-operation-paths.md
+Provider Reference: backlog/user-action-required/project-wiki-role-routing-and-operation-paths.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator 019faa18-fe86-7110-9b9e-c7be3bdc8888
+Owner: Unowned pending approval/resumption
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -30,13 +30,13 @@ Branch: codex/project-wiki-role-routing-operation-paths-019faa18
 
 Worktree: /Users/martinbechard/.codex/worktrees/4713/dev-methodology
 
-Phase: Read-only analysis pending governed-definition approval determination.
+Phase: Awaiting explicit scope-specific governed-definition approval.
 
 Started At: 2026-07-28T19:07:00Z
 
 Claim Evidence: running-project-wiki-role-routing-operation-paths-019faa18-recovery; SHARED_CHECKOUT_ACQUIRED; claim event e64f1eb5-10e8-417f-980b-9e8e8b818b7e; recovery notification followed prior DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED event 38ae895b-7bfa-4366-86bc-a0c17bfa5be9.
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Next Lifecycle Owner: Parent Coordinator, then the preserved root Dev Orchestrator
 
 ## Summary
 
@@ -85,3 +85,42 @@ None.
 Collision reconciliation before creation found no active item with this provider reference, slug, affected skill, or overlapping accepted outcome.
 
 This record has one primary affected skill identity: skills/project-wiki/SKILL.md. It does not authorize a skill-definition mutation. If correction changes this governed SKILL.md, later implementation requires explicit scope-specific user approval naming that exact definition, a provenance approval record, and the supported pre-mutation definition-change check.
+
+## User Action Required
+
+Question: Do you approve modifying exactly these two governed canonical definitions for this defect: skills/project-wiki/SKILL.md and agents/roles/wiki-activities/wiki-ingester.role.yaml? The change will make verifier dispatch/interruption role-owned, require BLOCKED evidence for pre- and post-move verifier interruption without bypassing the pre-move GOOD boundary, and resolve project-wiki helper operations portably from the loaded skill directory. Supported generated mirrors will be regenerated from those approved sources; no other skill or agent definition will be changed.
+
+Why User Owns This: Repository governance requires explicit exact scope approval before a governed definition mutation.
+
+Approved Scope Requested:
+
+- skills/project-wiki/SKILL.md
+- agents/roles/wiki-activities/wiki-ingester.role.yaml
+
+Exclusions: No wiki-topic-verifier, wiki-writer, project-wiki-topic-write, project-wiki-topic-verify, or other governed definition may change. Generated mirrors must never be hand-edited.
+
+Preflight After Approval: Create a delegated-user-direction approval record naming both exact definitions. Run scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change separately for skills/project-wiki/SKILL.md and agents/roles/wiki-activities/wiki-ingester.role.yaml using that record.
+
+Unattended Boundary: All definition, companion test/reference, regeneration, review, verification, and delivery work stops. Only read-only inspection may continue.
+
+Resumption: Move through User Action Required -> Ready -> Starting -> Running in canonical Thread 019faa18-fe86-7110-9b9e-c7be3bdc8888 before mutation.
+
+## Lifecycle Recovery Evidence
+
+Canonical Runtime Thread: 019faa18-fe86-7110-9b9e-c7be3bdc8888
+
+Canonical Root Agent Task: 019faa18-fe86-7110-9b9e-c7be3bdc8888
+
+Parent Coordinator: 019fa9bb-1423-7e80-bcde-3caa765e3758
+
+Branch: codex/project-wiki-role-routing-operation-paths-019faa18
+
+Worktree: /Users/martinbechard/.codex/worktrees/4713/dev-methodology
+
+Running Lifecycle Commit: 8fd05f6f22da49dbe0f9e09569307a42cc123ed7
+
+Prior Rejection Event: 38ae895b-7bfa-4366-86bc-a0c17bfa5be9
+
+Running Claim Acquire and Release Events: e64f1eb5-10e8-417f-980b-9e8e8b818b7e / c22ca0b4-7488-400b-a55c-1fefd05c2080
+
+Read-Only Analysis Evidence: The primary affected governed definitions are skills/project-wiki/SKILL.md and agents/roles/wiki-activities/wiki-ingester.role.yaml. No governed definition mutation has occurred.
