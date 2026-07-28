@@ -1,6 +1,6 @@
 # Allow typed evidence in architecture review checklists
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-architect
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -22,9 +22,17 @@ Dispatch Time: 2026-07-28T19:19:58Z
 
 Intended Root Role: Dev Orchestrator
 
-Runtime Thread: Pending runtime creation
+Runtime Thread: 019faa2d-2ffa-75c0-80d5-e3bd4f7a31fa
 
-Root Agent Task: Pending runtime acceptance
+Root Agent Task: 019faa2d-2ffa-75c0-80d5-e3bd4f7a31fa
+
+Phase: Root Dev Orchestrator accepted delivery ownership; implementation has not started.
+
+Started At: 2026-07-28T19:26:56.856080Z
+
+Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim starting-to-running-review-architecture-019faa2d; incarnation 01c1ae9d-5532-4613-8a93-08d5199f3ea7; claim journal event 7dd8c4f3-0e63-47a4-b627-d6762eaa290c; exact provider path claimed in the primary main checkout.
+
+Recovery Evidence: Initial lifecycle claim attempt returned DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED because the unrelated backlog/defect-backlog/detect-typescript-esm-in-bundler-only-projects.md was modified. Coordinator recovery confirmed that record committed as f0f5c17a6af52fdcf332fc7cf48e7c0b49ee98ef and released claim event 1828d51c-d8e3-416a-a26a-22a8ac029a6a before this clean-primary retry.
 
 Next Lifecycle Owner: Root Dev Orchestrator
 
