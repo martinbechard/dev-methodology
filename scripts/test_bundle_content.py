@@ -2963,6 +2963,20 @@ class BundleContentTests(unittest.TestCase):
             / "templates"
             / "module-design-template.md"
         ).read_text(encoding="utf-8")
+        module_create = (SKILLS_ROOT / "create-module-design" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        module_review = (SKILLS_ROOT / "review-module-design" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn(
+            "Treat every level-two heading in the template as mandatory.",
+            module_create,
+        )
+        self.assertIn(
+            "Every template heading is mandatory and must retain its exact text and order",
+            module_review,
+        )
         for phrase in (
             "path, body, token, session, message, or persistence identifiers",
             "synchronous and asynchronous failure behavior",
@@ -2976,22 +2990,52 @@ class BundleContentTests(unittest.TestCase):
                 "## Configuration",
                 "TODO: Retain this section. If the module has no configuration, "
                 "state why configuration is not applicable.",
+                "TODO: Remove this section if the module has no configuration.",
+                "Not applicable because this module has no configuration.",
             ),
             (
                 "## External Interfaces",
                 "TODO: Retain this section. If the module has no external interface, "
                 "state why external interfaces are not applicable.",
+                "TODO: Remove this section if the module has no external interface.",
+                "Not applicable because this module has no external interface.",
             ),
             (
                 "## UI And Notification Behavior",
                 "TODO: Retain this section. If the module has no UI or notification "
                 "behavior, state why UI and notification behavior are not applicable.",
+                "TODO: Remove this section if the module has no UI or notification "
+                "behavior.",
+                "Not applicable because this module has no UI or notification behavior.",
             ),
         )
-        for heading, instruction in mandatory_section_instructions:
+        representative_module = module_template
+        for _, instruction, _, explanation in mandatory_section_instructions:
+            representative_module = representative_module.replace(
+                instruction,
+                explanation,
+            )
+
+        template_headings = re.findall(r"^## .+$", module_template, flags=re.MULTILINE)
+        representative_headings = re.findall(
+            r"^## .+$",
+            representative_module,
+            flags=re.MULTILINE,
+        )
+        self.assertEqual(template_headings, representative_headings)
+
+        for heading, instruction, removal_instruction, explanation in (
+            mandatory_section_instructions
+        ):
             with self.subTest(mandatory_module_section=heading):
                 self.assertEqual(1, module_template.count(heading))
                 self.assertIn(instruction, module_template)
+                self.assertNotIn(removal_instruction, module_template)
+                self.assertRegex(
+                    representative_module,
+                    rf"(?ms)^{re.escape(heading)}$.*?^{re.escape(explanation)}$"
+                    r".*?(?=^## |\Z)",
+                )
 
     def test_forward_document_design_prevents_downstream_coordination_chaos(self) -> None:
         """Planned document levels must close resolvable gaps for their consumers."""
