@@ -1,6 +1,6 @@
 # Restore role-owned wiki verification routing and portable operation paths
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/project-wiki-role-routing-and-operati
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Root Dev Orchestrator 019faa18-fe86-7110-9b9e-c7be3bdc8888
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -30,13 +30,13 @@ Branch: codex/project-wiki-role-routing-operation-paths-019faa18
 
 Worktree: /Users/martinbechard/.codex/worktrees/4713/dev-methodology
 
-Phase: Starting; awaiting preserved root Dev Orchestrator acceptance before repository mutation.
+Phase: Approval preflight and candidate implementation.
 
 Started At: 2026-07-28T19:07:00Z
 
 Claim Evidence: running-project-wiki-role-routing-operation-paths-019faa18-recovery; SHARED_CHECKOUT_ACQUIRED; claim event e64f1eb5-10e8-417f-980b-9e8e8b818b7e; recovery notification followed prior DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED event 38ae895b-7bfa-4366-86bc-a0c17bfa5be9.
 
-Next Lifecycle Owner: Parent Coordinator, then the preserved root Dev Orchestrator
+Next Lifecycle Owner: Root Dev Orchestrator
 
 ## Resumption Evidence
 
@@ -75,6 +75,18 @@ Canonical Runtime Thread and Root Agent Task: 019faa18-fe86-7110-9b9e-c7be3bdc88
 Observed Launch Evidence: Existing canonical work-item Thread is preserved for resumption; no replacement Thread is authorized.
 
 Starting -> Running Requirement: The preserved root Dev Orchestrator must accept this same Thread and atomically record Starting -> Running with the canonical identity, branch, worktree, and accepted ownership evidence before repository mutation.
+
+## Running Acceptance
+
+Accepted Owner: Root Dev Orchestrator 019faa18-fe86-7110-9b9e-c7be3bdc8888
+
+Canonical Runtime Thread and Root Agent Task: 019faa18-fe86-7110-9b9e-c7be3bdc8888
+
+Accepted Branch and Worktree: codex/project-wiki-role-routing-operation-paths-019faa18; /Users/martinbechard/.codex/worktrees/4713/dev-methodology
+
+Accepted Phase: Approval preflight and candidate implementation.
+
+Acceptance Claim Evidence: running-resumed-project-wiki-role-routing-operation-paths-019faa18; SHARED_CHECKOUT_ACQUIRED; claim event 72ed96f3-46a6-4b98-8b30-ad46da205124.
 
 ## Summary
 
