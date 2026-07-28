@@ -12,10 +12,20 @@ import fnmatch
 import json
 import re
 import sys
-import tomllib
 from pathlib import Path
 
-import yaml
+try:
+    import tomllib
+except ModuleNotFoundError:
+    try:
+        import tomli as tomllib
+    except ModuleNotFoundError:
+        tomllib = None
+
+try:
+    import yaml
+except ModuleNotFoundError:
+    yaml = None
 
 
 HERE = Path(__file__).resolve()
@@ -34,6 +44,8 @@ OWNER_FILE_GLOBS = ("build.gradle*", "requirements*.txt")
 
 def load_yaml(path: Path) -> dict[str, object]:
     """Load one YAML mapping so malformed registry inputs fail at the command boundary."""
+    if yaml is None:
+        raise ValueError("missing runtime prerequisite: PyYAML")
     value = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
         raise ValueError(f"Expected a YAML mapping: {path}")
@@ -94,6 +106,36 @@ def nearest_owner_files(root: Path, scope: Path, files: list[Path]) -> list[Path
     return sorted(owners)
 
 
+def dependency_name(value: str) -> str:
+    """Return the normalized package name from one supported dependency declaration."""
+    return re.split(r"[<>=!~;\s\[]", value, maxsplit=1)[0].lower()
+
+
+def pyproject_dependencies(text: str) -> set[str]:
+    """Extract normalized dependency names with a standards-compliant TOML parser."""
+    if tomllib is None:
+        return set()
+    try:
+        value = tomllib.loads(text)
+    except tomllib.TOMLDecodeError:
+        return set()
+    dependencies: set[str] = set()
+    project = value.get("project", {})
+    for item in project.get("dependencies", []) if isinstance(project, dict) else []:
+        if isinstance(item, str):
+            dependencies.add(dependency_name(item))
+    optional = project.get("optional-dependencies", {}) if isinstance(project, dict) else {}
+    if isinstance(optional, dict):
+        for items in optional.values():
+            for item in items if isinstance(items, list) else []:
+                if isinstance(item, str):
+                    dependencies.add(dependency_name(item))
+    poetry = value.get("tool", {}).get("poetry", {}).get("dependencies", {})
+    if isinstance(poetry, dict):
+        dependencies.update(str(name).lower() for name in poetry if str(name).lower() != "python")
+    return dependencies
+
+
 def manifest_dependencies(paths: list[Path]) -> set[str]:
     """Extract normalized dependency names from supported owning manifests."""
     dependencies: set[str] = set()
@@ -111,28 +153,12 @@ def manifest_dependencies(paths: list[Path]) -> set[str]:
                 if isinstance(value.get(field), dict):
                     dependencies.update(str(name) for name in value[field])
         elif path.name == "pyproject.toml":
-            try:
-                value = tomllib.loads(text)
-            except tomllib.TOMLDecodeError:
-                continue
-            project = value.get("project", {})
-            for item in project.get("dependencies", []) if isinstance(project, dict) else []:
-                if isinstance(item, str):
-                    dependencies.add(re.split(r"[<>=!~;\s\[]", item, maxsplit=1)[0].lower())
-            optional = project.get("optional-dependencies", {}) if isinstance(project, dict) else {}
-            if isinstance(optional, dict):
-                for items in optional.values():
-                    for item in items if isinstance(items, list) else []:
-                        if isinstance(item, str):
-                            dependencies.add(re.split(r"[<>=!~;\s\[]", item, maxsplit=1)[0].lower())
-            poetry = value.get("tool", {}).get("poetry", {}).get("dependencies", {})
-            if isinstance(poetry, dict):
-                dependencies.update(str(name).lower() for name in poetry if str(name).lower() != "python")
+            dependencies.update(pyproject_dependencies(text))
         elif fnmatch.fnmatch(path.name, "requirements*.txt"):
             for line in text.splitlines():
                 item = line.strip()
                 if item and not item.startswith(("#", "-")):
-                    dependencies.add(re.split(r"[<>=!~;\s\[]", item, maxsplit=1)[0].lower())
+                    dependencies.add(dependency_name(item))
     return dependencies
 
 
@@ -346,6 +372,20 @@ def detect_scope(
             ],
             "status": "BLOCKED",
         }
+    if tomllib is None and any(path.name == "pyproject.toml" for path in manifests):
+        pattern = scope_value.rstrip("/") + ("/**" if target.is_dir() else "")
+        return {
+            "scope": scope_value,
+            "pathPattern": pattern,
+            "skills": [],
+            "sourceEvidence": [],
+            "missingRequiredSkills": [],
+            "exclusiveConflicts": [],
+            "scopeErrors": [
+                "missing runtime prerequisite: install tomli or use Python 3.11+ to read pyproject.toml"
+            ],
+            "status": "BLOCKED",
+        }
     entries = {str(item["skill"]): item for item in registry.get("skills", [])}
     selected: dict[str, dict[str, object]] = {}
     missing: list[dict[str, object]] = []
@@ -445,6 +485,44 @@ def detect(args: argparse.Namespace) -> tuple[dict[str, object], int]:
     return result, 2 if blocked else 0
 
 
+def missing_pyyaml_result(args: argparse.Namespace) -> dict[str, object]:
+    """Return deterministic per-scope blockers without reading the YAML registry."""
+    root = args.project_root.resolve()
+    available_skills = set(args.available_skill) if args.available_skill is not None else None
+    loadouts = []
+    for value in args.scope:
+        scope = Path(value)
+        if scope.is_absolute():
+            try:
+                scope_value = scope.resolve().relative_to(root).as_posix()
+            except ValueError:
+                scope_value = scope.resolve().as_posix()
+        else:
+            scope_value = scope.as_posix()
+        loadouts.append({
+            "scope": scope_value,
+            "pathPattern": scope_value,
+            "skills": [],
+            "sourceEvidence": [],
+            "missingRequiredSkills": [],
+            "exclusiveConflicts": [],
+            "scopeErrors": ["missing runtime prerequisite: PyYAML"],
+            "status": "BLOCKED",
+        })
+    return {
+        "schema": "dev-methodology-technology-skill-detection-result",
+        "version": 1,
+        "projectRoot": str(root),
+        "runtimeSkillCatalog": {
+            "source": "explicit --available-skill values" if available_skills is not None else "skills root",
+            "skillsRoot": str(args.skills_root.resolve()),
+            "availableSkills": sorted(available_skills) if available_skills is not None else None,
+        },
+        "loadouts": loadouts,
+        "status": "BLOCKED",
+    }
+
+
 def main() -> int:
     """Parse command-line inputs, run detection, and print JSON or YAML output."""
     parser = argparse.ArgumentParser(description="Detect setup-time technology skills for selected project folders.")
@@ -459,9 +537,15 @@ def main() -> int:
     )
     parser.add_argument("--format", choices=("json", "yaml"), default="json")
     args = parser.parse_args()
+    if yaml is None:
+        print(json.dumps(missing_pyyaml_result(args), indent=2, sort_keys=True))
+        return 2
     try:
         result, exit_code = detect(args)
-    except (OSError, ValueError, yaml.YAMLError) as error:
+    except (OSError, ValueError) as error:
+        print(error, file=sys.stderr)
+        return 1
+    except yaml.YAMLError as error:
         print(error, file=sys.stderr)
         return 1
     print(json.dumps(result, indent=2, sort_keys=True) if args.format == "json" else yaml.safe_dump(result, sort_keys=False), end="\n")

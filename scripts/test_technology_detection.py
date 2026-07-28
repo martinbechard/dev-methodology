@@ -6,7 +6,9 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -23,6 +25,8 @@ DETECT_SCRIPT = ROOT / "scripts" / "detect-technology-skills.py"
 INSTALLED_DETECT_SCRIPT = ROOT / "skills" / "detect-technology-skills" / "scripts" / "detect.py"
 RENDER_SCRIPT = ROOT / "scripts" / "render-agents-technology-skills.py"
 REGISTRY = ROOT / "skills" / "detect-technology-skills" / "references" / "technology-skill-detection-registry.yaml"
+TOML_PYTHON_ENV = "TECHNOLOGY_DETECTOR_TOML_PYTHON"
+PARSER_FREE_PYTHON_ENV = "TECHNOLOGY_DETECTOR_PARSER_FREE_PYTHON"
 
 
 def load_renderer_module():
@@ -203,15 +207,71 @@ def confirmed_technology_selection() -> dict[str, object]:
     }
 
 
+def detector_test_interpreter(environment_name: str, *, require_toml: bool) -> Path:
+    """Resolve a PyYAML-capable detector runtime with the requested TOML parser state."""
+    configured = os.environ.get(environment_name)
+    candidates = [configured] if configured else [
+        sys.executable,
+        "python3.13",
+        "python3.12",
+        "python3.11",
+        "python3.10",
+        "python3.9",
+        "python3",
+    ]
+    checked: set[Path] = set()
+    probe = (
+        "import importlib.util; "
+        "has_toml = bool(importlib.util.find_spec('tomllib') or importlib.util.find_spec('tomli')); "
+        "has_yaml = bool(importlib.util.find_spec('yaml')); "
+        f"raise SystemExit(0 if has_yaml and has_toml is {require_toml!r} else 1)"
+    )
+    for candidate in candidates:
+        if not candidate:
+            continue
+        located = shutil.which(candidate)
+        path = Path(located or candidate).expanduser().resolve()
+        if path in checked or not path.is_file():
+            continue
+        checked.add(path)
+        completed = subprocess.run([str(path), "-c", probe], check=False, capture_output=True, text=True)
+        if completed.returncode == 0:
+            return path
+    requirement = "with" if require_toml else "without"
+    if configured:
+        raise AssertionError(
+            f"{environment_name}={configured!r} is not a Python runtime {requirement} tomllib/tomli and with PyYAML"
+        )
+    raise unittest.SkipTest(
+        f"host matrix has no Python runtime {requirement} tomllib/tomli and with PyYAML; "
+        f"set {environment_name} to provide one"
+    )
+
+
+def toml_capable_interpreter() -> Path:
+    """Return the configured or discovered runtime for tests that interpret pyproject.toml."""
+    return detector_test_interpreter(TOML_PYTHON_ENV, require_toml=True)
+
+
+def parser_free_interpreter() -> Path:
+    """Return the configured or discovered runtime for the missing-TOML-parser boundary."""
+    return detector_test_interpreter(PARSER_FREE_PYTHON_ENV, require_toml=False)
+
+
 def run_detection(
     project: Path,
     *scopes: str,
     expected_code: int = 0,
     detector: Path = DETECT_SCRIPT,
     extra: list[str] | None = None,
+    interpreter: Path | str = sys.executable,
+    isolated: bool = False,
 ) -> dict[str, object]:
     """Run one detector implementation and return its parsed result at the expected exit boundary."""
-    arguments = [sys.executable, str(detector), "--project-root", str(project)]
+    arguments = [str(interpreter)]
+    if isolated:
+        arguments.append("-S")
+    arguments.extend([str(detector), "--project-root", str(project)])
     for scope in scopes:
         arguments.extend(["--scope", scope])
     arguments.extend(extra or [])
@@ -727,6 +787,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             renderer.render(no_variant)
 
     def test_explicit_activation_clause_requires_every_condition(self) -> None:
+        toml_python = toml_capable_interpreter()
         for dependencies, expected in (([], False), (["example-framework"], True)):
             with self.subTest(dependencies=dependencies):
                 with tempfile.TemporaryDirectory() as directory:
@@ -764,6 +825,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                     result = run_detection(
                         project,
                         "main.py",
+                        interpreter=toml_python,
                         extra=["--registry", str(registry), "--skills-root", str(skills)],
                     )
 
@@ -1222,6 +1284,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         )
         for name, manifest_name, manifest, source_name, source, expected in cases:
             with self.subTest(case=name), tempfile.TemporaryDirectory() as directory:
+                interpreter = toml_capable_interpreter() if manifest_name == "pyproject.toml" else sys.executable
                 root = Path(directory) / "project"
                 source_path = root / source_name
                 source_path.parent.mkdir(parents=True)
@@ -1236,6 +1299,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                             root,
                             "src",
                             detector=detector,
+                            interpreter=interpreter,
                             extra=["--registry", str(registry)],
                         )
                         self.assertEqual(expected, result["loadouts"][0]["skills"])
@@ -1358,6 +1422,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                         self.assertEqual(["typescript"], result["loadouts"][0]["skills"])
 
     def test_mysql_sibling_module_does_not_contaminate_selected_scope(self) -> None:
+        toml_python = toml_capable_interpreter()
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "project"
             service_source = root / "service" / "src" / "main.py"
@@ -1383,6 +1448,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                         root,
                         "service/src",
                         detector=detector,
+                        interpreter=toml_python,
                         extra=["--registry", str(registry)],
                     )
                     self.assertEqual(["python"], result["loadouts"][0]["skills"])
@@ -1661,12 +1727,19 @@ class TechnologyDetectionTests(unittest.TestCase):
                     self.assertEqual([], result["loadouts"][0]["skills"])
 
     def test_python_scope_has_exact_loadout(self) -> None:
+        toml_python = toml_capable_interpreter()
         for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
             with self.subTest(detector=detector):
-                result = run_detection(ROOT / "evals" / "projects" / "python-inventory", "src", detector=detector)
+                result = run_detection(
+                    ROOT / "evals" / "projects" / "python-inventory",
+                    "src",
+                    detector=detector,
+                    interpreter=toml_python,
+                )
                 self.assertEqual(["python"], result["loadouts"][0]["skills"])
 
     def test_python_cli_filename_does_not_activate_node_cli(self) -> None:
+        toml_python = toml_capable_interpreter()
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "src").mkdir()
@@ -1677,7 +1750,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             )
             for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
                 with self.subTest(detector=detector):
-                    result = run_detection(root, "src", detector=detector)
+                    result = run_detection(root, "src", detector=detector, interpreter=toml_python)
                     self.assertEqual(["python"], result["loadouts"][0]["skills"])
 
     def test_node_cli_requires_a_javascript_or_typescript_cli_path(self) -> None:
@@ -1701,9 +1774,15 @@ class TechnologyDetectionTests(unittest.TestCase):
                         self.assertEqual(expected, result["loadouts"][0]["skills"])
 
     def test_fastapi_scope_composes_with_python(self) -> None:
+        toml_python = toml_capable_interpreter()
         for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
             with self.subTest(detector=detector):
-                result = run_detection(ROOT / "evals" / "projects" / "fastapi-orders", "app", detector=detector)
+                result = run_detection(
+                    ROOT / "evals" / "projects" / "fastapi-orders",
+                    "app",
+                    detector=detector,
+                    interpreter=toml_python,
+                )
                 self.assertEqual(["fastapi", "python"], result["loadouts"][0]["skills"])
                 evidence = {row["skill"]: row["evidence"] for row in result["loadouts"][0]["sourceEvidence"]}
                 self.assertTrue(any("fastapi" in value.lower() for value in evidence["fastapi"]))
@@ -1792,6 +1871,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             self.assertEqual(["typescript"], result["loadouts"][0]["skills"])
 
     def test_sibling_spring_module_does_not_contaminate_python_scope(self) -> None:
+        toml_python = toml_capable_interpreter()
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "python" / "src").mkdir(parents=True)
@@ -1800,7 +1880,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (root / "python" / "pyproject.toml").write_text('[project]\nname="python"\nversion="1"\n', encoding="utf-8")
             (root / "java" / "src" / "Main.java").write_text("class Main {}\n", encoding="utf-8")
             (root / "java" / "pom.xml").write_text("<artifactId>spring-boot</artifactId>\n", encoding="utf-8")
-            result = run_detection(root, "python/src")
+            result = run_detection(root, "python/src", interpreter=toml_python)
             self.assertEqual(["python"], result["loadouts"][0]["skills"])
 
     def test_missing_detected_required_skill_blocks_setup(self) -> None:
@@ -1938,6 +2018,239 @@ class TechnologyDetectionTests(unittest.TestCase):
             self.assertEqual("NO_VARIANT", result["loadouts"][0]["status"])
             self.assertEqual([], result["loadouts"][0]["skills"])
 
+    def test_parser_free_runtime_blocks_only_pyproject_scopes(self) -> None:
+        """Block pyproject scopes while preserving detection on a parser-free runtime."""
+        python = parser_free_interpreter()
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            pyproject_project = root / "pyproject-project"
+            plain_project = root / "plain-project"
+            skills = root / "skills"
+            pyproject_project.mkdir()
+            plain_project.mkdir()
+            (pyproject_project / "main.py").write_text("value = 1\n", encoding="utf-8")
+            (pyproject_project / "pyproject.toml").write_text(
+                "[project]\n"
+                'name = "example"\n'
+                'dependencies = ["FastAPI>=0.115"]\n',
+                encoding="utf-8",
+            )
+            (plain_project / "main.py").write_text("value = 1\n", encoding="utf-8")
+            (plain_project / "README.txt").write_text("plain\n", encoding="utf-8")
+            for skill in ("example-fastapi", "example-python"):
+                skill_root = skills / skill
+                skill_root.mkdir(parents=True)
+                (skill_root / "SKILL.md").write_text(
+                    f"---\nname: {skill}\ndescription: Test Python 3.9 prerequisites.\n---\n",
+                    encoding="utf-8",
+                )
+            registry = root / "registry.yaml"
+            registry.write_text(yaml.safe_dump({"skills": [
+                {
+                    "skill": "example-fastapi",
+                    "kind": "technology",
+                    "capabilities": ["web-framework"],
+                    "activation": {"anyOf": [{"owningDependency": "fastapi"}]},
+                    "companions": [],
+                    "selection": "additive",
+                    "priority": 100,
+                    "requiredWhenDetected": True,
+                },
+                {
+                    "skill": "example-python",
+                    "kind": "technology",
+                    "capabilities": ["language-coding"],
+                    "activation": {"anyOf": [{"fileExtension": ".py"}]},
+                    "companions": [],
+                    "selection": "additive",
+                    "priority": 110,
+                    "requiredWhenDetected": True,
+                },
+            ]}), encoding="utf-8")
+
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector, outcome="BLOCKED_PREREQUISITE"):
+                    blocked_prerequisite = run_detection(
+                        pyproject_project,
+                        "main.py",
+                        expected_code=2,
+                        detector=detector,
+                        interpreter=python,
+                        extra=["--registry", str(registry), "--skills-root", str(skills)],
+                    )
+                    self.assertEqual("BLOCKED", blocked_prerequisite["loadouts"][0]["status"])
+                    self.assertEqual([], blocked_prerequisite["loadouts"][0]["skills"])
+                    self.assertEqual(
+                        ["missing runtime prerequisite: install tomli or use Python 3.11+ to read pyproject.toml"],
+                        blocked_prerequisite["loadouts"][0]["scopeErrors"],
+                    )
+
+                with self.subTest(detector=detector, outcome="READY"):
+                    ready = run_detection(
+                        plain_project,
+                        "main.py",
+                        detector=detector,
+                        interpreter=python,
+                        extra=["--registry", str(registry), "--skills-root", str(skills)],
+                    )
+                    self.assertEqual("READY", ready["loadouts"][0]["status"])
+                    self.assertEqual(["example-python"], ready["loadouts"][0]["skills"])
+
+                with self.subTest(detector=detector, outcome="BLOCKED"):
+                    blocked = run_detection(
+                        plain_project,
+                        "main.py",
+                        expected_code=2,
+                        detector=detector,
+                        interpreter=python,
+                        extra=[
+                            "--registry", str(registry),
+                            "--skills-root", str(skills),
+                            "--available-skill", "unrelated-skill",
+                        ],
+                    )
+                    self.assertEqual("BLOCKED", blocked["loadouts"][0]["status"])
+
+                with self.subTest(detector=detector, outcome="NO_VARIANT"):
+                    no_variant = run_detection(
+                        plain_project,
+                        "README.txt",
+                        detector=detector,
+                        interpreter=python,
+                        extra=["--registry", str(registry), "--skills-root", str(skills)],
+                    )
+                    self.assertEqual("NO_VARIANT", no_variant["loadouts"][0]["status"])
+
+    def test_tomllib_parses_quoted_optional_dependency_table(self) -> None:
+        """Keep valid quoted TOML table syntax on the standard parser path."""
+        python = toml_capable_interpreter()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            project = root / "project"
+            skills = root / "skills"
+            project.mkdir()
+            (project / "main.py").write_text("value = 1\n", encoding="utf-8")
+            (project / "pyproject.toml").write_text(
+                '["project"."optional-dependencies"]\n'
+                'web = ["FastAPI>=0.115"]\n',
+                encoding="utf-8",
+            )
+            skill_root = skills / "example-fastapi"
+            skill_root.mkdir(parents=True)
+            (skill_root / "SKILL.md").write_text(
+                "---\nname: example-fastapi\ndescription: Test quoted TOML tables.\n---\n",
+                encoding="utf-8",
+            )
+            registry = root / "registry.yaml"
+            registry.write_text(yaml.safe_dump({"skills": [{
+                "skill": "example-fastapi",
+                "kind": "technology",
+                "capabilities": ["web-framework"],
+                "activation": {"anyOf": [{"owningDependency": "fastapi"}]},
+                "companions": [],
+                "selection": "additive",
+                "priority": 100,
+                "requiredWhenDetected": True,
+            }]}), encoding="utf-8")
+
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(
+                        project,
+                        "main.py",
+                        detector=detector,
+                        interpreter=python,
+                        extra=["--registry", str(registry), "--skills-root", str(skills)],
+                    )
+                    self.assertEqual(["example-fastapi"], result["loadouts"][0]["skills"])
+
+    def test_malformed_pyproject_never_yields_false_dependency_detection(self) -> None:
+        """Reject partial dependency evidence from a malformed pyproject document."""
+        parser_free_python = parser_free_interpreter()
+        toml_python = toml_capable_interpreter()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            project = root / "project"
+            skills = root / "skills"
+            project.mkdir()
+            (project / "main.py").write_text("value = 1\n", encoding="utf-8")
+            (project / "pyproject.toml").write_text(
+                "[project]\n"
+                'dependencies = ["FastAPI>=0.115"]\n'
+                "this is not valid TOML\n",
+                encoding="utf-8",
+            )
+            skill_root = skills / "example-fastapi"
+            skill_root.mkdir(parents=True)
+            (skill_root / "SKILL.md").write_text(
+                "---\nname: example-fastapi\ndescription: Test malformed TOML.\n---\n",
+                encoding="utf-8",
+            )
+            registry = root / "registry.yaml"
+            registry.write_text(yaml.safe_dump({"skills": [{
+                "skill": "example-fastapi",
+                "kind": "technology",
+                "capabilities": ["web-framework"],
+                "activation": {"anyOf": [{"owningDependency": "fastapi"}]},
+                "companions": [],
+                "selection": "additive",
+                "priority": 100,
+                "requiredWhenDetected": True,
+            }]}), encoding="utf-8")
+
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector, interpreter="toml-capable"):
+                    parsed = run_detection(
+                        project,
+                        "main.py",
+                        detector=detector,
+                        interpreter=toml_python,
+                        extra=["--registry", str(registry), "--skills-root", str(skills)],
+                    )
+                    self.assertEqual("NO_VARIANT", parsed["loadouts"][0]["status"])
+                    self.assertEqual([], parsed["loadouts"][0]["skills"])
+
+                with self.subTest(detector=detector, interpreter="parser-free"):
+                    blocked = run_detection(
+                        project,
+                        "main.py",
+                        expected_code=2,
+                        detector=detector,
+                        interpreter=parser_free_python,
+                        extra=["--registry", str(registry), "--skills-root", str(skills)],
+                    )
+                    self.assertEqual("BLOCKED", blocked["loadouts"][0]["status"])
+                    self.assertEqual([], blocked["loadouts"][0]["skills"])
+
+    def test_missing_pyyaml_blocks_each_scope_before_registry_load(self) -> None:
+        """Return structured blockers before a missing PyYAML runtime can touch the registry."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "one.py").write_text("value = 1\n", encoding="utf-8")
+            (root / "two.py").write_text("value = 2\n", encoding="utf-8")
+            missing_registry = root / "does-not-exist.yaml"
+
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(
+                        root,
+                        "one.py",
+                        "two.py",
+                        expected_code=2,
+                        detector=detector,
+                        isolated=True,
+                        extra=["--registry", str(missing_registry)],
+                    )
+                    self.assertEqual("BLOCKED", result["status"])
+                    self.assertEqual(["one.py", "two.py"], [item["scope"] for item in result["loadouts"]])
+                    for loadout in result["loadouts"]:
+                        self.assertEqual("BLOCKED", loadout["status"])
+                        self.assertEqual(
+                            ["missing runtime prerequisite: PyYAML"],
+                            loadout["scopeErrors"],
+                        )
+
     def test_missing_scope_blocks_instead_of_reporting_no_variant(self) -> None:
         project = ROOT / "evals" / "projects" / "fastapi-orders"
         for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
@@ -1963,8 +2276,9 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_installed_detector_matches_source_behavior(self) -> None:
         project = ROOT / "evals" / "projects" / "fastapi-orders"
-        source_result = run_detection(project, "app")
-        installed = run_detection(project, "app", detector=INSTALLED_DETECT_SCRIPT)
+        toml_python = toml_capable_interpreter()
+        source_result = run_detection(project, "app", interpreter=toml_python)
+        installed = run_detection(project, "app", detector=INSTALLED_DETECT_SCRIPT, interpreter=toml_python)
         self.assertEqual(source_result, installed)
 
     def test_detector_has_no_task_time_options(self) -> None:
