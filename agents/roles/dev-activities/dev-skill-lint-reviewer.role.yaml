@@ -43,10 +43,10 @@ instructions:
     critical findings or an explicit no-critical-findings result.
   - BLOCKED when a target skill or required referenced package cannot be read, the
     scope is ambiguous enough to change the result, or required evidence is unavailable.
-modelProfile: advanced-long
+modelProfile: skill-lint
 modelStages:
   evidence-extraction: simple
-  synthesis: advanced-long
+  synthesis: skill-lint
 examples:
 - purpose: Find critical contradictions in a long workflow skill without reporting
     minor prose issues.

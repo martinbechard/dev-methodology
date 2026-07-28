@@ -13,3 +13,5 @@ profiles:
   advanced-long:
     model: opus-4.8
     context: extra-long
+  skill-lint:
+    model: opus-4.8

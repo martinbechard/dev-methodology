@@ -1,0 +1,5 @@
+basis: explicit-user-direction
+definition_scope: adapters/codex/model-profiles.yaml
+provenance:
+  source: user-message
+  reference: thread:current/message:skill-lint-luna-xhigh

@@ -159,7 +159,7 @@
             "skill-authoring",
             "review-structured-artifact"
           ],
-          "sha256": "777b69446238de8940cee4789f9ba75a7590d60fbd3d2b8e8a22cc50147e1190",
+          "sha256": "11c1c48b9f42ddda09df2f80ed16e5935c369800ff8723d41b2016479b044da1",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
@@ -515,7 +515,7 @@
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "beae5f619cbf0e0c2d3c735334d5b258319aa572ffb798f285138aba11a3ed63",
+          "sha256": "707c78841166bdf90a3236ed1b14b985a7982c1599b9c7eb0d6699a502c42263",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
@@ -877,7 +877,7 @@
             "skill-authoring",
             "review-structured-artifact"
           ],
-          "sha256": "1d4cb37ca4984529a8255413c23e634d275a4e60f38f2a451f7588923eaf4011",
+          "sha256": "397b806b62506c32226c52f487983e446a6ccb3f6911a09cba4c6f1988be7e9a",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
@@ -1220,7 +1220,7 @@
             "skill-authoring",
             "review-structured-artifact"
           ],
-          "sha256": "6822d8f9a27fa2be52efe1ab54ffa82187e470a9a161cb1944762bb7728fd2d8",
+          "sha256": "0a3f6209707a9aa9552f17a08acac2b30bf8ab3f4edb7da95bd8ea2a6fde87f0",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
