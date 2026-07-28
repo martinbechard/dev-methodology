@@ -301,3 +301,16 @@ None.
 - The existing Dev Artifact Reviewer is the GPT-5.5 medium reviewer. This item does not create a second documentation-review role.
 - Formal ASD-STE100 compliance and certification are non-goals.
 - A sentence-length target must never cause loss of meaning or alteration of a technical token.
+
+## Delivery Scope Defect
+
+- Recorded At: 2026-07-28.
+- Finding: Candidate a83eae77b1e5a0001d79995a5687043c81ef0abf includes two unrelated baseline-fixture repairs: complete dev-skill-lint-reviewer scenarios in evals/agent-scenarios.yaml and a backlog-crisis-mode probe in evals/skill-probes.yaml, with corresponding rows in design/agent-skill-test-coverage-checklist.md.
+- Evidence: Independent Dev Code Reviewer confirmed the finding. Reproduce it with the exact command below.
+
+```text
+git diff --unified=8 6affa81cccc7fca4b8ce8ed4045a5139c18a7654 a83eae77b1e5a0001d79995a5687043c81ef0abf -- evals/agent-scenarios.yaml evals/skill-probes.yaml design/agent-skill-test-coverage-checklist.md
+```
+- Scope Decision: Neither source definition changed, and this STE work item does not authorize the two fixture repairs. Keep the repairs outside this delivery.
+- Next Action: The original coder must remove or split the unrelated fixture repairs, regenerate only STE-owned outputs, and report the pre-existing generator declarations separately without repairing unrelated definitions.
+- Lifecycle: This attached defect does not create a new implementation task, change this feature's Running state, or grant dispatch authority.
