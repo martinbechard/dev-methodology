@@ -282,7 +282,7 @@ TODO: List configuration fields this module reads or writes.
 
 TODO: State defaults, validation rules, reload behavior, and ownership.
 
-TODO: Remove this section if the module has no configuration.
+TODO: Retain this section. If the module has no configuration, state why configuration is not applicable.
 
 ## External Interfaces
 
@@ -292,7 +292,7 @@ TODO: Describe external APIs, browser APIs, files, command line tools, logs, loc
 
 TODO: State request and response shapes when the module directly owns them.
 
-TODO: Remove this section if the module has no external interface.
+TODO: Retain this section. If the module has no external interface, state why external interfaces are not applicable.
 
 ## UI And Notification Behavior
 
@@ -300,7 +300,7 @@ TODO: Remove this section if the module has no external interface.
 
 TODO: Describe user-visible output, status updates, chart output, notification behavior, and rendering rules owned by this module.
 
-TODO: Remove this section if the module has no UI or notification behavior.
+TODO: Retain this section. If the module has no UI or notification behavior, state why UI and notification behavior are not applicable.
 
 ## Error Handling
 

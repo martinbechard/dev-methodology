@@ -2971,6 +2971,28 @@ class BundleContentTests(unittest.TestCase):
         ):
             self.assertIn(phrase, module_template)
 
+        mandatory_section_instructions = (
+            (
+                "## Configuration",
+                "TODO: Retain this section. If the module has no configuration, "
+                "state why configuration is not applicable.",
+            ),
+            (
+                "## External Interfaces",
+                "TODO: Retain this section. If the module has no external interface, "
+                "state why external interfaces are not applicable.",
+            ),
+            (
+                "## UI And Notification Behavior",
+                "TODO: Retain this section. If the module has no UI or notification "
+                "behavior, state why UI and notification behavior are not applicable.",
+            ),
+        )
+        for heading, instruction in mandatory_section_instructions:
+            with self.subTest(mandatory_module_section=heading):
+                self.assertEqual(1, module_template.count(heading))
+                self.assertIn(instruction, module_template)
+
     def test_forward_document_design_prevents_downstream_coordination_chaos(self) -> None:
         """Planned document levels must close resolvable gaps for their consumers."""
         cases = {
