@@ -2000,9 +2000,9 @@ def _reset(args: argparse.Namespace) -> int:
             registry_file.seek(0)
             raw_registry = registry_file.read()
             previous = json.loads(raw_registry) if raw_registry else {"claims": []}
-            claims = previous.get("claims")
-            if not isinstance(claims, list):
+            if not isinstance(previous, dict) or not isinstance(previous.get("claims"), list):
                 raise ValueError
+            claims = previous["claims"]
             previous_claim_count = len(claims)
         except (json.JSONDecodeError, ValueError):
             previous_valid = False

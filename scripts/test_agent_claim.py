@@ -317,13 +317,20 @@ class AgentClaimTests(unittest.TestCase):
             release_events[0]["baseline_commit"],
         )
 
-    def test_reset_replaces_missing_valid_or_malformed_registry_with_empty_claims(
+    def test_reset_replaces_missing_valid_or_invalid_registry_with_empty_claims(
         self,
     ) -> None:
         cases = (
             ("missing", None, 0, True),
             ("valid", '{"claims":[{"claim_id":"stale"}]}\n', 1, True),
             ("malformed", '{"claims":[', None, False),
+            ("non_object_null", "null\n", None, False),
+            ("non_object_array", "[]\n", None, False),
+            ("non_object_string", '"claims"\n', None, False),
+            ("non_object_number", "1\n", None, False),
+            ("non_object_boolean", "true\n", None, False),
+            ("missing_claims", "{}\n", None, False),
+            ("claims_not_list", '{"claims":{}}\n', None, False),
         )
         for name, content, removed_count, previous_valid in cases:
             with self.subTest(name=name):
