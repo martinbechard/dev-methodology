@@ -1,6 +1,6 @@
 # Make file-provider claim events conditional on configured resource coordination
 
-Status: Ready
+Status: Starting
 
 User Question: Do you explicitly approve editing the governed canonical definition skills/manage-file-work-items/SKILL.md to make its provider claim directions conditional for resource coordination agent-claim versus none?
 
@@ -12,7 +12,7 @@ Provider Reference: backlog/defect-backlog/respect-resource-coordination-none-in
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator reservation
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -32,13 +32,13 @@ Branch: codex/respect-resource-coordination-none-019fa9f9
 
 Worktree: /Users/martinbechard/.codex/worktrees/c089/dev-methodology
 
-Current Phase: Paused pending scope-specific user authorization for a governed canonical definition change.
+Current Phase: Starting — parent reservation recorded; awaiting preserved root acceptance.
 
 Started At Evidence: Root acceptance recorded by Dev Backlog Steward on 2026-07-28T18:39:39Z after the parent reservation, against Runtime Thread and Root Agent Task 019fa9f9-9548-7853-9fe3-301c76b94b82.
 
 Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim running-acceptance-respect-resource-coordination-none-019fa9f9; incarnation a1e091bf-51fe-4f58-a077-b2ead9fe9f49; claim journal event 3d683343-0e55-46fe-b292-421593bcdfdb; exact provider path claimed in the primary main checkout.
 
-Next Lifecycle Owner: User, then Parent Coordinator and the preserved Root Dev Orchestrator.
+Next Lifecycle Owner: Preserved Root Dev Orchestrator 019fa9f9-9548-7853-9fe3-301c76b94b82
 
 ## User Action Required
 
@@ -65,6 +65,20 @@ Approved Scope and Semantics: skills/manage-file-work-items/SKILL.md only. Remov
 Preserved Execution Identity: Runtime Thread and Root Agent Task 019fa9f9-9548-7853-9fe3-301c76b94b82; branch codex/respect-resource-coordination-none-019fa9f9; worktree /Users/martinbechard/.codex/worktrees/c089/dev-methodology; prior lifecycle and recovery history remain intact.
 
 Pre-Mutation Requirement: Before any governed definition mutation, create the exact approval record from this user direction and pass the supported definition-change preflight for skills/manage-file-work-items/SKILL.md.
+
+## Starting Reservation Evidence
+
+Transition: Ready to Starting recorded by Parent Dev Backlog Coordinator on 2026-07-28.
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Launch Reservation: resume-manage-file-work-items-019fa9f9-9548-7853-9fe3-301c76b94b82.
+
+Reservation Time: 2026-07-28T21:49:12Z.
+
+Canonical Execution Identity: Runtime Thread and Root Agent Task 019fa9f9-9548-7853-9fe3-301c76b94b82; branch codex/respect-resource-coordination-none-019fa9f9; worktree /Users/martinbechard/.codex/worktrees/c089/dev-methodology.
+
+Required Next Acceptance: The existing sole Root Dev Orchestrator must separately accept Starting to Running through its Dev Backlog Steward before any governed-definition mutation. No replacement Thread is authorized.
 
 ## Recovery Evidence
 

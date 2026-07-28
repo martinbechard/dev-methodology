@@ -1,6 +1,6 @@
 # Stop test-strategy from rerunning technology-skill routing
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/stop-test-strategy-from-rerunning-tec
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator reservation
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -26,13 +26,13 @@ Runtime Thread: 019faa2d-300b-7012-9a14-03dc3039a7ac
 
 Root Agent Task: 019faa2d-300b-7012-9a14-03dc3039a7ac
 
-Next Lifecycle Owner: Parent Dev Backlog Coordinator
+Next Lifecycle Owner: Preserved Root Dev Orchestrator 019faa2d-300b-7012-9a14-03dc3039a7ac
 
 Canonical Branch: codex/stop-test-strategy-routing-019faa2d
 
 Canonical Worktree: /Users/martinbechard/.codex/worktrees/8c28/dev-methodology
 
-Current Phase: Waiting for User / approval
+Current Phase: Starting — parent reservation recorded; awaiting preserved root acceptance.
 
 Started At: 2026-07-28T19:27:05Z
 
@@ -113,6 +113,20 @@ Approved Scope and Semantics: skills/test-strategy/SKILL.md only. Delete current
 Preserved Execution Identity: Runtime Thread and Root Agent Task 019faa2d-300b-7012-9a14-03dc3039a7ac; canonical branch codex/stop-test-strategy-routing-019faa2d; canonical worktree /Users/martinbechard/.codex/worktrees/8c28/dev-methodology; prior lifecycle history remains intact.
 
 Pre-Mutation Requirement: Before any governed definition mutation, create the exact approval record from this user direction and pass the supported definition-change preflight for skills/test-strategy/SKILL.md.
+
+## Starting Reservation Evidence
+
+Transition: Ready to Starting recorded by Parent Dev Backlog Coordinator on 2026-07-28.
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Launch Reservation: resume-stop-test-strategy-019faa2d-300b-7012-9a14-03dc3039a7ac.
+
+Reservation Time: 2026-07-28T21:49:12Z.
+
+Canonical Execution Identity: Runtime Thread and Root Agent Task 019faa2d-300b-7012-9a14-03dc3039a7ac; canonical branch codex/stop-test-strategy-routing-019faa2d; canonical worktree /Users/martinbechard/.codex/worktrees/8c28/dev-methodology.
+
+Required Next Acceptance: The existing sole Root Dev Orchestrator must separately accept Starting to Running through its Dev Backlog Steward before any governed-definition mutation. No replacement Thread is authorized.
 
 ## Notes
 

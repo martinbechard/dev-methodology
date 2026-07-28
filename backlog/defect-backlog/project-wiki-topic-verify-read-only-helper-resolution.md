@@ -1,6 +1,6 @@
 # Keep topic verification read-only and make helper checks executable
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/project-wiki-topic-verify-read-only-h
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator reservation
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -26,13 +26,13 @@ Runtime Thread: 019faa18-fde3-7d20-ad68-77bfcf160fbd
 
 Root Agent Task: 019faa18-fde3-7d20-ad68-77bfcf160fbd
 
-Next Lifecycle Owner: Parent Dev Backlog Coordinator
+Next Lifecycle Owner: Preserved Root Dev Orchestrator 019faa18-fde3-7d20-ad68-77bfcf160fbd
 
 Branch: codex/project-wiki-topic-verify-helper-resolution-019faa18
 
 Worktree: /Users/martinbechard/.codex/worktrees/5cd1/dev-methodology
 
-Phase: Read-only analysis
+Phase: Starting — parent reservation recorded; awaiting preserved root acceptance.
 
 Started At: 2026-07-28T19:03:33Z
 
@@ -67,6 +67,20 @@ Approved Scope and Semantics: skills/project-wiki-topic-verify/SKILL.md only. Ke
 Preserved Execution Identity: Runtime Thread and Root Agent Task 019faa18-fde3-7d20-ad68-77bfcf160fbd; branch codex/project-wiki-topic-verify-helper-resolution-019faa18; worktree /Users/martinbechard/.codex/worktrees/5cd1/dev-methodology; prior lifecycle history remains intact.
 
 Pre-Mutation Requirement: Before any governed definition mutation, create the exact approval record from this user direction and pass the supported definition-change preflight for skills/project-wiki-topic-verify/SKILL.md.
+
+## Starting Reservation Evidence
+
+Transition: Ready to Starting recorded by Parent Dev Backlog Coordinator on 2026-07-28.
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Launch Reservation: resume-project-wiki-topic-verify-019faa18-fde3-7d20-ad68-77bfcf160fbd.
+
+Reservation Time: 2026-07-28T21:49:12Z.
+
+Canonical Execution Identity: Runtime Thread and Root Agent Task 019faa18-fde3-7d20-ad68-77bfcf160fbd; branch codex/project-wiki-topic-verify-helper-resolution-019faa18; worktree /Users/martinbechard/.codex/worktrees/5cd1/dev-methodology.
+
+Required Next Acceptance: The existing sole Root Dev Orchestrator must separately accept Starting to Running through its Dev Backlog Steward before any governed-definition mutation. No replacement Thread is authorized.
 
 ## Summary
 

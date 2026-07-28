@@ -1,6 +1,6 @@
 # Replace the structured-design chain-of-thought output contract
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/replace-structured-design-chain-of-th
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator reservation
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -30,7 +30,7 @@ Branch: codex/replace-structured-design-cot-contract-019faa19
 
 Worktree: /Users/martinbechard/.codex/worktrees/3d44/dev-methodology
 
-Phase: Awaiting explicit scope-specific user approval for governed-definition changes.
+Phase: Starting — parent reservation recorded; awaiting preserved root acceptance.
 
 Started At: 2026-07-28T19:05:44.790829Z
 
@@ -64,6 +64,20 @@ Approved Scope and Semantics: skills/structured-design/SKILL.md and skills/revie
 Preserved Execution Identity: Runtime Thread and Root Agent Task 019faa19-2538-7cd0-832e-62b428886363; branch codex/replace-structured-design-cot-contract-019faa19; worktree /Users/martinbechard/.codex/worktrees/3d44/dev-methodology; prior lifecycle history remains intact.
 
 Pre-Mutation Requirement: Before any governed definition mutation, create exact approval records for both approved paths and pass the supported definition-change preflight for each path.
+
+## Starting Reservation Evidence
+
+Transition: Ready to Starting recorded by Parent Dev Backlog Coordinator on 2026-07-28.
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Launch Reservation: resume-structured-design-contract-019faa19-2538-7cd0-832e-62b428886363.
+
+Reservation Time: 2026-07-28T21:49:12Z.
+
+Canonical Execution Identity: Runtime Thread and Root Agent Task 019faa19-2538-7cd0-832e-62b428886363; branch codex/replace-structured-design-cot-contract-019faa19; worktree /Users/martinbechard/.codex/worktrees/3d44/dev-methodology.
+
+Required Next Acceptance: The existing sole Root Dev Orchestrator must separately accept Starting to Running through its Dev Backlog Steward before any governed-definition mutation. No replacement Thread is authorized.
 
 ## User Action Required Transition Evidence
 
