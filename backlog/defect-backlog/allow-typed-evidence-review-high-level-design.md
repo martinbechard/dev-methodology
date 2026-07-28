@@ -1,6 +1,6 @@
 # Allow typed evidence in high-level-design review checklists
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-high-leve
 
 Completion: direct-main
 
-Owner: Unowned pending root Dev Orchestrator acceptance
+Owner: Dev Orchestrator
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -28,11 +28,11 @@ Runtime Thread: 019faa83-9a42-7e11-9c24-207fde14359b
 
 Root Agent Task: 019faa83-9a42-7e11-9c24-207fde14359b
 
-Phase: Ready -> Starting. The canonical root Dev Orchestrator remains paused pending its distinct Starting -> Running acceptance before any implementation.
+Phase: Starting -> Running accepted by the canonical root Dev Orchestrator before implementation.
 
-Started At: Historical Running acceptance 2026-07-28T21:00:15Z.
+Started At: Resumed Running acceptance 2026-07-28T21:40:00Z; historical Running acceptance 2026-07-28T21:00:15Z.
 
-Claim Evidence: Historical reservation claim SHARED_CHECKOUT_ACQUIRED reserve-six-ready-refill-high-level-design-019fa9bb-retry, acquisition journal event 969dc859-f1ca-4b19-8ced-ae084cbca933. Historical acceptance claim SHARED_CHECKOUT_ACQUIRED accept-running-high-level-design-019faa83, acquisition journal event 7dc68740-6349-428b-bb6d-5f235b8aba09; backlog-mutation:primary extension journal event e4c5e9b4-40c2-47cc-86f1-fc1bf6d2812c. Historical User Action Required claim SHARED_CHECKOUT_ACQUIRED running-to-uar-high-level-design-019faa83, acquisition journal event 084fddae-df99-4488-9c18-2e7792b5aed6; backlog-mutation:primary extension journal event 5050e499-9c1e-4dc8-af70-ac6505e0bb35. Ready transition claim SHARED_CHECKOUT_ACQUIRED resume-hld-uar-ready-019faa83, acquisition journal event 066ad35b-bcc9-45ab-9ea8-ff746f334fef. Starting reservation claim SHARED_CHECKOUT_ACQUIRED reserve-hld-ready-starting-019faa83, acquisition journal event b3342262-2bc4-4cca-8543-de8c7f2e1cbd.
+Claim Evidence: Historical reservation claim SHARED_CHECKOUT_ACQUIRED reserve-six-ready-refill-high-level-design-019fa9bb-retry, acquisition journal event 969dc859-f1ca-4b19-8ced-ae084cbca933. Historical acceptance claim SHARED_CHECKOUT_ACQUIRED accept-running-high-level-design-019faa83, acquisition journal event 7dc68740-6349-428b-bb6d-5f235b8aba09; backlog-mutation:primary extension journal event e4c5e9b4-40c2-47cc-86f1-fc1bf6d2812c. Historical User Action Required claim SHARED_CHECKOUT_ACQUIRED running-to-uar-high-level-design-019faa83, acquisition journal event 084fddae-df99-4488-9c18-2e7792b5aed6; backlog-mutation:primary extension journal event 5050e499-9c1e-4dc8-af70-ac6505e0bb35. Ready transition claim SHARED_CHECKOUT_ACQUIRED resume-hld-uar-ready-019faa83, acquisition journal event 066ad35b-bcc9-45ab-9ea8-ff746f334fef. Starting reservation claim SHARED_CHECKOUT_ACQUIRED reserve-hld-ready-starting-019faa83, acquisition journal event b3342262-2bc4-4cca-8543-de8c7f2e1cbd. Resumed Running acceptance claim SHARED_CHECKOUT_ACQUIRED accept-running-hld-resumed-019faa83, acquisition journal event d20f6a8d-590a-4769-9dfa-80e0bad1aab3; backlog-mutation:primary extension journal event 93447b46-ae4e-4081-9951-24d77d9c409e.
 
 ## Summary
 
