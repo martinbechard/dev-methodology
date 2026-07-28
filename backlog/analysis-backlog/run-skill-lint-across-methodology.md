@@ -13,16 +13,19 @@ Completion: direct-main
 ## Running Acceptance
 
 - Transition: Starting -> Running.
-- Parent Coordination Thread: /root.
-- Canonical Work-Item Thread: /root/skill_lint_methodology.
-- Canonical Root Agent Task: /root/skill_lint_methodology.
-- Owner: Root Dev Orchestrator for the canonical work-item Thread.
-- Accepted At: 2026-07-28T16:33:29Z.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fa9be-0083-7542-973f-af35557b2393.
+- Canonical Root Agent Task: 019fa9be-0083-7542-973f-af35557b2393.
+- Owner: Root Dev Orchestrator.
+- Accepted At: 2026-07-28T17:22:38Z.
 - Branch: codex/run-skill-lint-across-methodology-019f.
 - Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/run-skill-lint-across-methodology-019f.
 - Reserved Base/Main Commit: 6affa81cccc7fca4b8ce8ed4045a5139c18a7654.
-- Implementation Claim Evidence: No implementation claim was required or acquired; the live registry was empty at acceptance.
-- Provider-Mutation Claim Evidence: skill-lint-running-lifecycle-20260728 acquired by Dev Backlog Steward for this file-only transition.
+- Implementation Claim Evidence: No implementation claim is required; the live registry was empty before this recovery transaction.
+- Provider-Mutation Claim Evidence: rehome-skill-lint-provider-019fa9be acquired by dev-backlog-steward for this exact backlog file; claim event b01ace89-b57a-4d10-88af-897fdf3d5a67.
+- Recovery History: The prior internal canonical Thread and root Agent Task /root/skill_lint_methodology were replaced during recovery; they remain history only and are not current execution identities.
+- Recovery Phase: Recovery reconciliation accepted.
+- Current Main Observation: main was clean at c751bd170bb0d09a88d3976e732298b6a743d62d when this transaction began; the reserved base remains 6affa81cccc7fca4b8ce8ed4045a5139c18a7654.
 
 ## Summary
 
