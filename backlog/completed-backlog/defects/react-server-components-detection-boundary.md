@@ -1,12 +1,12 @@
 # Require Server Components evidence before activating the RSC skill
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/react-server-components-detection-boundary.md
+Provider Reference: backlog/completed-backlog/defects/react-server-components-detection-boundary.md
 
 Completion: direct-main
 
@@ -81,3 +81,35 @@ None.
 Collision reconciliation before creation found no active item with this provider reference, slug, affected provider identity, or overlapping accepted outcome.
 
 This record has one primary affected provider identity: skills/react-server-components. The accepted smallest correction is skills/react-server-components/detection.yaml only, which is not presently a governed definition surface. No governed-definition approval is required unless later discovery changes skills/react-server-components/SKILL.md or skills/react-server-components/agents/openai.yaml; either change would require explicit scope-specific user approval, a provenance approval record, and the supported pre-mutation definition-change check.
+
+## Completion Evidence
+
+Completion Selector: direct-main
+
+Accepted Source Commit: 425a2bf6f65de341608641ef4a5a8ae58fe94fb1
+
+Integration and Observed Main Commit: 54b8f357c2620275c5b1bd6f023052fcb85bae20
+
+Main Before Integration: f8f7936e03fc2ad84847dc2d416e17087e21a2e8
+
+Integration Strategy: conflict-free cherry-pick -x followed by ff-only main observation.
+
+Source Reachability: The accepted source is intentionally non-ancestral. Patch ID 134fff176c06fedb112dcac9469a4fe27d4ca2a0 and the exact accepted four-path/content mapping prove the replayed content in integration commit 54b8f357c2620275c5b1bd6f023052fcb85bae20.
+
+Independent Review: ACCEPTED with no findings.
+
+Independent Verification: PASS.
+
+Post-Integration Validation: Focused Python 3.11 test reported 1 OK; generator --check was current; diff and clean checks passed.
+
+Definition Boundary: No governed definition changed. No definition approval was required.
+
+Publication: No remote publication was required; no push was performed.
+
+Prior Integration Claim Events: attempt 1 acquired fe4bdb5c and released 74b34621; attempt 2 acquired 04e52dea and released 156df97c; final attempt acquired b687d351 and released 001d2ad0.
+
+Preserved Prior Evidence: Evidence tag retained for old integration commit 6436bedb.
+
+Completed At UTC: 2026-07-28T19:52:15Z
+
+Cleanup Eligibility: Eligible after this terminal provider closure commits and the exact completion claim is released.
