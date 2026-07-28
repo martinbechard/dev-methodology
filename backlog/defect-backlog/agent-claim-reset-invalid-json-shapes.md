@@ -1,6 +1,6 @@
 # Make agent-claim reset recover invalid JSON registry shapes
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/agent-claim-reset-invalid-json-shapes
 
 Completion: direct-main
 
-Owner: Unowned pending acceptance
+Owner: Root Dev Orchestrator task 019fa9f9-33f9-72f3-bbda-e18bbdea4bb5
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -22,9 +22,21 @@ Dispatch Time: 2026-07-28T18:22:25Z
 
 Intended Root Role: Dev Orchestrator
 
-Runtime Thread: Pending
+Runtime Thread: 019fa9f9-33f9-72f3-bbda-e18bbdea4bb5
 
-Root Agent Task: Pending
+Root Agent Task: 019fa9f9-33f9-72f3-bbda-e18bbdea4bb5
+
+Branch: codex/agent-claim-reset-invalid-json-shapes-019fa9f9
+
+Worktree: /Users/martinbechard/.codex/worktrees/8eed/dev-methodology
+
+Phase: Root Dev Orchestrator accepted delivery ownership; implementation has not started.
+
+Started At: 2026-07-28T18:44:20.209181Z
+
+Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim running-acceptance-agent-claim-reset-invalid-json-shapes-019fa9f9; incarnation 922ba317-8b4c-40ae-a083-d9f001d343a1; claim journal event 82780823-6fb1-4e00-82f2-3dc843eccfe2; exact provider path claimed in the primary main checkout.
+
+Replacement / Re-home Evidence: The original acceptance Steward made no mutation because claim running-acceptance-agent-claim-reset-invalid-json-shapes-019fa9f9 returned DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED; recovery journal event cd02e4ee-d90b-4168-9c9a-b879b294f926. Parent Coordinator authorized this re-home after primary main was reconciled clean at 12f90c126d0bc6ea7d3ad5ab05792d35eb9d02a7.
 
 Next Lifecycle Owner: Root Dev Orchestrator
 
