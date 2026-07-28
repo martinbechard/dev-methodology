@@ -1,6 +1,6 @@
 # Stop test-strategy from rerunning technology-skill routing
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/stop-test-strategy-from-rerunning-tec
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator reservation
+Owner: Dev Orchestrator /root
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -26,13 +26,13 @@ Runtime Thread: 019faa2d-300b-7012-9a14-03dc3039a7ac
 
 Root Agent Task: 019faa2d-300b-7012-9a14-03dc3039a7ac
 
-Next Lifecycle Owner: Preserved Root Dev Orchestrator 019faa2d-300b-7012-9a14-03dc3039a7ac
+Next Lifecycle Owner: Root Dev Orchestrator
 
 Canonical Branch: codex/stop-test-strategy-routing-019faa2d
 
 Canonical Worktree: /Users/martinbechard/.codex/worktrees/8c28/dev-methodology
 
-Current Phase: Starting — parent reservation recorded; awaiting preserved root acceptance.
+Current Phase: Approved definition change pending pre-mutation check
 
 Started At: 2026-07-28T19:27:05Z
 
@@ -127,6 +127,24 @@ Reservation Time: 2026-07-28T21:49:12Z.
 Canonical Execution Identity: Runtime Thread and Root Agent Task 019faa2d-300b-7012-9a14-03dc3039a7ac; canonical branch codex/stop-test-strategy-routing-019faa2d; canonical worktree /Users/martinbechard/.codex/worktrees/8c28/dev-methodology.
 
 Required Next Acceptance: The existing sole Root Dev Orchestrator must separately accept Starting to Running through its Dev Backlog Steward before any governed-definition mutation. No replacement Thread is authorized.
+
+## Running Acceptance Evidence
+
+Transition: Starting to Running recorded on 2026-07-28.
+
+Root Dev Orchestrator: Dev Orchestrator /root.
+
+Accepted At: 2026-07-28T21:52:24Z.
+
+Canonical Execution Identity: Runtime Thread and Root Agent Task 019faa2d-300b-7012-9a14-03dc3039a7ac; canonical branch codex/stop-test-strategy-routing-019faa2d; canonical worktree /Users/martinbechard/.codex/worktrees/8c28/dev-methodology.
+
+Current Phase: Approved definition change pending pre-mutation check.
+
+Claim Evidence: SHARED_CHECKOUT_ACQUIRED; claim resumed-starting-to-running-019faa2d-300b-7012-9a14-03dc3039a7ac; event ec946a55-efa3-4c37-9985-f2891400e92b; primary main baseline 78f21b8f763ebc319ac274585131e2cb17fb02ac.
+
+Exact Approval Provenance: User direction in the preserved canonical Runtime Thread authorizes skills/test-strategy/SKILL.md only: delete current line 10 and Workflow step 3, add no replacement routing language, mechanically renumber remaining workflow steps, and do not broaden policy.
+
+Pre-Mutation Boundary: No governed definition mutation occurs in this lifecycle transaction. Before any approved definition edit, create the exact approval record and pass the supported pre-mutation check for skills/test-strategy/SKILL.md.
 
 ## Notes
 
