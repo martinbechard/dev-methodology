@@ -1006,6 +1006,21 @@ def wcag_contrast_ratio(first_hex: str, second_hex: str) -> float:
 
 
 class BundleContentTests(unittest.TestCase):
+    def test_tool_runtime_excludes_sensitive_content_from_retained_traces(
+        self,
+    ) -> None:
+        skill_text = (SKILLS_ROOT / "tool-runtime" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+
+        for phrase in (
+            "Exclude sensitive values and protected payload or file contents from retained logs and traces, or redact them before retention.",
+            "Apply this rule to successful, denied, malformed, partial, and retried tool calls.",
+            "Preserve enough non-sensitive execution trace for users and reviewers to understand what happened without retaining protected content.",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
     def test_backlog_crisis_mode_is_conditional_and_sequential(self) -> None:
         skill_text = (
             SKILLS_ROOT / "backlog-crisis-mode" / "SKILL.md"

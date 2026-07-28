@@ -20,7 +20,9 @@ Use this application-domain pack for product internals that expose, parse, route
 - Keep tool schemas, parser behavior, execution authority, and logs aligned.
 - Validate arguments before side effects.
 - Make protected paths, denied actions, and recovery behavior explicit.
-- Preserve enough execution trace for users and reviewers to understand what happened.
+- Exclude sensitive values and protected payload or file contents from retained logs and traces, or redact them before retention.
+- Apply this rule to successful, denied, malformed, partial, and retried tool calls.
+- Preserve enough non-sensitive execution trace for users and reviewers to understand what happened without retaining protected content.
 
 ## Verification
 

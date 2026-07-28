@@ -1,0 +1,5 @@
+basis: explicit-user-direction
+definition_scope: skills/tool-runtime/SKILL.md
+provenance:
+  source: delegated-user-direction
+  reference: thread:019fa9bb-1423-7e80-bcde-3caa765e3758/delegation:sensitive-tool-runtime-retention-approval
