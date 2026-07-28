@@ -1,6 +1,6 @@
 # Separate distributed methodology guidance from repository maintenance procedures
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/separate-distributed-methodology-from
 
 Completion: direct-main
 
-Owner: Unowned pending acceptance
+Owner: Root Dev Orchestrator
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -22,11 +22,25 @@ Dispatch Time: 2026-07-28T18:22:25Z
 
 Intended Root Role: Dev Orchestrator
 
-Runtime Thread: Pending
+Runtime Thread: 019fa9f9-60b1-74a2-998b-6b7efc913f02
 
-Root Agent Task: Pending
+Root Agent Task: 019fa9f9-60b1-74a2-998b-6b7efc913f02
 
 Next Lifecycle Owner: Root Dev Orchestrator
+
+## Running Acceptance
+
+- Transition: Starting -> Running.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fa9f9-60b1-74a2-998b-6b7efc913f02.
+- Canonical Root Agent Task Id: 019fa9f9-60b1-74a2-998b-6b7efc913f02.
+- Owner: Root Dev Orchestrator.
+- Delivery Branch: codex/separate-distributed-methodology-maintenance-019fa9f9.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/2a2c/dev-methodology.
+- Phase: Read-only approval-boundary analysis.
+- Started At: 2026-07-28T18:39:39Z.
+- Started-At Evidence: The canonical root Dev Orchestrator accepted the parent-reserved work item and requested this distinct provider transition.
+- Claim Evidence: running-acceptance-019fa9f9-60b1-74a2-998b-6b7efc913f02; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 9b3d677d-bb04-4fed-a4c6-8cbe5e10496b; claimed 2026-07-28T18:39:39.631163Z.
 
 ## Summary
 
