@@ -1,6 +1,6 @@
 # Run Skill Lint Across Methodology Skills
 
-Status: Ready
+Status: Starting
 
 Type: Analysis
 
@@ -9,6 +9,18 @@ Provider: file
 Provider Reference: backlog/analysis-backlog/run-skill-lint-across-methodology.md
 
 Completion: direct-main
+
+## Starting Reservation
+
+- Transition: Ready -> Starting.
+- Parent Coordination Thread: /root.
+- Reservation: One parent-owned launch reservation.
+- Normalized Objective: Run skill lint across methodology skills.
+- Dispatched At: 2026-07-28T16:28:48Z.
+- Intended Root Role: Dev Orchestrator.
+- Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
+- Owner: Unowned pending root Dev Orchestrator acceptance.
+- Next Lifecycle Owner: The root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
 
 ## Summary
 
