@@ -54,7 +54,7 @@ The user authorized immediate creation of independently dispatchable Defect reco
 
 ## Dependencies
 
-None. Collision reconciliation before creation found no active item with this provider reference, slug, affected skill, or overlapping accepted outcome.
+None
 
 ## Verification
 
@@ -68,5 +68,7 @@ None. Collision reconciliation before creation found no active item with this pr
 None.
 
 ## Notes
+
+Collision reconciliation before creation found no active item with this provider reference, slug, affected skill, or overlapping accepted outcome.
 
 This record has one primary affected skill identity: skills/detect-technology-skills/SKILL.md. It does not authorize a skill-definition mutation. If correction changes this governed SKILL.md, later implementation requires explicit scope-specific user approval naming that exact definition, a provenance approval record, and the supported pre-mutation definition-change check. If a source change requires a supported mirror refresh, implementation must follow the approved source-category relationship.

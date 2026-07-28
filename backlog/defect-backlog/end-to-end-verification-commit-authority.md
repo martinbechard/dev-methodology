@@ -48,13 +48,13 @@ The user authorized immediate creation of independently dispatchable Defect reco
 
 ## Acceptance Criteria
 
-- Direct-main, feature-branch, UNSET, and evidence-only contexts use only their selected delivery route.
+- Direct-main and feature-branch contexts use only their selected delivery route; UNSET creates no commit and requires an explicit Commit-selection question/stop before delivery.
 - Evidence-only verification produces a handoff without a verifier-created commit.
 - The skill states the verifier and delivery-owner boundaries unambiguously.
 
 ## Dependencies
 
-None. Collision reconciliation before creation found no active item with this provider reference, slug, affected skill, or overlapping accepted outcome.
+None
 
 ## Verification
 
@@ -68,5 +68,7 @@ None. Collision reconciliation before creation found no active item with this pr
 None.
 
 ## Notes
+
+Collision reconciliation before creation found no active item with this provider reference, slug, affected skill, or overlapping accepted outcome.
 
 This record has one primary affected skill identity: skills/end-to-end-verification/SKILL.md. It does not authorize a skill-definition mutation. If correction changes this governed SKILL.md, later implementation requires explicit scope-specific user approval naming that exact definition, a provenance approval record, and the supported pre-mutation definition-change check.
