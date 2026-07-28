@@ -8086,6 +8086,29 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertNotIn("agent-claim", role.skill_conditions)
 
+    def test_dev_skill_lint_reviewer_reports_only_critical_skill_issues(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        role = next(role for role in roles if role.name == "dev-skill-lint-reviewer")
+
+        self.assertEqual("advanced-long", role.model_profile)
+        self.assertEqual(
+            {
+                "skill-authoring",
+                "review-structured-artifact",
+            },
+            set(build_skill_docs.fixed_role_skills(role)) - {"effective-communication"},
+        )
+        self.assertEqual({"structured-explanation"}, set(role.skill_conditions))
+        self.assertNotIn("agent-claim", role.skill_conditions)
+        self.assertIn("Report only critical skill issues", role.instructions)
+        self.assertIn("Do not report minor grammar", role.instructions)
+        self.assertIn("material STE clarity failure", role.instructions)
+        self.assertIn("significant redundancy", role.instructions)
+        self.assertIn("wrong harness boundary", role.instructions)
+        self.assertIn("no-critical-findings result", role.output_contract)
+
     def test_role_categories_and_names_follow_prefix_actor_rules(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         skill_payload = build_skill_docs.build_payload()

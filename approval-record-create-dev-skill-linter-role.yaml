@@ -1,0 +1,5 @@
+basis: explicit-user-direction
+definition_scope: agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml
+provenance:
+  source: user-message
+  reference: thread:current/message:create-skill-linter-subagent

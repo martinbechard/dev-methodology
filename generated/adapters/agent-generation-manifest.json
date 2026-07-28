@@ -1,7 +1,7 @@
 {
   "adapters": {
     "claude": {
-      "agentCount": 28,
+      "agentCount": 29,
       "agents": [
         {
           "name": "dev-artifact-reviewer",
@@ -150,6 +150,17 @@
           ],
           "sha256": "40db4b6438b98dda88e7082ef38013170c868181d425509836168abaf9883a78",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
+        },
+        {
+          "name": "dev-skill-lint-reviewer",
+          "output": "generated/adapters/claude/agents/dev-skill-lint-reviewer.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "skill-authoring",
+            "review-structured-artifact"
+          ],
+          "sha256": "777b69446238de8940cee4789f9ba75a7590d60fbd3d2b8e8a22cc50147e1190",
+          "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
           "name": "dev-ux-specialist",
@@ -333,7 +344,7 @@
       "outputRoot": "generated/adapters/claude/agents"
     },
     "codex": {
-      "agentCount": 28,
+      "agentCount": 29,
       "agents": [
         {
           "name": "dev-artifact-reviewer",
@@ -494,6 +505,18 @@
           ],
           "sha256": "326d9f63d41f309e32e5586a48cc6151c4636a47f5e850b30d1e17e40cfcf084",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
+        },
+        {
+          "name": "dev-skill-lint-reviewer",
+          "output": "generated/adapters/codex/agents/dev-skill-lint-reviewer.toml",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "skill-authoring",
+            "review-structured-artifact",
+            "codex-harness-directives"
+          ],
+          "sha256": "beae5f619cbf0e0c2d3c735334d5b258319aa572ffb798f285138aba11a3ed63",
+          "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
           "name": "dev-ux-specialist",
@@ -696,7 +719,7 @@
       "outputRoot": "generated/adapters/codex/agents"
     },
     "gemini": {
-      "agentCount": 28,
+      "agentCount": 29,
       "agents": [
         {
           "name": "dev-artifact-reviewer",
@@ -845,6 +868,17 @@
           ],
           "sha256": "d65c7325b95b93f70c7b582054c5a6dbdc5c48526823267d4a2ff104c9aba1f7",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
+        },
+        {
+          "name": "dev-skill-lint-reviewer",
+          "output": "generated/adapters/gemini/agents/dev-skill-lint-reviewer.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "skill-authoring",
+            "review-structured-artifact"
+          ],
+          "sha256": "1d4cb37ca4984529a8255413c23e634d275a4e60f38f2a451f7588923eaf4011",
+          "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
           "name": "dev-ux-specialist",
@@ -1028,7 +1062,7 @@
       "outputRoot": "generated/adapters/gemini/agents"
     },
     "junie": {
-      "agentCount": 28,
+      "agentCount": 29,
       "agents": [
         {
           "name": "dev-artifact-reviewer",
@@ -1177,6 +1211,17 @@
           ],
           "sha256": "541100bf11e6e2d77b757f1aa90a5cd32ab3ee5ea183e61e44a83a965ce40cd8",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
+        },
+        {
+          "name": "dev-skill-lint-reviewer",
+          "output": "generated/adapters/junie/agents/dev-skill-lint-reviewer.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "skill-authoring",
+            "review-structured-artifact"
+          ],
+          "sha256": "6822d8f9a27fa2be52efe1ab54ffa82187e470a9a161cb1944762bb7728fd2d8",
+          "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
           "name": "dev-ux-specialist",
@@ -1360,7 +1405,7 @@
       "outputRoot": "generated/adapters/junie/agents"
     }
   },
-  "canonicalRoleCount": 28,
+  "canonicalRoleCount": 29,
   "generationOptions": {
     "coreSkillDelivery": "by-reference",
     "inlineCoreSkills": false
