@@ -1,6 +1,6 @@
 # Allow typed evidence in module-design review checklists
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -10,7 +10,19 @@ Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-module-de
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator dispatch reservation
+
+## Current Starting Reservation
+
+- Transition: Ready -> Starting.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Launch Reservation: reserve-six-approved-ready-starting-019fa9bb.
+- Dispatch Time: 2026-07-28T22:42:49Z.
+- Normalized Objective: Allow typed evidence in module-design review checklists.
+- Intended Root Role: Dev Orchestrator.
+- Canonical Runtime Thread and Root Agent Task: 019faa83-9a42-7e11-9c24-20a7a4264da3.
+- Observed Launch Evidence: The existing canonical work-item Thread is preserved for resumption. No replacement Thread is authorized.
+- Starting -> Running Requirement: The preserved root Dev Orchestrator must accept this same Thread and atomically record Starting -> Running with canonical identity, branch, worktree, and accepted ownership evidence before repository mutation.
 
 ## User Action Required Resolution
 

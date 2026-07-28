@@ -1,6 +1,6 @@
 # Defer verifier orchestration to conceptual roles and resolve writer helper commands
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -10,7 +10,19 @@ Provider Reference: backlog/defect-backlog/project-wiki-topic-write-role-owned-v
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator dispatch reservation
+
+## Current Starting Reservation
+
+- Transition: Ready -> Starting.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Launch Reservation: reserve-six-approved-ready-starting-019fa9bb.
+- Dispatch Time: 2026-07-28T22:42:49Z.
+- Normalized Objective: Defer verifier orchestration to conceptual roles and resolve writer helper commands.
+- Intended Root Role: Dev Orchestrator.
+- Canonical Runtime Thread and Root Agent Task: 019faa19-0275-7210-aaf6-45931b8079ab.
+- Observed Launch Evidence: The existing canonical work-item Thread is preserved for resumption. No replacement Thread is authorized.
+- Starting -> Running Requirement: The preserved root Dev Orchestrator must accept this same Thread and atomically record Starting -> Running with canonical identity, branch, worktree, and accepted ownership evidence before repository mutation.
 
 ## User Action Required Resolution
 
