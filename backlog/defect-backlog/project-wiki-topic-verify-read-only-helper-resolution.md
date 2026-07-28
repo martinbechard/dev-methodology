@@ -1,6 +1,6 @@
 # Keep topic verification read-only and make helper checks executable
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/project-wiki-topic-verify-read-only-h
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -26,13 +26,13 @@ Runtime Thread: 019faa18-fde3-7d20-ad68-77bfcf160fbd
 
 Root Agent Task: 019faa18-fde3-7d20-ad68-77bfcf160fbd
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Next Lifecycle Owner: Dev Backlog Coordinator
 
 Branch: codex/project-wiki-topic-verify-helper-resolution-019faa18
 
 Worktree: /Users/martinbechard/.codex/worktrees/5cd1/dev-methodology
 
-Phase: Approved definition preflight and implementation
+Phase: Blocked — validation-root configuration authority required
 
 Started At: 2026-07-28T19:03:33Z
 
@@ -71,6 +71,26 @@ Approved Scope and Semantics: skills/project-wiki-topic-verify/SKILL.md only. Ke
 Preserved Execution Identity: Runtime Thread and Root Agent Task 019faa18-fde3-7d20-ad68-77bfcf160fbd; branch codex/project-wiki-topic-verify-helper-resolution-019faa18; worktree /Users/martinbechard/.codex/worktrees/5cd1/dev-methodology; prior lifecycle history remains intact.
 
 Pre-Mutation Requirement: Before any governed definition mutation, create the exact approval record from this user direction and pass the supported definition-change preflight for skills/project-wiki-topic-verify/SKILL.md.
+
+## Blocked Evidence
+
+Blocker: Required mcp-agent-ops skill_validate returned structured root-policy rejection: Path is outside configured skill roots: /Users/martinbechard/dev/dev-methodology/skills/project-wiki-topic-verify. skill-authoring forbids repository fallback after structured rejection.
+
+Blocker Owner: Project Configurator / validator-root configuration authority.
+
+Coordinator Action: Provide an authorized configured skill_validate route for repository source packages or route a governing validation-contract change through its own authority. Do not retry unchanged integration.
+
+Unblock Condition: Configured validation supports this repository source package through an authorized root, or governing authority changes the validation contract.
+
+Candidate and Delivery Preservation: Accepted candidate 77416fc3fde142b57d3addc676efa5986a852b08; preserved integration branch codex/integrate-topic-verify-read-only-helper-019faa18-77416fc3; preserved exact replay stash 6085a8100d81b3e11f4aaac1476e67582177bbb5; last unchanged main observation 3fbbd092055e4a3344b66d4a6b2c7db093d86345. No integration commit or main update occurred. Source worktree is clean.
+
+Preflight, Review, and Verification Evidence: ALLOWED_APPROVED_DEFINITION_CHANGE and ALLOWED_APPROVED_REGENERATION prechecks; independent review APPROVED; verification VERIFIED PASS; focused tests 1/1; project-wiki tests 19/19; build-skill-docs --check and git diff --check passed; exact replay hashes and generated-delta equivalence confirmed.
+
+Integration Claim Evidence: Integration claim acquired event e2adfc5a-982e-4644-aa11-12e05664be97 and released event 90850a74-484b-49f1-9ff9-ad207ef6b8bc.
+
+Provider Claim Evidence: blocked-project-wiki-topic-verify-helper-resolution-019faa18 acquired as SHARED_CHECKOUT_ACQUIRED on primary main at 2026-07-28T22:27:36.741385Z; claim journal event 69037ae4-07e9-48de-bce5-036c9934a4b5.
+
+Permitted Resumption: Blocked to Ready only after Dev Backlog Coordinator verifies the unblock condition. Then require Ready to Starting to Running using the same canonical task before a new attempt.
 
 ## Starting Reservation Evidence
 
