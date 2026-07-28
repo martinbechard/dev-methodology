@@ -1,6 +1,6 @@
 # Make file-provider claim events conditional on configured resource coordination
 
-Status: Starting
+Status: Running
 
 User Question: Do you explicitly approve editing the governed canonical definition skills/manage-file-work-items/SKILL.md to make its provider claim directions conditional for resource coordination agent-claim versus none?
 
@@ -12,7 +12,7 @@ Provider Reference: backlog/defect-backlog/respect-resource-coordination-none-in
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator reservation
+Owner: Root Dev Orchestrator
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -32,11 +32,13 @@ Branch: codex/respect-resource-coordination-none-019fa9f9
 
 Worktree: /Users/martinbechard/.codex/worktrees/c089/dev-methodology
 
-Current Phase: Starting — parent reservation recorded; awaiting preserved root acceptance.
+Current Phase: Approved definition correction preflight.
 
-Started At Evidence: Root acceptance recorded by Dev Backlog Steward on 2026-07-28T18:39:39Z after the parent reservation, against Runtime Thread and Root Agent Task 019fa9f9-9548-7853-9fe3-301c76b94b82.
+Started At Evidence: Preserved Root Dev Orchestrator accepted Starting to Running on 2026-07-28T21:56:01Z, against canonical Runtime Thread and Root Agent Task 019fa9f9-9548-7853-9fe3-301c76b94b82, after the parent reservation.
 
 Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim running-acceptance-respect-resource-coordination-none-019fa9f9; incarnation a1e091bf-51fe-4f58-a077-b2ead9fe9f49; claim journal event 3d683343-0e55-46fe-b292-421593bcdfdb; exact provider path claimed in the primary main checkout.
+
+Running Acceptance Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim running-acceptance-respect-resource-coordination-none-019fa9f9-resumed; incarnation d4491dcd-ab9a-4bfa-a15e-066c70341b6a; claim journal event 0201d6ee-3347-4096-a3ba-74654de19284; exact provider path claimed in the primary main checkout.
 
 Next Lifecycle Owner: Preserved Root Dev Orchestrator 019fa9f9-9548-7853-9fe3-301c76b94b82
 
