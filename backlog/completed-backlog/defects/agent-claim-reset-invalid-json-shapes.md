@@ -1,12 +1,12 @@
 # Make agent-claim reset recover invalid JSON registry shapes
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/agent-claim-reset-invalid-json-shapes.md
+Provider Reference: backlog/completed-backlog/defects/agent-claim-reset-invalid-json-shapes.md
 
 Completion: direct-main
 
@@ -84,3 +84,14 @@ None.
 Collision reconciliation before creation found no active item with this provider reference, slug, affected skill, or overlapping accepted outcome.
 
 This record has one primary affected skill identity: skills/agent-claim-command/SKILL.md. It does not authorize a skill-definition mutation. If the correction changes that governed SKILL.md, later implementation requires explicit scope-specific user approval naming the exact definition, a provenance approval record, and the supported pre-mutation definition-change check. A code-only correction to skills/agent-claim-command/scripts/claim.py remains subject to ordinary implementation review and verification.
+
+## Completion Evidence
+
+- Completed At: 2026-07-28T19:32:27Z.
+- Accepted candidate: 0a005efbf36d446c1c8ce70c15c5cc6661e9b167.
+- Direct-main integration: dfab50ca1b6bd4c1a6c956a3dae42baefbed6d1a. It changes only skills/agent-claim-command/scripts/claim.py and scripts/test_agent_claim.py, and its bytes were proven equivalent to the accepted candidate.
+- Main observation: integration commit dfab50ca1b6bd4c1a6c956a3dae42baefbed6d1a is an ancestor of observed primary main e1aefd26240c2c343e154a462a76b05cc38b2565. The primary checkout was clean before this provider transaction.
+- Review and verification: independent review GOOD; candidate and integration verification PASS, including focused command-helper tests and diff validation.
+- Lifecycle and integration claims: acceptance acquire and release events 82780823-6fb1-4e00-82f2-3dc843eccfe2 and 8cd19f2d-037d-482d-83a2-a2d4c0145ae1; integration acquire and release events d68398af-22a9-4296-9204-f44a4d19aa2e and 0b523e08-e03a-4fec-b6fd-a10c1de3d168.
+- Terminal provider claim: complete-agent-claim-reset-invalid-json-shapes-019fa9f9 acquired for the source and destination paths as SHARED_CHECKOUT_ACQUIRED, event de29ab34-24a1-4efe-a379-f4edbaa62d36.
+- Source-to-integration mapping: candidate 0a005efbf36d446c1c8ce70c15c5cc6661e9b167 -> integration dfab50ca1b6bd4c1a6c956a3dae42baefbed6d1a.
