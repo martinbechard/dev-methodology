@@ -13,7 +13,7 @@ Completion: direct-main
 ## Starting Reservation
 
 - Transition: Ready -> Starting.
-- Parent Coordination Thread: /root.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
 - Reservation: One parent-owned launch reservation.
 - Normalized Objective: Establish the STE technical documentation standard.
 - Dispatched At: 2026-07-28T16:28:48Z.
@@ -25,15 +25,28 @@ Completion: direct-main
 ## Running Acceptance
 
 - Transition: Starting -> Running.
-- Canonical Work-Item Thread: /root/ste_technical_documentation.
-- Canonical Root Agent Task Id: /root/ste_technical_documentation.
-- Owner: Dev Orchestrator /root/ste_technical_documentation.
+- Canonical Work-Item Thread: 019fa9be-0083-7542-973f-af103c0c45a5.
+- Canonical Root Agent Task Id: 019fa9be-0083-7542-973f-af103c0c45a5.
+- Owner: Dev Orchestrator 019fa9be-0083-7542-973f-af103c0c45a5.
 - Delivery Branch: codex/establish-ste-technical-documentation-standard.
 - Delivery Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/establish-ste-technical-documentation-standard.
 - Phase: Technical documentation standard delivery.
 - Started At: 2026-07-28T16:33:26Z.
 - Started-At Evidence: The canonical root Dev Orchestrator accepted the reserved work item and requested this distinct provider transition.
 - Claim Evidence: ste-running-lifecycle-20260728; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 87e8521b-ebbe-4672-92ea-d80638e0a825; claimed 2026-07-28T16:33:26.656534Z.
+
+## Recovery Identity Reconciliation
+
+- Recovery Transaction: Preserve Running while reconciling the accepted execution identity.
+- Parent Coordinator Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fa9be-0083-7542-973f-af103c0c45a5.
+- Canonical Root Agent Task Id: 019fa9be-0083-7542-973f-af103c0c45a5.
+- Preserved Prior Work-Item Thread: /root/ste_technical_documentation.
+- Preserved Prior Root Agent Task Id: /root/ste_technical_documentation.
+- Accepted Candidate Commit: a83eae77b1e5a0001d79995a5687043c81ef0abf.
+- Current Phase: Correct the attached semantic-preservation defect and remove unrelated fixture content.
+- Next Phase: Obtain fresh independent review and verification after the correction.
+- Claim Evidence: rehome-ste-provider-identity-019fa9be; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event dfc116a9-72fc-4ebd-95a2-e4c61aea380c; claimed 2026-07-28T17:29:41.140717Z.
 
 ## Summary
 
