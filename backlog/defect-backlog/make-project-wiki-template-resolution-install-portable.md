@@ -1,6 +1,6 @@
 # Resolve the project-wiki template from the installed skill catalog
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -9,6 +9,24 @@ Provider: file
 Provider Reference: backlog/defect-backlog/make-project-wiki-template-resolution-install-portable.md
 
 Completion: direct-main
+
+Owner: Unowned pending root acceptance
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
+
+Launch Reservation: reserve-seven-batch2-defects-019fa9bb
+
+Normalized Objective: Resolve the project-wiki template from the installed skill catalog.
+
+Dispatch Time: 2026-07-28T18:56:59Z
+
+Intended Root Role: Dev Orchestrator
+
+Runtime Thread: Pending canonical child Thread creation after this durable reservation.
+
+Root Agent Task: Pending canonical root Dev Orchestrator acceptance.
+
+Next Lifecycle Owner: Root Dev Orchestrator
 
 ## Summary
 
