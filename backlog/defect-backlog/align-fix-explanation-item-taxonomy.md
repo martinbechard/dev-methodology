@@ -1,6 +1,6 @@
 # Align fix-explanation relationship examples with the six-type explanation model
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -9,6 +9,24 @@ Provider: file
 Provider Reference: backlog/defect-backlog/align-fix-explanation-item-taxonomy.md
 
 Completion: direct-main
+
+Owner: Unowned pending acceptance
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
+
+Launch Reservation: reserve-first-eight-lint-defects-019fa9bb
+
+Normalized Objective: Make fix-explanation relationship examples conform to the declared six-type structured-explanation model.
+
+Dispatch Time: 2026-07-28T18:22:25Z
+
+Intended Root Role: Dev Orchestrator
+
+Runtime Thread: Pending
+
+Root Agent Task: Pending
+
+Next Lifecycle Owner: Root Dev Orchestrator
 
 ## Summary
 

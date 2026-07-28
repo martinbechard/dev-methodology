@@ -1,6 +1,6 @@
 # Make agent-claim reset recover invalid JSON registry shapes
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -9,6 +9,24 @@ Provider: file
 Provider Reference: backlog/defect-backlog/agent-claim-reset-invalid-json-shapes.md
 
 Completion: direct-main
+
+Owner: Unowned pending acceptance
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
+
+Launch Reservation: reserve-first-eight-lint-defects-019fa9bb
+
+Normalized Objective: Make the agent-claim reset operation recover every invalid JSON registry shape that its contract promises to repair.
+
+Dispatch Time: 2026-07-28T18:22:25Z
+
+Intended Root Role: Dev Orchestrator
+
+Runtime Thread: Pending
+
+Root Agent Task: Pending
+
+Next Lifecycle Owner: Root Dev Orchestrator
 
 ## Summary
 

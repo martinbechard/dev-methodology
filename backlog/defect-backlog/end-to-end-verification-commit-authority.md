@@ -1,6 +1,6 @@
 # Route E2E evidence delivery through Commit authority
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -9,6 +9,24 @@ Provider: file
 Provider Reference: backlog/defect-backlog/end-to-end-verification-commit-authority.md
 
 Completion: direct-main
+
+Owner: Unowned pending acceptance
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
+
+Launch Reservation: reserve-first-eight-lint-defects-019fa9bb
+
+Normalized Objective: Make end-to-end verification deliver evidence through the selected Commit workflow instead of unconditionally creating a commit.
+
+Dispatch Time: 2026-07-28T18:22:25Z
+
+Intended Root Role: Dev Orchestrator
+
+Runtime Thread: Pending
+
+Root Agent Task: Pending
+
+Next Lifecycle Owner: Root Dev Orchestrator
 
 ## Summary
 
