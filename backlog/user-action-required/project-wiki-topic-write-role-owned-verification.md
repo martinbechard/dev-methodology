@@ -1,12 +1,12 @@
 # Defer verifier orchestration to conceptual roles and resolve writer helper commands
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/project-wiki-topic-write-role-owned-verification.md
+Provider Reference: backlog/user-action-required/project-wiki-topic-write-role-owned-verification.md
 
 Completion: direct-main
 
@@ -26,7 +26,7 @@ Runtime Thread: 019faa19-0275-7210-aaf6-45931b8079ab
 
 Root Agent Task: 019faa19-0275-7210-aaf6-45931b8079ab
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Next Lifecycle Owner: Parent Dev Backlog Coordinator
 
 ## Running Acceptance
 
@@ -43,6 +43,32 @@ Next Lifecycle Owner: Root Dev Orchestrator
 - Provider-Mutation Claim Evidence: starting-running-project-wiki-topic-write-role-owned-verification-019faa19 acquired by dev-backlog-steward for this exact backlog file; claim outcome SHARED_CHECKOUT_ACQUIRED, claim event 32989a07-7358-4209-aac6-76fb8b3fa764, incarnation 0d412f08-24ec-4c03-8ce0-355fa896dbd0.
 - Recovery History: The earlier claim attempt was rejected with DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED; claim event c606912d-4cf5-42c7-bcb4-84a3bb782572. The Coordinator reconciled the primary checkout before this accepted transaction.
 - Current Main Observation: main was clean at 41e61c0a92fd8fe1d6bfbb696923a4abef8376d8 when this transaction began.
+
+## User Action Required
+
+Blocker: Explicit scope-specific user approval is absent for the governed definition skills/project-wiki-topic-write/SKILL.md.
+
+Blocker Owner: User
+
+Question: Do you approve changing only skills/project-wiki-topic-write/SKILL.md to remove direct verifier-spawn and retry orchestration, hand verification requests and interruption evidence back to the owning conceptual role while preserving writer edits and verifier read-only boundaries, and replace unresolved project-wiki-skill-root commands with an executable source-and-installed helper-resolution contract?
+
+Why User Input Is Required: Project guidance requires explicit scope-specific user direction before a governed skill definition can change. The supported pre-mutation check returned BLOCKED_APPROVAL_REQUIRED with exit 3.
+
+Resolution: Pending
+
+Rationale: The role-owned verification and helper-resolution intent is supported by accepted report candidate 54d860f1978d4cb403e59162cfb209fe45cc06a8 and the completed read-only analysis.
+
+Exclusions: No agent role definition, skills/project-wiki-topic-write/agents/openai.yaml, other skill definition, direct generated mirror, test, code, documentation, provider beyond this transition, or delivery mutation is approved.
+
+Unattended Boundary: No source, definition, test, or delivery mutation may occur until explicit approval is recorded, this same canonical task routes through User Action Required -> Ready -> Starting -> Running, and an exact-scope approval record passes the supported pre-mutation check.
+
+Preserved Canonical Identity: Runtime Thread and Root Agent Task 019faa19-0275-7210-aaf6-45931b8079ab; Parent Coordination Thread 019fa9bb-1423-7e80-bcde-3caa765e3758; Branch codex/project-wiki-topic-write-role-owned-verification-019faa19; Worktree /Users/martinbechard/.codex/worktrees/9a08/dev-methodology.
+
+Preserved Running Acceptance: Lifecycle commit d7f7e8b30df3a957aab8dddf27feed9c6e51397e; acquire event 32989a07-7358-4209-aac6-76fb8b3fa764; release event e7d56d84-d0bc-44cb-b02b-a6b979413c65; prior rejection event c606912d-4cf5-42c7-bcb4-84a3bb782572.
+
+Read-Only Evidence: Focused current tests are green only as coverage-gap evidence. Candidate: None. Worktree: clean.
+
+Transition Claim Evidence: user-action-required-project-wiki-topic-write-role-owned-verification-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T19:17:05.436654Z; claim event 7e51c165-b719-46bd-ae93-19ef6cfb10de. Destination scope extended before move; event f38aa2a3-b5a4-4c43-9369-278b86330e57.
 
 ## Summary
 
