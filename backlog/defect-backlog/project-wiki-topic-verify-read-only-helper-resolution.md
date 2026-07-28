@@ -1,6 +1,6 @@
 # Keep topic verification read-only and make helper checks executable
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/project-wiki-topic-verify-read-only-h
 
 Completion: direct-main
 
-Owner: Unowned pending root acceptance
+Owner: Root Dev Orchestrator
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -22,11 +22,21 @@ Dispatch Time: 2026-07-28T18:56:59Z
 
 Intended Root Role: Dev Orchestrator
 
-Runtime Thread: Pending canonical child Thread creation after this durable reservation.
+Runtime Thread: 019faa18-fde3-7d20-ad68-77bfcf160fbd
 
-Root Agent Task: Pending canonical root Dev Orchestrator acceptance.
+Root Agent Task: 019faa18-fde3-7d20-ad68-77bfcf160fbd
 
 Next Lifecycle Owner: Root Dev Orchestrator
+
+Branch: codex/project-wiki-topic-verify-helper-resolution-019faa18
+
+Worktree: /Users/martinbechard/.codex/worktrees/5cd1/dev-methodology
+
+Phase: Read-only analysis
+
+Started At: 2026-07-28T19:03:33Z
+
+Claim Evidence: running-project-wiki-topic-verify-helper-resolution-019faa18 acquired as SHARED_CHECKOUT_ACQUIRED on primary main at 2026-07-28T19:03:26.668254Z; claim journal event 9df147d9-db17-41a7-a86d-bc5923f35672.
 
 ## Summary
 
