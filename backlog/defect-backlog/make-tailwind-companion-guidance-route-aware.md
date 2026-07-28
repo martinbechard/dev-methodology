@@ -1,6 +1,6 @@
 # Make Tailwind companion guidance conditional on active-scope routing
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/make-tailwind-companion-guidance-rout
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Dev Orchestrator
 
 ## Current Starting Reservation
 
@@ -23,6 +23,17 @@ Owner: Parent Dev Backlog Coordinator dispatch reservation
 - Canonical Runtime Thread and Root Agent Task: 019faa83-d3c4-7962-b3f8-f4b1a9845d94.
 - Observed Launch Evidence: The existing canonical work-item Thread is preserved for resumption. No replacement Thread is authorized.
 - Starting -> Running Requirement: The preserved root Dev Orchestrator must accept this same Thread and atomically record Starting -> Running with canonical identity, branch, worktree, and accepted ownership evidence before repository mutation.
+
+## Running Acceptance
+
+- Transition: Starting -> Running.
+- Accepted Owner: Dev Orchestrator.
+- Canonical Runtime Thread and Root Agent Task: 019faa83-d3c4-7962-b3f8-f4b1a9845d94.
+- Branch: codex/tailwind-companion-route-aware-019faa83.
+- Worktree: /Users/martinbechard/.codex/worktrees/41ca/dev-methodology.
+- Phase: Running acceptance complete; approved Tailwind guidance correction is pending the separate governed-source approval-record and pre-mutation check.
+- Approved Governed Scope: skills/tailwind-design-system/SKILL.md only.
+- Repository Mutation Boundary: No source mutation occurred before this Running acceptance became durable. Any later source mutation remains gated on the exact-scope approval record and successful supported pre-mutation check.
 
 ## User Action Required Resolution
 
@@ -53,11 +64,11 @@ Branch: codex/tailwind-companion-route-aware-019faa83
 
 Worktree: /Users/martinbechard/.codex/worktrees/41ca/dev-methodology
 
-Phase: Ready for parent dispatch reservation; preserved canonical root must accept Starting -> Running before repository mutation.
+Phase: Running acceptance complete; approved Tailwind guidance correction is pending the separate governed-source approval-record and pre-mutation check.
 
 Started At: 2026-07-28T21:00:12Z
 
-Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim move-user-action-tailwind-019faa83; acquisition journal event 08db59f8-b414-418e-b747-92e3a7ded6ef. Preserved Running acceptance evidence: provider commit 48ec224dbc8a7981a0ea234990d3de1c599f0bad; SHARED_CHECKOUT_ACQUIRED claim accept-running-tailwind-019faa83, acquisition journal event bafae64e-bed6-4c26-aa1d-32a9a005094a, and release journal event 1f9c568f-a28e-48bf-a47a-fe4bbfd2e084. Preserved Starting reservation evidence: SHARED_CHECKOUT_ACQUIRED claim reserve-six-ready-refill-tailwind-019fa9bb-retry; acquisition journal event d7b2246e-4e09-43df-a8f7-a5a04455a0d9.
+Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim accept-running-tailwind-approved-019faa83; acquisition journal event 416a53f5-f73b-4f2d-bb5b-fc662ccc9462. Preserved User Action Required transition evidence: SHARED_CHECKOUT_ACQUIRED claim move-user-action-tailwind-019faa83; acquisition journal event 08db59f8-b414-418e-b747-92e3a7ded6ef. Preserved prior Running acceptance evidence: provider commit 48ec224dbc8a7981a0ea234990d3de1c599f0bad; SHARED_CHECKOUT_ACQUIRED claim accept-running-tailwind-019faa83, acquisition journal event bafae64e-bed6-4c26-aa1d-32a9a005094a, and release journal event 1f9c568f-a28e-48bf-a47a-fe4bbfd2e084. Preserved Starting reservation evidence: SHARED_CHECKOUT_ACQUIRED claim reserve-six-ready-refill-tailwind-019fa9bb-retry; acquisition journal event d7b2246e-4e09-43df-a8f7-a5a04455a0d9.
 
 ## Summary
 
