@@ -1,12 +1,12 @@
 # Keep Quarkus persistence companion selection setup-owned
 
-Status: User Action Required
+Status: Abandoned
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/keep-quarkus-persistence-companion-selection-setup-owned.md
+Provider Reference: backlog/failed-backlog/defects/keep-quarkus-persistence-companion-selection-setup-owned.md
 
 Completion: direct-main
 
@@ -36,9 +36,21 @@ Reservation Commit: 3e0692b60a3694f29f3b8e05f399212c31bc1573
 
 Running Acceptance Commit: 6fc8044a75fe46bf80c9954821ed177b817383dd
 
-Phase: approval-boundary assessment; awaiting explicit governed-definition approval.
+User Action Required Commit: 0f7ffee03d9328b001dd1e2af849944646b50d8d
 
-Claim Evidence: Prior recovery evidence: failed claim journal event 46ea90ff-e0e6-4ff1-919f-033cbc589a9f. Running acceptance: SHARED_CHECKOUT_ACQUIRED claim accept-quarkus-persistence-running-019faa83; acquisition journal event 2b164214-b8aa-4a66-9a7f-4fe0fb291b9c; RELEASED journal event fb975c37-1245-44be-a7c1-a64ecd8b8599. User Action Required move: SHARED_CHECKOUT_ACQUIRED claim uar-quarkus-persistence-019faa83; acquisition journal event e345981b-699a-4007-ac6a-3d13d33af316. Release evidence follows the committed provider transaction.
+Phase: terminal abandonment
+
+Claim Evidence: Prior recovery evidence: failed claim journal event 46ea90ff-e0e6-4ff1-919f-033cbc589a9f. Running acceptance: SHARED_CHECKOUT_ACQUIRED claim accept-quarkus-persistence-running-019faa83; acquisition journal event 2b164214-b8aa-4a66-9a7f-4fe0fb291b9c; RELEASED journal event fb975c37-1245-44be-a7c1-a64ecd8b8599. User Action Required move: SHARED_CHECKOUT_ACQUIRED claim uar-quarkus-persistence-019faa83; acquisition journal event e345981b-699a-4007-ac6a-3d13d33af316; RELEASED journal event c70c808a-3382-45fd-a922-26f66466fb18. Terminal abandonment: SHARED_CHECKOUT_ACQUIRED claim abandon-quarkus-persistence-019faa83; acquisition journal event 76fa6258-6df5-4806-a38c-962684497d3c. Release evidence follows the committed provider transaction.
+
+## Terminal Abandonment
+
+Disposition Authority: Dev Backlog Coordinator terminal disposition on 2026-07-28.
+
+User Provenance: On 2026-07-28, the user stated: “First of all in general the tech skills are wired into AGENTS.md and by default that's what's loaded, the Dev Coder doesn't have any special instructions for loading technology-specific skills. Second there can be additional skills needed at runtime through the harness skill mechanism - we're not going to override that with a prompt. So this request doesn't really make sense” and “the linter is supposed to judge the writing quality and coherence, not what the prompt seeks to achieve”.
+
+Rationale: The defect incorrectly conflated AGENTS.md setup-configured technology-skill loading with prompt-level selection and ignored harness runtime skill injection. The user declined the requested governed definition change, so no technically coherent authorized delivery remains.
+
+No Artifact Mutation Evidence: No skills/quarkus-persistence definition, references, tests, generated mirrors, candidate, delivery, or integration mutation occurred. The only work for this item is the provider lifecycle record in commits 6fc8044a75fe46bf80c9954821ed177b817383dd, 0f7ffee03d9328b001dd1e2af849944646b50d8d, and this terminal provider commit.
 
 ## User Action Required
 
