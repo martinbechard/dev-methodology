@@ -1,12 +1,12 @@
 # Allow typed evidence in functional-specification review checklists
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-functional-spec.md
+Provider Reference: backlog/completed-backlog/defects/allow-typed-evidence-review-functional-spec.md
 
 Completion: direct-main
 
@@ -53,13 +53,29 @@ Branch: codex/allow-typed-evidence-review-functional-spec-019faa2d
 
 Worktree: /Users/martinbechard/.codex/worktrees/cccf/dev-methodology
 
-Current Phase: Approved implementation and focused verification
+Current Phase: Completed direct-main delivery
 
 Running Started At: 2026-07-28T23:09:48Z
 
 Accepted Ownership Evidence: The preserved root Dev Orchestrator accepted Runtime Thread and Root Agent Task 019faa2d-300c-7881-8233-115c049c1b8b after the parent reservation, with no replacement Thread authorized.
 
 Current Acceptance Claim Evidence: starting-running-approval-019faa2d acquired as SHARED_CHECKOUT_ACQUIRED (journal 7d577bfd-756d-4a2e-bd66-6b077ca7b760) for this exact provider file before this transition.
+
+## Terminal Delivery Evidence
+
+Accepted Source Commit: 2edbc27c6e33ef653ef17e1da1d3d411494c32b0.
+
+Integrated Main Commit: b9fba0a20671241a569e6d80b4399c0b193fb53e.
+
+Source-to-Integration Mapping: Accepted source 2edbc27c6e33ef653ef17e1da1d3d411494c32b0 is mapped to clean main commit b9fba0a20671241a569e6d80b4399c0b193fb53e.
+
+Independent Review: GOOD.
+
+Verification: GOOD.
+
+Completion Disposition: READY under direct-main delivery.
+
+Terminal Archive Claim Evidence: running-completed-019faa2d acquired as SHARED_CHECKOUT_ACQUIRED (journal 179e15d0-4008-4248-89e0-74a1a48b445e) for the exact source and archive paths.
 
 Claim Evidence: starting-running-019faa2d acquired as SHARED_CHECKOUT_ACQUIRED (journal 152d0334-5bfc-4c13-9455-d66dbcc16c2e) for this exact provider file before the transition.
 
