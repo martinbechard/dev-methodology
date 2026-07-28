@@ -1,6 +1,6 @@
 # Make file-provider claim events conditional on configured resource coordination
 
-Status: Running
+Status: Completed
 
 User Question: Do you explicitly approve editing the governed canonical definition skills/manage-file-work-items/SKILL.md to make its provider claim directions conditional for resource coordination agent-claim versus none?
 
@@ -8,7 +8,7 @@ Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/respect-resource-coordination-none-in-manage-file-work-items.md
+Provider Reference: backlog/completed-backlog/defects/respect-resource-coordination-none-in-manage-file-work-items.md
 
 Completion: direct-main
 
@@ -32,7 +32,7 @@ Branch: codex/respect-resource-coordination-none-019fa9f9
 
 Worktree: /Users/martinbechard/.codex/worktrees/c089/dev-methodology
 
-Current Phase: Approved definition correction preflight.
+Current Phase: Completed by verified direct-main delivery and terminal provider closure.
 
 Started At Evidence: Preserved Root Dev Orchestrator accepted Starting to Running on 2026-07-28T21:56:01Z, against canonical Runtime Thread and Root Agent Task 019fa9f9-9548-7853-9fe3-301c76b94b82, after the parent reservation.
 
@@ -41,6 +41,30 @@ Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim running-acceptance-respect-resour
 Running Acceptance Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim running-acceptance-respect-resource-coordination-none-019fa9f9-resumed; incarnation d4491dcd-ab9a-4bfa-a15e-066c70341b6a; claim journal event 0201d6ee-3347-4096-a3ba-74654de19284; exact provider path claimed in the primary main checkout.
 
 Next Lifecycle Owner: Preserved Root Dev Orchestrator 019fa9f9-9548-7853-9fe3-301c76b94b82
+
+## Completion Evidence
+
+Completion Disposition: READY
+
+Completion Selector: direct-main
+
+Accepted Source Commit: 0440625b3d9bdda2a7eb2966f801df83f309baca on codex/respect-resource-coordination-none-019fa9f9; source baseline d0660115.
+
+Integration Commit and Observed Main: 6ff47725854c27eb39b2e38f67312f6525569e52 on main, with parent 41faaff1; the integration commit is an ancestor of observed main.
+
+Non-Ancestral Integration Mapping: The accepted source and integration commits have identical stable patch ID ffc03687ff4205a275bf78e33bd57ebdc24b1383 across the exact six delivered paths.
+
+Review Evidence: Fresh source and post-integration methodology reviews APPROVED.
+
+Verification Evidence: Post-integration verifier VERIFIED. Thirteen focused Python 3.11 tests passed; build-skill-docs.py --check was current; definition preflight returned ALLOWED_APPROVED_DEFINITION_CHANGE; MCP YAML verification returned zero findings; generated mirror was current; and diff check was clean.
+
+Scoped Omission: MCP skill_validate structurally rejected paths outside configured skill roots. It was not bypassed because that scope is outside the configured validation roots.
+
+Integration Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim integrate-respect-resource-coordination-none-root-019fa9f9; incarnation 474a88d2-4d37-442b-8055-39200a043f54; acquire event 5db55f6f-fa04-4190-a186-0c829bc792f4; RELEASED event 58c66c83-feb8-4387-b650-18df85a33dbc; registry empty after release.
+
+Remote Observation: Local main was ahead of origin/main by 1062. No remote publication was required or configured for local direct-main completion, and no push was performed.
+
+Completed At Evidence: Terminal provider closure started on 2026-07-28T22:55:30Z after the observed clean main state and direct-main delivery verification.
 
 ## User Action Required
 
