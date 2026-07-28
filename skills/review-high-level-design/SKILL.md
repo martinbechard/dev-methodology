@@ -23,11 +23,24 @@ Require an appropriate Mermaid diagram whenever the HLD describes an ordered seq
 
 For the high-level-design current reverse-engineering pass, accepted module designs, source, tests, configuration, procedures, runtime evidence, and project configuration are sufficient inputs. Intentionally absent later parent architecture, functional specifications, and wiki pages are not missing mandatory inputs.
 
+## Completed Checklist Evidence
+
+For every applicable question record:
+
+- Status: pass, fail, question, or n/a.
+- Question: the objective question being answered.
+- Evidence type: exact quotation, summary, assessment, or not applicable.
+- Evidence source: the named artifact, input, checklist, or retained response.
+- Evidence: literal source text for an exact quotation, or clearly labeled summary, assessment, or not-applicable explanation.
+- Assessment: the judgment grounded in the recorded evidence.
+
+Use exactly one allowed status and never qualify a status with wording such as pass with finding. When a material finding applies, use fail or question and record any partial strengths in the assessment. Use exact quotation only for literal source text that occurs in the named evidence source. For a mode-dependent n/a, use Evidence type: not applicable and explain why the question does not apply rather than fabricating a quotation. When a required contract is missing, use summary or assessment evidence to describe the gap and mark the item fail; there is no literal source text to quote.
+
 ## Workflow
 
 1. Read the artifact and identify its design mode, authoritative inputs, requirements coverage, subsystem scope, constituent components, artifact-placement ledger, exact source and test paths, package or module namespaces, interactions, ordered action sequences and their diagrams, critical trust and identity boundaries, cross-module contract reconciliation, data anchors, principles, patterns, justified propositions, residual open questions, invariants, documentation acceptance, implementation readiness, and verification claims.
 2. Read references/review-checklist-high-level-design.md.
-3. Complete every applicable checklist question with status, quoted evidence, and assessment. Use exactly one allowed status: `pass`, `fail`, `question`, or `n/a`; never qualify a status with wording such as `pass with finding`. When a material finding applies, use `fail` or `question` and record any partial strengths in the assessment.
+3. Complete every applicable checklist question with the Completed Checklist Evidence fields.
 4. Save the completed review checklist next to the artifact using this form: artifact-name.review-checklist-high-level-design.md.
 5. Use documentation-page-verify with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
 6. Verify high-level design sections against the checklist, especially requirements coverage, parent architecture, data anchors, constituent components, interaction model, trust boundaries, identity selectors, authorization, disclosure limits, cross-module contracts, validation and state ownership, transaction and asynchronous boundaries, error timing, configuration, implementation order, invariants, readiness, definition of good, and verification.

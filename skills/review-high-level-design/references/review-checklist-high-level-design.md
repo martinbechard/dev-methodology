@@ -10,10 +10,12 @@ For every question record:
 
 - Status: pass, fail, question, or n/a.
 - Question: copy the objective question being answered.
-- Quoted evidence: quote the exact artifact or source text that supports the status.
-- Assessment: explain why the quoted evidence passes, fails, is unclear, or is not applicable.
+- Evidence type: exact quotation, summary, assessment, or not applicable.
+- Evidence source: name the artifact, input, checklist, or retained response used.
+- Evidence: record literal source text for an exact quotation, or a clearly labeled summary, assessment, or not-applicable explanation.
+- Assessment: explain why the evidence passes, fails, is unclear, or is not applicable.
 
-Do not mark pass without quoted evidence.
+Do not mark pass without evidence. Use exact quotation only for literal source text that occurs in the named evidence source. For a mode-dependent n/a, use Evidence type: not applicable and explain why the question does not apply rather than fabricating a quotation. When a required contract is missing, use summary or assessment evidence to describe the gap and mark the item fail; there is no literal source text to quote.
 
 ## Skill Workflow Checks
 
