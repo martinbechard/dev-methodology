@@ -1,6 +1,6 @@
 # Resolve the project-wiki template from the installed skill catalog
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/make-project-wiki-template-resolution
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Root Dev Orchestrator / canonical task 019faa18-fde1-7690-ba81-7eb1a23bf4cf
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -30,13 +30,13 @@ Canonical Branch: codex/project-wiki-template-resolution-portable-019faa18
 
 Assigned Worktree: /Users/martinbechard/.codex/worktrees/c5e3/dev-methodology
 
-Current Phase: Starting; awaiting preserved root Dev Orchestrator acceptance before repository mutation.
+Current Phase: Create the delegated-user-direction approval record and run the exact definition preflight before implementation.
 
 Started At: 2026-07-28T19:03:10Z
 
 Claim Evidence: running-project-wiki-template-resolution-019faa18 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T19:03:10.486935Z; claim event a7ae62a2-3ac9-411b-bb9a-21601bd1c398.
 
-Next Lifecycle Owner: User approval authority
+Next Lifecycle Owner: Root Dev Orchestrator
 
 ## Resumption Evidence
 
@@ -75,6 +75,20 @@ Canonical Runtime Thread and Root Agent Task: 019faa18-fde1-7690-ba81-7eb1a23bf4
 Observed Launch Evidence: Existing canonical work-item Thread is preserved for resumption; no replacement Thread is authorized.
 
 Starting -> Running Requirement: The preserved root Dev Orchestrator must accept this same Thread and atomically record Starting -> Running with the canonical identity, branch, worktree, and accepted ownership evidence before repository mutation.
+
+## Running Acceptance Evidence
+
+Accepted Owner: Root Dev Orchestrator / canonical task 019faa18-fde1-7690-ba81-7eb1a23bf4cf.
+
+Accepted Runtime Thread and Root Agent Task: 019faa18-fde1-7690-ba81-7eb1a23bf4cf.
+
+Accepted Branch and Worktree: codex/project-wiki-template-resolution-portable-019faa18; /Users/martinbechard/.codex/worktrees/c5e3/dev-methodology.
+
+Required Pre-Implementation Gate: Create the delegated-user-direction approval record for skills/project-wiki-create/SKILL.md only and run the exact definition-change preflight before any governed-definition mutation.
+
+No-Mutation-Before-Preflight Evidence: The approved scope and exclusions remain recorded in Resumption Evidence; no governed definition, approval record, test, generated file, or unrelated path was mutated by this acceptance transaction.
+
+Acceptance Claim Evidence: running-project-wiki-template-approved-019faa18 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T22:59:00.533782Z; claim event 565fba33-65de-4547-bda7-36aeb816855e.
 
 ## Summary
 
