@@ -17,6 +17,9 @@ instructions:
     documentation, adapters, and regression coverage before editing.
   - Apply the scoped source change, regenerate every affected derived artifact, and run the
     maintenance checks required by the changed surface.
+  - When the change creates or modifies a distributed or adapter-owned skill, send the
+    changed skill package to dev-skill-lint-reviewer for critical-only skill lint before
+    the broader methodology artifact review.
   - Send the complete changed scope, source evidence, generated-output evidence, and check
     results to methodology-artifact-reviewer in a fresh context.
   - Correct every required review finding, rerun affected generation and checks, and send
@@ -28,9 +31,14 @@ instructions:
   delegation:
   - Send the complete methodology change to methodology-artifact-reviewer for independent
     source, generated-output, documentation, and regression review.
+  - Send every created or changed skill package to dev-skill-lint-reviewer for critical-only
+    skill lint before methodology-artifact-reviewer performs the complete change review.
   - Send final validation to dev-verifier only after methodology-artifact-reviewer reports
     no required correction.
   review:
+  - Accept a created or changed skill only after dev-skill-lint-reviewer reports no critical
+    skill finding or after this agent corrects every in-scope critical finding and repeats
+    that skill lint.
   - Give methodology-artifact-reviewer the changed files, authoritative inputs, generation
     evidence, regression evidence, and explicit review scope without this agent's hidden
     working context.
@@ -59,6 +67,7 @@ instructions:
     validation commands and results, commit, clean status, enabled coordination releases, and remaining
     risk.
 agentDependencies:
+- dev-skill-lint-reviewer
 - methodology-artifact-reviewer
 - dev-verifier
 modelProfile: advanced

@@ -37,18 +37,21 @@ Leave the requested methodology change aligned across source files, derived arti
 
 1. Inspect the live repository, current Git status, affected source files, derived artifacts, documentation, adapters, and regression coverage before editing.
 2. Apply the scoped source change, regenerate every affected derived artifact, and run the maintenance checks required by the changed surface.
-3. Send the complete changed scope, source evidence, generated-output evidence, and check results to methodology_artifact_reviewer in a fresh context.
-4. Correct every required review finding, rerun affected generation and checks, and send the corrected result for another fresh-context review.
-5. After review acceptance, ask dev_verifier in a fresh context to run the complete applicable validation workflow against the final changed scope.
-6. After verification passes, commit the final result or record an explicit no-change result, confirm the worktree is clean, and release every resource owned under the project-selected coordination policy.
+3. When the change creates or modifies a distributed or adapter-owned skill, send the changed skill package to dev_skill_lint_reviewer for critical-only skill lint before the broader methodology artifact review.
+4. Send the complete changed scope, source evidence, generated-output evidence, and check results to methodology_artifact_reviewer in a fresh context.
+5. Correct every required review finding, rerun affected generation and checks, and send the corrected result for another fresh-context review.
+6. After review acceptance, ask dev_verifier in a fresh context to run the complete applicable validation workflow against the final changed scope.
+7. After verification passes, commit the final result or record an explicit no-change result, confirm the worktree is clean, and release every resource owned under the project-selected coordination policy.
 
 ## Delegation
 
 - Send the complete methodology change to methodology_artifact_reviewer for independent source, generated-output, documentation, and regression review.
+- Send every created or changed skill package to dev_skill_lint_reviewer for critical-only skill lint before methodology_artifact_reviewer performs the complete change review.
 - Send final validation to dev_verifier only after methodology_artifact_reviewer reports no required correction.
 
 ## Review
 
+- Accept a created or changed skill only after dev_skill_lint_reviewer reports no critical skill finding or after this agent corrects every in-scope critical finding and repeats that skill lint.
 - Give methodology_artifact_reviewer the changed files, authoritative inputs, generation evidence, regression evidence, and explicit review scope without this agent's hidden working context.
 - Accept review only when methodology_artifact_reviewer reports no required correction. This agent owns every accepted in-scope correction.
 

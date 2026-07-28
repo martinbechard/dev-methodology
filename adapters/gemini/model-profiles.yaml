@@ -13,5 +13,5 @@ profiles:
   advanced-long:
     model: pro
     context: extra-long
-  skill-lint:
+  intermediate:
     model: pro

@@ -159,7 +159,7 @@
             "skill-authoring",
             "review-structured-artifact"
           ],
-          "sha256": "11c1c48b9f42ddda09df2f80ed16e5935c369800ff8723d41b2016479b044da1",
+          "sha256": "a543407de37a23492c86e56b308a43cbc2dac6e429c077af04262f2262197bbb",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
@@ -213,7 +213,7 @@
             "development-methodology",
             "structured-explanation"
           ],
-          "sha256": "4dfdd98bfca3fccbfa125463713d933dcd0fd983ec8645d24cafb92e44e9abb5",
+          "sha256": "cbd8bceb7f652a4d4e5c9c10fb16339740673db4efc08b2efa004e7f1cce5d21",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -515,7 +515,7 @@
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "707c78841166bdf90a3236ed1b14b985a7982c1599b9c7eb0d6699a502c42263",
+          "sha256": "a70c1744948144c4dd8da8de9f0c4e1650fce4536c6ab79ab1e9b7666a5022d3",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
@@ -573,7 +573,7 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "413954afcc41cd90c52021cab9a454cfdee59e7304774a8dfd53f3b7a32dff67",
+          "sha256": "d5935a8838ad6b3ccffd68b5274c07664f759e0350979cd4c41770661fde5ea1",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -877,7 +877,7 @@
             "skill-authoring",
             "review-structured-artifact"
           ],
-          "sha256": "397b806b62506c32226c52f487983e446a6ccb3f6911a09cba4c6f1988be7e9a",
+          "sha256": "1c3f3f65c6c1c175a5c9c1a70d06479a8283aecc7e051af311ba89013f01027c",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
@@ -931,7 +931,7 @@
             "development-methodology",
             "structured-explanation"
           ],
-          "sha256": "9afad7bbddc92c819b5519e5d664c4db8df9161d355f333aa47cfd292fe2c755",
+          "sha256": "b3336640c1d6a5cc0500aa774f28b10897672143060ae52593ef83980fb6befb",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -1220,7 +1220,7 @@
             "skill-authoring",
             "review-structured-artifact"
           ],
-          "sha256": "0a3f6209707a9aa9552f17a08acac2b30bf8ab3f4edb7da95bd8ea2a6fde87f0",
+          "sha256": "20892dc6d6b46925d69d5134863039f46b0476c60f1fcc871a2d224628c7336c",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
@@ -1274,7 +1274,7 @@
             "development-methodology",
             "structured-explanation"
           ],
-          "sha256": "94f3c7007c0c5129e20939300ba1e42b633f156b17e4477c95ae5bf62d605986",
+          "sha256": "0f10718d888118611d3ee58a64850d9af084f98a7c02aa058eae0a9b2b22c63c",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {

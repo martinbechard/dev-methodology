@@ -6357,6 +6357,7 @@ class BundleContentTests(unittest.TestCase):
                 "dev-backlog-steward",
             ),
             "methodology-maintainer": (
+                "dev-skill-lint-reviewer",
                 "methodology-artifact-reviewer",
                 "dev-verifier",
             ),
@@ -8092,7 +8093,7 @@ class BundleContentTests(unittest.TestCase):
         roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
         role = next(role for role in roles if role.name == "dev-skill-lint-reviewer")
 
-        self.assertEqual("skill-lint", role.model_profile)
+        self.assertEqual("intermediate", role.model_profile)
         self.assertEqual(
             {
                 "skill-authoring",
@@ -8330,7 +8331,7 @@ class BundleContentTests(unittest.TestCase):
     def test_model_profiles_are_semantic_and_adapter_complete(self) -> None:
         source_profiles = load_yaml_object(MODEL_PROFILES_PATH)["profiles"]
         self.assertEqual(
-            {"simple", "default", "documentation", "advanced", "advanced-long", "skill-lint"},
+            {"simple", "default", "documentation", "advanced", "advanced-long", "intermediate"},
             set(source_profiles),
         )
 
@@ -8352,7 +8353,7 @@ class BundleContentTests(unittest.TestCase):
                 "documentation": "gpt-5.6-sol",
                 "advanced": "gpt-5.6-sol",
                 "advanced-long": "gpt-5.6-sol",
-                "skill-lint": "gpt-5.6-luna",
+                "intermediate": "gpt-5.6-luna",
             },
             {
                 profile_name: profile["model"]
@@ -8387,7 +8388,7 @@ class BundleContentTests(unittest.TestCase):
                 "documentation": ("gpt-5.6-sol", "high"),
                 "advanced": ("gpt-5.6-sol", "high"),
                 "advanced-long": ("gpt-5.6-sol", "high"),
-                "skill-lint": ("gpt-5.6-luna", "xhigh"),
+                "intermediate": ("gpt-5.6-luna", "xhigh"),
             },
             "claude": {
                 "simple": ("fable-5", None),
@@ -8395,7 +8396,7 @@ class BundleContentTests(unittest.TestCase):
                 "documentation": ("fable-5", None),
                 "advanced": ("opus-4.8", None),
                 "advanced-long": ("opus-4.8", None),
-                "skill-lint": ("opus-4.8", None),
+                "intermediate": ("opus-4.8", None),
             },
             "gemini": {
                 "simple": ("flash", None),
@@ -8403,7 +8404,7 @@ class BundleContentTests(unittest.TestCase):
                 "documentation": ("auto", None),
                 "advanced": ("pro", None),
                 "advanced-long": ("pro", None),
-                "skill-lint": ("pro", None),
+                "intermediate": ("pro", None),
             },
             "junie": {
                 "simple": ("gemini-flash", "low"),
@@ -8411,7 +8412,7 @@ class BundleContentTests(unittest.TestCase):
                 "documentation": ("gpt-5.6-sol", "high"),
                 "advanced": ("opus", "high"),
                 "advanced-long": ("opus", "high"),
-                "skill-lint": ("opus", "high"),
+                "intermediate": ("opus", "high"),
             },
         }
 

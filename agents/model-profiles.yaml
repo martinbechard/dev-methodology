@@ -11,5 +11,5 @@ profiles:
     purpose: Review synthesis, architecture, diagnosis, and difficult implementation work.
   advanced-long:
     purpose: Advanced reasoning over unusually large evidence sets or cross-project context.
-  skill-lint:
-    purpose: Critical-only skill review that prioritizes contradictions, unsafe boundaries, and maintainability risks without reporting minor nits.
+  intermediate:
+    purpose: Work that needs more scrutiny than simple extraction but less broad synthesis than the default profile.
