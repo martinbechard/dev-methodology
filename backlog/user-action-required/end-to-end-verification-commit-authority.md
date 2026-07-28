@@ -1,12 +1,12 @@
 # Route E2E evidence delivery through Commit authority
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/end-to-end-verification-commit-authority.md
+Provider Reference: backlog/user-action-required/end-to-end-verification-commit-authority.md
 
 Completion: direct-main
 
@@ -30,7 +30,7 @@ Branch: codex/end-to-end-verification-commit-authority
 
 Worktree: /Users/martinbechard/.codex/worktrees/06cb/dev-methodology
 
-Phase: Source analysis / approval reconciliation
+Phase: Waiting for explicit definition-change approval
 
 Started At: 2026-07-28T18:41:57Z
 
@@ -38,7 +38,21 @@ Started-At Evidence: The canonical root Dev Orchestrator accepted the parent-res
 
 Claim Evidence: lifecycle-running-end-to-end-verification-commit-authority-019fa9f9 acquired as SHARED_CHECKOUT_ACQUIRED; incarnation 5aef2c89-2803-4f3d-bc6f-6087d8d964bb; claim journal event 1f7a6ade-3628-40bb-bd28-98b0b75d904d; exact provider path claimed in the primary main checkout at 2026-07-28T18:41:57.429396Z.
 
+Accepted Candidate Commit: fabb6277f3d2f0f5eb296c1e605cff9d83582aa4
+
 Next Lifecycle Owner: Root Dev Orchestrator
+
+## User Action Required
+
+Question: Do you explicitly approve changing skills/end-to-end-verification/SKILL.md so verification returns evidence without creating a commit, while only the delivery owner applies direct-main or feature-branch, UNSET stops for selection, and evidence-only work applies no Commit workflow?
+
+Why User Input Is Required: skills/end-to-end-verification/SKILL.md is a governed distributed skill definition. The requested correction requires explicit, scope-specific user approval; repository access, the accepted candidate, and general repair authority do not authorize this definition change.
+
+Exact Governed Scope: skills/end-to-end-verification/SKILL.md only.
+
+Supported Regeneration Boundary: Configured generated mirrors may be regenerated from this approved source without a second definition approval.
+
+Unattended Boundary: Do not mutate the skill, approval record, probe, or generated mirrors until approval is recorded and the supported pre-mutation check returns ALLOWED.
 
 ## Summary
 
