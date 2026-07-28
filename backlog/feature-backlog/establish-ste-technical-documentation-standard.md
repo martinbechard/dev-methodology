@@ -327,3 +327,16 @@ git diff --unified=8 6affa81cccc7fca4b8ce8ed4045a5139c18a7654 a83eae77b1e5a0001d
 - Scope Decision: Neither source definition changed, and this STE work item does not authorize the two fixture repairs. Keep the repairs outside this delivery.
 - Next Action: The original coder must remove or split the unrelated fixture repairs, regenerate only STE-owned outputs, and report the pre-existing generator declarations separately without repairing unrelated definitions.
 - Lifecycle: This attached defect does not create a new implementation task, change this feature's Running state, or grant dispatch authority.
+
+## Current-Main Integration Preparation
+
+- Status: Running remains unchanged.
+- Accepted Candidate Commit: a4165c21f464e0cf74d72c6f81b7a64d49c90f62.
+- Candidate Branch: `codex/establish-ste-technical-documentation-standard`.
+- Candidate Worktree: `/Users/martinbechard/dev/dev-methodology/.worktrees/establish-ste-technical-documentation-standard`; clean when accepted.
+- Phase: Current-main integration preparation.
+- Independent Review: Fresh Dev Code Reviewer verdict GOOD with no findings. Fresh Methodology Artifact Reviewer verdict GOOD with no findings.
+- Independent Verification: Dev Verifier disposition READY. It passed 35 contract, evaluation, and explorer tests; 9 focused bundle and documentation tests; and 14 of 14 approved definition checks. Generator, metadata, hierarchy, YAML, Python compile, and diff checks were green. Semantic mutations were caught.
+- Verification Context: Structural and declaration totals were 29/127 versus 28/126. Baseline debt remains in `dev-skill-lint-reviewer` and `backlog-crisis-mode`; no candidate-specific blocker was found.
+- Next Owner And Action: The root Dev Orchestrator must create a fresh integration branch from current main and apply only the accepted STE content.
+- Claim Evidence: `record-ste-integration-phase-019fa9be`; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 11366c84-c930-4e1a-94d3-e3d164e6a346; claimed 2026-07-28T18:30:46.080325Z. Release evidence follows the provider commit.
