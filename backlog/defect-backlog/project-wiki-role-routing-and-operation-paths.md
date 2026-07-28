@@ -1,6 +1,6 @@
 # Restore role-owned wiki verification routing and portable operation paths
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/project-wiki-role-routing-and-operati
 
 Completion: direct-main
 
-Owner: Unowned pending root acceptance
+Owner: Root Dev Orchestrator 019faa18-fe86-7110-9b9e-c7be3bdc8888
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -22,9 +22,19 @@ Dispatch Time: 2026-07-28T18:56:59Z
 
 Intended Root Role: Dev Orchestrator
 
-Runtime Thread: Pending canonical child Thread creation after this durable reservation.
+Runtime Thread: 019faa18-fe86-7110-9b9e-c7be3bdc8888
 
-Root Agent Task: Pending canonical root Dev Orchestrator acceptance.
+Root Agent Task: 019faa18-fe86-7110-9b9e-c7be3bdc8888
+
+Branch: codex/project-wiki-role-routing-operation-paths-019faa18
+
+Worktree: /Users/martinbechard/.codex/worktrees/4713/dev-methodology
+
+Phase: Read-only analysis pending governed-definition approval determination.
+
+Started At: 2026-07-28T19:07:00Z
+
+Claim Evidence: running-project-wiki-role-routing-operation-paths-019faa18-recovery; SHARED_CHECKOUT_ACQUIRED; claim event e64f1eb5-10e8-417f-980b-9e8e8b818b7e; recovery notification followed prior DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED event 38ae895b-7bfa-4366-86bc-a0c17bfa5be9.
 
 Next Lifecycle Owner: Root Dev Orchestrator
 
