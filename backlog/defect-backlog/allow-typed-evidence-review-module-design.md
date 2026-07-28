@@ -1,6 +1,6 @@
 # Allow typed evidence in module-design review checklists
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -34,6 +34,7 @@ Owner: Root Dev Orchestrator
 - Worktree: /Users/martinbechard/.codex/worktrees/e3a5/dev-methodology.
 - Phase: Approved governed-scope preflight and candidate implementation.
 - Accepted Ownership Evidence: SHARED_CHECKOUT_ACQUIRED claim accept-running-module-design-approved-019faa83; incarnation 9fc69adb-2c7d-474b-a972-61af3bbae072; claim journal event f90d1c4b-54a2-4513-9f24-cbc2d19bdc31; parent resumption commit 0a306a8a8a980441cd3d52aa72d7f75eff06107b; Starting reservation commit 41faaff1f90168c532123031e787c1643342bb1d.
+- Status Correction Evidence: SHARED_CHECKOUT_ACQUIRED claim correct-running-status-module-design-019faa83; incarnation c26dae49-984b-4484-be9f-dce3b2dc69fe; claim journal event 689ddfae-d06d-4cfa-a96d-dec2fed3b75d; correction reconciled the required Running status with the accepted ownership record.
 
 ## User Action Required Resolution
 
