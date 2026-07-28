@@ -1,6 +1,6 @@
 # Stop UX review from performing runtime technology routing
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -9,6 +9,24 @@ Provider: file
 Provider Reference: backlog/defect-backlog/stop-ux-review-runtime-technology-routing.md
 
 Completion: direct-main
+
+Owner: Unowned
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
+
+Launch Reservation: reserve-six-ready-defects-019fa9bb
+
+Normalized Objective: Stop UX review from performing runtime technology routing.
+
+Dispatch Time: 2026-07-28T19:19:58Z
+
+Intended Root Role: Dev Orchestrator
+
+Runtime Thread: Pending runtime creation
+
+Root Agent Task: Pending runtime acceptance
+
+Next Lifecycle Owner: Root Dev Orchestrator
 
 ## Summary
 
