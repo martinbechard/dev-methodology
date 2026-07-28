@@ -1,6 +1,6 @@
 # Allow typed evidence in unit-test-plan review checklists
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-unit-test
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -24,13 +24,19 @@ Dispatch Time: 2026-07-28T20:53:27Z
 
 Intended Root Role: Dev Orchestrator
 
-Runtime Thread: Pending
+Runtime Thread: 019faa83-d3aa-7c61-a6fb-aec4584086bb
 
-Root Agent Task: Pending
+Root Agent Task: 019faa83-d3aa-7c61-a6fb-aec4584086bb
 
-Phase: Ready -> Starting reserved by the parent Dev Backlog Coordinator; pending root Dev Orchestrator acceptance.
+Branch: codex/allow-typed-evidence-review-unit-test-plan
 
-Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim reserve-six-ready-refill-unit-test-plan-019fa9bb-retry; acquisition journal event 3f94a858-6d88-454e-82c0-73fe2ddd1e10.
+Worktree: /Users/martinbechard/.codex/worktrees/9beb/dev-methodology
+
+Phase: authority/preflight investigation
+
+Started At: 2026-07-28T21:00:28Z
+
+Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim accept-running-unit-test-plan-019faa83; acquisition journal event e34a3ba4-2923-49f2-a37b-5f71cee17153. Live claim status immediately before acceptance also showed the unrelated recovery claim document-outline-skill-file-019fa9bf owning only .agents/skills/create-document-outline/skill.md and no overlapping path; separate claim accept-running-module-design-019faa83 owns only backlog/defect-backlog/allow-typed-evidence-review-module-design.md and also does not overlap this provider file.
 
 ## Summary
 
