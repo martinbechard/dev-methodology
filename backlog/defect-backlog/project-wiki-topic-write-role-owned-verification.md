@@ -1,6 +1,6 @@
 # Defer verifier orchestration to conceptual roles and resolve writer helper commands
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/project-wiki-topic-write-role-owned-v
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Root Dev Orchestrator
 
 ## Current Starting Reservation
 
@@ -23,6 +23,21 @@ Owner: Parent Dev Backlog Coordinator dispatch reservation
 - Canonical Runtime Thread and Root Agent Task: 019faa19-0275-7210-aaf6-45931b8079ab.
 - Observed Launch Evidence: The existing canonical work-item Thread is preserved for resumption. No replacement Thread is authorized.
 - Starting -> Running Requirement: The preserved root Dev Orchestrator must accept this same Thread and atomically record Starting -> Running with canonical identity, branch, worktree, and accepted ownership evidence before repository mutation.
+
+## Current Running Acceptance
+
+- Transition: Starting -> Running.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread and Root Agent Task: 019faa19-0275-7210-aaf6-45931b8079ab.
+- Owner: Root Dev Orchestrator.
+- Accepted At: 2026-07-28T23:57:30Z.
+- Branch: codex/project-wiki-topic-write-role-owned-verification-019faa19.
+- Worktree: /Users/martinbechard/.codex/worktrees/9a08/dev-methodology.
+- Phase: Exact approval-record preflight then bounded implementation.
+- Approved Governed Scope: skills/project-wiki-topic-write/SKILL.md only.
+- Approval Gate: No governed mutation may occur until the exact-scope approval record passes the supported pre-mutation check.
+- Provider-Mutation Claim Evidence: starting-running-project-wiki-topic-write-role-owned-verification-approved-retry-019faa19 acquired by dev-backlog-steward for this exact backlog file; claim outcome SHARED_CHECKOUT_ACQUIRED, claim event f2852e4f-8f77-41cf-ba53-5bd7034c3a2f, incarnation cafd5d3e-b40d-4dda-b0a4-ecd0fea8f1b7.
+- Retry Recovery History: The prior exact claim attempt received DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED, event 338dcf9a-7dec-4109-b241-e96b9642e491, with no claim or provider mutation. Earlier stale-baton reconciliation expected 03a9a8325731f2c631c9fb095efc6e5d4683e539 but observed d2aecb0a6216786f105aed7a7dd8e13930724dae with live project-wiki-template-resolution-integration-019faa18, also with no claim or provider mutation. A later clean reconciliation at 46db574d2ec01634b83fa350ca62e0917a69e580 observed nonoverlapping integrate-project-wiki-role-routing-019faa18, also with no claim or provider mutation.
 
 ## User Action Required Resolution
 
@@ -47,7 +62,7 @@ Runtime Thread: 019faa19-0275-7210-aaf6-45931b8079ab
 
 Root Agent Task: 019faa19-0275-7210-aaf6-45931b8079ab
 
-Next Lifecycle Owner: Parent Dev Backlog Coordinator
+Next Lifecycle Owner: Root Dev Orchestrator
 
 ## Running Acceptance
 
