@@ -1,6 +1,6 @@
 # Establish The STE Technical Documentation Standard
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -8,7 +8,7 @@ Provider: file
 
 Provider Reference: backlog/feature-backlog/establish-ste-technical-documentation-standard.md
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Dev Orchestrator 019fa9be-0083-7542-973f-af103c0c45a5
 
 ## Current Starting Reservation
 
@@ -21,6 +21,23 @@ Owner: Parent Dev Backlog Coordinator dispatch reservation
 - Canonical Runtime Thread and Root Agent Task: 019fa9be-0083-7542-973f-af103c0c45a5.
 - Observed Launch Evidence: The existing canonical work-item Thread is preserved for resumption. No replacement Thread is authorized.
 - Starting -> Running Requirement: The preserved root Dev Orchestrator must accept this same Thread and atomically record Starting -> Running with canonical identity, branch, worktree, and accepted ownership evidence before repository mutation.
+
+## Current Running Acceptance
+
+- Transition: Starting -> Running.
+- Accepted At: 2026-07-28T23:07:11.558256Z.
+- Canonical Work-Item Thread: 019fa9be-0083-7542-973f-af103c0c45a5.
+- Canonical Root Agent Task: 019fa9be-0083-7542-973f-af103c0c45a5.
+- Owner: Dev Orchestrator 019fa9be-0083-7542-973f-af103c0c45a5.
+- Parent Coordinator Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Acceptance Evidence: The preserved root Dev Orchestrator accepted the parent-owned reservation for this same canonical Thread. No replacement Thread is authorized.
+- Original Delivery Evidence: Candidate branch `codex/establish-ste-technical-documentation-standard` and worktree `/Users/martinbechard/dev/dev-methodology/.worktrees/establish-ste-technical-documentation-standard` remain clean at accepted candidate a4165c21f464e0cf74d72c6f81b7a64d49c90f62.
+- Integration Evidence: Integration branch `codex/establish-ste-technical-documentation-standard-integration` and worktree `/Users/martinbechard/dev/dev-methodology/.worktrees/establish-ste-technical-documentation-standard-integration` remain clean at 79a7be438ed51f503dd33f01f0c8e97b56d60709.
+- Approval Provenance: The direct user answer `ok I approve` is accepted only for the 14 previously enumerated governed definition paths. No scope expansion is authorized.
+- Preserved Gates: Both independent reviews remain GOOD. Dev Verifier remains READY. Preserve all exclusions and the baseline debt in `dev-skill-lint-reviewer` and `backlog-crisis-mode`.
+- Current Phase: Rerun all 14 exact definition preflights in the preserved integration worktree. Then apply accepted content to the current main-derived integration state, regenerate, review, verify, and complete direct-main delivery.
+- Execution Boundary: Do not mutate any governed definition before every exact preflight returns ALLOWED_APPROVED_DEFINITION_CHANGE. Stop on any rejection or claim conflict.
+- Claim Evidence: `ste-starting-running-019fa9be`; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event be27ab6d-4eaf-49aa-9587-86b90a8a2aae; claimed 2026-07-28T23:07:11.558256Z. Release follows the provider commit.
 
 ## User Action Required Resolution
 
