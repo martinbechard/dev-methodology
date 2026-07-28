@@ -1,6 +1,6 @@
 # Allow typed evidence in high-level-design review checklists
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-high-leve
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -24,13 +24,15 @@ Dispatch Time: 2026-07-28T20:53:27Z
 
 Intended Root Role: Dev Orchestrator
 
-Runtime Thread: Pending
+Runtime Thread: 019faa83-9a42-7e11-9c24-207fde14359b
 
-Root Agent Task: Pending
+Root Agent Task: 019faa83-9a42-7e11-9c24-207fde14359b
 
-Phase: Ready -> Starting reserved by the parent Dev Backlog Coordinator; pending root Dev Orchestrator acceptance.
+Phase: Starting -> Running accepted by the root Dev Orchestrator before implementation.
 
-Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim reserve-six-ready-refill-high-level-design-019fa9bb-retry; acquisition journal event 969dc859-f1ca-4b19-8ced-ae084cbca933.
+Started At: 2026-07-28T21:00:15Z
+
+Claim Evidence: Reservation claim SHARED_CHECKOUT_ACQUIRED reserve-six-ready-refill-high-level-design-019fa9bb-retry, acquisition journal event 969dc859-f1ca-4b19-8ced-ae084cbca933. Acceptance claim SHARED_CHECKOUT_ACQUIRED accept-running-high-level-design-019faa83, acquisition journal event 7dc68740-6349-428b-bb6d-5f235b8aba09; backlog-mutation:primary extension journal event e4c5e9b4-40c2-47cc-86f1-fc1bf6d2812c.
 
 ## Summary
 
