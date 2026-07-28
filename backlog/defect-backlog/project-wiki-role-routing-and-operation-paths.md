@@ -1,6 +1,6 @@
 # Restore role-owned wiki verification routing and portable operation paths
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/project-wiki-role-routing-and-operati
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator dispatch reservation
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -30,7 +30,7 @@ Branch: codex/project-wiki-role-routing-operation-paths-019faa18
 
 Worktree: /Users/martinbechard/.codex/worktrees/4713/dev-methodology
 
-Phase: Ready for parent dispatch reservation; preserved canonical root must accept Starting -> Running before repository mutation.
+Phase: Starting; awaiting preserved root Dev Orchestrator acceptance before repository mutation.
 
 Started At: 2026-07-28T19:07:00Z
 
@@ -57,6 +57,24 @@ Exclusions Preserved: No wiki-topic-verifier, wiki-writer, project-wiki-topic-wr
 Approval-Record and Preflight Requirement: Before any governed-definition mutation, create a delegated-user-direction approval record covering both exact paths and run scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change separately for each path using that record.
 
 Preserved Canonical Thread and Root Agent Task: 019faa18-fe86-7110-9b9e-c7be3bdc8888.
+
+## Starting Reservation
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Launch Reservation: reserve-four-approved-ready-starting-project-wiki-role-routing-019fa9bb.
+
+Dispatch Time: 2026-07-28T22:09:28Z.
+
+Normalized Objective: Restore role-owned wiki verification routing and portable operation paths.
+
+Intended Root Role: Dev Orchestrator.
+
+Canonical Runtime Thread and Root Agent Task: 019faa18-fe86-7110-9b9e-c7be3bdc8888.
+
+Observed Launch Evidence: Existing canonical work-item Thread is preserved for resumption; no replacement Thread is authorized.
+
+Starting -> Running Requirement: The preserved root Dev Orchestrator must accept this same Thread and atomically record Starting -> Running with the canonical identity, branch, worktree, and accepted ownership evidence before repository mutation.
 
 ## Summary
 

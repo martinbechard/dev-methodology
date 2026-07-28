@@ -1,6 +1,6 @@
 # Prevent sensitive data retention in tool-runtime logs and traces
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/prevent-sensitive-tool-runtime-log-an
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator dispatch reservation
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -30,7 +30,7 @@ Branch: codex/prevent-sensitive-tool-runtime-retention-019faa2d
 
 Worktree: /Users/martinbechard/.codex/worktrees/7f70/dev-methodology
 
-Phase: Ready for parent dispatch reservation; preserved canonical root must accept Starting -> Running before repository mutation.
+Phase: Starting; awaiting preserved root Dev Orchestrator acceptance before repository mutation.
 
 Started At: 2026-07-28T19:27:04.520990Z
 
@@ -57,6 +57,24 @@ Exclusions Preserved: No metadata, other governed skill or agent definition, gen
 Approval-Record and Preflight Requirement: Before any governed-definition mutation, create a delegated-user-direction approval record covering skills/tool-runtime/SKILL.md and run scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change for that path using the record.
 
 Preserved Canonical Thread and Root Agent Task: 019faa2d-2ffa-75c0-80d5-e3d3b9f4a851.
+
+## Starting Reservation
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Launch Reservation: reserve-four-approved-ready-starting-tool-runtime-retention-019fa9bb.
+
+Dispatch Time: 2026-07-28T22:09:28Z.
+
+Normalized Objective: Prevent sensitive data retention in tool-runtime logs and traces.
+
+Intended Root Role: Dev Orchestrator.
+
+Canonical Runtime Thread and Root Agent Task: 019faa2d-2ffa-75c0-80d5-e3d3b9f4a851.
+
+Observed Launch Evidence: Existing canonical work-item Thread is preserved for resumption; no replacement Thread is authorized.
+
+Starting -> Running Requirement: The preserved root Dev Orchestrator must accept this same Thread and atomically record Starting -> Running with the canonical identity, branch, worktree, and accepted ownership evidence before repository mutation.
 
 ## User Action Required
 

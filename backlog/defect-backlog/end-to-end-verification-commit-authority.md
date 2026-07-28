@@ -1,6 +1,6 @@
 # Route E2E evidence delivery through Commit authority
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/end-to-end-verification-commit-author
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator dispatch reservation
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -30,7 +30,7 @@ Branch: codex/end-to-end-verification-commit-authority
 
 Worktree: /Users/martinbechard/.codex/worktrees/06cb/dev-methodology
 
-Phase: Ready for parent dispatch reservation; preserved canonical root must accept Starting -> Running before repository mutation.
+Phase: Starting; awaiting preserved root Dev Orchestrator acceptance before repository mutation.
 
 Started At: 2026-07-28T18:41:57Z
 
@@ -63,6 +63,24 @@ Preserved Test-Only Candidate: fabb6277f3d2f0f5eb296c1e605cff9d83582aa4.
 Approval-Record and Preflight Requirement: Before any governed-definition mutation, create a delegated-user-direction approval record covering skills/end-to-end-verification/SKILL.md and run scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change for that path using the record.
 
 Preserved Canonical Thread and Root Agent Task: 019fa9f9-33ef-7c73-872e-bd0bfce5e7bd.
+
+## Starting Reservation
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Launch Reservation: reserve-four-approved-ready-starting-e2e-commit-authority-019fa9bb.
+
+Dispatch Time: 2026-07-28T22:09:28Z.
+
+Normalized Objective: Make end-to-end verification deliver evidence through the selected Commit workflow instead of unconditionally creating a commit.
+
+Intended Root Role: Dev Orchestrator.
+
+Canonical Runtime Thread and Root Agent Task: 019fa9f9-33ef-7c73-872e-bd0bfce5e7bd.
+
+Observed Launch Evidence: Existing canonical work-item Thread is preserved for resumption; no replacement Thread is authorized.
+
+Starting -> Running Requirement: The preserved root Dev Orchestrator must accept this same Thread and atomically record Starting -> Running with the canonical identity, branch, worktree, and accepted ownership evidence before repository mutation.
 
 ## User Action Required
 

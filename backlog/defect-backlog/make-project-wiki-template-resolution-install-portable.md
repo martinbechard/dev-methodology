@@ -1,6 +1,6 @@
 # Resolve the project-wiki template from the installed skill catalog
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/make-project-wiki-template-resolution
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator dispatch reservation
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -30,7 +30,7 @@ Canonical Branch: codex/project-wiki-template-resolution-portable-019faa18
 
 Assigned Worktree: /Users/martinbechard/.codex/worktrees/c5e3/dev-methodology
 
-Current Phase: Ready for parent dispatch reservation; preserved canonical root must accept Starting -> Running before repository mutation.
+Current Phase: Starting; awaiting preserved root Dev Orchestrator acceptance before repository mutation.
 
 Started At: 2026-07-28T19:03:10Z
 
@@ -57,6 +57,24 @@ Exclusions Preserved: No review-routing change, other skill or agent definition,
 Approval-Record and Preflight Requirement: Before any governed-definition mutation, create a delegated-user-direction approval record covering skills/project-wiki-create/SKILL.md and run scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change for that path using the record.
 
 Preserved Canonical Thread and Root Agent Task: 019faa18-fde1-7690-ba81-7eb1a23bf4cf.
+
+## Starting Reservation
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Launch Reservation: reserve-four-approved-ready-starting-project-wiki-template-019fa9bb.
+
+Dispatch Time: 2026-07-28T22:09:28Z.
+
+Normalized Objective: Resolve the project-wiki template from the installed skill catalog.
+
+Intended Root Role: Dev Orchestrator.
+
+Canonical Runtime Thread and Root Agent Task: 019faa18-fde1-7690-ba81-7eb1a23bf4cf.
+
+Observed Launch Evidence: Existing canonical work-item Thread is preserved for resumption; no replacement Thread is authorized.
+
+Starting -> Running Requirement: The preserved root Dev Orchestrator must accept this same Thread and atomically record Starting -> Running with the canonical identity, branch, worktree, and accepted ownership evidence before repository mutation.
 
 ## Summary
 
