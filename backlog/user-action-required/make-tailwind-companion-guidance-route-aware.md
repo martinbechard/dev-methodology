@@ -1,12 +1,12 @@
 # Make Tailwind companion guidance conditional on active-scope routing
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/make-tailwind-companion-guidance-route-aware.md
+Provider Reference: backlog/user-action-required/make-tailwind-companion-guidance-route-aware.md
 
 Completion: direct-main
 
@@ -32,11 +32,11 @@ Branch: codex/tailwind-companion-route-aware-019faa83
 
 Worktree: /Users/martinbechard/.codex/worktrees/41ca/dev-methodology
 
-Phase: Running acceptance; read-only defect investigation pending definition-authority determination.
+Phase: User Action Required; exact governed-definition approval is required before any source mutation.
 
 Started At: 2026-07-28T21:00:12Z
 
-Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim accept-running-tailwind-019faa83; acquisition journal event bafae64e-bed6-4c26-aa1d-32a9a005094a. Supersedes only the prior Starting reservation claim evidence: SHARED_CHECKOUT_ACQUIRED claim reserve-six-ready-refill-tailwind-019fa9bb-retry; acquisition journal event d7b2246e-4e09-43df-a8f7-a5a04455a0d9.
+Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim move-user-action-tailwind-019faa83; acquisition journal event 08db59f8-b414-418e-b747-92e3a7ded6ef. Preserved Running acceptance evidence: provider commit 48ec224dbc8a7981a0ea234990d3de1c599f0bad; SHARED_CHECKOUT_ACQUIRED claim accept-running-tailwind-019faa83, acquisition journal event bafae64e-bed6-4c26-aa1d-32a9a005094a, and release journal event 1f9c568f-a28e-48bf-a47a-fe4bbfd2e084. Preserved Starting reservation evidence: SHARED_CHECKOUT_ACQUIRED claim reserve-six-ready-refill-tailwind-019fa9bb-retry; acquisition journal event d7b2246e-4e09-43df-a8f7-a5a04455a0d9.
 
 ## Summary
 
@@ -74,7 +74,19 @@ None
 
 ## Open Questions
 
-None
+Do you explicitly approve changing exactly the governed skill definition skills/tailwind-design-system/SKILL.md so its Tailwind companion guidance uses only framework, renderer, and test skills already routed into the active scope?
+
+## User Action Required
+
+Why The User Owns This: The requested correction changes exactly one governed skill definition. Project policy requires explicit, scope-specific user approval before that canonical source may be changed. The supported pre-mutation check returned BLOCKED_APPROVAL_REQUIRED with exit 3.
+
+Approve: Permits an exact provenance approval record, the supported pre-mutation check, a narrow canonical source correction, supported same-category regeneration, and focused Tailwind Vite, Next.js, and unrouted-test verification.
+
+Defer: Moves or keeps this recognized work non-dispatchable until the user is ready, with no source mutation.
+
+Decline: Leaves the definition unchanged and routes the item to an authorized terminal abandonment or failure disposition.
+
+Unattended Stop: No source, generated mirror, test, candidate, review, verification, integration, or completion mutation may continue. Only lifecycle recording and read-only preservation are permitted.
 
 ## Notes
 
