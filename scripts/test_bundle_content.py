@@ -4036,6 +4036,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("Question:", checklist_text)
                 self.assertIn("Status:", checklist_text)
                 if skill_name in (
+                    "review-architecture",
                     "review-functional-spec",
                     "review-high-level-design",
                 ):
@@ -4050,6 +4051,7 @@ class BundleContentTests(unittest.TestCase):
     def test_typed_review_evidence_covers_each_completion_case(self) -> None:
         """Keep typed review evidence honest when literal source text is unavailable."""
         for skill_name, review_target in (
+            ("review-architecture", "architecture"),
             ("review-functional-spec", "functional-spec"),
             ("review-high-level-design", "high-level-design"),
         ):
