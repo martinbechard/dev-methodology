@@ -1,16 +1,16 @@
 # Separate distributed methodology guidance from repository maintenance procedures
 
-Status: User Action Required
+Status: Abandoned
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/separate-distributed-methodology-from-repository-maintenance.md
+Provider Reference: backlog/failed-backlog/defects/separate-distributed-methodology-from-repository-maintenance.md
 
 Completion: direct-main
 
-Owner: Unowned pending user approval
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -26,7 +26,7 @@ Runtime Thread: 019fa9f9-60b1-74a2-998b-6b7efc913f02
 
 Root Agent Task: 019fa9f9-60b1-74a2-998b-6b7efc913f02
 
-Next Lifecycle Owner: Parent Dev Backlog Coordinator
+Next Lifecycle Owner: None; terminal archive
 
 ## Running Acceptance
 
@@ -58,6 +58,24 @@ Next Lifecycle Owner: Parent Dev Backlog Coordinator
 - Focused Verification Evidence: Three focused tests reported OK during the read-only analysis.
 - Candidate Commit: None.
 - Provider-Mutation Claim Evidence: uar-transition-019fa9f9-60b1-74a2-998b-6b7efc913f02; acquire outcome SHARED_CHECKOUT_ACQUIRED; acquire event 6152a8b5-0928-4ee1-88b9-32c747636027; destination extension outcome EXTENDED; extension event 777c27d4-9a02-4c96-ba6c-50d878a3b43d.
+
+## Abandoned Evidence
+
+- Transition: User Action Required -> Abandoned.
+- Abandonment Authority: The user declined the requested governed definition and metadata change.
+- User Answer: Decline - this is the skill that is declaring those scripts.
+- User Answer Provenance: User message in canonical Thread 019fa9f9-60b1-74a2-998b-6b7efc913f02 on 2026-07-28.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fa9f9-60b1-74a2-998b-6b7efc913f02.
+- Canonical Root Agent Task Id: 019fa9f9-60b1-74a2-998b-6b7efc913f02.
+- Preserved Delivery Branch: codex/separate-distributed-methodology-maintenance-019fa9f9.
+- Preserved Delivery Worktree: /Users/martinbechard/.codex/worktrees/2a2c/dev-methodology.
+- Preserved Read-Only Evidence: The five-marker portability finding, BLOCKED_APPROVAL_REQUIRED preflight, focused three-test OK evidence, and no candidate commit remain recorded above.
+- Post-Answer Mutation Proof: No definition, metadata, generated-output, source, or provider mutation followed the user answer before this authorized terminal provider mutation.
+- Candidate Commit: None.
+- Terminal Provider-Mutation Claim Evidence: abandon-transition-019fa9f9-60b1-74a2-998b-6b7efc913f02; acquire outcome SHARED_CHECKOUT_ACQUIRED; acquire event d04edd91-a93c-4366-91f0-3b0d4fae1cc3; destination extension outcome EXTENDED; extension event f6bf7fec-dddf-4a8a-8672-e842f410a947.
+- Completed At: 2026-07-28T21:42:17Z.
+- Terminal Archive Path: backlog/failed-backlog/defects/separate-distributed-methodology-from-repository-maintenance.md.
 
 ## Summary
 
