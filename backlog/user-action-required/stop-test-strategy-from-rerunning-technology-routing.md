@@ -1,12 +1,12 @@
 # Stop test-strategy from rerunning technology-skill routing
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/stop-test-strategy-from-rerunning-technology-routing.md
+Provider Reference: backlog/user-action-required/stop-test-strategy-from-rerunning-technology-routing.md
 
 Completion: direct-main
 
@@ -26,13 +26,13 @@ Runtime Thread: 019faa2d-300b-7012-9a14-03dc3039a7ac
 
 Root Agent Task: 019faa2d-300b-7012-9a14-03dc3039a7ac
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Next Lifecycle Owner: User
 
 Canonical Branch: codex/stop-test-strategy-routing-019faa2d
 
 Canonical Worktree: /Users/martinbechard/.codex/worktrees/8c28/dev-methodology
 
-Current Phase: approval-boundary analysis / failing-test preparation
+Current Phase: Waiting for User / approval
 
 Started At: 2026-07-28T19:27:05Z
 
@@ -76,7 +76,31 @@ None
 
 ## Open Questions
 
-None.
+Do you approve changing only skills/test-strategy/SKILL.md so ordinary test-strategy work consumes the project-configured active-scope technology skillset, does not rerun or infer technology routing from repository evidence, and refers missing or stale routing caused by genuine configuration changes to Project Configurator?
+
+## User Action Required
+
+Question: Do you approve changing only skills/test-strategy/SKILL.md so ordinary test-strategy work consumes the project-configured active-scope technology skillset, does not rerun or infer technology routing from repository evidence, and refers missing or stale routing caused by genuine configuration changes to Project Configurator?
+
+Why Input Is Required: Only the user can grant exact governed skill-definition mutation approval and provenance.
+
+Unattended Work Boundary: All implementation and delivery activities stop. Only provider coordination and read-only preservation may continue.
+
+Resolution: Pending user answer.
+
+## Approval Boundary
+
+Disposition: BLOCKED_APPROVAL_REQUIRED.
+
+Governed Scope Requiring Approval: skills/test-strategy/SKILL.md only.
+
+Supported Generated Effects After an Approved Canonical Edit: generated/adapters/** and design/generated/skill-definitions.js, regenerated through the supported source-owned generator; never hand-edit a generated mirror.
+
+Excluded Before Approval: No governed definition mutation, invented-provenance approval record, test mutation, generator or regeneration, generated-mirror mutation, candidate production, delivery, or completion.
+
+Evidence: skills/test-strategy/SKILL.md line 10 consumes routed guidance, while workflow step 3 routes specialized skills from repository evidence. Accepted lint evidence is evals/results/2026-07-28-methodology-skill-lint.md lines 371-381. AGENTS.md and PROJECT.yaml require explicit scope-specific user approval before a governed definition mutation.
+
+Same-Thread Resumption: Record the exact answer and provenance once. An approved answer moves this item to Ready in the typed defect path, then the Coordinator records Ready to Starting for this same canonical Thread; the same root Dev Orchestrator accepts it and its sole Steward records Starting to Running. Run the supported pre-mutation check with the exact approval record before any definition edit.
 
 ## Notes
 
