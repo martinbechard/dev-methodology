@@ -1,6 +1,6 @@
 # Run Skill Lint Across Methodology Skills
 
-Status: Starting
+Status: Running
 
 Type: Analysis
 
@@ -10,17 +10,19 @@ Provider Reference: backlog/analysis-backlog/run-skill-lint-across-methodology.m
 
 Completion: direct-main
 
-## Starting Reservation
+## Running Acceptance
 
-- Transition: Ready -> Starting.
+- Transition: Starting -> Running.
 - Parent Coordination Thread: /root.
-- Reservation: One parent-owned launch reservation.
-- Normalized Objective: Run skill lint across methodology skills.
-- Dispatched At: 2026-07-28T16:28:48Z.
-- Intended Root Role: Dev Orchestrator.
-- Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
-- Owner: Unowned pending root Dev Orchestrator acceptance.
-- Next Lifecycle Owner: The root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
+- Canonical Work-Item Thread: /root/skill_lint_methodology.
+- Canonical Root Agent Task: /root/skill_lint_methodology.
+- Owner: Root Dev Orchestrator for the canonical work-item Thread.
+- Accepted At: 2026-07-28T16:33:29Z.
+- Branch: codex/run-skill-lint-across-methodology-019f.
+- Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/run-skill-lint-across-methodology-019f.
+- Reserved Base/Main Commit: 6affa81cccc7fca4b8ce8ed4045a5139c18a7654.
+- Implementation Claim Evidence: No implementation claim was required or acquired; the live registry was empty at acceptance.
+- Provider-Mutation Claim Evidence: skill-lint-running-lifecycle-20260728 acquired by Dev Backlog Steward for this file-only transition.
 
 ## Summary
 
