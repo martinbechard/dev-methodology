@@ -1,16 +1,16 @@
 # Replace the structured-design chain-of-thought output contract
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/replace-structured-design-chain-of-thought-output-contract.md
+Provider Reference: backlog/defect-backlog/replace-structured-design-chain-of-thought-output-contract.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator task 019faa19-2538-7cd0-832e-62b428886363
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -44,7 +44,7 @@ Why User Approval Is Required: Both exact paths are governed skill definitions. 
 
 Unattended Work Boundary: Unattended governed-definition mutation must stop while this approval is pending. Read-only evidence preservation may continue.
 
-Resolution: Pending user approval.
+Resolution: Approved on 2026-07-28. Exact user answer: I approve.
 
 ## Governed Definition Approval Preflight
 
@@ -52,6 +52,18 @@ Safe Intent: Replace public CHAIN-OF-THOUGHT contract and companion review langu
 
 - skills/structured-design/SKILL.md: BLOCKED_APPROVAL_REQUIRED.
 - skills/review-structured-artifact/SKILL.md: BLOCKED_APPROVAL_REQUIRED.
+
+## Resumption Evidence
+
+Transition: User Action Required to Ready recorded on 2026-07-28.
+
+Answer Provenance: Exact answer I approve in preserved canonical Runtime Thread 019faa19-2538-7cd0-832e-62b428886363 directly after the recorded User Action Required question; routed to Parent Coordination Thread 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Approved Scope and Semantics: skills/structured-design/SKILL.md and skills/review-structured-artifact/SKILL.md only. Replace public CHAIN-OF-THOUGHT language with observable DECISION, EVIDENCE, and UNCERTAINTY artifacts. No other governed definition scope is approved.
+
+Preserved Execution Identity: Runtime Thread and Root Agent Task 019faa19-2538-7cd0-832e-62b428886363; branch codex/replace-structured-design-cot-contract-019faa19; worktree /Users/martinbechard/.codex/worktrees/3d44/dev-methodology; prior lifecycle history remains intact.
+
+Pre-Mutation Requirement: Before any governed definition mutation, create exact approval records for both approved paths and pass the supported definition-change preflight for each path.
 
 ## User Action Required Transition Evidence
 

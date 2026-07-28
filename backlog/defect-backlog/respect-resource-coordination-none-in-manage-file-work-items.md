@@ -1,6 +1,6 @@
 # Make file-provider claim events conditional on configured resource coordination
 
-Status: User Action Required
+Status: Ready
 
 User Question: Do you explicitly approve editing the governed canonical definition skills/manage-file-work-items/SKILL.md to make its provider claim directions conditional for resource coordination agent-claim versus none?
 
@@ -8,11 +8,11 @@ Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/respect-resource-coordination-none-in-manage-file-work-items.md
+Provider Reference: backlog/defect-backlog/respect-resource-coordination-none-in-manage-file-work-items.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -51,6 +51,20 @@ Required After Approval: Record the exact approval evidence for skills/manage-fi
 Approval Scope: skills/manage-file-work-items/SKILL.md
 
 Parent Coordinator Task: 019fa9bb-1423-7e80-bcde-3caa765e3758
+
+Resolution: Approved on 2026-07-28. Exact user direction: The manage-file-work-items skill shouldn't know about agent claims, they are independent concerns that would both be loaded based on the agent and/or project definition, so clean up the manage-file-work-items.md to not have that in one form or another.
+
+## Resumption Evidence
+
+Transition: User Action Required to Ready recorded on 2026-07-28.
+
+Answer Provenance: User message in preserved canonical Runtime Thread 019fa9f9-9548-7853-9fe3-301c76b94b82, routed to Parent Coordination Thread 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Approved Scope and Semantics: skills/manage-file-work-items/SKILL.md only. Remove agent-claim knowledge in every form. Agent-claim remains independently loaded and applied; no other governed definition scope is approved.
+
+Preserved Execution Identity: Runtime Thread and Root Agent Task 019fa9f9-9548-7853-9fe3-301c76b94b82; branch codex/respect-resource-coordination-none-019fa9f9; worktree /Users/martinbechard/.codex/worktrees/c089/dev-methodology; prior lifecycle and recovery history remain intact.
+
+Pre-Mutation Requirement: Before any governed definition mutation, create the exact approval record from this user direction and pass the supported definition-change preflight for skills/manage-file-work-items/SKILL.md.
 
 ## Recovery Evidence
 

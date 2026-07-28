@@ -1,16 +1,16 @@
 # Stop test-strategy from rerunning technology-skill routing
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/stop-test-strategy-from-rerunning-technology-routing.md
+Provider Reference: backlog/defect-backlog/stop-test-strategy-from-rerunning-technology-routing.md
 
 Completion: direct-main
 
-Owner: Dev Orchestrator /root
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -26,7 +26,7 @@ Runtime Thread: 019faa2d-300b-7012-9a14-03dc3039a7ac
 
 Root Agent Task: 019faa2d-300b-7012-9a14-03dc3039a7ac
 
-Next Lifecycle Owner: User
+Next Lifecycle Owner: Parent Dev Backlog Coordinator
 
 Canonical Branch: codex/stop-test-strategy-routing-019faa2d
 
@@ -86,7 +86,7 @@ Why Input Is Required: Only the user can grant exact governed skill-definition m
 
 Unattended Work Boundary: All implementation and delivery activities stop. Only provider coordination and read-only preservation may continue.
 
-Resolution: Pending user answer.
+Resolution: Approved on 2026-07-28. Exact user direction: Just get rid of step 3, don't add that stuff. The skills might be testing skills not necessarily tech skills. Also line 10 is idiotic because the routing is already done implicitly for the testing agent.
 
 ## Approval Boundary
 
@@ -101,6 +101,18 @@ Excluded Before Approval: No governed definition mutation, invented-provenance a
 Evidence: skills/test-strategy/SKILL.md line 10 consumes routed guidance, while workflow step 3 routes specialized skills from repository evidence. Accepted lint evidence is evals/results/2026-07-28-methodology-skill-lint.md lines 371-381. AGENTS.md and PROJECT.yaml require explicit scope-specific user approval before a governed definition mutation.
 
 Same-Thread Resumption: Record the exact answer and provenance once. An approved answer moves this item to Ready in the typed defect path, then the Coordinator records Ready to Starting for this same canonical Thread; the same root Dev Orchestrator accepts it and its sole Steward records Starting to Running. Run the supported pre-mutation check with the exact approval record before any definition edit.
+
+## Resumption Evidence
+
+Transition: User Action Required to Ready recorded on 2026-07-28.
+
+Answer Provenance: User message in preserved canonical Runtime Thread 019faa2d-300b-7012-9a14-03dc3039a7ac, routed to Parent Coordination Thread 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Approved Scope and Semantics: skills/test-strategy/SKILL.md only. Delete current line 10 and Workflow step 3, add no replacement routing language, and mechanically renumber. No other governed definition scope is approved.
+
+Preserved Execution Identity: Runtime Thread and Root Agent Task 019faa2d-300b-7012-9a14-03dc3039a7ac; canonical branch codex/stop-test-strategy-routing-019faa2d; canonical worktree /Users/martinbechard/.codex/worktrees/8c28/dev-methodology; prior lifecycle history remains intact.
+
+Pre-Mutation Requirement: Before any governed definition mutation, create the exact approval record from this user direction and pass the supported definition-change preflight for skills/test-strategy/SKILL.md.
 
 ## Notes
 

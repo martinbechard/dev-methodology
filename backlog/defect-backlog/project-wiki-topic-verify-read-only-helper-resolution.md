@@ -1,12 +1,12 @@
 # Keep topic verification read-only and make helper checks executable
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/project-wiki-topic-verify-read-only-helper-resolution.md
+Provider Reference: backlog/defect-backlog/project-wiki-topic-verify-read-only-helper-resolution.md
 
 Completion: direct-main
 
@@ -26,7 +26,7 @@ Runtime Thread: 019faa18-fde3-7d20-ad68-77bfcf160fbd
 
 Root Agent Task: 019faa18-fde3-7d20-ad68-77bfcf160fbd
 
-Next Lifecycle Owner: User
+Next Lifecycle Owner: Parent Dev Backlog Coordinator
 
 Branch: codex/project-wiki-topic-verify-helper-resolution-019faa18
 
@@ -53,6 +53,20 @@ Exclusions: No approval for any other skill or agent definition, no hand edits t
 Preflight Evidence: Lines 51-52 and 104 use unresolved project-wiki-skill-root. Line 51 authorizes okf-migrate despite the read-only contract on lines 3, 10, and 53. skills/project-wiki/scripts/test_setup_guidance.py currently codifies these defects; its focused 8-test run passed, proving test drift rather than acceptance.
 
 Unattended Stop: No governed definition mutation, candidate production, integration, or completion may continue until approval is recorded and the supported pre-mutation check passes. Read-only evidence already collected is preserved.
+
+Resolution: Approved on 2026-07-28. Exact user answer: ok I approve.
+
+## Resumption Evidence
+
+Transition: User Action Required to Ready recorded on 2026-07-28.
+
+Answer Provenance: Exact answer ok I approve in preserved canonical Runtime Thread 019faa18-fde3-7d20-ad68-77bfcf160fbd directly after the recorded User Action Required question; routed to Parent Coordination Thread 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Approved Scope and Semantics: skills/project-wiki-topic-verify/SKILL.md only. Keep verification strictly read-only and resolve helper commands from the loaded installed or source skill location. Preserve existing exclusions. No other governed definition scope is approved.
+
+Preserved Execution Identity: Runtime Thread and Root Agent Task 019faa18-fde3-7d20-ad68-77bfcf160fbd; branch codex/project-wiki-topic-verify-helper-resolution-019faa18; worktree /Users/martinbechard/.codex/worktrees/5cd1/dev-methodology; prior lifecycle history remains intact.
+
+Pre-Mutation Requirement: Before any governed definition mutation, create the exact approval record from this user direction and pass the supported definition-change preflight for skills/project-wiki-topic-verify/SKILL.md.
 
 ## Summary
 
