@@ -1,6 +1,6 @@
 # Allow typed evidence in unit-test-plan review checklists
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-unit-test
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Dev Orchestrator
 
 ## Current Starting Reservation
 
@@ -53,7 +53,7 @@ Branch: codex/allow-typed-evidence-review-unit-test-plan
 
 Worktree: /Users/martinbechard/.codex/worktrees/9beb/dev-methodology
 
-Phase: Ready for parent dispatch reservation; preserved canonical root must accept Starting -> Running before repository mutation.
+Phase: approved definition preflight and bounded implementation
 
 Started At: 2026-07-28T21:00:28Z
 
@@ -64,6 +64,14 @@ Running Provider Commit: 496c00920a559c11c4b498fa2b833b7c3d7215c0
 Running Claim Release: RELEASED claim accept-running-unit-test-plan-019faa83; release journal event 86e95205-d90e-4a43-92ea-3f8c0f51fabb.
 
 User Action Required Transition Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim user-action-required-unit-test-plan-019faa83; acquisition journal event 96e9b513-95b8-486c-ae30-220245a5b721.
+
+Immutable Starting Provider Commit: f0ae510d1bdf60758a8508bb4ad054d333f694ad
+
+Accepted Ownership Evidence: Dev Orchestrator accepted the preserved canonical Runtime Thread and Root Agent Task 019faa83-d3aa-7c61-a6fb-aec4584086bb for this exact provider item, branch codex/allow-typed-evidence-review-unit-test-plan, and worktree /Users/martinbechard/.codex/worktrees/9beb/dev-methodology. Approved governed scope remains exactly skills/review-unit-test-plan/SKILL.md, with the user-message provenance retained below.
+
+Acceptance Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim accept-running-unit-test-plan-approved-019faa83; acquisition journal event 50325c09-9e29-4842-9fb8-8a336daed34e.
+
+Accepted At: 2026-07-28T23:53:08Z
 
 ## User Action Required
 
