@@ -1,6 +1,6 @@
 # Allow typed evidence in architecture review checklists
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-architect
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Dev Orchestrator
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -28,13 +28,29 @@ Intended Root Role: Dev Orchestrator
 
 Observed Launch Evidence: Parent Dev Backlog Coordinator selected this eligible preserved canonical Thread at 9 Starting-plus-Running items and recorded the tenth-slot reservation before acceptance.
 
-Phase: Starting. The preserved canonical Thread must accept Starting -> Running before any definition, companion, test, generated, or other repository mutation.
+Phase: Approved implementation preflight. No governed definition, companion, test, generated, or other repository mutation has started.
+
+Started At: 2026-07-28T23:13:29.367032Z
 
 Branch: codex/allow-typed-evidence-review-architecture-019faa2d
 
 Worktree: /Users/martinbechard/.codex/worktrees/9954/dev-methodology
 
-Next Lifecycle Owner: root Dev Orchestrator for canonical Runtime Thread 019faa2d-2ffa-75c0-80d5-e3bd4f7a31fa
+Running Acceptance Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim starting-to-running-review-architecture-approved-019faa2d; incarnation d15c010f-8cfb-476a-96f9-26516ba2be80; claim journal event 2cf34c4a-ab28-4355-afd8-1f90212d37f5; exact provider path claimed in the primary main checkout.
+
+Next Lifecycle Owner: Root Dev Orchestrator
+
+## Approved Implementation Preflight
+
+Approved Provenance: Direct user response in canonical Runtime Thread 019faa2d-2ffa-75c0-80d5-e3bd4f7a31fa on 2026-07-28; exact user message: Approved.
+
+Approved Governed Scope: skills/review-architecture/SKILL.md only.
+
+Ordinary Companions: skills/review-architecture/references/review-checklist-architecture.md and focused assertions in scripts/test_bundle_content.py.
+
+Exclusions: No other governed definition; never hand-edit generated mirrors.
+
+Preflight Gate: Before any governed-definition mutation, create the delegated-user-direction approval record and run python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change skills/review-architecture/SKILL.md --approval-record [approval record path].
 
 ## User Action Required Resolution
 
