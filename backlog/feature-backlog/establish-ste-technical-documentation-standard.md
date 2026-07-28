@@ -1,6 +1,6 @@
 # Establish The STE Technical Documentation Standard
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -21,6 +21,19 @@ Completion: direct-main
 - Runtime Thread And Task Id: Pending canonical child task creation by the parent after this durable reservation.
 - Owner: Unowned pending root Dev Orchestrator acceptance.
 - Next Lifecycle Owner: The root Dev Orchestrator must record a distinct Starting -> Running acceptance before repository mutation.
+
+## Running Acceptance
+
+- Transition: Starting -> Running.
+- Canonical Work-Item Thread: /root/ste_technical_documentation.
+- Canonical Root Agent Task Id: /root/ste_technical_documentation.
+- Owner: Dev Orchestrator /root/ste_technical_documentation.
+- Delivery Branch: codex/establish-ste-technical-documentation-standard.
+- Delivery Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/establish-ste-technical-documentation-standard.
+- Phase: Technical documentation standard delivery.
+- Started At: 2026-07-28T16:33:26Z.
+- Started-At Evidence: The canonical root Dev Orchestrator accepted the reserved work item and requested this distinct provider transition.
+- Claim Evidence: ste-running-lifecycle-20260728; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 87e8521b-ebbe-4672-92ea-d80638e0a825; claimed 2026-07-28T16:33:26.656534Z.
 
 ## Summary
 
