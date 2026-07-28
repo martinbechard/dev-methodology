@@ -1,12 +1,12 @@
 # Bound MySQL production verification to safe test environments
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/bound-mysql-production-verification-to-safe-targets.md
+Provider Reference: backlog/user-action-required/bound-mysql-production-verification-to-safe-targets.md
 
 Completion: direct-main
 
@@ -37,6 +37,26 @@ Started At: 2026-07-28T19:03:17Z
 Claim Evidence: running-bound-mysql-production-verification-019faa18 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T19:03:09.767122Z; claim event e9d3d83d-0272-4db2-bb72-6c8c1fdc8d9f.
 
 Next Lifecycle Owner: Root Dev Orchestrator
+
+## User Action Required
+
+Question: Do you approve changing exactly skills/mysql/SKILL.md to bound state-changing MySQL verification to explicitly safe non-production test environments, require separate explicit authority for any production-facing action, and preserve only safely authorized read-only production evidence collection?
+
+Why User Input Is Required: skills/mysql/SKILL.md is a governed skill definition. The supported pre-mutation check returned BLOCKED_APPROVAL_REQUIRED with exit 3 because no explicit, scope-specific user approval record authorizes this definition change.
+
+Resolution: Pending
+
+Exclusions: skills/mysql/agents/openai.yaml, detection metadata, generated mirrors, and every other skill or agent definition.
+
+Unattended Boundary: No approval record or mutation of source, tests, docs, generated outputs, review artifacts, integration, or delivery may occur until approval is durably recorded and this same canonical Thread resumes through User Action Required -> Ready -> Starting -> Running.
+
+## Read-Only Evidence
+
+Affected Governed Definition: skills/mysql/SKILL.md:44
+
+Supported Pre-Mutation Check: BLOCKED_APPROVAL_REQUIRED, exit 3.
+
+Implementation Mutation: None.
 
 ## Summary
 
