@@ -1,12 +1,14 @@
 # Establish The STE Technical Documentation Standard
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/establish-ste-technical-documentation-standard.md
+Provider Reference: backlog/user-action-required/establish-ste-technical-documentation-standard.md
+
+Owner: Unowned
 
 Completion: direct-main
 
@@ -340,3 +342,35 @@ git diff --unified=8 6affa81cccc7fca4b8ce8ed4045a5139c18a7654 a83eae77b1e5a0001d
 - Verification Context: Structural and declaration totals were 29/127 versus 28/126. Baseline debt remains in `dev-skill-lint-reviewer` and `backlog-crisis-mode`; no candidate-specific blocker was found.
 - Next Owner And Action: The root Dev Orchestrator must create a fresh integration branch from current main and apply only the accepted STE content.
 - Claim Evidence: `record-ste-integration-phase-019fa9be`; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 11366c84-c930-4e1a-94d3-e3d164e6a346; claimed 2026-07-28T18:30:46.080325Z. Release evidence follows the provider commit.
+
+## User Action Required
+
+Do you explicitly approve integration mutation of exactly the 14 governed definition paths listed below for accepted candidate a4165c21f464e0cf74d72c6f81b7a64d49c90f62?
+
+- `adapters/codex/model-profiles.yaml`
+- `agents/role-schema.yaml`
+- `agents/roles/dev-activities/dev-artifact-reviewer.role.yaml`
+- `agents/roles/dev-activities/dev-documentation-writer.role.yaml`
+- `agents/roles/wiki-activities/wiki-architect.role.yaml`
+- `agents/roles/wiki-activities/wiki-ingester.role.yaml`
+- `agents/roles/wiki-activities/wiki-researcher.role.yaml`
+- `agents/roles/wiki-activities/wiki-source-collector.role.yaml`
+- `agents/roles/wiki-activities/wiki-writer.role.yaml`
+- `skills/documentation-page-verify/SKILL.md`
+- `skills/effective-communication/SKILL.md`
+- `skills/ste-technical-writing/SKILL.md`
+- `skills/ste-technical-writing/agents/openai.yaml`
+- `skills/structured-explanation/SKILL.md`
+
+- Transition: Running -> User Action Required.
+- Transitioned At: 2026-07-28T18:50:11.032278Z.
+- Decision Owner: Parent Coordinator 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Why User Input Is Required: All 14 supported checks returned ALLOWED_APPROVED_DEFINITION_CHANGE. The trusted execution reviewer rejected provider-recorded approval because current trusted user content did not enumerate the exact scope.
+- Approval Consequence: Exact approval permits normal User Action Required -> Ready -> Starting -> Running resumption in canonical task 019fa9be-0083-7542-973f-af103c0c45a5.
+- Decline Or Narrowed-Scope Consequence: It prevents current integration and requires Coordinator disposition or replanning.
+- Unattended-Work Boundary: Do not mutate governed definitions, apply the integration, deliver to main, or close this item. Preserve the accepted candidate and integration branch.
+- Preserved Resumption Evidence: Canonical Work-Item Thread and root task 019fa9be-0083-7542-973f-af103c0c45a5 are non-owning resumption evidence. The parent Coordinator Thread remains 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Preserved Delivery Evidence: Candidate branch `codex/establish-ste-technical-documentation-standard` and worktree `/Users/martinbechard/dev/dev-methodology/.worktrees/establish-ste-technical-documentation-standard` remain preserved. Accepted candidate a4165c21f464e0cf74d72c6f81b7a64d49c90f62, both independent GOOD reviews, and Dev Verifier READY remain accepted evidence.
+- Preserved Integration Evidence: Integration branch `codex/establish-ste-technical-documentation-standard-integration` and worktree `/Users/martinbechard/dev/dev-methodology/.worktrees/establish-ste-technical-documentation-standard-integration` were clean at 79a7be438ed51f503dd33f01f0c8e97b56d60709. Preserve the rejected governed-mutation and read-only evidence.
+- Claim Evidence: `uar-ste-governed-integration-019fa9be`; claim outcome DIRTY_CHECKOUT_RECOVERY_ACQUIRED; claim event f9ae5d66-3b5c-4abb-b55a-36c25ac3d72d; claimed 2026-07-28T18:50:11.032278Z. Release follows the provider commit.
+- Next Action: Route the user's answer through the canonical task or parent Coordinator Thread exactly once.
