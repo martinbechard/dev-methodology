@@ -1,12 +1,12 @@
 # Align fix-explanation relationship examples with the six-type explanation model
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/align-fix-explanation-item-taxonomy.md
+Provider Reference: backlog/user-action-required/align-fix-explanation-item-taxonomy.md
 
 Completion: direct-main
 
@@ -47,6 +47,20 @@ Next Lifecycle Owner: Root Dev Orchestrator
 - Recovery History: An earlier claim attempt was refused with DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED; recovery event 335ebefc-8500-4e69-a6d4-6e58986e1e82. Independent recovery then reconciled primary main clean and the claim registry empty.
 - Acceptance Evidence: Fresh independent exact-commit review was GOOD for batch-1 provider correction 1ef9018bf859607f161ff9a275c336c145b73b9a; promotion_complete: true.
 - Dependencies: None.
+
+## User Action Required
+
+- Transition: Running -> User Action Required.
+- Coordinator Decision: The required definition-change approval is a concrete user-owned decision.
+- Canonical Work-Item Thread: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06, preserved for same-Thread resumption.
+- Canonical Root Agent Task: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06, preserved for same-Thread resumption.
+- Running Lifecycle Commit: cde9160864182a00b5045bccc37a24b890a6f1f7.
+- Exact User Question: “Do you approve changing exactly skills/fix-explanation/SKILL.md, limited to correcting its relationship examples so structured items use the six authorized item types—QUERY, SUB-QUERY, FACT, HYPOTHESIS, UNKNOWN, and ANSWER—or so TEST, FIX, PROBLEM, and BENEFIT are clearly ordinary concepts rather than item types, while preserving the intended relationships? This does not authorize changing skills/structured-explanation/SKILL.md, skill metadata, or any other governed definition. Supported generated skill mirrors may be regenerated from this one approved source.”
+- Why User Input Is Required: AGENTS.md and PROJECT.yaml require explicit scope-specific user approval for a governed definition change. The supported preflight returned BLOCKED_APPROVAL_REQUIRED, and the approval audit found no prior approval.
+- Requested Approval Scope: skills/fix-explanation/SKILL.md only.
+- Explicitly Excluded: skills/structured-explanation/SKILL.md, skill metadata, agents, and every other skill or governed definition.
+- Prohibited Unattended Action: Do not mutate source, tests, or generated files; create an approval record; review; verify; integrate; or deliver until the user answers. Read-only evidence remains preserved.
+- Resumption: Record the user's answer once, then preserve this canonical Thread and follow User Action Required -> Ready -> Starting -> Running through distinct authorized lifecycle transactions.
 
 ## Summary
 
