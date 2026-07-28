@@ -7,16 +7,13 @@ metadata:
 
 # Test Strategy
 
-Choose tests from behavior and risk, then use the specialized test guidance already routed for the affected scope.
-
 ## Workflow
 
 1. Identify the changed contract, user-visible outcome, state transition, failure modes, and affected boundaries.
 2. Select the smallest useful test boundary for each risk.
-3. Route applicable specialized test skills from repository evidence.
-4. Run focused checks first, then broader checks when the blast radius requires them.
-5. Preserve failing evidence. Do not weaken assertions, disable checks, or relabel failures to obtain a pass.
-6. Report exact commands, outcomes, skipped checks, environment blockers, and residual risk.
+3. Run focused checks first, then broader checks when the blast radius requires them.
+4. Preserve failing evidence. Do not weaken assertions, disable checks, or relabel failures to obtain a pass.
+5. Report exact commands, outcomes, skipped checks, environment blockers, and residual risk.
 
 ## Coverage Principles
 

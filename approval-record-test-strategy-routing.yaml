@@ -1,0 +1,6 @@
+basis: explicit-user-direction
+definition_scope: skills/test-strategy/SKILL.md
+direction: "Delete the introductory routing sentence and Workflow step 3, add no replacement routing language, and mechanically renumber the remaining workflow steps."
+provenance:
+  source: user-message
+  reference: thread:019faa2d-300b-7012-9a14-03dc3039a7ac/message:delete-line-10-and-step-3
