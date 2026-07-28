@@ -213,6 +213,100 @@ def python_imports_module(path: Path, module: str) -> bool:
     return False
 
 
+def strip_jsonc_comments(text: str) -> str | None:
+    """Remove JSONC comments while preserving quoted comment markers and rejecting unterminated blocks."""
+    result: list[str] = []
+    index = 0
+    in_string = False
+    escaped = False
+    while index < len(text):
+        character = text[index]
+        if in_string:
+            result.append(character)
+            if escaped:
+                escaped = False
+            elif character == "\\":
+                escaped = True
+            elif character == '"':
+                in_string = False
+            index += 1
+            continue
+        if character == '"':
+            in_string = True
+            result.append(character)
+            index += 1
+            continue
+        if character == "/" and index + 1 < len(text):
+            marker = text[index + 1]
+            if marker == "/":
+                index += 2
+                while index < len(text) and text[index] not in "\r\n":
+                    index += 1
+                continue
+            if marker == "*":
+                closing = text.find("*/", index + 2)
+                if closing == -1:
+                    return None
+                comment = text[index + 2:closing]
+                result.extend("\n" if character == "\n" else " " for character in comment)
+                index = closing + 2
+                continue
+        result.append(character)
+        index += 1
+    return "".join(result)
+
+
+def strip_jsonc_trailing_commas(text: str) -> str:
+    """Remove commas immediately before JSON object or array closers without changing strings."""
+    result: list[str] = []
+    index = 0
+    in_string = False
+    escaped = False
+    while index < len(text):
+        character = text[index]
+        if in_string:
+            result.append(character)
+            if escaped:
+                escaped = False
+            elif character == "\\":
+                escaped = True
+            elif character == '"':
+                in_string = False
+            index += 1
+            continue
+        if character == '"':
+            in_string = True
+            result.append(character)
+            index += 1
+            continue
+        if character == ",":
+            next_index = index + 1
+            while next_index < len(text) and text[next_index].isspace():
+                next_index += 1
+            if next_index < len(text) and text[next_index] in "}]":
+                index += 1
+                continue
+        result.append(character)
+        index += 1
+    return "".join(result)
+
+
+def load_jsonc_mapping(path: Path) -> dict[str, object] | None:
+    """Load one JSONC object, returning no evidence for unreadable or malformed content."""
+    try:
+        text = path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return None
+    without_comments = strip_jsonc_comments(text)
+    if without_comments is None:
+        return None
+    try:
+        value = json.loads(strip_jsonc_trailing_commas(without_comments))
+    except json.JSONDecodeError:
+        return None
+    return value if isinstance(value, dict) else None
+
+
 def predicate_evidence(
     predicate: dict[str, object],
     root: Path,
@@ -254,6 +348,19 @@ def predicate_evidence(
     if key == "owningDependency":
         dependency = str(expected).lower()
         return [f"owning manifest dependency {expected}"] if dependency in dependencies else []
+    if key == "compilerOption":
+        pattern = str(expected["glob"])
+        name = str(expected["name"])
+        wanted = str(expected["equals"])
+        for path in sorted(set(files + owner_evidence)):
+            if not glob_matches(relative(path, root), pattern) and not glob_matches(path.name, pattern):
+                continue
+            value = load_jsonc_mapping(path)
+            compiler_options = value.get("compilerOptions") if value is not None else None
+            actual = compiler_options.get(name) if isinstance(compiler_options, dict) else None
+            if isinstance(actual, str) and actual.casefold() == wanted.casefold():
+                return [f"compiler option {name}={wanted}: {relative(path, root)}"]
+        return []
     if key in {"contentPattern", "owningContentPattern"}:
         pattern = str(expected["glob"])
         candidates = owner_evidence if key == "owningContentPattern" else sorted(set(files + owner_evidence))

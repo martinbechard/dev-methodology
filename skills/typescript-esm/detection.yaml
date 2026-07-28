@@ -16,5 +16,7 @@ activation:
     - anyOf:
       - contentPattern: {glob: package.json, contains: '"type": "module"'}
       - contentPattern: {glob: tsconfig*.json, contains: NodeNext}
+      - compilerOption: {glob: tsconfig*.json, name: module, equals: ESNext}
+      - compilerOption: {glob: tsconfig*.json, name: moduleResolution, equals: bundler}
 companions:
 - typescript

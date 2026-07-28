@@ -3388,6 +3388,20 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
                       "contains": "NodeNext",
                       "glob": "tsconfig*.json"
                     }
+                  },
+                  {
+                    "compilerOption": {
+                      "equals": "ESNext",
+                      "glob": "tsconfig*.json",
+                      "name": "module"
+                    }
+                  },
+                  {
+                    "compilerOption": {
+                      "equals": "bundler",
+                      "glob": "tsconfig*.json",
+                      "name": "moduleResolution"
+                    }
                   }
                 ]
               }

@@ -39,13 +39,19 @@ def load_renderer_module():
     return module
 
 
-def write_source_detection_registry(path: Path) -> None:
-    """Write a temporary registry from source detection definitions for focused source tests."""
+def load_detection_builder_module():
+    """Load the detection builder so source-schema behavior can be tested directly."""
     spec = importlib.util.spec_from_file_location("build_technology_detection", BUILD_SCRIPT)
     if spec is None or spec.loader is None:
         raise AssertionError(f"cannot load detection builder: {BUILD_SCRIPT}")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    return module
+
+
+def write_source_detection_registry(path: Path) -> None:
+    """Write a temporary registry from source detection definitions for focused source tests."""
+    module = load_detection_builder_module()
     path.write_text(
         yaml.safe_dump(module.registry(module.load_detection_entries()), sort_keys=False),
         encoding="utf-8",
@@ -831,6 +837,39 @@ class TechnologyDetectionTests(unittest.TestCase):
 
                     self.assertEqual(expected, "example-framework" in result["loadouts"][0]["skills"])
 
+    def test_compiler_option_predicate_schema_requires_exact_string_fields(self) -> None:
+        builder = load_detection_builder_module()
+        path = ROOT / "skills" / "typescript-esm" / "detection.yaml"
+        predicate = {
+            "glob": "tsconfig*.json",
+            "name": "moduleResolution",
+            "equals": "bundler",
+        }
+
+        self.assertEqual(
+            predicate,
+            builder.validate_mapping_predicate(
+                "compilerOption",
+                predicate,
+                "activation.anyOf",
+                path,
+            ),
+        )
+        with self.assertRaisesRegex(ValueError, "requires"):
+            builder.validate_mapping_predicate(
+                "compilerOption",
+                {"glob": "tsconfig*.json", "name": "moduleResolution"},
+                "activation.anyOf",
+                path,
+            )
+        with self.assertRaisesRegex(ValueError, "must be a non-empty string"):
+            builder.validate_mapping_predicate(
+                "compilerOption",
+                {**predicate, "equals": ["bundler"]},
+                "activation.anyOf",
+                path,
+            )
+
     def test_source_import_is_code_evidence_not_comment_or_string_text(self) -> None:
         cases = (
             ("from fastapi import FastAPI\n", True),
@@ -924,6 +963,89 @@ class TechnologyDetectionTests(unittest.TestCase):
             with self.subTest(detector=detector):
                 result = run_detection(ROOT / "evals" / "projects" / "typescript-order-pricing", "src", detector=detector)
                 self.assertEqual(["typescript", "typescript-esm", "typescript-strict"], result["loadouts"][0]["skills"])
+
+    def test_typescript_es_module_configuration_is_jsonc_aware_and_case_insensitive(self) -> None:
+        cases = (
+            ("compact-esnext", '{"compilerOptions":{"module":"ESNext"}}', True),
+            ("lowercase-esnext", '{"compilerOptions": { "module" : "esnext" }}', True),
+            ("compact-bundler", '{"compilerOptions":{"moduleResolution":"bundler"}}', True),
+            (
+                "capitalized-bundler-with-trailing-commas",
+                '{"compilerOptions": {"moduleResolution": "Bundler",},}',
+                True,
+            ),
+            (
+                "commented-out-bundler",
+                '{"compilerOptions": {// "moduleResolution": "bundler"\n"noEmit": true}}',
+                False,
+            ),
+            ("malformed-bundler", '{"compilerOptions":{"moduleResolution":"bundler"', False),
+        )
+        for name, configuration, expected in cases:
+            with self.subTest(case=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                source = root / "src" / "main.ts"
+                source.parent.mkdir()
+                source.write_text("export const main = true;\n", encoding="utf-8")
+                (root / "tsconfig.json").write_text(
+                    configuration,
+                    encoding="utf-8",
+                )
+                (root / "package.json").write_text(
+                    '{"devDependencies":{"typescript":"1"}}\n',
+                    encoding="utf-8",
+                )
+                registry = root / "source-registry.yaml"
+                write_source_detection_registry(registry)
+
+                for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                    with self.subTest(case=name, detector=detector):
+                        result = run_detection(
+                            root,
+                            "src",
+                            detector=detector,
+                            extra=["--registry", str(registry)],
+                        )
+
+                        expected_skills = ["typescript", "typescript-esm"] if expected else ["typescript"]
+                        self.assertEqual(expected_skills, result["loadouts"][0]["skills"])
+
+    def test_typescript_es_module_detection_preserves_existing_activation_paths(self) -> None:
+        cases = (
+            (
+                "package-module",
+                '{"compilerOptions": {}}',
+                '{"type": "module", "devDependencies": {"typescript": "1"}}',
+            ),
+            (
+                "nodenext",
+                '{"compilerOptions":{"module":"NodeNext"}}',
+                '{"devDependencies":{"typescript":"1"}}',
+            ),
+        )
+        for name, configuration, package in cases:
+            with self.subTest(case=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                source = root / "src" / "main.ts"
+                source.parent.mkdir()
+                source.write_text("export const main = true;\n", encoding="utf-8")
+                (root / "tsconfig.json").write_text(configuration, encoding="utf-8")
+                (root / "package.json").write_text(package, encoding="utf-8")
+                registry = root / "source-registry.yaml"
+                write_source_detection_registry(registry)
+
+                for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                    with self.subTest(case=name, detector=detector):
+                        result = run_detection(
+                            root,
+                            "src",
+                            detector=detector,
+                            extra=["--registry", str(registry)],
+                        )
+                        self.assertEqual(
+                            ["typescript", "typescript-esm"],
+                            result["loadouts"][0]["skills"],
+                        )
 
     def test_spring_boot_scope_has_exact_loadout(self) -> None:
         for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
