@@ -1,12 +1,12 @@
 # Run Skill Lint Across Methodology Skills
 
-Status: Running
+Status: Completed
 
 Type: Analysis
 
 Provider: file
 
-Provider Reference: backlog/analysis-backlog/run-skill-lint-across-methodology.md
+Provider Reference: backlog/completed-backlog/analyses/run-skill-lint-across-methodology.md
 
 Completion: direct-main
 
@@ -86,3 +86,49 @@ None.
 ## Notes
 
 The word "methology" in the source request is interpreted as "methodology" and scoped to this repository's authoritative methodology skill sources.
+
+## Analysis Result
+
+The authoritative inventory contains 127 skill sources: 19 raw CRITICAL outcomes and 108 raw NO_CRITICAL outcomes. Independent reconciliation accepted 27 CONFIRMED_CRITICAL outcomes and 100 NO_CRITICAL outcomes. The focused MySQL resolution used Luna with high reasoning effort. The accepted disposition rejected the provisional documentation-bootstrap and Liquibase findings and rejected the narrowed provisional subfindings for manage-file-work-items and project-wiki-create. No skill, agent, schema, or other definition mutation was made under this analysis item.
+
+The accepted results created 27 unique file-provider Defects. Their exact references are:
+
+- backlog/defect-backlog/agent-claim-reset-invalid-json-shapes.md
+- backlog/defect-backlog/backlog-crisis-retain-agent-claim.md
+- backlog/defect-backlog/align-module-design-mandatory-heading-contract.md
+- backlog/defect-backlog/make-technology-detector-fallback-prerequisites-executable.md
+- backlog/defect-backlog/end-to-end-verification-commit-authority.md
+- backlog/defect-backlog/align-fix-explanation-item-taxonomy.md
+- backlog/defect-backlog/bound-jest-failure-ownership-to-current-change.md
+- backlog/defect-backlog/separate-distributed-methodology-from-repository-maintenance.md
+- backlog/defect-backlog/respect-resource-coordination-none-in-manage-file-work-items.md
+- backlog/defect-backlog/bound-mysql-production-verification-to-safe-targets.md
+- backlog/defect-backlog/make-project-wiki-template-resolution-install-portable.md
+- backlog/defect-backlog/project-wiki-topic-verify-read-only-helper-resolution.md
+- backlog/defect-backlog/project-wiki-topic-write-role-owned-verification.md
+- backlog/defect-backlog/project-wiki-role-routing-and-operation-paths.md
+- backlog/defect-backlog/keep-quarkus-persistence-companion-selection-setup-owned.md
+- backlog/defect-backlog/react-server-components-detection-boundary.md
+- backlog/defect-backlog/allow-typed-evidence-review-architecture.md
+- backlog/defect-backlog/allow-typed-evidence-review-functional-spec.md
+- backlog/defect-backlog/allow-typed-evidence-review-high-level-design.md
+- backlog/defect-backlog/allow-typed-evidence-review-module-design.md
+- backlog/defect-backlog/allow-typed-evidence-review-unit-test-plan.md
+- backlog/defect-backlog/replace-structured-design-chain-of-thought-output-contract.md
+- backlog/defect-backlog/make-tailwind-companion-guidance-route-aware.md
+- backlog/defect-backlog/stop-test-strategy-from-rerunning-technology-routing.md
+- backlog/defect-backlog/prevent-sensitive-tool-runtime-log-and-trace-retention.md
+- backlog/defect-backlog/detect-typescript-esm-in-bundler-only-projects.md
+- backlog/defect-backlog/stop-ux-review-runtime-technology-routing.md
+
+The durable result is [Methodology Skill Lint Review](../../../evals/results/2026-07-28-methodology-skill-lint.md), which records the complete inventory, raw and accepted disposition separation, exact defect evidence, reviewer identities, and final outcome table.
+
+## Completion Evidence
+
+- Terminal lifecycle: Running -> Completed. Terminal owner: Unowned.
+- Canonical Work-Item Thread and Canonical Root Agent Task: 019fa9be-0083-7542-973f-af35557b2393. Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758. The running-acceptance branch and worktree evidence above are preserved.
+- Accepted report source: 325a9777d51d7ed9121b40a10780e8e007f209f7. Artifact review: GOOD. Verifier: PASS. Provider batch review: GOOD.
+- Direct-main integration: 26bb65b3391508feafb3306ba33e5408f8d0e74b. The integrated report blob is b645967027ad1b619c7a1622e87a2ab1cb1b0a10.
+- All-skill validation and diff checks passed for the accepted delivery. The direct-main completion contract is satisfied.
+- Integration claim: b327eb75-146f-4809-9a16-807d3182c34f acquired; dccba99f-7281-4546-bf07-7c31e76b6a52 released.
+- Archive claim: close-skill-lint-analysis-019fa9be acquired for this source and destination record; event 8e6a40b7-53b7-4696-af3a-050c5fece226. The release and terminal provider commit are recorded after this archive transaction.
