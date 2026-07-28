@@ -1,16 +1,16 @@
 # Allow typed evidence in module-design review checklists
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-module-design.md
+Provider Reference: backlog/user-action-required/allow-typed-evidence-review-module-design.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -28,15 +28,35 @@ Runtime Thread: 019faa83-9a42-7e11-9c24-20a7a4264da3
 
 Root Agent Task: 019faa83-9a42-7e11-9c24-20a7a4264da3
 
-Phase: Implementation intake and governed-scope assessment
+Phase: Awaiting explicit scope-specific user approval for the governed distributed skill definition.
 
 Started At: 2026-07-28T20:59:47Z
 
 Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim accept-running-module-design-019faa83; incarnation 8ad0f8bd-9fef-4949-bb1c-2c9fc4e9ca0c; claim journal event 2eae4bd2-7cda-4c60-8b5d-51591f3a33fc; exact provider path claimed in the primary main checkout.
 
+Running Evidence: Starting -> Running committed as 8a196a389516fdd140c1763fe64c64e8a4f5687d; acquisition event 2eae4bd2-7cda-4c60-8b5d-51591f3a33fc; release event 300ef22a-99cf-4ca6-b334-a1ac206b125c; phase was Implementation intake and governed-scope assessment.
+
 Branch: codex/allow-typed-evidence-review-module-design-019faa83
 
 Worktree: /Users/martinbechard/.codex/worktrees/e3a5/dev-methodology
+
+Next Lifecycle Owner: Dev Backlog Coordinator
+
+## User Action Required Evidence
+
+Question: Do you explicitly approve modifying the governed distributed skill definition skills/review-module-design/SKILL.md solely so module-design review checklists may use typed evidence—including exact quotation, structural evidence, operation-reconciliation evidence, omission evidence, and not-applicable rationale—instead of requiring literal source quotations for every applicable question? Supported regeneration of listed mirrors from this approved canonical source is included; the direct checklist and focused tests are ordinary companion changes.
+
+Why Input Is Required: The project approval boundary requires explicit, scope-specific user direction before any governed skill-definition mutation.
+
+Blocker Owner: User
+
+Unblock Condition: Explicit scope-specific approval for skills/review-module-design/SKILL.md with real user-message or delegated-user-direction provenance, a corresponding approval record, and successful supported preflight.
+
+Ordinary Companions: skills/review-module-design/references/review-checklist-module-design.md and focused tests remain unmodified.
+
+Supported Regeneration Boundary: Only mirrors listed for the approved distributed-skills source category, with no second approval.
+
+Unattended-Work Boundary: No definition, checklist, test, generated, candidate, review, verification, Commit delivery, or terminal closure mutation until approval and successful preflight.
 
 ## Summary
 
