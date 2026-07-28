@@ -1,16 +1,16 @@
 # Restore role-owned wiki verification routing and portable operation paths
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/project-wiki-role-routing-and-operation-paths.md
+Provider Reference: backlog/completed-backlog/defects/project-wiki-role-routing-and-operation-paths.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator 019faa18-fe86-7110-9b9e-c7be3bdc8888
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -30,13 +30,13 @@ Branch: codex/project-wiki-role-routing-operation-paths-019faa18
 
 Worktree: /Users/martinbechard/.codex/worktrees/4713/dev-methodology
 
-Phase: Approval preflight and candidate implementation.
+Phase: Completed through verified direct-main delivery.
 
 Started At: 2026-07-28T19:07:00Z
 
 Claim Evidence: running-project-wiki-role-routing-operation-paths-019faa18-recovery; SHARED_CHECKOUT_ACQUIRED; claim event e64f1eb5-10e8-417f-980b-9e8e8b818b7e; recovery notification followed prior DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED event 38ae895b-7bfa-4366-86bc-a0c17bfa5be9.
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Next Lifecycle Owner: Parent Coordinator for branch and worktree cleanup only
 
 ## Resumption Evidence
 
@@ -174,3 +174,33 @@ Prior Rejection Event: 38ae895b-7bfa-4366-86bc-a0c17bfa5be9
 Running Claim Acquire and Release Events: e64f1eb5-10e8-417f-980b-9e8e8b818b7e / c22ca0b4-7488-400b-a55c-1fefd05c2080
 
 Read-Only Analysis Evidence: The primary affected governed definitions are skills/project-wiki/SKILL.md and agents/roles/wiki-activities/wiki-ingester.role.yaml. No governed definition mutation has occurred.
+
+## Completion Evidence
+
+Completed At: 2026-07-28T23:47:10Z
+
+Completion: direct-main
+
+Accepted Source Commit: f3a814bd81af47004df2e2b2deca72543acee7d0
+
+Integration and Main Commit: cf79773f86d395f740a8062ba63daea3220c5f88
+
+Observed Clean Main: b7b1894c5d80643c3ffbc3856afab2fb1caa7233; the integration commit is an ancestor of this main tip.
+
+Final Review: GOOD
+
+Final Verification: GOOD
+
+Changed Paths: Exact 19 accepted paths.
+
+Approval Preflights: Both approved definition scopes returned ALLOWED.
+
+Focused Checks: Portability 2/2; bundle role and companion checks 4/4; replay and runtime checks 4/4; generated checks current; scripts/build-skill-docs.py --check current; git diff --check clean.
+
+Scoped Omission: Live and external control was prohibited. The final reviewer and verifier accepted deterministic actual-adapter SHA binding.
+
+Direct-Main Project-Files Claim: acquired event 7b26e28f-9d6a-4b69-8081-d7644f8b5c07; released event f71c2978-9492-4b5e-b59f-ffce7df8d81d.
+
+Terminal Archive Claim: complete-project-wiki-role-routing-operation-paths-019faa18; acquired SHARED_CHECKOUT_ACQUIRED event 6f3da1c0-5735-4796-8f91-137ce15aed63; release follows commit verification.
+
+Cleanup Eligibility: The integration branch and assigned worktree are eligible for parent Coordinator cleanup only. This provider transaction does not remove branches or worktrees.
