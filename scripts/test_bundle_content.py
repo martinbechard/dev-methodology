@@ -8388,7 +8388,7 @@ class BundleContentTests(unittest.TestCase):
                 "documentation": ("gpt-5.6-sol", "high"),
                 "advanced": ("gpt-5.6-sol", "high"),
                 "advanced-long": ("gpt-5.6-sol", "high"),
-                "intermediate": ("gpt-5.6-luna", "xhigh"),
+                "intermediate": ("gpt-5.6-luna", "high"),
             },
             "claude": {
                 "simple": ("fable-5", None),

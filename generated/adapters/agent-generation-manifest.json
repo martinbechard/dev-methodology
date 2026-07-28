@@ -515,7 +515,7 @@
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "a70c1744948144c4dd8da8de9f0c4e1650fce4536c6ab79ab1e9b7666a5022d3",
+          "sha256": "167d2f22e38c21e608b573044c9d342ab69efffc6382ae123a1b6ea6d09affd8",
           "source": "agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml"
         },
         {
