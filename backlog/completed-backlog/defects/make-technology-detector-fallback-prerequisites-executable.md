@@ -1,12 +1,12 @@
 # Make the technology detector fallback prerequisites executable
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/make-technology-detector-fallback-prerequisites-executable.md
+Provider Reference: backlog/completed-backlog/defects/make-technology-detector-fallback-prerequisites-executable.md
 
 Completion: direct-main
 
@@ -30,11 +30,31 @@ Branch: codex/make-technology-detector-fallback-prerequisites-executable
 
 Worktree: /Users/martinbechard/.codex/worktrees/0f55/dev-methodology
 
-Phase: Source analysis / code-only correction assessment
+Phase: Delivered and independently verified
 
 Started At: 2026-07-28T18:39:45.277192Z
 
-Claim Evidence: lifecycle-running-019fa9f9-33ef-7c73-872e-bd374d9108b2 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T18:39:45.277192Z; claim journal event 2b0184db-55bf-4163-b76a-c0007cb10a68.
+Claim Evidence: lifecycle-running-019fa9f9-33ef-7c73-872e-bd374d9108b2 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T18:39:45.277192Z; claim journal event 2b0184db-55bf-4163-b76a-c0007cb10a68. A prior terminal claim attempt was rejected as DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED; journal event 4a8ad3bd-15e6-4ec9-9c3e-98da86d70a63. Terminal claim terminal-detector-fallback-019fa9f9-33ef-7c73-872e-bd374d9108b2 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T19:43:30.814239Z; claim journal event 63c42cfe-cd85-420c-9190-3d4d465d86e0.
+
+Completed At: 2026-07-28T19:43:30.814239Z
+
+## Completion Evidence
+
+Accepted Source Commit: 441411f0bef05a01a3ce6b1a98a9a1e35c096f78.
+
+Source Branch and Worktree: codex/make-technology-detector-fallback-prerequisites-executable at /Users/martinbechard/.codex/worktrees/0f55/dev-methodology; clean.
+
+Independent Source Review: GOOD on the exact accepted candidate.
+
+Independent Verifier: PASS on the exact accepted candidate.
+
+Direct-Main Integration: cherry-picked with -x as b7e627cf6cfcb5edafd70341c6ef1897e0dbe1c9 from fresh main e1aefd26240c2c343e154a462a76b05cc38b2565.
+
+Integration Claim: direct-main-detector-fallback-019fa9f9 acquired event 04dba0dd-9a22-4cbd-aa23-78e8dd448f90 and released event 93e5a5db-aebb-4869-a886-9955d29b6d04.
+
+Post-Integration Verification: independent verification observed main 5d4b2932732715b3970a5b34b74ceb4f7e453f19; b7e627cf6cfcb5edafd70341c6ef1897e0dbe1c9 was an ancestor; exact blobs matched on three paths; Python 3.9 and 3.11 six-test matrices, generator checks, mirror comparison, and diff checks passed.
+
+Delivery Scope: local main only; no remote push was requested or configured.
 
 ## Summary
 
