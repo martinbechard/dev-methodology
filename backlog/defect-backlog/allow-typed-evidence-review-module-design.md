@@ -1,6 +1,6 @@
 # Allow typed evidence in module-design review checklists
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-module-de
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Root Dev Orchestrator
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -24,13 +24,19 @@ Dispatch Time: 2026-07-28T20:53:27Z
 
 Intended Root Role: Dev Orchestrator
 
-Runtime Thread: Pending
+Runtime Thread: 019faa83-9a42-7e11-9c24-20a7a4264da3
 
-Root Agent Task: Pending
+Root Agent Task: 019faa83-9a42-7e11-9c24-20a7a4264da3
 
-Phase: Ready -> Starting reserved by the parent Dev Backlog Coordinator; pending root Dev Orchestrator acceptance.
+Phase: Implementation intake and governed-scope assessment
 
-Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim reserve-six-ready-refill-module-design-019fa9bb-retry; acquisition journal event 8f4fa453-be84-481c-a4cf-a180dee53f5e.
+Started At: 2026-07-28T20:59:47Z
+
+Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim accept-running-module-design-019faa83; incarnation 8ad0f8bd-9fef-4949-bb1c-2c9fc4e9ca0c; claim journal event 2eae4bd2-7cda-4c60-8b5d-51591f3a33fc; exact provider path claimed in the primary main checkout.
+
+Branch: codex/allow-typed-evidence-review-module-design-019faa83
+
+Worktree: /Users/martinbechard/.codex/worktrees/e3a5/dev-methodology
 
 ## Summary
 
