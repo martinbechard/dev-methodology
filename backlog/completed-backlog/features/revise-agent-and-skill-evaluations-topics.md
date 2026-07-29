@@ -1,12 +1,12 @@
 # Revise the Agent and Skill Evaluations Document Topics
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/document-topic-revision/revise-agent-and-skill-evaluations-topics.md
+Provider Reference: backlog/completed-backlog/features/revise-agent-and-skill-evaluations-topics.md
 
 Completion: direct-main
 
@@ -157,3 +157,31 @@ Deadline: 2026-07-29T16:00:00Z.
 Next Action: Focused source-grounded analysis, then bounded implementation.
 
 Next Reconciliation: Immediately after lifecycle commit or any rejection, and no later than 15 minutes.
+
+## Completion Evidence
+
+Completed At: 2026-07-29T16:09:26Z.
+
+Canonical Thread and Root Agent Task: 019fae7b-a018-7510-9ae6-0ae08730cdd9.
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Completion Disposition: READY through direct-main.
+
+Accepted Source Commit: 9161a960144ce070c6391368b0312a9350d3ab2d from branch codex/revise-agent-skill-evaluation-topics-019fae7b.
+
+Integrated Main Commit: d6d2679aae763f1024d507091cb9f39cf75547ea, conflict-free replay on fresh base 0618f10d25b840e1295e271b103d0ea0e850f9e8.
+
+Integrated Paths: scripts/build-agent-skill-evaluation-docs.py; scripts/test_agent_skill_evaluation_docs.py; design/agent-and-skill-evaluations.html.
+
+Main Observation: merge-base(d6d2679a, main) = d6d2679a. Exact blobs: generator c172646d25dab5870d19bc27d9d732c51feb11d2; test 17ef25c552fd980b16a9c0ed53c6777ed224c9b5; HTML 9a88c2f3a46f7c90479dc9b1b8aad42c41a0167a.
+
+Independent Review: GOOD; no material findings.
+
+Independent Verification: GOOD. Generator freshness check passed; 27 focused tests passed; git diff check passed. Inventory: 30 agents, 99 scenarios, 129 skills, and 15 follow-ups. Browser and broad suites were intentionally excluded.
+
+Topic Analysis: method cluster improved from 71.4% to 100%; mixed reconciliation from 57.1% to 92.9%; root from 96.7% to 97.4%; one reorder, seven regroupings or reparents, four honest-partial categories, and zero wrong-document topics. No durable analysis artifact was retained.
+
+Integration Claim Evidence: acquired d82e28e6-7e0e-4061-8c02-5b19fa2ea8ef; released 439dfcca-f36b-48d6-aa79-aa247eb76855; registry empty after release.
+
+Archive Path: backlog/completed-backlog/features/revise-agent-and-skill-evaluations-topics.md.
