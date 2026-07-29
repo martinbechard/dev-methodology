@@ -1,6 +1,6 @@
 # Fix Index Page Settings Control Placement
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -82,13 +82,13 @@ Worktree: /Users/martinbechard/.codex/worktrees/1bad/dev-methodology.
 
 Private Baseline: 961af38d (clean HEAD/main observed before recovery baton).
 
-Owner: Unowned pending accepted root.
+Owner: Root Dev Orchestrator.
 
 Runtime Launch Result: Direct conversation-title handoff observed; Root Dev Orchestrator accepted the launch handshake at 2026-07-29T16:51:49.385631Z.
 
-Owner Acceptance: Pending.
+Owner Acceptance: Accepted by Root Dev Orchestrator through canonical task 019faec8-943a-7902-adaa-c2c00a370169 at 2026-07-29T16:56:20.318210Z.
 
-Reconciliation: Pending.
+Reconciliation: Starting -> Running recorded by Dev Backlog Steward on primary main.
 
 ## Starting Settlement Evidence
 
@@ -98,9 +98,33 @@ Runtime Launch Result: Direct conversation-title handoff observed; Root Dev Orch
 
 Canonical Conversation: 019faec8-943a-7902-adaa-c2c00a370169.
 
-Owner Acceptance: Pending.
+Owner Acceptance: Accepted by Root Dev Orchestrator through canonical task 019faec8-943a-7902-adaa-c2c00a370169 at 2026-07-29T16:56:20.318210Z.
 
-Reconciliation: Pending.
+Reconciliation: Starting -> Running recorded by Dev Backlog Steward on primary main.
+
+## Active Execution Evidence
+
+Transition: Starting -> Running.
+
+Canonical Thread: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Root Agent Task: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Root Role: Dev Orchestrator.
+
+Owner: Root Dev Orchestrator.
+
+Branch: codex/fix-index-page-settings-control-placement.
+
+Worktree: /Users/martinbechard/.codex/worktrees/1bad/dev-methodology.
+
+Current Phase: Immediate index.html settings-control placement implementation authorized; repository mutation has not begun.
+
+Started At: 2026-07-29T16:56:20.318210Z (primary-main claim acquisition and Root Dev Orchestrator acceptance).
+
+Starting Baton: 2ab347410e42374496128d6cfe4a13e6f30be9dd on primary main.
+
+Claim Evidence: starting-running-019faec8 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-29T16:56:20.318210Z; claim journal event 30027335-6fe3-493c-ae79-0f0abb357fab.
 
 ## Notes
 
