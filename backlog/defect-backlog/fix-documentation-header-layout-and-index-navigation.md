@@ -1,6 +1,6 @@
 # Fix Documentation Header Layout And Index Navigation
 
-Status: Starting
+Status: Ready
 
 Type: Defect
 
@@ -61,7 +61,7 @@ None.
 
 None.
 
-## Current Dispatch Reservation
+## Expired Dispatch Reservation
 
 Transition: Ready -> Starting.
 
@@ -84,6 +84,24 @@ Canonical Conversation: None.
 Owner Acceptance: None.
 
 Reconciliation: Pending.
+
+## Startup Reconciliation
+
+Transition: Starting -> Ready.
+
+Reconciled At: 2026-07-29T15:53:00Z.
+
+Settlement Deadline: 2026-07-29T15:50:52Z.
+
+Delayed Canonical Conversation and Root Agent Task: 019fae92-0f9c-73d1-8061-b64d453c503a.
+
+Delayed Owner Acceptance: Observed at 2026-07-29T15:51:19Z, 27 seconds after the settlement deadline; invalid for the expired reservation.
+
+Source Mutation Evidence: None observed. No source mutation was authorized or performed under the expired reservation.
+
+Reservation Disposition: Expired reservation cleared. No replacement launch was created.
+
+Reconciliation: Ready.
 
 ## Starting Settlement Evidence
 
