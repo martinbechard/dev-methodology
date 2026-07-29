@@ -1,6 +1,6 @@
 # Restore Agent And Skill Definitions Outline And Simplify Diagrams
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -142,13 +142,13 @@ Worktree: /Users/martinbechard/.codex/worktrees/ab5e/dev-methodology.
 
 Private Baseline: 9c35af2d43e0b4544cc64016d5c6e37d171018fc (clean).
 
-Owner: Unowned pending accepted root.
+Owner: Root Dev Orchestrator.
 
 Runtime Launch Result: Direct conversation-title handoff observed; Root Dev Orchestrator accepted the launch handshake at 2026-07-29T16:29:18.426653Z.
 
-Owner Acceptance: Pending.
+Owner Acceptance: Accepted by Root Dev Orchestrator through canonical task 019faeb3-d88f-7a73-9533-899158b73f4c.
 
-Reconciliation: Pending.
+Reconciliation: Starting -> Running recorded by Dev Backlog Steward on primary main.
 
 ## Starting Settlement Evidence
 
@@ -158,9 +158,33 @@ Runtime Launch Result: Direct conversation-title handoff observed; Root Dev Orch
 
 Canonical Conversation: 019faeb3-d88f-7a73-9533-899158b73f4c.
 
-Owner Acceptance: Pending.
+Owner Acceptance: Accepted by Root Dev Orchestrator through canonical task 019faeb3-d88f-7a73-9533-899158b73f4c.
 
-Reconciliation: Pending.
+Reconciliation: Starting -> Running recorded by Dev Backlog Steward on primary main.
+
+## Running Ownership
+
+Transition: Starting -> Running.
+
+Canonical Thread: 019faeb3-d88f-7a73-9533-899158b73f4c.
+
+Root Agent Task: 019faeb3-d88f-7a73-9533-899158b73f4c.
+
+Root Role: Dev Orchestrator.
+
+Owner: Root Dev Orchestrator.
+
+Branch: codex/restore-definitions-outline-diagrams-019faeb3.
+
+Worktree: /Users/martinbechard/.codex/worktrees/ab5e/dev-methodology.
+
+Current Phase: Implementation authorized; repository mutation has not begun.
+
+Started At: 2026-07-29T16:32:28.894865Z (primary-main claim acquisition and owner acceptance evidence).
+
+Starting Baton: e49a3f21c723f1154bffb1cf18e2730e12267e91 on primary main.
+
+Claim Evidence: starting-to-running-019faeb3 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-29T16:32:28.894865Z; claim journal event a908d777-3833-4193-9da0-abe17b73f429.
 
 ## Notes
 
