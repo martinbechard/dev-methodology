@@ -1,6 +1,6 @@
 ---
 name: project-wiki-topic-write
-description: Create, rewrite, split, and verify repository docs/wiki topic pages. Use when writing topics to correct verifier findings, split broad pages into durable leaf pages, update folder hubs and topic indexes, preserve source-backed wiki content, run project-wiki lint, invoke $project-wiki-topic-verify, and apply verifier corrections within an explicit caller retry cap or a bounded default.
+description: Create, rewrite, split, and verify repository docs/wiki topic pages. Use when writing topics to correct verifier findings, split broad pages into durable leaf pages, update folder hubs and topic indexes, preserve source-backed wiki content, run local project-wiki checks, apply role-supplied corrections, and prepare a complete handoff for role-owned independent verification.
 metadata:
   category: wiki-and-knowledge
 ---
@@ -9,7 +9,7 @@ metadata:
 
 ## Overview
 
-Use this skill when editing docs/wiki content. The writer owns file edits, while the verifier stays read-only and independently judges the created or updated topic pages.
+Use this skill when editing docs/wiki content. The writer owns file edits, corrections, and local validation. The owning conceptual role orchestrates the independent read-only verifier and owns correction-attempt counting, interruption handling, and terminal status.
 
 ## Required Context
 
@@ -20,11 +20,8 @@ The caller must provide:
 - Pages to review or correct.
 - Any verifier findings already known.
 - Any source paths that are authoritative evidence for the assigned pages.
-- A non-negative correction-attempt cap when the caller or owning agent defines one.
 
 If the write scope is missing or overlaps with another active writer, stop and request a clearer assignment.
-When no correction-attempt cap is supplied, use a default of two corrected resubmissions
-after the initial verifier verdict.
 
 ## Read Before Editing
 
@@ -54,36 +51,50 @@ Non-reserved Markdown concept documents should have YAML frontmatter with a non-
 11. Do not pack a sequence or enumeration into a long paragraph. Treat three or more distinct steps or items in one paragraph as a list-structure trigger. Introduce the group with a short sentence, use a numbered list for ordered steps and a bulleted list for unordered items, and keep one coherent step or item in each entry.
 12. Do not invent source paths, code paths, tests, backlog status, behavior, fallback, or compatibility claims.
 
-## Verifier Loop
+When the owning conceptual role supplies verifier findings for a correction pass, apply only the requested in-scope corrections and rerun the applicable local checks. The role, not this skill, counts correction attempts and decides whether another independent verification pass is allowed.
 
-The writer must run the verifier loop on every created or updated topic page before finishing.
-An explicit caller or owning-agent correction-attempt cap governs the loop. When no cap
-is supplied, allow at most two corrected resubmissions after the initial verdict. The
-initial verdict does not count as a correction attempt.
+## Local Validation
 
-1. Run project-wiki lint from the repository root.
-2. Run python3 project-wiki-skill-root/scripts/wiki_ops.py okf-migrate when frontmatter may be missing or stale.
-3. Run python3 project-wiki-skill-root/scripts/wiki_ops.py okf-validate.
-4. Run python3 project-wiki-skill-root/scripts/wiki_ops.py link-leaves when any durable leaf was created or updated.
-5. Spawn a fresh subagent without forking context and ask it to use $project-wiki-topic-verify.
-6. Pass the repository root, the complete list of created or updated topic pages, evidence source paths if any, and lint plus OKF validation output.
-7. If the verifier returns GOOD, finish the verifier loop.
-8. If the verifier returns NEEDS_CORRECTION and correction attempts remain, apply the
-   corrections in the writer context, count one correction attempt, rerun lint and OKF
-   validation, and invoke a fresh verifier again.
-9. If the verifier still returns NEEDS_CORRECTION after the governing cap is exhausted,
-   stop and return BLOCKED with the latest findings, completed attempt count, and governing
-   cap. Do not continue the loop.
+Run commands from the repository root. Use python3 unless the environment clearly provides python.
 
-The verifier must not edit files. The writer owns all corrections.
+Resolve PROJECT_WIKI_SKILL_ROOT as the absolute directory containing the loaded project-wiki/SKILL.md. Do not assume a source checkout or fixed home catalog. Verify both the loaded skill and operation script before invoking a command:
+
+```bash
+PROJECT_WIKI_SKILL_ROOT="/absolute/path/to/the/loaded/project-wiki"
+test -f "$PROJECT_WIKI_SKILL_ROOT/SKILL.md"
+test -f "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py"
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" lint
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-migrate
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-validate
+python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" link-leaves
+```
+
+Run lint and OKF validation for every changed page set. Run okf-migrate only when frontmatter may be missing or stale. Run link-leaves when any durable leaf was created or updated.
+
+## Verification Handoff
+
+After local validation, preserve the written page set and prepare one complete handoff containing:
+
+- Repository root.
+- The complete created, updated, and deleted page inventory.
+- Authoritative evidence paths needed to judge those pages.
+- Current lint, OKF validation, and leaf-link results.
+- Any role-supplied findings applied during the current correction pass.
+- The preserved writer state, using a commit identifier when already committed or the write-scope status and diff digest when uncommitted.
+
+Return the handoff to the owning conceptual role. The skill does not spawn or invoke the verifier, count correction attempts, interpret verifier availability or interruption, or issue a terminal GOOD or BLOCKED status.
+
+The owning conceptual role routes the handoff to a fresh wiki-topic-verifier, captures the invocation and returned receipt, and compares the write-scope state immediately before and after that read-only invocation. That comparison is the before-and-after no-mutation evidence proving the verifier did not change writer-owned files.
+
+Leave the writer edits intact if the verifier is interrupted or returns an unavailable non-verdict, and return no invented verdict or findings from this skill. The owning conceptual role uses the preserved writer state, invocation receipt, before-and-after no-mutation evidence, page inventory, validation results, completed correction attempts, governing cap, and exact unresolved interruption as role-owned BLOCKED evidence.
 
 ## Output
 
 Return:
 
-- Pages created, updated, or deleted.
+- The complete created, updated, and deleted page inventory.
 - Leaf concepts split out or intentionally deferred.
-- Verifier verdicts.
-- GOOD or BLOCKED status with the correction-attempt count and governing cap.
-- Lint and OKF validation result.
-- Any remaining blockers.
+- Any role-supplied corrections applied.
+- Lint, OKF validation, and leaf-link results.
+- The complete verification handoff and preserved writer state.
+- Any remaining writer-owned blocker, such as missing scope or authoritative evidence.

@@ -272,6 +272,21 @@ class SetupGuidanceTest(unittest.TestCase):
                     skill_text,
                 )
 
+    def test_topic_writer_uses_the_loaded_project_wiki_helper(self) -> None:
+        topic_writer_text = TOPIC_WRITER_SKILL.read_text(encoding="utf-8")
+
+        self.assertNotIn("project-wiki-" + "skill-root", topic_writer_text)
+        self.assertIn(
+            "the absolute directory containing the loaded project-wiki/SKILL.md",
+            topic_writer_text,
+        )
+        for command in ("lint", "okf-migrate", "okf-validate", "link-leaves"):
+            with self.subTest(command=command):
+                self.assertIn(
+                    f"{WIKI_OPS_COMMAND_PREFIX} {command}",
+                    topic_writer_text,
+                )
+
     def test_all_operations_resolve_from_source_and_installed_catalogs(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             temporary_root = Path(temporary)

@@ -3,3 +3,4 @@ cases:
   durable-topic-creation: {overviewTopics: [deployment, rollback, incident escalation], sources: [operations-procedure]}
   code-aware-maintenance: {commitRange: synthetic-a..synthetic-b, sources: [implementation, tests, operator-procedure], conflict: procedure stale}
   insufficient-sources: {requestedTopic: incident escalation, available: [unapproved chat summary], missing: [procedure, implementation evidence]}
+  verifier-interruption: {writerEdits: [deployment-policy, deployment-hub], validation: [lint-pass, okf-pass, leaf-link-pass], verifierOutcome: interrupted-before-verdict}

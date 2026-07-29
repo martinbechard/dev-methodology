@@ -44,3 +44,18 @@ scenarios:
     deterministicChecks: [harness-agent-identity, authority-gap-presence, no-forbidden-mutation, claim-lifecycle, output-contract-presence]
     expectedOutputs: [status, source traceability, lint and verifier evidence, claim closeout]
     expectedTerminalStatus: BLOCKED
+  - id: verifier-interruption
+    priority: 4
+    status: executable
+    executableCase: fixtures/cases.yaml
+    offlineHarness: executable_harness.py
+    purpose: Preserve validated writer edits and return role-owned evidence when independent verification is interrupted.
+    initialState: The writer has completed a validated topic-page set, and Wiki Topic Verifier becomes unavailable before returning a verdict.
+    task: Hand off the validated page set for independent verification and stop safely when the verifier returns no verdict.
+    targetSkills: [agent-claim, project-wiki, project-wiki-topic-write]
+    allowedAgentDependencies: [wiki-topic-verifier]
+    requiredBehaviors: [Preserve writer edits, Keep Wiki Topic Verifier read-only, Let Wiki Writer own verifier invocation and interruption handling, Record before-and-after state proving no verifier mutation, Report role-owned BLOCKED evidence with page inventory validation results completed correction attempts governing cap and the exact interruption]
+    forbiddenBehaviors: [Do not let project-wiki-topic-write invoke the verifier, Revert writer edits, Allow verifier mutation, Invent a verifier verdict or findings, Report READY]
+    deterministicChecks: [harness-agent-identity, dependency-identity-and-order, wiki-validation, read-only-boundary, no-forbidden-mutation, claim-lifecycle, output-contract-presence]
+    expectedOutputs: [status, durable wiki changes, source traceability, lint and verifier evidence, claim closeout]
+    expectedTerminalStatus: BLOCKED

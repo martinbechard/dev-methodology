@@ -6724,13 +6724,6 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("agent-work-merge", orchestrator.skills)
         self.assertNotIn("review-structured-artifact", orchestrator.skills)
 
-        topic_write_skill = (
-            SKILLS_ROOT / "project-wiki-topic-write" / "SKILL.md"
-        ).read_text(encoding="utf-8")
-        self.assertIn("at most two corrected resubmissions", topic_write_skill)
-        self.assertIn("governing cap is exhausted", topic_write_skill)
-        self.assertNotIn("Repeat until the verifier returns GOOD", topic_write_skill)
-
         direct_lane_example = next(
             example
             for example in orchestrator.examples
@@ -6756,6 +6749,130 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("commit closeout", normalized_response)
                 self.assertIn("enabled resource-coordination evidence", normalized_response)
                 self.assertNotIn("released the ingest claim", normalized_response)
+
+    def test_topic_writer_hands_verification_to_the_owning_role(self) -> None:
+        """Topic writing preserves edits and evidence without owning verifier dispatch."""
+        topic_write_skill = (
+            SKILLS_ROOT / "project-wiki-topic-write" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        topic_write_metadata = load_yaml_object(
+            SKILLS_ROOT
+            / "project-wiki-topic-write"
+            / "agents"
+            / "openai.yaml"
+        )
+        normalized_skill = " ".join(topic_write_skill.split())
+        default_prompt = topic_write_metadata["interface"]["default_prompt"]
+        writer_role = load_yaml_object(
+            ROLES_ROOT / "wiki-activities" / "wiki-writer.role.yaml"
+        )
+        verifier_role = load_yaml_object(
+            ROLES_ROOT / "wiki-activities" / "wiki-topic-verifier.role.yaml"
+        )
+
+        for prohibited in (
+            "Spawn a fresh subagent",
+            "invoke a fresh verifier again",
+            "count one correction attempt",
+            "at most two corrected resubmissions",
+            "governing cap is exhausted",
+            "return BLOCKED",
+        ):
+            with self.subTest(prohibited_skill_orchestration=prohibited):
+                self.assertNotIn(prohibited, topic_write_skill)
+        for required in (
+            "The skill does not spawn or invoke the verifier",
+            "Return the handoff to the owning conceptual role",
+            "Leave the writer edits intact",
+            "before-and-after no-mutation evidence",
+            "role-owned BLOCKED evidence",
+            "complete created, updated, and deleted page inventory",
+            "lint, OKF validation, and leaf-link results",
+        ):
+            with self.subTest(required_writer_handoff=required):
+                self.assertIn(required, normalized_skill)
+        self.assertIn("role-owned independent verification", default_prompt)
+        for prohibited in (
+            "retry cap",
+            "two-attempt default",
+            "return BLOCKED",
+        ):
+            with self.subTest(prohibited_metadata_orchestration=prohibited):
+                self.assertNotIn(prohibited, default_prompt)
+
+        writer_instructions = writer_role["instructions"]
+        boundary_text = " ".join(writer_instructions["boundaries"])
+        delegation_text = " ".join(writer_instructions["delegation"])
+        failure_text = " ".join(writer_instructions["failureHandling"])
+        completion_text = " ".join(writer_instructions["completion"])
+        self.assertIn("Invoke wiki-topic-verifier", delegation_text)
+        self.assertIn(
+            "Report BLOCKED when wiki-topic-verifier is unavailable",
+            failure_text,
+        )
+        self.assertIn(
+            "Capture the verifier invocation and returned receipt",
+            delegation_text,
+        )
+        self.assertIn(
+            "writer-owned page scope immediately before and after",
+            delegation_text,
+        )
+        self.assertIn("attempted verifier write", boundary_text)
+        self.assertIn("Preserve the current unverified writer edits", failure_text)
+        self.assertIn("do not invent verifier findings", failure_text)
+        self.assertIn("intentionally leave the worktree dirty", completion_text)
+        self.assertIn(
+            "Report BLOCKED only with the reviewed page inventory",
+            completion_text,
+        )
+        self.assertEqual("never", verifier_role["repositoryMutation"])
+        writer_scenarios = load_yaml_object(
+            AGENT_TEST_SUITES_ROOT / "wiki-writer" / "scenarios.yaml"
+        )["scenarios"]
+        interruption = next(
+            scenario
+            for scenario in writer_scenarios
+            if scenario["id"] == "verifier-interruption"
+        )
+        interruption_contract = " ".join(
+            [
+                *interruption["requiredBehaviors"],
+                *interruption["forbiddenBehaviors"],
+            ]
+        )
+        known_checks = {
+            check["id"]
+            for check in load_yaml_object(REPOSITORY_ROOT / "evals" / "judges.yaml")[
+                "checks"
+            ]
+        }
+        writer_fixtures = load_yaml_object(
+            AGENT_TEST_SUITES_ROOT / "wiki-writer" / "fixtures" / "cases.yaml"
+        )["cases"]
+        self.assertEqual("BLOCKED", interruption["expectedTerminalStatus"])
+        self.assertLessEqual(set(interruption["deterministicChecks"]), known_checks)
+        self.assertIn("verifier-interruption", writer_fixtures)
+        self.assertEqual(
+            "executable_harness.py",
+            interruption["offlineHarness"],
+        )
+        self.assertTrue(
+            (
+                AGENT_TEST_SUITES_ROOT
+                / "wiki-writer"
+                / interruption["offlineHarness"]
+            ).is_file()
+        )
+        for required in (
+            "Preserve writer edits",
+            "Keep Wiki Topic Verifier read-only",
+            "before-and-after state",
+            "role-owned BLOCKED evidence",
+            "Do not let project-wiki-topic-write invoke the verifier",
+        ):
+            with self.subTest(interruption_contract=required):
+                self.assertIn(required, interruption_contract)
 
     def test_dev_orchestrator_durably_records_every_confirmed_defect(self) -> None:
         """Source and native roles preserve mandatory duplicate-reconciled defect evidence."""
@@ -9051,6 +9168,20 @@ class BundleContentTests(unittest.TestCase):
                             "destination-collision",
                             "verifier-failure",
                             "final-evidence-audit-read-only",
+                        },
+                        {
+                            scenario["id"]
+                            for scenario in scenarios["scenarios"]
+                        },
+                    )
+                elif entry["id"] == "wiki-writer":
+                    self.assertEqual(4, len(scenarios["scenarios"]))
+                    self.assertEqual(
+                        {
+                            "durable-topic-creation",
+                            "code-aware-maintenance",
+                            "insufficient-sources",
+                            "verifier-interruption",
                         },
                         {
                             scenario["id"]
