@@ -1,10 +1,10 @@
 # Clarify path-limited backlog commit coordination
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Root Dev Orchestrator for canonical task 019fab2d-d9ac-7a82-8107-04260716d4d0
 
 Provider: file
 
@@ -75,13 +75,15 @@ Branch: codex/clarify-path-limited-backlog-commit-019fab2d
 
 Worktree: /Users/martinbechard/.codex/worktrees/95f4/dev-methodology
 
-Started At: 2026-07-29T00:29:45.269126Z
+Started At: 2026-07-29T01:18:03.065326Z
 
-Phase: Lifecycle acceptance recorded; implementation and approval work have not started.
+Phase: Lifecycle acceptance recorded after resumption; no definition, test, documentation, mirror, candidate, review, integration, delivery, or other source mutation has started.
 
-Starting Reservation Commit: be0cf3e873ec31ff2cedaaa91d399597b8b47484
+Starting Reservation Commit: 8ae2360cbe52e799d4653fe99a1aad49b36bec9c
 
-Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim accept-starting-running-clarify-path-limited-019fab2d; journal event aa249b43-468b-44ba-917c-62ab544eed75; exact path backlog/defect-backlog/clarify-path-limited-backlog-commit-coordination.md.
+Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim starting-running-clarify-path-limited-019fab2d; journal event bc2405de-c2f8-4584-85e6-d6555e74b906; exact path backlog/defect-backlog/clarify-path-limited-backlog-commit-coordination.md.
+
+Controlling Approval and Gate: The dated controlling answer “ok I approve” applies only to skills/create-file-work-item/SKILL.md and skills/manage-file-work-items/SKILL.md. Do not mutate either source path until an approval record exists and both exact supported preflights return ALLOWED.
 
 ## Summary
 
