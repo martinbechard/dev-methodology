@@ -1,6 +1,6 @@
 # Restore Agent And Skill Definitions Outline And Simplify Diagrams
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -117,6 +117,50 @@ None.
 ## Open Questions
 
 None.
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019faeb3-d88f-7a73-9533-899158b73f4c.
+
+Launch Reservation: One bounded launch reservation for the canonical work-item conversation; no additional conversation creation is authorized.
+
+Normalized Objective: Restore the intended Conceptual Agent and Skill Definitions structure, enforce it through a durable tree-form outline, place Dev Activities before Backlog Management, and remove the redundant backlog-focus and wiring-map surfaces.
+
+Dispatch Time: 2026-07-29T16:30:15Z.
+
+Intended Root Role: Root Dev Orchestrator.
+
+Canonical Conversation and Root Agent Task: 019faeb3-d88f-7a73-9533-899158b73f4c.
+
+Direct Conversation-Title Handoff: Restore Agent And Skill Definitions Outline And Simplify Diagrams.
+
+Branch: codex/restore-definitions-outline-diagrams-019faeb3.
+
+Worktree: /Users/martinbechard/.codex/worktrees/ab5e/dev-methodology.
+
+Private Baseline: 9c35af2d43e0b4544cc64016d5c6e37d171018fc (clean).
+
+Owner: Unowned pending accepted root.
+
+Runtime Launch Result: Direct conversation-title handoff observed; Root Dev Orchestrator accepted the launch handshake at 2026-07-29T16:29:18.426653Z.
+
+Owner Acceptance: Pending.
+
+Reconciliation: Pending.
+
+## Starting Settlement Evidence
+
+Settlement Window: 2026-07-29T16:30:15Z to 2026-07-29T16:31:15Z (exactly 60 seconds).
+
+Runtime Launch Result: Direct conversation-title handoff observed; Root Dev Orchestrator accepted the launch handshake at 2026-07-29T16:29:18.426653Z.
+
+Canonical Conversation: 019faeb3-d88f-7a73-9533-899158b73f4c.
+
+Owner Acceptance: Pending.
+
+Reconciliation: Pending.
 
 ## Notes
 
