@@ -1,12 +1,12 @@
 # Stop UX review from performing runtime technology routing
 
-Status: User Action Required
+Status: Abandoned
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/stop-ux-review-runtime-technology-routing.md
+Provider Reference: backlog/failed-backlog/defects/stop-ux-review-runtime-technology-routing.md
 
 Completion: direct-main
 
@@ -55,6 +55,18 @@ Supported Post-Approval Regeneration Only: generated/adapters/** and design/gene
 Unattended Stop: Stop governed-definition mutation, test/candidate production that depends on the change, regeneration, delivery, and integration; only read-only preservation/reconciliation may continue.
 
 Evidence: Accepted lint report evals/results/2026-07-28-methodology-skill-lint.md:408-418; source skills/user-experience-review/SKILL.md:15; owning role agents/roles/dev-activities/dev-ux-specialist.role.yaml:6-8,64; bounded read-only reviewer found no code/test-only correction can satisfy acceptance and confirmed exact one-file scope.
+
+## Abandonment Evidence
+
+Abandonment Authority: Explicit user decline in the canonical task on 2026-07-28.
+
+User Decline Provenance: “Declined, skills routing is mostly done by the harness, and agents may be allowed to request more skills to be loaded if it makes sense.”
+
+Rationale: Routing is primarily harness-owned and agents may be permitted to request additional skills when appropriate. This rationale does not authorize any different governed definition, replacement work item, or new feature.
+
+Post-Answer Mutation Evidence: After the answer, this task changed no source, test, generated mirror, governed definition, or provider record before this authorized terminal provider transaction. The only task-state actions were title/update and Coordinator notification.
+
+Delivery Evidence: No implementation candidate or delivery commit exists. Completion direct-main was not attempted because the exact requested definition change was declined. No approval provenance may be inferred or manufactured.
 
 ## Summary
 
