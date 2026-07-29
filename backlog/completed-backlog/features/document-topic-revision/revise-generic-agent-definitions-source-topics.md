@@ -1,12 +1,12 @@
 # Revise the Generic Agent Definitions Source Document Topics
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/document-topic-revision/revise-generic-agent-definitions-source-topics.md
+Provider Reference: backlog/completed-backlog/features/document-topic-revision/revise-generic-agent-definitions-source-topics.md
 
 Completion: direct-main
 
@@ -36,6 +36,19 @@ Phase: document topic revision preparation
 Started At: 2026-07-29T03:38:52Z
 Acceptance Evidence: The canonical root Dev Orchestrator accepted delivery ownership after the parent Coordinator's 2c2a17fd Ready -> Starting reservation.
 Current Claim Evidence: accept-revise-generic-agent-definitions-source-topics-019fabe9; outcome SHARED_CHECKOUT_ACQUIRED; claim event 2df7a8b0-6906-43a3-b105-7504ddf8c41d; exact provider path claimed in the primary main checkout.
+
+## Completion Evidence
+
+Completed At: 2026-07-29T04:20:43Z
+Completion Disposition: READY
+Accepted Source Commit: c36d599e on codex/revise-generic-agent-definitions-source-topics; source worktree clean.
+Main Integration: Cherry-pick -x integration commit e6a902a00072633becc81457fabd44cf88c08b51; source and integration patch ID 5f2098559c9b9ff34d5062ccc74c1ccef8224915.
+Observed Main: main at 18d40caf968d4a961d12eaab9ecd992581fc350f during terminal reconciliation; e6a902a00072633becc81457fabd44cf88c08b51 is an ancestor and the primary worktree was clean.
+Delivery Scope: design/generic-agent-definitions-source.html only.
+Review Evidence: Independent final editorial review GOOD; independent final generated-ownership review GOOD.
+Verification Evidence: Seven exact focused tests PASS; scripts/build-skill-docs.py --check current; HTML IDs, ARIA, and local file links PASS; baseline links, IDs, and code tokens preserved; git diff --check PASS.
+Scoped Baseline Warning: Unchanged README.md#explicit-target-deployment fragment mismatch predates the candidate and remains required by the focused contract; no repair was authorized.
+Terminal Claim Evidence: complete-revise-generic-agent-definitions-source-topics-019fabe9; outcome SHARED_CHECKOUT_ACQUIRED; claim event 3ea24298-01c2-49dc-ae90-e4c1b5603594; current and destination provider paths claimed in the primary main checkout.
 
 Series: backlog/feature-backlog/document-topic-revision/index.md
 
