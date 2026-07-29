@@ -1,14 +1,14 @@
 # Incorporate the Document Topic Editor and Topic Skills
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
-Owner: Root Dev Orchestrator for canonical task 019fab9e-44bf-7571-9fbb-d9d63d3fa9da
+Owner: Unowned pending the recorded user decision
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/document-topic-revision/incorporate-document-topic-agent-and-skills.md
+Provider Reference: backlog/user-action-required/incorporate-document-topic-agent-and-skills.md
 
 Completion: direct-main
 
@@ -61,6 +61,39 @@ Phase: Analyzing.
 Starting Reservation Commit: 2afc03e64d8ed45053900e8ae1e12a1055d8e6f4.
 
 Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim starting-running-019fab9e-44bf-7571-9fbb-d9d63d3fa9da; incarnation 687e34f1-ab98-4b88-8625-6144c6985975; claim journal event 15b4f135-6274-42d0-822b-cb89d25c4968; exact path backlog/feature-backlog/document-topic-revision/incorporate-document-topic-agent-and-skills.md in the primary main checkout.
+
+## User Action Required
+
+Question: Do you explicitly approve creating exactly the five governed definitions listed above for the read-only analyze-document-topics skill, the separately authorized revise-document-topics skill, and the conceptual Document Topic Editor—and, for each revision, should the durable before-and-after topic-analysis artifact be recorded by default or only when the caller requests it?
+
+Why User Approval Is Required: All five exact paths are separately governed definitions. Backlog creation and dispatch were not approval.
+
+Options and Consequences:
+
+- A. Approve + record by default: permits exact approval records and preflights, bounded implementation, supported same-category regeneration, ordinary tests, evaluation, and documentation; every revision is auditable by default.
+- B. Approve + caller-requested only: permits the same exact governed scope but omits the durable before-and-after artifact unless requested, reducing routine evidence and storage.
+- C. Defer: preserves this task, branch, and worktree in User Action Required with no definition mutation.
+- D. Decline: ends this proposed governed-definition addition without reframing backlog creation as approval.
+
+Display Name: Document Topic Editor.
+
+Canonical Filename: agents/roles/dev-activities/dev-document-topic-editor.role.yaml.
+
+Exact Governed Definition Manifest:
+
+1. skills/analyze-document-topics/SKILL.md
+2. skills/revise-document-topics/SKILL.md
+3. skills/analyze-document-topics/agents/openai.yaml
+4. skills/revise-document-topics/agents/openai.yaml
+5. agents/roles/dev-activities/dev-document-topic-editor.role.yaml
+
+Concrete Example: Analysis of design/agentic-configuration.html may report a low-coherence parent without changing bytes. Only a separately authorized revision may move headings, and the selected artifact policy controls whether its before-and-after outline is durably retained.
+
+Exclusions: No other agent, skill, or metadata definition; no hand-edited generated mirror; no cross-family regeneration; and no document-revision child work.
+
+Unattended Work Boundary: After this provider move, stop all definition, source, test, evaluation, documentation, generated, candidate, review, integration, and delivery work until the exact answer is recorded, this same task resumes through User Action Required -> Ready -> Starting -> Running, and all five exact supported preflights return ALLOWED.
+
+Preserved Execution and Scope Evidence: Running acceptance commit 83bdaba2ebb3fea8c776d4be619186380881abb0; canonical task and Thread 019fab9e-44bf-7571-9fbb-d9d63d3fa9da; branch codex/incorporate-document-topic-agent-and-skills-019fab9e; worktree /Users/martinbechard/.codex/worktrees/350a/dev-methodology; clean no-candidate state; migration sources .agents/skills/create-document-outline/SKILL.md and .agents/skills/improve-document-outline/SKILL.md; supported regeneration surfaces, evaluation/test/documentation companions, and semantic documentation model-profile evidence remain preserved for later authorized work.
 
 ## Summary
 
