@@ -364,11 +364,11 @@
 
     <section class="hero" aria-labelledby="page-title">
       <h1 id="page-title">Generic Agent Definitions Source</h1>
-      <p class="callout">The default generator preserves fixed and conditional core-skill semantics while emitting native by-reference bindings. Explicit inline remains available for self-contained runtimes. The generation manifest records the chosen mode and agent digests so installation metadata can prove that the installed bytes use the same delivery contract.</p>
+      <p class="callout">Conceptual roles under <code>agents/roles/</code> own agent intent, <code>agents/role-schema.yaml</code> owns the allowed vocabulary, and the model-profile sources own semantic profile IDs and concrete runtime model values. The default generator owns the transformation that preserves fixed and conditional core-skill semantics while emitting native by-reference bindings. Explicit inline remains available for self-contained runtimes. The generator also produces the generation manifest from those source values, recording the chosen mode and agent digests so installation metadata can prove that the installed bytes use the same delivery contract.</p>
       <p class="lede">
         Skills and agents have different portability models. A source skill remains the same portable skill package when it is deployed,
         while a conceptual agent definition source must be converted into the file format and properties understood by each agent harness.
-        This page explains that difference, the conceptual agent definition model, native agent packaging, cross-runtime property mappings, and vendor references.
+        This page explains that difference, then separates canonical inputs and constraints from generated outputs before covering conceptual semantics, model resolution, native packaging, cross-runtime adapter mappings, and vendor references.
       </p>
     </section>
 
@@ -400,7 +400,7 @@
 
     <section class="section" aria-labelledby="generation-title">
       <h2 id="generation-title">From Conceptual Agent Definitions To Native Agent Definitions</h2>
-      <p class="lede"><code>agents/roles/&lt;role-category&gt;/&lt;role-name&gt;.role.yaml</code> is a conceptual agent definition source, not a file that an agent harness loads directly. It describes the agent once with the repository's shared vocabulary. The generator validates that vocabulary, resolves adapter-specific values, and emits one native agent definition per supported harness.</p>
+      <p class="lede"><code>agents/roles/&lt;role-category&gt;/&lt;role-name&gt;.role.yaml</code> is a conceptual agent definition source, not a file that an agent harness loads directly. It owns the agent's conceptual values, including its selected profile ID, in the repository's shared vocabulary. <code>agents/role-schema.yaml</code> constrains those values, the conceptual profile catalog owns profile purposes, and adapter model-profile YAML owns concrete model and any effort or context values present. <code>scripts/build-skill-docs.py</code> owns the transformation that emits one native agent definition per supported harness.</p>
       <div class="flow" aria-label="Conceptual agent definition generation flow">
         <div class="flow-row">
           <div><span class="name">1. Author The Conceptual Agent Definition</span></div>
@@ -412,12 +412,12 @@
         </div>
         <div class="flow-row">
           <div><span class="name">3. Render Each Harness Format</span></div>
-          <p><code>scripts/build-skill-docs.py</code> converts the conceptual values into native property names and file structures. For example, conceptual <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude Code, Gemini CLI, or Junie CLI agent. The generator emits native or instruction-driven core-skill references by default and preserves conditional request-specific selection instructions.</p>
+          <p><code>scripts/build-skill-docs.py</code> owns conversion to native property names, Codex runtime-name normalization and output-filename derivation, instruction placement, explicit omissions, skill-reference and inline-skill handling, and runtime file structures. For example, conceptual <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude Code, Gemini CLI, or Junie CLI agent. Conceptual roles and skills still own their source values, and adapter model-profile YAML owns only the concrete model and any effort or context values present for its harness.</p>
           <p>The Codex adapter includes <code>codex-harness-directives</code> in that required core set when <code>repositoryMutation</code> is required or conditional. Passing <code>--inline-core-skills true</code> explicitly embeds required core skill bodies. The <a href="skills-modularization.html#skill-lifecycle-title">cross-harness skill lifecycle</a> owns the preload, dynamic invocation, content-read, application, and proof distinctions.</p>
         </div>
         <div class="flow-row">
           <div><span class="name">4. Use Generated Native Agent Definition Files</span></div>
-          <p>The generated Codex TOML and Claude Code, Gemini CLI, and Junie CLI Markdown files are deployable runtime artifacts. They are regenerated from the conceptual agent definition source and must not become independent sources of truth.</p>
+          <p>The generated Codex TOML and Claude Code, Gemini CLI, and Junie CLI Markdown files are deployable runtime artifacts. Their conceptual values come from roles, schema-governed defaults, referenced skills, and model-profile sources; <code>scripts/build-skill-docs.py</code> owns their native transformation and file structure. The generated files must not become independent sources of truth.</p>
         </div>
       </div>
       <div class="panel">
@@ -425,16 +425,21 @@
         <ul>
           <li><span class="name">Rename or relocate:</span> a conceptual property may become a differently named native property or move into an instruction body.</li>
           <li><span class="name">Resolve:</span> a provider-neutral value such as <code>modelProfile: advanced</code> becomes the concrete model and reasoning settings selected by an adapter.</li>
-          <li><span class="name">Expand:</span> skill conditions, output contracts, and rationale can become native fields, generated instructions, or trace comments.</li>
+          <li><span class="name">Expand:</span> source-owned skill conditions, output contracts, and rationale can become generator-rendered native fields, instructions, or trace comments.</li>
           <li><span class="name">Default or omit:</span> behavior without a native equivalent follows an explicit fallback rule instead of inventing an unsupported harness property.</li>
         </ul>
       </div>
+    </section>
+
+    <section class="section" aria-labelledby="canonical-inputs-title">
+      <h2 id="canonical-inputs-title">Canonical Inputs And Constraints</h2>
+      <p class="lede">These files are maintained sources. Conceptual roles own agent semantics, the schema owns allowed fields and fixed behavior, semantic model profiles own provider-neutral capability names, adapter profiles own runtime model values, and skill sources own their instruction packages.</p>
       <div class="matrix">
         <table>
           <thead>
             <tr>
-              <th>Artifact</th>
-              <th>Repository file</th>
+              <th>Canonical Input</th>
+              <th>Repository Source</th>
               <th>Relationship To The Harness</th>
             </tr>
           </thead>
@@ -462,22 +467,45 @@
             <tr>
               <td><span class="name">Model resolution</span></td>
               <td><code>agents/model-profiles.yaml</code> and <code>adapters/&lt;harness-name&gt;/model-profiles.yaml</code></td>
-              <td>Maps conceptual capability profiles to the concrete model properties used by each harness.</td>
+              <td>The conceptual catalog owns semantic capability profiles; each adapter profile owns the concrete model properties used by its harness.</td>
             </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="generated-outputs-title">
+      <h2 id="generated-outputs-title">Generated Outputs And Canonical Owners</h2>
+      <p class="lede">Generated files are replaceable projections. Maintained sources own their source values, while <code>scripts/build-skill-docs.py</code> owns output transformation, native structure, and manifest construction. Adapter model-profile YAML owns concrete model and any effort or context values present, not unrelated native mappings.</p>
+      <div class="matrix">
+        <table>
+          <thead>
+            <tr>
+              <th>Generated Output</th>
+              <th>Repository File</th>
+              <th>Canonical Owner</th>
+            </tr>
+          </thead>
+          <tbody>
             <tr>
               <td><span class="name">Native agent definition outputs</span></td>
               <td><code>generated/adapters/&lt;harness-name&gt;/agents/&lt;role-name&gt;.&lt;harness-extension&gt;</code></td>
-              <td>Contains the harness-specific agent files produced by generation. Current outputs are Codex TOML plus Claude Code, Gemini CLI, and Junie CLI Markdown.</td>
+              <td>Each conceptual role owns its agent values; <code>agents/role-schema.yaml</code> owns vocabulary and fixed declarations; referenced skill sources own skill instructions; and the applicable adapter model-profile YAML owns its concrete model and any effort or context values present. <code>scripts/build-skill-docs.py</code> owns Codex runtime-name normalization, output-filename derivation from <code>role.filename</code> plus the native extension, native property and instruction mapping, skill handling, omission rules, and runtime file structure. Current formats are Codex TOML plus Claude Code, Gemini CLI, and Junie CLI Markdown.</td>
             </tr>
             <tr>
               <td><span class="name">Generation inventory</span></td>
               <td><code>generated/adapters/agent-generation-manifest.json</code></td>
-              <td>Records each conceptual agent definition source, generated harness file, and expected digest so generated files can be checked for drift.</td>
+              <td>Conceptual roles directly supply agent names and source relationships. In by-reference mode, role-declared unconditional skills plus <code>agents/role-schema.yaml</code> <code>fixedBehavior.sharedSkills</code> supply <code>referencedFixedSkills</code>. For mutation-capable Codex roles in that mode, <code>scripts/build-skill-docs.py</code> also adds the adapter-owned <code>codex-harness-directives</code> skill to <code>referencedFixedSkills</code>. Inline mode leaves <code>referencedFixedSkills</code> empty because the skill bodies are embedded. Adapter-owned skills supply <code>harnessSkills</code> in either delivery mode. The generator owns the manifest transformation, formats, output paths, delivery-mode field, and digest calculation. Other schema declarations, skill content, and model-profile values can influence generated-output digests without being serialized as separate manifest fields.</td>
             </tr>
             <tr>
-              <td><span class="name">Generated documentation data</span></td>
-              <td><code>design/generated/skill-definitions.js</code> and <code>design/generated/role-definitions.js</code></td>
-              <td>Feeds the <a href="agent-and-skill-definitions.html">agent definition and skill map</a>. These catalog files describe the sources for documentation; harnesses do not load them.</td>
+              <td><span class="name">Generated skill documentation data</span></td>
+              <td><code>design/generated/skill-definitions.js</code></td>
+              <td>Distributed <code>skills/*/SKILL.md</code>, applicable <code>skills/*/agents/openai.yaml</code>, and <code>design/skill-categories.yaml</code> supply this projection; adapter-owned skills are not included. <code>scripts/build-skill-docs.py</code> owns the skill documentation-data transformation. The projection feeds the <a href="agent-and-skill-definitions.html">agent definition and skill map</a>; harnesses do not load it.</td>
+            </tr>
+            <tr>
+              <td><span class="name">Generated role documentation data</span></td>
+              <td><code>design/generated/role-definitions.js</code></td>
+              <td>Conceptual roles, <code>agents/role-schema.yaml</code> shared-skill declarations, and <code>design/role-catalog-groups.yaml</code> supply this projection; semantic model profiles constrain and validate roles, while adapter model mappings are not content owners. <code>scripts/build-skill-docs.py</code> adds schema-owned shared skills to effective roles and owns the role documentation-data transformation. The projection feeds the <a href="agent-and-skill-definitions.html">agent definition and skill map</a>; harnesses do not load it.</td>
             </tr>
           </tbody>
         </table>
@@ -501,7 +529,7 @@
           <tr>
             <td><span class="name">Name</span></td>
             <td><code>name</code></td>
-            <td>Names the agent type used by routing, references, generated files, and UI display. Use a stable, short name that can survive adapter generation.</td>
+            <td>Names the agent type used by routing, references, generated files, and UI display. The conceptual role owns the portable name and filename values; <code>scripts/build-skill-docs.py</code> owns runtime normalization and derived output filenames. Use a stable, short name that can survive adapter generation.</td>
           </tr>
           <tr>
             <td><span class="name">Filename</span></td>
@@ -526,7 +554,7 @@
           <tr>
             <td><span class="name">Agent dependencies</span></td>
             <td><code>agentDependencies</code></td>
-            <td>Names fixed direct agent-to-agent use declared by this conceptual definition. The generated diagram renders an arrow from the using agent to each used agent; runtime-selected delegation that is not a fixed dependency remains outside this list.</td>
+            <td>Names fixed direct agent-to-agent use declared by this conceptual definition. The conceptual role owns each dependency relationship, and the generated diagram renders its arrow from the using agent to each used agent; runtime-selected delegation that is not a fixed dependency remains outside this list.</td>
           </tr>
           <tr>
             <td><span class="name">Skill condition</span></td>
@@ -606,14 +634,15 @@
           <tr>
             <td><span class="name">Examples</span></td>
             <td><code>examples</code></td>
-            <td>Stores customer-safe runtime invocations and plausible responses for generated catalog views and regression checks. Adapter-specific invocations use that harness's native selector, including underscore-normalized Codex agent names.</td>
+            <td>Stores customer-safe runtime invocations and plausible responses that remain owned by the conceptual role when rendered in generated catalog views and regression checks. Adapter-specific invocations use that harness's native selector, including underscore-normalized Codex agent names.</td>
           </tr>
         </tbody>
       </table>
     </section>
 
     <section class="section" aria-labelledby="ignored-properties-title">
-      <h2 id="ignored-properties-title">Properties We Ignore</h2>
+      <h2 id="ignored-properties-title">Schema Constraints: Properties We Ignore</h2>
+      <p class="lede"><code>agents/role-schema.yaml</code> owns this exclusion boundary. Excluded vendor properties are not canonical conceptual fields and therefore do not acquire generated equivalents.</p>
       <table>
         <thead><tr><th>Property</th><th>Reason</th></tr></thead>
         <tbody>
@@ -626,20 +655,37 @@
     </section>
 
     <section class="section" aria-labelledby="defaulted-properties-title">
-      <h2 id="defaulted-properties-title">Behavior We Default</h2>
+      <h2 id="defaulted-properties-title">Schema Constraints: Behavior We Default</h2>
+      <p class="lede"><code>agents/role-schema.yaml</code> owns these fixed declarations. <code>fixedBehavior.sharedSkills</code> is consumed by <code>scripts/build-skill-docs.py</code> when it builds each role's effective skill set; <code>target</code>, <code>userInvocable</code>, and <code>automaticDelegation</code> remain schema declarations with the documented adapter treatment below.</p>
       <table>
         <thead><tr><th>Behavior</th><th>Methodology Default</th><th>Adapter Rule</th></tr></thead>
         <tbody>
           <tr><td><code>fixedBehavior.target</code></td><td>Every conceptual agent definition targets local development.</td><td>Do not emit a remote or cloud execution target unless a future schema version adds one.</td></tr>
-          <tr><td><code>fixedBehavior.userInvocable</code></td><td>Every generated native agent definition remains eligible for user invocation.</td><td>Emit the runtime's normal invocation metadata where supported.</td></tr>
-          <tr><td><code>fixedBehavior.automaticDelegation</code></td><td>Every generated native agent definition remains eligible for automatic delegation.</td><td>Use descriptions and runtime invocation fields to preserve automatic selection.</td></tr>
-          <tr><td><code>fixedBehavior.sharedSkills</code></td><td>Every conceptual agent uses the listed communication or operating skills.</td><td>Add each shared skill to every generated native agent without repeating it in every role source.</td></tr>
+          <tr><td><code>fixedBehavior.userInvocable</code></td><td>The schema declares every conceptual agent eligible for user invocation.</td><td>Emit the runtime's normal invocation metadata where supported.</td></tr>
+          <tr><td><code>fixedBehavior.automaticDelegation</code></td><td>The schema declares every conceptual agent eligible for automatic delegation.</td><td>Use descriptions and runtime invocation fields to preserve automatic selection.</td></tr>
+          <tr><td><code>fixedBehavior.sharedSkills</code></td><td>Every conceptual agent uses the listed communication or operating skills.</td><td><code>scripts/build-skill-docs.py</code> adds each schema-owned shared skill to the effective role before rendering native agents, without repeating it in every role source.</td></tr>
         </tbody>
       </table>
     </section>
 
+    <section class="section" aria-labelledby="model-profiles-title">
+      <h2 id="model-profiles-title">Semantic Model Profiles And Adapter Resolution</h2>
+      <p class="lede">Model selection has two source layers. The conceptual catalog owns provider-neutral profile IDs and purposes; each adapter model-profile mapping owns the concrete model and any effort or context values present for the same IDs. <code>scripts/build-skill-docs.py</code> loads and validates those fields, renders <code>model</code> for Codex, Claude Code, Gemini CLI, and Junie CLI, renders effort only for Codex and Junie CLI, and currently renders no context field.</p>
+      <div class="flow" aria-label="Semantic model profile resolution">
+        <div class="flow-row">
+          <div><span class="name">Conceptual capability catalog</span></div>
+          <p><code>agents/model-profiles.yaml</code> owns the profile IDs and their purposes. Conceptual roles select one of those IDs through <code>modelProfile</code> or assign bounded stage IDs through <code>modelStages</code>.</p>
+        </div>
+        <div class="flow-row">
+          <div><span class="name">Harness adapter mappings</span></div>
+          <p><code>adapters/&lt;harness-name&gt;/model-profiles.yaml</code> owns the accepted concrete <code>model</code>, optional <code>effort</code>, and optional <code>context</code> values for its harness. <code>scripts/build-skill-docs.py</code> requires each adapter to map the complete conceptual profile set, then owns which accepted values are rendered and their native property names: all four adapters receive <code>model</code>, Codex and Junie CLI also receive effort, and no adapter currently receives context.</p>
+        </div>
+      </div>
+    </section>
+
     <section class="section" aria-labelledby="packaging-title">
       <h2 id="packaging-title">Native Runtime Packaging</h2>
+      <p class="lede">Packaging describes each runtime format and discovery location. Conceptual roles, schema declarations, referenced skills, and adapter model-profile YAML supply source values; <code>scripts/build-skill-docs.py</code> owns Codex runtime-name normalization, output-filename derivation, property mappings, instruction placement, omission rules, skill delivery, and runtime file structures.</p>
       <div class="matrix">
         <table>
           <thead>
@@ -653,22 +699,22 @@
             <tr>
               <td><span class="name">Codex</span></td>
               <td>One standalone TOML file per custom agent.</td>
-              <td>Codex discovers project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code>. This bundle generates <code>generated/adapters/codex/agents/*.toml</code>. Mutation-capable definitions enable <code>codex-harness-directives</code> through <code>[[skills.config]]</code> and add a developer instruction to read it by default; explicit inline core delivery embeds it. Read-only definitions omit it. Enablement is not preloading or behavioral evidence.</td>
+              <td>Codex discovers project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code>. The Codex model-profile source contains model, effort, and context values; <code>scripts/build-skill-docs.py</code> renders model and effort as <code>model</code> and <code>model_reasoning_effort</code>, but does not render context. Roles supply the other conceptual values. The generator also owns the TOML structure, Codex runtime-name normalization, and output-filename derivation from <code>role.filename</code> under <code>generated/adapters/codex/agents/*.toml</code>. Mutation-capable definitions enable <code>codex-harness-directives</code> through <code>[[skills.config]]</code> and add a developer instruction to read it by default; explicit inline core delivery embeds it. Read-only definitions omit it. Enablement is not preloading or behavioral evidence.</td>
             </tr>
             <tr>
               <td><span class="name">Claude Code</span></td>
               <td>Markdown with YAML frontmatter and a Markdown instruction body.</td>
-              <td>Claude discovers project <code>.claude/agents/</code> and user <code>~/.claude/agents/</code>. This bundle generates <code>generated/adapters/claude/agents/*.md</code>.</td>
+              <td>Claude discovers project <code>.claude/agents/</code> and user <code>~/.claude/agents/</code>. The Claude model-profile source contains model and context values, with no effort values; <code>scripts/build-skill-docs.py</code> renders only <code>model</code> and does not render context. Roles supply the other conceptual values, and the generator owns output-filename derivation plus the YAML-frontmatter and Markdown-body transformation under <code>generated/adapters/claude/agents/*.md</code>.</td>
             </tr>
             <tr>
               <td><span class="name">Gemini CLI</span></td>
               <td>Markdown with YAML frontmatter and a Markdown instruction body.</td>
-              <td>Gemini CLI discovers workspace <code>.gemini/agents/</code> and user <code>~/.gemini/agents/</code>. This bundle generates <code>generated/adapters/gemini/agents/&lt;agent-name&gt;.md</code>.</td>
+              <td>Gemini CLI discovers workspace <code>.gemini/agents/</code> and user <code>~/.gemini/agents/</code>. The Gemini model-profile source contains model and context values; <code>scripts/build-skill-docs.py</code> renders only <code>model</code> and does not render context. Roles supply the other conceptual values, and the generator owns output-filename derivation plus the YAML-frontmatter and Markdown-body transformation under <code>generated/adapters/gemini/agents/&lt;agent-name&gt;.md</code>.</td>
             </tr>
             <tr>
               <td><span class="name">Junie CLI</span></td>
               <td>Markdown with YAML metadata and a Markdown instruction body.</td>
-              <td>Junie CLI discovers project <code>.junie/agents/</code> or <code>.agents/</code>, user <code>~/.junie/agents/</code> or <code>~/.agents/</code>, and explicit agent locations. This bundle generates <code>generated/adapters/junie/agents/&lt;agent-name&gt;.md</code>.</td>
+              <td>Junie CLI discovers project <code>.junie/agents/</code> or <code>.agents/</code>, user <code>~/.junie/agents/</code> or <code>~/.agents/</code>, and explicit agent locations. The Junie model-profile source contains model, effort, and context values; <code>scripts/build-skill-docs.py</code> renders model and effort as <code>model</code> and <code>reasoningLevel</code>, but does not render context. Roles supply the other conceptual values, and the generator owns output-filename derivation plus the YAML-metadata and Markdown-body transformation under <code>generated/adapters/junie/agents/&lt;agent-name&gt;.md</code>.</td>
             </tr>
             <tr>
               <td><span class="name">GitHub Copilot Agent Mode</span></td>
@@ -681,7 +727,7 @@
     </section>
     <section class="section" aria-labelledby="mapping-title">
       <h2 id="mapping-title">Conceptual-To-Native Property Mapping</h2>
-      <p class="lede">This matrix shows how conceptual agent definition properties are converted to the actual properties or instruction surfaces understood by each harness. The conceptual property table above is the exhaustive source schema inventory; fields carried only in generated instructions, comments, catalog data, or filenames do not need a separate native mapping row.</p>
+      <p class="lede">This matrix shows how <code>scripts/build-skill-docs.py</code> converts conceptual agent definition properties to the actual properties or instruction surfaces understood by each harness. Conceptual roles and schema declarations supply source values; adapter model-profile YAML supplies concrete model and any effort or context values present. The generator owns native property names, Codex runtime-name normalization and output-filename derivation, instruction placement, omissions, skill handling, comments, and runtime structures.</p>
       <table>
         <thead>
           <tr>
@@ -785,9 +831,9 @@
           <tr>
             <td><span class="name">adapter profile settings</span></td>
             <td><code>model_reasoning_effort</code></td>
-            <td><code>effort</code></td>
+            <td>The profile may define <code>effort</code>, but the current generator renders only <code>model</code>.</td>
             <td>No documented subagent effort field; the adapter resolves only <code>model</code>.</td>
-            <td><code>reasoningLevel</code> or <code>effort</code></td>
+            <td><code>reasoningLevel</code></td>
             <td>No documented field.</td>
           </tr>
           <tr>
@@ -816,7 +862,7 @@
           </tr>
           <tr>
             <td><span class="name">isolation</span></td>
-            <td><code>sandbox_mode</code>; read-only is generated only for roles whose <code>repositoryMutation</code> value is <code>never</code></td>
+            <td>The conceptual role supplies <code>isolation</code> and <code>repositoryMutation</code> values under the schema. <code>scripts/build-skill-docs.py</code> owns the cross-field rule that validates read-only isolation only when <code>repositoryMutation</code> is <code>never</code> and renders <code>sandbox_mode</code> only for that read-only source value.</td>
             <td><code>isolation</code> for workspace isolation; permission behavior uses <code>permissionMode</code></td>
             <td>No documented field.</td>
             <td>No documented field.</td>
@@ -852,7 +898,7 @@
 
     <section class="section" aria-labelledby="sources-title">
       <h2 id="sources-title">Authoritative Runtime Sources</h2>
-      <p class="lede">The native formats and property mappings above are based on each harness vendor's documentation. These sources define what the generated runtime files may contain; they do not replace the conceptual agent definition sources maintained in this repository.</p>
+      <p class="lede">The native formats and property mappings above are based on each harness vendor's documentation. Vendor sources constrain supported runtime surfaces; conceptual roles, schema declarations, skills, and model-profile YAML supply source values. <code>scripts/build-skill-docs.py</code> owns the repository's transformation into native properties, instructions, omissions, filenames, manifests, and runtime file structures.</p>
       <div class="matrix">
         <table>
           <thead>
