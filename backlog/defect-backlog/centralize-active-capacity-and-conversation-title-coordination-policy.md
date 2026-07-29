@@ -1,6 +1,6 @@
 # Centralize active-capacity and conversation-title coordination policy
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/centralize-active-capacity-and-conver
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Root Dev Orchestrator 019fab2d-b796-7ff0-b7fd-8438b335e4af
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -32,6 +32,10 @@ Delivery Worktree: /Users/martinbechard/.codex/worktrees/c82a/dev-methodology
 
 Next Lifecycle Owner: Root Dev Orchestrator 019fab2d-b796-7ff0-b7fd-8438b335e4af
 
+Phase: Lifecycle acceptance complete; implementation has not started
+
+Started At: 2026-07-29T00:20:59.422474Z
+
 ## Starting Reservation
 
 - Transition: Ready -> Starting.
@@ -48,6 +52,18 @@ Next Lifecycle Owner: Root Dev Orchestrator 019fab2d-b796-7ff0-b7fd-8438b335e4af
 - Observed Launch Evidence: Parent Dev Backlog Coordinator reserved this canonical Thread under available Starting-plus-Running capacity and woke its canonical root task.
 - Required Next Transition: The same root Dev Orchestrator must atomically record Starting -> Running for this canonical Thread and task before any implementation or governed definition mutation.
 - Lifecycle Claim Evidence: ready-starting-three-reservations-019fa9bb; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event ee40be56-9b67-437f-91e6-f70c38fe84f8; claimed 2026-07-29T00:06:49.750900Z.
+
+## Running Acceptance
+
+- Transition: Starting -> Running.
+- Canonical Work-Item Thread: 019fab2d-b796-7ff0-b7fd-8438b335e4af.
+- Canonical Root Agent Task Id: 019fab2d-b796-7ff0-b7fd-8438b335e4af.
+- Owner: Root Dev Orchestrator 019fab2d-b796-7ff0-b7fd-8438b335e4af.
+- Phase: Lifecycle acceptance complete; implementation has not started.
+- Delivery Branch: codex/centralize-active-capacity-conversation-title-019fab2d.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/c82a/dev-methodology.
+- Started-At Evidence: Root Dev Orchestrator accepted this canonical Starting reservation before repository mutation; 2026-07-29T00:20:59.422474Z.
+- Lifecycle Claim Evidence: running-transition-019fab2d; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 1157cbfa-2b2d-41e2-a9e3-85638816b958; claimed 2026-07-29T00:20:59.422474Z.
 
 ## Summary
 
