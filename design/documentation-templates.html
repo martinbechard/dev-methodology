@@ -68,7 +68,8 @@
 
     h1,
     h2,
-    h3 {
+    h3,
+    h4 {
       margin: 0;
       line-height: 1.15;
     }
@@ -83,7 +84,8 @@
       font-size: clamp(1.35rem, 2vw, 2rem);
     }
 
-    h3 {
+    h3,
+    h4 {
       font-size: 1.05rem;
     }
 
@@ -278,7 +280,8 @@
       padding: var(--space-5);
     }
 
-    .panel h3 {
+    .panel h3,
+    .panel h4 {
       margin-bottom: var(--space-3);
     }
 
@@ -486,11 +489,15 @@
       </div>
     </section>
 
-    <section class="section" aria-labelledby="selection-title">
-      <h2 id="selection-title">Template Selection</h2>
-      <p class="lede">Choose the smallest artifact that fully owns the requested knowledge. Project configuration and wiki methodology establish operating context; the remaining templates form a progressively narrower development chain.</p>
-      <div class="matrix">
-        <table>
+    <section class="section" aria-labelledby="workflow-title">
+      <h2 id="workflow-title">Template Workflow</h2>
+      <p class="lede">Choose the artifact that owns the requested knowledge, apply its structural and prose authorities, then complete and maintain it from project evidence.</p>
+
+      <section class="section" aria-labelledby="selection-title">
+        <h3 id="selection-title">Template Selection</h3>
+        <p class="lede">Choose the smallest artifact that fully owns the requested knowledge. Project configuration and wiki methodology establish operating context; the remaining templates form a progressively narrower development chain.</p>
+        <div class="matrix">
+          <table>
           <thead>
             <tr>
               <th>Question to answer</th>
@@ -540,32 +547,60 @@
               <td>Translates accepted contracts and implementation evidence into durable test obligations.</td>
             </tr>
           </tbody>
-        </table>
-      </div>
-    </section>
+          </table>
+        </div>
+      </section>
 
-    <section class="section" aria-labelledby="prose-boundary-title">
-      <h2 id="prose-boundary-title">Structure And Technical Prose</h2>
-      <p class="lede">A selected template controls the artifact structure and required sections. The ste-technical-writing skill controls technical prose inside that structure.</p>
-      <div class="grid">
-        <article class="panel">
-          <h3>Template authority</h3>
-          <ul>
-            <li>Keep the selected artifact sections and their order.</li>
-            <li>Keep descriptions, requirements, decisions, and procedures in their source-defined forms.</li>
-            <li>Use structured-explanation only for a technical reasoning section that needs its item model.</li>
-          </ul>
-        </article>
-        <article class="panel">
-          <h3>STE authority</h3>
-          <ul>
-            <li>Preserve exact identifiers, values, conditions, ownership, quotations, and normative force.</li>
-            <li>Apply clear technical prose to headings, lists, tables, captions, and structured-explanation synopses.</li>
-            <li>Do not rewrite code, commands, schemas, machine-readable data, fixed labels, or quotations.</li>
-            <li>Do not claim formal ASD-STE100 verification or certification.</li>
-          </ul>
-        </article>
-      </div>
+      <section class="section" aria-labelledby="prose-boundary-title">
+        <h3 id="prose-boundary-title">Artifact Authoring Boundaries</h3>
+        <p class="lede">A selected template controls the artifact structure and required sections. The ste-technical-writing skill controls technical prose inside that structure.</p>
+        <div class="grid">
+          <article class="panel">
+            <h4>Template structure authority</h4>
+            <ul>
+              <li>Keep the selected artifact sections and their order.</li>
+              <li>Keep descriptions, requirements, decisions, and procedures in their source-defined forms.</li>
+              <li>Use structured-explanation only for a technical reasoning section that needs its item model.</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h4>Technical prose authority</h4>
+            <ul>
+              <li>Preserve exact identifiers, values, conditions, ownership, quotations, and normative force.</li>
+              <li>Apply clear technical prose to headings, lists, tables, captions, and structured-explanation synopses.</li>
+              <li>Do not rewrite code, commands, schemas, machine-readable data, fixed labels, or quotations.</li>
+              <li>Do not claim formal ASD-STE100 verification or certification.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="completion-title">
+        <h3 id="completion-title">Template Completion</h3>
+        <div class="grid">
+          <article class="panel">
+            <h4>Source-backed artifact completion</h4>
+            <ul>
+              <li>Copy only the template that matches the requested artifact.</li>
+              <li>Replace every TODO instruction with project-specific evidence.</li>
+              <li>Link authoritative sources, code, tests, backlog records, and related pages where the explanation depends on them.</li>
+              <li>Use Not yet identified when a required source, implementation, test, or related record does not exist.</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h4>Artifact review</h4>
+            <ul>
+              <li>Run the matching artifact reviewer after the document is complete.</li>
+              <li>Keep steady-state prose and record unresolved decisions explicitly.</li>
+              <li>Add editable Mermaid diagrams only when a real relationship is easier to understand visually.</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h4>Ongoing maintenance</h4>
+            <p>Recheck the document when its sources, responsibilities, contracts, or verification evidence change.</p>
+          </article>
+        </div>
+      </section>
     </section>
 
     <section class="section" aria-labelledby="wiki-format-title">
@@ -608,7 +643,7 @@ tags: [topic-folder]
 
       <div class="grid section">
         <article class="panel">
-          <h3>Shared page contract</h3>
+          <h3>Topic page shared contract</h3>
           <ol class="contract-list">
             <li>Current Understanding</li>
             <li>Authoritative Sources</li>
@@ -622,7 +657,7 @@ tags: [topic-folder]
         </article>
 
         <article class="panel">
-          <h3>Page organization</h3>
+          <h3>Topic page organization</h3>
           <ul>
             <li>Non-reserved concept pages use YAML frontmatter with a non-empty type; title, description, and tags improve routing and previews.</li>
             <li>Folder index.md and log.md files are reserved navigation pages and do not need concept frontmatter.</li>
@@ -640,29 +675,6 @@ tags: [topic-folder]
       <p class="section"><a href="../skills/project-wiki/references/page-schema.md">Read the complete project wiki page schema</a> for leaf splitting, digest ordering, source-link, OKF, and maintenance rules. The <a href="wiki-skills-and-project-context.html">Wiki Skills And Project Context page</a> explains how that page format participates in persistent synthesis, source authority, independent verification, and code-aware synchronization.</p>
     </section>
 
-    <section class="section" aria-labelledby="completion-title">
-      <h2 id="completion-title">Template Completion</h2>
-      <div class="grid">
-        <article class="panel">
-          <h3>Source-backed content</h3>
-          <ul>
-            <li>Copy only the template that matches the requested artifact.</li>
-            <li>Replace every TODO instruction with project-specific evidence.</li>
-            <li>Link authoritative sources, code, tests, backlog records, and related pages where the explanation depends on them.</li>
-            <li>Use Not yet identified when a required source, implementation, test, or related record does not exist.</li>
-          </ul>
-        </article>
-        <article class="panel">
-          <h3>Review and maintenance</h3>
-          <ul>
-            <li>Run the matching artifact reviewer after the document is complete.</li>
-            <li>Keep steady-state prose and record unresolved decisions explicitly.</li>
-            <li>Add editable Mermaid diagrams only when a real relationship is easier to understand visually.</li>
-            <li>Recheck the document when its sources, responsibilities, contracts, or verification evidence change.</li>
-          </ul>
-        </article>
-      </div>
-    </section>
   </main>
   <footer class="site-footer">
     <p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
