@@ -153,6 +153,13 @@ python3 "${HOME}/.agents/skills/agent-claim-command/scripts/claim.py" --help
 
 For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, Ready -> Starting reservations, and Stalled or Blocked dispositions. The root Dev Orchestrator owns Starting -> Running acceptance and terminal closure requests for its work item. Dev Backlog Steward performs each authorized provider mutation for either owner. Dev Backlog Watchdog performs periodic read-only observation and reports only actionable anomalies or satisfied exit conditions to the Coordinator. Each agent follows Agent Claim when its work reaches an event in the Claim Events table.
 
+Coordinated capacity is adaptive. Ten active items is a ceiling, not a target. The
+Coordinator lowers the dispatch limit when work shares generated outputs, tests, integration
+resources, provider transactions, reviewers, or the available execution budget. Accepted
+candidates, bounded final corrections, completed deliveries awaiting provider closure, and
+satisfied mechanical recoveries form the finish lane and take priority over new Ready work
+that would delay them.
+
 ## Backlog Report
 
 Generate an offline HTML snapshot from the repository's live backlog state:
@@ -396,6 +403,15 @@ commit.
 After a new file-backed work item is committed, its creator sends the provider reference to the existing Coordinator task. The message only prompts a fresh inventory read; it does not reserve capacity, change lifecycle state, create a delivery task, or begin implementation. If no Coordinator task is available, the committed item remains discoverable in the backlog.
 
 When the user or Watchdog declares a backlog crisis, the existing Coordinator pauses normal dispatch and claim operations and works through the crisis set one item at a time. Each item must reach Completed, Abandoned, or Superseded before the next item begins. The Coordinator resumes normal dispatch only after every crisis item is terminal, no Blocked item remains, all crisis changes are committed, and required focused verification is recorded.
+
+Normal coordination avoids crisis accumulation by classifying preventing conditions before
+selecting lifecycle state. Requested-outcome blockers use Blocked; genuine user decisions use
+User Action Required; mechanical recovery and reviewer availability remain bounded
+agent-owned recovery; unrelated baseline failures remain evidence rather than scope
+expansion. Preserved accepted candidates reconcile against current main once and do not
+repeat unchanged review or verification. Testing maps each acceptance criterion to its
+cheapest proving check and uses real disposable repositories or fixtures instead of building
+coordination simulators.
 
 Backlog work that the user directly requests or explicitly authorizes starts with Status:
 Ready in the typed active folders under backlog unless the user defers it. A known or

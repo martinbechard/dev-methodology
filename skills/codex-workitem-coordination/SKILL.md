@@ -49,10 +49,31 @@ conversation-title synchronization. Persistence managers record provider mutatio
 evidence supplied by their callers. They do not determine whether execution is active,
 inspect runtime state, calculate capacity, or rename conversations.
 
-Count no more than ten actively eligible work items. A provider state contributes one
-active-capacity slot only while it satisfies the matching evidence contract below. Reconcile
-every Starting and Running record against current runtime evidence before counting it and
-before reserving more work. A conversation title never creates active eligibility.
+Count no more than ten actively eligible work items. Ten is a hard ceiling, not a dispatch
+target. A provider state contributes one active-capacity slot only while it satisfies the
+matching evidence contract below. Reconcile every Starting and Running record against
+current runtime evidence before counting it and before reserving more work. A conversation
+title never creates active eligibility.
+
+### Adaptive Capacity And Finish-Lane Priority
+
+Before dispatch, choose an effective dispatch limit at or below ten from current evidence:
+
+- expected path and shared-resource independence
+- available Coordinator, reviewer, verifier, and integration capacity
+- the current execution and context budget
+- finish-lane work that would be delayed by another launch
+
+Reduce the limit when active items are likely to contend for the same generated outputs,
+shared tests, primary integration lane, provider transaction, reviewer capacity, or runtime
+resource. Do not fill capacity from provider count alone.
+
+Finish-lane work has priority over new Ready dispatch when it includes an accepted candidate
+awaiting integration, one bounded correction awaiting its final gate, delivered work awaiting
+terminal provider closure, or a satisfied mechanical recovery that can immediately resume
+delivery. Finish the oldest compatible item first. This priority does not stop independent
+private-worktree work, but it prevents a new launch from taking a resource needed to finish
+preserved work.
 
 ### Starting Settlement Contract
 
@@ -182,6 +203,12 @@ route title reconciliation to the canonical conversation owner.
 
 When agent-claim is loaded, use its Claim Events table and supporting rules. Do not define claim behavior in this skill.
 
+At each mutation or integration event, supply the smallest currently known exact path or
+resource manifest to the selected coordination skill. Do not request a whole-project claim
+when a fixed subset is known. A broader request needs an evidence-backed reason that the
+required paths cannot yet be bounded, and it must be narrowed or released at the first safe
+boundary.
+
 Before creating or transitioning work to User Action Required, apply agent-claim to the blocking condition and confirm that a separate genuine user-owned decision remains. Structured claim outcomes and technical claim cleanup or recovery remain agent-owned and do not justify User Action Required.
 
 ## Work-Item Execution Record
@@ -230,7 +257,9 @@ For a provider that supports queue inventory and lifecycle transitions:
 1. Reconcile every provider record in Starting or Running against the active-execution
    evidence contract, record every required truthful non-active transition, then count only
    the remaining actively eligible Starting or Running items.
-2. When the count is below ten, select enough eligible Ready items to fill available capacity without exceeding ten active items.
+2. Determine the effective dispatch limit from Adaptive Capacity And Finish-Lane Priority.
+   Select eligible Ready items only while the active count is below that limit and no selected
+   launch would delay compatible finish-lane work.
 3. For each selection, have the parent Coordinator's Dev Backlog Steward child atomically
    record the Ready -> Starting reservation, Starting Settlement Evidence, and dispatch
    evidence through the effective Persistence-selected management skill before creating a
@@ -246,7 +275,8 @@ For a provider that supports queue inventory and lifecycle transitions:
 6. Dispatch only work that can begin implementation or another bounded delivery phase. Do
    not create a conversation merely to wait for approval, a dependency, a reviewer, a shared
    resource, or a delivery window.
-7. When an item leaves Starting or Running, fill the active-capacity vacancy promptly through the same Ready -> Starting reservation sequence.
+7. When an item leaves Starting or Running, reconcile finish-lane work and the effective
+   dispatch limit before reserving a replacement. Never refill a vacancy from count alone.
 
 Stalled, Blocked, User Action Required, Holding, Awaiting Review, Completed, Failed,
 Abandoned, and Future Ideas do not count toward ten. A Starting or Running record without
@@ -378,9 +408,34 @@ Keep claim release, Commit delivery, and Persistence closure as distinct operati
 
 If the nonterminal AWAITING_REVIEW update fails or its result is ambiguous, preserve the Commit handoff and reconcile that same Persistence transaction before resuming delivery. Do not request terminal COMPLETED, repeat an already successful nonterminal update, or reinterpret the Commit disposition as terminal.
 
+### Candidate Recovery
+
+Preserve a candidate recovery receipt with its immutable commit, exact changed paths,
+accepted findings, review result, verification result, and commands already passed. After a
+mechanical or shared-resource unblock, reconcile the preserved candidate against current main
+once. Re-run only integration-sensitive checks and any review needed because combined bytes
+changed meaning. Do not repeat unchanged source review or verification merely because time,
+lifecycle, a claim wait, or provider reconciliation passed.
+
+### Review And Verification Availability
+
+Assign one reviewer and one verifier with a finite response deadline. If either Agent becomes
+unavailable or fails to return a terminal verdict, preserve its partial evidence and replace
+the unavailable Agent once. If the replacement also fails to return a terminal verdict, the
+parent Coordinator must choose one evidence-backed recovery disposition and must not launch
+another replacement loop. Review availability failure is not a source finding and does not
+invalidate a preserved candidate by itself.
+
 ## Verification
 
-Follow the project's targeted-test policy. Select tests from the changed behavior and its actual dependency paths. Do not add a broad suite merely because several work items were delivered together.
+Follow the project's targeted-test policy. Before running commands, map each acceptance
+criterion to the cheapest test that can prove it and record the distinct criterion for every
+expensive or repeated check. Select tests from the changed behavior and its actual dependency
+paths. Do not add a broad suite merely because several work items were delivered together.
+Do not build a Git, claim, runtime, or provider simulator when a real disposable repository,
+fixture, or focused contract assertion proves the boundary. A simulator is justified only
+when the requested outcome is the simulator or the real boundary cannot be exercised safely,
+and that reason must be explicit.
 
 ## Combined Regression Sets
 
@@ -406,6 +461,26 @@ The parent observes long-running work at phase start, first failure, timeout, an
 After an expensive failure, classify its failure signature before repeating anything. Reuse retained output, add the smallest offline replay or deterministic regression that reproduces the boundary, and make that focused check pass before another equivalent live or broad run. Run one cheapest representative first. Start a second expensive representative only when it covers a distinct acceptance criterion that retained evidence and deterministic checks cannot prove.
 
 If the active unit reaches its hard stop, repeats the same failure, or stops producing useful evidence, stop that unit. Preserve or commit its work. Stop or hand off its shared resources. Follow agent-claim for any active claim. Two unproductive attempts require parent investigation and a revised plan.
+
+## Blocker Classification
+
+Classify a preventing condition before selecting lifecycle or recovery:
+
+- requested-outcome blocker: the requested behavior cannot progress without a concrete
+  external or Coordinator-owned action; use Blocked with that owner and observable trigger
+- genuine user decision: execution discovered an unresolved choice that belongs to the user;
+  use User Action Required with one exact question
+- mechanical or infrastructure recovery: claim cleanup, provider reconciliation, dirty
+  checkout, configured-root routing, generator baseline, or runtime repair that an Agent can
+  perform; keep it agent-owned and run one bounded recovery instead of treating the mechanism
+  as the requested outcome
+- review availability failure: preserve candidate evidence and apply the bounded replacement
+  rule rather than manufacturing a source defect
+- unrelated baseline failure: retain evidence, but do not expand scope or keep an otherwise
+  accepted item open solely to repair it
+
+Use Blocked only when the requested outcome cannot safely progress in the current bounded
+recovery and the record names the preventing cause, owner, and observable unblock condition.
 
 ## Stalled Investigation And Blocker Handoff
 

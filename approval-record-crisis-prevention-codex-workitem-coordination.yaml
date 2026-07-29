@@ -1,0 +1,6 @@
+basis: explicit-user-direction
+definition_scope: skills/codex-workitem-coordination/SKILL.md
+direction: "Resume crisis mode to apply the process improvements that avoid stranded work, excess concurrency, repeated gates, broad claims, and overcomplicated testing."
+provenance:
+  source: user-message
+  reference: thread:current/message:resume-crisis-mode-process-improvements

@@ -15,12 +15,17 @@ Keep source files, generated outputs, documentation, installers, and tests align
 2. Update sources under skills, technology detection metadata, agents/roles, and design/skill-categories.yaml before changing derived artifacts.
 3. Run the metadata synchronizer after skill name or description changes.
 4. Run the technology detection generator after specialized activation metadata changes.
-5. Run the documentation generator after any skill, category, or conceptual agent definition change.
-6. Inspect generated Codex, Claude Code, Gemini CLI, and Junie CLI native agent definitions and confirm that unconditional core skills use by-reference delivery by default and remain fixed while conditional skills retain their conditions. Confirm explicit inline generation embeds the same fixed core skill bodies, every skill ID resolves to a bundled skill, and every model profile resolves through each supported adapter.
-7. Update hand-authored policy in README.md and the design HTML pages when the operating model changes.
-8. Do not pack a sequence or enumeration into a long paragraph. Treat three or more distinct steps or items in one paragraph as a list-structure trigger. Introduce the group with a short sentence, use a numbered list for ordered steps and a bulleted list for unordered items, and keep one coherent step or item in each entry.
-9. Run stale-output checks, repository regression tests, Agent Skill validation, and git diff checks.
-10. Keep maintenance repository-local. Do not populate user-home skill or agent folders to validate or use the bundle.
+5. Leave every owning generator runnable in the originating change. When adding a conceptual
+   role, add its suite index, suite, and scenario declaration before completion. When adding
+   a distributed skill, record its supported probe disposition and update exact inventory
+   assertions that consume the catalog. Do not defer originating inventory drift to a later
+   work item.
+6. Run the documentation generator after any skill, category, or conceptual agent definition change.
+7. Inspect generated Codex, Claude Code, Gemini CLI, and Junie CLI native agent definitions and confirm that unconditional core skills use by-reference delivery by default and remain fixed while conditional skills retain their conditions. Confirm explicit inline generation embeds the same fixed core skill bodies, every skill ID resolves to a bundled skill, and every model profile resolves through each supported adapter.
+8. Update hand-authored policy in README.md and the design HTML pages when the operating model changes.
+9. Do not pack a sequence or enumeration into a long paragraph. Treat three or more distinct steps or items in one paragraph as a list-structure trigger. Introduce the group with a short sentence, use a numbered list for ordered steps and a bulleted list for unordered items, and keep one coherent step or item in each entry.
+10. Run stale-output checks, repository regression tests, Agent Skill validation, and git diff checks.
+11. Keep maintenance repository-local. Do not populate user-home skill or agent folders to validate or use the bundle.
 
 ## Deterministic Operations
 

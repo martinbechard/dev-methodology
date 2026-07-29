@@ -1,0 +1,6 @@
+basis: explicit-user-direction
+definition_scope: skills/maintain-methodology-documentation/SKILL.md
+direction: "Resume crisis mode to apply the process improvements, including leaving owning generators and evaluation inventory complete in the originating change."
+provenance:
+  source: user-message
+  reference: thread:current/message:resume-crisis-mode-process-improvements

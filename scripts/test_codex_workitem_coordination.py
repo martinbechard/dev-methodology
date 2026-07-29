@@ -15,6 +15,9 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 README_PATH = REPOSITORY_ROOT / "README.md"
 SKILL_PATH = REPOSITORY_ROOT / "skills" / "codex-workitem-coordination" / "SKILL.md"
 MANAGE_FILE_WORK_ITEMS_PATH = REPOSITORY_ROOT / "skills" / "manage-file-work-items" / "SKILL.md"
+MAINTAIN_METHODOLOGY_PATH = (
+    REPOSITORY_ROOT / "skills" / "maintain-methodology-documentation" / "SKILL.md"
+)
 COORDINATOR_ROLE_PATH = (
     REPOSITORY_ROOT / "agents" / "roles" / "dev-activities" / "dev-backlog-coordinator.role.yaml"
 )
@@ -698,6 +701,65 @@ class StartingLifecycleContractTests(unittest.TestCase):
         for clause in required:
             with self.subTest(clause=clause):
                 self.assertIn(clause, normalized_contract)
+
+    def test_capacity_is_adaptive_and_finish_lane_has_priority(self) -> None:
+        """Ten is a ceiling; shared resources and nearly finished work lower dispatch."""
+
+        normalized = " ".join(self.coordination.split())
+        for clause in (
+            "Ten is a hard ceiling, not a dispatch target.",
+            "effective dispatch limit",
+            "Finish-lane work has priority over new Ready dispatch",
+            "accepted candidate awaiting integration",
+            "terminal provider closure",
+            "Do not fill capacity from provider count alone.",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, normalized)
+
+    def test_recovery_preserves_evidence_and_bounds_review_availability(self) -> None:
+        """Accepted evidence survives recovery; missing reviewers cannot loop forever."""
+
+        normalized = " ".join(self.coordination.split())
+        for clause in (
+            "reconcile the preserved candidate against current main once",
+            "Do not repeat unchanged source review or verification",
+            "one reviewer and one verifier",
+            "replace the unavailable Agent once",
+            "must not launch another replacement loop",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, normalized)
+
+    def test_blockers_and_tests_use_outcome_focused_budgets(self) -> None:
+        """Mechanical recovery and unrelated failures do not become outcome blockers."""
+
+        normalized = " ".join(self.coordination.split())
+        for clause in (
+            "requested-outcome blocker",
+            "mechanical or infrastructure recovery",
+            "review availability failure",
+            "unrelated baseline failure",
+            "map each acceptance criterion to the cheapest test",
+            "Do not build a Git, claim, runtime, or provider simulator",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, normalized)
+
+    def test_originating_methodology_change_leaves_generators_runnable(self) -> None:
+        """New catalog sources include their owning inventory before completion."""
+
+        maintenance = " ".join(
+            MAINTAIN_METHODOLOGY_PATH.read_text(encoding="utf-8").split()
+        )
+        for clause in (
+            "Leave every owning generator runnable",
+            "add its suite index, suite, and scenario declaration",
+            "record its supported probe disposition",
+            "Do not defer originating inventory drift",
+        ):
+            with self.subTest(clause=clause):
+                self.assertIn(clause, maintenance)
 
         normalized_queue = " ".join(self.queue_section.split())
         normalized_reconciliation = " ".join(self.reconciliation_section.split())
