@@ -10251,14 +10251,20 @@ class BundleContentTests(unittest.TestCase):
                 self.assertEqual(1, text.count('<footer class="site-footer">'))
                 self.assertIn("AI-Assisted Coding Toolkit", text)
                 self.assertEqual(1, text.count(expected_gradient))
+                self.assertRegex(
+                    text,
+                    r"\.site-header \{[^}]*display: flex;[^}]*"
+                    r"align-items: center;[^}]*gap: [^;}]+;",
+                )
+                self.assertRegex(
+                    text,
+                    r"\.site-brand \{[^}]*display: inline-flex;[^}]*"
+                    r"min-width: 0;",
+                )
                 if filename == "index.html":
                     self.assertIn('src="logo.png"', text)
                     self.assertIn('href="LICENSE">MIT License</a>', text)
                 else:
-                    self.assertRegex(
-                        text,
-                        r"\.site-header \{[^}]*display: flex;[^}]*align-items: center;",
-                    )
                     self.assertIn('src="../logo.png"', text)
                     self.assertIn('href="../LICENSE">MIT License</a>', text)
 
@@ -10325,6 +10331,8 @@ class BundleContentTests(unittest.TestCase):
             "storage.setItem",
             'return `idea://open?file=${encodeURIComponent(filePath)}`;',
             ".documentation-settings {\n      margin-left: auto;",
+            'const header = document.querySelector(".site-header");',
+            "header.appendChild(container);",
         ):
             with self.subTest(documentation_settings_phrase=phrase):
                 self.assertIn(phrase, settings_text)
