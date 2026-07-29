@@ -1,6 +1,6 @@
 # Integrate Evaluation Evidence Into Documentation Navigation
 
-Status: Starting
+Status: Ready
 
 Type: Defect
 
@@ -102,6 +102,26 @@ Canonical Conversation: None.
 Owner Acceptance: None.
 
 Reconciliation: Pending.
+
+## Startup Reconciliation
+
+Transition: Starting -> Ready.
+
+Reconciled At: 2026-07-29T16:00:14Z.
+
+Settlement Deadline: 2026-07-29T15:58:40Z.
+
+Late Canonical Conversation and Root Agent Task: 019fae99-2d9b-7163-850b-8d50269b85c4.
+
+Late Owner Acceptance: Observed at 2026-07-29T15:58:47Z, 7 seconds after the settlement deadline; invalid for the expired reservation.
+
+Late Worktree: None reported by the late acceptance.
+
+Source Mutation Evidence: None observed. No source mutation was authorized or performed under the expired reservation.
+
+Reservation Disposition: Expired reservation cleared. The late task is preserved as invalid startup evidence; no replacement launch was created.
+
+Reconciliation: Ready.
 
 ## Notes
 
