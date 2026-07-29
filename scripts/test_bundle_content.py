@@ -4070,6 +4070,7 @@ class BundleContentTests(unittest.TestCase):
             ("review-architecture", "architecture"),
             ("review-functional-spec", "functional-spec"),
             ("review-high-level-design", "high-level-design"),
+            ("review-module-design", "module-design"),
         ):
             skill_text = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(
                 encoding="utf-8"
@@ -4147,6 +4148,44 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("assessment for a derived finding", skill_text)
         self.assertIn("not applicable with a reason", skill_text)
         self.assertIn("Resolve every exact quotation", skill_text)
+
+    def test_module_review_binds_typed_evidence_to_required_scenarios(self) -> None:
+        """Bind each required module-review scenario to its evidence semantics."""
+        skill_text = (SKILLS_ROOT / "review-module-design" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        checklist_text = (
+            SKILLS_ROOT
+            / "review-module-design"
+            / "references"
+            / "review-checklist-module-design.md"
+        ).read_text(encoding="utf-8")
+        scenario_contracts = {
+            "omitted required operation": (
+                "For an omitted required operation, use Status: fail, select summary "
+                "or assessment as the Evidence type, name every authoritative source "
+                "searched in Evidence source, describe the omission in Evidence, and "
+                "do not fabricate a quotation."
+            ),
+            "non-applicable asynchronous boundary": (
+                "For a genuinely non-applicable asynchronous boundary, use Status: "
+                "n/a with Evidence type: not applicable and explain the rationale in "
+                "Evidence; do not use n/a for an omitted required boundary."
+            ),
+            "resolved exact quotation": (
+                "For a question resolved by literal source text, use Evidence type: "
+                "exact quotation, name the source in Evidence source, and copy an "
+                "Evidence value that occurs literally in the named source."
+            ),
+        }
+
+        for document_name, text in (
+            ("skill", skill_text),
+            ("checklist", checklist_text),
+        ):
+            for scenario_name, contract in scenario_contracts.items():
+                with self.subTest(document=document_name, scenario=scenario_name):
+                    self.assertIn(contract, text)
 
     def test_hld_and_module_reviews_enforce_adequacy_and_security_contracts(self) -> None:
         cases = {

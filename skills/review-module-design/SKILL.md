@@ -23,12 +23,31 @@ Require an appropriate Mermaid diagram whenever Processing Rules or External And
 
 For the module-design current reverse-engineering pass, accepted project configuration, repository inventory, assigned source evidence, tests, procedures, configuration, and runtime evidence are sufficient inputs. Intentionally absent later high-level designs, architecture, functional specifications, and wiki pages are not missing mandatory inputs.
 
+## Completed Checklist Evidence
+
+For every applicable question record:
+
+- Status: pass, fail, question, or n/a.
+- Question: the objective question being answered.
+- Evidence type: exact quotation, summary, assessment, or not applicable.
+- Evidence source: the named artifact, input, checklist, or retained response.
+- Evidence: literal source text for an exact quotation, or clearly labeled summary, assessment, or not-applicable explanation.
+- Assessment: the judgment grounded in the recorded evidence.
+
+Use exactly one allowed status and never qualify a status with wording such as pass with finding. When a material finding applies, use fail or question and record any partial strengths in the assessment. Use exact quotation only for literal source text that occurs in the named evidence source. For a mode-dependent n/a, use Evidence type: not applicable and explain why the question does not apply rather than fabricating a quotation. When a required contract is missing, use summary or assessment evidence to describe the gap and mark the item fail; there is no literal source text to quote.
+
+For an omitted required operation, use Status: fail, select summary or assessment as the Evidence type, name every authoritative source searched in Evidence source, describe the omission in Evidence, and do not fabricate a quotation.
+
+For a genuinely non-applicable asynchronous boundary, use Status: n/a with Evidence type: not applicable and explain the rationale in Evidence; do not use n/a for an omitted required boundary.
+
+For a question resolved by literal source text, use Evidence type: exact quotation, name the source in Evidence source, and copy an Evidence value that occurs literally in the named source.
+
 ## Workflow
 
 1. Before semantic assessment, compare the artifact's ordered level-two headings with the module design template. For Documentation Acceptance and Implementation Readiness, skip any leading retained explanatory note or notes, then verify that the first authored decisions begin with ACCEPTED or BLOCKED and READY or BLOCKED, respectively. Every template heading is mandatory and must retain its exact text and order, including sections that state they are not applicable. If a heading is missing, renamed, duplicated, merged, or reordered, or either decision does not lead the authored content after the notes, return a BLOCKED Response Adequacy finding and stop before spending a semantic-review pass. After this gate passes, identify the design mode, authoritative inputs, requirements coverage, runtime path, implementation-placement and symbol ledger, responsibility, callers, dependencies, contracts, justified module propositions, residual open questions, trust and identity boundaries, internal state, processing rules, error handling, documentation acceptance, implementation readiness, and verification claims.
 2. Read references/review-checklist-module-design.md.
 3. Build a source-traced operation-contract ledger independently from the candidate. Start with the target assignment and its owning-HLD constituent-component description, and decompose every scope-bearing qualifier into an operation or requirement facet before reviewing the candidate. Search every occurrence of each operation name, route, responsibility, and close synonym across the authoritative inputs before accepting any candidate OPEN claim. Preserve qualifiers for eligibility, audience, ownership, projection, paging, lifecycle, best-effort behavior, or another contract-bearing restriction instead of accepting a generic operation label. Reconcile compatible facts distributed across accepted inputs when they unambiguously name different facets of the same exact operation, retaining each source; do not demand one all-encompassing source sentence. Bind every evidence item to the exact method and route, command, event, or job it names; do not transfer a sibling operation's response, validation, side effect, or failure contract. For list or query operations, assess client presentation state, request filter/page/sort inputs, server acceptance and validation, deterministic ordering, response rows and metadata, and reload behavior separately. Record request and response type bindings plus the exact state owner, side-effect initiator, submission owner, executor or delivery owner, completion signal, and failure phase.
-4. Complete every applicable checklist question with status, quoted evidence, and assessment.
+4. Complete every applicable checklist question with the Completed Checklist Evidence fields.
 5. Save the completed review checklist next to the artifact using this form: artifact-name.review-checklist-module-design.md.
 6. Use documentation-page-verify with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
 7. Verify module sections against the checklist, especially requirements coverage, runtime path, responsibilities, callers, dependencies, public contracts, identity selectors, authorization, response disclosure, validation ownership, state transitions, failure timing, sensitive logging, internal data, processing rules, processing diagrams, invariants, configuration, external interfaces, UI behavior, readiness, and verification. Do not downgrade an accepted authenticated-only or role-required outcome merely because its exact filter, annotation, guard, or middleware mechanism remains OPEN. Treat public API, public user, public projection, guest view, open catalog, and similar labels as names or disclosure categories, not evidence of anonymous access.
