@@ -1,6 +1,6 @@
 # Fix Index Page Settings Control Placement
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -176,15 +176,15 @@ Worktree: /Users/martinbechard/.codex/worktrees/1bad/dev-methodology.
 
 Preserved Private Candidate: 3b5116fcb658312ad10544041d2eb9c3f445ef65; unintegrated.
 
-Owner: Unowned pending accepted root.
+Owner: Root Dev Orchestrator.
 
 Runtime Launch Result: Same canonical conversation reserved for resume through the direct conversation-title handoff.
 
-Owner Acceptance: Pending.
+Owner Acceptance: Accepted by Root Dev Orchestrator through canonical task 019faec8-943a-7902-adaa-c2c00a370169 at 2026-07-29T17:08:12.154427000Z.
 
 Required Next Lifecycle Transition: The same root Dev Orchestrator must separately accept Starting -> Running before further repository mutation.
 
-Reconciliation: Pending.
+Reconciliation: Starting -> Running recorded by Dev Backlog Steward on primary main.
 
 ## Starting Settlement Evidence (Fresh Settlement)
 
@@ -194,9 +194,35 @@ Runtime Launch Result: Same canonical conversation reserved for resume through t
 
 Canonical Conversation: 019faec8-943a-7902-adaa-c2c00a370169.
 
-Owner Acceptance: Pending.
+Owner Acceptance: Accepted by Root Dev Orchestrator through canonical task 019faec8-943a-7902-adaa-c2c00a370169 at 2026-07-29T17:08:12.154427000Z.
 
-Reconciliation: Pending.
+Reconciliation: Starting -> Running recorded by Dev Backlog Steward on primary main.
+
+## Active Execution Evidence (Fresh Settlement)
+
+Transition: Starting -> Running.
+
+Canonical Thread: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Root Agent Task: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Root Role: Dev Orchestrator.
+
+Owner: Root Dev Orchestrator.
+
+Branch: codex/fix-index-page-settings-control-placement.
+
+Worktree: /Users/martinbechard/.codex/worktrees/1bad/dev-methodology.
+
+Preserved Private Candidate: 3b5116fcb658312ad10544041d2eb9c3f445ef65; unintegrated on primary main.
+
+Current Phase: Independent review of the preserved candidate authorized; no recoding.
+
+Started At: 2026-07-29T17:08:12.154427000Z (Root Dev Orchestrator acceptance within the fresh settlement window).
+
+Starting Baton: 67a3dc5187e1862cc02af8b997ca69fb690e5a08 on primary main.
+
+Claim Evidence: starting-running-resume-019faec8 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-29T17:08:38.845739Z; claim journal event 713cdbce-80e6-4a05-aacc-5ae3fdfe98c4.
 
 ## Notes
 
