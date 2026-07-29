@@ -1,6 +1,6 @@
 # Classify Dev Backlog Watchdog As Backlog Management
 
-Status: Starting
+Status: Ready
 
 Type: Defect
 
@@ -66,6 +66,18 @@ None.
 None.
 
 ## Notes
+
+## Missed-Settlement Reconciliation
+
+Transition: Starting -> Ready.
+Reconciled At: 2026-07-29T17:38:47Z.
+Settlement Deadline: 2026-07-29T17:36:38Z.
+Canonical Conversation and Root Agent Task: 019faeef-c808-7a62-a004-15f9986d7b14.
+Owner: Unowned.
+Canonical Acceptance: None observed.
+Source Mutation Evidence: None observed.
+Required Resumption: Reuse the same canonical task through a new Ready -> Starting -> Running sequence.
+Reconciliation: Ready.
 
 ## Current Dispatch Reservation
 

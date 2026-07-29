@@ -1,6 +1,6 @@
 # Add Sticky Section Navigation To Documentation Pages
 
-Status: Starting
+Status: Ready
 
 Type: Feature
 
@@ -70,6 +70,18 @@ None.
 None.
 
 ## Notes
+
+## Missed-Settlement Reconciliation
+
+Transition: Starting -> Ready.
+Reconciled At: 2026-07-29T17:38:47Z.
+Settlement Deadline: 2026-07-29T17:36:38Z.
+Canonical Conversation and Root Agent Task: 019faef0-2663-7e50-a6ab-0de973661fbf.
+Owner: Unowned.
+Canonical Acceptance: None observed.
+Source Mutation Evidence: None observed.
+Required Resumption: Reuse the same canonical task through a new Ready -> Starting -> Running sequence.
+Reconciliation: Ready.
 
 ## Current Dispatch Reservation
 

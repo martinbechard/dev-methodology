@@ -1,6 +1,6 @@
 # Eliminate Standalone Definition Approval Records
 
-Status: Starting
+Status: Ready
 
 Type: Defect
 
@@ -107,6 +107,18 @@ Approved at creation on 2026-07-29 by the direct user request in Codex task `019
 This approval is limited to the two governed canonical skill-definition paths listed above and the dependent cleanup artifacts listed separately. It does not authorize changes to conceptual agent definitions, schemas, model profiles, skill metadata, adapter-owned skill definitions, or any additional distributed skill definition. Discovery of another governed canonical path requires new explicit user approval recorded in this work item before that path is mutated.
 
 ## Notes
+
+## Missed-Settlement Reconciliation
+
+Transition: Starting -> Ready.
+Reconciled At: 2026-07-29T17:38:47Z.
+Settlement Deadline: 2026-07-29T17:36:38Z.
+Canonical Conversation and Root Agent Task: 019faeef-ff87-74b0-b834-79a811be1656.
+Owner: Unowned.
+Canonical Acceptance: None observed.
+Source Mutation Evidence: None observed.
+Required Resumption: Reuse the same canonical task through a new Ready -> Starting -> Running sequence.
+Reconciliation: Ready.
 
 ## Current Dispatch Reservation
 

@@ -1,6 +1,6 @@
 # Archive Terminal Work-Item Series
 
-Status: Starting
+Status: Ready
 
 Type: Feature
 
@@ -110,6 +110,18 @@ Exact user wording and provenance:
 The approval covers exactly the governed canonical source listed above and only the allowed dependent artifacts listed separately. Additional governed paths require new explicit, scope-specific user approval.
 
 ## Notes
+
+## Missed-Settlement Reconciliation
+
+Transition: Starting -> Ready.
+Reconciled At: 2026-07-29T17:38:47Z.
+Settlement Deadline: 2026-07-29T17:36:38Z.
+Canonical Conversation and Root Agent Task: 019faeef-e932-7352-a53d-fdb1535f5994.
+Owner: Unowned.
+Canonical Acceptance: None observed.
+Source Mutation Evidence: None observed.
+Required Resumption: Reuse the same canonical task through a new Ready -> Starting -> Running sequence.
+Reconciliation: Ready.
 
 ## Current Dispatch Reservation
 
