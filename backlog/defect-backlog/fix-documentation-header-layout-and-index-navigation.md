@@ -1,6 +1,6 @@
 # Fix Documentation Header Layout And Index Navigation
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -142,6 +142,40 @@ Canonical Conversation: 019fae92-0f9c-73d1-8061-b64d453c503a.
 Owner Acceptance: Pending.
 
 Reconciliation: Pending.
+
+## Current Running Acceptance
+
+Transition: Starting -> Running.
+
+Root Dev Orchestrator: Root Dev Orchestrator 019fae92-0f9c-73d1-8061-b64d453c503a.
+
+Canonical Conversation and Root Agent Task: 019fae92-0f9c-73d1-8061-b64d453c503a.
+
+Worktree: /Users/martinbechard/.codex/worktrees/b423/dev-methodology.
+
+Branch: Detached HEAD.
+
+Clean Worktree HEAD: 0fefbb23d1ab19da9aca62098d8e4474264db601.
+
+Accepted At: 2026-07-29T15:55:04Z.
+
+Reconciliation Result: Running.
+
+## Active Execution Evidence
+
+Condition Type: root-execution.
+
+Owner: Root Dev Orchestrator 019fae92-0f9c-73d1-8061-b64d453c503a.
+
+Evidence: Accepted awaiting durable lifecycle.
+
+Observed/Started: 2026-07-29T15:55:04Z.
+
+Deadline: 2026-07-29T16:25:00Z.
+
+Next Action: Attach Codex branch, then focused implementation.
+
+Next Reconciliation: Immediately after lifecycle commit or blocker, and no later than 15 minutes.
 
 ## Starting Settlement Evidence
 
