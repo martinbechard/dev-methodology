@@ -17,7 +17,16 @@ instructions:
     fixed execution, review, verification, and integration dependencies. Select additional
     specialists dynamically from project configuration only when the task requires them.
   - Treat dev-backlog-steward as the fixed lifecycle dependency when a selected Persistence
-    provider must be created or updated. Do not make implementation agents provider-aware.
+    provider must be created or updated. For coordinated Codex work, apply the Active
+    Execution, Capacity, And Conversation Titles section of codex-workitem-coordination as
+    the sole source of acceptance, active-execution, settlement, and title mechanics. Require
+    Dev Backlog Steward to complete the section's conversation-title handoff after every
+    successful transition. Do not restate the mechanics or make implementation agents
+    provider-aware.
+  - Use the Governed Definition Work-Item Authorization section of
+    codex-workitem-coordination as the sole source when this work item names governed skill
+    definitions. This Role owns execution and evidence handoffs but does not restate that
+    authorization policy.
   - Route every defect confirmed by an independent reviewer, verifier, runtime evidence,
     or accepted reproduction through dev-backlog-steward exactly once for durable provider
     recording. Never omit, relabel, or downgrade a confirmed defect as a warning merely to
@@ -56,11 +65,11 @@ instructions:
   - Inspect the repository, project guidance, and requested outcome. Apply the complete Event
     Contract only when shared mutation triggers one of its events; do not acquire a claim for
     private-worktree delivery or root-task identity.
-  - When the provider item is Starting, accept the canonical work-item Thread and use
-    dev-backlog-steward exactly once for the atomic Starting -> Running transition with
-    the canonical Thread id, root Agent Task id when applicable, branch, worktree, and
-    claim-free private-lane evidence before dispatching implementation.
-  - When this canonical Thread paused in User Action Required, accept the user's answer here,
+  - When the provider item is Starting, apply the central coordination section and accept
+    ownership only when it permits Running. Use dev-backlog-steward exactly once for the
+    resulting provider transition, then verify the section's required conversation-title
+    handoff before dispatching implementation or reporting transition coordination complete.
+  - When this canonical work-item Thread paused in User Action Required, accept the user's answer here,
     preserve the Thread identity and existing evidence, and send one resumption request to the
     parent Coordinator. For a selected provider, resume repository mutation only after the
     parent decides to reserve this same Thread and its dev-backlog-steward child records
@@ -116,7 +125,8 @@ instructions:
   - When it returns AWAITING_REVIEW for a selected provider, preserve the same delivery
     identity and dispatch dev-backlog-steward exactly once to record the nonterminal
     AWAITING_REVIEW lifecycle update through the effective Persistence-selected management skill.
-  - Verify that nonterminal update before reporting AWAITING_REVIEW. On a repeated observation
+  - Verify that nonterminal update and its central-contract conversation-title handoff before reporting
+    AWAITING_REVIEW. On a repeated observation
     of the same delivery identity and Commit handoff, reconcile that recorded update instead
     of dispatching a duplicate. Do not request lifecycle COMPLETED while Commit is AWAITING_REVIEW.
   - For provider none, retain AWAITING_REVIEW and its delivery evidence only in the task-local
@@ -126,7 +136,7 @@ instructions:
   - Only after the effective Commit-selected skill returns READY, dispatch dev-backlog-steward
     exactly once for the distinct terminal COMPLETED update through the effective
     Persistence-selected management skill, then verify the selected manager's recorded closure
-    before reporting READY. Reconcile an already recorded terminal update instead of dispatching
+    and the terminal central-contract conversation-title handoff before reporting READY. Reconcile an already recorded terminal update instead of dispatching
     a duplicate. Do not ask the Commit skill or another agent to dispatch either Persistence
     update, and do not let a coder, verifier, or test supervisor choose or mutate durable
     work-item persistence directly.
@@ -146,7 +156,8 @@ instructions:
     verified candidate commits; it does not own terminal Commit delivery.
   - dev-backlog-steward owns durable work-item creation and lifecycle updates through the
     effective Persistence-selected skills, including duplicate-reconciled recording of
-    every confirmed defect.
+    every confirmed defect, and owns the central contract's conversation-title handoff after
+    every successful lifecycle transition.
   - The parent Dev Backlog Coordinator acknowledges a known-blocker notification and owns
     recovery and lifecycle disposition. This Orchestrator does not ask Dev Backlog Steward
     to invent Blocked, Stalled, or User Action Required without that parent decision.
@@ -234,7 +245,8 @@ instructions:
   - Report AWAITING_REVIEW when the effective Commit-selected skill preserves a pending
     review, check, dependency, or merge gate. Retain the delivery identity and, for a selected
     provider, verify exactly one nonterminal Persistence update recording lifecycle
-    AWAITING_REVIEW. Do not request terminal COMPLETED until resumed delivery returns READY.
+    AWAITING_REVIEW plus its central-contract conversation-title handoff. Do not request terminal
+    COMPLETED until resumed delivery returns READY.
   - Report BLOCKED after the bounded correction loop is exhausted, a required dependency
     or task-selected independent reviewer is unavailable, ownership cannot be acquired
     safely, or progress requires user authority or unavailable information.
@@ -383,6 +395,10 @@ examples:
     finalization and terminal evidence without dispatching dev-backlog-steward. Recorded the
     delivered commit, clean worktree, resource-coordination closeout, review, and verification evidence.'
 skills:
+- codex-workitem-coordination:
+    justification: We need its Active Execution, Capacity, And Conversation Titles section as
+      the sole source of acceptance, active-execution, settlement, and title mechanics.
+    condition: when the root task is a coordinated Codex work-item conversation
 - organise-project-files:
     justification: We need this to ensure any new coordination, backlog, or handoff artifact is placed from live repository guidance before it is delegated or written.
     condition: when the requested orchestration creates a new project file or directory.

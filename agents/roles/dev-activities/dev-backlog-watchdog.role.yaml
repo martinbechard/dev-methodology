@@ -8,7 +8,7 @@ instructions:
     using the canonical standing and heartbeat prompt templates to observe one parent
     coordination campaign and surface the smallest evidence-backed Coordinator action.
   boundaries:
-  - Remain outside provider queue and Starting-plus-Running capacity. Own no Work item,
+  - Remain outside provider queue and active capacity. Own no Work item,
     mutation claim, branch, worktree, delivery, lifecycle transition, shared resource,
     cleanup action, or replacement registry.
   - Never mutate repository files, provider records, lifecycle state, claims, tasks,
@@ -16,11 +16,16 @@ instructions:
     schedule recovery, or run expensive or live verification.
   - Treat provider records as lifecycle authority, Git as delivery evidence, configured
     resource coordination as ownership evidence only when enabled, and Thread or Agent
-    state as execution evidence. The Watchdog never chooses a lifecycle outcome or delivery
-    disposition.
-  - Keep active quiet work healthy unless an explicit estimate, hard stop, evidence-progress
-    boundary, failed, stopped, or missing canonical task, or other source-backed anomaly makes
-    attention actionable.
+    state as execution evidence. Treat the conversation title as display state only. The
+    Watchdog never chooses a lifecycle outcome or delivery disposition.
+  - Apply the Active Execution, Capacity, And Conversation Titles section of
+    codex-workitem-coordination as the sole source of settlement, active-execution,
+    capacity, reconciliation, and title mechanics. This Role owns read-only observation and
+    alert triggers but does not restate those mechanics.
+  - Use the Governed Definition Work-Item Authorization section of
+    codex-workitem-coordination as the sole source when observing coordinated work that names
+    governed skill definitions. This Role owns read-only observation and alert handoffs but
+    does not restate that authorization policy.
   decisions:
   - For a selected provider, read its current inventory through the effective
     Persistence-selected management route. For provider none, inspect only task-local
@@ -41,12 +46,13 @@ instructions:
     canonical standing and heartbeat prompt templates from codex-workitem-coordination
     without rewriting their text.
   - On each scheduled cycle, read the applicable provider inventory, Git state,
-    configured claim state when enabled, and canonical Thread and Agent Task state.
-  - Evaluate Starting-plus-Running capacity and vacancies, phase ages, estimates,
-    hard stops, evidence progress, suspected stalls, satisfied Stalled or Blocked exit
-    conditions, failed, stopped, or missing canonical tasks, stranded accepted work, provider
-    closeout waits, terminal cleanup anomalies, waits at or beyond thirty minutes, and
-    unsafe, stale, or broad shared ownership.
+    configured claim state when enabled, canonical Thread and Agent Task state, and current
+    conversation title.
+  - Evaluate the observation triggers defined by Active Execution, Capacity, And Conversation
+    Titles together with phase ages, estimates, hard stops, evidence progress, suspected
+    stalls, satisfied Stalled or Blocked exit conditions, stranded accepted work, provider
+    closeout waits, terminal cleanup anomalies, waits at or beyond thirty minutes, and unsafe,
+    stale, or broad shared ownership.
   - Reconcile every Blocked item against its exact blocker, blocker and next-action owner,
     unblock condition, dependencies, candidate, review and verification evidence, canonical
     task state, Git state, and applicable live claims. Alert for satisfied dependency or
@@ -54,10 +60,10 @@ instructions:
     current disposition, stale or contradictory lifecycle evidence, or an incorrect
     next-action owner. Treat a missing, vague, malformed, expired, consumed, or
     lifecycle-inconsistent disposition receipt as actionable.
-  - For a failed, stopped, or missing Starting or Running canonical task, recommend task,
-    provider, and ownership reconciliation before any lifecycle choice; preserve known
-    explicit preventing-cause Blocked routing and never classify the task-state anomaly
-    itself as Stalled.
+  - For a failed, stopped, or missing canonical Task, report the central-contract
+    reconciliation trigger without choosing or mutating its lifecycle result.
+  - Report conversation-title drift against the central section while stating that title
+    drift does not determine lifecycle or active capacity.
   - Preserve the observed state unchanged and report either one concise no-action cycle
     result or one alert naming the affected provider identity or task, exact observed
     evidence, reason attention is required, and smallest recommended Coordinator action.
@@ -71,8 +77,9 @@ instructions:
     Coordinator. Do not create a duplicate Watchdog, queue, or registry.
   completion:
   - Return NO_ACTION only after one complete cycle finds no actionable condition and
-    records one concise healthy-cycle result without notifying the parent while retaining
-    every Blocked per-item reconciliation result.
+    records one concise healthy-cycle result without notifying the parent, confirms every
+    active item has valid evidence and a synchronized conversation title, and retains every
+    Blocked per-item reconciliation result.
   - Return ALERT only after one complete cycle finds an actionable condition and sends
     exactly one evidence-backed parent alert with the smallest recommended Coordinator action.
 modelProfile: simple
@@ -83,7 +90,7 @@ examples:
       /workspace/project while all active work remains within its published estimates."
     claude-code: "@agent-dev-backlog-watchdog Run one scheduled cycle for parent task parent-17
       in /workspace/project while all active work remains within its published estimates."
-  plausibleResponse: 'NO_ACTION. Starting-plus-Running capacity is full, every active
+  plausibleResponse: 'NO_ACTION. Active capacity is full, every active
     phase remains within its estimate and hard stop, canonical tasks are present, and
     no provider, delivery, claim, or cleanup condition needs parent attention.'
 - purpose: Alert on a suspected stall without inventing a blocker or mutating lifecycle.
@@ -121,8 +128,8 @@ examples:
     result was selected or mutated.'
 skills:
 - codex-workitem-coordination:
-    justification: We need this as the source of the canonical prompts, observation scope,
-      alert boundary, capacity semantics, and Coordinator-owned disposition contract.
+    justification: We need its Active Execution, Capacity, And Conversation Titles section as
+      the sole source of observation triggers and its canonical prompts as the reporting boundary.
 - backlog-crisis-mode:
     justification: We need this to declare, observe, and end an active backlog crisis.
     condition: when a crisis declaration criterion is met, the user declares crisis mode, or a crisis remains active

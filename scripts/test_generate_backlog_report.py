@@ -24,7 +24,7 @@ _COMPLETE_STALLED_EVIDENCE = {
     "Phase Estimate": "Not present",
     "Hard Stop": "Not present",
     "Anomaly or Progress Gap": "No evidence-bearing output after the focused test began.",
-    "Canonical Thread": "thread-stalled-fixture",
+    "Canonical Conversation": "conversation-stalled-fixture",
     "Root Agent Task": "task-stalled-fixture",
     "Current Ownership and Coordination State": (
         "Dev Orchestrator retains the canonical worktree; no active file claim."
@@ -627,6 +627,55 @@ Do not implement.
         self.assertNotIn("Suspected Stall", blocked)
         self.assertIn("Known Blocker", blocked)
 
+    def test_stalled_canonical_conversation_satisfies_validation(self) -> None:
+        """Canonical Conversation is the required Stalled execution identity."""
+
+        self.write_item(
+            "backlog/feature-backlog/canonical-conversation.md",
+            title="Canonical Conversation",
+            status="Stalled",
+            item_type="Feature",
+            stalled_evidence=_COMPLETE_STALLED_EVIDENCE,
+        )
+
+        rendered = self.generate()
+
+        self.assertNotIn(
+            "Missing Stalled evidence: Canonical Conversation.",
+            rendered,
+        )
+        self.assertIn(
+            "<dt>Canonical Conversation</dt>"
+            "<dd>conversation-stalled-fixture</dd>",
+            rendered,
+        )
+
+    def test_legacy_canonical_thread_does_not_satisfy_stalled_validation(self) -> None:
+        """Canonical Thread alone is migration debt, not canonical Stalled evidence."""
+
+        stalled_evidence = dict(_COMPLETE_STALLED_EVIDENCE)
+        del stalled_evidence["Canonical Conversation"]
+        stalled_evidence["Canonical Thread"] = "thread-stalled-fixture"
+        self.write_item(
+            "backlog/feature-backlog/legacy-canonical-thread.md",
+            title="Legacy Canonical Thread",
+            status="Stalled",
+            item_type="Feature",
+            stalled_evidence=stalled_evidence,
+        )
+
+        rendered = self.generate()
+
+        self.assertIn(
+            "Missing Stalled evidence: Canonical Conversation.",
+            rendered,
+        )
+        self.assertIn(
+            "<dt>Canonical Conversation</dt><dd>Missing</dd>",
+            rendered,
+        )
+        self.assertNotIn("<dt>Canonical Thread</dt>", rendered)
+
     def test_semantic_status_badges_are_distinct_and_wcag_aa_conformant(self) -> None:
         """Critical lifecycle badges need distinct classes and accessible palettes."""
 
@@ -795,7 +844,12 @@ Do not continue without the answer.
         self.assertIn("<dt>Next Investigation Action</dt>", example)
         for field in _COMPLETE_STALLED_EVIDENCE:
             with self.subTest(field=field):
-                self.assertIn(f"<dt>{field}</dt>", example)
+                fixture_field = (
+                    "Canonical Thread"
+                    if field == "Canonical Conversation"
+                    else field
+                )
+                self.assertIn(f"<dt>{fixture_field}</dt>", example)
 
     def test_external_prerequisites_remain_complete_unmet_and_non_runnable(self) -> None:
         """Plain-language prerequisites retain their text and require manual satisfaction."""

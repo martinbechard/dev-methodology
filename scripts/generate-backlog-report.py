@@ -82,7 +82,7 @@ STALLED_EVIDENCE_FIELDS = (
     "Phase Estimate",
     "Hard Stop",
     "Anomaly or Progress Gap",
-    "Canonical Thread",
+    "Canonical Conversation",
     "Root Agent Task",
     "Current Ownership and Coordination State",
     "Diagnostic Owner",

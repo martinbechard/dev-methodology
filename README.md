@@ -153,10 +153,6 @@ python3 "${HOME}/.agents/skills/agent-claim-command/scripts/claim.py" --help
 
 For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, Ready -> Starting reservations, and Stalled or Blocked dispositions. The root Dev Orchestrator owns Starting -> Running acceptance and terminal closure requests for its work item. Dev Backlog Steward performs each authorized provider mutation for either owner. Dev Backlog Watchdog performs periodic read-only observation and reports only actionable anomalies or satisfied exit conditions to the Coordinator. Each agent follows Agent Claim when its work reaches an event in the Claim Events table.
 
-Every file-provider creation, lifecycle update, move, archive, or justified atomic multi-record operation carries a complete manifest of exact canonical repository-relative backlog paths and their current-source or created-destination roles. Ordinary creation and update each use one path. Moves and archives use one source and one destination. Generic atomic operations use at least two paths and a nonempty rationale. Current sources must match their current Provider References; created destinations must be absent and name their intended final Provider References. The loaded resource-coordination procedure applies independently and its evidence must agree with the exact manifest.
-
-Mutating Git commands use all and only the manifest pathspecs after --, and commit creation is path-limited. They preserve unrelated staged blobs, tracked dirty bytes, and untracked dirty bytes. The resulting immutable commit object must prove the full changed-path set, committed bytes, presence or absence, and final Provider References. Missing, inferred, wildcard, directory, partial, role-invalid, or mismatched scope fails the transaction.
-
 ## Backlog Report
 
 Generate an offline HTML snapshot from the repository's live backlog state:
@@ -165,7 +161,19 @@ Generate an offline HTML snapshot from the repository's live backlog state:
 python3 scripts/generate-backlog-report.py --output /path/to/backlog-report.html
 ```
 
-The command writes one self-contained HTML file with no network dependencies. It reports Stalled, Blocked, and User Action Required as separate inventories from dispatchable work and treats any remaining active Status: Proposed item as a migration anomaly rather than an operational bucket. Starting and Running alone consume coordinated active capacity; Stalled retains its owner and diagnostic next action without consuming a slot.
+The command writes one self-contained HTML file with no network dependencies. It reports
+Stalled, Blocked, and User Action Required as separate inventories from dispatchable work
+and treats any remaining active Status: Proposed item as a migration anomaly rather than an
+operational bucket. Starting consumes coordinated active capacity only during the single
+60-second launch settlement. Its reservation evidence begins truthfully as Pending with no
+launch attempt, conversation, or accepted owner. It becomes Running only after an observed
+successful launch and owner acceptance; otherwise it becomes Ready by the deadline. Any later
+Stalled, Blocked, User Action Required, or terminal disposition uses a distinct transition
+from Ready. Running consumes capacity only with complete Active Execution Evidence for active
+root execution, live delegated work, or a bounded owned wait or progress condition. Its
+historical observation and start times do not control expiry; both its finite condition
+deadline and next-reconciliation boundary must remain in the future. An ineligible Running
+record moves to a truthful non-active state before replacement capacity is dispatched.
 
 Future Ideas are file-provider-only and intentionally absent from the ordinary report, runnable counts, and lifecycle totals. With another Persistence provider selected, durable capture is blocked unless the user explicitly selects file as the one-item override; no provider issue or shadow file is created. Include and validate file-provider Future Ideas only through an explicit ideation operation:
 
@@ -175,7 +183,7 @@ python3 scripts/generate-backlog-report.py --output /path/to/backlog-report.html
 
 The explicit view lists Future Ideas separately. Each idea needs only a title, Synopsis, and Origin or Rationale; Notes and a free-text Revisit Trigger are optional. A promoted idea remains in place with Promoted To and the complete promoted work item carries the exact source idea path in its Source Evidence. Promotion Completion is direct-main, feature-branch, or UNSET. Holding accepts an underlying dispatchable Type or the Holding Type; User Action Required retains its underlying dispatchable Type.
 
-create-file-work-item owns the one exact-path promotion transaction. Its durable manifest names the retained idea as the current source, the promoted work item as the exclusive destination path, and the atomic rationale. The loaded resource-coordination procedure applies to both exact promotion paths. The transaction stages the exact pair, uses a path-limited commit, proves reciprocal links and the destination Provider Reference from the immutable commit object, and preserves unrelated staged and dirty bytes.
+Promotion always runs as one primary-main transaction. Before mutation, the steward snapshots exact idea and target bytes and existence plus the exact full Git index file bytes and existence. It stages the reciprocal pair only, uses a path-limited commit, captures the new commit OID, verifies that exact immutable object contains exactly both records and bytes, and leaves unrelated staged state intact. A failed operation restores and verifies both worktree paths and the Git index. The steward follows [Agent Claim](skills/agent-claim/SKILL.md) when that skill is loaded. Unsafe recovery reports BLOCKED with preserved evidence and the Dev Backlog Steward recovery owner.
 
 The report is read-only. It does not approve user-action items, mutate backlog files, acquire work, or dispatch agents.
 
@@ -356,13 +364,66 @@ After that analysis and explicit user approval, --replace-customized may be comb
 
 Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The [Wiki Skills And Project Context page](design/wiki-skills-and-project-context.html) owns the conceptual relationship among the LLM-wiki pattern, OKF-compatible files, project-wiki operations, and code-project-wiki synchronization. The generated [Core Agent and Skills](design/agent-and-skill-definitions.html) page owns catalog views of current conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. [Technology Skills](design/skills-modularization.html) explains technology-agnostic agent skills and setup-bound technology extensions. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns bootstrap, planned design progression, source-backed documentation, execution, review, verification, integration, configured delivery closeout, and execution evidence. [Agent Claim](skills/agent-claim/SKILL.md) owns all claim rules.
 
-Dev Backlog Coordinator owns parent-level, just-in-time coordination only when a user explicitly requests several user-visible Codex work-item tasks. It obtains inventory and lifecycle state through the effective Persistence-selected manager, delegates provider mutation to Dev Backlog Steward, and sends each active work item to Dev Orchestrator with the effective Commit-selected skill. File, GitHub, and GitLab retain native provider identities; placeholder providers, provider none, and UNSET preserve their defined zero-mutation or non-durable boundaries without fallback. The dedicated Dev Backlog Watchdog observes provider, task, progress, estimate, hard-stop, Stalled, and Blocked exit-condition evidence on its periodic read-only cycle. It stays quiet when no action is needed and alerts the Coordinator when investigation or disposition is required; it never mutates provider state, dispatches work, or chooses a lifecycle transition. The Coordinator retains capacity, retry, canonical-task, lifecycle-decision, and terminal housekeeping obligations without copying provider or completion procedures. Each accepted item merges after focused verification. When explicitly related items require a broader check, the Coordinator runs one combined regression after every selected item is present on main and records the tested commit. The portable [codex-workitem-coordination skill](skills/codex-workitem-coordination/SKILL.md) is the procedure source of truth; task titles, task status, and messages are coordination state rather than provider or delivery evidence.
+Dev Backlog Coordinator owns parent-level, just-in-time coordination only when a user
+explicitly requests several user-visible Codex work-item tasks. It obtains provider inventory
+through the effective Persistence-selected manager and applies the portable
+[codex-workitem-coordination skill](skills/codex-workitem-coordination/SKILL.md) as the
+single authority for active-execution eligibility, the 60-second Starting settlement,
+Running evidence, capacity, runtime reconciliation, and conversation-title synchronization.
+It delegates every provider mutation to Dev Backlog Steward and sends each actively eligible
+work item to Dev Orchestrator with the effective Commit-selected skill. File, GitHub, and
+GitLab retain native provider identities; placeholder providers, provider none, and UNSET
+preserve their defined zero-mutation or non-durable boundaries without fallback.
+
+Dev Backlog Steward remains accountable after every successful lifecycle transition. It
+directly renames the canonical conversation when runtime authority exists. Otherwise it sends
+the exact required conversation title to the canonical conversation owner or runtime
+coordinator and verifies that handoff before reporting transition coordination complete. The
+stable conversation identity remains unchanged, and the conversation title is display state,
+never provider, active-execution, or delivery authority.
+
+The dedicated Dev Backlog Watchdog observes provider, runtime, Active Execution Evidence,
+conversation-title, estimate, hard-stop, Stalled, and Blocked exit-condition evidence on its
+periodic read-only cycle. It stays quiet when no action is needed and alerts the Coordinator
+when investigation or disposition is required; it never mutates provider state, dispatches
+work, or chooses a lifecycle transition. The Coordinator retains capacity,
+canonical-execution, lifecycle-decision, and terminal housekeeping obligations without
+copying provider or completion procedures. Each accepted item merges after focused
+verification. When explicitly related items require a broader check, the Coordinator runs
+one combined regression after every selected item is present on main and records the tested
+commit.
 
 After a new file-backed work item is committed, its creator sends the provider reference to the existing Coordinator task. The message only prompts a fresh inventory read; it does not reserve capacity, change lifecycle state, create a delivery task, or begin implementation. If no Coordinator task is available, the committed item remains discoverable in the backlog.
 
 When the user or Watchdog declares a backlog crisis, the existing Coordinator pauses normal dispatch and claim operations and works through the crisis set one item at a time. Each item must reach Completed, Abandoned, or Superseded before the next item begins. The Coordinator resumes normal dispatch only after every crisis item is terminal, no Blocked item remains, all crisis changes are committed, and required focused verification is recorded.
 
-Backlog work that the user directly requests or explicitly authorizes starts with Status: Ready in the typed active folders under backlog unless the user defers it. A known or anticipated decision that execution may later reach is an implementation constraint, not a creation-time User Action Required condition. An executing item becomes Stalled when progress has stopped and the preventing cause is still unknown; it becomes Blocked only when the Coordinator can name the preventing cause and record an observable unblock condition. Stalled is nonterminal and outside Starting-plus-Running capacity. The Coordinator may return it to Running with the same owner, to Ready after ownership ends, to Blocked when investigation identifies the cause, to User Action Required for one exact user-owned action, or to a terminal outcome with matching evidence. A Ready item moves to User Action Required only after execution reaches a distinct user-owned decision that the original request or authorization did not resolve. An explicitly requested lightweight thought belongs in backlog/future-ideas with only its title, Synopsis, and Origin or Rationale; it is not recognized, approved, or runnable work. Recognized work whose current next safe step requires a user decision, approval, authority grant, value judgment, or user-held information belongs in [backlog/user-action-required](backlog/user-action-required/README.md) with its underlying Type and one concrete question. The user may answer and continue in the canonical work-item Thread that asked the question. The Coordinator decides routing; for a selected provider its Steward records the answer, Ready, and Starting, then the same root Orchestrator accepts Running through its Steward. Provider none records equivalent evidence task-locally without provider mutation or capacity inference. Neither route requires the user to switch to the parent or creates a replacement Thread. Work produced before reconciliation is preserved and checked through the normal ownership, review, verification, and delivery gates rather than rejected solely because of its Thread location. Evidence-backed ordinary dependencies remain with typed active work. Intentionally deferred recognized work with no immediate question remains in backlog/holding. Status: Proposed is not an operational backlog state.
+Backlog work that the user directly requests or explicitly authorizes starts with Status:
+Ready in the typed active folders under backlog unless the user defers it. A known or
+anticipated decision that execution may later reach is an implementation constraint, not a
+creation-time User Action Required condition. An executing item becomes Stalled when
+progress has stopped and the preventing cause is still unknown; it becomes Blocked only when
+the Coordinator can name the preventing cause and record an observable unblock condition.
+Stalled is nonterminal and outside active capacity. The Coordinator may return it to Running
+with the same owner and fresh Active Execution Evidence, to Ready after ownership ends, to
+Blocked when investigation identifies the cause, to User Action Required for one exact
+user-owned action, or to a terminal outcome with matching evidence. A Ready item moves to
+User Action Required only after execution reaches a distinct user-owned decision that the
+original request or authorization did not resolve. An explicitly requested lightweight
+thought belongs in backlog/future-ideas with only its title, Synopsis, and Origin or
+Rationale; it is not recognized, approved, or runnable work. Recognized work whose current
+next safe step requires a user decision, approval, authority grant, value judgment, or
+user-held information belongs in [backlog/user-action-required](backlog/user-action-required/README.md)
+with its underlying Type and one concrete question. The user may answer and continue in the
+canonical work-item conversation that asked the question. The Coordinator decides routing;
+for a selected provider its Steward records the answer, Ready, and Starting, then the same
+root Orchestrator accepts Running through its Steward. Provider none records equivalent
+evidence task-locally without provider mutation or capacity inference. Neither route requires
+the user to switch to the parent or creates a replacement conversation. Work produced before
+reconciliation is preserved and checked through the normal ownership, review, verification,
+and delivery gates rather than rejected solely because of its conversation location.
+Evidence-backed ordinary dependencies remain with typed active work. Intentionally deferred
+recognized work with no immediate question remains in backlog/holding. Status: Proposed is
+not an operational backlog state.
 
 The generic Gang of Four pattern skills are request-specific assignments for design authoring and design review. Java, TypeScript, and Python pattern examples remain setup-detected technology skills available to every agent acting under the matching folder guidance.
 
@@ -385,8 +446,6 @@ The wiki and development-wiki skills are:
 
 The documentation methodology skills are:
 
-- analyze-document-topics
-- revise-document-topics
 - development-methodology
 - documentation-bootstrap
 - documentation-reverse-engineer
@@ -564,7 +623,7 @@ python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --inli
 python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --output AGENTS.md --update-authority-directive
 ```
 
-Before a governed agent or skill definition change, record the existing explicit user direction with its exact definition scope and auditable provenance, then run the renderer's operational pre-mutation check. When the user explicitly requests a work item to create or modify named skills, that request approves the exact named skill-definition paths recorded in the item; do not request the same approval again. Additional approval is required only for additional skill-definition paths outside that requested manifest. Agent definitions and other governed definition families remain outside a named-skill request unless the request also explicitly includes them. The check validates the project policy and returns a JSON outcome with exit code 0 for an allowed change or 3 for a blocked change. It does not create approval or enforce filesystem permissions.
+A user-authorized work item that names exact skill definition paths supplies the required user direction for those named skills. Record that work-item authorization with its exact definition scope and auditable provenance, then run the renderer's operational pre-mutation check for every named path. Additional skill definitions outside the work item's named scope require new explicit user approval. The check validates the project policy and returns a JSON outcome with exit code 0 for an allowed change or 3 for a blocked change. It does not create approval or enforce filesystem permissions.
 
 ```yaml
 basis: explicit-user-direction

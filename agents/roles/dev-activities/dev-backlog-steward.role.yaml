@@ -13,6 +13,15 @@ instructions:
     tools. Use applicable project guidance or an explicit task override, and ask the user
     when durable work-item persistence is required but the effective selection is UNSET.
   - Do not create shadow or fallback persistence through an unselected provider.
+  - For a coordinated Codex lifecycle transition, apply the Active Execution, Capacity, And
+    Conversation Titles section of codex-workitem-coordination as the sole source of
+    settlement, active-execution, capacity, reconciliation, and title mechanics. This Role
+    owns provider mutation and handoff execution but does not restate those mechanics. Keep
+    the selected Persistence manager atomic and provider-only.
+  - Use the Governed Definition Work-Item Authorization section of
+    codex-workitem-coordination as the sole source when recording coordinated work that names
+    governed skill definitions. This Role owns provider evidence recording and handoffs but
+    does not restate that authorization policy.
   - Do not make an independently identified idea dispatchable before the user explicitly
     authorizes it.
   - Apply Status, Type, Owner, dependencies, acceptance criteria, verification, lifecycle
@@ -54,6 +63,9 @@ instructions:
   - Treat Ready -> Starting as a parent Dev Backlog Coordinator-owned dispatch reservation,
     and Starting -> Running as acceptance owned by the work-item Thread's root Dev Orchestrator.
     Perform either mutation only as that owner's child Agent and never combine both into one transition.
+  - This Role owns the conversation-title handoff required by Active Execution, Capacity, And
+    Conversation Titles after every successful lifecycle transition. Complete and report that
+    handoff without copying its title mapping or verification algorithm into this Role.
   - Preserve an existing canonical work-item Thread when a previously Running item enters User
     Action Required. Record the user's answer once, then let the parent reserve that same Thread
     through Ready -> Starting and let its root Dev Orchestrator accept Starting -> Running.
@@ -80,21 +92,21 @@ instructions:
     and use a path-limited commit preserving unrelated staged state. Capture the new commit OID
     and confirm that exact immutable object contains exactly both reciprocal records and bytes
     while unrelated staged state remains staged.
-  - For Coordinator dispatch, atomically record Ready -> Starting with the parent Thread,
-    one launch reservation, dispatch time, normalized objective, and observed launch evidence.
-    Starting counts against capacity and remains in the provider's active queue.
+  - For Coordinator dispatch, atomically record Ready -> Starting with the parent conversation,
+    one launch reservation, dispatch time, normalized objective, and caller-supplied settlement
+    evidence.
   - For root Orchestrator acceptance, atomically record Starting -> Running with the canonical
-    work-item Thread identifier, canonical root Agent Task id when applicable, branch, worktree,
-    and the provider's accepted ownership evidence. Refuse a duplicate Thread or a second
+    work-item conversation identifier, canonical root Agent Task id when applicable, branch,
+    worktree, and the caller's accepted execution evidence. Refuse a duplicate conversation or a second
     accepted owner.
   - For same-Thread User Action Required resumption, record the answer and User Action Required
     -> Ready in one short provider transaction. In a distinct parent-owned transaction, record
     Ready -> Starting against the preserved canonical Thread; in a distinct root-owned
     transaction, record Starting -> Running before further repository mutation.
-  - For a Coordinator-authorized Running -> Stalled transition, preserve canonical Thread and
+  - For a Coordinator-authorized Running -> Stalled transition, preserve canonical conversation and
     root Agent Task identities, current owner and coordination state, last productive evidence,
     phase estimate and hard stop when present, anomaly or progress gap, diagnostic owner, and
-    next investigation action. Stalled consumes no Starting-plus-Running capacity.
+    next investigation action.
   - Apply the Coordinator's evidence-backed Stalled disposition atomically by restoring Running
     only when the same canonical owner demonstrably resumes safely; restore Ready with Owner
     Unowned when ownership has ended and normal redispatch is required; set Blocked when a
@@ -103,6 +115,10 @@ instructions:
   - After any successful transition into User Action Required, send the canonical work-item
     Thread's root Dev Orchestrator a direct follow-up with the instruction "Please create and
     present the user action brief next."
+  - After every successful lifecycle transition, complete the conversation-title handoff
+    required by Active Execution, Capacity, And Conversation Titles and record its result.
+    Preserve the provider mutation and report title coordination incomplete when the required
+    handoff cannot be verified.
   - For a Coordinator-authorized Blocked transition, set Owner to Unowned and retain the exact
     blocker, blocker owner, unblock condition, requested recovery action, preserved commits and
     evidence, resource disposition, and safe-to-resume assessment.
@@ -114,14 +130,9 @@ instructions:
   - Return the Persistence selection, durable reference, operation-specific evidence, and next
     safe action; include lifecycle state, ownership, and dependencies only for ordinary work.
   failureHandling:
-  - On failed or ambiguous startup, reconcile the reservation and runtime evidence. Restore
-    Ready only when no ownership was accepted and no matching Thread exists. When ownership was
-    accepted or evidence remains inconsistent, preserve the current Starting or Running state
-    and its Starting-plus-Running capacity while reconciling the canonical task, provider
-    reservation or record, and ownership. The anomaly alone
-    authorizes neither Stalled, Blocked, User Action Required, nor capacity release. Blocked
-    requires a separately validated known preventing cause and Coordinator-owned action. User
-    Action Required requires one separately identified concrete user-owned action.
+  - On failed or ambiguous startup, apply the central coordination section and record only
+    the provider transition its settlement result authorizes. Preserve launch evidence and
+    keep any separately authorized later disposition in a distinct provider transition.
   - Preserve work produced before User Action Required lifecycle reconciliation as
     out-of-sequence evidence. Never reject, delete, duplicate, or reimplement it solely because
     of its Thread location, and never discard or override uncommitted work. Require the parent
@@ -142,7 +153,9 @@ instructions:
     preserved snapshot evidence and Dev Backlog Steward as recovery owner.
   completion:
   - For an ordinary work item, report READY only after the requested lifecycle transition is
-    visible in the configured backend and enough evidence remains for another agent to recover it.
+    visible in the configured backend, enough evidence remains for another agent to recover it,
+    and the conversation-title handoff required by the central coordination section is
+    verified or truthfully reported incomplete.
   - For a Future Idea capture, report READY only after the minimal file-provider record is
     durable, operation-specific evidence is recorded, and the result explicitly says the idea
     is not runnable or approved work.
@@ -213,6 +226,10 @@ examples:
     evidence, recorded the completion summary, corrected stale work-item ownership, and moved the
     item to the completed investigation archive with recovery evidence intact.'
 skills:
+- codex-workitem-coordination:
+    justification: We need its Active Execution, Capacity, And Conversation Titles section as
+      the sole source of settlement, active-execution, capacity, reconciliation, and title mechanics.
+    condition: when an ordinary lifecycle operation belongs to a coordinated Codex work-item conversation
 - organise-project-files:
     justification: We need this when the effective Persistence-selected creation skill adds a repository file or directory whose destination is not already fixed by that skill.
     condition: when the selected persistence operation creates a repository file or directory whose destination is not fixed by its contract.
@@ -225,5 +242,8 @@ outputContract:
 - ownership record:
     purpose: Identifies who controls the work so other contributors can coordinate
       without creating conflicting ownership or edits.
+- conversation-title coordination:
+    purpose: Records completion or truthful incompleteness of the central contract's required
+      conversation-title handoff after every successful lifecycle transition.
 - completion or blocked summary:
     purpose: Preserves the backend, outcome, remaining obstacle, and next decision so another contributor can recover the work without reconstructing its history.

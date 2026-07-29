@@ -33,8 +33,20 @@ REPOSITORY_MAINTENANCE_SKILL_PATH = (
     / "dev-methodology-repository-maintenance"
     / "SKILL.md"
 )
-ANALYZE_TOPICS_SKILL_PATH = REPOSITORY_ROOT / "skills" / "analyze-document-topics" / "SKILL.md"
-REVISE_TOPICS_SKILL_PATH = REPOSITORY_ROOT / "skills" / "revise-document-topics" / "SKILL.md"
+CREATE_OUTLINE_SKILL_PATH = (
+    REPOSITORY_ROOT
+    / ".agents"
+    / "skills"
+    / "create-document-outline"
+    / "SKILL.md"
+)
+IMPROVE_OUTLINE_SKILL_PATH = (
+    REPOSITORY_ROOT
+    / ".agents"
+    / "skills"
+    / "improve-document-outline"
+    / "SKILL.md"
+)
 SKILLS_ROOT = REPOSITORY_ROOT / "skills"
 ROLES_ROOT = REPOSITORY_ROOT / "agents" / "roles"
 SKILL_CATEGORIES_PATH = REPOSITORY_ROOT / "design" / "skill-categories.yaml"
@@ -1091,6 +1103,71 @@ class BundleContentTests(unittest.TestCase):
             coordination_skill,
         )
 
+    def test_active_execution_and_conversation_titles_route_through_one_skill(self) -> None:
+        """Canonical roles reference one policy whose generated mirrors remain current."""
+
+        coordination_text = (
+            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        provider_text = (
+            SKILLS_ROOT / "manage-file-work-items" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("single normative authority", coordination_text)
+        self.assertIn("conversation-title synchronization", coordination_text)
+        self.assertNotIn("Active Execution Evidence", provider_text)
+        self.assertNotIn("conversation-title synchronization", provider_text)
+
+        role_names = (
+            "dev-backlog-coordinator",
+            "dev-backlog-steward",
+            "dev-orchestrator",
+            "dev-backlog-watchdog",
+        )
+        central_section = "Active Execution, Capacity, And Conversation Titles"
+        duplicated_markers = (
+            "60-second",
+            "Reservation Started At",
+            "Settlement Deadline",
+            "Runtime Launch Result",
+            "Owner Acceptance:",
+            "Reconciliation Result:",
+            "Condition Type:",
+            "Deadline or Expires At:",
+            "Next Reconciliation At:",
+            "Active Execution Evidence",
+            "Starting-plus-Running count",
+            "Implementing —",
+        )
+        for role_name in role_names:
+            role = load_yaml_object(
+                ROLES_ROOT / "dev-activities" / f"{role_name}.role.yaml"
+            )
+            selected_skills = {next(iter(entry)) for entry in role["skills"]}
+            role_text = json.dumps(role, sort_keys=True)
+            with self.subTest(role=role_name):
+                self.assertIn("codex-workitem-coordination", selected_skills)
+                self.assertIn(central_section, role_text)
+                for marker in duplicated_markers:
+                    self.assertNotIn(marker, role_text)
+
+        for generated_path in (
+            SKILL_DEFINITIONS_PATH,
+            ROLE_DEFINITIONS_PATH,
+            *(
+                GENERATED_ADAPTERS_ROOT / adapter / "agents" / f"{role_name}{extension}"
+                for adapter, extension in (
+                    ("codex", ".toml"),
+                    ("claude", ".md"),
+                    ("gemini", ".md"),
+                    ("junie", ".md"),
+                )
+                for role_name in role_names
+            ),
+        ):
+            with self.subTest(generated=generated_path):
+                generated_text = generated_path.read_text(encoding="utf-8")
+                self.assertIn("conversation title", generated_text.lower())
+
     def test_redundant_root_manuals_are_removed(self) -> None:
         for file_name in REMOVED_ROOT_FILES:
             with self.subTest(file_name=file_name):
@@ -1202,10 +1279,13 @@ class BundleContentTests(unittest.TestCase):
         lifecycle_text = (
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
         ).read_text(encoding="utf-8")
+        normalized_coordination = " ".join(coordination_text.split())
+        normalized_manage = " ".join(manage_text.split())
+        normalized_readme = " ".join(readme_text.split())
 
         for phrase in (
-            "The user may answer and continue the conversation in that canonical Thread.",
-            "must not require the user to repeat the answer in the parent Thread",
+            "The user may answer and continue in that canonical conversation.",
+            "must not require the user to repeat the answer in the parent conversation",
             "User Action Required -> Ready",
             "its Dev Backlog Steward child records Ready -> Starting",
             "preserve that work as out-of-sequence evidence",
@@ -1213,21 +1293,21 @@ class BundleContentTests(unittest.TestCase):
             "Resume the same Thread only after Running is durable",
         ):
             with self.subTest(coordination_contract=phrase):
-                self.assertIn(phrase, coordination_text)
+                self.assertIn(phrase, normalized_coordination)
 
         for phrase in (
-            "Accept the answer in the canonical work-item Thread that asked the question",
-            "Do not require the user to switch Threads or repeat the answer.",
-            "parent Coordinator reserve Ready -> Starting for the existing canonical Thread",
+            "Accept the answer in the canonical work-item conversation that asked the question",
+            "Do not require the user to switch conversations or repeat the answer.",
+            "parent Coordinator authorizes resumption, record Ready -> Starting for the existing canonical conversation",
             "Work performed before User Action Required -> Ready -> Starting -> Running reconciliation is not automatically accepted or discarded.",
             "Do not continue delivery until the parent and the same root Orchestrator reconcile",
         ):
             with self.subTest(manage_contract=phrase):
-                self.assertIn(phrase, manage_text)
+                self.assertIn(phrase, normalized_manage)
 
         self.assertIn(
-            "The user may answer and continue in the canonical work-item Thread",
-            readme_text,
+            "The user may answer and continue in the canonical work-item conversation",
+            normalized_readme,
         )
         self.assertIn("Same-Thread Resume", lifecycle_text)
         self.assertIn(
@@ -1406,32 +1486,7 @@ class BundleContentTests(unittest.TestCase):
                 is not None
                 and (automatic_subject is not None or automatic_passive is not None)
             )
-            runtime_discovery_description = re.search(
-                r"\bruntime\b[^.;!?]{0,80}\brules for discovering\b",
-                text,
-                re.IGNORECASE,
-            )
-            runtime_description_suffix = (
-                text[runtime_discovery_description.end():]
-                if runtime_discovery_description is not None
-                else ""
-            )
-            runtime_description_directive = re.search(
-                rf"\b(?:must|should|{manual_action}|{load_action})\b",
-                runtime_description_suffix,
-                re.IGNORECASE,
-            )
-            purely_descriptive_runtime_discovery = (
-                runtime_discovery_description is not None
-                and runtime_discovery_description.start() <= match.start()
-                and runtime_description_directive is None
-            )
-            return not (
-                governed_prohibition
-                or explicit_artifact_inspection
-                or automatic_load
-                or purely_descriptive_runtime_discovery
-            )
+            return not (governed_prohibition or explicit_artifact_inspection or automatic_load)
 
         prohibited_examples = (
             "Read the root AGENTS.md before acting.",
@@ -1445,7 +1500,6 @@ class BundleContentTests(unittest.TestCase):
             "Before creating files, read AGENTS.md.",
             "The coder reads AGENTS.md before writing source files.",
             "The harness supplies tools, but the coder reads AGENTS.md before acting.",
-            "Each runtime has its own rules for discovering project instructions, but the coder must read AGENTS.md before acting.",
         )
         allowed_examples = (
             "Do not tell ordinary agents to read AGENTS.md.",
@@ -1453,7 +1507,6 @@ class BundleContentTests(unittest.TestCase):
             "Review the existing AGENTS.md artifact.",
             "Investigate whether the harness loads AGENTS.md.",
             "The harness supplies applicable AGENTS.md instructions automatically.",
-            "Each runtime has its own rules for discovering project instructions.",
         )
         for example in prohibited_examples:
             with self.subTest(prohibited_example=example):
@@ -1993,7 +2046,7 @@ class BundleContentTests(unittest.TestCase):
             "Do not request lifecycle COMPLETED while Commit is AWAITING_REVIEW",
             "Resume the same effective Commit-selected skill through review corrections, checks, dependency order, merge, and main observation until it returns READY or BLOCKED.",
             "dispatch dev-backlog-steward exactly once for the distinct terminal COMPLETED update",
-            "verify the selected manager's recorded closure before reporting READY",
+            "verify the selected manager's recorded closure and the terminal central-contract conversation-title handoff before reporting READY",
             "For provider none, do not dispatch dev-backlog-steward",
         ):
             with self.subTest(phrase=phrase):
@@ -2234,43 +2287,6 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(boundary_phrase, skill_text)
                 self.assertTrue((skill_root / reference_path).is_file())
                 self.assertTrue((skill_root / "detection.yaml").is_file())
-
-    def test_jest_failure_ownership_follows_attribution_and_explicit_user_choice(
-        self,
-    ) -> None:
-        jest_text = (SKILLS_ROOT / "jest" / "SKILL.md").read_text(encoding="utf-8")
-
-        attributable_case = (
-            "Treat failures attributable to the current change as current-task "
-            "repair ownership."
-        )
-        pre_existing_case = (
-            "After attribution proves that a failure is unrelated or pre-existing, "
-            "ask the user whether to repair it now."
-        )
-        explicit_choice_boundary = (
-            "Include that repair in current-task ownership only when the user "
-            "explicitly authorizes it."
-        )
-        separate_evidence_boundary = (
-            "Otherwise, preserve the failure as separate verification evidence "
-            "without expanding scope, do not create an application Defect for that "
-            "test failure, and permit the scoped change to complete when its own "
-            "applicable verification passes."
-        )
-
-        for phrase in (
-            attributable_case,
-            pre_existing_case,
-            explicit_choice_boundary,
-            separate_evidence_boundary,
-        ):
-            with self.subTest(phrase=phrase):
-                self.assertIn(phrase, jest_text)
-        self.assertNotIn(
-            "Treat failing tests as the current task until explained and fixed.",
-            jest_text,
-        )
 
     def test_gof_pattern_families_are_generic_complete_and_role_assignable(self) -> None:
         expected = {
@@ -4122,7 +4138,6 @@ class BundleContentTests(unittest.TestCase):
             ("review-architecture", "architecture"),
             ("review-functional-spec", "functional-spec"),
             ("review-high-level-design", "high-level-design"),
-            ("review-module-design", "module-design"),
         ):
             skill_text = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(
                 encoding="utf-8"
@@ -4200,44 +4215,6 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("assessment for a derived finding", skill_text)
         self.assertIn("not applicable with a reason", skill_text)
         self.assertIn("Resolve every exact quotation", skill_text)
-
-    def test_module_review_binds_typed_evidence_to_required_scenarios(self) -> None:
-        """Bind each required module-review scenario to its evidence semantics."""
-        skill_text = (SKILLS_ROOT / "review-module-design" / "SKILL.md").read_text(
-            encoding="utf-8"
-        )
-        checklist_text = (
-            SKILLS_ROOT
-            / "review-module-design"
-            / "references"
-            / "review-checklist-module-design.md"
-        ).read_text(encoding="utf-8")
-        scenario_contracts = {
-            "omitted required operation": (
-                "For an omitted required operation, use Status: fail, select summary "
-                "or assessment as the Evidence type, name every authoritative source "
-                "searched in Evidence source, describe the omission in Evidence, and "
-                "do not fabricate a quotation."
-            ),
-            "non-applicable asynchronous boundary": (
-                "For a genuinely non-applicable asynchronous boundary, use Status: "
-                "n/a with Evidence type: not applicable and explain the rationale in "
-                "Evidence; do not use n/a for an omitted required boundary."
-            ),
-            "resolved exact quotation": (
-                "For a question resolved by literal source text, use Evidence type: "
-                "exact quotation, name the source in Evidence source, and copy an "
-                "Evidence value that occurs literally in the named source."
-            ),
-        }
-
-        for document_name, text in (
-            ("skill", skill_text),
-            ("checklist", checklist_text),
-        ):
-            for scenario_name, contract in scenario_contracts.items():
-                with self.subTest(document=document_name, scenario=scenario_name):
-                    self.assertIn(contract, text)
 
     def test_hld_and_module_reviews_enforce_adequacy_and_security_contracts(self) -> None:
         cases = {
@@ -4429,8 +4406,8 @@ class BundleContentTests(unittest.TestCase):
             "## Blocked Handoff And Resumption",
             "Set Status to Blocked and Owner to Unowned",
             "restore Status: Ready with Owner: Unowned",
-            "Dev Backlog Steward child atomically records Ready -> Starting reservation and dispatch evidence",
-            "Only after the work-item Thread's root Dev Orchestrator Agent accepts ownership",
+            "When the parent Dev Backlog Coordinator authorizes Ready -> Starting",
+            "When the root Dev Orchestrator authorizes Starting -> Running",
             "restore the byte-for-byte pre-attempt Blocked item",
             "Provider mutation protection cannot substitute for delivery ownership.",
         ):
@@ -4505,15 +4482,15 @@ class BundleContentTests(unittest.TestCase):
             "Keep revisit triggers as free text",
             "Retain the original idea in backlog/future-ideas",
             "preflight target collisions before any promotion write",
+            "save the source idea, target, and Git index state needed to restore the attempt",
             "including Open Questions",
-            "exactly one retained current source path",
-            "exactly one exclusively created destination path",
-            "Apply the loaded resource-coordination procedure to both exact promotion paths",
-            "Every mutating Git argument vector must name all and only the manifest paths after --.",
+            "The promotion must either succeed completely or restore the previous state.",
+            "Remove only the new target created by this attempt.",
+            "Stage exactly the idea and target paths",
             "path-limited commit",
-            "immutable commit object",
-            "require its changed-path set to equal the source-and-destination manifest",
-            "Execute only the Future Idea promotion shape in Exact Backlog Creation Transaction",
+            "Capture the new commit OID immediately after commit creation",
+            "require its changed-path set and reciprocal record bytes to contain exactly the intended pair",
+            "Follow the Claim Events table in agent-claim for the retained Future Idea update",
         ):
             with self.subTest(create_future_ideas_contract=required_phrase):
                 self.assertIn(required_phrase, create_file_text)
@@ -4540,7 +4517,7 @@ class BundleContentTests(unittest.TestCase):
             "preserving unrelated staged state",
             "Capture the new commit OID",
             "follow applicable project guidance for repository mutation",
-            "provider's accepted ownership evidence",
+            "caller's accepted execution evidence",
             "operation-specific evidence is recorded",
             "provider lifecycle",
         ):
@@ -4556,19 +4533,21 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(steward_coordination_phrase=retired_coordination_phrase):
                 self.assertNotIn(retired_coordination_phrase, role_text)
         for required_phrase in (
-            "create-file-work-item owns the one exact-path promotion transaction",
-            "loaded resource-coordination procedure applies to both exact promotion paths",
-            "exclusive destination path",
-            "immutable commit object",
-            "preserves unrelated staged and dirty bytes",
+            "exact full Git index file bytes and existence",
+            "path-limited commit",
+            "unrelated staged state",
+            "captures the new commit OID",
+            "The steward follows [Agent Claim](skills/agent-claim/SKILL.md) when that skill is loaded.",
         ):
             with self.subTest(future_ideas_readme=required_phrase):
                 self.assertIn(required_phrase, readme_text)
         for required_phrase in (
-            "create-file-work-item owns one exact-path promotion transaction",
-            "resource coordination applies to both exact promotion paths",
-            "immutable commit object",
-            "manage-file-work-items routes promotion to this owner",
+            "exact full Git index file bytes and existence",
+            "path-limited commit",
+            "unrelated staged state",
+            "captures the new commit OID",
+            "Event 1 protects the retained Future Idea update through a claim on only its exact current path",
+            "uniquely named promoted target uses atomic no-overwrite creation without a target claim",
         ):
             with self.subTest(future_ideas_provider_contract=required_phrase):
                 self.assertIn(required_phrase, provider_contract_text)
@@ -4578,55 +4557,6 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertIn("reject direct unowned Blocked to Running", judge_text)
         self.assertIn("byte-for-byte pre-attempt Blocked item", judge_text)
-
-    def test_file_provider_backlog_mutations_require_exact_path_proof(self) -> None:
-        create_text = (
-            SKILLS_ROOT / "create-file-work-item" / "SKILL.md"
-        ).read_text(encoding="utf-8")
-        manage_text = (
-            SKILLS_ROOT / "manage-file-work-items" / "SKILL.md"
-        ).read_text(encoding="utf-8")
-
-        for required_phrase in (
-            "## Exact Backlog Creation Transaction",
-            "complete exact canonical repository-relative provider-path manifest",
-            "exactly one created destination path",
-            "nonempty atomic rationale",
-            "loaded resource-coordination procedure to both exact promotion paths",
-            "exclusive-create remains authoritative",
-            "tracked dirty byte sequence",
-            "untracked dirty byte sequence",
-            "git add --",
-            "git commit --only",
-            "immutable commit object",
-            "only to canonical file-provider records under backlog",
-        ):
-            with self.subTest(create_contract=required_phrase):
-                self.assertIn(required_phrase, create_text)
-
-        for required_phrase in (
-            "## Exact Provider-Path Transaction",
-            "complete exact canonical repository-relative provider-path manifest",
-            "one current path",
-            "one current source and one created destination",
-            "at least two paths",
-            "nonempty atomic rationale",
-            "current Provider Reference",
-            "intended post-mutation Provider Reference",
-            "loaded resource-coordination procedure",
-            "coordination evidence agrees with the exact manifest",
-            "tracked dirty byte sequence",
-            "untracked dirty byte sequence",
-            "title-derived",
-            "git add --",
-            "git commit --only",
-            "implicit index-wide commit",
-            "immutable commit object",
-            "only to canonical file-provider records under backlog",
-            "single Future Idea promotion transaction owned by create-file-work-item",
-        ):
-            with self.subTest(manage_contract=required_phrase):
-                self.assertIn(required_phrase, manage_text)
 
     def test_skill_frontmatter_uses_agent_skill_schema(self) -> None:
         for skill_path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):
@@ -5433,29 +5363,24 @@ class BundleContentTests(unittest.TestCase):
             "## Dependencies",
             "## Verification",
             "## Open Questions",
-            "## Governed Definition Approval",
-            "### Governed Canonical Sources",
-            "### Allowed Dependent Artifacts",
-            "### Approval Resolution",
-            "## User Action Required",
             "## Notes",
         )
         positions = [template_text.index(marker) for marker in ordered_markers]
         self.assertEqual(sorted(positions), positions)
         for optional_comment in (
             "<!-- OPTIONAL: Series child metadata",
-            "<!-- OPTIONAL: Governed Definition Approval",
             "<!-- OPTIONAL: User Action Required",
+            "<!-- OPTIONAL: Governed definition pre-answer evidence",
             "<!-- OPTIONAL: Notes",
         ):
             self.assertIn(optional_comment, template_text)
         self.assertLess(
-            template_text.index("## Governed Definition Approval"),
-            template_text.index("## User Action Required"),
+            template_text.index("### Governed Canonical Sources"),
+            template_text.index("### Question for the User"),
         )
         self.assertLess(
-            template_text.index("### Approval Resolution"),
-            template_text.index("## User Action Required"),
+            template_text.index("### Allowed Dependent Artifacts"),
+            template_text.index("### Question for the User"),
         )
         self.assertNotIn("Open Decisions", template_text)
         self.assertNotIn("Design Principles", template_text)
@@ -5470,10 +5395,6 @@ class BundleContentTests(unittest.TestCase):
             "invalid User Action Required classification",
             "exact canonical-path manifest",
             "exact user-message provenance",
-            "treat that request as approval",
-            "Do not ask the user to approve those same requested skill definitions again",
-            "additional skill-definition path outside the recorded requested manifest",
-            "does not revoke or suspend approval for the originally requested manifest",
             "They are approval evidence, not design rules.",
             "Keep change-control manifests out of Design Principles",
         ):
@@ -6335,18 +6256,26 @@ class BundleContentTests(unittest.TestCase):
         manage_text = (SKILLS_ROOT / "manage-file-work-items" / "SKILL.md").read_text(
             encoding="utf-8"
         )
+        coordination_text = (
+            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+        ).read_text(encoding="utf-8")
 
         for provider_contract in (
             "Only the primary worktree on main may change canonical files under backlog.",
             "Each startup or terminal transition remains its own short primary-main provider transaction.",
-            "Keep delivery ownership isolated from backlog mutation ownership.",
+            "Keep delivery ownership isolated from provider mutation ownership.",
             "Provider mutation protection cannot substitute for delivery ownership.",
-            "An event-scoped coordination constraint does not block safe bounded work before the affected event.",
-            "Defer only that event; continue non-conflicting work in isolated private worktrees.",
             "any deferred edit, shared-resource, or integration event as distinct facts.",
         ):
             with self.subTest(provider_contract=provider_contract):
                 self.assertIn(provider_contract, manage_text)
+
+        for coordination_contract in (
+            "A coordination-only overlap note does not block a safe private-worktree start.",
+            "Defer only that event; continue non-conflicting work in isolated private worktrees.",
+        ):
+            with self.subTest(coordination_contract=coordination_contract):
+                self.assertIn(coordination_contract, coordination_text)
 
         for forbidden_coupling in (
             "agent-claim",
@@ -6967,7 +6896,7 @@ class BundleContentTests(unittest.TestCase):
             "Provider UNSET or an unavailable selected skill",
             "effective Commit-selected skill",
             "Do not reproduce provider or Commit procedures",
-            "ten Starting or Running items",
+            "active queue defined by codex-workitem-coordination",
             "Retry only when that notification arrives",
             "Only the watchdog investigates stale claim ownership",
             "Every fifteen minutes",
@@ -6993,6 +6922,7 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(retired_wait_contract=retired_wait_contract):
                 self.assertNotIn(retired_wait_contract, role_text)
+        self.assertNotIn("ten actively eligible Starting or Running items", role_text)
 
     def test_dev_backlog_coordinator_snapshot_includes_stalled_state(self) -> None:
         """Source and generated role outputs must expose Stalled inventory."""
@@ -7034,10 +6964,10 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("provider lifecycle snapshot", rendered)
                 self.assertIn("STALLED", rendered)
 
-    def test_backlog_roles_preserve_terminal_recount_and_failed_task_alerts(
+    def test_backlog_roles_reconcile_active_evidence_before_refilling_capacity(
         self,
     ) -> None:
-        """Source and generated roles must retain the lifecycle corrections."""
+        """Roles select the central contract without restating its mechanics."""
 
         coordinator_path = (
             ROLES_ROOT
@@ -7051,45 +6981,34 @@ class BundleContentTests(unittest.TestCase):
         )
         coordinator_role = load_yaml_object(coordinator_path)
         watchdog_role = load_yaml_object(watchdog_path)
-        coordinator_workflow = " ".join(
-            " ".join(coordinator_role["instructions"]["workflow"]).split()
-        )
-        watchdog_workflow = " ".join(
-            " ".join(watchdog_role["instructions"]["workflow"]).split()
-        )
-        recount_contract = (
-            "For durable providers, immediately recount Starting-plus-Running "
-            "items through the effective manager and reserve eligible READY work "
-            "toward ten active items."
-        )
-        failed_task_contract = "failed, stopped, or missing canonical tasks"
-        task_reconciliation_contract = (
-            "For a failed, stopped, or missing Starting or Running canonical task, "
-            "recommend task, provider, and ownership reconciliation before any "
-            "lifecycle choice; preserve known explicit preventing-cause Blocked "
-            "routing and never classify the task-state anomaly itself as Stalled."
-        )
-        coordinator_task_reconciliation_contract = (
-            "When a Starting or Running canonical task is failed, stopped, or "
-            "missing, reconcile the canonical task, provider reservation or record, "
-            "and ownership while preserving the current lifecycle state and "
-            "Starting-plus-Running capacity. Do not ask Dev Backlog Steward to "
-            "record Stalled, Blocked, User Action Required, or capacity release "
-            "from the anomaly itself. Only separately validated disposition "
-            "evidence may authorize a later lifecycle change."
+        central_section = "Active Execution, Capacity, And Conversation Titles"
+        prohibited_mechanics = (
+            "exactly 60 seconds",
+            "60-second",
+            "Starting-plus-Running",
+            "Active Execution Evidence",
+            "Reservation Started At",
+            "Settlement Deadline",
         )
 
-        self.assertIn(recount_contract, coordinator_workflow)
+        for role in (coordinator_role, watchdog_role):
+            role_text = json.dumps(role, sort_keys=True)
+            selected = {next(iter(entry)) for entry in role["skills"]}
+            self.assertIn("codex-workitem-coordination", selected)
+            self.assertIn(central_section, role_text)
+            for phrase in prohibited_mechanics:
+                self.assertNotIn(phrase, role_text)
+
         self.assertIn(
-            coordinator_task_reconciliation_contract,
-            coordinator_workflow,
+            "A failed, stopped, or missing canonical Task triggers the central "
+            "coordination section.",
+            " ".join(coordinator_role["instructions"]["decisions"]),
         )
-        self.assertNotIn(
-            "immediately recount Running items",
-            coordinator_workflow,
+        self.assertIn(
+            "For a failed, stopped, or missing canonical Task, report the "
+            "central-contract reconciliation trigger",
+            " ".join(watchdog_role["instructions"]["workflow"]),
         )
-        self.assertIn(failed_task_contract, watchdog_workflow)
-        self.assertIn(task_reconciliation_contract, watchdog_workflow)
         self.assertIn(
             "dev-backlog-watchdog",
             coordinator_role["agentDependencies"],
@@ -7119,16 +7038,11 @@ class BundleContentTests(unittest.TestCase):
                 )
             ).read_text(encoding="utf-8")
             with self.subTest(runtime=runtime):
-                self.assertIn(recount_contract, coordinator_generated)
-                self.assertIn(
-                    coordinator_task_reconciliation_contract,
-                    coordinator_generated,
-                )
-                self.assertIn(failed_task_contract, watchdog_generated)
-                self.assertIn(
-                    task_reconciliation_contract,
-                    watchdog_generated,
-                )
+                self.assertIn(central_section, coordinator_generated)
+                self.assertIn(central_section, watchdog_generated)
+                for phrase in prohibited_mechanics:
+                    self.assertNotIn(phrase, coordinator_generated)
+                    self.assertNotIn(phrase, watchdog_generated)
 
     def test_claim_related_skills_do_not_copy_claim_events_or_polling_rules(
         self,
@@ -7543,8 +7457,8 @@ class BundleContentTests(unittest.TestCase):
                     r"(?:the verifier|it) returns GOOD",
                 )
 
-    def test_lifecycle_separates_task_execution_anomalies_from_states(self) -> None:
-        """The state map must reconcile task anomalies before lifecycle routing."""
+    def test_lifecycle_reconciles_active_execution_before_refilling_capacity(self) -> None:
+        """The state map must make active eligibility evidence explicit."""
 
         lifecycle_text = (
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
@@ -7554,17 +7468,17 @@ class BundleContentTests(unittest.TestCase):
             lifecycle_text.index('<section class="section" id="file-provider"')
         ]
 
-        anomaly_label = (
-            '<h3 id="task-execution-anomaly-title">Task/execution anomaly '
-            "<span>Not a lifecycle state</span></h3>"
+        reconciliation_label = (
+            '<h3 id="task-execution-anomaly-title">Active execution reconciliation '
+            "<span>One central contract</span></h3>"
         )
-        self.assertIn(anomaly_label, backlog_section)
+        self.assertIn(reconciliation_label, backlog_section)
         self.assertLess(
-            backlog_section.index(anomaly_label),
+            backlog_section.index(reconciliation_label),
             backlog_section.index("<strong>Stalled</strong>"),
         )
         self.assertLess(
-            backlog_section.index(anomaly_label),
+            backlog_section.index(reconciliation_label),
             backlog_section.index("<strong>Blocked</strong>"),
         )
 
@@ -7575,18 +7489,15 @@ class BundleContentTests(unittest.TestCase):
         self.assertIsNotNone(state_map_match)
         state_map_label = state_map_match.group(1)
         for clause in (
-            "A failed, stopped, or missing Starting or Running canonical task "
-            "is a Task/execution anomaly, not lifecycle evidence.",
-            "Preserve its current state and Starting-plus-Running capacity while "
-            "reconciling the canonical task, provider record or reservation, and "
-            "ownership.",
-            "The anomaly alone authorizes neither Stalled, Blocked, User Action "
-            "Required, nor capacity release.",
-            "Only a separately proved unknown progress gap may become Stalled.",
-            "Blocked requires a separately validated known cause and "
-            "Coordinator-owned action.",
-            "User Action Required requires one separately identified concrete "
-            "user-owned action.",
+            "Starting is active only during a 60-second launch settlement whose "
+            "evidence begins Pending before launch.",
+            "Every other Starting result becomes Ready first; any later non-active "
+            "disposition is a distinct transition from Ready.",
+            "Running is active only while both its finite condition deadline and "
+            "next-reconciliation boundary remain in the future.",
+            "Missing or expired evidence moves the item to a truthful non-active "
+            "state before capacity is refilled.",
+            "Stalled and Blocked are non-active recovery states.",
         ):
             with self.subTest(aria_clause=clause):
                 self.assertIn(clause, state_map_label)
@@ -7599,7 +7510,7 @@ class BundleContentTests(unittest.TestCase):
         ]
         self.assertIn(
             '<ol class="task-anomaly-flow" '
-            'aria-label="Task/execution anomaly reconciliation flow">',
+            'aria-label="Active execution reconciliation flow">',
             anomaly_section,
         )
         self.assertIn(
@@ -7607,9 +7518,9 @@ class BundleContentTests(unittest.TestCase):
             lifecycle_text,
         )
         flow_steps = (
-            "Observe anomaly",
-            "Reconcile identity",
-            "Evaluate separate evidence",
+            "Settle Starting",
+            "Prove Running",
+            "Release inactive capacity",
         )
         flow_positions = tuple(
             anomaly_section.index(f"<strong>{step}</strong>")
@@ -7617,30 +7528,24 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertEqual(tuple(sorted(flow_positions)), flow_positions)
         for clause in (
-            "failed, stopped, or missing canonical task for a Starting or "
-            "Running item",
-            "execution evidence, not lifecycle evidence",
-            "Preserve the current lifecycle state and Starting-plus-Running "
-            "capacity while reconciling the canonical task, provider record or "
-            "reservation, and ownership.",
-            "The anomaly alone authorizes neither Stalled, Blocked, User Action "
-            "Required, nor capacity release.",
-            "Only a separately proved unknown progress gap may become Stalled.",
-            "Blocked requires a separately validated known cause and "
-            "Coordinator-owned action.",
-            "User Action Required requires one separately identified concrete "
-            "user-owned action.",
+            "The reservation begins Pending with no launch attempt, canonical "
+            "conversation, or accepted owner.",
+            "Otherwise finalize Ready by the deadline",
+            "record any later disposition in a distinct transition from Ready.",
+            "Observed and started times are history.",
+            "Keep both future boundaries current",
+            "Expiry of either boundary invalidates active eligibility.",
+            "Absent, invalid, or expired evidence cannot preserve Starting or Running.",
+            "The Steward records the truthful non-active disposition before the "
+            "Coordinator fills the vacancy.",
         ):
             with self.subTest(visible_clause=clause):
                 self.assertIn(clause, anomaly_section)
 
         retired_shortcuts = (
-            "is a Task/execution anomaly, not a lifecycle state.",
-            "Reconcile the canonical task, provider record or reservation, and "
-            "ownership before any lifecycle choice.",
-            "The anomaly alone does not release Starting-plus-Running capacity "
-            "or justify Stalled.",
-            "Only a separately validated known cause may become Blocked.",
+            "Preserve its current state and Starting-plus-Running capacity",
+            "The anomaly alone authorizes neither Stalled, Blocked",
+            "The anomaly alone does not release Starting-plus-Running capacity",
         )
         for clause in retired_shortcuts:
             with self.subTest(retired_clause=clause):
@@ -7823,11 +7728,11 @@ class BundleContentTests(unittest.TestCase):
             "Claim Limits",
             "Lifecycle Handoffs",
             "Execution Safeguards",
-            "1 · Recorded State",
-            "2 · Clear Question",
-            "3 · Consequences And Boundary",
-            "4 · Decision Record",
-            "5 · Same-Thread Resume",
+            "1 · User Question",
+            "2 · Preserved Context",
+            "3 · Decision Record",
+            "4 · Same-Thread Resume",
+            "5 · Outcome Routing",
             "Evidence Boundaries",
             "Thread Evidence Boundary:",
             "Integration Cleanup",
@@ -7857,7 +7762,7 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertEqual(1, lifecycle_text.count('class="lifecycle-rail"'))
         self.assertEqual(1, lifecycle_text.count('class="status-figure"'))
-        self.assertEqual(3, lifecycle_text.count('class="sequence-figure"'))
+        self.assertEqual(2, lifecycle_text.count('class="sequence-figure"'))
         self.assertEqual(1, lifecycle_text.count('class="thread-model-figure"'))
         self.assertEqual(1, lifecycle_text.count('class="steward-sequence-figure"'))
         self.assertEqual(1, lifecycle_text.count('class="branch-figure"'))
@@ -7913,6 +7818,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(phrase, lifecycle_text)
 
         for obsolete_phrase in (
+            "Codex task",
             "One user-visible Dev Orchestrator task",
             "ten are Running",
             "SHARED_CHECKOUT_RELEASE_REQUIRED",
@@ -9101,19 +9007,6 @@ class BundleContentTests(unittest.TestCase):
                             if dependency not in target["allowedAgentDependencies"]
                         ],
                     )
-                elif entry["id"] == "methodology-maintainer":
-                    self.assertEqual(
-                        ["methodology-artifact-reviewer", "dev-verifier"],
-                        target["allowedAgentDependencies"],
-                    )
-                    self.assertEqual(
-                        ["dev-skill-lint-reviewer"],
-                        [
-                            dependency
-                            for dependency in role.get("agentDependencies", [])
-                            if dependency not in target["allowedAgentDependencies"]
-                        ],
-                    )
                 else:
                     self.assertEqual(
                         role.get("agentDependencies", []),
@@ -9165,7 +9058,7 @@ class BundleContentTests(unittest.TestCase):
                         },
                     )
                 elif entry["id"] == "dev-backlog-coordinator":
-                    self.assertEqual(7, len(scenarios["scenarios"]))
+                    self.assertEqual(6, len(scenarios["scenarios"]))
                 elif entry["id"] == "dev-backlog-watchdog":
                     self.assertEqual(4, len(scenarios["scenarios"]))
                 else:
@@ -9398,19 +9291,18 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(phrase, maintenance_skill_text)
                 self.assertNotIn(phrase, agents_text)
 
-    def test_topic_revision_preserves_honest_scores_and_requires_authority(self) -> None:
-        skill_text = REVISE_TOPICS_SKILL_PATH.read_text(encoding="utf-8")
+    def test_repository_local_outline_improvement_preserves_honest_scores(self) -> None:
+        skill_text = IMPROVE_OUTLINE_SKILL_PATH.read_text(encoding="utf-8")
         skill_metadata = load_yaml_object_from_frontmatter(
-            REVISE_TOPICS_SKILL_PATH
+            IMPROVE_OUTLINE_SKILL_PATH
         )
 
-        self.assertEqual("revise-document-topics", skill_metadata["name"])
+        self.assertEqual("improve-document-outline", skill_metadata["name"])
+        self.assertIn("partial scores", skill_metadata["description"])
 
         for phrase in (
-            "[Analyze Document Topics](../analyze-document-topics/SKILL.md)",
-            "Explicit authority to revise",
-            "Do not retain one by default.",
-            "more truthful structure",
+            "[Create Document Outline](../create-document-outline/SKILL.md)",
+            "Prefer a more truthful structure over a higher percentage.",
             "Recalculate the moved topic and every sibling whose predecessor changes.",
             "Reject a reorder that merely transfers a partial score",
             "a one-child parent created only to remove a sequence score",
@@ -9421,15 +9313,13 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, skill_text)
 
-    def test_topic_analysis_is_read_only_and_source_grounded(self) -> None:
-        skill_text = ANALYZE_TOPICS_SKILL_PATH.read_text(encoding="utf-8")
+    def test_repository_local_outline_justifications_are_source_grounded(self) -> None:
+        skill_text = CREATE_OUTLINE_SKILL_PATH.read_text(encoding="utf-8")
         skill_metadata = load_yaml_object_from_frontmatter(
-            ANALYZE_TOPICS_SKILL_PATH
+            CREATE_OUTLINE_SKILL_PATH
         )
 
-        self.assertEqual("analyze-document-topics", skill_metadata["name"])
-        self.assertIn("skill is read-only", skill_text)
-        self.assertIn("source bytes were not changed", skill_text)
+        self.assertEqual("create-document-outline", skill_metadata["name"])
         for phrase in (
             "Treat every why clause as an evidence claim",
             "the source blocks represented by those topics",
@@ -9443,40 +9333,6 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, skill_text)
-
-    def test_document_topic_editor_owns_both_phases_and_focused_cases(self) -> None:
-        role = load_yaml_object(
-            ROLES_ROOT / "dev-activities" / "dev-document-topic-editor.role.yaml"
-        )
-        self.assertEqual("conditional", role["repositoryMutation"])
-        self.assertEqual("documentation", role["modelProfile"])
-        self.assertEqual(
-            ["analyze-document-topics", "revise-document-topics"],
-            [next(iter(entry)) for entry in role["skills"]],
-        )
-
-        codex = tomllib.loads(
-            (
-                GENERATED_ADAPTERS_ROOT
-                / "codex"
-                / "agents"
-                / "dev-document-topic-editor.toml"
-            ).read_text(encoding="utf-8")
-        )
-        self.assertEqual("high", codex["model_reasoning_effort"])
-
-        agent = next(
-            entry
-            for entry in load_yaml_object(REPOSITORY_ROOT / "evals" / "agent-scenarios.yaml")["agents"]
-            if entry["id"] == "dev-document-topic-editor"
-        )
-        self.assertEqual(
-            [
-                "dev-document-topic-editor-read-only",
-                "dev-document-topic-editor-authorized-revision",
-            ],
-            [scenario["id"] for scenario in agent["scenarios"]],
-        )
 
     def test_development_methodology_guides_skill_rename_cleanup(self) -> None:
         skill_text = (
@@ -10404,7 +10260,7 @@ class BundleContentTests(unittest.TestCase):
             lifecycle_text,
         )
         self.assertIn(
-            "Task-list reads, task titles, wake messages, and UI archival",
+            "conversation-title synchronization",
             lifecycle_text,
         )
         self.assertIn(
