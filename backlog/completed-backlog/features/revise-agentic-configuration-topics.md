@@ -1,16 +1,42 @@
 # Revise the Agentic Configuration Document Topics
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/document-topic-revision/revise-agentic-configuration-topics.md
+Provider Reference: backlog/completed-backlog/features/revise-agentic-configuration-topics.md
 
 Completion: direct-main
 
-Owner: Dev Orchestrator (canonical root task 019fabe9-4434-7750-b431-80584e1146ab)
+Owner: Completed by Root Dev Orchestrator for canonical task 019fabe9-4434-7750-b431-80584e1146ab
+
+## Completion Evidence
+
+Disposition: READY.
+
+Completion: direct-main.
+
+Accepted Source Candidate: f42e4e1bbacb3411e2716f7f6783d0379ea468e0.
+
+Independent Review: GOOD, with no findings.
+
+Independent Verification: GOOD; 41 paragraphs, 20 harness rows, 9 IDs, 30 links, ARIA and filter behavior preserved, and partial sequence scores retained where the source did not establish direction.
+
+Integration Mapping: f42e4e1bbacb3411e2716f7f6783d0379ea468e0 -> 8a57aef0423748093546fa9d5df3557c0a92a8d9 by git cherry-pick -x; exact changed-path content equivalence confirmed for design/agentic-configuration.html and scripts/test_bundle_content.py.
+
+Observed Main Tip: 8a57aef0423748093546fa9d5df3557c0a92a8d9, clean and reachable from main.
+
+Post-Integration Verification: Nine focused unittests PASS using /Users/martinbechard/.pyenv/versions/3.11.10/bin/python3; python3 scripts/build-skill-docs.py --check PASS; git diff --check PASS. The initial Apple Python 3.9 attempt failed before loading five tests because tomllib was unavailable; the supported Python 3.11 rerun passed.
+
+Integration Claim Release: b1fd9fbe-1a3b-4813-a36f-0b14de695f86.
+
+Completed At: 2026-07-29T03:58:10Z.
+
+Archive Path: backlog/completed-backlog/features/revise-agentic-configuration-topics.md.
+
+Terminal Provider-Mutation Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim complete-revise-agentic-configuration-topics-019fabe9; incarnation a0af5a68-5174-464f-9973-0a5dabe91e94; claim journal event c467f337-7ea1-48e4-9757-f61c98053f59; exact active and archive provider paths claimed in the primary main checkout.
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 Launch Reservation: reserve-nine-document-topic-revisions-019fa9bb-04; one bounded live launch handshake
 Normalized Objective: Revise the Agentic Configuration Document Topics.
