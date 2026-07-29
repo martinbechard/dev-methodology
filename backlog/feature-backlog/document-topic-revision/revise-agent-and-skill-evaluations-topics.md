@@ -1,6 +1,6 @@
 # Revise the Agent and Skill Evaluations Document Topics
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -87,3 +87,39 @@ Canonical Conversation: None observed.
 Owner Acceptance: None observed.
 
 Reconciliation: Ready.
+
+## Current Dispatch Reservation (Existing Canonical Conversation)
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Launch Reservation: One bounded resume reservation for the existing canonical conversation; no new conversation creation is authorized.
+
+Normalized Objective: Analyze and revise the generated Agent and Skill Evaluations page through its owning sources and generator so evaluation coverage, evidence, outcomes, and limitations form a coherent topic hierarchy.
+
+Dispatch Time: 2026-07-29T15:30:04Z.
+
+Intended Root Role: Root Dev Orchestrator.
+
+Canonical Conversation: 019fae7b-a018-7510-9ae6-0ae08730cdd9.
+
+Canonical Root Agent Task: 019fae7b-a018-7510-9ae6-0ae08730cdd9.
+
+Worktree: /Users/martinbechard/.codex/worktrees/225d/dev-methodology.
+
+Owner: Unowned pending root acceptance.
+
+Required Next Lifecycle Transition: The existing root Dev Orchestrator must separately accept Starting -> Running before any source or repository mutation.
+
+## Starting Settlement Evidence (Existing Canonical Conversation)
+
+Settlement Window: 2026-07-29T15:30:04Z to 2026-07-29T15:31:04Z (exactly 60 seconds).
+
+Runtime Launch Result: Existing canonical conversation observed and ready for resume.
+
+Canonical Conversation: 019fae7b-a018-7510-9ae6-0ae08730cdd9.
+
+Owner Acceptance: Pending.
+
+Reconciliation: Pending.
