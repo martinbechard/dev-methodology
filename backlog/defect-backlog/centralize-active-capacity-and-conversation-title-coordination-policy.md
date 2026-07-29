@@ -1,6 +1,6 @@
 # Centralize active-capacity and conversation-title coordination policy
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/centralize-active-capacity-and-conver
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator dispatch reservation
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -32,7 +32,7 @@ Delivery Worktree: /Users/martinbechard/.codex/worktrees/c82a/dev-methodology
 
 Next Lifecycle Owner: Root Dev Orchestrator 019fab2d-b796-7ff0-b7fd-8438b335e4af
 
-Phase: Approved scope awaiting parent dispatch reservation
+Phase: Live bounded launch handshake awaiting root acceptance
 
 Started At: 2026-07-29T00:20:59.422474Z
 
@@ -89,6 +89,23 @@ Unattended Work Boundary: Stop all definition, mirror, companion implementation,
 - Owner: Unowned pending the parent Coordinator's distinct Ready -> Starting reservation.
 - Canonical Work-Item Thread Preserved: 019fab2d-b796-7ff0-b7fd-8438b335e4af.
 - Lifecycle Claim Evidence: uar-ready-centralize-capacity-019fab2d; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event e00f7aea-3dfb-4b91-b0ca-64fb44b06b5a; claimed 2026-07-29T01:09:50.047653Z.
+
+## Resumed Starting Reservation
+
+- Transition: Ready -> Starting.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fab2d-b796-7ff0-b7fd-8438b335e4af.
+- Canonical Root Agent Task Id: 019fab2d-b796-7ff0-b7fd-8438b335e4af.
+- Owner: Parent Dev Backlog Coordinator dispatch reservation.
+- Launch Reservation: resumed-ready-starting-019fab2d; one live immediate bounded launch handshake.
+- Dispatch Time: 2026-07-29T01:11:01.062826Z.
+- Normalized Objective: Centralize the Codex active-execution eligibility, capacity, runtime reconciliation, and portable conversation-title coordination policy so inactive work cannot consume capacity and every lifecycle transition has truthful execution coordination.
+- Intended Root Role: Dev Orchestrator.
+- Delivery Branch: codex/centralize-active-capacity-conversation-title-019fab2d.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/c82a/dev-methodology.
+- Observed Launch Evidence: The parent Coordinator preserved and re-reserved the same canonical Thread immediately after the approved User Action Required -> Ready transition.
+- Required Next Transition: The same root Dev Orchestrator must atomically record Starting -> Running before any implementation.
+- Lifecycle Claim Evidence: ready-starting-centralize-capacity-019fab2d; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 06a67744-120d-46ff-88b5-e5385b5c4301; claimed 2026-07-29T01:11:01.062826Z.
 
 ## Starting Reservation
 
