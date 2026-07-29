@@ -1,6 +1,6 @@
 # Align fix-explanation relationship examples with the six-type explanation model
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/align-fix-explanation-item-taxonomy.m
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Root Dev Orchestrator 019fa9f9-33f0-7db3-90d5-2dc77dd89c06
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -44,6 +44,24 @@ Next Lifecycle Owner: Root Dev Orchestrator 019fa9f9-33f0-7db3-90d5-2dc77dd89c06
 - Observed Launch Evidence: Parent Dev Backlog Coordinator reserved this preserved canonical Thread under available Starting-plus-Running capacity and woke its canonical root task.
 - Required Next Transition: The same root Dev Orchestrator must atomically record Starting -> Running for this canonical Thread and task before any implementation or governed definition mutation.
 - Lifecycle Claim Evidence: ready-starting-three-reservations-019fa9bb; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event ee40be56-9b67-437f-91e6-f70c38fe84f8; claimed 2026-07-29T00:06:49.750900Z.
+
+## Running Acceptance After Approved Resumption
+
+- Transition: Starting -> Running.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06.
+- Canonical Root Agent Task: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06.
+- Owner: Root Dev Orchestrator 019fa9f9-33f0-7db3-90d5-2dc77dd89c06.
+- Branch: codex/align-fix-explanation-item-taxonomy.
+- Worktree: /Users/martinbechard/.codex/worktrees/f57f/dev-methodology.
+- Phase: Approval-record and preflight preparation, then regression implementation.
+- Started At: 2026-07-29T00:22:48Z.
+- Started-At Evidence: The canonical root Dev Orchestrator accepted the resumed parent reservation and requested this distinct provider transition.
+- Approval Provenance: User message item-51 in turn 019faaf7-9e71-7451-8211-6b7899f7e045.
+- Approved Governed Scope: skills/fix-explanation/SKILL.md only.
+- Approved Model: The six structured reasoning item types remain authoritative. PROBLEM, FIX, TEST, and BENEFIT are separate first-class concept-role/reference-axis terms; preserve their relationships.
+- Explicitly Excluded: skills/structured-explanation/SKILL.md, skill metadata, agents, every other governed definition, and unrelated source changes.
+- Provider-Mutation Claim Evidence: running-acceptance-approval-fix-explanation-019fa9f9-33f0-7db3-90d5-2dc77dd89c06 acquired by dev-backlog-steward for this exact provider file; outcome SHARED_CHECKOUT_ACQUIRED; claim event c1c83986-5cba-40e4-aac3-4afffd7182bc; claimed 2026-07-29T00:22:41.855120Z.
 
 ## Running Acceptance
 
