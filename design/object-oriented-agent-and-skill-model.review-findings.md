@@ -19,16 +19,19 @@ No material findings.
   - **RESULT:** Mermaid diagrams use AGENTS.md DII for an injected shared contract and SKILL.md for the concrete definition.
 
 - **CHECK:** DIR-5, DIR-6
-  - **RESULT:** Injectable Skill requires shared linking vocabulary and selection through AGENTS.md.
+  - **RESULT:** Injectable Skill requires a shared procedure name, shared parameter meaning, and selection through AGENTS.md.
 
 - **CHECK:** DIR-7, DIR-8
   - **RESULT:** Coupled Skill is a deliberate direct dependency and remains appropriate when substitution adds no value.
 
 - **CHECK:** DIR-9
-  - **RESULT:** A simple SKILL.md can export one interface, while a complex SKILL.md can export several independently invoked terms without implying that the file should be split.
+  - **RESULT:** A simple SKILL.md can export one interface, while a complex SKILL.md can export several independently invoked procedure names without implying that the file should be split.
 
 - **CHECK:** DIR-10, DIR-11, DIR-12
   - **RESULT:** The Cancel-button example shows request interpretation, Create Workitem parameter construction, AGENTS.md selection, SKILL.md loading, and execution of the selected procedure.
+
+- **CHECK:** DIR-15, DIR-16
+  - **RESULT:** Procedure name identifies the linkage between an invoker and a skill, and descriptive rules state model relationships as declarative truths.
 
 ## Residual Verification Gap
 
