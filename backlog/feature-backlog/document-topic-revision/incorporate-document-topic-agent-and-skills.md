@@ -1,8 +1,10 @@
 # Incorporate the Document Topic Editor and Topic Skills
 
-Status: Ready
+Status: Starting
 
 Type: Feature
+
+Owner: Unowned pending Root Dev Orchestrator acceptance
 
 Provider: file
 
@@ -11,6 +13,32 @@ Provider Reference: backlog/feature-backlog/document-topic-revision/incorporate-
 Completion: direct-main
 
 Series: backlog/feature-backlog/document-topic-revision/index.md
+
+## Dispatch Reservation
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
+
+Canonical Work-Item Thread: 019fab9e-44bf-7571-9fbb-d9d63d3fa9da
+
+Canonical Root Agent Task: 019fab9e-44bf-7571-9fbb-d9d63d3fa9da
+
+Launch Reservation: One bounded live handshake for the canonical work-item Thread.
+
+Dispatch Time: 2026-07-29T02:10:25.998414Z
+
+Normalized Objective: Incorporate the Document Topic Editor and Topic Skills.
+
+Intended Root Role: Dev Orchestrator
+
+Branch: codex/incorporate-document-topic-agent-and-skills-019fab9e
+
+Worktree: /Users/martinbechard/.codex/worktrees/350a/dev-methodology
+
+Observed Launch Evidence: Parent Dev Backlog Coordinator authorized one bounded launch reservation for canonical Runtime Thread and root Agent Task 019fab9e-44bf-7571-9fbb-d9d63d3fa9da; this transaction preserves Owner as Unowned pending root acceptance.
+
+Dependencies Observed: None.
+
+Required Next Lifecycle Transition: The same canonical task's root Dev Orchestrator must record Starting to Running before governed-scope discovery, definition approval, or implementation mutation.
 
 ## Summary
 
