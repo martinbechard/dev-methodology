@@ -1,6 +1,6 @@
 # Defer verifier orchestration to conceptual roles and resolve writer helper commands
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -10,9 +10,19 @@ Provider Reference: backlog/defect-backlog/project-wiki-topic-write-role-owned-v
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator dispatch reservation
 
-Current Phase: Ready / approved metadata resumption.
+Current Phase: Starting / approved metadata resumption.
+
+## Metadata Starting Reservation
+
+- Transition: Ready -> Starting.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Runtime Thread and Root Agent Task: 019faa19-0275-7210-aaf6-45931b8079ab.
+- Branch: codex/project-wiki-topic-write-role-owned-verification-019faa19.
+- Worktree: /Users/martinbechard/.codex/worktrees/9a08/dev-methodology.
+- Requirement: This same root Dev Orchestrator must accept Starting -> Running before any repository mutation.
+- Provider-Mutation Claim Evidence: starting-project-wiki-topic-write-metadata-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED; claim event 79f0ca42-e807-4e8d-985d-2336f2513e3d.
 
 ## User Action Required
 
