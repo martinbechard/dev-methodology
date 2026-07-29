@@ -1,16 +1,46 @@
 # Incorporate the Document Topic Editor and Topic Skills
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
-Owner: Root Dev Orchestrator for canonical task 019fab9e-44bf-7571-9fbb-d9d63d3fa9da
+Owner: Completed by Root Dev Orchestrator for canonical task 019fab9e-44bf-7571-9fbb-d9d63d3fa9da
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/document-topic-revision/incorporate-document-topic-agent-and-skills.md
+Provider Reference: backlog/completed-backlog/features/incorporate-document-topic-agent-and-skills.md
 
 Completion: direct-main
+
+## Completion Evidence
+
+Disposition: READY.
+
+Completion: direct-main.
+
+Accepted Source Candidate: 915f4ec5b4d2dce8703ae4e408afcc71fbf6b357.
+
+Independent Review: GOOD.
+
+Independent Verification: GOOD.
+
+Integration Mapping: be523a3f -> a0152f5b; 64ff5323 -> 3dd964dc; 915f4ec5 -> 281cff4b.
+
+Observed Main Tip: 281cff4b465743bb828cf5eb67d316e2289c072a, clean.
+
+Post-Integration Verification: Five exact tests PASS using /opt/homebrew/bin/python3.11; python3 scripts/build-skill-docs.py --check PASS; git diff --check PASS.
+
+Documentation Profile Evidence: gpt-5.5 with high reasoning effort.
+
+Implementation Claim Release: f7e0266d-bc8f-4fff-b144-b3cb6e32baa3.
+
+Integration Claim Release: 6e4f96b7-451e-4c6e-9916-841dcbf55cce.
+
+Completed At: 2026-07-29T03:15:56Z.
+
+Archive Path: backlog/completed-backlog/features/incorporate-document-topic-agent-and-skills.md.
+
+Terminal Provider-Mutation Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim complete-document-topic-019fab9e-44bf-7571-9fbb-d9d63d3fa9da; incarnation 17a7107a-090f-4f2d-a3c1-b5588d111814; claim journal event 835c71ff-a4ee-4504-9d74-63b66e334655; exact source and destination provider paths claimed in the primary main checkout.
 
 Series: backlog/feature-backlog/document-topic-revision/index.md
 
