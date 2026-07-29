@@ -1,6 +1,6 @@
 # Bound Jest failure ownership to the current change
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/bound-jest-failure-ownership-to-curre
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Root Dev Orchestrator
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -26,7 +26,7 @@ Runtime Thread: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
 
 Root Agent Task: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
 
-Next Lifecycle Owner: Root Dev Orchestrator 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
+Next Lifecycle Owner: Root Dev Orchestrator
 
 ## Starting Reservation
 
@@ -44,6 +44,22 @@ Next Lifecycle Owner: Root Dev Orchestrator 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
 - Observed Launch Evidence: Parent Dev Backlog Coordinator reserved this preserved canonical Thread under available Starting-plus-Running capacity and woke its canonical root task.
 - Required Next Transition: The same root Dev Orchestrator must atomically record Starting -> Running for this canonical Thread and task before any implementation or governed definition mutation.
 - Lifecycle Claim Evidence: ready-starting-three-reservations-019fa9bb; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event ee40be56-9b67-437f-91e6-f70c38fe84f8; claimed 2026-07-29T00:06:49.750900Z.
+
+## Running Acceptance After Approved Resumption
+
+- Transition: Starting -> Running.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- Canonical Root Agent Task Id: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- Owner: Root Dev Orchestrator.
+- Delivery Branch: codex/bound-jest-failure-ownership-019fa9f9.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/31c1/dev-methodology.
+- Phase: Approval preflight and test-driven implementation.
+- Started At: 2026-07-29T00:11:14Z.
+- Started-At Evidence: The canonical root Dev Orchestrator accepted the parent-reserved Starting item after the recorded exact-scope user approval.
+- Approval Provenance: User answer ok approved on 2026-07-28 in canonical Thread 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87; scope is skills/jest/SKILL.md only.
+- Definition-Mutation Boundary: Do not mutate the approved skill or generated mirrors until the separate preflight returns ALLOWED_APPROVED_DEFINITION_CHANGE.
+- Claim Evidence: running-acceptance-approved-jest-019fa9f9; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event dbfd344e-904e-474f-8022-e381907b78f6; claimed 2026-07-29T00:11:03.282189Z.
 
 ## Running Acceptance
 
