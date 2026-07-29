@@ -1,22 +1,24 @@
 # Defer verifier orchestration to conceptual roles and resolve writer helper commands
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/project-wiki-topic-write-role-owned-verification.md
+Provider Reference: backlog/defect-backlog/project-wiki-topic-write-role-owned-verification.md
 
 Completion: direct-main
 
 Owner: Unowned
 
-Current Phase: Waiting for User / Wiki Writer interruption contract.
+Current Phase: Ready / approved Wiki Writer interruption resumption.
 
 ## Wiki Writer Interruption Approval
 
 Question: Do you approve changing only agents/roles/wiki-activities/wiki-writer.role.yaml to make verifier-interruption handling explicitly role-owned: preserve unverified writer edits, capture the invocation receipt and before/after writer-scope evidence, allow interruption-specific BLOCKED evidence without invented verifier findings, and keep the verifier non-mutating?
+
+Resolution: On 2026-07-28, the user answered `ok approved` in the canonical-task message provenance: Parent Dev Backlog Coordinator task 019fa9bb-1423-7e80-bcde-3caa765e3758. Approval applies exactly to agents/roles/wiki-activities/wiki-writer.role.yaml for role-owned verifier interruption handling: preserve unverified writer edits, capture receipt and before/after writer-scope evidence, permit findings-optional interruption BLOCKED evidence, and keep the verifier non-mutating.
 
 Before and After: Before, the harness-hardcoded packet invents or assumes latest findings although none may exist. After, the role requires the receipt and before/after evidence, preserves unverified edits, records findings-optional BLOCKED interruption evidence, and detects and rejects attempted verifier writes.
 
@@ -129,7 +131,7 @@ Runtime Thread: 019faa19-0275-7210-aaf6-45931b8079ab
 
 Root Agent Task: 019faa19-0275-7210-aaf6-45931b8079ab
 
-Next Lifecycle Owner: User
+Next Lifecycle Owner: Parent Dev Backlog Coordinator
 
 ## Running Acceptance
 
