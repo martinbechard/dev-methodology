@@ -1,12 +1,12 @@
 # Fix Documentation Header Layout And Index Navigation
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/fix-documentation-header-layout-and-index-navigation.md
+Provider Reference: backlog/completed-backlog/defects/fix-documentation-header-layout-and-index-navigation.md
 
 Completion: direct-main
 
@@ -192,3 +192,29 @@ Reconciliation: Pending.
 ## Notes
 
 This defect refines the shared experience delivered by backlog/completed-backlog/features/add-html-documentation-header-settings.md. It does not change the settings choices, persistence keys, or popup contents.
+
+## Completion Evidence
+
+Canonical Task, Thread, and Root Dev Orchestrator: 019fae92-0f9c-73d1-8061-b64d453c503a.
+
+Completion Selector: direct-main.
+
+Accepted Source Candidate: 7146cd65db3c36bc25d4a9082c2b40422f407b3c.
+
+Fresh-Main Reconciliation: 0dba848191b3e63902bcf3b70ff6ba79024b37e8, based on evaluation main d6d2679aae763f1024d507091cb9f39cf75547ea.
+
+Integration and Main Observation: d551cf4eb0eb280f00b2206d85f85e0f461db4ed on main, with 0dba848191b3e63902bcf3b70ff6ba79024b37e8 as an ancestor. The non-ancestral source mapping preserves 7146cd65db3c36bc25d4a9082c2b40422f407b3c across 14 accepted paths while combining the evaluation-topic changes on scripts/build-agent-skill-evaluation-docs.py, scripts/test_agent_skill_evaluation_docs.py, and design/agent-and-skill-evaluations.html. At terminal closure, main was clean at 61b4574eb311b10fd35aa0a703bc606b51ad3888, an unrelated later backlog commit with d551cf4eb0eb280f00b2206d85f85e0f461db4ed as an ancestor.
+
+Independent Review: Dev Code Reviewer GOOD with no material findings; the overlapping-path correction was handled.
+
+Verification: Independent deterministic source verification PASS with 12 focused tests and audits; author focused tests passed; no broad suite. Browser verification PASS at 1440x900 and 390x844 on definitions, evaluations, and explorer: right edge 24px desktop and 16px mobile, exact title and link, redundant control absent, sequence controls preserved, Enter and Escape settings behavior, and zero console errors. Integrated verification on main: 27 scripts.test_agent_skill_evaluation_docs tests PASS; generator --check PASS; git diff --check PASS.
+
+Integration Claim: integrate-documentation-header-navigation-019fae92 acquired event 79748f5d-dff6-4f14-a885-129c2c2df38a and released event d36a48d8-5b36-4f81-b742-d53347afc347; registry was empty after release. Browser and port claims were released. No remote publication was required or claimed; local main ahead of origin is pre-existing project state.
+
+Terminal Provider Claim: complete-documentation-header-layout-index-navigation-019fae92 acquired event 1ac45344-30b5-42cd-ad5d-61c82027845e for the active and archive paths.
+
+Completed At: 2026-07-29T16:15:45Z.
+
+Completed Archive Path: backlog/completed-backlog/defects/fix-documentation-header-layout-and-index-navigation.md.
+
+Terminal Backlog Commit: This path-limited provider commit carries the exact active-to-archive move.
