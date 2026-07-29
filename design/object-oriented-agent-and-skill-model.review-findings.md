@@ -42,9 +42,24 @@ No material findings.
 - **CHECK:** LOG-12, LOG-13
   - **RESULT:** The direct Peer Skill example is source-backed, and Peer remains a relationship between skills rather than a competing implementation-selection mechanism.
 
+- **CHECK:** DIR-21, DIR-22
+  - **RESULT:** Each established skill group has its own diagram, and Concurrent Tasking visibly encloses Resource Coordination and Feature Branch And Worktrees.
+
+- **CHECK:** DIR-23, DIR-24
+  - **RESULT:** Backlog Management remains independent of claims and Commit selection, including crisis mode, while the corrected baseline skills remain under Baseline Development.
+
+- **CHECK:** DIR-25, DIR-26
+  - **RESULT:** Documentation Methodology shows development-methodology routing to bootstrap, reverse engineering, and page verification, and the shown current cross-group relationships are marked without turning the marker into a split decision.
+
+- **CHECK:** DIR-27, LOG-14
+  - **RESULT:** The diagrams reserve AGENTS.md DII for selectable procedure implementations, distinguish direct technology-skill names, and preserve provider-specific and explicitly unsupported workitem behavior.
+
+- **CHECK:** LOG-15, LOG-16, LOG-17
+  - **RESULT:** Direct-main integration dependencies and verification handoffs remain visible across group boundaries, while the analytical groups remain distinct from catalog metadata categories.
+
 ## Residual Verification Gap
 
 - **CHECK:** DOC-6
-- **TARGET:** Eleven Mermaid blocks in the target artifact
+- **TARGET:** Eighteen Mermaid blocks in the target artifact
 - **SYNOPSIS:** Static inspection found balanced fences and suitable classDiagram and sequenceDiagram forms, but no local Mermaid renderer was available.
-- **NEXT CHECK:** Render all eleven blocks when a Mermaid runtime becomes available and correct any parser-specific display issue before publishing rendered companions.
+- **NEXT CHECK:** Render all eighteen blocks when a Mermaid runtime becomes available and correct any parser-specific display issue before publishing rendered companions.
