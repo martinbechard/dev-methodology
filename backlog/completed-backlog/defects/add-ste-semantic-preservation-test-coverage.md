@@ -1,12 +1,12 @@
 # Add STE semantic-preservation test coverage
 
-Status: Ready
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/add-ste-semantic-preservation-test-coverage.md
+Provider Reference: backlog/completed-backlog/defects/add-ste-semantic-preservation-test-coverage.md
 
 Completion: direct-main
 
@@ -67,3 +67,13 @@ None.
 ## Notes
 
 This defect is attached to the current STE delivery at backlog/feature-backlog/establish-ste-technical-documentation-standard.md. The original coder owns the runnable next action. This defect record authorizes no dispatch, implementation ownership, or lifecycle transition for the parent feature.
+
+## Completion Evidence
+
+- Disposition: Completed within the canonical STE feature delivery. This record created no separate dispatch or implementation task.
+- Parent Feature Archive: `backlog/completed-backlog/features/establish-ste-technical-documentation-standard.md`.
+- Delivered Test Evidence: `scripts/test_ste_technical_writing.py` covers activation-fixture exclusion and rejection of changed identifiers, configuration values, and owners.
+- Verification: Focused STE tests and semantic mutants passed. Independent STE reviews were GOOD. Dev Verifier disposition was READY.
+- Delivery Provenance: Source candidate a4165c21f464e0cf74d72c6f81b7a64d49c90f62; combined candidate d7565498; delivered main 0c7784ca4dda436730e927102c0de28662d74bdd, reachable through feature closure b36d4fd903cfc96c125a5c5bd497c9fd604f3063.
+- Integration Claim Evidence: Project-files acquire event 5b1950b5-e9a0-4f59-bfad-f2cdeea82de2 and release event 2f9048ed-d441-4ca5-8399-db041a5b94e4.
+- Completion Transaction Claim: `complete-ste-semantic-defect-019fa9be`; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event d47efc49-c6fd-4ad5-9b6b-55afb6a62322; claimed 2026-07-29T01:06:12.799205Z. Release follows this provider commit.
