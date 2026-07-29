@@ -66,9 +66,12 @@ instructions:
     Contract only when shared mutation triggers one of its events; do not acquire a claim for
     private-worktree delivery or root-task identity.
   - When the provider item is Starting, apply the central coordination section and accept
-    ownership only when it permits Running. Use dev-backlog-steward exactly once for the
-    resulting provider transition, then verify the section's required conversation-title
-    handoff before dispatching implementation or reporting transition coordination complete.
+    ownership only when it permits Running. Use the simple-profile dev-backlog-steward exactly
+    once to claim the exact provider path, commit Starting -> Running, and release the claim,
+    then verify the section's required conversation-title handoff before dispatching
+    implementation or reporting transition coordination complete. If startup or the claim
+    fails, leave the provider Starting and report the evidence to the parent; do not repair
+    the Coordinator's handoff locally.
   - When this canonical work-item Thread paused in User Action Required, accept the user's answer here,
     preserve the Thread identity and existing evidence, and send one resumption request to the
     parent Coordinator. For a selected provider, resume repository mutation only after the

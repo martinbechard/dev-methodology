@@ -1,0 +1,6 @@
+basis: explicit-user-direction
+definition_scope: agents/roles/dev-activities/dev-backlog-coordinator.role.yaml
+direction: "The Coordinator records Ready to Starting and launches the task; the new task records Starting to Running. Starting recovery belongs to the Watchdog and Coordinator, not a short automatic rollback window."
+provenance:
+  source: user-message
+  reference: thread:019fa9bb-1423-7e80-bcde-3caa765e3758/message:dispatch-handoff-and-claim-tracking-only

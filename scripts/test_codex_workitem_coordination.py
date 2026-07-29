@@ -34,7 +34,7 @@ HISTORICAL_PARENT_TASK_ID = "019f8b00-e6d7-7841-854a-40a50ca4e7f2"
 HISTORICAL_REPOSITORY_ROOT = "/Users/martinbechard/dev/dev-methodology"
 HISTORICAL_STANDING_PROMPT = """Act as the dedicated read-only Dev Methodology backlog watchdog for parent task 019f8b00-e6d7-7841-854a-40a50ca4e7f2 in /Users/martinbechard/dev/dev-methodology.
 
-Apply skills/codex-workitem-coordination/SKILL.md, especially Active Execution, Capacity, And Conversation Titles, Dedicated Read-Only Watchdog, and Fifteen-Minute Parent Review. On each cycle, read current file-backed work items, Git state, configured claim registry state, and Codex runtime state. Evaluate active eligibility and capacity, Starting settlement deadlines, Running Active Execution Evidence, conversation-title synchronization, phases and age, estimates/hard stops/evidence progress, Blocked unblock conditions, accepted work stranded before integration, integrated work awaiting provider closeout, terminal cleanup anomalies, waits at or beyond 30 minutes, and unsafe/stale/broad shared ownership.
+Apply skills/codex-workitem-coordination/SKILL.md, especially Active Execution, Capacity, And Conversation Titles, Dedicated Read-Only Watchdog, and Fifteen-Minute Parent Review. On each cycle, read current file-backed work items, Git state, configured claim registry state, and Codex runtime state. Evaluate active eligibility and capacity, Starting age and next-reconciliation evidence, Running Active Execution Evidence, conversation-title synchronization, phases and age, estimates/hard stops/evidence progress, Blocked unblock conditions, accepted work stranded before integration, integrated work awaiting provider closeout, terminal cleanup anomalies, waits at or beyond 30 minutes, and unsafe/stale/broad shared ownership.
 
 Remain strictly read-only. Do not mutate repository files, lifecycle state, claims, tasks, branches, worktrees, or shared resources; do not dispatch, integrate, clean up, or run expensive/live verification. Notify parent task 019f8b00-e6d7-7841-854a-40a50ca4e7f2 only when an actionable condition exists, with exact evidence and the smallest recommended parent action. When healthy, record only a concise no-action cycle result here."""
 HISTORICAL_HEARTBEAT_PROMPT = """Run one complete read-only watchdog cycle now using the task's standing contract. Notify parent task 019f8b00-e6d7-7841-854a-40a50ca4e7f2 only if an actionable condition exists; otherwise record a concise no-action cycle note here."""
@@ -688,15 +688,14 @@ class StartingLifecycleContractTests(unittest.TestCase):
             " ".join(coordinator_role["instructions"]["workflow"]).split()
         )
 
-    def test_starting_is_bounded_and_prevents_duplicate_start(self) -> None:
+    def test_starting_handoff_is_durable_and_prevents_duplicate_start(self) -> None:
         normalized_contract = " ".join(self.contract.split())
         required = (
             "Ready -> Starting",
-            "60 seconds",
-            "Starting settlement deadline",
-            "canonical task id",
-            "must not create a duplicate conversation",
-            "ambiguous startup",
+            "claims the same exact provider path",
+            "Coordinator's handoff is complete",
+            "Watchdog reports the stale Starting item",
+            "start one replacement task after duplicate reconciliation",
         )
         for clause in required:
             with self.subTest(clause=clause):
@@ -773,7 +772,7 @@ class StartingLifecycleContractTests(unittest.TestCase):
             normalized_queue,
         )
         self.assertIn(
-            "never retry conversation creation after an ambiguous response.",
+            "Never retry conversation creation blindly",
             normalized_reconciliation,
         )
         self.assertNotIn("Starting counts against capacity", self.provider)
@@ -813,16 +812,16 @@ class StartingLifecycleContractTests(unittest.TestCase):
                 with self.subTest(source=source[:20], clause=clause):
                     self.assertIn(clause, source)
 
-    def test_inactive_runtime_anomalies_release_capacity_truthfully(self) -> None:
-        """Runtime anomalies cannot preserve active lifecycle without active evidence."""
+    def test_starting_runtime_anomalies_are_watchdog_recoverable(self) -> None:
+        """Failed startup remains visible until Coordinator recovery."""
 
         normalized = " ".join(self.coordination.split())
         for clause in (
-            "Starting must leave active capacity when its 60-second settlement deadline expires",
+            "Starting consumes active capacity until the provider records Running",
+            "Watchdog reports the stale Starting item",
+            "follow up with the same task",
+            "start one replacement task after duplicate reconciliation",
             "Running must leave active capacity when its Active Execution Evidence is absent, invalid, or expired",
-            "atomically restore Starting -> Ready",
-            "distinct subsequent provider transaction from Ready",
-            "Release the capacity slot",
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause, normalized)
@@ -851,9 +850,9 @@ class StartingLifecycleContractTests(unittest.TestCase):
 
         readme = README_PATH.read_text(encoding="utf-8")
         for clause in (
-            "Dev Backlog Coordinator owns queue decisions, Ready -> Starting reservations, and Stalled or Blocked dispositions",
-            "root Dev Orchestrator owns Starting -> Running acceptance and terminal closure requests",
-            "Dev Backlog Steward performs each authorized provider mutation",
+            "Dev Backlog Coordinator owns queue decisions, Ready -> Starting reservations, task launch, and Stalled or Blocked dispositions",
+            "root Dev Orchestrator independently owns Starting -> Running acceptance and terminal closure requests",
+            "simple-profile Dev Backlog Steward performs each authorized provider mutation",
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause, readme)
@@ -863,8 +862,8 @@ class StartingLifecycleContractTests(unittest.TestCase):
         normalized = " ".join(self.contract.split())
         required = (
             "Starting -> Running",
-            "restore Ready",
-            "Preserve launch and diagnostic evidence",
+            "leave Starting intact",
+            "report exact evidence",
             "branch, worktree, and applicable claim evidence",
             "root Dev Orchestrator",
             "Dev Backlog Steward child",
@@ -959,7 +958,7 @@ class StartingLifecycleContractTests(unittest.TestCase):
     def test_watchdog_reports_mechanical_task_and_coordination_mismatches(self) -> None:
         normalized_coordination = " ".join(self.coordination.split())
         required = (
-            "expired Starting settlement",
+            "overdue Starting reconciliation",
             "absent or expired Running Active Execution Evidence",
             "stopped task with a live claim",
             "terminal item with a live claim",
@@ -1121,70 +1120,63 @@ class CentralActiveExecutionAndConversationTitleTests(unittest.TestCase):
             readme,
         )
 
-    def test_starting_has_one_precise_short_settlement_window(self) -> None:
+    def test_starting_handoff_uses_two_exact_provider_transactions(self) -> None:
         normalized = " ".join(self.coordination.split())
         required = (
-            "exactly 60 seconds",
-            "begins when the Ready -> Starting provider mutation succeeds",
-            "ends when the root Dev Orchestrator accepts ownership",
-            "Starting Settlement Evidence",
-            "Reservation Started At",
-            "Settlement Deadline",
-            "Runtime Launch Result",
+            "Starting Handoff Evidence",
+            "Starting Recorded At",
+            "claim only its exact provider path",
+            "records Ready -> Starting",
+            "releases the claim",
+            "does not wait for or perform Starting -> Running",
+            "claims the same exact provider path",
             "Canonical Conversation",
-            "Owner Acceptance",
-            "Reconciliation Result",
+            "Next Reconciliation At",
         )
         for clause in required:
             with self.subTest(clause=clause):
                 self.assertIn(clause, normalized)
 
-    def test_starting_evidence_evolves_from_truthful_pending_to_final(self) -> None:
-        """Reservation evidence cannot claim launch or acceptance before either occurs."""
+    def test_starting_evidence_supports_watchdog_recovery(self) -> None:
+        """Starting records enough evidence for later recovery without a short receipt."""
 
         normalized = " ".join(self.coordination.split())
         for clause in (
-            "At reservation time, initialize the evolving record",
-            "Runtime Launch Result: Not attempted",
-            "Canonical Conversation: None",
-            "Owner Acceptance: None",
-            "Reconciliation Result: Pending",
-            "Pending is valid only before Settlement Deadline",
-            "must be final at or before Settlement Deadline",
-            "Reconciliation Result: Running",
-            "Reconciliation Result: Ready",
+            "Launch Result: [Not attempted, Requested, Started, Failed, or Unknown]",
+            "Canonical Conversation: [identity or None]",
+            "Last Contact At: [UTC timestamp or None]",
+            "Next Reconciliation At: [UTC timestamp no later than the next fifteen-minute parent review]",
+            "leaves the provider in Starting",
+            "Do not automatically restore Ready",
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause, normalized)
 
-        self.assertNotIn(
-            "Reconciliation Result: [Running or Ready, plus any separately authorized later disposition]",
-            self.coordination,
-        )
+        self.assertNotIn("Settlement Deadline", self.coordination)
 
-    def test_final_running_requires_observed_launch_and_owner_acceptance(self) -> None:
-        """A final Running result cannot precede its runtime and ownership evidence."""
+    def test_running_is_owned_by_the_new_task(self) -> None:
+        """The Coordinator launch and task acceptance remain separate."""
 
         normalized = " ".join(self.coordination.split())
         for clause in (
-            "A final Running result is invalid unless",
-            "Runtime Launch Result records an observed successful launch",
-            "Canonical Conversation records the observed stable identity",
-            "Owner Acceptance records the accepting root owner and acceptance time",
-            "valid Running eligibility evidence is present",
+            "The Coordinator's handoff is complete when task creation has been requested",
+            "The new task independently accepts the item",
+            "records Starting -> Running",
+            "before implementation begins",
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause, normalized)
 
-    def test_every_unaccepted_starting_settlement_restores_ready_first(self) -> None:
-        """No non-Running outcome may bypass the atomic Ready restoration."""
+    def test_failed_starting_waits_for_watchdog_and_coordinator_recovery(self) -> None:
+        """The claim helper or task failure does not force a rollback transaction."""
 
         normalized = " ".join(self.coordination.split())
         for clause in (
-            "Every settlement that does not validly finalize Running must first atomically restore Starting -> Ready",
-            "Every non-Running Starting settlement result is Ready",
-            "distinct subsequent provider transaction from Ready",
-            "Never select Stalled, Blocked, User Action Required, Completed, Failed, or Abandoned as the Starting settlement result",
+            "A failed or missing task launch",
+            "a task that cannot claim the provider",
+            "leaves the provider in Starting",
+            "Watchdog reports the stale Starting item",
+            "Coordinator may follow up with the same task",
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause, normalized)
@@ -1292,14 +1284,12 @@ class CentralActiveExecutionAndConversationTitleTests(unittest.TestCase):
 
         central_section = "Active Execution, Capacity, And Conversation Titles"
         normative_markers = (
-            "exactly 60 seconds",
-            "60-second",
-            "Reservation Started At",
-            "Settlement Deadline",
-            "Runtime Launch Result",
+            "Starting Recorded At:",
+            "Coordinator:",
+            "Normalized Objective:",
+            "Launch Result:",
             "Canonical Conversation:",
-            "Owner Acceptance:",
-            "Reconciliation Result:",
+            "Last Contact At:",
             "Condition Type:",
             "Observed At:",
             "Started At:",

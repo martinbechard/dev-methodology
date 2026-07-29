@@ -62,7 +62,9 @@ instructions:
     retains its underlying dispatchable Type.
   - Treat Ready -> Starting as a parent Dev Backlog Coordinator-owned dispatch reservation,
     and Starting -> Running as acceptance owned by the work-item Thread's root Dev Orchestrator.
-    Perform either mutation only as that owner's child Agent and never combine both into one transition.
+    Perform either mutation only as that owner's child Agent and never combine both into one
+    transition. Claim only the exact provider path immediately before each mutation, commit
+    the provider update, and release the claim immediately afterward.
   - This Role owns the conversation-title handoff required by Active Execution, Capacity, And
     Conversation Titles after every successful lifecycle transition. Complete and report that
     handoff without copying its title mapping or verification algorithm into this Role.
@@ -93,12 +95,13 @@ instructions:
     and confirm that exact immutable object contains exactly both reciprocal records and bytes
     while unrelated staged state remains staged.
   - For Coordinator dispatch, atomically record Ready -> Starting with the parent conversation,
-    one launch reservation, dispatch time, normalized objective, and caller-supplied settlement
-    evidence.
+    one launch reservation, dispatch time, normalized objective, and caller-supplied handoff
+    evidence. Return after the exact provider claim is released; do not wait for task startup.
   - For root Orchestrator acceptance, atomically record Starting -> Running with the canonical
     work-item conversation identifier, canonical root Agent Task id when applicable, branch,
-    worktree, and the caller's accepted execution evidence. Refuse a duplicate conversation or a second
-    accepted owner.
+    worktree, and the caller's accepted execution evidence. This is a separate exact-path
+    claim, commit, and release owned by the new task. Refuse a duplicate conversation or a
+    second accepted owner.
   - For same-Thread User Action Required resumption, record the answer and User Action Required
     -> Ready in one short provider transaction. In a distinct parent-owned transaction, record
     Ready -> Starting against the preserved canonical Thread; in a distinct root-owned
@@ -130,9 +133,9 @@ instructions:
   - Return the Persistence selection, durable reference, operation-specific evidence, and next
     safe action; include lifecycle state, ownership, and dependencies only for ordinary work.
   failureHandling:
-  - On failed or ambiguous startup, apply the central coordination section and record only
-    the provider transition its settlement result authorizes. Preserve launch evidence and
-    keep any separately authorized later disposition in a distinct provider transition.
+  - On failed, ambiguous, missing, or claim-blocked startup, leave the provider Starting until
+    the Coordinator supplies a Watchdog-informed recovery decision. Preserve launch evidence
+    and do not infer a lifecycle transition from elapsed time.
   - Preserve work produced before User Action Required lifecycle reconciliation as
     out-of-sequence evidence. Never reject, delete, duplicate, or reimplement it solely because
     of its Thread location, and never discard or override uncommitted work. Require the parent
@@ -162,7 +165,7 @@ instructions:
   - For Future Idea promotion, report READY only after the confirmed commit contains exactly
     the reciprocal idea and target and unrelated staged state remains intact. Unsafe recovery
     is always BLOCKED.
-modelProfile: default
+modelProfile: simple
 examples:
 - purpose: Create and assign a durable feature item through the effective Persistence binding.
   runtimeInvocations:

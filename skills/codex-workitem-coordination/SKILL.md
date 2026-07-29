@@ -75,54 +75,44 @@ delivery. Finish the oldest compatible item first. This priority does not stop i
 private-worktree work, but it prevents a new launch from taking a resource needed to finish
 preserved work.
 
-### Starting Settlement Contract
+### Starting Handoff And Recovery Contract
 
-Starting is one live launch handshake. Its settlement window is exactly 60 seconds. The
-window begins when the Ready -> Starting provider mutation succeeds and ends when the root
-Dev Orchestrator accepts ownership, the launch is truthfully dispositioned, or the Starting
-settlement deadline expires. A Thread-creation error, timeout, disconnect, ambiguous
-response, stopped launch, missing launch, or immediate post-launch read without an accepted
-owner triggers reconciliation within that same window. Never retry conversation creation.
+Starting is the durable handoff between the parent Dev Backlog Coordinator and one new root
+Dev Orchestrator task. The Coordinator selects one Ready item, uses Dev Backlog Steward to
+claim only its exact provider path, records Ready -> Starting, commits that provider update,
+and releases the claim. Only after that transaction is durable does the Coordinator start the
+new task. The Coordinator's handoff is complete when task creation has been requested; it
+does not wait for or perform Starting -> Running.
 
-Retain one evolving Starting Settlement Evidence record in the provider's supported evidence
-fields, or task-locally for provider none. At reservation time, initialize the evolving record
-truthfully before any runtime launch has been attempted:
+The new task independently accepts the item. Its Dev Backlog Steward claims the same exact
+provider path, records Starting -> Running with the canonical task identity and Active
+Execution Evidence, commits, and releases the claim before implementation begins.
+
+Retain this evidence in the provider record:
 
 ```markdown
-## Starting Settlement Evidence
+## Starting Handoff Evidence
 
-Reservation Started At: [UTC timestamp]
-Settlement Deadline: [UTC timestamp exactly 60 seconds later]
-Runtime Launch Result: Not attempted
-Canonical Conversation: None
-Owner Acceptance: None
-Reconciliation Result: Pending
-Last Updated At: [UTC timestamp]
+Starting Recorded At: [UTC timestamp]
+Coordinator: [parent task identity]
+Normalized Objective: [bounded objective]
+Launch Result: [Not attempted, Requested, Started, Failed, or Unknown]
+Canonical Conversation: [identity or None]
+Last Contact At: [UTC timestamp or None]
+Next Reconciliation At: [UTC timestamp no later than the next fifteen-minute parent review]
 ```
 
-After each launch observation, update Runtime Launch Result, Canonical Conversation, Owner
-Acceptance, and Last Updated At with only observed facts. Reconciliation Result remains
-Pending while the handshake is live. Pending is valid only before Settlement Deadline and
-must be final at or before Settlement Deadline.
+A failed or missing task launch, a task that cannot claim the provider, or a task that stops
+before Running leaves the provider in Starting. Do not automatically restore Ready and do not
+make the launch wait on a short settlement receipt. At or after Next Reconciliation At, the
+Watchdog reports the stale Starting item and its evidence to the Coordinator. The Coordinator
+may follow up with the same task, stop it, start one replacement task after duplicate
+reconciliation, or authorize a truthful provider transition. The Watchdog never mutates the
+item or launches the replacement.
 
-A final Running result is invalid unless Runtime Launch Result records an observed successful
-launch, Canonical Conversation records the observed stable identity, Owner Acceptance records
-the accepting root owner and acceptance time, and valid Running eligibility evidence is
-present. When all four conditions are true within the window, atomically record Starting ->
-Running with Reconciliation Result: Running.
-
-Every settlement that does not validly finalize Running must first atomically restore Starting
--> Ready with Reconciliation Result: Ready. Every non-Running Starting settlement result is
-Ready, including an error, timeout, disconnect, ambiguous response, missing accepted owner,
-stopped or missing launch, or deadline expiry. Never select Stalled, Blocked, User Action
-Required, Completed, Failed, or Abandoned as the Starting settlement result. Preserve launch
-and diagnostic evidence. Any proved later Stalled, Blocked, User Action Required, Completed,
-Failed, or Abandoned disposition occurs only in a distinct subsequent provider transaction
-from Ready under its normal authority.
-
-Starting must leave active capacity when its 60-second settlement deadline expires. Release
-the capacity slot after the selected provider records Ready, and fill the vacancy from fresh
-inventory.
+Starting consumes active capacity until the provider records Running or the Coordinator
+records another truthful lifecycle state. A title or task-creation response does not replace
+either provider transaction.
 
 ### Running Eligibility And Evidence
 
@@ -218,7 +208,7 @@ For a selected Persistence provider, use its management skill to record these ph
 - canonical work-item conversation identifier, root Dev Orchestrator Agent, and canonical Task identifier for that root assignment when the runtime supplies one
 - branch and worktree
 - current phase
-- Starting Settlement Evidence or Active Execution Evidence while the lifecycle requires it
+- Starting Handoff Evidence or Active Execution Evidence while the lifecycle requires it
 - exact required conversation title and verified direct rename or handoff evidence
 - accepted candidate commit
 - delivery-wait or provider-closure-wait start time
@@ -261,17 +251,20 @@ For a provider that supports queue inventory and lifecycle transitions:
    Select eligible Ready items only while the active count is below that limit and no selected
    launch would delay compatible finish-lane work.
 3. For each selection, have the parent Coordinator's Dev Backlog Steward child atomically
-   record the Ready -> Starting reservation, Starting Settlement Evidence, and dispatch
+   record the Ready -> Starting reservation, Starting Handoff Evidence, and dispatch
    evidence through the effective Persistence-selected management skill before creating a
    runtime conversation.
-4. Reconcile the reservation and existing runtime evidence, then create at most one
+4. After the committed provider update and released claim, create at most one
    user-visible work-item conversation for the Starting work item. When the item already has
    one canonical conversation preserved from a prior Running to User Action Required
    transition, adopt that same conversation instead of creating a replacement.
-5. After the conversation's root Dev Orchestrator Agent accepts ownership and produces valid
-   Active Execution Evidence, have that Orchestrator's Dev Backlog Steward child atomically
-   record Starting -> Running with the canonical conversation identifier, root Agent Task
-   identifier when applicable, branch, worktree, and applicable claim evidence.
+   The Coordinator's handoff ends after requesting this launch.
+5. The conversation's root Dev Orchestrator Agent accepts ownership and produces valid
+   Active Execution Evidence. Its Dev Backlog Steward child independently claims the exact
+   provider path and atomically
+   records Starting -> Running with the canonical conversation identifier, root Agent Task
+   identifier when applicable, branch, worktree, and applicable claim evidence, then releases
+   that claim before implementation.
 6. Dispatch only work that can begin implementation or another bounded delivery phase. Do
    not create a conversation merely to wait for approval, a dependency, a reviewer, a shared
    resource, or a delivery window.
@@ -311,13 +304,10 @@ Reconcile active and archived conversations using all available identity evidenc
 
 If exactly one match exists, adopt it as the canonical work-item conversation. If multiple
 matches exist, preserve one canonical conversation, stop every duplicate before mutation,
-verify no unique work is lost, and archive the duplicates when supported. Reconcile again
-before the Starting settlement deadline. At or before the deadline, record Running only for
-an observed successful launch, stable canonical conversation, accepted owner, and valid
-Running eligibility evidence. Otherwise finalize the evolving settlement as Ready and
-atomically restore Starting -> Ready first. Any later disposition uses a distinct provider
-transaction from Ready. Never retain Starting or Pending beyond the deadline, and never retry
-conversation creation after an ambiguous response.
+and verify no unique work is lost. Do not archive tasks while task archival is paused by the
+user. A launch error or ambiguous response leaves the provider in Starting for Watchdog and
+Coordinator recovery. Never retry conversation creation blindly; reconcile identity first,
+then the Coordinator may follow up, stop the failed task, or start one replacement.
 
 ## Conversation Execution Compatibility
 
@@ -356,10 +346,12 @@ independent review, verification, delivery, and stewardship Agents are children 
 work-item conversation.
 
 Ready -> Starting is the parent Coordinator's dispatch and capacity-reservation decision.
-Use its Dev Backlog Steward child to record the reservation through the selected manager
-before launch. Count Starting only during the valid 60-second settlement window. Reconcile
-existing reservation and runtime evidence before every launch. One work item must not create
-a duplicate conversation after a timeout, conversation-creation error, or ambiguous startup.
+Use its Dev Backlog Steward child to claim the exact provider path, record and commit the
+reservation through the selected manager, and release the claim before launch. After it
+requests the new root task, the Coordinator's handoff is done. Starting remains active until
+the new task records Running or the Coordinator records another truthful state. One work item
+must not create a duplicate conversation after a timeout, conversation-creation error, or
+ambiguous startup.
 
 When a Running work item pauses in User Action Required, preserve its canonical work-item
 conversation, root Agent Task identity, branch, worktree, clean commits, and unresolved
@@ -369,12 +361,12 @@ Ready -> Starting; it must not require the user to repeat the answer in the pare
 conversation or create a replacement work-item conversation.
 
 After the work-item conversation's root Dev Orchestrator Agent accepts ownership and records
-valid Active Execution Evidence, it uses its Dev Backlog Steward child for the atomic
-Starting -> Running transition. The record includes the canonical conversation identifier,
-canonical root Agent Task id when applicable, branch, worktree, applicable claim evidence,
-and Active Execution Evidence. If launch fails or remains ambiguous, apply the Starting
-Settlement Contract. A runtime anomaly cannot preserve active capacity without valid matching
-evidence.
+valid Active Execution Evidence, it uses its Dev Backlog Steward child to claim the exact
+provider path, perform the atomic Starting -> Running transition, commit, and release. The
+record includes the canonical conversation identifier, canonical root Agent Task id when
+applicable, branch, worktree, applicable claim evidence, and Active Execution Evidence. If
+launch or provider acquisition fails, leave Starting intact and report exact evidence for
+Watchdog and Coordinator recovery.
 
 The work-item Orchestrator owns candidate production, review, verification, Commit delivery,
 and terminal Persistence request. Its Steward child records the selected provider lifecycle
@@ -490,10 +482,10 @@ slow work is not Stalled by itself. A source-backed progress gap, crossed estima
 stop, or other observed progress anomaly must support the classification.
 
 A failed, stopped, or missing canonical Task is runtime evidence that requires immediate
-active-eligibility reconciliation. It cannot preserve Starting or Running by itself. Apply
-the Starting Settlement Contract or Running Eligibility And Evidence contract, retain
-recovery evidence, and record the resulting truthful non-active state when active evidence
-is absent or expired.
+reconciliation. It leaves a Starting item in Starting until the Coordinator chooses a
+recovery action under the Starting Handoff And Recovery Contract, but it cannot preserve
+Running by itself. Apply the matching contract, retain recovery evidence, and record a
+truthful lifecycle transition only when the Coordinator selects one.
 
 The Dev Backlog Watchdog reports suspected Stalled evidence but never chooses or mutates
 the lifecycle result. Dev Backlog Coordinator decides whether the evidence justifies
@@ -620,7 +612,7 @@ When the user requests background supervision for a sustained queue, the parent 
 ```text
 Act as the dedicated read-only Dev Methodology backlog watchdog for parent task {parent_task_id} in {repository_root}.
 
-Apply skills/codex-workitem-coordination/SKILL.md, especially Active Execution, Capacity, And Conversation Titles, Dedicated Read-Only Watchdog, and Fifteen-Minute Parent Review. On each cycle, read current file-backed work items, Git state, configured claim registry state, and Codex runtime state. Evaluate active eligibility and capacity, Starting settlement deadlines, Running Active Execution Evidence, conversation-title synchronization, phases and age, estimates/hard stops/evidence progress, Blocked unblock conditions, accepted work stranded before integration, integrated work awaiting provider closeout, terminal cleanup anomalies, waits at or beyond 30 minutes, and unsafe/stale/broad shared ownership.
+Apply skills/codex-workitem-coordination/SKILL.md, especially Active Execution, Capacity, And Conversation Titles, Dedicated Read-Only Watchdog, and Fifteen-Minute Parent Review. On each cycle, read current file-backed work items, Git state, configured claim registry state, and Codex runtime state. Evaluate active eligibility and capacity, Starting age and next-reconciliation evidence, Running Active Execution Evidence, conversation-title synchronization, phases and age, estimates/hard stops/evidence progress, Blocked unblock conditions, accepted work stranded before integration, integrated work awaiting provider closeout, terminal cleanup anomalies, waits at or beyond 30 minutes, and unsafe/stale/broad shared ownership.
 
 Remain strictly read-only. Do not mutate repository files, lifecycle state, claims, tasks, branches, worktrees, or shared resources; do not dispatch, integrate, clean up, or run expensive/live verification. Notify parent task {parent_task_id} only when an actionable condition exists, with exact evidence and the smallest recommended parent action. When healthy, record only a concise no-action cycle result here.
 ```
@@ -637,12 +629,12 @@ context without rewriting the canonical prompt text.
 
 When the watchdog runs, it reads provider inventory, Git state, runtime state, and current
 conversation titles. For provider none, it reads only task-local runtime state. When
-agent-claim is loaded, it also reads the claim registry. It alerts on every expired Starting
-settlement, absent or expired Running Active Execution Evidence, stopped task with a live
+agent-claim is loaded, it also reads the claim registry. It alerts on every overdue Starting
+reconciliation, absent or expired Running Active Execution Evidence, stopped task with a live
 claim, terminal item with a live claim, and conversation title that does not match the
 central mapping. It also evaluates:
 
-- every Starting item against its 60-second settlement deadline
+- every Starting item against its Starting Recorded At, launch result, last contact, and Next Reconciliation At evidence
 - every Running phase against its complete Active Execution Evidence, published estimate,
   hard stop, and latest evidence-bearing progress
 - every suspected stall and every Stalled item's diagnostic evidence and exit conditions

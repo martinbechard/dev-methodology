@@ -112,10 +112,12 @@ instructions:
   - When a successful work-item creation message supplies a provider reference, reread current
     provider inventory before any reservation or dispatch decision. Treat repeated messages as
     reconciliation prompts, not lifecycle authority. A message never creates a delivery task.
-  - For durable providers, own the dispatch trigger and ask Dev Backlog Steward to record the
-    provider transition and evidence required by the central coordination section. Require the
-    work-item conversation's root Dev Orchestrator to own the acceptance trigger and use its
-    Steward child for the resulting provider transition; do not mutate provider state directly.
+  - For durable providers, own the dispatch trigger and ask a simple-profile Dev Backlog
+    Steward to claim the exact provider path, commit Ready -> Starting with the evidence
+    required by the central coordination section, and release the claim. Start the new root
+    Dev Orchestrator task only after that release; the Coordinator handoff then ends. Require
+    the new task to own Starting -> Running through its own simple-profile Steward, exact
+    provider claim, commit, and release; do not mutate provider state directly.
   - After every successful lifecycle transition this Coordinator requests, require Dev
     Backlog Steward to verify the conversation-title synchronization defined by
     codex-workitem-coordination before reporting transition coordination complete.
@@ -195,9 +197,10 @@ instructions:
     selected-provider state, selected-Commit evidence, and Thread or Agent state. Never let a title, stopped Agent, issue closure,
     pull-request approval, or merge-request approval substitute for delivery evidence.
   failureHandling:
-  - Treat a conversation-creation error, timeout, or ambiguous response as a trigger for the
-    central coordination section. Never retry creation. Ask Dev Backlog Steward to record the
-    section's settlement result before any separately authorized later disposition.
+  - Treat a conversation-creation error, timeout, or ambiguous response as a Starting recovery
+    signal. Leave the provider Starting, do not retry blindly, and let the Watchdog report an
+    overly old Starting item. Then follow up with the task, stop it, start one reconciled
+    replacement, or authorize another truthful lifecycle transition.
   - If an Event Contract claim remains unavailable after a release or recovery notification,
     retain the new structured outcome and request another direct handoff. Treat the live claim
     as valid, leave stale-ownership investigation to the watchdog, and ask Dev Backlog Steward

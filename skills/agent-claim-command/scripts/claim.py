@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Implements the claim command-line interface and helper for registry, journal, deadline, recovery, and release operations.
+# Summary: Implements claim ownership, overlap, journal, deadline, and release operations without inspecting working-tree state.
 
 from __future__ import annotations
 
@@ -30,7 +30,6 @@ SUCCESS = 0
 ERROR = 1
 COORDINATION_REQUIRED_EXIT_CODE = 3
 ISOLATION_SETUP_EXIT_CODE = 4
-RECOVERY_AUTHORIZATION_EXIT_CODE = 5
 BACKLOG_ROOT_DIRECTORY = "backlog"
 WORKTREE_ROOT_DIRECTORY = ".worktrees"
 WORKTREE_IGNORE_PATTERN = "/.worktrees/"
@@ -538,59 +537,6 @@ def _deadline_status(deadline: dict[str, Any], evaluated_at: datetime) -> dict[s
 
 def _path_domain(path: str) -> str:
     return "backlog" if _path_is_within(path, BACKLOG_ROOT_DIRECTORY) else "project_files"
-
-
-def _status_snapshot(worktree: Path) -> dict[str, dict[str, str]]:
-    raw_entries = _git(
-        worktree,
-        "status",
-        "--porcelain=v1",
-        "-z",
-        "--untracked-files=all",
-    ).stdout.split("\0")
-    snapshot: dict[str, dict[str, str]] = {"project_files": {}, "backlog": {}}
-    index = 0
-    while index < len(raw_entries):
-        entry = raw_entries[index]
-        index += 1
-        if not entry:
-            continue
-        status = entry[:2]
-        paths = [entry[3:]]
-        if "R" in status or "C" in status:
-            if index >= len(raw_entries) or not raw_entries[index]:
-                raise ValueError("Incomplete NUL-terminated Git rename status record.")
-            paths.append(raw_entries[index])
-            index += 1
-        for path in paths:
-            snapshot[_path_domain(path)][path] = status
-    return snapshot
-
-
-def _status_entries(paths: dict[str, str]) -> list[dict[str, str]]:
-    return [
-        {"path": path, "status": status}
-        for path, status in sorted(paths.items())
-    ]
-
-
-def _status_paths(entries: Sequence[dict[str, str]]) -> list[str]:
-    return sorted({entry["path"] for entry in entries})
-
-
-def _status_for_domain(
-    snapshot: dict[str, dict[str, str]],
-    file_domain: str,
-    *,
-    resource_only: bool = False,
-) -> list[dict[str, str]]:
-    if file_domain == "all_files" or (file_domain == "none" and not resource_only):
-        return _status_entries({**snapshot["project_files"], **snapshot["backlog"]})
-    if file_domain == "none":
-        return []
-    if file_domain in snapshot:
-        return _status_entries(snapshot[file_domain])
-    return []
 
 
 def _head(worktree: Path) -> str:
@@ -1618,32 +1564,9 @@ def _acquire(args: argparse.Namespace) -> int:
             outcome = "ISOLATE"
         else:
             target_worktree = repository
-            initial_snapshot = _status_snapshot(target_worktree)
-            initial_status = _status_for_domain(
-                initial_snapshot,
-                requested_scope["file_domain"],
-                resource_only=_scope_is_resource_only(requested_scope),
-            )
-            if initial_status and not args.allow_recovery:
-                event = _event(
-                    "acquire",
-                    "RECOVERY_REQUIRED",
-                    args,
-                    requested_scope=requested_scope,
-                    dirty_paths=_status_paths(initial_status),
-                    command_warnings=scope_warnings,
-                )
-                return _journaled_result(
-                    RECOVERY_AUTHORIZATION_EXIT_CODE,
-                    common_directory,
-                    event,
-                    scope_warnings,
-                    dirty_status=initial_status,
-                )
-            mode = "recovery" if initial_status else "primary"
-            outcome = "RECOVER" if initial_status else "PRIMARY"
+            mode = "primary"
+            outcome = "PRIMARY"
 
-        baseline_snapshot = _status_snapshot(target_worktree)
         now = _timestamp()
         deadline = (
             _deadline_from_request(deadline_request, now)
@@ -1655,11 +1578,6 @@ def _acquire(args: argparse.Namespace) -> int:
             "backlog": requested_scope["backlog"],
             "all_files": requested_scope["all_files"],
             "baseline_commit": _head(target_worktree),
-            "baseline_status": _status_for_domain(
-                baseline_snapshot,
-                requested_scope["file_domain"],
-                resource_only=_scope_is_resource_only(requested_scope),
-            ),
             "branch": _branch(target_worktree),
             "checkout_topology": (
                 "primary"
@@ -2516,7 +2434,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--repo", default=".", help="Path inside the repository.")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    acquire = subparsers.add_parser("acquire", help="Atomically acquire primary, isolated, or recovery ownership.")
+    acquire = subparsers.add_parser("acquire", help="Atomically acquire scoped ownership.")
     acquire.add_argument("--claim-id", required=True)
     acquire.add_argument("--agent", required=True)
     acquire.add_argument("--task", required=True)
@@ -2529,7 +2447,6 @@ def _parser() -> argparse.ArgumentParser:
         help="Compatibility input that must equal the canonical primary-root .worktrees target.",
     )
     acquire.add_argument("--base", default="HEAD")
-    acquire.add_argument("--allow-recovery", action="store_true")
     _add_resource_timing_arguments(acquire)
     acquire.set_defaults(handler=_acquire)
 

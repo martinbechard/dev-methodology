@@ -78,7 +78,7 @@ When an active folder contains a subfolder with index.md, treat it as one relate
 Use explicit provider lifecycle states and never infer success from silence:
 
 - READY: authorized, complete enough to dispatch, and without unmet prerequisites.
-- STARTING: the caller authorized and supplied evidence for one nonterminal launch reservation.
+- STARTING: the Coordinator durably reserved the item and requested one root task launch.
 - RUNNING: the caller authorized and supplied evidence for accepted execution ownership.
 - STALLED: current evidence indicates that the item is not making progress while the causal blocker or unblock condition remains unknown.
 - BLOCKED: a known preventing cause awaits Dev Backlog Coordinator-owned coordination, recovery, or disposition.
@@ -126,14 +126,13 @@ If closed items remain in active folders, explicit status is the open or closed 
   provider reference. Reject a request that asks this file manager to infer runtime state,
   active eligibility, capacity, or a conversation disposition.
 - For Ready -> Starting, record the caller-supplied parent coordination identity,
-  reservation, normalized objective, dispatch time, and launch evidence atomically.
+  reservation, normalized objective, dispatch time, and Starting handoff evidence atomically.
 - For Starting -> Running, record the caller-supplied canonical conversation identity,
   canonical Task identity when applicable, root owner, branch, worktree, started-at
   evidence, and accepted execution evidence atomically.
-- When the caller authorizes settlement without accepted Running ownership, atomically record
-  Starting -> Ready. Refuse a request that combines a later Stalled, Blocked, User Action
-  Required, or terminal disposition with that mutation; any such caller-authorized
-  disposition requires a distinct subsequent provider transaction from Ready.
+- A failed or missing task launch, or a task that cannot claim this provider path, leaves the
+  item Starting until the Coordinator authorizes a recovery transition. Do not infer or
+  automatically record Starting -> Ready from elapsed time or a missing receipt.
 - For User Action Required -> Ready and every other authorized nonterminal transition,
   preserve prior evidence, record the decision provenance and next action, and mutate only
   the provider fields and path required by that transition.
@@ -164,7 +163,7 @@ Do not move an independently identified defect, enhancement, or idea into a type
 Record durable evidence appropriate to every transition:
 
 - READY: source evidence, requirements, acceptance criteria, dependencies, verification expectations, provider_reference, and completion selection.
-- STARTING: caller-supplied parent coordination identity, dispatch reservation, normalized objective, dispatch time, intended root Dev Orchestrator Role, and launch evidence.
+- STARTING: caller-supplied parent coordination identity, dispatch reservation, normalized objective, dispatch time, intended root Dev Orchestrator Role, launch result, last contact, and next reconciliation time.
 - RUNNING: caller-supplied owner, canonical conversation and Task identities when applicable, branch or worktree, phase, started-at evidence, and accepted execution evidence.
 - STALLED: last known productive evidence, phase estimate and hard stop when present,
   anomaly or progress gap, canonical conversation and root Agent Task identities, current ownership
@@ -248,16 +247,17 @@ Resume blocked work through the same provider and startup boundaries as new work
 1. Read and retain the complete pre-attempt Blocked item bytes.
 2. Reconcile the blocker and confirm that the recorded unblock condition is satisfied.
 3. In one short provider transaction, restore Status: Ready with Owner: Unowned while retaining the blocker, unblock condition, evidence, and acceptance criteria as recovery history. If this transaction fails, restore the byte-for-byte pre-attempt Blocked item and do not infer execution ownership.
-4. When the parent Dev Backlog Coordinator authorizes Ready -> Starting, atomically record
-   its supplied reservation and dispatch evidence. This provider transaction does not grant
-   execution ownership.
-5. If launch reconciliation does not authorize Running, atomically record Starting -> Ready
-   first. Record any separately authorized later disposition only in a distinct provider
-   transaction from Ready. Do not inspect runtime conversations or choose that disposition
-   here.
-6. When the root Dev Orchestrator authorizes Starting -> Running, atomically record its
+4. When the parent Dev Backlog Coordinator authorizes Ready -> Starting, claim the exact
+   provider path, atomically record and commit its supplied reservation and dispatch
+   evidence, then release the claim. This provider transaction does not grant execution
+   ownership.
+5. If the new task fails to start or cannot claim the provider, leave the item Starting.
+   Record a recovery transition only after the Coordinator supplies its Watchdog-informed
+   decision. Do not inspect runtime conversations or choose that disposition here.
+6. When the root Dev Orchestrator authorizes Starting -> Running, claim the exact provider
+   path, atomically record and commit its
    supplied canonical conversation identifier, root Agent Task id when applicable, owner,
-   branch, worktree, and accepted execution evidence.
+   branch, worktree, and accepted execution evidence, then release the claim.
 
 Blocked, Ready, or satisfaction of an unblock condition never authorizes a direct transition to Running. Provider mutation protection cannot substitute for delivery ownership.
 

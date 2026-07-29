@@ -9,6 +9,11 @@ metadata:
 
 Claims prevent two agents from changing the same shared file or resource at the same time. A claim and its release do not prove that work is complete.
 
+The claim system tracks declared ownership and scope overlap only. Acquisition, extension,
+status, and release do not inspect or gate on staged, unstaged, untracked, renamed, or deleted
+files. Git owns dirty-worktree protection, overwrite refusal, merge conflicts, and commit
+contents.
+
 Git provides one primary worktree for a repository. The primary worktree owns the backlog and the main branch. Other worktrees are private working copies.
 
 ## Claim Events

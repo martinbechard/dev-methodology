@@ -1392,7 +1392,7 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
         self.assertEqual("primary", result["claim"]["checkout_topology"])
 
-    def test_primary_integration_scope_preserves_dirty_primary_recovery(self) -> None:
+    def test_primary_integration_scope_ignores_worktree_status(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
         isolated, _isolated_path = self.isolated_arguments("isolated")
         self.claim(
@@ -1414,14 +1414,11 @@ class AgentClaimTests(unittest.TestCase):
             ),
         )
 
-        self.assertEqual(5, completed.returncode)
+        self.assertEqual(0, completed.returncode, completed.stderr)
         result = self.output(completed)
-        self.assertEqual("DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED", result["outcome"])
-        self.assertEqual("RECOVERY_REQUIRED", result["legacy_outcome"])
-        self.assertEqual(
-            [{"path": "docs/guide.md", "status": " M"}],
-            result["dirty_status"],
-        )
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
+        self.assertEqual("PRIMARY", result["legacy_outcome"])
+        self.assertNotIn("dirty_status", result)
 
     def test_simultaneous_nonoverlapping_claims_can_both_use_primary(self) -> None:
         files_by_claim = {
@@ -2658,20 +2655,20 @@ class AgentClaimTests(unittest.TestCase):
             any(event["outcome"] == "RELEASED" for event in self.journal_events())
         )
 
-    def test_recovery_claim_release_does_not_require_checkpoint_commit(self) -> None:
-        (self.repository / "README.md").write_text("recovery\n", encoding="utf-8")
+    def test_dirty_file_does_not_change_claim_acquisition_or_release(self) -> None:
+        (self.repository / "README.md").write_text("dirty\n", encoding="utf-8")
         acquired = self.claim(
-            *self.acquire_arguments("recovery"),
+            *self.acquire_arguments("dirty-file"),
             "--file",
             "README.md",
-            "--allow-recovery",
         )
-        released = self.claim("release", "--claim-id", "recovery")
+        released = self.claim("release", "--claim-id", "dirty-file")
 
         self.assertEqual(0, acquired.returncode, acquired.stderr)
         result = self.output(acquired)
-        self.assertEqual("DIRTY_CHECKOUT_RECOVERY_ACQUIRED", result["outcome"])
-        self.assertEqual("RECOVER", result["legacy_outcome"])
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
+        self.assertEqual("PRIMARY", result["legacy_outcome"])
+        self.assertNotIn("baseline_status", result["claim"])
         self.assertEqual(0, released.returncode, released.stderr)
 
     def test_isolated_worktrees_commit_without_global_commit_resource(self) -> None:

@@ -1,0 +1,6 @@
+basis: explicit-user-direction
+definition_scope: skills/agent-claim/SKILL.md
+direction: "The claims tool should track claims only and must not verify whether repository files are modified; Git owns dirty-file and merge-conflict detection."
+provenance:
+  source: user-message
+  reference: thread:019fa9bb-1423-7e80-bcde-3caa765e3758/message:dispatch-handoff-and-claim-tracking-only

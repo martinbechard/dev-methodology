@@ -6500,6 +6500,9 @@ class BundleContentTests(unittest.TestCase):
             "Apply the exclusive OS lock directly to agent-claims.json.",
             "Release is claim cleanup only.",
             "Release does not inspect or gate on worktree cleanliness",
+            "The claim system tracks declared ownership and scope overlap only.",
+            "status, and release do not inspect or gate on staged, unstaged, untracked, renamed, or deleted",
+            "Git owns dirty-worktree protection",
             "Claim scope is the file, set of files, or shared resource that a claim protects.",
             "Every claim request must specify a scope.",
             "An overlapping request returns CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
@@ -6693,6 +6696,9 @@ class BundleContentTests(unittest.TestCase):
         for required_contract in (
             "Claims prevent two agents from changing the same shared file or resource at the same time.",
             "A claim and its release do not prove that work is complete.",
+            "The claim system tracks declared ownership and scope overlap only.",
+            "status, and release do not inspect or gate on staged, unstaged, untracked, renamed, or deleted",
+            "Git owns dirty-worktree protection",
             "Every claim request must specify a scope.",
             "An overlapping request returns CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
             "Ask its owner for a release or recovery notification.",
@@ -7895,10 +7901,12 @@ class BundleContentTests(unittest.TestCase):
         self.assertIsNotNone(state_map_match)
         state_map_label = state_map_match.group(1)
         for clause in (
-            "Starting is active only during a 60-second launch settlement whose "
-            "evidence begins Pending before launch.",
-            "Every other Starting result becomes Ready first; any later non-active "
-            "disposition is a distinct transition from Ready.",
+            "The Coordinator commits Ready to Starting under one exact provider claim, "
+            "releases it, launches one root task, and ends its handoff.",
+            "The new task independently commits Starting to Running under its own exact "
+            "provider claim before implementation.",
+            "A failed or missing launch remains Starting until the Watchdog reports it "
+            "and the Coordinator performs recovery.",
             "Running is active only while both its finite condition deadline and "
             "next-reconciliation boundary remain in the future.",
             "Missing or expired evidence moves the item to a truthful non-active "
@@ -7924,9 +7932,9 @@ class BundleContentTests(unittest.TestCase):
             lifecycle_text,
         )
         flow_steps = (
-            "Settle Starting",
+            "Recover Starting",
             "Prove Running",
-            "Release inactive capacity",
+            "Reconcile inactive work",
         )
         flow_positions = tuple(
             anomaly_section.index(f"<strong>{step}</strong>")
@@ -7934,15 +7942,15 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertEqual(tuple(sorted(flow_positions)), flow_positions)
         for clause in (
-            "The reservation begins Pending with no launch attempt, canonical "
-            "conversation, or accepted owner.",
-            "Otherwise finalize Ready by the deadline",
-            "record any later disposition in a distinct transition from Ready.",
+            "The Coordinator commits Ready to Starting, releases its claim, launches one task, and ends its handoff.",
+            "The new task commits Starting to Running through its own claim.",
+            "Failed or missing launches stay Starting until Watchdog evidence triggers Coordinator recovery.",
             "Observed and started times are history.",
             "Keep both future boundaries current",
             "Expiry of either boundary invalidates active eligibility.",
-            "Absent, invalid, or expired evidence cannot preserve Starting or Running.",
-            "The Steward records the truthful non-active disposition before the "
+            "A failed launch remains Starting until Coordinator recovery.",
+            "Absent, invalid, or expired evidence cannot preserve Running.",
+            "The Steward records any selected lifecycle transition before the "
             "Coordinator fills the vacancy.",
         ):
             with self.subTest(visible_clause=clause):

@@ -151,7 +151,7 @@ A Codex user-level installation uses the installed copy:
 python3 "${HOME}/.agents/skills/agent-claim-command/scripts/claim.py" --help
 ```
 
-For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, Ready -> Starting reservations, and Stalled or Blocked dispositions. The root Dev Orchestrator owns Starting -> Running acceptance and terminal closure requests for its work item. Dev Backlog Steward performs each authorized provider mutation for either owner. Dev Backlog Watchdog performs periodic read-only observation and reports only actionable anomalies or satisfied exit conditions to the Coordinator. Each agent follows Agent Claim when its work reaches an event in the Claim Events table.
+For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, Ready -> Starting reservations, task launch, and Stalled or Blocked dispositions. After the exact provider claim is released, the Coordinator launches the root Dev Orchestrator task and its handoff is done. The root Dev Orchestrator independently owns Starting -> Running acceptance and terminal closure requests. The simple-profile Dev Backlog Steward performs each authorized provider mutation for either owner. Dev Backlog Watchdog detects overly old Starting items and reports recovery evidence to the Coordinator. Each agent follows Agent Claim when its work reaches an event in the Claim Events table.
 
 Coordinated capacity is adaptive. Ten active items is a ceiling, not a target. The
 Coordinator lowers the dispatch limit when work shares generated outputs, tests, integration
@@ -171,12 +171,13 @@ python3 scripts/generate-backlog-report.py --output /path/to/backlog-report.html
 The command writes one self-contained HTML file with no network dependencies. It reports
 Stalled, Blocked, and User Action Required as separate inventories from dispatchable work
 and treats any remaining active Status: Proposed item as a migration anomaly rather than an
-operational bucket. Starting consumes coordinated active capacity only during the single
-60-second launch settlement. Its reservation evidence begins truthfully as Pending with no
-launch attempt, conversation, or accepted owner. It becomes Running only after an observed
-successful launch and owner acceptance; otherwise it becomes Ready by the deadline. Any later
-Stalled, Blocked, User Action Required, or terminal disposition uses a distinct transition
-from Ready. Running consumes capacity only with complete Active Execution Evidence for active
+operational bucket. Starting begins after the Coordinator's Steward claims the exact provider
+path, commits Ready -> Starting, and releases the claim. The Coordinator then launches one
+root task and its handoff is complete. That task independently uses its Steward to claim the
+same provider path, commit Starting -> Running, and release the claim. A failed or missing
+launch remains Starting until the Watchdog reports its age and the Coordinator follows up,
+stops the task, starts one reconciled replacement, or selects another truthful disposition.
+Running consumes capacity only with complete Active Execution Evidence for active
 root execution, live delegated work, or a bounded owned wait or progress condition. Its
 historical observation and start times do not control expiry; both its finite condition
 deadline and next-reconciliation boundary must remain in the future. An ineligible Running
@@ -375,7 +376,7 @@ Dev Backlog Coordinator owns parent-level, just-in-time coordination only when a
 explicitly requests several user-visible Codex work-item tasks. It obtains provider inventory
 through the effective Persistence-selected manager and applies the portable
 [codex-workitem-coordination skill](skills/codex-workitem-coordination/SKILL.md) as the
-single authority for active-execution eligibility, the 60-second Starting settlement,
+single authority for active-execution eligibility, Starting handoff and recovery,
 Running evidence, capacity, runtime reconciliation, and conversation-title synchronization.
 It delegates every provider mutation to Dev Backlog Steward and sends each actively eligible
 work item to Dev Orchestrator with the effective Commit-selected skill. File, GitHub, and
