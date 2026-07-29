@@ -1,18 +1,28 @@
 # Defer verifier orchestration to conceptual roles and resolve writer helper commands
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/project-wiki-topic-write-role-owned-verification.md
+Provider Reference: backlog/completed-backlog/defects/project-wiki-topic-write-role-owned-verification.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
-Current Phase: Exact role approval record/preflight then bounded correction.
+Current Phase: Completed / verified direct-main delivery.
+
+## Completion Evidence
+
+- Completion: direct-main.
+- Final Delivery Commit: 9167ec9c9a3c0e4990580f69fe331e2c7d12a3da, mapped from accepted source 812db4a2112c96981ef98ab1278cebfa555f89be.
+- Review and Verification: final GOOD review; PASS verification; focused checks and harness 14/14.
+- Governed Approval: Three approved governed scopes and supported preflights passed.
+- Integration Evidence: combined-source regeneration preserved document-topic/active-capacity and modelProfile documentation. Integration claim acquired with event 27891975-de2b-464e-bff4-71ef2050429b and incarnation b6267e21-35d5-4c10-96a2-98bd2a68ce85; released with event e6bc620f-7305-4e75-813c-247e56044084.
+- Known Unrelated Evidence: baseline catalog and document-topic checklist-name evidence remain unrepaired and are outside this closure.
+- Terminal Provider Claim Evidence: complete-project-wiki-topic-write-role-owned-verification-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED; claim event 2d1f7bae-7287-44f9-a520-5a02759b955c, incarnation 4d77cc33-1a29-4574-b9da-7a2ac3f89aa2.
 
 ## Wiki Writer Running Acceptance
 
