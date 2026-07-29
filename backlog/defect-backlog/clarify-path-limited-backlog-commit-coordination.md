@@ -1,14 +1,42 @@
 # Clarify path-limited backlog commit coordination
 
-Status: Ready
+Status: Starting
 
 Type: Defect
+
+Owner: Parent Dev Backlog Coordinator dispatch reservation
 
 Provider: file
 
 Provider Reference: backlog/defect-backlog/clarify-path-limited-backlog-commit-coordination.md
 
 Completion: direct-main
+
+## Dispatch Reservation
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
+
+Canonical Work-Item Thread: 019fab2d-d9ac-7a82-8107-04260716d4d0
+
+Canonical Root Agent Task: 019fab2d-d9ac-7a82-8107-04260716d4d0
+
+Launch Reservation: One bounded live handshake for the canonical work-item Thread.
+
+Dispatch Time: 2026-07-29T00:16:18.701278Z
+
+Normalized Objective: Clarify and enforce claim-scoped, path-limited file-provider Git mutations for the exact provider record while preserving unrelated primary-worktree state.
+
+Intended Root Role: Dev Orchestrator
+
+Branch: codex/clarify-path-limited-backlog-commit-019fab2d
+
+Worktree: /Users/martinbechard/.codex/worktrees/95f4/dev-methodology
+
+Observed Launch Evidence: Parent Coordinator authorized the bounded reservation. The canonical Thread and root task identity are recorded for the live handoff.
+
+Required Next Lifecycle Transition: The same canonical task's root Dev Orchestrator must record Starting to Running before any implementation or approval work.
+
+Conversation-Title Handoff: Synchronized with the Parent Coordinator; the title is display-only and does not alter the canonical provider identity or mutation scope.
 
 ## Summary
 
