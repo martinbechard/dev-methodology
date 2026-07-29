@@ -1,16 +1,16 @@
 # Centralize active-capacity and conversation-title coordination policy
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/centralize-active-capacity-and-conversation-title-coordination-policy.md
+Provider Reference: backlog/defect-backlog/centralize-active-capacity-and-conversation-title-coordination-policy.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator 019fab2d-b796-7ff0-b7fd-8438b335e4af
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -32,7 +32,7 @@ Delivery Worktree: /Users/martinbechard/.codex/worktrees/c82a/dev-methodology
 
 Next Lifecycle Owner: Root Dev Orchestrator 019fab2d-b796-7ff0-b7fd-8438b335e4af
 
-Phase: Awaiting explicit scope-specific user approval
+Phase: Approved scope awaiting parent dispatch reservation
 
 Started At: 2026-07-29T00:20:59.422474Z
 
@@ -77,6 +77,18 @@ Unattended Work Boundary: Stop all definition, mirror, companion implementation,
 - Delivery Worktree: /Users/martinbechard/.codex/worktrees/c82a/dev-methodology.
 - Running Evidence Preserved: provider-only acceptance commit 24af5ac10ea909a0d5709a85b02742be894c79d9; claim acquired event 1157cbfa-2b2d-41e2-a9e3-85638816b958; claim released event 3cdde1d7-2c99-4514-a370-353c40f54910.
 - Lifecycle Claim Evidence: running-uar-centralize-capacity-recovery-019fab2d; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 9c9bfd66-fef7-4414-9ad5-9baed91a94f9; claimed 2026-07-29T00:34:12.203006Z.
+
+## User Action Resolution And Resumption
+
+- Resolution: Approve.
+- Answer: ok I approve.
+- Answered At: 2026-07-28.
+- Provenance: Direct user message in canonical work-item conversation 019fab2d-b796-7ff0-b7fd-8438b335e4af.
+- Authorized Scope: Exactly the six governed paths listed in User Action Required, limited to the recorded centralized active-execution, capacity, runtime-reconciliation, and portable conversation-title contract; supported same-category mirrors and ordinary companions only. The recorded exclusions remain binding.
+- Transition: User Action Required -> Ready.
+- Owner: Unowned pending the parent Coordinator's distinct Ready -> Starting reservation.
+- Canonical Work-Item Thread Preserved: 019fab2d-b796-7ff0-b7fd-8438b335e4af.
+- Lifecycle Claim Evidence: uar-ready-centralize-capacity-019fab2d; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event e00f7aea-3dfb-4b91-b0ca-64fb44b06b5a; claimed 2026-07-29T01:09:50.047653Z.
 
 ## Starting Reservation
 
