@@ -1,16 +1,16 @@
 # Revise the Documentation Templates Document Topics
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/document-topic-revision/revise-documentation-templates-topics.md
+Provider Reference: backlog/completed-backlog/features/revise-documentation-templates-topics.md
 
 Completion: direct-main
 
-Owner: Dev Orchestrator (canonical root task 019fabe9-5ef7-7c13-b496-207c16a69bcf)
+Owner: Unowned
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 Launch Reservation: reserve-nine-document-topic-revisions-019fa9bb-05; one bounded live launch handshake
 Normalized Objective: Revise the Documentation Templates Document Topics.
@@ -68,3 +68,14 @@ backlog/feature-backlog/document-topic-revision/incorporate-document-topic-agent
 ## Open Questions
 
 None.
+
+## Completion Evidence
+
+- Completion selector: direct-main.
+- Canonical delivery owner: Dev Orchestrator root task and Runtime Thread 019fabe9-5ef7-7c13-b496-207c16a69bcf on branch codex/revise-documentation-templates-topics in /Users/martinbechard/.codex/worktrees/595a/dev-methodology.
+- Accepted source: 95d56f5ae98117b8697349f367803c1a94780ad1, limited to design/documentation-templates.html.
+- Main integration: conflict-free cherry-pick -x produced main integration commit 6f9ff2cf77e2d2643f540d0280a011e991ecab1d, the observed main tip. The source-to-main blob-equivalence evidence is a38c8fd2a7e733960a6b29e846c5f13481abff4e.
+- Integration coordination: the exact integration claim was acquired at event e37aaa0f-01ed-4b03-a8cc-c03d26432fe2 and released at event 367cd802-3a32-406f-b7cf-ebd20725040c. Main and source worktrees were clean after integration. No remote push was requested; local main remains ahead of origin.
+- Independent editorial review: GOOD with no findings.
+- Verification: source and post-integration topic-owner unit test and build-skill-docs generator freshness passed; aria references passed 7 of 7; links passed 15 of 15; template triggers were 8 unique; generated hooks and Git diff check passed.
+- Terminal provider transaction: Dev Backlog Steward acquired exact source and archive-path claims as complete-revise-documentation-templates-topics-019fabe9 at event c2a0b6e2-1c40-4728-838d-29d04959ef66. This completion archive commit is released immediately after commit verification.
