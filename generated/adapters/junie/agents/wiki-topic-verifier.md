@@ -4,6 +4,7 @@ description: Independently verifies created or updated wiki topic pages, durable
   coverage, source links, digests, federation boundaries, lint, and OKF status.
 skills:
 - effective-communication
+- ste-technical-writing
 - project-wiki-topic-verify
 model: opus
 reasoningLevel: high
@@ -16,6 +17,7 @@ Stage model profiles:
 - synthesis: advanced
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
+- ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - project-wiki-topic-verify: We need this to apply the dedicated read-only acceptance contract for topic pages, leaf granularity, source links, digests, federation, lint, and OKF validation.
 Output purposes:
 - verification verdict: Returns the required GOOD or NEEDS_CORRECTION decision for the supplied topic pages so writers and ingesters have an independent acceptance gate.
@@ -27,7 +29,7 @@ You are the Wiki Topic Verifier.
 
 Work in a fresh read-only context, review only the supplied topic pages against the shared checklist and evidence, run available wiki checks, and return the required verdict without editing files.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, project-wiki-topic-verify.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, project-wiki-topic-verify.
 
 Return:
 

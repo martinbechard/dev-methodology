@@ -303,19 +303,75 @@ def _validate_case_refs(
     return sorted(set(references))
 
 
-def _validate_declared_inventory(
+def _missing_declarations(
     expected: set[str],
     declared: set[str],
     *,
-    missing_label: str,
     unknown_label: str,
-) -> None:
+) -> list[str]:
     missing = sorted(expected - declared)
     unknown = sorted(declared - expected)
-    if missing:
-        raise ValueError(f"{missing_label}: {', '.join(missing)}")
     if unknown:
         raise ValueError(f"{unknown_label}: {', '.join(unknown)}")
+    return missing
+
+
+def _missing_skill_declaration_state(category: str) -> dict[str, object]:
+    """Return structural coverage without credit for an absent skill probe."""
+    return {
+        "structural": True,
+        "probeDeclared": False,
+        "probeIds": [],
+        "evaluationCategory": category,
+        "catalogFixtureBacked": False,
+        "positiveCaseBacked": False,
+        "positiveCaseBackedCases": [],
+        "negativeCaseBacked": False,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": False,
+        "fixtureBacked": False,
+        "fixtureBackedCases": [],
+        "executableFixture": False,
+        "executableCases": [],
+        "judgeCalibration": "missing",
+        "scenarioAssociations": [],
+        "workflowAssociations": [],
+        "executedCases": [],
+        "judgePassedCases": [],
+        "securityContainedCases": [],
+        "verifiedCases": [],
+        "staleByDigestCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveVerifiedCases": [],
+        "positiveStaleByDigestCases": [],
+    }
+
+
+def _missing_agent_declaration_state() -> dict[str, object]:
+    """Return structural coverage without credit for absent agent scenarios."""
+    return {
+        "structural": True,
+        "scenarioDeclared": False,
+        "scenarioIds": [],
+        "caseBacked": False,
+        "caseBackedScenarioIds": [],
+        "caseBackedCases": [],
+        "partialScenarioCoverage": False,
+        "fixtureBacked": False,
+        "fixtureBackedCases": [],
+        "executableFixture": False,
+        "executableCases": [],
+        "scenarioCoverage": {},
+        "judgeCalibration": "missing",
+        "workflowAssociations": [],
+        "executedCases": [],
+        "judgePassedCases": [],
+        "securityContainedCases": [],
+        "verifiedCases": [],
+        "staleByDigestCases": [],
+    }
 
 
 def _validate_judge_plan(
@@ -1165,12 +1221,13 @@ def build_evaluation_coverage(
             "positiveVerifiedCases": [],
             "positiveStaleByDigestCases": [],
         }
-    _validate_declared_inventory(
+    missing_skill_declarations = _missing_declarations(
         set(skills),
         set(probes_by_skill),
-        missing_label="Skills missing probe declarations",
         unknown_label="Probe declarations reference unknown skills",
     )
+    for skill_id in missing_skill_declarations:
+        probe_state[skill_id] = _missing_skill_declaration_state(skills[skill_id])
 
     agent_entries, agents_by_id = _unique_items(
         catalogs["agentScenarios"].get("agents"), "agent scenario declarations"
@@ -1278,12 +1335,13 @@ def build_evaluation_coverage(
             "verifiedCases": [],
             "staleByDigestCases": [],
         }
-    _validate_declared_inventory(
+    missing_agent_declarations = _missing_declarations(
         set(roles),
         set(agents_by_id),
-        missing_label="Conceptual agents missing scenario declarations",
         unknown_label="Scenario declarations reference unknown conceptual agents",
     )
+    for agent_id in missing_agent_declarations:
+        agent_state[agent_id] = _missing_agent_declaration_state()
 
     packs, packs_by_id = _unique_items(
         catalogs["workflowPacks"].get("packs"), "workflow packs"
@@ -1563,11 +1621,19 @@ def build_evaluation_coverage(
         "workflows": workflow_state,
         "judgeStatus": judge_status,
         "sandboxProfiles": sandbox_profiles,
+        "declarationDebt": {
+            "skillsMissingProbeDeclarations": missing_skill_declarations,
+            "agentsMissingScenarioDeclarations": missing_agent_declarations,
+        },
         "evidenceStatus": {
             "structuralAgentCount": len(roles),
             "structuralSkillCount": len(skills),
-            "probeDeclaredSkillCount": len(probe_state),
-            "scenarioDeclaredAgentCount": len(agent_state),
+            "probeDeclaredSkillCount": sum(
+                bool(state["probeDeclared"]) for state in probe_state.values()
+            ),
+            "scenarioDeclaredAgentCount": sum(
+                bool(state["scenarioDeclared"]) for state in agent_state.values()
+            ),
             "declaredScenarioCount": sum(
                 len(state["scenarioIds"]) for state in agent_state.values()
             ),
@@ -1697,6 +1763,7 @@ def render(
         if isinstance(item, dict)
     }
     evidence = active_coverage["evidenceStatus"]
+    declaration_debt = active_coverage["declarationDebt"]
     lines = [
         "# Agent, Skill, Technology, And Test Coverage Checklist",
         "",
@@ -1722,6 +1789,8 @@ def render(
         "",
         f"- [x] {evidence['structuralAgentCount']} conceptual agents and {evidence['structuralSkillCount']} bundled skills have structural coverage.",
         f"- [x] {evidence['scenarioDeclaredAgentCount']} agents are scenario-declared and {evidence['probeDeclaredSkillCount']} skills are probe-declared.",
+        f"- Agents missing scenario declarations: {_case_list(declaration_debt['agentsMissingScenarioDeclarations'])}.",
+        f"- Skills missing probe declarations: {_case_list(declaration_debt['skillsMissingProbeDeclarations'])}.",
         f"- [x] {evidence['declaredScenarioCount']} agent scenarios and {evidence['workflowPackCount']} workflow packs are declared.",
         f"- {evidence['caseBackedWorkflowPackCount']} workflow packs have associated cases; {evidence['partialWorkflowPackCount']} are partial and {evidence['endToEndFixtureBackedWorkflowPackCount']} have end-to-end fixture coverage.",
         f"- {evidence['fixtureBackedCaseCount']} cases are fixture-backed and {evidence['executableCaseCount']} fixtures are structurally executable before harness readiness is considered.",
@@ -1823,6 +1892,26 @@ def render(
             f"{_case_list(state['staleByDigestCases'])} |"
         )
 
+    missing_skill_declarations = declaration_debt["skillsMissingProbeDeclarations"]
+    skill_declaration_verification = (
+        f"- {checkbox(not missing_skill_declarations)} "
+        "Every live skill has exactly one probe declaration."
+    )
+    if missing_skill_declarations:
+        skill_declaration_verification += (
+            f" Missing declarations: {_case_list(missing_skill_declarations)}."
+        )
+
+    missing_agent_declarations = declaration_debt["agentsMissingScenarioDeclarations"]
+    agent_declaration_verification = (
+        f"- {checkbox(not missing_agent_declarations)} "
+        "Every live conceptual agent has exactly one scenario declaration with at least one scenario."
+    )
+    if missing_agent_declarations:
+        agent_declaration_verification += (
+            f" Missing declarations: {_case_list(missing_agent_declarations)}."
+        )
+
     lines.extend(
         [
             "",
@@ -1835,8 +1924,8 @@ def render(
             "",
             "## Repository Verification Layers",
             "",
-            "- [x] Every live skill has exactly one probe declaration.",
-            "- [x] Every live conceptual agent has exactly one scenario declaration with at least one scenario.",
+            skill_declaration_verification,
+            agent_declaration_verification,
             "- [x] Evaluation catalog references, fixture paths, Judge plans, harnesses, workflow links, and sandbox profiles are validated.",
             "- [x] Codex and Junie are the only supported evaluation harnesses.",
             "- [x] Executed, Judge-passed, security-contained, calibration, and stale claims are classified independently by the evaluation runner.",
@@ -2178,6 +2267,7 @@ def build_explorer_payload(
         "workflowCoverage": coverage["workflows"],
         "judgeStatus": coverage["judgeStatus"],
         "sandboxProfiles": coverage["sandboxProfiles"],
+        "declarationDebt": coverage["declarationDebt"],
         "evidenceStatus": coverage["evidenceStatus"],
     }
 

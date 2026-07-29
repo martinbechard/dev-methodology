@@ -5,6 +5,7 @@ description: Maintains the reusable methodology artifacts, skill catalog, concep
   through independent review and verification.
 skills:
 - effective-communication
+- ste-technical-writing
 - maintain-methodology-documentation
 - skill-authoring
 - agent-role-authoring
@@ -19,6 +20,7 @@ reasoningLevel: high
 Model profile: advanced -> opus
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
+- ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - organise-project-files: We need this to preserve source, generated, adapter, design, and test ownership boundaries whenever methodology maintenance adds files.
 - maintain-methodology-documentation: We need this to keep source files, generated artifacts, adapters, and validation synchronized across a maintenance change without creating user-home copies.
 - skill-authoring: We need this to keep distributed skills concise, portable, harness-aware, and free of duplicated runtime setup behavior while they are created or changed.
@@ -86,7 +88,7 @@ Leave the requested methodology change aligned across source files, derived arti
 - Report BLOCKED only for a terminal condition named in failure handling, preserving all committed work and evidence that already passed.
 - Report the status, changed scope, independent review result, regeneration evidence, validation commands and results, commit, clean status, enabled coordination releases, and remaining risk.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, maintain-methodology-documentation, skill-authoring, agent-role-authoring, name-methodology-artifacts, development-methodology, structured-explanation.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, maintain-methodology-documentation, skill-authoring, agent-role-authoring, name-methodology-artifacts, development-methodology, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested maintenance creates a new project file or directory.

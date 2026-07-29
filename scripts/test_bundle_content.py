@@ -5672,7 +5672,10 @@ class BundleContentTests(unittest.TestCase):
             next(iter(entry))
             for entry in role_schema["fixedBehavior"]["sharedSkills"]
         ]
-        self.assertEqual(["effective-communication"], shared_role_skills)
+        self.assertEqual(
+            ["effective-communication", "ste-technical-writing"],
+            shared_role_skills,
+        )
         self.assertEqual(
             expected_outputs[ROLE_DEFINITIONS_PATH],
             ROLE_DEFINITIONS_PATH.read_text(encoding="utf-8"),
@@ -8359,7 +8362,8 @@ class BundleContentTests(unittest.TestCase):
                 "skill-authoring",
                 "review-structured-artifact",
             },
-            set(build_skill_docs.fixed_role_skills(role)) - {"effective-communication"},
+            set(build_skill_docs.fixed_role_skills(role))
+            - {"effective-communication", "ste-technical-writing"},
         )
         self.assertEqual({"structured-explanation"}, set(role.skill_conditions))
         self.assertNotIn("agent-claim", role.skill_conditions)
@@ -8610,7 +8614,7 @@ class BundleContentTests(unittest.TestCase):
             {
                 "simple": "gpt-5.6-luna",
                 "default": "gpt-5.6-terra",
-                "documentation": "gpt-5.6-sol",
+                "documentation": "gpt-5.5",
                 "advanced": "gpt-5.6-sol",
                 "advanced-long": "gpt-5.6-sol",
                 "intermediate": "gpt-5.6-luna",
@@ -8635,17 +8639,31 @@ class BundleContentTests(unittest.TestCase):
         skill_names = set(build_skill_docs.build_payload()["skills"])
         roles = build_skill_docs.load_role_definitions(skill_names)
         writer = next(role for role in roles if role.name == "dev-documentation-writer")
-        unrelated_roles = [role for role in roles if role.name != writer.name]
         source_profile_ids = set(build_skill_docs.load_model_profiles())
 
         self.assertEqual("documentation", writer.model_profile)
-        self.assertTrue(all(role.model_profile != "documentation" for role in unrelated_roles))
+        self.assertEqual(
+            {
+                "dev-artifact-reviewer",
+                "dev-documentation-writer",
+                "wiki-architect",
+                "wiki-ingester",
+                "wiki-researcher",
+                "wiki-source-collector",
+                "wiki-writer",
+            },
+            {
+                role.name
+                for role in roles
+                if role.model_profile == "documentation"
+            },
+        )
 
         expected_profiles = {
             "codex": {
                 "simple": ("gpt-5.6-luna", "medium"),
                 "default": ("gpt-5.6-terra", "medium"),
-                "documentation": ("gpt-5.6-sol", "high"),
+                "documentation": ("gpt-5.5", "medium"),
                 "advanced": ("gpt-5.6-sol", "high"),
                 "advanced-long": ("gpt-5.6-sol", "high"),
                 "intermediate": ("gpt-5.6-luna", "high"),
@@ -8695,8 +8713,8 @@ class BundleContentTests(unittest.TestCase):
             profiles_by_adapter["codex"],
             known_role_names=tuple(role.name for role in roles),
         )
-        self.assertIn('model = "gpt-5.6-sol"', codex_text)
-        self.assertIn('model_reasoning_effort = "high"', codex_text)
+        self.assertIn('model = "gpt-5.5"', codex_text)
+        self.assertIn('model_reasoning_effort = "medium"', codex_text)
 
         claude_frontmatter = yaml.safe_load(
             build_skill_docs.render_claude_agent(
@@ -9169,10 +9187,20 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(agent=role["name"]):
                 self.assertIn(f"| {role['name']} |", agent_section)
 
+        declared_skills = {
+            str(probe["skill"])
+            for probe in load_yaml_object(
+                REPOSITORY_ROOT / "evals" / "skill-probes.yaml"
+            )["probes"]
+        }
         for skill_path in skill_paths:
             skill_name = load_yaml_object_from_frontmatter(skill_path)["name"]
             with self.subTest(skill=skill_name):
-                self.assertIn(f"| {skill_name} | [x] | [x] ", skill_section)
+                declaration = "[x]" if skill_name in declared_skills else "[ ]"
+                self.assertIn(
+                    f"| {skill_name} | [x] | {declaration} ",
+                    skill_section,
+                )
 
 
     def test_readme_points_to_skill_based_setup(self) -> None:

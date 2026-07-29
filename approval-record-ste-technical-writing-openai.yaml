@@ -1,0 +1,5 @@
+basis: explicit-user-direction
+definition_scope: skills/ste-technical-writing/agents/openai.yaml
+provenance:
+  source: user-message
+  reference: thread:019fa9be-0083-7542-973f-af103c0c45a5/message:item-73

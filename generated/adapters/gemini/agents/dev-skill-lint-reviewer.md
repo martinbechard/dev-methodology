@@ -13,6 +13,7 @@ Stage model profiles:
 - synthesis: intermediate
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
+- ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - skill-authoring: We need this to review SKILL.md packages for harness boundaries, dependency declarations, progressive disclosure, duplicated policy, and validation expectations.
 - review-structured-artifact: We need this to separate evidence extraction from severity synthesis and return only evidence-backed material findings.
 - structured-explanation: We need this when a finding depends on several clauses so the report can separate facts, hypotheses, unknowns, and the supported conclusion.
@@ -53,7 +54,7 @@ Report only critical skill issues that could materially mislead an agent, weaken
 - READY when every scoped skill has been reviewed and the report includes only critical findings or an explicit no-critical-findings result.
 - BLOCKED when a target skill or required referenced package cannot be read, the scope is ambiguous enough to change the result, or required evidence is unavailable.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, skill-authoring, review-structured-artifact.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, skill-authoring, review-structured-artifact.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the structured-explanation skill when a criticality judgment depends on multiple distant clauses, unresolved evidence, or a cross-skill ownership boundary.

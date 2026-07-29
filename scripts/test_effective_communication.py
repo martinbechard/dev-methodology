@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
-# AI attribution: Created with AI assistance.
+# AI attribution: Generated with AI assistance.
 # Summary: Verifies the shared communication skill and its generated-agent wiring.
 
 from __future__ import annotations
@@ -94,7 +94,7 @@ class EffectiveCommunicationContractTests(unittest.TestCase):
         schema = yaml.safe_load(ROLE_SCHEMA_PATH.read_text(encoding="utf-8"))
         shared_entries = schema["fixedBehavior"]["sharedSkills"]
         self.assertEqual(
-            ["effective-communication"],
+            ["effective-communication", "ste-technical-writing"],
             [next(iter(entry)) for entry in shared_entries],
         )
 

@@ -20,8 +20,10 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 28 conceptual agents and 125 bundled skills have structural coverage.
-- [x] 28 agents are scenario-declared and 125 skills are probe-declared.
+- [x] 29 conceptual agents and 127 bundled skills have structural coverage.
+- [x] 28 agents are scenario-declared and 126 skills are probe-declared.
+- Agents missing scenario declarations: dev-skill-lint-reviewer.
+- Skills missing probe declarations: backlog-crisis-mode.
 - [x] 64 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
 - 12 cases are fixture-backed and 12 fixtures are structurally executable before harness readiness is considered.
@@ -31,7 +33,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 27 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 1 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 28 agents and 102 skills have pending Model Judge status.
+- 28 agents and 103 skills have pending Model Judge status.
 - 0 agents and 23 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -55,7 +57,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 
 | Agent | Profile | Structural | Scenario-declared | Case-backed scenarios | All scenarios backed | Executable full fixture | Judge calibration | Executed | Judge-passed | Security-contained | Stale-by-digest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| dev-artifact-reviewer | advanced | [x] | [x] dev-artifact-reviewer-boundary, dev-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| dev-artifact-reviewer | documentation | [x] | [x] dev-artifact-reviewer-boundary, dev-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-backlog-coordinator | advanced-long | [x] | [x] dev-backlog-coordinator-boundary, dev-backlog-coordinator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-backlog-steward | default | [x] | [x] dev-backlog-steward-boundary, dev-backlog-steward-happy, dev-backlog-steward-provider-boundary | [x] dev-backlog-steward-boundary, dev-backlog-steward-happy, dev-backlog-steward-provider-boundary | [x] backlog-lifecycle, file-work-item-no-mutation, file-work-item-template-contract, github-work-item-provider, provider-placeholder-matrix | [x] backlog-lifecycle, file-work-item-no-mutation, file-work-item-template-contract, github-work-item-provider, provider-placeholder-matrix | pending | none | none | none | none |
 | dev-backlog-watchdog | simple | [x] | [x] dev-backlog-watchdog-boundary, dev-backlog-watchdog-exit-condition, dev-backlog-watchdog-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
@@ -68,6 +70,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | dev-prompt-reviewer | advanced | [x] | [x] dev-prompt-reviewer-boundary, dev-prompt-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-runtime-diagnostician | advanced | [x] | [x] dev-runtime-diagnostician-boundary, dev-runtime-diagnostician-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-security-reviewer | advanced | [x] | [x] dev-security-reviewer-boundary, dev-security-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| dev-skill-lint-reviewer | intermediate | [x] | [ ] none | [ ] none | [ ] none | [ ] none | missing | none | none | none | none |
 | dev-ux-specialist | default | [x] | [x] dev-ux-specialist-boundary, dev-ux-specialist-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-verifier | advanced | [x] | [x] dev-verifier-boundary, dev-verifier-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | methodology-artifact-reviewer | advanced | [x] | [x] methodology-artifact-reviewer-boundary, methodology-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
@@ -75,14 +78,14 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | project-bootstrapper | advanced-long | [x] | [x] project-bootstrapper-boundary, project-bootstrapper-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | project-configurator | default | [x] | [x] project-configurator-advanced-setup, project-configurator-basic-setup, project-configurator-boundary, project-configurator-conceptual-role-technology-exclusion, project-configurator-dev-coder-provider-dependency-exclusion, project-configurator-documentation-roots, project-configurator-happy, project-configurator-persisted-technology-confirmation | [x] project-configurator-happy | [ ] none | [ ] none | pending | none | none | none | none |
 | project-organiser | default | [x] | [x] project-organiser-boundary, project-organiser-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| wiki-architect | advanced | [x] | [x] wiki-architect-boundary, wiki-architect-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| wiki-architect | documentation | [x] | [x] wiki-architect-boundary, wiki-architect-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | wiki-artifact-reviewer | advanced | [x] | [x] wiki-artifact-reviewer-boundary, wiki-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| wiki-ingester | default | [x] | [x] wiki-ingester-boundary, wiki-ingester-happy | [x] wiki-ingester-happy | [ ] none | [ ] none | pending | none | none | none | none |
+| wiki-ingester | documentation | [x] | [x] wiki-ingester-boundary, wiki-ingester-happy | [x] wiki-ingester-happy | [ ] none | [ ] none | pending | none | none | none | none |
 | wiki-query-responder | default | [x] | [x] wiki-query-responder-boundary, wiki-query-responder-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| wiki-researcher | default | [x] | [x] wiki-researcher-boundary, wiki-researcher-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| wiki-source-collector | simple | [x] | [x] wiki-source-collector-boundary, wiki-source-collector-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| wiki-researcher | documentation | [x] | [x] wiki-researcher-boundary, wiki-researcher-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| wiki-source-collector | documentation | [x] | [x] wiki-source-collector-boundary, wiki-source-collector-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | wiki-topic-verifier | advanced | [x] | [x] wiki-topic-verifier-boundary, wiki-topic-verifier-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| wiki-writer | default | [x] | [x] wiki-writer-boundary, wiki-writer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| wiki-writer | documentation | [x] | [x] wiki-writer-boundary, wiki-writer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 
 ## Bundled Skill Checklist
 
@@ -112,6 +115,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | maintain-methodology-documentation | [x] | [x] probe-maintain-methodology-documentation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | name-methodology-artifacts | [x] | [x] probe-name-methodology-artifacts | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | skill-authoring | [x] | [x] probe-skill-authoring | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| ste-technical-writing | [x] | [x] probe-ste-technical-writing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 
 ### Artifact creation skills
 
@@ -144,6 +148,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | agent-work-merge | [x] | [x] probe-agent-work-merge | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | application-security | [x] | [x] probe-application-security | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | ast-grep | [x] | [x] probe-ast-grep | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| backlog-crisis-mode | [x] | [ ] none | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | missing | none | none | none | none |
 | careful-coding | [x] | [x] probe-careful-coding | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | code-comments | [x] | [x] probe-code-comments | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | code-discovery | [x] | [x] probe-code-discovery | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
@@ -310,8 +315,8 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 
 ## Repository Verification Layers
 
-- [x] Every live skill has exactly one probe declaration.
-- [x] Every live conceptual agent has exactly one scenario declaration with at least one scenario.
+- [ ] Every live skill has exactly one probe declaration. Missing declarations: backlog-crisis-mode.
+- [ ] Every live conceptual agent has exactly one scenario declaration with at least one scenario. Missing declarations: dev-skill-lint-reviewer.
 - [x] Evaluation catalog references, fixture paths, Judge plans, harnesses, workflow links, and sandbox profiles are validated.
 - [x] Codex and Junie are the only supported evaluation harnesses.
 - [x] Executed, Judge-passed, security-contained, calibration, and stale claims are classified independently by the evaluation runner.

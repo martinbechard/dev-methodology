@@ -6,6 +6,9 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -442,19 +445,49 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         ):
             self.coverage()
 
-    def test_every_skill_and_agent_requires_a_declaration(self) -> None:
-        """The current inventories must be exactly represented in probe and scenario catalogs."""
+    def test_missing_declarations_remain_structural_debt(self) -> None:
+        """Missing declarations remain visible without receiving declaration credit."""
         self.catalogs()
 
-        with self.assertRaisesRegex(
-            ValueError, r"Skills missing probe declarations: skill-b"
-        ):
-            self.coverage(skills=("skill-a", "skill-b"))
+        snapshot = self.coverage(
+            skills=("skill-a", "skill-b"),
+            agents=("agent-a", "agent-b"),
+        )
 
+        self.assertEqual(2, snapshot["evidenceStatus"]["structuralSkillCount"])
+        self.assertEqual(1, snapshot["evidenceStatus"]["probeDeclaredSkillCount"])
+        self.assertEqual(2, snapshot["evidenceStatus"]["structuralAgentCount"])
+        self.assertEqual(1, snapshot["evidenceStatus"]["scenarioDeclaredAgentCount"])
+        self.assertEqual(
+            {
+                "skillsMissingProbeDeclarations": ["skill-b"],
+                "agentsMissingScenarioDeclarations": ["agent-b"],
+            },
+            snapshot["declarationDebt"],
+        )
+        self.assertTrue(snapshot["skills"]["skill-b"]["structural"])
+        self.assertFalse(snapshot["skills"]["skill-b"]["probeDeclared"])
+        self.assertEqual([], snapshot["skills"]["skill-b"]["probeIds"])
+        self.assertEqual("missing", snapshot["skills"]["skill-b"]["judgeCalibration"])
+        self.assertTrue(snapshot["agents"]["agent-b"]["structural"])
+        self.assertFalse(snapshot["agents"]["agent-b"]["scenarioDeclared"])
+        self.assertEqual([], snapshot["agents"]["agent-b"]["scenarioIds"])
+        self.assertEqual("missing", snapshot["agents"]["agent-b"]["judgeCalibration"])
+
+    def test_orphan_declarations_still_fail_validation(self) -> None:
+        """A declaration without a live source must remain a catalog error."""
+        self.catalogs(probe_skills=("skill-a", "skill-b"))
         with self.assertRaisesRegex(
-            ValueError, r"Conceptual agents missing scenario declarations: agent-b"
+            ValueError, r"Probe declarations reference unknown skills: skill-b"
         ):
-            self.coverage(agents=("agent-a", "agent-b"))
+            self.coverage(skills=("skill-a",))
+
+        self.catalogs(scenario_agents=("agent-a", "agent-b"))
+        with self.assertRaisesRegex(
+            ValueError,
+            r"Scenario declarations reference unknown conceptual agents: agent-b",
+        ):
+            self.coverage(agents=("agent-a",))
 
     def test_evaluation_harnesses_are_codex_and_junie_only(self) -> None:
         """Catalog declarations cannot silently add an unsupported evaluation harness."""
@@ -1086,6 +1119,80 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         )
         self.assertIn('"model": "test-model"', rendered)
         self.assertNotIn("gpt-", rendered)
+
+
+class RepositoryCoverageCliTests(unittest.TestCase):
+    """Verify the repository CLI reproduces truthful incomplete-catalog output."""
+
+    def test_cli_reproduces_structural_and_declared_totals(self) -> None:
+        """The supported check command must accept and expose declaration debt."""
+        environment = dict(os.environ)
+        environment["PYTHONDONTWRITEBYTECODE"] = "1"
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT_PATH), "--check"],
+            cwd=ROOT,
+            env=environment,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertIn("Agent and skill support checklist is current.", result.stdout)
+
+        checklist = (
+            ROOT / "design" / "agent-skill-test-coverage-checklist.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "29 conceptual agents and 127 bundled skills have structural coverage",
+            checklist,
+        )
+        self.assertIn(
+            "28 agents are scenario-declared and 126 skills are probe-declared",
+            checklist,
+        )
+        self.assertIn(
+            "Agents missing scenario declarations: dev-skill-lint-reviewer",
+            checklist,
+        )
+        self.assertIn(
+            "Skills missing probe declarations: backlog-crisis-mode",
+            checklist,
+        )
+        self.assertIn(
+            "- [ ] Every live skill has exactly one probe declaration. "
+            "Missing declarations: backlog-crisis-mode.",
+            checklist,
+        )
+        self.assertIn(
+            "- [ ] Every live conceptual agent has exactly one scenario declaration "
+            "with at least one scenario. Missing declarations: dev-skill-lint-reviewer.",
+            checklist,
+        )
+        self.assertNotIn(
+            "- [x] Every live skill has exactly one probe declaration.",
+            checklist,
+        )
+        self.assertNotIn(
+            "- [x] Every live conceptual agent has exactly one scenario declaration "
+            "with at least one scenario.",
+            checklist,
+        )
+
+        explorer_text = (
+            ROOT / "design" / "generated" / "agent-skill-explorer-data.js"
+        ).read_text(encoding="utf-8")
+        explorer = json.loads(explorer_text.split(" = ", 1)[1].rstrip(";\n"))
+        self.assertEqual(29, explorer["evidenceStatus"]["structuralAgentCount"])
+        self.assertEqual(127, explorer["evidenceStatus"]["structuralSkillCount"])
+        self.assertEqual(28, explorer["evidenceStatus"]["scenarioDeclaredAgentCount"])
+        self.assertEqual(126, explorer["evidenceStatus"]["probeDeclaredSkillCount"])
+        self.assertEqual(
+            {
+                "agentsMissingScenarioDeclarations": ["dev-skill-lint-reviewer"],
+                "skillsMissingProbeDeclarations": ["backlog-crisis-mode"],
+            },
+            explorer["declarationDebt"],
+        )
 
 
 if __name__ == "__main__":

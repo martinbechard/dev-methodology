@@ -2,6 +2,7 @@
 Model profile: advanced-long -> opus-4.8
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
+- ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - organise-project-files: We need this to ensure any new coordination, backlog, or handoff artifact is placed from live repository guidance before it is delegated or written.
 - structured-design: We need this to divide complex work into bounded responsibilities and dependencies that can be assigned without losing the intended system outcome.
 - structured-explanation: We need this so assignments, decisions, handoffs, and outcomes remain understandable across contributors with separate working contexts.
@@ -26,6 +27,7 @@ description: Coordinates multi-step development work across implementation and w
   enabled resource-coordination evidence.
 skills:
 - effective-communication
+- ste-technical-writing
 - structured-design
 - structured-explanation
 model: opus-4.8
@@ -126,7 +128,7 @@ Coordinate scoped development work through independently owned implementation, f
 - A BLOCKED result with a concrete preventing cause is incomplete until the parent Dev Backlog Coordinator receives the full blocker notification and all triggered resources have a truthful release, handoff, or retained-ownership disposition.
 - Report the status, task breakdown, resolved definition-owned skillsets, assigned agents, enabled resource ownership, work-item delivery references, confirmed defect records, Persistence lifecycle updates, commits, review results, verification results, integration evidence, and remaining questions.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, structured-design, structured-explanation.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, structured-design, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested orchestration creates a new project file or directory.

@@ -1661,6 +1661,20 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: sql}
+  - id: probe-ste-technical-writing
+    skill: ste-technical-writing
+    source: skills/ste-technical-writing/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: artifact-contract
+    activationCondition: An agent writes, rewrites, or reviews technical-document prose.
+    negativeCondition: Ordinary communication, executable code, machine-readable data, exact technical tokens, and verbatim quotations do not receive prose rewriting.
+    expectedBehavior: Preserve source meaning, identifiers, configuration values, conditions, ownership, and normative force while improving technical prose; keep the artifact-specific structure and structured-explanation item model; and do not convert descriptions or unordered rules into procedures.
+    judgePlan: {deterministicChecks: [skill-read-trace, source-link-resolution, artifact-structure, contradiction-scan, readiness-consistency], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-documentation-writer-happy, dev-artifact-reviewer-happy, wiki-ingester-happy, wiki-writer-happy]
+    workflowAssociations: [documentation-methodology, project-setup, wiki-lifecycle]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: sql}
   - id: probe-effective-communication
     skill: effective-communication
     source: skills/effective-communication/SKILL.md

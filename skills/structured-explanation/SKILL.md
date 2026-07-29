@@ -15,6 +15,12 @@ metadata:
 Write structured markdown that explains an answer through nested questions and
 supporting statements.
 
+## Prose Boundary
+
+This skill controls the reasoning item types and their relationships. STE governs the prose inside each item when the explanation is technical-document prose. The ste-technical-writing skill does not replace the item model.
+
+The effective-communication skill controls the surrounding message and handoff. Do not require structured-explanation items in ordinary technical documentation.
+
 ## When To Use
 
 Use this skill when you need to:

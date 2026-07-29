@@ -42,7 +42,7 @@ instructions:
     validation results, completed correction attempts, and the exact unresolved condition.
 agentDependencies:
 - wiki-topic-verifier
-modelProfile: default
+modelProfile: documentation
 examples:
 - purpose: Restructure an overloaded wiki page into granular durable topics while
     preserving navigation, source traceability, and the digest that surfaces the change.

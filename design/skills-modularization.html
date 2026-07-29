@@ -521,6 +521,7 @@
   <section class="section" aria-labelledby="agent-skills-title">
     <h2 id="agent-skills-title">Core Agent Skills</h2>
     <p class="lede">An agent definition may directly reference both required and optional core skills. A required skill has no condition and is selected for every invocation of that agent. An optional skill has a human-readable condition and is selected only when the request and available evidence make it applicable.</p>
+    <p class="lede">The role schema supplies effective-communication and ste-technical-writing to every conceptual agent. Effective communication governs user and agent messages. STE governs technical-document prose only when an agent writes, rewrites, or reviews that prose.</p>
     <p class="lede">Selection does not by itself say whether a harness preloads, dynamically reads, or applies the skill; the <a href="#skill-lifecycle-title">cross-harness lifecycle</a> makes those states explicit.</p>
     <p class="lede">Both kinds of directly referenced skills must be technology-agnostic so the generic agent definition can be reused across programming languages, frameworks, project types, and agentic coding vendors. View their complete definitions in the <a href="agent-and-skill-definitions.html#skills-title">Skill Catalog on the Core Agent and Skills page</a>. The <a href="wiki-skills-and-project-context.html">Wiki Skills And Project Context page</a> explains the operating relationships within the wiki skill family without duplicating that catalog.</p>
     <div class="matrix">
@@ -545,6 +546,40 @@
             <td>A skill entry in the agent definition with a human-readable condition.</td>
             <td>The request and available evidence satisfy the rule; the agent applies judgment rather than matching prompt words.</td>
             <td>Dev Coder uses test-driven-development when behavior can be expressed through executable tests and organise-project-files when it creates a project path. Feature-branch completion loads create-pull-request only when its provider-accurate GitHub publication boundary requires it.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 class="section-subheading">Technical-document composition</h3>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Owner</th>
+            <th>Owned concern</th>
+            <th>Boundary</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag" data-skill-definition="ste-technical-writing">ste-technical-writing</span></td>
+            <td>Clarity and semantic preservation for technical-document prose.</td>
+            <td>It preserves identifiers, values, conditions, ownership, and normative force. It does not define document sections or claim formal ASD-STE100 compliance.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Artifact-specific skill or template</span></td>
+            <td>The artifact structure, required sections, and artifact-specific workflow.</td>
+            <td>STE applies inside the selected structure. It does not convert descriptions or unordered rules into procedures.</td>
+          </tr>
+          <tr>
+            <td><span class="tag" data-skill-definition="structured-explanation">structured-explanation</span></td>
+            <td>QUERY, SUB-QUERY, FACT, HYPOTHESIS, UNKNOWN, and ANSWER relationships.</td>
+            <td>STE governs prose inside the items. It does not replace the item model or require it in ordinary technical documentation.</td>
+          </tr>
+          <tr>
+            <td><span class="tag" data-skill-definition="effective-communication">effective-communication</span></td>
+            <td>The surrounding outcome, evidence, blocker, decision, next action, approval, and handoff.</td>
+            <td>It does not reshape a durable artifact body into a message, procedure, or status report.</td>
           </tr>
         </tbody>
       </table>

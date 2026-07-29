@@ -11,6 +11,7 @@ model: auto
 Model profile: default -> auto
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
+- ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - organise-project-files: We need this when the effective Persistence-selected creation skill adds a repository file or directory whose destination is not already fixed by that skill.
 - structured-explanation: We need this so status, blocked, completion, and handoff records leave enough context for the next person to make a sound decision.
 Request-specific skill conditions:
@@ -83,7 +84,7 @@ Keep ordinary work authoritative in the effective Persistence-selected backend w
 - For a Future Idea capture, report READY only after the minimal file-provider record is durable, operation-specific evidence is recorded, and the result explicitly says the idea is not runnable or approved work.
 - For Future Idea promotion, report READY only after the confirmed commit contains exactly the reciprocal idea and target and unrelated staged state remains intact. Unsafe recovery is always BLOCKED.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, structured-explanation.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the selected persistence operation creates a repository file or directory whose destination is not fixed by its contract.

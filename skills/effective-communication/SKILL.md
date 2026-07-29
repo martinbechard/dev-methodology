@@ -9,6 +9,14 @@ metadata:
 
 Start with the outcome that matters to the recipient.
 
+## Artifact Body Boundary
+
+Use this skill for ordinary user and agent messages. It controls outcomes, evidence, blockers, decisions, next actions, approvals, and handoffs.
+
+When a message contains a durable artifact body, let the artifact-specific writing method control its structure. Let ste-technical-writing control technical prose in that artifact body.
+
+Do not convert descriptive artifact content into instructions, procedures, or status reports. Keep the surrounding message separate from the artifact body.
+
 ## Write Clearly
 
 - Use familiar words.

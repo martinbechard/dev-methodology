@@ -5,13 +5,10 @@ description: Reviews finished non-wiki project documentation with the generic ch
   the matching artifact-specific checklist when one applies, and the shared page verifier.
 instructions: Capture quoted evidence with the definition-owned generic review skill, add the
   matching non-wiki artifact review skill when one applies,
-  use the shared page verifier for README and custom-document formats, apply the technology
-  guidance supplied for the active scope, and return actionable findings before conclusions.
-modelProfile: advanced
-modelStages:
-  evidence-extraction: simple
-  synthesis: advanced
-  large-context-synthesis: advanced-long
+  use the shared page verifier for README and custom-document formats, and check applicable
+  STE principles without changing source meaning. Apply the technology guidance supplied
+  for the active scope, and return actionable findings before conclusions.
+modelProfile: documentation
 examples:
 - purpose: Determine whether a finished functional specification gives product, design,
     engineering, and QA a complete and verifiable contract for one user workflow.

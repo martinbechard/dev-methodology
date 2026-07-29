@@ -33,6 +33,19 @@ When a specific structure or format is indicated, that structure is authoritativ
 
 Examples of format-owned artifacts include design HTML pages, README files, runtime adapter profiles, generated data files, native agent definition files, package metadata, and vendor schema documents.
 
+## STE Review
+
+Apply ste-technical-writing when this skill verifies a README file or custom non-wiki technical document. The artifact-specific method remains the structure authority.
+
+Report semantic changes caused by mechanical STE application. Check for these changes:
+
+- A description changed into an instruction.
+- Unordered information changed into an ordered procedure.
+- An identifier, configuration value, modality, condition, ownership statement, permission, requirement, or prohibition changed.
+- Exact code, commands, paths, schemas, fixed labels, or quotations changed.
+
+Prefer source meaning over a sentence-length or vocabulary target. Do not report formal ASD-STE100 verification or certification.
+
 ## Sentence Review
 
 Review every prose sentence separately. Apply the same review to a table row or list item when it makes a complete claim or gives a complete instruction.

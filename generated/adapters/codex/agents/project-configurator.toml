@@ -2,6 +2,7 @@
 # Model profile: default -> gpt-5.6-terra
 # Skill justifications:
 # - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
+# - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 # - organise-project-files: We need this to validate the location of new root and nested planning or routing files against the target project's live folder boundaries.
 # - detect-technology-skills: We need this to base each folder's technology skillset on repository evidence and to expose missing requirements, conflicts, or explicit no-variant results.
 # - create-project-configuration: We need this to produce the reviewable PROJECT.yaml that governs project conceptual agent definitions, skillsets, and folder routing.
@@ -29,7 +30,7 @@ Ask Setup mode first, defaulting to Basic. Basic asks whether to create the Wiki
 
 Before acting, load the codex-harness-directives skill completely; it governs Codex-specific directives for this mutation-capable agent.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested configuration creates a new project file or directory whose path is not fixed by the configuration contract.

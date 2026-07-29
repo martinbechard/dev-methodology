@@ -35,6 +35,8 @@ The core methodology keeps one shared wiki-compatible page contract and six docu
 
 The shared page contract starts every durable page with Current Understanding, Authoritative Sources, Related Code, Related Tests, Related Backlog Items, Related Wiki Pages, Open Questions, and Maintenance Notes. Specialized documents keep those sections first, then add their own sections.
 
+The shared ste-technical-writing skill governs technical-document prose across conceptual agents. Artifact-specific skills and templates continue to govern document structure. Effective communication governs user and agent messages, while structured explanation governs technical reasoning items. The STE skill preserves exact technical content and source meaning. It does not claim formal ASD-STE100 compliance.
+
 The [Documentation Templates page](design/documentation-templates.html) describes all eight distributed template assets, their creation and review routes, and the project wiki repository and topic-page formats. The [Wiki Skills And Project Context page](design/wiki-skills-and-project-context.html) explains how the eight wiki-related skills turn the LLM-wiki pattern and an OKF-compatible representation into durable, source-governed project context, including the code-aware synchronization specialization.
 
 Normal planned development proceeds top down from accepted functional specifications and architecture through create-high-level-design and review-high-level-design, then through create-module-design and review-module-design, and finally through ordinary implementation agents with the project-routed technology skills. The design skills use PLANNED_DEVELOPMENT mode, account for every applicable requirement, and block downstream work when a critical identity, security, public-response, state-ownership, validation, transaction, asynchronous, or failure-timing contract remains unresolved.
@@ -383,6 +385,7 @@ The documentation methodology skills are:
 - documentation-bootstrap
 - documentation-reverse-engineer
 - documentation-page-verify
+- ste-technical-writing
 - create-project-configuration
 - maintain-methodology-documentation
 - agent-role-authoring

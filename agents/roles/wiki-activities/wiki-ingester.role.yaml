@@ -130,7 +130,7 @@ instructions:
     audit reports an explicit no-change result and does not acquire operational ownership.
 agentDependencies:
 - wiki-topic-verifier
-modelProfile: default
+modelProfile: documentation
 examples:
 - purpose: Turn an approved raw research report into granular durable topic coverage,
     item-level digest entries, and traceable processed-source links.

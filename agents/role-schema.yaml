@@ -38,6 +38,8 @@ fixedBehavior:
   sharedSkills:
     - effective-communication:
         justification: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
+    - ste-technical-writing:
+        justification: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 excludedProperties:
   - hooks
   - target

@@ -2,6 +2,7 @@
 Model profile: advanced-long -> opus-4.8
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
+- ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - structured-explanation: We need this to report capacity, waits, enabled ownership, throughput, and recovery in a compact evidence-backed form.
 - codex-workitem-coordination: We need this as the separate parent process for task identity, capacity, delivery-wait recovery, and terminal cleanup.
 - backlog-crisis-mode: We need this to replace ordinary dispatch with one-task sequential delivery during a declared backlog crisis.
@@ -24,6 +25,7 @@ description: Acts as the parent backlog coordinator across the effective work-it
   over provider lifecycle or per-item delivery.
 skills:
 - effective-communication
+- ste-technical-writing
 - structured-explanation
 model: opus-4.8
 ---
@@ -117,7 +119,7 @@ Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work mov
 - Report BLOCKED with the exact provider identity or explicit task, canonical task id, phase, wait age, blocker owner, preserved commits, attempted remedies, and the one unavailable selection, capability, authority, or decision.
 - Always report the provider lifecycle snapshot or provider-none task state, dispatches, stalled-delivery actions, completed-item cleanup, and fifteen-minute throughput summary.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, structured-explanation.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the codex-workitem-coordination skill when Codex user-visible tasks coordinate multiple work items.
