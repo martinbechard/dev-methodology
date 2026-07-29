@@ -1,6 +1,6 @@
 # Defer verifier orchestration to conceptual roles and resolve writer helper commands
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,9 +10,20 @@ Provider Reference: backlog/defect-backlog/project-wiki-topic-write-role-owned-v
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Root Dev Orchestrator
 
-Current Phase: Starting / approved Wiki Writer interruption resumption.
+Current Phase: Exact role approval record/preflight then bounded correction.
+
+## Wiki Writer Running Acceptance
+
+- Transition: Starting -> Running.
+- Owner: Root Dev Orchestrator.
+- Canonical Runtime Thread and Root Agent Task: 019faa19-0275-7210-aaf6-45931b8079ab.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Scope and Exclusions: agents/roles/wiki-activities/wiki-writer.role.yaml only; no other role, skill, metadata, or direct generated edit.
+- Evidence: Preserve a7fa91d9605fb2ad3450e5438ee78237e8785068, a387cd86, verifier PASS, reviewer NEEDS_CORRECTION, and ordinary harness attempted-write/read-only enforcement or narrowed claim.
+- Approval Gate: No source, test, or generated mutation may occur before Running and the exact role approval record plus supported preflight returns ALLOWED.
+- Claim Evidence: running-wiki-writer-interruption-019faa19, event 925a5f6a-b8a9-4a27-82ec-22e7f5f55526.
 
 ## Wiki Writer Starting Reservation
 
