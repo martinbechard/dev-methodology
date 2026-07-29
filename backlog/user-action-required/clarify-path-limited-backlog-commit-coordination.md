@@ -1,16 +1,40 @@
 # Clarify path-limited backlog commit coordination
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
-Owner: Root Dev Orchestrator for canonical task 019fab2d-d9ac-7a82-8107-04260716d4d0
+Owner: Root Dev Orchestrator for canonical task 019fab2d-d9ac-7a82-8107-04260716d4d0, paused pending user approval
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/clarify-path-limited-backlog-commit-coordination.md
+Provider Reference: backlog/user-action-required/clarify-path-limited-backlog-commit-coordination.md
 
 Completion: direct-main
+
+## User Action Required
+
+Question: Do you explicitly approve changing exactly these governed skill definitions—skills/agent-claim/SKILL.md, skills/create-file-work-item/SKILL.md, and skills/manage-file-work-items/SKILL.md—to require exact canonical provider-path manifests and path-limited file-provider Git mutations that preserve unrelated primary-worktree state?
+
+Why User Owns This: These three SKILL.md files are governed definitions. Work-item creation and repair authority do not approve a definition mutation.
+
+Governed Scope for Presentation Only:
+
+- skills/agent-claim/SKILL.md
+- skills/create-file-work-item/SKILL.md
+- skills/manage-file-work-items/SKILL.md
+
+Explicitly Excluded: skills/codex-workitem-coordination/SKILL.md. Read-only evidence found no conflict, so it is outside the proposed definition scope.
+
+Illustrative Example: Before, “archive the MySQL item” can lead a Steward or Git command to infer paths or commit unrelated staged entries. After, the assignment, claim, git add -- source destination, path-limited commit, immutable changed-path proof, and provider references all name and match the exact source and destination while unrelated index and worktree state remain unchanged.
+
+Options:
+
+- Approve: Record exact user-message provenance, run three exact supported preflights, and implement only these definitions plus ordinary focused tests, documentation, and supported skill mirrors.
+- Defer: Preserve this item, branch, worktree, and evidence in User Action Required without mutation. Do not use Holding unless the provider contract requires it for a non-user wait.
+- Decline: End the proposed definition change without source mutation.
+
+Unattended Work Boundary: After this User Action Required record is durable, do not mutate definitions, tests, documentation, mirrors, candidates, reviews, integrations, or delivery. Resume only after explicit approval, the same-task User Action Required to Ready to Starting to Running sequence, and all three preflights return ALLOWED.
 
 ## Dispatch Reservation
 
