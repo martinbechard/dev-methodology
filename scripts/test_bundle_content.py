@@ -4044,16 +4044,16 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("completed review checklist", skill_text)
                 self.assertIn("Question:", checklist_text)
                 self.assertIn("Status:", checklist_text)
-                if skill_name in (
-                    "review-architecture",
-                    "review-functional-spec",
-                    "review-high-level-design",
-                ):
-                    self.assertIn("Evidence type:", checklist_text)
-                    self.assertIn("Evidence source:", checklist_text)
-                    self.assertIn("Evidence:", checklist_text)
-                else:
-                    self.assertIn("Quoted evidence:", checklist_text)
+                legacy_evidence = "Quoted evidence:" in checklist_text
+                typed_evidence = all(
+                    field in checklist_text
+                    for field in (
+                        "Evidence type:",
+                        "Evidence source:",
+                        "Evidence:",
+                    )
+                )
+                self.assertTrue(legacy_evidence or typed_evidence)
                 self.assertIn("Assessment:", checklist_text)
                 self.assertIn("?", checklist_text)
 
@@ -4108,6 +4108,38 @@ class BundleContentTests(unittest.TestCase):
                             self.assertIn(phrase, text)
 
             self.assertNotIn("- Quoted evidence:", checklist_text)
+
+    def test_review_unit_test_plan_uses_shared_typed_evidence_contract(self) -> None:
+        skill_text = (
+            SKILLS_ROOT / "review-unit-test-plan" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        checklist_text = (
+            SKILLS_ROOT
+            / "review-unit-test-plan"
+            / "references"
+            / "review-checklist-unit-test-plan.md"
+        ).read_text(encoding="utf-8")
+
+        for field in (
+            "Status:",
+            "Question:",
+            "Evidence type:",
+            "Evidence source:",
+            "Evidence:",
+            "Assessment:",
+        ):
+            with self.subTest(field=field):
+                self.assertIn(field, checklist_text)
+
+        self.assertNotIn("- Quoted evidence:", checklist_text)
+        self.assertIn("source conflict or required text is absent", checklist_text)
+        self.assertIn("assessment or summary", checklist_text)
+        self.assertIn("not applicable with a reason", checklist_text)
+        self.assertIn("Every exact quotation must occur in the named source", checklist_text)
+        self.assertIn("summary for paraphrased source meaning", skill_text)
+        self.assertIn("assessment for a derived finding", skill_text)
+        self.assertIn("not applicable with a reason", skill_text)
+        self.assertIn("Resolve every exact quotation", skill_text)
 
     def test_hld_and_module_reviews_enforce_adequacy_and_security_contracts(self) -> None:
         cases = {
