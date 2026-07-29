@@ -1,22 +1,24 @@
 # Defer verifier orchestration to conceptual roles and resolve writer helper commands
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/project-wiki-topic-write-role-owned-verification.md
+Provider Reference: backlog/defect-backlog/project-wiki-topic-write-role-owned-verification.md
 
 Completion: direct-main
 
 Owner: Unowned
 
-Current Phase: Waiting for User / metadata approval.
+Current Phase: Ready / approved metadata resumption.
 
 ## User Action Required
 
 Question: Do you approve changing only skills/project-wiki-topic-write/agents/openai.yaml to align its Codex summary and default prompt with the already-approved role-owned verification handoff, remove skill-owned retry and terminal BLOCKED instructions, and keep direct invocation consistent with skills/project-wiki-topic-write/SKILL.md?
+
+Resolution: On 2026-07-28, the user answered `I approve` in the canonical-task message provenance: Parent Dev Backlog Coordinator task 019fa9bb-1423-7e80-bcde-3caa765e3758. Approval applies only to skills/project-wiki-topic-write/agents/openai.yaml for the stated role-owned handoff, retry/terminal-BLOCKED removal, and consistent direct invocation.
 
 Decision Brief:
 
@@ -88,7 +90,7 @@ Runtime Thread: 019faa19-0275-7210-aaf6-45931b8079ab
 
 Root Agent Task: 019faa19-0275-7210-aaf6-45931b8079ab
 
-Next Lifecycle Owner: User
+Next Lifecycle Owner: Parent Dev Backlog Coordinator
 
 ## Running Acceptance
 
