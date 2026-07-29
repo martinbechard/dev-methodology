@@ -1,12 +1,12 @@
 # Centralize active-capacity and conversation-title coordination policy
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/centralize-active-capacity-and-conversation-title-coordination-policy.md
+Provider Reference: backlog/user-action-required/centralize-active-capacity-and-conversation-title-coordination-policy.md
 
 Completion: direct-main
 
@@ -32,9 +32,51 @@ Delivery Worktree: /Users/martinbechard/.codex/worktrees/c82a/dev-methodology
 
 Next Lifecycle Owner: Root Dev Orchestrator 019fab2d-b796-7ff0-b7fd-8438b335e4af
 
-Phase: Lifecycle acceptance complete; implementation has not started
+Phase: Awaiting explicit scope-specific user approval
 
 Started At: 2026-07-29T00:20:59.422474Z
+
+## User Action Required
+
+Question: “Do you explicitly approve changing the six governed definitions listed below, limited to centralizing the active-execution, capacity, runtime-reconciliation, and portable conversation-title contract described in this work item, with only supported same-category generated mirrors and ordinary documentation/tests updated as companions?”
+
+Why User Input Is Required: Root AGENTS.md and PROJECT.yaml require explicit scope-specific user approval for every governed definition. Backlog creation and repair authority are insufficient.
+
+### Exact Governed Scope
+
+1. skills/codex-workitem-coordination/SKILL.md
+2. skills/manage-file-work-items/SKILL.md
+3. agents/roles/dev-activities/dev-backlog-coordinator.role.yaml
+4. agents/roles/dev-activities/dev-backlog-steward.role.yaml
+5. agents/roles/dev-activities/dev-orchestrator.role.yaml
+6. agents/roles/dev-activities/dev-backlog-watchdog.role.yaml
+
+### Illustrative Before And After
+
+Before, a provider may remain Starting while its canonical conversation is idle and still inflate active capacity, and its display title may remain “Waiting for Claim” after the claim is gone. After, Starting occupies capacity only during a bounded live launch handshake; otherwise it returns to Ready, and the Steward renames the canonical conversation after the committed lifecycle transition or verifies an exact rename handoff when it lacks UI authority.
+
+### Options And Consequences
+
+- Approve: permits exact approval records, one supported preflight per governed path, the narrow implementation, supported same-category regeneration, ordinary README/design/tests, independent review, and delivery.
+- Defer: preserves this item and its evidence in User Action Required without any definition, mirror, companion, or candidate mutation.
+- Decline: ends this requested governed-definition change. The earlier work-item creation authorization is not reframed as definition approval.
+
+### Exclusions
+
+No other skill, agent, or metadata definition is in scope. Generated mirrors must not be hand-edited. No skill-to-skill loading is permitted.
+
+Unattended Work Boundary: Stop all definition, mirror, companion implementation, test, documentation, candidate, review, integration, and delivery work until the answer is durably recorded and the same canonical task resumes User Action Required -> Ready -> Starting -> Running with all six exact preflights ALLOWED.
+
+## User Action Required Transition
+
+- Transition: Running -> User Action Required.
+- Canonical Work-Item Thread: 019fab2d-b796-7ff0-b7fd-8438b335e4af.
+- Canonical Root Agent Task Id: 019fab2d-b796-7ff0-b7fd-8438b335e4af.
+- Owner: Root Dev Orchestrator 019fab2d-b796-7ff0-b7fd-8438b335e4af; canonical Thread preserved for the answer and resumption.
+- Delivery Branch: codex/centralize-active-capacity-conversation-title-019fab2d.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/c82a/dev-methodology.
+- Running Evidence Preserved: provider-only acceptance commit 24af5ac10ea909a0d5709a85b02742be894c79d9; claim acquired event 1157cbfa-2b2d-41e2-a9e3-85638816b958; claim released event 3cdde1d7-2c99-4514-a370-353c40f54910.
+- Lifecycle Claim Evidence: running-uar-centralize-capacity-recovery-019fab2d; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 9c9bfd66-fef7-4414-9ad5-9baed91a94f9; claimed 2026-07-29T00:34:12.203006Z.
 
 ## Starting Reservation
 
