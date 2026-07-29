@@ -1,20 +1,38 @@
 # Incorporate the Document Topic Editor and Topic Skills
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
-Owner: Unowned pending the recorded user decision
+Owner: Unowned
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/incorporate-document-topic-agent-and-skills.md
+Provider Reference: backlog/feature-backlog/document-topic-revision/incorporate-document-topic-agent-and-skills.md
 
 Completion: direct-main
 
 Series: backlog/feature-backlog/document-topic-revision/index.md
 
-## Dispatch Reservation
+## Resumption Record
+
+Transition: User Action Required -> Ready.
+
+Recorded At: 2026-07-29T02:42:17Z.
+
+Direct User Direction and Provenance: In the parent coordination thread on 2026-07-29, the user said: “If something OTHER than what I asked is needed, THEN we need more approval. Cleanup the workitem then get to it.”
+
+Resolution: The existing work item authorizes mutation of exactly these governed definitions: skills/analyze-document-topics/SKILL.md; skills/revise-document-topics/SKILL.md; skills/analyze-document-topics/agents/openai.yaml; skills/revise-document-topics/agents/openai.yaml; and agents/roles/dev-activities/dev-document-topic-editor.role.yaml.
+
+Artifact Policy: Caller-requested only; do not retain a durable before-and-after topic-analysis artifact unless the caller requests it.
+
+Approval Boundary: Any additional skill, agent, metadata, schema, or other governed definition outside the exact five-path manifest requires new explicit, scope-specific user approval before mutation.
+
+Superseded Clarification: The prior User Action Required gate incorrectly stated that work-item authorization did not authorize the requested five definitions. It is retained below as history only. This direct user direction supersedes that assertion.
+
+Required Next Lifecycle Transition: The parent Dev Backlog Coordinator may reserve this same canonical task through Ready -> Starting. The canonical task's root Dev Orchestrator must then record Starting -> Running before any preflight, definition, source, generated, test, or other repository mutation.
+
+## Preserved Dispatch Reservation History
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -40,7 +58,7 @@ Dependencies Observed: None.
 
 Required Next Lifecycle Transition: The same canonical task's root Dev Orchestrator must record Starting to Running before governed-scope discovery, definition approval, or implementation mutation.
 
-## Running Evidence
+## Preserved Running Evidence
 
 Transition: Starting -> Running.
 
@@ -62,11 +80,11 @@ Starting Reservation Commit: 2afc03e64d8ed45053900e8ae1e12a1055d8e6f4.
 
 Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim starting-running-019fab9e-44bf-7571-9fbb-d9d63d3fa9da; incarnation 687e34f1-ab98-4b88-8625-6144c6985975; claim journal event 15b4f135-6274-42d0-822b-cb89d25c4968; exact path backlog/feature-backlog/document-topic-revision/incorporate-document-topic-agent-and-skills.md in the primary main checkout.
 
-## User Action Required
+## Superseded User Action Required Clarification
 
 Question: Do you explicitly approve creating exactly the five governed definitions listed above for the read-only analyze-document-topics skill, the separately authorized revise-document-topics skill, and the conceptual Document Topic Editor—and, for each revision, should the durable before-and-after topic-analysis artifact be recorded by default or only when the caller requests it?
 
-Why User Approval Is Required: All five exact paths are separately governed definitions. Backlog creation and dispatch were not approval.
+Why User Approval Was Requested: The prior provider record treated backlog creation and dispatch as insufficient approval. The later direct user direction recorded in Resumption Record supersedes that conclusion for the exact five-path manifest only.
 
 Options and Consequences:
 
@@ -91,7 +109,7 @@ Concrete Example: Analysis of design/agentic-configuration.html may report a low
 
 Exclusions: No other agent, skill, or metadata definition; no hand-edited generated mirror; no cross-family regeneration; and no document-revision child work.
 
-Unattended Work Boundary: After this provider move, stop all definition, source, test, evaluation, documentation, generated, candidate, review, integration, and delivery work until the exact answer is recorded, this same task resumes through User Action Required -> Ready -> Starting -> Running, and all five exact supported preflights return ALLOWED.
+Historical Unattended Work Boundary: The prior hold stopped delivery pending an answer. The answer is now recorded above; work remains stopped until this same task is separately reserved through Ready -> Starting and accepted through Starting -> Running.
 
 Preserved Execution and Scope Evidence: Running acceptance commit 83bdaba2ebb3fea8c776d4be619186380881abb0; canonical task and Thread 019fab9e-44bf-7571-9fbb-d9d63d3fa9da; branch codex/incorporate-document-topic-agent-and-skills-019fab9e; worktree /Users/martinbechard/.codex/worktrees/350a/dev-methodology; clean no-candidate state; migration sources .agents/skills/create-document-outline/SKILL.md and .agents/skills/improve-document-outline/SKILL.md; supported regeneration surfaces, evaluation/test/documentation companions, and semantic documentation model-profile evidence remain preserved for later authorized work.
 
@@ -151,4 +169,4 @@ None.
 
 ## Notes
 
-Anticipated governed canonical sources are skills/analyze-document-topics/SKILL.md, skills/revise-document-topics/SKILL.md, skills/analyze-document-topics/agents/openai.yaml, skills/revise-document-topics/agents/openai.yaml, and agents/roles/dev-activities/dev-document-topic-editor.role.yaml. This work item authorizes backlog capture and later implementation dispatch; it does not authorize mutation of those definitions. Implementation must record exact user approval and pass one supported pre-mutation check for each governed path.
+Authorized governed canonical sources are skills/analyze-document-topics/SKILL.md, skills/revise-document-topics/SKILL.md, skills/analyze-document-topics/agents/openai.yaml, skills/revise-document-topics/agents/openai.yaml, and agents/roles/dev-activities/dev-document-topic-editor.role.yaml. The direct user direction recorded in Resumption Record authorizes only those requested definitions. Implementation must record that approval and pass one supported pre-mutation check for each governed path. Any definition outside this exact manifest needs new explicit approval.
