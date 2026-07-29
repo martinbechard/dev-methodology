@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Core Agent and Skills</title>
+  <title>Conceptual Agent and Skill Definitions</title>
   <style>
     :root {
       --color-ink: #18212f;
@@ -61,7 +61,8 @@
 
     h1,
     h2,
-    h3 {
+    h3,
+    h4 {
       margin: 0;
       line-height: 1.15;
       letter-spacing: 0;
@@ -78,6 +79,10 @@
     }
 
     h3 {
+      font-size: 1rem;
+    }
+
+    h4 {
       font-size: 1rem;
     }
 
@@ -283,6 +288,16 @@
     .tag.technology-skill {
       background: var(--color-soft-cyan);
       color: var(--color-technology-skill);
+    }
+
+    .tag.model-profile {
+      background: var(--color-soft-green);
+      color: var(--color-router);
+    }
+
+    .tag.mutation-policy {
+      background: var(--color-soft-rose);
+      color: var(--color-evidence);
     }
 
     .tag.output {
@@ -633,17 +648,34 @@
   </nav>
 
   <section class="hero" aria-labelledby="page-title">
-    <h1 id="page-title">Core Agent and Skills</h1>
-    <p class="callout">A conceptual agent definition declares required and conditional technology-agnostic core skills. The role schema adds effective-communication and ste-technical-writing to every conceptual agent. Initial generation defaults these skills to by-reference delivery. PROJECT.yaml separately records installed core delivery, Persistence, Commit, and user-confirmed folder technologies. AGENTS.md supplies the folder technology references.</p>
-    <p class="callout">Effective communication governs ordinary user and agent messages. STE applies only when an agent writes, rewrites, or reviews technical-document prose. Artifact-specific methods still govern document structure, and structured-explanation still governs its reasoning item model.</p>
-    <p class="callout">Dev Coder receives normalized work and persistence evidence through orchestration. It does not depend directly on provider-specific create or manage skills.</p>
+    <h1 id="page-title">Conceptual Agent and Skill Definitions</h1>
     <p class="lede">
-      This page owns conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. The interactive diagram and the cards deliberately present the same definition-to-skill relationships in two generated views; no hand-authored routing policy lives here.
+      This page owns the generated catalog presentation for source-derived conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. The interactive diagram and the cards deliberately present the same definition-to-skill relationships in two generated views. The separate delivery responsibilities section explains hand-authored workflow policy without redefining generated agents or skills.
     </p>
   </section>
 
-  <section class="section" aria-labelledby="hierarchy-title">
-    <h2 id="hierarchy-title">Interactive Agent And Skill Map</h2>
+  <section class="section" aria-labelledby="definition-scope-title">
+    <h2 id="definition-scope-title">Conceptual Definition Scope</h2>
+    <p class="callout">A conceptual agent definition declares required and conditional technology-agnostic core skills. The role schema adds effective-communication and ste-technical-writing to every conceptual agent. Initial generation defaults these skills to by-reference delivery.</p>
+    <p class="callout">Effective communication governs ordinary user and agent messages. STE applies only when an agent writes, rewrites, or reviews technical-document prose. Artifact-specific methods still govern document structure, and structured-explanation still governs its reasoning item model.</p>
+  </section>
+
+  <section class="section" aria-labelledby="agent-definitions-title">
+    <h2 id="agent-definitions-title">Conceptual Agent Definitions</h2>
+    <p>Each generated card presents an agent's description, assigned skills, output contracts, model profile, and repository mutation policy. Use <strong>View</strong> for the complete generated definition, including responsibilities, conditions, examples, and source YAML.</p>
+    <div id="agent-catalog"></div>
+  </section>
+
+  <section class="section" aria-labelledby="skills-title">
+    <h2 id="skills-title">Skill Definitions</h2>
+    <h3>Generated Skill Catalog</h3>
+    <p>Each generated category groups the portable skill definitions assigned to it by source metadata. Select a skill name to inspect its category, source path, description, and complete definition.</p>
+    <div class="wide-grid" id="skill-catalog"></div>
+  </section>
+
+  <section class="section" aria-labelledby="relationships-title">
+    <h2 id="relationships-title">Agent-Skill Relationships</h2>
+    <h3 id="hierarchy-title">Interactive Agent And Skill Map</h3>
     <p class="note">
       This diagram uses color to distinguish agent-to-skill assignments from agent-to-agent dependencies. Amber lines show skills an agent always uses, while violet lines show skills selected when an applicable rule matches. Blue arrows show direct dependencies between agents. Blue skill cards have a separate meaning: they identify technology skills selected during project setup. <a href="skills-modularization.html">Agent Skill Architecture</a> explains these skill-assignment conventions.
     </p>
@@ -654,10 +686,18 @@
     </object>
   </section>
 
-  <div id="agent-catalog"></div>
+  <section class="section" aria-labelledby="project-bindings-title">
+    <h2 id="project-bindings-title">Project-Selected Delivery and Technology Bindings</h2>
+    <p>PROJECT.yaml records installed core delivery, Persistence, Commit, and user-confirmed folder technologies. AGENTS.md supplies the applicable folder technology references.</p>
+  </section>
 
-  <section class="section" aria-labelledby="skills-title">
-    <h2 id="skills-title">Skill Catalog</h2>
+  <section class="section" aria-labelledby="provider-independence-title">
+    <h2 id="provider-independence-title">Provider-Independent Dev Coder Inputs</h2>
+    <p>Dev Coder receives normalized work and persistence evidence through orchestration. It does not depend directly on provider-specific create or manage skills.</p>
+  </section>
+
+  <section class="section" aria-labelledby="delivery-responsibilities-title">
+    <h2 id="delivery-responsibilities-title">Work-Item Delivery Responsibilities</h2>
     <h3>Delivery Workflow</h3>
     <p>Candidate creation and terminal delivery are separate responsibilities:</p>
     <ol>
@@ -691,7 +731,6 @@
       <li>The coordinator preserves capacity, retry, watchdog, identity, and cleanup semantics without copying provider or completion procedures.</li>
       <li>The <a href="orchestrated-development-lifecycle.html">orchestrated development lifecycle</a> owns the communication flows.</li>
     </ul>
-    <div class="wide-grid" id="skill-catalog"></div>
   </section>
 
 </main>
@@ -742,7 +781,7 @@
       const headingRow = document.createElement("div");
       headingRow.className = "agent-card__heading";
 
-      const heading = document.createElement("h3");
+      const heading = document.createElement("h4");
       heading.textContent = role.displayName;
       headingRow.appendChild(heading);
 
@@ -770,6 +809,16 @@
           : "skill",
       ));
       details.appendChild(createTagGroup("Outputs", role.outputs, "output"));
+      details.appendChild(createTagGroup(
+        "Model profile",
+        [role.modelProfile],
+        "model-profile",
+      ));
+      details.appendChild(createTagGroup(
+        "Repository mutation",
+        [role.repositoryMutation],
+        "mutation-policy",
+      ));
       card.appendChild(details);
       return card;
     }
@@ -784,7 +833,7 @@
         section.className = "section";
         section.setAttribute("aria-labelledby", `${group.id}-title`);
 
-        const heading = document.createElement("h2");
+        const heading = document.createElement("h3");
         heading.id = `${group.id}-title`;
         heading.textContent = `Agents for ${group.label}`;
         section.appendChild(heading);
@@ -826,7 +875,7 @@
         const panel = document.createElement("article");
         panel.className = "panel";
 
-        const heading = document.createElement("h3");
+        const heading = document.createElement("h4");
         heading.textContent = category.label;
         panel.appendChild(heading);
 

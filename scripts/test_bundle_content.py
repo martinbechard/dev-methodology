@@ -530,10 +530,20 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "grid-template-columns: repeat(3, minmax(0, 1fr));",
     "Skills",
     "Outputs",
+    "Model profile",
+    "Repository mutation",
+    "[role.modelProfile]",
+    "[role.repositoryMutation]",
+    'document.createElement("h4")',
     ".tag.output",
     ".tag.conditional-skill",
     ".tag.technology-skill",
+    ".tag.model-profile",
+    ".tag.mutation-policy",
     "technology-skill-detection-registry.js",
+    "Conceptual Agent Definitions",
+    "Skill Definitions",
+    "Agent-Skill Relationships",
     "Interactive Agent And Skill Map",
     'class="hierarchy-embed"',
     "Open the interactive SVG diagram",
@@ -682,9 +692,15 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
 )
 DOCUMENT_INFORMATION_OWNERS = {
     "agent-and-skill-definitions.html": (
-        "Core Agent and Skills",
+        "Conceptual Agent and Skill Definitions",
+        "Conceptual Definition Scope",
+        "Conceptual Agent Definitions",
+        "Skill Definitions",
+        "Agent-Skill Relationships",
         "Interactive Agent And Skill Map",
-        "Skill Catalog",
+        "Project-Selected Delivery and Technology Bindings",
+        "Provider-Independent Dev Coder Inputs",
+        "Work-Item Delivery Responsibilities",
     ),
     "agentic-configuration.html": (
         "Knowledge Structure",
@@ -9907,12 +9923,14 @@ class BundleContentTests(unittest.TestCase):
         }
         self.assertEqual({}, duplicates)
 
-    def test_agent_and_skill_catalog_exposes_multi_item_rules_as_lists(self) -> None:
+    def test_work_item_delivery_responsibilities_expose_multi_item_rules_as_lists(
+        self,
+    ) -> None:
         page_text = (
             REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.html"
         ).read_text(encoding="utf-8")
-        skill_catalog = page_text.split(
-            '<section class="section" aria-labelledby="skills-title">',
+        delivery_responsibilities = page_text.split(
+            '<section class="section" aria-labelledby="delivery-responsibilities-title">',
             maxsplit=1,
         )[1].split("</section>", maxsplit=1)[0]
 
@@ -10044,10 +10062,10 @@ class BundleContentTests(unittest.TestCase):
                 self.assertLess(
                     len(paragraph.split()),
                     80,
-                    msg=f"Skill Catalog paragraph should be split into a list: {paragraph}",
+                    msg=f"Delivery responsibilities paragraph should be split into a list: {paragraph}",
                 )
 
-        assert_catalog_structure(skill_catalog)
+        assert_catalog_structure(delivery_responsibilities)
 
         def empty_expected_lists(match: re.Match[str]) -> str:
             tag = match.group(1)
@@ -10056,7 +10074,7 @@ class BundleContentTests(unittest.TestCase):
         empty_container_mutant = re.sub(
             r"<(ol|ul)>(.*?)</\1>",
             empty_expected_lists,
-            skill_catalog,
+            delivery_responsibilities,
             flags=re.DOTALL,
         )
         with self.subTest(mutant="empty expected list containers"):
@@ -10070,7 +10088,7 @@ class BundleContentTests(unittest.TestCase):
         unordered_coordination_item = (
             "<li>Provider none has no durable queue or capacity target.</li>"
         )
-        swapped_list_mutant = skill_catalog.replace(
+        swapped_list_mutant = delivery_responsibilities.replace(
             ordered_coordination_item,
             "__ORDERED_COORDINATION_ITEM__",
             1,
@@ -10094,7 +10112,7 @@ class BundleContentTests(unittest.TestCase):
         last_delivery_item = (
             "<li>Persistence closure begins only after Commit returns READY.</li>"
         )
-        reordered_delivery_mutant = skill_catalog.replace(
+        reordered_delivery_mutant = delivery_responsibilities.replace(
             first_delivery_item,
             "__FIRST_DELIVERY_ITEM__",
             1,
@@ -10111,7 +10129,7 @@ class BundleContentTests(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 assert_catalog_structure(reordered_delivery_mutant)
 
-        missing_commit_clause_mutant = skill_catalog.replace(
+        missing_commit_clause_mutant = delivery_responsibilities.replace(
             "<li>Dev Orchestrator obtains fresh independent review and source verification, combines accepted candidates when needed, then applies or resumes the effective Commit-selected skill referenced by applicable AGENTS.md guidance.</li>",
             "<li>Dev Orchestrator obtains fresh independent review and source verification.</li>",
             1,
@@ -10120,7 +10138,7 @@ class BundleContentTests(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 assert_catalog_structure(missing_commit_clause_mutant)
 
-        paragraph_to_item_mutant = skill_catalog
+        paragraph_to_item_mutant = delivery_responsibilities
         paragraph_moves = (
             (
                 "<p>Candidate creation and terminal delivery are separate responsibilities:</p>",
@@ -10156,6 +10174,65 @@ class BundleContentTests(unittest.TestCase):
         with self.subTest(mutant="intended paragraphs moved into list items"):
             with self.assertRaises(AssertionError):
                 assert_catalog_structure(paragraph_to_item_mutant)
+
+    def test_agent_and_skill_definition_page_preserves_topic_hierarchy(self) -> None:
+        page_text = (
+            REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.html"
+        ).read_text(encoding="utf-8")
+        self.assertEqual(
+            [
+                ("definition-scope-title", "Conceptual Definition Scope"),
+                ("agent-definitions-title", "Conceptual Agent Definitions"),
+                ("skills-title", "Skill Definitions"),
+                ("relationships-title", "Agent-Skill Relationships"),
+                (
+                    "project-bindings-title",
+                    "Project-Selected Delivery and Technology Bindings",
+                ),
+                (
+                    "provider-independence-title",
+                    "Provider-Independent Dev Coder Inputs",
+                ),
+                (
+                    "delivery-responsibilities-title",
+                    "Work-Item Delivery Responsibilities",
+                ),
+            ],
+            re.findall(r'<h2 id="([^"]+)">([^<]+)</h2>', page_text),
+        )
+
+        agent_section = page_text.split(
+            '<section class="section" aria-labelledby="agent-definitions-title">',
+            maxsplit=1,
+        )[1].split("</section>", maxsplit=1)[0]
+        self.assertIn('<div id="agent-catalog"></div>', agent_section)
+
+        skill_section = page_text.split(
+            '<section class="section" aria-labelledby="skills-title">',
+            maxsplit=1,
+        )[1].split("</section>", maxsplit=1)[0]
+        self.assertLess(
+            skill_section.index("<h3>Generated Skill Catalog</h3>"),
+            skill_section.index('<div class="wide-grid" id="skill-catalog"></div>'),
+        )
+
+        role_card_renderer = page_text.split(
+            "function createRoleCard(role) {",
+            maxsplit=1,
+        )[1].split("function renderRoleCatalog()", maxsplit=1)[0]
+        self.assertIn('document.createElement("h4")', role_card_renderer)
+
+        role_catalog_renderer = page_text.split(
+            "function renderRoleCatalog() {",
+            maxsplit=1,
+        )[1].split("function renderSkillCatalog()", maxsplit=1)[0]
+        self.assertIn('document.createElement("h3")', role_catalog_renderer)
+
+        category_renderer = page_text.split(
+            "const createCategoryPanel = (category) => {",
+            maxsplit=1,
+        )[1].split("skillData.categories.forEach", maxsplit=1)[0]
+        self.assertIn('document.createElement("h4")', category_renderer)
 
     def test_agent_role_map_separates_lifecycle_categories(self) -> None:
         role_map_text = (

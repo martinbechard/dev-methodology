@@ -345,10 +345,10 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertNotIn('data-role-group="backlog-management"', role_map)
 
     def test_map_legend_stays_with_the_map_without_a_category_summary(self) -> None:
-        """The edge legend belongs to the diagram instead of a standalone section."""
+        """The edge legend belongs to the agent-skill relationship section."""
         role_map = ROLE_MAP_PATH.read_text(encoding="utf-8")
         hierarchy_section = role_map.split(
-            '<section class="section" aria-labelledby="hierarchy-title">', 1
+            '<section class="section" aria-labelledby="relationships-title">', 1
         )[1].split("</section>", 1)[0]
 
         self.assertIn(
