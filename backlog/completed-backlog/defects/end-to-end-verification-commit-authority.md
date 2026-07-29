@@ -1,12 +1,12 @@
 # Route E2E evidence delivery through Commit authority
 
-Status: Blocked
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/end-to-end-verification-commit-authority.md
+Provider Reference: backlog/completed-backlog/defects/end-to-end-verification-commit-authority.md
 
 Completion: direct-main
 
@@ -141,6 +141,15 @@ Unattended Boundary: Do not mutate the skill, approval record, probe, or generat
 ## Summary
 
 Make end-to-end verification deliver evidence through the selected Commit workflow instead of unconditionally creating a commit.
+
+## Crisis Resolution
+
+- Crisis Mode: User-declared on 2026-07-29; ordinary dispatch and claim operations stopped.
+- Resolution: Adopted preserved candidate 841284f622a9e1dd6cc2539c240114739f19df3d. The configured MCP rejection was an out-of-root routing limitation, not a defect in the requested skill behavior.
+- Verification: Exact governed-definition preflight returned ALLOWED_APPROVED_DEFINITION_CHANGE; the focused Commit-authority decision-table regression passed; generated skill documentation was current; Git diff checks passed.
+- Residual Evidence: The structured MCP root-policy rejection remains recorded as infrastructure evidence and was not bypassed with an alternate validator.
+- Delivery: Direct-main crisis commit recorded with this terminal provider archive.
+- Final Owner: Unowned.
 
 ## Context
 

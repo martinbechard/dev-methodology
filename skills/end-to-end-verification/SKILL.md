@@ -19,7 +19,30 @@ Prove the complete workflow with explicit environment ownership and observable a
 6. Capture reproducible steps, assertions, runtime errors, and diagnostic artifacts.
 7. Distinguish product failures from environment, identity, data, or runtime setup blockers.
 
-Before finish or handoff, commit completed work and prove the applicable worktree clean.
+## Evidence Handoff And Commit Authority
+
+End-to-end verification owns evidence capture and the verifier handoff. It does not own delivery integration, publication, or provider lifecycle mutation.
+
+- Only the delivery owner applies the effective Commit-selected skill.
+- For direct-main, the delivery owner applies complete-work-item-direct-main.
+- For feature-branch, the delivery owner applies complete-work-item-feature-branch.
+- Evidence-only or no mutation authority is terminal: return the evidence handoff without applying a Commit skill or creating a commit.
+- When repository delivery is required and Commit is UNSET, ask for the Commit selection and stop before delivery.
+- Do not create a commit outside the effective Commit-selected skill.
+
+## Evidence Delivery Decision Table
+
+Apply the evidence-only or no-mutation row before evaluating Commit. A terminal evidence handoff does not become a delivery request merely because Commit is UNSET or selected.
+
+| Request authority | Commit selection | Result |
+| --- | --- | --- |
+| Evidence-only or no mutation authority | UNSET | Return the terminal evidence handoff; apply no Commit workflow and create no commit. |
+| Evidence-only or no mutation authority | direct-main or feature-branch | Return the terminal evidence handoff; apply no Commit workflow and create no commit. |
+| Repository delivery required | UNSET | Ask for Commit selection and stop before delivery; create no commit. |
+| Repository delivery required | direct-main | Return evidence to the delivery owner for complete-work-item-direct-main. |
+| Repository delivery required | feature-branch | Return evidence to the delivery owner for complete-work-item-feature-branch. |
+
+Return the commands, results, diagnostic artifacts, blockers, cleanup state, and applicable worktree status as reproducible evidence.
 
 ## Review Evidence
 

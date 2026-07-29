@@ -1564,6 +1564,46 @@ class BundleContentTests(unittest.TestCase):
             skill_text.index("Only after the effective Commit-selected skill returns READY"),
         )
 
+    def test_end_to_end_verification_routes_evidence_through_commit_authority(
+        self,
+    ) -> None:
+        """Verification evidence must not grant the verifier delivery authority."""
+        skill_text = (
+            SKILLS_ROOT / "end-to-end-verification" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        for phrase in (
+            "Only the delivery owner applies the effective Commit-selected skill.",
+            "For direct-main, the delivery owner applies complete-work-item-direct-main.",
+            "For feature-branch, the delivery owner applies complete-work-item-feature-branch.",
+            "Evidence-only or no mutation authority is terminal: return the evidence handoff without applying a Commit skill or creating a commit.",
+            "When repository delivery is required and Commit is UNSET, ask for the Commit selection and stop before delivery.",
+            "Do not create a commit outside the effective Commit-selected skill.",
+        ):
+            with self.subTest(commit_authority_contract=phrase):
+                self.assertIn(phrase, skill_text)
+
+        section = skill_text.split(
+            "## Evidence Delivery Decision Table", 1
+        )[1].split("\n## ", 1)[0]
+        rows = {}
+        for line in section.splitlines():
+            if not line.startswith("|") or line.startswith("| ---"):
+                continue
+            cells = [cell.strip() for cell in line.strip("|").split("|")]
+            if cells[0] == "Request authority":
+                continue
+            rows[(cells[0], cells[1])] = cells[2]
+
+        self.assertEqual(
+            "Return the terminal evidence handoff; apply no Commit workflow and create no commit.",
+            rows[("Evidence-only or no mutation authority", "UNSET")],
+        )
+        self.assertEqual(
+            "Ask for Commit selection and stop before delivery; create no commit.",
+            rows[("Repository delivery required", "UNSET")],
+        )
+
     def test_skill_authoring_contract_is_shared_by_maintainer_and_reviewer(self) -> None:
         skill_text = (SKILLS_ROOT / "skill-authoring" / "SKILL.md").read_text(
             encoding="utf-8"
