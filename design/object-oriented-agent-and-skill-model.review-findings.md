@@ -4,7 +4,7 @@
 
 - Target: design/object-oriented-agent-and-skill-model.md
 - Completed checklist: design/object-oriented-agent-and-skill-model.review-checklist-structured.md
-- Review basis: the retained user directions for this object-oriented analysis, plus the repository sources named in the completed checklist
+- Review basis: the retained user directions for the object-oriented analysis, including the current document-separation and diagram-notation corrections
 
 ## Findings
 
@@ -13,53 +13,35 @@ No material findings.
 ## Verified Clarifications
 
 - **CHECK:** DIR-1, DIR-2
-  - **RESULT:** The document is a conceptual analysis without lifecycle-style example labels or an application sequence.
+  - **RESULT:** The target is now a standalone reusable method. It links to the separate skill-group index without embedding any group design.
 
 - **CHECK:** DIR-3, DIR-4
-  - **RESULT:** Mermaid diagrams use AGENTS.md DII for an injected shared contract and SKILL.md for the concrete definition.
+  - **RESULT:** Every concrete skill identity uses +skill, and the method explicitly distinguishes that member from a procedure call.
 
 - **CHECK:** DIR-5, DIR-6
-  - **RESULT:** Injectable Skill requires a shared procedure name, shared parameter meaning, and selection through AGENTS.md.
+  - **RESULT:** Function style appears on a concrete SKILL.md node only for the focused whole-skill example. Named multi-procedure skills use exact section titles or clear procedure names.
 
 - **CHECK:** DIR-7, DIR-8
-  - **RESULT:** Agent Skill is an exact-name Agent dependency that can apply to every execution or through conditional routing.
+  - **RESULT:** The artifact remains a conceptual analysis and preserves AGENTS.md DII for injected contracts and SKILL.md for concrete definitions.
 
-- **CHECK:** DIR-9
-  - **RESULT:** A simple SKILL.md can export one interface, while a complex SKILL.md can export several independently invoked procedure names without implying that the file should be split.
+- **CHECK:** DIR-9, DIR-10
+  - **RESULT:** Agent Skills precede Injected Skills, and Peer Skills remain complementary skills reached either by exact name or through injection.
 
-- **CHECK:** DIR-10, DIR-11, DIR-12
-  - **RESULT:** The Cancel-button example shows request interpretation, Create Workitem parameter construction, AGENTS.md selection, SKILL.md loading, and execution of the selected procedure.
+- **CHECK:** DIR-11, LOG-5
+  - **RESULT:** The Cancel-button example remains traceable from user request through Create Workitem, AGENTS.md selection, SKILL.md loading, and provider-specific execution.
 
-- **CHECK:** DIR-15, DIR-16
-  - **RESULT:** Procedure name identifies the linkage between an invoker and a skill, and descriptive rules state model relationships as declarative truths.
+- **CHECK:** DIR-12, LOG-7
+  - **RESULT:** The complex-skill example uses +skill plus separate procedure names and does not turn multiple procedures into one function or an automatic split decision.
 
-- **CHECK:** DIR-17, DIR-18, DIR-19
-  - **RESULT:** RULE-1 has its own global Agent-space section, Agent Skills precede Injected Skills, and the Injected Skills section focuses on Agents.
+- **CHECK:** DOC-1, DOC-2
+  - **RESULT:** All forty-one structured assertions have examples and unique IDs. Retired RULE-31 was not reused.
 
-- **CHECK:** DIR-20
-  - **RESULT:** Peer Skills are complementary SKILL.md files that can reference one another directly or use skills injection when the complementary implementation should vary.
-
-- **CHECK:** LOG-12, LOG-13
-  - **RESULT:** The direct Peer Skill example is source-backed, and Peer remains a relationship between skills rather than a competing implementation-selection mechanism.
-
-- **CHECK:** DIR-21, DIR-22
-  - **RESULT:** Each established skill group has its own diagram, and Concurrent Tasking visibly encloses Resource Coordination and Feature Branch And Worktrees.
-
-- **CHECK:** DIR-23, DIR-24
-  - **RESULT:** Backlog Management remains independent of claims and Commit selection, including crisis mode, while the corrected baseline skills remain under Baseline Development.
-
-- **CHECK:** DIR-25, DIR-26
-  - **RESULT:** Documentation Methodology shows development-methodology routing to bootstrap, reverse engineering, and page verification, and the shown current cross-group relationships are marked without turning the marker into a split decision.
-
-- **CHECK:** DIR-27, LOG-14
-  - **RESULT:** The diagrams reserve AGENTS.md DII for selectable procedure implementations, distinguish direct technology-skill names, and preserve provider-specific and explicitly unsupported workitem behavior.
-
-- **CHECK:** LOG-15, LOG-16, LOG-17
-  - **RESULT:** Direct-main integration dependencies and verification handoffs remain visible across group boundaries, while the analytical groups remain distinct from catalog metadata categories.
+- **CHECK:** DOC-3, DOC-7, DOC-9, DOC-10
+  - **RESULT:** Group diagrams are absent, links resolve, backticks occur only in Mermaid fences, and retired notation and lifecycle labels are absent.
 
 ## Residual Verification Gap
 
 - **CHECK:** DOC-6
-- **TARGET:** Eighteen Mermaid blocks in the target artifact
+- **TARGET:** Eleven Mermaid blocks in the target artifact
 - **SYNOPSIS:** Static inspection found balanced fences and suitable classDiagram and sequenceDiagram forms, but no local Mermaid renderer was available.
-- **NEXT CHECK:** Render all eighteen blocks when a Mermaid runtime becomes available and correct any parser-specific display issue before publishing rendered companions.
+- **NEXT CHECK:** Render all eleven blocks when a Mermaid runtime is available and correct any parser-specific display issue before publishing rendered companions.

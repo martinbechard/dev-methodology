@@ -10,9 +10,11 @@ It covers:
 - Injected Skills;
 - Peer Skills;
 - Skill interfaces and SKILL.md files;
-- applications of the model to the established skill groups.
+- notation for identifying a skill and the particular procedure being used.
 
 The document explains relationships through examples while defining no schema, migration, or repository change sequence.
+
+Applications of this method are maintained separately in [Object-Oriented Skill Group Models](object-oriented-skill-group-models.md).
 
 ## 1. Finality
 
@@ -47,6 +49,19 @@ The document explains relationships through examples while defining no schema, m
 | Peer Skill | A SKILL.md intended to complement another SKILL.md. Peer Skills can reference one another directly or use skills injection. | complete-work-item-feature-branch directly invokes create-pull-request for GitHub publication. |
 | Agent class | A reusable agent definition containing purpose, instructions, known dependencies, and outputs. | Backlog Manager. |
 | Agent object | One task-bound execution of an agent class with context and changing state. | The Backlog Manager processing the Cancel button request. |
+| Skill identity member | The +skill member names the concrete SKILL.md represented by a node. It identifies a skill and is not a procedure call. | +skill careful-coding identifies careful-coding/SKILL.md. |
+| Whole-skill procedure member | A function-style member names a procedure and its parameters. A concrete SKILL.md node uses this form only when the whole skill is one cohesive procedure. | +createWorkitem(workitemDescription) represents a focused Create Workitem skill. |
+| Procedure-selection member | The +procedure member identifies part of a multi-procedure skill or one procedure in a grouped interface. It uses an exact section title when one exists, or concise procedure keywords otherwise. | +procedure Claim Events identifies the Claim Events section of agent-claim. |
+
+### Diagram Notation
+
+Every concrete SKILL.md node uses +skill followed by the skill name. This member answers which skill the node represents; it does not say which procedure is invoked.
+
+An AGENTS.md DII node uses a function-style member when it represents one callable procedure contract. When one DII summarizes several related procedure contracts, it names them with +procedure members instead. A concrete SKILL.md node uses function style only when the whole skill is one cohesive procedure.
+
+When a SKILL.md defines several related procedures, its node uses +procedure followed by the exact section title that owns the relevant instructions. When no section title names the procedure clearly, concise keywords identify the relevant part. A node can omit a procedure member when the relationship applies the whole named skill rather than one internal procedure.
+
+For example, agent-claim is shown with +skill agent-claim and +procedure Claim Events when a diagram refers to claim acquisition or release. The Create Workitem AGENTS.md DII is shown with +createWorkitem(workitemDescription) because that node is the callable contract itself.
 
 ## 3. Skills In The Global Agent Space
 
@@ -85,13 +100,14 @@ classDiagram
 
     class ImplementingSkill {
         <<SKILL.md>>
+        +skill selected-skill-name
         +createWorkitem(workitemDescription)
     }
 
     class CarefulCodingSkill {
         <<SKILL.md>>
         <<Agent Skill>>
-        +applyCarefulCoding()
+        +skill careful-coding
     }
 
     GlobalAgentSpace o-- Agent : hosts
@@ -102,9 +118,9 @@ classDiagram
     CreateWorkitem <|.. ImplementingSkill : exported implementation
 ```
 
-Create Workitem is the human-readable procedure name. createWorkitem(workitemDescription) is the diagram notation for the same procedure and its parameter.
+Create Workitem is the human-readable procedure name. createWorkitem(workitemDescription) is the callable-contract notation for the same procedure and its parameter. The +skill members identify concrete SKILL.md files; they are not calls.
 
-The AGENTS.md DII prototype marks the pure-virtual side of the analogy. The SKILL.md contains the procedure that gives the shared procedure name its concrete behavior.
+The AGENTS.md DII prototype marks the pure-virtual side of the analogy. The SKILL.md contains the procedure that gives the shared procedure name its concrete behavior. ImplementingSkill uses function style because this focused example treats the whole hypothetical skill as one procedure, while CarefulCodingSkill uses only its skill identity because the reference applies the named multi-procedure skill.
 
 ## 4. Agent Skills
 
@@ -136,13 +152,13 @@ classDiagram
     class CarefulCodingSkill {
         <<SKILL.md>>
         <<Agent Skill>>
-        +applyCarefulCoding()
+        +skill careful-coding
     }
 
     class TestDrivenDevelopmentSkill {
         <<SKILL.md>>
         <<Agent Skill>>
-        +applyTestDrivenDevelopment()
+        +skill test-driven-development
     }
 
     DevCoder --> CarefulCodingSkill : references by name every time
@@ -184,13 +200,15 @@ classDiagram
     class FileWorkitemSkill {
         <<SKILL.md>>
         <<Injectable Skill>>
-        +createWorkitem(workitemDescription)
+        +skill create-file-work-item
+        +procedure Exact Backlog Creation Transaction
     }
 
     class GitLabWorkitemSkill {
         <<SKILL.md>>
         <<Injectable Skill>>
-        +createWorkitem(workitemDescription)
+        +skill create-gitlab-work-item
+        +procedure Workflow
     }
 
     BacklogManager ..> CreateWorkitem : invokes
@@ -230,19 +248,22 @@ classDiagram
     class FeatureBranchCompletionSkill {
         <<SKILL.md>>
         <<Peer Skill>>
-        +publishAcceptedChange()
+        +skill complete-work-item-feature-branch
+        +procedure Candidate Publication
     }
 
     class CreatePullRequestSkill {
         <<SKILL.md>>
         <<Peer Skill>>
-        +createPullRequest()
+        +skill create-pull-request
+        +procedure Workflow
     }
 
     class DevelopmentWorkflowSkill {
         <<SKILL.md>>
         <<Peer Skill>>
-        +verifyChange()
+        +skill development-workflow
+        +procedure Verification
     }
 
     class RunProjectTests {
@@ -254,14 +275,16 @@ classDiagram
         <<SKILL.md>>
         <<Peer Skill>>
         <<Injectable Skill>>
-        +runProjectTests(testScope)
+        +skill junit
+        +procedure Verification
     }
 
     class JestSkill {
         <<SKILL.md>>
         <<Peer Skill>>
         <<Injectable Skill>>
-        +runProjectTests(testScope)
+        +skill jest
+        +procedure Verification
     }
 
     FeatureBranchCompletionSkill --> CreatePullRequestSkill : invokes by skill name
@@ -331,7 +354,8 @@ classDiagram
     class GitLabWorkitemSkill {
         <<SKILL.md>>
         <<Injectable Skill>>
-        +createWorkitem(workitemDescription)
+        +skill create-gitlab-work-item
+        +procedure Workflow
     }
 
     AgentsGuidance ..> CreateWorkitem : recognizes procedure name
@@ -408,8 +432,9 @@ classDiagram
 
     class RepositoryHostingSkill {
         <<SKILL.md>>
-        +createWorkitem(workitemDescription)
-        +publishChange(changeDescription)
+        +skill repository-hosting
+        +procedure Create Workitem
+        +procedure Publish Change
     }
 
     CreateWorkitem <|.. RepositoryHostingSkill : exported implementation
@@ -447,13 +472,18 @@ classDiagram
     class DirectMainSkill {
         <<SKILL.md>>
         <<Injectable Skill>>
-        +deliverWorkitem(acceptedCommit)
+        +skill complete-work-item-direct-main
+        +procedure Main Reconciliation
+        +procedure Integrated Verification And Main Observation
     }
 
     class FeatureBranchSkill {
         <<SKILL.md>>
         <<Injectable Skill>>
-        +deliverWorkitem(acceptedCommit)
+        +skill complete-work-item-feature-branch
+        +procedure Candidate Publication
+        +procedure Review And Check Loop
+        +procedure Merge And Completion Gate
     }
 
     DevelopmentWorkflow ..> DeliverWorkitem : invokes
@@ -499,12 +529,14 @@ classDiagram
     class CarefulCodingSkill {
         <<SKILL.md>>
         <<Agent Skill>>
+        +skill careful-coding
     }
 
     class FeatureBranchSkill {
         <<SKILL.md>>
         <<Injectable Skill>>
-        +deliverWorkitem(acceptedCommit)
+        +skill complete-work-item-feature-branch
+        +procedure Review And Check Loop
     }
 
     CodingAgentClass <|-- RunningCodingAgent : instance of
@@ -588,820 +620,26 @@ classDiagram
   - **SYNOPSIS:** Each GOAL, RULE, PROCESS, and other structured assertion is followed by an EXAMPLE.
   - **EXAMPLE:** RULE-20 defines the Injectable Skill boundary and illustrates it with code-discovery.
 
-## 16. Applied Skill Group Diagrams
+- **RULE: RULE-32** Concrete skill notation distinguishes identity from procedure selection
+  - **SYNOPSIS:** A SKILL.md node uses +skill for its identity, function style only when the whole skill is one cohesive procedure, and +procedure with a section title or clarifying keywords when only part of a multi-procedure skill is relevant.
+  - **EXAMPLE:** An agent-claim node can show +skill agent-claim and +procedure Claim Events without implying that all of agent-claim is one function.
 
-These diagrams apply the object-oriented vocabulary to the skill groups established for the current methodology. The groups are analytical views of responsibility. They do not replace the catalog categories stored in skill metadata.
+## Applied Models
 
-Each SKILL.md from the established directory tree stays in its primary group. A Cross-group node appears when a current Agent definition or SKILL.md reaches across that boundary. A Cross-group responsibility marker means that a skill remains in its primary group while part of its current procedure records or invokes another group’s concern. Both markers expose current coupling without deciding that the skill should be split.
-
-AGENTS.md DII appears only where project guidance selects a procedure implementation. A project-selected list of technology skills is shown as a selected SKILL.md set because the current definitions name those skills directly and do not promise one shared procedure name.
-
-The skill nodes are complete for the established groups. Agent arrows show representative current invokers rather than every Agent that names each skill.
-
-### 16.1 Baseline Development
-
-Baseline Development contains practices that Agents reference by exact skill name across ordinary implementation, design, review, and explanation work.
-
-```mermaid
-classDiagram
-    direction LR
-
-    class DevCoder {
-        <<Agent class>>
-    }
-
-    class ProjectOrganiser {
-        <<Agent class>>
-    }
-
-    class DevArtifactReviewer {
-        <<Agent class>>
-    }
-
-    namespace BaselineDevelopment {
-        class CarefulCoding {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId careful-coding
-        }
-
-        class CodeComments {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId code-comments
-        }
-
-        class CodeDiscovery {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId code-discovery
-        }
-
-        class TestDrivenDevelopment {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId test-driven-development
-        }
-
-        class StructuredDesign {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId structured-design
-        }
-
-        class StructuredExplanation {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId structured-explanation
-        }
-
-        class OrganiseProjectFiles {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId organise-project-files
-        }
-
-        class ReviewStructuredArtifact {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId review-structured-artifact
-        }
-
-        class FixExplanation {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId fix-explanation
-        }
-    }
-
-    class DocumentationPageVerify {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skillId documentation-page-verify
-    }
-
-    DevCoder --> CarefulCoding : references by name
-    DevCoder --> CodeComments : references by name
-    DevCoder --> CodeDiscovery : references by name
-    DevCoder --> TestDrivenDevelopment : conditional name reference
-    DevCoder --> OrganiseProjectFiles : references by name
-    DevCoder --> FixExplanation : references by name
-    ProjectOrganiser --> StructuredDesign : references by name
-    ProjectOrganiser --> StructuredExplanation : references by name
-    ProjectOrganiser --> OrganiseProjectFiles : references by name
-    DevArtifactReviewer --> ReviewStructuredArtifact : references by name
-    CodeComments --> StructuredExplanation : invokes by skill name
-    FixExplanation --> StructuredExplanation : invokes by skill name
-    StructuredExplanation --> StructuredDesign : invokes by skill name when needed
-    ReviewStructuredArtifact --> DocumentationPageVerify : invokes by skill name
-```
-
-For example, Dev Coder names careful-coding for every execution and test-driven-development under a condition. code-comments and fix-explanation directly invoke structured-explanation as a Peer Skill.
-
-### 16.2 Project Setup
-
-Project Setup uses exact-name Agent Skills to detect technology candidates, create configuration, establish selected documentation roots, and verify the result.
-
-```mermaid
-classDiagram
-    direction LR
-
-    class ProjectConfigurator {
-        <<Agent class>>
-    }
-
-    class ProjectBootstrapper {
-        <<Agent class>>
-    }
-
-    namespace ProjectSetup {
-        class DetectTechnologySkills {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId detect-technology-skills
-        }
-
-        class CreateProjectConfiguration {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId create-project-configuration
-        }
-
-        class DocumentationBootstrap {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId documentation-bootstrap
-        }
-
-        class DocumentationPageVerify {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId documentation-page-verify
-        }
-
-        class ConfirmedTechnologySkills {
-            <<Selected SKILL.md set>>
-            +orderedSkillIds
-            +folderScopes
-        }
-    }
-
-    class OrganiseProjectFiles {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skillId organise-project-files
-    }
-
-    class DevelopmentMethodology {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skillId development-methodology
-    }
-
-    class AgentsGuidance {
-        <<AGENTS.md>>
-    }
-
-    ProjectConfigurator --> DetectTechnologySkills : references by name
-    ProjectConfigurator --> CreateProjectConfiguration : references by name
-    ProjectConfigurator --> DocumentationBootstrap : references by name
-    ProjectConfigurator --> DocumentationPageVerify : references by name
-    ProjectConfigurator --> OrganiseProjectFiles : references by name
-    ProjectConfigurator --> DevelopmentMethodology : references by name
-    ProjectBootstrapper --> DocumentationBootstrap : references by name
-    ProjectBootstrapper --> OrganiseProjectFiles : references by name
-    ProjectBootstrapper --> DevelopmentMethodology : references by name
-    DetectTechnologySkills --> ConfirmedTechnologySkills : produces confirmed names
-    CreateProjectConfiguration --> AgentsGuidance : renders guidance
-    AgentsGuidance --> ConfirmedTechnologySkills : names selected skills
-```
-
-For example, Project Configurator names detect-technology-skills directly. The generated AGENTS.md then names each confirmed folder technology skill; the current contract does not claim that every such skill implements one common Skill interface.
-
-### 16.3 Documentation Methodology
-
-Development Methodology is the documentation router. It directly names focused Peer Skills for bootstrap, reverse engineering, and shared page verification.
-
-```mermaid
-classDiagram
-    direction LR
-
-    class DevDocumentationWriter {
-        <<Agent class>>
-    }
-
-    class MethodologyMaintainer {
-        <<Agent class>>
-    }
-
-    namespace DocumentationMethodology {
-        class DevelopmentMethodology {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            <<Peer Skill>>
-            +skillId development-methodology
-        }
-    }
-
-    class DocumentationBootstrap {
-        <<SKILL.md>>
-        <<Cross-group>>
-        <<Peer Skill>>
-        +skillId documentation-bootstrap
-    }
-
-    class DocumentationReverseEngineer {
-        <<SKILL.md>>
-        <<Cross-group>>
-        <<Peer Skill>>
-        +skillId documentation-reverse-engineer
-    }
-
-    class DocumentationPageVerify {
-        <<SKILL.md>>
-        <<Cross-group>>
-        <<Peer Skill>>
-        +skillId documentation-page-verify
-    }
-
-    DevDocumentationWriter --> DevelopmentMethodology : references by name
-    MethodologyMaintainer --> DevelopmentMethodology : references by name
-    DevelopmentMethodology --> DocumentationBootstrap : routes by skill name
-    DevelopmentMethodology --> DocumentationReverseEngineer : routes by skill name
-    DevelopmentMethodology --> DocumentationPageVerify : routes by skill name
-    DocumentationBootstrap --> DocumentationReverseEngineer : invokes for full reverse engineering
-```
-
-For example, documentation-bootstrap creates only selected empty roots during Project Configurator setup. A later full-project documentation workflow invokes documentation-reverse-engineer instead of treating setup as reverse engineering.
-
-### 16.4 Backlog Management
-
-Backlog Management is independent of resource coordination and Commit delivery. AGENTS.md selects one creation skill and one management skill for the effective Persistence provider.
-
-```mermaid
-classDiagram
-    direction TB
-
-    class DevBacklogSteward {
-        <<Agent class>>
-    }
-
-    class DevBacklogCoordinator {
-        <<Agent class>>
-    }
-
-    class CreateWorkitem {
-        <<AGENTS.md DII>>
-        +createWorkitem(workitemDescription)
-    }
-
-    class ManageWorkitem {
-        <<AGENTS.md DII>>
-        +manageWorkitem(operation, workitemIdentity)
-    }
-
-    namespace BacklogManagement {
-        class BacklogCrisisMode {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId backlog-crisis-mode
-        }
-
-        class CreateFileWorkitem {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            <<Cross-group>>
-            +skillId create-file-work-item
-            +createWorkitem(workitemDescription)
-        }
-
-        class ManageFileWorkitems {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            <<Cross-group responsibility>>
-            +skillId manage-file-work-items
-            +manageWorkitem(operation, workitemIdentity)
-        }
-
-        class CreateGitHubWorkitem {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            +skillId create-github-work-item
-            +createWorkitem(workitemDescription)
-        }
-
-        class ManageGitHubWorkitems {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            <<Cross-group responsibility>>
-            +skillId manage-github-work-items
-            +manageWorkitem(operation, workitemIdentity)
-        }
-
-        class CreateGitLabWorkitem {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            +skillId create-gitlab-work-item
-            +createWorkitem(workitemDescription)
-        }
-
-        class ManageGitLabWorkitems {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            <<Cross-group responsibility>>
-            +skillId manage-gitlab-work-items
-            +manageWorkitem(operation, workitemIdentity)
-        }
-
-        class CreateAzureDevOpsWorkitem {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            <<Unsupported placeholder>>
-            +skillId create-azure-devops-work-item
-            +createWorkitem(workitemDescription)
-        }
-
-        class ManageAzureDevOpsWorkitems {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            <<Unsupported placeholder>>
-            +skillId manage-azure-devops-work-items
-            +manageWorkitem(operation, workitemIdentity)
-        }
-
-        class CreateJiraWorkitem {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            <<Unsupported placeholder>>
-            +skillId create-jira-work-item
-            +createWorkitem(workitemDescription)
-        }
-
-        class ManageJiraWorkitems {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            <<Unsupported placeholder>>
-            +skillId manage-jira-work-items
-            +manageWorkitem(operation, workitemIdentity)
-        }
-    }
-
-    class ResourceCoordination {
-        <<AGENTS.md DII>>
-        <<Cross-group>>
-        +coordinateResource(claimEvent, scope)
-    }
-
-    class OrganiseProjectFiles {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skillId organise-project-files
-    }
-
-    class StructuredExplanation {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skillId structured-explanation
-    }
-
-    DevBacklogSteward ..> CreateWorkitem : invokes
-    DevBacklogSteward ..> ManageWorkitem : invokes
-    DevBacklogSteward --> OrganiseProjectFiles : conditional name reference
-    DevBacklogSteward --> StructuredExplanation : references by name
-    DevBacklogCoordinator --> BacklogCrisisMode : references by name after declaration
-    DevBacklogCoordinator --> StructuredExplanation : references by name
-    CreateWorkitem <|.. CreateFileWorkitem : exported implementation
-    CreateWorkitem <|.. CreateGitHubWorkitem : exported implementation
-    CreateWorkitem <|.. CreateGitLabWorkitem : exported implementation
-    CreateWorkitem <|.. CreateAzureDevOpsWorkitem : blocking implementation
-    CreateWorkitem <|.. CreateJiraWorkitem : blocking implementation
-    ManageWorkitem <|.. ManageFileWorkitems : exported implementation
-    ManageWorkitem <|.. ManageGitHubWorkitems : exported implementation
-    ManageWorkitem <|.. ManageGitLabWorkitems : exported implementation
-    ManageWorkitem <|.. ManageAzureDevOpsWorkitems : blocking implementation
-    ManageWorkitem <|.. ManageJiraWorkitems : blocking implementation
-    CreateFileWorkitem ..> ResourceCoordination : invokes when enabled
-```
-
-For example, crisis mode still uses the effective backlog provider while stopping claim operations and delegated delivery. Persistence none injects no creation or management SKILL.md and creates no shadow backlog.
-
-The Cross-group responsibility marker on the implemented management skills records that their current procedures also store delivery evidence and delivery-mode recovery state. It does not move backlog lifecycle ownership into the Commit group.
-
-### 16.5 Concurrent Tasking
-
-Concurrent Tasking encloses Resource Coordination and Feature Branch And Worktrees. The top-level coordination skill uses both subgroups while keeping Persistence behind its own Skill interfaces.
-
-```mermaid
-classDiagram
-    direction TB
-
-    class DevBacklogCoordinator {
-        <<Agent class>>
-    }
-
-    class DevOrchestrator {
-        <<Agent class>>
-    }
-
-    class DevMergeCoordinator {
-        <<Agent class>>
-    }
-
-    namespace ConcurrentTasking {
-        class ConcurrentTaskingGroup {
-            <<Skill group>>
-        }
-
-        class CodexWorkitemCoordination {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            <<Peer Skill>>
-            <<Cross-group responsibility>>
-            +skillId codex-workitem-coordination
-        }
-
-        class ResourceCoordinationGroup {
-            <<Skill subgroup>>
-        }
-
-        class AgentClaim {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            +skillId agent-claim
-            +coordinateResource(claimEvent, scope)
-        }
-
-        class AgentClaimCommand {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            +skillId agent-claim-command
-            +runClaimOperation(operation, arguments)
-        }
-
-        class AgentClaimMcp {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            +skillId agent-claim-mcp
-            +runClaimOperation(operation, arguments)
-        }
-
-        class FeatureBranchWorktreesGroup {
-            <<Skill subgroup>>
-        }
-
-        class AgentWorkMerge {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            <<Peer Skill>>
-            <<Cross-group responsibility>>
-            +skillId agent-work-merge
-        }
-
-        class CompleteWorkitemFeatureBranch {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            <<Peer Skill>>
-            <<Cross-group responsibility>>
-            +skillId complete-work-item-feature-branch
-            +deliverWorkitem(acceptedCommit)
-        }
-
-        class CreatePullRequest {
-            <<SKILL.md>>
-            <<Peer Skill>>
-            +skillId create-pull-request
-        }
-    }
-
-    class ManageWorkitem {
-        <<AGENTS.md DII>>
-        <<Cross-group>>
-        +manageWorkitem(operation, workitemIdentity)
-    }
-
-    class ResourceCoordination {
-        <<AGENTS.md DII>>
-        +coordinateResource(claimEvent, scope)
-    }
-
-    class ClaimHelper {
-        <<AGENTS.md DII>>
-        +runClaimOperation(operation, arguments)
-    }
-
-    class DeliverWorkitem {
-        <<AGENTS.md DII>>
-        +deliverWorkitem(acceptedCommit)
-    }
-
-    class OrganiseProjectFiles {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skillId organise-project-files
-    }
-
-    class StructuredDesign {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skillId structured-design
-    }
-
-    class StructuredExplanation {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skillId structured-explanation
-    }
-
-    class ReviewStructuredArtifact {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skillId review-structured-artifact
-    }
-
-    class FixExplanation {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skillId fix-explanation
-    }
-
-    ConcurrentTaskingGroup o-- CodexWorkitemCoordination : contains
-    ConcurrentTaskingGroup *-- ResourceCoordinationGroup : encloses
-    ConcurrentTaskingGroup *-- FeatureBranchWorktreesGroup : encloses
-    ResourceCoordinationGroup o-- AgentClaim : contains
-    ResourceCoordinationGroup o-- AgentClaimCommand : contains
-    ResourceCoordinationGroup o-- AgentClaimMcp : contains
-    FeatureBranchWorktreesGroup o-- AgentWorkMerge : contains
-    FeatureBranchWorktreesGroup o-- CompleteWorkitemFeatureBranch : contains
-    FeatureBranchWorktreesGroup o-- CreatePullRequest : contains
-    DevBacklogCoordinator --> CodexWorkitemCoordination : conditional name reference
-    DevOrchestrator --> CodexWorkitemCoordination : conditional name reference
-    DevMergeCoordinator --> AgentWorkMerge : references by name
-    DevOrchestrator --> OrganiseProjectFiles : conditional name reference
-    DevOrchestrator --> StructuredDesign : references by name
-    DevOrchestrator --> StructuredExplanation : references by name
-    DevMergeCoordinator --> OrganiseProjectFiles : conditional name reference
-    DevMergeCoordinator --> ReviewStructuredArtifact : references by name
-    DevMergeCoordinator --> FixExplanation : references by name
-    CodexWorkitemCoordination ..> ManageWorkitem : invokes selected Persistence procedure
-    CodexWorkitemCoordination ..> ResourceCoordination : invokes when enabled
-    CodexWorkitemCoordination ..> DeliverWorkitem : routes accepted delivery
-    ResourceCoordination <|.. AgentClaim : exported implementation
-    AgentClaim ..> ClaimHelper : invokes selected helper
-    ClaimHelper <|.. AgentClaimCommand : command implementation
-    ClaimHelper <|.. AgentClaimMcp : MCP implementation
-    DeliverWorkitem <|.. CompleteWorkitemFeatureBranch : exported implementation
-    CompleteWorkitemFeatureBranch --> CreatePullRequest : invokes by skill name for GitHub
-    AgentWorkMerge ..> ResourceCoordination : invokes during integration
-```
-
-For example, Concurrent tasking Yes requires the enclosing group to use the resource-coordination subgroup and the feature-branch-and-worktrees subgroup. agent-claim supplies the coordination procedure, while one configured claim helper supplies its tool-specific operations.
-
-### 16.6 Direct Main Delivery
-
-Direct Main Delivery is the alternative Commit implementation when Concurrent Tasking is not selected. Its current SKILL.md reaches into concurrency-owned integration and resource-coordination skills.
-
-```mermaid
-classDiagram
-    direction LR
-
-    class DevOrchestrator {
-        <<Agent class>>
-    }
-
-    class DeliverWorkitem {
-        <<AGENTS.md DII>>
-        +deliverWorkitem(acceptedCommit)
-    }
-
-    namespace DirectMainDelivery {
-        class CompleteWorkitemDirectMain {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            <<Cross-group responsibility>>
-            +skillId complete-work-item-direct-main
-            +deliverWorkitem(acceptedCommit)
-        }
-    }
-
-    class AgentWorkMerge {
-        <<SKILL.md>>
-        <<Cross-group>>
-        <<Peer Skill>>
-        +skillId agent-work-merge
-    }
-
-    class ResourceCoordination {
-        <<AGENTS.md DII>>
-        <<Cross-group>>
-        +coordinateResource(claimEvent, scope)
-    }
-
-    DevOrchestrator ..> DeliverWorkitem : invokes after accepted gates
-    DeliverWorkitem <|.. CompleteWorkitemDirectMain : exported implementation
-    CompleteWorkitemDirectMain --> AgentWorkMerge : invokes by skill name when integration remains
-    CompleteWorkitemDirectMain ..> ResourceCoordination : invokes during integration
-```
-
-For example, the caller still invokes Deliver Workitem with an accepted commit. AGENTS.md selects complete-work-item-direct-main, whose procedure may directly invoke agent-work-merge and the selected resource-coordination procedure.
-
-### 16.7 Review And Verification
-
-Review And Verification contains independent evidence and diagnosis skills. Current reviewer and verifier Agents also name several Baseline Development skills directly.
-
-```mermaid
-classDiagram
-    direction TB
-
-    class ReviewAgentDefinitions {
-        <<Agent classes>>
-        +DevCodeReviewer
-        +DevVerifier
-        +DevRuntimeDiagnostician
-        +DevPromptReviewer
-    }
-
-    namespace ReviewAndVerification {
-        class CodeReviewEvidence {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId code-review-evidence
-        }
-
-        class TestStrategy {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId test-strategy
-        }
-
-        class EndToEndVerification {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            <<Cross-group responsibility>>
-            +skillId end-to-end-verification
-        }
-
-        class RootCauseAnalysis {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            <<Peer Skill>>
-            +skillId root-cause-analysis
-        }
-
-        class RuntimeEvidenceCollection {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            <<Peer Skill>>
-            +skillId runtime-evidence-collection
-        }
-
-        class CodeExecutionTracing {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            <<Peer Skill>>
-            +skillId code-execution-tracing
-        }
-
-        class PromptContracts {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skillId prompt-contracts
-        }
-    }
-
-    class CarefulCoding {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skillId careful-coding
-    }
-
-    class CodeComments {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skillId code-comments
-    }
-
-    class CodeDiscovery {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skillId code-discovery
-    }
-
-    class OrganiseProjectFiles {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skillId organise-project-files
-    }
-
-    class ReviewStructuredArtifact {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skillId review-structured-artifact
-    }
-
-    class StructuredExplanation {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skillId structured-explanation
-    }
-
-    class ResourceCoordination {
-        <<AGENTS.md DII>>
-        <<Cross-group>>
-        +coordinateResource(claimEvent, scope)
-    }
-
-    class DeliverWorkitem {
-        <<AGENTS.md DII>>
-        <<Cross-group>>
-        +deliverWorkitem(acceptedCommit)
-    }
-
-    ReviewAgentDefinitions --> CodeReviewEvidence : exact-name Agent references
-    ReviewAgentDefinitions --> TestStrategy : exact-name Agent references
-    ReviewAgentDefinitions --> EndToEndVerification : exact-name Agent references
-    ReviewAgentDefinitions --> RootCauseAnalysis : exact-name Agent references
-    ReviewAgentDefinitions --> RuntimeEvidenceCollection : exact-name Agent references
-    ReviewAgentDefinitions --> CodeExecutionTracing : exact-name Agent references
-    ReviewAgentDefinitions --> PromptContracts : exact-name Agent references
-    ReviewAgentDefinitions --> CarefulCoding : exact-name Agent references
-    ReviewAgentDefinitions --> CodeComments : exact-name Agent references
-    ReviewAgentDefinitions --> CodeDiscovery : exact-name Agent references
-    ReviewAgentDefinitions --> OrganiseProjectFiles : exact-name Agent references
-    ReviewAgentDefinitions --> ReviewStructuredArtifact : exact-name Agent references
-    ReviewAgentDefinitions --> StructuredExplanation : exact-name Agent references
-    RootCauseAnalysis --> CodeExecutionTracing : invokes by skill name
-    RootCauseAnalysis --> RuntimeEvidenceCollection : invokes by skill name
-    CodeExecutionTracing --> RuntimeEvidenceCollection : invokes when source evidence is insufficient
-    EndToEndVerification ..> ResourceCoordination : invokes when a claim event occurs
-    EndToEndVerification ..> DeliverWorkitem : hands evidence to delivery owner
-```
-
-For example, Dev Verifier names test-strategy and end-to-end-verification directly. end-to-end-verification remains verification-owned while its current procedure applies resource coordination when triggered and hands accepted evidence to the effective Commit delivery owner.
-
-- **RULE: RULE-31** Each established skill group has a separate applied diagram
-  - **SYNOPSIS:** Baseline Development, Project Setup, Documentation Methodology, Backlog Management, Concurrent Tasking, Direct Main Delivery, and Review And Verification each show their current SKILL.md files and boundary relationships.
-  - **EXAMPLE:** The Concurrent Tasking diagram encloses Resource Coordination and Feature Branch And Worktrees while the Backlog Management diagram stays outside that enclosure.
+The reusable method ends here. Current applications to the established skill groups are maintained as independent documents under [Object-Oriented Skill Group Models](object-oriented-skill-group-models.md).
 
 ## Authoritative Inputs
 
 - The user-supplied object-oriented analysis and vocabulary corrections for this document.
-- [Bundled Skill Inventory](../README.md)
 - [Agentic Configuration](agentic-configuration.html)
 - [Work-Item Provider And Completion Contracts](work-item-provider-and-completion-contracts.md)
-- [Development Methodology](../skills/development-methodology/SKILL.md)
-- [Documentation Bootstrap](../skills/documentation-bootstrap/SKILL.md)
-- [Documentation Reverse Engineer](../skills/documentation-reverse-engineer/SKILL.md)
-- [Documentation Page Verify](../skills/documentation-page-verify/SKILL.md)
-- [Create Project Configuration](../skills/create-project-configuration/SKILL.md)
-- [Detect Technology Skills](../skills/detect-technology-skills/SKILL.md)
 - [Create File Work Item](../skills/create-file-work-item/SKILL.md)
-- [Manage File Work Items](../skills/manage-file-work-items/SKILL.md)
-- [Create GitHub Work Item](../skills/create-github-work-item/SKILL.md)
-- [Manage GitHub Work Items](../skills/manage-github-work-items/SKILL.md)
 - [Create GitLab Work Item](../skills/create-gitlab-work-item/SKILL.md)
-- [Manage GitLab Work Items](../skills/manage-gitlab-work-items/SKILL.md)
-- [Create Azure DevOps Work Item](../skills/create-azure-devops-work-item/SKILL.md)
-- [Manage Azure DevOps Work Items](../skills/manage-azure-devops-work-items/SKILL.md)
-- [Create Jira Work Item](../skills/create-jira-work-item/SKILL.md)
-- [Manage Jira Work Items](../skills/manage-jira-work-items/SKILL.md)
 - [Complete Work Item Direct Main](../skills/complete-work-item-direct-main/SKILL.md)
 - [Complete Work Item Feature Branch](../skills/complete-work-item-feature-branch/SKILL.md)
 - [Create Pull Request](../skills/create-pull-request/SKILL.md)
-- [Agent Claim](../skills/agent-claim/SKILL.md)
-- [Agent Claim Command](../skills/agent-claim-command/SKILL.md)
-- [Agent Claim MCP](../skills/agent-claim-mcp/SKILL.md)
-- [Agent Work Merge](../skills/agent-work-merge/SKILL.md)
-- [Codex Work-Item Coordination](../skills/codex-workitem-coordination/SKILL.md)
-- [Backlog Crisis Mode](../skills/backlog-crisis-mode/SKILL.md)
-- [Code Review Evidence](../skills/code-review-evidence/SKILL.md)
-- [Test Strategy](../skills/test-strategy/SKILL.md)
-- [End To End Verification](../skills/end-to-end-verification/SKILL.md)
-- [Root Cause Analysis](../skills/root-cause-analysis/SKILL.md)
-- [Runtime Evidence Collection](../skills/runtime-evidence-collection/SKILL.md)
-- [Code Execution Tracing](../skills/code-execution-tracing/SKILL.md)
-- [Prompt Contracts](../skills/prompt-contracts/SKILL.md)
-- [Code Discovery](../skills/code-discovery/SKILL.md)
 - [Careful Coding](../skills/careful-coding/SKILL.md)
-- [Code Comments](../skills/code-comments/SKILL.md)
 - [Test-Driven Development](../skills/test-driven-development/SKILL.md)
-- [Structured Design](../skills/structured-design/SKILL.md)
-- [Structured Explanation](../skills/structured-explanation/SKILL.md)
-- [Organise Project Files](../skills/organise-project-files/SKILL.md)
-- [Review Structured Artifact](../skills/review-structured-artifact/SKILL.md)
-- [Fix Explanation](../skills/fix-explanation/SKILL.md)
 - [JUnit](../skills/junit/SKILL.md)
 - [Jest](../skills/jest/SKILL.md)
 - [Dev Coder](../agents/roles/dev-activities/dev-coder.role.yaml)
-- [Dev Orchestrator](../agents/roles/dev-activities/dev-orchestrator.role.yaml)
-- [Dev Backlog Coordinator](../agents/roles/dev-activities/dev-backlog-coordinator.role.yaml)
-- [Dev Backlog Steward](../agents/roles/dev-activities/dev-backlog-steward.role.yaml)
-- [Dev Merge Coordinator](../agents/roles/dev-activities/dev-merge-coordinator.role.yaml)
-- [Dev Code Reviewer](../agents/roles/dev-activities/dev-code-reviewer.role.yaml)
-- [Dev Verifier](../agents/roles/dev-activities/dev-verifier.role.yaml)
-- [Dev Runtime Diagnostician](../agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml)
-- [Dev Prompt Reviewer](../agents/roles/dev-activities/dev-prompt-reviewer.role.yaml)
-- [Dev Documentation Writer](../agents/roles/dev-activities/dev-documentation-writer.role.yaml)
-- [Project Configurator](../agents/roles/project-setup/project-configurator.role.yaml)
-- [Project Bootstrapper](../agents/roles/project-setup/project-bootstrapper.role.yaml)
-- [Project Organiser](../agents/roles/project-setup/project-organiser.role.yaml)
-- [Methodology Maintainer](../agents/roles/methodology-maintenance/methodology-maintainer.role.yaml)
