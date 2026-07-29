@@ -1,6 +1,6 @@
 # Integrate Evaluation Evidence Into Documentation Navigation
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -66,6 +66,42 @@ None.
 ## Open Questions
 
 None.
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Launch Reservation: One bounded launch reservation.
+
+Normalized Objective: Integrate Evaluation Evidence into the ordered HTML documentation navigation, with its own index tile and standard previous and next controls between Core Agent and Skills and Agentic Configuration.
+
+Dispatch Time: 2026-07-29T15:57:40Z.
+
+Intended Root Role: Root Dev Orchestrator.
+
+Owner: Unowned pending root acceptance.
+
+Runtime Launch Result: Not attempted.
+
+Canonical Conversation: None.
+
+Owner Acceptance: None.
+
+Reconciliation: Pending.
+
+## Starting Settlement Evidence
+
+Settlement Window: 2026-07-29T15:57:40Z to 2026-07-29T15:58:40Z (exactly 60 seconds).
+
+Runtime Launch Result: Not attempted.
+
+Canonical Conversation: None.
+
+Owner Acceptance: None.
+
+Reconciliation: Pending.
 
 ## Notes
 
