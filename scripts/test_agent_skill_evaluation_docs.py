@@ -432,6 +432,55 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertIn(text, self.page)
 
+    def test_page_topics_separate_method_coverage_results_limits_and_history(self) -> None:
+        """The page hierarchy must keep distinct evaluation evidence roles in reader order."""
+        section_topics = (
+            ("methodology", "Evaluation purpose and method"),
+            ("coverage", "Coverage and case catalogs"),
+            ("campaign", "Campaign receipt and results"),
+            ("limitations", "Evidence limitations"),
+            ("history", "Historical evidence alignment"),
+            ("agents", "Agent-by-agent evidence"),
+            ("skills", "Skill-by-skill evidence"),
+            ("follow-ups", "Recorded campaign follow-ups"),
+            ("sources", "Authoritative sources"),
+        )
+        positions = []
+        for section_id, title in section_topics:
+            with self.subTest(section=section_id):
+                section_marker = f'<section class="section" id="{section_id}"'
+                heading_marker = f">{title}</h2>"
+                self.assertIn(section_marker, self.page)
+                self.assertIn(heading_marker, self.page)
+                positions.append(self.page.index(section_marker))
+                self.assertIn(f'href="#{section_id}"', self.page)
+        self.assertEqual(sorted(positions), positions)
+
+        for topic in (
+            "Evaluation layers",
+            "Workspace and privacy",
+            "Verdicts and Judges",
+            "Current catalog inventory",
+            "Case and workflow catalogs",
+            "Skill catalog states",
+            "Campaign verdict results",
+            "Harness and evidence breakdown",
+            "Not verified passes",
+            "Alignment and strength",
+            "Evidence alignment states",
+        ):
+            with self.subTest(topic=topic):
+                self.assertEqual(1, self.page.count(f"<h3>{topic}</h3>"))
+
+        association_counts = self.model["associationCatalogCounts"]
+        for count, label in (
+            (association_counts["cases"], "Executable cases"),
+            (association_counts["agentScenarios"], "Agent scenarios"),
+            (association_counts["workflowPacks"], "Workflow packs"),
+        ):
+            with self.subTest(catalog=label):
+                self.assertIn(f"<strong>{count}</strong><span>{label}</span>", self.page)
+
     def test_static_page_contains_every_entry_without_javascript(self) -> None:
         """Generated details must remain complete when the optional filter script is absent."""
         self.assertEqual(129, self.page.count('class="evaluation-card skill-card"'))
