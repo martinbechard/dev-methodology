@@ -33,6 +33,13 @@ REPOSITORY_MAINTENANCE_SKILL_PATH = (
     / "dev-methodology-repository-maintenance"
     / "SKILL.md"
 )
+CREATE_OUTLINE_SKILL_PATH = (
+    REPOSITORY_ROOT
+    / ".agents"
+    / "skills"
+    / "create-document-outline"
+    / "SKILL.md"
+)
 IMPROVE_OUTLINE_SKILL_PATH = (
     REPOSITORY_ROOT
     / ".agents"
@@ -8663,7 +8670,7 @@ class BundleContentTests(unittest.TestCase):
             "codex": {
                 "simple": ("gpt-5.6-luna", "medium"),
                 "default": ("gpt-5.6-terra", "medium"),
-                "documentation": ("gpt-5.5", "medium"),
+                "documentation": ("gpt-5.5", "high"),
                 "advanced": ("gpt-5.6-sol", "high"),
                 "advanced-long": ("gpt-5.6-sol", "high"),
                 "intermediate": ("gpt-5.6-luna", "high"),
@@ -8714,7 +8721,7 @@ class BundleContentTests(unittest.TestCase):
             known_role_names=tuple(role.name for role in roles),
         )
         self.assertIn('model = "gpt-5.5"', codex_text)
-        self.assertIn('model_reasoning_effort = "medium"', codex_text)
+        self.assertIn('model_reasoning_effort = "high"', codex_text)
 
         claude_frontmatter = yaml.safe_load(
             build_skill_docs.render_claude_agent(
@@ -9250,6 +9257,27 @@ class BundleContentTests(unittest.TestCase):
             "Move the explanation, not merely its outline label.",
             "Keep a partial sequence score",
             "probable wrong-document topics",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
+    def test_repository_local_outline_justifications_are_source_grounded(self) -> None:
+        skill_text = CREATE_OUTLINE_SKILL_PATH.read_text(encoding="utf-8")
+        skill_metadata = load_yaml_object_from_frontmatter(
+            CREATE_OUTLINE_SKILL_PATH
+        )
+
+        self.assertEqual("create-document-outline", skill_metadata["name"])
+        for phrase in (
+            "Treat every why clause as an evidence claim",
+            "the source blocks represented by those topics",
+            "Do not introduce an unstated purpose, outcome, chronology, dependency,",
+            "Confirm that the current topic clearly enunciates every constituent",
+            "The why must explain the topic that",
+            "is actually written, not a broader",
+            "prefer the narrowest source-supported transition",
+            "reject a why clause that is not entailed",
+            "every topic and why clause describe the same scope",
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, skill_text)

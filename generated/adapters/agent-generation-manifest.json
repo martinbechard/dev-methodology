@@ -385,7 +385,7 @@
             "documentation-page-verify",
             "codex-harness-directives"
           ],
-          "sha256": "b970edacf3cb7f8eba57a62c699bb4c6278ad2366a3ac646610b14c7a287935a",
+          "sha256": "f06707d8c14db3d0e1c6c6cffea439083363e70d556508ac0444dafae173f7c4",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -475,7 +475,7 @@
             "development-methodology",
             "codex-harness-directives"
           ],
-          "sha256": "ed930095e06dc84349d47ef143fba5ad2d33ed598f67f72c84fb3612cb8b6156",
+          "sha256": "df720b1930a98988ff6a15e85aa7772e5a7dc4949cba5175373fc234a822cd8f",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -674,7 +674,7 @@
             "project-wiki",
             "codex-harness-directives"
           ],
-          "sha256": "516e6b4c0a2f59046150ac321ebe448cd7744a832c73b4feb7ffce75fc39477a",
+          "sha256": "01cab921135c7d83586a89bb8a9e85bc2673f323627d71654c44eceb98b226ba",
           "source": "agents/roles/wiki-activities/wiki-architect.role.yaml"
         },
         {
@@ -700,7 +700,7 @@
             "project-wiki-topic-write",
             "codex-harness-directives"
           ],
-          "sha256": "d78268f839ebb96017fdd85e38229db31add05654c68891f3249e078a3c0d6f0",
+          "sha256": "1fe6317f67e3595174c296cc263844de4ae3e75c4fbf8a70f6100b8d2a17ea0b",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -724,7 +724,7 @@
             "project-wiki-research",
             "codex-harness-directives"
           ],
-          "sha256": "91ef5c773d7ad6b6c253a8dff77650cd63f3a10acb128d77b2af2c511507accb",
+          "sha256": "71dec5d9c25aa2378e53b165d29ff8e50b787bc06798d0b9e450504c0a660fb7",
           "source": "agents/roles/wiki-activities/wiki-researcher.role.yaml"
         },
         {
@@ -738,7 +738,7 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "f4a7fb36cd9200b8ebd85a825b897800f8b9c29f75bb272707ae54e7f63bd7f7",
+          "sha256": "a0d3bf6df827b78affa8b965f17600d74fc375db81152f9d76e8aa8d50bf9b2f",
           "source": "agents/roles/wiki-activities/wiki-source-collector.role.yaml"
         },
         {
@@ -762,7 +762,7 @@
             "project-wiki-topic-write",
             "codex-harness-directives"
           ],
-          "sha256": "07f03adbf02e527de4cc0c8c7b25e001d509e331df3272f605c0e45c031791b7",
+          "sha256": "378eabb367efac0a11a31a9befecbca58bb5fe55f06fba27dc49e9a5de8dc664",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],

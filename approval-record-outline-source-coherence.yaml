@@ -1,0 +1,5 @@
+basis: explicit-user-direction
+definition_scope: .agents/skills/create-document-outline/SKILL.md
+provenance:
+  source: user-message
+  reference: thread:019fa9bf-1e81-7a70-87e5-a747ce97318f/message:reinforce-source-grounded-justifications-and-high-effort-rerun

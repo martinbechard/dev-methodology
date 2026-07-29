@@ -301,6 +301,69 @@ preceding topic elsewhere in the outline.
 
 ## Evaluate Topic Placement
 
+### Source-Grounded Justifications
+
+Treat every why clause as an evidence claim about the topic placement, not as
+an opportunity to invent a plausible editorial story.
+
+Ground each justification strictly in:
+
+- the wording of the current topic;
+- the wording of its parent or immediately preceding sibling, as applicable;
+- the source blocks represented by those topics.
+
+Do not introduce an unstated purpose, outcome, chronology, dependency,
+workflow, protection claim, or causal relationship merely because it would
+make the placement sound coherent. When the source establishes only a narrow
+relationship, state that narrow relationship and score it accordingly.
+
+Require topic-to-justification coherence:
+
+1. Identify every constituent subject, function, condition, or outcome named
+   in the why clause.
+2. Confirm that the current topic clearly enunciates every constituent it is
+   said to cover. Exact word repetition is unnecessary, but the topic's
+   ordinary meaning must state the same subject matter.
+3. Confirm that the source blocks assigned to the topic explicitly support
+   those constituents and the asserted relationship.
+4. Read the topic and why clause together. The why must explain the topic that
+   is actually written, not a broader, narrower, or different interpretation.
+5. If a necessary constituent appears only in the source or the why clause,
+   revise the topic text to include it, split the topic, move it, or lower the
+   score. Do not leave the mismatch hidden inside a generous explanation.
+
+Relationship words such as type, part, stage, input, output, contrast, and
+dependency may connect the named topics. They must not smuggle additional
+subject matter into either topic. A consequence may justify placement only
+when the topic names that consequence and the source treats it as part of the
+topic.
+
+For sibling sequence, prefer the narrowest source-supported transition. For
+example, if the current topic consumes an artifact described by its
+predecessor, say that it uses that artifact as an input. Do not inflate that
+relationship into an unstated end-to-end workflow.
+
+Fictitious example:
+
+```text
+Parent: Quality Assurance
+Preceding sibling: Test Environment Setup
+
+Weak:
+[100% alignment | parent 2/2 — why: testing protects reliability and operating cost | sequence 2/2 — why: after deployment establishes production readiness, testing verifies the finished system] Performance Testing
+
+The weak clauses introduce reliability, cost, deployment, production
+readiness, and finished-system verification even though the topic does not
+enunciate them.
+
+Stronger:
+[100% alignment | parent 2/2 — why: executing performance tests under load is a quality-assurance activity | sequence 2/2 — why: performance tests run in the test environment prepared by the preceding topic] Performance Test Execution Under Load
+```
+
+The stronger topic names the tested activity and its load condition. Each why
+clause uses only those named constituents, the applicable related topic, and a
+relationship supported by the represented source blocks.
+
 ### Parent Containment
 
 Score how well the current topic is contained within its parent topic:
@@ -437,6 +500,13 @@ After scoring, perform a skeptical editorial pass:
 
 - challenge every 2-point component by checking whether its why clause names a
   complete semantic relationship;
+- reject a why clause that is not entailed by the represented source blocks;
+- reject a why clause whose constituent subject matter is not clearly
+  enunciated by the topic it explains;
+- reject a why clause that improves coherence by adding an unstated purpose,
+  outcome, chronology, dependency, or causal story;
+- read every topic and why clause together and revise the topic, placement, or
+  score when they describe different scopes;
 - challenge every 1-point or 0-point component by checking whether its why
   clause states the exact limitation or mismatch;
 - reduce the score when the relationship depends only on shared words,
@@ -464,6 +534,11 @@ Confirm that:
 - every non-root topic has the required parent-containment score;
 - every parent-containment score has a concise explanation of why the entire
   child-topic scope is or is not a subset of the parent-topic scope;
+- every why clause is entailed by its represented source blocks and introduces
+  no unstated subject, purpose, outcome, chronology, dependency, or causality;
+- every topic clearly enunciates the constituent subject matter used by its why
+  clauses;
+- every topic and why clause describe the same scope when read together;
 - every topic after the first sibling has the required sequence score;
 - every sequence score has a concise explanation of the directed relationship
   that makes the current topic a logical successor, partial successor, or

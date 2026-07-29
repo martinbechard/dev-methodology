@@ -10,7 +10,7 @@ profiles:
     effort: medium
   documentation:
     model: gpt-5.5
-    effort: medium
+    effort: high
   advanced:
     model: gpt-5.6-sol
     effort: high
