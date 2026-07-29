@@ -1,6 +1,6 @@
 # Bound Jest failure ownership to the current change
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -10,15 +10,15 @@ Provider Reference: backlog/defect-backlog/bound-jest-failure-ownership-to-curre
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator dispatch reservation
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
-Launch Reservation: ready-starting-three-reservations-019fa9bb-bound-jest
+Launch Reservation: ready-starting-approved-suite-repairs-019fa9bb-bound-jest
 
 Normalized Objective: Limit Jest repair ownership to failures attributable to the current change and preserve unrelated failures as separate evidence.
 
-Dispatch Time: 2026-07-29T00:06:49.750900Z
+Dispatch Time: 2026-07-29T01:52:03Z
 
 Intended Root Role: Dev Orchestrator
 
@@ -26,7 +26,7 @@ Runtime Thread: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
 
 Root Agent Task: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
 
-Next Lifecycle Owner: Dev Backlog Coordinator
+Next Lifecycle Owner: Root Dev Orchestrator 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
 
 ## Starting Reservation
 
@@ -103,6 +103,23 @@ The parent Dev Backlog Coordinator must record User Action Required -> Ready for
 - Exclusions: No application Defect, no other governed definition, and no broader repair.
 - Resulting Disposition: Ready with Owner: Unowned. This transaction does not reserve Starting or accept Running.
 - Lifecycle Claim Evidence: ready-preexisting-jest-suite-failures-019fa9f9; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 85a4e66e-5760-4aec-b97e-482e80f1c039; claimed 2026-07-29T01:49:29.234152Z.
+
+## Starting Reservation — Approved Suite Repairs
+
+- Transition: Ready -> Starting.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- Canonical Root Agent Task Id: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- Owner: Parent Dev Backlog Coordinator dispatch reservation.
+- Launch Reservation: ready-starting-approved-suite-repairs-019fa9bb-bound-jest; one live bounded handshake.
+- Normalized Objective: Repair only the approved nine stale bundle assertions and one stale STE medium-to-high expectation together with the verified Jest change, preserving no broader scope.
+- Dispatch Time: 2026-07-29T01:52:03Z.
+- Intended Root Role: Dev Orchestrator.
+- Delivery Branch: codex/bound-jest-failure-ownership-019fa9f9.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/31c1/dev-methodology.
+- Observed Launch Evidence: Parent Dev Backlog Coordinator reserved this preserved canonical Thread under available Starting-plus-Running capacity and woke its canonical root task.
+- Required Next Transition: The same root Dev Orchestrator must atomically record Starting -> Running for this canonical Thread and task before repository mutation, review, verification, integration, or delivery.
+- Lifecycle Claim Evidence: starting-preexisting-jest-suite-failures-019fa9f9; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event b54e84f3-942d-4aef-9aa3-e43e98158986; claimed 2026-07-29T01:51:52.792770Z.
 
 ## Running Acceptance After Approved Resumption
 
