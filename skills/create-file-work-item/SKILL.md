@@ -29,6 +29,42 @@ Resolve the final canonical path first, then create it with the platform's exclu
 
 Keep backlog creation separate from implementation ownership. When creation immediately authorizes delivery, record and commit the READY item first.
 
+## Exact Backlog Creation Transaction
+
+This section owns exact-path Git behavior for ordinary work-item creation and Future Idea promotion. Do not define a second Git or immutable-proof procedure for promotion.
+
+Resolve and preserve one complete exact canonical repository-relative provider-path manifest before assignment or mutation. Accept only these operation shapes:
+
+- Ordinary creation has exactly one created destination path and no current path.
+- Future Idea promotion has exactly one retained current source path, exactly one exclusively created destination path, and a nonempty atomic rationale explaining why the reciprocal records must commit together.
+
+Refuse an unknown operation, a multi-path ordinary creation, a promotion with either endpoint or its rationale missing, or a missing, title-derived, inferred, wildcard, directory, partial, or mismatched manifest. A conversation title is display text and never supplies the provider path.
+
+Apply ordinary creation only to canonical file-provider records under backlog. Apply promotion only to one retained Future Idea source and one canonical file-provider destination under backlog. Do not apply either transaction to arbitrary repository files. Resolve path roles before mutation:
+
+- A current source must exist with the exact saved bytes and current identity required by its record type.
+- A created destination must be absent and must name itself as its intended final Provider Reference.
+
+The exclusive-create remains authoritative for every created destination. Never substitute an overwrite-capable write merely because Git path limits are available. For promotion, update the retained idea with Promoted To and create the complete reciprocal work item exclusively in the same transaction.
+
+Apply the loaded resource-coordination procedure when it requires protection for a manifest path. Apply the loaded resource-coordination procedure to both exact promotion paths before changing the retained source or creating the destination. Preserve the resulting coordination evidence with the transaction evidence without defining that procedure here.
+
+Every mutating Git argument vector must name all and only the manifest paths after --. Use the equivalent of:
+
+```bash
+git add -- backlog/type-backlog/item.md
+git commit --only -m "Create file work item" -- backlog/type-backlog/item.md
+
+git add -- backlog/future-ideas/idea.md backlog/type-backlog/item.md
+git commit --only -m "Promote Future Idea" -- backlog/future-ideas/idea.md backlog/type-backlog/item.md
+```
+
+Do not use git add ., git add -A, a directory or wildcard pathspec, or an implicit index-wide git commit. Do not clear, replace, or commit unrelated staged entries. Preserve every unrelated staged blob, tracked dirty byte sequence, and untracked dirty byte sequence exactly.
+
+Verify the resulting immutable commit object before reporting success. For ordinary creation, require its changed-path set to equal the one-path manifest and the committed record's Provider Reference and bytes to equal the final path and validated bytes. For promotion, require its changed-path set to equal the source-and-destination manifest, the retained source bytes to contain the exact Promoted To destination, the destination bytes to contain the exact reciprocal Source Evidence path, and the destination Provider Reference to equal the final destination.
+
+A manifest-role, coordination-evidence, Git-argument, changed-path, committed-byte, reciprocal-link, Provider Reference, or unrelated-state mismatch makes the attempt failed or BLOCKED, never successful.
+
 ## Template Workflow
 
 Start each item from [file-work-item-template.md](../development-methodology/assets/templates/file-work-item-template.md). Replace every TODO instruction with source-backed content. Remove every guidance comment before commit. Remove an optional Series, User Action Required, or Notes section when it does not apply; do not leave empty headings or placeholder boilerplate.
@@ -79,20 +115,12 @@ Promote an idea only through a deliberate user-authorized operation:
 
 1. Read the retained source idea, resolve its canonical regular-file authority, and search ordinary queues for an existing matching work item.
 2. Resolve the intended canonical target path and preflight target collisions before any promotion write. An existing target or matching ordinary work item blocks promotion without changing either record.
-3. Remain on primary main. Follow the Claim Events table in agent-claim for the retained Future Idea update. Create the promoted file with an exclusive create operation. Stop if the target already exists. Before editing, save the source idea, target, and Git index state needed to restore the attempt.
-4. Create one complete typed work item in its applicable active, Holding, or User Action Required destination with every field and section required by Required Item Shape, including Open Questions, and any destination-specific sections. Holding may retain its underlying dispatchable Type or declare Type: Holding; User Action Required must retain its underlying dispatchable Type.
-5. Set Completion to exactly direct-main, feature-branch, or UNSET.
-6. Include the exact canonical source idea path in the promoted work item's Source Evidence section.
-7. Retain the original idea in backlog/future-ideas and add Promoted To with the promoted item's canonical provider reference.
-8. Validate both files, the complete item shape, destination rules, and links in both directions.
-9. Stage exactly the idea and target paths without clearing, replacing, or committing unrelated staged state. Use a path-limited commit for exactly those two paths.
-10. Capture the new commit OID immediately after commit creation. Re-read that exact immutable object rather than mutable HEAD and require its changed-path set and reciprocal record bytes to contain exactly the intended pair. Verify unrelated staged state remains staged before reporting success.
-
-The promotion must either succeed completely or restore the previous state. If writing, validation, staging, or the pre-commit step fails, restore the source idea and Git index. Remove only the new target created by this attempt. Verify the restored state before returning.
-
-If the commit result is unknown, inspect Git history before deciding whether to restore files. Read the resulting commit ID directly from Git.
-
-If restoration fails, or if the commit does not contain the two linked records, return BLOCKED. Identify the saved recovery evidence and the Dev Backlog Steward responsible for recovery. Do not report success until the commit contains exactly those two files and unrelated staged files remain unchanged.
+3. Create one complete typed work item in its applicable active, Holding, or User Action Required destination with every field and section required by Required Item Shape, including Open Questions, and any destination-specific sections. Holding may retain its underlying dispatchable Type or declare Type: Holding; User Action Required must retain its underlying dispatchable Type.
+4. Set Completion to exactly direct-main, feature-branch, or UNSET.
+5. Include the exact canonical source idea path in the promoted work item's Source Evidence section.
+6. Retain the original idea in backlog/future-ideas and add Promoted To with the promoted item's canonical provider reference.
+7. Validate both complete files, destination rules, and links in both directions.
+8. Construct the exact two-path manifest with the retained source role, exclusive destination role, and atomic rationale. Execute only the Future Idea promotion shape in Exact Backlog Creation Transaction, including resource coordination for both exact paths, exact Git argument vectors, the path-limited commit, immutable proof, and unrelated-state preservation.
 
 Promotion does not copy the idea's optional revisit trigger into lifecycle scheduling. The promoted work item receives Status: Ready in its typed active folder when promotion authorizes active work, Status: Holding when the user deliberately defers the recognized work, or Status: User Action Required when a separate genuine user-owned question prevents safe work.
 
@@ -220,7 +248,9 @@ Send no message when creation fails or when duplicate reconciliation creates no 
 Before reporting completion:
 
 - Confirm the effective provider is file and the mutation occurred only under backlog in the primary main worktree.
+- Confirm the ordinary creation assignment carried the complete exact canonical repository-relative provider-path manifest and every mutating Git argument vector used exactly that path after --.
 - Confirm uniquely named atomic no-overwrite creation succeeded.
+- Confirm the captured immutable commit object contains exactly the authorized path and validated bytes while unrelated staged and dirty state remains unchanged.
 - Confirm the item is in the right typed folder and has a stable unique path.
 - Confirm related multi-item goals have an index.md and linked independently runnable children.
 - Confirm the complete required item shape, source evidence, dependencies, and verification expectations are present.

@@ -132,6 +132,18 @@ Every provider maps its native record to the following logical fields. Providers
 
 Sensitive, private, proprietary, credential, or company-internal evidence must remain in an appropriate private evidence store. A public provider record may link to a safe reference but must not disclose unsuitable content.
 
+## Exact File-Provider Transactions
+
+Every file-provider creation, lifecycle update, move, archive, or justified atomic multi-record operation starts from a complete exact canonical repository-relative provider-path manifest. The manifest identifies every current source and created destination. Ordinary creation and update each use exactly one path. A move or archive uses exactly one current source and one created destination. A generic atomic operation uses at least two paths and a nonempty rationale, including when exactly two records participate. An unknown operation, invalid role shape, or missing, title-derived, inferred, wildcard, directory, partial, or mismatched manifest is invalid. Conversation titles remain display text and never provider identity or mutation scope.
+
+The transaction applies only to canonical provider records under backlog, plus the retained Future Idea source in create-file-work-item's promotion operation. Current work-item sources must exist with matching current Provider References and saved bytes. Created destinations must be absent, use exclusive-create, and declare their intended final Provider References. In-place records keep their reference. Move and archive sources become absent while their destinations contain the final destination reference. Immutable proof covers the full manifest even when pre-mutation roles differ.
+
+The loaded resource-coordination procedure remains independent from file-provider behavior. Apply it before mutation and require its coordination evidence to agree with the exact manifest without copying its policy into the provider manager.
+
+Every mutating Git argument vector names all and only the authorized provider paths after --. Staging must not use git add ., git add -A, directories, wildcards, or inferred paths. Commit creation uses a path-limited form such as git commit --only with the exact manifest paths instead of reusing the implicit full index. Unrelated staged blobs, tracked dirty bytes, and untracked dirty bytes remain exact.
+
+The resulting immutable commit object must have a changed-path set, committed bytes, deletions, destination bytes, and final Provider References that match the full manifest and every path role. Any mismatch is BLOCKED or failed and never lifecycle success.
+
 ## Future Ideas Are Not Work Items
 
 The file provider reserves backlog/future-ideas for explicitly requested lightweight thoughts that are not yet actionable, approved, scheduled, or recognized as work. Durable Future Ideas are file-provider-only. When another Persistence provider applies, capture is BLOCKED unless the user explicitly selects file as the one-item override for that idea; the steward creates neither a provider issue nor a shadow file.
@@ -142,7 +154,7 @@ Only an explicit ideation or promotion operation reads or validates this folder.
 
 Deliberate promotion retains the idea, adds Promoted To with the canonical work-item reference, and creates one complete work item in an active, Holding, or User Action Required destination. The promoted item records file as Provider, its exact canonical path as Provider Reference, exactly direct-main, feature-branch, or UNSET as Completion, and the retained idea path as an exact Source Evidence entry. Holding accepts the underlying dispatchable Type or the Holding Type. User Action Required retains its underlying dispatchable Type.
 
-Promotion is one failure-atomic primary-main transaction. Before any promotion mutation, the steward snapshots exact idea and target bytes and existence and the exact full Git index file bytes and existence. It stages only the reciprocal pair, uses a path-limited commit, captures the new commit OID, verifies that exact immutable object contains exactly both records and bytes, and leaves unrelated staged state intact. A pre-commit failure restores and verifies the worktree and index snapshots byte-for-byte. When resource coordination selects agent-claim, Event 1 protects the retained Future Idea update through a claim on only its exact current path; the uniquely named promoted target uses atomic no-overwrite creation without a target claim, and an existing target blocks promotion before mutation. Release the source-path claim after success or safe verified rollback, and retain it after unsafe rollback or post-commit reciprocal verification failure. When none is selected, no claim discovery, operation, registry mutation, release, or claim evidence occurs. In either mode, unsafe recovery reports BLOCKED with preserved evidence and the Dev Backlog Steward recovery owner.
+create-file-work-item owns one exact-path promotion transaction under the file-provider contract above. Its durable two-path manifest identifies the retained Future Idea as the current source, the promoted item as the exclusive destination, and the reciprocal-record atomic rationale. The loaded resource coordination applies to both exact promotion paths. The immutable commit object must contain exactly the retained source with Promoted To and the destination with reciprocal Source Evidence and its final Provider Reference. manage-file-work-items routes promotion to this owner and does not define a second procedure.
 
 ## Provider Authority And References
 
@@ -150,7 +162,7 @@ Promotion is one failure-atomic primary-main transaction. Before any promotion m
 
 - Authority exists exclusively under backlog in the primary worktree whose branch is main.
 - The canonical identifier is the repository-relative backlog path. The stable filename slug may be used as a display shorthand only when it is unambiguous.
-- Unique atomic creation uses no claim. Existing-item Running transitions and terminal evidence claim the exact current path, while archive movement also claims the exact destination path; each mutation remains a separate commit.
+- Unique atomic creation uses no claim. Existing-item and archive claim behavior remains owned by Agent Claim. Every provider mutation still carries its complete exact path manifest and remains a separate verified commit.
 - Isolated worktrees may read backlog state but do not author or archive the canonical backlog record.
 - A completed item moves to the matching type folder under backlog/completed-backlog. The destination path becomes the terminal provider reference.
 

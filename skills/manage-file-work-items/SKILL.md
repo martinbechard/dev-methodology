@@ -27,6 +27,39 @@ Another worktree may inspect backlog but must not create, transition, or archive
 
 Each startup or terminal transition remains its own short primary-main provider transaction. Before finish or handoff, commit completed work and prove the applicable worktree clean.
 
+## Exact Provider-Path Transaction
+
+Every assignment or baton for a lifecycle transition, update, move, archive, or justified atomic multi-record operation must carry a complete exact canonical repository-relative provider-path manifest. Preserve that manifest as durable transaction evidence.
+
+- An in-place update, including one lifecycle transition, names exactly one current path.
+- A move or archive names exactly one current source and one created destination.
+- A justified atomic multi-record operation names at least two paths, identifies every current and created path role, and includes a nonempty atomic rationale. This rule applies even when the operation has exactly two records.
+
+Refuse an unknown operation kind, a multi-path ordinary update, a move or archive with either endpoint missing, an atomic operation with fewer than two paths, or a multi-record operation that omits a path role or the atomic rationale. Also refuse a missing, title-derived, inferred, wildcard, directory, partial, or mismatched manifest. Never derive scope from a conversation title, filename guess, work-item title, directory scan, staged index, or prior transaction.
+
+Apply this transaction only to canonical file-provider records under backlog. Do not use it for arbitrary repository files. Parse and compare Provider Reference fields by path role:
+
+- Every current work-item source must exist, its current Provider Reference must equal that current source path, and its bytes and lifecycle preconditions must match the saved preimage.
+- Every created destination must be absent before mutation and must be declared as an intended post-mutation Provider Reference. Exclusive-create remains its collision boundary.
+- For an in-place update, the final Provider Reference remains the same current path.
+- For a move or archive, the source is absent after mutation and the destination record's final Provider Reference equals the destination path.
+- For an atomic multi-record operation, every retained current record and every created destination must have its role-appropriate final presence, absence, bytes, and Provider Reference.
+
+Before mutation, apply the loaded resource-coordination procedure and require that its coordination evidence agrees with the exact manifest. Keep resource-coordination policy and outcome interpretation in that loaded procedure rather than defining either one here.
+
+Perform the file mutation only after those checks. Every mutating Git argument vector must name all and only the manifest paths after --. Supported path-limited forms include:
+
+```bash
+git add -- backlog/type-backlog/item.md
+git commit --only -m "Update file work item" -- backlog/type-backlog/item.md
+git mv -- backlog/type-backlog/item.md backlog/completed-backlog/types/item.md
+git commit --only -m "Archive file work item" -- backlog/type-backlog/item.md backlog/completed-backlog/types/item.md
+```
+
+For an atomic multi-record operation, pass every exact manifest path after -- to each applicable git add and git commit --only invocation. Prohibit git add ., git add -A, directory or wildcard staging, pathspec inference, and an implicit index-wide commit. Do not clear, replace, or commit unrelated staged entries. Preserve every unrelated staged blob, tracked dirty byte sequence, and untracked dirty byte sequence exactly.
+
+Verify the resulting immutable commit object before reporting success. Require its changed-path set to equal the full manifest exactly. Parse the committed bytes and require every source deletion, retained record, destination record, and Provider Reference to match its operation role. Any mismatch among the assignment manifest, path roles, coordination evidence, Git argument vectors, changed-path set, committed bytes, existence, Provider References, or unrelated state makes the transaction BLOCKED or failed, never successful.
+
 ## Folder Model
 
 Use these folders when present:
@@ -144,7 +177,7 @@ Do not move an independently identified defect, enhancement, or idea into a type
 - Treat only a resolved regular work-item file contained by its canonical backlog queue as a promotion target. Reject a symlinked or otherwise resolved target that escapes authority without reading external bytes.
 - Include the exact retained idea path in the promoted work item's Source Evidence section, and add Promoted To with the canonical work-item reference to the original idea.
 - Preserve the original idea in place after promotion. Do not archive or delete it merely because typed work now exists.
-- Update the idea and promoted item in one primary-main transaction after duplicate detection succeeds. Create the destination with an exclusive create operation and stop if it already exists. Preserve enough file and index state to verify the commit or restore the attempt.
+- Route the idea and promoted item through the single Future Idea promotion transaction owned by create-file-work-item after duplicate detection succeeds. Do not define or execute a competing promotion transaction here.
 
 ## Transition Evidence
 

@@ -153,6 +153,10 @@ python3 "${HOME}/.agents/skills/agent-claim-command/scripts/claim.py" --help
 
 For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, Ready -> Starting reservations, and Stalled or Blocked dispositions. The root Dev Orchestrator owns Starting -> Running acceptance and terminal closure requests for its work item. Dev Backlog Steward performs each authorized provider mutation for either owner. Dev Backlog Watchdog performs periodic read-only observation and reports only actionable anomalies or satisfied exit conditions to the Coordinator. Each agent follows Agent Claim when its work reaches an event in the Claim Events table.
 
+Every file-provider creation, lifecycle update, move, archive, or justified atomic multi-record operation carries a complete manifest of exact canonical repository-relative backlog paths and their current-source or created-destination roles. Ordinary creation and update each use one path. Moves and archives use one source and one destination. Generic atomic operations use at least two paths and a nonempty rationale. Current sources must match their current Provider References; created destinations must be absent and name their intended final Provider References. The loaded resource-coordination procedure applies independently and its evidence must agree with the exact manifest.
+
+Mutating Git commands use all and only the manifest pathspecs after --, and commit creation is path-limited. They preserve unrelated staged blobs, tracked dirty bytes, and untracked dirty bytes. The resulting immutable commit object must prove the full changed-path set, committed bytes, presence or absence, and final Provider References. Missing, inferred, wildcard, directory, partial, role-invalid, or mismatched scope fails the transaction.
+
 ## Backlog Report
 
 Generate an offline HTML snapshot from the repository's live backlog state:
@@ -171,7 +175,7 @@ python3 scripts/generate-backlog-report.py --output /path/to/backlog-report.html
 
 The explicit view lists Future Ideas separately. Each idea needs only a title, Synopsis, and Origin or Rationale; Notes and a free-text Revisit Trigger are optional. A promoted idea remains in place with Promoted To and the complete promoted work item carries the exact source idea path in its Source Evidence. Promotion Completion is direct-main, feature-branch, or UNSET. Holding accepts an underlying dispatchable Type or the Holding Type; User Action Required retains its underlying dispatchable Type.
 
-Promotion always runs as one primary-main transaction. Before mutation, the steward snapshots exact idea and target bytes and existence plus the exact full Git index file bytes and existence. It stages the reciprocal pair only, uses a path-limited commit, captures the new commit OID, verifies that exact immutable object contains exactly both records and bytes, and leaves unrelated staged state intact. A failed operation restores and verifies both worktree paths and the Git index. The steward follows [Agent Claim](skills/agent-claim/SKILL.md) when that skill is loaded. Unsafe recovery reports BLOCKED with preserved evidence and the Dev Backlog Steward recovery owner.
+create-file-work-item owns the one exact-path promotion transaction. Its durable manifest names the retained idea as the current source, the promoted work item as the exclusive destination path, and the atomic rationale. The loaded resource-coordination procedure applies to both exact promotion paths. The transaction stages the exact pair, uses a path-limited commit, proves reciprocal links and the destination Provider Reference from the immutable commit object, and preserves unrelated staged and dirty bytes.
 
 The report is read-only. It does not approve user-action items, mutate backlog files, acquire work, or dispatch agents.
 

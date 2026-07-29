@@ -4453,15 +4453,15 @@ class BundleContentTests(unittest.TestCase):
             "Keep revisit triggers as free text",
             "Retain the original idea in backlog/future-ideas",
             "preflight target collisions before any promotion write",
-            "save the source idea, target, and Git index state needed to restore the attempt",
             "including Open Questions",
-            "The promotion must either succeed completely or restore the previous state.",
-            "Remove only the new target created by this attempt.",
-            "Stage exactly the idea and target paths",
+            "exactly one retained current source path",
+            "exactly one exclusively created destination path",
+            "Apply the loaded resource-coordination procedure to both exact promotion paths",
+            "Every mutating Git argument vector must name all and only the manifest paths after --.",
             "path-limited commit",
-            "Capture the new commit OID immediately after commit creation",
-            "require its changed-path set and reciprocal record bytes to contain exactly the intended pair",
-            "Follow the Claim Events table in agent-claim for the retained Future Idea update",
+            "immutable commit object",
+            "require its changed-path set to equal the source-and-destination manifest",
+            "Execute only the Future Idea promotion shape in Exact Backlog Creation Transaction",
         ):
             with self.subTest(create_future_ideas_contract=required_phrase):
                 self.assertIn(required_phrase, create_file_text)
@@ -4504,21 +4504,19 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(steward_coordination_phrase=retired_coordination_phrase):
                 self.assertNotIn(retired_coordination_phrase, role_text)
         for required_phrase in (
-            "exact full Git index file bytes and existence",
-            "path-limited commit",
-            "unrelated staged state",
-            "captures the new commit OID",
-            "The steward follows [Agent Claim](skills/agent-claim/SKILL.md) when that skill is loaded.",
+            "create-file-work-item owns the one exact-path promotion transaction",
+            "loaded resource-coordination procedure applies to both exact promotion paths",
+            "exclusive destination path",
+            "immutable commit object",
+            "preserves unrelated staged and dirty bytes",
         ):
             with self.subTest(future_ideas_readme=required_phrase):
                 self.assertIn(required_phrase, readme_text)
         for required_phrase in (
-            "exact full Git index file bytes and existence",
-            "path-limited commit",
-            "unrelated staged state",
-            "captures the new commit OID",
-            "Event 1 protects the retained Future Idea update through a claim on only its exact current path",
-            "uniquely named promoted target uses atomic no-overwrite creation without a target claim",
+            "create-file-work-item owns one exact-path promotion transaction",
+            "resource coordination applies to both exact promotion paths",
+            "immutable commit object",
+            "manage-file-work-items routes promotion to this owner",
         ):
             with self.subTest(future_ideas_provider_contract=required_phrase):
                 self.assertIn(required_phrase, provider_contract_text)
@@ -4528,6 +4526,55 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertIn("reject direct unowned Blocked to Running", judge_text)
         self.assertIn("byte-for-byte pre-attempt Blocked item", judge_text)
+
+    def test_file_provider_backlog_mutations_require_exact_path_proof(self) -> None:
+        create_text = (
+            SKILLS_ROOT / "create-file-work-item" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        manage_text = (
+            SKILLS_ROOT / "manage-file-work-items" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        for required_phrase in (
+            "## Exact Backlog Creation Transaction",
+            "complete exact canonical repository-relative provider-path manifest",
+            "exactly one created destination path",
+            "nonempty atomic rationale",
+            "loaded resource-coordination procedure to both exact promotion paths",
+            "exclusive-create remains authoritative",
+            "tracked dirty byte sequence",
+            "untracked dirty byte sequence",
+            "git add --",
+            "git commit --only",
+            "immutable commit object",
+            "only to canonical file-provider records under backlog",
+        ):
+            with self.subTest(create_contract=required_phrase):
+                self.assertIn(required_phrase, create_text)
+
+        for required_phrase in (
+            "## Exact Provider-Path Transaction",
+            "complete exact canonical repository-relative provider-path manifest",
+            "one current path",
+            "one current source and one created destination",
+            "at least two paths",
+            "nonempty atomic rationale",
+            "current Provider Reference",
+            "intended post-mutation Provider Reference",
+            "loaded resource-coordination procedure",
+            "coordination evidence agrees with the exact manifest",
+            "tracked dirty byte sequence",
+            "untracked dirty byte sequence",
+            "title-derived",
+            "git add --",
+            "git commit --only",
+            "implicit index-wide commit",
+            "immutable commit object",
+            "only to canonical file-provider records under backlog",
+            "single Future Idea promotion transaction owned by create-file-work-item",
+        ):
+            with self.subTest(manage_contract=required_phrase):
+                self.assertIn(required_phrase, manage_text)
 
     def test_skill_frontmatter_uses_agent_skill_schema(self) -> None:
         for skill_path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):
