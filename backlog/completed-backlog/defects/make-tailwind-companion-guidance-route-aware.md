@@ -1,12 +1,12 @@
 # Make Tailwind companion guidance conditional on active-scope routing
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/make-tailwind-companion-guidance-route-aware.md
+Provider Reference: backlog/completed-backlog/defects/make-tailwind-companion-guidance-route-aware.md
 
 Completion: direct-main
 
@@ -34,6 +34,21 @@ Owner: Dev Orchestrator
 - Phase: Running acceptance complete; approved Tailwind guidance correction is pending the separate governed-source approval-record and pre-mutation check.
 - Approved Governed Scope: skills/tailwind-design-system/SKILL.md only.
 - Repository Mutation Boundary: No source mutation occurred before this Running acceptance became durable. Any later source mutation remains gated on the exact-scope approval record and successful supported pre-mutation check.
+
+## Completion Evidence
+
+- Completed At: 2026-07-29T00:11:23Z.
+- Completion Selector: direct-main.
+- Accepted Source Candidate: 5f149c41ead5edf668617d76b675563c823352b8; source paths: skills/tailwind-design-system/SKILL.md, scripts/test_tailwind_design_system.py, and design/generated/skill-definitions.js.
+- Independent Review: ACCEPT with no actionable findings.
+- Independent Verification: VERIFIED PASS.
+- Integration: fresh current-main cleanup branch codex/tailwind-companion-route-aware-integration-019faa83; merge commit b5c77cf1abe9127ae303eb91ab8a16ad0487221e; current-main reconciliation commit and observed primary-main tip d6ea790d90238b1efb0bcf04fb47cd624191afb0.
+- Main Reachability: source candidate 5f149c41ead5edf668617d76b675563c823352b8 and integration tip d6ea790d90238b1efb0bcf04fb47cd624191afb0 are ancestors of primary main.
+- Primary-Main Checks: Python 3.11 focused unittest, 3 tests OK; skill validation passed; build-skill-docs --check passed; py_compile passed; governed source preflight ALLOWED_APPROVED_DEFINITION_CHANGE; mirror preflight ALLOWED_APPROVED_REGENERATION; and git diff --check passed.
+- Approval Scope and Provenance: user approval from Parent Dev Backlog Coordinator task 019fa9bb-1423-7e80-bcde-3caa765e3758 approved only skills/tailwind-design-system/SKILL.md; no other governed definition was approved.
+- Scoped Omission: an initial Apple Python 3.9 invocation failed only because an existing test_bundle_content import requires standard-library tomllib; the configured Python 3.11 rerun passed all checks.
+- Delivery Authority: local primary main; no remote publication is configured or required.
+- Cleanup Eligibility: codex/tailwind-companion-route-aware-integration-019faa83 is fully merged; cleanup is eligible under the direct-main completion process.
 
 ## User Action Required Resolution
 
@@ -64,11 +79,11 @@ Branch: codex/tailwind-companion-route-aware-019faa83
 
 Worktree: /Users/martinbechard/.codex/worktrees/41ca/dev-methodology
 
-Phase: Running acceptance complete; approved Tailwind guidance correction is pending the separate governed-source approval-record and pre-mutation check.
+Phase: Completed; verified direct-main delivery observed on primary main.
 
 Started At: 2026-07-28T21:00:12Z
 
-Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim accept-running-tailwind-approved-019faa83; acquisition journal event 416a53f5-f73b-4f2d-bb5b-fc662ccc9462. Preserved User Action Required transition evidence: SHARED_CHECKOUT_ACQUIRED claim move-user-action-tailwind-019faa83; acquisition journal event 08db59f8-b414-418e-b747-92e3a7ded6ef. Preserved prior Running acceptance evidence: provider commit 48ec224dbc8a7981a0ea234990d3de1c599f0bad; SHARED_CHECKOUT_ACQUIRED claim accept-running-tailwind-019faa83, acquisition journal event bafae64e-bed6-4c26-aa1d-32a9a005094a, and release journal event 1f9c568f-a28e-48bf-a47a-fe4bbfd2e084. Preserved Starting reservation evidence: SHARED_CHECKOUT_ACQUIRED claim reserve-six-ready-refill-tailwind-019fa9bb-retry; acquisition journal event d7b2246e-4e09-43df-a8f7-a5a04455a0d9.
+Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim complete-tailwind-route-aware-019faa83; acquisition journal event 7a438165-cae7-4675-ab2a-dcaa3151a555. Integration claim integrate-tailwind-route-aware-019faa83: SHARED_CHECKOUT_ACQUIRED journal 6e43b041-a07e-42d0-9487-c60b8b75da78 and RELEASED journal 82dbbef9-128a-480e-987c-3c5b2df16d3e. Preserved Running acceptance evidence: SHARED_CHECKOUT_ACQUIRED claim accept-running-tailwind-approved-019faa83; acquisition journal event 416a53f5-f73b-4f2d-bb5b-fc662ccc9462. Preserved User Action Required transition evidence: SHARED_CHECKOUT_ACQUIRED claim move-user-action-tailwind-019faa83; acquisition journal event 08db59f8-b414-418e-b747-92e3a7ded6ef. Preserved prior Running acceptance evidence: provider commit 48ec224dbc8a7981a0ea234990d3de1c599f0bad; SHARED_CHECKOUT_ACQUIRED claim accept-running-tailwind-019faa83, acquisition journal event bafae64e-bed6-4c26-aa1d-32a9a005094a, and release journal event 1f9c568f-a28e-48bf-a47a-fe4bbfd2e084. Preserved Starting reservation evidence: SHARED_CHECKOUT_ACQUIRED claim reserve-six-ready-refill-tailwind-019fa9bb-retry; acquisition journal event d7b2246e-4e09-43df-a8f7-a5a04455a0d9.
 
 ## Summary
 
