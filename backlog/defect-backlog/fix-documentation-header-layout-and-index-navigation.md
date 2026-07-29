@@ -1,6 +1,6 @@
 # Fix Documentation Header Layout And Index Navigation
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -102,6 +102,46 @@ Source Mutation Evidence: None observed. No source mutation was authorized or pe
 Reservation Disposition: Expired reservation cleared. No replacement launch was created.
 
 Reconciliation: Ready.
+
+## Current Dispatch Reservation (Existing Canonical Conversation)
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Launch Reservation: One bounded resume reservation for the existing canonical conversation; no new conversation creation is authorized.
+
+Normalized Objective: Make the HTML documentation header intuitive by placing the settings control in the right-hand corner and using the linked toolkit title as the single control for returning to the documentation index.
+
+Dispatch Time: 2026-07-29T15:54:20Z.
+
+Intended Root Role: Root Dev Orchestrator.
+
+Canonical Conversation: 019fae92-0f9c-73d1-8061-b64d453c503a.
+
+Canonical Root Agent Task: 019fae92-0f9c-73d1-8061-b64d453c503a.
+
+Worktree: /Users/martinbechard/.codex/worktrees/b423/dev-methodology.
+
+Owner: Unowned pending root acceptance.
+
+Runtime Launch Result: Existing canonical conversation observed and ready for resume.
+
+Owner Acceptance: Pending.
+
+Reconciliation: Pending.
+
+## Starting Settlement Evidence (Existing Canonical Conversation)
+
+Settlement Window: 2026-07-29T15:54:20Z to 2026-07-29T15:55:20Z (exactly 60 seconds).
+
+Runtime Launch Result: Existing canonical conversation observed and ready for resume.
+
+Canonical Conversation: 019fae92-0f9c-73d1-8061-b64d453c503a.
+
+Owner Acceptance: Pending.
+
+Reconciliation: Pending.
 
 ## Starting Settlement Evidence
 
