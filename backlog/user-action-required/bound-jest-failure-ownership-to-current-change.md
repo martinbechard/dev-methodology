@@ -1,16 +1,16 @@
 # Bound Jest failure ownership to the current change
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/bound-jest-failure-ownership-to-current-change.md
+Provider Reference: backlog/user-action-required/bound-jest-failure-ownership-to-current-change.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned pending user action
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -26,7 +26,7 @@ Runtime Thread: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
 
 Root Agent Task: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Next Lifecycle Owner: Dev Backlog Coordinator
 
 ## Starting Reservation
 
@@ -120,6 +120,52 @@ The parent Dev Backlog Coordinator must record User Action Required -> Ready for
 - Observed Launch Evidence: Parent Dev Backlog Coordinator reserved this preserved canonical Thread under available Starting-plus-Running capacity and woke its canonical root task.
 - Required Next Transition: The same root Dev Orchestrator must atomically record Starting -> Running for this canonical Thread and task before repository mutation, review, verification, integration, or delivery.
 - Lifecycle Claim Evidence: starting-preexisting-jest-suite-failures-019fa9f9; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event b54e84f3-942d-4aef-9aa3-e43e98158986; claimed 2026-07-29T01:51:52.792770Z.
+
+## User Action Required — Newly Exposed Lifecycle Assertion
+
+### Question for the User
+
+Should I also update the newly exposed stale lifecycle assertion so it permits the accepted phrase “multi-item Codex task campaigns”?
+
+### Options and Tradeoffs
+
+- Approve adds only this assertion repair, then finishes tests/review/integration.
+- Defer preserves the partial authorized repair and candidate evidence in User Action Required.
+- Decline reverts only the partial stale-test repair and resumes the original verified Jest change while leaving unrelated tests unchanged.
+
+### Why User Input Is Required
+
+The assertion was hidden behind an earlier failure and was not one of the ten exact approved repairs. Repairing it expands the accepted scope and requires user authorization.
+
+### Evidence and Preservation
+
+- Transition: Running -> User Action Required.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- Canonical Root Agent Task Id: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- Preserved Running Commit: 615a1bd1bab2af9593b64d237c2e09ca674279cd.
+- Preserved Replay Commit: 1729293ea38d784ba674db0bca7cec39728e33d9.
+- Preserved Uncommitted Private Changes: scripts/test_bundle_content.py and scripts/test_ste_technical_writing.py only.
+- Preserved Candidate Commit: 2966d6cb95b45fe145969fb3ac6a0076d98c7799.
+- Accepted Source Commit: dbb0083aa36205ceee5a92a915754b2fe86260d5.
+- Attribution, Review, and Verification Evidence: Preserved in the canonical Thread and provider history.
+- Lifecycle Claim Evidence: uar-exposed-lifecycle-assertion-019fa9f9; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event f3d4d0f5-b257-4a04-9dd2-fbc93648fe08; claimed 2026-07-29T02:02:06.561840Z.
+
+### Exclusions
+
+No application Defect, no additional governed definition, and no broader repair.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+After this provider move, do not perform further test, source, candidate, review, integration, or delivery mutation until the user answers and the same task resumes through User Action Required -> Ready -> Starting -> Running.
+
+### Resumption
+
+Preserve all evidence. The parent Dev Backlog Coordinator must record User Action Required -> Ready for this canonical Thread, then separately reserve Ready -> Starting. The same root Dev Orchestrator must separately accept Starting -> Running before work resumes.
 
 ## Running Acceptance — Approved Suite Repairs
 
