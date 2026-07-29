@@ -6,7 +6,6 @@
 from __future__ import annotations
 
 import importlib.util
-import json
 import re
 import sys
 import unittest
@@ -21,7 +20,6 @@ BUILD_SCRIPT = ROOT / "scripts" / "build-skill-docs.py"
 SKILL_PATH = ROOT / "skills" / "effective-communication" / "SKILL.md"
 ROLE_SCHEMA_PATH = ROOT / "agents" / "role-schema.yaml"
 HIERARCHY_PATH = ROOT / "design" / "agent-skill-hierarchy.svg"
-EXPLORER_PATH = ROOT / "design" / "generated" / "agent-skill-explorer-data.js"
 ROLES_ROOT = ROOT / "agents" / "roles"
 
 
@@ -107,7 +105,7 @@ class EffectiveCommunicationContractTests(unittest.TestCase):
                 self.assertIn("effective-communication", role.skills)
                 self.assertNotIn("effective-communication", role.skill_conditions)
 
-    def test_generated_relationship_views_assign_communication_to_every_role(self) -> None:
+    def test_generated_hierarchy_assigns_communication_to_every_role(self) -> None:
         role_count = len(list(ROLES_ROOT.glob("*/*.role.yaml")))
 
         hierarchy = ET.parse(HIERARCHY_PATH).getroot()
@@ -132,16 +130,6 @@ class EffectiveCommunicationContractTests(unittest.TestCase):
             "unassigned",
             " ".join(text.strip() for text in communication_node.itertext()),
         )
-
-        explorer_text = EXPLORER_PATH.read_text(encoding="utf-8")
-        explorer_payload = json.loads(explorer_text.split(" = ", 1)[1].rstrip(";\n"))
-        explorer_edges = [
-            edge
-            for edge in explorer_payload["edges"]
-            if edge["skill"] == "effective-communication"
-        ]
-        self.assertEqual(role_count, len(explorer_edges))
-        self.assertTrue(all(edge["kind"] == "fixed" for edge in explorer_edges))
 
 
 if __name__ == "__main__":

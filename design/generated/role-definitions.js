@@ -5,12 +5,12 @@
 window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
   "catalogGroups": [
     {
-      "id": "backlog-management",
-      "label": "Backlog Management"
-    },
-    {
       "id": "dev-activities",
       "label": "Dev Activities"
+    },
+    {
+      "id": "backlog-management",
+      "label": "Backlog Management"
     },
     {
       "id": "wiki-activities",

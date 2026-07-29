@@ -32,12 +32,6 @@ ROLE_WIDTH = 320
 SKILL_WIDTH = 360
 SVG_WIDTH = 1150
 ROLE_DISPLAY_ACRONYMS = {"e2e": "E2E", "qa": "QA", "ux": "UX"}
-BACKLOG_MANAGEMENT_ROLES = (
-    "dev-backlog-coordinator",
-    "dev-backlog-steward",
-    "dev-backlog-watchdog",
-    "dev-orchestrator",
-)
 
 
 def _load_yaml(path: Path) -> dict[str, object]:
@@ -302,12 +296,6 @@ def build_svg() -> str:
         roles.append(role)
 
     role_names = {str(role["name"]) for role in roles}
-    missing_backlog_roles = set(BACKLOG_MANAGEMENT_ROLES) - role_names
-    if missing_backlog_roles:
-        raise ValueError(
-            "Backlog management focus references unknown conceptual definitions: "
-            + ", ".join(sorted(missing_backlog_roles))
-        )
     agent_dependencies: list[tuple[str, str]] = []
     for role in roles:
         source_role = str(role["name"])
@@ -400,17 +388,14 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 .selection-marker{fill:none;stroke:#0f766e;stroke-width:4;opacity:0}.skill-node.active .selection-marker,.skill-node.selected .selection-marker{opacity:1}
 .reset-control,.view-control{cursor:pointer;outline:none}.reset-control rect{fill:#fff;stroke:#0f766e}.reset-control text{font-size:11px;font-weight:700;fill:#0f766e}
 .view-control rect{fill:#0f766e;stroke:#0f766e}.view-control text{font-size:11px;font-weight:700;fill:#fff}
-.backlog-focus-control{cursor:pointer;outline:none}.backlog-focus-control rect{fill:#eff6ff;stroke:#2563eb}.backlog-focus-control text{font-size:11px;font-weight:700;fill:#1d4ed8}.backlog-focus-control.active rect{fill:#2563eb}.backlog-focus-control.active text{fill:#fff}
 .dependency-toggle{cursor:pointer;outline:none}.dependency-toggle .toggle-surface{fill:#fff;stroke:#2563eb}.dependency-toggle .toggle-box{fill:#fff;stroke:#2563eb;stroke-width:1.5}.dependency-toggle text{font-size:11px;font-weight:700;fill:#1d4ed8}.dependency-toggle .checkmark{fill:none;stroke:#fff;stroke-width:2;opacity:0}.dependency-toggle.checked .toggle-box{fill:#2563eb}.dependency-toggle.checked .checkmark{opacity:1}
 .dependency-toggle:hover .toggle-surface,.dependency-toggle:focus .toggle-surface{stroke-width:2}.dependency-toggle:focus .toggle-surface{stroke-dasharray:4 2}
-.backlog-focus-control:hover rect,.backlog-focus-control:focus rect{stroke-width:2}.backlog-focus-control:focus rect{stroke-dasharray:4 2}
 .reset-control:hover rect,.reset-control:focus rect,.view-control:hover rect,.view-control:focus rect{stroke-width:2}.reset-control:focus rect,.view-control:focus rect{stroke-dasharray:4 2}
 .reset-control.disabled,.view-control.disabled{cursor:default;opacity:.35}.reset-control.disabled:hover rect,.view-control.disabled:hover rect{stroke-width:1}
 @media (prefers-reduced-motion:reduce){.node,.edge,.dependency-edge,.role-node,.skill-node{transition:none}}
 ]]></style>""",
         '<text x="30" y="38" class="heading">Choose an agent or skill. Trace its relationships.</text>',
         '<text x="30" y="64" id="selection-status" class="status" role="status" aria-live="polite">All agents and skills shown. Agent dependency arrows are visible.</text>',
-        f'<g class="backlog-focus-control" data-focus-roles="{" ".join(BACKLOG_MANAGEMENT_ROLES)}" role="button" tabindex="0" aria-pressed="false" aria-label="Focus backlog management agents"><rect x="30" y="78" width="210" height="30" rx="15"/><text x="135" y="97" text-anchor="middle">Focus backlog management</text></g>',
         f'<g class="dependency-toggle checked" role="checkbox" tabindex="0" aria-checked="true" aria-label="Show agent dependencies"><rect x="{SVG_WIDTH - 585}" y="24" width="220" height="30" rx="15" class="toggle-surface"/><rect x="{SVG_WIDTH - 573}" y="32" width="14" height="14" rx="3" class="toggle-box"/><path d="M {SVG_WIDTH - 570} 39 L {SVG_WIDTH - 566} 43 L {SVG_WIDTH - 560} 35" class="checkmark"/><text x="{SVG_WIDTH - 550}" y="43">Show agent dependencies</text></g>',
         f'<g class="view-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Select an agent or skill to view its definition"><rect x="{SVG_WIDTH - 330}" y="24" width="160" height="30" rx="15"/><text x="{SVG_WIDTH - 250}" y="43" text-anchor="middle">View definition</text></g>',
         f'<g class="reset-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Clear map selection"><rect x="{SVG_WIDTH - 150}" y="24" width="120" height="30" rx="15"/><text x="{SVG_WIDTH - 90}" y="43" text-anchor="middle">Clear selection</text></g>',
@@ -520,34 +505,19 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
   const skillNodes = Array.from(document.querySelectorAll(".skill-node"));
   const edges = Array.from(document.querySelectorAll(".edge"));
   const dependencyEdges = Array.from(document.querySelectorAll(".dependency-edge"));
-  const backlogFocusControl = document.querySelector(".backlog-focus-control");
   const dependencyToggle = document.querySelector(".dependency-toggle");
   const viewControl = document.querySelector(".view-control");
   const resetControl = document.querySelector(".reset-control");
   const status = document.getElementById("selection-status");
   const viewDefinitionMessage = "dev-methodology:view-definition";
-  const backlogManagementRoles = new Set(backlogFocusControl.dataset.focusRoles.split(" "));
-  const backlogManagementDependencyEdges = dependencyEdges.filter(
-    (edge) => backlogManagementRoles.has(edge.dataset.sourceRole)
-  );
-  const backlogFocusRoles = new Set([
-    ...backlogManagementRoles,
-    ...backlogManagementDependencyEdges.map((edge) => edge.dataset.targetRole),
-  ]);
   let selectedRole = "";
   let selectedSkill = "";
-  let focusBacklogManagement = false;
   let showAgentDependencies = true;
 
   function renderSelection() {
-    const hasSelection = Boolean(selectedRole || selectedSkill || focusBacklogManagement);
-    const hasDefinitionSelection = Boolean(selectedRole || selectedSkill);
+    const hasSelection = Boolean(selectedRole || selectedSkill);
     const activeSkills = new Set(
-      focusBacklogManagement
-        ? edges
-            .filter((edge) => backlogFocusRoles.has(edge.dataset.role))
-            .map((edge) => edge.dataset.skill)
-        : selectedRole
+      selectedRole
         ? edges
             .filter((edge) => edge.dataset.role === selectedRole)
             .map((edge) => edge.dataset.skill)
@@ -556,9 +526,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
           : []
     );
     const activeRoles = new Set(
-      focusBacklogManagement
-        ? backlogFocusRoles
-        : selectedSkill
+      selectedSkill
         ? edges
             .filter((edge) => edge.dataset.skill === selectedSkill)
             .map((edge) => edge.dataset.role)
@@ -567,12 +535,9 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
           : []
     );
     const activeDependencyEdges = dependencyEdges.filter(
-      (edge) => showAgentDependencies && (
-        focusBacklogManagement
-          ? backlogManagementDependencyEdges.includes(edge)
-          : selectedRole
-            && (edge.dataset.sourceRole === selectedRole || edge.dataset.targetRole === selectedRole)
-      )
+      (edge) => showAgentDependencies
+        && selectedRole
+        && (edge.dataset.sourceRole === selectedRole || edge.dataset.targetRole === selectedRole)
     );
     activeDependencyEdges.forEach((edge) => {
       activeRoles.add(edge.dataset.sourceRole);
@@ -588,9 +553,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
       node.setAttribute("aria-pressed", String(isSelected));
     });
     edges.forEach((edge) => {
-      const isActive = focusBacklogManagement
-        ? backlogFocusRoles.has(edge.dataset.role)
-        : selectedRole
+      const isActive = selectedRole
         ? edge.dataset.role === selectedRole
         : edge.dataset.skill === selectedSkill;
       edge.classList.toggle("active", isActive);
@@ -613,9 +576,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
     const activeRoleNode = roleNodes.find(
       (node) => node.dataset.role === selectedRole
     );
-    if (focusBacklogManagement) {
-      status.textContent = `Backlog management: ${activeRoles.size} agents, ${activeSkills.size} linked skills, and ${activeDependencyEdges.length} dependency arrows highlighted.`;
-    } else if (activeRoleNode) {
+    if (activeRoleNode) {
       const dependencyStatus = showAgentDependencies
         ? ` ${activeDependencyEdges.length} agent dependency arrows highlighted.`
         : "";
@@ -634,19 +595,17 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
     );
     dependencyToggle.classList.toggle("checked", showAgentDependencies);
     dependencyToggle.setAttribute("aria-checked", String(showAgentDependencies));
-    backlogFocusControl.classList.toggle("active", focusBacklogManagement);
-    backlogFocusControl.setAttribute("aria-pressed", String(focusBacklogManagement));
     const selectedKind = selectedRole ? "agent" : selectedSkill ? "skill" : "";
     const selectedName = selectedRole || selectedSkill;
     const selectedLabel = activeRoleNode
       ? activeRoleNode.dataset.displayName
       : selectedSkill;
-    viewControl.classList.toggle("disabled", !hasDefinitionSelection);
-    viewControl.setAttribute("aria-disabled", String(!hasDefinitionSelection));
-    viewControl.setAttribute("tabindex", hasDefinitionSelection ? "0" : "-1");
+    viewControl.classList.toggle("disabled", !hasSelection);
+    viewControl.setAttribute("aria-disabled", String(!hasSelection));
+    viewControl.setAttribute("tabindex", hasSelection ? "0" : "-1");
     viewControl.setAttribute(
       "aria-label",
-      hasDefinitionSelection
+      hasSelection
         ? `View ${selectedLabel} definition`
         : "Select an agent or skill to view its definition"
     );
@@ -661,7 +620,6 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
     const shouldClear = selectedRole === roleName && !selectedSkill;
     selectedRole = shouldClear ? "" : roleName;
     selectedSkill = "";
-    focusBacklogManagement = false;
     renderSelection();
   }
 
@@ -669,21 +627,12 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
     const shouldClear = selectedSkill === skillName && !selectedRole;
     selectedSkill = shouldClear ? "" : skillName;
     selectedRole = "";
-    focusBacklogManagement = false;
     renderSelection();
   }
 
   function clearSelection() {
     selectedRole = "";
     selectedSkill = "";
-    focusBacklogManagement = false;
-    renderSelection();
-  }
-
-  function toggleBacklogManagementFocus() {
-    selectedRole = "";
-    selectedSkill = "";
-    focusBacklogManagement = !focusBacklogManagement;
     renderSelection();
   }
 
@@ -695,7 +644,6 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
   function viewRoleDefinition(roleName) {
     selectedRole = roleName;
     selectedSkill = "";
-    focusBacklogManagement = false;
     renderSelection();
     viewSelectedDefinition();
   }
@@ -703,7 +651,6 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
   function viewSkillDefinition(skillName) {
     selectedRole = "";
     selectedSkill = skillName;
-    focusBacklogManagement = false;
     renderSelection();
     viewSelectedDefinition();
   }
@@ -754,13 +701,6 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
       toggleAgentDependencies();
     }
   });
-  backlogFocusControl.addEventListener("click", toggleBacklogManagementFocus);
-  backlogFocusControl.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      toggleBacklogManagementFocus();
-    }
-  });
   viewControl.addEventListener("click", () => {
     if (selectedRole || selectedSkill) viewSelectedDefinition();
   });
@@ -771,16 +711,16 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
     }
   });
   resetControl.addEventListener("click", () => {
-    if (selectedRole || selectedSkill || focusBacklogManagement) clearSelection();
+    if (selectedRole || selectedSkill) clearSelection();
   });
   resetControl.addEventListener("keydown", (event) => {
-    if ((selectedRole || selectedSkill || focusBacklogManagement) && (event.key === "Enter" || event.key === " ")) {
+    if ((selectedRole || selectedSkill) && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
       clearSelection();
     }
   });
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && (selectedRole || selectedSkill || focusBacklogManagement)) clearSelection();
+    if (event.key === "Escape" && (selectedRole || selectedSkill)) clearSelection();
   });
   renderSelection();
 })();

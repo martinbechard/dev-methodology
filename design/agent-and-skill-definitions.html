@@ -662,6 +662,18 @@
     <p class="callout">Effective communication governs ordinary user and agent messages. STE applies only when an agent writes, rewrites, or reviews technical-document prose. Artifact-specific methods still govern document structure, and structured-explanation still governs its reasoning item model.</p>
   </section>
 
+  <section class="section" aria-labelledby="relationships-title">
+    <h2 id="relationships-title">Agent-Skill Relationships</h2>
+    <h3 id="hierarchy-title">Interactive Agent And Skill Map</h3>
+    <p class="note">
+      This diagram uses color to distinguish agent-to-skill assignments from agent-to-agent dependencies. Amber lines show skills an agent always uses, while violet lines show skills selected when an applicable rule matches. Blue arrows show direct dependencies between agents. Blue skill cards have a separate meaning: they identify technology skills selected during project setup. <a href="skills-modularization.html">Agent Skill Architecture</a> explains these skill-assignment conventions.
+    </p>
+    <p><a href="agent-skill-hierarchy.svg">Open the interactive SVG diagram</a>.</p>
+    <object id="agent-skill-hierarchy" class="hierarchy-embed" data="agent-skill-hierarchy.svg" type="image/svg+xml" tabindex="-1" aria-label="Interactive hierarchy connecting agents to bundled skills and direct agent dependencies">
+      <a href="agent-skill-hierarchy.svg">Open the interactive agent and skill map</a>
+    </object>
+  </section>
+
   <section class="section" aria-labelledby="agent-definitions-title">
     <h2 id="agent-definitions-title">Conceptual Agent Definitions</h2>
     <p>Each generated card presents an agent's description, assigned skills, output contracts, model profile, and repository mutation policy. Use <strong>View</strong> for the complete generated definition, including responsibilities, conditions, examples, and source YAML.</p>
@@ -673,19 +685,6 @@
     <h3>Generated Skill Catalog</h3>
     <p>Each generated category groups the portable skill definitions assigned to it by source metadata. Select a skill name to inspect its category, source path, description, and complete definition.</p>
     <div class="wide-grid" id="skill-catalog"></div>
-  </section>
-
-  <section class="section" aria-labelledby="relationships-title">
-    <h2 id="relationships-title">Agent-Skill Relationships</h2>
-    <h3 id="hierarchy-title">Interactive Agent And Skill Map</h3>
-    <p class="note">
-      This diagram uses color to distinguish agent-to-skill assignments from agent-to-agent dependencies. Amber lines show skills an agent always uses, while violet lines show skills selected when an applicable rule matches. Blue arrows show direct dependencies between agents. Blue skill cards have a separate meaning: they identify technology skills selected during project setup. <a href="skills-modularization.html">Agent Skill Architecture</a> explains these skill-assignment conventions.
-    </p>
-    <p>Use <strong>Focus backlog management</strong> in the diagram to isolate Dev Backlog Coordinator, Dev Backlog Steward, Dev Orchestrator, the delivery agents they directly dispatch, and the focused agents' assigned skills. Persistence-selected creation and management skills remain project bindings, so the map shows them through the agents that resolve those bindings rather than as fixed definition-owned assignments.</p>
-    <p><a href="agent-skill-hierarchy.svg">Open the interactive SVG diagram</a> or <a href="agent-skill-explorer.html">explore agents, detected skills, harness loading, and evidence in the wiring map</a>.</p>
-    <object id="agent-skill-hierarchy" class="hierarchy-embed" data="agent-skill-hierarchy.svg" type="image/svg+xml" tabindex="-1" aria-label="Interactive hierarchy connecting agents to bundled skills and direct agent dependencies">
-      <a href="agent-skill-hierarchy.svg">Open the interactive agent and skill map</a>
-    </object>
   </section>
 
   <section class="section" aria-labelledby="project-bindings-title">

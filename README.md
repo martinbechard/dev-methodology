@@ -61,7 +61,7 @@ Project-specific evaluation skills may freeze inputs and compare completed candi
 - generated/adapters contains ready-to-copy native agent definitions and agent-generation-manifest.json. Codex, Claude Code, Gemini CLI, and Junie CLI definitions are generated from the same conceptual sources.
 - backlog contains the repository's typed active work, separate Stalled and Blocked lifecycle inventories, user-action-required queue, holding state, lightweight future-ideas area, and outcome archives. It is available only from the primary worktree.
 - .worktrees contains ignored linked agent checkouts beneath the primary worktree. It is operational state rather than distributable project source.
-- design/generated/technology-skill-detection-registry.js exposes the same detection registry for documentation and the interactive agent-skill explorer.
+- design/generated/technology-skill-detection-registry.js exposes the same detection registry for documentation.
 - design/role-catalog-groups.yaml owns presentation-only role group order, source-backed role overrides, and labels shared by the role cards and hierarchy diagram.
 - scripts/openai_metadata.py refreshes derived Codex interface fields from SKILL.md while preserving hand-authored policy and dependencies.
 - scripts contains regression tests for installer behavior and bundle content.
@@ -99,7 +99,7 @@ The generated [interactive agent and skill hierarchy](design/agent-and-skill-def
 python3 scripts/build-agent-skill-hierarchy.py
 ```
 
-The generated [agent and skill wiring map](design/agent-skill-explorer.html) joins conceptual definitions, detected technology routes, model profiles, native adapters, loading semantics, evaluation cases, and classified receipts in one offline, keyboard-accessible explorer. The generated [agent, skill, technology, and test coverage checklist](design/agent-skill-test-coverage-checklist.md) inventories every agent and bundled skill, shows specialized activation coverage, and distinguishes declarations and manual observations from independently verified behavior. Regenerate both data views with:
+The generated [agent, skill, technology, and test coverage checklist](design/agent-skill-test-coverage-checklist.md) inventories every agent and bundled skill, shows specialized activation coverage, and distinguishes declarations and manual observations from independently verified behavior. Regenerate the checklist with:
 
 ```bash
 python3 scripts/build-support-checklist.py

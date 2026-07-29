@@ -6,7 +6,6 @@
 from __future__ import annotations
 
 import importlib.util
-import json
 import sys
 import tomllib
 import unittest
@@ -23,12 +22,12 @@ OPENAI_METADATA_PATH = SKILL_PATH.parent / "agents" / "openai.yaml"
 ROLE_SCHEMA_PATH = ROOT / "agents" / "role-schema.yaml"
 CODEX_PROFILES_PATH = ROOT / "adapters" / "codex" / "model-profiles.yaml"
 HIERARCHY_PATH = ROOT / "design" / "agent-skill-hierarchy.svg"
-EXPLORER_PATH = ROOT / "design" / "generated" / "agent-skill-explorer-data.js"
 ROLES_ROOT = ROOT / "agents" / "roles"
 
 DOCUMENTATION_ROLES = {
     "dev-artifact-reviewer",
     "dev-documentation-writer",
+    "dev-document-topic-editor",
     "wiki-architect",
     "wiki-ingester",
     "wiki-researcher",
@@ -183,7 +182,7 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
                     role.skill_conditions,
                 )
 
-    def test_generated_relationship_views_assign_ste_to_every_role(self) -> None:
+    def test_generated_hierarchy_assigns_ste_to_every_role(self) -> None:
         role_count = len(list(ROLES_ROOT.glob("*/*.role.yaml")))
 
         hierarchy = ET.parse(HIERARCHY_PATH).getroot()
@@ -198,20 +197,6 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
                 "conditional-edge" not in edge.attrib["class"]
                 for edge in hierarchy_edges
             )
-        )
-
-        explorer_text = EXPLORER_PATH.read_text(encoding="utf-8")
-        explorer_payload = json.loads(
-            explorer_text.split(" = ", 1)[1].rstrip(";\n")
-        )
-        explorer_edges = [
-            edge
-            for edge in explorer_payload["edges"]
-            if edge["skill"] == "ste-technical-writing"
-        ]
-        self.assertEqual(role_count, len(explorer_edges))
-        self.assertTrue(
-            all(edge["kind"] == "fixed" for edge in explorer_edges)
         )
 
     def test_documentation_roles_and_codex_profile_use_gpt_55_high(self) -> None:

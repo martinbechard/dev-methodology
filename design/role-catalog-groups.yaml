@@ -1,10 +1,10 @@
 schema: agent-catalog-groups
 version: 1
 groups:
-  - id: backlog-management
-    label: Backlog Management
   - id: dev-activities
     label: Dev Activities
+  - id: backlog-management
+    label: Backlog Management
   - id: wiki-activities
     label: Wiki Activities
   - id: project-setup

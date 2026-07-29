@@ -320,4 +320,4 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 - [x] Evaluation catalog references, fixture paths, Judge plans, harnesses, workflow links, and sandbox profiles are validated.
 - [x] Codex and Junie are the only supported evaluation harnesses.
 - [x] Executed, Judge-passed, security-contained, calibration, and stale claims are classified independently by the evaluation runner.
-- [x] Explorer data carries the same conservative coverage snapshot.
+- [x] Coverage counts come directly from the authoritative agent, skill, and evaluation catalogs.
