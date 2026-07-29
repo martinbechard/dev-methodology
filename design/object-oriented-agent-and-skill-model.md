@@ -1,601 +1,438 @@
-# Object-Oriented Agent And Skill Model
+# Object-Oriented Analysis Of Agents And Skills
 
 ## Status
 
-This document is a design proposal for analyzing agents and skills. It does not change a skill definition, an agent definition, project configuration, generated guidance, or runtime behavior.
+This document records the analysis proposed in the current discussion. It does not change any skill definition, agent definition, schema, generator, project configuration, or generated guidance.
 
-## 1. Finality
+The examples use three labels:
 
-This section defines why the object-oriented model exists.
+- CURRENT means the behavior is present in the repository now.
+- PROPOSED means the relationship is part of this analysis but is not implemented yet.
+- HYPOTHETICAL means the example exists only to explain the notation.
 
-- **GOAL: GOAL-1** Separate procedure contracts from their implementations
-  - **SYNOPSIS:** Agents and workflow skills depend on provider-neutral procedure interfaces. Skill packages export concrete implementations of those interfaces.
-  - **BECAUSE:** A caller can request an operation without embedding the selected provider or delivery mechanism in its own instructions.
+## 1. Purpose
 
-- **GOAL: GOAL-2** Treat setup as the composition root
-  - **SYNOPSIS:** Project setup selects interface implementations, persists the selections, and renders the bindings into applicable project guidance.
-  - **BECAUSE:** Provider and workflow choices belong to project configuration rather than to reusable agent or skill definitions.
+- **GOAL: GOAL-1** Describe skills as packages with callable procedures
+  - **SYNOPSIS:** A skill is analyzed as a package that exposes one or more procedures. Those procedures form one or more interfaces.
+  - **EXAMPLE:** PROPOSED: create-file-work-item exposes a Create Work Item procedure backed by a repository file.
 
-- **GOAL: GOAL-3** Model an executing agent as a stateful object
-  - **SYNOPSIS:** An agent instance combines one conceptual agent definition, task context, lifecycle state, evidence, and injected procedure implementations.
-  - **BECAUSE:** An active agent has identity and changing state that a skill package does not have.
+- **GOAL: GOAL-2** Separate an expected interface from its implementations
+  - **SYNOPSIS:** A caller can expect a procedure without naming the skill package that supplies it. One of the loaded skill packages supplies the implementation.
+  - **EXAMPLE:** PROPOSED: a development workflow expects Deliver Item. The selected implementation comes from complete-work-item-direct-main or complete-work-item-feature-branch.
 
-- **GOAL: GOAL-4** Support reuse without duplicating relationships
-  - **SYNOPSIS:** Shared agent behavior can be represented by abstract base classes or mixins, including multiple inheritance, when the agents share the same semantic contract.
-  - **BECAUSE:** A relationship should be declared once when several agent types inherit the same obligations and invariants.
+- **GOAL: GOAL-3** Describe an executing agent as an object with state
+  - **SYNOPSIS:** An agent definition is comparable to a class. One running agent or subagent is comparable to an object whose task context and execution state change over time.
+  - **EXAMPLE:** CURRENT ANALOGUE: the dev-coder definition is reusable. A running dev-coder assigned issue 42 has a particular checkout, changed-file set, candidate commit, and verification state.
 
-## 2. Technical Directives
+- **GOAL: GOAL-4** Prepare an analysis that can later be applied to all skills
+  - **SYNOPSIS:** After this model is reviewed, a separate phase can inventory every skill, identify its procedures, and map expected interfaces to exported implementations.
+  - **EXAMPLE:** PROPOSED: the later inventory would place create-file-work-item and create-gitlab-work-item under the same candidate Create Work Item interface, then review whether that mapping is accurate.
 
-This section defines the rules that shape the model.
+## 2. Vocabulary
 
-- **RULE: RULE-1** Treat a skill as a package
-  - **SYNOPSIS:** A skill package contains instructions and assets and exports one or more independently identifiable procedure implementations.
-  - **BECAUSE:** One package can provide several cohesive operations without making the package itself the callable contract.
+| Term | Meaning here | Concrete example |
+| --- | --- | --- |
+| Skill package | One skill together with the instructions and resources it owns. | CURRENT: complete-work-item-feature-branch is one skill package. |
+| Procedure | An action described by a skill package. | CURRENT: create-gitlab-work-item describes how to create and read back one GitLab issue. |
+| Expected interface | A procedure, or coherent group of procedures, that a caller says it needs without naming the implementing package. This is the pure-virtual side of the analogy. | PROPOSED: Create Work Item is expected by a backlog workflow. |
+| Exported implementation | The procedure definition supplied by a concrete skill package. This is the concrete side of the analogy. | PROPOSED: create-file-work-item exports the file-backed implementation of Create Work Item. |
+| Setup binding | The setup choice that causes one implementing skill package to be referenced in effective AGENTS.md guidance. | CURRENT ANALOGUE: Persistence file causes generated guidance to reference create-file-work-item and manage-file-work-items. |
+| DII-style dependency | The term used in this analysis for a caller that knows the needed interface but does not know the selected implementing package. This document does not add a runtime mechanism to that term. | PROPOSED: a caller invokes Deliver Item while setup determines which completion skill is loaded. |
+| Agent class | The reusable agent definition: its purpose, instructions, known dependencies, and outputs. | CURRENT ANALOGUE: the dev-coder role definition. |
+| Agent object | One task-bound execution of an agent definition, with context and changing state. | CURRENT ANALOGUE: one dev-coder working on issue 42 in a particular worktree. |
+| Base agent class | Shared agent behavior shown once and inherited by several agent classes. | HYPOTHETICAL: Reviewing Agent supplies common read-only review behavior to several specialized reviewers. |
 
-- **RULE: RULE-2** Give every procedure interface a provider-neutral contract
-  - **SYNOPSIS:** An interface defines operation names, inputs, outputs, allowed dispositions, authority boundaries, side effects, evidence, and resume behavior without naming an implementing skill.
-  - **BECAUSE:** Two implementations are substitutable only when callers can rely on the same observable contract.
+- **RULE: RULE-1** Do not assign special meaning to unrequested architecture terms
+  - **SYNOPSIS:** This model uses package, procedure, interface, implementation, class, object, inheritance, and setup binding. It does not introduce ports, a composition root, extension slots, a context assembler, interface versions, or provider cardinality.
+  - **EXAMPLE:** Say “Dev Orchestrator expects Deliver Item.” Do not say “Dev Orchestrator has a delivery port.”
 
-- **RULE: RULE-3** Separate required ports from dynamic extension slots
-  - **SYNOPSIS:** A required port is an interface known by the consumer, such as Deliver Item. A dynamic extension slot accepts zero or more capability descriptors that setup supplies for a project or technology scope.
-  - **DECISION:** Use dependency injection for known required ports and dynamic interface invocation for descriptor-based extension lookup. This document abbreviates those mechanisms as DI and DII.
-  - **BECAUSE:** Classic dependency injection fits known workflow obligations, while technology and project extensions may add procedures that a generic agent definition does not know in advance.
+## 3. Skill Package Assertions
 
-- **RULE: RULE-4** Use interface-based dependencies by default
-  - **SYNOPSIS:** A reusable skill package declares the procedure interfaces it requires rather than the package names that implement them.
-  - **BECAUSE:** The dependency remains stable when setup substitutes another conforming provider.
+- **RULE: RULE-2** A skill package can export one interface
+  - **SYNOPSIS:** A focused skill can define the procedures for one interface.
+  - **EXAMPLE:** PROPOSED: create-gitlab-work-item exports Create Work Item using GitLab issue operations.
 
-- **RULE: RULE-5** Allow deliberate concrete package dependencies
-  - **SYNOPSIS:** A skill may name another package when the dependency is intentionally non-substitutable, such as a package-owned asset or a host-specific adapter.
-  - **BECAUSE:** Interface indirection should express a real variation point rather than hide an inseparable implementation detail.
+- **RULE: RULE-3** A skill package can export more than one interface
+  - **SYNOPSIS:** Independent procedure groups in the same package can be represented as separate exported interfaces.
+  - **EXAMPLE:** HYPOTHETICAL: if one git-hosting skill defined both Create Work Item and Publish Delivery as independent procedure groups, the analysis would show two exported interfaces from that package.
 
-- **RULE: RULE-6** Resolve one provider for each single-provider interface and scope
-  - **SYNOPSIS:** Setup rejects zero providers, multiple providers, incompatible versions, and ambiguous folder matches for a required single-provider interface.
-  - **BECAUSE:** Loading two competing implementations leaves procedure dispatch undefined.
+- **RULE: RULE-4** Multiple independent exports identify a review point, not an automatic split
+  - **SYNOPSIS:** A package that exports more than one independent interface is highlighted so reviewers can decide whether it should remain whole or be split later.
+  - **EXAMPLE:** HYPOTHETICAL: the git-hosting package above would be highlighted because issue creation and code publication could change independently. This document would not split it.
 
-- **RULE: RULE-7** Declare multi-provider interfaces explicitly
-  - **SYNOPSIS:** An interface that supports aggregation declares many-provider cardinality and its ordering, merge, conflict, and failure rules.
-  - **BECAUSE:** Multiple loaded packages must not be mistaken for safe composition merely because their procedures have different names.
+- **RULE: RULE-5** A skill package can depend on an expected interface
+  - **SYNOPSIS:** The dependent package names the procedure it needs, while setup supplies a skill package that defines that procedure.
+  - **EXAMPLE:** PROPOSED: an overall development package says “Deliver the accepted item” without naming either complete-work-item-direct-main or complete-work-item-feature-branch.
 
-- **RULE: RULE-8** Keep interface identity independent from skill identity
-  - **SYNOPSIS:** Interface identifiers name stable capabilities, while skill identifiers name concrete instruction packages.
-  - **BECAUSE:** Renaming or replacing a provider package should not require rewriting every consumer.
-
-- **RULE: RULE-9** Use inheritance only for shared semantics
-  - **SYNOPSIS:** An abstract agent base or mixin owns common obligations, state rules, and interface expectations. Sharing one skill is not sufficient reason to introduce inheritance.
-  - **BECAUSE:** False inheritance hides differences and creates fragile coupling.
-
-- **RULE: RULE-10** Resolve multiple-inheritance conflicts before generation
-  - **SYNOPSIS:** Identical inherited interface requirements merge by interface identity. Incompatible signatures, authority rules, state transitions, or output contracts block generation until an explicit override resolves them.
-  - **BECAUSE:** A generated agent must receive one coherent contract.
-
-- **RULE: RULE-11** Keep configuration, loading, and behavioral evidence distinct
-  - **SYNOPSIS:** A persisted binding records selection, project guidance records delivery, a harness records loading, and execution evidence records whether the procedure was followed.
-  - **BECAUSE:** Configuration or context presence alone does not prove behavior.
-
-## 3. Information Model
-
-This section defines the objects and contracts in the analysis.
-
-- **ENTITY: ENTITY-1** Procedure interface
-  - **SYNOPSIS:** A provider-neutral description of one cohesive callable capability.
-  - **FIELD:** Interface identity and version
-    - **SYNOPSIS:** The stable name and compatibility version used for binding and validation.
-  - **FIELD:** Procedure signatures
-    - **SYNOPSIS:** The operations, inputs, outputs, and allowed dispositions exposed to consumers.
-  - **FIELD:** Behavioral contract
-    - **SYNOPSIS:** Preconditions, authority, side effects, idempotency, evidence, failure, and resume rules.
-  - **FIELD:** Provider cardinality
-    - **SYNOPSIS:** The interface declares whether exactly one or several implementations may be bound in one effective scope.
-
-- **ENTITY: ENTITY-2** Procedure implementation
-  - **SYNOPSIS:** A concrete definition of an interface procedure supplied by one skill package.
-  - **FIELD:** Implemented interface
-    - **SYNOPSIS:** The interface identity and compatible version satisfied by the implementation.
-  - **FIELD:** Provider-specific method
-    - **SYNOPSIS:** The instructions, tools, terminology, and evidence rules used by this provider.
-
-- **ENTITY: ENTITY-3** Skill package
-  - **SYNOPSIS:** A portable package that exports procedure implementations and may require other procedure interfaces.
-  - **FIELD:** Export manifest
-    - **SYNOPSIS:** The implemented interfaces and procedures available from the package.
-  - **FIELD:** Requirement manifest
-    - **SYNOPSIS:** The abstract interfaces and any deliberate concrete package dependencies needed by the package.
-  - **FIELD:** Assets
-    - **SYNOPSIS:** Templates, scripts, checklists, examples, or other package-owned resources used by its implementations.
-
-- **ENTITY: ENTITY-4** Conceptual agent definition
-  - **SYNOPSIS:** An abstract class that defines purpose, authority, workflow, expected interfaces, extension slots, outputs, and inheritance.
-  - **FIELD:** Required interfaces
-    - **SYNOPSIS:** Known procedure contracts that every instance must receive.
-  - **FIELD:** Dynamic extension slots
-    - **SYNOPSIS:** Project or technology capabilities discovered and injected for the effective scope.
-  - **FIELD:** Base definitions and mixins
-    - **SYNOPSIS:** Shared agent contracts inherited before runtime generation.
-
-- **ENTITY: ENTITY-5** Agent instance
-  - **SYNOPSIS:** A task-bound object created from a conceptual agent definition and an effective set of bindings.
-  - **FIELD:** Context
-    - **SYNOPSIS:** The request, project instructions, relevant source, and loaded package instructions.
-  - **FIELD:** Identity and purpose
-    - **SYNOPSIS:** The task identity, agent type, delegated scope, and expected outcome.
-  - **FIELD:** State
-    - **SYNOPSIS:** The current phase, work-item identity, checkout, ownership, waits, attempts, and terminal disposition.
-  - **FIELD:** Evidence
-    - **SYNOPSIS:** Source observations, review results, checks, commits, publications, and handoff records accumulated during execution.
-
-- **ENTITY: ENTITY-6** Interface binding
-  - **SYNOPSIS:** A setup-owned mapping from one interface and effective scope to one or more implementing skill packages.
-  - **FIELD:** Scope
-    - **SYNOPSIS:** The project default or most-specific folder boundary where the binding applies.
-  - **FIELD:** Selector evidence
-    - **SYNOPSIS:** The explicit setup choice or confirmed technology evidence that authorized the provider.
-  - **FIELD:** Concrete providers
-    - **SYNOPSIS:** The selected skill package identifiers and compatible exported interfaces.
-
-- **ENTITY: ENTITY-7** Context assembler
-  - **SYNOPSIS:** The generator and harness behavior that resolves bindings, validates them, loads packages, and creates the effective agent instance.
-  - **FIELD:** Static injection
-    - **SYNOPSIS:** Known required interfaces are bound before the agent starts.
-  - **FIELD:** Dynamic interface invocation
-    - **SYNOPSIS:** The agent can inspect injected capability descriptors and invoke a matching project or technology procedure without a compile-time provider dependency.
-
-## 4. Core Object Structure
-
-This class diagram separates abstract contracts, concrete implementations, package ownership, setup bindings, and stateful instances.
+The notation for an expected interface and two exported implementations is:
 
 ```mermaid
 classDiagram
     direction LR
 
-    class ProcedureInterface {
-        <<interface>>
-        +interfaceId
-        +version
-        +cardinality
-        +invoke(request) ProcedureResult
-        +resume(identity, observation) ProcedureResult
+    class CallingPackage {
+        <<skill package>>
+        +runWorkflow()
     }
 
-    class ProcedureImplementation {
-        +providerId
-        +implementedVersion
-        +instructions
-        +evidenceContract
+    class ExpectedProcedure {
+        <<expected interface>>
+        +invoke(request)
     }
 
-    class SkillPackage {
-        <<package>>
-        +skillId
-        +exportManifest
-        +requirementManifest
-        +assets
+    class SkillPackageA {
+        <<skill package>>
+        +invoke(request)
     }
 
-    class ConceptualAgentDefinition {
-        <<abstract>>
-        +purpose
-        +authority
-        +workflow
-        +requiredInterfaces
-        +extensionSlots
-        +outputContract
+    class SkillPackageB {
+        <<skill package>>
+        +invoke(request)
     }
 
-    class AgentInstance {
-        +taskIdentity
-        +context
-        +phase
-        +state
-        +evidence
-    }
-
-    class InterfaceBinding {
-        +scope
-        +interfaceId
-        +providerSkillIds
-        +selectionEvidence
-    }
-
-    class ContextAssembler {
-        +resolveBindings()
-        +validateCompatibility()
-        +loadPackages()
-        +createAgentInstance()
-    }
-
-    ProcedureInterface <|.. ProcedureImplementation : implements
-    SkillPackage "1" *-- "1..*" ProcedureImplementation : exports
-    SkillPackage ..> ProcedureInterface : requires
-    ConceptualAgentDefinition ..> ProcedureInterface : expects
-    AgentInstance --> ConceptualAgentDefinition : instance of
-    ContextAssembler --> InterfaceBinding : resolves
-    ContextAssembler --> SkillPackage : loads
-    ContextAssembler --> AgentInstance : injects
+    CallingPackage ..> ExpectedProcedure : expects
+    ExpectedProcedure <|.. SkillPackageA : exported implementation
+    ExpectedProcedure <|.. SkillPackageB : exported implementation
 ```
 
-## 5. Delivery Interface Substitution
+In this diagram, ExpectedProcedure is the pure-virtual side of the analogy. SkillPackageA and SkillPackageB contain the actual instructions.
 
-The overall development workflow knows that a verified item must be delivered. It does not know whether delivery means direct integration or a reviewed feature branch.
+## 4. Setup Binding And DII-Style Use
 
-- **PROCESS: PROCESS-1** Deliver a verified item
-  - **SYNOPSIS:** The development workflow invokes the Deliver Item interface after required testing and review pass.
-  - **USES:** Deliver Item
-    - **BECAUSE:** Delivery is required, but its project-selected mechanism is a separate concern.
-  - **PRODUCES:** READY, AWAITING_REVIEW, or BLOCKED
-    - **BECAUSE:** The common result allows direct completion, resumable host review, and truthful failure.
+- **RULE: RULE-6** Setup selects the implementing skill package
+  - **SYNOPSIS:** The project configuration records a selection and generated AGENTS.md guidance references the selected skill package.
+  - **EXAMPLE:** CURRENT ANALOGUE: workflow_selection.persistence can select file, which renders references to create-file-work-item and manage-file-work-items. workflow_selection.commit can independently select direct-main, which renders a reference to complete-work-item-direct-main.
 
-- **MODULE: MODULE-1** Direct-main delivery package
-  - **SYNOPSIS:** The complete-work-item-direct-main skill implements Deliver Item by integrating the accepted contribution, verifying main, and returning terminal evidence.
+- **RULE: RULE-7** The caller does not repeat the selected package’s procedure
+  - **SYNOPSIS:** The caller states when it needs the interface. The loaded skill package explains how the selected procedure works.
+  - **EXAMPLE:** PROPOSED: after review and verification pass, Dev Orchestrator says “Deliver the accepted commit.” The selected completion skill supplies either the direct-main or feature-branch procedure.
 
-- **MODULE: MODULE-2** Feature-branch delivery package
-  - **SYNOPSIS:** The complete-work-item-feature-branch skill implements Deliver Item by publishing the accepted branch, preserving delivery identity through review, resuming pending work, and observing merge.
+- **RULE: RULE-8** DII-style use is an instruction relationship in this proposal
+  - **SYNOPSIS:** The proposal does not assume a compiled interface table, a service locator, or a new runtime. The agent receives AGENTS.md and skill instructions in context and follows the selected procedure.
+  - **EXAMPLE:** CURRENT ANALOGUE: generated root guidance says which Commit skill to use. The harness loads natural-language guidance; it does not instantiate a software interface object.
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Setup as Project setup
+    participant Project as PROJECT.yaml
+    participant Guidance as AGENTS.md
+    participant Agent as Running agent
+    participant Skill as Selected skill package
+
+    User->>Setup: choose one supported workflow option
+    Setup->>Project: record the selection
+    Setup->>Guidance: reference the selected skill
+    Guidance->>Agent: make the selected instructions available
+    Agent->>Skill: use the expected procedure
+    Skill-->>Agent: supply the concrete instructions
+```
+
+## 5. Example: Create Work Item
+
+Create Work Item is a candidate interface from the user’s scenario, not a declaration already present in the skill files.
+
+- **PROCESS: PROCESS-1** Request creation of one durable work item
+  - **SYNOPSIS:** A backlog workflow provides the work description and asks the expected Create Work Item interface to create the authoritative record.
+  - **EXAMPLE:** PROPOSED: a retry-support request is passed to Create Work Item without the caller choosing a file path or invoking GitLab directly.
+
+- **MODULE: MODULE-1** File-backed implementation
+  - **SYNOPSIS:** create-file-work-item supplies the repository-file procedure.
+  - **EXAMPLE:** CURRENT BEHAVIOR USED BY THE PROPOSAL: it creates an authoritative file under backlog with exclusive creation, validates it, and commits only the exact provider paths.
+
+- **MODULE: MODULE-2** GitLab-backed implementation
+  - **SYNOPSIS:** create-gitlab-work-item supplies the GitLab issue procedure.
+  - **EXAMPLE:** CURRENT BEHAVIOR USED BY THE PROPOSAL: it checks for duplicates, creates one issue, reads it back, and returns its GitLab identity and URL.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class BacklogWorkflow {
+        +recordRequestedWork()
+    }
+
+    class CreateWorkItem {
+        <<expected interface>>
+        +create(request)
+    }
+
+    class CreateFileWorkItem {
+        <<skill package>>
+        +createFileWorkItem(request)
+    }
+
+    class CreateGitLabWorkItem {
+        <<skill package>>
+        +createGitLabIssue(request)
+    }
+
+    BacklogWorkflow ..> CreateWorkItem : expects
+    CreateWorkItem <|.. CreateFileWorkItem : exported implementation
+    CreateWorkItem <|.. CreateGitLabWorkItem : exported implementation
+```
+
+- **RULE: RULE-9** Keep the current agent-ownership question visible
+  - **SYNOPSIS:** The interface diagram does not decide which current agent performs provider mutation.
+  - **EXAMPLE:** PROPOSED SCENARIO: Backlog Coordinator can request Create Work Item. CURRENT: Dev Backlog Coordinator delegates durable provider mutation to Dev Backlog Steward, which applies the selected creation or management skill. Applying this model must decide how to preserve that responsibility boundary.
+
+## 6. Example: Deliver Item
+
+Deliver Item is a second candidate interface. The current repository calls the configured choice Commit.
+
+- **PROCESS: PROCESS-2** Deliver an accepted change
+  - **SYNOPSIS:** The development workflow requests delivery only after its required review and verification have passed.
+  - **EXAMPLE:** CURRENT ANALOGUE: Dev Orchestrator applies the effective Commit-selected skill to the accepted direct or combined commit after independent review and verification.
+
+- **MODULE: MODULE-3** Direct-main implementation
+  - **SYNOPSIS:** complete-work-item-direct-main supplies delivery by integrating the accepted commit into the configured main branch, verifying the integrated state, and observing main reachability.
+  - **EXAMPLE:** CURRENT: an accepted candidate is integrated on main, the focused post-integration check passes, and the delivered commit is observed on main before the skill returns READY.
+
+- **MODULE: MODULE-4** Feature-branch implementation
+  - **SYNOPSIS:** complete-work-item-feature-branch supplies delivery through one feature branch, host publication, review corrections, required checks, observed merge, and base-branch reachability.
+  - **EXAMPLE:** CURRENT: the skill pushes the intended branch, publishes a pull request or merge request using host-accurate terminology, returns AWAITING_REVIEW while gates are pending, and returns READY only after merge is observed.
 
 ```mermaid
 classDiagram
     direction LR
 
     class DevelopmentWorkflow {
-        +afterVerification(candidate, evidence)
+        +afterReviewAndVerification()
     }
 
     class DeliverItem {
-        <<interface>>
-        +deliver(candidate, evidence) DeliveryResult
-        +resume(deliveryIdentity, hostState) DeliveryResult
+        <<expected interface>>
+        +deliver(acceptedCommit)
     }
 
-    class DirectMainDeliverySkill {
+    class DirectMainCompletion {
         <<skill package>>
-        +skillId complete-work-item-direct-main
-        +deliver(candidate, evidence) DeliveryResult
-        +resume(deliveryIdentity, mainState) DeliveryResult
+        +deliverOnMain(acceptedCommit)
     }
 
-    class FeatureBranchDeliverySkill {
+    class FeatureBranchCompletion {
         <<skill package>>
-        +skillId complete-work-item-feature-branch
-        +deliver(candidate, evidence) DeliveryResult
-        +resume(deliveryIdentity, hostState) DeliveryResult
+        +deliverThroughReview(acceptedCommit)
     }
 
-    class CommitBinding {
-        +selector direct-main or feature-branch
-        +effectiveScope
-        +selectedSkill
-    }
-
-    DevelopmentWorkflow ..> DeliverItem : requires
-    DeliverItem <|.. DirectMainDeliverySkill : implements
-    DeliverItem <|.. FeatureBranchDeliverySkill : implements
-    CommitBinding --> DeliverItem : binds one provider
+    DevelopmentWorkflow ..> DeliverItem : expects
+    DeliverItem <|.. DirectMainCompletion : exported implementation
+    DeliverItem <|.. FeatureBranchCompletion : exported implementation
 ```
 
-## 6. Work-Item Provider Substitution
+- **UNCERTAINTY:** The two current completion skills do not return identical intermediate states
+  - **EXAMPLE:** complete-work-item-feature-branch can return AWAITING_REVIEW, while complete-work-item-direct-main returns READY or BLOCKED. Review must decide whether Deliver Item is one interface whose invocation may continue over time or whether smaller interfaces are needed.
 
-The Create Work Item interface lets provider-neutral backlog behavior request one durable item without embedding file or GitLab procedures.
+## 7. Agent Classes, Objects, And Injected Skills
 
-- **PROCESS: PROCESS-2** Create a durable work item
-  - **SYNOPSIS:** A backlog owner supplies normalized work-item data to the Create Work Item interface.
-  - **USES:** Create Work Item
-    - **BECAUSE:** The requested lifecycle operation is stable while the authoritative provider varies by project.
+- **RULE: RULE-10** An agent definition is analyzed as a class
+  - **SYNOPSIS:** The class contains reusable purpose and instructions and knows the core interfaces required for that purpose.
+  - **EXAMPLE:** CURRENT ANALOGUE: dev-coder defines the reusable objective of producing a clean verified candidate commit and names its definition-owned skills.
 
-- **RULE: RULE-12** Preserve current provider-mutation ownership
-  - **SYNOPSIS:** In the current agent model, Dev Backlog Coordinator delegates durable provider mutation to Dev Backlog Steward. Dev Backlog Steward consumes the selected provider interface.
-  - **BECAUSE:** Interface extraction and agent responsibility are separate design decisions.
+- **RULE: RULE-11** A running agent is analyzed as an object with state
+  - **SYNOPSIS:** The object receives a task and accumulates task-specific context and state while executing the class instructions.
+  - **EXAMPLE:** CURRENT ANALOGUE: one dev-coder object knows it is handling issue 42, is working in one worktree, has changed three paths, and is currently running focused tests.
 
-- **MODULE: MODULE-3** File work-item creation package
-  - **SYNOPSIS:** The create-file-work-item skill implements Create Work Item with primary-main backlog placement, exclusive creation, validation, and exact commit evidence.
+- **RULE: RULE-12** Core interfaces can be known by the agent class
+  - **SYNOPSIS:** Procedures inherent to the agent’s reusable purpose can be expressed as expected interfaces on the class.
+  - **EXAMPLE:** PROPOSED: a Development Agent class expects Implement Change and Verify Change because every instance performs those procedures.
 
-- **MODULE: MODULE-4** GitLab work-item creation package
-  - **SYNOPSIS:** The create-gitlab-work-item skill implements Create Work Item with GitLab issue identity, native fields, duplicate handling, and provider evidence.
-
-```mermaid
-classDiagram
-    direction LR
-
-    class BacklogCoordinatorAgent {
-        +coordinateInventory()
-        +requestProviderMutation()
-    }
-
-    class BacklogStewardAgent {
-        +createWorkItem(request)
-        +manageWorkItem(operation)
-    }
-
-    class CreateWorkItem {
-        <<interface>>
-        +create(normalizedItem) WorkItemResult
-    }
-
-    class CreateFileWorkItemSkill {
-        <<skill package>>
-        +skillId create-file-work-item
-        +create(normalizedItem) WorkItemResult
-    }
-
-    class CreateGitLabWorkItemSkill {
-        <<skill package>>
-        +skillId create-gitlab-work-item
-        +create(normalizedItem) WorkItemResult
-    }
-
-    class PersistenceBinding {
-        +selector file or gitlab
-        +effectiveScope
-        +selectedCreateSkill
-    }
-
-    BacklogCoordinatorAgent --> BacklogStewardAgent : delegates mutation
-    BacklogStewardAgent ..> CreateWorkItem : requires
-    CreateWorkItem <|.. CreateFileWorkItemSkill : implements
-    CreateWorkItem <|.. CreateGitLabWorkItemSkill : implements
-    PersistenceBinding --> CreateWorkItem : binds one provider
-```
-
-The same pattern applies independently to a Manage Work Items interface. Creation and management remain separate interfaces because their inputs, cardinality, lifecycle authority, and consumers differ.
-
-## 7. Agent Classes, Instances, And Multiple Inheritance
-
-Shared bases describe semantic obligations rather than lists of commonly loaded skills.
-
-- **CLASS: CLASS-1** Stateful agent
-  - **SYNOPSIS:** The root abstract agent class defines identity, purpose, context, state, evidence, and terminal output behavior.
-
-- **CLASS: CLASS-2** Persistence consumer
-  - **SYNOPSIS:** This mixin requires provider-neutral work-item creation or management interfaces and preserves provider identity.
-
-- **CLASS: CLASS-3** Delivery consumer
-  - **SYNOPSIS:** This mixin requires the Deliver Item interface and preserves one delivery identity through terminal observation.
-
-- **CLASS: CLASS-4** Dynamic extension consumer
-  - **SYNOPSIS:** This mixin accepts project and technology capability descriptors for the current scope and applies matching procedures without naming their packages in the base definition.
+- **RULE: RULE-13** Technology and project skills can be added without naming them in the reusable class
+  - **SYNOPSIS:** Setup or folder guidance can add skill packages for the object’s effective scope. The reusable agent definition need not know in advance whether that package is Python, Java, or a project-specific skill.
+  - **EXAMPLE:** CURRENT ANALOGUE: dev-coder has dynamicFolderSkills enabled, while this repository’s scripts folder guidance loads python for work under scripts.
 
 ```mermaid
 classDiagram
     direction TB
 
-    class StatefulAgent {
-        <<abstract>>
-        +identity
+    class DevCoderDefinition {
+        <<agent class>>
         +purpose
-        +context
-        +state
-        +evidence
-        +finish() AgentResult
+        +core expectations
     }
 
-    class PersistenceConsumer {
-        <<mixin>>
-        +requires CreateWorkItem
-        +requires ManageWorkItems
+    class RunningDevCoder {
+        <<agent object>>
+        +task issue-42
+        +scope scripts
+        +state testing
     }
 
-    class DeliveryConsumer {
-        <<mixin>>
-        +requires DeliverItem
+    class PythonSkill {
+        <<injected skill package>>
+        +python procedures
     }
 
-    class DynamicExtensionConsumer {
-        <<mixin>>
-        +extensionSlots
-        +discoverCapabilities()
-        +invokeCapability(descriptor)
-    }
-
-    class DevBacklogSteward {
-        +routeProviderOperation()
-    }
-
-    class DevOrchestrator {
-        +coordinateDelivery()
-    }
-
-    class DevCoder {
-        +produceCandidate()
-    }
-
-    class AgentInstance {
-        +taskIdentity
-        +phase
-        +workItemIdentity
-        +checkout
-        +ownership
-        +evidence
-    }
-
-    StatefulAgent <|-- DevBacklogSteward
-    PersistenceConsumer <|-- DevBacklogSteward
-    StatefulAgent <|-- DevOrchestrator
-    DeliveryConsumer <|-- DevOrchestrator
-    DynamicExtensionConsumer <|-- DevOrchestrator
-    StatefulAgent <|-- DevCoder
-    DynamicExtensionConsumer <|-- DevCoder
-    AgentInstance --> StatefulAgent : realizes one definition
+    DevCoderDefinition <|-- RunningDevCoder : instance of
+    PythonSkill --> RunningDevCoder : loaded for scripts
 ```
 
-## 8. Setup-Time Injection
+The diagram is an analysis notation. It does not claim that the harness constructs a software object at runtime.
 
-This sequence shows project setup acting as a composition root and the harness creating a bound agent instance.
+## 8. Base Agent Classes And Multiple Inheritance
+
+- **RULE: RULE-14** A base class can represent behavior shared by several agents
+  - **SYNOPSIS:** When several agent definitions genuinely share the same instructions or expected interfaces, the diagram can show that relationship once on a base class.
+  - **EXAMPLE:** HYPOTHETICAL: Reviewing Agent defines a common Review Artifact expectation inherited by code, documentation, and methodology reviewers.
+
+- **RULE: RULE-15** Shared skill use alone does not prove inheritance
+  - **SYNOPSIS:** The later analysis must compare purpose and behavior, not only repeated skill names.
+  - **EXAMPLE:** HYPOTHETICAL: a coder and a verifier may both use python, but that does not make them subclasses of the same Python Agent base.
+
+- **RULE: RULE-16** The model allows multiple inheritance
+  - **SYNOPSIS:** An agent class can inherit from more than one base when the inherited responsibilities are independent and both apply.
+  - **EXAMPLE:** HYPOTHETICAL: Dev Security Reviewer inherits Reviewing Agent and Security Analysis Agent.
 
 ```mermaid
-sequenceDiagram
-    actor User
-    participant Configurator as Project Configurator
-    participant Project as PROJECT.yaml
-    participant Guidance as AGENTS.md
-    participant Harness
-    participant Catalog as Skill Catalog
-    participant Agent as Agent Instance
+classDiagram
+    direction TB
 
-    User->>Configurator: Select Persistence, Commit, and confirmed technologies
-    Configurator->>Project: Persist selectors, scopes, and selection evidence
-    Configurator->>Catalog: Validate exported interfaces and compatibility
-    Configurator->>Guidance: Render concrete skill references for each binding
-    Harness->>Guidance: Load guidance for the effective scope
-    Harness->>Catalog: Resolve referenced skill packages
-    Catalog-->>Harness: Return procedure implementations and descriptors
-    Harness->>Agent: Inject required ports and dynamic extension capabilities
-    Agent->>Agent: Invoke interfaces without selecting providers
+    class ReviewingAgent {
+        <<base agent class>>
+        +reviewArtifact()
+    }
+
+    class SecurityAnalysisAgent {
+        <<base agent class>>
+        +analyzeSecurity()
+    }
+
+    class DevSecurityReviewer {
+        <<agent class>>
+    }
+
+    ReviewingAgent <|-- DevSecurityReviewer
+    SecurityAnalysisAgent <|-- DevSecurityReviewer
 ```
 
-## 9. Current-State Mapping
+No current agent definition declares this inheritance. The diagram only demonstrates the requested multiple-inheritance notation.
 
-The repository already contains partial forms of this model.
+## 9. Current Repository Grounding
 
-- **ENTITY: ENTITY-8** Persistence selector
-  - **SYNOPSIS:** The current workflow_selection.persistence value selects a create and manage provider pair.
-  - **EVIDENCE:** Work-Item Provider And Completion Contracts maps file, GitHub, GitLab, Azure DevOps, and Jira values to provider-specific create and manage skills.
+- **ENTITY: ENTITY-1** Persistence is an existing setup selection
+  - **SYNOPSIS:** PROJECT.yaml and generated guidance already select work-item creation and management skills by provider.
+  - **EXAMPLE:** CURRENT: file selects create-file-work-item and manage-file-work-items; GitLab selects create-gitlab-work-item and manage-gitlab-work-items.
 
-- **ENTITY: ENTITY-9** Commit selector
-  - **SYNOPSIS:** The current workflow_selection.commit value selects direct-main or feature-branch completion.
-  - **EVIDENCE:** Work-Item Provider And Completion Contracts maps the two values to complete-work-item-direct-main and complete-work-item-feature-branch.
+- **ENTITY: ENTITY-2** Commit is an existing independent setup selection
+  - **SYNOPSIS:** PROJECT.yaml and generated guidance already select a completion skill independently of Persistence.
+  - **EXAMPLE:** CURRENT: direct-main selects complete-work-item-direct-main; feature-branch selects complete-work-item-feature-branch.
 
-- **ENTITY: ENTITY-10** Dynamic folder skills
-  - **SYNOPSIS:** Current conceptual agent definitions can declare that they consume folder skills supplied through project guidance.
-  - **EVIDENCE:** Generic Agent Definitions Source defines dynamicFolderSkills as setup-owned guidance rather than a fixed conceptual skill list.
+- **ENTITY: ENTITY-3** Folder technology skills are an existing injection analogue
+  - **SYNOPSIS:** Project configuration associates skills with folder scopes, and effective guidance tells agents which skills to load for those scopes.
+  - **EXAMPLE:** CURRENT: scripts/** loads python.
 
-- **UNCERTAINTY:** Current skills and conceptual agent definitions do not declare formal exported and required procedure interfaces. The application phase must inventory actual contracts before selecting interface names, signatures, versions, cardinalities, and inheritance.
+- **ENTITY: ENTITY-4** Resource coordination remains a separate setup concern
+  - **SYNOPSIS:** This interface analysis does not make resource coordination part of Persistence, Commit, or backlog management.
+  - **EXAMPLE:** CURRENT: project setup selects resource coordination independently. A sequential crisis workflow can still manage its backlog while not using claims.
 
-- **UNCERTAINTY:** Current harnesses load natural-language packages rather than executable method tables. The application phase must define validation and evidence semantics without claiming language-runtime dispatch guarantees that the harness cannot provide.
+- **UNCERTAINTY:** Current skill definitions do not formally declare expected or exported interfaces
+  - **EXAMPLE:** create-file-work-item contains its procedure instructions, but it does not declare “implements Create Work Item” in a machine-readable field.
+
+- **UNCERTAINTY:** Current agent definitions name skill packages rather than formal interfaces
+  - **EXAMPLE:** dev-coder lists careful-coding and code-discovery packages. It does not declare abstract Implement Change or Discover Code interfaces.
+
+These current mechanisms are evidence that setup already selects and loads different instructions. They are not evidence that the proposed object-oriented interface model has already been implemented.
 
 ## 10. Constraints
 
-This section prevents the analogy from obscuring operational boundaries.
+- **RULE: RULE-17** Mark proposed and hypothetical examples explicitly
+  - **SYNOPSIS:** Readers must be able to distinguish repository facts from analysis notation whenever the status could otherwise be mistaken.
+  - **EXAMPLE:** The Dev Security Reviewer inheritance example is HYPOTHETICAL, while scripts/** loading python is CURRENT.
 
-- **RULE: RULE-13** Treat object orientation as a design model
-  - **SYNOPSIS:** Classes, interfaces, packages, and injection describe contracts and generation behavior. They do not claim that an agent harness runs an object-oriented programming language.
-  - **BECAUSE:** The maintained artifacts are instructions, configuration, generated agent definitions, and runtime context.
+- **RULE: RULE-18** Do not invent an interface contract during this analysis
+  - **SYNOPSIS:** Procedure signatures, return values, failure behavior, and interface grouping remain review questions until the skill inventory provides evidence.
+  - **EXAMPLE:** Deliver Item is shown as a candidate interface, but the document does not decide how AWAITING_REVIEW must appear in its final contract.
 
-- **RULE: RULE-14** Do not infer substitutability from similar names
-  - **SYNOPSIS:** Two procedures implement the same interface only after their input, output, authority, lifecycle, side-effect, and evidence contracts reconcile.
-  - **BECAUSE:** Similar intent does not guarantee safe replacement.
+- **RULE: RULE-19** Do not split packages or rewrite agents in this phase
+  - **SYNOPSIS:** The analysis identifies candidates. A later, separately approved phase applies accepted decisions.
+  - **EXAMPLE:** create-file-work-item remains unchanged even though the diagram shows it as a candidate Create Work Item implementation.
 
-- **RULE: RULE-15** Keep Persistence and Commit independent
-  - **SYNOPSIS:** Create Work Item and Manage Work Items bindings do not select Deliver Item, and the Deliver Item binding does not select a work-item provider.
-  - **BECAUSE:** The existing project model composes provider and delivery choices independently.
+- **RULE: RULE-20** Preserve independent setup choices
+  - **SYNOPSIS:** Persistence, Commit, resource coordination, concurrent tasking, and folder technology selection do not become one interface merely because setup configures all of them.
+  - **EXAMPLE:** A file-backed work item can use feature-branch delivery with or without claim-based resource coordination, subject to the selected workflow.
 
-- **RULE: RULE-16** Keep resource coordination independent
-  - **SYNOPSIS:** A Resource Ownership interface can be injected separately when enabled. Persistence and delivery implementations may require it without embedding its concrete provider.
-  - **BECAUSE:** Crisis, direct-main, feature-branch, and concurrent workflows can select different coordination behavior without redefining provider lifecycles.
+## 11. Questions For Review
 
-- **RULE: RULE-17** Preserve provider and host terminology
-  - **SYNOPSIS:** A common interface normalizes the operation contract but does not rename GitLab merge requests as GitHub pull requests or erase provider-native evidence.
-  - **BECAUSE:** Substitution must preserve provider-accurate semantics.
+- **UNCERTAINTY:** Is one candidate interface needed for work-item creation and another for work-item management?
+  - **EXAMPLE:** create-file-work-item and manage-file-work-items are separate current packages even though both operate on the file provider.
 
-- **RULE: RULE-18** Stop after reviewed analysis
-  - **SYNOPSIS:** This phase produces only the model and review artifacts. It does not annotate, split, rename, or rewrite skills or agents.
-  - **BECAUSE:** Applying the model requires a separately reviewed inventory and exact governed-definition scope.
+- **UNCERTAINTY:** Which agent should expect Create Work Item in the applied model?
+  - **EXAMPLE:** The user’s scenario names Backlog Coordinator, while the current repository assigns provider mutation to Dev Backlog Steward.
 
-## 11. Definition Of Good
+- **UNCERTAINTY:** Is Deliver Item one long-running interface or several smaller interfaces?
+  - **EXAMPLE:** Feature-branch delivery publishes, waits for review, resumes after corrections, and observes merge; direct-main delivery does not have that review wait.
 
-This section defines the acceptance boundary for the analysis.
+- **UNCERTAINTY:** How should an injected technology skill expose procedures that the base agent did not know before setup?
+  - **EXAMPLE:** dev-coder does not name python, but an object working under scripts receives the python skill through folder guidance.
 
-- **RULE: RULE-19** The model separates all four layers
-  - **SYNOPSIS:** A reviewer can distinguish expected interfaces, exported implementations, skill packages, and stateful agent instances in prose and diagrams.
+- **UNCERTAINTY:** Which repeated agent relationships justify a base class?
+  - **EXAMPLE:** Repeated use of review-structured-artifact may suggest a Reviewing Agent base, but shared use alone is not enough to prove shared class semantics.
 
-- **RULE: RULE-20** Both substitution examples are complete
-  - **SYNOPSIS:** The document shows file versus GitLab work-item creation and direct-main versus feature-branch delivery through common interfaces.
+## 12. Definition Of Good
 
-- **RULE: RULE-21** Setup owns concrete binding
-  - **SYNOPSIS:** The diagrams show PROJECT.yaml and AGENTS.md selecting and delivering implementations while reusable consumers remain provider-neutral.
+- **RULE: RULE-21** Every design assertion has a concrete example
+  - **EXAMPLE:** RULE-13 explains injected skills with the current scripts/** to python mapping.
 
-- **RULE: RULE-22** Dynamic extensions are represented
-  - **SYNOPSIS:** The model explains how technology and project skills can be injected without becoming fixed dependencies of every conceptual agent definition.
+- **RULE: RULE-22** Diagrams visibly separate expectations from implementations
+  - **EXAMPLE:** CreateWorkItem has the expected interface stereotype; CreateFileWorkItem and CreateGitLabWorkItem have the skill package stereotype.
 
-- **RULE: RULE-23** Agent inheritance has a conflict rule
-  - **SYNOPSIS:** The model supports multiple inheritance but blocks incompatible inherited contracts.
+- **RULE: RULE-23** Repository facts and proposed analysis remain distinguishable
+  - **EXAMPLE:** The current Commit selector is evidence; the Deliver Item interface is explicitly PROPOSED.
 
-- **RULE: RULE-24** The proposal does not overstate current implementation
-  - **SYNOPSIS:** Current selectors and dynamic folder skills are identified as partial foundations, while formal interface manifests remain proposed.
+- **RULE: RULE-24** Unrequested architecture is absent
+  - **EXAMPLE:** The model does not give “port” any role beyond identifying it as terminology that should not be used here.
 
-## 12. Test Cases
-
-These cases will validate the model before and during application.
-
-- **TASK: TASK-1** Substitute direct-main delivery
-  - **SYNOPSIS:** Bind Deliver Item to complete-work-item-direct-main and verify that the development workflow needs no provider-specific instruction change.
-  - **STATUS:** proposed
-
-- **TASK: TASK-2** Substitute feature-branch delivery
-  - **SYNOPSIS:** Bind Deliver Item to complete-work-item-feature-branch and verify that the same caller handles AWAITING_REVIEW and resume behavior through the common result contract.
-  - **STATUS:** proposed
-
-- **TASK: TASK-3** Substitute file work-item creation
-  - **SYNOPSIS:** Bind Create Work Item to create-file-work-item and verify provider-accurate file identity, authority, mutation, and evidence.
-  - **STATUS:** proposed
-
-- **TASK: TASK-4** Substitute GitLab work-item creation
-  - **SYNOPSIS:** Bind Create Work Item to create-gitlab-work-item and verify provider-accurate issue identity, terminology, mutation, and evidence.
-  - **STATUS:** proposed
-
-- **TASK: TASK-5** Reject an ambiguous single-provider binding
-  - **SYNOPSIS:** Bind two Create Work Item implementations in one effective scope and verify that configuration generation fails before an agent starts.
-  - **STATUS:** proposed
-
-- **TASK: TASK-6** Reject an incompatible implementation
-  - **SYNOPSIS:** Bind a procedure whose outputs or authority do not satisfy the expected interface and verify a compatibility failure.
-  - **STATUS:** proposed
-
-- **TASK: TASK-7** Merge compatible inherited requirements
-  - **SYNOPSIS:** Inherit the same interface through two agent mixins and verify that generation produces one requirement.
-  - **STATUS:** proposed
-
-- **TASK: TASK-8** Reject incompatible inherited requirements
-  - **SYNOPSIS:** Inherit conflicting procedure signatures or authority rules and verify that generation requires an explicit resolution.
-  - **STATUS:** proposed
-
-- **TASK: TASK-9** Inject folder technology capabilities
-  - **SYNOPSIS:** Supply confirmed folder skills to a dynamic extension consumer and verify that only the most-specific effective scope is loaded.
-  - **STATUS:** proposed
+- **RULE: RULE-25** This phase ends with review artifacts, not definition changes
+  - **EXAMPLE:** Review may accept Create Work Item as a candidate without editing either creation skill.
 
 ## 13. Application Plan After Review
 
-This plan applies the model only after the analysis and its review are accepted.
-
-- **MODIFICATION: MOD-1** Inventory existing procedures
-  - **SYNOPSIS:** Record each skill package, its independent procedures, inputs, outputs, dispositions, side effects, authority, evidence, resumability, concrete dependencies, and candidate interface dependencies.
+- **MODIFICATION: MOD-1** Inventory every skill package
+  - **SYNOPSIS:** Record the actual procedures described by each current skill definition.
+  - **EXAMPLE:** For complete-work-item-feature-branch, record branch publication, review-loop handling, check observation, and merge observation before deciding whether they form one or several interfaces.
   - **STATUS:** proposed
 
-- **MODIFICATION: MOD-2** Derive interface candidates
-  - **SYNOPSIS:** Group procedures only when their complete observable contracts are substitutable. Highlight packages that export unrelated interfaces as split candidates without splitting them automatically.
+- **MODIFICATION: MOD-2** Record expected procedures
+  - **SYNOPSIS:** For each agent or calling skill, record procedures it needs without first assuming an implementation package.
+  - **EXAMPLE:** Record that Dev Orchestrator needs delivery after review and verification, then compare that need with the two Commit skills.
   - **STATUS:** proposed
 
-- **MODIFICATION: MOD-3** Define the interface catalog
-  - **SYNOPSIS:** Establish interface identity, versioning, procedure signatures, cardinality, compatibility, and binding validation in a reviewed canonical source.
-  - **UNCERTAINTY:** The canonical source path and schema are not selected in this proposal. Choose them during the application design before creating files.
+- **MODIFICATION: MOD-3** Map exported implementations
+  - **SYNOPSIS:** Map each skill procedure to candidate expected interfaces only when the current definitions support the same caller need.
+  - **EXAMPLE:** Compare create-file-work-item and create-gitlab-work-item as candidate Create Work Item implementations.
   - **STATUS:** proposed
 
-- **MODIFICATION: MOD-4** Annotate skill exports and requirements
-  - **SYNOPSIS:** Add reviewed interface metadata to exact authorized skill-definition paths and preserve deliberate concrete dependencies.
+- **MODIFICATION: MOD-4** Highlight packages that export several independent interfaces
+  - **SYNOPSIS:** Mark them for review without changing their files.
+  - **EXAMPLE:** If the inventory finds unrelated creation and publication procedures in one package, mark that package as a possible split.
   - **STATUS:** proposed
 
-- **MODIFICATION: MOD-5** Replace setup-bound concrete agent dependencies
-  - **SYNOPSIS:** Make conceptual agent definitions declare expected interfaces and extension slots, while setup bindings select provider packages.
+- **MODIFICATION: MOD-5** Find agent base-class candidates
+  - **SYNOPSIS:** Compare shared purpose, instructions, and expected interfaces across agent definitions.
+  - **EXAMPLE:** Review the artifact-reviewing agents to determine whether they share an actual Reviewing Agent contract.
   - **STATUS:** proposed
 
-- **MODIFICATION: MOD-6** Generate and validate bindings
-  - **SYNOPSIS:** Extend configuration and generation to reject missing, ambiguous, incompatible, cyclic, or conflict-bearing bindings before runtime delivery.
+- **MODIFICATION: MOD-6** Review the complete mapping
+  - **SYNOPSIS:** Resolve the questions in section 11 before changing governed definitions.
+  - **EXAMPLE:** Decide the current owner and procedure boundary of Create Work Item before adding it to an agent definition.
   - **STATUS:** proposed
 
-- **MODIFICATION: MOD-7** Introduce agent bases and mixins
-  - **SYNOPSIS:** Extract shared agent semantics only after the inventory proves identical obligations and conflict-free inheritance.
-  - **STATUS:** proposed
-
-- **MODIFICATION: MOD-8** Regenerate diagrams and tests
-  - **SYNOPSIS:** Show expected interfaces separately from implementing skill exports and add substitution, conflict, scope, inheritance, and behavioral evidence checks.
+- **MODIFICATION: MOD-7** Apply only the approved mapping
+  - **SYNOPSIS:** Change only the exact skill, agent, schema, generator, documentation, and test paths authorized in the later phase.
+  - **EXAMPLE:** An approved Create Work Item change would name its exact implementing skills and affected agent paths before any governed definition is edited.
   - **STATUS:** proposed
 
 ## Authoritative Inputs
 
-- The user-supplied object-oriented analysis in the current task.
+- The user-supplied object-oriented analysis and terminology corrections in the current task.
 - [Work-Item Provider And Completion Contracts](work-item-provider-and-completion-contracts.md)
 - [Agentic Configuration](agentic-configuration.html)
-- [Generic Agent Definitions Source](generic-agent-definitions-source.html)
 - [Complete Work Item Direct Main](../skills/complete-work-item-direct-main/SKILL.md)
 - [Complete Work Item Feature Branch](../skills/complete-work-item-feature-branch/SKILL.md)
 - [Create File Work Item](../skills/create-file-work-item/SKILL.md)
 - [Create GitLab Work Item](../skills/create-gitlab-work-item/SKILL.md)
+- [Backlog Crisis Mode](../skills/backlog-crisis-mode/SKILL.md)
+- [Dev Coder](../agents/roles/dev-activities/dev-coder.role.yaml)
+- [Dev Orchestrator](../agents/roles/dev-activities/dev-orchestrator.role.yaml)
 - [Dev Backlog Coordinator](../agents/roles/dev-activities/dev-backlog-coordinator.role.yaml)
 - [Dev Backlog Steward](../agents/roles/dev-activities/dev-backlog-steward.role.yaml)
