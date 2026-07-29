@@ -1,12 +1,12 @@
 # Keep topic verification read-only and make helper checks executable
 
-Status: Blocked
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/project-wiki-topic-verify-read-only-helper-resolution.md
+Provider Reference: backlog/completed-backlog/defects/project-wiki-topic-verify-read-only-helper-resolution.md
 
 Completion: direct-main
 
@@ -109,6 +109,15 @@ Required Next Acceptance: The existing sole Root Dev Orchestrator must separatel
 ## Summary
 
 Keep project-wiki topic verification read-only and make its helper commands resolve from an executable installed location.
+
+## Crisis Resolution
+
+- Crisis Mode: User-declared on 2026-07-29; ordinary dispatch and claim operations stopped.
+- Resolution: Adopted preserved candidate 77416fc3fde142b57d3addc676efa5986a852b08 and reconciled it with the newer portable PROJECT_WIKI_SKILL_ROOT contract.
+- Verification: Exact governed-definition preflight returned ALLOWED_APPROVED_DEFINITION_CHANGE; four focused read-only/helper-portability tests passed; generated skill documentation was current; Git diff checks passed.
+- Residual Evidence: The configured MCP root-policy rejection remains recorded as infrastructure evidence and was not bypassed with an alternate validator.
+- Delivery: Direct-main crisis commit recorded with this terminal provider archive.
+- Final Owner: Unowned.
 
 ## Context
 

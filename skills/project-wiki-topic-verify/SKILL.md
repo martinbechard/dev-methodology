@@ -32,6 +32,17 @@ Use that checklist as the acceptance contract. Also read these project-wiki refe
 - ../project-wiki/references/operations.md when raw ingest, digests, or raw/processed moves are being judged.
 - ../project-wiki/references/source-priority.md when sources conflict.
 
+## Read-Only Helper Resolution
+
+Resolve PROJECT_WIKI_SKILL_ROOT as the absolute directory containing the loaded project-wiki/SKILL.md.
+Require "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" to exist.
+Use that absolute loaded-skill path for read-only lint and okf-validate commands in both source and installed layouts.
+If the helper file does not exist, stop and report that the required read-only checks could not run.
+
+The Wiki Writer or Ingester owns every wiki mutation, including okf-migrate and link-leaves.
+The verifier only checks evidence and reports findings.
+These ownership rules remain in force even when the caller asks the verifier to repair a page.
+
 ## Review Workflow
 
 Non-reserved Markdown concept documents should have YAML frontmatter with a non-empty type field. Folder index.md and log.md files are OKF reserved files and should stay navigational without concept frontmatter.
@@ -45,11 +56,11 @@ Non-reserved Markdown concept documents should have YAML frontmatter with a non-
 7. Check named source references in prose. They must link to the source at the point of use when the prose names or compares source artifacts.
 8. Check multi-source paragraphs for a synthesis, contrast, tension, or source-specific boundary instead of stacked source summaries.
 9. Flag a long paragraph that carries a sequence or enumeration instead of exposing its structure. Treat three or more distinct steps or items in one paragraph as a finding. Require a numbered list for ordered steps and a bulleted list for unordered items, with one coherent step or item in each entry.
-10. Check that the leaf-link pass was run for created or updated durable leaves. Run the leaf-link pass after creating or updating a durable leaf page. Use repository grep to find existing wiki mentions of each leaf title before finishing. A page that mentions a durable leaf title should link the first unlinked mention to that leaf unless the mention is inside a heading, code fence, or existing link.
+10. Check evidence that the owning Writer or Ingester ran the leaf-link pass for created or updated durable leaves. Use repository grep read-only to inspect existing wiki mentions of each leaf title. Report missing leaf-link evidence as a finding; do not run link-leaves.
 11. Check source links, digest links, topic-index links, and federation boundaries. Raw and raw/processed source links must be relative to the wiki page, not absolute filesystem paths.
-12. Run the project-wiki lint command from the repository root when available.
-13. Run python3 project-wiki-skill-root/scripts/wiki_ops.py okf-migrate only when the caller asks for repair; otherwise stay read-only and report missing or stale frontmatter as a finding.
-14. Run python3 project-wiki-skill-root/scripts/wiki_ops.py okf-validate from the repository root when available.
+12. Run python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" lint from the repository root.
+13. Report missing or stale frontmatter as a finding for the owning Writer or Ingester; do not run okf-migrate.
+14. Run python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-validate from the repository root.
 15. Return a verdict about the created or updated topic pages. Do not edit files.
 
 ## Leaf Concept Audit
@@ -101,7 +112,7 @@ Return NEEDS_CORRECTION when a paragraph uses multiple sources but only stacks s
 
 Return NEEDS_CORRECTION when a long paragraph carries a sequence or enumeration. Three or more distinct steps or items in one paragraph require a numbered list for ordered steps or a bulleted list for unordered items.
 
-Return NEEDS_CORRECTION when a created or updated durable leaf was not followed by python3 project-wiki-skill-root/scripts/wiki_ops.py link-leaves or equivalent repository grep coverage.
+Return NEEDS_CORRECTION when evidence does not show that the owning Writer or Ingester followed a created or updated durable leaf with link-leaves or equivalent repository grep coverage.
 
 Return NEEDS_CORRECTION when a digest entry uses its dated text mainly to list page or file changes instead of summarizing the content that was added or modified.
 

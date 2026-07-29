@@ -36,6 +36,7 @@ WIKI_OPS_COMMANDS = (
     ("questions",),
     ("questions", "--format", "json"),
 )
+WIKI_OPS_IMPLEMENTATION = SKILL_ROOT / "scripts" / "wiki_ops.py"
 COMPANY_DIGEST_BOUNDARY_PHRASE = (
     "do not discuss multiple companies in one digest entry unless they are part of the same joint story, "
     "such as a partnership, acquisition, coordinated release, or directly comparative event; appearing "
@@ -68,6 +69,20 @@ OKF_GUIDANCE_PHRASES = [
     "Folder index.md and log.md files are OKF reserved files",
     f"{WIKI_OPS_COMMAND_PREFIX} okf-migrate",
     f"{WIKI_OPS_COMMAND_PREFIX} okf-validate",
+]
+
+READ_ONLY_VERIFIER_PHRASES = [
+    "The Wiki Writer or Ingester owns every wiki mutation, including okf-migrate and link-leaves.",
+    "The verifier only checks evidence and reports findings.",
+    "These ownership rules remain in force even when the caller asks the verifier to repair a page.",
+    "Report missing leaf-link evidence as a finding; do not run link-leaves.",
+    "Report missing or stale frontmatter as a finding for the owning Writer or Ingester; do not run okf-migrate.",
+]
+
+VERIFIER_HELPER_RESOLUTION_PHRASES = [
+    "Resolve PROJECT_WIKI_SKILL_ROOT as the absolute directory containing the loaded project-wiki/SKILL.md.",
+    'Require "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" to exist.',
+    "Use that absolute loaded-skill path for read-only lint and okf-validate commands in both source and installed layouts.",
 ]
 
 AGENTS_GUIDANCE_PHRASES = [
@@ -222,7 +237,7 @@ class SetupGuidanceTest(unittest.TestCase):
     def test_shared_leaf_linking_guidance_is_available(self) -> None:
         reference_paths = [
             PAGE_SCHEMA_REFERENCE,
-            VERIFICATION_CHECKLIST,
+            TOPIC_WRITER_SKILL,
         ]
 
         for reference_path in reference_paths:
@@ -234,7 +249,7 @@ class SetupGuidanceTest(unittest.TestCase):
     def test_okf_guidance_is_available(self) -> None:
         reference_paths = [
             PAGE_SCHEMA_REFERENCE,
-            VERIFICATION_CHECKLIST,
+            TOPIC_WRITER_SKILL,
         ]
 
         for reference_path in reference_paths:
@@ -332,6 +347,26 @@ class SetupGuidanceTest(unittest.TestCase):
                 self.assertIn(completed.returncode, allowed_return_codes)
                 self.assertNotIn("Traceback", completed.stderr)
                 self.assertNotIn("No such file or directory", completed.stderr)
+    def test_topic_verifier_is_read_only_and_resolves_the_wiki_helper(self) -> None:
+        verifier_text = TOPIC_VERIFIER_SKILL.read_text(encoding="utf-8")
+        checklist_text = VERIFICATION_CHECKLIST.read_text(encoding="utf-8")
+
+        for phrase in READ_ONLY_VERIFIER_PHRASES:
+            with self.subTest(path=TOPIC_VERIFIER_SKILL.name, phrase=phrase):
+                self.assertIn(phrase, verifier_text)
+
+        for phrase in READ_ONLY_VERIFIER_PHRASES[:2]:
+            with self.subTest(path=VERIFICATION_CHECKLIST.name, phrase=phrase):
+                self.assertIn(phrase, checklist_text)
+
+        for phrase in VERIFIER_HELPER_RESOLUTION_PHRASES:
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, verifier_text)
+
+        self.assertTrue(WIKI_OPS_IMPLEMENTATION.is_file())
+        self.assertNotIn("project-wiki-skill-root", verifier_text)
+        self.assertNotIn(f"{WIKI_OPS_COMMAND_PREFIX} okf-migrate", checklist_text)
+        self.assertNotIn(f"{WIKI_OPS_COMMAND_PREFIX} link-leaves", checklist_text)
 
 
 if __name__ == "__main__":

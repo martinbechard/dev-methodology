@@ -58,11 +58,14 @@ Use this checklist when verifying created or updated docs/wiki topic pages, espe
 - Local wiki links are Markdown links and resolve from the page where they appear.
 - Monthly digest entries link to the durable leaves that hold the details.
 - The relevant topic-index entry or folder hub links any newly created durable leaf.
-- Run the leaf-link pass after creating or updating a durable leaf page.
-- Resolve PROJECT_WIKI_SKILL_ROOT as the absolute directory containing the loaded project-wiki/SKILL.md and verify scripts/wiki_ops.py exists there before running an operation.
-- Run python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" link-leaves from the repository root for the leaf-link pass.
-- Run python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-migrate when concept frontmatter is missing or stale.
-- Run python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-validate before accepting topic pages.
+- The Wiki Writer or Ingester owns every wiki mutation, including okf-migrate and link-leaves.
+- The verifier only checks evidence and reports findings.
+- The Writer or Ingester runs the leaf-link pass after creating or updating a durable leaf page.
+- The verifier reports missing leaf-link evidence as a finding and does not run link-leaves.
+- The Writer or Ingester runs okf-migrate when concept frontmatter is missing or stale.
+- The verifier reports missing or stale frontmatter as a finding and does not run okf-migrate.
+- Resolve PROJECT_WIKI_SKILL_ROOT as the absolute directory containing the loaded project-wiki/SKILL.md and verify scripts/wiki_ops.py exists there before a read-only operation.
+- The verifier runs python3 "$PROJECT_WIKI_SKILL_ROOT/scripts/wiki_ops.py" okf-validate before accepting topic pages.
 - Use repository grep to find existing wiki mentions of each leaf title before finishing.
 - A page that mentions a durable leaf title should link the first unlinked mention to that leaf unless the mention is inside a heading, code fence, or existing link.
 - No source path, code path, test path, backlog item, behavior, fallback, or compatibility constraint is invented.
