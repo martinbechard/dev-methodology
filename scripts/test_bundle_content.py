@@ -10266,14 +10266,6 @@ class BundleContentTests(unittest.TestCase):
                 self.assertEqual(1, text.count('<footer class="site-footer">'))
                 self.assertIn("AI-Assisted Coding Toolkit", text)
                 self.assertEqual(1, text.count(expected_gradient))
-                site_header = css_rule_declarations(text, ".site-header")
-                self.assertEqual("flex", site_header.get("display"))
-                self.assertEqual("center", site_header.get("align-items"))
-                self.assertTrue(site_header.get("gap"))
-
-                site_brand = css_rule_declarations(text, ".site-brand")
-                self.assertEqual("inline-flex", site_brand.get("display"))
-                self.assertEqual("0", site_brand.get("min-width"))
                 if filename == "index.html":
                     self.assertIn(
                         '<a class="site-brand" href="index.html">',
@@ -10284,6 +10276,31 @@ class BundleContentTests(unittest.TestCase):
                 else:
                     self.assertIn('src="../logo.png"', text)
                     self.assertIn('href="../LICENSE">MIT License</a>', text)
+
+        settings_consumer_text = {}
+        for page_path in sorted(design_root.glob("*.html")):
+            text = page_path.read_text(encoding="utf-8")
+            if '<script src="documentation-settings.js"></script>' in text:
+                settings_consumer_text[page_path.name] = text
+        self.assertFalse(
+            set(DOCUMENT_NAVIGATION_ORDER) - settings_consumer_text.keys()
+        )
+        self.assertIn("agent-skill-explorer.html", settings_consumer_text)
+
+        settings_site_chrome_pages = {
+            "index.html": index_text,
+            **settings_consumer_text,
+        }
+        for filename, text in settings_site_chrome_pages.items():
+            with self.subTest(settings_site_chrome=filename):
+                site_header = css_rule_declarations(text, ".site-header")
+                self.assertEqual("flex", site_header.get("display"))
+                self.assertEqual("center", site_header.get("align-items"))
+                self.assertTrue(site_header.get("gap"))
+
+                site_brand = css_rule_declarations(text, ".site-brand")
+                self.assertEqual("inline-flex", site_brand.get("display"))
+                self.assertEqual("0", site_brand.get("min-width"))
 
         license_text = (REPOSITORY_ROOT / "LICENSE").read_text(encoding="utf-8")
         self.assertIn("MIT License", license_text)
