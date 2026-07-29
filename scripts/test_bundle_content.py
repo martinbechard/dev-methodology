@@ -340,7 +340,7 @@ README_REQUIRED_PHRASES = (
     "- hibernate-orm-panache",
     "- quarkus-testing",
     "jhipster-domain-modeling",
-    "[Technology Skills](design/skills-modularization.html) explains always-used and rule-selected agent skills",
+    "[Agent Skill Architecture](design/skills-modularization.html) explains always-used and rule-selected agent skills",
     "[Wiki Skills And Project Context page](design/wiki-skills-and-project-context.html)",
     "The generic Gang of Four pattern skills are request-specific assignments for design authoring and design review.",
     "project-wiki-create",
@@ -428,9 +428,9 @@ DOCUMENTATION_LIST_VERIFIER_SKILLS = (
     "project-wiki-topic-verify",
 )
 MODULARIZATION_REQUIRED_PHRASES = (
-    "Core Agent Skills",
-    "Why Technology-Specific Skills Are Loaded Separately",
-    "Technology Extensions Setup Process",
+    "Core Skill Categories and Ownership",
+    "Skill Selection Ownership and Technology Boundaries",
+    "Technology Extension Configuration Process",
     "may directly reference both required and optional core skills",
     "Both kinds of directly referenced skills must be technology-agnostic",
     "Required core skill",
@@ -439,10 +439,10 @@ MODULARIZATION_REQUIRED_PHRASES = (
     "No finite agent definition can list every language, framework, library, runtime, database, and tool",
     "only technology and domain skills that actually exist in the available skill collection",
     "New technology skills can be added without editing every generic agent definition",
-    "Cross-Harness Skill Lifecycle",
-    "Native runtime mechanisms",
-    "Bundle selection and delivery",
-    "Skill Inlining Benefits",
+    "Skill Lifecycle and Runtime Delivery",
+    "Native Runtime Mechanisms",
+    "Bundle Selection and Instruction Delivery",
+    "Skill Instruction Delivery and Inlining",
     "Avoiding known-skill retrieval tokens",
     "Reducing tool-call interruptions",
     "Conditional MCP delivery path",
@@ -454,13 +454,13 @@ MODULARIZATION_REQUIRED_PHRASES = (
     "reviewable intent log",
     "edit PROJECT.yaml to force a correction",
     "Operational result — after setup",
-    "Technology Extension Skills",
+    "Technology Extension Skill Catalog",
     "generic pattern family covers all 23 Gang of Four object-oriented patterns",
     "request-specific assignments for Dev Documentation Writer and Dev Artifact Reviewer",
     "pattern examples remain setup-detected technology skills",
     "Changeset identity, include-chain, validation, update, rollback, and recovery guidance together with SQL.",
     "jhipster-domain-modeling",
-    "How Setup-Time Technology Detection Works",
+    "Setup-Time Technology Detection",
     "runs the detector once for each representative folder scope",
     "nearest supported owning project boundary",
     "Every rule has a root anyOf list",
@@ -693,9 +693,9 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Bundle Deployment And Runtime Setup",
         "Cross-Harness Evaluation Environment, Permission Profiles, And Audit Evidence",
     ),
-    "skills-modularization.html": ("Technology Skills",) + MODULARIZATION_REQUIRED_PHRASES[:3] + (
-        "Technology Extension Skills",
-        "How Setup-Time Technology Detection Works",
+    "skills-modularization.html": ("Agent Skill Architecture",) + MODULARIZATION_REQUIRED_PHRASES[:3] + (
+        "Technology Extension Skill Catalog",
+        "Setup-Time Technology Detection",
     ),
     "generic-agent-definitions-source.html": (
         "The Portability Problem",
@@ -9492,12 +9492,13 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(phrase, modularization_text)
 
         modularization_section_order = (
-            "Core Agent Skills",
-            "Technology Extension Skills",
-            "Why Technology-Specific Skills Are Loaded Separately",
-            "Skill Inlining Benefits",
-            "Technology Extensions Setup Process",
-            "How Setup-Time Technology Detection Works",
+            "Core Skill Categories and Ownership",
+            "Skill Lifecycle and Runtime Delivery",
+            "Technology Extension Skill Catalog",
+            "Skill Selection Ownership and Technology Boundaries",
+            "Skill Instruction Delivery and Inlining",
+            "Technology Extension Configuration Process",
+            "Setup-Time Technology Detection",
         )
         modularization_section_positions = tuple(
             modularization_text.index(f">{heading}</h2>")
@@ -9722,7 +9723,7 @@ class BundleContentTests(unittest.TestCase):
             index_text,
         )
         self.assertIn("<h3>Core Agent and Skills</h3>", index_text)
-        self.assertIn("<h3>Technology Skills</h3>", index_text)
+        self.assertIn("<h3>Agent Skill Architecture</h3>", index_text)
 
         expected_gradient = (
             "linear-gradient(180deg, rgba(232, 240, 255, 0.9), "

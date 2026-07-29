@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Technology Skills</title>
+  <title>Agent Skill Architecture</title>
   <style>
     :root {
       --color-ink: #172033;
@@ -511,15 +511,15 @@
   </nav>
 
   <section class="hero" aria-labelledby="page-title">
-    <h1 id="page-title">Technology Skills</h1>
+    <h1 id="page-title">Agent Skill Architecture</h1>
     <p class="callout">Conceptual agent definitions own only technology-agnostic core skill identifiers. Native agents reference those core skills by default. Project Configurator detects candidates once, shows their evidence and conflicts for user confirmation, and records the accepted folder skillsets in PROJECT.yaml. It then renders by-reference AGENTS.md guidance. Technology selection never adds persistence-provider skills to an agent.</p>
     <p class="lede">
-      The toolkit separates stable, technology-agnostic ways of working from the extensions needed for a specific stack. An agent definition owns the skills it always needs and the conditional skills it uses only when a stated rule matches. During project setup, Project Configurator binds compatible technology skills to folders from repository evidence.
+      The toolkit separates stable, technology-agnostic ways of working from the extensions needed for a specific stack. This page distinguishes skill categories and ownership from runtime delivery, setup-time selection, and verification. An agent definition owns the skills it always needs and the conditional skills it uses only when a stated rule matches. During project setup, Project Configurator binds compatible technology skills to folders from repository evidence.
     </p>
   </section>
 
   <section class="section" aria-labelledby="agent-skills-title">
-    <h2 id="agent-skills-title">Core Agent Skills</h2>
+    <h2 id="agent-skills-title">Core Skill Categories and Ownership</h2>
     <p class="lede">An agent definition may directly reference both required and optional core skills. A required skill has no condition and is selected for every invocation of that agent. An optional skill has a human-readable condition and is selected only when the request and available evidence make it applicable.</p>
     <p class="lede">The role schema supplies effective-communication and ste-technical-writing to every conceptual agent. Effective communication governs user and agent messages. STE governs technical-document prose only when an agent writes, rewrites, or reviews that prose.</p>
     <p class="lede">Selection does not by itself say whether a harness preloads, dynamically reads, or applies the skill; the <a href="#skill-lifecycle-title">cross-harness lifecycle</a> makes those states explicit.</p>
@@ -550,7 +550,7 @@
         </tbody>
       </table>
     </div>
-    <h3 class="section-subheading">Technical-document composition</h3>
+    <h3 class="section-subheading">Technical-Document Composition</h3>
     <p>Document Topic Editor separates read-only structural diagnosis from mutation. <span class="tag" data-skill-definition="analyze-document-topics">analyze-document-topics</span> inventories and scores the complete topic hierarchy without changing source bytes. <span class="tag" data-skill-definition="revise-document-topics">revise-document-topics</span> consumes that analysis only with explicit revision authority, preserves every substantive topic, and retains a durable before-and-after artifact only when requested.</p>
     <div class="matrix">
       <table>
@@ -648,7 +648,7 @@
   </section>
 
   <section class="section" aria-labelledby="skill-lifecycle-title">
-    <h2 id="skill-lifecycle-title">Cross-Harness Skill Lifecycle</h2>
+    <h2 id="skill-lifecycle-title">Skill Lifecycle and Runtime Delivery</h2>
     <p class="lede">Skill discovery, selection, instruction delivery, behavioral use, and proof are separate events. This section owns those distinctions for the bundle. The native runtime files described on the <a href="generic-agent-definitions-source.html">source-model page</a> and the project context layers described on the <a href="agentic-configuration.html">agentic configuration page</a> link here instead of redefining them.</p>
     <div class="matrix">
       <table>
@@ -694,7 +694,7 @@
       </table>
     </div>
 
-    <h3 class="section-subheading">Native runtime mechanisms</h3>
+    <h3 class="section-subheading">Native Runtime Mechanisms</h3>
     <div class="matrix">
       <table>
         <thead>
@@ -739,7 +739,7 @@
       </table>
     </div>
 
-    <h3 class="section-subheading">Bundle selection and delivery</h3>
+    <h3 class="section-subheading">Bundle Selection and Instruction Delivery</h3>
     <div class="matrix">
       <table>
         <thead>
@@ -779,7 +779,7 @@
   </section>
 
   <section class="section" aria-labelledby="technology-examples-title">
-    <h2 id="technology-examples-title">Technology Extension Skills</h2>
+    <h2 id="technology-examples-title">Technology Extension Skill Catalog</h2>
     <p>Java, TypeScript, and Python pattern examples remain setup-detected technology skills, so any agent acting in a matching folder can use idiomatic implementations without making one language shape canonical. They provide implementation forms for all 23 patterns; selection, tradeoffs, and review criteria remain with the generic skills above.</p>
     <div class="matrix">
       <table>
@@ -946,7 +946,7 @@
   </section>
 
   <section class="section" aria-labelledby="technology-boundary-title">
-    <h2 id="technology-boundary-title">Why Technology-Specific Skills Are Loaded Separately</h2>
+    <h2 id="technology-boundary-title">Skill Selection Ownership and Technology Boundaries</h2>
     <p class="lede">Required versus optional is not the architectural split. Both are valid forms of technology-agnostic skill references inside an agent definition. The actual boundary is technology dependence. No finite agent definition can list every language, framework, library, runtime, database, and tool that may exist now or be added later. Listing technology skills in generic agents would also require every relevant agent definition to change whenever the technology catalog grows.</p>
     <p>The toolkit therefore uses three independent skill-selection mechanisms. Agent definitions provide their own required and optional technology-agnostic skills. Generated adapters statically append the required core skill instructions by default, while optional request-specific skills remain subject to their conditions and the native lifecycle described above.</p>
     <p>Project setup can also declare ordered project-wide skill references that apply through root AGENTS.md without changing agent definitions. Separately, setup considers only technology and domain skills that actually exist in the available skill collection. It detects which ones match each project or folder scope and statically embeds those skills under the applicable AGENTS.md scope by default. New technology skills can be added without editing every generic agent definition.</p>
@@ -982,7 +982,7 @@
         </tbody>
       </table>
     </div>
-    <h3 class="section-subheading">Required and optional skills in current agent definitions</h3>
+    <h3 class="section-subheading">Core Skills in Current Agent Definitions</h3>
     <div class="matrix">
       <table>
         <thead>
@@ -1024,7 +1024,7 @@
   </section>
 
   <section class="section" aria-labelledby="inlining-benefits-title">
-    <h2 id="inlining-benefits-title">Skill Inlining Benefits</h2>
+    <h2 id="inlining-benefits-title">Skill Instruction Delivery and Inlining</h2>
     <p class="lede">Inlining places skill instructions in agent context during generation or project configuration when the selection is already certain. The agent starts with the guidance it must use instead of spending context and output tokens constructing calls to retrieve known instructions.</p>
     <div class="grid">
       <article class="card skill">
@@ -1046,7 +1046,7 @@
   </section>
 
   <section class="section" aria-labelledby="setup-title">
-    <h2 id="setup-title">Technology Extensions Setup Process</h2>
+    <h2 id="setup-title">Technology Extension Configuration Process</h2>
     <p class="lede">Project Configurator owns the setup process. It asks for Basic or Advanced mode, inspects the target repository, selects resource coordination independently as none or agent-claim, validates ordered project-level skill extensions, and selects technology extensions from source evidence and user confirmation. It records independent Persistence and Commit choices in PROJECT.yaml and verifies that the result matches the recorded intent.</p>
     <p class="lede">Agent-claim requires one verified claim helper. None renders no claim skill or helper. Folder technology guidance remains by-reference by default, with explicit inline delivery available in Advanced setup.</p>
     <aside class="note">
@@ -1068,21 +1068,21 @@
   </section>
 
   <section class="section" aria-labelledby="detection-title">
-    <h2 id="detection-title">How Setup-Time Technology Detection Works</h2>
+    <h2 id="detection-title">Setup-Time Technology Detection</h2>
     <div class="explanation">
       <p class="lede">Project Configurator runs the detector once for each representative folder scope selected during setup. The detector is a repository scanner, not an LLM judgment call. It receives the project root and folder scopes, evaluates versioned rules against files and manifests, and returns a structured result for each scope. It never uses the agent name, prompt wording, task description, or whether an agent says that it read a skill.</p>
 
-      <h3>What Project Configurator runs</h3>
+      <h3>Detector Invocation</h3>
       <p>Project Configurator prefers the <code>detect_technology_skills</code> MCP operation when mcp-agent-ops is configured. The server binds the request to its complete active skill catalog and trusted detection registry. The distributed command remains the portability fallback only when the tool is absent or the server cannot initialize or connect before request dispatch. A valid BLOCKED, NO_VARIANT, path, root, authorization, input-policy, or other structured result is never bypassed through the fallback.</p>
       <p>Both surfaces receive one project root and one or more scope arguments. A scope can be a folder such as web/src or api/app, or a single file. The detector walks files inside that scope while ignoring dependency, generated-output, and environment directories such as node_modules, dist, target, .next, .venv, and .git. The MCP surface additionally requires the absolute project root and every discovered source or owner file to resolve beneath an administrator-configured workspace root.</p>
       <pre class="config-block"><code>python3 [detector-skill]/scripts/detect.py --project-root [root] --scope [folder]</code></pre>
       <p>For each scoped file, the detector walks upward to the nearest supported owning project boundary. Supported owner files include package.json, pyproject.toml, requirements files, pom.xml, and Gradle build files. This prevents a child package from inheriting an unrelated dependency from a parent workspace. If one requested scope crosses multiple owning project directories, detection stops with a BLOCKED result and asks Project Configurator to analyze those owners as separate scopes.</p>
 
-      <h3>Where the detection rules come from</h3>
+      <h3>Detection Rule Sources</h3>
       <p>Every bundled technology or domain skill has a detection.yaml file beside its SKILL.md. A build step validates those files and combines them into the generated detection registry consumed by the detector. Each rule names the skill it can select, the evidence that is sufficient, any companion skills that must be added, and whether the skill competes with alternatives in an exclusive group.</p>
       <p>For example, the FastAPI rule succeeds when the scope contains Python code and the nearest owning manifest declares fastapi, or when parsed Python code contains a real FastAPI import. If FastAPI is selected, its python companion skill is added to the same loadout. A comment or string containing an example FastAPI import does not count.</p>
 
-      <h3>How one rule decides whether it matches</h3>
+      <h3>Rule Matching</h3>
       <p>Every rule has a root anyOf list. At least one branch in that list must succeed. A branch can contain an allOf list, in which case every check in that branch must succeed. The detector keeps the concrete file, manifest, dependency, or import that satisfied the branch so Project Configurator can review why a skill was selected.</p>
       <div class="matrix">
         <table>
@@ -1123,11 +1123,11 @@
         </table>
       </div>
 
-      <h3>How selected skills, companions, and conflicts are resolved</h3>
+      <h3>Companion and Conflict Resolution</h3>
       <p>Most detected skills are additive, so every matching skill is kept. A selected skill can also require companion skills; FastAPI, for example, adds python even if the Python rule was not independently selected. For an exclusive group, the lowest numeric priority wins.</p>
       <p>If two matching alternatives have the same winning priority, the detector returns an exclusive conflict and marks the scope BLOCKED. It also marks the scope BLOCKED when a required selected or companion skill is not available in the installed skill collection.</p>
 
-      <h3>What the detector returns</h3>
+      <h3>Detection Results</h3>
       <div class="matrix">
         <table>
           <thead>

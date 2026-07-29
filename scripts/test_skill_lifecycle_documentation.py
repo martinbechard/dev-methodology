@@ -24,7 +24,7 @@ class SkillLifecycleDocumentationTests(unittest.TestCase):
         text = MODULARIZATION_PATH.read_text(encoding="utf-8")
 
         for phrase in (
-            "Cross-Harness Skill Lifecycle",
+            "Skill Lifecycle and Runtime Delivery",
             "Available",
             "Preloaded",
             "Dynamically invoked",
