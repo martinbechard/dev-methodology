@@ -736,9 +736,13 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Compiled Context Flow",
         "Project Wiki Operating Model",
         "Separation Of Work",
+        "Wiki Role Ownership",
+        "Federation Responsibilities",
         "Skill Collaboration Boundaries",
         "Code-Aware Hybrid",
-        "Verification And Compounding Health",
+        "Verification Gates",
+        "Compounding Context",
+        "Primary And Local Sources",
     ),
 }
 DOCUMENT_FORBIDDEN_HEADINGS = {
@@ -828,6 +832,14 @@ DOCUMENT_REQUIRED_CONTENT_LINKS = {
         "../skills/project-wiki-topic-write/SKILL.md",
         "../skills/project-wiki-topic-verify/SKILL.md",
         "../skills/code-project-wiki/SKILL.md",
+        "../agents/roles/wiki-activities/wiki-architect.role.yaml",
+        "../agents/roles/wiki-activities/wiki-source-collector.role.yaml",
+        "../agents/roles/wiki-activities/wiki-researcher.role.yaml",
+        "../agents/roles/wiki-activities/wiki-ingester.role.yaml",
+        "../agents/roles/wiki-activities/wiki-writer.role.yaml",
+        "../agents/roles/wiki-activities/wiki-topic-verifier.role.yaml",
+        "../agents/roles/wiki-activities/wiki-query-responder.role.yaml",
+        "../agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml",
     ),
 }
 DEVELOPMENT_USE_LOADOUTS = (
@@ -9574,10 +9586,82 @@ class BundleContentTests(unittest.TestCase):
                     self.assertIn(f'href="{link}', page_text[filename])
 
         wiki_context_path = design_root / "wiki-skills-and-project-context.html"
+        wiki_context_text = page_text["wiki-skills-and-project-context.html"]
+        self.assertEqual(
+            1,
+            wiki_context_text.count(
+                '<h1 id="page-title">Wiki Skills And Project Context</h1>'
+            ),
+        )
+        wiki_context_h2_order = tuple(
+            re.findall(r"<h2[^>]*>([^<]+)</h2>", wiki_context_text)
+        )
+        self.assertEqual(
+            DOCUMENT_INFORMATION_OWNERS["wiki-skills-and-project-context.html"][1:],
+            wiki_context_h2_order,
+        )
+
+        wiki_context_section_topics = {
+            "flow-title": (
+                "Raw evidence producers",
+                "Wiki Ingester",
+                "Independent acceptance",
+            ),
+            "roles-title": (
+                "Wiki Architect",
+                "Wiki Source Collector",
+                "Wiki Researcher",
+                "Wiki Ingester",
+                "Wiki Writer",
+                "Wiki Topic Verifier",
+                "Wiki Query Responder",
+                "Wiki Artifact Reviewer",
+            ),
+            "federation-title": (
+                "Upstream entity ownership",
+                "Downstream project context",
+                "Shared and conflicting coverage",
+                "Source and feed routing",
+            ),
+            "verification-title": (
+                "Raw ingest before movement",
+                "Processed links after movement",
+                "Direct page maintenance",
+                "Methodology artifacts",
+            ),
+        }
+        for section_id, expected_h3_topics in wiki_context_section_topics.items():
+            with self.subTest(wiki_context_section=section_id):
+                section = wiki_context_text.split(
+                    f'<section class="section" aria-labelledby="{section_id}">',
+                    maxsplit=1,
+                )[1].split("</section>", maxsplit=1)[0]
+                actual_h3_topics = tuple(
+                    re.sub(r"<[^>]+>", "", heading).strip()
+                    for heading in re.findall(
+                        r"<h3[^>]*>(.*?)</h3>",
+                        section,
+                        flags=re.DOTALL,
+                    )
+                )
+                self.assertEqual(expected_h3_topics, actual_h3_topics)
+
+        for source_derived_contract in (
+            "whole-project reverse-engineering audit mode",
+            "mutation-capable direct use saves a raw query fragment only if mutation is allowed",
+            "Only GOOD authorizes moving the source to raw/processed",
+            "becomes an open question about routing",
+        ):
+            with self.subTest(source_derived_contract=source_derived_contract):
+                self.assertEqual(
+                    1,
+                    wiki_context_text.count(source_derived_contract),
+                )
+
         wiki_context_hrefs = set(
             re.findall(
                 r'href="([^"]+)"',
-                page_text["wiki-skills-and-project-context.html"],
+                wiki_context_text,
             )
         )
         for link in DOCUMENT_REQUIRED_CONTENT_LINKS[
