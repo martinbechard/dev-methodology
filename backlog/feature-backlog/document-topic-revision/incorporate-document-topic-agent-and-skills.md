@@ -1,10 +1,10 @@
 # Incorporate the Document Topic Editor and Topic Skills
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
-Owner: Unowned
+Owner: Root Dev Orchestrator for canonical task 019fab9e-44bf-7571-9fbb-d9d63d3fa9da
 
 Provider: file
 
@@ -65,6 +65,30 @@ Observed Launch Evidence: Parent Dev Backlog Coordinator recorded one bounded li
 Dependencies Observed: None.
 
 Required Next Lifecycle Transition: The same canonical task's root Dev Orchestrator must record Starting -> Running before any mutation or preflight.
+
+## Current Running Acceptance
+
+Transition: Starting -> Running.
+
+Root Dev Orchestrator: Root Dev Orchestrator for canonical task 019fab9e-44bf-7571-9fbb-d9d63d3fa9da.
+
+Canonical Work-Item Thread: 019fab9e-44bf-7571-9fbb-d9d63d3fa9da.
+
+Canonical Root Agent Task: 019fab9e-44bf-7571-9fbb-d9d63d3fa9da.
+
+Branch: codex/incorporate-document-topic-agent-and-skills-019fab9e.
+
+Worktree: /Users/martinbechard/.codex/worktrees/350a/dev-methodology.
+
+Started At: 2026-07-29T02:56:10Z.
+
+Phase: Implementing.
+
+Starting Reservation Commit: 134675139f160bec097a777fcd47b518d0f09730.
+
+Authorization: Exact governed-definition authorization applies only to skills/analyze-document-topics/SKILL.md; skills/revise-document-topics/SKILL.md; skills/analyze-document-topics/agents/openai.yaml; skills/revise-document-topics/agents/openai.yaml; and agents/roles/dev-activities/dev-document-topic-editor.role.yaml. The artifact policy is caller-requested only. No other governed definition is authorized.
+
+Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim starting-running-document-topic-019fab9e-44bf-7571-9fbb-d9d63d3fa9da; incarnation 4ae13eb0-b47c-46d7-af53-503d3c2375b8; claim journal event f21da02e-b7eb-46f5-9c21-6fe36e98a4d1; exact path backlog/feature-backlog/document-topic-revision/incorporate-document-topic-agent-and-skills.md in the primary main checkout.
 
 ## Preserved Dispatch Reservation History
 
