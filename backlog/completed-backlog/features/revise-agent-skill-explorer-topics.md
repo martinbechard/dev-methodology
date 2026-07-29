@@ -1,16 +1,45 @@
 # Revise the Agent and Skill Wiring Map Document Topics
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/document-topic-revision/revise-agent-skill-explorer-topics.md
+Provider Reference: backlog/completed-backlog/features/revise-agent-skill-explorer-topics.md
 
 Completion: direct-main
 
-Owner: Dev Orchestrator (canonical root task 019fabe9-0f29-7ec0-b384-ebd0d0c8a470)
+Owner: Unowned
+
+## Completion Evidence
+
+Disposition: READY.
+
+Completion: direct-main.
+
+Accepted Source Candidate: 34e9abb00b6567c7d34f185c5349dd1c51080463.
+
+Independent Editorial Review: GOOD, with no findings.
+
+Independent Usability Review: GOOD, with no findings.
+
+Independent Verification: VERIFIED.
+
+Integration Mapping: 34e9abb00b6567c7d34f185c5349dd1c51080463 -> f3abf34a03900689cc8ef364ce44935a90ddfbd6 by cherry-pick. The source and integration blobs for design/agent-skill-explorer.html are identical: 5f228925f411c160627647ddb3767d60f6f4e4b5.
+
+Observed Main Tip: f3abf34a03900689cc8ef364ce44935a90ddfbd6, clean and reachable from main.
+
+Post-Integration Verification: Focused explorer checks 5/5 PASS; HTML5, local, and accessibility checks PASS; git diff --check PASS. The explorer-data freshness check WARN reproduces on the parent baseline and is unrelated: generator and evaluation source blobs are unchanged.
+
+Integration Claim Release: 408fc4f5-1b5f-4c71-9f5d-53067012cea1.
+
+Completed At: 2026-07-29T04:05:43Z.
+
+Archive Path: backlog/completed-backlog/features/revise-agent-skill-explorer-topics.md.
+
+Terminal Provider-Mutation Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim complete-revise-agent-skill-explorer-topics-019fabe9; incarnation ade4e329-6045-445e-9b45-47d903366aa2; claim journal event c91c0701-325d-4837-bbce-173cc769e144; exact active and archive provider paths claimed in the primary main checkout.
+
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 Launch Reservation: reserve-nine-document-topic-revisions-019fa9bb-02; one bounded live launch handshake
 Normalized Objective: Revise the Agent and Skill Wiring Map Document Topics.
