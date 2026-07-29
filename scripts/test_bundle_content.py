@@ -10244,6 +10244,21 @@ class BundleContentTests(unittest.TestCase):
             "linear-gradient(180deg, rgba(232, 240, 255, 0.9), "
             "rgba(246, 248, 251, 0) 340px)"
         )
+
+        def css_rule_declarations(text: str, selector: str) -> dict[str, str]:
+            rule_match = re.search(
+                rf"{re.escape(selector)}\s*\{{(?P<body>[^}}]*)\}}",
+                text,
+            )
+            self.assertIsNotNone(rule_match, f"Missing CSS rule for {selector}")
+            assert rule_match is not None
+            return {
+                name.strip(): value.strip()
+                for declaration in rule_match.group("body").split(";")
+                if ":" in declaration
+                for name, value in (declaration.split(":", maxsplit=1),)
+            }
+
         html_pages = {"index.html": index_text, **page_text}
         for filename, text in html_pages.items():
             with self.subTest(site_chrome=filename):
@@ -10251,17 +10266,19 @@ class BundleContentTests(unittest.TestCase):
                 self.assertEqual(1, text.count('<footer class="site-footer">'))
                 self.assertIn("AI-Assisted Coding Toolkit", text)
                 self.assertEqual(1, text.count(expected_gradient))
-                self.assertRegex(
-                    text,
-                    r"\.site-header \{[^}]*display: flex;[^}]*"
-                    r"align-items: center;[^}]*gap: [^;}]+;",
-                )
-                self.assertRegex(
-                    text,
-                    r"\.site-brand \{[^}]*display: inline-flex;[^}]*"
-                    r"min-width: 0;",
-                )
+                site_header = css_rule_declarations(text, ".site-header")
+                self.assertEqual("flex", site_header.get("display"))
+                self.assertEqual("center", site_header.get("align-items"))
+                self.assertTrue(site_header.get("gap"))
+
+                site_brand = css_rule_declarations(text, ".site-brand")
+                self.assertEqual("inline-flex", site_brand.get("display"))
+                self.assertEqual("0", site_brand.get("min-width"))
                 if filename == "index.html":
+                    self.assertIn(
+                        '<a class="site-brand" href="index.html">',
+                        text,
+                    )
                     self.assertIn('src="logo.png"', text)
                     self.assertIn('href="LICENSE">MIT License</a>', text)
                 else:
