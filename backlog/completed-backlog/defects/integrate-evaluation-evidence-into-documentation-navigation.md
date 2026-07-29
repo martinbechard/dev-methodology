@@ -1,12 +1,12 @@
 # Integrate Evaluation Evidence Into Documentation Navigation
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/integrate-evaluation-evidence-into-documentation-navigation.md
+Provider Reference: backlog/completed-backlog/defects/integrate-evaluation-evidence-into-documentation-navigation.md
 
 Completion: direct-main
 
@@ -179,7 +179,7 @@ Clean Worktree HEAD: 17e8ab98ff090041be3ccc0439fc5380f8992d93.
 
 Accepted At: 2026-07-29T16:02:11Z.
 
-Owner: Root Dev Orchestrator 019fae99-2d9b-7163-850b-8d50269b85c4.
+Owner: Unowned.
 
 Active Evidence: root-execution, accepted.
 
@@ -192,6 +192,32 @@ Next Action: Attach Codex branch, then focused analysis and implementation with 
 Next Reconciliation: Immediately after lifecycle commit or blocker, and no later than 15 minutes.
 
 Reconciliation: Running.
+
+## Completion Evidence
+
+Canonical Task, Thread, and Root Dev Orchestrator: 019fae99-2d9b-7163-850b-8d50269b85c4.
+
+Completion Selector: direct-main.
+
+Accepted Source Candidate: 65f3bad798ad635e4596e8c490b0974396551279.
+
+Fresh-Main Reconciliation: 3ec77035f5b0cf07ecb798eafae6762060bffa7f, based on clean main d18de79aa4a2b7d82a994cb4d0a6fc89f0fa3ce6. The non-ancestral source mapping preserved evaluation-topic delivery d6d2679aae763f1024d507091cb9f39cf75547ea and header reconciliation 0dba848191b3e63902bcf3b70ff6ba79024b37e8 while applying the accepted seven-path navigation semantics.
+
+Integration and Main Observation: Main fast-forwarded from d18de79aa4a2b7d82a994cb4d0a6fc89f0fa3ce6 to 3ec77035f5b0cf07ecb798eafae6762060bffa7f. The observed main tip equalled the integration commit, its reachability check passed, the exact seven changed paths matched the accepted scope, and the primary worktree was clean.
+
+Independent Review: Dev Code Reviewer GOOD with no findings. It confirmed exactly one Evaluation Evidence tile, contiguous indicators 01 through 09, the complete reciprocal previous and next sequence, unchanged later-page content, generator ownership and freshness, and preserved evaluation behavior.
+
+Verification: Candidate checks passed Python compilation, generator freshness, 26 evaluation-document tests, focused bundle navigation and settings checks, and git diff validation. Fresh reconciliation checks passed the exact navigation unit test, generator freshness check, focused bundle navigation test, and diff validation. Representative browser checks were not rerun in this task because the local browser packages were unavailable; the terminal closure baton explicitly limited recovery to the focused integration-sensitive checks and accepted the preserved review and verification evidence. No simulator or broad suite ran.
+
+Integration Claim: integrate-evaluation-navigation-019fae99-main acquired the exact seven final paths at event f4cb6804-a995-4507-b415-986a3dd69c51 and released them at event 0e3dc64f-0947-439f-9499-ff7a717f8d09 after clean main observation.
+
+Terminal Provider Claim: close-evaluation-navigation-019fae99 acquired the active and archive provider paths at event a5ecb68c-e4ac-4b50-8a8a-a6bb261d1484.
+
+Completed At: 2026-07-29T16:24:58Z.
+
+Completed Archive Path: backlog/completed-backlog/defects/integrate-evaluation-evidence-into-documentation-navigation.md.
+
+Terminal Backlog Commit: This path-limited provider commit carries the exact active-to-archive move.
 
 ## Notes
 
