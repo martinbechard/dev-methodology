@@ -1,0 +1,6 @@
+basis: explicit-user-direction
+definition_scope: skills/create-file-work-item/SKILL.md
+direction: "When I ask for a work item to be created to create or modify skills, we only need additional approval for ADDITIONAL skills. We need to fix the guidance right now."
+provenance:
+  source: user-message
+  reference: thread:019fa9be-c415-7bc0-9ce4-5282a6185769/message:fix-workitem-request-skill-definition-authority

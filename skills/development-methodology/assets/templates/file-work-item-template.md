@@ -67,25 +67,35 @@ TODO: List canonical provider references, or state None.
 
 TODO: Record agent-resolvable technical uncertainty for discovery, design, review, or verification. State None when no technical questions remain. Open Questions do not by themselves make an authorized item non-dispatchable.
 
+<!-- OPTIONAL: Governed Definition Approval. Keep this section when governed definitions are expected to change. Remove this comment and the entire section otherwise. -->
+
+## Governed Definition Approval
+
+> This optional section makes definition-change authority exact and auditable without manufacturing a second approval request for work the user already requested. Definition maintainers and reviewers use it to record the governed manifest, dependent effects, and the request or later answer that authorizes the scope.
+
+### Governed Canonical Sources
+
+> This subsection lists every governed canonical file in the approved scope. For a user-requested work item that creates or modifies named skills, resolve and record the exact named skill-definition paths approved by that request.
+
+- TODO: List each exact repository-relative governed source path. Do not use directories, wildcards, or artifact categories.
+
+### Allowed Dependent Artifacts
+
+> This subsection bounds noncanonical effects of an approved definition change. List supported generated mirrors and any separately permitted non-governed dependent files without treating them as additional governed definitions.
+
+- TODO: List supported generated mirrors and each separately allowed non-governed dependent path. State None when approval covers only the governed sources.
+
+### Approval Resolution
+
+> This subsection records why the exact governed manifest is authorized. When the user explicitly requested a work item to create or modify the named skills, record Approved at creation with the exact request wording, date, and user-message provenance. If an additional governed path is discovered later, keep the original manifest approved and record Pending only for the additional path until the user answers.
+
+TODO: Record Approved at creation, Approved by later answer, or Pending for additional scope, with exact wording, date, provenance, and unchanged boundaries.
+
 <!-- OPTIONAL: User Action Required. Keep this section only when one concrete user-owned answer blocks the next safe step. Remove this comment and the entire section otherwise. -->
 
 ## User Action Required
 
 > This optional section separates a genuine user-owned blocker from technical uncertainty, preventing unsafe assumptions while allowing bounded discovery to continue. Coordinators and implementers use it only when one concrete answer is required for the next safe step, and record the question, rationale, options, resolution, and unattended boundary in its subsections.
-
-<!-- OPTIONAL: Governed definition pre-answer evidence. Keep these subsections only when governed definitions are expected to change. Remove this comment and both subsections otherwise. -->
-
-### Governed Canonical Sources
-
-> This subsection makes definition-change approval exact enough to enforce and audit. Definition maintainers use it before asking for approval to list every governed canonical file that discovery shows must change.
-
-- TODO: List each exact repository-relative governed source path that discovery found necessary. Do not use directories, wildcards, or artifact categories.
-
-### Allowed Dependent Artifacts
-
-> This subsection bounds noncanonical effects of an approved definition change, preventing approval from expanding implicitly. Definition maintainers and reviewers use it with governed-source approval to list supported generated mirrors and any separately permitted dependent files.
-
-- TODO: List supported generated mirrors and each separately allowed non-governed dependent path. State None when approval covers only the governed sources.
 
 ### Question for the User
 
@@ -109,7 +119,7 @@ TODO: Explain why agents cannot resolve this question safely.
 
 > This subsection creates durable evidence of the answer so later agents can act within exactly the authority granted. Coordinators and implementers use it after the user responds to record the wording, date, provenance, and unchanged approval boundaries.
 
-Pending. After the answer, record the exact answer, user wording, date, and user-message provenance. For governed definitions, preserve the approved Governed Canonical Sources and Allowed Dependent Artifacts above; do not infer broader scope from the answer.
+Pending. After the answer, record the exact answer, user wording, date, and user-message provenance. When this answer approves additional governed scope, update Governed Definition Approval above without broadening the originally approved manifest.
 
 ### Unattended Work Boundary
 

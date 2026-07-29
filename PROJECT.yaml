@@ -160,6 +160,8 @@ definition_change_authority:
     user_direction_required: true
     exact_scope_required: true
     audit_record_required: true
+    named_skill_work_item_request_authorizes_scope: true
+    additional_skill_scope_requires_new_approval: true
     required_basis: explicit-user-direction
     allowed_provenance_sources:
       - user-message

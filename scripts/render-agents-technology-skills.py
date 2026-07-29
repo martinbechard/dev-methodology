@@ -343,7 +343,13 @@ def definition_change_authority(value: dict[str, object]) -> dict[str, object] |
     evidence = policy.get("approval_evidence")
     if not isinstance(evidence, dict):
         raise ValueError("definition_change_authority.approval_evidence must be a mapping")
-    for key in ("user_direction_required", "exact_scope_required", "audit_record_required"):
+    for key in (
+        "user_direction_required",
+        "exact_scope_required",
+        "audit_record_required",
+        "named_skill_work_item_request_authorizes_scope",
+        "additional_skill_scope_requires_new_approval",
+    ):
         _required_boolean(evidence, key, True, "definition_change_authority.approval_evidence")
     if evidence.get("required_basis") != "explicit-user-direction":
         raise ValueError("definition_change_authority.approval_evidence.required_basis must be explicit-user-direction")
@@ -430,6 +436,10 @@ def definition_change_authority_lines(value: dict[str, object]) -> list[str]:
         AUTHORITY_HEADING,
         "",
         "Every change to an agent definition or skill definition requires explicit, scope-specific user approval before mutation. Record the user's direction, the exact definition scope it authorizes, and the approval evidence in the work lifecycle. Silence, unrelated prior approval, and broad repository mutation authority are insufficient.",
+        "",
+        "When the user explicitly requests a work item whose requested outcome creates or modifies named skill definitions, that request is the approval for the exact named skill-definition paths recorded in the work item. Do not ask again or route the item to User Action Required solely because those recorded paths are governed. Require additional approval only for additional skill-definition paths outside the requested manifest. Preserve the exact request wording and provenance, record the exact canonical-path manifest, and run the supported pre-mutation check for every governed path.",
+        "",
+        "This work-item rule does not authorize an agent definition, schema, model input, or unrelated metadata definition unless the user's request also explicitly names or unambiguously requests that governed definition.",
         "",
         "Repository access, a failing test, a repair assignment, general write authority, review work, verification work, and a desire to make validation pass do not authorize a definition change.",
         "",

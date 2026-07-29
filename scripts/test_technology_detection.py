@@ -66,6 +66,8 @@ def definition_change_authority() -> dict[str, object]:
             "user_direction_required": True,
             "exact_scope_required": True,
             "audit_record_required": True,
+            "named_skill_work_item_request_authorizes_scope": True,
+            "additional_skill_scope_requires_new_approval": True,
             "required_basis": "explicit-user-direction",
             "allowed_provenance_sources": ["user-message", "delegated-user-direction"],
             "provenance_reference_required": True,
@@ -3666,6 +3668,18 @@ class TechnologyDetectionTests(unittest.TestCase):
             first_content = output.read_text(encoding="utf-8")
             self.assertIn("## Agent And Skill Definition Approval", first_content)
             self.assertIn("explicit, scope-specific user approval", first_content)
+            self.assertIn(
+                "that request is the approval for the exact named skill-definition paths",
+                first_content,
+            )
+            self.assertIn(
+                "Require additional approval only for additional skill-definition paths",
+                first_content,
+            )
+            self.assertIn(
+                "does not authorize an agent definition",
+                first_content,
+            )
             self.assertIn("failing test", first_content)
             self.assertIn("test, fixture, assertion, or expected result is incorrect", first_content)
             self.assertIn("agents/roles/**/*.role.yaml", first_content)
@@ -3759,6 +3773,20 @@ class TechnologyDetectionTests(unittest.TestCase):
                     "allowed_provenance_sources": ["repair-assignment"],
                 },
             }, "allowed_provenance_sources must contain only the supported"),
+            ({
+                **definition_change_authority(),
+                "approval_evidence": {
+                    **definition_change_authority()["approval_evidence"],
+                    "named_skill_work_item_request_authorizes_scope": False,
+                },
+            }, "named_skill_work_item_request_authorizes_scope must be true"),
+            ({
+                **definition_change_authority(),
+                "approval_evidence": {
+                    **definition_change_authority()["approval_evidence"],
+                    "additional_skill_scope_requires_new_approval": False,
+                },
+            }, "additional_skill_scope_requires_new_approval must be true"),
             ({
                 **definition_change_authority(),
                 "non_approval_bases": [

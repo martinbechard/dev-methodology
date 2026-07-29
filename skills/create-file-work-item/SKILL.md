@@ -181,9 +181,13 @@ Treat a question as an invalid User Action Required classification when an agent
 
 ## Governed Definition Approval
 
-Before requesting approval for a governed definition change, use source discovery to identify the smallest required governed sources and produce an exact canonical-path manifest. Record that manifest in the work-item body before asking the user. Do not substitute a directory, wildcard, artifact category, or general permission for exact path-specific approval.
+When the user explicitly requests creation of a work item whose requested outcome creates or modifies named skills, treat that request as approval for the exact named skill-definition paths resolved from the request and recorded in the work item. Create the item as Ready unless a separate unresolved user-owned decision exists. Do not ask the user to approve those same requested skill definitions again, and do not route the item to User Action Required solely because the recorded paths are governed.
 
-Record the exact approval scope, exact user wording, date, and exact user-message provenance durably in the work-item body. List any allowed generated mirrors or other dependent artifacts separately from the governed canonical sources.
+Use source discovery to identify the smallest governed skill-definition sources needed for the requested named skills and produce an exact canonical-path manifest. Record the exact scope, exact user wording, date, and exact user-message provenance durably in the work-item body as approval granted at creation. List supported generated mirrors and non-governed dependent artifacts separately from the governed canonical sources. Do not substitute a directory, wildcard, artifact category, or general permission for exact path-specific approval.
+
+If implementation later discovers an additional skill-definition path outside the recorded requested manifest, stop mutation of that additional path and obtain new explicit scope-specific approval for it. The additional-path requirement does not revoke or suspend approval for the originally requested manifest. Agent definitions, schemas, model inputs, and unrelated metadata definitions are not authorized by a request for named skills unless the user's request also explicitly names or unambiguously requests them.
+
+When an agent independently proposes a governed definition change that the user did not request, record the smallest exact manifest before asking the user and use User Action Required only when that approval is the next safe user-owned action.
 
 Keep change-control manifests out of Design Principles. They are approval evidence, not design rules. Do not mutate a governed definition until the applicable project check accepts an approval record for that exact canonical path.
 
@@ -211,6 +215,7 @@ Write each item as a self-contained work package with these fields and sections:
 - Dependencies: canonical provider references or None.
 - Verification: expected tests, builds, checks, review, or artifacts.
 - Open Questions: unresolved agent-resolvable technical matters, or None.
+- Governed Definition Approval: optional exact canonical sources, allowed dependent artifacts, and approval resolution when governed definitions are expected to change.
 - Notes: optional edge cases, examples, and non-goals.
 
 For an item in backlog/user-action-required, also include:

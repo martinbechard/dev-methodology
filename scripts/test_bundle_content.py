@@ -5381,24 +5381,29 @@ class BundleContentTests(unittest.TestCase):
             "## Dependencies",
             "## Verification",
             "## Open Questions",
+            "## Governed Definition Approval",
+            "### Governed Canonical Sources",
+            "### Allowed Dependent Artifacts",
+            "### Approval Resolution",
+            "## User Action Required",
             "## Notes",
         )
         positions = [template_text.index(marker) for marker in ordered_markers]
         self.assertEqual(sorted(positions), positions)
         for optional_comment in (
             "<!-- OPTIONAL: Series child metadata",
+            "<!-- OPTIONAL: Governed Definition Approval",
             "<!-- OPTIONAL: User Action Required",
-            "<!-- OPTIONAL: Governed definition pre-answer evidence",
             "<!-- OPTIONAL: Notes",
         ):
             self.assertIn(optional_comment, template_text)
         self.assertLess(
-            template_text.index("### Governed Canonical Sources"),
-            template_text.index("### Question for the User"),
+            template_text.index("## Governed Definition Approval"),
+            template_text.index("## User Action Required"),
         )
         self.assertLess(
-            template_text.index("### Allowed Dependent Artifacts"),
-            template_text.index("### Question for the User"),
+            template_text.index("### Approval Resolution"),
+            template_text.index("## User Action Required"),
         )
         self.assertNotIn("Open Decisions", template_text)
         self.assertNotIn("Design Principles", template_text)
@@ -5413,6 +5418,10 @@ class BundleContentTests(unittest.TestCase):
             "invalid User Action Required classification",
             "exact canonical-path manifest",
             "exact user-message provenance",
+            "treat that request as approval",
+            "Do not ask the user to approve those same requested skill definitions again",
+            "additional skill-definition path outside the recorded requested manifest",
+            "does not revoke or suspend approval for the originally requested manifest",
             "They are approval evidence, not design rules.",
             "Keep change-control manifests out of Design Principles",
         ):

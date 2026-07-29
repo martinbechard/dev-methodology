@@ -2,6 +2,10 @@
 
 Every change to an agent definition or skill definition requires explicit, scope-specific user approval before mutation. Record the user's direction, the exact definition scope it authorizes, and the approval evidence in the work lifecycle. Silence, unrelated prior approval, and broad repository mutation authority are insufficient.
 
+When the user explicitly requests a work item whose requested outcome creates or modifies named skill definitions, that request is the approval for the exact named skill-definition paths recorded in the work item. Do not ask again or route the item to User Action Required solely because those recorded paths are governed. Require additional approval only for additional skill-definition paths outside the requested manifest. Preserve the exact request wording and provenance, record the exact canonical-path manifest, and run the supported pre-mutation check for every governed path.
+
+This work-item rule does not authorize an agent definition, schema, model input, or unrelated metadata definition unless the user's request also explicitly names or unambiguously requests that governed definition.
+
 Repository access, a failing test, a repair assignment, general write authority, review work, verification work, and a desire to make validation pass do not authorize a definition change.
 
 The harness-loaded directive is the project authority boundary. Before mutating a governed canonical source, run the supported pre-mutation check with an approval record that cites existing explicit user direction:
