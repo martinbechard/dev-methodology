@@ -1,6 +1,6 @@
 # Fix Index Page Settings Control Placement
 
-Status: Running
+Status: Ready
 
 Type: Defect
 
@@ -58,7 +58,7 @@ None.
 
 None.
 
-## Current Dispatch Reservation
+## Invalidated Dispatch Reservation
 
 Transition: Ready -> Starting.
 
@@ -102,7 +102,7 @@ Owner Acceptance: Accepted by Root Dev Orchestrator through canonical task 019fa
 
 Reconciliation: Starting -> Running recorded by Dev Backlog Steward on primary main.
 
-## Active Execution Evidence
+## Invalidated Execution Evidence
 
 Transition: Starting -> Running.
 
@@ -125,6 +125,32 @@ Started At: 2026-07-29T16:56:20.318210Z (primary-main claim acquisition and Root
 Starting Baton: 2ab347410e42374496128d6cfe4a13e6f30be9dd on primary main.
 
 Claim Evidence: starting-running-019faec8 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-29T16:56:20.318210Z; claim journal event 30027335-6fe3-493c-ae79-0f0abb357fab.
+
+## Missed-Settlement Reconciliation
+
+Transition: Running -> Ready.
+
+Reconciled At: 2026-07-29T17:04:21Z.
+
+Missed Settlement Evidence: The fresh Starting-baton turn began at 2026-07-29T16:54:46Z, after the 2026-07-29T16:54:43Z settlement deadline.
+
+Pre-Reservation Handshake: The 2026-07-29T16:51:49.385631Z root handshake predates the Ready -> Starting reservation and does not satisfy its acceptance boundary.
+
+Owner: Unowned.
+
+Canonical Conversation and Root Agent Task: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Branch: codex/fix-index-page-settings-control-placement.
+
+Worktree: /Users/martinbechard/.codex/worktrees/1bad/dev-methodology.
+
+Private Candidate: 3b5116fcb658312ad10544041d2eb9c3f445ef65; zero integration on primary main.
+
+Source Mutation Evidence: No primary-main source mutation is accepted by this reconciliation.
+
+Required Resumption: The same canonical task must complete a new Ready -> Starting -> Running sequence before further repository mutation.
+
+Reconciliation: Ready.
 
 ## Notes
 
