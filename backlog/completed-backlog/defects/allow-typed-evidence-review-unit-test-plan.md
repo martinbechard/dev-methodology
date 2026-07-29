@@ -1,16 +1,16 @@
 # Allow typed evidence in unit-test-plan review checklists
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-unit-test-plan.md
+Provider Reference: backlog/completed-backlog/defects/allow-typed-evidence-review-unit-test-plan.md
 
 Completion: direct-main
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 ## Current Starting Reservation
 
@@ -53,7 +53,7 @@ Branch: codex/allow-typed-evidence-review-unit-test-plan
 
 Worktree: /Users/martinbechard/.codex/worktrees/9beb/dev-methodology
 
-Phase: approved definition preflight and bounded implementation
+Phase: terminal provider closure
 
 Started At: 2026-07-28T21:00:28Z
 
@@ -72,6 +72,21 @@ Accepted Ownership Evidence: Dev Orchestrator accepted the preserved canonical R
 Acceptance Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim accept-running-unit-test-plan-approved-019faa83; acquisition journal event 50325c09-9e29-4842-9fb8-8a336daed34e.
 
 Accepted At: 2026-07-28T23:53:08Z
+
+Completed At: 2026-07-29T00:46:48Z
+
+## Completion Evidence
+
+- User approval: exact governed scope skills/review-unit-test-plan/SKILL.md, with user-message provenance recorded above; approval record approval-record-typed-evidence-review-unit-test-plan.yaml; supported preflight ALLOWED_APPROVED_DEFINITION_CHANGE.
+- Candidates: original 97a332f0765edfdfc5a47ee81e2e2e84ca2f29fd; final protected 5627fc97935c403c896c15ad302628289e689da8.
+- Direct-main delivery: merge commit e4cc100d6f410d9c3853bcbeaa3ae7c9854457a9, parents 9b28d38fc84f27bb86d36e5e4d5633195e5ae44c and 5627fc97935c403c896c15ad302628289e689da8. The final protected candidate is reachable from the merge, and the merge is reachable from main.
+- Exact delivered paths: approval-record-typed-evidence-review-unit-test-plan.yaml; design/generated/skill-definitions.js; scripts/test_bundle_content.py; skills/review-unit-test-plan/SKILL.md; skills/review-unit-test-plan/references/review-checklist-unit-test-plan.md. The source-to-integration mapping is candidate 5627fc97935c403c896c15ad302628289e689da8 through merge e4cc100d6f410d9c3853bcbeaa3ae7c9854457a9 on main.
+- Independent gates: final protected review ACCEPTED with no findings; final protected verification VERIFIED.
+- Post-integration checks: six focused tests passed under Python 3.11; approval preflight allowed; local skill validation passed; build-skill-docs --check current; git diff --check clean. The initial macOS Python 3.9 invocation failed before collection because tomllib was unavailable; the identical tests passed with repository-compatible Python 3.11.
+- Lifecycle evidence: Starting -> Running provider commit 8eeb9c9bafd5be974c00692e59d8e15cb848ef1e; claim acquisition event 50325c09-9e29-4842-9fb8-8a336daed34e; claim release event 90f07dc2-6a8c-41cb-ab1f-41bbe6b2f288.
+- Main integration claim: acquisition event 2d3b8723-d4d4-4e01-bf74-ccd6642b3df8; release event b19b6722-23c6-4d3c-abe7-7cc454833e18.
+- Completion disposition: direct-main READY on main; main tip and reachability were verified clean before this terminal provider transaction.
+- Terminal archive claim: SHARED_CHECKOUT_ACQUIRED claim complete-unit-test-plan-typed-evidence-019faa83; acquisition journal event 07e95589-a870-465b-becf-493e31338269.
 
 ## User Action Required
 
