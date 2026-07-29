@@ -731,10 +731,12 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Work-Item Backlog",
         "File-Backed Work Items",
         "Agent Roles",
+        "Runtime Coordination",
         "Runtime Coordination Surfaces",
-        "Private Workspaces And Delivery Paths",
+        "Private Workspaces",
         "Shared-Resource Coordination",
         "Delivery Stages",
+        "Blocker Recovery",
         "User Decision Gates",
         "Delivery Evidence",
         "Design And Documentation Workflows",
@@ -7713,9 +7715,11 @@ class BundleContentTests(unittest.TestCase):
             ("backlog-title", "Work-Item Backlog"),
             ("file-provider-title", "File-Backed Work Items"),
             ("agents-title", "Agent Roles"),
-            ("private-work-title", "Private Workspaces And Delivery Paths"),
+            ("runtime-section-title", "Runtime Coordination"),
+            ("private-work-title", "Private Workspaces"),
             ("coordination-title", "Shared-Resource Coordination"),
             ("delivery-title", "Delivery Stages"),
+            ("blocker-recovery-title", "Blocker Recovery"),
             ("decisions-title", "User Decision Gates"),
             ("evidence-title", "Delivery Evidence"),
             ("design-work-title", "Design And Documentation Workflows"),
@@ -7728,10 +7732,26 @@ class BundleContentTests(unittest.TestCase):
 
         agents_section = lifecycle_text[
             lifecycle_text.index('<section class="section" id="agents"') :
+            lifecycle_text.index(
+                '<section class="section" id="runtime-coordination"'
+            )
+        ]
+        runtime_section = lifecycle_text[
+            lifecycle_text.index(
+                '<section class="section" id="runtime-coordination"'
+            ) :
             lifecycle_text.index('<section class="section" id="private-work"')
         ]
         delivery_section = lifecycle_text[
             lifecycle_text.index('<section class="section" id="delivery"') :
+            lifecycle_text.index('<section class="section" id="blocker-recovery"')
+        ]
+        commit_to_steward_handoff = delivery_section[
+            delivery_section.index('<li><span class="number">8</span>') :
+            delivery_section.index('<li><span class="number">9</span>')
+        ]
+        blocker_section = lifecycle_text[
+            lifecycle_text.index('<section class="section" id="blocker-recovery"') :
             lifecycle_text.index('<section class="section" id="decisions"')
         ]
         backlog_section = lifecycle_text[
@@ -7774,7 +7794,7 @@ class BundleContentTests(unittest.TestCase):
             "Coordinator Sequence",
         ):
             with self.subTest(blocker_handoff_heading=heading):
-                self.assertIn(f"<h4>{heading}</h4>", delivery_section)
+                self.assertIn(f"<h4>{heading}</h4>", blocker_section)
         self.assertIn(
             "An Assignment is bounded work sent to an Agent; it does not create another work-item Thread.",
             agents_section,
@@ -7789,15 +7809,15 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertIn(
             '<figcaption id="steward-sequence-title">Steward Assignments Are Sequential',
-            agents_section,
+            runtime_section,
         )
         self.assertIn(
             "only one mutating assignment may be active or queued at a time",
-            agents_section,
+            runtime_section,
         )
         self.assertIn(
             "A final assignment result proves only that assignment finished.",
-            agents_section,
+            runtime_section,
         )
         self.assertIn(
             'class="thread-model-figure" aria-labelledby="thread-model-title"',
@@ -7805,7 +7825,7 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertIn(
             'class="steward-sequence-figure" aria-labelledby="steward-sequence-title"',
-            agents_section,
+            runtime_section,
         )
         self.assertIn(
             'role="img" aria-label="A parent coordination Thread contains a Coordinator Agent',
@@ -7813,8 +7833,13 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertIn(
             'role="img" aria-label="Assignment A performs and commits one lifecycle update.',
-            agents_section,
+            runtime_section,
         )
+        self.assertIn(
+            '<figcaption id="watchdog-cycle-title">Watchdog Observation Is Read-Only',
+            runtime_section,
+        )
+        self.assertIn("<h3>Backlog Crisis Mode</h3>", runtime_section)
         self.assertIn(
             'aria-label="Lifecycle terminology"',
             agents_section,
@@ -7840,7 +7865,7 @@ class BundleContentTests(unittest.TestCase):
             "Assignment B",
         )
         assignment_positions = tuple(
-            agents_section.index(f"<strong>{step}</strong>")
+            runtime_section.index(f"<strong>{step}</strong>")
             for step in assignment_steps
         )
         self.assertEqual(
@@ -7855,9 +7880,35 @@ class BundleContentTests(unittest.TestCase):
             ".assignment-flow { grid-template-columns: 1fr; }",
             lifecycle_text,
         )
-        self.assertNotIn("Conditional Claim A", agents_section)
-        self.assertNotIn("Conditional Claim B", agents_section)
-        self.assertNotIn("task-local", lifecycle_text)
+        self.assertNotIn("Conditional Claim A", runtime_section)
+        self.assertNotIn("Conditional Claim B", runtime_section)
+        provider_none_delivery_markers = (
+            "task-local AWAITING_REVIEW",
+            "delivery evidence",
+            "without provider mutation",
+            "Commit READY",
+            "task-local COMPLETED finalization",
+            "terminal evidence",
+            "without provider mutation",
+        )
+        marker_offset = 0
+        for marker in provider_none_delivery_markers:
+            with self.subTest(provider_none_delivery_marker=marker):
+                marker_position = commit_to_steward_handoff.index(
+                    marker,
+                    marker_offset,
+                )
+                marker_offset = marker_position + len(marker)
+        self.assertEqual(
+            2,
+            commit_to_steward_handoff.lower().count("provider none"),
+        )
+        self.assertIn(
+            '<span class="actor">Root Orchestrator</span>'
+            '<span class="direction" role="img" aria-label="sends to">'
+            '&rarr;</span><span class="actor">Steward</span>',
+            commit_to_steward_handoff,
+        )
 
         title_like_labels = (
             "Work-Item Continuity",
@@ -7878,11 +7929,11 @@ class BundleContentTests(unittest.TestCase):
             "Claim Limits",
             "Lifecycle Handoffs",
             "Execution Safeguards",
-            "1 · User Question",
-            "2 · Preserved Context",
-            "3 · Decision Record",
-            "4 · Same-Thread Resume",
-            "5 · Outcome Routing",
+            "1 · Recorded State",
+            "2 · Clear Question",
+            "3 · Consequences And Boundary",
+            "4 · Decision Record",
+            "5 · Same-Thread Resume",
             "Evidence Boundaries",
             "Thread Evidence Boundary:",
             "Integration Cleanup",
@@ -7912,7 +7963,7 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertEqual(1, lifecycle_text.count('class="lifecycle-rail"'))
         self.assertEqual(1, lifecycle_text.count('class="status-figure"'))
-        self.assertEqual(2, lifecycle_text.count('class="sequence-figure"'))
+        self.assertEqual(3, lifecycle_text.count('class="sequence-figure"'))
         self.assertEqual(1, lifecycle_text.count('class="thread-model-figure"'))
         self.assertEqual(1, lifecycle_text.count('class="steward-sequence-figure"'))
         self.assertEqual(1, lifecycle_text.count('class="branch-figure"'))
@@ -8074,7 +8125,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertGreater(lifecycle_text.count('role="img" aria-label="sends to"'), 0)
         self.assertIn("position: static; flex-wrap: wrap", lifecycle_text)
 
-        private_index = lifecycle_text.index(">Private Workspaces And Delivery Paths<")
+        private_index = lifecycle_text.index(">Private Workspaces<")
         coordination_index = lifecycle_text.index(">Shared-Resource Coordination<")
         delivery_index = lifecycle_text.index(">Delivery Stages<")
         self.assertLess(private_index, coordination_index)

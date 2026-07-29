@@ -246,10 +246,28 @@
     figcaption span { display: block; margin-top: 0.35rem; color: var(--muted); font-family: var(--body); font-size: 0.88rem; font-weight: 500; }
     .state-map {
       display: grid;
-      grid-template-columns: repeat(9, minmax(5rem, 1fr));
       gap: 0.75rem;
       align-items: center;
     }
+    .state-common {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(5rem, 1fr));
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .state-paths { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .state-path {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      align-items: center;
+      padding: 1rem;
+      border: 1px solid var(--line);
+      border-top: 0.28rem solid var(--teal);
+      background: var(--soft-teal);
+    }
+    .state-path.feature { border-top-color: var(--violet); background: var(--soft-violet); }
+    .state-path-label { flex-basis: 100%; color: var(--ink); font-weight: 850; }
     .state-node { padding: 0.8rem; border: 1px solid var(--line); border-radius: 0.55rem; background: var(--soft-slate); text-align: center; font-weight: 850; }
     .state-node.active { background: var(--soft-teal); color: var(--teal-deep); }
     .state-node.pause { background: var(--soft-amber); color: #754300; }
@@ -431,6 +449,13 @@
     .sequence-list .actor { color: var(--ink); font-size: 0.88rem; font-weight: 850; }
     .sequence-list .direction { color: var(--teal); font-size: 1.2rem; font-weight: 900; text-align: center; }
     .sequence-list p { font-size: 0.9rem; }
+    .regression-flow { display: grid; grid-template-columns: minmax(0, 2fr) auto minmax(14rem, 1fr); gap: 1rem; align-items: center; }
+    .merge-lanes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
+    .merge-lane { padding: 0.9rem; border-top: 0.28rem solid var(--blue); background: var(--soft-blue); }
+    .merge-lane strong, .regression-result strong { display: block; margin-bottom: 0.35rem; color: var(--ink); }
+    .merge-lane p, .regression-result p { font-size: 0.86rem; }
+    .merge-join { color: var(--teal-deep); font-size: 1.5rem; font-weight: 900; }
+    .regression-result { padding: 1rem; border-top: 0.28rem solid var(--green); background: var(--soft-teal); }
     .decision-band { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 2rem; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
     .decision-band div { padding: 1.2rem; background: var(--panel); }
     .decision-band div + div { border-left: 1px solid var(--line); }
@@ -460,8 +485,9 @@
       .section-heading { grid-template-columns: 1fr; }
       .lifecycle-rail ol { grid-template-columns: repeat(3, 1fr); gap: 1.5rem 0.8rem; }
       .lifecycle-rail ol::before { display: none; }
-      .state-map { grid-template-columns: 1fr; }
+      .state-common, .state-paths { grid-template-columns: 1fr; }
       .state-arrow { transform: rotate(90deg); }
+      .state-path .state-arrow { transform: none; }
       .task-anomaly-flow { grid-template-columns: 1fr; }
       .state-branches, .delivery-paths, .design-progression, .blocker-handoff-grid { grid-template-columns: 1fr; }
       .thread-map { grid-template-columns: 1fr; }
@@ -473,6 +499,8 @@
       .role-row p { grid-column: 1 / -1; }
       .sequence-list li { grid-template-columns: 2rem 1fr 1.2rem 1fr; }
       .sequence-list p { grid-column: 2 / -1; }
+      .regression-flow, .merge-lanes { grid-template-columns: 1fr; }
+      .merge-join { transform: rotate(90deg); text-align: center; }
       .decision-band { grid-template-columns: repeat(2, 1fr); }
       .decision-band div:nth-child(3) { border-left: 0; border-top: 1px solid var(--line); }
       .decision-band div:nth-child(4) { border-top: 1px solid var(--line); }
@@ -585,9 +613,11 @@
     <a href="#backlog">Backlog</a>
     <a href="#file-provider">Files</a>
     <a href="#agents">Agents</a>
+    <a href="#runtime-coordination">Runtime</a>
     <a href="#private-work">Branches</a>
     <a href="#coordination">Shared resources</a>
     <a href="#delivery">Delivery</a>
+    <a href="#blocker-recovery">Blockers</a>
     <a href="#decisions">User decisions</a>
     <a href="#evidence">Evidence</a>
     <a href="#design-work">Design work</a>
@@ -620,8 +650,14 @@
     </div>
     <figure class="status-figure" aria-labelledby="status-title">
       <figcaption id="status-title">Work-Item Status<span>Type stays stable; status changes as authority, dependencies, execution, and delivery change.</span></figcaption>
-      <div class="state-map" role="img" aria-label="Ready moves to Starting, then Running, then Awaiting Review, then Completed. Starting is active only during a 60-second launch settlement whose evidence begins Pending before launch. An observed successful launch, canonical conversation, accepted owner, and valid Running evidence are all required for Running. Every other Starting result becomes Ready first; any later non-active disposition is a distinct transition from Ready. Running is active only while both its finite condition deadline and next-reconciliation boundary remain in the future. Missing or expired evidence moves the item to a truthful non-active state before capacity is refilled. User Action Required and Holding pause before Ready. Stalled and Blocked are non-active recovery states. Failed and Abandoned are terminal outcomes.">
-        <div class="state-node active">Ready</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Starting</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Running</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Awaiting Review</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Completed</div>
+      <div class="state-map" role="img" aria-label="Ready moves to Starting and then Running. After review and verification, direct-main delivery reaches Commit READY and then terminal Completed. Feature-branch delivery reaches Commit AWAITING_REVIEW, records lifecycle Awaiting Review when a provider is selected, then reaches Commit READY and terminal Completed. With provider none, Commit AWAITING_REVIEW produces task-local AWAITING_REVIEW and delivery evidence. Commit READY produces task-local COMPLETED finalization and terminal evidence. Neither result causes a provider mutation. Starting is active only during a 60-second launch settlement whose evidence begins Pending before launch. An observed successful launch, canonical conversation, accepted owner, and valid Running evidence are all required for Running. Every other Starting result becomes Ready first; any later non-active disposition is a distinct transition from Ready. Running is active only while both its finite condition deadline and next-reconciliation boundary remain in the future. Missing or expired evidence moves the item to a truthful non-active state before capacity is refilled. User Action Required and Holding pause before Ready. Stalled and Blocked are non-active recovery states. Failed and Abandoned are terminal outcomes.">
+        <div class="state-common">
+          <div class="state-node active">Ready</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Starting</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Running</div>
+        </div>
+        <div class="state-paths">
+          <div class="state-path"><strong class="state-path-label">Direct-main Commit path</strong><div class="state-node active">Commit READY</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Completed</div></div>
+          <div class="state-path feature"><strong class="state-path-label">Feature-branch Commit path</strong><div class="state-node active">Commit AWAITING_REVIEW</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Awaiting Review</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Commit READY</div><div class="state-arrow" aria-hidden="true">&rarr;</div><div class="state-node active">Completed</div></div>
+        </div>
       </div>
       <p class="source-note">After completion, a file provider may move the item to its archive location. Archive placement is not another lifecycle status.</p>
       <aside class="task-execution-anomaly" aria-labelledby="task-execution-anomaly-title">
@@ -723,6 +759,14 @@
       </dl>
     </figure>
     <aside class="thread-context"><h3>Execution Contexts</h3><p>The Dev Backlog Watchdog is a standing read-only child Agent outside delivery capacity. The Dev Backlog Steward is a child Agent, not another work-item Thread or queue entry. It performs only explicitly delegated provider mutations.</p><p>An Assignment is bounded work sent to an Agent; it does not create another work-item Thread. A runtime may retain a child execution context for that Agent, but the methodology still treats it as part of the owning parent or work-item Thread.</p></aside>
+    <p class="source-note">The <a href="agent-and-skill-definitions.html#dev-activities-title">development-agent catalog</a> owns the complete Role definitions. <a href="../skills/codex-workitem-coordination/SKILL.md">Work-item coordination</a> owns the execution-context model.</p>
+  </section>
+
+  <section class="section" id="runtime-coordination" aria-labelledby="runtime-section-title">
+    <div class="section-heading">
+      <span class="chapter-number">Chapter 04</span>
+      <div><h2 id="runtime-section-title">Runtime Coordination</h2></div>
+    </div>
     <aside class="thread-context" aria-labelledby="runtime-coordination-title"><h3 id="runtime-coordination-title">Runtime Coordination Surfaces</h3><p>The shared <code>codex-workitem-coordination</code> skill is the single normative authority for active-execution eligibility, capacity, runtime reconciliation, and conversation-title synchronization in an explicitly requested multi-item Codex campaign. Dev Backlog Coordinator, Dev Backlog Steward, Dev Orchestrator, and Dev Backlog Watchdog select that skill for their applicable responsibilities. The file-provider manager remains atomic and does not own runtime state.</p><p>Dev Backlog Steward synchronizes the conversation title after every successful lifecycle transition. It renames directly when the runtime permits it; otherwise it sends the exact title to the canonical conversation owner or runtime coordinator and verifies that handoff. The conversation keeps a stable identity. Its title remains display state and never replaces provider, active-execution, Git, review, verification, or coordination-registry evidence.</p></aside>
     <figure class="watchdog-cycle-figure" aria-labelledby="watchdog-cycle-title">
       <figcaption id="watchdog-cycle-title">Watchdog Observation Is Read-Only<span>The Watchdog reports evidence; the Coordinator decides and the Steward records any lifecycle change.</span></figcaption>
@@ -750,13 +794,12 @@
       </div>
       <p class="sequence-warning"><strong>Do not infer Agent idleness from an earlier result.</strong> A final assignment result proves only that assignment finished.</p>
     </figure>
-    <p class="source-note">The <a href="agent-and-skill-definitions.html#dev-activities-title">development-agent catalog</a> owns the complete Role definitions. <a href="../skills/codex-workitem-coordination/SKILL.md">Work-item coordination</a> owns the execution-context model.</p>
   </section>
 
   <section class="section" id="private-work" aria-labelledby="private-work-title">
     <div class="section-heading">
-      <span class="chapter-number">Chapter 04</span>
-      <div><h2 id="private-work-title">Private Workspaces And Delivery Paths</h2><p>Starting and Running Work items use separate worktrees. Their files, outputs, and caches remain separate until delivery.</p></div>
+      <span class="chapter-number">Chapter 05</span>
+      <div><h2 id="private-work-title">Private Workspaces</h2><p>Starting and Running Work items use separate worktrees. Their files, outputs, and caches remain separate until delivery.</p></div>
     </div>
     <figure class="branch-figure" aria-labelledby="branch-title">
       <figcaption id="branch-title">Parallel Workspaces<span>A worktree is a separate checkout. A branch records that item's commits.</span></figcaption>
@@ -766,24 +809,11 @@
         <span class="branch-label">main</span><div class="branch-line"><strong>Item C · branch C</strong><p>Investigation and correction in worktree C.</p></div>
       </div>
     </figure>
-    <figure class="sequence-figure" aria-labelledby="combined-regression-title">
-      <figcaption id="combined-regression-title">One Combined Regression After Independent Merges<span>Focused verification proves each item. The later system-wide run checks their combined main state.</span></figcaption>
-      <ol class="sequence-list">
-        <li><span class="number">1</span><span class="actor">Item A</span><span class="direction" role="img" aria-label="merges into">&rarr;</span><span class="actor">main</span><p>Run focused tests, review, verify, and merge independently.</p></li>
-        <li><span class="number">2</span><span class="actor">Item B</span><span class="direction" role="img" aria-label="merges into">&rarr;</span><span class="actor">main</span><p>Use the same per-item delivery path without waiting for Item C.</p></li>
-        <li><span class="number">3</span><span class="actor">Item C</span><span class="direction" role="img" aria-label="completes the selected set">&rarr;</span><span class="actor">Coordinator</span><p>After every selected item is on main, schedule one combined regression.</p></li>
-        <li><span class="number">4</span><span class="actor">Regression</span><span class="direction" role="img" aria-label="records">&rarr;</span><span class="actor">Evidence</span><p>Record the exact main commit and selected work items. Route a distinct failure as a new defect.</p></li>
-      </ol>
-    </figure>
-    <div class="delivery-paths">
-      <article class="delivery-path"><h3>Direct-main delivery</h3><ol><li>Review and verify the private candidate.</li><li>Follow <a href="../skills/agent-claim/SKILL.md">Agent Claim</a> when it is loaded.</li><li>Refresh current main and create a fresh reconciliation branch from that exact commit.</li><li>Apply only the accepted paths; do not import unrelated ancestry merely to preserve history. Verify the integrated result, update main, and complete delivery closeout.</li></ol></article>
-      <article class="delivery-path"><h3>Feature-branch delivery</h3><ol><li>Review and verify the feature branch.</li><li>The Commit skill publishes a GitHub pull request or GitLab merge request and returns Commit AWAITING_REVIEW without Persistence mutation.</li><li>Dev Orchestrator separately dispatches Dev Backlog Steward exactly once for the nonterminal AWAITING_REVIEW update; repeated observation reconciles that update.</li><li>Resume the same delivery identity through provider-accurate review, checks, merge, and main observation until Commit READY, then dispatch exactly once for the distinct terminal Persistence closure. Provider none keeps both states thread-local.</li></ol></article>
-    </div>
   </section>
 
   <section class="section" id="coordination" aria-labelledby="coordination-title">
     <div class="section-heading">
-      <span class="chapter-number">Chapter 05</span>
+      <span class="chapter-number">Chapter 06</span>
       <div><h2 id="coordination-title">Shared-Resource Coordination</h2><p>PROJECT.yaml may load Agent Claim when the project needs temporary protection for shared files or resources. The claim registry records temporary ownership; it does not prove review, delivery, or completion.</p></div>
     </div>
     <figure class="resource-figure" aria-labelledby="resource-title">
@@ -804,7 +834,7 @@
 
   <section class="section" id="delivery" aria-labelledby="delivery-title">
     <div class="section-heading">
-      <span class="chapter-number">Chapter 06</span>
+      <span class="chapter-number">Chapter 07</span>
       <div><h2 id="delivery-title">Delivery Stages</h2><p>Production work is accepted in layers. Review asks whether the change is correct and maintainable; verification proves the required behavior; delivery integrates the accepted result through the configured path.</p></div>
     </div>
     <figure class="sequence-figure" aria-labelledby="delivery-sequence-title">
@@ -816,11 +846,36 @@
         <li><span class="number">4</span><span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Producer</span><p>Accept or return actionable findings; corrected work receives a fresh independent review.</p></li>
         <li><span class="number">5</span><span class="actor">Reviewer</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Dev Verifier</span><p>After review acceptance, run checks proportional to affected behavior and risk.</p></li>
         <li><span class="number">6</span><span class="actor">Dev Verifier</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Root Orchestrator</span><p>Return the accepted candidate, check results, residual risks, and justified omissions.</p></li>
-        <li><span class="number">7</span><span class="actor">Root Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Commit</span><p>Apply Commit only after review and verification. Re-review reconciled content when integration changes meaning. Commit AWAITING_REVIEW preserves the delivery identity; Commit READY returns the prepared terminal handoff.</p></li>
-        <li><span class="number">8</span><span class="actor">Root Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Steward</span><p>Record AWAITING_REVIEW exactly once as nonterminal Persistence state. Only after Commit READY, dispatch exactly once for the distinct terminal COMPLETED update. Synchronize the conversation title after each successful transition. Provider none retains both states conversation-locally.</p></li>
+        <li><span class="number">7</span><span class="actor">Root Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Commit</span><p>Apply Commit only after review and verification. Re-review reconciled content when integration changes meaning. Direct-main delivery returns Commit READY when complete. Feature-branch delivery returns Commit AWAITING_REVIEW while review, checks, merge, or main observation remains pending, then returns Commit READY. Commit AWAITING_REVIEW preserves the delivery identity; Commit READY returns the prepared terminal handoff.</p></li>
+        <li><span class="number">8</span><span class="actor">Root Orchestrator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Steward</span><p>For selected providers, record Commit AWAITING_REVIEW exactly once as nonterminal Persistence state. With provider none, retain task-local AWAITING_REVIEW and delivery evidence without provider mutation. Only after Commit READY, selected providers record terminal COMPLETED closure. After Commit READY, retain task-local COMPLETED finalization and terminal evidence without provider mutation for provider none. Synchronize the conversation title after each successful provider transition.</p></li>
         <li><span class="number">9</span><span class="actor">Coordinator</span><span class="direction" role="img" aria-label="sends to">&rarr;</span><span class="actor">Cleanup</span><p>Verify the integration branch is merged, remove the clean worktree, delete the merged branch, verify the terminal conversation title, close the conversation, prune metadata, and refill queue capacity from fresh active-eligibility evidence.</p></li>
       </ol>
     </figure>
+    <div class="delivery-paths">
+      <article class="delivery-path"><h3>Direct-main delivery</h3><ol><li>Review and verify the private candidate.</li><li>Follow <a href="../skills/agent-claim/SKILL.md">Agent Claim</a> when it is loaded.</li><li>Refresh current main and create a fresh reconciliation branch from that exact commit.</li><li>Apply only the accepted paths; do not import unrelated ancestry merely to preserve history. Verify the integrated result, update main, and complete delivery closeout.</li></ol></article>
+      <article class="delivery-path"><h3>Feature-branch delivery</h3><ol><li>Review and verify the feature branch.</li><li>The Commit skill publishes a GitHub pull request or GitLab merge request and returns Commit AWAITING_REVIEW without Persistence mutation.</li><li>Dev Orchestrator separately dispatches Dev Backlog Steward exactly once for the nonterminal AWAITING_REVIEW update; repeated observation reconciles that update.</li><li>Resume the same delivery identity through provider-accurate review, checks, merge, and main observation until Commit READY, then dispatch exactly once for the distinct terminal Persistence closure. Provider none keeps both states thread-local.</li></ol></article>
+    </div>
+    <details><summary>Integration Cleanup</summary><div><p>Create a fresh reconciliation branch from current main for integration; this becomes the work-item Thread's integration and cleanup branch. An older candidate branch retained only as a non-ancestral content source is handled separately.</p><p>Before handoff, commit completed work and prove the applicable worktree clean.</p></div></details>
+    <figure class="sequence-figure" aria-labelledby="combined-regression-title">
+      <figcaption id="combined-regression-title">One Combined Regression After Independent Merges<span>Focused verification proves each item. The later system-wide run checks their combined main state.</span></figcaption>
+      <div class="regression-flow" role="img" aria-label="Items A, B, and C use parallel independent merge lanes into main. Any item may finish last. After every selected item is on main, the Coordinator schedules one combined regression, which records evidence for the exact main commit and selected work items.">
+        <div class="merge-lanes">
+          <div class="merge-lane"><strong>Item A &rarr; main</strong><p>Run focused tests, review, verify, and merge independently.</p></div>
+          <div class="merge-lane"><strong>Item B &rarr; main</strong><p>Use the same per-item delivery path without waiting for Item C.</p></div>
+          <div class="merge-lane"><strong>Item C &rarr; main</strong></div>
+        </div>
+        <div class="merge-join" aria-hidden="true">&rarr;</div>
+        <div class="regression-result"><strong>Coordinator &rarr; Regression &rarr; Evidence</strong><p>After every selected item is on main, schedule one combined regression.</p><p>Record the exact main commit and selected work items. Route a distinct failure as a new defect.</p></div>
+      </div>
+    </figure>
+    <p class="source-note">Direct-main and pull-request details are defined by <a href="../skills/complete-work-item-direct-main/SKILL.md">Direct-Main Completion</a>, <a href="../skills/complete-work-item-feature-branch/SKILL.md">Feature-Branch Completion</a>, and <a href="../skills/create-pull-request/SKILL.md">Create Pull Request</a>.</p>
+  </section>
+
+  <section class="section" id="blocker-recovery" aria-labelledby="blocker-recovery-title">
+    <div class="section-heading">
+      <span class="chapter-number">Chapter 08</span>
+      <div><h2 id="blocker-recovery-title">Blocker Recovery</h2></div>
+    </div>
     <aside class="thread-context"><h3>Known Blocker Handoff</h3>
       <div class="blocker-handoff-grid">
         <section><h4>Orchestrator Blocker Steps</h4><ol><li>Stop unsafe work.</li><li>Preserve commits and evidence.</li><li>Resolve resource ownership truthfully.</li><li>Notify the Coordinator immediately.</li></ol></section>
@@ -829,12 +884,11 @@
       </div>
     </aside>
     <details><summary>Execution Safeguards</summary><div><p>Findings return to the original producer. After two failed correction attempts for the same criterion, preserve the canonical task, candidate, review, verification, Git, claim, and attempt history before returning exactly one concrete disposition decision for Steward application. A fresh retry is bounded to one attempt, links its evidence to every unresolved finding, and is consumed before another reconciliation.</p><p>Before a phase expected to exceed five minutes, publish the active unit, estimate, hard stop, retained evidence path, and distinct acceptance criterion. After an expensive failure, classify retained evidence, add the smallest offline regression, and run one cheapest representative first.</p></div></details>
-    <p class="source-note">Direct-main and pull-request details are defined by <a href="../skills/complete-work-item-direct-main/SKILL.md">Direct-Main Completion</a>, <a href="../skills/complete-work-item-feature-branch/SKILL.md">Feature-Branch Completion</a>, and <a href="../skills/create-pull-request/SKILL.md">Create Pull Request</a>.</p>
   </section>
 
   <section class="section" id="decisions" aria-labelledby="decisions-title">
     <div class="section-heading">
-      <span class="chapter-number">Chapter 07</span>
+      <span class="chapter-number">Chapter 09</span>
       <div><h2 id="decisions-title">User Decision Gates</h2><p>Agents resolve technical questions from evidence. A work item moves to User Action Required only when the next safe step depends on authority, intent, risk acceptance, or information that belongs to the user.</p></div>
     </div>
     <p class="source-note">Coordinator inability alone does not manufacture a user obligation. A technical or external cause remains Blocked with an exact owner and observable unblock condition until one concrete action genuinely belongs to the user.</p>
@@ -850,7 +904,7 @@
 
   <section class="section" id="evidence" aria-labelledby="evidence-title">
     <div class="section-heading">
-      <span class="chapter-number">Chapter 08</span>
+      <span class="chapter-number">Chapter 10</span>
       <div><h2 id="evidence-title">Delivery Evidence</h2><p>Different records answer different questions. None can substitute for another.</p></div>
     </div>
     <table class="evidence-table" aria-labelledby="evidence-table-caption">
@@ -864,12 +918,11 @@
       </tbody>
     </table>
     <aside class="not-a-record"><strong>Thread Evidence Boundary:</strong> Its Agent messages, title, and live state help people observe execution. Durable facts still belong in the Work item, Git, review outputs, and the coordination registry when enabled. With none, registry evidence is absent.</aside>
-    <details><summary>Integration Cleanup</summary><div><p>Create a fresh reconciliation branch from current main for integration; this becomes the work-item Thread's integration and cleanup branch. An older candidate branch retained only as a non-ancestral content source is handled separately.</p><p>Before handoff, commit completed work and prove the applicable worktree clean.</p></div></details>
   </section>
 
   <section class="section" id="design-work" aria-labelledby="design-work-title">
     <div class="section-heading">
-      <span class="chapter-number">Chapter 09</span>
+      <span class="chapter-number">Chapter 11</span>
       <div><h2 id="design-work-title">Design And Documentation Workflows</h2><p>Design and documentation change the producer and reviewer, not the lifecycle. They still start from an authorized work item, proceed in a private lane, receive independent review, pass focused verification, and use the configured delivery path.</p></div>
     </div>
     <div class="design-progression" aria-label="Planned design progression">

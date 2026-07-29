@@ -1,12 +1,12 @@
 # Revise the Orchestrated Development Lifecycle Document Topics
 
-Status: Blocked
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/document-topic-revision/revise-orchestrated-development-lifecycle-topics.md
+Provider Reference: backlog/completed-backlog/features/document-topic-revision/revise-orchestrated-development-lifecycle-topics.md
 
 Completion: direct-main
 
@@ -54,6 +54,15 @@ Lifecycle Claim Evidence: reserve-nine-document-topic-revisions-019fa9bb; outcom
 - Resource Disposition: No live task claim or integration resource is retained.
 - Safe To Resume: No. Resumption must use this same canonical task, first restore Ready after the unblock condition is met, then perform distinct Ready -> Starting and Starting -> Running transitions.
 - Provider-Mutation Claim Evidence: block-orchestrated-lifecycle-019fabe9 acquired by Dev Backlog Steward for this exact backlog file; claim event 9d61abde-98b6-463a-9a5b-f2f4c6f7c7aa.
+
+## Crisis Resolution
+
+- Crisis Mode: User-declared on 2026-07-29; ordinary dispatch and claim operations stopped.
+- Resolution: Adopted preserved candidate 8656d2e8cb342cf0066ad2da8cd5bf10e6e5fe0f and added only the two missing focused guards identified by final review.
+- Test Remedy: The lifecycle contract now fails if both provider-none qualifications disappear or if the step-eight Root Orchestrator to Steward actor handoff changes.
+- Verification: The focused lifecycle bundle test passed; Git diff checks passed.
+- Delivery: Direct-main crisis commit recorded with this terminal provider archive.
+- Final Owner: Unowned.
 
 Series: backlog/feature-backlog/document-topic-revision/index.md
 
