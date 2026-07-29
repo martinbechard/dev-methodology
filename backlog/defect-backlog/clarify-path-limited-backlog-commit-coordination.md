@@ -1,10 +1,10 @@
 # Clarify path-limited backlog commit coordination
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Root Dev Orchestrator for canonical task 019fab2d-d9ac-7a82-8107-04260716d4d0
 
 Provider: file
 
@@ -37,6 +37,26 @@ Observed Launch Evidence: Parent Coordinator authorized the bounded reservation.
 Required Next Lifecycle Transition: The same canonical task's root Dev Orchestrator must record Starting to Running before any implementation or approval work.
 
 Conversation-Title Handoff: Synchronized with the Parent Coordinator; the title is display-only and does not alter the canonical provider identity or mutation scope.
+
+## Running Evidence
+
+Root Dev Orchestrator: Root Dev Orchestrator for canonical task 019fab2d-d9ac-7a82-8107-04260716d4d0
+
+Canonical Work-Item Thread: 019fab2d-d9ac-7a82-8107-04260716d4d0
+
+Canonical Root Agent Task: 019fab2d-d9ac-7a82-8107-04260716d4d0
+
+Branch: codex/clarify-path-limited-backlog-commit-019fab2d
+
+Worktree: /Users/martinbechard/.codex/worktrees/95f4/dev-methodology
+
+Started At: 2026-07-29T00:29:45.269126Z
+
+Phase: Lifecycle acceptance recorded; implementation and approval work have not started.
+
+Starting Reservation Commit: be0cf3e873ec31ff2cedaaa91d399597b8b47484
+
+Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim accept-starting-running-clarify-path-limited-019fab2d; journal event aa249b43-468b-44ba-917c-62ab544eed75; exact path backlog/defect-backlog/clarify-path-limited-backlog-commit-coordination.md.
 
 ## Summary
 
