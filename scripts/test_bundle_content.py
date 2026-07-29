@@ -705,8 +705,8 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Conceptual-To-Native Property Mapping",
     ),
     "agent-skill-specialization-examples.html": (
-        "Examples",
-        "Configuration Examples",
+        "Agent And Skill Specialization Examples",
+        "Configuration Examples By Project Structure",
         "Northwind Tools: Root-Only Guidance",
         "Acme Ledger: Nested Tier Guidance",
         "Beacon Knowledge Base: Workflow Separation",

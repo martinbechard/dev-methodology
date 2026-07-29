@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Examples</title>
+  <title>Agent And Skill Specialization Examples</title>
   <style>
     :root {
       --color-ink: #18212f;
@@ -150,7 +150,8 @@
       font-size: 1.08rem;
     }
 
-    .section {
+    .section,
+    .example {
       margin-top: var(--space-8);
     }
 
@@ -480,36 +481,35 @@
   </nav>
 
   <section class="hero" aria-labelledby="page-title">
-    <h1 id="page-title">Examples</h1>
+    <h1 id="page-title">Agent And Skill Specialization Examples</h1>
     <p class="callout">Current project examples use Persistence and Commit as independent selectors, by-reference core and technology delivery by default, and user-confirmed folder technology evidence. Legacy Provider and Completion fields migrate deterministically without changing recorded intent.</p>
     <p class="lede">
-      This page owns three customer-safe configuration examples: a root-only tool, a multi-tier application with nested guidance, and a wiki repository with separate source and synthesis workflows.
+      This page uses three customer-safe configurations to demonstrate project-structure specialization: a root-only tool, a multi-tier application with nested guidance, and a wiki repository with separate source and synthesis workflows.
     </p>
   </section>
 
   <section class="section" aria-labelledby="examples-title">
-    <h2 id="examples-title">Configuration Examples</h2>
+    <h2 id="examples-title">Configuration Examples By Project Structure</h2>
     <p class="note">Each example contains one focused PROJECT.yaml excerpt and only the decision that distinguishes it. The <a href="../skills/development-methodology/assets/templates/project-template.yaml">linked template</a> owns the full schema.</p>
     <div class="grid">
       <article class="card case">
-        <h3><a href="#northwind-title">Northwind Tools</a></h3>
+        <h3><a href="#northwind-title">Northwind Tools: Root-Only Guidance</a></h3>
         <p>One runtime and one validation workflow need only root guidance.</p>
       </article>
       <article class="card case">
-        <h3><a href="#acme-title">Acme Ledger</a></h3>
+        <h3><a href="#acme-title">Acme Ledger: Nested Tier Guidance</a></h3>
         <p>API and database subtrees need narrower operational guidance.</p>
       </article>
       <article class="card case">
-        <h3><a href="#beacon-title">Beacon Knowledge Base</a></h3>
+        <h3><a href="#beacon-title">Beacon Knowledge Base: Workflow Separation</a></h3>
         <p>Raw source handling and durable wiki synthesis remain separate workflows.</p>
       </article>
     </div>
-  </section>
 
-  <section class="section" aria-labelledby="northwind-title">
-    <h2 id="northwind-title">Northwind Tools: Root-Only Guidance</h2>
-    <p class="note">A single TypeScript runtime and common test workflow do not justify nested AGENTS.md files.</p>
-    <pre class="config-block"><code>schema: project
+    <article class="example" aria-labelledby="northwind-title">
+      <h3 id="northwind-title">Northwind Tools: Root-Only Guidance</h3>
+      <p class="note">This example demonstrates root-only guidance. A single TypeScript runtime and common test workflow do not justify nested AGENTS.md files. Technology skills remain scoped to source and tests.</p>
+      <pre class="config-block"><code>schema: project
 schema_version: 1
 project_setup:
   mode: basic
@@ -546,12 +546,12 @@ validation_plan:
       proves: command and fixture behavior
     - command: pnpm run build
       proves: package compilation</code></pre>
-  </section>
+    </article>
 
-  <section class="section" aria-labelledby="acme-title">
-    <h2 id="acme-title">Acme Ledger: Nested Tier Guidance</h2>
-    <p class="note">Repository-wide rules stay at the root; only API contracts and database migration rules require nested guidance.</p>
-    <pre class="config-block"><code>schema: project
+    <article class="example" aria-labelledby="acme-title">
+      <h3 id="acme-title">Acme Ledger: Nested Tier Guidance</h3>
+      <p class="note">This example demonstrates tier-specific specialization. Repository-wide rules stay at the root. API contracts and database migration rules require nested guidance and specialized skill loadouts.</p>
+      <pre class="config-block"><code>schema: project
 schema_version: 1
 project_taxonomy:
   family: web-application
@@ -581,12 +581,12 @@ technology_skill_loadouts:
   - scope: DB
     pathPattern: db/**
     skills: [postgres-drizzle, typescript-strict, jest]</code></pre>
-  </section>
+    </article>
 
-  <section class="section" aria-labelledby="beacon-title">
-    <h2 id="beacon-title">Beacon Knowledge Base: Workflow Separation</h2>
-    <p class="note">One root guidance file is sufficient, but its routing keeps raw collection separate from durable wiki maintenance and ingest.</p>
-    <pre class="config-block"><code>schema: project
+    <article class="example" aria-labelledby="beacon-title">
+      <h3 id="beacon-title">Beacon Knowledge Base: Workflow Separation</h3>
+      <p class="note">This example demonstrates workflow specialization within one root guidance file. Routing keeps raw collection separate from durable wiki maintenance and ingest. Each workflow has a distinct conceptual role, required skills, and verification commands.</p>
+      <pre class="config-block"><code>schema: project
 schema_version: 1
 project_taxonomy:
   family: documentation-and-project-wiki
@@ -621,6 +621,7 @@ folder_routing:
     verification_commands:
       - wiki_ops.py lint
       - wiki_ops.py okf-validate</code></pre>
+    </article>
   </section>
 </main>
 <footer class="site-footer">
