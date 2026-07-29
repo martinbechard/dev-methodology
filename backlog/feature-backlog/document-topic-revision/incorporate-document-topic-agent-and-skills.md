@@ -1,6 +1,6 @@
 # Incorporate the Document Topic Editor and Topic Skills
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -31,6 +31,40 @@ Approval Boundary: Any additional skill, agent, metadata, schema, or other gover
 Superseded Clarification: The prior User Action Required gate incorrectly stated that work-item authorization did not authorize the requested five definitions. It is retained below as history only. This direct user direction supersedes that assertion.
 
 Required Next Lifecycle Transition: The parent Dev Backlog Coordinator may reserve this same canonical task through Ready -> Starting. The canonical task's root Dev Orchestrator must then record Starting -> Running before any preflight, definition, source, generated, test, or other repository mutation.
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Canonical Work-Item Thread: 019fab9e-44bf-7571-9fbb-d9d63d3fa9da.
+
+Canonical Root Agent Task: 019fab9e-44bf-7571-9fbb-d9d63d3fa9da.
+
+Launch Reservation: One bounded live handshake for the same canonical work-item Thread.
+
+Dispatch Time: 2026-07-29T02:54:16Z.
+
+Normalized Objective: Incorporate the Document Topic Editor and Topic Skills.
+
+Intended Root Role: Dev Orchestrator.
+
+Owner: Unowned pending root acceptance.
+
+Branch: codex/incorporate-document-topic-agent-and-skills-019fab9e.
+
+Worktree: /Users/martinbechard/.codex/worktrees/350a/dev-methodology.
+
+Authorization Context: The work item authorizes exactly the five governed definitions listed in Resumption Record. The artifact policy remains caller-requested only. Any additional governed definition needs new explicit, scope-specific user approval.
+
+Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim ready-starting-019fab9e-44bf-7571-9fbb-d9d63d3fa9da; incarnation 422e3af4-edff-4dcb-9dcf-79b6cf42e633; claim journal event 389d0cd2-81ef-4c34-b2a2-cd39b7bcfd31; exact path backlog/feature-backlog/document-topic-revision/incorporate-document-topic-agent-and-skills.md in the primary main checkout.
+
+Observed Launch Evidence: Parent Dev Backlog Coordinator recorded one bounded live handshake reservation for the canonical Thread and root Agent Task. This transaction preserves Owner as Unowned pending root acceptance.
+
+Dependencies Observed: None.
+
+Required Next Lifecycle Transition: The same canonical task's root Dev Orchestrator must record Starting -> Running before any mutation or preflight.
 
 ## Preserved Dispatch Reservation History
 
