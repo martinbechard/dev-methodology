@@ -1,16 +1,16 @@
 # Preserve agent-claim ownership during backlog crisis delivery
 
-Status: User Action Required
+Status: Abandoned
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/backlog-crisis-retain-agent-claim.md
+Provider Reference: backlog/failed-backlog/defects/backlog-crisis-retain-agent-claim.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -30,7 +30,7 @@ Branch: codex/backlog-crisis-retain-agent-claim-019fa9f9
 
 Worktree: /Users/martinbechard/.codex/worktrees/f213/dev-methodology
 
-Current Phase: Waiting for explicit definition-change approval.
+Current Phase: Terminal abandonment recorded after the user declined the governed definition changes.
 
 Started At Evidence: Root acceptance recorded by Dev Backlog Steward on 2026-07-28T18:39:45Z after the parent reservation, against Runtime Thread and Root Agent Task 019fa9f9-3418-7b72-87e0-02e68efe0792.
 
@@ -46,7 +46,7 @@ Why User Input Is Required: These are governed skill and agent definition source
 
 Exact Governed Scope: skills/backlog-crisis-mode/SKILL.md, agents/roles/dev-activities/dev-backlog-coordinator.role.yaml, and skills/backlog-crisis-mode/agents/openai.yaml only.
 
-Resolution: Pending.
+Resolution: Declined on 2026-07-28: crisis mode is crisis mode, no coordination.
 
 Unattended Work Boundary: Do not mutate those definitions, dependent mirrors, documentation, tests, implementation, review, verification, or direct-main delivery until approval is recorded. Independent unrelated work may continue.
 
@@ -69,6 +69,24 @@ Generator Baseline: python3 scripts/build-skill-docs.py --check passed.
 Focused Tests: Passed under /opt/homebrew/bin/python3.11.
 
 Python Environment Limitation: The system Python 3.9 environment lacks `tomllib`; it is not a focused-test failure.
+
+## Terminal Disposition
+
+Coordinator-Authorized Transition: User Action Required -> Abandoned.
+
+User Answer: Decline - crisis mode is crisis mode, no coordination.
+
+Answer Received: 2026-07-28.
+
+Answer Provenance: Direct canonical user message in Thread 019fa9f9-3418-7b72-87e0-02e68efe0792.
+
+Rationale: The user declines the proposed governed changes and authorizes no replacement work.
+
+Post-Answer Mutation Proof: No governed definition, generated mirror, documentation, test, implementation, review, verification, or delivery mutation occurred after the answer.
+
+Terminal Provider Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim backlog-crisis-retain-agent-claim-abandoned-019fa9f9; incarnation 03591400-9e77-45b4-b83b-e199e4f384c8; claim journal event 6a7b6efe-bdf4-40ee-8cea-04f1a412c744; both exact provider paths claimed in the primary main checkout.
+
+Cleanup Eligibility: Eligible after the immutable terminal provider commit is verified and this exact claim is released.
 
 ## Summary
 
