@@ -1,16 +1,16 @@
 # Bound Jest failure ownership to the current change
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/bound-jest-failure-ownership-to-current-change.md
+Provider Reference: backlog/defect-backlog/bound-jest-failure-ownership-to-current-change.md
 
 Completion: direct-main
 
-Owner: Unowned pending user action
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -166,6 +166,26 @@ After this provider move, do not perform further test, source, candidate, review
 ### Resumption
 
 Preserve all evidence. The parent Dev Backlog Coordinator must record User Action Required -> Ready for this canonical Thread, then separately reserve Ready -> Starting. The same root Dev Orchestrator must separately accept Starting -> Running before work resumes.
+
+## User Action Resolution — Final Lifecycle Assertion
+
+- Transition: User Action Required -> Ready.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- Canonical Root Agent Task Id: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- User Answer: ok but that's the last one.
+- Answer Provenance: Direct canonical-task user message answering the durable lifecycle-assertion question.
+- Authorized Repair Scope: Only the newly exposed stale lifecycle assertion repair that permits the accepted phrase multi-item Codex task campaigns.
+- Firm Boundary: No further unrelated or pre-existing failure repair may be added. Any additional unrelated failure remains separate verification evidence without scope expansion or an application Defect. The authorized scoped change continues or completes as applicable.
+- Preserved Jest Definition Approval: Retain the prior exact approval and provenance.
+- Preserved Ten-Test Approval: Retain the prior approval for the nine stale bundle assertions and one stale STE medium-to-high expectation.
+- Preserved Candidate Commit: 2966d6cb95b45fe145969fb3ac6a0076d98c7799.
+- Accepted Source Commit: dbb0083aa36205ceee5a92a915754b2fe86260d5.
+- Preserved Replay Commit: 1729293ea38d784ba674db0bca7cec39728e33d9.
+- Preserved Private Partial Repair: Retain the private partial repair as canonical evidence.
+- Exclusions: No application Defect, no additional governed definition, and no broader repair.
+- Resulting Disposition: Ready with Owner: Unowned. This transaction does not reserve Starting or accept Running.
+- Lifecycle Claim Evidence: ready-final-lifecycle-assertion-019fa9f9; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 7ab68df0-520d-4302-9b3c-a94b4a6004bc; claimed 2026-07-29T02:17:06.507000Z.
 
 ## Running Acceptance — Approved Suite Repairs
 
