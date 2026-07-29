@@ -178,6 +178,10 @@ When deciding between backwards-compatibility and migration:
 
 Use these structure rules consistently:
 
+- The six item types from structured-explanation remain authoritative: QUERY, SUB-QUERY, FACT, HYPOTHESIS, UNKNOWN, and ANSWER.
+- PROBLEM, FIX, TEST, and BENEFIT are CONCEPT-ROLE values, not item types.
+- The item type is the structural reasoning axis. CONCEPT-ROLE is a separate domain and reference axis.
+- Give each domain linchpin an allowed item type, a stable ID, and a CONCEPT-ROLE. Use relationship fields to reference those IDs.
 - Parent-child relationship:
   - nest the child item under the parent item
 - Sibling relationship:
@@ -186,14 +190,33 @@ Use these structure rules consistently:
   - keep the item at the correct structural level and add one or more explicit
     reference fields such as ADDRESSES, RELATES-TO, or DEPENDS-ON
 
-Examples:
+Representative relationship example:
 
-- A TEST that exists only to verify one FIX should be nested under that
-  FIX.
-- A FIX that addresses two separate PROBLEM items should remain one item
-  and reference both problems explicitly.
-- A BENEFIT that follows directly from one FIX should be nested under that
-  FIX.
+```markdown
+- **QUERY: Q-FIX-1**
+  - **SYNOPSIS:** How does the fix correct invalid-record handling?
+  - **FACT: F-PROBLEM-1**
+    - **SYNOPSIS:** The parser accepts an invalid record.
+    - **CONCEPT-ROLE:** PROBLEM
+  - **FACT: F-PROBLEM-2**
+    - **SYNOPSIS:** The failure message does not identify the invalid field.
+    - **CONCEPT-ROLE:** PROBLEM
+  - **FACT: F-FIX-1**
+    - **SYNOPSIS:** The parser validates the field and reports its name.
+    - **CONCEPT-ROLE:** FIX
+    - **ADDRESSES:** F-PROBLEM-1, F-PROBLEM-2
+    - **FACT: F-TEST-1**
+      - **SYNOPSIS:** The regression test rejects the record and names the field.
+      - **CONCEPT-ROLE:** TEST
+      - **VERIFIES:** F-FIX-1
+    - **FACT: F-BENEFIT-1**
+      - **SYNOPSIS:** Callers receive precise validation feedback.
+      - **CONCEPT-ROLE:** BENEFIT
+      - **FOLLOWS-FROM:** F-FIX-1
+  - **ANSWER: A-FIX-1**
+    - **SYNOPSIS:** The fix rejects the invalid record, identifies the field, and is covered by a regression test.
+    - **SUPPORTED-BY:** F-PROBLEM-1, F-PROBLEM-2, F-FIX-1, F-TEST-1, F-BENEFIT-1
+```
 
 ## Persistence Rule
 

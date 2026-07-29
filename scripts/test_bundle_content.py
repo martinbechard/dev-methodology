@@ -1057,6 +1057,173 @@ def wcag_contrast_ratio(first_hex: str, second_hex: str) -> float:
 
 
 class BundleContentTests(unittest.TestCase):
+    def test_fix_explanation_separates_concept_roles_from_item_types(self) -> None:
+        structured_text = (
+            SKILLS_ROOT / "structured-explanation" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        core_model = structured_text.split(
+            "The format has six item types:", 1
+        )[1].split("Use them in this order of thought:", 1)[0]
+        allowed_item_types = {
+            "QUERY",
+            "SUB-QUERY",
+            "FACT",
+            "HYPOTHESIS",
+            "UNKNOWN",
+            "ANSWER",
+        }
+
+        self.assertEqual(
+            allowed_item_types,
+            set(re.findall(r"^- `([A-Z-]+)`$", core_model, re.MULTILINE)),
+        )
+
+        fix_text = (SKILLS_ROOT / "fix-explanation" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        relationship_rules = fix_text.split("## Relationship Rules", 1)[1].split(
+            "## Persistence Rule", 1
+        )[0]
+        self.assertIn(
+            "PROBLEM, FIX, TEST, and BENEFIT are CONCEPT-ROLE values, not item types.",
+            relationship_rules,
+        )
+
+        example = relationship_rules.split(
+            "Representative relationship example:", 1
+        )[1]
+        example_items = re.findall(
+            r"^( *)- \*\*([A-Z-]+): ([A-Z][A-Z0-9-]*)\*\*$",
+            example,
+            re.MULTILINE,
+        )
+        self.assertEqual(
+            [
+                ("", "QUERY", "Q-FIX-1"),
+                ("  ", "FACT", "F-PROBLEM-1"),
+                ("  ", "FACT", "F-PROBLEM-2"),
+                ("  ", "FACT", "F-FIX-1"),
+                ("    ", "FACT", "F-TEST-1"),
+                ("    ", "FACT", "F-BENEFIT-1"),
+                ("  ", "ANSWER", "A-FIX-1"),
+            ],
+            example_items,
+        )
+        example_ids = [item_id for _, _, item_id in example_items]
+        self.assertEqual(len(example_ids), len(set(example_ids)))
+        self.assertTrue(
+            all(
+                item_type in allowed_item_types
+                for _, item_type, _ in example_items
+            )
+        )
+        expected_roles = {
+            "F-PROBLEM-1": ("  ", "FACT", "PROBLEM"),
+            "F-PROBLEM-2": ("  ", "FACT", "PROBLEM"),
+            "F-FIX-1": ("  ", "FACT", "FIX"),
+            "F-TEST-1": ("    ", "FACT", "TEST"),
+            "F-BENEFIT-1": ("    ", "FACT", "BENEFIT"),
+        }
+        self.assertEqual(
+            ["PROBLEM", "PROBLEM", "FIX", "TEST", "BENEFIT"],
+            re.findall(
+                r"^ *- \*\*CONCEPT-ROLE:\*\* ([A-Z]+)$",
+                example,
+                re.MULTILINE,
+            ),
+        )
+        for item_id, (indent, item_type, concept_role) in expected_roles.items():
+            with self.subTest(item_id=item_id):
+                self.assertRegex(
+                    example,
+                    (
+                        rf"(?m)^{indent}- \*\*{item_type}: {item_id}\*\*\n"
+                        rf"^{indent}  - \*\*SYNOPSIS:\*\* [^\n]+\n"
+                        rf"^{indent}  - \*\*CONCEPT-ROLE:\*\* {concept_role}$"
+                    ),
+                )
+
+        item_line = re.compile(
+            r"^(?P<indent> *)- \*\*[A-Z-]+: (?P<item_id>[A-Z][A-Z0-9-]*)\*\*$"
+        )
+        relationship_line = re.compile(
+            (
+                r"^(?P<indent> *)- \*\*"
+                r"(?P<relationship>ADDRESSES|VERIFIES|FOLLOWS-FROM|SUPPORTED-BY)"
+                r":\*\* (?P<targets>[A-Z0-9, -]+)$"
+            )
+        )
+
+        def relationship_owners(markdown: str) -> list[tuple[str, str, str]]:
+            item_stack: list[tuple[int, str]] = []
+            owners: list[tuple[str, str, str]] = []
+            for line in markdown.splitlines():
+                item_match = item_line.match(line)
+                if item_match:
+                    indent = len(item_match.group("indent"))
+                    while item_stack and item_stack[-1][0] >= indent:
+                        item_stack.pop()
+                    item_stack.append((indent, item_match.group("item_id")))
+                    continue
+                relationship_match = relationship_line.match(line)
+                if relationship_match is None:
+                    continue
+                indent = len(relationship_match.group("indent"))
+                while item_stack and item_stack[-1][0] >= indent:
+                    item_stack.pop()
+                self.assertTrue(item_stack)
+                owner_indent, owner_id = item_stack[-1]
+                self.assertEqual(owner_indent + 2, indent)
+                owners.append(
+                    (
+                        owner_id,
+                        relationship_match.group("relationship"),
+                        relationship_match.group("targets"),
+                    )
+                )
+            return owners
+
+        expected_relationships = [
+            ("F-FIX-1", "ADDRESSES", "F-PROBLEM-1, F-PROBLEM-2"),
+            ("F-TEST-1", "VERIFIES", "F-FIX-1"),
+            ("F-BENEFIT-1", "FOLLOWS-FROM", "F-FIX-1"),
+            (
+                "A-FIX-1",
+                "SUPPORTED-BY",
+                "F-PROBLEM-1, F-PROBLEM-2, F-FIX-1, F-TEST-1, F-BENEFIT-1",
+            ),
+        ]
+        relationships = relationship_owners(example)
+        self.assertEqual(expected_relationships, relationships)
+        misplaced_verifies = example.replace(
+            "      - **VERIFIES:** F-FIX-1",
+            "    - **VERIFIES:** F-FIX-1",
+            1,
+        )
+        with self.assertRaises(AssertionError):
+            self.assertEqual(
+                expected_relationships,
+                relationship_owners(misplaced_verifies),
+            )
+        for _, _, target_list in relationships:
+            for target in target_list.split(", "):
+                with self.subTest(target=target):
+                    self.assertIn(target, example_ids)
+
+        build_skill_docs = load_build_skill_docs_module()
+        rendered_html = build_skill_docs.build_payload()["skills"][
+            "fix-explanation"
+        ]["html"]
+        policy_clauses = (
+            "The six item types from structured-explanation remain authoritative: QUERY, SUB-QUERY, FACT, HYPOTHESIS, UNKNOWN, and ANSWER.",
+            "PROBLEM, FIX, TEST, and BENEFIT are CONCEPT-ROLE values, not item types.",
+            "The item type is the structural reasoning axis. CONCEPT-ROLE is a separate domain and reference axis.",
+            "Give each domain linchpin an allowed item type, a stable ID, and a CONCEPT-ROLE. Use relationship fields to reference those IDs.",
+        )
+        for clause in policy_clauses:
+            with self.subTest(clause=clause):
+                self.assertIn(f"<li>{clause}</li>", rendered_html)
+
     def test_tool_runtime_excludes_sensitive_content_from_retained_traces(
         self,
     ) -> None:

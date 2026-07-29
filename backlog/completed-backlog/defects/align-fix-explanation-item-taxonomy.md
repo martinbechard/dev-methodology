@@ -1,12 +1,12 @@
 # Align fix-explanation relationship examples with the six-type explanation model
 
-Status: Blocked
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/align-fix-explanation-item-taxonomy.md
+Provider Reference: backlog/completed-backlog/defects/align-fix-explanation-item-taxonomy.md
 
 Completion: direct-main
 
@@ -121,6 +121,14 @@ Next Lifecycle Owner: Dev Backlog Coordinator
 ## Summary
 
 Make fix-explanation relationship examples conform to the declared six-type structured-explanation model.
+
+## Crisis Resolution
+
+- Crisis Mode: User-declared on 2026-07-29; ordinary dispatch, claims, and repeated reviewer waits stopped.
+- Resolution: Adopted preserved clean candidate 8555aa64cc9c5996979f563966ecacba04acdc69 because the blocker was missing terminal reviewer responses, not a source, test, or preflight failure.
+- Verification: Exact governed-definition preflight returned ALLOWED_APPROVED_DEFINITION_CHANGE; the focused concept-role regression passed; generated skill documentation was current; Git diff checks passed.
+- Delivery: Direct-main crisis commit recorded with this terminal provider archive.
+- Final Owner: Unowned.
 
 ## Context
 
