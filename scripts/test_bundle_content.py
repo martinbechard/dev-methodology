@@ -10059,9 +10059,14 @@ class BundleContentTests(unittest.TestCase):
                     ),
                 )
                 self.assertIn(
-                    '<a href="../index.html">Back to Documentation Index</a>',
+                    '<a class="site-brand" href="../index.html">',
                     text,
                 )
+                self.assertIn(
+                    "<span>AI-Assisted Coding Toolkit Index</span>",
+                    text,
+                )
+                self.assertNotIn("Back to Documentation Index", text)
                 self.assertEqual(
                     1,
                     text.count('<div class="document-sequence">'),
@@ -10074,11 +10079,6 @@ class BundleContentTests(unittest.TestCase):
                 sequence = nav.split(
                     '<div class="document-sequence">', maxsplit=1
                 )[1].split("</div>", maxsplit=1)[0]
-                self.assertLess(
-                    nav.index("Back to Documentation Index"),
-                    nav.index('<div class="document-sequence">'),
-                )
-
                 if position == 0:
                     self.assertNotIn('rel="prev"', sequence)
                 else:
@@ -10135,6 +10135,10 @@ class BundleContentTests(unittest.TestCase):
                     self.assertIn('src="logo.png"', text)
                     self.assertIn('href="LICENSE">MIT License</a>', text)
                 else:
+                    self.assertRegex(
+                        text,
+                        r"\.site-header \{[^}]*display: flex;[^}]*align-items: center;",
+                    )
                     self.assertIn('src="../logo.png"', text)
                     self.assertIn('href="../LICENSE">MIT License</a>', text)
 
@@ -10191,6 +10195,7 @@ class BundleContentTests(unittest.TestCase):
             "storage.getItem",
             "storage.setItem",
             'return `idea://open?file=${encodeURIComponent(filePath)}`;',
+            ".documentation-settings {\n      margin-left: auto;",
         ):
             with self.subTest(documentation_settings_phrase=phrase):
                 self.assertIn(phrase, settings_text)

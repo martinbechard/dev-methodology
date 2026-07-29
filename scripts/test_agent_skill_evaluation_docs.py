@@ -490,6 +490,13 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             self.assertNotRegex(attributes_only, r"\shidden(?:\s|=|>)")
         self.assertIn('<script src="documentation-settings.js"></script>', self.page)
         self.assertIn('<script src="agent-and-skill-evaluations.js"></script>', self.page)
+        self.assertIn('<a class="site-brand" href="../index.html">', self.page)
+        self.assertIn("<span>AI-Assisted Coding Toolkit Index</span>", self.page)
+        self.assertNotIn("Back to Documentation Index", self.page)
+        self.assertRegex(
+            self.page,
+            r"\.site-header \{[^}]*display: flex;[^}]*align-items: center;",
+        )
         self.assertIn('<noscript>', self.page)
 
     def test_responsive_controls_and_statuses_have_accessible_text_contracts(self) -> None:
