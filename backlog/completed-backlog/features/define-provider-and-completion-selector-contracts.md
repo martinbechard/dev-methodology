@@ -29,7 +29,7 @@ Establish the canonical provider, completion, identifier, authority, state, and 
 
 ## Context
 
-This is the foundation item in the [Work-Item Provider And Completion Contracts series](../../feature-backlog/work-item-provider-and-completion/index.md). Commit c18d476 supplies a working selector prototype, while aeb7bc4 preserves the earlier integration evidence named by the planning request. The prototype combines some provider and completion responsibilities under execute-workitem, file-based-backlog, and github-issues-backlog. Later items must not rename or split those skills independently without one accepted cross-provider contract.
+This is the foundation item in the [Work-Item Provider And Completion Contracts series](work-item-provider-and-completion/index.md). Commit c18d476 supplies a working selector prototype, while aeb7bc4 preserves the earlier integration evidence named by the planning request. The prototype combines some provider and completion responsibilities under execute-workitem, file-based-backlog, and github-issues-backlog. Later items must not rename or split those skills independently without one accepted cross-provider contract.
 
 ## Requirements
 

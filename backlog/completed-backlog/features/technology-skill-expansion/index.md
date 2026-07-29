@@ -27,10 +27,10 @@ Project setup should detect these technologies from owning repository evidence a
 
 ## Recommended Order
 
-1. [Split Hibernate ORM with Panache from Quarkus Persistence](split-hibernate-orm-panache-technology-skill.md).
-2. [Add the MySQL technology skill](add-mysql-technology-skill.md).
-3. [Add the Quartz Scheduler technology skill](add-quartz-scheduler-technology-skill.md).
-4. [Add the MapStruct technology skill](add-mapstruct-technology-skill.md).
+1. [Split Hibernate ORM with Panache from Quarkus Persistence](../split-hibernate-orm-panache-technology-skill.md).
+2. [Add the MySQL technology skill](../add-mysql-technology-skill.md).
+3. [Add the Quartz Scheduler technology skill](../add-quartz-scheduler-technology-skill.md).
+4. [Add the MapStruct technology skill](../add-mapstruct-technology-skill.md).
 
 The Panache split comes first because it corrects an existing oversized skill boundary. The remaining items are independent and may be dispatched in any order after confirming non-overlapping repository claims.
 

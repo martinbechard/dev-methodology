@@ -50,7 +50,7 @@ Verification Evidence: Seven exact focused tests PASS; scripts/build-skill-docs.
 Scoped Baseline Warning: Unchanged README.md#explicit-target-deployment fragment mismatch predates the candidate and remains required by the focused contract; no repair was authorized.
 Terminal Claim Evidence: complete-revise-generic-agent-definitions-source-topics-019fabe9; outcome SHARED_CHECKOUT_ACQUIRED; claim event 3ea24298-01c2-49dc-ae90-e4c1b5603594; current and destination provider paths claimed in the primary main checkout.
 
-Series: backlog/feature-backlog/document-topic-revision/index.md
+Series: backlog/completed-backlog/features/document-topic-revision/index.md
 
 ## Summary
 

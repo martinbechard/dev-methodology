@@ -52,7 +52,7 @@ Add complete-work-item-direct-main so a verified contribution reaches completion
 
 ## Context
 
-This item is a completion lane in the [Work-Item Provider And Completion Contracts series](../../feature-backlog/work-item-provider-and-completion/index.md). The current simple-workitem prototype ends with a verified local commit, which is a useful handoff but does not guarantee that the commit is on main. A temporary isolation branch may be required for safe claim ownership, but that branch is an implementation mechanism rather than the terminal delivery state.
+This item is a completion lane in the [Work-Item Provider And Completion Contracts series](work-item-provider-and-completion/index.md). The current simple-workitem prototype ends with a verified local commit, which is a useful handoff but does not guarantee that the commit is on main. A temporary isolation branch may be required for safe claim ownership, but that branch is an implementation mechanism rather than the terminal delivery state.
 
 ## Requirements
 

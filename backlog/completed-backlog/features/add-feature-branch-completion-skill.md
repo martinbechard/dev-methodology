@@ -48,7 +48,7 @@ Add complete-work-item-feature-branch so implementation, provider-accurate pull 
 
 ## Context
 
-This item is a completion lane in the [Work-Item Provider And Completion Contracts series](../feature-backlog/work-item-provider-and-completion/index.md). The current feature-branch-workitem prototype correctly publishes completed work as ready for review, but AWAITING_REVIEW is a handoff state rather than backlog completion. The final contract must resume after review and verify merge evidence before the selected work-item provider is asked to close the item.
+This item is a completion lane in the [Work-Item Provider And Completion Contracts series](work-item-provider-and-completion/index.md). The current feature-branch-workitem prototype correctly publishes completed work as ready for review, but AWAITING_REVIEW is a handoff state rather than backlog completion. The final contract must resume after review and verify merge evidence before the selected work-item provider is asked to close the item.
 
 ## Requirements
 

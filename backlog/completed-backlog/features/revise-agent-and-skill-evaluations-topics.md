@@ -10,7 +10,7 @@ Provider Reference: backlog/completed-backlog/features/revise-agent-and-skill-ev
 
 Completion: direct-main
 
-Series: backlog/feature-backlog/document-topic-revision/index.md
+Series: backlog/completed-backlog/features/document-topic-revision/index.md
 
 ## Summary
 

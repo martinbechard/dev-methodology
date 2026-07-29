@@ -34,15 +34,15 @@ Separate read-only topic analysis from source mutation. The analysis phase must 
 
 ## Recommended Order
 
-1. [Incorporate the Document Topic Editor and Topic Skills](incorporate-document-topic-agent-and-skills.md)
+1. [Incorporate the Document Topic Editor and Topic Skills](../incorporate-document-topic-agent-and-skills.md)
 2. Revise the catalog and generated-view documents:
    - [Core Agent and Skills](revise-agent-and-skill-definitions-topics.md)
-   - [Agent and Skill Evaluations](revise-agent-and-skill-evaluations-topics.md)
-   - [Agent and Skill Wiring Map](revise-agent-skill-explorer-topics.md)
+   - [Agent and Skill Evaluations](../revise-agent-and-skill-evaluations-topics.md)
+   - [Agent and Skill Wiring Map](../revise-agent-skill-explorer-topics.md)
 3. Revise the explanatory methodology documents:
    - [Examples](revise-agent-skill-specialization-examples-topics.md)
-   - [Agentic Configuration](revise-agentic-configuration-topics.md)
-   - [Documentation Templates](revise-documentation-templates-topics.md)
+   - [Agentic Configuration](../revise-agentic-configuration-topics.md)
+   - [Documentation Templates](../revise-documentation-templates-topics.md)
    - [Generic Agent Definitions Source](revise-generic-agent-definitions-source-topics.md)
    - [Orchestrated Development Lifecycle](revise-orchestrated-development-lifecycle-topics.md)
    - [Technology Skills](revise-skills-modularization-topics.md)

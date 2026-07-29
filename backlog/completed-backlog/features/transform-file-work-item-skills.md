@@ -54,7 +54,7 @@ Replace the generic create-backlog and manage-backlog names with symmetric file-
 
 ## Context
 
-This item is a provider lane in the [Work-Item Provider And Completion Contracts series](../../feature-backlog/work-item-provider-and-completion/index.md). The current create-backlog and manage-backlog skills contain the mature typed-item and lifecycle procedures. The newer file-based-backlog skill mostly selects those procedures. The transformation should preserve the mature behavior under provider-specific names rather than layer another wrapper around it.
+This item is a provider lane in the [Work-Item Provider And Completion Contracts series](work-item-provider-and-completion/index.md). The current create-backlog and manage-backlog skills contain the mature typed-item and lifecycle procedures. The newer file-based-backlog skill mostly selects those procedures. The transformation should preserve the mature behavior under provider-specific names rather than layer another wrapper around it.
 
 ## Requirements
 

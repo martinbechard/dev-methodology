@@ -34,7 +34,7 @@ Add symmetric Azure DevOps and Jira create and manage skill packages that make t
 
 ## Context
 
-This item is a provider lane in the [Work-Item Provider And Completion Contracts series](../../feature-backlog/work-item-provider-and-completion/index.md). Azure DevOps and Jira are required selector placeholders, not implemented providers. Explicit packages let project validation name the intended provider and report a truthful capability boundary instead of silently selecting files, GitHub, GitLab, or an arbitrary external API.
+This item is a provider lane in the [Work-Item Provider And Completion Contracts series](work-item-provider-and-completion/index.md). Azure DevOps and Jira are required selector placeholders, not implemented providers. Explicit packages let project validation name the intended provider and report a truthful capability boundary instead of silently selecting files, GitHub, GitLab, or an arbitrary external API.
 
 ## Requirements
 

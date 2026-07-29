@@ -28,26 +28,26 @@ Conceptual agent definitions declare their generic definition-owned skills. Proj
 
 ## Recommended Order
 
-1. [Replace task-time routing with setup-time technology detection](../../completed-backlog/features/replace-router-with-setup-detector.md).
-2. [Verify Codex CLI skill activation](verify-codex-skill-activation.md).
-3. [Document the cross-harness skill lifecycle](document-cross-harness-skill-lifecycle.md).
-4. [Build the agent and skill mind map](build-agent-skill-mind-map.md).
-5. [Align Project Organiser filename selection](align-project-organiser-filename-selection.md).
-6. [Enforce behavioral regression assertions](enforce-behavioral-regression-assertions.md).
-7. [Prevent unsupported review findings](../../completed-backlog/defects/prevent-unsupported-review-findings.md).
-8. [Prevent unauthorized contract narrowing](prevent-unauthorized-contract-narrowing.md).
-9. [Preserve authoritative configuration evidence](../../completed-backlog/features/preserve-authoritative-configuration-evidence.md).
-10. [Prevent read-only review side effects](prevent-read-only-review-side-effects.md).
-11. [Require exact review quotation traceability](require-exact-review-quotation-traceability.md).
-12. [Preserve canonical review checklists](preserve-canonical-review-checklists.md).
-13. [Require claimed backlog resumption](require-claimed-backlog-resumption.md).
-14. [Preserve Configurator runtime bridges](preserve-configurator-runtime-bridges.md).
-15. [Enforce documentation template conformance](../../completed-backlog/defects/enforce-documentation-template-conformance.md).
-16. [Preserve integrated documentation steady state](preserve-integrated-documentation-steady-state.md).
-17. [Restore Wiki Ingester on verifier interruption](restore-wiki-ingester-on-verifier-interruption.md).
-18. [Preserve Wiki Research source links](preserve-wiki-research-source-links.md).
-19. [Replace Bootstrapper marathon with isolated test doubles](replace-bootstrapper-marathon-with-isolated-test-doubles.md).
-20. [Integrate Codex work-item coordination](integrate-codex-workitem-coordination.md).
+1. [Replace task-time routing with setup-time technology detection](../replace-router-with-setup-detector.md).
+2. [Verify Codex CLI skill activation](../verify-codex-skill-activation.md).
+3. [Document the cross-harness skill lifecycle](../document-cross-harness-skill-lifecycle.md).
+4. [Build the agent and skill mind map](../build-agent-skill-mind-map.md).
+5. [Align Project Organiser filename selection](../../defects/align-project-organiser-filename-selection.md).
+6. [Enforce behavioral regression assertions](../../defects/enforce-behavioral-regression-assertions.md).
+7. [Prevent unsupported review findings](../../defects/prevent-unsupported-review-findings.md).
+8. [Prevent unauthorized contract narrowing](../../defects/prevent-unauthorized-contract-narrowing.md).
+9. [Preserve authoritative configuration evidence](../preserve-authoritative-configuration-evidence.md).
+10. [Prevent read-only review side effects](../../defects/prevent-read-only-review-side-effects.md).
+11. [Require exact review quotation traceability](../../defects/require-exact-review-quotation-traceability.md).
+12. [Preserve canonical review checklists](../../defects/preserve-canonical-review-checklists.md).
+13. [Require claimed backlog resumption](../../defects/require-claimed-backlog-resumption.md).
+14. [Preserve Configurator runtime bridges](../../defects/preserve-configurator-runtime-bridges.md).
+15. [Enforce documentation template conformance](../../defects/enforce-documentation-template-conformance.md).
+16. [Preserve integrated documentation steady state](../../defects/preserve-integrated-documentation-steady-state.md).
+17. [Restore Wiki Ingester on verifier interruption](../../defects/restore-wiki-ingester-on-verifier-interruption.md).
+18. [Preserve Wiki Research source links](../../defects/preserve-wiki-research-source-links.md).
+19. [Replace Bootstrapper marathon with isolated test doubles](../../defects/replace-bootstrapper-marathon-with-isolated-test-doubles.md).
+20. [Integrate Codex work-item coordination](../integrate-codex-workitem-coordination.md).
 
 The detector is the foundation. Codex verification must run against the stable generated definitions and project guidance. Documentation must distinguish designed behavior from behavior proven by the CLI suite. The mind map should consume the final detection and evidence data rather than adapting to an obsolete routing schema.
 

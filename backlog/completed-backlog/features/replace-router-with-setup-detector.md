@@ -14,7 +14,7 @@ The current implementation asks ordinary coding, review, verification, and diagn
 
 Claude skills properties preload full definition-owned skill content. Codex normally discovers enabled skills and follows developer instructions to load them. Codex skills.config controls availability and selection but does not preload skill bodies. Folder-specific technology skills should be established during project setup and loaded dynamically from the nearest project guidance.
 
-See the series [index](../../feature-backlog/agent-skill-lifecycle/index.md) and design/technology-skill-detection-spec.md.
+See the series [index](agent-skill-lifecycle/index.md) and design/technology-skill-detection-spec.md.
 
 ## Requirements
 

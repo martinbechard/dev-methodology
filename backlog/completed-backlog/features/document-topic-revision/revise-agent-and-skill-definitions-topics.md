@@ -35,7 +35,7 @@ Verification Evidence: Independent verifier returned READY — PASS. Twenty-thre
 Topic Placement Evidence: Before, ambiguous root Core Agent and Skills mixed unheaded definition, project, and provider blocks; generated agent groups had no visible Agent Definitions owner; the relationship map had no relationship parent; and delivery, Persistence, and coordination were incorrectly contained by Skill Catalog. After, root Conceptual Agent and Skill Definitions orders Conceptual Definition Scope, Conceptual Agent Definitions, Skill Definitions, Agent-Skill Relationships, Project-Selected Delivery and Technology Bindings, Provider-Independent Dev Coder Inputs, and Work-Item Delivery Responsibilities. Each has full 2/2 parent containment. Skill Definitions honestly remains 1/2 sequence after Agent Definitions because they are parallel definition families; peer generated agent groups, roles, and skill categories honestly remain 1/2 sequence after the first because catalog peers have no intrinsic chronology. Every original substantive block remains exactly once; no standalone analysis artifact was retained.
 Terminal Claim Evidence: complete-revise-agent-and-skill-definitions-topics-019fabe8; outcome SHARED_CHECKOUT_ACQUIRED; claim event 4ce44620-a3b9-42cf-be03-28e18e26215a; current and destination provider paths claimed in the primary main checkout.
 
-Series: backlog/feature-backlog/document-topic-revision/index.md
+Series: backlog/completed-backlog/features/document-topic-revision/index.md
 
 ## Summary
 

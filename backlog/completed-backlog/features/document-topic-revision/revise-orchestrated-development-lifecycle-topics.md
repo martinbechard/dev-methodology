@@ -64,7 +64,7 @@ Lifecycle Claim Evidence: reserve-nine-document-topic-revisions-019fa9bb; outcom
 - Delivery: Direct-main crisis commit recorded with this terminal provider archive.
 - Final Owner: Unowned.
 
-Series: backlog/feature-backlog/document-topic-revision/index.md
+Series: backlog/completed-backlog/features/document-topic-revision/index.md
 
 ## Summary
 

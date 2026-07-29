@@ -46,16 +46,16 @@ This series plans the transformation only. It does not implement, rename, delete
 
 ## Recommended Order
 
-1. [Define provider and completion selector contracts](define-provider-and-completion-selector-contracts.md).
+1. [Define provider and completion selector contracts](../define-provider-and-completion-selector-contracts.md).
 2. After the contract is accepted, proceed in parallel with:
-   - [Transform file work-item skills](transform-file-work-item-skills.md).
-   - [Split GitHub work-item skills](split-github-work-item-skills.md).
-   - [Add GitLab work-item skills](add-gitlab-work-item-skills.md).
-   - [Add Azure DevOps and Jira placeholders](add-azure-devops-and-jira-placeholders.md).
-   - [Add direct-main completion](add-direct-main-completion-skill.md).
-   - [Add feature-branch completion](add-feature-branch-completion-skill.md).
-3. [Render selected work-item skills](render-selected-work-item-skills.md) after every provider and completion identifier stabilizes.
-4. [Integrate work-item contracts across the bundle](integrate-work-item-contracts-across-bundle.md) after selector rendering is accepted.
+   - [Transform file work-item skills](../transform-file-work-item-skills.md).
+   - [Split GitHub work-item skills](../split-github-work-item-skills.md).
+   - [Add GitLab work-item skills](../add-gitlab-work-item-skills.md).
+   - [Add Azure DevOps and Jira placeholders](../add-azure-devops-and-jira-placeholders.md).
+   - [Add direct-main completion](../add-direct-main-completion-skill.md).
+   - [Add feature-branch completion](../add-feature-branch-completion-skill.md).
+3. [Render selected work-item skills](../render-selected-work-item-skills.md) after every provider and completion identifier stabilizes.
+4. [Integrate work-item routing through core-only agent definitions](../integrate-work-item-routing-through-core-only-agent-definitions.md) after selector rendering is accepted.
 
 ## Definition Of Good
 

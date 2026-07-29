@@ -42,7 +42,7 @@ Archive Path: backlog/completed-backlog/features/incorporate-document-topic-agen
 
 Terminal Provider-Mutation Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim complete-document-topic-019fab9e-44bf-7571-9fbb-d9d63d3fa9da; incarnation 17a7107a-090f-4f2d-a3c1-b5588d111814; claim journal event 835c71ff-a4ee-4504-9d74-63b66e334655; exact source and destination provider paths claimed in the primary main checkout.
 
-Series: backlog/feature-backlog/document-topic-revision/index.md
+Series: backlog/completed-backlog/features/document-topic-revision/index.md
 
 ## Resumption Record
 

@@ -49,7 +49,7 @@ Running Provider Claim Evidence: acquired SHARED_CHECKOUT_ACQUIRED event 32e9e59
 Terminal Provider Claim Evidence: complete-wiki-project-context-019fabea; outcome SHARED_CHECKOUT_ACQUIRED; claim event d379f57f-2de6-41b4-be6d-9c74c5e8188d; exact active and archive provider paths claimed in the primary main checkout.
 Archive Path: backlog/completed-backlog/features/document-topic-revision/revise-wiki-skills-and-project-context-topics.md
 
-Series: backlog/feature-backlog/document-topic-revision/index.md
+Series: backlog/completed-backlog/features/document-topic-revision/index.md
 
 ## Summary
 

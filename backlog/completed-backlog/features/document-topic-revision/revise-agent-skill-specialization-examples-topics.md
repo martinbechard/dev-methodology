@@ -50,7 +50,7 @@ Prior Terminal Attempt: rolled back byte-for-byte after the shared checkout chan
 Terminal Provider Claim Evidence: complete-revise-agent-skill-specialization-examples-topics-019fabe9; outcome SHARED_CHECKOUT_ACQUIRED; claim event c870059e-0d42-4ed8-aca7-7083b4bc296f; exact active and archive provider paths claimed in the primary main checkout.
 Archive Path: backlog/completed-backlog/features/document-topic-revision/revise-agent-skill-specialization-examples-topics.md
 
-Series: backlog/feature-backlog/document-topic-revision/index.md
+Series: backlog/completed-backlog/features/document-topic-revision/index.md
 
 ## Summary
 

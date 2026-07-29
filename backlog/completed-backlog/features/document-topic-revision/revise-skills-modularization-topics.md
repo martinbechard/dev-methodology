@@ -46,7 +46,7 @@ Integration Claim Evidence: acquire 095976f8-d491-4c09-8612-5672c0acacc8; extens
 Running Provider Claim Evidence: acquire 9d2b0677-c49a-4173-a89b-d0b2a233c619; release bc01baeb-eaf4-4fb4-b8b3-6feaed344ea3.
 Terminal Provider Claim Evidence: complete-revise-skills-modularization-topics-019fabe9; outcome SHARED_CHECKOUT_ACQUIRED; claim event 1595e7d7-4e9a-4456-aff1-06709e70c280.
 
-Series: backlog/feature-backlog/document-topic-revision/index.md
+Series: backlog/completed-backlog/features/document-topic-revision/index.md
 
 ## Summary
 

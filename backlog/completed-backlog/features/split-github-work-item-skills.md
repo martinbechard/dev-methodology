@@ -49,7 +49,7 @@ Replace github-issues-backlog with symmetric create-github-work-item and manage-
 
 ## Context
 
-This item is a provider lane in the [Work-Item Provider And Completion Contracts series](../../feature-backlog/work-item-provider-and-completion/index.md). The current github-issues-backlog prototype combines creation and lifecycle management in one skill. Separating those responsibilities makes GitHub symmetric with other providers while keeping issue lifecycle distinct from pull-request delivery.
+This item is a provider lane in the [Work-Item Provider And Completion Contracts series](work-item-provider-and-completion/index.md). The current github-issues-backlog prototype combines creation and lifecycle management in one skill. Separating those responsibilities makes GitHub symmetric with other providers while keeping issue lifecycle distinct from pull-request delivery.
 
 ## Requirements
 

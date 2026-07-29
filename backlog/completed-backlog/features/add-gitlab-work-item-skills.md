@@ -53,7 +53,7 @@ Add symmetric create-gitlab-work-item and manage-gitlab-work-items skills that u
 
 ## Context
 
-This item is a provider lane in the [Work-Item Provider And Completion Contracts series](../feature-backlog/work-item-provider-and-completion/index.md). GitLab must be a first-class provider rather than a GitHub-shaped alias. Its issue references, labels, milestones, relationships, merge requests, approvals, pipelines, and merge evidence must be expressed through GitLab capabilities and terminology.
+This item is a provider lane in the [Work-Item Provider And Completion Contracts series](work-item-provider-and-completion/index.md). GitLab must be a first-class provider rather than a GitHub-shaped alias. Its issue references, labels, milestones, relationships, merge requests, approvals, pipelines, and merge evidence must be expressed through GitLab capabilities and terminology.
 
 ## Requirements
 

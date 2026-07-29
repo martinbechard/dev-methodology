@@ -55,7 +55,7 @@ Lifecycle Claim Evidence: reserve-nine-document-topic-revisions-019fa9bb; outcom
 Acceptance Time: 2026-07-29T03:37:46Z
 Acceptance Evidence: Canonical root Dev Orchestrator accepted the reserved work item through its Dev Backlog Steward child. Exact provider-file claim accept-revise-agent-skill-explorer-topics-019fabe9 acquired in the primary main checkout; claim event f7e0ab60-3279-4bc4-bb82-72bdfb11079b; outcome SHARED_CHECKOUT_ACQUIRED.
 
-Series: backlog/feature-backlog/document-topic-revision/index.md
+Series: backlog/completed-backlog/features/document-topic-revision/index.md
 
 ## Summary
 

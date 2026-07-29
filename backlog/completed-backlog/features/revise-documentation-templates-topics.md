@@ -26,7 +26,7 @@ Lifecycle Claim Evidence: reserve-nine-document-topic-revisions-019fa9bb; outcom
 Acceptance Time: 2026-07-29T03:40:29Z
 Acceptance Evidence: Canonical root Dev Orchestrator accepted the reserved work item through its Dev Backlog Steward child. Exact provider-file claim accept-revise-documentation-templates-topics-019fabe9 acquired in the primary main checkout; claim event b8818728-7728-4d90-b236-a93a7a65f9ff; outcome SHARED_CHECKOUT_ACQUIRED. Launch HEAD 36b94050ae97efdc664b33bb590016029c54af9b was confirmed for branch codex/revise-documentation-templates-topics in worktree /Users/martinbechard/.codex/worktrees/595a/dev-methodology.
 
-Series: backlog/feature-backlog/document-topic-revision/index.md
+Series: backlog/completed-backlog/features/document-topic-revision/index.md
 
 ## Summary
 

@@ -52,7 +52,7 @@ Lifecycle Claim Evidence: reserve-nine-document-topic-revisions-019fa9bb; outcom
 Acceptance Time: 2026-07-29T03:44:16Z
 Acceptance Evidence: Canonical root Dev Orchestrator accepted the reserved work item through its Dev Backlog Steward child. Exact provider-file claim starting-running-revise-agentic-configuration-019fabe9 acquired in the primary main checkout; claim event 8aee038d-2a29-4171-8ab5-890882b7313d; outcome SHARED_CHECKOUT_ACQUIRED. Delivery branch codex/revise-agentic-configuration-topics and worktree /Users/martinbechard/.codex/worktrees/7a27/dev-methodology confirmed for canonical root Thread and task 019fabe9-4434-7750-b431-80584e1146ab.
 
-Series: backlog/feature-backlog/document-topic-revision/index.md
+Series: backlog/completed-backlog/features/document-topic-revision/index.md
 
 ## Summary
 
