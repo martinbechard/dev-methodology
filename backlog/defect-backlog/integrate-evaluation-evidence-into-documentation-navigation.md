@@ -1,6 +1,6 @@
 # Integrate Evaluation Evidence Into Documentation Navigation
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -122,6 +122,46 @@ Source Mutation Evidence: None observed. No source mutation was authorized or pe
 Reservation Disposition: Expired reservation cleared. The late task is preserved as invalid startup evidence; no replacement launch was created.
 
 Reconciliation: Ready.
+
+## Current Dispatch Reservation (Existing Canonical Conversation)
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Launch Reservation: One bounded resume reservation for the existing canonical conversation; no new conversation creation is authorized.
+
+Normalized Objective: Integrate Evaluation Evidence into the ordered HTML documentation navigation, with its own index tile and standard previous and next controls between Core Agent and Skills and Agentic Configuration.
+
+Dispatch Time: 2026-07-29T16:01:29Z.
+
+Intended Root Role: Root Dev Orchestrator.
+
+Canonical Conversation: 019fae99-2d9b-7163-850b-8d50269b85c4.
+
+Canonical Root Agent Task: 019fae99-2d9b-7163-850b-8d50269b85c4.
+
+Worktree: /Users/martinbechard/.codex/worktrees/0ab1/dev-methodology.
+
+Owner: Unowned pending root acceptance.
+
+Runtime Launch Result: Existing canonical conversation observed and ready for resume.
+
+Owner Acceptance: Pending.
+
+Reconciliation: Pending.
+
+## Starting Settlement Evidence (Existing Canonical Conversation)
+
+Settlement Window: 2026-07-29T16:01:29Z to 2026-07-29T16:02:29Z (exactly 60 seconds).
+
+Runtime Launch Result: Existing canonical conversation observed and ready for resume.
+
+Canonical Conversation: 019fae99-2d9b-7163-850b-8d50269b85c4.
+
+Owner Acceptance: Pending.
+
+Reconciliation: Pending.
 
 ## Notes
 
