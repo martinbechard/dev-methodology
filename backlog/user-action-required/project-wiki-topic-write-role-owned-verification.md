@@ -1,18 +1,34 @@
 # Defer verifier orchestration to conceptual roles and resolve writer helper commands
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/project-wiki-topic-write-role-owned-verification.md
+Provider Reference: backlog/user-action-required/project-wiki-topic-write-role-owned-verification.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
-Current Phase: Exact metadata approval-record/preflight then bounded correction.
+Current Phase: Waiting for User / Wiki Writer interruption contract.
+
+## Wiki Writer Interruption Approval
+
+Question: Do you approve changing only agents/roles/wiki-activities/wiki-writer.role.yaml to make verifier-interruption handling explicitly role-owned: preserve unverified writer edits, capture the invocation receipt and before/after writer-scope evidence, allow interruption-specific BLOCKED evidence without invented verifier findings, and keep the verifier non-mutating?
+
+Before and After: Before, the harness-hardcoded packet invents or assumes latest findings although none may exist. After, the role requires the receipt and before/after evidence, preserves unverified edits, records findings-optional BLOCKED interruption evidence, and detects and rejects attempted verifier writes.
+
+Options: Approve permits an exact role approval record and preflight, bounded correction, supported role-mirror regeneration, and ordinary harness attempted-write enforcement. Defer preserves a7fa91d9605fb2ad3450e5438ee78237e8785068 and a387cd86 together with PASS/NEEDS_CORRECTION evidence. Decline leaves the contract insufficient for a later truthful terminal disposition.
+
+Why User Input Is Required: This is a separately governed conceptual role. Review proves the need but cannot authorize the definition change.
+
+Exclusions: No other role, skill, metadata, or direct generated edit is approved. Only supported Wiki Writer mirrors may be regenerated from the approved role source. Preserve the ordinary harness correction and all approval and lifecycle evidence.
+
+Unattended Boundary: No further mutation may occur after this User Action Required transition until explicit approval, this same task routes through User Action Required -> Ready -> Starting -> Running, and the exact role preflight returns ALLOWED.
+
+Transition Claim Evidence: user-action-required-wiki-writer-interruption-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED; claim event 138e4291-4236-4f96-b2bf-e5ce2f6ac122.
 
 ## Metadata Running Acceptance
 
@@ -113,7 +129,7 @@ Runtime Thread: 019faa19-0275-7210-aaf6-45931b8079ab
 
 Root Agent Task: 019faa19-0275-7210-aaf6-45931b8079ab
 
-Next Lifecycle Owner: Parent Dev Backlog Coordinator
+Next Lifecycle Owner: User
 
 ## Running Acceptance
 
