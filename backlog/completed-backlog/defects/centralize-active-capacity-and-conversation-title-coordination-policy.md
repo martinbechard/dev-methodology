@@ -1,12 +1,12 @@
 # Centralize active-capacity and conversation-title coordination policy
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/centralize-active-capacity-and-conversation-title-coordination-policy.md
+Provider Reference: backlog/completed-backlog/defects/centralize-active-capacity-and-conversation-title-coordination-policy.md
 
 Completion: direct-main
 
@@ -32,7 +32,7 @@ Delivery Worktree: /Users/martinbechard/.codex/worktrees/c82a/dev-methodology
 
 Next Lifecycle Owner: Root Dev Orchestrator 019fab2d-b796-7ff0-b7fd-8438b335e4af
 
-Phase: Running; implementation gated on six approval records and supported preflights
+Phase: Completed and observed on primary main
 
 Started At: 2026-07-29T00:20:59.422474Z
 
@@ -121,6 +121,22 @@ Unattended Work Boundary: Stop all definition, mirror, companion implementation,
 - Preserved Claim Evidence: 1157cbfa-2b2d-41e2-a9e3-85638816b958 acquired and 3cdde1d7-2c99-4514-a370-353c40f54910 released; e00f7aea-3dfb-4b91-b0ca-64fb44b06b5a acquired and 88cbcf96-0fb2-4268-b184-86c8cb97fc33 released; 06a67744-120d-46ff-88b5-e5385b5c4301 acquired and e9d3e8d1-5b4c-41c3-a85b-02a3750709b2 released.
 - Required Approval And Preflights: skills/codex-workitem-coordination/SKILL.md; skills/manage-file-work-items/SKILL.md; agents/roles/dev-activities/dev-backlog-coordinator.role.yaml; agents/roles/dev-activities/dev-backlog-steward.role.yaml; agents/roles/dev-activities/dev-orchestrator.role.yaml; agents/roles/dev-activities/dev-backlog-watchdog.role.yaml.
 - Lifecycle Claim Evidence: starting-running-centralize-capacity-019fab2d; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 9526eaa5-33d2-40ad-befe-226415835527; claimed 2026-07-29T01:12:05.042925Z.
+
+## Completion Evidence
+
+- Transition: Running -> Completed.
+- Completion: direct-main.
+- Accepted Delivery Commit: 91304e3339a1c79aec1812b889c275e64f5dd3e3, observed on primary main.
+- Source Candidate Commit: 3a4deb4e1c580af3c52463d0aa513e335cc8daec.
+- Independent Review: GOOD, bounded review of the centralized coordination policy and delivery.
+- Focused Verification: 52 coordination tests PASS; 2 generated-output tests PASS; 3 reporter tests PASS; 5 explorer tests PASS.
+- Freshness Verification: build-skill-docs PASS; hierarchy freshness PASS.
+- Diff Verification: applicable diff checks PASS.
+- Known Unrelated Baseline: build-support-checklist rejects four document-topic deterministic check names. This foundational baseline was not repaired by this work item.
+- Canonical Work-Item Thread: 019fab2d-b796-7ff0-b7fd-8438b335e4af.
+- Root Agent Task: 019fab2d-b796-7ff0-b7fd-8438b335e4af.
+- Completed Archive Path: backlog/completed-backlog/defects/centralize-active-capacity-and-conversation-title-coordination-policy.md.
+- Lifecycle Claim Evidence: complete-centralize-capacity-019fab2d; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 9c9feb22-0bad-44d1-a0eb-2ee7bd30964d; claimed 2026-07-29T03:24:55.406950Z.
 
 ## Starting Reservation
 
