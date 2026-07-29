@@ -1,16 +1,16 @@
 # Align fix-explanation relationship examples with the six-type explanation model
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/align-fix-explanation-item-taxonomy.md
+Provider Reference: backlog/defect-backlog/align-fix-explanation-item-taxonomy.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator 019fa9f9-33f0-7db3-90d5-2dc77dd89c06
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -26,7 +26,7 @@ Runtime Thread: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06
 
 Root Agent Task: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Next Lifecycle Owner: Dev Backlog Coordinator
 
 ## Running Acceptance
 
@@ -48,19 +48,19 @@ Next Lifecycle Owner: Root Dev Orchestrator
 - Acceptance Evidence: Fresh independent exact-commit review was GOOD for batch-1 provider correction 1ef9018bf859607f161ff9a275c336c145b73b9a; promotion_complete: true.
 - Dependencies: None.
 
-## User Action Required
+## User Action Resolution
 
-- Transition: Running -> User Action Required.
-- Coordinator Decision: The required definition-change approval is a concrete user-owned decision.
+- Transition: User Action Required -> Ready.
 - Canonical Work-Item Thread: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06, preserved for same-Thread resumption.
 - Canonical Root Agent Task: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06, preserved for same-Thread resumption.
-- Running Lifecycle Commit: cde9160864182a00b5045bccc37a24b890a6f1f7.
-- Exact User Question: “Do you approve changing exactly skills/fix-explanation/SKILL.md, limited to correcting its relationship examples so structured items use the six authorized item types—QUERY, SUB-QUERY, FACT, HYPOTHESIS, UNKNOWN, and ANSWER—or so TEST, FIX, PROBLEM, and BENEFIT are clearly ordinary concepts rather than item types, while preserving the intended relationships? This does not authorize changing skills/structured-explanation/SKILL.md, skill metadata, or any other governed definition. Supported generated skill mirrors may be regenerated from this one approved source.”
-- Why User Input Is Required: AGENTS.md and PROJECT.yaml require explicit scope-specific user approval for a governed definition change. The supported preflight returned BLOCKED_APPROVAL_REQUIRED, and the approval audit found no prior approval.
-- Requested Approval Scope: skills/fix-explanation/SKILL.md only.
-- Explicitly Excluded: skills/structured-explanation/SKILL.md, skill metadata, agents, and every other skill or governed definition.
-- Prohibited Unattended Action: Do not mutate source, tests, or generated files; create an approval record; review; verify; integrate; or deliver until the user answers. Read-only evidence remains preserved.
-- Resumption: Record the user's answer once, then preserve this canonical Thread and follow User Action Required -> Ready -> Starting -> Running through distinct authorized lifecycle transactions.
+- User Answer: I approve that you update the item and proceed with it.
+- Answer Provenance: turn 019faaf7-9e71-7451-8211-6b7899f7e045, item-51, on 2026-07-28.
+- Approved Governed Scope: skills/fix-explanation/SKILL.md only.
+- Approved Model: The six structured reasoning item types remain authoritative. PROBLEM, FIX, TEST, and BENEFIT are separate first-class concept-role/reference axis terms. Preserve their relationships.
+- Explicitly Excluded: skills/structured-explanation/SKILL.md, skill metadata, agents, every other governed definition, and unrelated source changes.
+- Supported Generated Effects: Regenerate only supported mirrors from the approved source category.
+- Resulting Disposition: Ready with Owner: Unowned. The parent Dev Backlog Coordinator must separately reserve Ready -> Starting for this preserved canonical Thread. The same root Dev Orchestrator must then separately accept Starting -> Running before any governed definition or delivery mutation.
+- Lifecycle Claim Evidence: uar-ready-approved-resumptions-019fa9bb; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event a7e0c68a-5570-42fe-90e7-460aaad546e9; claimed 2026-07-29T00:04:51.124316Z.
 
 ## Summary
 
