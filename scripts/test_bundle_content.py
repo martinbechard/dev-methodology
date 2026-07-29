@@ -582,8 +582,8 @@ GENERIC_AGENT_DEFINITIONS_REQUIRED_PHRASES = (
     "Mutation-capable definitions enable <code>codex-harness-directives</code> through <code>[[skills.config]]</code>",
 )
 AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
-    "Agentic Configuration",
-    "This page describes how coding agent runtimes use generated files.",
+    "Coding-Agent Runtime Configuration And Its Cross-Harness Evaluation",
+    "This page describes how coding agent runtimes use generated files and how cross-harness evaluations configure and audit those runtimes.",
     "Glossary",
     "Coding agent runtime",
     "a tool that runs an AI coding agent, such as Codex, Claude Code, Gemini CLI, Junie CLI, or GitHub Copilot.",
@@ -604,6 +604,10 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "Root Project Instruction Files",
     "Nested Project Instruction Files",
     "Runtime Configuration File Locations",
+    "Cross-Harness Evaluation Environment, Permission Profiles, And Audit Evidence",
+    "Evaluation Environment And Retained Evidence",
+    "Permission Profiles And Containment Limits",
+    "Audit Validity And Protection Limits",
     "<code>PROJECT.yaml</code> records selected conceptual agents, installed core-skill delivery, user-confirmed folder technologies, Persistence, Commit, and technology delivery.",
     "It maps those selections to root and nested <code>AGENTS.md</code> guidance.",
     "Usable generated code needs relevant context that steers the agent toward the project's standards.",
@@ -687,6 +691,7 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Context Layers",
         "Runtime Configuration File Locations",
         "Bundle Deployment And Runtime Setup",
+        "Cross-Harness Evaluation Environment, Permission Profiles, And Audit Evidence",
     ),
     "skills-modularization.html": ("Technology Skills",) + MODULARIZATION_REQUIRED_PHRASES[:3] + (
         "Technology Extension Skills",
@@ -10355,13 +10360,32 @@ class BundleContentTests(unittest.TestCase):
         section_headings = (
             "Runtime Configuration File Locations",
             "Bundle Deployment And Runtime Setup",
-            "Evaluation Isolation And Audit Evidence",
+            "Cross-Harness Evaluation Environment, Permission Profiles, And Audit Evidence",
         )
         section_positions = [
             configuration_text.index(f">{heading}</h2>")
             for heading in section_headings
         ]
         self.assertEqual(sorted(section_positions), section_positions)
+
+        evaluation_section = configuration_text.split(
+            '<section class="section" aria-labelledby="evaluation-title">', maxsplit=1
+        )[1].split("</section>", maxsplit=1)[0]
+        evaluation_subheadings = (
+            "Evaluation Environment And Retained Evidence",
+            "Permission Profiles And Containment Limits",
+            "Audit Validity And Protection Limits",
+        )
+        evaluation_subheading_positions = [
+            evaluation_section.index(
+                f'<h3 class="boundary-heading">{heading}</h3>'
+            )
+            for heading in evaluation_subheadings
+        ]
+        self.assertEqual(
+            sorted(evaluation_subheading_positions),
+            evaluation_subheading_positions,
+        )
 
         helper_path = (
             "${HOME}/.agents/skills/agent-claim-command/scripts/claim.py"

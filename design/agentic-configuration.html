@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Agentic Configuration</title>
+  <title>Coding-Agent Runtime Configuration and Its Cross-Harness Evaluation</title>
   <style>
     :root {
       --color-ink: #18212f;
@@ -474,9 +474,9 @@
     </nav>
 
     <section class="hero" aria-labelledby="page-title">
-      <h1 id="page-title">Agentic Configuration</h1>
+      <h1 id="page-title">Coding-Agent Runtime Configuration And Its Cross-Harness Evaluation</h1>
       <p class="callout"><code>PROJECT.yaml</code> records selected conceptual agents, installed core-skill delivery, user-confirmed folder technologies, Persistence, Commit, and technology delivery. It maps those selections to root and nested <code>AGENTS.md</code> guidance. Basic setup fixes concurrency, Persistence, Commit, and technology delivery. It exposes those choices as Set values. Advanced exposes the supported choices. Most-specific folder guidance wins across supported harnesses. Thin Claude bridges import the same colocated guidance.</p>
-      <p class="boundary">This page describes how coding agent runtimes use generated files.</p>
+      <p class="boundary">This page describes how coding agent runtimes use generated files and how cross-harness evaluations configure and audit those runtimes.</p>
     </section>
 
     <section class="section" aria-labelledby="glossary-title">
@@ -758,9 +758,12 @@
     </section>
 
     <section class="section" aria-labelledby="evaluation-title">
-      <h2 id="evaluation-title">Evaluation Isolation And Audit Evidence</h2>
+      <h2 id="evaluation-title">Cross-Harness Evaluation Environment, Permission Profiles, And Audit Evidence</h2>
+      <h3 class="boundary-heading">Evaluation Environment And Retained Evidence</h3>
       <p class="table-note">The cross-harness evaluation runner uses the same separation between installed catalog, runtime configuration, and retained evidence. It pins the mcp-agent-ops release and installed-runtime digest. It stages an exact catalog beneath a disposable context root and supplies one isolated Codex or external Junie server configuration. It retains session-bound process streams plus exact configuration, catalog, authorization, and allowed output evidence outside the product workspace.</p>
+      <h3 class="boundary-heading">Permission Profiles And Containment Limits</h3>
       <p class="table-note">The MCP Git-lifecycle case gives Codex an exact digest-bound permission profile. It gives Junie an owner-only action policy for the same fifteen MCP operations plus Git add and Git commit. The Codex profile denies network, host-home, and evidence-root access. It grants writes to the disposable workspace, its Git metadata, and the unique evaluator temporary directory. Other system paths remain read-only. The Junie policy controls capabilities but is not filesystem containment.</p>
+      <h3 class="boundary-heading">Audit Validity And Protection Limits</h3>
       <p class="table-note">The audit must contain one call-bearing MCP process stream. A completed call in another stream invalidates exact-once evidence. Each required operation is bound to its privacy-safe argument digest and bounded outcome on the same completed call. An outcome-less completed call is not semantic evidence. These boundaries protect reproducibility and host state; they do not claim hostile-code containment.</p>
     </section>
   </main>
