@@ -4,7 +4,7 @@
 
 - Target: design/object-oriented-agent-and-skill-model.md
 - Completed checklist: design/object-oriented-agent-and-skill-model.review-checklist-structured.md
-- Review basis: the retained user directions for the object-oriented analysis, including the current document-separation, member-notation, and relationship-notation corrections
+- Review basis: the retained user direction for glossary placement, progressive diagram explanation, reference direction, exact-name aggregation, procedure-name lines, conditional dotted lines, Peer Skills, and superclass stand-ins
 
 ## Findings
 
@@ -12,54 +12,45 @@ No material findings.
 
 ## Verified Clarifications
 
-- **CHECK:** DIR-1, DIR-2
-  - **RESULT:** The target is now a standalone reusable method. It links to the separate skill-group index without embedding any group design.
+- **CHECK:** DIR-1, DIR-2, DIR-3
+  - **RESULT:** The glossary is section 15, the standalone notation section and large legend are gone, and each visual element is introduced beside the first example that needs it.
 
-- **CHECK:** DIR-3, DIR-4
-  - **RESULT:** Every concrete skill identity uses +skill, and the method explicitly distinguishes that member from a procedure call.
+- **CHECK:** DIR-4, DIR-5, LOG-7, LOG-8
+  - **RESULT:** The document presents object-oriented analysis as an analogy. It draws no Agent inheritance and uses Structured Artifact Reviewers only as a stand-in for repeated exact-name references.
 
-- **CHECK:** DIR-5, DIR-6
-  - **RESULT:** Function style appears on a concrete SKILL.md node only for the focused whole-skill example. Named multi-procedure skills use exact section titles or clear procedure names.
+- **CHECK:** DIR-6, DIR-7, DIR-8
+  - **RESULT:** Every class reference points from referencing node to referenced node. Open diamonds mean exact skill-name knowledge, while regular arrows mean procedure-name knowledge.
 
-- **CHECK:** DIR-7, DIR-8
-  - **RESULT:** The artifact remains a conceptual analysis and preserves AGENTS.md DII for injected contracts and SKILL.md for concrete definitions.
+- **CHECK:** DIR-9, DIR-12
+  - **RESULT:** Dotted class lines are reserved for conditional loading and state their condition. Sequence messages are solid, so return messages do not reuse the dotted form.
 
-- **CHECK:** DIR-9, DIR-10
-  - **RESULT:** Agent Skills precede Injected Skills, and Peer Skills remain complementary skills reached either by exact name or through injection.
+- **CHECK:** DIR-10
+  - **RESULT:** Injected relationships now read Agent to AGENTS.md DII by regular arrow, then AGENTS.md DII to the selected SKILL.md by open-diamond arrow.
 
-- **CHECK:** DIR-11, LOG-5
-  - **RESULT:** The Cancel-button example remains traceable from user request through Create Workitem, AGENTS.md selection, SKILL.md loading, and provider-specific execution.
+- **CHECK:** DIR-11, LOG-4
+  - **RESULT:** complete-work-item-feature-branch uses an open diamond because it names create-pull-request directly. test-driven-development reaches JUnit or Jest through the Run Project Tests procedure and AGENTS.md selection.
 
-- **CHECK:** DIR-12, LOG-7
-  - **RESULT:** The complex-skill example uses +skill plus separate procedure names and does not turn multiple procedures into one function or an automatic split decision.
+- **CHECK:** DIR-13, LOG-5, LOG-6
+  - **RESULT:** +skill identifies a concrete skill, function style names one cohesive procedure contract, and +procedure selects a section or keyword group inside a multi-procedure skill. The agent-claim example exposes Acquire Claim and Release Claim without implying that the skill must be split.
 
-- **CHECK:** DIR-13, DIR-15
-  - **RESULT:** Solid association arrows now mean exact-name skill use or selection, dotted dependency arrows mean indirect use through an AGENTS.md DII, and each relationship uses one canonical label.
+- **CHECK:** DIR-14, DOC-3
+  - **RESULT:** The standalone method and its adjacent review evidence are the only changed design artifacts. The skill-group diagrams remain unchanged pending review of the convention.
 
-- **CHECK:** DIR-14, LOG-11
-  - **RESULT:** Realization, aggregation, composition, inheritance, and instance classification have distinct line and arrowhead forms. A running Agent object is no longer drawn as an inherited subclass.
+- **CHECK:** DIR-15, LOG-9
+  - **RESULT:** Principal complex examples use current definitions: test-driven-development, agent-claim, complete-work-item-feature-branch, create-pull-request, and review-structured-artifact.
 
-- **CHECK:** DIR-18
-  - **RESULT:** Four explicit direction rules cover arrows, labels, diamonds, and instance links. Every arrowed class relationship is written source first and target second, so its label reads in the same direction as its arrowhead.
+- **CHECK:** LOG-10
+  - **RESULT:** Mermaid supports relationship markers at both endpoints over solid or dashed links, which supports the source-side open diamond and target-side arrowhead forms.
 
-- **CHECK:** DIR-16
-  - **RESULT:** Sequence diagrams use solid messages for requests and actions, dotted messages for returned information, and labels beginning with stable action or Return verbs.
+- **CHECK:** DOC-1, DOC-2, DOC-4, DOC-5
+  - **RESULT:** All forty-three structured assertions have examples and unique definition IDs. Eleven Mermaid blocks have balanced fences, twenty-three class references follow the convention, and all twelve sequence messages are solid.
 
-- **CHECK:** DIR-17
-  - **RESULT:** The convention is applied only to the standalone analysis method and its review evidence. The individual skill-group designs remain unchanged pending user review.
-
-- **CHECK:** LOG-9, LOG-10
-  - **RESULT:** The relation forms follow Mermaid’s object-oriented relationship semantics, and AGENTS.md binding, exact-name implementation selection, and DII realization are represented separately.
-
-- **CHECK:** DOC-1, DOC-2
-  - **RESULT:** All forty-six structured assertions have examples and unique IDs. Retired RULE-31 was not reused.
-
-- **CHECK:** DOC-3, DOC-7, DOC-9, DOC-10
-  - **RESULT:** Group diagrams are absent, links resolve, backticks occur only in Mermaid fences, and retired notation and lifecycle labels are absent.
+- **CHECK:** DOC-7, DOC-9, DOC-10, DOC-12
+  - **RESULT:** Local Markdown links resolve, inline backticks are absent outside Mermaid fences, retired notation and inheritance syntax are absent, and whitespace validation passes.
 
 ## Residual Verification Gap
 
 - **CHECK:** DOC-6
-- **TARGET:** Twelve Mermaid blocks in the target artifact
-- **SYNOPSIS:** Static inspection found balanced fences and suitable classDiagram and sequenceDiagram forms, but no local Mermaid renderer was available.
-- **NEXT CHECK:** Render all twelve blocks when a Mermaid runtime is available and correct any parser-specific display issue before publishing rendered companions.
+- **TARGET:** Eleven Mermaid blocks in the target artifact
+- **SYNOPSIS:** Static inspection found balanced fences and supported classDiagram and sequenceDiagram forms, but no local Mermaid renderer was available.
+- **NEXT CHECK:** Render all eleven blocks when a Mermaid runtime is available and correct any parser-specific display issue before publishing rendered companions.
