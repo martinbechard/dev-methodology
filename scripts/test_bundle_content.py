@@ -1418,7 +1418,17 @@ class BundleContentTests(unittest.TestCase):
                 is not None
                 and (automatic_subject is not None or automatic_passive is not None)
             )
-            return not (governed_prohibition or explicit_artifact_inspection or automatic_load)
+            runtime_discovery_description = re.search(
+                r"\bruntime\b[^.;!?]{0,80}\brules for discovering\b",
+                text,
+                re.IGNORECASE,
+            )
+            return not (
+                governed_prohibition
+                or explicit_artifact_inspection
+                or automatic_load
+                or runtime_discovery_description
+            )
 
         prohibited_examples = (
             "Read the root AGENTS.md before acting.",
@@ -1439,6 +1449,7 @@ class BundleContentTests(unittest.TestCase):
             "Review the existing AGENTS.md artifact.",
             "Investigate whether the harness loads AGENTS.md.",
             "The harness supplies applicable AGENTS.md instructions automatically.",
+            "Each runtime has its own rules for discovering project instructions.",
         )
         for example in prohibited_examples:
             with self.subTest(prohibited_example=example):
@@ -7804,11 +7815,11 @@ class BundleContentTests(unittest.TestCase):
             "Claim Limits",
             "Lifecycle Handoffs",
             "Execution Safeguards",
-            "1 · User Question",
-            "2 · Preserved Context",
-            "3 · Decision Record",
-            "4 · Same-Thread Resume",
-            "5 · Outcome Routing",
+            "1 · Recorded State",
+            "2 · Clear Question",
+            "3 · Consequences And Boundary",
+            "4 · Decision Record",
+            "5 · Same-Thread Resume",
             "Evidence Boundaries",
             "Thread Evidence Boundary:",
             "Integration Cleanup",
@@ -7838,7 +7849,7 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertEqual(1, lifecycle_text.count('class="lifecycle-rail"'))
         self.assertEqual(1, lifecycle_text.count('class="status-figure"'))
-        self.assertEqual(2, lifecycle_text.count('class="sequence-figure"'))
+        self.assertEqual(3, lifecycle_text.count('class="sequence-figure"'))
         self.assertEqual(1, lifecycle_text.count('class="thread-model-figure"'))
         self.assertEqual(1, lifecycle_text.count('class="steward-sequence-figure"'))
         self.assertEqual(1, lifecycle_text.count('class="branch-figure"'))
@@ -7894,7 +7905,6 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(phrase, lifecycle_text)
 
         for obsolete_phrase in (
-            "Codex task",
             "One user-visible Dev Orchestrator task",
             "ten are Running",
             "SHARED_CHECKOUT_RELEASE_REQUIRED",
@@ -9083,6 +9093,19 @@ class BundleContentTests(unittest.TestCase):
                             if dependency not in target["allowedAgentDependencies"]
                         ],
                     )
+                elif entry["id"] == "methodology-maintainer":
+                    self.assertEqual(
+                        ["methodology-artifact-reviewer", "dev-verifier"],
+                        target["allowedAgentDependencies"],
+                    )
+                    self.assertEqual(
+                        ["dev-skill-lint-reviewer"],
+                        [
+                            dependency
+                            for dependency in role.get("agentDependencies", [])
+                            if dependency not in target["allowedAgentDependencies"]
+                        ],
+                    )
                 else:
                     self.assertEqual(
                         role.get("agentDependencies", []),
@@ -9134,7 +9157,7 @@ class BundleContentTests(unittest.TestCase):
                         },
                     )
                 elif entry["id"] == "dev-backlog-coordinator":
-                    self.assertEqual(6, len(scenarios["scenarios"]))
+                    self.assertEqual(7, len(scenarios["scenarios"]))
                 elif entry["id"] == "dev-backlog-watchdog":
                     self.assertEqual(4, len(scenarios["scenarios"]))
                 else:

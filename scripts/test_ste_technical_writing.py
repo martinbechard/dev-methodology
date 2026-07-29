@@ -214,7 +214,7 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
             all(edge["kind"] == "fixed" for edge in explorer_edges)
         )
 
-    def test_documentation_roles_and_codex_profile_use_gpt_55_medium(self) -> None:
+    def test_documentation_roles_and_codex_profile_use_gpt_55_high(self) -> None:
         build_skill_docs = _load_build_module()
         skills = set(build_skill_docs.build_payload()["skills"])
         roles = build_skill_docs.load_role_definitions(skills)
@@ -233,7 +233,7 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
             CODEX_PROFILES_PATH.read_text(encoding="utf-8")
         )["profiles"]
         self.assertEqual(
-            {"model": "gpt-5.5", "effort": "medium"},
+            {"model": "gpt-5.5", "effort": "high"},
             profiles["documentation"],
         )
 
@@ -262,7 +262,7 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
                 )
                 parsed = tomllib.loads(rendered)
                 self.assertEqual("gpt-5.5", parsed["model"])
-                self.assertEqual("medium", parsed["model_reasoning_effort"])
+                self.assertEqual("high", parsed["model_reasoning_effort"])
 
     def test_non_codex_documentation_profile_mappings_remain_native(self) -> None:
         expected = {
