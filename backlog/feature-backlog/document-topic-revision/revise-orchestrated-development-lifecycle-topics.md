@@ -1,6 +1,6 @@
 # Revise the Orchestrated Development Lifecycle Document Topics
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/feature-backlog/document-topic-revision/revise-orche
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 Launch Reservation: reserve-nine-document-topic-revisions-019fa9bb-07; one bounded live launch handshake
 Normalized Objective: Revise the Orchestrated Development Lifecycle Document Topics.
@@ -37,6 +37,23 @@ Lifecycle Claim Evidence: reserve-nine-document-topic-revisions-019fa9bb; outcom
 - Reserved Base/Main Commit: 36b94050ae97efdc664b33bb590016029c54af9b.
 - Provider-Mutation Claim Evidence: accept-orchestrated-lifecycle-019fabe9 acquired by Dev Backlog Steward for this exact backlog file; claim event caa2ddf0-f65c-4dea-a3cc-83b0d72ae313.
 - Starting Evidence: Parent Coordinator's durable reservation was committed at 2c2a17fdf119e053cf2d158587dc5b8fe225f340; the current clean primary-main acceptance base was 344ba96ab4e5aa279b3185863d2b6786d506572d.
+
+## Blocked Handoff
+
+- Transition: Running -> Blocked.
+- Recorded At: 2026-07-29T04:39:12Z.
+- Coordinator Disposition: Immutable exhausted-correction disposition from Parent Coordinator Thread 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread And Root Agent Task: 019fabe9-b4c9-7dc3-95f0-4951be6d8bc1; preserve this same task for any resumption.
+- Preserved Delivery Identity: branch codex/revise-orchestrated-development-lifecycle-topics; worktree /Users/martinbechard/.codex/worktrees/3688/dev-methodology.
+- Preserved Candidate: clean commit 8656d2e8cb342cf0066ad2da8cd5bf10e6e5fe0f; exact candidate scope design/orchestrated-development-lifecycle.html and scripts/test_bundle_content.py.
+- Preserved Verification And Review Evidence: editorial GOOD and methodology GOOD.
+- Exact Blocker: Final code review found that removal of both provider none qualifiers still passes and that mutating the exact Root Orchestrator -> Steward actors still passes. Two bounded corrections already targeted this semantic-guard criterion, and no third same-cycle retry is authorized.
+- Blocker Owner: Dev Backlog Coordinator and methodology authority.
+- Unblock Condition: Explicit Coordinator or methodology-authority recovery that changes the exhausted-correction constraint or supplies an independently accepted test remedy without another same-cycle retry.
+- Requested Coordinator Recovery Action: Reconcile the exhausted-correction constraint or accept an independent remedy; do not authorize another same-cycle correction retry.
+- Resource Disposition: No live task claim or integration resource is retained.
+- Safe To Resume: No. Resumption must use this same canonical task, first restore Ready after the unblock condition is met, then perform distinct Ready -> Starting and Starting -> Running transitions.
+- Provider-Mutation Claim Evidence: block-orchestrated-lifecycle-019fabe9 acquired by Dev Backlog Steward for this exact backlog file; claim event 9d61abde-98b6-463a-9a5b-f2f4c6f7c7aa.
 
 Series: backlog/feature-backlog/document-topic-revision/index.md
 
