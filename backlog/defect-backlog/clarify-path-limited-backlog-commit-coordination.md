@@ -1,10 +1,10 @@
 # Clarify path-limited backlog commit coordination
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator dispatch reservation
 
 Provider: file
 
@@ -41,7 +41,7 @@ Canonical Root Agent Task: 019fab2d-d9ac-7a82-8107-04260716d4d0
 
 Launch Reservation: One bounded live handshake for the canonical work-item Thread.
 
-Dispatch Time: 2026-07-29T00:16:18.701278Z
+Dispatch Time: 2026-07-29T01:17:14.465238Z
 
 Normalized Objective: Clarify and enforce claim-scoped, path-limited file-provider Git mutations for the exact provider record while preserving unrelated primary-worktree state.
 
@@ -51,11 +51,17 @@ Branch: codex/clarify-path-limited-backlog-commit-019fab2d
 
 Worktree: /Users/martinbechard/.codex/worktrees/95f4/dev-methodology
 
-Observed Launch Evidence: Parent Coordinator authorized the bounded reservation. The canonical Thread and root task identity are recorded for the live handoff.
+Observed Launch Evidence: Parent Dev Backlog Coordinator authorized one bounded resumption reservation for the preserved canonical Thread and root task identity.
 
 Required Next Lifecycle Transition: The same canonical task's root Dev Orchestrator must record Starting to Running before any implementation or approval work.
 
 Conversation-Title Handoff: Synchronized with the Parent Coordinator; the title is display-only and does not alter the canonical provider identity or mutation scope.
+
+Resumption Ready Commit: e3ca0888553d908420bf2df3718a06b757629885
+
+Resumption Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim ready-starting-clarify-path-limited-019fab2d; journal event 1a61bfbc-a14a-4b9a-a6d3-347718f313d5; exact path backlog/defect-backlog/clarify-path-limited-backlog-commit-coordination.md.
+
+Approved Scope and Preflight Gate: The controlling answer approves only skills/create-file-work-item/SKILL.md and skills/manage-file-work-items/SKILL.md. No source mutation occurs until an approval record exists and both exact supported preflights return ALLOWED.
 
 ## Running Evidence
 
