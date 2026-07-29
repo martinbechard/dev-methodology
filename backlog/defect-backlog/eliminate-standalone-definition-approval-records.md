@@ -1,6 +1,6 @@
 # Eliminate Standalone Definition Approval Records
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -165,3 +165,31 @@ Next Reconciliation: No later than 2026-07-29T18:34:03Z.
 Required Next Lifecycle Transition: The same root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
 
 This current handoff uses the no-short-settlement contract. The historical settlement evidence above remains preserved as prior attempt evidence.
+
+## Active Execution Evidence
+
+Transition: Starting -> Running.
+
+Parent Coordinator Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+
+Canonical Thread: 019faeef-ff87-74b0-b834-79a811be1656.
+
+Root Agent Task: 019faeef-ff87-74b0-b834-79a811be1656.
+
+Root Role: Dev Orchestrator.
+
+Owner: Root Dev Orchestrator.
+
+Branch: codex/eliminate-standalone-definition-approval-records.
+
+Worktree: /Users/martinbechard/.codex/worktrees/00b6/dev-methodology.
+
+Started At: 2026-07-29T18:21:38Z.
+
+Provider Claim: provider-running-eliminate-standalone-definition-approval-records-019faeef; acquired 2026-07-29T18:21:30.006119Z.
+
+Current Phase: Running with implementation pending.
+
+Owner Acceptance: Accepted by Root Dev Orchestrator through canonical task 019faeef-ff87-74b0-b834-79a811be1656 at 2026-07-29T18:21:38Z.
+
+Reconciliation: Starting -> Running recorded by Dev Backlog Steward on primary main.
