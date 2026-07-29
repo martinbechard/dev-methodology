@@ -1,14 +1,14 @@
 # Clarify path-limited backlog commit coordination
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
-Owner: Root Dev Orchestrator for canonical task 019fab2d-d9ac-7a82-8107-04260716d4d0
+Owner: Completed by the Root Dev Orchestrator for canonical task 019fab2d-d9ac-7a82-8107-04260716d4d0
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/clarify-path-limited-backlog-commit-coordination.md
+Provider Reference: backlog/completed-backlog/defects/clarify-path-limited-backlog-commit-coordination.md
 
 Completion: direct-main
 
@@ -84,6 +84,34 @@ Starting Reservation Commit: 8ae2360cbe52e799d4653fe99a1aad49b36bec9c
 Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim starting-running-clarify-path-limited-019fab2d; journal event bc2405de-c2f8-4584-85e6-d6555e74b906; exact path backlog/defect-backlog/clarify-path-limited-backlog-commit-coordination.md.
 
 Controlling Approval and Gate: The dated controlling answer “ok I approve” applies only to skills/create-file-work-item/SKILL.md and skills/manage-file-work-items/SKILL.md. Do not mutate either source path until an approval record exists and both exact supported preflights return ALLOWED.
+
+## Completion Evidence
+
+Completion Selector: direct-main
+
+Canonical Work-Item Thread and Root Task: 019fab2d-d9ac-7a82-8107-04260716d4d0
+
+Accepted Source Candidate: 3602302cf2e980c67fbbfc7f3319d098aa38e496
+
+Integration Commit and Observed Main Tip: eb72fe50200218820d096db744b483fae1b3f9ff on main
+
+Integration Mapping: The accepted source candidate was mapped non-ancestrally into the observed main integration commit.
+
+Independent Review: APPROVED
+
+Verifier: PASS
+
+Exact Approval Preflights: ALLOWED for skills/create-file-work-item/SKILL.md and skills/manage-file-work-items/SKILL.md.
+
+Integration Claim Evidence: Acquired event 049d6968-274b-4b28-833b-3b8db3b96bc6; released event f67776e4-d3d7-4582-b8a3-9d694e3b1a77.
+
+Rejected Candidates: dd36a8485c783f70dad5afbdcabe3a1cab4327c9 and d76e67c7a2eb277e5a4e742202f3c7723fdf8046 were not integrated.
+
+Wording Correction: 314b9a5b57025bcb6cc79e0c3b6a5abd09907e66 narrowed the delivery contract before completion.
+
+Approved Scope and Exclusions: The controlling approval applies only to skills/create-file-work-item/SKILL.md and skills/manage-file-work-items/SKILL.md. skills/agent-claim/SKILL.md, skills/codex-workitem-coordination/SKILL.md, and arbitrary non-backlog files remained excluded.
+
+Completed At: 2026-07-29T02:48:54.826401Z
 
 ## Summary
 
