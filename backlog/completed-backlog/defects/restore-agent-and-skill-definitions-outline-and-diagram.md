@@ -1,12 +1,12 @@
 # Restore Agent And Skill Definitions Outline And Simplify Diagrams
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/restore-agent-and-skill-definitions-outline-and-diagram.md
+Provider Reference: backlog/completed-backlog/defects/restore-agent-and-skill-definitions-outline-and-diagram.md
 
 Completion: direct-main
 
@@ -185,6 +185,42 @@ Started At: 2026-07-29T16:32:28.894865Z (primary-main claim acquisition and owne
 Starting Baton: e49a3f21c723f1154bffb1cf18e2730e12267e91 on primary main.
 
 Claim Evidence: starting-to-running-019faeb3 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-29T16:32:28.894865Z; claim journal event a908d777-3833-4193-9da0-abe17b73f429.
+
+## Completion Evidence
+
+Lifecycle Transition: Running -> Completed.
+
+Completion Disposition: READY.
+
+Completion Selector: direct-main.
+
+Accepted Source Commit: 0078d66b17de1d6ffe0c83eaf5e5818f4236c079.
+
+Integration Commit: 45e2eca0043012a650d79345e2544ac1d71fc38b.
+
+Observed Main: configured local main at 45e2eca0043012a650d79345e2544ac1d71fc38b; no remote publication was requested.
+
+Integration Reachability: 45e2eca0043012a650d79345e2544ac1d71fc38b is ancestor-or-equal to observed main.
+
+Source-To-Integration Mapping: non-ancestral cherry-pick/rebase with identical patch SHA-256 8db3d3d91f1be8897676529be2a64a40bab5d94bd1613927fb4877a22049a212.
+
+Independent Review: GOOD, with no findings.
+
+Independent Verification: PASS. Exact baseline-only support-checklist failures reproduced unchanged.
+
+Source Checks: 54 focused checks passed; build-skill-docs --check passed; build-agent-skill-hierarchy --check passed; py_compile passed; Git diff checks passed; retired-name sweep was empty.
+
+Post-Main Checks: 15 outline/hierarchy checks passed; both freshness checks passed; retired-name sweep was empty; Git diff check passed.
+
+Scoped Omission: live browser verification remains unproven because of the macOS process sandbox.
+
+Integration Claim Evidence: integrate-restore-definitions-019faeb3 acquired SHARED_CHECKOUT_ACQUIRED with journal a7ee63c2-6ec8-4710-8ab0-95d9855d205f and released RELEASED with journal fe0397d4-d64b-4f8a-bc11-016966958435.
+
+Provider Claim Evidence: complete-restore-definitions-019faeb3 acquired SHARED_CHECKOUT_ACQUIRED at 2026-07-29T17:00:15.816140Z; claim journal event 287682e5-832a-4a49-bf2a-360bd1c8721c.
+
+Completed At: 2026-07-29T17:00:28Z.
+
+Completed Archive Path: backlog/completed-backlog/defects/restore-agent-and-skill-definitions-outline-and-diagram.md.
 
 ## Notes
 
