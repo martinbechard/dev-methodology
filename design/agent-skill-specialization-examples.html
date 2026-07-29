@@ -416,11 +416,15 @@
     }
 
     .site-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
       padding-top: var(--space-4);
     }
 
     .site-brand {
       display: inline-flex;
+      min-width: 0;
       align-items: center;
       gap: var(--space-3);
       color: var(--color-ink);
@@ -468,12 +472,11 @@
 <header class="site-header">
   <a class="site-brand" href="../index.html">
     <img class="site-logo" src="../logo.png" alt="DevConsult Canada logo">
-    <span>AI-Assisted Coding Toolkit</span>
+    <span>AI-Assisted Coding Toolkit Index</span>
   </a>
 </header>
 <main>
   <nav class="document-nav" aria-label="Documentation navigation">
-    <a href="../index.html">Back to Documentation Index</a>
     <div class="document-sequence">
       <a href="generic-agent-definitions-source.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Generic Agent Definitions Source</a>
       <a href="orchestrated-development-lifecycle.html" rel="next">Next: Orchestrated Development Lifecycle <span aria-hidden="true">&rarr;</span></a>

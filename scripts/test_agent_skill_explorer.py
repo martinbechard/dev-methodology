@@ -29,7 +29,12 @@ class AgentSkillExplorerTests(unittest.TestCase):
         self.assertNotIn("https://", page)
         self.assertNotIn("http://", page)
         self.assertIn('class="site-header"', page)
-        self.assertIn('href="../index.html">Back to Documentation Index</a>', page)
+        self.assertIn(
+            '<a class="site-brand" href="../index.html">',
+            page,
+        )
+        self.assertIn("<span>AI-Assisted Coding Toolkit Index</span>", page)
+        self.assertNotIn("Back to Documentation Index", page)
         self.assertIn(
             'href="agent-and-skill-definitions.html">Back to Core Agent and Skills</a>',
             page,

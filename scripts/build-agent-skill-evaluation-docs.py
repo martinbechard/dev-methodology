@@ -1060,8 +1060,8 @@ def render_page(model: dict[str, object]) -> str:
     p {{ margin: 0; color: var(--muted); }}
     p + p {{ margin-top: .65rem; }}
     .site-header, main, .site-footer {{ width: min(100% - 2rem,var(--content)); margin-inline: auto; }}
-    .site-header {{ display: flex; align-items: center; padding-top: 1.2rem; }}
-    .site-brand {{ display: inline-flex; align-items: center; gap: .75rem; color: var(--ink); font-weight: 800; text-decoration: none; }}
+    .site-header {{ display: flex; align-items: center; gap: .75rem; padding-top: 1.2rem; }}
+    .site-brand {{ display: inline-flex; min-width: 0; align-items: center; gap: .75rem; color: var(--ink); font-weight: 800; text-decoration: none; }}
     .site-logo {{ width: 2.35rem; height: 2.35rem; border-radius: .45rem; }}
     main {{ padding: 2rem 0 5rem; }}
     .document-nav, .document-sequence {{ display: flex; flex-wrap: wrap; gap: .65rem; }}
@@ -1124,11 +1124,10 @@ def render_page(model: dict[str, object]) -> str:
 </head>
 <body>
 <header class="site-header">
-  <a class="site-brand" href="../index.html"><img class="site-logo" src="../logo.png" alt="DevConsult Canada logo"><span>AI-Assisted Coding Toolkit</span></a>
+  <a class="site-brand" href="../index.html"><img class="site-logo" src="../logo.png" alt="DevConsult Canada logo"><span>AI-Assisted Coding Toolkit Index</span></a>
 </header>
 <main>
   <nav class="document-nav" aria-label="Documentation navigation">
-    <a href="../index.html">Back to Documentation Index</a>
     <div class="document-sequence"><a href="agent-and-skill-definitions.html"><span aria-hidden="true">&larr;</span> Core Agent and Skills</a></div>
   </nav>
   <section class="hero" aria-labelledby="page-title">

@@ -76,9 +76,10 @@
       width: min(100% - 2rem, var(--content));
       margin-inline: auto;
     }
-    .site-header { padding-top: 1.2rem; }
+    .site-header { display: flex; align-items: center; gap: 0.75rem; padding-top: 1.2rem; }
     .site-brand {
       display: inline-flex;
+      min-width: 0;
       align-items: center;
       gap: 0.75rem;
       color: var(--ink);
@@ -570,12 +571,11 @@
 <header class="site-header">
   <a class="site-brand" href="../index.html">
     <img class="site-logo" src="../logo.png" alt="DevConsult Canada logo">
-    <span>AI-Assisted Coding Toolkit</span>
+    <span>AI-Assisted Coding Toolkit Index</span>
   </a>
 </header>
 <main>
   <nav class="document-nav" aria-label="Documentation navigation">
-    <a href="../index.html">Back to Documentation Index</a>
     <div class="document-sequence">
       <a href="agent-skill-specialization-examples.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Examples</a>
       <a href="documentation-templates.html" rel="next">Next: Documentation Templates <span aria-hidden="true">&rarr;</span></a>

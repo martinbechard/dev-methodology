@@ -49,6 +49,20 @@ Summary: Presents the generated agent and skill relationship contract as an offl
       background: #091b2a;
     }
     .site-header a { font-weight: 700; }
+    .site-brand {
+      display: inline-flex;
+      min-width: 0;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .site-logo {
+      width: 2.35rem;
+      height: 2.35rem;
+      border-radius: 0.45rem;
+      object-fit: cover;
+    }
     .masthead {
       display: grid;
       grid-template-columns: minmax(0, 1.5fr) minmax(16rem, 0.7fr);
@@ -145,7 +159,10 @@ Summary: Presents the generated agent and skill relationship contract as an offl
 </head>
 <body>
   <header class="site-header">
-    <a href="../index.html">Back to Documentation Index</a>
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../logo.png" alt="DevConsult Canada logo">
+      <span>AI-Assisted Coding Toolkit Index</span>
+    </a>
     <a href="agent-and-skill-definitions.html">Back to Core Agent and Skills</a>
   </header>
   <section class="masthead" aria-labelledby="page-title">
