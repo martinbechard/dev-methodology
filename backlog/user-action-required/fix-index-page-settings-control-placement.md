@@ -1,14 +1,20 @@
 # Fix Index Page Settings Control Placement
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/fix-index-page-settings-control-placement.md
+Provider Reference: backlog/user-action-required/fix-index-page-settings-control-placement.md
 
 Completion: direct-main
+
+Owner: Unowned
+
+## Question For The User
+
+Do you authorize replaying commits 3b5116fcb658312ad10544041d2eb9c3f445ef65, e84298ebc28c87e189514cc0e3bc7796e41975e3, and 4c06ab5e002b18706834c15b31317bfb3594d76f onto shared primary main, changing only index.html and scripts/test_bundle_content.py?
 
 ## Summary
 
@@ -223,6 +229,34 @@ Started At: 2026-07-29T17:08:12.154427000Z (Root Dev Orchestrator acceptance wit
 Starting Baton: 67a3dc5187e1862cc02af8b997ca69fb690e5a08 on primary main.
 
 Claim Evidence: starting-running-resume-019faec8 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-29T17:08:38.845739Z; claim journal event 713cdbce-80e6-4a05-aacc-5ae3fdfe98c4.
+
+## User Action Required Evidence
+
+Transition: Running -> User Action Required.
+
+Canonical Thread and Root Agent Task: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Question: Do you authorize replaying commits 3b5116fcb658312ad10544041d2eb9c3f445ef65, e84298ebc28c87e189514cc0e3bc7796e41975e3, and 4c06ab5e002b18706834c15b31317bfb3594d76f onto shared primary main, changing only index.html and scripts/test_bundle_content.py?
+
+Why Input Is Required: Two execution-safety rejections require explicit authorization before replaying the preserved private candidate commits onto shared primary main.
+
+Risk: Shared main gains only the reviewed and verified index-header layout and test commits; unrelated paths are excluded.
+
+Preserved Candidate Commits: 3b5116fcb658312ad10544041d2eb9c3f445ef65; e84298ebc28c87e189514cc0e3bc7796e41975e3; 4c06ab5e002b18706834c15b31317bfb3594d76f.
+
+Review and Verification: GOOD review; focused PASS; browser PASS.
+
+Current Main Observation: Clean primary main at 488bfe67a907aab1f121f59fd4366d85469f0432; prior claims released.
+
+Approve: Permits the same canonical task to follow User Action Required -> Ready -> Starting -> Running, then replay exactly the preserved commits.
+
+Defer: Preserves the candidate and evidence without shared-main delivery.
+
+Decline: Ends shared-main delivery and reverts the candidate disposition without extra scope.
+
+Prohibited Unattended Action: Do not replay, integrate, alter source files, or create a replacement task until the user answers this exact question.
+
+Resolution: Pending.
 
 ## Notes
 
