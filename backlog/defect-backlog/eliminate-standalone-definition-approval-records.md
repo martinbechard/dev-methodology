@@ -1,6 +1,6 @@
 # Eliminate Standalone Definition Approval Records
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -193,3 +193,43 @@ Current Phase: Running with implementation pending.
 Owner Acceptance: Accepted by Root Dev Orchestrator through canonical task 019faeef-ff87-74b0-b834-79a811be1656 at 2026-07-29T18:21:38Z.
 
 Reconciliation: Starting -> Running recorded by Dev Backlog Steward on primary main.
+
+## Blocked Evidence
+
+Transition: Running -> Blocked.
+
+Blocked At: 2026-07-29T19:10:33Z.
+
+Canonical Thread: 019faeef-ff87-74b0-b834-79a811be1656.
+
+Root Agent Task: 019faeef-ff87-74b0-b834-79a811be1656.
+
+Owner: Unowned.
+
+Preserved Execution Owner and Coordination State: Root Dev Orchestrator accepted the canonical task; Running execution is suspended pending the configured-root validation route.
+
+Exact Blocker: Configured mcp-agent-ops skill_validate rejects candidate, source, and primary-checkout paths as outside configured skill roots without inspecting either approved skill; no dynamic configured-root mutation tool is exposed, and the structured rejection forbids fallback.
+
+Blocker Owner: Project Configurator / configured validator infrastructure.
+
+Unblock Condition: An authorized configured-root route can validate exactly skills/codex-workitem-coordination and skills/create-file-work-item from candidate 7cca88fee05db053e452729fcc094cc8309623ed.
+
+Requested Coordinator Recovery Action: Establish the authorized configured-root validation route, then resume this same canonical task through Blocked -> Ready -> Starting -> Running and perform one genuine read-only skill_validate attempt.
+
+Preserved Candidate: 7cca88fee05db053e452729fcc094cc8309623ed.
+
+Integration Branch: codex/eliminate-standalone-definition-approval-records-integration-019faeef.
+
+Integration Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/eliminate-standalone-definition-approval-records-integration-019faeef.
+
+Source Mapping: 13997b4db187cac289920d530752c3d74b69ef60 + c817df1735d035a1d7b2ae3bda162400a86d6e2e -> 7cca88fee05db053e452729fcc094cc8309623ed.
+
+Code Review: Fresh independent code review GOOD.
+
+Focused Verification: PASS.
+
+Methodology Review: Blocked solely by the configured-root skill_validate rejection.
+
+Resource Disposition: No source or integration mutation performed; candidate, branch, worktree, review, and verification evidence are preserved.
+
+Safe-to-Resume Assessment: Safe only after the stated unblock condition is satisfied and the normal Blocked -> Ready -> Starting -> Running lifecycle sequence is recorded for this same canonical task.
