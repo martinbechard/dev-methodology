@@ -1,6 +1,6 @@
 # Archive Terminal Work-Item Series
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -110,6 +110,30 @@ Exact user wording and provenance:
 The approval covers exactly the governed canonical source listed above and only the allowed dependent artifacts listed separately. Additional governed paths require new explicit, scope-specific user approval.
 
 ## Notes
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+Parent Coordination Thread: 019faeef-e932-7352-a53d-fdb1535f5994.
+Launch Reservation: One synchronized bounded launch reservation in the adaptive-capacity batch.
+Normalized Objective: Archive terminal work-item series.
+Dispatch Time: 2026-07-29T17:35:38Z.
+Intended Root Role: Root Dev Orchestrator.
+Canonical Conversation and Root Agent Task: 019faeef-e932-7352-a53d-fdb1535f5994.
+Direct Conversation-Title Handoff: Archive Terminal Work-Item Series.
+Branch: codex/archive-terminal-work-item-series-019faeef.
+Worktree: /Users/martinbechard/.codex/worktrees/2d69/dev-methodology.
+Owner: Unowned pending accepted root.
+Required Next Lifecycle Transition: The same root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
+Reconciliation: Pending.
+
+## Starting Settlement Evidence
+
+Settlement Window: 2026-07-29T17:35:38Z to 2026-07-29T17:36:38Z (exactly 60 seconds; shared adaptive-capacity batch window).
+Runtime Launch Result: Direct conversation-title handoff accepted for the synchronized batch.
+Canonical Conversation: 019faeef-e932-7352-a53d-fdb1535f5994.
+Owner Acceptance: Pending.
+Reconciliation: Pending.
 
 - Commit b5a48776d8dca621f4dc069e8805b4d924fe3abc is migration evidence, not a substitute for the steady-state contract and regression tests.
 - Do not reintroduce a Status field on index.md merely to make terminal state visible; derive series state from required children and use archive location as terminal evidence.

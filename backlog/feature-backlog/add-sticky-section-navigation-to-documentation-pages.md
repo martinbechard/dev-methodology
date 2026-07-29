@@ -1,6 +1,6 @@
 # Add Sticky Section Navigation To Documentation Pages
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -70,5 +70,29 @@ None.
 None.
 
 ## Notes
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+Parent Coordination Thread: 019faef0-2663-7e50-a6ab-0de973661fbf.
+Launch Reservation: One synchronized bounded launch reservation in the adaptive-capacity batch.
+Normalized Objective: Add sticky section navigation to documentation pages.
+Dispatch Time: 2026-07-29T17:35:38Z.
+Intended Root Role: Root Dev Orchestrator.
+Canonical Conversation and Root Agent Task: 019faef0-2663-7e50-a6ab-0de973661fbf.
+Direct Conversation-Title Handoff: Add Sticky Section Navigation To Documentation Pages.
+Branch: codex/add-sticky-section-navigation-to-documentation-pages.
+Worktree: /Users/martinbechard/.codex/worktrees/cf9b/dev-methodology.
+Owner: Unowned pending accepted root.
+Required Next Lifecycle Transition: The same root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
+Reconciliation: Pending.
+
+## Starting Settlement Evidence
+
+Settlement Window: 2026-07-29T17:35:38Z to 2026-07-29T17:36:38Z (exactly 60 seconds; shared adaptive-capacity batch window).
+Runtime Launch Result: Direct conversation-title handoff accepted for the synchronized batch.
+Canonical Conversation: 019faef0-2663-7e50-a6ab-0de973661fbf.
+Owner Acceptance: Pending.
+Reconciliation: Pending.
 
 This item applies to HTML documentation detail pages linked from the toolkit index. It does not add a section menu to the root index page, whose primary purpose is choosing a document rather than navigating a long document body.

@@ -1,6 +1,6 @@
 # Eliminate Standalone Definition Approval Records
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -107,5 +107,29 @@ Approved at creation on 2026-07-29 by the direct user request in Codex task `019
 This approval is limited to the two governed canonical skill-definition paths listed above and the dependent cleanup artifacts listed separately. It does not authorize changes to conceptual agent definitions, schemas, model profiles, skill metadata, adapter-owned skill definitions, or any additional distributed skill definition. Discovery of another governed canonical path requires new explicit user approval recorded in this work item before that path is mutated.
 
 ## Notes
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+Parent Coordination Thread: 019faeef-ff87-74b0-b834-79a811be1656.
+Launch Reservation: One synchronized bounded launch reservation in the adaptive-capacity batch.
+Normalized Objective: Eliminate standalone definition approval records.
+Dispatch Time: 2026-07-29T17:35:38Z.
+Intended Root Role: Root Dev Orchestrator.
+Canonical Conversation and Root Agent Task: 019faeef-ff87-74b0-b834-79a811be1656.
+Direct Conversation-Title Handoff: Eliminate Standalone Definition Approval Records.
+Branch: codex/eliminate-standalone-definition-approval-records.
+Worktree: /Users/martinbechard/.codex/worktrees/00b6/dev-methodology.
+Owner: Unowned pending accepted root.
+Required Next Lifecycle Transition: The same root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
+Reconciliation: Pending.
+
+## Starting Settlement Evidence
+
+Settlement Window: 2026-07-29T17:35:38Z to 2026-07-29T17:36:38Z (exactly 60 seconds; shared adaptive-capacity batch window).
+Runtime Launch Result: Direct conversation-title handoff accepted for the synchronized batch.
+Canonical Conversation: 019faeef-ff87-74b0-b834-79a811be1656.
+Owner Acceptance: Pending.
+Reconciliation: Pending.
 
 This item authorizes cleanup delivery but does not perform it during work-item creation. Preserve unrelated working-tree and backlog state.

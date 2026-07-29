@@ -1,6 +1,6 @@
 # Classify Dev Backlog Watchdog As Backlog Management
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -66,5 +66,29 @@ None.
 None.
 
 ## Notes
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+Parent Coordination Thread: 019faeef-c808-7a62-a004-15f9986d7b14.
+Launch Reservation: One synchronized bounded launch reservation in the adaptive-capacity batch.
+Normalized Objective: Classify Dev Backlog Watchdog as Backlog Management.
+Dispatch Time: 2026-07-29T17:35:38Z.
+Intended Root Role: Root Dev Orchestrator.
+Canonical Conversation and Root Agent Task: 019faeef-c808-7a62-a004-15f9986d7b14.
+Direct Conversation-Title Handoff: Classify Dev Backlog Watchdog As Backlog Management.
+Branch: codex/classify-dev-backlog-watchdog-as-backlog-management-019faeef.
+Worktree: /Users/martinbechard/.codex/worktrees/5569/dev-methodology.
+Owner: Unowned pending accepted root.
+Required Next Lifecycle Transition: The same root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
+Reconciliation: Pending.
+
+## Starting Settlement Evidence
+
+Settlement Window: 2026-07-29T17:35:38Z to 2026-07-29T17:36:38Z (exactly 60 seconds; shared adaptive-capacity batch window).
+Runtime Launch Result: Direct conversation-title handoff accepted for the synchronized batch.
+Canonical Conversation: 019faeef-c808-7a62-a004-15f9986d7b14.
+Owner Acceptance: Pending.
+Reconciliation: Pending.
 
 Coordinate implementation with backlog/defect-backlog/restore-agent-and-skill-definitions-outline-and-diagram.md because both items update presentation grouping or hierarchy sources. This is a source-overlap consideration, not a delivery dependency.
