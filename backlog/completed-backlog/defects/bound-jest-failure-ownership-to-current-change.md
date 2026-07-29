@@ -1,16 +1,16 @@
 # Bound Jest failure ownership to the current change
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/bound-jest-failure-ownership-to-current-change.md
+Provider Reference: backlog/completed-backlog/defects/bound-jest-failure-ownership-to-current-change.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -26,7 +26,7 @@ Runtime Thread: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
 
 Root Agent Task: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Next Lifecycle Owner: None — terminal archive
 
 ## Starting Reservation
 
@@ -287,6 +287,26 @@ Preserve all evidence. The parent Dev Backlog Coordinator must record User Actio
 - Exclusions: No other governed definition, generated mirror, application Defect, or unrelated repair is approved.
 - Resulting Disposition: Ready with Owner: Unowned. The parent Dev Backlog Coordinator must separately reserve Ready -> Starting for this preserved canonical Thread. The same root Dev Orchestrator must then separately accept Starting -> Running before any governed definition or delivery mutation.
 - Lifecycle Claim Evidence: uar-ready-approved-resumptions-019fa9bb; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event a7e0c68a-5570-42fe-90e7-460aaad546e9; claimed 2026-07-29T00:04:51.124316Z.
+
+## Completion and Archive Evidence
+
+- Transition: Running -> Completed.
+- Completed At: 2026-07-29T02:59:45Z.
+- Completed Archive Path: backlog/completed-backlog/defects/bound-jest-failure-ownership-to-current-change.md.
+- Accepted Source Candidate: dbb0083aa36205ceee5a92a915754b2fe86260d5.
+- Reconciled Candidate History: 37dc527a473b4c9f4684f2fc736c6b882a6ad7f5 through 7e685cf368e5a30207df172b2c7895ba9a467e00.
+- Final Direct-Main Delivery: 67b85d2d164b364c6c3778762d72064f93d3376c, reachable from current main by graph ancestry.
+- Delivery Changed Path: scripts/test_bundle_content.py.
+- Integration Evidence: Range-diff and byte-equivalent replay evidence reconcile the accepted source through the final delivery.
+- Independent Code Review: ACCEPTED.
+- Artifact Review: GOOD.
+- Independent Verifier: PASS.
+- Established Verification: 139 bundle checks and 13 STE tests passed; skill validation, generated-artifact and documentation freshness, and diff/clean evidence were accepted.
+- Governed Definition Evidence: Approved source and generated-mirror preflights returned ALLOWED_APPROVED_DEFINITION_CHANGE for the authorized scope.
+- Firm Boundary: No further unrelated or pre-existing failure repair was added. Additional failures remain evidence only and do not become an application Defect or scope expansion.
+- Evidence-Only Baseline Failures: The main-only path-limited file-work-item test reproduced on the untouched base, and an unrelated support-checklist generated explorer drift remained unrepaired; neither was made an application Defect.
+- Delivery Claim Evidence: Exact five-file claim acquired as event fa7ef199-37e9-438e-8f65-1008f74e514d and released as event ca4483bd-60ed-4ae0-9949-2e86f97cd53c.
+- Terminal Provider Claim Evidence: completed-archive-bound-jest-019fa9f9; outcome SHARED_CHECKOUT_ACQUIRED; acquire event 06748fe2-64e2-4039-9015-084b8151bd38; claimed 2026-07-29T02:59:11.736522Z.
 
 ## Summary
 
