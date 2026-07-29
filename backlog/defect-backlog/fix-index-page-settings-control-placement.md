@@ -1,6 +1,6 @@
 # Fix Index Page Settings Control Placement
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -151,6 +151,52 @@ Source Mutation Evidence: No primary-main source mutation is accepted by this re
 Required Resumption: The same canonical task must complete a new Ready -> Starting -> Running sequence before further repository mutation.
 
 Reconciliation: Ready.
+
+## Current Dispatch Reservation (Fresh Settlement)
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Launch Reservation: One bounded resume reservation for the same canonical work-item conversation; no additional conversation creation is authorized.
+
+Normalized Objective: Place the settings cog in the right-hand corner of the AI-Assisted Coding Toolkit index-page header so the index uses the same intuitive header alignment as the documentation detail pages.
+
+Dispatch Time: 2026-07-29T17:07:13Z.
+
+Intended Root Role: Root Dev Orchestrator.
+
+Canonical Conversation and Root Agent Task: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Direct Conversation-Title Handoff: Fix Index Page Settings Control Placement.
+
+Branch: codex/fix-index-page-settings-control-placement.
+
+Worktree: /Users/martinbechard/.codex/worktrees/1bad/dev-methodology.
+
+Preserved Private Candidate: 3b5116fcb658312ad10544041d2eb9c3f445ef65; unintegrated.
+
+Owner: Unowned pending accepted root.
+
+Runtime Launch Result: Same canonical conversation reserved for resume through the direct conversation-title handoff.
+
+Owner Acceptance: Pending.
+
+Required Next Lifecycle Transition: The same root Dev Orchestrator must separately accept Starting -> Running before further repository mutation.
+
+Reconciliation: Pending.
+
+## Starting Settlement Evidence (Fresh Settlement)
+
+Settlement Window: 2026-07-29T17:07:13Z to 2026-07-29T17:08:13Z (exactly 60 seconds).
+
+Runtime Launch Result: Same canonical conversation reserved for resume through the direct conversation-title handoff.
+
+Canonical Conversation: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Owner Acceptance: Pending.
+
+Reconciliation: Pending.
 
 ## Notes
 
