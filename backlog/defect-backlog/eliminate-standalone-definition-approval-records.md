@@ -1,6 +1,6 @@
 # Eliminate Standalone Definition Approval Records
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -120,7 +120,7 @@ Source Mutation Evidence: None observed.
 Required Resumption: Reuse the same canonical task through a new Ready -> Starting -> Running sequence.
 Reconciliation: Ready.
 
-## Current Dispatch Reservation
+## Historical Dispatch Reservation
 
 Transition: Ready -> Starting.
 Parent Coordination Thread: 019faeef-ff87-74b0-b834-79a811be1656.
@@ -145,3 +145,23 @@ Owner Acceptance: Pending.
 Reconciliation: Pending.
 
 This item authorizes cleanup delivery but does not perform it during work-item creation. Preserve unrelated working-tree and backlog state.
+
+## Current Starting Handoff Evidence
+
+Transition: Ready -> Starting.
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+Launch Reservation: One root Dev Orchestrator launch requested for the preserved canonical work-item task.
+Normalized Objective: Eliminate standalone definition approval records.
+Dispatch Time: 2026-07-29T18:19:03Z.
+Intended Root Role: Root Dev Orchestrator.
+Launch Result: Requested.
+Canonical Conversation and Root Agent Task: 019faeef-ff87-74b0-b834-79a811be1656.
+Direct Conversation-Title Handoff: Eliminate Standalone Definition Approval Records.
+Branch: codex/eliminate-standalone-definition-approval-records.
+Worktree: /Users/martinbechard/.codex/worktrees/00b6/dev-methodology.
+Owner: Unowned pending accepted root.
+Last Contact: 2026-07-29T18:19:03Z; launch request recorded by Dev Backlog Steward.
+Next Reconciliation: No later than 2026-07-29T18:34:03Z.
+Required Next Lifecycle Transition: The same root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
+
+This current handoff uses the no-short-settlement contract. The historical settlement evidence above remains preserved as prior attempt evidence.
