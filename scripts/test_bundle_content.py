@@ -33,6 +33,13 @@ REPOSITORY_MAINTENANCE_SKILL_PATH = (
     / "dev-methodology-repository-maintenance"
     / "SKILL.md"
 )
+IMPROVE_OUTLINE_SKILL_PATH = (
+    REPOSITORY_ROOT
+    / ".agents"
+    / "skills"
+    / "improve-document-outline"
+    / "SKILL.md"
+)
 SKILLS_ROOT = REPOSITORY_ROOT / "skills"
 ROLES_ROOT = REPOSITORY_ROOT / "agents" / "roles"
 SKILL_CATEGORIES_PATH = REPOSITORY_ROOT / "design" / "skill-categories.yaml"
@@ -672,6 +679,7 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Knowledge Structure",
         "Context Layers",
         "Runtime Configuration File Locations",
+        "Bundle Deployment And Runtime Setup",
     ),
     "skills-modularization.html": ("Technology Skills",) + MODULARIZATION_REQUIRED_PHRASES[:3] + (
         "Technology Extension Skills",
@@ -695,6 +703,7 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Work-Item Backlog",
         "File-Backed Work Items",
         "Agent Roles",
+        "Runtime Coordination Surfaces",
         "Private Workspaces And Delivery Paths",
         "Shared-Resource Coordination",
         "Delivery Stages",
@@ -9163,6 +9172,28 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(phrase, maintenance_skill_text)
                 self.assertNotIn(phrase, agents_text)
 
+    def test_repository_local_outline_improvement_preserves_honest_scores(self) -> None:
+        skill_text = IMPROVE_OUTLINE_SKILL_PATH.read_text(encoding="utf-8")
+        skill_metadata = load_yaml_object_from_frontmatter(
+            IMPROVE_OUTLINE_SKILL_PATH
+        )
+
+        self.assertEqual("improve-document-outline", skill_metadata["name"])
+        self.assertIn("partial scores", skill_metadata["description"])
+
+        for phrase in (
+            "[Create Document Outline](../create-document-outline/SKILL.md)",
+            "Prefer a more truthful structure over a higher percentage.",
+            "Recalculate the moved topic and every sibling whose predecessor changes.",
+            "Reject a reorder that merely transfers a partial score",
+            "a one-child parent created only to remove a sequence score",
+            "Move the explanation, not merely its outline label.",
+            "Keep a partial sequence score",
+            "probable wrong-document topics",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
     def test_development_methodology_guides_skill_rename_cleanup(self) -> None:
         skill_text = (
             SKILLS_ROOT / "development-methodology" / "SKILL.md"
@@ -10032,11 +10063,70 @@ class BundleContentTests(unittest.TestCase):
             'settings.set("harness", filterHarnessToSettings[harnessFilter.value]);',
             configuration_text,
         )
-        self.assertNotIn("Markdown agent definition", locations_section)
-        self.assertNotIn("TOML agent definition", locations_section)
+        self.assertIn(
+            '<tr class="format-heading" data-harness-format="claude gemini junie copilot">',
+            locations_section,
+        )
+        self.assertIn("Markdown Agent Definition Files", locations_section)
+        self.assertNotIn("Standalone TOML Agent Definition", locations_section)
         self.assertIsNone(re.search(r"\bnative\b", configuration_text, re.IGNORECASE))
         self.assertNotIn(".claude/rules", configuration_text)
         self.assertNotIn("&lt;project-root&gt;/.claude/CLAUDE.md", configuration_text)
+
+    def test_agentic_configuration_topics_follow_primary_document_ownership(self) -> None:
+        configuration_text = (
+            REPOSITORY_ROOT / "design" / "agentic-configuration.html"
+        ).read_text(encoding="utf-8")
+        lifecycle_text = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        ).read_text(encoding="utf-8")
+
+        section_headings = (
+            "Runtime Configuration File Locations",
+            "Bundle Deployment And Runtime Setup",
+            "Evaluation Isolation And Audit Evidence",
+        )
+        section_positions = [
+            configuration_text.index(f">{heading}</h2>")
+            for heading in section_headings
+        ]
+        self.assertEqual(sorted(section_positions), section_positions)
+
+        helper_path = (
+            "${HOME}/.agents/skills/agent-claim-command/scripts/claim.py"
+        )
+        root_guidance_end = configuration_text.index(
+            "<h4>Nested Project Instruction Files</h4>"
+        )
+        self.assertIn(helper_path, configuration_text[:root_guidance_end])
+        self.assertEqual(1, configuration_text.count(helper_path))
+
+        nested_group = configuration_text.split(
+            '<th colspan="4" scope="rowgroup">Nested Project Instruction Files',
+            maxsplit=1,
+        )[1].split("</tbody>", maxsplit=1)[0]
+        nested_harnesses = re.findall(
+            r'<tr data-harness-row data-harness="([^"]+)">',
+            nested_group,
+        )
+        self.assertEqual(
+            ["codex", "claude", "gemini", "copilot", "junie"],
+            nested_harnesses,
+        )
+
+        self.assertNotIn(">Coordination Surfaces</h3>", configuration_text)
+        self.assertIn(
+            '<h3 id="runtime-coordination-title">Runtime Coordination Surfaces</h3>',
+            lifecycle_text,
+        )
+        self.assertIn(
+            "Task-list reads, task titles, wake messages, and UI archival",
+            lifecycle_text,
+        )
+        self.assertIn(
+            'href="orchestrated-development-lifecycle.html#runtime-coordination-title"',
+            configuration_text,
+        )
 
     def test_reverse_engineering_uses_structural_code_discovery(self) -> None:
         skill_text = (

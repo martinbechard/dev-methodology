@@ -335,6 +335,13 @@
       font-weight: 400;
     }
 
+    .format-heading th {
+      background: var(--color-soft-blue);
+      color: var(--color-project);
+      font-size: var(--font-sm);
+      text-transform: none;
+    }
+
     tr[hidden] {
       display: none;
     }
@@ -534,9 +541,9 @@
                   <h4>Root Project Instruction Files</h4>
                   <p>Project setup creates a portable <code>AGENTS.md</code> at the project root. <code>PROJECT.yaml</code> selects resource coordination independently as none or agent-claim. When it selects agent-claim, the root guidance references that skill and includes one verified command-line or MCP claim helper. When it selects none, the guidance contains no claim skill or helper.</p>
                   <p>The root guidance names user-confirmed folder technology skills by reference by default. It appends ordered project skill-extension references at the root only. It also records the selected Persistence and Commit routes while shared workflow skills retain procedural ownership. Advanced setup may explicitly select inline technology delivery.</p>
-                  <p>A missing resource-coordination value is a configuration error. A missing claim helper is an error only when agent-claim is selected. Runtime agents use the configured helper and do not try another one.</p>
+                  <p>A missing resource-coordination value is a configuration error. A missing claim helper is an error only when agent-claim is selected. Runtime agents use the configured helper and do not try another one. A generated command-line helper reference resolves to the same current user-scope root as the installed helper. Its standard entry point is <code>${HOME}/.agents/skills/agent-claim-command/scripts/claim.py</code>; generated project guidance may instead render another setup-verified portable helper path.</p>
                   <p>When Persistence is <code>UNSET</code> and durable work-item management is first requested, the agent asks whether to select the available file provider. Approval updates <code>PROJECT.yaml</code> and renders <code>AGENTS.md.candidate</code> for comparison with the existing <code>AGENTS.md</code>. During comparison, project-specific directives are preserved, reusable project guidance moves into project skills when appropriate, and generated guidance is applied only after comparison. Deferral leaves Persistence <code>UNSET</code>; an explicit none selection remains none.</p>
-                  <p>For Claude Code, a thin colocated <code>CLAUDE.md</code> imports that root guidance without duplicating it. The <a href="skills-modularization.html#skill-lifecycle-title">cross-harness skill lifecycle</a> distinguishes embedded content from availability, invocation, application, and proof.</p>
+                  <p>For Claude Code, a thin colocated <code>CLAUDE.md</code> imports that root guidance without duplicating it.</p>
                 </div>
               </li>
               <li class="nested-layer">
@@ -622,6 +629,9 @@
             <td><code>&lt;project-root&gt;/.codex/agents/&lt;agent-name&gt;.toml</code></td>
             <td>One standalone TOML file per agent. Harness-specific fields include the name, description, developer instructions, model, reasoning, sandbox, optional MCP configuration, and <code>[[skills.config]]</code> enablement entries. Those entries select catalog availability; they do not preload skill content.</td>
           </tr>
+          <tr class="format-heading" data-harness-format="claude gemini junie copilot">
+            <th colspan="4">Markdown Agent Definition Files</th>
+          </tr>
           <tr data-harness-row data-harness="claude">
             <td><a href="https://code.claude.com/docs/en/sub-agents">Claude Code</a></td>
             <td><code>~/.claude/agents/&lt;agent-name&gt;.md</code></td>
@@ -704,20 +714,25 @@
             <td><code>&lt;folder-path&gt;/GEMINI.md</code></td>
             <td>Gemini scans ancestor and subdirectory context files, then concatenates all discovered instructions with their source paths.</td>
           </tr>
-          <tr data-harness-row data-harness="junie">
-            <td><a href="https://junie.jetbrains.com/docs/guidelines-and-memory.html">Junie CLI</a></td>
-            <td>Inherited from <code>~/.junie/AGENTS.md</code></td>
-            <td>Not a documented nested guideline location</td>
-            <td>Junie documents root project guidelines rather than nested discovery. Use project skills for task-specific or folder-specific procedures.</td>
-          </tr>
           <tr data-harness-row data-harness="copilot">
             <td><a href="https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions">GitHub Copilot</a></td>
             <td>Inherited from <code>~/.copilot/copilot-instructions.md</code></td>
             <td><code>&lt;project-root&gt;/.github/instructions/&lt;rule-name&gt;.instructions.md</code> or <code>&lt;folder-path&gt;/AGENTS.md</code></td>
             <td>Path-specific instruction files require YAML <code>applyTo</code> frontmatter. Non-root <code>AGENTS.md</code> files are additional rather than primary instructions.</td>
           </tr>
+          <tr data-harness-row data-harness="junie">
+            <td><a href="https://junie.jetbrains.com/docs/guidelines-and-memory.html">Junie CLI</a></td>
+            <td>Inherited from <code>~/.junie/AGENTS.md</code></td>
+            <td>Not a documented nested guideline location</td>
+            <td>Junie documents root project guidelines rather than nested discovery. Use project skills for task-specific or folder-specific procedures.</td>
+          </tr>
         </tbody>
       </table>
+      <p class="table-note">The <a href="generic-agent-definitions-source.html">Generic Agent Definitions Source</a> page owns conceptual-to-harness-specific conversion details. This table covers only what each runtime file contributes, where the harness discovers it, and which incompatible harness-specific rule or format applies.</p>
+    </section>
+
+    <section class="section" aria-labelledby="bundle-runtime-title">
+      <h2 id="bundle-runtime-title">Bundle Deployment And Runtime Setup</h2>
       <h3 class="boundary-heading">Installer Destinations And Cleanup</h3>
       <p>The build and maintenance workflow does not install skills or agents automatically. The bundle installer is the repository script that copies the selected shared skills, runtime-specific skills, and generated agent definitions into a coding agent runtime location. The installer acts only when explicitly invoked.</p>
       <p>The installer maps <code>--scope user</code> and <code>--scope project</code> to the matching locations in this table. <code>--scope user</code> selects the coding agent runtime's standard user directories. <code>--scope project</code> selects its standard directories under the current project. <code>--project-root</code> requires <code>--scope project</code> and selects another existing project directory without changing the invocation directory. Relative project roots are resolved from the invocation directory. If the resolved project root is missing or is not a directory, the installer stops before mutation; it does not fall back to the invocation directory, another current project, or user destinations.</p>
@@ -730,20 +745,19 @@
       <p>Deploy the Codex bundle to the current project with <code>python3 scripts/install-skills.py --adapter codex --scope project --install-agents --replace</code>. Deploy it to another existing project without changing directories by adding <code>--project-root /absolute/path/to/another-project</code>.</p>
       <p>Remove bundle-owned artifacts from an explicit skills destination and optional agent destination with <code>--remove-owned</code>, for example <code>python3 scripts/install-skills.py --adapter codex --scope user --remove-owned</code>. A caller that supplies a custom generic source may also supply an explicit adapter source with <code>--adapter-skills-source</code>.</p>
       <p>The Codex MCP skill root must match the selected installer destination. A user-scope Codex deployment therefore uses the resolved <code>~/.agents/skills</code> path for both the catalog root and its detection registry. Other MCP-backed deployments follow the same rule when they bind a server to the installed skill catalog. A manifest-owned deployment from an earlier bundle under <code>~/.codex/skills</code> is removed only after the standard deployment, MCP reconfiguration, catalog refresh, and catalog verification succeed.</p>
-      <p>The generated command-line claim helper reference uses the same current user-scope root when project guidance names the standard installed helper. Its standard installed entry point is <code>${HOME}/.agents/skills/agent-claim-command/scripts/claim.py</code>; generated project guidance may instead render another setup-verified portable helper path.</p>
-      <p class="table-note">The <a href="generic-agent-definitions-source.html">Generic Agent Definitions Source</a> page owns conceptual-to-harness-specific conversion details. This table covers only what each runtime file contributes, where the harness discovers it, and which incompatible harness-specific rule or format applies.</p>
       <h3 class="boundary-heading">Adapter-Owned Skills</h3>
       <p class="table-note">Adapter-owned skills are runtime-specific additions installed beside the shared skill catalog only for the coding agent runtime that needs them. Today, a Codex deployment includes the adapter-owned <code>codex-harness-directives</code> skill in addition to shared skills. Mutation-capable Codex agents reference it by default and instruct the agent to load it before acting. Explicit inline core delivery embeds it with the other required core skills. Read-only Codex agents and non-Codex runtimes do not receive it.</p>
       <p class="table-note">The <a href="generic-agent-definitions-source.html">source-model page</a> owns the generation rule for adapter-owned skills. The <a href="skills-modularization.html#skill-lifecycle-title">cross-harness lifecycle</a> owns the difference between availability and instruction delivery.</p>
-      <h3 class="boundary-heading">Coordination Surfaces</h3>
-      <p class="table-note">The shared <code>codex-workitem-coordination</code> skill is conditionally assigned to Dev Backlog Coordinator for explicitly requested multi-item Codex task campaigns. Task-list reads, task titles, wake messages, and UI archival remain runtime coordination surfaces. They are not conceptual agent-definition properties.</p>
-      <p class="table-note">The <a href="orchestrated-development-lifecycle.html#claims-communication-title">lifecycle communication section</a> owns the identity, evidence, and cleanup rules for terminal tasks and execution contexts.</p>
       <h3 class="boundary-heading">MCP Server Configuration</h3>
       <p class="table-note">The preferred mcp-agent-ops connection remains host or session configuration. It is not a duplicated property in every generated agent. Scoped Codex and Junie deployments configure mcp-agent-ops by default. The bundle installer locates the installed executable, binds the server to the deployed skill catalog and technology registry, and uses the selected project or current working directory as the least-privilege workspace root. One or more explicit <code>--mcp-workspace-root</code> values replace that default workspace-root set. Use <code>--mcp-agent-ops-executable</code> when the executable is not discoverable on <code>PATH</code>. Deployments that use only explicit destinations must also supply <code>--mcp-config</code> because a custom skill destination does not identify the host configuration location. With project scope, an explicit <code>--mcp-config</code> overrides the project configuration path without changing the selected project used by the remaining defaults. Use <code>--configure-mcp false</code> when the host should remain unchanged.</p>
       <p class="table-note">During scoped Codex and Junie skill deployment, the bundle installer creates the host configuration when it is absent or has no MCP servers. If other servers are already configured, the installer writes a separately named candidate and asks before activation. An accepted replacement preserves the previous active file with a <code>.bak</code> extension. Rejection leaves the active file unchanged and preserves the candidate for review. A noninteractive deployment never replaces an active configuration that already contains other servers.</p>
       <p class="table-note">Codex defines the stdio server in user or trusted-project <code>config.toml</code>. A Codex agent inherits parent servers when it omits <code>mcp_servers</code>. An override must contain full runtime-specific server configuration. Junie defines the server in user or project <code>mcp.json</code>. A nonempty agent <code>mcpServers</code> field is a names-only allowlist, and omission uses the servers configured for the session.</p>
       <p class="table-note">The bundle installer configures an existing mcp-agent-ops server; it does not install the executable. Install and verify mcp-agent-ops before selecting it as the claim helper. Published release 0.4.0 does not support the required claim results and must not be selected for claims.</p>
-      <h3 class="boundary-heading">Evaluation Isolation And Audit Evidence</h3>
+      <p class="table-note">The <a href="orchestrated-development-lifecycle.html#runtime-coordination-title">orchestrated development lifecycle</a> owns runtime coordination surfaces and the identity, evidence, and cleanup rules for terminal tasks and execution contexts.</p>
+    </section>
+
+    <section class="section" aria-labelledby="evaluation-title">
+      <h2 id="evaluation-title">Evaluation Isolation And Audit Evidence</h2>
       <p class="table-note">The cross-harness evaluation runner uses the same separation between installed catalog, runtime configuration, and retained evidence. It pins the mcp-agent-ops release and installed-runtime digest. It stages an exact catalog beneath a disposable context root and supplies one isolated Codex or external Junie server configuration. It retains session-bound process streams plus exact configuration, catalog, authorization, and allowed output evidence outside the product workspace.</p>
       <p class="table-note">The MCP Git-lifecycle case gives Codex an exact digest-bound permission profile. It gives Junie an owner-only action policy for the same fifteen MCP operations plus Git add and Git commit. The Codex profile denies network, host-home, and evidence-root access. It grants writes to the disposable workspace, its Git metadata, and the unique evaluator temporary directory. Other system paths remain read-only. The Junie policy controls capabilities but is not filesystem containment.</p>
       <p class="table-note">The audit must contain one call-bearing MCP process stream. A completed call in another stream invalidates exact-once evidence. Each required operation is bound to its privacy-safe argument digest and bounded outcome on the same completed call. An outcome-less completed call is not semantic evidence. These boundaries protect reproducibility and host state; they do not claim hostile-code containment.</p>
@@ -757,6 +771,7 @@
     const settings = window.DEV_METHODOLOGY_DOCUMENTATION_SETTINGS;
     const harnessFilter = document.querySelector("#harness-filter");
     const harnessRows = Array.from(document.querySelectorAll("[data-harness-row]"));
+    const harnessFormatRows = Array.from(document.querySelectorAll("[data-harness-format]"));
     const harnessFilterStatus = document.querySelector("#harness-filter-status");
     const settingsHarnessToFilter = {
       codex: "codex",
@@ -773,6 +788,10 @@
       const selectedHarness = harnessFilter.value;
       for (const row of harnessRows) {
         row.hidden = selectedHarness !== "all" && row.dataset.harness !== selectedHarness;
+      }
+      for (const row of harnessFormatRows) {
+        const supportedHarnesses = row.dataset.harnessFormat.split(" ");
+        row.hidden = selectedHarness !== "all" && !supportedHarnesses.includes(selectedHarness);
       }
 
       if (selectedHarness === "all") {
