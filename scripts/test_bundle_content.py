@@ -2220,6 +2220,39 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue((skill_root / reference_path).is_file())
                 self.assertTrue((skill_root / "detection.yaml").is_file())
 
+    def test_jest_failure_ownership_follows_attribution_and_explicit_user_choice(
+        self,
+    ) -> None:
+        jest_text = (SKILLS_ROOT / "jest" / "SKILL.md").read_text(encoding="utf-8")
+
+        attributable_case = (
+            "Treat failures attributable to the current change as current-task "
+            "repair ownership."
+        )
+        pre_existing_case = (
+            "After attribution proves that a failure is unrelated or pre-existing, "
+            "ask the user whether to repair it now."
+        )
+        explicit_choice_boundary = (
+            "Include that repair in current-task ownership only when the user "
+            "explicitly authorizes it."
+        )
+        separate_evidence_boundary = (
+            "Otherwise, preserve the failure as separate verification evidence "
+            "without expanding scope, do not create an application Defect for that "
+            "test failure, and permit the scoped change to complete when its own "
+            "applicable verification passes."
+        )
+
+        for phrase in (
+            attributable_case,
+            pre_existing_case,
+            explicit_choice_boundary,
+            separate_evidence_boundary,
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, jest_text)
+
     def test_gof_pattern_families_are_generic_complete_and_role_assignable(self) -> None:
         expected = {
             "object-creation-patterns": (

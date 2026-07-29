@@ -1,0 +1,5 @@
+basis: explicit-user-direction
+definition_scope: skills/jest/SKILL.md
+provenance:
+  source: user-message
+  reference: thread:019fa9f9-33ef-7c73-872e-bcf0c7cb4b87/message:item-41

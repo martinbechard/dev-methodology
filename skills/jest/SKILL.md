@@ -29,5 +29,8 @@ Use this pack for Jest unit and integration tests.
 
 - Run focused Jest tests for the changed area first.
 - Run broader Jest suites and build before completing code changes when the blast radius is wider.
-- Treat failing tests as the current task until explained and fixed.
+- Treat failures attributable to the current change as current-task repair ownership.
+- After attribution proves that a failure is unrelated or pre-existing, ask the user whether to repair it now.
+- Include that repair in current-task ownership only when the user explicitly authorizes it.
+- Otherwise, preserve the failure as separate verification evidence without expanding scope, do not create an application Defect for that test failure, and permit the scoped change to complete when its own applicable verification passes.
 - Run repository-native commands and confirm aliases, transforms, environment, and module configuration before changing imports to satisfy the runner.
