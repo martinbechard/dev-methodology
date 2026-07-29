@@ -1,6 +1,6 @@
 # Defer verifier orchestration to conceptual roles and resolve writer helper commands
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,9 +10,22 @@ Provider Reference: backlog/defect-backlog/project-wiki-topic-write-role-owned-v
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Root Dev Orchestrator
 
-Current Phase: Starting / approved metadata resumption.
+Current Phase: Exact metadata approval-record/preflight then bounded correction.
+
+## Metadata Running Acceptance
+
+- Transition: Starting -> Running.
+- Owner: Root Dev Orchestrator.
+- Canonical Runtime Thread and Root Agent Task: 019faa19-0275-7210-aaf6-45931b8079ab.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Branch: codex/project-wiki-topic-write-role-owned-verification-019faa19.
+- Worktree: /Users/martinbechard/.codex/worktrees/9a08/dev-methodology.
+- Candidate and Review Evidence: a7fa91d9605fb2ad3450e5438ee78237e8785068; NEEDS_CORRECTION. Preserve the ordinary deterministic offline interruption harness.
+- Metadata Scope and Exclusions: skills/project-wiki-topic-write/agents/openai.yaml only; no role definitions, other skill or metadata definitions, or direct generated edits.
+- Approval Gate: No metadata, test, generated, or candidate correction may occur until an exact metadata approval record exists and the supported pre-mutation check returns ALLOWED.
+- Provider-Mutation Claim Evidence: running-project-wiki-topic-write-metadata-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED; claim event 600f346c-ec5d-4d52-ac25-7098fb12605e.
 
 ## Metadata Starting Reservation
 
