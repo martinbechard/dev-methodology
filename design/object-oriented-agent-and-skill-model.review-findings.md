@@ -4,7 +4,7 @@
 
 - Target: design/object-oriented-agent-and-skill-model.md
 - Completed checklist: design/object-oriented-agent-and-skill-model.review-checklist-structured.md
-- Review basis: the retained user directions for the object-oriented analysis, including the current document-separation and diagram-notation corrections
+- Review basis: the retained user directions for the object-oriented analysis, including the current document-separation, member-notation, and relationship-notation corrections
 
 ## Findings
 
@@ -33,8 +33,26 @@ No material findings.
 - **CHECK:** DIR-12, LOG-7
   - **RESULT:** The complex-skill example uses +skill plus separate procedure names and does not turn multiple procedures into one function or an automatic split decision.
 
+- **CHECK:** DIR-13, DIR-15
+  - **RESULT:** Solid association arrows now mean exact-name skill use or selection, dotted dependency arrows mean indirect use through an AGENTS.md DII, and each relationship uses one canonical label.
+
+- **CHECK:** DIR-14, LOG-11
+  - **RESULT:** Realization, aggregation, composition, inheritance, and instance classification have distinct line and arrowhead forms. A running Agent object is no longer drawn as an inherited subclass.
+
+- **CHECK:** DIR-18
+  - **RESULT:** Four explicit direction rules cover arrows, labels, diamonds, and instance links. Every arrowed class relationship is written source first and target second, so its label reads in the same direction as its arrowhead.
+
+- **CHECK:** DIR-16
+  - **RESULT:** Sequence diagrams use solid messages for requests and actions, dotted messages for returned information, and labels beginning with stable action or Return verbs.
+
+- **CHECK:** DIR-17
+  - **RESULT:** The convention is applied only to the standalone analysis method and its review evidence. The individual skill-group designs remain unchanged pending user review.
+
+- **CHECK:** LOG-9, LOG-10
+  - **RESULT:** The relation forms follow Mermaid’s object-oriented relationship semantics, and AGENTS.md binding, exact-name implementation selection, and DII realization are represented separately.
+
 - **CHECK:** DOC-1, DOC-2
-  - **RESULT:** All forty-one structured assertions have examples and unique IDs. Retired RULE-31 was not reused.
+  - **RESULT:** All forty-six structured assertions have examples and unique IDs. Retired RULE-31 was not reused.
 
 - **CHECK:** DOC-3, DOC-7, DOC-9, DOC-10
   - **RESULT:** Group diagrams are absent, links resolve, backticks occur only in Mermaid fences, and retired notation and lifecycle labels are absent.
@@ -42,6 +60,6 @@ No material findings.
 ## Residual Verification Gap
 
 - **CHECK:** DOC-6
-- **TARGET:** Eleven Mermaid blocks in the target artifact
+- **TARGET:** Twelve Mermaid blocks in the target artifact
 - **SYNOPSIS:** Static inspection found balanced fences and suitable classDiagram and sequenceDiagram forms, but no local Mermaid renderer was available.
-- **NEXT CHECK:** Render all eleven blocks when a Mermaid runtime is available and correct any parser-specific display issue before publishing rendered companions.
+- **NEXT CHECK:** Render all twelve blocks when a Mermaid runtime is available and correct any parser-specific display issue before publishing rendered companions.
