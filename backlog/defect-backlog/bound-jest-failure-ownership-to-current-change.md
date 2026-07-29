@@ -1,16 +1,16 @@
 # Bound Jest failure ownership to the current change
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/bound-jest-failure-ownership-to-current-change.md
+Provider Reference: backlog/defect-backlog/bound-jest-failure-ownership-to-current-change.md
 
 Completion: direct-main
 
-Owner: Unowned pending user action
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -88,6 +88,21 @@ After this durable User Action Required transition, do not resume the provider, 
 ### Resumption
 
 The parent Dev Backlog Coordinator must record User Action Required -> Ready for the preserved canonical Thread. It must then separately reserve Ready -> Starting, and the same root Dev Orchestrator must separately accept Starting -> Running before any repository mutation, review, verification, integration, or delivery resumes.
+
+## User Action Resolution — Pre-Existing Test-Suite Failures
+
+- Transition: User Action Required -> Ready.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- Canonical Root Agent Task Id: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- User Answer: approved.
+- Answer Provenance: Direct user answer to the durable question Should I fix the pre-existing test-suite failures now?
+- Authorized Repair Scope: Only the already-attributed nine stale bundle assertions and one stale STE medium-to-high expectation, with fresh review, verification, and combined integration.
+- Preserved Candidate Commit: 2966d6cb95b45fe145969fb3ac6a0076d98c7799.
+- Accepted Source Commit: dbb0083aa36205ceee5a92a915754b2fe86260d5.
+- Exclusions: No application Defect, no other governed definition, and no broader repair.
+- Resulting Disposition: Ready with Owner: Unowned. This transaction does not reserve Starting or accept Running.
+- Lifecycle Claim Evidence: ready-preexisting-jest-suite-failures-019fa9f9; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 85a4e66e-5760-4aec-b97e-482e80f1c039; claimed 2026-07-29T01:49:29.234152Z.
 
 ## Running Acceptance After Approved Resumption
 
