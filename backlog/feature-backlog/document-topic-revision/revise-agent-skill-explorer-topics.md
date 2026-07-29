@@ -1,0 +1,56 @@
+# Revise the Agent and Skill Wiring Map Document Topics
+
+Status: Ready
+
+Type: Feature
+
+Provider: file
+
+Provider Reference: backlog/feature-backlog/document-topic-revision/revise-agent-skill-explorer-topics.md
+
+Completion: direct-main
+
+Series: backlog/feature-backlog/document-topic-revision/index.md
+
+## Summary
+
+Analyze and revise design/agent-skill-explorer.html so the wiring map's explanation, controls, graph relationships, evidence, and limitations are organized as clear topics.
+
+## Context
+
+The explorer combines a maintained HTML interface with generated graph data. Revision must preserve the distinction between the page shell and generated data while keeping the interactive map usable by keyboard and assistive technology.
+
+## Source Evidence
+
+Direct user request in task 019fa9bf-1e81-7a70-87e5-a747ce97318f on 2026-07-28 to create one work item for each document to revise it after integrating the document-topic agent and skills.
+
+## Requirements
+
+- Produce a fresh source-grounded scored topic outline for design/agent-skill-explorer.html.
+- Distinguish explanatory topics from controls, status text, graph data, and interface chrome.
+- Revise authored headings and prose where the topic analysis identifies unclear scope or order.
+- Revise owning generated-data sources when a proposed topic change affects displayed graph semantics.
+- Preserve agent, skill, dependency, technology, model-profile, adapter, evaluation, and receipt relationships.
+- Preserve keyboard navigation, focus behavior, filtering, accessible names, and offline operation.
+
+## Acceptance Criteria
+
+- The page clearly explains what the graph represents, how to navigate it, and how to interpret each relationship and evidence state.
+- Interface controls are not mistaken for subject-matter topics.
+- No graph relationship or evidence qualification is lost.
+- The generated data and HTML interface remain synchronized.
+
+## Dependencies
+
+backlog/feature-backlog/document-topic-revision/incorporate-document-topic-agent-and-skills.md
+
+## Verification
+
+- Run scripts/test_agent_skill_explorer.py and the owning explorer-data freshness check.
+- Run focused keyboard, accessibility, link, and markup checks.
+- Run git diff --check.
+- Obtain independent editorial and usability review.
+
+## Open Questions
+
+None.
