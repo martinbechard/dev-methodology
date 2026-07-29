@@ -1,16 +1,16 @@
 # Bound MySQL production verification to safe test environments
 
-Status: User Action Required
+Status: Abandoned
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/bound-mysql-production-verification-to-safe-targets.md
+Provider Reference: backlog/failed-backlog/defects/bound-mysql-production-verification-to-safe-targets.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -36,7 +36,7 @@ Started At: 2026-07-28T19:03:17Z
 
 Claim Evidence: running-bound-mysql-production-verification-019faa18 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-28T19:03:09.767122Z; claim event e9d3d83d-0272-4db2-bb72-6c8c1fdc8d9f.
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Next Lifecycle Owner: None; terminal disposition recorded.
 
 ## User Action Required
 
@@ -44,7 +44,7 @@ Question: Do you approve changing exactly skills/mysql/SKILL.md to bound state-c
 
 Why User Input Is Required: skills/mysql/SKILL.md is a governed skill definition. The supported pre-mutation check returned BLOCKED_APPROVAL_REQUIRED with exit 3 because no explicit, scope-specific user approval record authorizes this definition change.
 
-Resolution: Pending
+Resolution: Declined on 2026-07-28: ok decline
 
 Exclusions: skills/mysql/agents/openai.yaml, detection metadata, generated mirrors, and every other skill or agent definition.
 
@@ -57,6 +57,28 @@ Affected Governed Definition: skills/mysql/SKILL.md:44
 Supported Pre-Mutation Check: BLOCKED_APPROVAL_REQUIRED, exit 3.
 
 Implementation Mutation: None.
+
+## Abandonment Evidence
+
+Abandonment Authority: Immutable Coordinator terminal disposition.
+
+User Answer: ok decline
+
+User Answer Date: 2026-07-28
+
+User Answer Provenance: Canonical Thread 019faa18-fe84-7130-a136-7c5ea69b1981.
+
+Rationale: Connection strings and execution authority are controlled outside the development-time skill. Production engine means MySQL-compatible engine fidelity, not necessarily live production. The proposed authorization protocol would be overkill and inconsistent with other development-time skills.
+
+Approval Provenance: None.
+
+No-Mutation Proof: No skill, approval record, test, documentation, generated mirror, candidate, integration, or delivery mutation occurred.
+
+Terminal Transaction Scope: backlog/user-action-required/bound-mysql-production-verification-to-safe-targets.md -> backlog/failed-backlog/defects/bound-mysql-production-verification-to-safe-targets.md.
+
+Terminal Claim Evidence: abandon-bound-mysql-production-verification-019faa18 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-29T02:38:30.998676Z; claim event 8d402c89-a99b-4a08-a355-cc18e905fc94.
+
+Cleanup Eligibility: Eligible after this terminal provider commit is verified and the exact terminal claim is released.
 
 ## Summary
 
