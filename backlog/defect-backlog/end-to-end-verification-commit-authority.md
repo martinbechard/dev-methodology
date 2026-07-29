@@ -1,6 +1,6 @@
 # Route E2E evidence delivery through Commit authority
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/end-to-end-verification-commit-author
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -30,7 +30,7 @@ Branch: codex/end-to-end-verification-commit-authority
 
 Worktree: /Users/martinbechard/.codex/worktrees/06cb/dev-methodology
 
-Phase: Source analysis / approval reconciliation
+Phase: Blocked pending configured MCP validation roots
 
 Started At: 2026-07-28T18:41:57Z
 
@@ -38,7 +38,7 @@ Started-At Evidence: The canonical root Dev Orchestrator accepted the parent-res
 
 Claim Evidence: lifecycle-running-end-to-end-verification-commit-authority-019fa9f9 acquired as SHARED_CHECKOUT_ACQUIRED; incarnation 5aef2c89-2803-4f3d-bc6f-6087d8d964bb; claim journal event 1f7a6ade-3628-40bb-bd28-98b0b75d904d; exact provider path claimed in the primary main checkout at 2026-07-28T18:41:57.429396Z.
 
-Accepted Candidate Commit: fabb6277f3d2f0f5eb296c1e605cff9d83582aa4
+Accepted Candidate Commit: 841284f622a9e1dd6cc2539c240114739f19df3d
 
 Next Lifecycle Owner: Root Dev Orchestrator
 
@@ -101,6 +101,30 @@ Phase: Source analysis / approval reconciliation.
 Accepted Ownership Evidence: The preserved root Dev Orchestrator accepted the Coordinator's resumption reservation for this same canonical work-item Thread.
 
 Claim Evidence: lifecycle-running-end-to-end-verification-commit-authority-resumption-019fa9f9 acquired as SHARED_CHECKOUT_ACQUIRED; incarnation 50140fe4-e6de-4536-b33a-59cdcf9bb108; claim journal event 899bd646-4446-4e5e-bf7f-85fc44e7f855; claimed 2026-07-28T23:04:16.335464Z.
+
+## Blocked Evidence
+
+Known Blocker: The configured mcp-agent-ops skill_validate rejects the candidate path outside configured skill roots, and verify_yaml rejects the private worktree outside configured workspace roots. Policy forbids a CLI fallback.
+
+Blocker Owner: Parent Dev Backlog Coordinator / configured MCP server owner.
+
+Coordinator-Owned Next Action: Expose an accepted configured root containing the exact candidate bytes, then rerun only skill_validate and verify_yaml.
+
+Unblock and Resumption Condition: Both structured gates pass for exact candidate 841284f622a9e1dd6cc2539c240114739f19df3d; then perform Blocked -> Ready -> Starting -> Running in this same canonical task before delivery resumes.
+
+Candidate Evidence: 841284f622a9e1dd6cc2539c240114739f19df3d supersedes preserved test-only candidate fabb6277f3d2f0f5eb296c1e605cff9d83582aa4.
+
+Review Evidence: Fresh independent review verdict GOOD.
+
+Verification Evidence: Verifier verdict WARN because the configured MCP validation roots reject the candidate and private worktree; repository-native gates are green. The named MCP policy forbids a CLI fallback.
+
+Git Evidence: Canonical branch codex/end-to-end-verification-commit-authority and worktree /Users/martinbechard/.codex/worktrees/06cb/dev-methodology are preserved. Unrelated baseline failures remain unrelated.
+
+Canonical Execution Identity: Runtime Thread and Root Agent Task 019fa9f9-33ef-7c73-872e-bd0bfce5e7bd are preserved; ownership is now Unowned pending Coordinator recovery.
+
+Claim Evidence: blocked-e2e-commit-authority-mechanical-ready-retry-019fa9f9 acquired as SHARED_CHECKOUT_ACQUIRED; incarnation 6c564e86-d676-4d9a-aaea-52551dde1731; claim journal event 9cbfb3af-4ba6-4bfe-988c-d272c41912e1; claimed 2026-07-28T23:59:59.095667Z.
+
+Recovery History: Initial dirty acceptance claim rejection event ac07508c-c5a1-4fcb-a2ca-5609a9937d07; first Blocked retry rejection event f75d3347-3bb7-4145-94a3-b074e92c67e4; unrelated topic-write claim recovery release event 9c31c789-5e54-4fca-9525-39a67df9d692.
 
 ## User Action Required
 
