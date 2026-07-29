@@ -1,6 +1,6 @@
 # Fix Index Page Settings Control Placement
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -57,6 +57,50 @@ None.
 ## Open Questions
 
 None.
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Launch Reservation: One bounded launch reservation for the canonical work-item conversation; no additional conversation creation is authorized.
+
+Normalized Objective: Place the settings cog in the right-hand corner of the AI-Assisted Coding Toolkit index-page header so the index uses the same intuitive header alignment as the documentation detail pages.
+
+Dispatch Time: 2026-07-29T16:53:43Z.
+
+Intended Root Role: Root Dev Orchestrator.
+
+Canonical Conversation and Root Agent Task: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Direct Conversation-Title Handoff: Fix Index Page Settings Control Placement.
+
+Branch: codex/fix-index-page-settings-control-placement.
+
+Worktree: /Users/martinbechard/.codex/worktrees/1bad/dev-methodology.
+
+Private Baseline: 961af38d (clean HEAD/main observed before recovery baton).
+
+Owner: Unowned pending accepted root.
+
+Runtime Launch Result: Direct conversation-title handoff observed; Root Dev Orchestrator accepted the launch handshake at 2026-07-29T16:51:49.385631Z.
+
+Owner Acceptance: Pending.
+
+Reconciliation: Pending.
+
+## Starting Settlement Evidence
+
+Settlement Window: 2026-07-29T16:53:43Z to 2026-07-29T16:54:43Z (exactly 60 seconds).
+
+Runtime Launch Result: Direct conversation-title handoff observed; Root Dev Orchestrator accepted the launch handshake at 2026-07-29T16:51:49.385631Z.
+
+Canonical Conversation: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Owner Acceptance: Pending.
+
+Reconciliation: Pending.
 
 ## Notes
 
