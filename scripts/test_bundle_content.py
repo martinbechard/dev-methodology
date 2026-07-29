@@ -1638,6 +1638,10 @@ class BundleContentTests(unittest.TestCase):
             "Produces a structured Markdown design as response content, or authors or revises a design artifact",
             description,
         )
+        for artifact in ("DECISION", "EVIDENCE", "UNCERTAINTY", "BECAUSE"):
+            with self.subTest(frontmatter_artifact=artifact):
+                self.assertIn(artifact, description)
+
         for phrase in (
             "Use design-response mode by default",
             "Do not create a design file merely because design content was requested.",
@@ -1669,10 +1673,43 @@ class BundleContentTests(unittest.TestCase):
             "Use markdown nested bullets with two spaces per level.",
             "`SYNOPSIS` states the item's role.",
             "`BECAUSE` must justify its immediate parent line only.",
-            "`CHAIN-OF-THOUGHT` exists only to explain how the immediate parent leads to",
+            "`DECISION` states the selected conclusion, option, or course of action.",
+            "`EVIDENCE` records observable support for its immediate parent.",
+            "`UNCERTAINTY` records a material unresolved gap, assumption, or limit.",
+            "Do not request or expose hidden reasoning or private deliberation.",
+            "**DECISION:** Release the read-only report before write operations.",
+            "**EVIDENCE:** The accepted requirements authorize reporting but do not authorize mutations.",
+            "**UNCERTAINTY:** Expected report volume is unknown; excessive response size or latency could make the report unusable. Measure both with a representative load test.",
         ):
             with self.subTest(preserved_contract=preserved_contract):
                 self.assertIn(preserved_contract, skill_text)
+
+        review_skill_text = (
+            SKILLS_ROOT / "review-structured-artifact" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        for phrase in (
+            "Review observable decisions, evidence, and uncertainty",
+            "the stated decision is clear and authorized by the inputs",
+            "the recorded evidence is observable, traceable, and supports its immediate parent",
+            "material uncertainty is explicit about its impact and how it can be resolved",
+            "BECAUSE remains a concise justification rather than a request for private reasoning",
+        ):
+            with self.subTest(review_contract=phrase):
+                self.assertIn(phrase, review_skill_text)
+
+        generated_skill_text = SKILL_DEFINITIONS_PATH.read_text(encoding="utf-8")
+        evaluation_page_text = (
+            REPOSITORY_ROOT / "design" / "agent-and-skill-evaluations.html"
+        ).read_text(encoding="utf-8")
+        for text in (
+            description,
+            skill_text,
+            review_skill_text,
+            generated_skill_text,
+            evaluation_page_text,
+        ):
+            with self.subTest(forbidden_contract="CHAIN-OF-THOUGHT"):
+                self.assertNotIn("CHAIN-OF-THOUGHT", text)
 
         probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
         probe = next(

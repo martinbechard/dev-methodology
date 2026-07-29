@@ -1058,6 +1058,7 @@ def render_page(model: dict[str, object]) -> str:
     h3 {{ overflow-wrap: anywhere; font-size: 1.25rem; }}
     h4 {{ margin-top: .4rem; font-size: .93rem; text-transform: uppercase; letter-spacing: .04em; }}
     p {{ margin: 0; color: var(--muted); }}
+    p + p {{ margin-top: .65rem; }}
     .site-header, main, .site-footer {{ width: min(100% - 2rem,var(--content)); margin-inline: auto; }}
     .site-header {{ display: flex; align-items: center; padding-top: 1.2rem; }}
     .site-brand {{ display: inline-flex; align-items: center; gap: .75rem; color: var(--ink); font-weight: 800; text-decoration: none; }}

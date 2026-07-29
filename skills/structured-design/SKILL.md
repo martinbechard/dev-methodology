@@ -6,9 +6,10 @@ description: |
   design work. Use explicit item types such as GOAL, SUBGOAL, TASK,
   REQUIREMENT, ENTITY, MODULE, PROCESS, SCRIPT, COMMAND, PROMPT-MODULE,
   PROMPT-PAIR, FILE, RULE, and MODIFICATION. Use SYNOPSIS for the item's role,
-  BECAUSE to justify the exact parent assertion, and CHAIN-OF-THOUGHT only as
-  the bridge from the parent item to that BECAUSE. Use embedded IDs on
-  root-level items when review or cross-reference matters.
+  DECISION for a selected conclusion or course of action, EVIDENCE for
+  observable support, UNCERTAINTY for material unresolved limits, and BECAUSE
+  for concise justification. Do not request hidden reasoning. Use embedded IDs
+  on root-level items when review or cross-reference matters.
 metadata:
   category: development-practice
 ---
@@ -169,7 +170,9 @@ Do not create new kinds unless the existing ones are clearly insufficient.
 Prefer only the lines that add information:
 
 - `SYNOPSIS`
-- `CHAIN-OF-THOUGHT`
+- `DECISION`
+- `EVIDENCE`
+- `UNCERTAINTY`
 - `BECAUSE`
 - `CONTAINS`
 - `IMPORTS`
@@ -192,10 +195,21 @@ Prefer only the lines that add information:
 ## Required Discipline
 
 - `SYNOPSIS` states the item's role.
+- `DECISION` states the selected conclusion, option, or course of action.
+- `EVIDENCE` records observable support for its immediate parent.
+- `UNCERTAINTY` records a material unresolved gap, assumption, or limit.
 - `BECAUSE` must justify its immediate parent line only.
-- `CHAIN-OF-THOUGHT` exists only to explain how the immediate parent leads to
-  the `BECAUSE` directly below it.
-- Omit `CHAIN-OF-THOUGHT` when the `BECAUSE` is already clear.
+- Keep each `DECISION` concise and state the selected outcome rather than the
+  private reasoning process used to select it.
+- Point each `EVIDENCE` to an input, source, constraint, observation, test, or
+  result that a reviewer can inspect.
+- State the impact of each material `UNCERTAINTY` and what evidence or action
+  would resolve it.
+- Use `DECISION`, `EVIDENCE`, and `UNCERTAINTY` when the choice needs review.
+  Do not add them mechanically to every item.
+- Keep `BECAUSE` as a concise justification. Do not use it as a transcript of
+  private deliberation.
+- Do not request or expose hidden reasoning or private deliberation.
 - If a `BECAUSE` really justifies a different line, move it.
 - If two assertions need different reasons, split them.
 - Use plain English, short sentences, and simple words.
@@ -543,8 +557,11 @@ One-line purpose of this section.
 One-line purpose of this section.
 
 - **GOAL: GOAL-1** <outcome>
-  - **CHAIN-OF-THOUGHT:** <bridge to the reason below>
-  - **BECAUSE:** <why this goal matters>
+  - **SYNOPSIS:** <why this goal matters>
+  - **DECISION:** Release the read-only report before write operations.
+    - **EVIDENCE:** The accepted requirements authorize reporting but do not authorize mutations.
+    - **UNCERTAINTY:** Expected report volume is unknown; excessive response size or latency could make the report unusable. Measure both with a representative load test.
+    - **BECAUSE:** This order delivers authorized value without assuming write authority.
   - **SUBGOAL: SUBG-1** <chunk>
     - **BECAUSE:** <why this subgoal matters>
   - **TASK: TASK-1** <action>
@@ -581,14 +598,18 @@ Check all of these before returning:
 2. Every important item has a `SYNOPSIS`.
 3. Important assertions have `BECAUSE` where needed.
 4. Every `BECAUSE` justifies its immediate parent.
-5. Any `CHAIN-OF-THOUGHT` bridges the parent line to the `BECAUSE`.
-6. Item-specific details are nested under the right item.
-7. Prompt details use `PROMPT-MODULE` and `PROMPT-PAIR` correctly.
-8. Root-level IDs are used only when review or cross-reference matters.
-9. IDs are not added to every nested property.
-10. Gaps are stated explicitly rather than guessed away.
-11. A response-only request did not create or edit a design file.
-12. File-backed work used an authorized path and followed applicable
+5. Every `DECISION` states the selected conclusion, option, or course of action.
+6. Every `EVIDENCE` line names support that a reviewer can inspect.
+7. Every material `UNCERTAINTY` states its impact and how it can be resolved.
+8. The artifact does not request or expose hidden reasoning or private
+   deliberation.
+9. Item-specific details are nested under the right item.
+10. Prompt details use `PROMPT-MODULE` and `PROMPT-PAIR` correctly.
+11. Root-level IDs are used only when review or cross-reference matters.
+12. IDs are not added to every nested property.
+13. Gaps are stated explicitly rather than guessed away.
+14. A response-only request did not create or edit a design file.
+15. File-backed work used an authorized path and followed applicable
     placement and ownership rules plus enabled resource-coordination rules.
 
 ## Do Not
@@ -599,7 +620,9 @@ Check all of these before returning:
 - For authorized file-backed work, use the requested path, an existing
   authoritative artifact, or the repository's file-placement mechanism.
 - Do not mix unrelated assertions under one `BECAUSE`.
-- Do not use `CHAIN-OF-THOUGHT` as a second synopsis.
+- Do not request or expose hidden reasoning or private deliberation.
+- Do not present an unsupported claim as `EVIDENCE`.
+- Do not hide a material unknown inside `EVIDENCE` or `BECAUSE`.
 - Do not leave item-specific details at the wrong level.
 - Do not let requirements collapse into solution choices unless the document
   explicitly says they are design decisions.

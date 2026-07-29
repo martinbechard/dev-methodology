@@ -1,0 +1,17 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: dev-skill-lint-reviewer
+scenarios:
+  - id: critical-directive-review
+    priority: 1
+    status: declared
+    purpose: Report critical skill defects without manufacturing minor style findings.
+    initialState: A skill contains one contradictory lifecycle directive and several harmless prose preferences.
+    task: Review the skill for critical defects only.
+    targetSkills: [skill-authoring, review-structured-artifact]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Cite the contradictory clauses, Name the criticality criterion, Omit minor style nits]
+    forbiddenBehaviors: [Edit the skill, Report harmless wording as critical, Omit source evidence]
+    deterministicChecks: [required-findings, no-forbidden-mutation, output-contract-presence]
+    expectedOutputs: [critical skill findings, review limits]
+    expectedTerminalStatus: PASS

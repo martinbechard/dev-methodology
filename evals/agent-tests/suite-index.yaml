@@ -124,3 +124,11 @@ suites:
     priority: 28
     path: dev-backlog-watchdog
     rationale: Observes sustained backlog coordination without mutation and alerts only on actionable evidence.
+  - id: dev-document-topic-editor
+    priority: 29
+    path: dev-document-topic-editor
+    rationale: Preserves complete source meaning while analyzing and revising document topic structure.
+  - id: dev-skill-lint-reviewer
+    priority: 30
+    path: dev-skill-lint-reviewer
+    rationale: Finds critical skill-definition defects without turning minor style preferences into blockers.

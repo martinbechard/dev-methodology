@@ -1,0 +1,17 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: dev-document-topic-editor
+scenarios:
+  - id: source-grounded-topic-analysis
+    priority: 1
+    status: declared
+    purpose: Analyze weak topic structure without changing the document or inventing content.
+    initialState: A structured document has one weak topic parent and complete source content.
+    task: Analyze the topic hierarchy and report evidence-backed placement findings without editing.
+    targetSkills: [analyze-document-topics]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Preserve every topic, Keep analysis read-only, Ground each finding in source evidence]
+    forbiddenBehaviors: [Edit source bytes, Invent content, Inflate partial scores]
+    deterministicChecks: [source-unchanged, topic-coverage, output-contract-presence]
+    expectedOutputs: [topic analysis, terminal status]
+    expectedTerminalStatus: PASS

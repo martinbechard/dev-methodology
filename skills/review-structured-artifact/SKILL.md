@@ -6,10 +6,11 @@ description: |
   structured inputs or directives. It runs a checklist from a predefined
   template, saves a completed checklist, then derives structured review
   findings from the completed checklist. Use it to check internal logic,
-  directive coverage, terminology order, justification quality, and whether
-  asserted requirements are actually supported by the inputs. It supports a
-  generic base checklist first and allows artifact-specific checklist
-  supplements when available.
+  directive coverage, terminology order, observable decision, evidence, and
+  uncertainty quality, concise justification, and whether asserted
+  requirements are actually supported by the inputs. It supports a generic
+  base checklist first and allows artifact-specific checklist supplements when
+  available.
 metadata:
   category: artifact-review
 ---
@@ -144,6 +145,22 @@ supposed to apply:
 - mark it fail if it is missing or contradicted
 
 Do not silently forgive omitted directives.
+
+### 3A. Review observable decisions, evidence, and uncertainty
+
+When the target uses structured-design decision records, specifically check
+whether:
+
+- the stated decision is clear and authorized by the inputs
+- the recorded evidence is observable, traceable, and supports its immediate parent
+- material uncertainty is explicit about its impact and how it can be resolved
+- BECAUSE remains a concise justification rather than a request for private reasoning
+- the artifact reports the reviewable result without requesting or exposing
+  hidden reasoning or private deliberation
+
+Record a failed or questionable item when a decision is unsupported, evidence
+cannot be inspected, or material uncertainty is omitted. Do not infer private
+reasoning to fill an evidence gap.
 
 ### 4. Review unsupported assertions
 
@@ -346,24 +363,27 @@ When deciding what becomes a finding, prioritize:
 1. missing or contradicted input directives
 2. internally inconsistent logic
 3. undefined or misordered concepts that create blind spots
-4. BECAUSE clauses that do not justify their parent
-5. CHAIN-OF-THOUGHT clauses that do not justify the BECAUSE
-6. requirements that are really solution choices
-7. unsupported requirements or claims
-8. stale or retired references mixed into active design
-9. skill definitions that are detached from the prompts or processes that use
+4. unclear decisions or decisions not authorized by the inputs
+5. evidence that is not observable, traceable, or supportive of its parent
+6. material uncertainty that is omitted or does not state its impact and
+   resolution path
+7. BECAUSE clauses that do not concisely justify their parent
+8. requirements that are really solution choices
+9. unsupported requirements or claims
+10. stale or retired references mixed into active design
+11. skill definitions that are detached from the prompts or processes that use
    them
-10. design sections that mix finality, technical directives, and definition of
+12. design sections that mix finality, technical directives, and definition of
     good in a way that weakens the structure
-11. low-value summary sections that repeat the document without adding useful
+13. low-value summary sections that repeat the document without adding useful
    compression
-12. vague, abstract, or buzzword-heavy wording that hides what the target
-   actually requires
-13. missing finality, technical directives, constraints, definition of good,
+14. vague, abstract, or buzzword-heavy wording that hides what the target
+    actually requires
+15. missing finality, technical directives, constraints, definition of good,
     or test cases when they are needed for the artifact type
-14. architecture documents that drift into design-level detail without need
-15. component design documents that silently redesign architecture boundaries
-16. YAML companions that distort the markdown structure or force a generic
+16. architecture documents that drift into design-level detail without need
+17. component design documents that silently redesign architecture boundaries
+18. YAML companions that distort the markdown structure or force a generic
     type schema without justification
 
 ## Self-review before returning
@@ -374,19 +394,23 @@ Check all of these:
 2. The completed checklist exists before findings are written.
 3. Every applicable checklist item has a status, Evidence type, Evidence source, evidence, and assessment.
 4. Input directives were traced explicitly.
-5. Unsupported requirements or claims were checked explicitly.
-6. Workflow-versus-skill boundaries were checked when the target was a
+5. Observable decisions are clear and authorized by the inputs.
+6. Evidence is inspectable, traceable, and supports the assertion it is nested under.
+7. Material uncertainty states its impact and how it can be resolved.
+8. BECAUSE remains concise and no review step requests or infers private reasoning.
+9. Unsupported requirements or claims were checked explicitly.
+10. Workflow-versus-skill boundaries were checked when the target was a
    component or prompt-execution design.
-7. Writing quality and document completeness were checked when relevant.
-8. The design-doc section model was checked when the target was a design.
-9. Findings were derived from failed or questionable checklist items.
-10. Findings cite checklist IDs and target locations.
-11. The review did not skip the checklist and jump straight to prose.
-12. The output artifacts are concise and inspectable.
-13. If there were no material findings, the checklist still exists.
-14. Every exact quotation resolves against its named source after line-ending normalization and any omission uses the literal [omitted] marker.
-15. Summaries, assessments, and not-applicable explanations are not presented as exact quotations.
-16. The completed checklist records the shared three-part sentence review from documentation-page-verify.
+11. Writing quality and document completeness were checked when relevant.
+12. The design-doc section model was checked when the target was a design.
+13. Findings were derived from failed or questionable checklist items.
+14. Findings cite checklist IDs and target locations.
+15. The review did not skip the checklist and jump straight to prose.
+16. The output artifacts are concise and inspectable.
+17. If there were no material findings, the checklist still exists.
+18. Every exact quotation resolves against its named source after line-ending normalization and any omission uses the literal [omitted] marker.
+19. Summaries, assessments, and not-applicable explanations are not presented as exact quotations.
+20. The completed checklist records the shared three-part sentence review from documentation-page-verify.
 
 ## Do not
 
@@ -396,4 +420,5 @@ Check all of these:
 - Do not silently ignore missing directive coverage.
 - Do not accept unsupported requirements just because they sound plausible.
 - Do not collapse evidence and judgment into one vague sentence.
+- Do not infer or request hidden reasoning to justify a decision.
 - Do not ignore vague wording just because the structure looks correct.

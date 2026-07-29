@@ -1,12 +1,12 @@
 # Replace the structured-design chain-of-thought output contract
 
-Status: Blocked
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/replace-structured-design-chain-of-thought-output-contract.md
+Provider Reference: backlog/completed-backlog/defects/replace-structured-design-chain-of-thought-output-contract.md
 
 Completion: direct-main
 
@@ -30,7 +30,7 @@ Branch: codex/replace-structured-design-cot-contract-019faa19
 
 Worktree: /Users/martinbechard/.codex/worktrees/3d44/dev-methodology
 
-Phase: Blocked pending generator-aligned evaluation-page baseline recovery.
+Phase: Completed in backlog crisis mode.
 
 Started At: 2026-07-28T19:05:44.790829Z
 
@@ -51,6 +51,14 @@ Preserved Commits and Evidence: Original candidate 2e7a9b82d02f97801e142cb17c823
 Resource Disposition: Sensitive runtime completed at 67167fcf17ac018e8d62f2e583f22fc5cb477262; its claim was released with journal event 0c355c09-ef73-4777-a86c-1ef4a2f3fa5e. No live implementation claim remains.
 
 Safe-to-Resume Assessment: Not safe to resume repository mutation until the unblock condition is met and the normal Blocked -> Ready -> Starting -> Running lifecycle sequence completes. No user action is required.
+
+## Crisis Resolution
+
+Resolution: The parent Coordinator entered backlog crisis mode, adopted preserved candidates 2e7a9b82d02f97801e142cb17c82381c9f931ee5 and 9ba55baae7b7f621d5c97ead3db67f8dbeb07696, and treated the obsolete generator baseline as infrastructure work rather than a reason to keep the requested outcome blocked.
+
+Smallest Correction: Added the two missing conceptual-role suite declarations required by the existing evaluation documentation generator and moved the intentional adjacent-paragraph spacing rule into that generator. No evaluation runtime, simulator, claim helper, or generalized compatibility layer was added.
+
+Outcome: The public structured-design and review contracts now use observable DECISION, EVIDENCE, and UNCERTAINTY artifacts without requiring chain-of-thought. The supported skill and evaluation documentation generators are current, and the focused contract test passes.
 
 ## Running Acceptance
 

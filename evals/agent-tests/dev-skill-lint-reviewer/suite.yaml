@@ -1,0 +1,32 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: dev-skill-lint-reviewer
+priority: 30
+target:
+  conceptualRole: agents/roles/dev-activities/dev-skill-lint-reviewer.role.yaml
+  nativeAgent: generated/adapters/codex/agents/dev-skill-lint-reviewer.toml
+  repositoryMutation: conditional
+  requiredSkills: [skill-authoring, review-structured-artifact]
+  conditionalSkills:
+    structured-explanation: A criticality judgment depends on multiple distant clauses or an unresolved ownership boundary.
+  allowedAgentDependencies: []
+  requiredOutputs: [critical skill findings, no-critical-findings result, review limits]
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared: [../skills/agent-suite-supervision/SKILL.md, ../skills/agent-scenario-design/SKILL.md, ../skills/agent-evidence-judging/SKILL.md]
+  suite: []
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: dev_skill_lint_reviewer_suite_supervisor
+  targetInvocation: dev_skill_lint_reviewer
+  judgeInvocation: dev_skill_lint_reviewer_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: artifact-contract
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]
