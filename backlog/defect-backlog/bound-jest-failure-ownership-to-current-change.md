@@ -1,6 +1,6 @@
 # Bound Jest failure ownership to the current change
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/bound-jest-failure-ownership-to-curre
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Root Dev Orchestrator
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -26,7 +26,7 @@ Runtime Thread: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
 
 Root Agent Task: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
 
-Next Lifecycle Owner: Root Dev Orchestrator 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
+Next Lifecycle Owner: Root Dev Orchestrator
 
 ## Starting Reservation
 
@@ -203,6 +203,23 @@ Preserve all evidence. The parent Dev Backlog Coordinator must record User Actio
 - Observed Launch Evidence: Parent Dev Backlog Coordinator reserved this preserved canonical Thread under available Starting-plus-Running capacity and woke its canonical root task.
 - Required Next Transition: The same root Dev Orchestrator must atomically record Starting -> Running before any project mutation.
 - Lifecycle Claim Evidence: starting-final-lifecycle-assertion-019fa9f9; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event be83d434-351a-4eff-a21c-856fe056bc7d; claimed 2026-07-29T02:19:02.482601Z.
+
+## Running Acceptance — Final Lifecycle Assertion
+
+- Transition: Starting -> Running.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- Canonical Root Agent Task Id: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- Owner: Root Dev Orchestrator.
+- Delivery Branch: codex/bound-jest-failure-ownership-integration4-019fa9f9.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/31c1/dev-methodology.
+- Phase: Final approved lifecycle-assertion repair preparation.
+- Started At: 2026-07-29T02:21:05Z.
+- Started-At Evidence: The canonical root Dev Orchestrator accepted the parent-reserved Starting item under the final one-assertion approval.
+- Approval Provenance: User answer ok but that's the last one in canonical Thread 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- Firm Boundary: No further unrelated or pre-existing failure repair may be added; any additional failure is separate verification evidence without scope expansion or application Defect.
+- Preserved Approvals and Evidence: Retain the prior Jest definition approval, exact ten-test approval, candidates 2966d6cb95b45fe145969fb3ac6a0076d98c7799 and dbb0083aa36205ceee5a92a915754b2fe86260d5, replay 1729293ea38d784ba674db0bca7cec39728e33d9, private repair evidence, and all exclusions.
+- Claim Evidence: running-final-lifecycle-assertion-019fa9f9; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event a9f7fb2b-ffdc-4701-90a4-15f2a17d0aa5; claimed 2026-07-29T02:21:05.780099Z.
 
 ## Running Acceptance — Approved Suite Repairs
 
