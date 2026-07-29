@@ -1,16 +1,42 @@
 # Defer verifier orchestration to conceptual roles and resolve writer helper commands
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/project-wiki-topic-write-role-owned-verification.md
+Provider Reference: backlog/user-action-required/project-wiki-topic-write-role-owned-verification.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
+
+Current Phase: Waiting for User / metadata approval.
+
+## User Action Required
+
+Question: Do you approve changing only skills/project-wiki-topic-write/agents/openai.yaml to align its Codex summary and default prompt with the already-approved role-owned verification handoff, remove skill-owned retry and terminal BLOCKED instructions, and keep direct invocation consistent with skills/project-wiki-topic-write/SKILL.md?
+
+Decision Brief:
+
+- Before: direct metadata still owns retries and terminal BLOCKED instructions, contradicting the approved handoff.
+- After if approved: direct invocation hands verification, retry, and terminal evidence to the owning role.
+- Approve: permits an exact metadata approval record and preflight, a bounded correction, supported regeneration, and the ordinary deterministic offline interruption harness/test.
+- Defer: preserves the candidate and evidence in User Action Required with no implementation.
+- Decline: leaves the inconsistency and acceptance criterion unmet for later truthful terminal disposition.
+
+Why User Input Is Required: skills/project-wiki-topic-write/agents/openai.yaml is a separately governed metadata definition. Review cannot substitute for exact scope-specific user approval.
+
+Exclusions: No role definitions, other skill or metadata definitions, or direct generated edits are approved. Preserve the ordinary harness correction and infer no role scope.
+
+Unattended Boundary: After this provider move, no source, metadata, test, generated, candidate, review, integration, or delivery mutation may occur until explicit approval is recorded, this same task passes User Action Required -> Ready -> Starting -> Running, and the exact-scope preflight succeeds.
+
+Preserved Candidate and Review Evidence: Candidate a7fa91d9605fb2ad3450e5438ee78237e8785068; review and verification disposition NEEDS_CORRECTION.
+
+Preserved Canonical Identity: Runtime Thread and Root Agent Task 019faa19-0275-7210-aaf6-45931b8079ab; Parent Coordination Thread 019fa9bb-1423-7e80-bcde-3caa765e3758; Branch codex/project-wiki-topic-write-role-owned-verification-019faa19; Worktree /Users/martinbechard/.codex/worktrees/9a08/dev-methodology.
+
+Transition Claim Evidence: user-action-required-project-wiki-topic-write-metadata-019faa19 acquired as SHARED_CHECKOUT_ACQUIRED at 2026-07-29T00:26:47.389237Z; claim event 20004d63-bc17-4915-949b-ce1055f27673.
 
 ## Current Starting Reservation
 
@@ -62,7 +88,7 @@ Runtime Thread: 019faa19-0275-7210-aaf6-45931b8079ab
 
 Root Agent Task: 019faa19-0275-7210-aaf6-45931b8079ab
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Next Lifecycle Owner: User
 
 ## Running Acceptance
 
@@ -80,7 +106,7 @@ Next Lifecycle Owner: Root Dev Orchestrator
 - Recovery History: The earlier claim attempt was rejected with DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED; claim event c606912d-4cf5-42c7-bcb4-84a3bb782572. The Coordinator reconciled the primary checkout before this accepted transaction.
 - Current Main Observation: main was clean at 41e61c0a92fd8fe1d6bfbb696923a4abef8376d8 when this transaction began.
 
-## User Action Required
+## Prior User Action Required
 
 Blocker: Explicit scope-specific user approval is absent for the governed definition skills/project-wiki-topic-write/SKILL.md.
 
