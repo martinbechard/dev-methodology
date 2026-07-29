@@ -1,16 +1,16 @@
 # Bound Jest failure ownership to the current change
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/bound-jest-failure-ownership-to-current-change.md
+Provider Reference: backlog/user-action-required/bound-jest-failure-ownership-to-current-change.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned pending user action
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -26,7 +26,7 @@ Runtime Thread: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
 
 Root Agent Task: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
 
-Next Lifecycle Owner: Root Dev Orchestrator
+Next Lifecycle Owner: Dev Backlog Coordinator
 
 ## Starting Reservation
 
@@ -44,6 +44,50 @@ Next Lifecycle Owner: Root Dev Orchestrator
 - Observed Launch Evidence: Parent Dev Backlog Coordinator reserved this preserved canonical Thread under available Starting-plus-Running capacity and woke its canonical root task.
 - Required Next Transition: The same root Dev Orchestrator must atomically record Starting -> Running for this canonical Thread and task before any implementation or governed definition mutation.
 - Lifecycle Claim Evidence: ready-starting-three-reservations-019fa9bb; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event ee40be56-9b67-437f-91e6-f70c38fe84f8; claimed 2026-07-29T00:06:49.750900Z.
+
+## User Action Required
+
+- Transition: Running -> User Action Required.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- Canonical Root Agent Task Id: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- Preserved Candidate Commit: 2966d6cb95b45fe145969fb3ac6a0076d98c7799.
+- Accepted Source Commit: dbb0083aa36205ceee5a92a915754b2fe86260d5.
+- Lifecycle Claim Evidence: uar-preexisting-jest-suite-failures-019fa9f9; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 08a3918c-f5bd-44b1-9475-7de03912d04d; claimed 2026-07-29T01:20:50.574395Z.
+
+### Question for the User
+
+Should I fix the pre-existing test-suite failures now?
+
+### Evidence and Example
+
+Nine stale bundle assertions and one STE medium expectation reproduce unchanged on current main before the Jest candidate; the approved current profile is high. These failures are unrelated to the Jest change.
+
+### Why User Input Is Required
+
+Proven pre-existing repairs expand task ownership, and the approved Jest contract requires explicit user authorization.
+
+### Options and Tradeoffs
+
+- Approve: expand current ownership to repair those exact stale tests, rerun fresh review/verification, integrate together.
+- Defer: preserve unrelated failure evidence and later resume to complete verified Jest change without application Defect.
+- Decline: resume and complete Jest change while intentionally leaving unrelated tests unchanged.
+
+### Exclusions
+
+No new application Defect, no other governed definition, and no repair beyond the exact attributed stale tests are authorized unless separately approved.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+After this durable User Action Required transition, do not resume the provider, repair tests, acquire a project-files claim, integrate, or deliver until the user answers and this same task resumes through User Action Required -> Ready -> Starting -> Running. Preserve all evidence.
+
+### Resumption
+
+The parent Dev Backlog Coordinator must record User Action Required -> Ready for the preserved canonical Thread. It must then separately reserve Ready -> Starting, and the same root Dev Orchestrator must separately accept Starting -> Running before any repository mutation, review, verification, integration, or delivery resumes.
 
 ## Running Acceptance After Approved Resumption
 
