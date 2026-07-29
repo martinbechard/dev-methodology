@@ -1,6 +1,6 @@
 # Bound Jest failure ownership to the current change
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/bound-jest-failure-ownership-to-curre
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Root Dev Orchestrator
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -26,7 +26,7 @@ Runtime Thread: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
 
 Root Agent Task: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
 
-Next Lifecycle Owner: Root Dev Orchestrator 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87
+Next Lifecycle Owner: Root Dev Orchestrator
 
 ## Starting Reservation
 
@@ -120,6 +120,24 @@ The parent Dev Backlog Coordinator must record User Action Required -> Ready for
 - Observed Launch Evidence: Parent Dev Backlog Coordinator reserved this preserved canonical Thread under available Starting-plus-Running capacity and woke its canonical root task.
 - Required Next Transition: The same root Dev Orchestrator must atomically record Starting -> Running for this canonical Thread and task before repository mutation, review, verification, integration, or delivery.
 - Lifecycle Claim Evidence: starting-preexisting-jest-suite-failures-019fa9f9; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event b54e84f3-942d-4aef-9aa3-e43e98158986; claimed 2026-07-29T01:51:52.792770Z.
+
+## Running Acceptance — Approved Suite Repairs
+
+- Transition: Starting -> Running.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- Canonical Root Agent Task Id: 019fa9f9-33ef-7c73-872e-bcf0c7cb4b87.
+- Owner: Root Dev Orchestrator.
+- Delivery Branch: codex/bound-jest-failure-ownership-integration3-019fa9f9.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/31c1/dev-methodology.
+- Phase: Approved stale-test repair and Jest integration preparation.
+- Started At: 2026-07-29T01:53:49Z.
+- Started-At Evidence: The canonical root Dev Orchestrator accepted the parent-reserved Starting item for the exact approved repair scope.
+- Authorized Repair Scope: Nine stale bundle assertions and one stale STE medium-to-high expectation only, with fresh review, verification, and combined integration.
+- Preserved Candidate Commit: 2966d6cb95b45fe145969fb3ac6a0076d98c7799.
+- Accepted Source Commit: dbb0083aa36205ceee5a92a915754b2fe86260d5.
+- Exclusions: No application Defect, no other governed definition, and no broader repair.
+- Claim Evidence: running-approved-suite-repairs-019fa9f9; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event f9234e88-962a-43a7-b116-0b13304bac3d; claimed 2026-07-29T01:53:41.006633Z.
 
 ## Running Acceptance After Approved Resumption
 
