@@ -922,12 +922,34 @@ process.stdout.write(JSON.stringify({{
         for event_name in ('"input"', '"change"', '"click"', '"DOMContentLoaded"'):
             self.assertIn(event_name, script)
 
-    def test_navigation_surface_links_to_evaluation_page(self) -> None:
-        """The core definition catalog must expose the related evaluation documentation."""
+    def test_navigation_places_evaluation_between_core_and_configuration(self) -> None:
+        """The generated page must be a standard sequence member after the core catalog."""
         definitions_page = (ROOT / "design" / "agent-and-skill-definitions.html").read_text(
             encoding="utf-8"
         )
-        self.assertIn('href="agent-and-skill-evaluations.html"', definitions_page)
+        configuration_page = (ROOT / "design" / "agentic-configuration.html").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn(
+            '<a href="agent-and-skill-evaluations.html" rel="next">'
+            'Next: Evaluation Evidence <span aria-hidden="true">&rarr;</span></a>',
+            definitions_page,
+        )
+        self.assertIn(
+            '<a href="agent-and-skill-definitions.html" rel="prev">'
+            '<span aria-hidden="true">&larr;</span> Previous: Core Agent and Skills</a>',
+            self.page,
+        )
+        self.assertIn(
+            '<a href="agentic-configuration.html" rel="next">'
+            'Next: Agentic Configuration <span aria-hidden="true">&rarr;</span></a>',
+            self.page,
+        )
+        self.assertIn(
+            '<a href="agent-and-skill-evaluations.html" rel="prev">'
+            '<span aria-hidden="true">&larr;</span> Previous: Evaluation Evidence</a>',
+            configuration_page,
+        )
 
 
 if __name__ == "__main__":

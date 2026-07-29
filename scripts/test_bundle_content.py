@@ -763,6 +763,17 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Primary And Local Sources",
     ),
 }
+DOCUMENT_NAVIGATION_ORDER = (
+    "agent-and-skill-definitions.html",
+    "agent-and-skill-evaluations.html",
+    "agentic-configuration.html",
+    "skills-modularization.html",
+    "generic-agent-definitions-source.html",
+    "agent-skill-specialization-examples.html",
+    "orchestrated-development-lifecycle.html",
+    "documentation-templates.html",
+    "wiki-skills-and-project-context.html",
+)
 DOCUMENT_FORBIDDEN_HEADINGS = {
     "skills-modularization.html": (
         "Role Agent Set",
@@ -10019,11 +10030,12 @@ class BundleContentTests(unittest.TestCase):
                 )
 
         index_text = (REPOSITORY_ROOT / "index.html").read_text(encoding="utf-8")
-        for filename in DOCUMENT_INFORMATION_OWNERS:
+        for filename in DOCUMENT_NAVIGATION_ORDER:
             with self.subTest(index_link=filename):
                 self.assertIn(f'href="design/{filename}"', index_text)
         expected_index_owners = (
             "catalog",
+            "evaluations",
             "configuration",
             "modularization",
             "agent-definitions",
@@ -10046,10 +10058,10 @@ class BundleContentTests(unittest.TestCase):
                 index_text,
             )
         )
-        self.assertEqual(tuple(DOCUMENT_INFORMATION_OWNERS), index_pages)
+        self.assertEqual(DOCUMENT_NAVIGATION_ORDER, index_pages)
 
         for position, filename in enumerate(index_pages):
-            text = page_text[filename]
+            text = (design_root / filename).read_text(encoding="utf-8")
             with self.subTest(document_navigation=filename):
                 self.assertEqual(
                     1,
@@ -10079,6 +10091,13 @@ class BundleContentTests(unittest.TestCase):
                 sequence = nav.split(
                     '<div class="document-sequence">', maxsplit=1
                 )[1].split("</div>", maxsplit=1)[0]
+                expected_sequence_link_count = int(position > 0) + int(
+                    position < len(index_pages) - 1
+                )
+                self.assertEqual(
+                    expected_sequence_link_count,
+                    sequence.count("<a "),
+                )
                 if position == 0:
                     self.assertNotIn('rel="prev"', sequence)
                 else:
@@ -10150,7 +10169,16 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertNotIn('class="summary"', index_text)
         self.assertNotIn('class="pill"', index_text)
-        self.assertIn('aria-hidden="true">07</span>', index_text)
+        index_indicators = tuple(
+            re.findall(
+                r'<span class="icon" aria-hidden="true">(\d{2})</span>',
+                index_text,
+            )
+        )
+        self.assertEqual(
+            tuple(f"{position:02d}" for position in range(1, len(index_pages) + 1)),
+            index_indicators,
+        )
         for retired_page in (
             "agent-role-skill-map.html",
             "agentic-development-operating-model.html",
