@@ -1,6 +1,6 @@
 # Centralize active-capacity and conversation-title coordination policy
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -9,6 +9,45 @@ Provider: file
 Provider Reference: backlog/defect-backlog/centralize-active-capacity-and-conversation-title-coordination-policy.md
 
 Completion: direct-main
+
+Owner: Parent Dev Backlog Coordinator dispatch reservation
+
+Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
+
+Launch Reservation: ready-starting-three-reservations-019fa9bb-centralize-capacity
+
+Normalized Objective: Centralize the Codex active-execution eligibility, capacity, runtime reconciliation, and portable conversation-title coordination policy so inactive work cannot consume capacity and every lifecycle transition has truthful execution coordination.
+
+Dispatch Time: 2026-07-29T00:06:49.750900Z
+
+Intended Root Role: Dev Orchestrator
+
+Runtime Thread: 019fab2d-b796-7ff0-b7fd-8438b335e4af
+
+Root Agent Task: 019fab2d-b796-7ff0-b7fd-8438b335e4af
+
+Delivery Branch: codex/centralize-active-capacity-conversation-title-019fab2d
+
+Delivery Worktree: /Users/martinbechard/.codex/worktrees/c82a/dev-methodology
+
+Next Lifecycle Owner: Root Dev Orchestrator 019fab2d-b796-7ff0-b7fd-8438b335e4af
+
+## Starting Reservation
+
+- Transition: Ready -> Starting.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fab2d-b796-7ff0-b7fd-8438b335e4af.
+- Canonical Root Agent Task Id: 019fab2d-b796-7ff0-b7fd-8438b335e4af.
+- Owner: Parent Dev Backlog Coordinator dispatch reservation.
+- Launch Reservation: ready-starting-three-reservations-019fa9bb-centralize-capacity; one live bounded handshake.
+- Normalized Objective: Centralize the Codex active-execution eligibility, capacity, runtime reconciliation, and portable conversation-title coordination policy so inactive work cannot consume capacity and every lifecycle transition has truthful execution coordination.
+- Intended Root Role: Dev Orchestrator.
+- Delivery Branch: codex/centralize-active-capacity-conversation-title-019fab2d.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/c82a/dev-methodology.
+- Conversation Title Handoff: Centralize active-capacity and conversation-title coordination policy — Starting. The canonical conversation owner must synchronize this title before accepting delivery.
+- Observed Launch Evidence: Parent Dev Backlog Coordinator reserved this canonical Thread under available Starting-plus-Running capacity and woke its canonical root task.
+- Required Next Transition: The same root Dev Orchestrator must atomically record Starting -> Running for this canonical Thread and task before any implementation or governed definition mutation.
+- Lifecycle Claim Evidence: ready-starting-three-reservations-019fa9bb; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event ee40be56-9b67-437f-91e6-f70c38fe84f8; claimed 2026-07-29T00:06:49.750900Z.
 
 ## Summary
 

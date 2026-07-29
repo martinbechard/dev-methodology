@@ -1,6 +1,6 @@
 # Align fix-explanation relationship examples with the six-type explanation model
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -10,15 +10,15 @@ Provider Reference: backlog/defect-backlog/align-fix-explanation-item-taxonomy.m
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Parent Dev Backlog Coordinator dispatch reservation
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
-Launch Reservation: reserve-first-eight-lint-defects-019fa9bb
+Launch Reservation: ready-starting-three-reservations-019fa9bb-align-fix-explanation
 
 Normalized Objective: Make fix-explanation relationship examples conform to the declared six-type structured-explanation model.
 
-Dispatch Time: 2026-07-28T18:22:25Z
+Dispatch Time: 2026-07-29T00:06:49.750900Z
 
 Intended Root Role: Dev Orchestrator
 
@@ -26,7 +26,24 @@ Runtime Thread: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06
 
 Root Agent Task: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06
 
-Next Lifecycle Owner: Dev Backlog Coordinator
+Next Lifecycle Owner: Root Dev Orchestrator 019fa9f9-33f0-7db3-90d5-2dc77dd89c06
+
+## Starting Reservation
+
+- Transition: Ready -> Starting.
+- Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- Canonical Work-Item Thread: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06.
+- Canonical Root Agent Task Id: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06.
+- Owner: Parent Dev Backlog Coordinator dispatch reservation.
+- Launch Reservation: ready-starting-three-reservations-019fa9bb-align-fix-explanation; one live bounded handshake.
+- Normalized Objective: Make fix-explanation relationship examples conform to the declared six-type structured-explanation model.
+- Intended Root Role: Dev Orchestrator.
+- Delivery Branch: codex/align-fix-explanation-item-taxonomy.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/f57f/dev-methodology.
+- Conversation Title Handoff: Align fix-explanation item taxonomy — Starting. The canonical conversation owner must synchronize this title before accepting delivery.
+- Observed Launch Evidence: Parent Dev Backlog Coordinator reserved this preserved canonical Thread under available Starting-plus-Running capacity and woke its canonical root task.
+- Required Next Transition: The same root Dev Orchestrator must atomically record Starting -> Running for this canonical Thread and task before any implementation or governed definition mutation.
+- Lifecycle Claim Evidence: ready-starting-three-reservations-019fa9bb; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event ee40be56-9b67-437f-91e6-f70c38fe84f8; claimed 2026-07-29T00:06:49.750900Z.
 
 ## Running Acceptance
 
