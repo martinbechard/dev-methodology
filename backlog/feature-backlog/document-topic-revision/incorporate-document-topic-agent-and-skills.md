@@ -1,10 +1,10 @@
 # Incorporate the Document Topic Editor and Topic Skills
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
-Owner: Unowned pending Root Dev Orchestrator acceptance
+Owner: Root Dev Orchestrator for canonical task 019fab9e-44bf-7571-9fbb-d9d63d3fa9da
 
 Provider: file
 
@@ -39,6 +39,28 @@ Observed Launch Evidence: Parent Dev Backlog Coordinator authorized one bounded 
 Dependencies Observed: None.
 
 Required Next Lifecycle Transition: The same canonical task's root Dev Orchestrator must record Starting to Running before governed-scope discovery, definition approval, or implementation mutation.
+
+## Running Evidence
+
+Transition: Starting -> Running.
+
+Root Dev Orchestrator: Root Dev Orchestrator for canonical task 019fab9e-44bf-7571-9fbb-d9d63d3fa9da.
+
+Canonical Work-Item Thread: 019fab9e-44bf-7571-9fbb-d9d63d3fa9da.
+
+Canonical Root Agent Task: 019fab9e-44bf-7571-9fbb-d9d63d3fa9da.
+
+Branch: codex/incorporate-document-topic-agent-and-skills-019fab9e.
+
+Worktree: /Users/martinbechard/.codex/worktrees/350a/dev-methodology.
+
+Started At: 2026-07-29T02:13:56Z.
+
+Phase: Analyzing.
+
+Starting Reservation Commit: 2afc03e64d8ed45053900e8ae1e12a1055d8e6f4.
+
+Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim starting-running-019fab9e-44bf-7571-9fbb-d9d63d3fa9da; incarnation 687e34f1-ab98-4b88-8625-6144c6985975; claim journal event 15b4f135-6274-42d0-822b-cb89d25c4968; exact path backlog/feature-backlog/document-topic-revision/incorporate-document-topic-agent-and-skills.md in the primary main checkout.
 
 ## Summary
 
