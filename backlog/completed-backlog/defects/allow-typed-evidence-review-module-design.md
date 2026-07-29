@@ -1,16 +1,16 @@
 # Allow typed evidence in module-design review checklists
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/allow-typed-evidence-review-module-design.md
+Provider Reference: backlog/completed-backlog/defects/allow-typed-evidence-review-module-design.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
 ## Current Starting Reservation
 
@@ -35,6 +35,16 @@ Owner: Root Dev Orchestrator
 - Phase: Approved governed-scope preflight and candidate implementation.
 - Accepted Ownership Evidence: SHARED_CHECKOUT_ACQUIRED claim accept-running-module-design-approved-019faa83; incarnation 9fc69adb-2c7d-474b-a972-61af3bbae072; claim journal event f90d1c4b-54a2-4513-9f24-cbc2d19bdc31; parent resumption commit 0a306a8a8a980441cd3d52aa72d7f75eff06107b; Starting reservation commit 41faaff1f90168c532123031e787c1643342bb1d.
 - Status Correction Evidence: SHARED_CHECKOUT_ACQUIRED claim correct-running-status-module-design-019faa83; incarnation c26dae49-984b-4484-be9f-dce3b2dc69fe; claim journal event 689ddfae-d06d-4cfa-a96d-dec2fed3b75d; correction reconciled the required Running status with the accepted ownership record.
+
+## Completion Evidence
+
+- Delivery Disposition: READY.
+- Source-to-Integration Mapping: Candidate commit 92f978a7c0ecb59d4ccdf3093208c58c184e40d3 mapped to direct-main integration commit 98c99ed5dcc07a0e773bafdbde87c352728c8c78; that integration commit is reachable from observed clean main 6a266c03d28a7bc12ba3bf0a6b22d4bc602927fb.
+- Review and Verifier: Fresh integrated review APPROVED; verifier READY/PASS.
+- Verification: Six Python 3.11 focused and adjacent tests passed; approval preflight ALLOWED; generator freshness and diff checks passed.
+- Validator Configured-Root Residual: The configured-root validator residual remains recorded as a residual; this terminal disposition relies on the fresh verifier READY/PASS rather than claiming that residual was removed.
+- Delivery Claim Release: Broad project-files claim released with event 5989fa98-10c4-4846-b547-5dd2b6a05bb6.
+- Terminal Provider Claim: SHARED_CHECKOUT_ACQUIRED claim complete-module-design-typed-evidence-019faa83; incarnation 9055ec72-5b93-4fbc-bbd9-ea432666473f; claim journal event fa611a1c-fda1-4214-8184-0c3c7859169a.
 
 ## User Action Required Resolution
 
