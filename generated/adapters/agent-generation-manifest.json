@@ -97,7 +97,7 @@
             "analyze-document-topics",
             "revise-document-topics"
           ],
-          "sha256": "8d3b15cd1cc2367bbc985ade7b6be467a39f38710e5991f200d51df26420f734",
+          "sha256": "ddd00c11933f4802023c4bc01b8f9460b3d574fef2d4a180f4ca4f1e5b145e45",
           "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {
@@ -488,7 +488,7 @@
             "revise-document-topics",
             "codex-harness-directives"
           ],
-          "sha256": "c1833f985d3fd531944d2e94977a4ae746f55ea08e155a6e29ff63712b6d5969",
+          "sha256": "421d1e148e13019e9dc3e2281e233a84bd5a8f249a8299bcfbf05ee9b9e6e7d1",
           "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {
@@ -898,7 +898,7 @@
             "analyze-document-topics",
             "revise-document-topics"
           ],
-          "sha256": "81c3cbb8f9e03e215b25fb4d9e65ff1830037aefe33c530d7f4e1204213a1189",
+          "sha256": "947230d41f00e46b7dbef7639869721ed808d8b1215a9d14b39537565cefc9e6",
           "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {
@@ -1282,7 +1282,7 @@
             "analyze-document-topics",
             "revise-document-topics"
           ],
-          "sha256": "bf61e46c412076c4bc5465a3968b6eec40758d272355b55229d774b6801a8a57",
+          "sha256": "ea6b2785b3002326903cbce5cedf8da63364d960a7c6462812f155370ef56926",
           "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {

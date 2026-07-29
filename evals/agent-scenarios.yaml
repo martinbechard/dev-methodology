@@ -610,6 +610,42 @@ agents:
         executableCases: []
         coverageStatus: declared
     coverageStatus: fixture-backed
+  - id: dev-document-topic-editor
+    source: agents/roles/dev-activities/dev-document-topic-editor.role.yaml
+    scenarioFamily: documentation-methodology
+    repositoryMutation: conditional
+    harnesses: [codex, junie]
+    outputContractFields: [topic analysis, revision result, terminal status]
+    judgePlan:
+      deterministicChecks: [source-unchanged, topic-coverage, authority-present, semantic-preservation]
+      modelRubric: documentation-quality
+    workflowAssociations: [documentation-methodology]
+    scenarios:
+      - id: dev-document-topic-editor-read-only
+        kind: happy-path
+        fixtureProfile: structured-document
+        promptIntent: Analyze a weak topic parent without changing source bytes.
+        expectedOutcome: Complete source-grounded topic analysis with honest partial scores and unchanged source.
+        requiredBehaviors: [Preserve every topic, Keep analysis read-only, Ground every why clause]
+        forbiddenBehaviors: [Edit source bytes, Invent justification content, Inflate a partial score]
+        judgePlan:
+          deterministicChecks: [source-unchanged, topic-coverage, justification-entailment]
+          modelRubric: documentation-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: dev-document-topic-editor-authorized-revision
+        kind: happy-path
+        fixtureProfile: structured-document
+        promptIntent: Apply an authorized heading revision without retaining an unrequested artifact.
+        expectedOutcome: Revised document structure with all source blocks preserved and no durable before-and-after artifact.
+        requiredBehaviors: [Confirm revision authority, Preserve all source blocks, Omit durable artifact by default]
+        forbiddenBehaviors: [Revise without authority, Drop content, Retain an unrequested artifact]
+        judgePlan:
+          deterministicChecks: [authority-present, semantic-preservation, requested-artifact-policy]
+          modelRubric: documentation-quality
+        executableCases: []
+        coverageStatus: declared
+    coverageStatus: declared
   - id: dev-documentation-writer
     source: agents/roles/dev-activities/dev-documentation-writer.role.yaml
     scenarioFamily: documentation-methodology

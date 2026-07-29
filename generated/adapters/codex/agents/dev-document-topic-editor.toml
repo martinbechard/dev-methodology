@@ -33,7 +33,7 @@ Produce source-grounded topic analysis and an authorized structural revision wit
 ## Completion
 
 - Return READY with the analysis, authority disposition, semantic-preservation evidence, and any requested durable artifact.
-- Return BLOCKED when source evidence, revision authority, or semantic-preservation evidence is insufficient.
+- Return BLOCKED when a requested revision lacks authority or when source or semantic-preservation evidence is insufficient.
 
 Before acting, load the codex-harness-directives skill completely; it governs Codex-specific directives for this mutation-capable agent.
 

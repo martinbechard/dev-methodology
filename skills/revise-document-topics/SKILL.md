@@ -138,6 +138,20 @@ Count proposals separately as:
 - honest partial scores that should remain;
 - probable wrong-document topics.
 
+## Apply The Authorized Revision
+
+When revision is authorized, map each accepted structural proposal back to the
+source document:
+
+1. Move or rename headings and their complete owned content blocks together.
+2. Preserve every inventoried source block exactly once and keep nonstructural
+   meaning, identifiers, links, examples, tables, and normative force intact.
+3. Do not add claims merely to improve containment or sequence scores.
+4. Re-run the read-only topic analysis on the revised document and reconcile
+   its coverage ledger with the original inventory.
+5. Reject the revision when any source block disappears, duplicates, changes
+   meaning, or lacks an evidence-backed destination.
+
 ## Verify
 
 Confirm that:
@@ -150,14 +164,16 @@ Confirm that:
 - no synthetic or one-child score-fixing parent was introduced;
 - document moves follow primary ownership and leave useful linked boundaries;
 - the revised outline is editorially clearer even when its aggregate score does
-  not increase.
+  not increase;
+- the revised source document contains every original source block exactly
+  once with nonstructural meaning preserved.
 
 ## Output
 
 Return:
 
 1. a prioritized improvement matrix;
-2. the revised scored outline when revision is requested;
+2. the revised document paths and scored outline when revision is requested;
 3. document-architecture recommendations separated from outline-only changes;
 4. counts for reorder, regrouping or reparenting, honest partials, and probable
    wrong-document topics;

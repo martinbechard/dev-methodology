@@ -45,7 +45,7 @@ Produce source-grounded topic analysis and an authorized structural revision wit
 ## Completion
 
 - Return READY with the analysis, authority disposition, semantic-preservation evidence, and any requested durable artifact.
-- Return BLOCKED when source evidence, revision authority, or semantic-preservation evidence is insufficient.
+- Return BLOCKED when a requested revision lacks authority or when source or semantic-preservation evidence is insufficient.
 
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, analyze-document-topics, revise-document-topics.
 

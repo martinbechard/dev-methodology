@@ -9465,12 +9465,18 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertEqual("high", codex["model_reasoning_effort"])
 
-        scenarios = load_yaml_object(
-            AGENT_TEST_SUITES_ROOT / "dev-document-topic-editor" / "scenarios.yaml"
-        )["scenarios"]
-        self.assertEqual(["read-only-analysis", "authorized-revision"], [
-            scenario["id"] for scenario in scenarios
-        ])
+        agent = next(
+            entry
+            for entry in load_yaml_object(REPOSITORY_ROOT / "evals" / "agent-scenarios.yaml")["agents"]
+            if entry["id"] == "dev-document-topic-editor"
+        )
+        self.assertEqual(
+            [
+                "dev-document-topic-editor-read-only",
+                "dev-document-topic-editor-authorized-revision",
+            ],
+            [scenario["id"] for scenario in agent["scenarios"]],
+        )
 
     def test_development_methodology_guides_skill_rename_cleanup(self) -> None:
         skill_text = (
