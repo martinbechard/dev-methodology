@@ -1423,11 +1423,26 @@ class BundleContentTests(unittest.TestCase):
                 text,
                 re.IGNORECASE,
             )
+            runtime_description_suffix = (
+                text[runtime_discovery_description.end():]
+                if runtime_discovery_description is not None
+                else ""
+            )
+            runtime_description_directive = re.search(
+                rf"\b(?:must|should|{manual_action}|{load_action})\b",
+                runtime_description_suffix,
+                re.IGNORECASE,
+            )
+            purely_descriptive_runtime_discovery = (
+                runtime_discovery_description is not None
+                and runtime_discovery_description.start() <= match.start()
+                and runtime_description_directive is None
+            )
             return not (
                 governed_prohibition
                 or explicit_artifact_inspection
                 or automatic_load
-                or runtime_discovery_description
+                or purely_descriptive_runtime_discovery
             )
 
         prohibited_examples = (
@@ -1442,6 +1457,7 @@ class BundleContentTests(unittest.TestCase):
             "Before creating files, read AGENTS.md.",
             "The coder reads AGENTS.md before writing source files.",
             "The harness supplies tools, but the coder reads AGENTS.md before acting.",
+            "Each runtime has its own rules for discovering project instructions, but the coder must read AGENTS.md before acting.",
         )
         allowed_examples = (
             "Do not tell ordinary agents to read AGENTS.md.",
@@ -2263,6 +2279,10 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, jest_text)
+        self.assertNotIn(
+            "Treat failing tests as the current task until explained and fixed.",
+            jest_text,
+        )
 
     def test_gof_pattern_families_are_generic_complete_and_role_assignable(self) -> None:
         expected = {
