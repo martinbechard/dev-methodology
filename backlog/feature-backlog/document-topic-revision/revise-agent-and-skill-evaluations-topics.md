@@ -1,6 +1,6 @@
 # Revise the Agent and Skill Evaluations Document Topics
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -66,7 +66,7 @@ Launch Reservation: One bounded launch reservation.
 
 Normalized Objective: Analyze and revise the generated Agent and Skill Evaluations page through its owning sources and generator so evaluation coverage, evidence, outcomes, and limitations form a coherent topic hierarchy.
 
-Dispatch Time: 2026-07-29T15:24:14Z.
+Dispatch Time: 2026-07-29T15:24:54Z.
 
 Intended Root Role: Root Dev Orchestrator.
 
@@ -78,7 +78,7 @@ Required Next Lifecycle Transition: A root Dev Orchestrator must separately acce
 
 ## Starting Settlement Evidence
 
-Settlement Window: 2026-07-29T15:24:14Z to 2026-07-29T15:25:14Z (exactly 60 seconds).
+Settlement Window: 2026-07-29T15:24:54Z to 2026-07-29T15:25:54Z (exactly 60 seconds).
 
 Runtime Launch Result: Not attempted.
 
