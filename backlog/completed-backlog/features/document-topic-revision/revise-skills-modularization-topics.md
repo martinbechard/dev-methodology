@@ -1,16 +1,16 @@
 # Revise the Technology Skills Document Topics
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/document-topic-revision/revise-skills-modularization-topics.md
+Provider Reference: backlog/completed-backlog/features/document-topic-revision/revise-skills-modularization-topics.md
 
 Completion: direct-main
 
-Owner: Dev Orchestrator (root task 019fabe9-db91-7340-884f-9a33630f4aa5)
+Owner: Dev Orchestrator (root task 019fabe9-db91-7340-884f-9a33630f4aa5; completed)
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 Launch Reservation: reserve-nine-document-topic-revisions-019fa9bb-08; one bounded live launch handshake
 Normalized Objective: Revise the Technology Skills Document Topics.
@@ -26,6 +26,25 @@ Lifecycle Claim Evidence: reserve-nine-document-topic-revisions-019fa9bb; outcom
 Phase: Document topic revision accepted; source analysis pending.
 Started At: 2026-07-29T03:46:57Z
 Running Claim Evidence: accept-revise-skills-modularization-topics-019fabe9; outcome SHARED_CHECKOUT_ACQUIRED; claim event 9d2b0677-c49a-4173-a89b-d0b2a233c619; exact provider path claimed in the primary main checkout.
+Completed At: 2026-07-29T04:07:51Z
+
+## Completion Evidence
+
+Completion Disposition: READY
+Accepted Source Commit: 9ab242362f0c14d39796a6747385602253eb98dd
+Integration Strategy: cherry-pick -x
+Integration Commit: 29a75cbaafcb74f0c1b9a83bd3a177bb3ef31f51
+Observed Main Branch: main
+Observed Main Tip: 2000949ddd7007fcb770116a25b32e54d54d1766
+Integration Reachability: 29a75cbaafcb74f0c1b9a83bd3a177bb3ef31f51 is an ancestor of the observed main tip.
+Changed Paths: README.md; design/agent-and-skill-definitions.html; design/agentic-configuration.html; design/generic-agent-definitions-source.html; design/skills-modularization.html; index.html; scripts/test_bundle_content.py; scripts/test_skill_lifecycle_documentation.py.
+Independent Editorial Review: GOOD and READY; corrected inbound title labels confirmed.
+Independent Candidate Verification: PASS and READY.
+Source and Post-Integration Checks: build-technology-detection.py --check current; build-skill-docs.py --check current; 10 focused tests OK under Python 3.11; py_compile OK; git diff --check clean.
+Scoped Environment Note: The initial post-integration unit attempt under system Python 3.9 failed only because tomllib was unavailable. The same command passed under repository Python 3.11.
+Integration Claim Evidence: acquire 095976f8-d491-4c09-8612-5672c0acacc8; extension 13e8c89c-afc9-4674-b582-b4510429e3f3; release 76f62237-3f26-4407-acc9-1a189c19e600.
+Running Provider Claim Evidence: acquire 9d2b0677-c49a-4173-a89b-d0b2a233c619; release bc01baeb-eaf4-4fb4-b8b3-6feaed344ea3.
+Terminal Provider Claim Evidence: complete-revise-skills-modularization-topics-019fabe9; outcome SHARED_CHECKOUT_ACQUIRED; claim event 1595e7d7-4e9a-4456-aff1-06709e70c280.
 
 Series: backlog/feature-backlog/document-topic-revision/index.md
 
