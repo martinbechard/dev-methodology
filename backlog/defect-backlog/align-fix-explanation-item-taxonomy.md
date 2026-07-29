@@ -1,6 +1,6 @@
 # Align fix-explanation relationship examples with the six-type explanation model
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/align-fix-explanation-item-taxonomy.m
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator 019fa9f9-33f0-7db3-90d5-2dc77dd89c06
+Owner: Unowned
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -26,7 +26,28 @@ Runtime Thread: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06
 
 Root Agent Task: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06
 
-Next Lifecycle Owner: Root Dev Orchestrator 019fa9f9-33f0-7db3-90d5-2dc77dd89c06
+Next Lifecycle Owner: Dev Backlog Coordinator
+
+## Blocked Recovery
+
+- Transition: Running -> Blocked.
+- Canonical Work-Item Thread: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06, preserved.
+- Canonical Root Agent Task: 019fa9f9-33f0-7db3-90d5-2dc77dd89c06, preserved.
+- Owner: Unowned.
+- Branch: codex/align-fix-explanation-item-taxonomy.
+- Worktree: /Users/martinbechard/.codex/worktrees/f57f/dev-methodology.
+- Exact Blocker: Two successive independent code-review and verifier pairs failed to return required terminal ACCEPTED or PASS verdicts despite bounded waits, direct progress prompts, and final deadlines. No code, test, or preflight finding exists, but delivery cannot proceed without terminal independent verdicts.
+- Blocker Owner: Independent review and verification runtime coordination owner.
+- Unblock Condition: An authorized working review and verification lane completes terminal verdicts on 8555aa64cc9c5996979f563966ecacba04acdc69, or on a deliberately refreshed byte-equivalent current-main candidate if main advances.
+- Requested Recovery Action: The Coordinator records a recovered review and verification lane. The same task then follows Blocked -> Ready -> Starting -> Running before integration.
+- Candidate Evidence: The clean 016a-based candidate is 8555aa64cc9c5996979f563966ecacba04acdc69; its relevant source blob identity is a57c3739.
+- Approval Evidence: Scope is skills/fix-explanation/SKILL.md only; provenance is user message item-51 in turn 019faaf7-9e71-7451-8211-6b7899f7e045; the approved two-axis model remains preserved.
+- Gate Evidence: Source and supported generated-mirror gates are ALLOWED. The focused fix and two outline regressions, generator, and diff checks passed. The structured validator rejected outside-root input with no fallback.
+- Review And Verification History: Initial and replacement independent reviewer and verifier attempts were interrupted without required terminal ACCEPTED or PASS verdicts; no substantive code, test, or preflight finding was returned.
+- Primary Recovery Evidence: Primary main was clean and unclaimed after recovery at 016a0a36852668df73a02633ec474d4d22b42f36 before unrelated module-design integration claimed non-backlog project files.
+- User Action: None required.
+- Unattended Boundary: Do not start new reviewer retries, acquire a project-files claim, mutate the candidate, integrate, or deliver until the Coordinator records a recovered lane and lifecycle resumption.
+- Provider-Mutation Claim Evidence: terminal-blocked-fix-explanation-019fa9f9-33f0-7db3-90d5-2dc77dd89c06 acquired by dev-backlog-steward for this exact provider file; outcome SHARED_CHECKOUT_ACQUIRED; claim event 5a65edcd-20ad-48a4-9acd-d757a26b78b6; claimed 2026-07-29T01:42:31.079927Z.
 
 ## Starting Reservation
 
