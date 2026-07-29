@@ -1,6 +1,6 @@
 # Centralize active-capacity and conversation-title coordination policy
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/centralize-active-capacity-and-conver
 
 Completion: direct-main
 
-Owner: Parent Dev Backlog Coordinator dispatch reservation
+Owner: Root Dev Orchestrator 019fab2d-b796-7ff0-b7fd-8438b335e4af
 
 Parent Coordination Thread: 019fa9bb-1423-7e80-bcde-3caa765e3758
 
@@ -32,7 +32,7 @@ Delivery Worktree: /Users/martinbechard/.codex/worktrees/c82a/dev-methodology
 
 Next Lifecycle Owner: Root Dev Orchestrator 019fab2d-b796-7ff0-b7fd-8438b335e4af
 
-Phase: Live bounded launch handshake awaiting root acceptance
+Phase: Running; implementation gated on six approval records and supported preflights
 
 Started At: 2026-07-29T00:20:59.422474Z
 
@@ -106,6 +106,21 @@ Unattended Work Boundary: Stop all definition, mirror, companion implementation,
 - Observed Launch Evidence: The parent Coordinator preserved and re-reserved the same canonical Thread immediately after the approved User Action Required -> Ready transition.
 - Required Next Transition: The same root Dev Orchestrator must atomically record Starting -> Running before any implementation.
 - Lifecycle Claim Evidence: ready-starting-centralize-capacity-019fab2d; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 06a67744-120d-46ff-88b5-e5385b5c4301; claimed 2026-07-29T01:11:01.062826Z.
+
+## Resumed Running Acceptance
+
+- Transition: Starting -> Running.
+- Canonical Work-Item Thread: 019fab2d-b796-7ff0-b7fd-8438b335e4af.
+- Canonical Root Agent Task Id: 019fab2d-b796-7ff0-b7fd-8438b335e4af.
+- Owner: Root Dev Orchestrator 019fab2d-b796-7ff0-b7fd-8438b335e4af.
+- Phase: Running; implementation is gated on an approval record and one supported preflight returning ALLOWED for each of the six approved governed paths.
+- Delivery Branch: codex/centralize-active-capacity-conversation-title-019fab2d.
+- Delivery Worktree: /Users/martinbechard/.codex/worktrees/c82a/dev-methodology.
+- Immediate Acceptance Evidence: The canonical root accepted the parent Coordinator's live resumed Starting reservation at 2026-07-29T01:12:05.042925Z before implementation.
+- Preserved Lifecycle Commits: Running acceptance 24af5ac10ea909a0d5709a85b02742be894c79d9; User Action Required 9b28d38fc84f27bb86d36e5e4d5633195e5ae44c; approved Ready resumption 0ef3db18ac71b287679ea47c3b13b7548d9ff68c; resumed Starting reservation f7f3c1bad31055fcdfe883db6162787bb03f3173.
+- Preserved Claim Evidence: 1157cbfa-2b2d-41e2-a9e3-85638816b958 acquired and 3cdde1d7-2c99-4514-a370-353c40f54910 released; e00f7aea-3dfb-4b91-b0ca-64fb44b06b5a acquired and 88cbcf96-0fb2-4268-b184-86c8cb97fc33 released; 06a67744-120d-46ff-88b5-e5385b5c4301 acquired and e9d3e8d1-5b4c-41c3-a85b-02a3750709b2 released.
+- Required Approval And Preflights: skills/codex-workitem-coordination/SKILL.md; skills/manage-file-work-items/SKILL.md; agents/roles/dev-activities/dev-backlog-coordinator.role.yaml; agents/roles/dev-activities/dev-backlog-steward.role.yaml; agents/roles/dev-activities/dev-orchestrator.role.yaml; agents/roles/dev-activities/dev-backlog-watchdog.role.yaml.
+- Lifecycle Claim Evidence: starting-running-centralize-capacity-019fab2d; claim outcome SHARED_CHECKOUT_ACQUIRED; claim event 9526eaa5-33d2-40ad-befe-226415835527; claimed 2026-07-29T01:12:05.042925Z.
 
 ## Starting Reservation
 
