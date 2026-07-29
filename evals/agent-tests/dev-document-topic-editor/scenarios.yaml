@@ -1,0 +1,30 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: dev-document-topic-editor
+scenarios:
+- id: read-only-analysis
+  priority: 1
+  status: designed
+  executableCase: fixtures/cases.yaml
+  purpose: Diagnose a weak topic parent without changing source bytes.
+  task: Analyze the fixture document and report the source-grounded hierarchy.
+  targetSkills: [analyze-document-topics]
+  allowedAgentDependencies: []
+  requiredBehaviors: [Preserve every topic, Keep analysis read-only, Use honest partial scores, Ground every why clause]
+  forbiddenBehaviors: [Edit source bytes, Invent justification content, Inflate a partial score]
+  deterministicChecks: [source-unchanged, topic-coverage, justification-entailment]
+  expectedOutputs: [topic analysis, terminal status]
+  expectedTerminalStatus: PASS
+- id: authorized-revision
+  priority: 2
+  status: designed
+  executableCase: fixtures/cases.yaml
+  purpose: Apply an authorized structural revision without losing content.
+  task: Revise the fixture using its accepted analysis without retaining a durable before-and-after artifact.
+  targetSkills: [analyze-document-topics, revise-document-topics]
+  allowedAgentDependencies: []
+  requiredBehaviors: [Confirm revision authority, Repair the synthetic parent, Preserve all source topics, Omit durable artifact by default]
+  forbiddenBehaviors: [Revise without authority, Drop content, Invent a transition, Retain an unrequested artifact]
+  deterministicChecks: [authority-present, semantic-preservation, requested-artifact-policy]
+  expectedOutputs: [topic analysis, revision result, terminal status]
+  expectedTerminalStatus: PASS

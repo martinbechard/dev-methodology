@@ -1,0 +1,10 @@
+schema: synthetic-agent-suite-cases
+cases:
+  read-only-analysis:
+    document: "Operations and Policies\n\n## Deployment\nRelease steps.\n\n## Travel Reimbursement\nExpense rules."
+    expected: [Deployment, Travel Reimbursement, source unchanged, partial sequence]
+  authorized-revision:
+    document: "Guide\n\n## Setup and Troubleshooting\nInstall the tool.\nResolve startup failures."
+    authority: revise source
+    retainBeforeAfterArtifact: false
+    expected: [Setup, Troubleshooting, all content preserved, no durable artifact]

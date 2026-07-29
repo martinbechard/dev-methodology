@@ -1,14 +1,15 @@
 ---
-name: create-document-outline
-description: Infer a complete topic hierarchy from a document and evaluate and justify parent containment and sibling sequence.
+name: analyze-document-topics
+description: Analyze a document without changing it by reconstructing its complete topic hierarchy and evaluating source-grounded parent containment and sibling sequence.
 metadata:
   category: documentation-methodology
 ---
 
-# Create Document Outline
+# Analyze Document Topics
 
-Create an outline that represents the topics the document covers and the
-relationships among them.
+Analyze the topics a document covers and the relationships among them. This
+skill is read-only: do not change the source document. Return analysis evidence
+that a separately authorized revision may consume.
 
 Work like a text editor reconstructing the author's topical organization.
 Do not merely shorten every sentence and stack the shortened sentences beneath
@@ -554,4 +555,5 @@ Return:
 2. the top-down topic outline with placement-score prefixes and a why clause
    for every constituent score;
 3. a concise topic-coverage summary;
-4. any unresolved grouping or interpretation concern.
+4. any unresolved grouping or interpretation concern;
+5. a read-only result stating that the source bytes were not changed.

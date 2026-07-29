@@ -385,6 +385,8 @@ The wiki and development-wiki skills are:
 
 The documentation methodology skills are:
 
+- analyze-document-topics
+- revise-document-topics
 - development-methodology
 - documentation-bootstrap
 - documentation-reverse-engineer

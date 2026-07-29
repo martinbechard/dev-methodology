@@ -33,20 +33,8 @@ REPOSITORY_MAINTENANCE_SKILL_PATH = (
     / "dev-methodology-repository-maintenance"
     / "SKILL.md"
 )
-CREATE_OUTLINE_SKILL_PATH = (
-    REPOSITORY_ROOT
-    / ".agents"
-    / "skills"
-    / "create-document-outline"
-    / "SKILL.md"
-)
-IMPROVE_OUTLINE_SKILL_PATH = (
-    REPOSITORY_ROOT
-    / ".agents"
-    / "skills"
-    / "improve-document-outline"
-    / "SKILL.md"
-)
+ANALYZE_TOPICS_SKILL_PATH = REPOSITORY_ROOT / "skills" / "analyze-document-topics" / "SKILL.md"
+REVISE_TOPICS_SKILL_PATH = REPOSITORY_ROOT / "skills" / "revise-document-topics" / "SKILL.md"
 SKILLS_ROOT = REPOSITORY_ROOT / "skills"
 ROLES_ROOT = REPOSITORY_ROOT / "agents" / "roles"
 SKILL_CATEGORIES_PATH = REPOSITORY_ROOT / "design" / "skill-categories.yaml"
@@ -9410,18 +9398,19 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(phrase, maintenance_skill_text)
                 self.assertNotIn(phrase, agents_text)
 
-    def test_repository_local_outline_improvement_preserves_honest_scores(self) -> None:
-        skill_text = IMPROVE_OUTLINE_SKILL_PATH.read_text(encoding="utf-8")
+    def test_topic_revision_preserves_honest_scores_and_requires_authority(self) -> None:
+        skill_text = REVISE_TOPICS_SKILL_PATH.read_text(encoding="utf-8")
         skill_metadata = load_yaml_object_from_frontmatter(
-            IMPROVE_OUTLINE_SKILL_PATH
+            REVISE_TOPICS_SKILL_PATH
         )
 
-        self.assertEqual("improve-document-outline", skill_metadata["name"])
-        self.assertIn("partial scores", skill_metadata["description"])
+        self.assertEqual("revise-document-topics", skill_metadata["name"])
 
         for phrase in (
-            "[Create Document Outline](../create-document-outline/SKILL.md)",
-            "Prefer a more truthful structure over a higher percentage.",
+            "[Analyze Document Topics](../analyze-document-topics/SKILL.md)",
+            "Explicit authority to revise",
+            "Do not retain one by default.",
+            "more truthful structure",
             "Recalculate the moved topic and every sibling whose predecessor changes.",
             "Reject a reorder that merely transfers a partial score",
             "a one-child parent created only to remove a sequence score",
@@ -9432,13 +9421,15 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, skill_text)
 
-    def test_repository_local_outline_justifications_are_source_grounded(self) -> None:
-        skill_text = CREATE_OUTLINE_SKILL_PATH.read_text(encoding="utf-8")
+    def test_topic_analysis_is_read_only_and_source_grounded(self) -> None:
+        skill_text = ANALYZE_TOPICS_SKILL_PATH.read_text(encoding="utf-8")
         skill_metadata = load_yaml_object_from_frontmatter(
-            CREATE_OUTLINE_SKILL_PATH
+            ANALYZE_TOPICS_SKILL_PATH
         )
 
-        self.assertEqual("create-document-outline", skill_metadata["name"])
+        self.assertEqual("analyze-document-topics", skill_metadata["name"])
+        self.assertIn("skill is read-only", skill_text)
+        self.assertIn("source bytes were not changed", skill_text)
         for phrase in (
             "Treat every why clause as an evidence claim",
             "the source blocks represented by those topics",
@@ -9452,6 +9443,34 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, skill_text)
+
+    def test_document_topic_editor_owns_both_phases_and_focused_cases(self) -> None:
+        role = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-document-topic-editor.role.yaml"
+        )
+        self.assertEqual("conditional", role["repositoryMutation"])
+        self.assertEqual("documentation", role["modelProfile"])
+        self.assertEqual(
+            ["analyze-document-topics", "revise-document-topics"],
+            [next(iter(entry)) for entry in role["skills"]],
+        )
+
+        codex = tomllib.loads(
+            (
+                GENERATED_ADAPTERS_ROOT
+                / "codex"
+                / "agents"
+                / "dev-document-topic-editor.toml"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual("high", codex["model_reasoning_effort"])
+
+        scenarios = load_yaml_object(
+            AGENT_TEST_SUITES_ROOT / "dev-document-topic-editor" / "scenarios.yaml"
+        )["scenarios"]
+        self.assertEqual(["read-only-analysis", "authorized-revision"], [
+            scenario["id"] for scenario in scenarios
+        ])
 
     def test_development_methodology_guides_skill_rename_cleanup(self) -> None:
         skill_text = (

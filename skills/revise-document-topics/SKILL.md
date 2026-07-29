@@ -1,25 +1,32 @@
 ---
-name: improve-document-outline
-description: Improve a scored topic outline by repairing weak placement, grouping, sequence, and document ownership without gaming alignment scores. Use when an outline contains partial scores, suspicious full scores, synthetic parents, compound topics, or material that may belong in another document.
+name: revise-document-topics
+description: Revise an explicitly authorized document from a scored topic analysis by repairing weak placement, grouping, sequence, and ownership without gaming alignment scores.
+metadata:
+  category: documentation-methodology
 ---
 
-# Improve Document Outline
+# Revise Document Topics
 
-Improve the topical organization represented by an existing scored outline.
-Prefer a more truthful structure over a higher percentage.
+Revise a document's topical organization only when the caller explicitly
+authorizes source mutation. Prefer a more truthful structure over a higher
+percentage.
 
 ## Dependency
 
-Load and apply [Create Document Outline](../create-document-outline/SKILL.md)
-before this skill. Use its topic, containment, sequence, granularity, and scoring
-contracts as the baseline.
+Load and apply [Analyze Document Topics](../analyze-document-topics/SKILL.md)
+before this skill. Use its read-only topic, containment, sequence, granularity,
+and scoring contracts as the baseline. Stop after analysis when revision
+authority is absent.
 
 ## Inputs
 
 - The source document.
 - Its current scored topic outline.
+- Explicit authority to revise the source document.
 - Any linked documents that may own displaced material.
 - Any stated content boundary or document-ownership map.
+- Whether the caller requests a durable before-and-after topic-analysis
+  artifact. Do not retain one by default.
 
 ## Establish The Audit Set
 
@@ -155,4 +162,7 @@ Return:
 4. counts for reorder, regrouping or reparenting, honest partials, and probable
    wrong-document topics;
 5. unresolved tradeoffs, including stable comparison order versus local
-   sequence quality.
+   sequence quality;
+6. changed paths and verification evidence;
+7. the durable before-and-after analysis artifact when the caller requested
+   one, or an explicit statement that no durable artifact was retained.

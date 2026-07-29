@@ -1,7 +1,7 @@
 {
   "adapters": {
     "claude": {
-      "agentCount": 29,
+      "agentCount": 30,
       "agents": [
         {
           "name": "dev-artifact-reviewer",
@@ -87,6 +87,18 @@
           ],
           "sha256": "da84d016f4a3f1cb8771e41058e297bd5bef85d2d5bd61aa9af7a75322f9c89e",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
+        },
+        {
+          "name": "dev-document-topic-editor",
+          "output": "generated/adapters/claude/agents/dev-document-topic-editor.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "ste-technical-writing",
+            "analyze-document-topics",
+            "revise-document-topics"
+          ],
+          "sha256": "8d3b15cd1cc2367bbc985ade7b6be467a39f38710e5991f200d51df26420f734",
+          "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {
           "name": "dev-documentation-writer",
@@ -373,7 +385,7 @@
       "outputRoot": "generated/adapters/claude/agents"
     },
     "codex": {
-      "agentCount": 29,
+      "agentCount": 30,
       "agents": [
         {
           "name": "dev-artifact-reviewer",
@@ -465,6 +477,19 @@
           ],
           "sha256": "6742f4ecd475da26eeee583d62a7dd78910be95e31d3f5f62a2c638e7eb53f8f",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
+        },
+        {
+          "name": "dev-document-topic-editor",
+          "output": "generated/adapters/codex/agents/dev-document-topic-editor.toml",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "ste-technical-writing",
+            "analyze-document-topics",
+            "revise-document-topics",
+            "codex-harness-directives"
+          ],
+          "sha256": "c1833f985d3fd531944d2e94977a4ae746f55ea08e155a6e29ff63712b6d5969",
+          "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {
           "name": "dev-documentation-writer",
@@ -777,7 +802,7 @@
       "outputRoot": "generated/adapters/codex/agents"
     },
     "gemini": {
-      "agentCount": 29,
+      "agentCount": 30,
       "agents": [
         {
           "name": "dev-artifact-reviewer",
@@ -863,6 +888,18 @@
           ],
           "sha256": "8dfc998206709bee561e11cea3fc877c19b0f70fd815e73a34eda99fe3b420ac",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
+        },
+        {
+          "name": "dev-document-topic-editor",
+          "output": "generated/adapters/gemini/agents/dev-document-topic-editor.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "ste-technical-writing",
+            "analyze-document-topics",
+            "revise-document-topics"
+          ],
+          "sha256": "81c3cbb8f9e03e215b25fb4d9e65ff1830037aefe33c530d7f4e1204213a1189",
+          "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {
           "name": "dev-documentation-writer",
@@ -1149,7 +1186,7 @@
       "outputRoot": "generated/adapters/gemini/agents"
     },
     "junie": {
-      "agentCount": 29,
+      "agentCount": 30,
       "agents": [
         {
           "name": "dev-artifact-reviewer",
@@ -1235,6 +1272,18 @@
           ],
           "sha256": "cf9794d378b4e04e3a58e3cedb72e4ea251c1588f4d4ee361744506f0dbaebcf",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
+        },
+        {
+          "name": "dev-document-topic-editor",
+          "output": "generated/adapters/junie/agents/dev-document-topic-editor.md",
+          "referencedFixedSkills": [
+            "effective-communication",
+            "ste-technical-writing",
+            "analyze-document-topics",
+            "revise-document-topics"
+          ],
+          "sha256": "bf61e46c412076c4bc5465a3968b6eec40758d272355b55229d774b6801a8a57",
+          "source": "agents/roles/dev-activities/dev-document-topic-editor.role.yaml"
         },
         {
           "name": "dev-documentation-writer",
@@ -1521,7 +1570,7 @@
       "outputRoot": "generated/adapters/junie/agents"
     }
   },
-  "canonicalRoleCount": 29,
+  "canonicalRoleCount": 30,
   "generationOptions": {
     "coreSkillDelivery": "by-reference",
     "inlineCoreSkills": false

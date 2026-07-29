@@ -1,5 +1,0 @@
-basis: explicit-user-direction
-definition_scope: .agents/skills/improve-document-outline/SKILL.md
-provenance:
-  source: user-message
-  reference: thread:019fa9bf-1e81-7a70-87e5-a747ce97318f/message:add-local-improve-outline-skill-and-apply-documentation-recommendations

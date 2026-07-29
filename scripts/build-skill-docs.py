@@ -144,6 +144,7 @@ ROLE_ACTOR_SUFFIXES = {
     "configurator",
     "coordinator",
     "diagnostician",
+    "editor",
     "ingester",
     "maintainer",
     "operator",
