@@ -40,7 +40,7 @@ Owner: Root Dev Orchestrator
 
 - Resolved At: 2026-07-28T22:40:09Z.
 - User Answer: `approved, and update your title`.
-- User-Message Provenance: Parent Dev Backlog Coordinator task 019fa9bb-1423-7e80-bcde-3caa765e3758.
+- User-Message Provenance: Direct userMessage `approved, and update your title` in canonical Thread 019faa83-9a42-7e11-9c24-20a7a4264da3, turn 019faad0-bee6-7f53-a4b9-774b16715573, item-18. Candidate approval reference thread:019faa83-9a42-7e11-9c24-20a7a4264da3/message:approved-and-update-your-title is consistent.
 - Result: Approved only skills/review-module-design/SKILL.md for typed evidence: exact quotation, structural evidence, operation-reconciliation evidence, omission evidence, and not-applicable rationale. Supported mirrors and the ordinary checklist and focused tests remain within the existing bounded work; no other governed definition is approved. Update the title as part of the bounded correction.
 - Approval Gate: Before any governed-source mutation, create the exact-scope approval record from this provenance and pass the supported pre-mutation check.
 - Ready Resumption: Preserve canonical Thread and root task 019faa83-9a42-7e11-9c24-20a7a4264da3, branch, worktree, and history. The parent alone may separately reserve Ready -> Starting; the preserved root alone must separately accept Starting -> Running before repository mutation.
