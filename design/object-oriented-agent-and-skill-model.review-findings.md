@@ -16,7 +16,7 @@ No material findings.
   - **RESULT:** The document is a conceptual analysis without lifecycle-style example labels or an application sequence.
 
 - **CHECK:** DIR-3, DIR-4
-  - **RESULT:** Mermaid diagrams use Skill interface for the shared contract and SKILL.md for the concrete definition.
+  - **RESULT:** Mermaid diagrams use AGENTS.md DII for an injected shared contract and SKILL.md for the concrete definition.
 
 - **CHECK:** DIR-5, DIR-6
   - **RESULT:** Injectable Skill requires shared linking vocabulary and selection through AGENTS.md.

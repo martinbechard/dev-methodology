@@ -23,6 +23,7 @@ This document defines a conceptual vocabulary for analyzing agents, Skill interf
 | Term | Meaning | Example |
 | --- | --- | --- |
 | Skill interface | A shared verb phrase and parameter meaning used by callers and implementing SKILL.md files. | Create Workitem accepts a workitem description. |
+| AGENTS.md DII | The diagram prototype for a Skill interface whose implementation is selected through AGENTS.md. | Create Workitem is drawn as AGENTS.md DII. |
 | Interface term | The verb phrase that identifies the procedure a caller needs. | Create Workitem. |
 | Interface parameter | Information passed by the caller to the procedure named by the interface term. | Workitem description: Add a new Cancel button. |
 | Procedure | The instructions in a SKILL.md that explain how to perform the interface term. | Create a GitLab issue, read it back, and return its identity. |
@@ -47,7 +48,7 @@ classDiagram
     }
 
     class CreateWorkitem {
-        <<Skill interface>>
+        <<AGENTS.md DII>>
         +createWorkitem(workitemDescription)
     }
 
@@ -60,7 +61,7 @@ classDiagram
     CreateWorkitem <|.. ImplementingSkill : exported implementation
 ```
 
-The Skill interface is the pure-virtual side of the analogy. The SKILL.md contains the procedure that gives the verb phrase its concrete behavior.
+The AGENTS.md DII prototype marks the pure-virtual side of the analogy. The SKILL.md contains the procedure that gives the Skill interface verb phrase its concrete behavior.
 
 ## 3. Injectable Skills
 
@@ -88,7 +89,7 @@ classDiagram
     }
 
     class CreateWorkitem {
-        <<Skill interface>>
+        <<AGENTS.md DII>>
         +createWorkitem(workitemDescription)
     }
 
@@ -172,7 +173,7 @@ This section separates understanding the user’s request from choosing the impl
 sequenceDiagram
     actor User
     participant Agent as Backlog Manager Agent
-    participant Interface as Create Workitem Skill interface
+    participant Interface as Create Workitem AGENTS.md DII
 
     User->>Agent: Add a new item to create a Cancel button into the backlog
     Agent->>Agent: Identify the Create Workitem verb phrase
@@ -199,7 +200,7 @@ classDiagram
     direction LR
 
     class CreateWorkitem {
-        <<Skill interface>>
+        <<AGENTS.md DII>>
         +createWorkitem(workitemDescription)
     }
 
@@ -277,12 +278,12 @@ classDiagram
     direction LR
 
     class CreateWorkitem {
-        <<Skill interface>>
+        <<AGENTS.md DII>>
         +createWorkitem(workitemDescription)
     }
 
     class PublishChange {
-        <<Skill interface>>
+        <<AGENTS.md DII>>
         +publishChange(changeDescription)
     }
 
@@ -320,7 +321,7 @@ classDiagram
     }
 
     class DeliverWorkitem {
-        <<Skill interface>>
+        <<AGENTS.md DII>>
         +deliverWorkitem(acceptedCommit)
     }
 
@@ -448,13 +449,13 @@ classDiagram
 
 - **RULE: RULE-23** Keep this document conceptual
   - **SYNOPSIS:** The document explains the vocabulary and relationships without prescribing a schema, migration order, or repository change sequence.
-  - **EXAMPLE:** The diagrams show Create Workitem as a Skill interface without specifying a new YAML field for declaring it.
+  - **EXAMPLE:** The diagrams show Create Workitem with the AGENTS.md DII prototype without specifying a new YAML field for declaring it.
 
 ## 13. Definition Of Good
 
 - **RULE: RULE-24** Use the requested diagram prototypes
-  - **SYNOPSIS:** Diagrams label shared contracts as Skill interface and concrete definitions as SKILL.md.
-  - **EXAMPLE:** CreateWorkitem has the Skill interface stereotype; GitLabWorkitemSkill has the SKILL.md stereotype.
+  - **SYNOPSIS:** Diagrams label an injected shared contract as AGENTS.md DII and a concrete skill definition as SKILL.md.
+  - **EXAMPLE:** CreateWorkitem has the AGENTS.md DII stereotype; GitLabWorkitemSkill has the SKILL.md stereotype.
 
 - **RULE: RULE-25** Make the complete workitem invocation understandable
   - **SYNOPSIS:** A reader can follow the request from the user, through the agent’s verb phrase and parameter, through AGENTS.md injection, to the selected SKILL.md procedure.
