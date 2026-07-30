@@ -150,6 +150,165 @@ create-file-work-item mostly requests the loaded resource-coordination procedure
 
 Crisis mode continues to use the selected Persistence provider while disabling claims and delegated delivery. It therefore remains in Backlog Management without a Resource Coordination relationship.
 
+## Proposed Design
+
+The proposed diagram applies the recommendations below. Gold SKILL.md nodes have a proposed name change, and renamed-from records the current name. Neutral SKILL.md nodes keep their current names; their method-like members show proposed procedure headings.
+
+```mermaid
+classDiagram
+    direction TB
+
+    class DevBacklogSteward {
+        <<Agent>>
+    }
+
+    class DevBacklogCoordinator {
+        <<Agent>>
+    }
+
+    class CreateWorkItem["create-*-work-item"] {
+        <<AGENTS.md>>
+        <<abstract>>
+        +create-work-item(workItemDescription)
+    }
+
+    class ManageWorkItem["manage-*-work-items"] {
+        <<AGENTS.md>>
+        <<abstract>>
+        +inventory-work-items(selection)
+        +transition-work-item(workItem, transition)
+        +reconcile-work-item-completion(workItem, deliveryEvidence)
+    }
+
+    namespace BacklogManagement {
+        class resolve-backlog-crisis:::renamed {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            renamed-from backlog-crisis-mode
+        }
+
+        class create-file-work-item {
+            <<SKILL.md>>
+            <<Injectable Skill>>
+            +create-work-item()
+            +capture-future-idea()
+            +promote-future-idea()
+            +exact-backlog-creation-transaction()
+        }
+
+        class create-github-work-item {
+            <<SKILL.md>>
+            <<Injectable Skill>>
+            +create-work-item()
+        }
+
+        class create-gitlab-work-item {
+            <<SKILL.md>>
+            <<Injectable Skill>>
+            +create-work-item()
+        }
+
+        class create-azure-devops-work-item {
+            <<SKILL.md>>
+            <<Injectable Skill>>
+            <<Unsupported placeholder>>
+            +create-work-item()
+        }
+
+        class create-jira-work-item {
+            <<SKILL.md>>
+            <<Injectable Skill>>
+            <<Unsupported placeholder>>
+            +create-work-item()
+        }
+
+        class manage-file-work-items {
+            <<SKILL.md>>
+            <<Injectable Skill>>
+            +inventory-work-items()
+            +transition-work-item()
+            +reconcile-work-item-completion()
+            +recover-work-item()
+            +report-work-items()
+        }
+
+        class manage-github-work-items {
+            <<SKILL.md>>
+            <<Injectable Skill>>
+            +inventory-work-items()
+            +transition-work-item()
+            +reconcile-work-item-completion()
+            +recover-work-item()
+            +report-work-items()
+        }
+
+        class manage-gitlab-work-items {
+            <<SKILL.md>>
+            <<Injectable Skill>>
+            +inventory-work-items()
+            +transition-work-item()
+            +reconcile-work-item-completion()
+            +recover-work-item()
+            +report-work-items()
+        }
+
+        class manage-azure-devops-work-items {
+            <<SKILL.md>>
+            <<Injectable Skill>>
+            <<Unsupported placeholder>>
+            +inventory-work-items()
+            +transition-work-item()
+            +reconcile-work-item-completion()
+            +recover-work-item()
+            +report-work-items()
+        }
+
+        class manage-jira-work-items {
+            <<SKILL.md>>
+            <<Injectable Skill>>
+            <<Unsupported placeholder>>
+            +inventory-work-items()
+            +transition-work-item()
+            +reconcile-work-item-completion()
+            +recover-work-item()
+            +report-work-items()
+        }
+    }
+
+    class ResourceCoordination["resource-coordination"] {
+        <<AGENTS.md>>
+        <<Cross-group>>
+        +coordinate-shared-resource(resourceManifest)
+    }
+
+    class agent-claim {
+        <<SKILL.md>>
+        <<Cross-group>>
+    }
+
+    DevBacklogSteward --> CreateWorkItem
+    DevBacklogSteward --> ManageWorkItem
+    DevBacklogCoordinator o..> resolve-backlog-crisis : when a backlog crisis is declared
+
+    CreateWorkItem o--> create-file-work-item
+    CreateWorkItem o--> create-github-work-item
+    CreateWorkItem o--> create-gitlab-work-item
+    CreateWorkItem o--> create-azure-devops-work-item
+    CreateWorkItem o--> create-jira-work-item
+
+    ManageWorkItem o--> manage-file-work-items
+    ManageWorkItem o--> manage-github-work-items
+    ManageWorkItem o--> manage-gitlab-work-items
+    ManageWorkItem o--> manage-azure-devops-work-items
+    ManageWorkItem o--> manage-jira-work-items
+
+    create-file-work-item ..> ResourceCoordination : when resource coordination is enabled
+    create-file-work-item o..> agent-claim : when classifying User Action Required and agent-claim is loaded
+    manage-file-work-items ..> ResourceCoordination : when resource coordination is enabled
+
+    classDef renamed fill:#fff3bf,stroke:#b45309,stroke-width:3px,color:#111827
+```
+
 ## Skill Recommendations
 
 | Skill | Current source boundary | Recommendation | Reason |

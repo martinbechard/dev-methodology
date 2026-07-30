@@ -54,6 +54,55 @@ The concrete node shows the current internal procedure headings. None is named D
 
 agent-claim and agent-work-merge remain in Concurrent Tasking. The open diamonds show that complete-work-item-direct-main currently names those exact skills instead of reaching them through a procedure-mapped AGENTS.md interface.
 
+## Proposed Design
+
+The proposed diagram applies the recommendations below. Gold SKILL.md nodes have a proposed name change, and renamed-from records the current name. Neutral SKILL.md nodes keep their current names; their method-like members show proposed procedure headings.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class DevOrchestrator {
+        <<Agent>>
+    }
+
+    class DeliverWorkItem["deliver-work-item-*"] {
+        <<AGENTS.md>>
+        +deliver-work-item(acceptedCommit)
+    }
+
+    namespace DirectMainDelivery {
+        class deliver-work-item-direct-main:::renamed {
+            <<SKILL.md>>
+            <<Injectable Skill>>
+            renamed-from complete-work-item-direct-main
+            +deliver-work-item()
+            +evidence-gate()
+            +main-reconciliation()
+            +deliberate-integration()
+            +integrated-verification-and-main-observation()
+        }
+    }
+
+    class agent-claim {
+        <<SKILL.md>>
+        <<Cross-group>>
+    }
+
+    class integrate-agent-work:::renamed {
+        <<SKILL.md>>
+        <<Cross-group>>
+        renamed-from agent-work-merge
+    }
+
+    DevOrchestrator --> DeliverWorkItem
+    DeliverWorkItem o--> deliver-work-item-direct-main
+    deliver-work-item-direct-main o--> agent-claim
+    deliver-work-item-direct-main o..> integrate-agent-work : when the accepted commit is not represented on main
+
+    classDef renamed fill:#fff3bf,stroke:#b45309,stroke-width:3px,color:#111827
+```
+
 ## Skill Recommendations
 
 | Skill | Current source boundary | Recommendation | Reason |

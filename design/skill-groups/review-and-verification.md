@@ -162,6 +162,173 @@ The four Agent nodes show their actual fixed and conditional skill references in
 
 The Peer Skill arrows expose current direct coupling among diagnosis procedures. end-to-end-verification names agent-claim when a claim event occurs, so that relationship uses an open diamond. Its regular dotted delivery arrow is different: the verifier returns accepted evidence to the project-selected delivery owner without naming the Commit implementation.
 
+## Proposed Design
+
+The proposed diagram applies the recommendations below. Gold SKILL.md nodes have a proposed name change, and renamed-from records the current name. Neutral SKILL.md nodes keep their current names; their method-like members show proposed procedure headings.
+
+```mermaid
+classDiagram
+    direction TB
+
+    class DevCodeReviewer {
+        <<Agent>>
+    }
+
+    class DevVerifier {
+        <<Agent>>
+    }
+
+    class DevRuntimeDiagnostician {
+        <<Agent>>
+    }
+
+    class DevPromptReviewer {
+        <<Agent>>
+    }
+
+    class PlacementAwareReviewAgents {
+        <<Agent superclass stand-in>>
+    }
+
+    namespace ReviewAndVerification {
+        class review-code-with-evidence:::renamed {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            renamed-from code-review-evidence
+            +evidence-packet()
+            +synthesis-rules()
+        }
+
+        class test-strategy {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            +select-and-run-tests()
+            +coverage-principles()
+        }
+
+        class verify-end-to-end-workflow:::renamed {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            renamed-from end-to-end-verification
+            +evidence-handoff-and-commit-authority()
+        }
+
+        class analyze-root-cause:::renamed {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            <<Peer Skill>>
+            renamed-from root-cause-analysis
+        }
+
+        class collect-runtime-evidence:::renamed {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            <<Peer Skill>>
+            renamed-from runtime-evidence-collection
+        }
+
+        class trace-code-execution:::renamed {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            <<Peer Skill>>
+            renamed-from code-execution-tracing
+        }
+
+        class review-prompt-contracts:::renamed {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            renamed-from prompt-contracts
+        }
+    }
+
+    class careful-coding {
+        <<SKILL.md>>
+        <<Cross-group>>
+        +confirm-work-before-coding()
+        +validate-authorized-contract()
+        +execute-goal-driven-loop()
+    }
+
+    class code-comments {
+        <<SKILL.md>>
+        <<Cross-group>>
+        +write-structured-comments()
+        +add-code-artifact-header()
+        +document-public-constructs()
+        +review-code-comments()
+    }
+
+    class discover-code-scope:::renamed {
+        <<SKILL.md>>
+        <<Cross-group>>
+        renamed-from code-discovery
+    }
+
+    class organise-project-files {
+        <<SKILL.md>>
+        <<Cross-group>>
+        +choose-project-file-placement()
+    }
+
+    class review-structured-artifact {
+        <<SKILL.md>>
+        <<Cross-group>>
+        +review-structured-artifact()
+    }
+
+    class structured-explanation {
+        <<SKILL.md>>
+        <<Cross-group>>
+        +create-structured-explanation()
+    }
+
+    class agent-claim {
+        <<SKILL.md>>
+        <<Cross-group>>
+    }
+
+    class DeliverWorkItem["deliver-work-item-*"] {
+        <<AGENTS.md>>
+        <<Cross-group>>
+        +deliver-work-item(acceptedCommit)
+    }
+
+    DevCodeReviewer o--> review-code-with-evidence
+    DevCodeReviewer o--> careful-coding
+    DevCodeReviewer o--> code-comments
+    DevCodeReviewer o--> review-structured-artifact
+
+    DevVerifier o--> test-strategy
+    DevVerifier o--> review-structured-artifact
+    DevVerifier o--> structured-explanation
+    DevVerifier o..> verify-end-to-end-workflow : when confidence depends on a complete real workflow
+    DevVerifier o..> analyze-root-cause : when a verification check fails
+    DevVerifier o..> collect-runtime-evidence : when static checks cannot establish behavior
+    DevVerifier o..> trace-code-execution : when an outcome must be connected to source control flow
+    DevVerifier o..> review-prompt-contracts : when verification depends on a model-facing evaluator
+
+    DevRuntimeDiagnostician o--> discover-code-scope
+    DevRuntimeDiagnostician o--> test-strategy
+    DevRuntimeDiagnostician o--> analyze-root-cause
+    DevRuntimeDiagnostician o--> trace-code-execution
+    DevRuntimeDiagnostician o--> structured-explanation
+    DevRuntimeDiagnostician o..> collect-runtime-evidence : when source cannot establish runtime state
+    DevRuntimeDiagnostician o..> careful-coding : when diagnosis changes instrumentation or code
+
+    DevPromptReviewer o--> review-prompt-contracts
+    DevPromptReviewer o--> review-structured-artifact
+
+    PlacementAwareReviewAgents o..> organise-project-files : when review or verification creates a project artifact
+
+    analyze-root-cause o..> trace-code-execution : when the cause depends on a source path
+    analyze-root-cause o..> collect-runtime-evidence : when runtime facts are missing
+    trace-code-execution o..> collect-runtime-evidence : when source cannot identify the actual path
+    verify-end-to-end-workflow o..> agent-claim : when verification triggers a claim event
+    verify-end-to-end-workflow ..> DeliverWorkItem : when repository delivery is required
+
+    classDef renamed fill:#fff3bf,stroke:#b45309,stroke-width:3px,color:#111827
+```
+
 ## Skill Recommendations
 
 | Skill | Current source boundary | Recommendation | Reason |

@@ -111,6 +111,128 @@ The empty skill nodes are deliberate. The Agent definitions load these skills as
 
 The skill-to-skill open diamonds expose stronger Peer Skill coupling. For example, fix-explanation names structured-explanation directly, while structured-explanation names structured-design only when system structure must be described.
 
+## Proposed Design
+
+The proposed diagram applies the recommendations below. Gold SKILL.md nodes have a proposed name change, and renamed-from records the current name. Neutral SKILL.md nodes keep their current names; their method-like members show proposed procedure headings.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class DevCoder {
+        <<Agent>>
+    }
+
+    class ProjectOrganiser {
+        <<Agent>>
+    }
+
+    class StructuredArtifactReviewers {
+        <<Agent superclass stand-in>>
+    }
+
+    namespace BaselineDevelopment {
+        class careful-coding {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            +confirm-work-before-coding()
+            +validate-authorized-contract()
+            +execute-goal-driven-loop()
+        }
+
+        class code-comments {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            <<Peer Skill>>
+            +write-structured-comments()
+            +add-code-artifact-header()
+            +document-public-constructs()
+            +review-code-comments()
+        }
+
+        class discover-code-scope:::renamed {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            renamed-from code-discovery
+        }
+
+        class test-driven-development {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            <<Peer Skill>>
+            +run-red-green-refactor-loop()
+        }
+
+        class structured-design {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            <<Peer Skill>>
+            +create-structured-design()
+            +self-review-structured-design()
+        }
+
+        class structured-explanation {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            <<Peer Skill>>
+            +create-structured-explanation()
+        }
+
+        class organise-project-files {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            +choose-project-file-placement()
+        }
+
+        class review-structured-artifact {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            <<Peer Skill>>
+            +review-structured-artifact()
+        }
+
+        class explain-code-fix:::renamed {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            <<Peer Skill>>
+            renamed-from fix-explanation
+        }
+    }
+
+    class verify-documentation-page:::renamed {
+        <<SKILL.md>>
+        <<Cross-group>>
+        renamed-from documentation-page-verify
+    }
+
+    class analyze-root-cause:::renamed {
+        <<SKILL.md>>
+        <<Cross-group>>
+        renamed-from root-cause-analysis
+    }
+
+    DevCoder o--> careful-coding
+    DevCoder o--> code-comments
+    DevCoder o--> discover-code-scope
+    DevCoder o--> explain-code-fix
+    DevCoder o..> organise-project-files : when implementation creates a project file or directory
+    DevCoder o..> test-driven-development : when executable tests should guide implementation
+
+    ProjectOrganiser o--> organise-project-files
+    ProjectOrganiser o--> structured-design
+    ProjectOrganiser o--> structured-explanation
+
+    StructuredArtifactReviewers o--> review-structured-artifact
+
+    code-comments o..> structured-explanation : when writing a non-trivial comment block
+    explain-code-fix o--> structured-explanation
+    structured-explanation o..> structured-design : when an explanation needs system structure
+    review-structured-artifact o--> verify-documentation-page
+    test-driven-development o..> analyze-root-cause : when a test fails unexpectedly
+
+    classDef renamed fill:#fff3bf,stroke:#b45309,stroke-width:3px,color:#111827
+```
+
 ## Skill Recommendations
 
 These skills are primarily exact-name Agent Skills. They do not need to become injectable merely for consistency. The recommendations make operation boundaries clearer where another Agent or skill may need to refer to one part of the package.
