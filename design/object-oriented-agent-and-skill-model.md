@@ -2,14 +2,16 @@
 
 ## Scope
 
-This document defines a conceptual vocabulary for object-oriented analysis of Agents and skills.
+This document uses class designs to analyze how Agents and skills are related, dispatched, and organized.
 
 It covers:
 
+- Agent dependencies and procedure expectations;
 - exact-name, conditional, procedure-mapped, and request-triggered skill loading;
 - Agent Skills;
 - Injected Skills;
 - Peer Skills;
+- skill families and maintainable skill organization;
 - Skill interfaces and SKILL.md files;
 - diagram conventions introduced where each relationship first appears.
 
@@ -21,17 +23,17 @@ Applications of this method are maintained separately in [Object-Oriented Skill 
 
 ## 1. Finality
 
-- **GOAL: GOAL-1** Give callers stable procedure names for invoking skill procedures
-  - **SYNOPSIS:** An agent or another skill can use a shared procedure name without knowing which SKILL.md supplies the procedure.
-  - **EXAMPLE:** An Agent handling a new enhancement invokes create-new-work-item() through manage-work-item-* without knowing which matching SKILL.md supplies the procedure.
+- **GOAL: GOAL-1** Use class designs to understand how Agents and skills are related
+  - **SYNOPSIS:** The analysis makes Agent dependencies, procedure expectations, loading conditions, and AGENTS.md dispatch visible in one model.
+  - **BECAUSE:** Skills are loaded independently, so their instructions can clash when their relationships and responsibilities are unclear.
+  - **BECAUSE:** Agents reference some skills directly, while project directives in AGENTS.md map other procedure names to specific skill implementations.
+  - **BECAUSE:** Skills hide procedure details behind shared procedure names in a way that resembles object-oriented polymorphism.
+  - **EXAMPLE:** Class designs show Dev Coder naming careful-coding and conditionally naming test-driven-development, while Backlog Manager invokes create-new-work-item() through an AGENTS.md mapping that can select a file-backed or GitLab-backed implementation. The independently loaded dependencies and interchangeable procedure providers become visible instead of remaining hidden in separate files.
 
-- **GOAL: GOAL-2** Distinguish skill relationships from request-triggered selection
-  - **SYNOPSIS:** Agent Skills, Injected Skills, and Peer Skills describe declared relationships. Request-triggered selection chooses an available skill for one request without adding one of those declared relationships.
-  - **EXAMPLE:** Dev Coder names careful-coding, while a structural-search request can select ast-grep without adding ast-grep to the Agent definition or AGENTS.md.
-
-- **GOAL: GOAL-3** Treat a running agent as an object with context and state
-  - **SYNOPSIS:** An agent definition is comparable to a class. One running agent or subagent is comparable to an object that combines the definition with a task, loaded skills, and changing state.
-  - **EXAMPLE:** A running Backlog Manager has the user’s request, the effective AGENTS.md instructions, the selected workitem SKILL.md, and the current result of creating the item.
+- **GOAL: GOAL-2** Understand and improve skill organization
+  - **SYNOPSIS:** The analysis compares skill responsibilities, procedure families, and dependencies so maintainable skill hierarchies can be designed.
+  - **BECAUSE:** A visible hierarchy makes skill ownership, extension, and substitution easier to reason about.
+  - **EXAMPLE:** Provider-specific work-item skills can be organized under the procedures they implement, while a multi-procedure skill such as agent-claim can be evaluated for cohesion without assuming that it must be split.
 
 ## 2. Skills In The Global Agent Space
 
@@ -561,17 +563,17 @@ classDiagram
 
 The regular arrow shows that the development workflow knows Deliver Workitem by procedure name. The open-diamond arrows show the two exact skill names that AGENTS.md can select. The direct-main and feature-branch procedures remain different internally even though callers reach either one through the same procedure name.
 
-## 11. Agent Classes, Objects, And Skill Dependencies
+## 11. Agent Dependency Views
 
-An Agent can use named Agent Skills and Injected Skills together. The reusable Agent definition is comparable to a class, while one task-bound execution is comparable to an object with context and changing state.
+An Agent can use named Agent Skills and Injected Skills together. A class view concentrates on the Agent’s expected behavior and dependency paths rather than its task-bound runtime state.
 
-- **RULE: RULE-14** The agent class owns reusable purpose and known dependencies
-  - **SYNOPSIS:** The Agent definition states its purpose, the Skill interfaces it invokes, and the Agent Skills it names.
+- **RULE: RULE-14** An Agent class view records reusable expectations and dependencies
+  - **SYNOPSIS:** The Agent node shows the behavior relevant to the analysis, the procedure names it invokes, and the Agent Skills it names.
   - **EXAMPLE:** A coding-agent class can name careful-coding directly and invoke Deliver Workitem without naming the delivery SKILL.md.
 
-- **RULE: RULE-15** The agent object owns task context and changing state
-  - **SYNOPSIS:** One running instance receives the task, effective AGENTS.md, loaded SKILL.md files, and execution evidence.
-  - **EXAMPLE:** One coding-agent object holds accepted commit abc123, knows feature-branch is the injected delivery skill, and is waiting for review.
+- **RULE: RULE-15** Dependency views omit unrelated runtime state
+  - **SYNOPSIS:** The class view shows the expectations and dispatch paths needed to understand skill use without modeling task values that do not change those relationships.
+  - **EXAMPLE:** The coding Agent exposes deliverAcceptedChange() and its skill references without displaying an accepted commit or an awaiting-review state.
 
 - **RULE: RULE-16** Technology and project skills can be injectable through shared procedure names
   - **SYNOPSIS:** A technology or project SKILL.md is injectable when it implements a procedure name and invocation meaning that the Agent already uses.
@@ -581,10 +583,9 @@ An Agent can use named Agent Skills and Injected Skills together. The reusable A
 classDiagram
     direction TB
 
-    class RunningCodingAgent {
-        <<Agent object>>
-        +acceptedCommit abc123
-        +state awaitingReview
+    class CodingAgent {
+        <<Agent>>
+        +deliverAcceptedChange()
     }
 
     class careful-coding {
@@ -605,14 +606,14 @@ classDiagram
         +reference host-state-decision-table
     }
 
-    RunningCodingAgent o--> careful-coding
-    RunningCodingAgent --> DeliverWorkitem
+    CodingAgent o--> careful-coding
+    CodingAgent --> DeliverWorkitem
     DeliverWorkitem o--> complete-work-item-feature-branch
 ```
 
-The running Agent points directly to careful-coding because its Agent definition names that skill. It points regularly to Deliver Workitem because it knows the procedure name. The AGENTS.md DII points by open diamond to the selected feature-branch skill.
+The Agent points directly to careful-coding because its definition names that skill. It points regularly to Deliver Workitem because it knows the procedure name. The AGENTS.md DII points by open diamond to the selected feature-branch skill.
 
-The diagram does not draw a class-to-object link or an inheritance relationship. The class-and-object language explains reusable definition versus task-bound state; it does not require the harness to construct software objects.
+The diagram explains dependencies and dispatch. It does not require the harness to construct software classes or imply an inheritance relationship.
 
 ## 12. Agent Superclass Stand-Ins
 
@@ -671,6 +672,14 @@ The open-diamond arrow says that every represented Agent names review-structured
 
 ## 14. Definition Of Good
 
+- **RULE: RULE-52** Class views make dependency and dispatch paths understandable
+  - **SYNOPSIS:** A reader can identify which skills an Agent names, which procedures it expects, which conditions affect loading, and where AGENTS.md selects an implementation.
+  - **EXAMPLE:** The diagrams distinguish Dev Coder’s direct careful-coding reference from Backlog Manager’s procedure-name path through AGENTS.md to manage-work-item-gitlab.
+
+- **RULE: RULE-53** Class views make skill organization reviewable
+  - **SYNOPSIS:** A reader can compare responsibilities, procedure families, reference information, and dependencies when evaluating a maintainable skill hierarchy.
+  - **EXAMPLE:** The analysis groups work-item providers by create-new-work-item() while showing that agent-claim contains several related procedures without deciding in advance that the skill should be split.
+
 - **RULE: RULE-24** The diagrams distinguish AGENTS.md from SKILL.md
   - **SYNOPSIS:** Diagrams label an injected shared contract with the AGENTS.md stereotype and a concrete skill definition with the SKILL.md stereotype.
   - **EXAMPLE:** manage-work-item-* has the AGENTS.md stereotype; manage-work-item-gitlab has the SKILL.md stereotype.
@@ -714,6 +723,7 @@ The glossary summarizes concepts after the examples have established them.
 | Skill loading | The complete selected SKILL.md entering the active context so its instructions can be followed. | After AGENTS.md selects manage-work-item-gitlab, the agent reads that SKILL.md. |
 | Exact skill name | The identity used to resolve one skill package and its SKILL.md. It is not the shared literal filename SKILL.md. | careful-coding resolves the careful-coding package. |
 | Skill interface | A shared procedure name and invocation meaning used by an invoker and by the SKILL.md that supplies the procedure. | manage-work-item-* exposes create-new-work-item(). |
+| Polymorphism | The object-oriented analogy in which one procedure expectation can be supplied by different skill implementations without changing the invoker. It does not assert runtime language dispatch. | create-new-work-item() can be supplied by a file-backed or GitLab-backed work-item skill. |
 | Procedure name | The name that identifies the operation an invoker needs. | create-new-work-item. |
 | Procedure context | Information already held by the invoking Agent for use by the named procedure. | Enhancement description: Add a new Cancel button. |
 | Procedure | Instructions in a SKILL.md that explain how to perform the named operation. | Create a GitLab issue, read it back, and return its identity. |
@@ -731,8 +741,8 @@ The glossary summarizes concepts after the examples have established them.
 | Exact-name reference | An open-diamond arrow from a node that knows a skill’s exact name to that SKILL.md. | DevCoder o--> careful-coding. |
 | Procedure-name reference | A regular arrow from an invoker to the procedure it knows without naming the implementing SKILL.md. | BacklogManager --> manage-work-item. |
 | Conditional reference | A dotted regular or open-diamond arrow whose label states the loading condition. | DevCoder o..> test-driven-development when executable tests apply. |
-| Agent class | The reusable Agent definition side of the analogy. | Backlog Manager. |
-| Agent object | One task-bound execution with context and changing state. | The Backlog Manager processing the Cancel-button request. |
+| Agent class view | A diagram node that represents the Agent behavior, expectations, and dependencies relevant to the analysis without asserting a runtime class. | Coding Agent names careful-coding and refers to Deliver Workitem. |
+| Skill hierarchy | An organizational view of skill families, responsibilities, procedures, and dependencies. It does not by itself assert software inheritance. | Work-item provider skills can be grouped by the procedures they implement. |
 | Agent superclass stand-in | A diagram-compression node representing several Agents that share the same relationship. It does not assert inheritance. | Structured Artifact Reviewers represents reviewers that all name review-structured-artifact. |
 | Empty SKILL.md node | A concrete skill class with no displayed procedure or reference members, meaning that the relationship loads the whole skill. | careful-coding under Dev Coder. |
 | Procedure member | A function-style member backed by operational source content. The skill name itself can justify the member only when it names that operation. | +create-new-work-item() in manage-work-item-gitlab or +confirmWork(requestedChange) when that part of careful-coding is selected. |

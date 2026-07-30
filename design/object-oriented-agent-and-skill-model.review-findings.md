@@ -4,7 +4,7 @@
 
 - Target: design/object-oriented-agent-and-skill-model.md
 - Completed checklist: design/object-oriented-agent-and-skill-model.review-checklist-structured.md
-- Review basis: the retained user direction for glossary placement, progressive diagram explanation, reference direction, exact-name aggregation, procedure-name lines, conditional dotted lines, Peer Skills, superclass stand-ins, exact kebab-case skill identities, source-backed operations, reference information, heading analysis, empty whole-skill nodes, the manage-work-item-* injection example, plain AGENTS.md prototypes, and four separate skill-loading cases
+- Review basis: the retained user direction for outcome-oriented goals, dependency and dispatch analysis, independently loaded skills and possible conflicts, direct references, AGENTS.md procedure mapping, polymorphism, maintainable skill hierarchies, glossary placement, progressive diagram explanation, reference direction, exact-name aggregation, procedure-name lines, conditional dotted lines, Peer Skills, superclass stand-ins, exact kebab-case skill identities, source-backed operations, reference information, heading analysis, empty whole-skill nodes, the manage-work-item-* injection example, plain AGENTS.md prototypes, and four separate skill-loading cases
 - Review mode: same-agent self-review; no independent reviewer was dispatched for this bounded documentation correction
 
 ## Findings
@@ -19,8 +19,11 @@ No material findings.
 - **CHECK:** DIR-21
   - **RESULT:** RULE-1 and its relationship diagram remain together in section 2. The new SKILL.md modeling process starts in a separate section 3.
 
+- **CHECK:** DIR-35, DIR-36, DIR-37, DIR-38, RULE-52, RULE-53
+  - **RESULT:** Finality now states two outcomes: understand Agent and skill relationships through class designs, and understand and improve skill organization. The reasons cover independently loaded instructions that can clash, direct references versus AGENTS.md dispatch, polymorphic procedure hiding, and maintainable skill hierarchies. GOAL-1’s example spans direct loading, conditional loading, and an AGENTS.md mapping to alternative providers. The glossary defines the polymorphism analogy without asserting runtime language dispatch. Procedure naming and loading-path distinctions remain supporting mechanisms. Running-Agent state is absent from the goals, dependency view, and glossary.
+
 - **CHECK:** DIR-4, DIR-5, LOG-7, LOG-8
-  - **RESULT:** The document presents object-oriented analysis as an analogy. It draws no Agent inheritance and uses Structured Artifact Reviewers only as a stand-in for repeated exact-name references.
+  - **RESULT:** The document presents object-oriented analysis as an analogy. Its Agent class view shows expected behavior, dependencies, and dispatch without unrelated task state. It draws no Agent inheritance and uses Structured Artifact Reviewers only as a stand-in for repeated exact-name references.
 
 - **CHECK:** DIR-6, DIR-7, DIR-8
   - **RESULT:** Every class reference points from referencing node to referenced node. Open diamonds mean exact skill-name knowledge, while regular arrows mean procedure-name knowledge.
@@ -68,7 +71,7 @@ No material findings.
   - **RESULT:** careful-coding Goal-Driven Execution remains a general goal-to-evidence loop. test-driven-development Workflow remains the distinct red-green-refactor loop.
 
 - **CHECK:** DOC-1, DOC-2, DOC-4, DOC-5
-  - **RESULT:** All fifty-two structured assertions have examples and unique definition IDs. Eleven Mermaid blocks have balanced fences, twenty class references follow the convention, and all eleven sequence messages are solid.
+  - **RESULT:** All fifty-three structured assertions have examples and unique definition IDs. Eleven Mermaid blocks have balanced fences, twenty class references follow the convention, and all eleven sequence messages are solid.
 
 - **CHECK:** DOC-7, DOC-9, DOC-10, DOC-12
   - **RESULT:** Local Markdown links resolve, inline backticks are absent outside Mermaid fences, AGENTS.md DII prototypes, +skill, +procedure, CreateWorkitem, and invented PascalCase skill aliases are absent from the target, retired notation and inheritance syntax are absent, and whitespace validation passes.
