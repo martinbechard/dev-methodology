@@ -4,7 +4,7 @@
 
 - Target: design/object-oriented-agent-and-skill-model.md
 - Completed checklist: design/object-oriented-agent-and-skill-model.review-checklist-structured.md
-- Review basis: the retained user direction for outcome-oriented goals, dependency and dispatch analysis, independently loaded skills and possible conflicts, direct references, AGENTS.md procedure mapping, polymorphism, maintainable skill hierarchies, replacement of the global-space overview by progressive skill use cases, removal of redundant loading-path material, sibling Peer Skills composed by Agents or AGENTS.md, the work-item-base, work-item-dispatch, and work-item-monitor example, stronger coupling from direct skill-to-skill references, glossary placement, progressive diagram explanation, reference direction, exact-name aggregation, procedure-name lines, conditional dotted lines, request-based TDD routing language, plain-language Agent and AGENTS.md instruction examples, an explicit distinction between code-like diagram labels and the prose found in Agent definitions and AGENTS.md, superclass stand-ins, exact kebab-case skill identities, source-backed operations, reference information, heading analysis, empty whole-skill nodes, the manage-work-item-* injection example, plain AGENTS.md prototypes, and four separate skill use cases
+- Review basis: the retained user direction for outcome-oriented goals, dependency and dispatch analysis, independently loaded skills and possible conflicts, direct references, AGENTS.md procedure mapping, polymorphism, maintainable skill hierarchies, replacement of the global-space overview by progressive skill use cases, removal of redundant loading-path material, sibling Peer Skills composed by Agents or AGENTS.md, the work-item-base, work-item-dispatch, and work-item-monitor example, stronger coupling from direct skill-to-skill references, glossary placement, progressive diagram explanation, reference direction, exact-name aggregation, procedure-name lines, conditional dotted lines, request-based TDD routing language, plain-language Agent and AGENTS.md instruction examples, an explicit distinction between code-like diagram labels and the prose found in Agent definitions and AGENTS.md, superclass stand-ins, exact kebab-case skill identities, a concise SKILL.md node convention, source-backed procedure labels, relevant reference members, empty whole-skill nodes, removal of the detailed careful-coding inventory and modeling-debt analysis, the manage-work-item-* injection example, plain AGENTS.md prototypes, and four separate skill use cases
 - Review mode: same-agent self-review; no independent reviewer was dispatched for this bounded documentation correction
 
 ## Findings
@@ -40,14 +40,14 @@ No material findings.
 - **CHECK:** DIR-11, DIR-40, DIR-41, DIR-42, LOG-4
   - **RESULT:** Peer Skills are modeled first as complementary siblings composed by an Agent or AGENTS.md. Work Item Coordinator selects work-item-base with work-item-dispatch, while Work Item Watchdog selects work-item-base with work-item-monitor. The Peer Skills do not point to one another, and each Agent selects the common base once. Runtime caching or rereading remains outside the analysis. Technology selection and direct skill-to-skill coupling remain separate arrangements with different dependency shapes.
 
-- **CHECK:** DIR-13, DIR-16, DIR-23, LOG-5, LOG-14
-  - **RESULT:** A concrete SKILL.md class name identifies the skill without a redundant +skill member. An empty node means whole-skill loading, parentheses identify selected procedures, and +reference identifies non-callable information. Current skill identities and both work-item example families remain kebab-case; the wildcard family uses manage-work-item as its internal Mermaid identifier and manage-work-item-* as its visible label.
+- **CHECK:** DIR-13, DIR-16, DIR-23, DIR-44, LOG-5, LOG-14
+  - **RESULT:** Section 3 now contains only the node conventions needed by relationship diagrams: exact kebab-case identity, an empty node for whole-skill loading, method-like labels for relevant source-backed procedures, and +reference for relevant non-invoked guidance. The detailed careful-coding inventory, derived procedures, classification table, JUnit and Jest comparison, and modeling-debt discussion are absent.
 
 - **CHECK:** DIR-17, DIR-18, DIR-19
-  - **RESULT:** Skill identity is not treated as an invocation unless the name and definition describe an operation. careful-coding stays empty in relationship views to mean whole-skill loading; its separate inventory derives confirmWork, validateContract, and executeGoalDrivenLoop from operational sections. The sibling example keeps work-item definitions, states, and rules as reference members while marking dispatchWorkItem(), monitorWorkItems(), and raiseAlarm() as analysis-only procedures.
+  - **RESULT:** Skill identity is not treated as an invocation. Section 3 says to omit a method-like member when the skill does not clearly describe that procedure, and careful-coding stays empty in whole-skill relationship views. Procedure labels must represent written skill instructions or be clearly identified as analysis vocabulary. +reference remains limited to non-invoked guidance that matters to the relationship.
 
 - **CHECK:** DIR-20, LOG-12
-  - **RESULT:** The method requires a complete SKILL.md inventory before drawing members from a current definition. It separately identifies the manage-work-item provider family and the work-item-base, work-item-dispatch, and work-item-monitor sibling family as user-supplied analysis vocabulary rather than current source facts.
+  - **RESULT:** The method requires reading enough of a SKILL.md to support each displayed member, but no longer requires a complete inventory before drawing a focused relationship. It separately identifies the manage-work-item provider family and the work-item-base, work-item-dispatch, and work-item-monitor sibling family as analysis vocabulary rather than current source facts.
 
 - **CHECK:** DIR-22
   - **RESULT:** Relationship diagrams can show a focused subset of a complete skill inventory. Empty careful-coding nodes mean that the whole skill is loaded; manage-work-item-gitlab displays create-new-work-item() because that procedure is the focus of its DII view, while the adjacent prose explains that label through the words used in the source instructions.
@@ -61,17 +61,11 @@ No material findings.
 - **CHECK:** DIR-15, LOG-9
   - **RESULT:** Principal complex examples use current definitions: test-driven-development, agent-claim, complete-work-item-feature-branch, create-pull-request, and review-structured-artifact.
 
-- **CHECK:** RULE-48, LOG-4
-  - **RESULT:** The JUnit and Jest Verification sections support the derived Run Project Tests operation, but neither source heading exposes that common procedure name. The prose preserves that weaker substitution vocabulary as modeling debt.
-
 - **CHECK:** LOG-10, LOG-14
   - **RESULT:** Mermaid supports relationship markers at both endpoints over solid or dashed links, permits dashes in class names, and uses parentheses to distinguish operations from attributes.
 
-- **CHECK:** LOG-13
-  - **RESULT:** careful-coding Goal-Driven Execution remains a general goal-to-evidence loop. test-driven-development Workflow remains the distinct red-green-refactor loop.
-
 - **CHECK:** DOC-1, DOC-2, DOC-4, DOC-5
-  - **RESULT:** All fifty-three structured assertions have examples and unique definition IDs. Ten Mermaid blocks have balanced fences, seventeen class references follow the convention, and all eleven sequence messages are solid.
+  - **RESULT:** All forty-five structured assertions have examples and unique definition IDs. Ten Mermaid blocks have balanced fences, seventeen class references follow the convention, and all eleven sequence messages are solid.
 
 - **CHECK:** DOC-7, DOC-9, DOC-10, DOC-12
   - **RESULT:** Local Markdown links resolve, inline backticks are absent outside Mermaid fences, AGENTS.md DII prototypes, +skill, +procedure, CreateWorkitem, and invented PascalCase skill aliases are absent from the target, retired notation and inheritance syntax are absent, and whitespace validation passes.

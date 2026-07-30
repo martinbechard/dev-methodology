@@ -189,60 +189,17 @@ The use cases differ at their selection boundary:
 | Procedure mapped through AGENTS.md | Shared procedure in the Agent; implementation binding in AGENTS.md | AGENTS.md | The effective project binding for that procedure. |
 | Request-triggered skill | Explicit request marker or request-to-description match | Skill loader or caller | The current request. |
 
-## 3. Modeling A SKILL.md
+## 3. Showing A SKILL.md In A Diagram
 
-A concrete skill must be modeled before its relationships are drawn in detail. The inventory uses the exact skill identity as the class name, then separates callable operations from information those operations consult.
+A SKILL.md node shows only what the relationship needs. Before adding a member, read the skill and make sure the label represents instructions that the skill actually contains.
 
-- **RULE: RULE-44** A skill identity retains its exact kebab-case name
-  - **SYNOPSIS:** The concrete class name copies the name field from the SKILL.md instead of converting it to PascalCase, title case, or an invented class name.
-  - **EXAMPLE:** The concrete class is named careful-coding rather than using an invented PascalCase alias or a redundant identity member.
+- Use the skill’s exact kebab-case name as the node name.
+- Leave the member area empty when the relationship loads the whole skill.
+- Add a method-like member only when the relationship focuses on a procedure described by the skill. The member is diagram shorthand for written instructions, not a claim that SKILL.md contains software code.
+- Add a +reference member only when non-invoked guidance matters to the relationship.
+- If the skill does not clearly describe a procedure, leave that member out instead of inventing one.
 
-- **PROCESS: PROCESS-8** Inventory a complete SKILL.md before modeling its members
-  - **SYNOPSIS:** Read the title, description, every heading, and the instructions beneath each heading; then classify the content as a procedure, reference information, routing information, an input or result contract, or a mixed section.
-  - **EXAMPLE:** Modeling careful-coding requires reading Think Before Coding through Success Signal rather than treating the skill title as one callable operation.
-
-- **RULE: RULE-45** A skill name is not automatically a procedure name
-  - **SYNOPSIS:** A skill name can support a whole-skill procedure only when it names an operation and the definition supplies that operation. A subject, quality, technology, or guideline name identifies a package but not an invocation.
-  - **EXAMPLE:** create-pull-request can support createPullRequest(verifiedBranchState), while careful-coding cannot support carefulCoding().
-
-- **RULE: RULE-46** A function-style member requires operational source content
-  - **SYNOPSIS:** A procedure member must trace to instructions that perform an action with a meaningful input, decision, state change, or result. Use the source heading when it names the action; otherwise derive a concise operation name from the instructions and record the source heading.
-  - **EXAMPLE:** Think Before Coding is modeled as confirmWork(requestedChange) because its instructions actively resolve assumptions, ambiguity, simpler alternatives, and existing intent before implementation.
-
-- **RULE: RULE-47** Non-callable instructions are reference members
-  - **SYNOPSIS:** Guidelines, invariants, boundaries, decision tables, routing rules, and input or result shapes that an operation consults are attribute-style reference members without parentheses.
-  - **EXAMPLE:** Simplicity First is modeled as +reference simplicity-first-guidelines because it constrains coding decisions but is not independently invoked.
-
-- **RULE: RULE-48** Unclear source boundaries remain visible as modeling debt
-  - **SYNOPSIS:** When a heading is vague or mixes procedures with reference information, the analysis records the source-to-member mapping instead of silently presenting an invented procedure as source vocabulary. Clarifying that SKILL.md requires a separate governed definition change.
-  - **EXAMPLE:** JUnit and Jest both have a Verification heading that supports runProjectTests(testScope), but neither heading exposes that shared procedure name explicitly.
-
-- **RULE: RULE-49** A relationship diagram is a relevant view of the complete inventory
-  - **SYNOPSIS:** The analysis reads and classifies the whole skill, while a particular diagram displays only the procedures and references needed to explain that relationship. An omitted member is not presumed absent from the SKILL.md.
-  - **EXAMPLE:** An empty careful-coding node means that the Agent loads the whole skill, while manage-work-item-gitlab displays create-new-work-item() because the DII relationship selects that procedure.
-
-The inventory applies these classifications:
-
-- A procedure performs an action and has an invocation boundary.
-- Reference information constrains or explains procedures but is not invoked independently.
-- Routing, input, and result material remains reference information unless the source defines an independently invoked action.
-- A mixed or vague section can yield a derived member for analysis, but its source heading remains part of the evidence.
-
-The careful-coding inventory illustrates the method:
-
-| Source content | Classification | Modeled member | Reason |
-| --- | --- | --- | --- |
-| Skill name | Skill identity | class careful-coding | The class name identifies the package; it does not name an invocation. |
-| Think Before Coding | Procedure | +confirmWork(requestedChange) | The section requires a pre-implementation confirmation of assumptions, ambiguity, simpler approaches, project intent, callers, tests, and patterns. |
-| Simplicity First | Reference information | +reference simplicity-first-guidelines | The section supplies design constraints that other procedures consult. |
-| Surgical Changes | Reference information | +reference surgical-change-guidelines | The section constrains changed-line scope, cleanup, and error-boundary choices. |
-| Preserve Authorized Contracts | Procedure | +validateContract(authorizedContract) | The section requires an active check before narrowing accepted inputs, outputs, or rejection rules. |
-| Goal-Driven Execution | Procedure | +executeGoalDrivenLoop(workGoal) | The section turns a goal into success criteria and repeats implementation and verification until the criteria are met. |
-| Success Signal | Reference information | +reference success-signal | The section describes evidence that the guidance is working. |
-
-The class name retains kebab-case because it identifies the package. An empty member area means that the referencing node loads the whole skill. Parentheses distinguish selected procedures from attribute-style +reference members. These attributes are conceptual references, not runtime fields.
-
-Goal-Driven Execution uses tests in several examples, but it is broader than the red-green-refactor operation defined by test-driven-development. The two procedures therefore keep distinct names.
+For example, careful-coding stays empty when Dev Coder loads the whole skill. The manage-work-item-gitlab node can show create-new-work-item() when the diagram focuses on its Create New Work Item instructions.
 
 ## 4. Peer Skills
 
@@ -417,7 +374,7 @@ The number of Skill interfaces depends on how many independently invocable proce
   - **SYNOPSIS:** The analysis records each independently invoked procedure name. It does not conclude from that fact alone that the SKILL.md should be split.
   - **EXAMPLE:** Acquire Claim and Release Claim remain distinct procedure names even though agent-claim defines both.
 
-A function-style member belongs on an AGENTS.md DII or on a SKILL.md part whose source content defines an operation. A complex SKILL.md can therefore contain several function-style procedure members together with attribute-style reference members. The analysis records the source heading whenever the displayed operation name had to be derived from a vague heading or from its instructions.
+A function-style member belongs on an AGENTS.md DII or on a SKILL.md whose instructions describe that operation. A complex SKILL.md can show several procedure members together with +reference members when those details matter to the relationship.
 
 ```mermaid
 classDiagram
@@ -641,10 +598,6 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **SYNOPSIS:** Each GOAL, RULE, PROCESS, and other structured assertion is followed by an EXAMPLE.
   - **EXAMPLE:** RULE-20 defines the Injectable Skill boundary and illustrates it with code-discovery.
 
-- **RULE: RULE-32** Concrete skill notation distinguishes identity, procedures, and reference information
-  - **SYNOPSIS:** A SKILL.md node retains its kebab-case class name, stays empty when the whole skill is loaded, uses function style only for selected source-backed operations, and uses +reference without parentheses for non-callable information.
-  - **EXAMPLE:** careful-coding is empty when loaded as a whole, while agent-claim can display +acquireClaim(scope) and +reference claim-events when those members are relevant.
-
 - **RULE: RULE-42** Every reference points from the referencing node to the referenced node
   - **SYNOPSIS:** The source appears first, the arrowhead points to the target, and an open diamond remains on the source that knows an exact skill name.
   - **EXAMPLE:** manage-work-item o--> manage-work-item-gitlab reads from the AGENTS.md DII that names the matching skill to the SKILL.md that it selects.
@@ -668,9 +621,7 @@ The glossary summarizes concepts after the examples have established them.
 | Procedure name | The name that identifies the operation an invoker needs. | create-new-work-item. |
 | Procedure context | Information already held by the invoking Agent for use by the named procedure. | Enhancement description: Add a new Cancel button. |
 | Procedure | Instructions in a SKILL.md that explain how to perform the named operation. | Create a GitLab issue, read it back, and return its identity. |
-| Reference member | Attribute-style notation for guidelines, invariants, boundaries, routing, tables, or contracts that procedures consult but do not invoke independently. | +reference simplicity-first-guidelines. |
-| Derived procedure member | A function-style member whose operation is established by source instructions even though its displayed procedure name is clearer than the source heading. | Think Before Coding is modeled as +confirmWork(requestedChange). |
-| Modeling debt | A visible mismatch between the operations or references found in a skill and the headings or shared vocabulary that expose them. | JUnit Verification supports Run Project Tests but does not name that shared procedure explicitly. |
+| Reference member | Attribute-style notation for guidelines, invariants, boundaries, routing, tables, or contracts that procedures consult but do not invoke independently. | +reference claim-events in agent-claim. |
 | AGENTS.md DII | The indirect binding relationship represented by an abstract node whose stereotype is AGENTS.md. The node exposes a procedure whose matching skill is selected by name through AGENTS.md. | manage-work-item-* points to manage-work-item-gitlab after project setup selects GitLab persistence. |
 | SKILL.md | A concrete skill definition containing one or more procedures and reference sections. | manage-work-item-gitlab contains a Create New Work Item section in this analysis example. |
 | Agent Skill | A SKILL.md referenced by exact name in an Agent definition for every execution or under a routing condition. | Dev Coder names careful-coding unconditionally and test-driven-development conditionally. |
@@ -688,7 +639,7 @@ The glossary summarizes concepts after the examples have established them.
 | Skill hierarchy | An organizational view of skill families, responsibilities, procedures, composition owners, and dependencies. It does not by itself assert software inheritance. | work-item-base, work-item-dispatch, and work-item-monitor form a sibling family used by two Agent compositions. |
 | Agent superclass stand-in | A diagram-compression node representing several Agents that share the same relationship. It does not assert inheritance. | Structured Artifact Reviewers represents reviewers that all name review-structured-artifact. |
 | Empty SKILL.md node | A concrete skill class with no displayed procedure or reference members, meaning that the relationship loads the whole skill. | careful-coding under Dev Coder. |
-| Procedure member | A function-style member backed by operational source content. The skill name itself can justify the member only when it names that operation. | +create-new-work-item() in manage-work-item-gitlab or +confirmWork(requestedChange) when that part of careful-coding is selected. |
+| Procedure member | A method-like diagram label for a procedure described by the skill’s written instructions. | +create-new-work-item() in manage-work-item-gitlab when the relationship focuses on its Create New Work Item instructions. |
 
 ## Applied Models
 
