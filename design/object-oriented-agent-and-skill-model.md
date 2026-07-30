@@ -72,27 +72,82 @@ classDiagram
             +createWorkitem(workitemDescription)
         }
 
-        class GitLabWorkitemSkill {
+        class create-gitlab-work-item {
             <<SKILL.md>>
             <<Injectable Skill>>
             +skill create-gitlab-work-item
         }
 
-        class CarefulCodingSkill {
+        class careful-coding {
             <<SKILL.md>>
             <<Agent Skill>>
             +skill careful-coding
         }
     }
 
-    Agent o--> CarefulCodingSkill
+    Agent o--> careful-coding
     Agent --> CreateWorkitem
-    CreateWorkitem o--> GitLabWorkitemSkill
+    CreateWorkitem o--> create-gitlab-work-item
 ```
 
 The namespace shows which nodes are available in the global Agent space. It does not add a relationship among them. The open diamond on Agent records exact knowledge of careful-coding, while the regular arrow records that Agent knows Create Workitem without naming its implementation. The AGENTS.md DII then names the selected implementation through its open-diamond arrow.
 
-## 3. Agent Skills
+## 3. Modeling A SKILL.md
+
+A concrete skill must be modeled before its relationships are drawn in detail. The inventory uses the exact skill identity as the class name, then separates callable operations from information those operations consult.
+
+- **RULE: RULE-44** A skill identity retains its exact kebab-case name
+  - **SYNOPSIS:** The class name and +skill member copy the name field from the SKILL.md instead of converting it to PascalCase, title case, or an invented class name.
+  - **EXAMPLE:** The concrete class is named careful-coding and contains +skill careful-coding rather than an invented PascalCase alias.
+
+- **PROCESS: PROCESS-8** Inventory a complete SKILL.md before modeling its members
+  - **SYNOPSIS:** Read the title, description, every heading, and the instructions beneath each heading; then classify the content as a procedure, reference information, routing information, an input or result contract, or a mixed section.
+  - **EXAMPLE:** Modeling careful-coding requires reading Think Before Coding through Success Signal rather than treating the skill title as one callable operation.
+
+- **RULE: RULE-45** A skill name is not automatically a procedure name
+  - **SYNOPSIS:** A skill name can support a whole-skill procedure only when it names an operation and the definition supplies that operation. A subject, quality, technology, or guideline name identifies a package but not an invocation.
+  - **EXAMPLE:** create-pull-request can support createPullRequest(verifiedBranchState), while careful-coding cannot support carefulCoding().
+
+- **RULE: RULE-46** A function-style member requires operational source content
+  - **SYNOPSIS:** A procedure member must trace to instructions that perform an action with a meaningful input, decision, state change, or result. Use the source heading when it names the action; otherwise derive a concise operation name from the instructions and record the source heading.
+  - **EXAMPLE:** Think Before Coding is modeled as confirmWork(requestedChange) because its instructions actively resolve assumptions, ambiguity, simpler alternatives, and existing intent before implementation.
+
+- **RULE: RULE-47** Non-callable instructions are reference members
+  - **SYNOPSIS:** Guidelines, invariants, boundaries, decision tables, routing rules, and input or result shapes that an operation consults are attribute-style reference members without parentheses.
+  - **EXAMPLE:** Simplicity First is modeled as +reference simplicity-first-guidelines because it constrains coding decisions but is not independently invoked.
+
+- **RULE: RULE-48** Unclear source boundaries remain visible as modeling debt
+  - **SYNOPSIS:** When a heading is vague or mixes procedures with reference information, the analysis records the source-to-member mapping instead of silently presenting an invented procedure as source vocabulary. Clarifying that SKILL.md requires a separate governed definition change.
+  - **EXAMPLE:** JUnit and Jest both have a Verification heading that supports runProjectTests(testScope), but neither heading exposes that shared procedure name explicitly.
+
+- **RULE: RULE-49** A relationship diagram is a relevant view of the complete inventory
+  - **SYNOPSIS:** The analysis reads and classifies the whole skill, while a particular diagram displays only the procedures and references needed to explain that relationship. An omitted member is not presumed absent from the SKILL.md.
+  - **EXAMPLE:** The Create Workitem diagram shows createWorkitem, file-authority, and required-item-shape from create-file-work-item without pulling its separate Future Ideas procedures into the DII relationship.
+
+The inventory applies these classifications:
+
+- A procedure performs an action and has an invocation boundary.
+- Reference information constrains or explains procedures but is not invoked independently.
+- Routing, input, and result material remains reference information unless the source defines an independently invoked action.
+- A mixed or vague section can yield a derived member for analysis, but its source heading remains part of the evidence.
+
+The careful-coding inventory illustrates the method:
+
+| Source content | Classification | Modeled member | Reason |
+| --- | --- | --- | --- |
+| Skill name | Skill identity | +skill careful-coding | The name identifies a package of coding guidance; it does not name an invocation. |
+| Think Before Coding | Procedure | +confirmWork(requestedChange) | The section requires a pre-implementation confirmation of assumptions, ambiguity, simpler approaches, project intent, callers, tests, and patterns. |
+| Simplicity First | Reference information | +reference simplicity-first-guidelines | The section supplies design constraints that other procedures consult. |
+| Surgical Changes | Reference information | +reference surgical-change-guidelines | The section constrains changed-line scope, cleanup, and error-boundary choices. |
+| Preserve Authorized Contracts | Procedure | +validateContract(authorizedContract) | The section requires an active check before narrowing accepted inputs, outputs, or rejection rules. |
+| Goal-Driven Execution | Procedure | +executeGoalDrivenLoop(workGoal) | The section turns a goal into success criteria and repeats implementation and verification until the criteria are met. |
+| Success Signal | Reference information | +reference success-signal | The section describes evidence that the guidance is working. |
+
+The class name and +skill member retain kebab-case because they identify the package. Parentheses distinguish procedures from attribute-style +reference members. These attributes are conceptual references, not runtime fields.
+
+Goal-Driven Execution uses tests in several examples, but it is broader than the red-green-refactor operation defined by test-driven-development. The two procedures therefore keep distinct names.
+
+## 4. Agent Skills
 
 An Agent Skill is a SKILL.md that an Agent definition references by exact name. The reference can apply to every execution of that Agent role or only when a routing condition is satisfied.
 
@@ -123,25 +178,29 @@ classDiagram
         +implementChange()
     }
 
-    class CarefulCodingSkill {
+    class careful-coding {
         <<SKILL.md>>
         <<Agent Skill>>
         +skill careful-coding
+        +confirmWork(requestedChange)
+        +reference simplicity-first-guidelines
     }
 
-    class TestDrivenDevelopmentSkill {
+    class test-driven-development {
         <<SKILL.md>>
         <<Agent Skill>>
         +skill test-driven-development
+        +executeTddLoop(observableBehavior)
+        +reference boundaries
     }
 
-    DevCoder o--> CarefulCodingSkill
-    DevCoder o..> TestDrivenDevelopmentSkill : when executable tests apply
+    DevCoder o--> careful-coding
+    DevCoder o..> test-driven-development : when executable tests apply
 ```
 
 Both references couple Dev Coder to an exact skill name. The condition changes when the second reference applies; it does not turn the reference into skills injection.
 
-## 4. Injected Skills
+## 5. Injected Skills
 
 Injected Skills are Injectable Skills selected for an Agent through AGENTS.md. The Agent invokes a shared procedure name and does not name the implementing SKILL.md.
 
@@ -171,30 +230,34 @@ classDiagram
         +createWorkitem(workitemDescription)
     }
 
-    class FileWorkitemSkill {
+    class create-file-work-item {
         <<SKILL.md>>
         <<Injectable Skill>>
         +skill create-file-work-item
-        +procedure Exact Backlog Creation Transaction
+        +createWorkitem(workitemDescription)
+        +reference file-authority
+        +reference required-item-shape
     }
 
-    class GitLabWorkitemSkill {
+    class create-gitlab-work-item {
         <<SKILL.md>>
         <<Injectable Skill>>
         +skill create-gitlab-work-item
-        +procedure Workflow
+        +createWorkitem(workitemDescription)
+        +reference authority-and-inputs
+        +reference delivery-boundary
     }
 
     BacklogManager --> CreateWorkitem
-    CreateWorkitem o--> FileWorkitemSkill
-    CreateWorkitem o--> GitLabWorkitemSkill
+    CreateWorkitem o--> create-file-work-item
+    CreateWorkitem o--> create-gitlab-work-item
 
     note for CreateWorkitem "AGENTS.md selects one implementation"
 ```
 
 The regular arrow means that Backlog Manager refers to Create Workitem by its procedure name. The open-diamond arrows mean that the AGENTS.md DII can name either concrete skill. One project configuration selects one implementation for this procedure; the diagram shows the alternatives, not two simultaneous loads.
 
-The concrete skills contain more than one related procedure. Their +procedure members therefore name the exact section that owns the relevant instructions. A +procedure member is a section selection, not a function call.
+Both concrete skills expose createWorkitem(workitemDescription) because their operation-bearing names and creation workflows support that shared procedure. Their attribute-style members identify reference information used by the procedure. The nodes show the members relevant to this relationship rather than claiming to inventory every other operation in either file.
 
 The two Agent dependency styles differ at the selection boundary:
 
@@ -203,7 +266,7 @@ The two Agent dependency styles differ at the selection boundary:
 | Agent Skill | The exact skill name and that skill’s procedures. | The Agent definition references the skill for every execution or under a condition. | Replacement usually requires changing the Agent definition. |
 | Injected Skill | The procedure name and parameter meaning. | AGENTS.md selects an implementing SKILL.md. | Another SKILL.md can be selected when it implements the same procedure name and parameter meaning. |
 
-## 5. Peer Skills
+## 6. Peer Skills
 
 A Peer Skill complements another SKILL.md. Peer describes a relationship between complementary skills, not a third implementation-selection mechanism.
 
@@ -229,25 +292,30 @@ Peer Skill arrows apply the same knowledge test:
 classDiagram
     direction LR
 
-    class FeatureBranchCompletionSkill {
+    class complete-work-item-feature-branch {
         <<SKILL.md>>
         <<Peer Skill>>
         +skill complete-work-item-feature-branch
-        +procedure Candidate Publication
+        +publishCandidate(acceptedCommit)
+        +runReviewAndCheckLoop(publication)
+        +reference host-state-decision-table
     }
 
-    class CreatePullRequestSkill {
+    class create-pull-request {
         <<SKILL.md>>
         <<Peer Skill>>
         +skill create-pull-request
-        +procedure Workflow
+        +createPullRequest(verifiedBranchState)
+        +reference review-order
+        +reference draft-and-ready-state
     }
 
-    class TestDrivenDevelopmentSkill {
+    class test-driven-development {
         <<SKILL.md>>
         <<Peer Skill>>
         +skill test-driven-development
-        +procedure Workflow
+        +executeTddLoop(observableBehavior)
+        +reference boundaries
     }
 
     class RunProjectTests {
@@ -255,33 +323,39 @@ classDiagram
         +runProjectTests(testScope)
     }
 
-    class JUnitSkill {
+    class junit {
         <<SKILL.md>>
         <<Peer Skill>>
         <<Injectable Skill>>
         +skill junit
-        +procedure Verification
+        +runProjectTests(testScope)
+        +reference junit-boundary
+        +reference review-evidence
     }
 
-    class JestSkill {
+    class jest {
         <<SKILL.md>>
         <<Peer Skill>>
         <<Injectable Skill>>
         +skill jest
-        +procedure Verification
+        +runProjectTests(testScope)
+        +reference routing
+        +reference guidance
     }
 
-    FeatureBranchCompletionSkill o--> CreatePullRequestSkill
-    TestDrivenDevelopmentSkill --> RunProjectTests
-    RunProjectTests o--> JUnitSkill
-    RunProjectTests o--> JestSkill
+    complete-work-item-feature-branch o--> create-pull-request
+    test-driven-development --> RunProjectTests
+    RunProjectTests o--> junit
+    RunProjectTests o--> jest
 
     note for RunProjectTests "AGENTS.md selects one implementation"
 ```
 
 The feature-branch skill explicitly names create-pull-request, so its arrow uses the open diamond. test-driven-development knows Run Project Tests by procedure name, so its arrow is regular. AGENTS.md then selects JUnit or Jest by exact skill name.
 
-## 6. From User Request To Skill Interface
+The runProjectTests(testScope) members are derived from the Verification sections in both testing skills. The shared operation is semantically present, but its exact name is not a current source heading. That recorded mapping exposes weaker substitution vocabulary than the explicit Create Workitem example instead of disguising it.
+
+## 7. From User Request To Skill Interface
 
 This section separates understanding the user’s request from choosing the implementation.
 
@@ -313,7 +387,7 @@ sequenceDiagram
 
 At this point, the agent knows what procedure it needs and what information it will pass. It has not chosen file or GitLab behavior itself.
 
-## 7. Skills Injection Through AGENTS.md
+## 8. Skills Injection Through AGENTS.md
 
 AGENTS.md links a procedure name to a concrete SKILL.md.
 
@@ -339,22 +413,24 @@ classDiagram
         +createWorkitem(workitemDescription)
     }
 
-    class GitLabWorkitemSkill {
+    class create-gitlab-work-item {
         <<SKILL.md>>
         <<Injectable Skill>>
         +skill create-gitlab-work-item
-        +procedure Workflow
+        +createWorkitem(workitemDescription)
+        +reference authority-and-inputs
+        +reference delivery-boundary
     }
 
     BacklogManager --> CreateWorkitem
-    CreateWorkitem o--> GitLabWorkitemSkill
+    CreateWorkitem o--> create-gitlab-work-item
 ```
 
 The regular arrow goes from the Backlog Manager to the AGENTS.md DII because the Agent refers to Create Workitem by procedure name. The open-diamond arrow goes from the DII to create-gitlab-work-item because AGENTS.md selects that skill by exact name.
 
 Skills injection is an instruction relationship. The model does not require a compiled interface object or a software dependency-injection container.
 
-## 8. Loading And Invoking The Selected SKILL.md
+## 9. Loading And Invoking The Selected SKILL.md
 
 The agent follows the injection instruction only when it needs the Skill interface.
 
@@ -389,7 +465,7 @@ sequenceDiagram
 
 Every message is solid. Direction and the Return prefix distinguish information coming back from an action. The agent’s request, procedure name, and parameter meaning stay the same when another Injectable Skill is selected. The provider-specific actions come from the loaded SKILL.md.
 
-## 9. One Or More Interfaces In A SKILL.md
+## 10. One Or More Procedures In A SKILL.md
 
 The number of Skill interfaces depends on how many independently invocable procedure names the SKILL.md defines.
 
@@ -405,7 +481,7 @@ The number of Skill interfaces depends on how many independently invocable proce
   - **SYNOPSIS:** The analysis records each independently invoked procedure name. It does not conclude from that fact alone that the SKILL.md should be split.
   - **EXAMPLE:** Acquire Claim and Release Claim remain distinct procedure names even though agent-claim defines both.
 
-A function-style member belongs on an AGENTS.md DII or on a focused SKILL.md whose whole definition is one cohesive procedure. A multi-procedure SKILL.md instead uses +procedure with an exact section title when one exists, or concise keywords when a title does not identify the relevant part clearly.
+A function-style member belongs on an AGENTS.md DII or on a SKILL.md part whose source content defines an operation. A complex SKILL.md can therefore contain several function-style procedure members together with attribute-style reference members. The analysis records the source heading whenever the displayed operation name had to be derived from a vague heading or from its instructions.
 
 ```mermaid
 classDiagram
@@ -421,22 +497,25 @@ classDiagram
         +releaseClaim(claimId)
     }
 
-    class AgentClaimSkill {
+    class agent-claim {
         <<SKILL.md>>
         +skill agent-claim
-        +procedure Claim Events
-        +procedure Release Cleanup
+        +acquireClaim(scope)
+        +releaseClaim(claimId)
+        +reference claim-events
+        +reference shared-claim-records
+        +reference timed-resource-claims
     }
 
-    AcquireClaim o--> AgentClaimSkill
-    ReleaseClaim o--> AgentClaimSkill
+    AcquireClaim o--> agent-claim
+    ReleaseClaim o--> agent-claim
 ```
 
-Each AGENTS.md DII refers to its own procedure name and can select agent-claim by exact name. The two +procedure members show which independent parts of that concrete skill supply the procedures.
+Each AGENTS.md DII refers to its own procedure name and can select agent-claim by exact name. acquireClaim(scope) is derived from Claim Events, while releaseClaim(claimId) is supported by Claim Events and Release Cleanup. The attribute-style members preserve the decision table and record rules that both procedures consult.
 
 An Agent Skill or a directly referenced Peer Skill can also contain several procedures. Those procedures do not become interchangeable Skill interfaces merely because they share one file. Interchangeability requires the SKILL.md, its invokers, and alternative implementations to share the same procedure names and parameter meanings.
 
-## 10. A Second Injected Example: Deliver Workitem
+## 11. A Second Injected Example: Deliver Workitem
 
 The same relationship applies to completion procedures.
 
@@ -462,33 +541,37 @@ classDiagram
         +deliverWorkitem(acceptedCommit)
     }
 
-    class DirectMainSkill {
+    class complete-work-item-direct-main {
         <<SKILL.md>>
         <<Injectable Skill>>
         +skill complete-work-item-direct-main
-        +procedure Main Reconciliation
-        +procedure Integrated Verification And Main Observation
+        +deliverWorkitem(acceptedCommit)
+        +reconcileMain(acceptedCommit)
+        +verifyIntegratedMain(integrationCommit)
+        +reference provider-independence
     }
 
-    class FeatureBranchSkill {
+    class complete-work-item-feature-branch {
         <<SKILL.md>>
         <<Injectable Skill>>
         +skill complete-work-item-feature-branch
-        +procedure Candidate Publication
-        +procedure Review And Check Loop
-        +procedure Merge And Completion Gate
+        +deliverWorkitem(acceptedCommit)
+        +publishCandidate(acceptedCommit)
+        +runReviewAndCheckLoop(publication)
+        +verifyMerge(publication)
+        +reference host-state-decision-table
     }
 
     DevelopmentWorkflow --> DeliverWorkitem
-    DeliverWorkitem o--> DirectMainSkill
-    DeliverWorkitem o--> FeatureBranchSkill
+    DeliverWorkitem o--> complete-work-item-direct-main
+    DeliverWorkitem o--> complete-work-item-feature-branch
 
     note for DeliverWorkitem "AGENTS.md selects one implementation"
 ```
 
 The regular arrow shows that the development workflow knows Deliver Workitem by procedure name. The open-diamond arrows show the two exact skill names that AGENTS.md can select. The direct-main and feature-branch procedures remain different internally even though callers reach either one through the same procedure name.
 
-## 11. Agent Classes, Objects, And Skill Dependencies
+## 12. Agent Classes, Objects, And Skill Dependencies
 
 An Agent can use named Agent Skills and Injected Skills together. The reusable Agent definition is comparable to a class, while one task-bound execution is comparable to an object with context and changing state.
 
@@ -514,10 +597,14 @@ classDiagram
         +state awaitingReview
     }
 
-    class CarefulCodingSkill {
+    class careful-coding {
         <<SKILL.md>>
         <<Agent Skill>>
         +skill careful-coding
+        +confirmWork(requestedChange)
+        +validateContract(authorizedContract)
+        +executeGoalDrivenLoop(workGoal)
+        +reference simplicity-first-guidelines
     }
 
     class DeliverWorkitem {
@@ -525,23 +612,25 @@ classDiagram
         +deliverWorkitem(acceptedCommit)
     }
 
-    class FeatureBranchSkill {
+    class complete-work-item-feature-branch {
         <<SKILL.md>>
         <<Injectable Skill>>
         +skill complete-work-item-feature-branch
-        +procedure Review And Check Loop
+        +deliverWorkitem(acceptedCommit)
+        +runReviewAndCheckLoop(publication)
+        +reference host-state-decision-table
     }
 
-    RunningCodingAgent o--> CarefulCodingSkill
+    RunningCodingAgent o--> careful-coding
     RunningCodingAgent --> DeliverWorkitem
-    DeliverWorkitem o--> FeatureBranchSkill
+    DeliverWorkitem o--> complete-work-item-feature-branch
 ```
 
 The running Agent points directly to careful-coding because its Agent definition names that skill. It points regularly to Deliver Workitem because it knows the procedure name. The AGENTS.md DII points by open diamond to the selected feature-branch skill.
 
 The diagram does not draw a class-to-object link or an inheritance relationship. The class-and-object language explains reusable definition versus task-bound state; it does not require the harness to construct software objects.
 
-## 12. Agent Superclass Stand-Ins
+## 13. Agent Superclass Stand-Ins
 
 A shared relationship can appear once when many Agents reference the same skill in the same way. Drawing every Agent separately can hide the relationship behind repeated arrows.
 
@@ -557,7 +646,7 @@ A superclass stand-in is a diagram-compression device. It names the set of appli
 
 - **RULE: RULE-40** A stand-in is named after its applicability set
   - **SYNOPSIS:** Its name describes which Agents share the relationship and avoids invented runtime behavior.
-  - **EXAMPLE:** Structured Artifact Reviewers is clearer than a hypothetical Agent class with methods that do not exist in the Agent definitions.
+  - **EXAMPLE:** Structured Artifact Reviewers is clearer than an invented Agent class with methods that do not exist in the Agent definitions.
 
 ```mermaid
 classDiagram
@@ -568,18 +657,21 @@ classDiagram
         +represents applicable reviewing Agents
     }
 
-    class ReviewStructuredArtifactSkill {
+    class review-structured-artifact {
         <<SKILL.md>>
         <<Agent Skill>>
         +skill review-structured-artifact
+        +reviewStructuredArtifact(reviewTarget)
+        +reference checklist-discipline
+        +reference output-artifacts
     }
 
-    StructuredArtifactReviewers o--> ReviewStructuredArtifactSkill
+    StructuredArtifactReviewers o--> review-structured-artifact
 ```
 
 The open-diamond arrow says that every represented Agent names review-structured-artifact directly. No inheritance arrows are needed because the stand-in exists only to avoid drawing the same reference many times.
 
-## 13. Constraints
+## 14. Constraints
 
 - **RULE: RULE-20** A loaded skill is not necessarily injectable
   - **SYNOPSIS:** A SKILL.md is injectable only when it and its invokers share a procedure name and parameter meaning that another implementation can also use.
@@ -597,11 +689,11 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **SYNOPSIS:** The document explains the vocabulary and relationships without prescribing a schema, migration order, or repository change sequence.
   - **EXAMPLE:** The diagrams show Create Workitem with the AGENTS.md DII prototype without specifying a new YAML field for declaring it.
 
-## 14. Definition Of Good
+## 15. Definition Of Good
 
 - **RULE: RULE-24** The diagrams distinguish AGENTS.md DII from SKILL.md
   - **SYNOPSIS:** Diagrams label an injected shared contract as AGENTS.md DII and a concrete skill definition as SKILL.md.
-  - **EXAMPLE:** CreateWorkitem has the AGENTS.md DII stereotype; GitLabWorkitemSkill has the SKILL.md stereotype.
+  - **EXAMPLE:** CreateWorkitem has the AGENTS.md DII stereotype; create-gitlab-work-item has the SKILL.md stereotype.
 
 - **RULE: RULE-25** The complete workitem invocation is traceable
   - **SYNOPSIS:** A reader can follow the request from the user, through the agent’s procedure name and parameter, through AGENTS.md injection, to the selected SKILL.md procedure.
@@ -615,19 +707,19 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **SYNOPSIS:** Each GOAL, RULE, PROCESS, and other structured assertion is followed by an EXAMPLE.
   - **EXAMPLE:** RULE-20 defines the Injectable Skill boundary and illustrates it with code-discovery.
 
-- **RULE: RULE-32** Concrete skill notation distinguishes identity from procedure selection
-  - **SYNOPSIS:** A SKILL.md node uses +skill for its identity, function style only when the whole skill is one cohesive procedure, and +procedure with a section title or clarifying keywords when only part of a multi-procedure skill is relevant.
-  - **EXAMPLE:** An agent-claim node can show +skill agent-claim and +procedure Claim Events without implying that all of agent-claim is one function.
+- **RULE: RULE-32** Concrete skill notation distinguishes identity, procedures, and reference information
+  - **SYNOPSIS:** A SKILL.md node retains its kebab-case name and +skill identity, uses function style only for source-backed operations, and uses +reference without parentheses for non-callable information.
+  - **EXAMPLE:** agent-claim contains +skill agent-claim, +acquireClaim(scope), and +reference claim-events.
 
 - **RULE: RULE-42** Every reference points from the referencing node to the referenced node
   - **SYNOPSIS:** The source appears first, the arrowhead points to the target, and an open diamond remains on the source that knows an exact skill name.
-  - **EXAMPLE:** CreateWorkitem o--> GitLabWorkitemSkill reads from the AGENTS.md DII that names the skill to the SKILL.md that it selects.
+  - **EXAMPLE:** CreateWorkitem o--> create-gitlab-work-item reads from the AGENTS.md DII that names the skill to the SKILL.md that it selects.
 
 - **RULE: RULE-43** Line and endpoint form expose name knowledge and conditionality
   - **SYNOPSIS:** A regular line means procedure-name reference, an open diamond means exact skill-name reference, and the dotted form means the reference is conditional. Only a dotted class reference carries text, and that text states the condition.
-  - **EXAMPLE:** DevCoder o..> TestDrivenDevelopmentSkill with when executable tests apply means that Dev Coder conditionally loads that exact named skill.
+  - **EXAMPLE:** DevCoder o..> test-driven-development with when executable tests apply means that Dev Coder conditionally loads that exact named skill.
 
-## 15. Glossary
+## 16. Glossary
 
 The glossary summarizes concepts after the examples have established them.
 
@@ -638,6 +730,9 @@ The glossary summarizes concepts after the examples have established them.
 | Procedure name | The name that identifies the operation an invoker needs. | Create Workitem. |
 | Procedure parameter | Information passed to the named procedure. | Workitem description: Add a new Cancel button. |
 | Procedure | Instructions in a SKILL.md that explain how to perform the named operation. | Create a GitLab issue, read it back, and return its identity. |
+| Reference member | Attribute-style notation for guidelines, invariants, boundaries, routing, tables, or contracts that procedures consult but do not invoke independently. | +reference simplicity-first-guidelines. |
+| Derived procedure member | A function-style member whose operation is established by source instructions even though its displayed procedure name is clearer than the source heading. | Think Before Coding is modeled as +confirmWork(requestedChange). |
+| Modeling debt | A visible mismatch between the operations or references found in a skill and the headings or shared vocabulary that expose them. | JUnit Verification supports Run Project Tests but does not name that shared procedure explicitly. |
 | AGENTS.md DII | A diagram node for a procedure whose implementing skill is selected by name through AGENTS.md. | Create Workitem points to create-gitlab-work-item after project setup selects GitLab persistence. |
 | SKILL.md | A concrete skill definition containing one or more procedures. | create-gitlab-work-item/SKILL.md contains GitLab workitem procedures. |
 | Agent Skill | A SKILL.md referenced by exact name in an Agent definition for every execution or under a routing condition. | Dev Coder names careful-coding unconditionally and test-driven-development conditionally. |
@@ -645,15 +740,14 @@ The glossary summarizes concepts after the examples have established them.
 | Injected Skill | The Injectable Skill selected through AGENTS.md for one procedure in an effective project configuration. | create-gitlab-work-item is the Injected Skill when AGENTS.md binds it to Create Workitem. |
 | Skills injection | The AGENTS.md selection that links a procedure name to one concrete SKILL.md. | When Create Workitem is needed, load create-gitlab-work-item. |
 | Peer Skill | A SKILL.md that supplies a complementary procedure used by another SKILL.md. | complete-work-item-feature-branch uses create-pull-request. |
-| Exact-name reference | An open-diamond arrow from a node that knows a skill’s exact name to that SKILL.md. | DevCoder o--> CarefulCodingSkill. |
+| Exact-name reference | An open-diamond arrow from a node that knows a skill’s exact name to that SKILL.md. | DevCoder o--> careful-coding. |
 | Procedure-name reference | A regular arrow from an invoker to the procedure it knows without naming the implementing SKILL.md. | BacklogManager --> CreateWorkitem. |
-| Conditional reference | A dotted regular or open-diamond arrow whose label states the loading condition. | DevCoder o..> TestDrivenDevelopmentSkill when executable tests apply. |
+| Conditional reference | A dotted regular or open-diamond arrow whose label states the loading condition. | DevCoder o..> test-driven-development when executable tests apply. |
 | Agent class | The reusable Agent definition side of the analogy. | Backlog Manager. |
 | Agent object | One task-bound execution with context and changing state. | The Backlog Manager processing the Cancel-button request. |
 | Agent superclass stand-in | A diagram-compression node representing several Agents that share the same relationship. It does not assert inheritance. | Structured Artifact Reviewers represents reviewers that all name review-structured-artifact. |
 | Skill identity member | The +skill member that identifies the concrete SKILL.md represented by a node. | +skill careful-coding. |
-| Whole-skill procedure member | A function-style member used only when the whole node represents one cohesive procedure and its parameters. | +createWorkitem(workitemDescription). |
-| Procedure-selection member | The +procedure member that identifies the relevant part of a multi-procedure skill by exact section title or concise clarifying keywords. | +procedure Claim Events. |
+| Procedure member | A function-style member backed by operational source content. The skill name itself can justify the member only when it names that operation. | +createWorkitem(workitemDescription) in create-gitlab-work-item or +confirmWork(requestedChange) in careful-coding. |
 
 ## Applied Models
 
@@ -673,6 +767,8 @@ The reusable method ends here. Current applications to the established skill gro
 - [Test-Driven Development](../skills/test-driven-development/SKILL.md)
 - [JUnit](../skills/junit/SKILL.md)
 - [Jest](../skills/jest/SKILL.md)
+- [Agent Claim](../skills/agent-claim/SKILL.md)
+- [Review Structured Artifact](../skills/review-structured-artifact/SKILL.md)
 - [Dev Coder](../agents/roles/dev-activities/dev-coder.role.yaml)
 - [Mermaid Class Diagram Relationships](https://mermaid.js.org/syntax/classDiagram.html)
 - [Mermaid Sequence Diagram Messages](https://mermaid.js.org/syntax/sequenceDiagram)
