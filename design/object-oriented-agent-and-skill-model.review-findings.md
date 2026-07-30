@@ -4,7 +4,7 @@
 
 - Target: design/object-oriented-agent-and-skill-model.md
 - Completed checklist: design/object-oriented-agent-and-skill-model.review-checklist-structured.md
-- Review basis: the retained user direction for glossary placement, progressive diagram explanation, reference direction, exact-name aggregation, procedure-name lines, conditional dotted lines, Peer Skills, superclass stand-ins, exact kebab-case skill identities, source-backed operations, reference information, heading analysis, empty whole-skill nodes, the manage-work-item-* injection example, and plain AGENTS.md prototypes
+- Review basis: the retained user direction for glossary placement, progressive diagram explanation, reference direction, exact-name aggregation, procedure-name lines, conditional dotted lines, Peer Skills, superclass stand-ins, exact kebab-case skill identities, source-backed operations, reference information, heading analysis, empty whole-skill nodes, the manage-work-item-* injection example, plain AGENTS.md prototypes, and four separate skill-loading cases
 - Review mode: same-agent self-review; no independent reviewer was dispatched for this bounded documentation correction
 
 ## Findings
@@ -14,7 +14,7 @@ No material findings.
 ## Verified Clarifications
 
 - **CHECK:** DIR-1, DIR-2, DIR-3
-  - **RESULT:** The glossary is section 16, the standalone notation section and large legend are gone, and each visual element is introduced beside the first example that needs it.
+  - **RESULT:** The glossary is section 15, the standalone notation section and large legend are gone, and each visual element is introduced beside the first example that needs it.
 
 - **CHECK:** DIR-21
   - **RESULT:** RULE-1 and its relationship diagram remain together in section 2. The new SKILL.md modeling process starts in a separate section 3.
@@ -27,6 +27,9 @@ No material findings.
 
 - **CHECK:** DIR-9, DIR-12
   - **RESULT:** Dotted class lines are reserved for conditional loading and state their condition. Sequence messages are solid, so return messages do not reuse the dotted form.
+
+- **CHECK:** DIR-29, DIR-30, DIR-31, DIR-32, DIR-33, DIR-34, LOG-15
+  - **RESULT:** Section 4 gives unconditional exact-name loading, conditional exact-name loading, AGENTS.md procedure mapping, and request-triggered selection separate subsections. The first three cases have focused diagrams. Request-triggered selection has no persistent class relationship because it comes from explicit request naming or request-to-description matching. The text also distinguishes exact skill identity, the shared SKILL.md filename, selection, content loading, and behavioral application.
 
 - **CHECK:** DIR-10, DIR-24, DIR-25, DIR-26, DIR-28
   - **RESULT:** Injected relationships read Agent to the abstract manage-work-item-* AGENTS.md node by regular arrow, then AGENTS.md to manage-work-item-gitlab by open-diamond arrow. The prototype is AGENTS.md without DII. newEnhancement() and both requested explanatory notes remain visible, and both work-item nodes expose create-new-work-item().
@@ -65,7 +68,7 @@ No material findings.
   - **RESULT:** careful-coding Goal-Driven Execution remains a general goal-to-evidence loop. test-driven-development Workflow remains the distinct red-green-refactor loop.
 
 - **CHECK:** DOC-1, DOC-2, DOC-4, DOC-5
-  - **RESULT:** All fifty structured assertions have examples and unique definition IDs. Eleven Mermaid blocks have balanced fences, twenty-three class references follow the convention, and all eleven sequence messages are solid.
+  - **RESULT:** All fifty-two structured assertions have examples and unique definition IDs. Eleven Mermaid blocks have balanced fences, twenty class references follow the convention, and all eleven sequence messages are solid.
 
 - **CHECK:** DOC-7, DOC-9, DOC-10, DOC-12
   - **RESULT:** Local Markdown links resolve, inline backticks are absent outside Mermaid fences, AGENTS.md DII prototypes, +skill, +procedure, CreateWorkitem, and invented PascalCase skill aliases are absent from the target, retired notation and inheritance syntax are absent, and whitespace validation passes.

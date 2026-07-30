@@ -6,6 +6,7 @@ This document defines a conceptual vocabulary for object-oriented analysis of Ag
 
 It covers:
 
+- exact-name, conditional, procedure-mapped, and request-triggered skill loading;
 - Agent Skills;
 - Injected Skills;
 - Peer Skills;
@@ -24,9 +25,9 @@ Applications of this method are maintained separately in [Object-Oriented Skill 
   - **SYNOPSIS:** An agent or another skill can use a shared procedure name without knowing which SKILL.md supplies the procedure.
   - **EXAMPLE:** An Agent handling a new enhancement invokes create-new-work-item() through manage-work-item-* without knowing which matching SKILL.md supplies the procedure.
 
-- **GOAL: GOAL-2** Distinguish Agent Skills, Injected Skills, and Peer Skills
-  - **SYNOPSIS:** An Agent Skill is named directly by an Agent. An Injected Skill is selected for an Agent through AGENTS.md. A Peer Skill complements another skill through either a direct reference or skills injection.
-  - **EXAMPLE:** Dev Coder names careful-coding, an Agent receives manage-work-item-gitlab through injection, and complete-work-item-feature-branch invokes create-pull-request as a Peer Skill.
+- **GOAL: GOAL-2** Distinguish skill relationships from request-triggered selection
+  - **SYNOPSIS:** Agent Skills, Injected Skills, and Peer Skills describe declared relationships. Request-triggered selection chooses an available skill for one request without adding one of those declared relationships.
+  - **EXAMPLE:** Dev Coder names careful-coding, while a structural-search request can select ast-grep without adding ast-grep to the Agent definition or AGENTS.md.
 
 - **GOAL: GOAL-3** Treat a running agent as an object with context and state
   - **SYNOPSIS:** An agent definition is comparable to a class. One running agent or subagent is comparable to an object that combines the definition with a task, loaded skills, and changing state.
@@ -36,11 +37,12 @@ Applications of this method are maintained separately in [Object-Oriented Skill 
 
 Skills exist in a global Agent space, much as code modules exist in a process. The space makes a SKILL.md available for loading, but availability alone does not create coupling.
 
-Object-oriented analysis helps distinguish three facts:
+Object-oriented analysis helps distinguish four facts:
 
 - whether an invoker knows an exact skill name;
 - whether an invoker knows only a procedure name and its invocation meaning;
-- whether the reference applies every time or only under a condition.
+- whether the reference applies every time or only under a condition;
+- whether the skill was selected from the request rather than through a declared reference.
 
 A shared procedure name and invocation meaning form the Skill interface in this analogy.
 
@@ -152,27 +154,23 @@ The class name retains kebab-case because it identifies the package. An empty me
 
 Goal-Driven Execution uses tests in several examples, but it is broader than the red-green-refactor operation defined by test-driven-development. The two procedures therefore keep distinct names.
 
-## 4. Agent Skills
+## 4. Skill Loading Paths
 
-An Agent Skill is a SKILL.md that an Agent definition references by exact name. The reference can apply to every execution of that Agent role or only when a routing condition is satisfied.
+Skill selection and skill loading are related but distinct. A declaration or request first selects a skill. The selected SKILL.md must then enter the active context before its instructions can be applied. The diagrams in this section show selection references; they do not by themselves prove that the complete file was read or followed.
 
-This section covers only Agent-to-skill references. Skill-to-skill relationships are Peer Skills.
+Every portable skill package stores its instructions in a file named SKILL.md. In this analysis, loading by file name means loading the package resolved from an exact skill name such as careful-coding. It does not mean that the shared literal filename SKILL.md uniquely identifies a skill.
 
-- **RULE: RULE-5** An Agent Skill is referenced by its skill name
-  - **SYNOPSIS:** The Agent definition knows the exact SKILL.md identity and follows that skill’s procedures and instructions.
+### 4.1 Agent Loads A Skill By Exact Name
+
+An Agent Skill is a SKILL.md that an Agent definition references by exact skill name.
+
+- **RULE: RULE-5** An Agent Skill is referenced by its exact skill name
+  - **SYNOPSIS:** The Agent definition knows the exact skill identity and follows the procedures and instructions in the resolved SKILL.md.
   - **EXAMPLE:** Dev Coder names careful-coding directly in its skill list.
 
 - **RULE: RULE-6** An unconditional Agent Skill applies to every execution of the Agent role
   - **SYNOPSIS:** An Agent definition lists the skill without a condition because that dependency belongs to every execution of the role.
   - **EXAMPLE:** Dev Coder lists careful-coding without a condition so every Dev Coder execution applies it.
-
-- **RULE: RULE-7** A condition routes an Agent to a named Agent Skill
-  - **SYNOPSIS:** The Agent definition still knows the exact skill name, but it uses that skill only when the declared condition matches the task.
-  - **EXAMPLE:** Dev Coder names test-driven-development under the condition that executable tests should guide the implementation.
-
-A dotted line is introduced here because test-driven-development is optional. Dotted lines mean conditional loading throughout the class diagrams. A condition is the only text placed on a class-diagram arrow.
-
-The open diamond still means that Dev Coder knows the exact skill name. The line changes from solid to dotted only because the second reference is conditional.
 
 ```mermaid
 classDiagram
@@ -188,20 +186,41 @@ classDiagram
         <<Agent Skill>>
     }
 
+    DevCoder o--> careful-coding
+```
+
+The open diamond means that Dev Coder knows the exact skill name. The solid line means that the reference is unconditional. The empty careful-coding node means that Dev Coder loads the whole skill instead of selecting one displayed procedure.
+
+### 4.2 Agent Conditionally Loads A Skill By Exact Name
+
+A conditional Agent Skill is still named directly by the Agent definition, but the reference applies only when its condition is satisfied.
+
+- **RULE: RULE-7** A condition routes an Agent to a named Agent Skill
+  - **SYNOPSIS:** The Agent definition knows the exact skill name but uses that skill only when the declared condition matches the request and available evidence.
+  - **EXAMPLE:** Dev Coder names test-driven-development under the condition that executable tests should guide the implementation.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class DevCoder {
+        <<Agent>>
+        +implementChange()
+    }
+
     class test-driven-development {
         <<SKILL.md>>
         <<Agent Skill>>
     }
 
-    DevCoder o--> careful-coding
     DevCoder o..> test-driven-development : when executable tests apply
 ```
 
-Both empty skill nodes mean that Dev Coder loads each applicable skill as a whole. The references couple Dev Coder to exact skill names. The condition changes when the second reference applies; it does not turn the reference into skills injection.
+The open diamond still means exact-name knowledge. The dotted line means conditional loading, and the arrow label states the condition. Solid and dotted class references differ only in conditionality; both point from the referencing Agent to the named skill.
 
-## 5. Injected Skills
+### 4.3 Agent Uses A Procedure Mapped Through AGENTS.md
 
-Injected Skills are Injectable Skills selected for an Agent through AGENTS.md. The Agent invokes a shared procedure name and does not name the implementing SKILL.md.
+An Injected Skill is selected through AGENTS.md. The Agent refers to a procedure and does not name the implementing SKILL.md.
 
 - **RULE: RULE-2** The Agent, AGENTS.md, and the implementing SKILL.md share the same procedure name
   - **SYNOPSIS:** The procedure name connects the Agent’s intent, the injection instruction, and the concrete procedure.
@@ -230,12 +249,6 @@ classDiagram
         +create-new-work-item()
     }
 
-    class manage-work-item-file {
-        <<SKILL.md>>
-        <<Injectable Skill>>
-        +create-new-work-item()
-    }
-
     class manage-work-item-gitlab {
         <<SKILL.md>>
         <<Injectable Skill>>
@@ -243,26 +256,43 @@ classDiagram
     }
 
     BacklogManager --> manage-work-item
-    manage-work-item o--> manage-work-item-file
     manage-work-item o--> manage-work-item-gitlab
 
-    note for manage-work-item "AGENTS.md selects one matching manage-work-item-* skill"
+    note for BacklogManager "create a new work item when an enhancement is requested"
+    note for manage-work-item "Load manage-work-item-gitlab to create a new work item"
 ```
 
-The regular arrow means that Backlog Manager refers to create-new-work-item() through the manage-work-item-* family. The open-diamond arrows mean that the AGENTS.md DII can name either concrete matching skill. One project configuration selects one implementation for this procedure; the diagram shows the alternatives, not two simultaneous loads.
+The regular arrow means that Backlog Manager knows create-new-work-item() through the manage-work-item-* family without naming a skill. The open-diamond arrow means that AGENTS.md names manage-work-item-gitlab as the selected implementation.
 
-Both concrete skills expose create-new-work-item(). In manage-work-item-gitlab, that procedure maps to a Create New Work Item section that explains the GitLab-specific steps. Other management procedures can appear as additional sections without changing the creation procedure shared through the abstract family.
+The shown GitLab skill exposes create-new-work-item() through a Create New Work Item section. A file-backed implementation can expose the same procedure under the manage-work-item-file name. One effective project configuration selects one implementation, not both at once.
 
 The manage-work-item-* family and its two concrete names are analysis vocabulary supplied for this example. They do not assert that those exact skill definitions already exist in the repository.
 
-The two Agent dependency styles differ at the selection boundary:
+### 4.4 A Request Selects A Skill
 
-| Relationship | Agent knows | Selection | Substitution |
+A request can select an available skill without a declared reference from an Agent definition or AGENTS.md.
+
+- **RULE: RULE-50** Request-triggered selection is scoped to the request
+  - **SYNOPSIS:** A skill loader can select a discovered skill because the request names it explicitly or because the request matches its declared purpose. This selection does not add a durable Agent Skill or AGENTS.md relationship.
+  - **EXAMPLE:** A request that names ast-grep, or asks for structural code matching that fits the ast-grep description, can select ast-grep for that request without changing an Agent definition.
+
+The request-triggered forms are:
+
+- explicit selection by skill name or marker;
+- implicit selection from the request and a skill’s description or trigger conditions.
+
+No class diagram is needed for this case. The selection is a request-routing event rather than a persistent reference owned by an Agent definition or AGENTS.md. The running agent can still read and apply the selected SKILL.md after routing succeeds.
+
+The loading paths differ at their selection boundary:
+
+| Loading path | Selection source | Exact skill name known by | Scope |
 | --- | --- | --- | --- |
-| Agent Skill | The exact skill name and that skill’s procedures. | The Agent definition references the skill for every execution or under a condition. | Replacement usually requires changing the Agent definition. |
-| Injected Skill | The procedure name and invocation meaning. | AGENTS.md selects an implementing SKILL.md. | Another SKILL.md can be selected when it implements the same procedure name and invocation meaning. |
+| Unconditional Agent Skill | Agent definition | Agent definition | Every execution of that Agent role. |
+| Conditional Agent Skill | Agent definition condition | Agent definition | Executions whose request and evidence satisfy the condition. |
+| Procedure mapped through AGENTS.md | Shared procedure in the Agent; implementation binding in AGENTS.md | AGENTS.md | The effective project binding for that procedure. |
+| Request-triggered skill | Explicit request marker or request-to-description match | Skill loader or caller | The current request. |
 
-## 6. Peer Skills
+## 5. Peer Skills
 
 A Peer Skill complements another SKILL.md. Peer describes a relationship between complementary skills, not a third implementation-selection mechanism.
 
@@ -346,7 +376,7 @@ The feature-branch skill explicitly names create-pull-request, so its arrow uses
 
 The runProjectTests(testScope) members are derived from the Verification sections in both testing skills. The shared operation is semantically present, but its exact name is not a current source heading. That recorded mapping exposes weaker substitution vocabulary than the explicit create-new-work-item() family example instead of disguising it.
 
-## 7. From User Request To Skill Interface
+## 6. From User Request To Skill Interface
 
 This section separates understanding the user’s request from choosing the implementation.
 
@@ -377,7 +407,7 @@ sequenceDiagram
 
 At this point, newEnhancement() has referred to the creation procedure, but the Agent has not chosen file or GitLab behavior itself.
 
-## 8. Skills Injection Through AGENTS.md
+## 7. Skills Injection Through AGENTS.md
 
 AGENTS.md links a procedure name to a concrete SKILL.md.
 
@@ -389,39 +419,11 @@ AGENTS.md links a procedure name to a concrete SKILL.md.
   - **SYNOPSIS:** The Agent retains newEnhancement() and its create-new-work-item() reference when project setup chooses another matching implementation.
   - **EXAMPLE:** Changing the AGENTS.md binding from manage-work-item-gitlab to manage-work-item-file does not change newEnhancement().
 
-```mermaid
-classDiagram
-    direction LR
-
-    class BacklogManager {
-        <<Agent>>
-        +newEnhancement()
-    }
-
-    class manage-work-item["manage-work-item-*"] {
-        <<AGENTS.md>>
-        <<abstract>>
-        +create-new-work-item()
-    }
-
-    class manage-work-item-gitlab {
-        <<SKILL.md>>
-        <<Injectable Skill>>
-        +create-new-work-item()
-    }
-
-    BacklogManager --> manage-work-item
-    manage-work-item o--> manage-work-item-gitlab
-
-    note for BacklogManager "create a new work item when an enhancement is requested"
-    note for manage-work-item "Load manage-work-item-gitlab to create a new work item"
-```
-
-The regular arrow goes from the Backlog Manager to the AGENTS.md DII because newEnhancement() refers to create-new-work-item(). The open-diamond arrow goes from the DII to manage-work-item-gitlab because AGENTS.md selects that skill by exact name.
+Section 4.3 shows this binding as a regular arrow from Backlog Manager to the manage-work-item-* procedure family and an open-diamond arrow from AGENTS.md to manage-work-item-gitlab. The first reference preserves procedure-only knowledge in the Agent. The second reference records the exact skill name selected by project guidance.
 
 Skills injection is an instruction relationship. The model does not require a compiled interface object or a software dependency-injection container.
 
-## 9. Loading And Invoking The Selected SKILL.md
+## 8. Loading And Invoking The Selected SKILL.md
 
 The agent follows the injection instruction only when it needs the Skill interface.
 
@@ -456,7 +458,7 @@ sequenceDiagram
 
 Every message is solid. Direction and the Return prefix distinguish information coming back from an action. The Agent’s newEnhancement() behavior and create-new-work-item() reference stay the same when another matching skill is selected. The provider-specific actions come from the loaded SKILL.md.
 
-## 10. One Or More Procedures In A SKILL.md
+## 9. One Or More Procedures In A SKILL.md
 
 The number of Skill interfaces depends on how many independently invocable procedure names the SKILL.md defines.
 
@@ -505,7 +507,7 @@ Each AGENTS.md DII refers to its own procedure name and can select agent-claim b
 
 An Agent Skill or a directly referenced Peer Skill can also contain several procedures. Those procedures do not become interchangeable Skill interfaces merely because they share one file. Interchangeability requires the SKILL.md, its invokers, and alternative implementations to share the same procedure names and invocation meanings.
 
-## 11. A Second Injected Example: Deliver Workitem
+## 10. A Second Injected Example: Deliver Workitem
 
 The same relationship applies to completion procedures.
 
@@ -559,7 +561,7 @@ classDiagram
 
 The regular arrow shows that the development workflow knows Deliver Workitem by procedure name. The open-diamond arrows show the two exact skill names that AGENTS.md can select. The direct-main and feature-branch procedures remain different internally even though callers reach either one through the same procedure name.
 
-## 12. Agent Classes, Objects, And Skill Dependencies
+## 11. Agent Classes, Objects, And Skill Dependencies
 
 An Agent can use named Agent Skills and Injected Skills together. The reusable Agent definition is comparable to a class, while one task-bound execution is comparable to an object with context and changing state.
 
@@ -612,7 +614,7 @@ The running Agent points directly to careful-coding because its Agent definition
 
 The diagram does not draw a class-to-object link or an inheritance relationship. The class-and-object language explains reusable definition versus task-bound state; it does not require the harness to construct software objects.
 
-## 13. Agent Superclass Stand-Ins
+## 12. Agent Superclass Stand-Ins
 
 A shared relationship can appear once when many Agents reference the same skill in the same way. Drawing every Agent separately can hide the relationship behind repeated arrows.
 
@@ -649,7 +651,7 @@ classDiagram
 
 The open-diamond arrow says that every represented Agent names review-structured-artifact directly. No inheritance arrows are needed because the stand-in exists only to avoid drawing the same reference many times.
 
-## 14. Constraints
+## 13. Constraints
 
 - **RULE: RULE-20** A loaded skill is not necessarily injectable
   - **SYNOPSIS:** A SKILL.md is injectable only when it and its invokers share a procedure name and invocation meaning that another implementation can also use.
@@ -667,7 +669,7 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **SYNOPSIS:** The document explains the vocabulary and relationships without prescribing a schema, migration order, or repository change sequence.
   - **EXAMPLE:** The diagrams show manage-work-item-* with the AGENTS.md prototype without specifying a new YAML field for declaring it.
 
-## 15. Definition Of Good
+## 14. Definition Of Good
 
 - **RULE: RULE-24** The diagrams distinguish AGENTS.md from SKILL.md
   - **SYNOPSIS:** Diagrams label an injected shared contract with the AGENTS.md stereotype and a concrete skill definition with the SKILL.md stereotype.
@@ -677,9 +679,13 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **SYNOPSIS:** A reader can follow the request from the user, through newEnhancement() and its creation reference, through AGENTS.md injection, to the selected SKILL.md procedure.
   - **EXAMPLE:** Add a new Cancel button invokes newEnhancement(), which refers to create-new-work-item(); AGENTS.md selects manage-work-item-gitlab, whose Create New Work Item section performs the GitLab procedure.
 
-- **RULE: RULE-26** Direct and injected dependency styles have valid uses
-  - **SYNOPSIS:** Agent Skills and direct Peer Skill references support exact dependencies. Injected Skills support substitution.
-  - **EXAMPLE:** Dev Coder names careful-coding as an Agent Skill, complete-work-item-feature-branch names create-pull-request as a Peer Skill, and manage-work-item-* uses injection.
+- **RULE: RULE-26** Declared relationships and request-triggered selection have valid uses
+  - **SYNOPSIS:** Agent Skills and direct Peer Skill references support exact dependencies. Injected Skills support substitution. Request-triggered selection handles one request without creating a declared dependency.
+  - **EXAMPLE:** Dev Coder names careful-coding, manage-work-item-* uses injection, and a structural-search request can select ast-grep for that request alone.
+
+- **RULE: RULE-51** The four loading paths remain distinct
+  - **SYNOPSIS:** The method separates unconditional exact-name loading, conditional exact-name loading, procedure mapping through AGENTS.md, and request-triggered selection.
+  - **EXAMPLE:** Section 4 gives every loading path its own subsection and omits a persistent class relationship for request-triggered ast-grep selection.
 
 - **RULE: RULE-27** Every assertion includes an example
   - **SYNOPSIS:** Each GOAL, RULE, PROCESS, and other structured assertion is followed by an EXAMPLE.
@@ -694,16 +700,19 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **EXAMPLE:** manage-work-item o--> manage-work-item-gitlab reads from the AGENTS.md DII that names the matching skill to the SKILL.md that it selects.
 
 - **RULE: RULE-43** Line and endpoint form expose name knowledge and conditionality
-  - **SYNOPSIS:** A regular line means procedure-name reference, an open diamond means exact skill-name reference, and the dotted form means the reference is conditional. Only a dotted class reference carries text, and that text states the condition.
+  - **SYNOPSIS:** In declared relationships, a regular line means procedure-name reference, an open diamond means exact skill-name reference, and the dotted form means the reference is conditional. Only a dotted class reference carries text, and that text states the condition.
   - **EXAMPLE:** DevCoder o..> test-driven-development with when executable tests apply means that Dev Coder conditionally loads that exact named skill.
 
-## 16. Glossary
+## 15. Glossary
 
 The glossary summarizes concepts after the examples have established them.
 
 | Term | Meaning | Example |
 | --- | --- | --- |
 | Global Agent space | The execution space in which an Agent can find available SKILL.md files. Availability alone does not create a reference. | careful-coding and test-driven-development can both be available while one Agent execution loads only the applicable skills. |
+| Skill selection | A decision that one available skill applies to an Agent execution or request. Selection does not prove that the full instructions entered context. | A conditional rule selects test-driven-development when executable tests apply. |
+| Skill loading | The complete selected SKILL.md entering the active context so its instructions can be followed. | After AGENTS.md selects manage-work-item-gitlab, the agent reads that SKILL.md. |
+| Exact skill name | The identity used to resolve one skill package and its SKILL.md. It is not the shared literal filename SKILL.md. | careful-coding resolves the careful-coding package. |
 | Skill interface | A shared procedure name and invocation meaning used by an invoker and by the SKILL.md that supplies the procedure. | manage-work-item-* exposes create-new-work-item(). |
 | Procedure name | The name that identifies the operation an invoker needs. | create-new-work-item. |
 | Procedure context | Information already held by the invoking Agent for use by the named procedure. | Enhancement description: Add a new Cancel button. |
@@ -717,6 +726,7 @@ The glossary summarizes concepts after the examples have established them.
 | Injectable Skill | A SKILL.md written with a shared procedure name and invocation meaning so AGENTS.md can select it without changing its invoker. | manage-work-item-file and manage-work-item-gitlab can both supply create-new-work-item(). |
 | Injected Skill | The Injectable Skill selected through AGENTS.md for one procedure in an effective project configuration. | manage-work-item-gitlab is the Injected Skill when AGENTS.md binds it to manage-work-item-*. |
 | Skills injection | The AGENTS.md selection that links an abstract skill family and procedure to one concrete SKILL.md. | When create-new-work-item() is needed, load manage-work-item-gitlab. |
+| Request-triggered skill selection | Selection caused by an explicit skill name or marker in the request, or by a match between the request and the skill’s declared purpose. It does not require an Agent-definition reference or AGENTS.md binding. | A structural-search request selects ast-grep for the current request. |
 | Peer Skill | A SKILL.md that supplies a complementary procedure used by another SKILL.md. | complete-work-item-feature-branch uses create-pull-request. |
 | Exact-name reference | An open-diamond arrow from a node that knows a skill’s exact name to that SKILL.md. | DevCoder o--> careful-coding. |
 | Procedure-name reference | A regular arrow from an invoker to the procedure it knows without naming the implementing SKILL.md. | BacklogManager --> manage-work-item. |
@@ -735,6 +745,7 @@ The reusable method ends here. Current applications to the established skill gro
 
 - The user-supplied object-oriented analysis and vocabulary corrections for this document.
 - [Agentic Configuration](agentic-configuration.html)
+- [Agent Skill Architecture](skills-modularization.html)
 - [Work-Item Provider And Completion Contracts](work-item-provider-and-completion-contracts.md)
 - [Complete Work Item Direct Main](../skills/complete-work-item-direct-main/SKILL.md)
 - [Complete Work Item Feature Branch](../skills/complete-work-item-feature-branch/SKILL.md)
