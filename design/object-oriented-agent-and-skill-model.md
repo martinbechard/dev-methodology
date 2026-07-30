@@ -105,25 +105,25 @@ The open diamond still means exact-name knowledge. The dotted line means conditi
 
 ### 2.3 Agent Uses A Procedure Mapped Through AGENTS.md
 
-An Injected Skill is selected through AGENTS.md. The Agent refers to a procedure and does not name the implementing SKILL.md. A shared procedure name and invocation meaning form the Skill interface in this analogy.
+An Injected Skill is selected through AGENTS.md. The Agent instruction says what must be done without naming the skill that will do it. AGENTS.md names the skill to use for that project. When the Agent instruction, AGENTS.md, and the selected skill use the same procedure wording, that wording forms the Skill interface in this analogy.
 
 - **RULE: RULE-1** A procedure name can decouple an invoker from a skill implementation
-  - **SYNOPSIS:** The procedure name identifies the operation that the invoker needs, while AGENTS.md determines which SKILL.md supplies that procedure.
+  - **SYNOPSIS:** The procedure name describes the work that is needed. The Agent instruction can request that work while AGENTS.md chooses the skill that explains how to do it.
   - **EXAMPLE:** The Agent instruction says, “When a new enhancement is requested, create a new work item.” AGENTS.md says, “To create a new work item, use the manage-work-item-gitlab skill.”
 
 - **RULE: RULE-2** The Agent, AGENTS.md, and the implementing SKILL.md share the same procedure name
-  - **SYNOPSIS:** The procedure name connects the Agent’s intent, the injection instruction, and the concrete procedure.
-  - **EXAMPLE:** The Agent needs create-new-work-item(). AGENTS.md links manage-work-item-* to manage-work-item-gitlab, whose Create New Work Item section defines that procedure for GitLab.
+  - **SYNOPSIS:** The same procedure wording connects what the Agent must do, which skill AGENTS.md selects, and where that skill explains the work.
+  - **EXAMPLE:** The words “create a new work item” appear in the Agent instruction and the AGENTS.md instruction. The selected GitLab skill explains that work in its Create New Work Item section.
 
 - **RULE: RULE-3** An Injectable Skill encapsulates selectable technology or procedure details
-  - **SYNOPSIS:** The Injectable Skill owns the technology-specific or procedure-specific instructions that the Agent should not repeat.
-  - **EXAMPLE:** manage-work-item-gitlab owns issue search, creation, read-back verification, and GitLab identity while the Agent only requests a new work item.
+  - **SYNOPSIS:** The selected skill contains the detailed instructions that should not be repeated in the Agent definition.
+  - **EXAMPLE:** The Agent instruction only says to create a work item. The manage-work-item-gitlab skill explains the GitLab search, creation, and verification steps.
 
 - **RULE: RULE-4** AGENTS.md selects one of several implementations
-  - **SYNOPSIS:** AGENTS.md tells the agent which SKILL.md to load when it needs the procedure.
-  - **EXAMPLE:** One project can bind manage-work-item-* to manage-work-item-file, while another binds the same family and procedure to manage-work-item-gitlab.
+  - **SYNOPSIS:** AGENTS.md tells the Agent which skill to load when the work is needed.
+  - **EXAMPLE:** One project can say, “To create a new work item, use the manage-work-item-file skill.” Another can say, “To create a new work item, use the manage-work-item-gitlab skill.”
 
-An AGENTS.md node uses function style because it represents the expected procedure. DII describes the indirect binding relationship in this analysis; it is not part of the node’s stereotype.
+The diagram uses method-like names to keep the relationship compact. These names are not code copied from the Agent definition or AGENTS.md. DII describes this indirect instruction relationship in the analysis; it is not part of the AGENTS.md node’s stereotype.
 
 ```mermaid
 classDiagram
@@ -149,17 +149,21 @@ classDiagram
     BacklogManager --> manage-work-item
     manage-work-item o--> manage-work-item-gitlab
 
-    note for BacklogManager "create a new work item when an enhancement is requested"
-    note for manage-work-item "Load manage-work-item-gitlab to create a new work item"
+    note for BacklogManager "When a new enhancement is requested, create a new work item"
+    note for manage-work-item "To create a new work item, use the manage-work-item-gitlab skill"
 ```
 
-The regular arrow means that Backlog Manager knows create-new-work-item() through the manage-work-item-* family without naming a skill. The open-diamond arrow means that AGENTS.md names manage-work-item-gitlab as the selected implementation.
+Read the diagram as a picture of three written instructions:
 
-The shown GitLab skill exposes create-new-work-item() through a Create New Work Item section. A file-backed implementation can expose the same procedure under the manage-work-item-file name. One effective project configuration selects one implementation, not both at once.
+- The Backlog Manager Agent definition says, “When a new enhancement is requested, create a new work item.”
+- The project AGENTS.md says, “To create a new work item, use the manage-work-item-gitlab skill.”
+- The manage-work-item-gitlab SKILL.md has a Create New Work Item section that explains how to do that work in GitLab.
 
-The visible manage-work-item-* label is a wildcard family name. A matching concrete skill replaces the asterisk with its provider name. The diagram uses manage-work-item as Mermaid’s internal identifier because an asterisk is not valid in an unescaped class identifier.
+The method-like label newEnhancement() stands for the first instruction. The label create-new-work-item() stands for the shared words “create a new work item.” Neither label means that the Agent definition or AGENTS.md contains a software function.
 
-The manage-work-item-* family and its two concrete names are analysis vocabulary supplied for this example. They do not assert that those exact skill definitions already exist in the repository.
+The regular arrow shows that the Agent instruction asks for a new work item without naming a skill. The open-diamond arrow shows that AGENTS.md names the skill selected for the project. If a project stores work items in files, AGENTS.md can name manage-work-item-file instead. The Backlog Manager instruction remains unchanged.
+
+The manage-work-item-* node is diagram shorthand for the work-item skill selected by AGENTS.md. It is not a literal skill name or a line that would appear in an Agent definition. The concrete work-item skill names are analysis vocabulary for this example; they do not assert that those skill definitions already exist in the repository.
 
 ### 2.4 A Request Selects A Skill
 
