@@ -4,7 +4,7 @@
 
 - Target: design/object-oriented-agent-and-skill-model.md
 - Completed checklist: design/object-oriented-agent-and-skill-model.review-checklist-structured.md
-- Review basis: the retained user direction for glossary placement, progressive diagram explanation, reference direction, exact-name aggregation, procedure-name lines, conditional dotted lines, Peer Skills, superclass stand-ins, exact kebab-case skill identities, source-backed operations, reference information, heading analysis, empty whole-skill nodes, and the manage-work-item-* injection example
+- Review basis: the retained user direction for glossary placement, progressive diagram explanation, reference direction, exact-name aggregation, procedure-name lines, conditional dotted lines, Peer Skills, superclass stand-ins, exact kebab-case skill identities, source-backed operations, reference information, heading analysis, empty whole-skill nodes, the manage-work-item-* injection example, and plain AGENTS.md prototypes
 - Review mode: same-agent self-review; no independent reviewer was dispatched for this bounded documentation correction
 
 ## Findings
@@ -28,8 +28,8 @@ No material findings.
 - **CHECK:** DIR-9, DIR-12
   - **RESULT:** Dotted class lines are reserved for conditional loading and state their condition. Sequence messages are solid, so return messages do not reuse the dotted form.
 
-- **CHECK:** DIR-10, DIR-24, DIR-25, DIR-26
-  - **RESULT:** Injected relationships read Agent to the abstract manage-work-item-* AGENTS.md DII by regular arrow, then AGENTS.md DII to manage-work-item-gitlab by open-diamond arrow. newEnhancement() and both requested explanatory notes remain visible, and both work-item nodes expose create-new-work-item().
+- **CHECK:** DIR-10, DIR-24, DIR-25, DIR-26, DIR-28
+  - **RESULT:** Injected relationships read Agent to the abstract manage-work-item-* AGENTS.md node by regular arrow, then AGENTS.md to manage-work-item-gitlab by open-diamond arrow. The prototype is AGENTS.md without DII. newEnhancement() and both requested explanatory notes remain visible, and both work-item nodes expose create-new-work-item().
 
 - **CHECK:** DIR-11, LOG-4
   - **RESULT:** complete-work-item-feature-branch uses an open diamond because it names create-pull-request directly. test-driven-development reaches JUnit or Jest through the Run Project Tests procedure and AGENTS.md selection.
@@ -68,7 +68,7 @@ No material findings.
   - **RESULT:** All fifty structured assertions have examples and unique definition IDs. Eleven Mermaid blocks have balanced fences, twenty-three class references follow the convention, and all eleven sequence messages are solid.
 
 - **CHECK:** DOC-7, DOC-9, DOC-10, DOC-12
-  - **RESULT:** Local Markdown links resolve, inline backticks are absent outside Mermaid fences, +skill, +procedure, CreateWorkitem, and invented PascalCase skill aliases are absent from the target, retired notation and inheritance syntax are absent, and whitespace validation passes.
+  - **RESULT:** Local Markdown links resolve, inline backticks are absent outside Mermaid fences, AGENTS.md DII prototypes, +skill, +procedure, CreateWorkitem, and invented PascalCase skill aliases are absent from the target, retired notation and inheritance syntax are absent, and whitespace validation passes.
 
 ## Residual Verification Gap
 

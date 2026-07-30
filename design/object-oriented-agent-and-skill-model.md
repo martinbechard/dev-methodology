@@ -55,7 +55,7 @@ The first class diagram introduces two reference forms:
 
 Every arrow points from the referencing node to the referenced node. An unconditional arrow needs no label because its shape already states the reference type.
 
-A concrete SKILL.md class name identifies the represented skill. A concrete skill with no displayed members means that the invoker loads the whole skill rather than selecting one procedure. An AGENTS.md DII node uses function style because it represents the expected procedure.
+A concrete SKILL.md class name identifies the represented skill. A concrete skill with no displayed members means that the invoker loads the whole skill rather than selecting one procedure. An AGENTS.md node uses function style because it represents the expected procedure. DII describes the indirect binding relationship in this analysis; it is not part of the node's stereotype.
 
 ```mermaid
 classDiagram
@@ -68,7 +68,7 @@ classDiagram
         }
 
         class manage-work-item["manage-work-item-*"] {
-            <<AGENTS.md DII>>
+            <<AGENTS.md>>
             <<abstract>>
             +create-new-work-item()
         }
@@ -225,7 +225,7 @@ classDiagram
     }
 
     class manage-work-item["manage-work-item-*"] {
-        <<AGENTS.md DII>>
+        <<AGENTS.md>>
         <<abstract>>
         +create-new-work-item()
     }
@@ -312,7 +312,7 @@ classDiagram
     }
 
     class RunProjectTests {
-        <<AGENTS.md DII>>
+        <<AGENTS.md>>
         +runProjectTests(testScope)
     }
 
@@ -368,7 +368,7 @@ Sequence diagrams use solid messages for every request, action, and return. Thei
 sequenceDiagram
     actor User
     participant Agent
-    participant Interface as manage-work-item-* AGENTS.md DII
+    participant Interface as manage-work-item-* AGENTS.md
 
     User->>Agent: Request enhancement Add a new Cancel button
     Agent->>Agent: Invoke newEnhancement()
@@ -399,7 +399,7 @@ classDiagram
     }
 
     class manage-work-item["manage-work-item-*"] {
-        <<AGENTS.md DII>>
+        <<AGENTS.md>>
         <<abstract>>
         +create-new-work-item()
     }
@@ -479,12 +479,12 @@ classDiagram
     direction LR
 
     class AcquireClaim {
-        <<AGENTS.md DII>>
+        <<AGENTS.md>>
         +acquireClaim(scope)
     }
 
     class ReleaseClaim {
-        <<AGENTS.md DII>>
+        <<AGENTS.md>>
         +releaseClaim(claimId)
     }
 
@@ -527,7 +527,7 @@ classDiagram
     }
 
     class DeliverWorkitem {
-        <<AGENTS.md DII>>
+        <<AGENTS.md>>
         +deliverWorkitem(acceptedCommit)
     }
 
@@ -591,7 +591,7 @@ classDiagram
     }
 
     class DeliverWorkitem {
-        <<AGENTS.md DII>>
+        <<AGENTS.md>>
         +deliverWorkitem(acceptedCommit)
     }
 
@@ -665,13 +665,13 @@ The open-diamond arrow says that every represented Agent names review-structured
 
 - **RULE: RULE-23** The model remains conceptual
   - **SYNOPSIS:** The document explains the vocabulary and relationships without prescribing a schema, migration order, or repository change sequence.
-  - **EXAMPLE:** The diagrams show manage-work-item-* with the AGENTS.md DII prototype without specifying a new YAML field for declaring it.
+  - **EXAMPLE:** The diagrams show manage-work-item-* with the AGENTS.md prototype without specifying a new YAML field for declaring it.
 
 ## 15. Definition Of Good
 
-- **RULE: RULE-24** The diagrams distinguish AGENTS.md DII from SKILL.md
-  - **SYNOPSIS:** Diagrams label an injected shared contract as AGENTS.md DII and a concrete skill definition as SKILL.md.
-  - **EXAMPLE:** manage-work-item-* has the AGENTS.md DII stereotype; manage-work-item-gitlab has the SKILL.md stereotype.
+- **RULE: RULE-24** The diagrams distinguish AGENTS.md from SKILL.md
+  - **SYNOPSIS:** Diagrams label an injected shared contract with the AGENTS.md stereotype and a concrete skill definition with the SKILL.md stereotype.
+  - **EXAMPLE:** manage-work-item-* has the AGENTS.md stereotype; manage-work-item-gitlab has the SKILL.md stereotype.
 
 - **RULE: RULE-25** The complete workitem invocation is traceable
   - **SYNOPSIS:** A reader can follow the request from the user, through newEnhancement() and its creation reference, through AGENTS.md injection, to the selected SKILL.md procedure.
@@ -711,7 +711,7 @@ The glossary summarizes concepts after the examples have established them.
 | Reference member | Attribute-style notation for guidelines, invariants, boundaries, routing, tables, or contracts that procedures consult but do not invoke independently. | +reference simplicity-first-guidelines. |
 | Derived procedure member | A function-style member whose operation is established by source instructions even though its displayed procedure name is clearer than the source heading. | Think Before Coding is modeled as +confirmWork(requestedChange). |
 | Modeling debt | A visible mismatch between the operations or references found in a skill and the headings or shared vocabulary that expose them. | JUnit Verification supports Run Project Tests but does not name that shared procedure explicitly. |
-| AGENTS.md DII | An abstract diagram node for a procedure whose matching skill is selected by name through AGENTS.md. | manage-work-item-* points to manage-work-item-gitlab after project setup selects GitLab persistence. |
+| AGENTS.md DII | The indirect binding relationship represented by an abstract node whose stereotype is AGENTS.md. The node exposes a procedure whose matching skill is selected by name through AGENTS.md. | manage-work-item-* points to manage-work-item-gitlab after project setup selects GitLab persistence. |
 | SKILL.md | A concrete skill definition containing one or more procedures and reference sections. | manage-work-item-gitlab contains a Create New Work Item section in this analysis example. |
 | Agent Skill | A SKILL.md referenced by exact name in an Agent definition for every execution or under a routing condition. | Dev Coder names careful-coding unconditionally and test-driven-development conditionally. |
 | Injectable Skill | A SKILL.md written with a shared procedure name and invocation meaning so AGENTS.md can select it without changing its invoker. | manage-work-item-file and manage-work-item-gitlab can both supply create-new-work-item(). |
