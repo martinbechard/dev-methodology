@@ -2,9 +2,9 @@
 
 ## Scope
 
-Baseline Development contains practices that Agents reference by exact skill name across ordinary implementation, design, review, and explanation work.
+Baseline Development contains practices that current Agent definitions load by exact skill name across implementation, design, review, placement, and explanation work.
 
-The shared notation and cross-group markers are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md).
+The shared notation and recommendation boundary are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md).
 
 ## Current Design
 
@@ -13,103 +13,129 @@ classDiagram
     direction LR
 
     class DevCoder {
-        <<Agent class>>
+        <<Agent>>
     }
 
     class ProjectOrganiser {
-        <<Agent class>>
+        <<Agent>>
     }
 
-    class DevArtifactReviewer {
-        <<Agent class>>
+    class StructuredArtifactReviewers {
+        <<Agent superclass stand-in>>
     }
 
     namespace BaselineDevelopment {
-        class CarefulCoding {
+        class careful-coding {
             <<SKILL.md>>
             <<Agent Skill>>
-            +skill careful-coding
         }
 
-        class CodeComments {
+        class code-comments {
             <<SKILL.md>>
             <<Agent Skill>>
-            +skill code-comments
+            <<Peer Skill>>
         }
 
-        class CodeDiscovery {
+        class code-discovery {
             <<SKILL.md>>
             <<Agent Skill>>
-            +skill code-discovery
         }
 
-        class TestDrivenDevelopment {
+        class test-driven-development {
             <<SKILL.md>>
             <<Agent Skill>>
-            +skill test-driven-development
+            <<Peer Skill>>
         }
 
-        class StructuredDesign {
+        class structured-design {
             <<SKILL.md>>
             <<Agent Skill>>
-            +skill structured-design
+            <<Peer Skill>>
         }
 
-        class StructuredExplanation {
+        class structured-explanation {
             <<SKILL.md>>
             <<Agent Skill>>
-            +skill structured-explanation
+            <<Peer Skill>>
         }
 
-        class OrganiseProjectFiles {
+        class organise-project-files {
             <<SKILL.md>>
             <<Agent Skill>>
-            +skill organise-project-files
         }
 
-        class ReviewStructuredArtifact {
+        class review-structured-artifact {
             <<SKILL.md>>
             <<Agent Skill>>
-            +skill review-structured-artifact
+            <<Peer Skill>>
         }
 
-        class FixExplanation {
+        class fix-explanation {
             <<SKILL.md>>
             <<Agent Skill>>
-            +skill fix-explanation
+            <<Peer Skill>>
         }
     }
 
-    class DocumentationPageVerify {
+    class documentation-page-verify {
         <<SKILL.md>>
         <<Cross-group>>
-        +skill documentation-page-verify
     }
 
-    DevCoder --> CarefulCoding : references by name
-    DevCoder --> CodeComments : references by name
-    DevCoder --> CodeDiscovery : references by name
-    DevCoder --> TestDrivenDevelopment : conditional name reference
-    DevCoder --> OrganiseProjectFiles : references by name
-    DevCoder --> FixExplanation : references by name
-    ProjectOrganiser --> StructuredDesign : references by name
-    ProjectOrganiser --> StructuredExplanation : references by name
-    ProjectOrganiser --> OrganiseProjectFiles : references by name
-    DevArtifactReviewer --> ReviewStructuredArtifact : references by name
-    CodeComments --> StructuredExplanation : invokes by skill name
-    FixExplanation --> StructuredExplanation : invokes by skill name
-    StructuredExplanation --> StructuredDesign : invokes by skill name when needed
-    ReviewStructuredArtifact --> DocumentationPageVerify : invokes by skill name
+    class root-cause-analysis {
+        <<SKILL.md>>
+        <<Cross-group>>
+    }
+
+    DevCoder o--> careful-coding
+    DevCoder o--> code-comments
+    DevCoder o--> code-discovery
+    DevCoder o--> fix-explanation
+    DevCoder o..> organise-project-files : when implementation creates a project file or directory
+    DevCoder o..> test-driven-development : when executable tests should guide implementation
+
+    ProjectOrganiser o--> organise-project-files
+    ProjectOrganiser o--> structured-design
+    ProjectOrganiser o--> structured-explanation
+
+    StructuredArtifactReviewers o--> review-structured-artifact
+
+    code-comments o..> structured-explanation : when writing a non-trivial comment block
+    fix-explanation o--> structured-explanation
+    structured-explanation o..> structured-design : when an explanation needs system structure
+    review-structured-artifact o--> documentation-page-verify
+    test-driven-development o..> root-cause-analysis : when a test fails unexpectedly
 ```
 
-Dev Coder names careful-coding for every execution and test-driven-development under a condition. code-comments and fix-explanation directly invoke structured-explanation as a Peer Skill.
+The empty skill nodes are deliberate. The Agent definitions load these skills as whole packages rather than invoking a shared AGENTS.md procedure. Structured Artifact Reviewers stands in for the current reviewer, verifier, prompt-reviewer, and merge-coordinator definitions that name review-structured-artifact.
 
-The cross-group documentation-page-verify node makes the current verification dependency visible without moving that skill out of Project Setup.
+The skill-to-skill open diamonds expose stronger Peer Skill coupling. For example, fix-explanation names structured-explanation directly, while structured-explanation names structured-design only when system structure must be described.
+
+## Skill Recommendations
+
+These skills are primarily exact-name Agent Skills. They do not need to become injectable merely for consistency. The recommendations make operation boundaries clearer where another Agent or skill may need to refer to one part of the package.
+
+| Skill | Current source boundary | Recommendation | Reason |
+| --- | --- | --- | --- |
+| careful-coding | Think Before Coding, Preserve Authorized Contracts, and Goal-Driven Execution contain actions; Simplicity First and Surgical Changes are guidance. | Keep the skill name. Rename the action headings to Confirm Work Before Coding, Validate Authorized Contract, and Execute Goal-Driven Loop. | The new headings distinguish callable procedures from guidance without pretending that careful-coding itself is one procedure. |
+| code-comments | Structured Comment Writing, Mandatory Code Artifact Header, Public Construct Documentation, Change Workflow, and Review Evidence mix actions and reference rules. | Keep the skill name. Use Write Structured Comments, Add Code Artifact Header, Document Public Constructs, and Review Code Comments as operation headings. | The package owns several related procedures, so named operations are clearer than treating code-comments as one call. |
+| code-discovery | One Workflow establishes the smallest evidence-backed change or review scope. | Rename the skill to discover-code-scope. | The proposed name states the result of the single cohesive procedure and is more precise than the broad subject code-discovery. |
+| test-driven-development | Workflow contains the red-green-refactor procedure; Boundaries constrains it. | Keep the established skill name. Rename Workflow to Run Red-Green-Refactor Loop. | The practice name remains recognizable, while the heading gives callers a specific procedure name. |
+| structured-design | Output And Artifact Modes, the design rules, Pass Sequence, and Self-Review together define authoring and checking behavior. | Keep the skill name. Introduce Create Structured Design and Self-Review Structured Design as the two operation headings. | The remaining sections can stay reference material that those two procedures consult. |
+| structured-explanation | Core Model through Formatting defines one explanation procedure, while the other sections constrain it. | Keep the skill name. Introduce Create Structured Explanation as the operation heading. | A named entry procedure lets Peer Skills request an explanation without treating every reference section as a separate operation. |
+| organise-project-files | Placement Workflow performs the skill’s main operation. | Keep the skill name. Rename Placement Workflow to Choose Project File Placement. | The current skill name already names an operation; the new heading gives that operation a clear invocation boundary. |
+| review-structured-artifact | Workflow performs the review; checklist discipline and review priorities constrain it. | Keep the skill name. Rename Workflow to Review Structured Artifact. | The heading then matches the operation already named by the skill and by its Agent callers. |
+| fix-explanation | Workflow and Required Output explain a code fix; the remaining sections supply classification and relationship rules. | Rename the skill to explain-code-fix. | The proposed name removes the noun-or-verb ambiguity in fix-explanation and states the operation the package performs. |
 
 ## Authoritative Inputs
 
 - [Dev Coder](../../agents/roles/dev-activities/dev-coder.role.yaml)
 - [Project Organiser](../../agents/roles/project-setup/project-organiser.role.yaml)
+- [Dev Artifact Reviewer](../../agents/roles/dev-activities/dev-artifact-reviewer.role.yaml)
+- [Dev Code Reviewer](../../agents/roles/dev-activities/dev-code-reviewer.role.yaml)
+- [Dev Verifier](../../agents/roles/dev-activities/dev-verifier.role.yaml)
+- [Dev Prompt Reviewer](../../agents/roles/dev-activities/dev-prompt-reviewer.role.yaml)
+- [Dev Merge Coordinator](../../agents/roles/dev-activities/dev-merge-coordinator.role.yaml)
 - [Careful Coding](../../skills/careful-coding/SKILL.md)
 - [Code Comments](../../skills/code-comments/SKILL.md)
 - [Code Discovery](../../skills/code-discovery/SKILL.md)
@@ -120,3 +146,4 @@ The cross-group documentation-page-verify node makes the current verification de
 - [Review Structured Artifact](../../skills/review-structured-artifact/SKILL.md)
 - [Fix Explanation](../../skills/fix-explanation/SKILL.md)
 - [Documentation Page Verify](../../skills/documentation-page-verify/SKILL.md)
+- [Root-Cause Analysis](../../skills/root-cause-analysis/SKILL.md)

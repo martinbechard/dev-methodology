@@ -11,94 +11,91 @@
   - design/skill-groups/concurrent-tasking.md
   - design/skill-groups/direct-main-delivery.md
   - design/skill-groups/review-and-verification.md
-- Review date: 2026-07-29
-- Review scope: document separation, group boundaries, complete skill placement, cross-group coupling, Concurrent Tasking containment, AGENTS.md DII use, concrete skill identity, whole-skill function notation, multi-procedure labels, examples, diagrams, and source links
-- Input directives: the retained user directions for the established groups, plus the current separation and notation corrections
+- Review date: 2026-07-30
+- Review scope: the seven current-state diagrams, forty-one primary skill placements, current Agent and SKILL.md relationships, AGENTS.md procedure mappings, and one name or interface-heading recommendation for every primary skill
+- Input directives: the retained user directions for group ownership, diagram notation, actual skill identity, direct and conditional references, AGENTS.md injection, Peer Skills, and recommendation boundaries
 - Analysis method: design/object-oriented-agent-and-skill-model.md
 - Generic checklist: skills/review-structured-artifact/references/review-checklist-structured.md
 - Page verification procedure: skills/documentation-page-verify/SKILL.md
 
-Supporting repository inputs include the Agent and SKILL.md paths linked from the seven group documents, README.md, design/agentic-configuration.html, and design/work-item-provider-and-completion-contracts.md.
+Supporting repository inputs are the Agent and SKILL.md paths linked from each group document, README.md, design/agentic-configuration.html, and design/work-item-provider-and-completion-contracts.md.
+
+Diagram syntax reference: [Mermaid Class Diagrams](https://mermaid.js.org/syntax/classDiagram.html).
 
 ## User Directive Coverage
 
-| ID | Status | Question | Evidence type | Evidence source | Evidence | Assessment | Correction | Authority | Impact |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| DIR-1 | pass | Is each skill-group design independent from the reusable method and from the other groups? | structure inspection | Hub and seven linked pages | The method links to the hub, while the hub links to seven separate group files. Each group page carries its own scope, diagram, interpretation, and sources. | A reader can load only the relevant group. | None. | Current user direction. | None. |
-| DIR-2 | pass | Is the shared notation explained once outside the individual diagrams? | summary | Hub Diagram Notation | The hub explains +skill, function style, +procedure, exact titles, keywords, and omission when a relationship applies the whole skill. | Individual pages can remain compact. | None. | Current user direction. | None. |
-| DIR-3 | pass | Do concrete skill nodes use +skill rather than SkillId? | automated search | Seven group pages | Every concrete SKILL.md node has a +skill member and skillId has zero occurrences. | Skill identity is easy to read. | None. | Current user direction. | None. |
-| DIR-4 | pass | Is function style restricted to whole callable contracts rather than multi-procedure concrete skills? | automated search and diagram inspection | Seven group pages | Function-style members occur only on Create Workitem and Deliver Workitem AGENTS.md DII nodes. No concrete named SKILL.md node has a function member. | Multi-procedure skills are not presented as one function. | None. | Current user direction. | None. |
-| DIR-5 | pass | Do multi-procedure skills name exact source titles where available? | source comparison | Documentation, Backlog, Concurrent, Direct Main, and Review pages | Labels such as Artifact Creation Routes, Inventory Workflow, Claim Events, Command Contract, Candidate Publication, Main Reconciliation, and Evidence Handoff And Commit Authority match current section titles. | The relevant procedure is source-traceable. | None. | Current user direction and current SKILL.md files. | None. |
-| DIR-6 | pass | Are keywords used only when no single source title represents the shared part? | inspection | Backlog and Concurrent pages | Manage Workitem uses provider-neutral inventory, transition, and reconciliation keywords; Claim Helper uses operation keywords shared by command and MCP implementations. | The diagrams clarify the selected part without inventing a false common section title. | None. | Current user direction. | None. |
-| DIR-7 | pass | Does Baseline Development contain the corrected baseline skills? | diagram inspection | Baseline Development page | structured-design, structured-explanation, organise-project-files, review-structured-artifact, and fix-explanation remain primary nodes alongside careful-coding, code-comments, code-discovery, and test-driven-development. | Baseline practices are not misclassified as concurrency. | None. | Retained user direction. | None. |
-| DIR-8 | pass | Does Project Setup distinguish selected technology names from one shared injected interface? | diagram inspection | Project Setup page | The diagram uses a Selected SKILL.md set with ordered names and folder scopes. AGENTS.md names the selected skills without promising one common procedure. | Technology injection is not overstated. | None. | Retained user direction and current setup definitions. | None. |
-| DIR-9 | pass | Does Documentation Methodology include development-methodology and the reverse-engineering companion? | diagram and source inspection | Documentation Methodology page | development-methodology is the primary router; documentation-bootstrap, documentation-reverse-engineer, and documentation-page-verify are visible peers with exact procedure titles. | The previously omitted reverse-engineering relationship is present. | None. | Retained user direction and current documentation skills. | None. |
-| DIR-10 | pass | Does Backlog Management remain independent of claims and Commit selection, including crisis mode? | boundary inspection | Backlog Management page | Provider creation and management remain inside Backlog Management; Resource Coordination is external and conditional; crisis mode remains a backlog skill while stopping claim and delegation activity. | Backlog lifecycle does not depend structurally on feature branches or claims. | None. | Retained user direction and current backlog skills. | None. |
-| DIR-11 | pass | Does Concurrent Tasking enclose Resource Coordination and Feature Branch And Worktrees? | diagram inspection | Concurrent Tasking page | ConcurrentTaskingGroup has composition relationships to both subgroup nodes, which contain the current claim-helper and branch/worktree skills. | The requested enclosure is explicit. | None. | Retained user direction. | None. |
-| DIR-12 | pass | Is integration represented with feature-branch and worktree concerns? | diagram inspection | Concurrent Tasking page | agent-work-merge, complete-work-item-feature-branch, and create-pull-request are inside Feature Branch And Worktrees. | Integration remains a concurrency skill. | None. | Retained user direction. | None. |
-| DIR-13 | pass | Does Direct Main Delivery remain a distinct Commit option while exposing current concurrency dependencies? | diagram inspection | Direct Main Delivery page | complete-work-item-direct-main implements Deliver Workitem; agent-work-merge and Resource Coordination appear as Cross-group dependencies. | The alternative is distinct without hiding present coupling. | None. | Retained user direction and current delivery skill. | None. |
-| DIR-14 | pass | Does Review And Verification preserve evidence ownership and delivery handoff? | source comparison | Review And Verification page | Review and diagnosis skills remain primary; end-to-end-verification names Workflow and Evidence Handoff And Commit Authority, reaches Claim Events only when triggered, and hands accepted evidence to Deliver Workitem. | Verification does not become Commit ownership. | None. | Current verification skill. | None. |
-| DIR-15 | pass | Are skills used across boundaries visibly distinguished? | diagram inspection | Hub and seven pages | Cross-group marks external skill use and Cross-group responsibility marks a primary skill whose current procedures touch another concern. | Coupling is visible without becoming an automatic split recommendation. | None. | Retained user direction. | None. |
+| ID | Status | Question | Evidence | Assessment |
+| --- | --- | --- | --- | --- |
+| DIR-1 | pass | Are the reusable analysis method and the applied group designs separate? | The method links to one hub, and the hub links to seven independent group documents. | Readers can use the method without loading the complete applied inventory and can inspect one group without reading the other six. |
+| DIR-2 | pass | Do the diagrams model actual skills instead of invented concrete skill identities? | Every primary SKILL.md node uses an exact current kebab-case name, and every recommendation corresponds to an existing skills/name/SKILL.md source. | Wildcard labels appear only on AGENTS.md procedure-family nodes. |
+| DIR-3 | pass | Do arrows distinguish exact-name references from procedure-mapped references? | Open diamonds connect definitions that name a skill; regular arrows connect invokers to AGENTS.md procedure nodes; dotted forms carry conditions. | The diagrams follow the analysis method instead of using one generic dependency arrow. |
+| DIR-4 | pass | Do the diagrams preserve current coupling that is not yet cleanly injectable? | codex-workitem-coordination, create-file-work-item, end-to-end-verification, agent-work-merge, and both Commit implementations retain their current exact agent-claim references. | The current state is not made to look more polymorphic than its source definitions. |
+| DIR-5 | pass | Is whole-skill loading represented without inventing a method? | Exact-name Agent Skill nodes such as careful-coding remain empty when the complete skill is loaded. | A skill name is not reused as a fake procedure merely because a diagram needs a member. |
+| DIR-6 | pass | Are displayed concrete procedures traceable to current headings? | Generic members such as workflow(), required-result(), and command-contract() preserve the current source heading instead of showing the recommended vocabulary. | Current source and proposed interfaces remain distinguishable. |
+| DIR-7 | pass | Is Documentation Methodology separate from Project Setup? | development-methodology, documentation-bootstrap, documentation-reverse-engineer, and documentation-page-verify are primary Documentation Methodology skills; setup shows them only as Cross-group dependencies. | The documentation router and reverse-engineering workflow are not misclassified as setup skills. |
+| DIR-8 | pass | Does Concurrent Tasking enclose Resource Coordination and Feature Branch And Worktrees? | The Concurrent Tasking group has composition links to both subgroups; their seven primary skills appear beneath those boundaries. | The requested enclosure is explicit. |
+| DIR-9 | pass | Does Backlog Management remain independent of concurrency and Commit delivery? | Creation and management providers plus crisis mode are primary Backlog Management skills; resource coordination is a conditional Cross-group dependency. | Backlog use remains valid in crisis mode and in workflows that do not use claims or feature branches. |
+| DIR-10 | pass | Is integration grouped with feature branches and worktrees? | agent-work-merge, complete-work-item-feature-branch, and create-pull-request are contained by Feature Branch And Worktrees. | Integration appears in the concurrency boundary requested by the user. |
+| DIR-11 | pass | Are direct-main and feature-branch delivery shown as implementations of the same project-selected procedure? | Both group diagrams use the complete-work-item-* AGENTS.md node and the Deliver Work Item procedure. | Commit selection can vary without changing the invoking Agent instruction. |
+| DIR-12 | pass | Does every primary skill receive an improvement recommendation in the requested forms? | The seven recommendation tables contain forty-one unique skill rows. Each row recommends a clearer name, interface-oriented headings, or both. | No primary skill is omitted and no recommendation becomes an implementation plan. |
 
-## Coverage And Source Checks
+## Skill Coverage And Placement
 
-| ID | Status | Question | Evidence type | Evidence source | Evidence | Assessment | Correction | Authority | Impact |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| COV-1 | pass | Are all skills from the established group tree retained? | automated name comparison | Seven group pages | Forty primary skill names were expected and none were missing. documentation-reverse-engineer appears as the additional requested companion, and the dynamic confirmed technology set has its own node. | The split did not drop catalog coverage. | None. | Retained group tree and current user direction. | None. |
-| COV-2 | pass | Does each skill have one primary group? | namespace inspection | Seven group diagrams | The forty established skills each occur in one primary group namespace; repeated appearances outside that namespace carry Cross-group or Cross-group responsibility context. | Primary ownership remains unambiguous. | None. | Retained group tree. | None. |
-| COV-3 | pass | Are provider placeholders represented truthfully? | source comparison | Backlog Management and Azure DevOps and Jira skills | Azure DevOps and Jira creation and management nodes carry Unsupported placeholder and point to Required Result and No-Fallback Boundary. | A selectable placeholder is not shown as a successful provider. | None. | Current provider skills. | None. |
-| COV-4 | pass | Do resource-coordination labels match agent-claim? | source comparison | Backlog, Concurrent, Direct Main, and Review pages | Claim Events, Timed Resource Claims, and Release Cleanup are exact agent-claim section titles. | Claim behavior is source-backed. | None. | Current agent-claim skill. | None. |
-| COV-5 | pass | Do claim-helper labels match their implementations? | source comparison | Concurrent Tasking page | Command Contract and Uncertain Command Outcome match agent-claim-command; MCP Operations and Uncertain Tool Outcome match agent-claim-mcp. | Helper-specific procedures are distinguishable. | None. | Current claim-helper skills. | None. |
-| COV-6 | pass | Do delivery and integration labels match their implementations? | source comparison | Concurrent and Direct Main pages | Candidate Publication, Review And Check Loop, Merge And Completion Gate, Main Reconciliation, Deliberate Integration, Merge Workflow, and Verification are current section titles. | Delivery arrows identify real procedures. | None. | Current delivery and merge skills. | None. |
-| COV-7 | pass | Do backlog management labels reflect provider differences? | source comparison | Backlog Management page | File, GitHub, GitLab, Azure DevOps, and Jira nodes use their own section titles instead of one generic manageWorkitem call. | Provider-specific procedure structure remains visible. | None. | Current management skills. | None. |
+| ID | Status | Question | Evidence | Assessment |
+| --- | --- | --- | --- | --- |
+| COV-1 | pass | Are there forty-one unique recommendation rows? | Automated extraction found forty-one rows and no duplicate skill name. | Recommendation coverage matches the applied inventory. |
+| COV-2 | pass | Does every recommended skill have a current source file and diagram node? | Automated path and node checks found no missing skills/name/SKILL.md file and no missing class node. | Every recommendation is source-backed. |
+| COV-3 | pass | Are primary skills distributed across the intended groups? | Baseline Development 9; Project Setup 2; Documentation Methodology 4; Backlog Management 11; Concurrent Tasking 7; Direct Main Delivery 1; Review And Verification 7. | The totals equal forty-one and preserve the established ownership boundaries. |
+| COV-4 | pass | Are repeated dependencies identified as Cross-group rather than assigned twice? | Setup, documentation, backlog, delivery, and verification diagrams mark external skill nodes Cross-group. | Primary ownership stays unambiguous while important dependencies remain visible. |
+| COV-5 | pass | Are conditional Agent Skills based on current role conditions? | Conditions for TDD, crisis mode, coordination, documentation routes, runtime evidence, E2E verification, and artifact placement match the relevant role definitions. | Conditional loading is not inferred from skill availability alone. |
+| COV-6 | pass | Are direct Peer Skill references based on current SKILL.md wording? | The diagrams retain direct references such as fix-explanation to structured-explanation, structured-explanation to structured-design, review-structured-artifact to documentation-page-verify, diagnostic skill references, and feature-branch delivery to create-pull-request. | Stronger skill-to-skill coupling is visible. |
+| COV-7 | pass | Are unavailable provider implementations represented truthfully? | Azure DevOps and Jira work-item providers are marked Unsupported placeholder, and agent-claim-mcp is marked Unavailable implementation. | A selectable or documented placeholder is not presented as a successful current implementation. |
 
-## Generic Skill Workflow Checks
+## Recommendation Review
 
-| ID | Status | Question | Evidence type | Evidence source | Evidence | Assessment | Correction | Authority | Impact |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| WF-1 | pass | Is the target and linked review set recorded before scoring? | summary | Review Trace | The hub and all seven group paths are listed first. | Review scope is unambiguous. | None. | Generic checklist. | None. |
-| WF-2 | pass | Are directives and source artifacts identified before scoring? | summary | Review Trace | User directions, method, generic checklist, verification procedure, and linked repository inputs precede the checks. | Review authority is inspectable. | None. | Generic checklist. | None. |
-| WF-3 | pass | Is the generic base checklist named? | summary | Review Trace | The exact bundled checklist path is recorded. | Required review basis is present. | None. | review-structured-artifact. | None. |
-| WF-4 | pass | Is one aggregate checklist suitable for the hub and its linked design set? | assessment | Repository paths and review scope | The hub is the entry point and defines the shared notation; all seven pages are explicitly listed and scored individually by group boundary. | The review remains navigable without creating fourteen auxiliary files. | None. | review-structured-artifact and current separation goal. | None. |
-| WF-5 | pass | Is the checklist completed before findings are written? | execution order | Current review | The hub and group pages were completed before this checklist, and this checklist precedes findings. | Review order complies. | None. | review-structured-artifact. | None. |
-| WF-6 | pass | Are findings derived only from completed checks? | process inspection | Completed checklist | The findings file is written from this completed checklist. | Findings have an auditable basis. | None. | review-structured-artifact. | None. |
-| WF-7 | n/a | Do material findings contain target, correction, authority, and impact? | not applicable | Completed checklist | No material failed check exists. | Detailed material-finding fields do not apply. | None. | review-structured-artifact. | None. |
-| WF-8 | pass | Is severity based on practical impact? | assessment | Completed checklist | The unavailable Mermaid renderer is retained as a verification gap and not elevated to a content defect. | Severity is proportionate. | None. | Generic checklist. | None. |
+| ID | Status | Question | Evidence | Assessment |
+| --- | --- | --- | --- | --- |
+| REC-1 | pass | Are name changes limited to skills whose current names are subjects, categories, ambiguous phrases, or inaccurate responsibility labels? | Proposed names use operations such as discover, route, bootstrap, reverse-engineer, resolve, coordinate, integrate, deliver, review, verify, analyze, collect, trace, and explain. | The recommendations improve invocation vocabulary without renaming every skill mechanically. |
+| REC-2 | pass | Are established practice or provider names kept when a heading is the clearer improvement? | careful-coding, code-comments, test-driven-development, structured-design, structured-explanation, organise-project-files, review-structured-artifact, provider skills, claim skills, create-pull-request, and test-strategy keep their names. | Recognizable package identities remain stable where the package contains several related procedures or a well-known practice. |
+| REC-3 | pass | Do provider alternatives receive shared procedure headings? | Work-item creators converge on Create Work Item; managers converge on Inventory, Transition, Reconcile, Recover, and Report headings; claim helpers converge on the same claim-operation headings. | AGENTS.md can map one procedure vocabulary to alternative implementations. |
+| REC-4 | pass | Do Commit alternatives receive the same interface heading? | Both complete-work-item implementations are recommended to expose Deliver Work Item. | The common caller procedure is explicit even though direct-main and feature-branch internals remain different. |
+| REC-5 | pass | Do complex skills retain several independent procedures instead of being modeled as one title-shaped call? | code-comments, structured-design, create-project-configuration, work-item managers, agent-claim, and claim helpers receive multiple operation headings. | The recommendations follow the source responsibilities rather than forcing one procedure per file. |
+| REC-6 | pass | Are non-callable rules left as reference material? | Recommendations distinguish guidance, boundaries, decision tables, evidence models, and result contracts from the proposed operation headings. | The diagrams do not turn every heading into a callable interface. |
 
 ## Sentence Review
 
-Every complete prose assertion in the hub and seven group pages was reviewed for necessity, clarity, and definite reference.
+Every complete prose assertion in the hub and seven group documents was reviewed for necessity, clarity, and definite reference.
 
 | ID | Target | Needed | Clear | Definite reference | Assessment |
 | --- | --- | --- | --- | --- | --- |
-| SENT-1 | Hub Scope and Diagram Notation | pass | pass | pass | The analytical boundary, primary placement, cross-group markers, and three member forms are defined once. |
-| SENT-2 | Hub Group Designs and Definition Of Good | pass | pass | pass | Navigation and the observable quality conditions are concise. |
-| SENT-3 | Baseline Development | pass | pass | pass | Exact-name Agent and Peer Skill relationships are distinguishable. |
-| SENT-4 | Project Setup | pass | pass | pass | Setup-owned skills and cross-group dependencies are clear. |
-| SENT-5 | Documentation Methodology | pass | pass | pass | Routing, bootstrap, reverse engineering, and verification boundaries use exact procedures. |
-| SENT-6 | Backlog Management | pass | pass | pass | Persistence, crisis mode, provider differences, and conditional resource use remain separate. |
-| SENT-7 | Concurrent Tasking | pass | pass | pass | Enclosure, helper selection, delivery, and cross-group Persistence use are explicit. |
-| SENT-8 | Direct Main Delivery | pass | pass | pass | The Commit alternative and current concurrency dependencies are clear. |
-| SENT-9 | Review And Verification | pass | pass | pass | Evidence collection, diagnosis, claim events, and delivery handoff retain distinct owners. |
+| SENT-1 | Hub | pass | pass | pass | Scope, notation, recommendation boundaries, navigation, and Definition Of Good are stated once. |
+| SENT-2 | Baseline Development | pass | pass | pass | Whole-skill Agent loading and stronger Peer Skill references are distinguishable. |
+| SENT-3 | Project Setup | pass | pass | pass | Setup ownership and exact-name technology skill selection are not conflated with a shared technology interface. |
+| SENT-4 | Documentation Methodology | pass | pass | pass | Routing, bootstrap, reverse engineering, and page verification have separate responsibilities. |
+| SENT-5 | Backlog Management | pass | pass | pass | Persistence injection, provider placeholders, crisis mode, and remaining direct claim coupling are explicit. |
+| SENT-6 | Concurrent Tasking | pass | pass | pass | Containment, Commit and Persistence mappings, resource selection, helper selection, and exact-name coupling are explained separately. |
+| SENT-7 | Direct Main Delivery | pass | pass | pass | Delivery ownership, current procedure headings, and concurrency dependencies have definite referents. |
+| SENT-8 | Review And Verification | pass | pass | pass | Agent-specific skill sets, diagnosis peers, exact claim use, and Commit handoff remain distinct. |
 
 No sentence failed necessity, clarity, or definite reference.
 
-## Writing, Structure, Links, And Diagrams
+## Writing, Links, And Diagram Checks
 
-| ID | Status | Question | Evidence type | Evidence source | Evidence | Assessment | Correction | Authority | Impact |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| DOC-1 | pass | Does every group have one independently stored Mermaid diagram? | structure check | Seven group pages | Seven files contain seven Mermaid class diagrams, one per group. | The split matches the requested reading boundary. | None. | Current user direction. | None. |
-| DOC-2 | pass | Are Mermaid fences balanced? | automated structure check | Seven group pages | Seven Mermaid openings and seven closing fences were counted. | Diagram source structure is intact. | None. | Documentation page verification. | None. |
-| DOC-3 | pass | Do diagram forms match the group relationships? | inspection | Seven diagrams | Class diagrams show containment, primary membership, injection, exact-name references, and cross-group coupling. | The selected form is appropriate. | None. | Documentation page verification. | None. |
-| DOC-4 | question | Was every Mermaid block rendered locally? | local tool availability | Workspace runtime | No local Mermaid CLI or Mermaid Node module is available. The seven blocks received source inspection but not renderer execution. | This is a non-blocking verification gap. | Render all seven blocks when a Mermaid runtime is available. | Documentation page verification. | A parser-specific display issue could remain. |
-| DOC-5 | pass | Do local Markdown links resolve? | automated link verification | Hub and seven pages | The Markdown-link verifier reported no findings. | Navigation and source links are intact. | None. | Documentation page verification. | None. |
-| DOC-6 | pass | Is editable Mermaid the authoritative source? | inspection | Seven group pages | Every diagram remains an editable Mermaid block. | The group models are maintainable. | None. | Documentation page verification. | None. |
-| DOC-7 | pass | Is inline code formatting avoided? | automated search | Hub and seven pages | Backticks occur only on Mermaid fence lines. | Repository Markdown convention is met. | None. | Repository-maintenance procedure. | None. |
-| DOC-8 | pass | Are structured assertions complete and uniquely identified? | automated structure check | Hub Definition Of Good | Two assertions have two EXAMPLE lines and unique IDs. | Hub quality rules are traceable. | None. | Structured design procedure. | None. |
-| DOC-9 | pass | Are retired notation and lifecycle labels absent? | automated search | Hub and seven pages | skillId, CURRENT, PROPOSED, and HYPOTHETICAL have no occurrences. | Requested vocabulary and conceptual tone are consistent. | None. | Current and retained user direction. | None. |
+| ID | Status | Question | Evidence | Assessment |
+| --- | --- | --- | --- | --- |
+| DOC-1 | pass | Does each group have one independently stored Mermaid class diagram? | Seven group files contain seven Mermaid openings and seven closing fences. | The requested reading boundary is preserved. |
+| DOC-2 | pass | Are kebab-case class names valid Mermaid identifiers? | The official Mermaid class-diagram syntax permits alphanumeric characters, underscores, and dashes in class names. | Exact skill names do not need invented PascalCase aliases. |
+| DOC-3 | pass | Are relationship direction, endpoint, line style, and labels consistent? | Static inspection found arrows from referencing nodes to referenced nodes, open diamonds for exact names, regular endpoints for procedure names, dotted conditional references with labels, and unlabeled solid references. | The visual vocabulary matches the analysis method. |
+| DOC-4 | question | Was every Mermaid block rendered locally? | No local Mermaid package or CLI is installed. The seven blocks passed source inspection against the documented class-diagram syntax but were not renderer-executed. | This is a non-blocking verification gap; render the blocks when a project Mermaid runtime is available. |
+| DOC-5 | pass | Do local Markdown links resolve? | The Markdown-link verifier checked the hub, seven group pages, checklist, and findings with no findings. | Navigation and local source references are intact. |
+| DOC-6 | pass | Is editable Mermaid retained as the authoritative diagram source? | Every diagram is stored as a Mermaid block in its group document. | The designs remain maintainable without a separate binary source. |
+| DOC-7 | pass | Is inline code formatting avoided? | Backticks occur only on Mermaid fence lines in the hub and seven group documents. | Repository Markdown convention is preserved. |
+| DOC-8 | pass | Are stale diagram terms absent? | Automated search found no SkillId, skillId, AGENTS.md DII stereotype, DII stereotype, CURRENT, PROPOSED, HYPOTHETICAL, or +skill notation. | The applied diagrams use the reviewed vocabulary. |
+| DOC-9 | pass | Are the hub assertions structurally complete? | Three rules each include a synopsis and example with unique identifiers. | The Definition Of Good remains traceable. |
+| DOC-10 | pass | Does the Markdown diff pass whitespace validation? | git diff --check returned no findings. | No whitespace defect was introduced. |
 
 ## Review Result
 
-The hub and seven independently stored group designs pass the boundary, coverage, notation, source-title, link, sentence, and static Mermaid checks. Concurrent Tasking encloses Resource Coordination and Feature Branch And Worktrees; Backlog Management remains independent; each concrete skill uses +skill; and multi-procedure skills identify exact sections or clarifying procedure keywords.
+The hub and seven group designs pass the directive, source, placement, recommendation, sentence, link, and static diagram checks. They model forty-one actual skill definitions and keep current relationships separate from proposed name and heading improvements.
 
-DOC-4 remains the only non-blocking verification gap because the Mermaid source could not be rendered locally.
+DOC-4 remains the only non-blocking gap because no local Mermaid renderer is installed.

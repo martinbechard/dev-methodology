@@ -4,27 +4,33 @@
 
 This index applies the reusable [Object-Oriented Analysis Of Agents And Skills](object-oriented-agent-and-skill-model.md) to the established methodology skill groups.
 
-Each group has its own document so a reader can inspect one responsibility boundary without loading the complete set. The groups are analytical views of responsibility. They do not replace the catalog categories stored in skill metadata.
+Each group has its own document. Every group document contains:
 
-Each SKILL.md from the established directory tree stays in its primary group. A Cross-group node appears when a current Agent definition or SKILL.md reaches across that boundary. A Cross-group responsibility marker means that a skill remains in its primary group while part of its current procedure records or invokes another group’s concern. Both markers expose current coupling without deciding that the skill should be split.
+- a class diagram of the current Agent, AGENTS.md, and SKILL.md relationships;
+- the current SKILL.md headings that act as procedure boundaries in that view; and
+- one recommendation for every skill whose primary home is that group.
 
-AGENTS.md DII appears only where project guidance selects a procedure implementation. A project-selected list of technology skills is shown as a selected SKILL.md set because the current definitions name those skills directly and do not promise one shared procedure name.
+The seven group documents cover forty-one current skills. Each skill has one primary group. A repeated skill outside its primary group is marked Cross-group.
 
-The skill nodes are complete for the established groups. Agent arrows show representative current invokers rather than every Agent that names each skill.
+The diagrams describe the current definitions. The recommendations describe possible definition improvements. A recommendation does not change a skill and does not claim that the recommended interface already exists.
+
+Each recommendation uses one or both of the requested improvement forms: a clearer operation-shaped skill name, or procedure headings that give invokers and alternative implementations consistent interface vocabulary. “Keep the skill name” means that only heading changes are recommended.
 
 ## Diagram Notation
 
-Every concrete SKILL.md node uses +skill followed by the skill name. This identifies the skill and is not a procedure call.
+The applied diagrams use the relationship conventions from the analysis method:
 
-A function-style member names a procedure and its parameters. An AGENTS.md DII can use this notation for a callable contract. A concrete SKILL.md node uses it only when the whole skill is one cohesive procedure.
+- A SKILL.md node displays the exact kebab-case skill name.
+- An empty SKILL.md node means that the relationship loads the whole skill.
+- A method-like member represents a procedure found under the named current heading. Generic members such as workflow() are intentionally preserved when the source heading is generic.
+- A regular arrow points from an invoker to a procedure it knows without naming the implementing skill.
+- An open-diamond arrow points from a definition or SKILL.md that knows the exact referenced skill name.
+- A dotted arrow is conditional. Its label states the condition.
+- A solid arrow is unconditional and carries no label.
+- A solid-diamond line is used only for skill-group and subgroup containment. It is not a loading relationship.
+- An AGENTS.md node exposes the procedure wording that project guidance maps to a selected skill.
 
-When a skill defines several related procedures, +procedure identifies the relevant part. The member uses the exact SKILL.md section title when one exists. Otherwise, concise keywords clarify the part being used. When a relationship applies the whole named skill, the node needs no procedure member.
-
-For example:
-
-- +skill agent-claim identifies agent-claim/SKILL.md;
-- +procedure Claim Events identifies the titled part of agent-claim used for acquiring or releasing a claim;
-- +deliverWorkitem(acceptedCommit) identifies the single Deliver Workitem contract represented by an AGENTS.md DII.
+Mermaid sometimes needs an internal identifier when a visible name contains a wildcard. The visible class label remains the analysis identity. For example, the CreateWorkItem node is displayed as create-*-work-item.
 
 ## Group Designs
 
@@ -38,17 +44,23 @@ For example:
 
 ## Definition Of Good
 
-- **RULE: RULE-1** Each established skill group has an independent design document
-  - **SYNOPSIS:** Baseline Development, Project Setup, Documentation Methodology, Backlog Management, Concurrent Tasking, Direct Main Delivery, and Review And Verification can be read and maintained separately while sharing this notation.
-  - **EXAMPLE:** A reader investigating claims and feature branches can open Concurrent Tasking without processing the Backlog Management provider matrix.
+- **RULE: RULE-1** Each established skill group has an independent current-state design
+  - **SYNOPSIS:** A reader can inspect one responsibility boundary without loading the other six groups.
+  - **EXAMPLE:** Concurrent Tasking contains its own diagram for resource coordination and feature-branch delivery without repeating the Backlog Management provider matrix.
 
-- **RULE: RULE-2** Concrete skill notation identifies the skill before its relevant procedure
-  - **SYNOPSIS:** Every concrete skill node uses +skill, while function style is reserved for a whole-skill procedure and +procedure identifies a titled or keyword-selected part of a multi-procedure skill.
-  - **EXAMPLE:** Concurrent Tasking shows +skill agent-claim with +procedure Claim Events instead of presenting all of agent-claim as coordinateResource(claimEvent, scope).
+- **RULE: RULE-2** Every primary skill receives one source-backed improvement recommendation
+  - **SYNOPSIS:** A recommendation either improves the skill name or introduces procedure headings that can become stable interface vocabulary.
+  - **EXAMPLE:** create-gitlab-work-item keeps its current name but receives a proposed Create Work Item heading because its current entry procedure is only named Workflow.
+
+- **RULE: RULE-3** Current and recommended vocabulary remain visibly separate
+  - **SYNOPSIS:** A diagram member comes from a current heading, while a recommendation names vocabulary that does not yet exist.
+  - **EXAMPLE:** The Backlog Management diagram shows workflow() for create-gitlab-work-item, and the table recommends replacing that generic heading with Create Work Item.
 
 ## Authoritative Inputs
 
 - The retained user directions for the established skill groups and their object-oriented representation.
+- The forty-one SKILL.md files linked from the seven group documents.
+- The conceptual Agent definitions linked from the seven group documents.
 - [Bundled Skill Inventory](../README.md)
 - [Agentic Configuration](agentic-configuration.html)
 - [Work-Item Provider And Completion Contracts](work-item-provider-and-completion-contracts.md)

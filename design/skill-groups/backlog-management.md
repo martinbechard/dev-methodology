@@ -2,9 +2,9 @@
 
 ## Scope
 
-Backlog Management is independent of resource coordination and Commit delivery. AGENTS.md selects one creation skill and one management skill for the effective Persistence provider.
+Backlog Management is independent of Resource Coordination and Commit delivery. AGENTS.md selects one creation skill and one management skill for the effective Persistence provider.
 
-The shared notation and cross-group markers are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md).
+The shared notation and recommendation boundary are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md).
 
 ## Current Design
 
@@ -13,160 +13,158 @@ classDiagram
     direction TB
 
     class DevBacklogSteward {
-        <<Agent class>>
+        <<Agent>>
     }
 
     class DevBacklogCoordinator {
-        <<Agent class>>
+        <<Agent>>
     }
 
-    class CreateWorkitem {
-        <<AGENTS.md DII>>
-        +createWorkitem(workitemDescription)
+    class CreateWorkItem["create-*-work-item"] {
+        <<AGENTS.md>>
+        <<abstract>>
+        +create-work-item(workItemDescription)
     }
 
-    class ManageWorkitem {
-        <<AGENTS.md DII>>
-        +procedure Inventory and selection
-        +procedure Lifecycle transition
-        +procedure Completion reconciliation
+    class ManageWorkItem["manage-*-work-items"] {
+        <<AGENTS.md>>
+        <<abstract>>
+        +inventory-work-items(selection)
+        +transition-work-item(workItem, transition)
+        +reconcile-work-item-completion(workItem, deliveryEvidence)
     }
 
     namespace BacklogManagement {
-        class BacklogCrisisMode {
+        class backlog-crisis-mode {
             <<SKILL.md>>
             <<Agent Skill>>
-            +skill backlog-crisis-mode
         }
 
-        class CreateFileWorkitem {
+        class create-file-work-item {
             <<SKILL.md>>
             <<Injectable Skill>>
-            <<Cross-group>>
-            +skill create-file-work-item
-            +procedure Exact Backlog Creation Transaction
+            +exact-backlog-creation-transaction()
         }
 
-        class ManageFileWorkitems {
+        class create-github-work-item {
             <<SKILL.md>>
             <<Injectable Skill>>
-            <<Cross-group responsibility>>
-            +skill manage-file-work-items
-            +procedure Inventory Workflow
-            +procedure Dispatch Workflow
-            +procedure Completion And Archive Workflow
+            +creation()
         }
 
-        class CreateGitHubWorkitem {
+        class create-gitlab-work-item {
             <<SKILL.md>>
             <<Injectable Skill>>
-            +skill create-github-work-item
-            +procedure Creation
+            +workflow()
         }
 
-        class ManageGitHubWorkitems {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            <<Cross-group responsibility>>
-            +skill manage-github-work-items
-            +procedure Inventory And Selection
-            +procedure Lifecycle Management
-            +procedure Dependencies And Recovery
-        }
-
-        class CreateGitLabWorkitem {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            +skill create-gitlab-work-item
-            +procedure Workflow
-        }
-
-        class ManageGitLabWorkitems {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            <<Cross-group responsibility>>
-            +skill manage-gitlab-work-items
-            +procedure Operations
-            +procedure Completion And Reconciliation
-        }
-
-        class CreateAzureDevOpsWorkitem {
+        class create-azure-devops-work-item {
             <<SKILL.md>>
             <<Injectable Skill>>
             <<Unsupported placeholder>>
-            +skill create-azure-devops-work-item
-            +procedure Required Result
-            +procedure No-Fallback Boundary
+            +required-result()
         }
 
-        class ManageAzureDevOpsWorkitems {
+        class create-jira-work-item {
             <<SKILL.md>>
             <<Injectable Skill>>
             <<Unsupported placeholder>>
-            +skill manage-azure-devops-work-items
-            +procedure Required Result
-            +procedure No-Fallback Boundary
+            +required-result()
         }
 
-        class CreateJiraWorkitem {
+        class manage-file-work-items {
+            <<SKILL.md>>
+            <<Injectable Skill>>
+            +inventory-workflow()
+            +dispatch-workflow()
+            +completion-and-archive-workflow()
+        }
+
+        class manage-github-work-items {
+            <<SKILL.md>>
+            <<Injectable Skill>>
+            +inventory-and-selection()
+            +lifecycle-management()
+            +dependencies-and-recovery()
+        }
+
+        class manage-gitlab-work-items {
+            <<SKILL.md>>
+            <<Injectable Skill>>
+            +operations()
+            +completion-and-reconciliation()
+        }
+
+        class manage-azure-devops-work-items {
             <<SKILL.md>>
             <<Injectable Skill>>
             <<Unsupported placeholder>>
-            +skill create-jira-work-item
-            +procedure Required Result
-            +procedure No-Fallback Boundary
+            +required-result()
         }
 
-        class ManageJiraWorkitems {
+        class manage-jira-work-items {
             <<SKILL.md>>
             <<Injectable Skill>>
             <<Unsupported placeholder>>
-            +skill manage-jira-work-items
-            +procedure Required Result
-            +procedure No-Fallback Boundary
+            +required-result()
         }
     }
 
-    class ResourceCoordination {
-        <<AGENTS.md DII>>
+    class ResourceCoordination["resource-coordination"] {
+        <<AGENTS.md>>
         <<Cross-group>>
-        +procedure Claim Events
+        +coordinate-shared-resource(resourceManifest)
     }
 
-    class OrganiseProjectFiles {
+    class agent-claim {
         <<SKILL.md>>
         <<Cross-group>>
-        +skill organise-project-files
     }
 
-    class StructuredExplanation {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +skill structured-explanation
-    }
+    DevBacklogSteward --> CreateWorkItem
+    DevBacklogSteward --> ManageWorkItem
+    DevBacklogCoordinator o..> backlog-crisis-mode : when a backlog crisis is declared
 
-    DevBacklogSteward ..> CreateWorkitem : invokes
-    DevBacklogSteward ..> ManageWorkitem : invokes selected provider procedures
-    DevBacklogSteward --> OrganiseProjectFiles : conditional name reference
-    DevBacklogSteward --> StructuredExplanation : references by name
-    DevBacklogCoordinator --> BacklogCrisisMode : references by name after declaration
-    DevBacklogCoordinator --> StructuredExplanation : references by name
-    CreateWorkitem <|.. CreateFileWorkitem : exported implementation
-    CreateWorkitem <|.. CreateGitHubWorkitem : exported implementation
-    CreateWorkitem <|.. CreateGitLabWorkitem : exported implementation
-    CreateWorkitem <|.. CreateAzureDevOpsWorkitem : blocking implementation
-    CreateWorkitem <|.. CreateJiraWorkitem : blocking implementation
-    ManageWorkitem <|.. ManageFileWorkitems : exported procedures
-    ManageWorkitem <|.. ManageGitHubWorkitems : exported procedures
-    ManageWorkitem <|.. ManageGitLabWorkitems : exported procedures
-    ManageWorkitem <|.. ManageAzureDevOpsWorkitems : blocking implementation
-    ManageWorkitem <|.. ManageJiraWorkitems : blocking implementation
-    CreateFileWorkitem ..> ResourceCoordination : transaction uses Claim Events when enabled
+    CreateWorkItem o--> create-file-work-item
+    CreateWorkItem o--> create-github-work-item
+    CreateWorkItem o--> create-gitlab-work-item
+    CreateWorkItem o--> create-azure-devops-work-item
+    CreateWorkItem o--> create-jira-work-item
+
+    ManageWorkItem o--> manage-file-work-items
+    ManageWorkItem o--> manage-github-work-items
+    ManageWorkItem o--> manage-gitlab-work-items
+    ManageWorkItem o--> manage-azure-devops-work-items
+    ManageWorkItem o--> manage-jira-work-items
+
+    create-file-work-item ..> ResourceCoordination : when resource coordination is enabled
+    create-file-work-item o..> agent-claim : when classifying User Action Required and agent-claim is loaded
+    manage-file-work-items ..> ResourceCoordination : when resource coordination is enabled
 ```
 
-Crisis mode still uses the effective backlog provider while stopping claim operations and delegated delivery. Persistence none injects no creation or management SKILL.md and creates no shadow backlog.
+The AGENTS.md nodes show the procedures that callers need. The concrete nodes show the current headings that contain those procedures. The mismatched names are intentional evidence: for example, create-gitlab-work-item currently exposes only a generic Workflow heading rather than a Create Work Item heading.
 
-The management interface lists several procedure categories instead of inventing one manageWorkitem function. Each concrete provider names the exact sections that supply those parts. The Cross-group responsibility marker records that implemented management skills also store delivery evidence and delivery-mode recovery state; it does not move backlog lifecycle ownership into the Commit group.
+Each open-diamond fan-out lists available Persistence implementations. One effective project configuration selects one creation skill and one management skill. Azure DevOps and Jira remain selectable zero-mutation placeholders.
+
+create-file-work-item mostly requests the loaded resource-coordination procedure without selecting its implementation. Its User Action Required classification currently names agent-claim, so the diagram also retains that stronger exact-name dependency.
+
+Crisis mode continues to use the selected Persistence provider while disabling claims and delegated delivery. It therefore remains in Backlog Management without a Resource Coordination relationship.
+
+## Skill Recommendations
+
+| Skill | Current source boundary | Recommendation | Reason |
+| --- | --- | --- | --- |
+| backlog-crisis-mode | Declaration, Execution, Watchdog Behavior, Exit, and Result define one crisis-resolution procedure. | Rename the skill to resolve-backlog-crisis. | The verb-first name states what the conditional Agent Skill does instead of naming only the mode it enters. |
+| create-file-work-item | Exact Backlog Creation Transaction performs the write, while Future Ideas Capture and Future Idea Promotion are separate operations. | Keep the skill name. Introduce Create Work Item, Capture Future Idea, and Promote Future Idea headings; keep Exact Backlog Creation Transaction as their internal transaction procedure. | Create Work Item can match the provider interface without hiding the two file-only procedures inside the same package. |
+| create-github-work-item | Creation contains the provider-specific create procedure. | Keep the skill name. Rename Creation to Create Work Item. | The shared heading can match the AGENTS.md procedure used for every creation provider. |
+| create-gitlab-work-item | Workflow contains duplicate detection, creation, readback, and partial-mutation handling. | Keep the skill name. Rename Workflow to Create Work Item. | Workflow is too generic to form a stable interface; Create Work Item states the operation. |
+| create-azure-devops-work-item | Required Result defines the BLOCKED implementation for creation. | Keep the skill name. Add Create Work Item as the interface heading and place Required Result beneath it. | A blocking implementation still implements the same procedure and should be discoverable through the same heading. |
+| create-jira-work-item | Required Result defines the BLOCKED implementation for creation. | Keep the skill name. Add Create Work Item as the interface heading and place Required Result beneath it. | The placeholder can remain truthful while exposing the same procedure name as supported providers. |
+| manage-file-work-items | Inventory Workflow, Dispatch Workflow, Completion And Archive Workflow, Recovery Workflow, and Reporting are distinct procedures. | Keep the skill name. Use Inventory Work Items, Transition Work Item, Reconcile Work Item Completion, Recover Work Item, and Report Work Items as operation headings. | The shared procedure names expose provider-neutral operations while the file-specific rules remain inside each section. |
+| manage-github-work-items | Inventory And Selection, Lifecycle Management, Dependencies And Recovery, and Result contain the management operations. | Keep the skill name. Use Inventory Work Items, Transition Work Item, Reconcile Work Item Completion, Recover Work Item, and Report Work Items as operation headings. | Matching headings make the GitHub package substitutable without erasing its native issue behavior. |
+| manage-gitlab-work-items | Authority And Lookup, Operations, Completion And Reconciliation, and Result contain the management operations. | Keep the skill name. Use Inventory Work Items, Transition Work Item, Reconcile Work Item Completion, Recover Work Item, and Report Work Items as operation headings. | Operations is too broad to identify which management procedure a caller needs. |
+| manage-azure-devops-work-items | Required Result handles every management request with one BLOCKED result. | Keep the skill name. Add Inventory Work Items, Transition Work Item, Reconcile Work Item Completion, Recover Work Item, and Report Work Items headings that route to Required Result. | The placeholder should expose the same callable vocabulary as a future supported implementation without pretending that it succeeds. |
+| manage-jira-work-items | Required Result handles every management request with one BLOCKED result. | Keep the skill name. Add Inventory Work Items, Transition Work Item, Reconcile Work Item Completion, Recover Work Item, and Report Work Items headings that route to Required Result. | Consistent headings let AGENTS.md select the Jira placeholder through the same management interfaces. |
 
 ## Authoritative Inputs
 
@@ -174,14 +172,13 @@ The management interface lists several procedure categories instead of inventing
 - [Dev Backlog Coordinator](../../agents/roles/dev-activities/dev-backlog-coordinator.role.yaml)
 - [Backlog Crisis Mode](../../skills/backlog-crisis-mode/SKILL.md)
 - [Create File Work Item](../../skills/create-file-work-item/SKILL.md)
-- [Manage File Work Items](../../skills/manage-file-work-items/SKILL.md)
 - [Create GitHub Work Item](../../skills/create-github-work-item/SKILL.md)
-- [Manage GitHub Work Items](../../skills/manage-github-work-items/SKILL.md)
 - [Create GitLab Work Item](../../skills/create-gitlab-work-item/SKILL.md)
-- [Manage GitLab Work Items](../../skills/manage-gitlab-work-items/SKILL.md)
 - [Create Azure DevOps Work Item](../../skills/create-azure-devops-work-item/SKILL.md)
-- [Manage Azure DevOps Work Items](../../skills/manage-azure-devops-work-items/SKILL.md)
 - [Create Jira Work Item](../../skills/create-jira-work-item/SKILL.md)
+- [Manage File Work Items](../../skills/manage-file-work-items/SKILL.md)
+- [Manage GitHub Work Items](../../skills/manage-github-work-items/SKILL.md)
+- [Manage GitLab Work Items](../../skills/manage-gitlab-work-items/SKILL.md)
+- [Manage Azure DevOps Work Items](../../skills/manage-azure-devops-work-items/SKILL.md)
 - [Manage Jira Work Items](../../skills/manage-jira-work-items/SKILL.md)
-- [Organise Project Files](../../skills/organise-project-files/SKILL.md)
-- [Structured Explanation](../../skills/structured-explanation/SKILL.md)
+- [Agent Claim](../../skills/agent-claim/SKILL.md)

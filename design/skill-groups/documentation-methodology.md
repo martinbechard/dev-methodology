@@ -2,9 +2,9 @@
 
 ## Scope
 
-Documentation Methodology contains the development-methodology router and shows its current Peer Skill relationships to setup, reverse-engineering, and shared verification procedures.
+Documentation Methodology contains the documentation router, setup procedure, whole-project reverse-engineering procedure, and shared page verifier. Project Setup and documentation Agents load these skills by exact name.
 
-The shared notation and cross-group markers are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md).
+The shared notation and recommendation boundary are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md).
 
 ## Current Design
 
@@ -13,66 +13,90 @@ classDiagram
     direction LR
 
     class DevDocumentationWriter {
-        <<Agent class>>
+        <<Agent>>
     }
 
     class MethodologyMaintainer {
-        <<Agent class>>
+        <<Agent>>
+    }
+
+    class ProjectBootstrapper {
+        <<Agent>>
     }
 
     namespace DocumentationMethodology {
-        class DevelopmentMethodology {
+        class development-methodology {
             <<SKILL.md>>
             <<Agent Skill>>
             <<Peer Skill>>
-            +skill development-methodology
-            +procedure Document Type Selection
-            +procedure Artifact Creation Routes
+        }
+
+        class documentation-bootstrap {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            <<Peer Skill>>
+        }
+
+        class documentation-reverse-engineer {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            <<Peer Skill>>
+        }
+
+        class documentation-page-verify {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            <<Peer Skill>>
         }
     }
 
-    class DocumentationBootstrap {
+    class create-project-configuration {
         <<SKILL.md>>
         <<Cross-group>>
-        <<Peer Skill>>
-        +skill documentation-bootstrap
-        +procedure Configuration Setup Boundary
-        +procedure Full Project Documentation Default
     }
 
-    class DocumentationReverseEngineer {
+    class detect-technology-skills {
         <<SKILL.md>>
         <<Cross-group>>
-        <<Peer Skill>>
-        +skill documentation-reverse-engineer
-        +procedure Coverage Contract
     }
 
-    class DocumentationPageVerify {
-        <<SKILL.md>>
-        <<Cross-group>>
-        <<Peer Skill>>
-        +skill documentation-page-verify
-        +procedure Shared Page Contract
-    }
+    DevDocumentationWriter o--> development-methodology
+    DevDocumentationWriter o..> documentation-bootstrap : when the project lacks documentation structure
+    DevDocumentationWriter o..> documentation-reverse-engineer : when documentation must be derived from current source
+    DevDocumentationWriter o..> documentation-page-verify : when a custom non-wiki document needs verification
 
-    DevDocumentationWriter --> DevelopmentMethodology : references by name
-    MethodologyMaintainer --> DevelopmentMethodology : references by name
-    DevelopmentMethodology --> DocumentationBootstrap : Artifact Creation Routes
-    DevelopmentMethodology --> DocumentationReverseEngineer : Artifact Creation Routes
-    DevelopmentMethodology --> DocumentationPageVerify : Shared Page Contract
-    DocumentationBootstrap --> DocumentationReverseEngineer : Full Project Documentation Default
+    MethodologyMaintainer o--> development-methodology
+    ProjectBootstrapper o--> documentation-bootstrap
+
+    development-methodology o..> documentation-bootstrap : for first-time methodology setup
+    development-methodology o..> documentation-reverse-engineer : when deriving documentation from an existing codebase
+    development-methodology o..> documentation-page-verify : for mixed unknown or custom documentation
+    documentation-bootstrap o..> documentation-reverse-engineer : when bootstrap includes reverse engineering
+    documentation-reverse-engineer o--> create-project-configuration
+    documentation-reverse-engineer o--> detect-technology-skills
 ```
 
-documentation-bootstrap creates only selected empty roots during Project Configurator setup. Its Full Project Documentation Default points a later whole-project documentation workflow to documentation-reverse-engineer instead of treating setup as reverse engineering.
+The open diamonds are exact-name references. development-methodology is a router that explicitly names its companion skills, while documentation-bootstrap directly names documentation-reverse-engineer only for a later full-project documentation workflow.
 
-The +procedure members use exact section titles because these SKILL.md files each contain several related procedures.
+documentation-reverse-engineer names Project Setup procedures for its configuration gate. Those two Cross-group nodes do not move technology detection or project configuration into Documentation Methodology.
+
+## Skill Recommendations
+
+| Skill | Current source boundary | Recommendation | Reason |
+| --- | --- | --- | --- |
+| development-methodology | Required Companion Skills and Artifact Creation Routes route documentation work; the name sounds like the complete development methodology. | Rename the skill to route-documentation-work. | The proposed name states the actual operation and avoids implying that ordinary development Agents need a general methodology package. |
+| documentation-bootstrap | Configuration Setup Boundary and Bootstrap Workflow establish documentation roots and guidance. | Rename the skill to bootstrap-project-documentation. | The verb-first name identifies the operation and distinguishes the skill from a documentation category or artifact. |
+| documentation-reverse-engineer | Pass -1 through Pass 5 and Final Top-Down Semantic Reconciliation form one ordered reverse-engineering procedure. | Rename the skill to reverse-engineer-project-documentation. | The current name can read like an Agent role. The proposed name states the operation performed on project documentation. |
+| documentation-page-verify | Format Selection through Output performs one custom-page verification procedure. | Rename the skill to verify-documentation-page. | The verb-first name can serve directly as the procedure vocabulary used by documentation callers. |
 
 ## Authoritative Inputs
 
 - [Dev Documentation Writer](../../agents/roles/dev-activities/dev-documentation-writer.role.yaml)
 - [Methodology Maintainer](../../agents/roles/methodology-maintenance/methodology-maintainer.role.yaml)
+- [Project Bootstrapper](../../agents/roles/project-setup/project-bootstrapper.role.yaml)
 - [Development Methodology](../../skills/development-methodology/SKILL.md)
 - [Documentation Bootstrap](../../skills/documentation-bootstrap/SKILL.md)
 - [Documentation Reverse Engineer](../../skills/documentation-reverse-engineer/SKILL.md)
 - [Documentation Page Verify](../../skills/documentation-page-verify/SKILL.md)
+- [Create Project Configuration](../../skills/create-project-configuration/SKILL.md)
+- [Detect Technology Skills](../../skills/detect-technology-skills/SKILL.md)

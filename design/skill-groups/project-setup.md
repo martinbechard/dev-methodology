@@ -2,9 +2,9 @@
 
 ## Scope
 
-Project Setup uses exact-name Agent Skills to detect technology candidates, create configuration, establish selected documentation roots, and verify the result.
+Project Setup owns technology detection and project configuration. It uses documentation and placement skills from their primary groups rather than making those skills part of setup.
 
-The shared notation and cross-group markers are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md).
+The shared notation and recommendation boundary are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md).
 
 ## Current Design
 
@@ -13,78 +13,77 @@ classDiagram
     direction LR
 
     class ProjectConfigurator {
-        <<Agent class>>
+        <<Agent>>
     }
 
     class ProjectBootstrapper {
-        <<Agent class>>
+        <<Agent>>
     }
 
     namespace ProjectSetup {
-        class DetectTechnologySkills {
+        class detect-technology-skills {
             <<SKILL.md>>
             <<Agent Skill>>
-            +skill detect-technology-skills
         }
 
-        class CreateProjectConfiguration {
+        class create-project-configuration {
             <<SKILL.md>>
             <<Agent Skill>>
-            +skill create-project-configuration
-        }
-
-        class DocumentationBootstrap {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skill documentation-bootstrap
-        }
-
-        class DocumentationPageVerify {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +skill documentation-page-verify
-        }
-
-        class ConfirmedTechnologySkills {
-            <<Selected SKILL.md set>>
-            +skills ordered names
-            +scope folder patterns
         }
     }
 
-    class OrganiseProjectFiles {
+    class development-methodology {
         <<SKILL.md>>
         <<Cross-group>>
-        +skill organise-project-files
     }
 
-    class DevelopmentMethodology {
+    class documentation-bootstrap {
         <<SKILL.md>>
         <<Cross-group>>
-        +skill development-methodology
+    }
+
+    class documentation-page-verify {
+        <<SKILL.md>>
+        <<Cross-group>>
+    }
+
+    class organise-project-files {
+        <<SKILL.md>>
+        <<Cross-group>>
     }
 
     class AgentsGuidance {
         <<AGENTS.md>>
     }
 
-    ProjectConfigurator --> DetectTechnologySkills : references by name
-    ProjectConfigurator --> CreateProjectConfiguration : references by name
-    ProjectConfigurator --> DocumentationBootstrap : references by name
-    ProjectConfigurator --> DocumentationPageVerify : references by name
-    ProjectConfigurator --> OrganiseProjectFiles : references by name
-    ProjectConfigurator --> DevelopmentMethodology : references by name
-    ProjectBootstrapper --> DocumentationBootstrap : references by name
-    ProjectBootstrapper --> OrganiseProjectFiles : references by name
-    ProjectBootstrapper --> DevelopmentMethodology : references by name
-    DetectTechnologySkills --> ConfirmedTechnologySkills : produces confirmed names
-    CreateProjectConfiguration --> AgentsGuidance : renders guidance
-    AgentsGuidance --> ConfirmedTechnologySkills : names selected skills
+    class ConfirmedTechnologySkills {
+        <<Selected SKILL.md set>>
+    }
+
+    ProjectConfigurator o--> detect-technology-skills
+    ProjectConfigurator o--> create-project-configuration
+    ProjectConfigurator o--> development-methodology
+    ProjectConfigurator o--> documentation-page-verify
+    ProjectConfigurator o..> documentation-bootstrap : when documentation or routing structure is missing
+    ProjectConfigurator o..> organise-project-files : when an unfixed project path must be chosen
+
+    ProjectBootstrapper o--> development-methodology
+    ProjectBootstrapper o--> documentation-bootstrap
+    ProjectBootstrapper o..> organise-project-files : when an unfixed project path must be chosen
+
+    AgentsGuidance o--> ConfirmedTechnologySkills
 ```
 
-Project Configurator names detect-technology-skills directly. The generated AGENTS.md then names each confirmed folder technology skill; the current contract does not claim that every technology skill implements one common interface.
+Project Configurator and Project Bootstrapper name their skills directly. The generated AGENTS.md also names each confirmed folder technology skill directly. The current definitions do not promise that all technology skills implement one shared procedure, so the selected set is not drawn as an injectable interface.
 
-development-methodology remains in Documentation Methodology and organise-project-files remains in Baseline Development. Their Cross-group markers show that setup Agents currently name them.
+documentation-bootstrap, documentation-page-verify, and development-methodology belong to Documentation Methodology. organise-project-files belongs to Baseline Development. Their Cross-group nodes expose current setup use without changing primary ownership.
+
+## Skill Recommendations
+
+| Skill | Current source boundary | Recommendation | Reason |
+| --- | --- | --- | --- |
+| detect-technology-skills | Workflow performs detection; Operation Selection and Evidence Model define dispatch and interpretation rules. | Keep the skill name. Rename Workflow to Detect Technology Skills. | The skill name already states a cohesive operation, and the matching heading gives callers an explicit procedure boundary. |
+| create-project-configuration | Setup Contract, Scope, Workflow, and Verification combine configuration decisions, PROJECT.yaml authoring, AGENTS.md rendering, and validation. | Keep the skill name. Introduce Configure Project Agents And Skills, Render Project Guidance, and Verify Project Configuration as operation headings. | The package contains several related operations. Named headings let another skill refer to the required part without treating the complete package as one create call. |
 
 ## Authoritative Inputs
 
