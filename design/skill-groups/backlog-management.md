@@ -152,7 +152,7 @@ Crisis mode continues to use the selected Persistence provider while disabling c
 
 ## Proposed Design
 
-The proposed diagram applies the recommendations below. Gold SKILL.md nodes have a proposed name change, and renamed-from records the current name. Neutral SKILL.md nodes keep their current names; their method-like members show proposed procedure headings.
+The proposed diagram applies the recommendations below. Gold SKILL.md nodes have a proposed name change, and renamed-from records the current name. Blue SKILL.md nodes are proposed extractions, and extracted-from records their current source. Neutral SKILL.md nodes keep their current names; their method-like members show proposed procedure headings.
 
 ```mermaid
 classDiagram
@@ -181,7 +181,7 @@ classDiagram
     }
 
     namespace BacklogManagement {
-        class resolve-backlog-crisis:::renamed {
+        class resolve-backlog-blockage:::renamed {
             <<SKILL.md>>
             <<Agent Skill>>
             renamed-from backlog-crisis-mode
@@ -275,6 +275,20 @@ classDiagram
         }
     }
 
+    class set-solo-mode:::extracted {
+        <<SKILL.md>>
+        <<Cross-group>>
+        <<Peer Skill>>
+        extracted-from backlog-crisis-mode
+    }
+
+    class set-multitask-mode:::extracted {
+        <<SKILL.md>>
+        <<Cross-group>>
+        <<Peer Skill>>
+        extracted-from backlog-crisis-mode
+    }
+
     class ResourceCoordination["resource-coordination"] {
         <<AGENTS.md>>
         <<Cross-group>>
@@ -288,7 +302,9 @@ classDiagram
 
     DevBacklogSteward --> CreateWorkItem
     DevBacklogSteward --> ManageWorkItem
-    DevBacklogCoordinator o..> resolve-backlog-crisis : when a backlog crisis is declared
+    DevBacklogCoordinator o..> resolve-backlog-blockage : when a backlog blockage requires sequential recovery
+    DevBacklogCoordinator o..> set-solo-mode : when concurrent tasking is enabled and sequential blockage recovery begins
+    DevBacklogCoordinator o..> set-multitask-mode : when concurrent tasking is enabled and sequential recovery ends
 
     CreateWorkItem o--> create-file-work-item
     CreateWorkItem o--> create-github-work-item
@@ -307,13 +323,20 @@ classDiagram
     manage-file-work-items ..> ResourceCoordination : when resource coordination is enabled
 
     classDef renamed fill:#fff3bf,stroke:#b45309,stroke-width:3px,color:#111827
+    classDef extracted fill:#dbeafe,stroke:#1d4ed8,stroke-width:3px,color:#111827
 ```
+
+The proposed split keeps blockage analysis and sequential recovery in Backlog Management. set-solo-mode and set-multitask-mode belong to Concurrent Tasking because they disable or enable dispatch to secondary threads.
+
+Dev Backlog Coordinator loads each of the three skills by name when its matching condition occurs. The sibling skills do not name one another, so the Agent definition remains the visible place where the entry, recovery, and exit sequence is assembled.
+
+When Concurrent Tasking is not configured, no secondary-thread dispatch exists to change. resolve-backlog-blockage therefore remains usable without either dispatch-mode skill.
 
 ## Skill Recommendations
 
 | Skill | Current source boundary | Recommendation | Reason |
 | --- | --- | --- | --- |
-| backlog-crisis-mode | Declaration, Execution, Watchdog Behavior, Exit, and Result define one crisis-resolution procedure. | Rename the skill to resolve-backlog-crisis. | The verb-first name states what the conditional Agent Skill does instead of naming only the mode it enters. |
+| backlog-crisis-mode | Declaration, blocked-item recovery, Watchdog Behavior, and Result define blockage resolution. Execution stops ordinary dispatch, while Exit resumes it. | Rename the remaining skill to resolve-backlog-blockage. Extract set-solo-mode to disable dispatch to secondary threads and set-multitask-mode to enable it. | Blockage resolution remains backlog-specific, while dispatch-mode changes become reusable Concurrent Tasking procedures. Dev Backlog Coordinator can load each sibling skill for the matching transition without making the skills name one another. |
 | create-file-work-item | Exact Backlog Creation Transaction performs the write, while Future Ideas Capture and Future Idea Promotion are separate operations. | Keep the skill name. Introduce Create Work Item, Capture Future Idea, and Promote Future Idea headings; keep Exact Backlog Creation Transaction as their internal transaction procedure. | Create Work Item can match the provider interface without hiding the two file-only procedures inside the same package. |
 | create-github-work-item | Creation contains the provider-specific create procedure. | Keep the skill name. Rename Creation to Create Work Item. | The shared heading can match the AGENTS.md procedure used for every creation provider. |
 | create-gitlab-work-item | Workflow contains duplicate detection, creation, readback, and partial-mutation handling. | Keep the skill name. Rename Workflow to Create Work Item. | Workflow is too generic to form a stable interface; Create Work Item states the operation. |

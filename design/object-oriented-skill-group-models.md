@@ -9,9 +9,10 @@ Each group has its own document. Every group document contains:
 - a current-state class diagram of the Agent, AGENTS.md, and SKILL.md relationships;
 - a proposed-state class diagram that applies the recommendations while retaining the same relationship view;
 - the current SKILL.md headings that act as procedure boundaries in that view; and
-- one recommendation for every skill whose primary home is that group.
+- one recommendation for every current skill whose primary home is that group; and
+- any proposed skill extractions assigned to that group.
 
-The seven group documents cover forty-one current skills. Each skill has one primary group. A repeated skill outside its primary group is marked Cross-group.
+The seven group documents cover forty-one current skills. The proposed designs retain those responsibilities and add two extracted Concurrent Tasking skills, producing forty-three proposed primary skill packages. Each skill has one primary group. A repeated skill outside its primary group is marked Cross-group.
 
 The current diagrams describe the current definitions. The proposed diagrams visualize the possible definition improvements described by the recommendations. Neither a proposed diagram nor a recommendation changes a skill or claims that the recommended interface already exists.
 
@@ -37,8 +38,11 @@ Each Proposed Design applies the recommendations with a second visual convention
 
 - A gold SKILL.md node has a proposed skill-name change.
 - Its renamed-from member records the current exact name, so the change remains identifiable without relying on color.
+- A blue SKILL.md node is a proposed skill extracted from part of a current skill.
+- Its extracted-from member records the current source skill, so the split remains identifiable without relying on color.
 - A neutral SKILL.md node keeps its current skill name. Its method-like members show proposed procedure headings.
 - A repeated gold Cross-group node represents the same proposed rename shown in the skill’s primary group, not a second recommendation.
+- A repeated blue Cross-group node represents the same proposed extraction shown in the new skill’s primary group.
 - AGENTS.md procedure-family labels and relationship endpoints use the proposed vocabulary needed to reference the proposed skills.
 
 ## Group Designs
@@ -57,7 +61,7 @@ Each Proposed Design applies the recommendations with a second visual convention
   - **SYNOPSIS:** A reader can inspect one responsibility boundary and compare its current and recommended organization without loading the other six groups.
   - **EXAMPLE:** Concurrent Tasking contains paired diagrams for resource coordination and feature-branch delivery without repeating the Backlog Management provider matrix.
 
-- **RULE: RULE-2** Every primary skill receives one source-backed improvement recommendation
+- **RULE: RULE-2** Every current primary skill receives one source-backed improvement recommendation
   - **SYNOPSIS:** A recommendation either improves the skill name or introduces procedure headings that can become stable interface vocabulary.
   - **EXAMPLE:** create-gitlab-work-item keeps its current name but receives a proposed Create Work Item heading because its current entry procedure is only named Workflow.
 
@@ -68,6 +72,10 @@ Each Proposed Design applies the recommendations with a second visual convention
 - **RULE: RULE-4** Every proposed skill-name change is identifiable by color and text
   - **SYNOPSIS:** A gold node distinguishes a proposed name from unchanged names, and renamed-from preserves the current identity for readers who do not rely on color.
   - **EXAMPLE:** The proposed Concurrent Tasking diagram highlights integrate-agent-work and records renamed-from agent-work-merge inside the same node.
+
+- **RULE: RULE-5** Every proposed skill extraction identifies its source and primary group
+  - **SYNOPSIS:** A blue node distinguishes a new extracted package from a rename, and extracted-from preserves the current source boundary.
+  - **EXAMPLE:** set-solo-mode and set-multitask-mode are primary Concurrent Tasking skills and appear as Cross-group dependencies in Backlog Management.
 
 ## Authoritative Inputs
 

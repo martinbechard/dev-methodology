@@ -158,7 +158,7 @@ The current coordination skill also says “when agent-claim is loaded,” so it
 
 ## Proposed Design
 
-The proposed diagram applies the recommendations below. Gold SKILL.md nodes have a proposed name change, and renamed-from records the current name. Neutral SKILL.md nodes keep their current names; their method-like members show proposed procedure headings.
+The proposed diagram applies the recommendations below. Gold SKILL.md nodes have a proposed name change, and renamed-from records the current name. Blue SKILL.md nodes are proposed extractions, and extracted-from records their current source. Neutral SKILL.md nodes keep their current names; their method-like members show proposed procedure headings.
 
 ```mermaid
 classDiagram
@@ -264,6 +264,20 @@ classDiagram
             +create-or-update-pull-request()
             +review-order()
         }
+
+        class set-solo-mode:::extracted {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            <<Peer Skill>>
+            extracted-from backlog-crisis-mode
+        }
+
+        class set-multitask-mode:::extracted {
+            <<SKILL.md>>
+            <<Agent Skill>>
+            <<Peer Skill>>
+            extracted-from backlog-crisis-mode
+        }
     }
 
     class ManageWorkItem["manage-*-work-items"] {
@@ -293,6 +307,8 @@ classDiagram
     }
 
     ConcurrentTasking *-- coordinate-codex-work-items
+    ConcurrentTasking *-- set-solo-mode
+    ConcurrentTasking *-- set-multitask-mode
     ConcurrentTasking *-- ResourceCoordination
     ConcurrentTasking *-- FeatureBranchAndWorktrees
     ResourceCoordination *-- agent-claim
@@ -303,6 +319,8 @@ classDiagram
     FeatureBranchAndWorktrees *-- create-pull-request
 
     DevBacklogCoordinator o..> coordinate-codex-work-items : when Codex tasks coordinate multiple work items
+    DevBacklogCoordinator o..> set-solo-mode : when work must continue without dispatch to secondary threads
+    DevBacklogCoordinator o..> set-multitask-mode : when dispatch to secondary threads may resume
     DevOrchestrator o..> coordinate-codex-work-items : when the task is a coordinated Codex work-item conversation
     DevOrchestrator --> DeliverWorkItem
     DevMergeCoordinator o--> integrate-agent-work
@@ -322,7 +340,19 @@ classDiagram
     deliver-work-item-feature-branch o..> create-pull-request : for GitHub pull-request publication
 
     classDef renamed fill:#fff3bf,stroke:#b45309,stroke-width:3px,color:#111827
+    classDef extracted fill:#dbeafe,stroke:#1d4ed8,stroke-width:3px,color:#111827
 ```
+
+The two blue nodes extract dispatch-mode changes from backlog-crisis-mode. set-solo-mode disables dispatch to secondary threads, while set-multitask-mode enables it. They belong to Concurrent Tasking because they control whether work is dispatched concurrently rather than how a backlog blockage is resolved.
+
+Dev Backlog Coordinator loads each skill by name for the matching transition. No direct arrow joins the two skills because the Agent definition owns their order and conditions.
+
+## Proposed Skill Extractions
+
+| Proposed skill | Extracted source boundary | Responsibility | Reason |
+| --- | --- | --- | --- |
+| set-solo-mode | Execution step 1 stops ordinary dispatch. | Disable dispatch to secondary threads while the current Agent continues the work itself. | The procedure is useful whenever work must temporarily become sequential, not only during backlog blockage recovery. |
+| set-multitask-mode | Exit resumes normal dispatch. | Enable dispatch to secondary threads after the condition requiring sequential work has ended. | The complementary procedure makes resumption explicit and keeps dispatch policy out of the backlog-resolution skill. |
 
 ## Skill Recommendations
 
