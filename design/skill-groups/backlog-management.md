@@ -4,7 +4,7 @@
 
 Backlog Management is independent of Resource Coordination and Commit delivery. AGENTS.md selects one creation skill and one management skill for the effective Persistence provider.
 
-The reusable notation and applied-model legend are defined in [Object-Oriented Analysis Of Agents And Skills](../object-oriented-agent-and-skill-model.md#14-applied-methodology-skill-groups).
+The applied-model legend and comparison contract are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md#2-applied-model-legend).
 
 ## Current Design
 

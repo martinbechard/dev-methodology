@@ -2,8 +2,7 @@
 
 ## Scope
 
-- Target: design/object-oriented-agent-and-skill-model.md, Section 14 Applied Methodology Skill Groups
-- Compatibility index: design/object-oriented-skill-group-models.md
+- Target: design/object-oriented-skill-group-models.md
 - Linked design set: the seven Markdown files under design/skill-groups
 - Completed checklist: design/object-oriented-skill-group-models.review-checklist-structured.md
 - Review basis: the retained user directions, the reusable object-oriented analysis method, the complete applied-model legend diagram, forty-one current SKILL.md files, the relevant conceptual Agent definitions, the proposed name and heading recommendations, and the two proposed dispatch-mode extractions
@@ -15,7 +14,7 @@ No material findings.
 ## Verified Results
 
 - The applied model covers forty-one unique current skills and forty-three proposed skill packages across seven top-level group documents, with one current and one proposed diagram in each. Concurrent Tasking contains two nested skill groups inside its document.
-- The reusable analysis owns the application scope, complete current-versus-proposed legend diagram, group navigation, and application Definition Of Good; the former hub is a compatibility index only.
+- The dedicated applied document owns the application scope, complete current-versus-proposed legend diagram, group navigation, and application Definition Of Good. The reusable analysis owns the skill-group and containment method and links to the applied document.
 - The applied legend shows current and proposed procedure and AGENTS.md family vocabulary, neutral heading changes, gold renames, blue extractions, styled Cross-group repetitions with provenance, and state-specific relationship endpoints.
 - Solid-diamond containment is defined once in the reusable method. A group-to-skill line records direct membership, while a group-to-group line includes the nested group’s complete skill set. Neither form implies loading, invocation, or dependency.
 - Every current skill has one source-backed recommendation for a clearer skill name, interface-oriented headings, or both.

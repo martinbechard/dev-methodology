@@ -2,8 +2,7 @@
 
 ## Review Trace
 
-- Target artifact: design/object-oriented-agent-and-skill-model.md, Section 14 Applied Methodology Skill Groups
-- Compatibility index: design/object-oriented-skill-group-models.md
+- Target artifact: design/object-oriented-skill-group-models.md
 - Linked design set:
   - design/skill-groups/baseline-development.md
   - design/skill-groups/project-setup.md
@@ -27,7 +26,7 @@ Diagram syntax reference: [Mermaid Class Diagrams](https://mermaid.js.org/syntax
 
 | ID | Status | Question | Evidence | Assessment |
 | --- | --- | --- | --- | --- |
-| DIR-1 | pass | Does the reusable analysis own the applied overview while the detailed group designs remain separate? | Section 14 contains the application scope, a compact visual legend, navigation, and Definition Of Good, while it links to seven independent group documents. The former hub is a compatibility index only. | Readers have one conceptual authority and can still inspect one group without reading the other six. |
+| DIR-1 | pass | Does the dedicated applied document own the applied overview while the reusable method owns grouping and containment? | Object-Oriented Skill Group Models contains the application scope, compact visual legend, navigation, and application Definition Of Good, while it links to seven independent group documents. The reusable analysis defines skill groups and containment and links to this applied document. | Readers can use the method independently and inspect one applied group without reading the other six. |
 | DIR-2 | pass | Do current diagrams model actual skills while proposed-only identities remain explicit? | Every primary Current Design node uses an exact current kebab-case name. Every renamed Proposed Design node comes from that skill’s recommendation. set-solo-mode and set-multitask-mode are blue and carry extracted-from instead of being presented as current files. | Wildcard labels appear only on AGENTS.md procedure-family nodes, and proposed extractions cannot be mistaken for existing SKILL.md files. |
 | DIR-3 | pass | Do arrows distinguish exact-name references from procedure-mapped references? | Open diamonds connect definitions that name a skill; regular arrows connect invokers to AGENTS.md procedure nodes; dotted forms carry conditions. | The diagrams follow the analysis method instead of using one generic dependency arrow. |
 | DIR-4 | pass | Do the diagrams preserve current coupling that is not yet cleanly injectable? | codex-workitem-coordination, create-file-work-item, end-to-end-verification, agent-work-merge, and both Commit implementations retain their current exact agent-claim references in the current diagrams. The corresponding proposed nodes retain those relationships. | A proposed vocabulary change does not silently remove a coupling that was not included in the recommendation. |
@@ -74,11 +73,11 @@ Diagram syntax reference: [Mermaid Class Diagrams](https://mermaid.js.org/syntax
 
 ## Sentence Review
 
-Every complete prose assertion in the applied overview, compatibility index, and seven group documents was reviewed for necessity, clarity, and definite reference.
+Every complete prose assertion in the applied overview and seven group documents was reviewed for necessity, clarity, and definite reference.
 
 | ID | Target | Needed | Clear | Definite reference | Assessment |
 | --- | --- | --- | --- | --- | --- |
-| SENT-1 | Applied overview | pass | pass | pass | Scope, current and proposed highlighting, recommendation boundaries, the full visual legend, navigation, and Definition Of Good are stated once in Section 14. Reusable relationship notation remains in the earlier method sections. |
+| SENT-1 | Applied overview | pass | pass | pass | Scope, current and proposed highlighting, recommendation boundaries, the full visual legend, navigation, and Definition Of Good are stated once in the dedicated applied document. Reusable relationship notation remains in the analysis method. |
 | SENT-2 | Baseline Development | pass | pass | pass | Whole-skill Agent loading, stronger Peer Skill references, proposed headings, and renamed dependencies are distinguishable. |
 | SENT-3 | Project Setup | pass | pass | pass | Setup ownership and exact-name technology skill selection are not conflated with a shared technology interface in either state. |
 | SENT-4 | Documentation Methodology | pass | pass | pass | Routing, bootstrap, reverse engineering, and page verification have separate current and proposed identities. |
@@ -97,17 +96,17 @@ No sentence failed necessity, clarity, or definite reference.
 | DOC-2 | pass | Are kebab-case class names valid Mermaid identifiers? | The official Mermaid class-diagram syntax permits alphanumeric characters, underscores, and dashes in class names. | Exact skill names do not need invented PascalCase aliases. |
 | DOC-3 | pass | Are relationship direction, endpoint, line style, and labels consistent? | Static inspection of all fourteen diagrams found arrows from referencing nodes to referenced nodes, open diamonds for exact names, regular endpoints for procedure names, dotted conditional references with labels, unlabeled solid references, and solid diamonds only for direct group membership or nested skill-group containment. | The visual vocabulary matches the analysis method in both states. |
 | DOC-4 | question | Was every Mermaid block rendered locally? | No local Mermaid package or CLI is installed. The applied legend plus the fourteen detailed group diagrams passed source inspection against the documented class-diagram syntax but were not renderer-executed. | This is a non-blocking verification gap; render all fifteen applied-model blocks when a project Mermaid runtime is available. |
-| DOC-5 | pass | Do local Markdown links resolve? | The Markdown-link verifier checked the method, compatibility index, seven group pages, checklist, and findings with no findings. | Navigation and local source references are intact. |
-| DOC-6 | pass | Is editable Mermaid retained as the authoritative diagram source? | The legend is stored as a Mermaid block in the reusable analysis, and every current and proposed diagram is stored as a Mermaid block in its group document. | The designs remain maintainable without a separate binary source. |
-| DOC-7 | pass | Is inline code formatting avoided? | Backticks occur only on Mermaid fence lines in the method and seven group documents. The compatibility index has no backticks. | Repository Markdown convention is preserved. |
+| DOC-5 | pass | Do local Markdown links resolve? | The Markdown-link verifier checked the method, applied model, seven group pages, checklist, and findings with no findings. | Navigation and local source references are intact. |
+| DOC-6 | pass | Is editable Mermaid retained as the authoritative diagram source? | The legend is stored as a Mermaid block in the dedicated applied document, and every current and proposed diagram is stored as a Mermaid block in its group document. | The designs remain maintainable without a separate binary source. |
+| DOC-7 | pass | Is inline code formatting avoided? | Backticks occur only on Mermaid fence lines in the applied document and seven group documents. | Repository Markdown convention is preserved. |
 | DOC-8 | pass | Are stale diagram terms absent? | Automated search found no SkillId, skillId, AGENTS.md DII stereotype, DII stereotype, CURRENT, PROPOSED, HYPOTHETICAL, or +skill notation. | The applied diagrams use the reviewed vocabulary. |
-| DOC-9 | pass | Are the applied-overview assertions structurally complete? | Section 14 contains five application rules, each with a synopsis, example, and unique identifier. | The applied Definition Of Good remains traceable inside the conceptual authority. |
+| DOC-9 | pass | Are the applied-overview assertions structurally complete? | Section 4 of the applied document contains five application rules, each with a synopsis, example, and unique identifier. | The applied Definition Of Good remains traceable inside the applied design authority. |
 | DOC-10 | pass | Does the Markdown diff pass whitespace validation? | git diff --check returned no findings. | No whitespace defect was introduced. |
 | DOC-11 | pass | Is the proposed-name highlight consistent and textually recoverable? | Every Proposed Design and the applied legend use the same gold renamed style. Every styled class carries renamed-from, and every rename recommendation has one matching highlighted primary node in its group design. | Name changes are visually consistent and do not depend on color alone. |
 | DOC-12 | pass | Is the proposed-extraction highlight consistent and textually recoverable? | Backlog Management, Concurrent Tasking, and the applied legend use the same blue extracted style. Every styled class carries extracted-from, and both extraction rows have matching primary nodes in Concurrent Tasking. | Proposed new skills are distinguishable from renames and do not depend on color alone. |
 
 ## Review Result
 
-The consolidated applied overview and seven group designs pass the directive, source, placement, recommendation, sentence, link, and static diagram checks. One compact legend explains the design-state treatments, while fourteen detailed diagrams model forty-one actual skill definitions, retain current relationships, and separately visualize sixteen proposed skill-name changes, two proposed skill extractions, and the recommended heading changes.
+The dedicated applied overview and seven group designs pass the directive, source, placement, recommendation, sentence, link, and static diagram checks. One compact legend explains the design-state treatments, while fourteen detailed diagrams model forty-one actual skill definitions, retain current relationships, and separately visualize sixteen proposed skill-name changes, two proposed skill extractions, and the recommended heading changes.
 
 DOC-4 remains the only non-blocking gap because no local Mermaid renderer is installed.

@@ -4,7 +4,7 @@
 
 - Target: design/object-oriented-agent-and-skill-model.md
 - Completed checklist: design/object-oriented-agent-and-skill-model.review-checklist-structured.md
-- Review basis: the retained user direction for outcome-oriented goals, dependency and dispatch analysis, independently loaded skills and possible conflicts, direct references, AGENTS.md procedure mapping, polymorphism, maintainable skill hierarchies, replacement of the global-space overview by progressive skill use cases, removal of redundant loading-path material, sibling Peer Skills loaded by Agents or AGENTS.md, the work-item-base, work-item-dispatch, and work-item-monitor example, stronger coupling from direct skill-to-skill references, glossary placement, progressive diagram explanation, reference direction, exact-name aggregation, procedure-name lines, conditional dotted lines, solid-diamond set containment, skill groups as named comprehension sets, direct skill membership, nested skill-group inclusion, Mermaid display labels, request-based TDD routing language, plain-language Agent and AGENTS.md instruction examples, an explicit distinction between code-like diagram labels and the prose found in Agent definitions and AGENTS.md, superclass stand-ins, exact kebab-case skill identities, a concise SKILL.md node convention, source-backed procedure labels, relevant reference members, empty whole-skill nodes, removal of the detailed careful-coding inventory and modeling-debt analysis, the manage-work-item-* injection example, plain AGENTS.md prototypes, four separate skill use cases, consolidation of the methodology skill-group overview, and a complete applied-model legend diagram
+- Review basis: the retained user direction for outcome-oriented goals, dependency and dispatch analysis, independently loaded skills and possible conflicts, direct references, AGENTS.md procedure mapping, polymorphism, maintainable skill hierarchies, replacement of the global-space overview by progressive skill use cases, removal of redundant loading-path material, sibling Peer Skills loaded by Agents or AGENTS.md, the work-item-base, work-item-dispatch, and work-item-monitor example, stronger coupling from direct skill-to-skill references, glossary placement, progressive diagram explanation, reference direction, exact-name aggregation, procedure-name lines, conditional dotted lines, solid-diamond set containment, skill groups as named comprehension sets, direct skill membership, nested skill-group inclusion, Mermaid display labels, request-based TDD routing language, plain-language Agent and AGENTS.md instruction examples, an explicit distinction between code-like diagram labels and the prose found in Agent definitions and AGENTS.md, superclass stand-ins, exact kebab-case skill identities, a concise SKILL.md node convention, source-backed procedure labels, relevant reference members, empty whole-skill nodes, removal of the detailed careful-coding inventory and modeling-debt analysis, the manage-work-item-* injection example, plain AGENTS.md prototypes, four separate skill use cases, and separation of the reusable grouping method from the applied methodology skill-group design
 - Review mode: same-agent self-review; no independent reviewer was dispatched for this bounded documentation correction
 
 ## Findings
@@ -14,7 +14,7 @@ No material findings.
 ## Verified Clarifications
 
 - **CHECK:** DIR-1, DIR-2, DIR-3
-  - **RESULT:** The glossary is section 15, the standalone notation section and former all-relations legend are gone, and each reusable visual element is introduced beside the first use case that needs it. Section 14.2 has a separate compact legend only for the applied current-versus-proposed treatments.
+  - **RESULT:** The glossary is section 14, the standalone notation section, former all-relations legend, and applied-design legend are absent, and each reusable visual element is introduced beside the first use case that needs it.
 
 - **CHECK:** DIR-21, DIR-39
   - **RESULT:** Section 2 replaces the former global-space overview with four progressive skill use cases. It preserves availability, selection-versus-loading, arrow direction, RULE-1, exact-name notation, and procedure mapping. Section 3 explains the wildcard display label used by the injection example without restoring a combined legend or separate loading-path section.
@@ -56,7 +56,7 @@ No material findings.
   - **RESULT:** The agent-claim example exposes Acquire Claim and Release Claim without implying that the skill must be split.
 
 - **CHECK:** DIR-14, DIR-27, DIR-45, DIR-46, DIR-47, DOC-3
-  - **RESULT:** The method owns solid-diamond containment, Mermaid display labels, and the applied methodology skill-group overview. It defines direct skill membership and nested skill-group inclusion as comprehension-oriented set relationships, not loading or dependency. The applied legend diagram shows current and proposed vocabulary, neutral heading changes, renamed and extracted skills, Cross-group repetitions, and state-specific AGENTS.md endpoints. The Concurrent Tasking diagrams use Skill group for both parent and nested groups. No governed SKILL.md definition changed.
+  - **RESULT:** The method owns solid-diamond containment and Mermaid display labels. It defines direct skill membership and nested skill-group inclusion as comprehension-oriented set relationships, not loading or dependency. It links to Object-Oriented Skill Group Models, which separately owns the repository-specific current-versus-proposed design, legend, recommendations, and group navigation. No governed SKILL.md definition changed.
 
 - **CHECK:** DIR-15, LOG-9
   - **RESULT:** Principal complex examples use current definitions: test-driven-development, agent-claim, complete-work-item-feature-branch, create-pull-request, and review-structured-artifact.
@@ -65,7 +65,7 @@ No material findings.
   - **RESULT:** Mermaid supports relationship markers at both endpoints over solid or dashed links, permits dashes in class names, and uses parentheses to distinguish operations from attributes.
 
 - **CHECK:** DOC-1, DOC-2, DOC-4, DOC-5
-  - **RESULT:** All fifty-two structured assertions have examples and unique definition IDs. Twelve Mermaid blocks have balanced fences, nineteen loading and procedure references follow the convention, three class relationships show direct membership or nested containment, and all eleven sequence messages are solid.
+  - **RESULT:** All forty-seven structured assertions have examples and unique definition IDs. Eleven Mermaid blocks have balanced fences, seventeen loading and procedure references follow the convention, three class relationships show direct membership or nested containment, and all eleven sequence messages are solid.
 
 - **CHECK:** DOC-7, DOC-9, DOC-10, DOC-12
   - **RESULT:** Local Markdown links resolve, inline backticks are absent outside Mermaid fences, AGENTS.md DII prototypes, +skill, +procedure, CreateWorkitem, and invented PascalCase skill aliases are absent from the target, retired notation and inheritance syntax are absent, and whitespace validation passes.
@@ -73,6 +73,6 @@ No material findings.
 ## Residual Verification Gap
 
 - **CHECK:** DOC-6
-- **TARGET:** Twelve Mermaid blocks in the target artifact
+- **TARGET:** Eleven Mermaid blocks in the target artifact
 - **SYNOPSIS:** Static inspection found balanced fences and supported classDiagram and sequenceDiagram forms, but no local Mermaid renderer was available.
-- **NEXT CHECK:** Render all twelve blocks when a Mermaid runtime is available and correct any parser-specific display issue before publishing rendered companions.
+- **NEXT CHECK:** Render all eleven blocks when a Mermaid runtime is available and correct any parser-specific display issue before publishing rendered companions.

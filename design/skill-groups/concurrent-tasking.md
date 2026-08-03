@@ -4,7 +4,7 @@
 
 Concurrent Tasking directly contains codex-workitem-coordination and nests the Resource Coordination and Feature Branch And Worktrees skill groups. Its complete skill set therefore includes the direct skill plus every skill in those two nested groups. This containment is for comprehension and does not mean that the direct skill uses every nested skill. Persistence remains an independent injected provider.
 
-The reusable notation and applied-model legend are defined in [Object-Oriented Analysis Of Agents And Skills](../object-oriented-agent-and-skill-model.md#14-applied-methodology-skill-groups).
+The applied-model legend and comparison contract are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md#2-applied-model-legend).
 
 ## Current Design
 
