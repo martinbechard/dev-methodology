@@ -690,6 +690,80 @@ The relationship, node, member, containment, and display-label conventions come 
 - A repeated gold or blue Cross-group node represents the same rename or extraction shown in the primary group, not another recommendation.
 - AGENTS.md procedure-family labels and relationship endpoints use the vocabulary for the design state being shown.
 
+```mermaid
+classDiagram
+    direction TB
+
+    namespace CurrentDesign {
+        class CurrentAgentView["Agent"] {
+            <<Agent>>
+        }
+
+        class CurrentProvider["create-gitlab-work-item"] {
+            <<SKILL.md>>
+            +workflow()
+        }
+
+        class CurrentDelivery["complete-work-item-*"] {
+            <<AGENTS.md>>
+            +deliver-work-item(acceptedCommit)
+        }
+    }
+
+    namespace ProposedDesign {
+        class ProposedAgentView["Agent"] {
+            <<Agent>>
+        }
+
+        class ProposedProvider["create-gitlab-work-item"] {
+            <<SKILL.md>>
+            +create-work-item()
+        }
+
+        class route-documentation-work:::renamed {
+            <<SKILL.md>>
+            renamed-from development-methodology
+        }
+
+        class set-multitask-mode:::extracted {
+            <<SKILL.md>>
+            extracted-from backlog-crisis-mode
+        }
+
+        class ProposedDelivery["deliver-work-item-*"] {
+            <<AGENTS.md>>
+            +deliver-work-item(acceptedCommit)
+        }
+    }
+
+    namespace CrossGroupRepetitions {
+        class CrossGroupRouteDocumentation["route-documentation-work"] {
+            <<SKILL.md>>
+            <<Cross-group>>
+            renamed-from development-methodology
+        }
+
+        class CrossGroupSetMultitask["set-multitask-mode"] {
+            <<SKILL.md>>
+            <<Cross-group>>
+            extracted-from backlog-crisis-mode
+        }
+    }
+
+    CurrentAgentView --> CurrentDelivery
+    ProposedAgentView --> ProposedDelivery
+
+    class CrossGroupRouteDocumentation:::renamed
+    class CrossGroupSetMultitask:::extracted
+
+    classDef renamed fill:#fff3bf,stroke:#b45309,stroke-width:3px,color:#111827
+    classDef extracted fill:#dbeafe,stroke:#1d4ed8,stroke-width:3px,color:#111827
+```
+
+The Current Design namespace keeps the current skill identity, current Workflow member, and current AGENTS.md family label. The Proposed Design namespace shows four proposal forms: a neutral skill with a clearer procedure heading, a gold renamed skill, a blue extracted skill, and the proposed AGENTS.md family label. The two regular arrows demonstrate that a relationship endpoint uses the vocabulary of the design state in which it appears.
+
+The Cross Group Repetitions namespace repeats the same visible route-documentation-work and set-multitask-mode identities shown in Proposed Design. The repeated rename keeps the gold treatment and renamed-from member, while the repeated extraction keeps the blue treatment and extracted-from member. Cross-group identifies the repeated placement; it does not create another recommendation. No line connects a Current Design node to a Proposed Design node because the two namespaces compare design states rather than declare runtime dependencies.
+
 ### 14.3 Group Designs
 
 - [Baseline Development](skill-groups/baseline-development.md)
