@@ -4,7 +4,7 @@
 
 Concurrent Tasking encloses Resource Coordination and Feature Branch And Worktrees. codex-workitem-coordination coordinates the enclosing workflow while Persistence remains an independent injected provider.
 
-The shared notation and recommendation boundary are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md).
+The reusable notation and applied-model legend are defined in [Object-Oriented Analysis Of Agents And Skills](../object-oriented-agent-and-skill-model.md#14-applied-methodology-skill-groups).
 
 ## Current Design
 

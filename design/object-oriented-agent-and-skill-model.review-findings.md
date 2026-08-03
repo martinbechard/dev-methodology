@@ -4,7 +4,7 @@
 
 - Target: design/object-oriented-agent-and-skill-model.md
 - Completed checklist: design/object-oriented-agent-and-skill-model.review-checklist-structured.md
-- Review basis: the retained user direction for outcome-oriented goals, dependency and dispatch analysis, independently loaded skills and possible conflicts, direct references, AGENTS.md procedure mapping, polymorphism, maintainable skill hierarchies, replacement of the global-space overview by progressive skill use cases, removal of redundant loading-path material, sibling Peer Skills composed by Agents or AGENTS.md, the work-item-base, work-item-dispatch, and work-item-monitor example, stronger coupling from direct skill-to-skill references, glossary placement, progressive diagram explanation, reference direction, exact-name aggregation, procedure-name lines, conditional dotted lines, request-based TDD routing language, plain-language Agent and AGENTS.md instruction examples, an explicit distinction between code-like diagram labels and the prose found in Agent definitions and AGENTS.md, superclass stand-ins, exact kebab-case skill identities, a concise SKILL.md node convention, source-backed procedure labels, relevant reference members, empty whole-skill nodes, removal of the detailed careful-coding inventory and modeling-debt analysis, the manage-work-item-* injection example, plain AGENTS.md prototypes, and four separate skill use cases
+- Review basis: the retained user direction for outcome-oriented goals, dependency and dispatch analysis, independently loaded skills and possible conflicts, direct references, AGENTS.md procedure mapping, polymorphism, maintainable skill hierarchies, replacement of the global-space overview by progressive skill use cases, removal of redundant loading-path material, sibling Peer Skills loaded by Agents or AGENTS.md, the work-item-base, work-item-dispatch, and work-item-monitor example, stronger coupling from direct skill-to-skill references, glossary placement, progressive diagram explanation, reference direction, exact-name aggregation, procedure-name lines, conditional dotted lines, solid-diamond containment, Mermaid display labels, request-based TDD routing language, plain-language Agent and AGENTS.md instruction examples, an explicit distinction between code-like diagram labels and the prose found in Agent definitions and AGENTS.md, superclass stand-ins, exact kebab-case skill identities, a concise SKILL.md node convention, source-backed procedure labels, relevant reference members, empty whole-skill nodes, removal of the detailed careful-coding inventory and modeling-debt analysis, the manage-work-item-* injection example, plain AGENTS.md prototypes, four separate skill use cases, and consolidation of the methodology skill-group overview
 - Review mode: same-agent self-review; no independent reviewer was dispatched for this bounded documentation correction
 
 ## Findings
@@ -14,10 +14,10 @@ No material findings.
 ## Verified Clarifications
 
 - **CHECK:** DIR-1, DIR-2, DIR-3
-  - **RESULT:** The glossary is section 14, the standalone notation section and large legend are gone, and each visual element is introduced beside the first use case that needs it.
+  - **RESULT:** The glossary is section 15, the standalone notation section and large legend are gone, and each reusable visual element is introduced beside the first use case that needs it.
 
 - **CHECK:** DIR-21, DIR-39
-  - **RESULT:** Section 2 replaces the former global-space overview with four progressive skill use cases. It preserves availability, selection-versus-loading, arrow direction, RULE-1, exact-name notation, procedure mapping, and wildcard notation without retaining the combined global diagram or a separate loading-path section.
+  - **RESULT:** Section 2 replaces the former global-space overview with four progressive skill use cases. It preserves availability, selection-versus-loading, arrow direction, RULE-1, exact-name notation, and procedure mapping. Section 3 explains the wildcard display label used by the injection example without restoring a combined legend or separate loading-path section.
 
 - **CHECK:** DIR-35, DIR-36, DIR-37, DIR-38, RULE-52, RULE-53
   - **RESULT:** Finality states two outcomes: understand Agent and skill relationships through class designs, and understand and improve skill organization. The reasons cover independently loaded instructions that can clash, direct references versus AGENTS.md dispatch, polymorphic procedure hiding, and maintainable skill hierarchies. GOAL-1’s example spans direct loading, conditional loading, and an AGENTS.md mapping to alternative providers. The glossary defines the polymorphism analogy without asserting runtime language dispatch. Procedure naming and use-case distinctions remain supporting mechanisms. Running-Agent state is absent from the goals, dependency view, and glossary.
@@ -37,8 +37,8 @@ No material findings.
 - **CHECK:** DIR-10, DIR-24, DIR-25, DIR-26, DIR-28, DIR-31, DIR-43
   - **RESULT:** Section 2.3 first states the corresponding Agent, AGENTS.md, and SKILL.md instructions in ordinary language. It then says that newEnhancement() and create-new-work-item() are compact diagram labels rather than code from those files. The regular arrow represents an Agent instruction that requests a work item without naming a skill; the open-diamond arrow represents the AGENTS.md instruction that names manage-work-item-gitlab. The manage-work-item-* node is identified as diagram shorthand rather than a literal skill name or instruction.
 
-- **CHECK:** DIR-11, DIR-40, DIR-41, DIR-42, LOG-4
-  - **RESULT:** Peer Skills are modeled first as complementary siblings composed by an Agent or AGENTS.md. Work Item Coordinator selects work-item-base with work-item-dispatch, while Work Item Watchdog selects work-item-base with work-item-monitor. The Peer Skills do not point to one another, and each Agent selects the common base once. Runtime caching or rereading remains outside the analysis. Technology selection and direct skill-to-skill coupling remain separate arrangements with different dependency shapes.
+- **CHECK:** DIR-11, DIR-40, DIR-41, DIR-42, DIR-45, LOG-4
+  - **RESULT:** Peer Skills are modeled first as complementary siblings loaded as a set by an Agent or AGENTS.md. Work Item Coordinator selects work-item-base with work-item-dispatch, while Work Item Watchdog selects work-item-base with work-item-monitor. The Peer Skills do not point to one another, and each Agent selects the common base once. Runtime caching or rereading remains outside the analysis. Technology selection, direct skill-to-skill coupling, and solid-diamond organizational containment remain separate arrangements.
 
 - **CHECK:** DIR-13, DIR-16, DIR-23, DIR-44, LOG-5, LOG-14
   - **RESULT:** Section 3 now contains only the node conventions needed by relationship diagrams: exact kebab-case identity, an empty node for whole-skill loading, method-like labels for relevant source-backed procedures, and +reference for relevant non-invoked guidance. The detailed careful-coding inventory, derived procedures, classification table, JUnit and Jest comparison, and modeling-debt discussion are absent.
@@ -55,8 +55,8 @@ No material findings.
 - **CHECK:** LOG-6
   - **RESULT:** The agent-claim example exposes Acquire Claim and Release Claim without implying that the skill must be split.
 
-- **CHECK:** DIR-14, DIR-27, DOC-3
-  - **RESULT:** The standalone method and its adjacent review evidence are the only changed design artifacts. The skill-group diagrams and governed SKILL.md definitions remain unchanged pending review of the convention.
+- **CHECK:** DIR-14, DIR-27, DIR-45, DIR-46, DOC-3
+  - **RESULT:** The method now owns solid-diamond containment, Mermaid display labels, and the applied methodology skill-group overview. The old hub is a compatibility index, the seven group documents point to the consolidated authority, and their fourteen diagrams remain unchanged. No governed SKILL.md definition changed.
 
 - **CHECK:** DIR-15, LOG-9
   - **RESULT:** Principal complex examples use current definitions: test-driven-development, agent-claim, complete-work-item-feature-branch, create-pull-request, and review-structured-artifact.
@@ -65,7 +65,7 @@ No material findings.
   - **RESULT:** Mermaid supports relationship markers at both endpoints over solid or dashed links, permits dashes in class names, and uses parentheses to distinguish operations from attributes.
 
 - **CHECK:** DOC-1, DOC-2, DOC-4, DOC-5
-  - **RESULT:** All forty-five structured assertions have examples and unique definition IDs. Ten Mermaid blocks have balanced fences, seventeen class references follow the convention, and all eleven sequence messages are solid.
+  - **RESULT:** All fifty-two structured assertions have examples and unique definition IDs. Eleven Mermaid blocks have balanced fences, seventeen loading and procedure references follow the convention, two class relationships show containment, and all eleven sequence messages are solid.
 
 - **CHECK:** DOC-7, DOC-9, DOC-10, DOC-12
   - **RESULT:** Local Markdown links resolve, inline backticks are absent outside Mermaid fences, AGENTS.md DII prototypes, +skill, +procedure, CreateWorkitem, and invented PascalCase skill aliases are absent from the target, retired notation and inheritance syntax are absent, and whitespace validation passes.
@@ -73,6 +73,6 @@ No material findings.
 ## Residual Verification Gap
 
 - **CHECK:** DOC-6
-- **TARGET:** Ten Mermaid blocks in the target artifact
+- **TARGET:** Eleven Mermaid blocks in the target artifact
 - **SYNOPSIS:** Static inspection found balanced fences and supported classDiagram and sequenceDiagram forms, but no local Mermaid renderer was available.
-- **NEXT CHECK:** Render all ten blocks when a Mermaid runtime is available and correct any parser-specific display issue before publishing rendered companions.
+- **NEXT CHECK:** Render all eleven blocks when a Mermaid runtime is available and correct any parser-specific display issue before publishing rendered companions.

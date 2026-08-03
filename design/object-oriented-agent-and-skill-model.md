@@ -19,7 +19,7 @@ Object-oriented concepts are used as an analogy for understanding coupling. They
 
 The document explains relationships through examples while defining no schema, migration, or repository change sequence.
 
-Applications of this method are maintained separately in [Object-Oriented Skill Group Models](object-oriented-skill-group-models.md).
+The method concludes with an applied overview of the methodology skill groups. The detailed current and proposed diagrams remain in separate group documents so a reader can use the method without loading the complete applied inventory.
 
 ## 1. Finality
 
@@ -201,20 +201,24 @@ A SKILL.md node shows only what the relationship needs. Before adding a member, 
 
 For example, careful-coding stays empty when Dev Coder loads the whole skill. The manage-work-item-gitlab node can show create-new-work-item() when the diagram focuses on its Create New Work Item instructions.
 
-## 4. Peer Skills
+When a visible class name contains characters that Mermaid cannot use in an identifier, the diagram uses a separate internal identifier and quoted display label. The display label is the analysis identity; the internal identifier exists only to render the diagram. For example, manage-work-item is the internal identifier for the visible manage-work-item-* AGENTS.md node in Section 2.3.
 
-Peer Skills are sibling SKILL.md files that divide one domain into complementary responsibilities. Their primary relationship is composition: an Agent definition or project guidance loads the applicable siblings together. The siblings do not need to name or invoke one another.
+## 4. Skill Organization
+
+### 4.1 Peer Skills
+
+Peer Skills are sibling SKILL.md files that divide one domain into complementary responsibilities. An Agent definition or project guidance loads the applicable siblings as a set. The siblings do not need to name or invoke one another.
 
 - **RULE: RULE-28** Peer Skills divide a domain into complementary responsibilities
   - **SYNOPSIS:** Each sibling owns one cohesive part of the domain while relying on a compatible shared vocabulary.
   - **EXAMPLE:** work-item-base defines work items, states, and rules; work-item-dispatch changes status under dispatch rules; work-item-monitor observes work items and raises alarms.
 
-- **RULE: RULE-29** A composition owner loads the applicable Peer Skills
+- **RULE: RULE-29** A sibling-set loader loads the applicable Peer Skills
   - **SYNOPSIS:** An Agent definition or AGENTS.md names the sibling set needed for one role so the complete dependency set remains visible in one place.
   - **EXAMPLE:** Work Item Coordinator loads work-item-base and work-item-dispatch, while Work Item Watchdog loads work-item-base and work-item-monitor.
 
 - **RULE: RULE-30** Direct Peer Skill references create stronger coupling
-  - **SYNOPSIS:** A skill that names another skill creates a skill-to-skill dependency that must be traced in addition to the Agent or AGENTS.md composition.
+  - **SYNOPSIS:** A skill that names another skill creates a skill-to-skill dependency that must be traced in addition to the sibling set declared by the Agent or AGENTS.md.
   - **EXAMPLE:** complete-work-item-feature-branch names create-pull-request directly, so that relationship is more coupled than two siblings loaded together by one Agent.
 
 ```mermaid
@@ -262,19 +266,53 @@ classDiagram
     WorkItemWatchdog o--> work-item-monitor
 ```
 
-The open diamonds mean that each Agent knows the exact sibling skill names it loads. No arrows connect the Peer Skills because the composition owner, not a sibling, declares the set. Work Item Coordinator and Work Item Watchdog each select work-item-base once as shared domain context, then select only the specialized sibling needed by that role. Whether a harness caches or rereads an already selected SKILL.md is a runtime concern outside this analysis.
+The open diamonds mean that each Agent knows the exact sibling skill names it loads. No arrows connect the Peer Skills because the sibling-set loader, not a sibling, declares the set. Work Item Coordinator and Work Item Watchdog each select work-item-base once as shared domain context, then select only the specialized sibling needed by that role. Whether a harness caches or rereads an already selected SKILL.md is a runtime concern outside this analysis.
 
-The same composition can be expressed in AGENTS.md when the sibling set is project-specific rather than fixed in an Agent definition. Keeping the composition in the Agent or AGENTS.md makes the loaded hierarchy easier to inspect, change, and troubleshoot than a chain of skill-to-skill name references.
+The same sibling set can be expressed in AGENTS.md when the set is project-specific rather than fixed in an Agent definition. Keeping the set in the Agent or AGENTS.md makes the loaded hierarchy easier to inspect, change, and troubleshoot than a chain of skill-to-skill name references.
 
-Technology selection is another Peer Skill use case, but it selects alternatives rather than composing several complementary siblings. For example, test-driven-development can refer to Run Project Tests while AGENTS.md selects JUnit or Jest. A direct skill-to-skill reference remains valid when the invoking skill intentionally owns that dependency; its open-diamond arrow records the stronger coupling.
+Technology selection is another Peer Skill use case, but it selects alternatives rather than loading several complementary siblings. For example, test-driven-development can refer to Run Project Tests while AGENTS.md selects JUnit or Jest. A direct skill-to-skill reference remains valid when the invoking skill intentionally owns that dependency; its open-diamond arrow records the stronger coupling.
 
-| Peer arrangement | Composition owner | Loaded result | Dependency shape |
+| Peer arrangement | Sibling-set loader | Loaded result | Dependency shape |
 | --- | --- | --- | --- |
-| Sibling composition | Agent definition or AGENTS.md | Several complementary skills. | The composition owner names each sibling; siblings do not name one another. |
+| Sibling set | Agent definition or AGENTS.md | Several complementary skills. | The sibling-set loader names each sibling; siblings do not name one another. |
 | Technology or provider selection | AGENTS.md | One implementation among alternatives. | The caller knows a procedure; AGENTS.md knows the selected skill name. |
 | Direct Peer Skill reference | Invoking SKILL.md | One named complementary skill when needed. | The invoking skill names the peer directly. |
 
 The work-item sibling names and their displayed members are analysis vocabulary supplied for this example. They do not assert that those exact skill definitions already exist in the repository.
+
+### 4.2 Skill Groups And Containment
+
+A skill group organizes skills that share a responsibility boundary. A subgroup exposes a meaningful responsibility inside a larger group. The group model records the primary organizational home of each skill without implying that the group itself loads or invokes that skill.
+
+- **RULE: RULE-54** A solid diamond represents organizational containment
+  - **SYNOPSIS:** The solid diamond stays on the skill group or subgroup that contains the referenced subgroup or skill.
+  - **EXAMPLE:** Concurrent Tasking contains Resource Coordination, and Resource Coordination contains agent-claim.
+
+- **RULE: RULE-55** Containment is not a loading relationship
+  - **SYNOPSIS:** A containment line records primary placement only. An Agent, AGENTS.md, or SKILL.md still needs a separate regular or open-diamond reference when it invokes a procedure or names a skill.
+  - **EXAMPLE:** Resource Coordination can contain agent-claim while a separate AGENTS.md reference selects agent-claim as the project implementation.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class ConcurrentTasking {
+        <<Skill group>>
+    }
+
+    class ResourceCoordination {
+        <<Skill subgroup>>
+    }
+
+    class agent-claim {
+        <<SKILL.md>>
+    }
+
+    ConcurrentTasking *-- ResourceCoordination
+    ResourceCoordination *-- agent-claim
+```
+
+The solid diamonds point from each container to what it contains. They do not say that Concurrent Tasking loads Resource Coordination or that Resource Coordination loads agent-claim. Loading and invocation remain visible through the reference forms introduced in Section 2.
 
 ## 5. From User Request To Skill Interface
 
@@ -575,8 +613,8 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **EXAMPLE:** The diagrams distinguish Dev Coder’s direct careful-coding reference from Backlog Manager’s procedure-name path through AGENTS.md to manage-work-item-gitlab.
 
 - **RULE: RULE-53** Class views make skill organization reviewable
-  - **SYNOPSIS:** A reader can see which skills own shared context, which own specialized procedures, and where their composition is declared when evaluating a maintainable skill hierarchy.
-  - **EXAMPLE:** The analysis shows work-item-base shared by two Agent compositions while work-item-dispatch and work-item-monitor remain specialized siblings; it also shows that agent-claim contains several related procedures without deciding in advance that the skill should be split.
+  - **SYNOPSIS:** A reader can see which skills own shared context, which own specialized procedures, where sibling sets are loaded, and where skills have their primary organizational home.
+  - **EXAMPLE:** The analysis shows work-item-base shared by two Agent sibling sets while work-item-dispatch and work-item-monitor remain specialized siblings; it also shows agent-claim contained by Resource Coordination without deciding in advance that the skill should be split.
 
 - **RULE: RULE-24** The diagrams distinguish AGENTS.md from SKILL.md
   - **SYNOPSIS:** Diagrams label an injected shared contract with the AGENTS.md stereotype and a concrete skill definition with the SKILL.md stereotype.
@@ -587,8 +625,8 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **EXAMPLE:** Add a new Cancel button invokes newEnhancement(), which refers to create-new-work-item(); AGENTS.md selects manage-work-item-gitlab, whose Create New Work Item section performs the GitLab procedure.
 
 - **RULE: RULE-26** Declared relationships and request-triggered selection have valid uses
-  - **SYNOPSIS:** The model distinguishes exact Agent dependencies, sibling composition, AGENTS.md substitution, direct skill-to-skill coupling, and request-scoped selection.
-  - **EXAMPLE:** Dev Coder names careful-coding, Work Item Coordinator composes two work-item peers, manage-work-item-* uses injection, complete-work-item-feature-branch names create-pull-request, and a structural-search request selects ast-grep only for that request.
+  - **SYNOPSIS:** The model distinguishes exact Agent dependencies, sibling-set loading, organizational containment, AGENTS.md substitution, direct skill-to-skill coupling, and request-scoped selection.
+  - **EXAMPLE:** Dev Coder names careful-coding, Work Item Coordinator loads two work-item peers, Resource Coordination contains agent-claim, manage-work-item-* uses injection, complete-work-item-feature-branch names create-pull-request, and a structural-search request selects ast-grep only for that request.
 
 - **RULE: RULE-51** The four skill use cases remain distinct
   - **SYNOPSIS:** The method separates unconditional exact-name loading, conditional exact-name loading, procedure mapping through AGENTS.md, and request-triggered selection.
@@ -606,7 +644,72 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **SYNOPSIS:** In declared relationships, a regular line means procedure-name reference, an open diamond means exact skill-name reference, and the dotted form means the reference is conditional. Only a dotted class reference carries text, and that text states the condition.
   - **EXAMPLE:** The label “when the user requests TDD” on DevCoder o..> test-driven-development means that Dev Coder conditionally loads that exact named skill.
 
-## 14. Glossary
+## 14. Applied Methodology Skill Groups
+
+This section applies the reusable method to the established development-methodology skill groups. It contains the shared application boundary and navigation, while every group keeps its current and proposed diagrams in a separate document.
+
+### 14.1 Application Scope
+
+Every group document contains:
+
+- a Current Design class diagram of the Agent, AGENTS.md, and SKILL.md relationships;
+- a Proposed Design class diagram that applies the recommendations while retaining the same relationship view;
+- the current SKILL.md headings that act as procedure boundaries in that view;
+- one recommendation for every current skill whose primary home is that group; and
+- any proposed skill extractions assigned to that group.
+
+The seven group documents cover forty-one current skills. The proposed designs retain those responsibilities and add two extracted Concurrent Tasking skills, producing forty-three proposed primary skill packages. Each skill has one primary group. A repeated skill outside its primary group is marked Cross-group.
+
+The current diagrams describe the current definitions. The proposed diagrams visualize possible definition improvements described by the recommendations. Neither a proposed diagram nor a recommendation changes a skill or claims that a recommended interface already exists.
+
+Each recommendation uses one or both improvement forms: a clearer operation-shaped skill name, or procedure headings that give invokers and alternative implementations consistent interface vocabulary. Keep the skill name means that only heading changes are recommended.
+
+### 14.2 Applied Model Legend
+
+The relationship, node, member, containment, and display-label conventions come from the reusable method above. This application adds only the conventions needed to compare current definitions with proposed improvements:
+
+- A Current Design uses exact current skill names and procedure members derived from current headings. A generic current heading such as Workflow remains workflow() in that view.
+- A Proposed Design uses the recommended skill names and procedure headings.
+- A gold SKILL.md node has a proposed skill-name change. Its renamed-from member records the current exact name.
+- A blue SKILL.md node is a proposed skill extracted from part of a current skill. Its extracted-from member records the source skill.
+- A neutral SKILL.md node keeps its current skill name while its method-like members show proposed procedure headings.
+- A Cross-group node repeats a skill whose primary organizational home is another group.
+- A repeated gold or blue Cross-group node represents the same rename or extraction shown in the primary group, not another recommendation.
+- AGENTS.md procedure-family labels and relationship endpoints use the vocabulary for the design state being shown.
+
+### 14.3 Group Designs
+
+- [Baseline Development](skill-groups/baseline-development.md)
+- [Project Setup](skill-groups/project-setup.md)
+- [Documentation Methodology](skill-groups/documentation-methodology.md)
+- [Backlog Management](skill-groups/backlog-management.md)
+- [Concurrent Tasking](skill-groups/concurrent-tasking.md)
+- [Direct Main Delivery](skill-groups/direct-main-delivery.md)
+- [Review And Verification](skill-groups/review-and-verification.md)
+
+### 14.4 Application Definition Of Good
+
+- **RULE: RULE-56** Each established skill group has independent current and proposed designs
+  - **SYNOPSIS:** A reader can inspect one responsibility boundary and compare its current and recommended organization without loading the other six groups.
+  - **EXAMPLE:** Concurrent Tasking contains paired diagrams for resource coordination and feature-branch delivery without repeating the Backlog Management provider matrix.
+
+- **RULE: RULE-57** Every current primary skill receives one source-backed improvement recommendation
+  - **SYNOPSIS:** A recommendation either improves the skill name or introduces procedure headings that can become stable interface vocabulary.
+  - **EXAMPLE:** create-gitlab-work-item keeps its current name but receives a proposed Create Work Item heading because its current entry procedure is only named Workflow.
+
+- **RULE: RULE-58** Current and recommended vocabulary remain visibly separate
+  - **SYNOPSIS:** Current Design shows current names and headings, while Proposed Design shows the vocabulary recommended by the table.
+  - **EXAMPLE:** The Backlog Management current diagram shows workflow() for create-gitlab-work-item, while its proposed diagram shows create-work-item().
+
+- **RULE: RULE-59** Every proposed skill-name change is identifiable by color and text
+  - **SYNOPSIS:** A gold node distinguishes a proposed name from unchanged names, and renamed-from preserves the current identity for readers who do not rely on color.
+  - **EXAMPLE:** The proposed Concurrent Tasking diagram highlights integrate-agent-work and records renamed-from agent-work-merge inside the same node.
+
+- **RULE: RULE-60** Every proposed skill extraction identifies its source and primary group
+  - **SYNOPSIS:** A blue node distinguishes a new extracted package from a rename, and extracted-from preserves the current source boundary.
+  - **EXAMPLE:** set-solo-mode and set-multitask-mode are primary Concurrent Tasking skills and appear as Cross-group dependencies in Backlog Management.
+
+## 15. Glossary
 
 The glossary summarizes concepts after the examples have established them.
 
@@ -629,25 +732,27 @@ The glossary summarizes concepts after the examples have established them.
 | Injected Skill | The Injectable Skill selected through AGENTS.md for one procedure in an effective project configuration. | manage-work-item-gitlab is the Injected Skill when AGENTS.md binds it to manage-work-item-*. |
 | Skills injection | The AGENTS.md selection that links an abstract skill family and procedure to one concrete SKILL.md. | When create-new-work-item() is needed, load manage-work-item-gitlab. |
 | Request-triggered skill selection | Selection caused by an explicit skill name or marker in the request, or by a match between the request and the skill’s declared purpose. It does not require an Agent-definition reference or AGENTS.md binding. | A structural-search request selects ast-grep for the current request. |
-| Peer Skill | One of several sibling SKILL.md files that divide a domain into complementary responsibilities and can be loaded together by a composition owner. A Peer Skill does not need to name another sibling. | Work Item Coordinator loads work-item-base and work-item-dispatch. |
-| Skill composition owner | The Agent definition or AGENTS.md guidance that declares which complementary Peer Skills are loaded together. | Work Item Watchdog loads work-item-base and work-item-monitor. |
-| Direct Peer Skill reference | An exact-name dependency declared by one SKILL.md on another complementary SKILL.md. It is stronger coupling than having a common Agent or AGENTS.md composition owner. | complete-work-item-feature-branch names create-pull-request. |
+| Peer Skill | One of several sibling SKILL.md files that divide a domain into complementary responsibilities and can be loaded together by a sibling-set loader. A Peer Skill does not need to name another sibling. | Work Item Coordinator loads work-item-base and work-item-dispatch. |
+| Sibling-set loader | The Agent definition or AGENTS.md guidance that declares which complementary Peer Skills are loaded together. | Work Item Watchdog loads work-item-base and work-item-monitor. |
+| Direct Peer Skill reference | An exact-name dependency declared by one SKILL.md on another complementary SKILL.md. It is stronger coupling than having a common Agent or AGENTS.md sibling-set loader. | complete-work-item-feature-branch names create-pull-request. |
 | Exact-name reference | An open-diamond arrow from a node that knows a skill’s exact name to that SKILL.md. | DevCoder o--> careful-coding. |
 | Procedure-name reference | A regular arrow from an invoker to the procedure it knows without naming the implementing SKILL.md. | BacklogManager --> manage-work-item. |
 | Conditional reference | A dotted regular or open-diamond arrow whose label states the loading condition. | DevCoder o..> test-driven-development, labeled “when the user requests TDD.” |
 | Agent class view | A diagram node that represents the Agent behavior, expectations, and dependencies relevant to the analysis without asserting a runtime class. | Coding Agent names careful-coding and refers to Deliver Workitem. |
-| Skill hierarchy | An organizational view of skill families, responsibilities, procedures, composition owners, and dependencies. It does not by itself assert software inheritance. | work-item-base, work-item-dispatch, and work-item-monitor form a sibling family used by two Agent compositions. |
+| Skill group | A primary organizational boundary for skills that share a responsibility. The group does not itself load or invoke its contained skills. | Concurrent Tasking is the primary group for the coordination skills. |
+| Skill subgroup | A meaningful responsibility contained inside a larger skill group. | Resource Coordination is a subgroup of Concurrent Tasking. |
+| Containment relationship | A solid-diamond line from a skill group or subgroup to its primary contained subgroup or skill. It is not a loading or invocation reference. | Resource Coordination *-- agent-claim places agent-claim in that subgroup. |
+| Mermaid display label | The visible analysis identity used when Mermaid requires a different internal class identifier. | The internal manage-work-item identifier displays manage-work-item-*. |
+| Skill hierarchy | An organizational view of skill groups, families, responsibilities, procedures, sibling-set loaders, and dependencies. It does not by itself assert software inheritance. | work-item-base, work-item-dispatch, and work-item-monitor form a sibling family used by two Agent sibling sets. |
 | Agent superclass stand-in | A diagram-compression node representing several Agents that share the same relationship. It does not assert inheritance. | Structured Artifact Reviewers represents reviewers that all name review-structured-artifact. |
 | Empty SKILL.md node | A concrete skill class with no displayed procedure or reference members, meaning that the relationship loads the whole skill. | careful-coding under Dev Coder. |
 | Procedure member | A method-like diagram label for a procedure described by the skill’s written instructions. | +create-new-work-item() in manage-work-item-gitlab when the relationship focuses on its Create New Work Item instructions. |
 
-## Applied Models
-
-The reusable method ends here. Current applications to the established skill groups are maintained as independent documents under [Object-Oriented Skill Group Models](object-oriented-skill-group-models.md).
-
 ## Authoritative Inputs
 
-- The user-supplied object-oriented analysis and vocabulary corrections for this document.
+- The user-supplied object-oriented analysis, vocabulary corrections, containment convention, and methodology skill-group organization for this document.
+- The forty-one SKILL.md files and conceptual Agent definitions linked from the seven group documents.
+- [Bundled Skill Inventory](../README.md)
 - [Agentic Configuration](agentic-configuration.html)
 - [Agent Skill Architecture](skills-modularization.html)
 - [Work-Item Provider And Completion Contracts](work-item-provider-and-completion-contracts.md)

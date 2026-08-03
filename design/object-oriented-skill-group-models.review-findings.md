@@ -2,7 +2,8 @@
 
 ## Scope
 
-- Target: design/object-oriented-skill-group-models.md
+- Target: design/object-oriented-agent-and-skill-model.md, Section 14 Applied Methodology Skill Groups
+- Compatibility index: design/object-oriented-skill-group-models.md
 - Linked design set: the seven Markdown files under design/skill-groups
 - Completed checklist: design/object-oriented-skill-group-models.review-checklist-structured.md
 - Review basis: the retained user directions, the reusable object-oriented analysis method, forty-one current SKILL.md files, the relevant conceptual Agent definitions, the proposed name and heading recommendations, and the two proposed dispatch-mode extractions
@@ -14,6 +15,8 @@ No material findings.
 ## Verified Results
 
 - The applied model covers forty-one unique current primary skills and forty-three proposed primary packages across seven independent group documents, with one current and one proposed diagram in each.
+- The reusable analysis owns the application scope, current-versus-proposed legend, group navigation, and application Definition Of Good; the former hub is a compatibility index only.
+- Solid-diamond containment is defined once in the reusable method and remains distinct from loading, invocation, and exact-name references.
 - Every current primary skill has one source-backed recommendation for a clearer skill name, interface-oriented headings, or both.
 - Current diagram members remain distinct from the recommended vocabulary shown in Proposed Design.
 - Sixteen distinct skill-name changes are highlighted with the same gold style and identified textually with renamed-from.
