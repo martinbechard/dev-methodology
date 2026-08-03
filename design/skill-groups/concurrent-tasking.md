@@ -2,7 +2,7 @@
 
 ## Scope
 
-Concurrent Tasking encloses Resource Coordination and Feature Branch And Worktrees. codex-workitem-coordination coordinates the enclosing workflow while Persistence remains an independent injected provider.
+Concurrent Tasking directly contains codex-workitem-coordination and nests the Resource Coordination and Feature Branch And Worktrees skill groups. Its complete skill set therefore includes the direct skill plus every skill in those two nested groups. This containment is for comprehension and does not mean that the direct skill uses every nested skill. Persistence remains an independent injected provider.
 
 The reusable notation and applied-model legend are defined in [Object-Oriented Analysis Of Agents And Skills](../object-oriented-agent-and-skill-model.md#14-applied-methodology-skill-groups).
 
@@ -29,11 +29,11 @@ classDiagram
     }
 
     class ResourceCoordination {
-        <<Skill subgroup>>
+        <<Skill group>>
     }
 
     class FeatureBranchAndWorktrees {
-        <<Skill subgroup>>
+        <<Skill group>>
     }
 
     namespace ConcurrentTaskingSkills {
@@ -150,7 +150,7 @@ classDiagram
     complete-work-item-feature-branch o..> create-pull-request : for GitHub pull-request publication
 ```
 
-The solid-diamond lines express only containment. Concurrent Tasking contains the coordinating skill and both required subgroups; Resource Coordination and Feature Branch And Worktrees contain their current skills.
+The solid-diamond lines express only set containment. Concurrent Tasking directly contains the coordinating skill and nests two other skill groups. Resource Coordination and Feature Branch And Worktrees directly contain their current skills, so those skills also belong to the complete Concurrent Tasking set. No containment line means that one skill loads, invokes, or depends on another.
 
 The regular arrows expose procedure-name dependencies. codex-workitem-coordination asks for provider management, resource coordination, and delivery through project-selected procedures. AGENTS.md makes those selections by exact skill name and separately selects the claim-helper transport.
 
@@ -181,11 +181,11 @@ classDiagram
     }
 
     class ResourceCoordination {
-        <<Skill subgroup>>
+        <<Skill group>>
     }
 
     class FeatureBranchAndWorktrees {
-        <<Skill subgroup>>
+        <<Skill group>>
     }
 
     namespace ConcurrentTaskingSkills {

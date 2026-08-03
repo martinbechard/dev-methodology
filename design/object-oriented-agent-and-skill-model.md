@@ -282,15 +282,23 @@ The work-item sibling names and their displayed members are analysis vocabulary 
 
 ### 4.2 Skill Groups And Containment
 
-A skill group organizes skills that share a responsibility boundary. A subgroup exposes a meaningful responsibility inside a larger group. The group model records the primary organizational home of each skill without implying that the group itself loads or invokes that skill.
+A skill group is a named set used to organize skills for comprehension. It collects skills that contribute to one methodology capability or setup option, whether those skills are listed directly in the group or reached through a nested skill group.
 
-- **RULE: RULE-54** A solid diamond represents organizational containment
-  - **SYNOPSIS:** The solid diamond stays on the skill group or subgroup that contains the referenced subgroup or skill.
-  - **EXAMPLE:** Concurrent Tasking contains Resource Coordination, and Resource Coordination contains agent-claim.
+A nested skill group is the same kind of object as its parent. The word subgroup describes only its position inside that parent; it does not introduce a second kind of group. For any skill group:
 
-- **RULE: RULE-55** Containment is not a loading relationship
-  - **SYNOPSIS:** A containment line records primary placement only. An Agent, AGENTS.md, or SKILL.md still needs a separate regular or open-diamond reference when it invokes a procedure or names a skill.
-  - **EXAMPLE:** Resource Coordination can contain agent-claim while a separate AGENTS.md reference selects agent-claim as the project implementation.
+- direct skills are the skills listed immediately in that group;
+- nested skill groups are smaller named sets included by that group; and
+- the group’s complete skill set is its direct skills plus the complete skill sets of all its nested groups.
+
+This organization answers “Which skills should I consider part of this capability?” It does not answer “Which skill loads or invokes another skill?”
+
+- **RULE: RULE-54** A solid diamond represents set containment
+  - **SYNOPSIS:** A solid diamond from a skill group to a SKILL.md records direct membership. A solid diamond from one skill group to another records that the parent includes the child’s complete skill set.
+  - **EXAMPLE:** Concurrent Tasking directly contains codex-workitem-coordination and includes the Resource Coordination skill group, whose direct skills include agent-claim.
+
+- **RULE: RULE-55** Containment does not imply use or dependency
+  - **SYNOPSIS:** A containment line only builds the organizational set. An Agent, AGENTS.md, or SKILL.md still needs a separate regular or open-diamond reference when it invokes a procedure or names a skill.
+  - **EXAMPLE:** Concurrent Tasking includes every Resource Coordination skill for comprehension, but that does not mean codex-workitem-coordination loads agent-claim or that every Concurrent Tasking skill uses it.
 
 ```mermaid
 classDiagram
@@ -301,18 +309,23 @@ classDiagram
     }
 
     class ResourceCoordination {
-        <<Skill subgroup>>
+        <<Skill group>>
+    }
+
+    class codex-workitem-coordination {
+        <<SKILL.md>>
     }
 
     class agent-claim {
         <<SKILL.md>>
     }
 
+    ConcurrentTasking *-- codex-workitem-coordination
     ConcurrentTasking *-- ResourceCoordination
     ResourceCoordination *-- agent-claim
 ```
 
-The solid diamonds point from each container to what it contains. They do not say that Concurrent Tasking loads Resource Coordination or that Resource Coordination loads agent-claim. Loading and invocation remain visible through the reference forms introduced in Section 2.
+Concurrent Tasking has one direct skill in this view: codex-workitem-coordination. It also includes the nested Resource Coordination set, so agent-claim belongs to the complete Concurrent Tasking set through that nesting. The solid diamonds do not say that codex-workitem-coordination loads agent-claim or that Resource Coordination loads anything. Loading and invocation remain visible through the reference forms introduced in Section 2.
 
 ## 5. From User Request To Skill Interface
 
@@ -613,7 +626,7 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **EXAMPLE:** The diagrams distinguish Dev Coder’s direct careful-coding reference from Backlog Manager’s procedure-name path through AGENTS.md to manage-work-item-gitlab.
 
 - **RULE: RULE-53** Class views make skill organization reviewable
-  - **SYNOPSIS:** A reader can see which skills own shared context, which own specialized procedures, where sibling sets are loaded, and where skills have their primary organizational home.
+  - **SYNOPSIS:** A reader can see which skills own shared context, which own specialized procedures, where sibling sets are loaded, which skills are direct group members, and which complete skill sets are included through nesting.
   - **EXAMPLE:** The analysis shows work-item-base shared by two Agent sibling sets while work-item-dispatch and work-item-monitor remain specialized siblings; it also shows agent-claim contained by Resource Coordination without deciding in advance that the skill should be split.
 
 - **RULE: RULE-24** The diagrams distinguish AGENTS.md from SKILL.md
@@ -625,7 +638,7 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **EXAMPLE:** Add a new Cancel button invokes newEnhancement(), which refers to create-new-work-item(); AGENTS.md selects manage-work-item-gitlab, whose Create New Work Item section performs the GitLab procedure.
 
 - **RULE: RULE-26** Declared relationships and request-triggered selection have valid uses
-  - **SYNOPSIS:** The model distinguishes exact Agent dependencies, sibling-set loading, organizational containment, AGENTS.md substitution, direct skill-to-skill coupling, and request-scoped selection.
+  - **SYNOPSIS:** The model distinguishes exact Agent dependencies, sibling-set loading, skill-group set containment, AGENTS.md substitution, direct skill-to-skill coupling, and request-scoped selection.
   - **EXAMPLE:** Dev Coder names careful-coding, Work Item Coordinator loads two work-item peers, Resource Coordination contains agent-claim, manage-work-item-* uses injection, complete-work-item-feature-branch names create-pull-request, and a structural-search request selects ast-grep only for that request.
 
 - **RULE: RULE-51** The four skill use cases remain distinct
@@ -655,10 +668,10 @@ Every group document contains:
 - a Current Design class diagram of the Agent, AGENTS.md, and SKILL.md relationships;
 - a Proposed Design class diagram that applies the recommendations while retaining the same relationship view;
 - the current SKILL.md headings that act as procedure boundaries in that view;
-- one recommendation for every current skill whose primary home is that group; and
+- one recommendation for every current skill whose primary direct group appears at the top level or as a nested group in that document; and
 - any proposed skill extractions assigned to that group.
 
-The seven group documents cover forty-one current skills. The proposed designs retain those responsibilities and add two extracted Concurrent Tasking skills, producing forty-three proposed primary skill packages. Each skill has one primary group. A repeated skill outside its primary group is marked Cross-group.
+The seven group documents are top-level comprehension views covering forty-one current skills. Concurrent Tasking also contains two nested skill groups inside its document. The proposed designs retain the forty-one responsibilities and add two extracted Concurrent Tasking skills, producing forty-three proposed skill packages. Each skill has one primary direct group, which can be a top-level group or a nested group. Membership inherited from a nested group does not assign the skill a second primary group. A repeated skill outside its primary direct group and its containing ancestors is marked Cross-group.
 
 The current diagrams describe the current definitions. The proposed diagrams visualize possible definition improvements described by the recommendations. Neither a proposed diagram nor a recommendation changes a skill or claims that a recommended interface already exists.
 
@@ -673,7 +686,7 @@ The relationship, node, member, containment, and display-label conventions come 
 - A gold SKILL.md node has a proposed skill-name change. Its renamed-from member records the current exact name.
 - A blue SKILL.md node is a proposed skill extracted from part of a current skill. Its extracted-from member records the source skill.
 - A neutral SKILL.md node keeps its current skill name while its method-like members show proposed procedure headings.
-- A Cross-group node repeats a skill whose primary organizational home is another group.
+- A Cross-group node repeats a skill outside its primary direct group and outside any parent group that includes it through nesting.
 - A repeated gold or blue Cross-group node represents the same rename or extraction shown in the primary group, not another recommendation.
 - AGENTS.md procedure-family labels and relationship endpoints use the vocabulary for the design state being shown.
 
@@ -693,7 +706,7 @@ The relationship, node, member, containment, and display-label conventions come 
   - **SYNOPSIS:** A reader can inspect one responsibility boundary and compare its current and recommended organization without loading the other six groups.
   - **EXAMPLE:** Concurrent Tasking contains paired diagrams for resource coordination and feature-branch delivery without repeating the Backlog Management provider matrix.
 
-- **RULE: RULE-57** Every current primary skill receives one source-backed improvement recommendation
+- **RULE: RULE-57** Every current skill receives one source-backed improvement recommendation
   - **SYNOPSIS:** A recommendation either improves the skill name or introduces procedure headings that can become stable interface vocabulary.
   - **EXAMPLE:** create-gitlab-work-item keeps its current name but receives a proposed Create Work Item heading because its current entry procedure is only named Workflow.
 
@@ -705,9 +718,9 @@ The relationship, node, member, containment, and display-label conventions come 
   - **SYNOPSIS:** A gold node distinguishes a proposed name from unchanged names, and renamed-from preserves the current identity for readers who do not rely on color.
   - **EXAMPLE:** The proposed Concurrent Tasking diagram highlights integrate-agent-work and records renamed-from agent-work-merge inside the same node.
 
-- **RULE: RULE-60** Every proposed skill extraction identifies its source and primary group
+- **RULE: RULE-60** Every proposed skill extraction identifies its source and primary direct group
   - **SYNOPSIS:** A blue node distinguishes a new extracted package from a rename, and extracted-from preserves the current source boundary.
-  - **EXAMPLE:** set-solo-mode and set-multitask-mode are primary Concurrent Tasking skills and appear as Cross-group dependencies in Backlog Management.
+  - **EXAMPLE:** set-solo-mode and set-multitask-mode are direct members of Concurrent Tasking and appear as Cross-group dependencies in Backlog Management.
 
 ## 15. Glossary
 
@@ -739,9 +752,10 @@ The glossary summarizes concepts after the examples have established them.
 | Procedure-name reference | A regular arrow from an invoker to the procedure it knows without naming the implementing SKILL.md. | BacklogManager --> manage-work-item. |
 | Conditional reference | A dotted regular or open-diamond arrow whose label states the loading condition. | DevCoder o..> test-driven-development, labeled “when the user requests TDD.” |
 | Agent class view | A diagram node that represents the Agent behavior, expectations, and dependencies relevant to the analysis without asserting a runtime class. | Coding Agent names careful-coding and refers to Deliver Workitem. |
-| Skill group | A primary organizational boundary for skills that share a responsibility. The group does not itself load or invoke its contained skills. | Concurrent Tasking is the primary group for the coordination skills. |
-| Skill subgroup | A meaningful responsibility contained inside a larger skill group. | Resource Coordination is a subgroup of Concurrent Tasking. |
-| Containment relationship | A solid-diamond line from a skill group or subgroup to its primary contained subgroup or skill. It is not a loading or invocation reference. | Resource Coordination *-- agent-claim places agent-claim in that subgroup. |
+| Skill group | A named set used to organize skills for comprehension. Its complete skill set contains its direct skills plus every skill in its nested skill groups. The group does not itself load or invoke those skills. | Concurrent Tasking directly contains codex-workitem-coordination and includes the skills nested under Resource Coordination. |
+| Nested skill group | A skill group included inside another skill group. It is the same kind of object as its parent; subgroup is only a relative description of its position. | Resource Coordination is a skill group nested inside Concurrent Tasking. |
+| Direct group membership | A solid-diamond line from a skill group to a SKILL.md that places the skill immediately in that group. | Resource Coordination *-- agent-claim makes agent-claim a direct member of Resource Coordination. |
+| Nested set containment | A solid-diamond line from a parent skill group to a child skill group. The parent’s complete skill set includes the child’s complete skill set. It is not a loading, invocation, or dependency reference. | Concurrent Tasking *-- Resource Coordination includes Resource Coordination and all of its skills in the Concurrent Tasking comprehension view. |
 | Mermaid display label | The visible analysis identity used when Mermaid requires a different internal class identifier. | The internal manage-work-item identifier displays manage-work-item-*. |
 | Skill hierarchy | An organizational view of skill groups, families, responsibilities, procedures, sibling-set loaders, and dependencies. It does not by itself assert software inheritance. | work-item-base, work-item-dispatch, and work-item-monitor form a sibling family used by two Agent sibling sets. |
 | Agent superclass stand-in | A diagram-compression node representing several Agents that share the same relationship. It does not assert inheritance. | Structured Artifact Reviewers represents reviewers that all name review-structured-artifact. |
