@@ -150,10 +150,13 @@ classDiagram
             +review-code-comments()
         }
 
-        class discover-code-scope:::renamed {
+        class code-discovery {
             <<SKILL.md>>
             <<Agent Skill>>
-            renamed-from code-discovery
+            +discover-code-context(requested-work)
+            +determine-change-scope(discovered-context)
+            +reference contract-authority-rules
+            +reference discovery-boundaries
         }
 
         class test-driven-development {
@@ -213,7 +216,7 @@ classDiagram
 
     DevCoder o--> careful-coding
     DevCoder o--> code-comments
-    DevCoder o--> discover-code-scope
+    DevCoder o--> code-discovery
     DevCoder o--> explain-code-fix
     DevCoder o..> organise-project-files : when implementation creates a project file or directory
     DevCoder o..> test-driven-development : when executable tests should guide implementation
@@ -241,7 +244,7 @@ These skills are primarily exact-name Agent Skills. They do not need to become i
 | --- | --- | --- | --- |
 | careful-coding | Think Before Coding, Preserve Authorized Contracts, and Goal-Driven Execution contain actions; Simplicity First and Surgical Changes are guidance. | Keep the skill name. Rename the action headings to Confirm Work Before Coding, Validate Authorized Contract, and Execute Goal-Driven Loop. | The new headings distinguish callable procedures from guidance without pretending that careful-coding itself is one procedure. |
 | code-comments | Structured Comment Writing, Mandatory Code Artifact Header, Public Construct Documentation, Change Workflow, and Review Evidence mix actions and reference rules. | Keep the skill name. Use Write Structured Comments, Add Code Artifact Header, Document Public Constructs, and Review Code Comments as operation headings. | The package owns several related procedures, so named operations are clearer than treating code-comments as one call. |
-| code-discovery | One Workflow establishes the smallest evidence-backed change or review scope. | Rename the skill to discover-code-scope. | The proposed name states the result of the single cohesive procedure and is more precise than the broad subject code-discovery. |
+| code-discovery | Workflow steps 1 through 5 discover code context. Workflow step 6 records the evidence and resulting scope decision. Contract Authority and Boundaries constrain both operations. | Keep the skill name. Introduce Discover Code Context and Determine Change Scope as operation headings; retain Contract Authority and Boundaries as reference sections. | Discovery gathers repository evidence, while scope determination interprets that evidence into the smallest justified implementation or review boundary. The two related procedures belong in one package but should not be collapsed into one scope-only name. |
 | test-driven-development | Workflow contains the red-green-refactor procedure; Boundaries constrains it. | Keep the established skill name. Rename Workflow to Run Red-Green-Refactor Loop. | The practice name remains recognizable, while the heading gives callers a specific procedure name. |
 | structured-design | Output And Artifact Modes, the design rules, Pass Sequence, and Self-Review together define authoring and checking behavior. | Keep the skill name. Introduce Create Structured Design and Self-Review Structured Design as the two operation headings. | The remaining sections can stay reference material that those two procedures consult. |
 | structured-explanation | Core Model through Formatting defines one explanation procedure, while the other sections constrain it. | Keep the skill name. Introduce Create Structured Explanation as the operation heading. | A named entry procedure lets Peer Skills request an explanation without treating every reference section as a separate operation. |

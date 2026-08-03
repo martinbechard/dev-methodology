@@ -258,10 +258,13 @@ classDiagram
         +review-code-comments()
     }
 
-    class discover-code-scope:::renamed {
+    class code-discovery {
         <<SKILL.md>>
         <<Cross-group>>
-        renamed-from code-discovery
+        +discover-code-context(requested-work)
+        +determine-change-scope(discovered-context)
+        +reference contract-authority-rules
+        +reference discovery-boundaries
     }
 
     class organise-project-files {
@@ -307,7 +310,7 @@ classDiagram
     DevVerifier o..> trace-code-execution : when an outcome must be connected to source control flow
     DevVerifier o..> review-prompt-contracts : when verification depends on a model-facing evaluator
 
-    DevRuntimeDiagnostician o--> discover-code-scope
+    DevRuntimeDiagnostician o--> code-discovery
     DevRuntimeDiagnostician o--> test-strategy
     DevRuntimeDiagnostician o--> analyze-root-cause
     DevRuntimeDiagnostician o--> trace-code-execution
