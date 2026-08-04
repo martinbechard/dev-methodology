@@ -78,7 +78,29 @@ For example, verify-document-page stays empty because the example SKILL.md descr
 
 When a visible class name contains characters that Mermaid cannot use in an identifier, the diagram uses a separate internal identifier and quoted display label. The display label is the analysis identity; the internal identifier exists only to render the diagram.
 
-### 2.2 Agent Loads A Skill By Exact Name
+### 2.2 Showing An Agent In A Diagram
+
+An Agent node represents one agent definition rather than one running task. The native definition format depends on the harness. Codex stores an agent in a TOML file whose properties include its runtime name, description, developer instructions, model settings, and enabled harness skills. Claude Code stores an agent in a Markdown file whose YAML frontmatter carries metadata such as name, description, skills, and model, while the Markdown body carries the instructions.
+
+The diagram uses the portable agent identity even when a harness changes its runtime spelling. For example, the portable dev-coder identity is rendered in the Codex file dev-coder.toml with the runtime name dev_coder, while the Claude Code file dev-coder.md retains the name dev-coder.
+
+```mermaid
+classDiagram
+    class dev-coder {
+        <<Agent>>
+        +accepted-work-item
+        +candidate-handoff
+        +implement-work-item()
+        +verify-candidate()
+    }
+    note for dev-coder "Codex: dev-coder.toml, name dev_coder; Claude Code: dev-coder.md, name dev-coder"
+```
+
+The Agent stereotype distinguishes an agent definition from a SKILL.md or AGENTS.md node. Function members summarize procedures or responsibilities expressed by the agent instructions; they are not literal functions in the TOML or Markdown file. Data members summarize inputs, outputs, constraints, or other information relevant to the relationship being analyzed. The displayed dev-coder members are analysis vocabulary derived from its work-item input, implementation workflow, verification responsibility, and candidate handoff.
+
+Show only the Agent members needed by the diagram. Leave the member area empty when the relationship needs only the Agent identity. Model the native TOML or Markdown file as a separate node only when the analysis concerns generation, serialization, or adapter ownership rather than Agent and skill relationships.
+
+### 2.3 Agent Loads A Skill By Exact Name
 
 An Agent Skill is a SKILL.md that an Agent definition references by exact skill name.
 
@@ -111,7 +133,7 @@ The open diamond means that Documentation Agent knows the exact skill name. The 
 
 Documentation Agent and verify-document-page are analysis vocabulary for this example. They do not assert that those definitions exist in the repository.
 
-### 2.3 Agent Conditionally Loads A Skill By Exact Name
+### 2.4 Agent Conditionally Loads A Skill By Exact Name
 
 A conditional Agent Skill is still named directly by the Agent definition, but the reference applies only when its condition is satisfied.
 
@@ -140,7 +162,7 @@ The open diamond still means exact-name knowledge. The dotted line means conditi
 
 The test-driven-development member area is empty because the skill describes one overall TDD procedure. The dotted relationship still shows when that complete skill is loaded.
 
-### 2.4 Agent Uses A Procedure Mapped Through AGENTS.md
+### 2.5 Agent Uses A Procedure Mapped Through AGENTS.md
 
 An Injected Skill is selected through AGENTS.md. The Agent instruction says what must be done without naming the skill that will do it. AGENTS.md names the skill to use for that project. When the Agent instruction, AGENTS.md, and the selected skill use the same procedure wording, that wording forms the Skill interface in this analogy.
 
@@ -202,7 +224,7 @@ The regular arrow shows that the Agent instruction asks for a new work item with
 
 The manage-work-item-* node is diagram shorthand for the work-item skill selected by AGENTS.md. It is not a literal skill name or a line that would appear in an Agent definition. The concrete work-item skill names are analysis vocabulary for this example; they do not assert that those skill definitions already exist in the repository.
 
-### 2.5 A Request Selects A Skill
+### 2.6 A Request Selects A Skill
 
 A request can select an available skill without a declared reference from an Agent definition or AGENTS.md.
 
@@ -395,7 +417,7 @@ AGENTS.md links a procedure name to a concrete SKILL.md.
   - **SYNOPSIS:** The Agent retains newEnhancement() and its create-new-work-item() reference when project setup chooses another matching implementation.
   - **EXAMPLE:** Changing the AGENTS.md binding from manage-work-item-gitlab to manage-work-item-file does not change newEnhancement().
 
-Section 2.4 shows this binding as a regular arrow from Backlog Manager to the manage-work-item-* procedure family and an open-diamond arrow from AGENTS.md to manage-work-item-gitlab. The first reference preserves procedure-only knowledge in the Agent. The second reference records the exact skill name selected by project guidance.
+Section 2.5 shows this binding as a regular arrow from Backlog Manager to the manage-work-item-* procedure family and an open-diamond arrow from AGENTS.md to manage-work-item-gitlab. The first reference preserves procedure-only knowledge in the Agent. The second reference records the exact skill name selected by project guidance.
 
 Skills injection is an instruction relationship. The model does not require a compiled interface object or a software dependency-injection container.
 
@@ -749,5 +771,8 @@ The glossary summarizes concepts after the examples have established them.
 - [Agent Claim](../skills/agent-claim/SKILL.md)
 - [Review Structured Artifact](../skills/review-structured-artifact/SKILL.md)
 - [Dev Coder](../agents/roles/dev-activities/dev-coder.role.yaml)
+- [Generated Codex Dev Coder](../generated/adapters/codex/agents/dev-coder.toml)
+- [Generated Claude Code Dev Coder](../generated/adapters/claude/agents/dev-coder.md)
+- [Generic Agent Definitions Source](generic-agent-definitions-source.html)
 - [Mermaid Class Diagram Relationships](https://mermaid.js.org/syntax/classDiagram.html)
 - [Mermaid Sequence Diagram Messages](https://mermaid.js.org/syntax/sequenceDiagram)
