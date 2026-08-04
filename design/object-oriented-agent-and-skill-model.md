@@ -28,7 +28,7 @@ The method concludes with an applied overview of the methodology skill groups. T
   - **BECAUSE:** Skills are loaded independently, so their instructions can clash when their relationships and responsibilities are unclear.
   - **BECAUSE:** Agents reference some skills directly, while project directives in AGENTS.md map other procedure names to specific skill implementations.
   - **BECAUSE:** Skills hide procedure details behind shared procedure names in a way that resembles object-oriented polymorphism.
-  - **EXAMPLE:** Class designs show Dev Coder naming careful-coding and conditionally naming test-driven-development when the user requests TDD, while Backlog Manager invokes create-new-work-item() through an AGENTS.md mapping that can select a file-backed or GitLab-backed implementation. The independently loaded dependencies and interchangeable procedure providers become visible instead of remaining hidden in separate files.
+  - **EXAMPLE:** Class designs show Dev Coder naming fix-explanation and conditionally naming test-driven-development when the user requests TDD, while Backlog Manager invokes create-new-work-item() through an AGENTS.md mapping that can select a file-backed or GitLab-backed implementation. The independently loaded dependencies and interchangeable procedure providers become visible instead of remaining hidden in separate files.
 
 - **GOAL: GOAL-2** Understand and improve skill organization
   - **SYNOPSIS:** The analysis compares skill responsibilities, procedure families, and dependencies so maintainable skill hierarchies can be designed.
@@ -51,30 +51,32 @@ An Agent Skill is a SKILL.md that an Agent definition references by exact skill 
 
 - **RULE: RULE-5** An Agent Skill is referenced by its exact skill name
   - **SYNOPSIS:** The Agent definition knows the exact skill identity and follows the procedures and instructions in the resolved SKILL.md.
-  - **EXAMPLE:** Dev Coder names careful-coding directly in its skill list.
+  - **EXAMPLE:** A Documentation Agent can name verify-document-page directly in its skill list.
 
 - **RULE: RULE-6** An unconditional Agent Skill applies to every execution of the Agent role
   - **SYNOPSIS:** An Agent definition lists the skill without a condition because that dependency belongs to every execution of the role.
-  - **EXAMPLE:** Dev Coder lists careful-coding without a condition so every Dev Coder execution applies it.
+  - **EXAMPLE:** A Documentation Agent can list verify-document-page without a condition so every execution applies it.
 
 ```mermaid
 classDiagram
     direction LR
 
-    class DevCoder {
+    class DocumentationAgent {
         <<Agent>>
-        +implementChange()
+        +writeDocumentation()
     }
 
-    class careful-coding {
+    class verify-document-page {
         <<SKILL.md>>
         <<Agent Skill>>
     }
 
-    DevCoder o--> careful-coding
+    DocumentationAgent o--> verify-document-page
 ```
 
-The open diamond means that Dev Coder knows the exact skill name. The solid line means that the reference is unconditional, so it needs no label. The empty careful-coding node means that Dev Coder loads the whole skill instead of selecting one displayed procedure.
+The open diamond means that Documentation Agent knows the exact skill name. The solid line means that the reference is unconditional, so it needs no label. The verify-document-page member area is empty because that example skill describes one procedure; repeating the operation as a function member would add no information.
+
+Documentation Agent and verify-document-page are analysis vocabulary for this example. They do not assert that those definitions exist in the repository.
 
 ### 2.2 Agent Conditionally Loads A Skill By Exact Name
 
@@ -102,6 +104,8 @@ classDiagram
 ```
 
 The open diamond still means exact-name knowledge. The dotted line means conditional loading, and the arrow label states the condition. Solid and dotted class references differ only in conditionality; both point from the referencing Agent to the named skill.
+
+The test-driven-development member area is empty because the skill describes one overall TDD procedure. The dotted relationship still shows when that complete skill is loaded.
 
 ### 2.3 Agent Uses A Procedure Mapped Through AGENTS.md
 
@@ -193,15 +197,17 @@ The use cases differ at their selection boundary:
 
 A SKILL.md node shows only what the relationship needs. Before adding a member, read the skill and make sure the label represents instructions that the skill actually contains.
 
+An empty SKILL.md node means that the skill describes a single procedure, so the skill identity already represents that operation.
+
 - Use the skill’s exact kebab-case name as the node name.
-- Leave the member area empty when the relationship loads the whole skill.
+- Leave the member area empty if the skill describes a single procedure.
 - Add a function member with parentheses only when the relationship focuses on a procedure described by the skill. The member is diagram shorthand for written instructions, not a claim that SKILL.md contains software code.
 - Add a data member without parentheses when exposed definitions, structures, states, rules, values, or other non-procedural information matter to the relationship.
 - If the skill does not clearly describe a procedure, leave that member out instead of inventing one.
 
 The plus sign means that a member is exposed to users of the skill. Parentheses distinguish a function member from a data member. A data member is not an outgoing reference to another object. Dependencies remain between whole Agent, AGENTS.md, or SKILL.md nodes because the complete referenced file is loaded into context.
 
-For example, careful-coding stays empty when Dev Coder loads the whole skill. The manage-work-item-gitlab node can show create-new-work-item() when the diagram focuses on its Create New Work Item instructions. A work-item interface can show work-item-definition without parentheses when that shared data structure matters to the relationship.
+For example, verify-document-page stays empty because the example SKILL.md describes one procedure. The manage-work-item-gitlab node can show create-new-work-item() when the skill exposes that function among other members. A work-item interface can show work-item-definition without parentheses when that shared data structure matters to the relationship.
 
 When a visible class name contains characters that Mermaid cannot use in an identifier, the diagram uses a separate internal identifier and quoted display label. The display label is the analysis identity; the internal identifier exists only to render the diagram. For example, manage-work-item is the internal identifier for the visible manage-work-item-* AGENTS.md node in Section 2.3.
 
@@ -527,7 +533,7 @@ An Agent can use named Agent Skills and Injected Skills together. A class view c
 
 - **RULE: RULE-14** An Agent class view records reusable expectations and dependencies
   - **SYNOPSIS:** The Agent node shows the behavior relevant to the analysis, the procedure names it invokes, and the Agent Skills it names.
-  - **EXAMPLE:** A coding-agent class can name careful-coding directly and invoke Deliver Workitem without naming the delivery SKILL.md.
+  - **EXAMPLE:** A coding-agent class can name fix-explanation directly and invoke Deliver Workitem without naming the delivery SKILL.md.
 
 - **RULE: RULE-15** Dependency views omit unrelated runtime state
   - **SYNOPSIS:** The class view shows the expectations and dispatch paths needed to understand skill use without modeling task values that do not change those relationships.
@@ -546,7 +552,7 @@ classDiagram
         +deliverAcceptedChange()
     }
 
-    class careful-coding {
+    class fix-explanation {
         <<SKILL.md>>
         <<Agent Skill>>
     }
@@ -564,12 +570,12 @@ classDiagram
         +host-state-decision-table
     }
 
-    CodingAgent o--> careful-coding
+    CodingAgent o--> fix-explanation
     CodingAgent --> DeliverWorkitem
     DeliverWorkitem o--> complete-work-item-feature-branch
 ```
 
-The Agent points directly to careful-coding because its definition names that skill. It points regularly to Deliver Workitem because it knows the procedure name. The AGENTS.md DII points by open diamond to the selected feature-branch skill.
+The Agent points directly to fix-explanation because its definition names that single-procedure skill. Its empty member area avoids repeating the procedure already identified by the operation-shaped skill name. The Agent points regularly to Deliver Workitem because it knows the procedure name. The AGENTS.md DII points by open diamond to the selected feature-branch skill.
 
 The diagram explains dependencies and dispatch. It does not require the harness to construct software classes or imply an inheritance relationship.
 
@@ -709,7 +715,7 @@ The glossary summarizes concepts after the examples have established them.
 | Mermaid display label | The visible analysis identity used when Mermaid requires a different internal class identifier. | The internal manage-work-item identifier displays manage-work-item-*. |
 | Skill hierarchy | An organizational view of skill groups, families, responsibilities, procedures, sibling-set loaders, and dependencies. It does not by itself assert software inheritance. | work-item-base, work-item-dispatch, and work-item-monitor form a sibling family used by two Agent sibling sets. |
 | Agent superclass stand-in | A diagram-compression node representing several Agents that share the same relationship. It does not assert inheritance. | Structured Artifact Reviewers represents reviewers that all name review-structured-artifact. |
-| Empty SKILL.md node | A concrete skill class with no displayed data or function members, meaning that the relationship loads the whole skill. | careful-coding under Dev Coder. |
+| Empty SKILL.md node | A concrete skill class with no displayed members because the SKILL.md describes one procedure and its identity already represents that operation. | verify-document-page under Documentation Agent. |
 
 ## Authoritative Inputs
 
@@ -721,7 +727,7 @@ The glossary summarizes concepts after the examples have established them.
 - [Complete Work Item Direct Main](../skills/complete-work-item-direct-main/SKILL.md)
 - [Complete Work Item Feature Branch](../skills/complete-work-item-feature-branch/SKILL.md)
 - [Create Pull Request](../skills/create-pull-request/SKILL.md)
-- [Careful Coding](../skills/careful-coding/SKILL.md)
+- [Fix Explanation](../skills/fix-explanation/SKILL.md)
 - [Test-Driven Development](../skills/test-driven-development/SKILL.md)
 - [JUnit](../skills/junit/SKILL.md)
 - [Jest](../skills/jest/SKILL.md)
