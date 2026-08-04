@@ -312,6 +312,34 @@ Read the diagram as four related instructions:
 
 The factory analogy describes instruction selection rather than runtime object construction. AGENTS.md does not instantiate a provider object; it tells the Agent which provider SKILL.md to load. A different project can select another provider that realizes the same Interface Skill without changing the Agent’s direct dependency.
 
+#### Simplified View
+
+When provider selection is not the focus of the analysis, the diagram can omit the AGENTS.md factory while retaining the consumer and realization relationships.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class WorkItemCreator {
+        <<Agent>>
+    }
+
+    class manage-work-item["manage-work-item-*"] {
+        <<Interface Skill>>
+        +create-new-work-item()
+    }
+
+    class manage-work-item-gitlab {
+        <<Provider Skill>>
+        +create-new-work-item()
+    }
+
+    WorkItemCreator o--> manage-work-item
+    manage-work-item-gitlab ..|> manage-work-item
+```
+
+The simplified view still means that Work Item Creator consumes manage-work-item-* and manage-work-item-gitlab realizes that interface. Project-specific directives still select the Provider Skill as shown in the detailed diagram; the simplified view only omits that routing relationship.
+
 ### 2.8 A Request Selects A Skill
 
 A request can select an available skill without a declared reference from an Agent definition or AGENTS.md.
