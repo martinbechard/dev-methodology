@@ -43,7 +43,7 @@ Skill selection and skill loading are related but distinct. A declaration or req
 
 Every portable skill package stores its instructions in a file named SKILL.md. In this analysis, loading by file name means loading the package resolved from an exact skill name such as careful-coding. It does not mean that the shared literal filename SKILL.md uniquely identifies a skill.
 
-Part 2 introduces the SKILL.md node form first. Each use case then introduces only the arrow form and class details needed to explain its relationship. Every diagram arrow points from the referencing node to the referenced node.
+Part 2 introduces the SKILL.md, Agent, and Interface Skill node forms first. Each use case then introduces only the arrow form and class details needed to explain its relationship. Loading and procedure arrows point from the referencing node to the referenced node. A realization arrow points from the implementing skill to the Interface Skill.
 
 ### 2.1 Showing A SKILL.md In A Diagram
 
@@ -100,7 +100,40 @@ The Agent stereotype distinguishes an agent definition from a SKILL.md or AGENTS
 
 Show only the Agent members needed by the diagram. Leave the member area empty when the relationship needs only the Agent identity. Model the native TOML or Markdown file as a separate node only when the analysis concerns generation, serialization, or adapter ownership rather than Agent and skill relationships.
 
-### 2.3 Agent Loads A Skill By Exact Name
+### 2.3 Showing A Skill Interface In A Diagram
+
+Mermaid represents an interface as a stereotyped class node. In this method, a Skill interface is represented by a SKILL.md node with the additional Interface Skill stereotype. The node lists the public data and function members that interface users need to know and implementations must provide or respect. An interface can expose more than one data member, more than one function member, or both.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class work-item-lifecycle {
+        <<SKILL.md>>
+        <<Interface Skill>>
+        +work-item-definition
+        +create-new-work-item()
+        +transition-work-item()
+    }
+
+    class manage-work-item-gitlab {
+        <<SKILL.md>>
+        <<Injectable Skill>>
+        +work-item-definition
+        +create-new-work-item()
+        +transition-work-item()
+    }
+
+    manage-work-item-gitlab ..|> work-item-lifecycle
+```
+
+The work-item-lifecycle and manage-work-item-gitlab definitions are analysis vocabulary for this example. The diagram does not assert that those exact skill definitions already exist in the repository.
+
+The dashed line with a hollow triangular arrowhead is a realization relationship. It points from the implementing SKILL.md to the Interface Skill. It means that manage-work-item-gitlab supplies the required functions and provides or respects the public data defined by work-item-lifecycle. An implementation can restrict an allowed data value or add provider-specific members when those refinements remain usable by interface users.
+
+Realization describes conformance, not loading. The arrow does not mean that one skill loads the other, invokes it, or knows its exact skill name. When an interface user or implementation depends on the Interface Skill, the complete SKILL.md is still loaded as one context unit. Show that exact-name dependency with a separate open-diamond reference. Mermaid draws the declared relationship but does not verify member compatibility; semantic coherence still requires a reviewer to compare the complete interface, implementation, and known users.
+
+### 2.4 Agent Loads A Skill By Exact Name
 
 An Agent Skill is a SKILL.md that an Agent definition references by exact skill name.
 
@@ -133,7 +166,7 @@ The open diamond means that Documentation Agent knows the exact skill name. The 
 
 Documentation Agent and verify-document-page are analysis vocabulary for this example. They do not assert that those definitions exist in the repository.
 
-### 2.4 Agent Conditionally Loads A Skill By Exact Name
+### 2.5 Agent Conditionally Loads A Skill By Exact Name
 
 A conditional Agent Skill is still named directly by the Agent definition, but the reference applies only when its condition is satisfied.
 
@@ -162,7 +195,7 @@ The open diamond still means exact-name knowledge. The dotted line means conditi
 
 The test-driven-development member area is empty because the skill describes one overall TDD procedure. The dotted relationship still shows when that complete skill is loaded.
 
-### 2.5 Agent Uses A Procedure Mapped Through AGENTS.md
+### 2.6 Agent Uses A Procedure Mapped Through AGENTS.md
 
 An Injected Skill is selected through AGENTS.md. The Agent instruction says what must be done without naming the skill that will do it. AGENTS.md names the skill to use for that project. When the Agent instruction, AGENTS.md, and the selected skill use the same procedure wording, that wording forms the Skill interface in this analogy.
 
@@ -224,7 +257,7 @@ The regular arrow shows that the Agent instruction asks for a new work item with
 
 The manage-work-item-* node is diagram shorthand for the work-item skill selected by AGENTS.md. It is not a literal skill name or a line that would appear in an Agent definition. The concrete work-item skill names are analysis vocabulary for this example; they do not assert that those skill definitions already exist in the repository.
 
-### 2.6 A Request Selects A Skill
+### 2.7 A Request Selects A Skill
 
 A request can select an available skill without a declared reference from an Agent definition or AGENTS.md.
 
@@ -417,7 +450,7 @@ AGENTS.md links a procedure name to a concrete SKILL.md.
   - **SYNOPSIS:** The Agent retains newEnhancement() and its create-new-work-item() reference when project setup chooses another matching implementation.
   - **EXAMPLE:** Changing the AGENTS.md binding from manage-work-item-gitlab to manage-work-item-file does not change newEnhancement().
 
-Section 2.5 shows this binding as a regular arrow from Backlog Manager to the manage-work-item-* procedure family and an open-diamond arrow from AGENTS.md to manage-work-item-gitlab. The first reference preserves procedure-only knowledge in the Agent. The second reference records the exact skill name selected by project guidance.
+Section 2.6 shows this binding as a regular arrow from Backlog Manager to the manage-work-item-* procedure family and an open-diamond arrow from AGENTS.md to manage-work-item-gitlab. The first reference preserves procedure-only knowledge in the Agent. The second reference records the exact skill name selected by project guidance.
 
 Skills injection is an instruction relationship. The model does not require a compiled interface object or a software dependency-injection container.
 
@@ -503,10 +536,10 @@ classDiagram
     }
 
     WorkItemCreator o--> work-item-lifecycle
-    manage-work-item-gitlab o--> work-item-lifecycle
+    manage-work-item-gitlab ..|> work-item-lifecycle
 ```
 
-Both arrows terminate at the Interface Skill because Work Item Creator and manage-work-item-gitlab know that complete file by exact name. No arrow terminates at an individual member. The matching members show the contract correspondence: manage-work-item-gitlab implements both functions and respects both shared data members. It adds gitlab-project-id as provider-specific data.
+The open-diamond arrow means that Work Item Creator knows and loads the complete Interface Skill by exact name. The realization arrow means that manage-work-item-gitlab supplies the interface contract. Neither arrow terminates at an individual member. The matching members show that manage-work-item-gitlab implements both functions and respects both shared data members. It adds gitlab-project-id as provider-specific data. If the implementation also names and loads work-item-lifecycle, show that dependency with a separate open-diamond arrow.
 
 The interface and implementation names are analysis vocabulary for this example. They do not assert that those skill files already exist in the repository.
 
@@ -725,6 +758,7 @@ The glossary summarizes concepts after the examples have established them.
 | Exact skill name | The identity used to resolve one skill package and its SKILL.md. It is not the shared literal filename SKILL.md. | careful-coding resolves the careful-coding package. |
 | Skill interface | A shared contract containing public data members, function members, or both. | Work Item Lifecycle exposes work-item-definition, work-item-states, createWorkItem(description), and transitionWorkItem(workItem, state). |
 | Interface Skill | A SKILL.md that itemizes the data and function members an interface user must know and an implementation must provide or respect. | work-item-lifecycle publishes the shared Work Item Lifecycle member vocabulary. |
+| Skill realization | A dashed line with a hollow triangular arrowhead from an implementing SKILL.md to an Interface Skill. It means that the implementation supplies the interface functions and provides or respects its public data; it does not mean that either skill loads the other. | manage-work-item-gitlab ..\|> work-item-lifecycle. |
 | Polymorphism | The object-oriented analogy in which one interface expectation can be supplied by different skill implementations without changing the invoker. It does not assert runtime language dispatch. | create-new-work-item() can be supplied by a file-backed or GitLab-backed work-item skill. |
 | Procedure name | The name that identifies the operation an invoker needs. | create-new-work-item. |
 | Procedure context | Information already held by the invoking Agent for use by the named procedure. | Enhancement description: Add a new Cancel button. |
