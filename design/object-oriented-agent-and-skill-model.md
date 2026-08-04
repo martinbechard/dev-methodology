@@ -35,7 +35,7 @@ The method concludes with an applied overview of the methodology skill groups. T
   - **BECAUSE:** A visible hierarchy makes skill ownership, extension, and substitution easier to reason about.
   - **EXAMPLE:** work-item-base, work-item-dispatch, and work-item-monitor can form a sibling family composed by the Agents that need them, while a multi-procedure skill such as agent-claim can be evaluated for cohesion without assuming that it must be split.
 
-## 2. Skill Use Cases
+## 2. Skill Diagrams And Use Cases
 
 Skills exist in a global Agent space, much as code modules exist in a process. The space makes a SKILL.md available for loading, but availability alone does not create coupling.
 
@@ -43,9 +43,42 @@ Skill selection and skill loading are related but distinct. A declaration or req
 
 Every portable skill package stores its instructions in a file named SKILL.md. In this analysis, loading by file name means loading the package resolved from an exact skill name such as careful-coding. It does not mean that the shared literal filename SKILL.md uniquely identifies a skill.
 
-Every diagram arrow points from the referencing node to the referenced node. Each use case introduces only the arrow form and class details needed to explain that relationship.
+Part 2 introduces the SKILL.md node form first. Each use case then introduces only the arrow form and class details needed to explain its relationship. Every diagram arrow points from the referencing node to the referenced node.
 
-### 2.1 Agent Loads A Skill By Exact Name
+### 2.1 Showing A SKILL.md In A Diagram
+
+A skill is represented like a class because it encapsulates procedures and data. In practice, each diagram shows only the procedures and data needed in context. Before adding a member, read the skill and make sure the label represents a definition or procedure that the skill actually contains.
+
+```mermaid
+classDiagram
+    class careful-coding {
+        <<SKILL.md>>
+        +coding-principles
+        +verification-requirements
+        +inspectBeforeEditing()
+        +makeMinimalChange()
+        +verifyChanges()
+    }
+    note for careful-coding "Tip: for clarity, only include the members needed in context"
+```
+
+The displayed careful-coding members are illustrative analysis vocabulary. They demonstrate data and function member notation without asserting that those exact member names appear in the current skill definition.
+
+An empty SKILL.md node means that the skill describes a single procedure, so the skill identity already represents that operation.
+
+- Use the skill’s exact kebab-case name as the node name.
+- Leave the member area empty if the skill describes a single procedure.
+- Add a function member with parentheses only when the relationship focuses on a procedure described by the skill. The member is diagram shorthand for written instructions, not a claim that SKILL.md contains software code.
+- Add a data member without parentheses when exposed definitions, structures, states, rules, values, or other non-procedural information matter to the relationship.
+- If the skill does not clearly describe a procedure, leave that member out instead of inventing one.
+
+The plus sign means that a member is exposed to users of the skill. Parentheses distinguish a function member from a data member. A data member is not an outgoing reference to another object. Dependencies remain between whole Agent, AGENTS.md, or SKILL.md nodes because the complete referenced file is loaded into context.
+
+For example, verify-document-page stays empty because the example SKILL.md describes one procedure. The manage-work-item-gitlab node can show create-new-work-item() when the skill exposes that function among other members. A work-item interface can show work-item-definition without parentheses when that shared data structure matters to the relationship.
+
+When a visible class name contains characters that Mermaid cannot use in an identifier, the diagram uses a separate internal identifier and quoted display label. The display label is the analysis identity; the internal identifier exists only to render the diagram.
+
+### 2.2 Agent Loads A Skill By Exact Name
 
 An Agent Skill is a SKILL.md that an Agent definition references by exact skill name.
 
@@ -78,7 +111,7 @@ The open diamond means that Documentation Agent knows the exact skill name. The 
 
 Documentation Agent and verify-document-page are analysis vocabulary for this example. They do not assert that those definitions exist in the repository.
 
-### 2.2 Agent Conditionally Loads A Skill By Exact Name
+### 2.3 Agent Conditionally Loads A Skill By Exact Name
 
 A conditional Agent Skill is still named directly by the Agent definition, but the reference applies only when its condition is satisfied.
 
@@ -107,7 +140,7 @@ The open diamond still means exact-name knowledge. The dotted line means conditi
 
 The test-driven-development member area is empty because the skill describes one overall TDD procedure. The dotted relationship still shows when that complete skill is loaded.
 
-### 2.3 Agent Uses A Procedure Mapped Through AGENTS.md
+### 2.4 Agent Uses A Procedure Mapped Through AGENTS.md
 
 An Injected Skill is selected through AGENTS.md. The Agent instruction says what must be done without naming the skill that will do it. AGENTS.md names the skill to use for that project. When the Agent instruction, AGENTS.md, and the selected skill use the same procedure wording, that wording forms the Skill interface in this analogy.
 
@@ -169,7 +202,7 @@ The regular arrow shows that the Agent instruction asks for a new work item with
 
 The manage-work-item-* node is diagram shorthand for the work-item skill selected by AGENTS.md. It is not a literal skill name or a line that would appear in an Agent definition. The concrete work-item skill names are analysis vocabulary for this example; they do not assert that those skill definitions already exist in the repository.
 
-### 2.4 A Request Selects A Skill
+### 2.5 A Request Selects A Skill
 
 A request can select an available skill without a declared reference from an Agent definition or AGENTS.md.
 
@@ -193,27 +226,9 @@ The use cases differ at their selection boundary:
 | Procedure mapped through AGENTS.md | Shared procedure in the Agent; implementation binding in AGENTS.md | AGENTS.md | The effective project binding for that procedure. |
 | Request-triggered skill | Explicit request marker or request-to-description match | Skill loader or caller | The current request. |
 
-## 3. Showing A SKILL.md In A Diagram
+## 3. Skill Organization
 
-A SKILL.md node shows only what the relationship needs. Before adding a member, read the skill and make sure the label represents instructions that the skill actually contains.
-
-An empty SKILL.md node means that the skill describes a single procedure, so the skill identity already represents that operation.
-
-- Use the skill’s exact kebab-case name as the node name.
-- Leave the member area empty if the skill describes a single procedure.
-- Add a function member with parentheses only when the relationship focuses on a procedure described by the skill. The member is diagram shorthand for written instructions, not a claim that SKILL.md contains software code.
-- Add a data member without parentheses when exposed definitions, structures, states, rules, values, or other non-procedural information matter to the relationship.
-- If the skill does not clearly describe a procedure, leave that member out instead of inventing one.
-
-The plus sign means that a member is exposed to users of the skill. Parentheses distinguish a function member from a data member. A data member is not an outgoing reference to another object. Dependencies remain between whole Agent, AGENTS.md, or SKILL.md nodes because the complete referenced file is loaded into context.
-
-For example, verify-document-page stays empty because the example SKILL.md describes one procedure. The manage-work-item-gitlab node can show create-new-work-item() when the skill exposes that function among other members. A work-item interface can show work-item-definition without parentheses when that shared data structure matters to the relationship.
-
-When a visible class name contains characters that Mermaid cannot use in an identifier, the diagram uses a separate internal identifier and quoted display label. The display label is the analysis identity; the internal identifier exists only to render the diagram. For example, manage-work-item is the internal identifier for the visible manage-work-item-* AGENTS.md node in Section 2.3.
-
-## 4. Skill Organization
-
-### 4.1 Peer Skills
+### 3.1 Peer Skills
 
 Peer Skills are sibling SKILL.md files that divide one domain into complementary responsibilities. An Agent definition or project guidance loads the applicable siblings as a set. The siblings do not need to name or invoke one another.
 
@@ -288,7 +303,7 @@ Technology selection is another Peer Skill use case, but it selects alternatives
 
 The work-item sibling names and their displayed members are analysis vocabulary supplied for this example. They do not assert that those exact skill definitions already exist in the repository.
 
-### 4.2 Skill Groups And Containment
+### 3.2 Skill Groups And Containment
 
 A skill group is a named set used to organize skills for comprehension. It collects skills that contribute to one methodology capability or setup option, whether those skills are listed directly in the group or reached through a nested skill group.
 
@@ -337,7 +352,7 @@ Concurrent Tasking has one direct skill in this view: codex-workitem-coordinatio
 
 The repository-specific group models are maintained separately in [Object-Oriented Skill Group Models](object-oriented-skill-group-models.md).
 
-## 5. From User Request To Skill Interface
+## 4. From User Request To Skill Interface
 
 This section separates understanding the user’s request from choosing the implementation.
 
@@ -368,7 +383,7 @@ sequenceDiagram
 
 At this point, newEnhancement() has referred to the creation procedure, but the Agent has not chosen file or GitLab behavior itself.
 
-## 6. Skills Injection Through AGENTS.md
+## 5. Skills Injection Through AGENTS.md
 
 AGENTS.md links a procedure name to a concrete SKILL.md.
 
@@ -380,11 +395,11 @@ AGENTS.md links a procedure name to a concrete SKILL.md.
   - **SYNOPSIS:** The Agent retains newEnhancement() and its create-new-work-item() reference when project setup chooses another matching implementation.
   - **EXAMPLE:** Changing the AGENTS.md binding from manage-work-item-gitlab to manage-work-item-file does not change newEnhancement().
 
-Section 2.3 shows this binding as a regular arrow from Backlog Manager to the manage-work-item-* procedure family and an open-diamond arrow from AGENTS.md to manage-work-item-gitlab. The first reference preserves procedure-only knowledge in the Agent. The second reference records the exact skill name selected by project guidance.
+Section 2.4 shows this binding as a regular arrow from Backlog Manager to the manage-work-item-* procedure family and an open-diamond arrow from AGENTS.md to manage-work-item-gitlab. The first reference preserves procedure-only knowledge in the Agent. The second reference records the exact skill name selected by project guidance.
 
 Skills injection is an instruction relationship. The model does not require a compiled interface object or a software dependency-injection container.
 
-## 7. Loading And Invoking The Selected SKILL.md
+## 6. Loading And Invoking The Selected SKILL.md
 
 The agent follows the injection instruction only when it needs the Skill interface.
 
@@ -419,7 +434,7 @@ sequenceDiagram
 
 Every message is solid. Direction and the Return prefix distinguish information coming back from an action. The Agent’s newEnhancement() behavior and create-new-work-item() reference stay the same when another matching skill is selected. The provider-specific actions come from the loaded SKILL.md.
 
-## 8. Data And Function Members In Skill Interfaces
+## 7. Data And Function Members In Skill Interfaces
 
 A Skill interface is a public contract made of data members, function members, or both. An Interface Skill is a SKILL.md that itemizes the members an interface user must know and an implementation must provide or respect. AGENTS.md can still select a concrete implementation; the Interface Skill supplies the shared vocabulary rather than making that selection.
 
@@ -473,7 +488,7 @@ Both arrows terminate at the Interface Skill because Work Item Creator and manag
 
 The interface and implementation names are analysis vocabulary for this example. They do not assert that those skill files already exist in the repository.
 
-## 9. A Second Injected Example: Deliver Workitem
+## 8. A Second Injected Example: Deliver Workitem
 
 The same relationship applies to completion procedures.
 
@@ -527,7 +542,7 @@ classDiagram
 
 The regular arrow shows that the development workflow knows Deliver Workitem by procedure name. The open-diamond arrows show the two exact skill names that AGENTS.md can select. The direct-main and feature-branch procedures remain different internally even though callers reach either one through the same procedure name.
 
-## 10. Agent Dependency Views
+## 9. Agent Dependency Views
 
 An Agent can use named Agent Skills and Injected Skills together. A class view concentrates on the Agent’s expected behavior and dependency paths rather than its task-bound runtime state.
 
@@ -579,7 +594,7 @@ The Agent points directly to fix-explanation because its definition names that s
 
 The diagram explains dependencies and dispatch. It does not require the harness to construct software classes or imply an inheritance relationship.
 
-## 11. Agent Superclass Stand-Ins
+## 10. Agent Superclass Stand-Ins
 
 A shared relationship can appear once when many Agents reference the same skill in the same way. Drawing every Agent separately can hide the relationship behind repeated arrows.
 
@@ -616,7 +631,7 @@ classDiagram
 
 The open-diamond arrow says that every represented Agent names review-structured-artifact directly. No inheritance arrows are needed because the stand-in exists only to avoid drawing the same reference many times.
 
-## 12. Constraints
+## 11. Constraints
 
 - **RULE: RULE-20** A loaded skill is not necessarily injectable
   - **SYNOPSIS:** A SKILL.md is injectable only when it and its invokers share a procedure name and invocation meaning that another implementation can also use.
@@ -634,7 +649,7 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **SYNOPSIS:** The document explains the vocabulary and relationships without prescribing a schema, migration order, or repository change sequence.
   - **EXAMPLE:** The diagrams show manage-work-item-* with the AGENTS.md prototype without specifying a new YAML field for declaring it.
 
-## 13. Definition Of Good
+## 12. Definition Of Good
 
 - **RULE: RULE-52** Class views make dependency and dispatch paths understandable
   - **SYNOPSIS:** A reader can identify which skills an Agent names, which procedures it expects, which conditions affect loading, and where AGENTS.md selects an implementation.
@@ -676,7 +691,7 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **SYNOPSIS:** Skill maintenance compares each Interface Skill with every known user and implementation, checking data-member names and meanings, provider refinements, function implementations, and invocation meanings. No specialized validator is required: simple deterministic inventories can locate files and matching names, but semantic acceptance requires an LLM judge to read the complete referenced skills.
   - **EXAMPLE:** A judge checks that a work-item provider preserves work-item-definition, makes any narrower state constraint usable by its Agents, and implements createWorkItem(description) with the interface meaning.
 
-## 14. Glossary
+## 13. Glossary
 
 The glossary summarizes concepts after the examples have established them.
 
