@@ -334,11 +334,23 @@ classDiagram
         +create-new-work-item()
     }
 
+    class manage-work-item-jira {
+        <<Provider Skill>>
+        +create-new-work-item()
+    }
+
+    class manage-work-item-ado {
+        <<Provider Skill>>
+        +create-new-work-item()
+    }
+
     WorkItemCreator o--> manage-work-item
     manage-work-item-gitlab ..|> manage-work-item
+    manage-work-item-jira ..|> manage-work-item
+    manage-work-item-ado ..|> manage-work-item
 ```
 
-The simplified view still means that Work Item Creator consumes manage-work-item-* and manage-work-item-gitlab realizes that interface. Project-specific directives still select the Provider Skill as shown in the detailed diagram; the simplified view only omits that routing relationship.
+The simplified view still means that Work Item Creator consumes manage-work-item-*. Each Provider Skill shown realizes that interface. Project-specific directives select one of those providers as shown in the detailed diagram; the simplified view omits that routing relationship and does not imply that all providers are loaded together. The provider identities are analysis vocabulary for this example rather than assertions that those skill definitions already exist.
 
 ### 2.8 A Request Selects A Skill
 
