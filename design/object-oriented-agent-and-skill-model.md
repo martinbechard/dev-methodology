@@ -43,7 +43,7 @@ Skill selection and skill loading are related but distinct. A declaration or req
 
 Every portable skill package stores its instructions in a file named SKILL.md. In this analysis, loading by file name means loading the package resolved from an exact skill name such as careful-coding. It does not mean that the shared literal filename SKILL.md uniquely identifies a skill.
 
-Part 2 introduces the SKILL.md, Agent, and Interface Skill node forms first. Each use case then introduces only the arrow form and class details needed to explain its relationship. Loading and procedure arrows point from the referencing node to the referenced node. A realization arrow points from the implementing skill to the Interface Skill.
+Part 2 introduces each node and relationship when the analysis first needs it. Loading and procedure arrows point from the referencing node to the referenced node. A realization arrow points from an implementing skill to the Interface Skill whose contract it supplies.
 
 ### 2.1 Showing A SKILL.md In A Diagram
 
@@ -100,45 +100,7 @@ The Agent stereotype distinguishes an agent definition from a SKILL.md or AGENTS
 
 Show only the Agent members needed by the diagram. Leave the member area empty when the relationship needs only the Agent identity. Model the native TOML or Markdown file as a separate node only when the analysis concerns generation, serialization, or adapter ownership rather than Agent and skill relationships.
 
-### 2.3 Showing A Skill Interface In A Diagram
-
-Mermaid represents an interface as a stereotyped class node. In this method, an Interface Skill node uses Interface Skill as its single visible stereotype. The stereotype identifies a SKILL.md that publishes a Skill interface, so the diagram does not stack a second SKILL.md stereotype above it. The node lists the public data and function members that interface users need to know and implementations must provide or respect. An interface can expose more than one data member, more than one function member, or both.
-
-```mermaid
-classDiagram
-    direction LR
-
-    class WorkItemCreator {
-        <<Agent>>
-        +createRequestedWorkItem(description)
-    }
-
-    class work-item-lifecycle {
-        <<Interface Skill>>
-        +work-item-definition
-        +create-new-work-item()
-        +transition-work-item()
-    }
-
-    class manage-work-item-gitlab {
-        <<SKILL.md>>
-        <<Injectable Skill>>
-        +work-item-definition
-        +create-new-work-item()
-        +transition-work-item()
-    }
-
-    WorkItemCreator o--> work-item-lifecycle
-    manage-work-item-gitlab ..|> work-item-lifecycle
-```
-
-The Work Item Creator consumer references work-item-lifecycle directly by exact skill name. Its open-diamond arrow means that the consumer loads the complete Interface Skill. The work-item-lifecycle and manage-work-item-gitlab definitions are analysis vocabulary for this example. The diagram does not assert that those exact skill definitions already exist in the repository.
-
-The dashed line with a hollow triangular arrowhead is a realization relationship. It points from the implementing SKILL.md to the Interface Skill. It means that manage-work-item-gitlab supplies the required functions and provides or respects the public data defined by work-item-lifecycle. An implementation can restrict an allowed data value or add provider-specific members when those refinements remain usable by interface users.
-
-Realization describes conformance, not loading. The arrow does not mean that one skill loads the other, invokes it, or knows its exact skill name. When an interface user or implementation depends on the Interface Skill, the complete SKILL.md is still loaded as one context unit. Show that exact-name dependency with a separate open-diamond reference. Mermaid draws the declared relationship but does not verify member compatibility; semantic coherence still requires a reviewer to compare the complete interface, implementation, and known users.
-
-### 2.4 Agent Loads A Skill By Exact Name
+### 2.3 Agent Loads A Skill By Exact Name
 
 An Agent Skill is a SKILL.md that an Agent definition references by exact skill name.
 
@@ -171,7 +133,7 @@ The open diamond means that Documentation Agent knows the exact skill name. The 
 
 Documentation Agent and verify-document-page are analysis vocabulary for this example. They do not assert that those definitions exist in the repository.
 
-### 2.5 Agent Conditionally Loads A Skill By Exact Name
+### 2.4 Agent Conditionally Loads A Skill By Exact Name
 
 A conditional Agent Skill is still named directly by the Agent definition, but the reference applies only when its condition is satisfied.
 
@@ -200,7 +162,7 @@ The open diamond still means exact-name knowledge. The dotted line means conditi
 
 The test-driven-development member area is empty because the skill describes one overall TDD procedure. The dotted relationship still shows when that complete skill is loaded.
 
-### 2.6 Agent Uses A Procedure Mapped Through AGENTS.md
+### 2.5 Agent Uses A Procedure Mapped Through AGENTS.md
 
 An Injected Skill is selected through AGENTS.md. The Agent instruction says what must be done without naming the skill that will do it. AGENTS.md names the skill to use for that project. When the Agent instruction, AGENTS.md, and the selected skill use the same procedure wording, that wording forms the Skill interface in this analogy.
 
@@ -262,7 +224,101 @@ The regular arrow shows that the Agent instruction asks for a new work item with
 
 The manage-work-item-* node is diagram shorthand for the work-item skill selected by AGENTS.md. It is not a literal skill name or a line that would appear in an Agent definition. The concrete work-item skill names are analysis vocabulary for this example; they do not assert that those skill definitions already exist in the repository.
 
-### 2.7 A Request Selects A Skill
+### 2.6 Showing A Skill Interface In A Diagram
+
+The procedures a skill implements and the definitions it exposes can be considered a Skill interface when a calling Agent refers only to that public information. The Agent depends on those public members without needing to know the skill’s internal workflow, decision steps, or provider-specific details.
+
+A Skill interface does not require a separate file when only one skill owns and exposes the contract. When Agents and several provider skills must share the same public contract, a distinct SKILL.md can publish it independently. This method calls that separate package an Interface Skill.
+
+Mermaid represents an interface as a stereotyped class node. In this method, an Interface Skill node uses Interface Skill as its single visible stereotype. The stereotype identifies a SKILL.md, so the diagram does not stack a second SKILL.md stereotype above it. The node lists the public data and function members that consumers know and implementations must provide or respect. An interface can expose more than one data member, more than one function member, or both.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class WorkItemCreator {
+        <<Agent>>
+        +createRequestedWorkItem(description)
+    }
+
+    class work-item-lifecycle {
+        <<Interface Skill>>
+        +work-item-definition
+        +create-new-work-item()
+        +transition-work-item()
+    }
+
+    class manage-work-item-gitlab {
+        <<SKILL.md>>
+        +work-item-definition
+        +create-new-work-item()
+        +transition-work-item()
+    }
+
+    WorkItemCreator o--> work-item-lifecycle
+    manage-work-item-gitlab ..|> work-item-lifecycle
+```
+
+The Work Item Creator consumer references work-item-lifecycle directly by exact skill name. Its open-diamond arrow means that the consumer loads the complete Interface Skill while depending only on its public members. The work-item-lifecycle and manage-work-item-gitlab definitions are analysis vocabulary for this example. The diagram does not assert that those exact skill definitions already exist in the repository.
+
+The dashed line with a hollow triangular arrowhead is a realization relationship. It points from the implementing SKILL.md to the Interface Skill. It means that manage-work-item-gitlab supplies the required functions and provides or respects the public data defined by work-item-lifecycle. An implementation can restrict an allowed data value or add provider-specific members when those refinements remain usable by interface consumers.
+
+Realization describes conformance, not loading. The arrow does not mean that one skill loads the other, invokes it, or knows its exact skill name. When an interface consumer or implementation depends on the Interface Skill by name, the complete SKILL.md is still loaded as one context unit and that dependency uses a separate open-diamond reference. Mermaid draws the declared relationship but does not verify member compatibility; semantic coherence still requires a reviewer to compare the complete interface, implementation, and known consumers.
+
+### 2.7 Skill Providers Using A Factory Pattern
+
+A Provider Skill is a SKILL.md that supplies one implementation of an Interface Skill. When a project must choose one provider without putting that provider’s name into the Agent definition, AGENTS.md can act as a factory. The Agent consumes the Interface Skill directly, while the AGENTS.md factory selects and loads one Provider Skill by exact name.
+
+- **RULE: RULE-62** A factory-pattern Agent depends on the Interface Skill
+  - **SYNOPSIS:** The Agent names and loads the Interface Skill, then uses only its public data and procedures without naming a provider.
+  - **EXAMPLE:** Work Item Creator loads work-item-lifecycle and requests create-new-work-item() without knowing whether files or GitLab store the work item.
+
+- **RULE: RULE-63** AGENTS.md acts as the provider factory
+  - **SYNOPSIS:** Project guidance selects one Provider Skill by exact name, and that provider realizes the Interface Skill consumed by the Agent.
+  - **EXAMPLE:** One AGENTS.md can select manage-work-item-gitlab while another selects manage-work-item-file; Work Item Creator continues to consume work-item-lifecycle.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class WorkItemCreator {
+        <<Agent>>
+        +createRequestedWorkItem(description)
+    }
+
+    class work-item-lifecycle {
+        <<Interface Skill>>
+        +work-item-definition
+        +create-new-work-item()
+    }
+
+    class provider-factory["Work-item provider factory"] {
+        <<AGENTS.md>>
+        +select-work-item-provider()
+    }
+
+    class manage-work-item-gitlab {
+        <<Provider Skill>>
+        +work-item-definition
+        +create-new-work-item()
+    }
+
+    WorkItemCreator o--> work-item-lifecycle
+    WorkItemCreator --> provider-factory
+    provider-factory o--> manage-work-item-gitlab
+    manage-work-item-gitlab ..|> work-item-lifecycle
+```
+
+Read the diagram as four related instructions:
+
+- The Work Item Creator Agent directly loads work-item-lifecycle and uses its public contract.
+- The Agent asks for a configured work-item provider without naming one.
+- The project AGENTS.md acts as the factory by directly naming manage-work-item-gitlab as the selected Provider Skill.
+- The selected Provider Skill realizes the work-item-lifecycle interface.
+
+The factory analogy describes instruction selection rather than runtime object construction. AGENTS.md does not instantiate a provider object; it tells the Agent which provider SKILL.md to load. A different project can select another provider that realizes the same Interface Skill without changing the Agent’s direct dependency.
+
+### 2.8 A Request Selects A Skill
 
 A request can select an available skill without a declared reference from an Agent definition or AGENTS.md.
 
@@ -455,7 +511,7 @@ AGENTS.md links a procedure name to a concrete SKILL.md.
   - **SYNOPSIS:** The Agent retains newEnhancement() and its create-new-work-item() reference when project setup chooses another matching implementation.
   - **EXAMPLE:** Changing the AGENTS.md binding from manage-work-item-gitlab to manage-work-item-file does not change newEnhancement().
 
-Section 2.6 shows this binding as a regular arrow from Backlog Manager to the manage-work-item-* procedure family and an open-diamond arrow from AGENTS.md to manage-work-item-gitlab. The first reference preserves procedure-only knowledge in the Agent. The second reference records the exact skill name selected by project guidance.
+Section 2.5 shows this binding as a regular arrow from Backlog Manager to the manage-work-item-* procedure family and an open-diamond arrow from AGENTS.md to manage-work-item-gitlab. The first reference preserves procedure-only knowledge in the Agent. The second reference records the exact skill name selected by project guidance.
 
 Skills injection is an instruction relationship. The model does not require a compiled interface object or a software dependency-injection container.
 
@@ -730,9 +786,9 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **SYNOPSIS:** The model distinguishes exact Agent dependencies, sibling-set loading, skill-group set containment, AGENTS.md substitution, direct skill-to-skill coupling, and request-scoped selection.
   - **EXAMPLE:** Dev Coder names careful-coding, Work Item Coordinator loads two work-item peers, Resource Coordination contains agent-claim, manage-work-item-* uses injection, complete-work-item-feature-branch names create-pull-request, and a structural-search request selects ast-grep only for that request.
 
-- **RULE: RULE-51** The four skill use cases remain distinct
-  - **SYNOPSIS:** The method separates unconditional exact-name loading, conditional exact-name loading, procedure mapping through AGENTS.md, and request-triggered selection.
-  - **EXAMPLE:** Section 2 gives every use case its own subsection and omits a persistent class relationship for request-triggered ast-grep selection.
+- **RULE: RULE-51** The four skill-loading use cases remain distinct from factory composition
+  - **SYNOPSIS:** The method separates unconditional exact-name loading, conditional exact-name loading, procedure mapping through AGENTS.md, request-triggered selection, and the factory pattern that combines an Agent-facing Interface Skill with an AGENTS.md-selected Provider Skill.
+  - **EXAMPLE:** Section 2 gives every loading use case its own subsection, omits a persistent class relationship for request-triggered ast-grep selection, and presents provider selection as a separate composition.
 
 - **RULE: RULE-27** Every assertion includes an example
   - **SYNOPSIS:** Each GOAL, RULE, PROCESS, and other structured assertion is followed by an EXAMPLE.
@@ -763,6 +819,8 @@ The glossary summarizes concepts after the examples have established them.
 | Skill interface | A shared contract containing public data members, function members, or both. | Work Item Lifecycle exposes work-item-definition, work-item-states, createWorkItem(description), and transitionWorkItem(workItem, state). |
 | Interface Skill | A SKILL.md shown with the Interface Skill stereotype that itemizes the data and function members an interface user must know and an implementation must provide or respect. | work-item-lifecycle publishes the shared Work Item Lifecycle member vocabulary. |
 | Skill realization | A dashed line with a hollow triangular arrowhead from an implementing SKILL.md to an Interface Skill. It means that the implementation supplies the interface functions and provides or respects its public data; it does not mean that either skill loads the other. | manage-work-item-gitlab ..\|> work-item-lifecycle. |
+| Provider Skill | A SKILL.md that supplies one implementation of an Interface Skill and can be selected without changing the interface consumer. | manage-work-item-gitlab supplies the GitLab implementation of work-item-lifecycle. |
+| AGENTS.md factory | Project guidance that selects one Provider Skill by exact name while the Agent depends directly on an Interface Skill. The factory analogy describes instruction selection, not runtime object construction. | The Work-item provider factory selects manage-work-item-gitlab for an Agent that consumes work-item-lifecycle. |
 | Polymorphism | The object-oriented analogy in which one interface expectation can be supplied by different skill implementations without changing the invoker. It does not assert runtime language dispatch. | create-new-work-item() can be supplied by a file-backed or GitLab-backed work-item skill. |
 | Procedure name | The name that identifies the operation an invoker needs. | create-new-work-item. |
 | Procedure context | Information already held by the invoking Agent for use by the named procedure. | Enhancement description: Add a new Cancel button. |
