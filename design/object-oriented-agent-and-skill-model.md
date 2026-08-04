@@ -102,14 +102,18 @@ Show only the Agent members needed by the diagram. Leave the member area empty w
 
 ### 2.3 Showing A Skill Interface In A Diagram
 
-Mermaid represents an interface as a stereotyped class node. In this method, a Skill interface is represented by a SKILL.md node with the additional Interface Skill stereotype. The node lists the public data and function members that interface users need to know and implementations must provide or respect. An interface can expose more than one data member, more than one function member, or both.
+Mermaid represents an interface as a stereotyped class node. In this method, an Interface Skill node uses Interface Skill as its single visible stereotype. The stereotype identifies a SKILL.md that publishes a Skill interface, so the diagram does not stack a second SKILL.md stereotype above it. The node lists the public data and function members that interface users need to know and implementations must provide or respect. An interface can expose more than one data member, more than one function member, or both.
 
 ```mermaid
 classDiagram
     direction LR
 
+    class WorkItemCreator {
+        <<Agent>>
+        +createRequestedWorkItem(description)
+    }
+
     class work-item-lifecycle {
-        <<SKILL.md>>
         <<Interface Skill>>
         +work-item-definition
         +create-new-work-item()
@@ -124,10 +128,11 @@ classDiagram
         +transition-work-item()
     }
 
+    WorkItemCreator o--> work-item-lifecycle
     manage-work-item-gitlab ..|> work-item-lifecycle
 ```
 
-The work-item-lifecycle and manage-work-item-gitlab definitions are analysis vocabulary for this example. The diagram does not assert that those exact skill definitions already exist in the repository.
+The Work Item Creator consumer references work-item-lifecycle directly by exact skill name. Its open-diamond arrow means that the consumer loads the complete Interface Skill. The work-item-lifecycle and manage-work-item-gitlab definitions are analysis vocabulary for this example. The diagram does not assert that those exact skill definitions already exist in the repository.
 
 The dashed line with a hollow triangular arrowhead is a realization relationship. It points from the implementing SKILL.md to the Interface Skill. It means that manage-work-item-gitlab supplies the required functions and provides or respects the public data defined by work-item-lifecycle. An implementation can restrict an allowed data value or add provider-specific members when those refinements remain usable by interface users.
 
@@ -517,7 +522,6 @@ classDiagram
     }
 
     class work-item-lifecycle {
-        <<SKILL.md>>
         <<Interface Skill>>
         +work-item-definition
         +work-item-states
@@ -757,7 +761,7 @@ The glossary summarizes concepts after the examples have established them.
 | Skill loading | The complete selected SKILL.md entering the active context so its instructions can be followed. | After AGENTS.md selects manage-work-item-gitlab, the agent reads that SKILL.md. |
 | Exact skill name | The identity used to resolve one skill package and its SKILL.md. It is not the shared literal filename SKILL.md. | careful-coding resolves the careful-coding package. |
 | Skill interface | A shared contract containing public data members, function members, or both. | Work Item Lifecycle exposes work-item-definition, work-item-states, createWorkItem(description), and transitionWorkItem(workItem, state). |
-| Interface Skill | A SKILL.md that itemizes the data and function members an interface user must know and an implementation must provide or respect. | work-item-lifecycle publishes the shared Work Item Lifecycle member vocabulary. |
+| Interface Skill | A SKILL.md shown with the Interface Skill stereotype that itemizes the data and function members an interface user must know and an implementation must provide or respect. | work-item-lifecycle publishes the shared Work Item Lifecycle member vocabulary. |
 | Skill realization | A dashed line with a hollow triangular arrowhead from an implementing SKILL.md to an Interface Skill. It means that the implementation supplies the interface functions and provides or respects its public data; it does not mean that either skill loads the other. | manage-work-item-gitlab ..\|> work-item-lifecycle. |
 | Polymorphism | The object-oriented analogy in which one interface expectation can be supplied by different skill implementations without changing the invoker. It does not assert runtime language dispatch. | create-new-work-item() can be supplied by a file-backed or GitLab-backed work-item skill. |
 | Procedure name | The name that identifies the operation an invoker needs. | create-new-work-item. |
