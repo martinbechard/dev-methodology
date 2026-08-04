@@ -53,7 +53,7 @@ No material findings.
   - **RESULT:** Relationship diagrams can show a focused subset of a complete skill inventory. Empty careful-coding nodes mean that the whole skill is loaded; manage-work-item-gitlab displays create-new-work-item() because that procedure is the focus of its DII view, while the adjacent prose explains that label through the words used in the source instructions.
 
 - **CHECK:** LOG-6
-  - **RESULT:** The agent-claim example exposes Acquire Claim and Release Claim without implying that the skill must be split.
+  - **RESULT:** The Claim Lifecycle interface exposes acquireClaim(scope) and releaseClaim(claimId), showing that one interface can contain several related procedures. The text also allows one SKILL.md to expose several interfaces without implying that either procedure or interface cardinality requires the skill to be split.
 
 - **CHECK:** DIR-14, DIR-27, DIR-45, DIR-46, DIR-47, DOC-3
   - **RESULT:** The method owns solid-diamond containment and Mermaid display labels. It defines direct skill membership and nested skill-group inclusion as comprehension-oriented set relationships, not loading or dependency. It links to Object-Oriented Skill Group Models, which separately owns the repository-specific current-versus-proposed design, legend, recommendations, and group navigation. No governed SKILL.md definition changed.
@@ -65,7 +65,7 @@ No material findings.
   - **RESULT:** Mermaid supports relationship markers at both endpoints over solid or dashed links, permits dashes in class names, and uses parentheses to distinguish operations from attributes.
 
 - **CHECK:** DOC-1, DOC-2, DOC-4, DOC-5
-  - **RESULT:** All forty-seven structured assertions have examples and unique definition IDs. Eleven Mermaid blocks have balanced fences, seventeen loading and procedure references follow the convention, three class relationships show direct membership or nested containment, and all eleven sequence messages are solid.
+  - **RESULT:** All forty-seven structured assertions have examples and unique definition IDs. Eleven Mermaid blocks have balanced fences, sixteen loading and procedure references follow the convention, three class relationships show direct membership or nested containment, and all eleven sequence messages are solid.
 
 - **CHECK:** DOC-7, DOC-9, DOC-10, DOC-12
   - **RESULT:** Local Markdown links resolve, inline backticks are absent outside Mermaid fences, AGENTS.md DII prototypes, +skill, +procedure, CreateWorkitem, and invented PascalCase skill aliases are absent from the target, retired notation and inheritance syntax are absent, and whitespace validation passes.

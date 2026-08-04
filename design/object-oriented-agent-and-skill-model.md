@@ -413,19 +413,19 @@ Every message is solid. Direction and the Return prefix distinguish information 
 
 ## 8. One Or More Procedures In A SKILL.md
 
-The number of Skill interfaces depends on how many independently invocable procedure names the SKILL.md defines.
+The number of Skill interfaces depends on how the SKILL.md groups its procedures into contracts understood by invokers. A Skill interface is not limited to one procedure: it can contain several related procedures that belong to the same concern and are substituted together.
 
 - **RULE: RULE-10** A simple SKILL.md can export one Skill interface
-  - **SYNOPSIS:** One procedure name and its cohesive procedure are enough for a focused skill.
-  - **EXAMPLE:** manage-work-item-gitlab can export create-new-work-item() through its Create New Work Item section.
+  - **SYNOPSIS:** One cohesive interface is enough for a focused skill, and that interface can contain one procedure or several related procedures.
+  - **EXAMPLE:** A Claim Lifecycle interface can contain both acquireClaim(scope) and releaseClaim(claimId) because both procedures belong to the same claim-management contract.
 
 - **RULE: RULE-11** A more complex SKILL.md can export several Skill interfaces
-  - **SYNOPSIS:** One file can define several procedure names when it contains procedures that callers invoke independently and that do not describe the same cross-cutting concern.
-  - **EXAMPLE:** agent-claim can export Acquire Claim and Release Claim as separate Skill interfaces.
+  - **SYNOPSIS:** One file can define several interfaces when it contains separate procedure sets that callers use as different contracts and that do not describe the same cross-cutting concern.
+  - **EXAMPLE:** A work-item provider skill can export a Work Item Lifecycle interface containing transitionWorkItem() and reconcileWorkItem(), plus a Work Item Reporting interface containing inventoryWorkItems() and reportWorkItems().
 
 - **RULE: RULE-12** Multiple interfaces describe the SKILL.md without deciding its structure
-  - **SYNOPSIS:** The analysis records each independently invoked procedure name. It does not conclude from that fact alone that the SKILL.md should be split.
-  - **EXAMPLE:** Acquire Claim and Release Claim remain distinct procedure names even though agent-claim defines both.
+  - **SYNOPSIS:** The analysis records each cohesive interface and the procedures it exposes. It does not conclude from several interfaces or procedures alone that the SKILL.md should be split.
+  - **EXAMPLE:** acquireClaim(scope) and releaseClaim(claimId) remain distinct procedures in one Claim Lifecycle interface even though agent-claim defines both.
 
 A function-style member belongs on an AGENTS.md DII or on a SKILL.md whose instructions describe that operation. A complex SKILL.md can show several procedure members together with +reference members when those details matter to the relationship.
 
@@ -433,13 +433,9 @@ A function-style member belongs on an AGENTS.md DII or on a SKILL.md whose instr
 classDiagram
     direction LR
 
-    class AcquireClaim {
+    class ClaimLifecycle["claim-lifecycle"] {
         <<AGENTS.md>>
         +acquireClaim(scope)
-    }
-
-    class ReleaseClaim {
-        <<AGENTS.md>>
         +releaseClaim(claimId)
     }
 
@@ -452,13 +448,12 @@ classDiagram
         +reference timed-resource-claims
     }
 
-    AcquireClaim o--> agent-claim
-    ReleaseClaim o--> agent-claim
+    ClaimLifecycle o--> agent-claim
 ```
 
-Each AGENTS.md DII refers to its own procedure name and can select agent-claim by exact name. acquireClaim(scope) is derived from Claim Events, while releaseClaim(claimId) is supported by Claim Events and Release Cleanup. The attribute-style members preserve the decision table and record rules that both procedures consult.
+The one AGENTS.md interface contains two related procedures and can select agent-claim by exact name for both. acquireClaim(scope) is derived from Claim Events, while releaseClaim(claimId) is supported by Claim Events and Release Cleanup. The attribute-style members preserve the decision table and record rules that both procedures consult.
 
-An Agent Skill or a directly referenced Peer Skill can also contain several procedures. Those procedures do not become interchangeable Skill interfaces merely because they share one file. Interchangeability requires the SKILL.md, its invokers, and alternative implementations to share the same procedure names and invocation meanings.
+An Agent Skill or a directly referenced Peer Skill can also contain several procedures. Procedures do not form one interchangeable Skill interface merely because they share one file. They belong to the same interface when the SKILL.md, its invokers, and alternative implementations treat the procedure set as one contract with shared names and invocation meanings.
 
 ## 9. A Second Injected Example: Deliver Workitem
 
@@ -669,8 +664,8 @@ The glossary summarizes concepts after the examples have established them.
 | Skill selection | A decision that one available skill applies to an Agent execution or request. Selection does not prove that the full instructions entered context. | A conditional rule selects test-driven-development when the user requests TDD. |
 | Skill loading | The complete selected SKILL.md entering the active context so its instructions can be followed. | After AGENTS.md selects manage-work-item-gitlab, the agent reads that SKILL.md. |
 | Exact skill name | The identity used to resolve one skill package and its SKILL.md. It is not the shared literal filename SKILL.md. | careful-coding resolves the careful-coding package. |
-| Skill interface | A shared procedure name and invocation meaning used by an invoker and by the SKILL.md that supplies the procedure. | manage-work-item-* exposes create-new-work-item(). |
-| Polymorphism | The object-oriented analogy in which one procedure expectation can be supplied by different skill implementations without changing the invoker. It does not assert runtime language dispatch. | create-new-work-item() can be supplied by a file-backed or GitLab-backed work-item skill. |
+| Skill interface | A shared contract containing one or more related procedure names and invocation meanings used by an invoker and by each SKILL.md that supplies the procedures. | Claim Lifecycle exposes acquireClaim(scope) and releaseClaim(claimId). |
+| Polymorphism | The object-oriented analogy in which one interface expectation can be supplied by different skill implementations without changing the invoker. It does not assert runtime language dispatch. | create-new-work-item() can be supplied by a file-backed or GitLab-backed work-item skill. |
 | Procedure name | The name that identifies the operation an invoker needs. | create-new-work-item. |
 | Procedure context | Information already held by the invoking Agent for use by the named procedure. | Enhancement description: Add a new Cancel button. |
 | Procedure | Instructions in a SKILL.md that explain how to perform the named operation. | Create a GitLab issue, read it back, and return its identity. |
