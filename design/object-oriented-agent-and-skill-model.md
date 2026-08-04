@@ -195,11 +195,13 @@ A SKILL.md node shows only what the relationship needs. Before adding a member, 
 
 - Use the skill’s exact kebab-case name as the node name.
 - Leave the member area empty when the relationship loads the whole skill.
-- Add a method-like member only when the relationship focuses on a procedure described by the skill. The member is diagram shorthand for written instructions, not a claim that SKILL.md contains software code.
-- Add a +reference member only when non-invoked guidance matters to the relationship.
+- Add a function member with parentheses only when the relationship focuses on a procedure described by the skill. The member is diagram shorthand for written instructions, not a claim that SKILL.md contains software code.
+- Add a data member without parentheses when exposed definitions, structures, states, rules, values, or other non-procedural information matter to the relationship.
 - If the skill does not clearly describe a procedure, leave that member out instead of inventing one.
 
-For example, careful-coding stays empty when Dev Coder loads the whole skill. The manage-work-item-gitlab node can show create-new-work-item() when the diagram focuses on its Create New Work Item instructions.
+The plus sign means that a member is exposed to users of the skill. Parentheses distinguish a function member from a data member. A data member is not an outgoing reference to another object. Dependencies remain between whole Agent, AGENTS.md, or SKILL.md nodes because the complete referenced file is loaded into context.
+
+For example, careful-coding stays empty when Dev Coder loads the whole skill. The manage-work-item-gitlab node can show create-new-work-item() when the diagram focuses on its Create New Work Item instructions. A work-item interface can show work-item-definition without parentheses when that shared data structure matters to the relationship.
 
 When a visible class name contains characters that Mermaid cannot use in an identifier, the diagram uses a separate internal identifier and quoted display label. The display label is the analysis identity; the internal identifier exists only to render the diagram. For example, manage-work-item is the internal identifier for the visible manage-work-item-* AGENTS.md node in Section 2.3.
 
@@ -239,16 +241,16 @@ classDiagram
         class work-item-base {
             <<SKILL.md>>
             <<Peer Skill>>
-            +reference work-item-definition
-            +reference work-item-states
-            +reference work-item-rules
+            +work-item-definition
+            +work-item-states
+            +work-item-rules
         }
 
         class work-item-dispatch {
             <<SKILL.md>>
             <<Peer Skill>>
             +dispatchWorkItem(workItem)
-            +reference dispatch-rules
+            +dispatch-rules
         }
 
         class work-item-monitor {
@@ -256,7 +258,7 @@ classDiagram
             <<Peer Skill>>
             +monitorWorkItems(workItems)
             +raiseAlarm(workItem)
-            +reference alarm-rules
+            +alarm-rules
         }
     }
 
@@ -266,7 +268,7 @@ classDiagram
     WorkItemWatchdog o--> work-item-monitor
 ```
 
-The open diamonds mean that each Agent knows the exact sibling skill names it loads. No arrows connect the Peer Skills because the sibling-set loader, not a sibling, declares the set. Work Item Coordinator and Work Item Watchdog each select work-item-base once as shared domain context, then select only the specialized sibling needed by that role. Whether a harness caches or rereads an already selected SKILL.md is a runtime concern outside this analysis.
+The open diamonds mean that each Agent knows the exact sibling skill names it loads. No arrows connect the Peer Skills because the sibling-set loader, not a sibling, declares the set. The members without parentheses are exposed data; the members with parentheses are functions. They clarify the responsibility split but do not create member-level dependencies. Work Item Coordinator and Work Item Watchdog each select work-item-base once as shared domain context, then select only the specialized sibling needed by that role. Whether a harness caches or rereads an already selected SKILL.md is a runtime concern outside this analysis.
 
 The same sibling set can be expressed in AGENTS.md when the set is project-specific rather than fixed in an Agent definition. Keeping the set in the Agent or AGENTS.md makes the loaded hierarchy easier to inspect, change, and troubleshoot than a chain of skill-to-skill name references.
 
@@ -411,49 +413,59 @@ sequenceDiagram
 
 Every message is solid. Direction and the Return prefix distinguish information coming back from an action. The Agent’s newEnhancement() behavior and create-new-work-item() reference stay the same when another matching skill is selected. The provider-specific actions come from the loaded SKILL.md.
 
-## 8. One Or More Procedures In A SKILL.md
+## 8. Data And Function Members In Skill Interfaces
 
-The number of Skill interfaces depends on how the SKILL.md groups its procedures into contracts understood by invokers. A Skill interface is not limited to one procedure: it can contain several related procedures that belong to the same concern and are substituted together.
+A Skill interface is a public contract made of data members, function members, or both. An Interface Skill is a SKILL.md that itemizes the members an interface user must know and an implementation must provide or respect. AGENTS.md can still select a concrete implementation; the Interface Skill supplies the shared vocabulary rather than making that selection.
 
-- **RULE: RULE-10** A simple SKILL.md can export one Skill interface
-  - **SYNOPSIS:** One cohesive interface is enough for a focused skill, and that interface can contain one procedure or several related procedures.
-  - **EXAMPLE:** A Claim Lifecycle interface can contain both acquireClaim(scope) and releaseClaim(claimId) because both procedures belong to the same claim-management contract.
+- **RULE: RULE-10** A Skill interface can expose data and function members
+  - **SYNOPSIS:** Data members name shared structures, rules, constraints, or values, while function members name procedures an implementation performs.
+  - **EXAMPLE:** A Work Item Lifecycle interface can expose work-item-definition and work-item-states as data members together with createWorkItem(description) and transitionWorkItem(workItem, state) as function members.
 
-- **RULE: RULE-11** A more complex SKILL.md can export several Skill interfaces
-  - **SYNOPSIS:** One file can define several interfaces when it contains separate procedure sets that callers use as different contracts and that do not describe the same cross-cutting concern.
-  - **EXAMPLE:** A work-item provider skill can export a Work Item Lifecycle interface containing transitionWorkItem() and reconcileWorkItem(), plus a Work Item Reporting interface containing inventoryWorkItems() and reportWorkItems().
+- **RULE: RULE-11** One Skill interface can contain several functions
+  - **SYNOPSIS:** Related procedures remain members of one interface when invokers and implementations treat them as one cohesive contract.
+  - **EXAMPLE:** createWorkItem(description) and transitionWorkItem(workItem, state) both belong to Work Item Lifecycle rather than becoming separate interfaces merely because both are callable.
 
-- **RULE: RULE-12** Multiple interfaces describe the SKILL.md without deciding its structure
-  - **SYNOPSIS:** The analysis records each cohesive interface and the procedures it exposes. It does not conclude from several interfaces or procedures alone that the SKILL.md should be split.
-  - **EXAMPLE:** acquireClaim(scope) and releaseClaim(claimId) remain distinct procedures in one Claim Lifecycle interface even though agent-claim defines both.
+- **RULE: RULE-12** One implementation can satisfy several Skill interfaces
+  - **SYNOPSIS:** A complex implementation skill can provide the members of several independently useful contracts without that fact alone deciding whether its SKILL.md should be split.
+  - **EXAMPLE:** A provider can satisfy Work Item Lifecycle and Work Item Reporting while remaining one SKILL.md when those responsibilities are intentionally packaged together.
 
-A function-style member belongs on an AGENTS.md DII or on a SKILL.md whose instructions describe that operation. A complex SKILL.md can show several procedure members together with +reference members when those details matter to the relationship.
+For a function member, an implementation supplies its own procedure with the interface name and meaning. For a data member, an implementation respects the shared name and meaning. It can add provider-specific members, define concrete values, or document a narrower constraint. A narrower constraint is coherent only when interface users can still satisfy it; the interface name alone does not guarantee substitutability.
 
 ```mermaid
 classDiagram
     direction LR
 
-    class ClaimLifecycle["claim-lifecycle"] {
-        <<AGENTS.md>>
-        +acquireClaim(scope)
-        +releaseClaim(claimId)
+    class WorkItemCreator {
+        <<Agent>>
+        +createRequestedWorkItem(description)
     }
 
-    class agent-claim {
+    class work-item-lifecycle {
         <<SKILL.md>>
-        +acquireClaim(scope)
-        +releaseClaim(claimId)
-        +reference claim-events
-        +reference shared-claim-records
-        +reference timed-resource-claims
+        <<Interface Skill>>
+        +work-item-definition
+        +work-item-states
+        +createWorkItem(description)
+        +transitionWorkItem(workItem, state)
     }
 
-    ClaimLifecycle o--> agent-claim
+    class manage-work-item-gitlab {
+        <<SKILL.md>>
+        <<Implementation Skill>>
+        +work-item-definition
+        +work-item-states
+        +gitlab-project-id
+        +createWorkItem(description)
+        +transitionWorkItem(workItem, state)
+    }
+
+    WorkItemCreator o--> work-item-lifecycle
+    manage-work-item-gitlab o--> work-item-lifecycle
 ```
 
-The one AGENTS.md interface contains two related procedures and can select agent-claim by exact name for both. acquireClaim(scope) is derived from Claim Events, while releaseClaim(claimId) is supported by Claim Events and Release Cleanup. The attribute-style members preserve the decision table and record rules that both procedures consult.
+Both arrows terminate at the Interface Skill because Work Item Creator and manage-work-item-gitlab know that complete file by exact name. No arrow terminates at an individual member. The matching members show the contract correspondence: manage-work-item-gitlab implements both functions and respects both shared data members. It adds gitlab-project-id as provider-specific data.
 
-An Agent Skill or a directly referenced Peer Skill can also contain several procedures. Procedures do not form one interchangeable Skill interface merely because they share one file. They belong to the same interface when the SKILL.md, its invokers, and alternative implementations treat the procedure set as one contract with shared names and invocation meanings.
+The interface and implementation names are analysis vocabulary for this example. They do not assert that those skill files already exist in the repository.
 
 ## 9. A Second Injected Example: Deliver Workitem
 
@@ -487,7 +499,7 @@ classDiagram
         +deliverWorkitem(acceptedCommit)
         +reconcileMain(acceptedCommit)
         +verifyIntegratedMain(integrationCommit)
-        +reference provider-independence
+        +provider-independence
     }
 
     class complete-work-item-feature-branch {
@@ -497,7 +509,7 @@ classDiagram
         +publishCandidate(acceptedCommit)
         +runReviewAndCheckLoop(publication)
         +verifyMerge(publication)
-        +reference host-state-decision-table
+        +host-state-decision-table
     }
 
     DevelopmentWorkflow --> DeliverWorkitem
@@ -549,7 +561,7 @@ classDiagram
         <<Injectable Skill>>
         +deliverWorkitem(acceptedCommit)
         +runReviewAndCheckLoop(publication)
-        +reference host-state-decision-table
+        +host-state-decision-table
     }
 
     CodingAgent o--> careful-coding
@@ -654,6 +666,10 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **SYNOPSIS:** In declared relationships, a regular line means procedure-name reference, an open diamond means exact skill-name reference, and the dotted form means the reference is conditional. Only a dotted class reference carries text, and that text states the condition.
   - **EXAMPLE:** The label “when the user requests TDD” on DevCoder o..> test-driven-development means that Dev Coder conditionally loads that exact named skill.
 
+- **RULE: RULE-61** Interface users and implementations remain semantically coherent
+  - **SYNOPSIS:** Skill maintenance compares each Interface Skill with every known user and implementation, checking data-member names and meanings, provider refinements, function implementations, and invocation meanings. No specialized validator is required: simple deterministic inventories can locate files and matching names, but semantic acceptance requires an LLM judge to read the complete referenced skills.
+  - **EXAMPLE:** A judge checks that a work-item provider preserves work-item-definition, makes any narrower state constraint usable by its Agents, and implements createWorkItem(description) with the interface meaning.
+
 ## 14. Glossary
 
 The glossary summarizes concepts after the examples have established them.
@@ -664,14 +680,16 @@ The glossary summarizes concepts after the examples have established them.
 | Skill selection | A decision that one available skill applies to an Agent execution or request. Selection does not prove that the full instructions entered context. | A conditional rule selects test-driven-development when the user requests TDD. |
 | Skill loading | The complete selected SKILL.md entering the active context so its instructions can be followed. | After AGENTS.md selects manage-work-item-gitlab, the agent reads that SKILL.md. |
 | Exact skill name | The identity used to resolve one skill package and its SKILL.md. It is not the shared literal filename SKILL.md. | careful-coding resolves the careful-coding package. |
-| Skill interface | A shared contract containing one or more related procedure names and invocation meanings used by an invoker and by each SKILL.md that supplies the procedures. | Claim Lifecycle exposes acquireClaim(scope) and releaseClaim(claimId). |
+| Skill interface | A shared contract containing public data members, function members, or both. | Work Item Lifecycle exposes work-item-definition, work-item-states, createWorkItem(description), and transitionWorkItem(workItem, state). |
+| Interface Skill | A SKILL.md that itemizes the data and function members an interface user must know and an implementation must provide or respect. | work-item-lifecycle publishes the shared Work Item Lifecycle member vocabulary. |
 | Polymorphism | The object-oriented analogy in which one interface expectation can be supplied by different skill implementations without changing the invoker. It does not assert runtime language dispatch. | create-new-work-item() can be supplied by a file-backed or GitLab-backed work-item skill. |
 | Procedure name | The name that identifies the operation an invoker needs. | create-new-work-item. |
 | Procedure context | Information already held by the invoking Agent for use by the named procedure. | Enhancement description: Add a new Cancel button. |
 | Procedure | Instructions in a SKILL.md that explain how to perform the named operation. | Create a GitLab issue, read it back, and return its identity. |
-| Reference member | Attribute-style notation for guidelines, invariants, boundaries, routing, tables, or contracts that procedures consult but do not invoke independently. | +reference claim-events in agent-claim. |
+| Data member | A public member without parentheses that represents exposed structures, rules, constraints, or values rather than an invoked procedure. | +work-item-definition in work-item-lifecycle. |
+| Function member | A public member with parentheses that represents a procedure supplied by a skill. | +createWorkItem(description) in work-item-lifecycle and manage-work-item-gitlab. |
 | AGENTS.md DII | The indirect binding relationship represented by an abstract node whose stereotype is AGENTS.md. The node exposes a procedure whose matching skill is selected by name through AGENTS.md. | manage-work-item-* points to manage-work-item-gitlab after project setup selects GitLab persistence. |
-| SKILL.md | A concrete skill definition containing one or more procedures and reference sections. | manage-work-item-gitlab contains a Create New Work Item section in this analysis example. |
+| SKILL.md | A complete skill definition loaded as one context unit and containing data members, function members, or both. | manage-work-item-gitlab contains provider data and work-item procedures in this analysis example. |
 | Agent Skill | A SKILL.md referenced by exact name in an Agent definition for every execution or under a routing condition. | Dev Coder names careful-coding unconditionally and test-driven-development conditionally. |
 | Injectable Skill | A SKILL.md written with a shared procedure name and invocation meaning so AGENTS.md can select it without changing its invoker. | manage-work-item-file and manage-work-item-gitlab can both supply create-new-work-item(). |
 | Injected Skill | The Injectable Skill selected through AGENTS.md for one procedure in an effective project configuration. | manage-work-item-gitlab is the Injected Skill when AGENTS.md binds it to manage-work-item-*. |
@@ -691,8 +709,7 @@ The glossary summarizes concepts after the examples have established them.
 | Mermaid display label | The visible analysis identity used when Mermaid requires a different internal class identifier. | The internal manage-work-item identifier displays manage-work-item-*. |
 | Skill hierarchy | An organizational view of skill groups, families, responsibilities, procedures, sibling-set loaders, and dependencies. It does not by itself assert software inheritance. | work-item-base, work-item-dispatch, and work-item-monitor form a sibling family used by two Agent sibling sets. |
 | Agent superclass stand-in | A diagram-compression node representing several Agents that share the same relationship. It does not assert inheritance. | Structured Artifact Reviewers represents reviewers that all name review-structured-artifact. |
-| Empty SKILL.md node | A concrete skill class with no displayed procedure or reference members, meaning that the relationship loads the whole skill. | careful-coding under Dev Coder. |
-| Procedure member | A method-like diagram label for a procedure described by the skill’s written instructions. | +create-new-work-item() in manage-work-item-gitlab when the relationship focuses on its Create New Work Item instructions. |
+| Empty SKILL.md node | A concrete skill class with no displayed data or function members, meaning that the relationship loads the whole skill. | careful-coding under Dev Coder. |
 
 ## Authoritative Inputs
 
