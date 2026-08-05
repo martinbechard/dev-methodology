@@ -15,7 +15,7 @@ scenarios:
       - skill-authoring
       - agent-role-authoring
       - name-methodology-artifacts
-      - development-methodology
+      - route-documentation-work
       - structured-design
       - structured-explanation
     allowedAgentDependencies:
@@ -52,7 +52,7 @@ scenarios:
       - skill-authoring
       - agent-role-authoring
       - name-methodology-artifacts
-      - development-methodology
+      - route-documentation-work
       - structured-explanation
     allowedAgentDependencies:
       - methodology-artifact-reviewer
@@ -86,7 +86,7 @@ scenarios:
       - skill-authoring
       - agent-role-authoring
       - name-methodology-artifacts
-      - development-methodology
+      - route-documentation-work
       - structured-design
       - structured-explanation
     allowedAgentDependencies: []

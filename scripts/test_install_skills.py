@@ -271,7 +271,7 @@ class InstallSkillsTests(unittest.TestCase):
         installer = load_installer()
         source_catalog_root = REPOSITORY_ROOT / "skills"
         catalog_relative_template = Path(
-            "development-methodology/assets/templates/project-wiki-template.md"
+            "route-documentation-work/assets/templates/project-wiki-template.md"
         )
         project_wiki_create_text = (
             source_catalog_root / "project-wiki-create" / "SKILL.md"
@@ -279,7 +279,7 @@ class InstallSkillsTests(unittest.TestCase):
 
         self.assertIn("active skill catalog root", project_wiki_create_text)
         self.assertIn(
-            "available development-methodology skill entry",
+            "available route-documentation-work skill entry",
             project_wiki_create_text,
         )
         self.assertIn(
@@ -287,7 +287,7 @@ class InstallSkillsTests(unittest.TestCase):
             project_wiki_create_text,
         )
         self.assertNotIn(
-            "skills/development-methodology/assets/templates/project-wiki-template.md",
+            "skills/route-documentation-work/assets/templates/project-wiki-template.md",
             project_wiki_create_text,
         )
 

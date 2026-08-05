@@ -24,7 +24,7 @@ _JUDGES = Path(__file__).resolve().parents[2] / "judges.yaml"
 _TEMPLATE = (
     Path(__file__).resolve().parents[3]
     / "skills"
-    / "development-methodology"
+    / "route-documentation-work"
     / "assets"
     / "templates"
     / "module-design-template.md"

@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Development Methodology
+  display_name: Verify Documentation Page
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Use when creating or revising software project documentation, choosing a methodology template...
+  short_description: Use when verifying mixed, unknown, custom, or shared methodology documentation concerns that do...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $development-methodology to choose the right documentation workflow, template, and verification path.
+  default_prompt: Use $verify-documentation-page to verify this documentation page against the methodology template and sources.
 
 # Optional invocation policy placeholder.
 # policy:

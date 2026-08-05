@@ -55,10 +55,10 @@ _PRODUCERS = {
 }
 _TARGET_DIGESTS = {
     "agents/roles/project-setup/project-bootstrapper.role.yaml": (
-        "a9c0dacbdb619dd0b4fed24e104fa0258c80c070ccb8f497ba8d8c3e951e73c5"
+        "780bf4b01eacc535676697073d3ca1ede58cf132c841617c1a701ff8a6edb29b"
     ),
     "generated/adapters/codex/agents/project-bootstrapper.toml": (
-        "55fbdedbfcfb9af332d748e9101040c73858a07b994f851b244f85e43df8228b"
+        "92fda48e1e69cb1bb0194b1259857976ac6c34586e0c96214b0ddfd882b18d8c"
     ),
     "agents/roles/wiki-activities/wiki-ingester.role.yaml": (
         "8f6f1947076a7f8c66cff52e8eb555ce18c845ff82582ce13060a5a44fbd66b4"
@@ -175,8 +175,8 @@ def _copy_inputs(workspace: Path) -> list[str]:
             _REPOSITORY_ROOT / "skills" / skill
             for skill in (
                 "agent-claim",
-                "documentation-bootstrap",
-                "development-methodology",
+                "bootstrap-project-documentation",
+                "route-documentation-work",
                 "organise-project-files",
             )
         ),

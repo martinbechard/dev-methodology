@@ -1,7 +1,7 @@
 <!--
 Copyright (c) 2025 Martin Bechard [martin.bechard@DevConsult.ca]
 This software is licensed under the MIT License.
-File path: skills/development-methodology/assets/templates/project-wiki-template.md
+File path: skills/route-documentation-work/assets/templates/project-wiki-template.md
 1-line summary: Template for project wiki setup and code-aware maintenance.
 -->
 
@@ -21,7 +21,7 @@ TODO: State whether the wiki is already initialized, planned, partially maintain
 
 > This section prevents the wiki from becoming a competing source of truth. Wiki authors and reviewers use it when researching or resolving conflicting information to identify the controlling project sources and their precedence.
 
-TODO: Link the installed development-methodology skill, project procedures, README files, source roots, test roots, backlog roots, existing docs, and wiki tooling that define how this wiki should work.
+TODO: Link the installed route-documentation-work skill, project procedures, README files, source roots, test roots, backlog roots, existing docs, and wiki tooling that define how this wiki should work.
 
 TODO: State which source wins when sources disagree.
 

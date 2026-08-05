@@ -6,7 +6,7 @@ target:
   conceptualRole: agents/roles/dev-activities/dev-artifact-reviewer.role.yaml
   nativeAgent: generated/adapters/codex/agents/dev-artifact-reviewer.toml
   repositoryMutation: conditional
-  requiredSkills: [review-structured-artifact, documentation-page-verify]
+  requiredSkills: [review-structured-artifact, verify-documentation-page]
   conditionalSkills:
     agent-claim: Review evidence is saved.
     organise-project-files: Review creates a checklist or findings artifact.

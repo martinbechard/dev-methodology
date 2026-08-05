@@ -109,16 +109,16 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | agent-role-authoring | [x] | [x] probe-agent-role-authoring | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | analyze-document-topics | [x] | [ ] none | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | missing | none | none | none | none |
+| bootstrap-project-documentation | [x] | [x] probe-bootstrap-project-documentation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-project-configuration | [x] | [x] probe-create-project-configuration | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| development-methodology | [x] | [x] probe-development-methodology | [x] documentation-functional-spec, project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| documentation-bootstrap | [x] | [x] probe-documentation-bootstrap | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| documentation-page-verify | [x] | [x] probe-documentation-page-verify | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| documentation-reverse-engineer | [x] | [x] probe-documentation-reverse-engineer | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | maintain-methodology-documentation | [x] | [x] probe-maintain-methodology-documentation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | name-methodology-artifacts | [x] | [x] probe-name-methodology-artifacts | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| reverse-engineer-project-documentation | [x] | [x] probe-reverse-engineer-project-documentation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | revise-document-topics | [x] | [ ] none | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | missing | none | none | none | none |
+| route-documentation-work | [x] | [x] probe-route-documentation-work | [x] documentation-functional-spec, project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | skill-authoring | [x] | [x] probe-skill-authoring | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | ste-technical-writing | [x] | [x] probe-ste-technical-writing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| verify-documentation-page | [x] | [x] probe-verify-documentation-page | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 
 ### Artifact creation skills
 

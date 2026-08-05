@@ -98,7 +98,7 @@ skills:
       traceability, and coverage evidence are sufficient to protect the intended behavior.
     condition: when reviewing planned unit-test scenarios, boundaries, traceability,
       or coverage evidence.
-- documentation-page-verify:
+- verify-documentation-page:
     justification: We need this to apply a shared independent quality gate after the
       artifact-specific review so acceptance does not depend solely on the focused reviewer.
 outputContract:

@@ -67,7 +67,7 @@ A manifest-role, coordination-evidence, Git-argument, changed-path, committed-by
 
 ## Template Workflow
 
-Start each item from [file-work-item-template.md](../development-methodology/assets/templates/file-work-item-template.md). Replace every TODO instruction with source-backed content. Remove every guidance comment before commit. Remove an optional Series, User Action Required, or Notes section when it does not apply; do not leave empty headings or placeholder boilerplate.
+Start each item from [file-work-item-template.md](../route-documentation-work/assets/templates/file-work-item-template.md). Replace every TODO instruction with source-backed content. Remove every guidance comment before commit. Remove an optional Series, User Action Required, or Notes section when it does not apply; do not leave empty headings or placeholder boilerplate.
 
 - Ready items keep Status: Ready and remain dispatchable while Open Questions contain only agent-resolvable technical uncertainty.
 - User Action Required items keep the complete user question, reason, resolution, and unattended-work boundary in the item body.

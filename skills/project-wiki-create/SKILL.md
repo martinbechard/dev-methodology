@@ -1,6 +1,6 @@
 ---
 name: project-wiki-create
-description: Use when creating or substantially rewriting a project wiki methodology artifact from the development-methodology project-wiki-template asset, including wiki setup, authority order, base page contract, page subclassing, update workflow, automation, and verification guidance.
+description: Use when creating or substantially rewriting a project wiki methodology artifact from the route-documentation-work project-wiki-template asset, including wiki setup, authority order, base page contract, page subclassing, update workflow, automation, and verification guidance.
 metadata:
   category: wiki-and-knowledge
 ---
@@ -11,7 +11,7 @@ Use this skill to create or substantially rewrite one project wiki methodology a
 
 ## Template
 
-In an installed catalog, resolve the active skill catalog root from the available development-methodology skill entry. In a development-methodology source checkout, use the repository's skills directory as that catalog root. From either catalog root, use development-methodology/assets/templates/project-wiki-template.md as the starting asset. Do not resolve the template path relative to the target repository.
+In an installed catalog, resolve the active skill catalog root from the available route-documentation-work skill entry. In a route-documentation-work source checkout, use the repository's skills directory as that catalog root. From either catalog root, use route-documentation-work/assets/templates/project-wiki-template.md as the starting asset. Do not resolve the template path relative to the target repository.
 
 Copy the template only when a local editable artifact is needed. Replace every TODO instruction with source-backed content from the target repository.
 
@@ -31,7 +31,7 @@ Create one project wiki artifact that defines:
 
 Use project-wiki instead when the task is ordinary docs/wiki topic creation, topic maintenance, linting, OKF migration, raw ingest, or wiki operation work that does not need this methodology artifact.
 
-Use documentation-bootstrap first when the repository has not chosen documentation roots or wiki ownership yet.
+Use bootstrap-project-documentation first when the repository has not chosen documentation roots or wiki ownership yet.
 
 ## Workflow
 
@@ -50,7 +50,7 @@ Use documentation-bootstrap first when the repository has not chosen documentati
 Before finishing:
 
 1. Use project-wiki-review on the completed artifact.
-2. Use documentation-page-verify with the artifact, source evidence, and completed review checklist when the review skill calls for it.
+2. Use verify-documentation-page with the artifact, source evidence, and completed review checklist when the review skill calls for it.
 3. Run project wiki status and lint when docs/wiki exists.
 4. Run OKF validation when topic pages changed.
 5. Search the artifact for unresolved TODO markers that are not intentional.

@@ -4,8 +4,8 @@
 # - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 # - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 # - organise-project-files: We need this to place project configuration, documentation, review evidence, and setup records from live repository structure before bootstrap creates them.
-# - documentation-bootstrap: We need this to choose the smallest complete documentation structure and runtime integration that future agents can maintain reliably.
-# - development-methodology: We need this to route each required artifact to exactly one creation and review contract instead of producing an arbitrary or duplicated document set.
+# - bootstrap-project-documentation: We need this to choose the smallest complete documentation structure and runtime integration that future agents can maintain reliably.
+# - route-documentation-work: We need this to route each required artifact to exactly one creation and review contract instead of producing an arbitrary or duplicated document set.
 # Request-specific skill conditions:
 # - organise-project-files: when the requested bootstrap creates a new project file or directory whose path is not already fixed by the bootstrap contract
 # Output purposes:
@@ -110,7 +110,7 @@ Leave ordinary setup configured, validated, committed, clean, and ready for deve
 
 Before acting, load the codex-harness-directives skill completely; it governs Codex-specific directives for this mutation-capable agent.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, documentation-bootstrap, development-methodology.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, bootstrap-project-documentation, route-documentation-work.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested bootstrap creates a new project file or directory whose path is not already fixed by the bootstrap contract.

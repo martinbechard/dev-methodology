@@ -6,12 +6,12 @@
 # - organise-project-files: We need this to validate the location of new root and nested planning or routing files against the target project's live folder boundaries.
 # - detect-technology-skills: We need this to base each folder's technology skillset on repository evidence and to expose missing requirements, conflicts, or explicit no-variant results.
 # - create-project-configuration: We need this to produce the reviewable PROJECT.yaml that governs project conceptual agent definitions, skillsets, and folder routing.
-# - development-methodology: We need this to select methodology conceptual agent definitions and artifact routes that fit the target project's actual work and documentation needs.
-# - documentation-bootstrap: We need this when the target lacks the documentation and routing structure required for agents to load and follow the configuration consistently.
-# - documentation-page-verify: We need this to confirm that generated guidance and every referenced conceptual agent definition or skill remain grounded in project evidence and bundle contracts.
+# - route-documentation-work: We need this to select methodology conceptual agent definitions and artifact routes that fit the target project's actual work and documentation needs.
+# - bootstrap-project-documentation: We need this when the target lacks the documentation and routing structure required for agents to load and follow the configuration consistently.
+# - verify-documentation-page: We need this to confirm that generated guidance and every referenced conceptual agent definition or skill remain grounded in project evidence and bundle contracts.
 # Request-specific skill conditions:
 # - organise-project-files: when the requested configuration creates a new project file or directory whose path is not fixed by the configuration contract
-# - documentation-bootstrap: when the target lacks the documentation and routing structure needed for agents to load and follow the configuration consistently
+# - bootstrap-project-documentation: when the target lacks the documentation and routing structure needed for agents to load and follow the configuration consistently
 # Output purposes:
 # - PROJECT.yaml: Gives reviewers and generators one inspectable source of truth for the project's conceptual agent definitions, skillsets, and routing decisions.
 # - technology detection skillsets: Records the evidence-backed technology skills, missing requirements, conflicts, and no-variant outcomes that folder guidance must preserve.
@@ -30,11 +30,11 @@ Ask Setup mode first, defaulting to Basic. Basic asks whether to create the Wiki
 
 Before acting, load the codex-harness-directives skill completely; it governs Codex-specific directives for this mutation-capable agent.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, detect-technology-skills, create-project-configuration, route-documentation-work, verify-documentation-page.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested configuration creates a new project file or directory whose path is not fixed by the configuration contract.
-- Use the documentation-bootstrap skill when the target lacks the documentation and routing structure needed for agents to load and follow the configuration consistently.
+- Use the bootstrap-project-documentation skill when the target lacks the documentation and routing structure needed for agents to load and follow the configuration consistently.
 
 Return: PROJECT.yaml; technology detection skillsets; nested AGENTS.md recommendations; runtime capability validation; setup selections; workflow selectors; AGENTS.md and CLAUDE.md routing; validation evidence."""
 model = "gpt-5.6-terra"

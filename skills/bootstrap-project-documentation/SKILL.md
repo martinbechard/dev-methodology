@@ -1,23 +1,23 @@
 ---
-name: documentation-bootstrap
+name: bootstrap-project-documentation
 description: Use when applying the development methodology bundle to a target repository for the first time, choosing documentation roots, templates, AGENTS guidance, or wiki setup.
 metadata:
   category: documentation-methodology
 ---
 
-# Documentation Bootstrap
+# Bootstrap Project Documentation
 
 Use this skill for the first meaningful setup of the development methodology in a target repository. The output is a source-backed setup recommendation and a complete project-local documentation structure that agents and humans can maintain consistently.
 
 ## Configuration Setup Boundary
 
-When Project Configurator invokes this skill during setup, create only the selected empty documentation roots and repository-required placeholders. Basic setup asks only whether to create the Wiki: Yes selects wiki and No selects none, which creates no documentation root. Advanced setup choices are wiki, specifications, and both. Do not inspect source to create module designs, high-level designs, architecture, functional specifications, or wiki synthesis, and do not invoke documentation-reverse-engineer. Reverse engineering remains a later explicit workflow that consumes the accepted PROJECT.yaml.
+When Project Configurator invokes this skill during setup, create only the selected empty documentation roots and repository-required placeholders. Basic setup asks only whether to create the Wiki: Yes selects wiki and No selects none, which creates no documentation root. Advanced setup choices are wiki, specifications, and both. Do not inspect source to create module designs, high-level designs, architecture, functional specifications, or wiki synthesis, and do not invoke reverse-engineer-project-documentation. Reverse engineering remains a later explicit workflow that consumes the accepted PROJECT.yaml.
 
 ## Full Project Documentation Default
 
-When bootstrap includes reverse engineering for a repository, application, or project, treat the entire codebase as in scope. Do not ask the user to select a documentation breadth or offer a representative, sampled, minimal, or tiered documentation set. Use documentation-reverse-engineer to inventory every meaningful module, create and review the module documents, group the complete module set into high-level designs, derive architecture from the complete high-level-design set, document all observable workflows, and integrate the result into README and wiki hubs.
+When bootstrap includes reverse engineering for a repository, application, or project, treat the entire codebase as in scope. Do not ask the user to select a documentation breadth or offer a representative, sampled, minimal, or tiered documentation set. Use reverse-engineer-project-documentation to inventory every meaningful module, create and review the module documents, group the complete module set into high-level designs, derive architecture from the complete high-level-design set, document all observable workflows, and integrate the result into README and wiki hubs.
 
-The project configuration pass from documentation-reverse-engineer precedes documentation work. It creates or reconciles `PROJECT.yaml`, inventories the target runtime's available technology skills, and owns matching root and nested `AGENTS.md` routing. A scope with no pertinent specialized skill uses the recorded general-model-training fallback and remains in coverage.
+The project configuration pass from reverse-engineer-project-documentation precedes documentation work. It creates or reconciles `PROJECT.yaml`, inventories the target runtime's available technology skills, and owns matching root and nested `AGENTS.md` routing. A scope with no pertinent specialized skill uses the recorded general-model-training fallback and remains in coverage.
 
 Only use a narrower boundary when the user explicitly names it. Record what remains outside that boundary and do not report the project as fully documented or fully reverse engineered.
 
@@ -25,7 +25,7 @@ Only use a narrower boundary when the user explicitly names it. Record what rema
 
 - Target repository root.
 - Existing AGENTS instructions, README files, procedures, design folders, docs folders, wiki folders, backlog folders, and build or test commands.
-- Installed development-methodology and project-wiki family skills.
+- Installed route-documentation-work and project-wiki family skills.
 - User preferences for documentation roots, wiki ownership, automation, or local template copies.
 
 ## Setup Recommendation
@@ -50,12 +50,12 @@ Proceed directly when the user already specified these choices or the repository
 3. Confirm docs/wiki as the wiki root unless the project has a stronger established location.
 4. During ordinary setup, persist only the selected project_setup.documentation value and do not require documentation_mode.
 5. When a later explicit documentation workflow will keep structured module, high-level, architecture, and functional specifications authoritative while using README and docs/wiki for navigation and synthesis, select hybrid-specifications-and-wiki and persist it under documentation_mode so downstream agents do not reconstruct the selection from conversational context. For a legacy PROJECT.yaml without that later-workflow field, infer the value only when both structured specification roots and docs/wiki already exist or the workflow is establishing that full hierarchy. Otherwise obtain the project-owned selection before documentation work. Treat an unsupported documentation mode or a missing value without safe migration evidence as BLOCKED only at this later documentation boundary.
-6. During configuration setup, create only the selected empty roots and required placeholders. During a later explicit documentation workflow, use development-methodology to select template assets for active documents.
+6. During configuration setup, create only the selected empty roots and required placeholders. During a later explicit documentation workflow, use route-documentation-work to select template assets for active documents.
 7. Copy template files only during that later document-creation workflow or when the user explicitly requests project-owned templates.
 8. Use project-wiki setup guidance for docs/wiki initialization, schema, topic index, glossary, open decisions, known defects, and maintenance log.
 9. Add or update AGENTS.md guidance so future agents check docs/wiki first, save unsynthesized wiki knowledge under raw/wiki-fragments, use project-wiki skills for wiki work, and commit wiki changes with the source or documentation changes that made them necessary.
 10. Keep runtime-specific commands in project guidance only when the project actually depends on that runtime.
-11. When reverse engineering is in scope, require the project configuration gate, documentation coverage manifest, and every pass completion gate plus final top-down semantic reconciliation from documentation-reverse-engineer before bootstrap can advance or report completion.
+11. When reverse engineering is in scope, require the project configuration gate, documentation coverage manifest, and every pass completion gate plus final top-down semantic reconciliation from reverse-engineer-project-documentation before bootstrap can advance or report completion.
 12. Record unresolved ownership, source authority, verification, or automation questions in Open Questions instead of guessing.
 
 ## Local Template Policy

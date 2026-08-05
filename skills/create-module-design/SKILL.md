@@ -1,6 +1,6 @@
 ---
 name: create-module-design
-description: Use when creating or substantially rewriting a module design artifact from the development-methodology module-design-template asset, including runtime path, parent context, responsibilities, callers, dependencies, public contracts, internal state, processing rules, invariants, configuration, external interfaces, UI behavior, error handling, and verification.
+description: Use when creating or substantially rewriting a module design artifact from the route-documentation-work module-design-template asset, including runtime path, parent context, responsibilities, callers, dependencies, public contracts, internal state, processing rules, invariants, configuration, external interfaces, UI behavior, error handling, and verification.
 metadata:
   category: artifact-creation
 ---
@@ -13,7 +13,7 @@ For planned development, treat the module design as implementation design rather
 
 ## Template
 
-Use skills/development-methodology/assets/templates/module-design-template.md as the starting asset.
+Use skills/route-documentation-work/assets/templates/module-design-template.md as the starting asset.
 
 Copy the template only when a local editable artifact is needed. Replace every TODO instruction with content supported by the authoritative inputs for the selected design mode.
 
@@ -65,7 +65,7 @@ Create one module design that defines:
 
 Use create-high-level-design when the work spans several modules, components, tasks, services, or UI surfaces. Use create-architecture when the work defines project-wide boundaries, layers, technology choices, or cross-cutting rules.
 
-Use documentation-reverse-engineer when the user asks to derive many module designs from an existing codebase.
+Use reverse-engineer-project-documentation when the user asks to derive many module designs from an existing codebase.
 
 ## Workflow
 
@@ -100,7 +100,7 @@ Before finishing:
 
 1. Compare the ordered level-two headings with the module design template. For Documentation Acceptance and Implementation Readiness, skip any leading retained explanatory note or notes, then verify that the first authored decisions begin with ACCEPTED or BLOCKED and READY or BLOCKED, respectively. If any required heading is missing, renamed, duplicated, merged, or reordered, or either decision does not lead the authored content after the notes, stop with BLOCKED and correct the structure before invoking review-module-design.
 2. After the template-conformance gate passes, use review-module-design on the completed artifact.
-3. Use documentation-page-verify with the artifact, source evidence, and completed review checklist when the review skill calls for it.
+3. Use verify-documentation-page with the artifact, source evidence, and completed review checklist when the review skill calls for it.
 4. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.
 5. Search the artifact for unresolved TODO markers that are not intentional.
 6. Confirm every responsibility, dependency, public contract, processing rule, invariant, and verification claim has source evidence or an open question.

@@ -6,7 +6,7 @@ description: Writes source-backed non-wiki project documentation by selecting on
   the requested outcome.
 instructions: Inspect authoritative sources, apply the project and technology guidance
   supplied for the active scope, and apply STE principles to all technical-document
-  prose. Write the resulting artifact in steady-state language. Use development-methodology
+  prose. Write the resulting artifact in steady-state language. Use route-documentation-work
   to select exactly one creation route for a template-owned methodology artifact. Keep
   the selected creation skill responsible for artifact structure and required sections.
   Use structured-explanation only when an artifact or bounded rationale section must
@@ -20,7 +20,7 @@ instructions: Inspect authoritative sources, apply the project and technology gu
   integration. Use a narrower boundary only when the user explicitly names it, and
   never describe that result as complete project reverse engineering. When reverse-engineering
   integration requires a README or another custom entry document, preserve its established
-  format and use documentation-page-verify instead of forcing it into a methodology
+  format and use verify-documentation-page instead of forcing it into a methodology
   template.
 modelProfile: documentation
 examples:
@@ -63,7 +63,7 @@ skills:
 - organise-project-files:
     justification: We need this to place each new durable document in the repository's most specific documentation area before authoring it.
     condition: when the requested documentation work creates a new project file or directory.
-- development-methodology:
+- route-documentation-work:
     justification: We need this to choose the document type that matches the request and avoid combining incompatible documentation workflows.
 - create-functional-spec:
     justification: We need this when the requested artifact is a functional specification so product behavior is expressed consistently for product, design, engineering, and QA.
@@ -112,15 +112,15 @@ skills:
     justification: We need this when the requested artifact must define durable test coverage so implementation, review, and handoff use the same behavioral scenarios.
     condition: when defining durable unit-test scenarios, boundaries, traceability,
       or coverage expectations before implementation or review.
-- documentation-bootstrap:
+- bootstrap-project-documentation:
     justification: We need this when the target project lacks the methodology structure required to place and maintain the requested documentation correctly.
     condition: when the target project lacks the documentation structure needed to
       place and maintain the requested artifact.
-- documentation-reverse-engineer:
+- reverse-engineer-project-documentation:
     justification: We need this when authoritative documentation is missing or stale so claims can be derived from current code, configuration, and tests.
     condition: when authoritative documentation is missing, stale, or insufficient
       and the artifact must be derived from current code, configuration, or tests.
-- documentation-page-verify:
+- verify-documentation-page:
     justification: We need this when reverse-engineering integration creates or updates a README or custom non-wiki entry document that has no artifact-specific review contract.
     condition: when creating or updating a README or custom non-wiki entry document whose established format must be preserved.
 - structured-explanation:

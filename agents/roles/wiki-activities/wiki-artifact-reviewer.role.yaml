@@ -46,7 +46,7 @@ skills:
     condition: when the requested review creates a new project file or directory.
 - project-wiki-review:
     justification: We need this to apply the project-wiki artifact checklist for authority order, page subclasses, navigation, source links, update workflow, automation, and verification.
-- documentation-page-verify:
+- verify-documentation-page:
     justification: We need this to independently check the shared page contract, source support, links, diagrams, and steady-state language from the completed wiki review checklist.
 outputContract:
 - completed project-wiki checklist:

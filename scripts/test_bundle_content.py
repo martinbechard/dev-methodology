@@ -83,10 +83,10 @@ REMOVED_DEVELOPMENT_REFERENCES = (
     "procedure-reverse-engineer-project-documentation.md",
 )
 NEW_WORKFLOW_SKILLS = (
-    "documentation-bootstrap",
-    "documentation-reverse-engineer",
+    "bootstrap-project-documentation",
+    "reverse-engineer-project-documentation",
     "code-project-wiki",
-    "documentation-page-verify",
+    "verify-documentation-page",
     "create-project-configuration",
     "maintain-methodology-documentation",
     "skill-authoring",
@@ -302,11 +302,11 @@ EXAMPLE_PROJECT_SKILL_PACKS = (
 )
 README_REQUIRED_PHRASES = (
     "Use the repository skill sources and generated adapters as the operating surface.",
-    "documentation-bootstrap",
-    "documentation-reverse-engineer",
+    "bootstrap-project-documentation",
+    "reverse-engineer-project-documentation",
     "module-coverage.md",
     "code-project-wiki",
-    "documentation-page-verify",
+    "verify-documentation-page",
     "create-project-configuration",
     "PROJECT.yaml",
     "intermediate, reviewable intent log",
@@ -359,7 +359,7 @@ README_REQUIRED_PHRASES = (
     "Deploy the Gemini CLI bundle globally",
     "Deploy the Junie CLI bundle globally",
     "Use project-level skill and agent directories only when the project needs customized definitions",
-    "skills/development-methodology/assets/templates",
+    "skills/route-documentation-work/assets/templates",
     "python3 scripts/validate-agent-skills.py skills",
     "python3 scripts/validate-agent-skills.py adapters/codex/skills",
     "ownership manifest",
@@ -419,12 +419,12 @@ DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
     "Use the shared page contract only when the selected artifact type requires it.",
 )
 DOCUMENTATION_LIST_WRITER_SKILLS = (
-    "development-methodology",
+    "route-documentation-work",
     "maintain-methodology-documentation",
     "project-wiki-topic-write",
 )
 DOCUMENTATION_LIST_VERIFIER_SKILLS = (
-    "documentation-page-verify",
+    "verify-documentation-page",
     "project-wiki-topic-verify",
 )
 MODULARIZATION_REQUIRED_PHRASES = (
@@ -819,7 +819,7 @@ DOCUMENT_REQUIRED_CONTENT_LINKS = {
         "wiki-skills-and-project-context.html",
     ),
     "agent-skill-specialization-examples.html": (
-        "../skills/development-methodology/assets/templates/project-template.yaml",
+        "../skills/route-documentation-work/assets/templates/project-template.yaml",
     ),
     "generic-agent-definitions-source.html": (
         "../README.md#explicit-target-deployment",
@@ -838,13 +838,13 @@ DOCUMENT_REQUIRED_CONTENT_LINKS = {
         "wiki-skills-and-project-context.html",
     ),
     "documentation-templates.html": (
-        "../skills/development-methodology/assets/templates/project-template.yaml",
-        "../skills/development-methodology/assets/templates/project-wiki-template.md",
-        "../skills/development-methodology/assets/templates/functional-spec-template.md",
-        "../skills/development-methodology/assets/templates/architecture-template.md",
-        "../skills/development-methodology/assets/templates/high-level-design-template.md",
-        "../skills/development-methodology/assets/templates/module-design-template.md",
-        "../skills/development-methodology/assets/templates/unit-test-plan-template.md",
+        "../skills/route-documentation-work/assets/templates/project-template.yaml",
+        "../skills/route-documentation-work/assets/templates/project-wiki-template.md",
+        "../skills/route-documentation-work/assets/templates/functional-spec-template.md",
+        "../skills/route-documentation-work/assets/templates/architecture-template.md",
+        "../skills/route-documentation-work/assets/templates/high-level-design-template.md",
+        "../skills/route-documentation-work/assets/templates/module-design-template.md",
+        "../skills/route-documentation-work/assets/templates/unit-test-plan-template.md",
         "../skills/project-wiki/references/page-schema.md",
         "wiki-skills-and-project-context.html",
     ),
@@ -1591,7 +1591,7 @@ class BundleContentTests(unittest.TestCase):
         for path in (
             README_PATH,
             AGENTS_PATH,
-            SKILLS_ROOT / "development-methodology" / "SKILL.md",
+            SKILLS_ROOT / "route-documentation-work" / "SKILL.md",
             SKILLS_ROOT / "maintain-methodology-documentation" / "SKILL.md",
         ):
             with self.subTest(path=path):
@@ -1601,7 +1601,7 @@ class BundleContentTests(unittest.TestCase):
                 )
 
     def test_development_methodology_does_not_copy_monolithic_references(self) -> None:
-        references_root = SKILLS_ROOT / "development-methodology" / "references"
+        references_root = SKILLS_ROOT / "route-documentation-work" / "references"
 
         for file_name in REMOVED_DEVELOPMENT_REFERENCES:
             with self.subTest(file_name=file_name):
@@ -2640,7 +2640,7 @@ class BundleContentTests(unittest.TestCase):
 
         project_template = (
             SKILLS_ROOT
-            / "development-methodology"
+            / "route-documentation-work"
             / "assets"
             / "templates"
             / PROJECT_TEMPLATE
@@ -2937,6 +2937,37 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertIn("## Select And Run Tests", test_strategy)
         self.assertNotIn("## Workflow", test_strategy)
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probe_ids = {entry["id"] for entry in probes["probes"]}
+        for skill_name in expected_titles:
+            self.assertIn(f"probe-{skill_name}", probe_ids)
+
+    def test_documentation_methodology_skills_use_operation_shaped_interfaces(self) -> None:
+        expected_titles = {
+            "route-documentation-work": "# Route Documentation Work",
+            "bootstrap-project-documentation": "# Bootstrap Project Documentation",
+            "reverse-engineer-project-documentation": "# Reverse Engineer Project Documentation",
+            "verify-documentation-page": "# Verify Documentation Page",
+        }
+        retired_names = (
+            "development-methodology",
+            "documentation-bootstrap",
+            "documentation-reverse-engineer",
+            "documentation-page-verify",
+        )
+
+        for skill_name, title in expected_titles.items():
+            with self.subTest(skill_name=skill_name):
+                skill_path = SKILLS_ROOT / skill_name / "SKILL.md"
+                self.assertTrue(skill_path.is_file())
+                skill_text = skill_path.read_text(encoding="utf-8")
+                self.assertIn(f"name: {skill_name}", skill_text)
+                self.assertIn(title, skill_text)
+
+        for retired_name in retired_names:
+            with self.subTest(retired_name=retired_name):
+                self.assertFalse((SKILLS_ROOT / retired_name).exists())
 
         probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
         probe_ids = {entry["id"] for entry in probes["probes"]}
@@ -3612,7 +3643,7 @@ class BundleContentTests(unittest.TestCase):
 
     def test_artifact_creation_skills_route_to_templates_and_reviews(self) -> None:
         development_methodology_text = (
-            SKILLS_ROOT / "development-methodology" / "SKILL.md"
+            SKILLS_ROOT / "route-documentation-work" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         for skill_name, template_name, review_skill_name in ARTIFACT_CREATION_SKILLS:
@@ -3620,7 +3651,7 @@ class BundleContentTests(unittest.TestCase):
                 skill_path = SKILLS_ROOT / skill_name / "SKILL.md"
                 template_path = (
                     SKILLS_ROOT
-                    / "development-methodology"
+                    / "route-documentation-work"
                     / "assets"
                     / "templates"
                     / template_name
@@ -3636,7 +3667,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(template_name, skill_text)
                 self.assertIn(review_skill_name, skill_text)
                 self.assertIn("Replace every TODO instruction", skill_text)
-                self.assertIn("documentation-page-verify", skill_text)
+                self.assertIn("verify-documentation-page", skill_text)
                 self.assertIn(skill_name, development_methodology_text)
                 self.assertIn(template_name, development_methodology_text)
                 self.assertIn(review_skill_name, development_methodology_text)
@@ -3731,7 +3762,7 @@ class BundleContentTests(unittest.TestCase):
                 )
                 template_text = (
                     SKILLS_ROOT
-                    / "development-methodology"
+                    / "route-documentation-work"
                     / "assets"
                     / "templates"
                     / case["template"]
@@ -3798,7 +3829,7 @@ class BundleContentTests(unittest.TestCase):
 
         module_template = (
             SKILLS_ROOT
-            / "development-methodology"
+            / "route-documentation-work"
             / "assets"
             / "templates"
             / "module-design-template.md"
@@ -4004,7 +4035,7 @@ class BundleContentTests(unittest.TestCase):
         )
         template_text = (
             SKILLS_ROOT
-            / "development-methodology"
+            / "route-documentation-work"
             / "assets"
             / "templates"
             / "high-level-design-template.md"
@@ -4055,7 +4086,7 @@ class BundleContentTests(unittest.TestCase):
         def template_text(template_name: str) -> str:
             return (
                 SKILLS_ROOT
-                / "development-methodology"
+                / "route-documentation-work"
                 / "assets"
                 / "templates"
                 / template_name
@@ -4066,7 +4097,7 @@ class BundleContentTests(unittest.TestCase):
                 SKILLS_ROOT / skill_name / "references" / checklist_name
             ).read_text(encoding="utf-8")
 
-        development_text = skill_text("development-methodology")
+        development_text = skill_text("route-documentation-work")
         architecture_create = skill_text("create-architecture")
         functional_create = skill_text("create-functional-spec")
         hld_create = skill_text("create-high-level-design")
@@ -4256,7 +4287,7 @@ class BundleContentTests(unittest.TestCase):
                 assert_terms(rule.lower(), ("diagram", "prose", "numbered list", "table"))
                 self.assertRegex(rule.lower(), r"must not carry|instead of leaving")
                 additive_rule = line_containing(text, "additive minimum")
-                self.assertIn("shared development-methodology rule", additive_rule)
+                self.assertIn("shared route-documentation-work rule", additive_rule)
                 self.assertRegex(
                     additive_rule,
                     r"does not waive another shared trigger|"
@@ -4491,7 +4522,7 @@ class BundleContentTests(unittest.TestCase):
         """Keep HLD anchors concrete, owned, and reusable by later designs."""
         template_text = (
             SKILLS_ROOT
-            / "development-methodology"
+            / "route-documentation-work"
             / "assets"
             / "templates"
             / "high-level-design-template.md"
@@ -4533,7 +4564,7 @@ class BundleContentTests(unittest.TestCase):
         )
         functional_template = (
             SKILLS_ROOT
-            / "development-methodology"
+            / "route-documentation-work"
             / "assets"
             / "templates"
             / "functional-spec-template.md"
@@ -4572,7 +4603,7 @@ class BundleContentTests(unittest.TestCase):
 
         hld_template = (
             SKILLS_ROOT
-            / "development-methodology"
+            / "route-documentation-work"
             / "assets"
             / "templates"
             / "high-level-design-template.md"
@@ -4591,7 +4622,7 @@ class BundleContentTests(unittest.TestCase):
             ),
             (
                 SKILLS_ROOT
-                / "development-methodology"
+                / "route-documentation-work"
                 / "assets"
                 / "templates"
                 / "functional-spec-template.md"
@@ -4637,12 +4668,12 @@ class BundleContentTests(unittest.TestCase):
 
     def test_project_configuration_routes_to_template_and_verifier(self) -> None:
         development_methodology_text = (
-            SKILLS_ROOT / "development-methodology" / "SKILL.md"
+            SKILLS_ROOT / "route-documentation-work" / "SKILL.md"
         ).read_text(encoding="utf-8")
         skill_path = SKILLS_ROOT / PROJECT_CONFIGURATION_SKILL / "SKILL.md"
         template_path = (
             SKILLS_ROOT
-            / "development-methodology"
+            / "route-documentation-work"
             / "assets"
             / "templates"
             / PROJECT_TEMPLATE
@@ -4665,7 +4696,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn(PROJECT_TEMPLATE, skill_text)
         self.assertIn(PROJECT_ARTIFACT, skill_text)
         self.assertIn("Replace every TODO instruction", skill_text)
-        self.assertIn("documentation-page-verify", skill_text)
+        self.assertIn("verify-documentation-page", skill_text)
         self.assertIn("customer-safe examples", skill_text)
         self.assertIn("schema: project", template_text)
         self.assertIn("proprietary_validation_notes:", template_text)
@@ -4750,7 +4781,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Keep workflow configuration selector-only", skill_text)
         self.assertIn("Do not infer either selector", skill_text)
         development_methodology_text = (
-            SKILLS_ROOT / "development-methodology" / "SKILL.md"
+            SKILLS_ROOT / "route-documentation-work" / "SKILL.md"
         ).read_text(encoding="utf-8")
         self.assertIn("ordered project-level skill extensions", development_methodology_text)
         readme_text = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
@@ -4775,7 +4806,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("thin CLAUDE.md", skill_text)
         self.assertIn(PROJECT_CONFIGURATION_SKILL, development_methodology_text)
         self.assertIn(PROJECT_TEMPLATE, development_methodology_text)
-        self.assertIn("documentation-page-verify", development_methodology_text)
+        self.assertIn("verify-documentation-page", development_methodology_text)
 
     def test_project_and_template_publish_initial_resource_deadline_defaults(self) -> None:
         """Keep setup defaults observable and editable through the project policy path."""
@@ -4804,7 +4835,7 @@ class BundleContentTests(unittest.TestCase):
         }
         template_path = (
             SKILLS_ROOT
-            / "development-methodology"
+            / "route-documentation-work"
             / "assets"
             / "templates"
             / PROJECT_TEMPLATE
@@ -4818,7 +4849,7 @@ class BundleContentTests(unittest.TestCase):
 
     def test_artifact_review_skills_have_checklists_and_metadata(self) -> None:
         development_methodology_text = (
-            SKILLS_ROOT / "development-methodology" / "SKILL.md"
+            SKILLS_ROOT / "route-documentation-work" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         for skill_name, review_target in ARTIFACT_REVIEW_SKILLS:
@@ -4836,7 +4867,7 @@ class BundleContentTests(unittest.TestCase):
                 checklist_text = checklist_path.read_text(encoding="utf-8")
 
                 self.assertIn(checklist_name, skill_text)
-                self.assertIn("documentation-page-verify", skill_text)
+                self.assertIn("verify-documentation-page", skill_text)
                 self.assertIn("Review Checklist", checklist_text)
                 self.assertIn("Findings", checklist_text)
                 self.assertIn(skill_name, development_methodology_text)
@@ -5038,7 +5069,7 @@ class BundleContentTests(unittest.TestCase):
 
     def test_documentation_page_verifier_uses_completed_checklist_evidence(self) -> None:
         skill_text = (
-            SKILLS_ROOT / "documentation-page-verify" / "SKILL.md"
+            SKILLS_ROOT / "verify-documentation-page" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         for phrase in DOCUMENTATION_PAGE_VERIFIER_REVIEW_PHRASES:
@@ -5047,7 +5078,7 @@ class BundleContentTests(unittest.TestCase):
 
     def test_document_reviews_apply_three_checks_to_every_sentence(self) -> None:
         verifier_text = (
-            SKILLS_ROOT / "documentation-page-verify" / "SKILL.md"
+            SKILLS_ROOT / "verify-documentation-page" / "SKILL.md"
         ).read_text(encoding="utf-8")
         reviewer_text = (
             SKILLS_ROOT / "review-structured-artifact" / "SKILL.md"
@@ -5068,7 +5099,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("table row or list item", text)
                 self.assertIn("uses “the” before a common noun", text)
 
-        self.assertIn("Use documentation-page-verify", reviewer_text)
+        self.assertIn("Use verify-documentation-page", reviewer_text)
         self.assertIn("three sentence checks", reviewer_text)
         self.assertIn("completed checklist", reviewer_text)
 
@@ -6074,12 +6105,12 @@ class BundleContentTests(unittest.TestCase):
             encoding="utf-8"
         )
         methodology_text = (
-            SKILLS_ROOT / "development-methodology" / "SKILL.md"
+            SKILLS_ROOT / "route-documentation-work" / "SKILL.md"
         ).read_text(encoding="utf-8")
         template_name = "file-work-item-template.md"
         template_path = (
             SKILLS_ROOT
-            / "development-methodology"
+            / "route-documentation-work"
             / "assets"
             / "templates"
             / template_name
@@ -6647,7 +6678,7 @@ class BundleContentTests(unittest.TestCase):
                     )
                     self.assertEqual(
                         "when creating or updating a README or custom non-wiki entry document whose established format must be preserved",
-                        role.skill_conditions["documentation-page-verify"],
+                        role.skill_conditions["verify-documentation-page"],
                     )
                     for example in role_payload["roles"][role.name]["examples"]:
                         self.assertTrue(
@@ -7376,8 +7407,8 @@ class BundleContentTests(unittest.TestCase):
                 "create-project-configuration",
                 "skill-authoring",
                 "maintain-methodology-documentation",
-                "documentation-page-verify",
-                "development-methodology",
+                "verify-documentation-page",
+                "route-documentation-work",
             )
         }
         for skill, text in skill_texts.items():
@@ -7402,13 +7433,13 @@ class BundleContentTests(unittest.TestCase):
             encoding="utf-8"
         )
         self.assertNotIn("mcp-agent-ops", shared_claim_text)
-        self.assertIn("one skill_load call", skill_texts["development-methodology"])
-        self.assertIn("skill_resource_load", skill_texts["development-methodology"])
-        self.assertIn("Do not reread a skill through MCP", skill_texts["development-methodology"])
+        self.assertIn("one skill_load call", skill_texts["route-documentation-work"])
+        self.assertIn("skill_resource_load", skill_texts["route-documentation-work"])
+        self.assertIn("Do not reread a skill through MCP", skill_texts["route-documentation-work"])
         self.assertIn("detect_technology_skills", skill_texts["detect-technology-skills"])
         self.assertIn("skill_list plus detect_technology_skills", skill_texts["create-project-configuration"])
         self.assertIn("skill_validate", skill_texts["skill-authoring"])
-        self.assertIn("verify_markdown_links", skill_texts["documentation-page-verify"])
+        self.assertIn("verify_markdown_links", skill_texts["verify-documentation-page"])
         self.assertIn("skill_refresh", skill_texts["maintain-methodology-documentation"])
 
         readme_text = README_PATH.read_text(encoding="utf-8")
@@ -9345,7 +9376,7 @@ class BundleContentTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         template_text = (
             SKILLS_ROOT
-            / "development-methodology"
+            / "route-documentation-work"
             / "assets"
             / "templates"
             / "project-template.yaml"
@@ -9360,8 +9391,8 @@ class BundleContentTests(unittest.TestCase):
         roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
         role = next(role for role in roles if role.name == "project-bootstrapper")
 
-        self.assertNotIn("documentation-reverse-engineer", build_skill_docs.fixed_role_skills(role))
-        self.assertNotIn("documentation-reverse-engineer", role.skill_conditions)
+        self.assertNotIn("reverse-engineer-project-documentation", build_skill_docs.fixed_role_skills(role))
+        self.assertNotIn("reverse-engineer-project-documentation", role.skill_conditions)
         self.assertLess(
             role.instructions.index("project-configurator"),
             role.instructions.index("dev-documentation-writer"),
@@ -9471,14 +9502,14 @@ class BundleContentTests(unittest.TestCase):
         role = next(role for role in roles if role.name == "dev-verifier")
 
         self.assertNotIn(
-            "documentation-reverse-engineer",
+            "reverse-engineer-project-documentation",
             build_skill_docs.fixed_role_skills(role),
         )
         self.assertNotIn(
             "review-prompt-contracts",
             build_skill_docs.fixed_role_skills(role),
         )
-        self.assertNotIn("documentation-reverse-engineer", role.skill_conditions)
+        self.assertNotIn("reverse-engineer-project-documentation", role.skill_conditions)
         self.assertIn("review-prompt-contracts", role.skill_conditions)
         self.assertIn("model-facing evaluator", role.skill_conditions["review-prompt-contracts"])
         self.assertIn("model-facing evaluator", role.instructions)
@@ -10448,7 +10479,7 @@ class BundleContentTests(unittest.TestCase):
 
     def test_development_methodology_guides_skill_rename_cleanup(self) -> None:
         skill_text = (
-            SKILLS_ROOT / "development-methodology" / "SKILL.md"
+            SKILLS_ROOT / "route-documentation-work" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         for phrase in DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES:
@@ -11597,7 +11628,7 @@ class BundleContentTests(unittest.TestCase):
 
     def test_reverse_engineering_uses_structural_code_discovery(self) -> None:
         skill_text = (
-            SKILLS_ROOT / "documentation-reverse-engineer" / "SKILL.md"
+            SKILLS_ROOT / "reverse-engineer-project-documentation" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         for phrase in REVERSE_ENGINEERING_DISCOVERY_PHRASES:
@@ -11606,10 +11637,10 @@ class BundleContentTests(unittest.TestCase):
 
     def test_reverse_engineering_requires_full_gated_coverage(self) -> None:
         reverse_skill_text = (
-            SKILLS_ROOT / "documentation-reverse-engineer" / "SKILL.md"
+            SKILLS_ROOT / "reverse-engineer-project-documentation" / "SKILL.md"
         ).read_text(encoding="utf-8")
         bootstrap_skill_text = (
-            SKILLS_ROOT / "documentation-bootstrap" / "SKILL.md"
+            SKILLS_ROOT / "bootstrap-project-documentation" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         required_reverse_phrases = (
@@ -11668,7 +11699,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(phrase, writer.instructions)
 
         development_methodology_text = (
-            SKILLS_ROOT / "development-methodology" / "SKILL.md"
+            SKILLS_ROOT / "route-documentation-work" / "SKILL.md"
         ).read_text(encoding="utf-8")
         readme_text = README_PATH.read_text(encoding="utf-8")
         lifecycle_text = (
@@ -11700,7 +11731,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertFalse(
             (
                 SKILLS_ROOT
-                / "documentation-reverse-engineer"
+                / "reverse-engineer-project-documentation"
                 / "scripts"
                 / "reconstruction_run.py"
             ).exists()
@@ -11814,17 +11845,17 @@ class BundleContentTests(unittest.TestCase):
         self.assertEqual("ACCEPTED. Authored decision.", synthetic_decision)
 
         reverse_text = (
-            SKILLS_ROOT / "documentation-reverse-engineer" / "SKILL.md"
+            SKILLS_ROOT / "reverse-engineer-project-documentation" / "SKILL.md"
         ).read_text(encoding="utf-8")
         bootstrap_text = (
-            SKILLS_ROOT / "documentation-bootstrap" / "SKILL.md"
+            SKILLS_ROOT / "bootstrap-project-documentation" / "SKILL.md"
         ).read_text(encoding="utf-8")
         configuration_text = (
             SKILLS_ROOT / "create-project-configuration" / "SKILL.md"
         ).read_text(encoding="utf-8")
         project_template_text = (
             SKILLS_ROOT
-            / "development-methodology"
+            / "route-documentation-work"
             / "assets"
             / "templates"
             / "project-template.yaml"
@@ -11911,7 +11942,7 @@ class BundleContentTests(unittest.TestCase):
             )
             template_text = (
                 SKILLS_ROOT
-                / "development-methodology"
+                / "route-documentation-work"
                 / "assets"
                 / "templates"
                 / template_name
@@ -12011,7 +12042,7 @@ class BundleContentTests(unittest.TestCase):
             SKILLS_ROOT / "create-project-configuration" / "SKILL.md"
         ).read_text(encoding="utf-8")
         template_text = (
-            SKILLS_ROOT / "development-methodology" / "assets" / "templates" / "project-template.yaml"
+            SKILLS_ROOT / "route-documentation-work" / "assets" / "templates" / "project-template.yaml"
         ).read_text(encoding="utf-8")
 
         for phrase in (

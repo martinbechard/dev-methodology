@@ -31,7 +31,7 @@ The core methodology keeps one shared wiki-compatible page contract and six docu
 4. High-level design: create-high-level-design, high-level-design-template.md, review-high-level-design
 5. Module design: create-module-design, module-design-template.md, review-module-design
 6. Unit test plan: create-unit-test-plan, unit-test-plan-template.md, review-unit-test-plan
-7. File-backed work item: create-file-work-item, file-work-item-template.md, documentation-page-verify
+7. File-backed work item: create-file-work-item, file-work-item-template.md, verify-documentation-page
 
 The shared page contract starts every durable page with Current Understanding, Authoritative Sources, Related Code, Related Tests, Related Backlog Items, Related Wiki Pages, Open Questions, and Maintenance Notes. Specialized documents keep those sections first, then add their own sections.
 
@@ -50,7 +50,7 @@ Project-specific evaluation skills may freeze inputs and compare completed candi
 - skills contains the portable Agent Skills.
 - Specialized technology and domain skills own setup-time activation metadata in detection.yaml beside SKILL.md.
 - skills/detect-technology-skills contains the setup workflow, generated detector mirror, and generated portable technology registry.
-- skills/development-methodology/assets/templates contains the reusable TODO-driven template assets.
+- skills/route-documentation-work/assets/templates contains the reusable TODO-driven template assets.
 - Keep Codex openai.yaml metadata beside each source SKILL.md when a skill needs Codex app metadata, invocation policy, or tool dependencies.
 - scripts/install-skills.py installs the bundled skills through adapter profiles for generic Agent Skills, Codex, Gemini CLI, Claude Code, and JetBrains Junie CLI.
 - agents/role-schema.yaml defines the customer-independent conceptual agent definition schema.
@@ -67,7 +67,7 @@ Project-specific evaluation skills may freeze inputs and compare completed candi
 - scripts contains regression tests for installer behavior and bundle content.
 - AGENTS.md references the repository-local maintenance skill at .agents/skills/dev-methodology-repository-maintenance/SKILL.md.
 
-Reusable templates live inside the development-methodology skill assets so there is one distribution surface for agents. Target projects may copy individual template files when they need local editable documents, but the methodology itself is delivered through skills.
+Reusable templates live inside the route-documentation-work skill assets so there is one distribution surface for agents. Target projects may copy individual template files when they need local editable documents, but the methodology itself is delivered through skills.
 
 ## Generated Methodology Documentation
 
@@ -464,10 +464,10 @@ The wiki and development-wiki skills are:
 
 The documentation methodology skills are:
 
-- development-methodology
-- documentation-bootstrap
-- documentation-reverse-engineer
-- documentation-page-verify
+- route-documentation-work
+- bootstrap-project-documentation
+- reverse-engineer-project-documentation
+- verify-documentation-page
 - ste-technical-writing
 - create-project-configuration
 - maintain-methodology-documentation
@@ -621,7 +621,7 @@ Review checklists are evidence-capture templates. Each checklist question requir
 
 When a review skill runs, it saves a completed review checklist next to the reviewed artifact using this form: artifact-name.review-checklist-[review-target].md. For example, a coding review of test.ts saves test.ts.review-checklist-coding.md.
 
-Artifact-specific review skills pass the artifact, source evidence, and completed review checklist to documentation-page-verify. The verifier uses the completed checklist evidence to complete the shared page-contract, source-authority, link, diagram, and steady-state assessment.
+Artifact-specific review skills pass the artifact, source evidence, and completed review checklist to verify-documentation-page. The verifier uses the completed checklist evidence to complete the shared page-contract, source-authority, link, diagram, and steady-state assessment.
 
 ## Applying This Bundle To A Project
 
@@ -629,7 +629,7 @@ Invoke Project Bootstrapper once and describe the desired steady state:
 
 1. Use the repository bundle sources and matching generated runtime adapter.
 2. Review the resulting PROJECT.yaml, its resource_coordination selection, resource deadlines when agent-claim is selected, ordered project_skill_extensions list, reference-only Persistence and Commit workflow guidance, root or nested AGENTS.md guidance, and verification commands. When agent-claim is selected, one verified claim helper is recorded in the historical agent_claim_transport field. Project-level extensions are referenced without copying their definitions in one final root-only section. Confirmed technology skills are referenced from applicable AGENTS.md guidance by default; pass inline-tech-skills as true only when Advanced setup explicitly selects inline technology delivery. [Agent Skill Architecture](design/skills-modularization.html) explains the independent definition-owned, project-level extension, and folder technology selection mechanisms.
-3. Use documentation-bootstrap and documentation-reverse-engineer when the project needs a source-backed documentation baseline. Whole-project reverse engineering covers every meaningful module by default: inventory and review module designs first, group the complete set into high-level designs, derive architecture from those groups, cover all observable workflows, complete README and wiki integration, then run the final supplemental top-down semantic reconciliation from wiki and functional specifications through architecture, high-level designs, module designs, and source. Narrower coverage is valid only when the user explicitly names the boundary.
+3. Use bootstrap-project-documentation and reverse-engineer-project-documentation when the project needs a source-backed documentation baseline. Whole-project reverse engineering covers every meaningful module by default: inventory and review module designs first, group the complete set into high-level designs, derive architecture from those groups, cover all observable workflows, complete README and wiki integration, then run the final supplemental top-down semantic reconciliation from wiki and functional specifications through architecture, high-level designs, module designs, and source. Narrower coverage is valid only when the user explicitly names the boundary.
 4. For normal planned development, treat accepted functional specifications and architecture as the upstream authority. Create and review the HLD, create and review its module designs, then implement with the ordinary coding agent and project-routed technology skills. A missing high-impact contract blocks dependent work instead of being filled with an unsupported assumption.
 5. Follow the [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) for execution, independent review, integrated verification, commit, and configured delivery.
 

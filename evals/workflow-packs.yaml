@@ -172,10 +172,10 @@ packs:
       - probe-create-high-level-design
       - probe-create-module-design
       - probe-create-unit-test-plan
-      - probe-development-methodology
-      - probe-documentation-bootstrap
-      - probe-documentation-page-verify
-      - probe-documentation-reverse-engineer
+      - probe-route-documentation-work
+      - probe-bootstrap-project-documentation
+      - probe-verify-documentation-page
+      - probe-reverse-engineer-project-documentation
       - probe-maintain-methodology-documentation
       - probe-name-methodology-artifacts
       - probe-organise-project-files
@@ -245,10 +245,10 @@ packs:
       - probe-agent-claim
       - probe-create-project-configuration
       - probe-detect-technology-skills
-      - probe-development-methodology
-      - probe-documentation-bootstrap
-      - probe-documentation-page-verify
-      - probe-documentation-reverse-engineer
+      - probe-route-documentation-work
+      - probe-bootstrap-project-documentation
+      - probe-verify-documentation-page
+      - probe-reverse-engineer-project-documentation
       - probe-organise-project-files
       - probe-structured-design
       - probe-structured-explanation
@@ -309,8 +309,8 @@ packs:
     skillProbes:
       - probe-agent-claim
       - probe-code-project-wiki
-      - probe-documentation-bootstrap
-      - probe-documentation-page-verify
+      - probe-bootstrap-project-documentation
+      - probe-verify-documentation-page
       - probe-organise-project-files
       - probe-project-wiki
       - probe-project-wiki-create

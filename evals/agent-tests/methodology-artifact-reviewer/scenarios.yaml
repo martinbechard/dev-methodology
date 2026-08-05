@@ -14,8 +14,8 @@ scenarios:
       - skill-authoring
       - agent-role-authoring
       - name-methodology-artifacts
-      - documentation-page-verify
-      - development-methodology
+      - verify-documentation-page
+      - route-documentation-work
     requiredBehaviors:
       - Extract and compare source, generated, documentation, test, and command evidence before synthesis.
       - Verify harness boundaries, names, dependencies, generated facts, and regression coverage.
@@ -42,8 +42,8 @@ scenarios:
       - skill-authoring
       - agent-role-authoring
       - name-methodology-artifacts
-      - documentation-page-verify
-      - development-methodology
+      - verify-documentation-page
+      - route-documentation-work
     requiredBehaviors:
       - Lead with the adapter mismatch, stale catalog documentation, and missing regression protection.
       - Cite exact source and derived locations and require regeneration rather than direct adapter editing.
@@ -70,8 +70,8 @@ scenarios:
       - skill-authoring
       - agent-role-authoring
       - name-methodology-artifacts
-      - documentation-page-verify
-      - development-methodology
+      - verify-documentation-page
+      - route-documentation-work
     requiredBehaviors:
       - Distinguish visible file alignment from unverified generator and regression state.
       - Require the exact missing commands before acceptance.

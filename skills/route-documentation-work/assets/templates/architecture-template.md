@@ -1,7 +1,7 @@
 <!--
 Copyright (c) 2025 Martin Bechard [martin.bechard@DevConsult.ca]
 This software is licensed under the MIT License.
-File path: skills/development-methodology/assets/templates/architecture-template.md
+File path: skills/route-documentation-work/assets/templates/architecture-template.md
 1-line summary: Template for project-level architecture documentation.
 -->
 
@@ -188,7 +188,7 @@ TODO: Whenever any section describes two or more ordered actions or phases, or a
 
 TODO: Add a structural diagram when a section defines a non-tabular topology: one system-context, scope, ownership, layer, component, dependency, principle, risk, or verification node connects to two or more others; a dependency or ownership path spans three or more nodes; a cycle exists; containment spans two or more levels; or an edge crosses a system, trust, or runtime boundary.
 
-TODO: Treat the diagram triggers attached to individual architecture sections as additive minimums under the shared development-methodology rule. Satisfying one section-specific trigger does not waive another shared trigger.
+TODO: Treat the diagram triggers attached to individual architecture sections as additive minimums under the shared route-documentation-work rule. Satisfying one section-specific trigger does not waive another shared trigger.
 
 TODO: Prefer Mermaid flowchart for association, aggregation, dependency, ownership, and data-flow diagrams. Prefer Mermaid sequence diagrams for ordered actor handoffs. Prefer Mermaid state diagrams for lifecycle state machines.
 

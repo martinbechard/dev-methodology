@@ -133,7 +133,7 @@ Evidence extraction records quotes, locations, status, and uncertainty without d
 
 ### 2C. Review every sentence
 
-Use documentation-page-verify to review every prose sentence. Apply its three sentence checks to complete claims and instructions in tables and lists as well. Record the results in the completed checklist before extracting findings.
+Use verify-documentation-page to review every prose sentence. Apply its three sentence checks to complete claims and instructions in tables and lists as well. Record the results in the completed checklist before extracting findings.
 
 ### 3. Review directive coverage
 
@@ -410,7 +410,7 @@ Check all of these:
 17. If there were no material findings, the checklist still exists.
 18. Every exact quotation resolves against its named source after line-ending normalization and any omission uses the literal [omitted] marker.
 19. Summaries, assessments, and not-applicable explanations are not presented as exact quotations.
-20. The completed checklist records the shared three-part sentence review from documentation-page-verify.
+20. The completed checklist records the shared three-part sentence review from verify-documentation-page.
 
 ## Do not
 

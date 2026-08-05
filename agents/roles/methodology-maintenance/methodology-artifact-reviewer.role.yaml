@@ -45,9 +45,9 @@ skills:
       and output-contract alignment.
 - name-methodology-artifacts:
     justification: We need this to verify category prefixes, actor-form conceptual agent definition names, and skill operation names against the catalog naming contract.
-- documentation-page-verify:
+- verify-documentation-page:
     justification: We need this to judge methodology documentation against its authoritative sources and required page contracts instead of reviewing prose in isolation.
-- development-methodology:
+- route-documentation-work:
     justification: We need this to evaluate artifacts against the bundle's documented routes, templates, and maintenance rules rather than personal preference.
 outputContract:
 - finding-first review:

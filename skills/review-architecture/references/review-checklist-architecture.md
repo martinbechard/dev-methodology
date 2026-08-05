@@ -22,7 +22,7 @@ Do not mark pass without evidence. Use exact quotation only for literal source t
 - Question: Does the review identify the system boundary, runtime assumptions, layers, components, and cross-cutting claims before assessment?
 - Question: Does the completed review checklist name this checklist as review-checklist-architecture.md?
 - Question: Does the completed review checklist save next to the artifact using artifact-name.review-checklist-architecture.md?
-- Question: Does the review use documentation-page-verify with the artifact, source evidence, and completed review checklist?
+- Question: Does the review use verify-documentation-page with the artifact, source evidence, and completed review checklist?
 - Question: Does the final assessment derive findings or pass status from the completed review checklist rather than memory?
 - Question: Does the output lead with findings ordered by severity when problems exist?
 
@@ -57,7 +57,7 @@ Do not mark pass without evidence. Use exact quotation only for literal source t
 - Question: Whenever a section describes two or more ordered actions or phases, or any handoff, data movement, lifecycle transition, branch, retry, recovery path, startup or shutdown dependency, or dependent implementation phase, does it include an appropriate Mermaid sequence, state, or flow diagram instead of leaving the complete sequence only in prose, a numbered list, or a table?
 - Question: Whenever a section defines a non-tabular topology in which one system-context, scope, ownership, layer, component, dependency, principle, risk, or verification node connects to two or more others, a path spans three or more nodes, a cycle exists, containment spans two or more levels, or an edge crosses a system, trust, or runtime boundary, does it include a structural diagram?
 - Question: Do ordered diagrams use a sequence diagram for exchanges across actors or components, a state diagram for named states and transitions, or a flowchart for branches, recovery paths, ordered phases, and structural associations?
-- Question: Are section-specific architecture diagram triggers treated as additive minimums under the shared development-methodology rule, without using one satisfied section trigger to waive another shared trigger?
+- Question: Are section-specific architecture diagram triggers treated as additive minimums under the shared route-documentation-work rule, without using one satisfied section trigger to waive another shared trigger?
 
 ## Findings
 

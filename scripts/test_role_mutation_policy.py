@@ -18,7 +18,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 BUILD_SCRIPT = ROOT / "scripts" / "build-skill-docs.py"
 ROLE_SCHEMA = ROOT / "agents" / "role-schema.yaml"
-PROJECT_TEMPLATE = ROOT / "skills" / "development-methodology" / "assets" / "templates" / "project-template.yaml"
+PROJECT_TEMPLATE = ROOT / "skills" / "route-documentation-work" / "assets" / "templates" / "project-template.yaml"
 PROJECT_CONFIGURATION_SKILL = ROOT / "skills" / "create-project-configuration" / "SKILL.md"
 FEATURE_BRANCH_SKILL = ROOT / "skills" / "deliver-work-item-feature-branch" / "SKILL.md"
 DIRECT_MAIN_SKILL = ROOT / "skills" / "deliver-work-item-direct-main" / "SKILL.md"

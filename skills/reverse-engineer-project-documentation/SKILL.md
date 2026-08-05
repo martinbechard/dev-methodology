@@ -1,11 +1,11 @@
 ---
-name: documentation-reverse-engineer
+name: reverse-engineer-project-documentation
 description: Use when deriving a complete source-backed documentation hierarchy from an existing codebase, including exhaustive module coverage, subsystem designs, architecture, functional behavior, and wiki navigation.
 metadata:
   category: documentation-methodology
 ---
 
-# Documentation Reverse Engineer
+# Reverse Engineer Project Documentation
 
 Use this skill to derive a complete documentation hierarchy from an existing codebase. Work from the smallest implementation responsibilities outward: project configuration, repository inventory, module designs, subsystem high-level designs, architecture, functional specifications, README, and wiki integration.
 
@@ -30,7 +30,7 @@ Higher-level synthesis never substitutes for missing lower-level coverage. A com
 
 Read documentation_mode.selected from the accepted project-root PROJECT.yaml before starting the documentation passes. The supported full-project mode is hybrid-specifications-and-wiki: module designs, high-level designs, architecture, and functional specifications remain the structured authoritative artifacts, while README and wiki pages provide navigation and source-backed synthesis. Downstream agents consume this persisted value and must not reconstruct it from conversational context.
 
-When a legacy PROJECT.yaml has no documentation_mode field, return to create-project-configuration and migrate it before Pass 1. Infer hybrid-specifications-and-wiki only when the repository already has both structured specification roots and docs/wiki, or when documentation-bootstrap is establishing the full hybrid hierarchy; otherwise obtain the project-owned selection and persist it. An unsupported documentation mode or a missing mode that cannot be migrated from repository evidence blocks the configuration pass.
+When a legacy PROJECT.yaml has no documentation_mode field, return to create-project-configuration and migrate it before Pass 1. Infer hybrid-specifications-and-wiki only when the repository already has both structured specification roots and docs/wiki, or when bootstrap-project-documentation is establishing the full hybrid hierarchy; otherwise obtain the project-owned selection and persist it. An unsupported documentation mode or a missing mode that cannot be migrated from repository evidence blocks the configuration pass.
 
 ## Pass -1: Project Configuration
 
@@ -189,14 +189,14 @@ In hybrid-specifications-and-wiki mode, after the lower levels pass:
 
 1. Update the project README with concise project shape, supported setup, build, test, run, and documentation entry links.
 2. Invoke project-wiki to initialize docs/wiki when it is absent. Required inputs are the repository root, accepted PROJECT.yaml, accepted wiki setup recommendation, structured artifact locations, source authority, ownership boundaries, and project guidance. Owned outputs are the initialized docs/wiki root, required root pages, schema, topic index, glossary, open decisions, known defects, maintenance log, accepted operational folders, and setup guidance. Completion evidence is the exact created or changed wiki page list, wiki status, passing lint and applicable OKF validation, and whether the wiki artifacts were committed with the related work or intentionally left uncommitted under repository or user instructions.
-3. Invoke project-wiki-create only when the project needs a project wiki methodology artifact or that artifact needs substantial rewriting. Required inputs are the accepted PROJECT.yaml, wiki root, source authority, structured artifact locations, and repository maintenance rules. Owned output is the methodology artifact that defines wiki structure, required main pages, authority order, ownership, and maintenance contract. Completion evidence is its project-wiki-review result plus documentation-page-verify, wiki status and lint, and applicable OKF validation.
+3. Invoke project-wiki-create only when the project needs a project wiki methodology artifact or that artifact needs substantial rewriting. Required inputs are the accepted PROJECT.yaml, wiki root, source authority, structured artifact locations, and repository maintenance rules. Owned output is the methodology artifact that defines wiki structure, required main pages, authority order, ownership, and maintenance contract. Completion evidence is its project-wiki-review result plus verify-documentation-page, wiki status and lint, and applicable OKF validation.
 4. Invoke project-wiki-topic-write for main pages, domain hubs, indexes, and appropriately granular leaf topics. Required inputs are the repository root, bounded page scope, accepted structured artifacts and source paths, existing navigation, known verifier findings, and correction-attempt cap. Owned outputs are concise synthesis pages, folder hubs, topic-index entries, glossary links, open-decision and known-defect navigation, maintenance history, and links to the authoritative specifications without verbatim duplication. Completion evidence is the writer's page list, leaf decisions, verifier verdicts, correction count, lint result, and OKF validation result.
-5. Invoke project-wiki-review for each created or substantially rewritten wiki methodology or shared-contract artifact. Required inputs are the artifact, template when applicable, accepted specifications, source evidence, related wiki pages, and project guidance. Owned output is the completed adjacent review checklist and findings or pass assessment. Completion evidence is a passing checklist-derived review plus documentation-page-verify.
+5. Invoke project-wiki-review for each created or substantially rewritten wiki methodology or shared-contract artifact. Required inputs are the artifact, template when applicable, accepted specifications, source evidence, related wiki pages, and project guidance. Owned output is the completed adjacent review checklist and findings or pass assessment. Completion evidence is a passing checklist-derived review plus verify-documentation-page.
 6. Invoke project-wiki-topic-verify in a fresh read-only context for every created or updated topic-page set. Required inputs are the repository root, exact page list, authoritative evidence paths when needed, and lint output. Owned output is VERDICT: GOOD or VERDICT: NEEDS_CORRECTION with actionable findings. Completion evidence is GOOD together with passing lint and applicable OKF validation; corrections remain owned by project-wiki-topic-write.
 7. Link architecture, HLDs, modules, functional specifications, coverage manifests, source, tests, known defects, decisions, glossary, and open questions from the appropriate wiki pages.
 8. Keep experimental or unaccepted artifacts outside accepted documentation trees.
 9. Run wiki status, lint, link, topic, and OKF checks required by the project-wiki contract.
-10. Use documentation-page-verify for custom entry documents and the applicable project-wiki reviewers for wiki content.
+10. Use verify-documentation-page for custom entry documents and the applicable project-wiki reviewers for wiki content.
 
 Preserve the project-wiki source-priority, page-granularity, navigation, ownership, correction-loop, and verification contracts by invoking these capabilities rather than copying their procedures. Structured artifacts own detailed specification content. Wiki pages own discovery, glossary navigation, open-decision and known-defect indexes, maintenance history, and concise cross-links. Do not orphan an accepted structured artifact, create duplicate content ownership, assign overlapping page writes, or grow a hub when durable leaf topics are warranted.
 

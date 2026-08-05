@@ -1,5 +1,5 @@
 <!--
-File path: skills/development-methodology/assets/templates/file-work-item-template.md
+File path: skills/route-documentation-work/assets/templates/file-work-item-template.md
 1-line summary: Template for one self-contained file-backed work item.
 -->
 

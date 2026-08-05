@@ -292,7 +292,7 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
             for name in (
                 "effective-communication",
                 "structured-explanation",
-                "documentation-page-verify",
+                "verify-documentation-page",
             )
         }
         self.assertIn(
@@ -311,7 +311,7 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
             "does not replace the item model",
             skill_texts["structured-explanation"],
         )
-        verifier = skill_texts["documentation-page-verify"]
+        verifier = skill_texts["verify-documentation-page"]
         for phrase in (
             "semantic changes caused by mechanical STE application",
             "A description changed into an instruction",

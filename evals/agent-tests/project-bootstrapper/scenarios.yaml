@@ -11,8 +11,8 @@ scenarios:
     task: Complete project bootstrap without unnecessary reconfiguration or technology detection.
     targetSkills:
       - agent-claim
-      - documentation-bootstrap
-      - development-methodology
+      - bootstrap-project-documentation
+      - route-documentation-work
     allowedAgentDependencies:
       - dev-documentation-writer
       - dev-artifact-reviewer
@@ -51,8 +51,8 @@ scenarios:
     targetSkills:
       - agent-claim
       - organise-project-files
-      - documentation-bootstrap
-      - development-methodology
+      - bootstrap-project-documentation
+      - route-documentation-work
     allowedAgentDependencies:
       - project-configurator
       - dev-documentation-writer
@@ -101,8 +101,8 @@ scenarios:
     targetSkills:
       - agent-claim
       - organise-project-files
-      - documentation-bootstrap
-      - development-methodology
+      - bootstrap-project-documentation
+      - route-documentation-work
     allowedAgentDependencies:
       - project-configurator
       - dev-documentation-writer
@@ -144,8 +144,8 @@ scenarios:
     task: Complete the remaining setup without changing the current project configuration.
     targetSkills:
       - agent-claim
-      - documentation-bootstrap
-      - development-methodology
+      - bootstrap-project-documentation
+      - route-documentation-work
     allowedAgentDependencies: []
     requiredBehaviors:
       - Run the configured validation gate.

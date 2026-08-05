@@ -1,7 +1,7 @@
 <!--
 Copyright (c) 2025 Martin Bechard [martin.bechard@DevConsult.ca]
 This software is licensed under the MIT License.
-File path: skills/development-methodology/assets/templates/high-level-design-template.md
+File path: skills/route-documentation-work/assets/templates/high-level-design-template.md
 1-line summary: Template for subsystem and feature-family high-level design documentation.
 -->
 

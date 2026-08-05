@@ -13,12 +13,12 @@ For planned development, review architecture as solution design. Accept undefine
 
 Review whether the architecture prevents chaos in high-level designs by giving them one coherent frame for runtime units, subsystem vocabulary, stack, repository roots, documentation homes, ownership, layers, dependency direction, data authority, integrations, trust boundaries, configuration, lifecycle, and implementation sequence. Avoidable open questions, conflicting frames, incomplete paths, and placeholder locations are findings.
 
-Require an appropriate Mermaid diagram whenever a section describes two or more ordered actions or phases, or any handoff, data movement, lifecycle transition, branch, retry, recovery path, startup or shutdown dependency, or dependent implementation phase. Require a structural diagram when a section defines a non-tabular topology: one system-context, scope, ownership, layer, component, dependency, principle, risk, or verification node connects to two or more others; a dependency or ownership path spans three or more nodes; a cycle exists; containment spans two or more levels; or an edge crosses a system, trust, or runtime boundary. Prose, numbered lists, and tables may support a diagram but must not carry the complete qualifying relationship alone. Treat architecture-template section-specific triggers as additive minimums under the shared development-methodology rule; satisfying one section-specific trigger does not waive another shared trigger.
+Require an appropriate Mermaid diagram whenever a section describes two or more ordered actions or phases, or any handoff, data movement, lifecycle transition, branch, retry, recovery path, startup or shutdown dependency, or dependent implementation phase. Require a structural diagram when a section defines a non-tabular topology: one system-context, scope, ownership, layer, component, dependency, principle, risk, or verification node connects to two or more others; a dependency or ownership path spans three or more nodes; a cycle exists; containment spans two or more levels; or an edge crosses a system, trust, or runtime boundary. Prose, numbered lists, and tables may support a diagram but must not carry the complete qualifying relationship alone. Treat architecture-template section-specific triggers as additive minimums under the shared route-documentation-work rule; satisfying one section-specific trigger does not waive another shared trigger.
 
 ## Required Inputs
 
 - The architecture artifact under review.
-- The architecture template from development-methodology assets when available.
+- The architecture template from route-documentation-work assets when available.
 - Related source roots, tests, configuration, runtime metadata, procedures, high-level designs, module designs, and wiki pages.
 
 For the architecture current reverse-engineering pass, accepted high-level designs and confirmed cross-cutting source evidence are the required prerequisites. Intentionally absent later functional specifications and wiki pages are not missing mandatory inputs.
@@ -42,7 +42,7 @@ Use exactly one allowed status and never qualify a status with wording such as p
 2. Read references/review-checklist-architecture.md.
 3. Complete every applicable checklist question with the Completed Checklist Evidence fields.
 4. Save the completed review checklist next to the artifact using this form: artifact-name.review-checklist-architecture.md.
-5. Use documentation-page-verify with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
+5. Use verify-documentation-page with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
 6. Verify architecture sections against the checklist, especially scope, stack, file organization, dependency direction, ownership, data movement, lifecycle, implementation sequence, diagrams, cross-cutting concerns, invariants, risks, and verification.
 7. Judge documentation acceptance against source evidence, accepted HLD prerequisites, and current reverse-engineering pass requirements. Do not fail the artifact solely because later functional specifications or wiki pages are intentionally absent, or because a known defect, open decision, or limitation is recorded accurately.
 8. Judge implementation readiness separately. A review may accept the documentation while confirming BLOCKED implementation readiness; preserve the reason for downstream reconciliation and planning.

@@ -1,6 +1,6 @@
 ---
 name: create-functional-spec
-description: Use when creating or substantially rewriting a functional specification artifact from the development-methodology functional-spec-template asset, including actors, entry points, workflows, states, edge cases, acceptance behavior, and verification evidence.
+description: Use when creating or substantially rewriting a functional specification artifact from the route-documentation-work functional-spec-template asset, including actors, entry points, workflows, states, edge cases, acceptance behavior, and verification evidence.
 metadata:
   category: artifact-creation
 ---
@@ -13,7 +13,7 @@ For planned development, treat the functional specification as behavior design r
 
 ## Template
 
-Use skills/development-methodology/assets/templates/functional-spec-template.md as the starting asset.
+Use skills/route-documentation-work/assets/templates/functional-spec-template.md as the starting asset.
 
 Copy the template only when a local editable artifact is needed. Replace every TODO instruction with source-backed content from the target repository.
 
@@ -39,7 +39,7 @@ Create one functional specification that defines:
 
 Use project-wiki-topic-write instead when the task is a durable wiki topic page that summarizes existing functional knowledge without owning the functional specification.
 
-Use documentation-reverse-engineer when the user asks to derive a set of functional specifications from an existing codebase.
+Use reverse-engineer-project-documentation when the user asks to derive a set of functional specifications from an existing codebase.
 
 ## Interface Examples
 
@@ -81,7 +81,7 @@ Documentation acceptance asks whether the specification accurately records obser
 Before finishing:
 
 1. Use review-functional-spec on the completed artifact.
-2. Use documentation-page-verify with the artifact, source evidence, and completed review checklist when the review skill calls for it.
+2. Use verify-documentation-page with the artifact, source evidence, and completed review checklist when the review skill calls for it.
 3. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.
 4. Search the artifact for unresolved TODO markers that are not intentional.
 5. Confirm every workflow, state group, edge case, and acceptance claim has source evidence or a clearly recorded open question.

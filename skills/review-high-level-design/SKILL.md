@@ -18,7 +18,7 @@ Require an appropriate Mermaid diagram whenever the HLD describes an ordered seq
 ## Required Inputs
 
 - The high-level design artifact under review.
-- The high-level design template from development-methodology assets when available.
+- The high-level design template from route-documentation-work assets when available.
 - The authoritative inputs permitted by the artifact's selected design mode. For planned development this means accepted functional specifications, parent architecture, decisions, backlog requirements, project configuration, and relevant technology guidance. For existing behavior it also includes accepted module designs, source, tests, configuration, procedures, and runtime evidence.
 
 For the high-level-design current reverse-engineering pass, accepted module designs, source, tests, configuration, procedures, runtime evidence, and project configuration are sufficient inputs. Intentionally absent later parent architecture, functional specifications, and wiki pages are not missing mandatory inputs.
@@ -42,7 +42,7 @@ Use exactly one allowed status and never qualify a status with wording such as p
 2. Read references/review-checklist-high-level-design.md.
 3. Complete every applicable checklist question with the Completed Checklist Evidence fields.
 4. Save the completed review checklist next to the artifact using this form: artifact-name.review-checklist-high-level-design.md.
-5. Use documentation-page-verify with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
+5. Use verify-documentation-page with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
 6. Verify high-level design sections against the checklist, especially requirements coverage, parent architecture, data anchors, constituent components, interaction model, trust boundaries, identity selectors, authorization, disclosure limits, cross-module contracts, validation and state ownership, transaction and asynchronous boundaries, error timing, configuration, implementation order, invariants, readiness, definition of good, and verification.
 7. Perform operation inventory reconciliation before passing coverage. Enumerate every primary or supporting route, API, command, event, job, notification, and reference-data lookup named in any allowed input, then locate its Requirements Coverage row, owning component, boundary contract, and verification or its explicit out-of-scope authority. An unresolved facet does not justify omitting the supporting operation.
 8. Judge documentation acceptance against source evidence, accepted module prerequisites, and current reverse-engineering pass requirements. Do not fail the artifact solely because later architecture, functional specifications, or wiki pages are intentionally absent, or because a known defect, open decision, or limitation is recorded accurately.

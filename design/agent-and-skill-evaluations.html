@@ -150,7 +150,7 @@
       <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
       <div><dt>Documentation snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>3ab367ab6e745e1870e72e97298301afc46220a4d00f1de3a879008d7d50b225</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source snapshot</dt><dd><code>cdf7e7a86f0fa7db354ab80b97fb42cc199e004456c35f8837e5e0de33799a2b</code>; regenerated and compared by the focused check</dd></div>
     </dl>
     <div style="margin-top:2rem"><h3>Campaign verdict results</h3></div>
     <div class="grid" style="margin-top:1rem">
@@ -2379,6 +2379,36 @@
       </dl>
     </article>
 
+    <article class="evaluation-card skill-card" id="skill-bootstrap-project-documentation"
+      data-kind="skill" data-status="direct-probe" data-search="bootstrap-project-documentation use when applying the development methodology bundle to a target repository for the first time, choosing documentation roots, templates, agents guidance, or wiki setup. documentation-methodology probe-bootstrap-project-documentation linked agent-suite outcomes only: pass, blocked, fail">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>bootstrap-project-documentation</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Use when applying the development methodology bundle to a target repository for the first time, choosing documentation roots, templates, AGENTS guidance, or wiki setup.</p>
+      <p class="source-row"><a href="../skills/bootstrap-project-documentation/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-bootstrap-project-documentation</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">project-bootstrapper-happy</a>, <a href="../evals/agent-scenarios.yaml">wiki-architect-happy</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">documentation-methodology</a>, <a href="../evals/workflow-packs.yaml">project-setup</a>, <a href="../evals/workflow-packs.yaml">wiki-lifecycle</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, operation-coverage, readiness-consistency, source-link-resolution</dd></div>
+          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <ul class="link-list"><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / valid-configuration-direct-path</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / missing-configuration-multi-contribution</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / invalid-configuration-no-authority</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / technology-routing</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-architect/scenarios.yaml">wiki-architect / approved-wiki-initialization</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, BLOCKED, FAIL</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
     <article class="evaluation-card skill-card" id="skill-careful-coding"
       data-kind="skill" data-status="direct-probe" data-search="careful-coding use when the agent is about to implement, modify, refactor, or debug code and should bias toward explicit assumptions, simple designs, surgical diffs, and verified success criteria. development-practice probe-careful-coding linked agent-suite outcomes only: pass, blocked, fail">
       <div class="card-heading">
@@ -2650,12 +2680,12 @@
     </article>
 
     <article class="evaluation-card skill-card" id="skill-create-architecture"
-      data-kind="skill" data-status="direct-probe" data-search="create-architecture use when creating or substantially rewriting an architecture artifact from the development-methodology architecture-template asset, including system scope, context, technology stack, file organization, layers, components, data flow, lifecycle, cross-cutting concerns, risks, invariants, and verification. artifact-creation probe-create-architecture linked agent-suite outcomes only: blocked">
+      data-kind="skill" data-status="direct-probe" data-search="create-architecture use when creating or substantially rewriting an architecture artifact from the route-documentation-work architecture-template asset, including system scope, context, technology stack, file organization, layers, components, data flow, lifecycle, cross-cutting concerns, risks, invariants, and verification. artifact-creation probe-create-architecture linked agent-suite outcomes only: blocked">
       <div class="card-heading">
         <div><span class="card-kicker">Skill</span><h3>create-architecture</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
       </div>
-      <p>Use when creating or substantially rewriting an architecture artifact from the development-methodology architecture-template asset, including system scope, context, technology stack, file organization, layers, components, data flow, lifecycle, cross-cutting concerns, risks, invariants, and verification.</p>
+      <p>Use when creating or substantially rewriting an architecture artifact from the route-documentation-work architecture-template asset, including system scope, context, technology stack, file organization, layers, components, data flow, lifecycle, cross-cutting concerns, risks, invariants, and verification.</p>
       <p class="source-row"><a href="../skills/create-architecture/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe</h4>
 
@@ -2740,12 +2770,12 @@
     </article>
 
     <article class="evaluation-card skill-card" id="skill-create-functional-spec"
-      data-kind="skill" data-status="direct-probe" data-search="create-functional-spec use when creating or substantially rewriting a functional specification artifact from the development-methodology functional-spec-template asset, including actors, entry points, workflows, states, edge cases, acceptance behavior, and verification evidence. artifact-creation probe-create-functional-spec no governed campaign link">
+      data-kind="skill" data-status="direct-probe" data-search="create-functional-spec use when creating or substantially rewriting a functional specification artifact from the route-documentation-work functional-spec-template asset, including actors, entry points, workflows, states, edge cases, acceptance behavior, and verification evidence. artifact-creation probe-create-functional-spec no governed campaign link">
       <div class="card-heading">
         <div><span class="card-kicker">Skill</span><h3>create-functional-spec</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
       </div>
-      <p>Use when creating or substantially rewriting a functional specification artifact from the development-methodology functional-spec-template asset, including actors, entry points, workflows, states, edge cases, acceptance behavior, and verification evidence.</p>
+      <p>Use when creating or substantially rewriting a functional specification artifact from the route-documentation-work functional-spec-template asset, including actors, entry points, workflows, states, edge cases, acceptance behavior, and verification evidence.</p>
       <p class="source-row"><a href="../skills/create-functional-spec/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe</h4>
 
@@ -2830,12 +2860,12 @@
     </article>
 
     <article class="evaluation-card skill-card" id="skill-create-high-level-design"
-      data-kind="skill" data-status="direct-probe" data-search="create-high-level-design use when creating or substantially rewriting a high-level design artifact from the development-methodology high-level-design-template asset, including subsystem scope, parent architecture, data anchors, constituent components, interaction model, lifecycle, contracts, configuration, implementation order, invariants, and verification. artifact-creation probe-create-high-level-design no governed campaign link">
+      data-kind="skill" data-status="direct-probe" data-search="create-high-level-design use when creating or substantially rewriting a high-level design artifact from the route-documentation-work high-level-design-template asset, including subsystem scope, parent architecture, data anchors, constituent components, interaction model, lifecycle, contracts, configuration, implementation order, invariants, and verification. artifact-creation probe-create-high-level-design no governed campaign link">
       <div class="card-heading">
         <div><span class="card-kicker">Skill</span><h3>create-high-level-design</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
       </div>
-      <p>Use when creating or substantially rewriting a high-level design artifact from the development-methodology high-level-design-template asset, including subsystem scope, parent architecture, data anchors, constituent components, interaction model, lifecycle, contracts, configuration, implementation order, invariants, and verification.</p>
+      <p>Use when creating or substantially rewriting a high-level design artifact from the route-documentation-work high-level-design-template asset, including subsystem scope, parent architecture, data anchors, constituent components, interaction model, lifecycle, contracts, configuration, implementation order, invariants, and verification.</p>
       <p class="source-row"><a href="../skills/create-high-level-design/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe</h4>
 
@@ -2890,12 +2920,12 @@
     </article>
 
     <article class="evaluation-card skill-card" id="skill-create-module-design"
-      data-kind="skill" data-status="direct-probe" data-search="create-module-design use when creating or substantially rewriting a module design artifact from the development-methodology module-design-template asset, including runtime path, parent context, responsibilities, callers, dependencies, public contracts, internal state, processing rules, invariants, configuration, external interfaces, ui behavior, error handling, and verification. artifact-creation probe-create-module-design linked agent-suite outcomes only: pass">
+      data-kind="skill" data-status="direct-probe" data-search="create-module-design use when creating or substantially rewriting a module design artifact from the route-documentation-work module-design-template asset, including runtime path, parent context, responsibilities, callers, dependencies, public contracts, internal state, processing rules, invariants, configuration, external interfaces, ui behavior, error handling, and verification. artifact-creation probe-create-module-design linked agent-suite outcomes only: pass">
       <div class="card-heading">
         <div><span class="card-kicker">Skill</span><h3>create-module-design</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
       </div>
-      <p>Use when creating or substantially rewriting a module design artifact from the development-methodology module-design-template asset, including runtime path, parent context, responsibilities, callers, dependencies, public contracts, internal state, processing rules, invariants, configuration, external interfaces, UI behavior, error handling, and verification.</p>
+      <p>Use when creating or substantially rewriting a module design artifact from the route-documentation-work module-design-template asset, including runtime path, parent context, responsibilities, callers, dependencies, public contracts, internal state, processing rules, invariants, configuration, external interfaces, UI behavior, error handling, and verification.</p>
       <p class="source-row"><a href="../skills/create-module-design/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe</h4>
 
@@ -3094,126 +3124,6 @@
       <ul class="link-list"><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / valid-configuration-reuse</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / technology-routing</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / invalid-configuration</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
       <dl class="compact-list">
         <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
-    <article class="evaluation-card skill-card" id="skill-development-methodology"
-      data-kind="skill" data-status="direct-probe" data-search="development-methodology use when creating or revising software project documentation, choosing a methodology template, or routing setup, reverse engineering, code wiki, or page verification work. documentation-methodology probe-development-methodology linked agent-suite outcomes only: pass, blocked, fail">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>development-methodology</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Use when creating or revising software project documentation, choosing a methodology template, or routing setup, reverse engineering, code wiki, or page verification work.</p>
-      <p class="source-row"><a href="../skills/development-methodology/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-development-methodology</a></dd></div>
-          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>routing</dd></div>
-          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">documentation-functional-spec</a>, <a href="../evals/cases.yaml">project-configuration-routing</a></dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-documentation-writer-happy</a>, <a href="../evals/agent-scenarios.yaml">project-bootstrapper-happy</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">documentation-methodology</a>, <a href="../evals/workflow-packs.yaml">project-setup</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, forbidden-skill-absence</dd></div>
-          <div><dt>Model rubric</dt><dd>source-faithfulness</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <ul class="link-list"><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / valid-configuration-direct-path</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / missing-configuration-multi-contribution</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / invalid-configuration-no-authority</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / valid-configuration-reuse</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / technology-routing</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / invalid-configuration</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / routed-authoring</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / source-gaps</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / verification-correction</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-maintainer/scenarios.yaml">methodology-maintainer / coherent-skill-catalog-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-maintainer/scenarios.yaml">methodology-maintainer / generated-adapter-drift-repair</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-maintainer/scenarios.yaml">methodology-maintainer / blocked-schema-expansion</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml">methodology-artifact-reviewer / accepted-aligned-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml">methodology-artifact-reviewer / catalog-and-adapter-drift</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml">methodology-artifact-reviewer / incomplete-verification-evidence</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, BLOCKED, FAIL</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
-    <article class="evaluation-card skill-card" id="skill-documentation-bootstrap"
-      data-kind="skill" data-status="direct-probe" data-search="documentation-bootstrap use when applying the development methodology bundle to a target repository for the first time, choosing documentation roots, templates, agents guidance, or wiki setup. documentation-methodology probe-documentation-bootstrap linked agent-suite outcomes only: pass, blocked, fail">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>documentation-bootstrap</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Use when applying the development methodology bundle to a target repository for the first time, choosing documentation roots, templates, AGENTS guidance, or wiki setup.</p>
-      <p class="source-row"><a href="../skills/documentation-bootstrap/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-documentation-bootstrap</a></dd></div>
-          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
-          <div><dt>Executable cases</dt><dd>None declared</dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">project-bootstrapper-happy</a>, <a href="../evals/agent-scenarios.yaml">wiki-architect-happy</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">documentation-methodology</a>, <a href="../evals/workflow-packs.yaml">project-setup</a>, <a href="../evals/workflow-packs.yaml">wiki-lifecycle</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, operation-coverage, readiness-consistency, source-link-resolution</dd></div>
-          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <ul class="link-list"><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / valid-configuration-direct-path</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / missing-configuration-multi-contribution</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / invalid-configuration-no-authority</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / technology-routing</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-architect/scenarios.yaml">wiki-architect / approved-wiki-initialization</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, BLOCKED, FAIL</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
-    <article class="evaluation-card skill-card" id="skill-documentation-page-verify"
-      data-kind="skill" data-status="direct-probe" data-search="documentation-page-verify use when verifying mixed, unknown, custom, or shared methodology documentation concerns that do not have a clearer artifact-specific review skill. documentation-methodology probe-documentation-page-verify linked agent-suite outcomes only: pass, fail">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>documentation-page-verify</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Use when verifying mixed, unknown, custom, or shared methodology documentation concerns that do not have a clearer artifact-specific review skill.</p>
-      <p class="source-row"><a href="../skills/documentation-page-verify/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-documentation-page-verify</a></dd></div>
-          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>review-contract</dd></div>
-          <div><dt>Executable cases</dt><dd>None declared</dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-artifact-reviewer-boundary</a>, <a href="../evals/agent-scenarios.yaml">wiki-artifact-reviewer-happy</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">documentation-methodology</a>, <a href="../evals/workflow-packs.yaml">project-setup</a>, <a href="../evals/workflow-packs.yaml">wiki-lifecycle</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, source-link-resolution, artifact-review-checklist</dd></div>
-          <div><dt>Model rubric</dt><dd>review-quality</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <ul class="link-list"><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / valid-configuration-reuse</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / technology-routing</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / invalid-configuration</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / verification-correction</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-artifact-reviewer/scenarios.yaml">dev-artifact-reviewer / accepted-artifact</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-artifact-reviewer/scenarios.yaml">dev-artifact-reviewer / material-findings</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-artifact-reviewer/scenarios.yaml">dev-artifact-reviewer / missing-review-authority</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-artifact-reviewer/scenarios.yaml">wiki-artifact-reviewer / accepted-wiki-methodology-artifact</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-artifact-reviewer/scenarios.yaml">wiki-artifact-reviewer / structural-and-maintenance-findings</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-artifact-reviewer/scenarios.yaml">wiki-artifact-reviewer / missing-review-authority</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml">methodology-artifact-reviewer / accepted-aligned-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml">methodology-artifact-reviewer / catalog-and-adapter-drift</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml">methodology-artifact-reviewer / incomplete-verification-evidence</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, FAIL</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
-    <article class="evaluation-card skill-card" id="skill-documentation-reverse-engineer"
-      data-kind="skill" data-status="direct-probe" data-search="documentation-reverse-engineer use when deriving a complete source-backed documentation hierarchy from an existing codebase, including exhaustive module coverage, subsystem designs, architecture, functional behavior, and wiki navigation. documentation-methodology probe-documentation-reverse-engineer linked agent-suite outcomes only: blocked">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>documentation-reverse-engineer</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Use when deriving a complete source-backed documentation hierarchy from an existing codebase, including exhaustive module coverage, subsystem designs, architecture, functional behavior, and wiki navigation.</p>
-      <p class="source-row"><a href="../skills/documentation-reverse-engineer/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-documentation-reverse-engineer</a></dd></div>
-          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
-          <div><dt>Executable cases</dt><dd>None declared</dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-documentation-writer-boundary</a>, <a href="../evals/agent-scenarios.yaml">project-bootstrapper-happy</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">documentation-methodology</a>, <a href="../evals/workflow-packs.yaml">project-setup</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, operation-coverage, actor-boundary-coverage, readiness-consistency</dd></div>
-          <div><dt>Model rubric</dt><dd>artifact-contract</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <ul class="link-list"><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / source-gaps</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: BLOCKED</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
         <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
       </dl>
@@ -4450,12 +4360,12 @@
     </article>
 
     <article class="evaluation-card skill-card" id="skill-project-wiki-create"
-      data-kind="skill" data-status="direct-probe" data-search="project-wiki-create use when creating or substantially rewriting a project wiki methodology artifact from the development-methodology project-wiki-template asset, including wiki setup, authority order, base page contract, page subclassing, update workflow, automation, and verification guidance. wiki-and-knowledge probe-project-wiki-create linked agent-suite outcomes only: pass">
+      data-kind="skill" data-status="direct-probe" data-search="project-wiki-create use when creating or substantially rewriting a project wiki methodology artifact from the route-documentation-work project-wiki-template asset, including wiki setup, authority order, base page contract, page subclassing, update workflow, automation, and verification guidance. wiki-and-knowledge probe-project-wiki-create linked agent-suite outcomes only: pass">
       <div class="card-heading">
         <div><span class="card-kicker">Skill</span><h3>project-wiki-create</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
       </div>
-      <p>Use when creating or substantially rewriting a project wiki methodology artifact from the development-methodology project-wiki-template asset, including wiki setup, authority order, base page contract, page subclassing, update workflow, automation, and verification guidance.</p>
+      <p>Use when creating or substantially rewriting a project wiki methodology artifact from the route-documentation-work project-wiki-template asset, including wiki setup, authority order, base page contract, page subclassing, update workflow, automation, and verification guidance.</p>
       <p class="source-row"><a href="../skills/project-wiki-create/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe</h4>
 
@@ -4959,6 +4869,36 @@
       </dl>
     </article>
 
+    <article class="evaluation-card skill-card" id="skill-reverse-engineer-project-documentation"
+      data-kind="skill" data-status="direct-probe" data-search="reverse-engineer-project-documentation use when deriving a complete source-backed documentation hierarchy from an existing codebase, including exhaustive module coverage, subsystem designs, architecture, functional behavior, and wiki navigation. documentation-methodology probe-reverse-engineer-project-documentation linked agent-suite outcomes only: blocked">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>reverse-engineer-project-documentation</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Use when deriving a complete source-backed documentation hierarchy from an existing codebase, including exhaustive module coverage, subsystem designs, architecture, functional behavior, and wiki navigation.</p>
+      <p class="source-row"><a href="../skills/reverse-engineer-project-documentation/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-reverse-engineer-project-documentation</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-documentation-writer-boundary</a>, <a href="../evals/agent-scenarios.yaml">project-bootstrapper-happy</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">documentation-methodology</a>, <a href="../evals/workflow-packs.yaml">project-setup</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, operation-coverage, actor-boundary-coverage, readiness-consistency</dd></div>
+          <div><dt>Model rubric</dt><dd>artifact-contract</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <ul class="link-list"><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / source-gaps</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: BLOCKED</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
     <article class="evaluation-card skill-card" id="skill-review-architecture"
       data-kind="skill" data-status="direct-probe" data-search="review-architecture use when reviewing an architecture artifact for system scope, runtime assumptions, boundaries, dependency direction, cross-cutting concerns, and verification. artifact-review probe-review-architecture no governed campaign link">
       <div class="card-heading">
@@ -5233,6 +5173,36 @@ available.
       <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
       <dl class="compact-list">
         <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-route-documentation-work"
+      data-kind="skill" data-status="direct-probe" data-search="route-documentation-work use when creating or revising software project documentation, choosing a methodology template, or routing setup, reverse engineering, code wiki, or page verification work. documentation-methodology probe-route-documentation-work linked agent-suite outcomes only: pass, blocked, fail">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>route-documentation-work</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Use when creating or revising software project documentation, choosing a methodology template, or routing setup, reverse engineering, code wiki, or page verification work.</p>
+      <p class="source-row"><a href="../skills/route-documentation-work/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-route-documentation-work</a></dd></div>
+          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>routing</dd></div>
+          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">documentation-functional-spec</a>, <a href="../evals/cases.yaml">project-configuration-routing</a></dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-documentation-writer-happy</a>, <a href="../evals/agent-scenarios.yaml">project-bootstrapper-happy</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">documentation-methodology</a>, <a href="../evals/workflow-packs.yaml">project-setup</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, forbidden-skill-absence</dd></div>
+          <div><dt>Model rubric</dt><dd>source-faithfulness</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <ul class="link-list"><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / valid-configuration-direct-path</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / missing-configuration-multi-contribution</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-bootstrapper/scenarios.yaml">project-bootstrapper / invalid-configuration-no-authority</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / valid-configuration-reuse</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / technology-routing</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / invalid-configuration</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / routed-authoring</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / source-gaps</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / verification-correction</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-maintainer/scenarios.yaml">methodology-maintainer / coherent-skill-catalog-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-maintainer/scenarios.yaml">methodology-maintainer / generated-adapter-drift-repair</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-maintainer/scenarios.yaml">methodology-maintainer / blocked-schema-expansion</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml">methodology-artifact-reviewer / accepted-aligned-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml">methodology-artifact-reviewer / catalog-and-adapter-drift</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml">methodology-artifact-reviewer / incomplete-verification-evidence</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, BLOCKED, FAIL</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
         <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
       </dl>
@@ -5981,6 +5951,36 @@ inspect.
       <ul class="link-list"><li><a href="../evals/agent-tests/dev-ux-specialist/scenarios.yaml">dev-ux-specialist / complete-responsive-flow</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-ux-specialist/scenarios.yaml">dev-ux-specialist / keyboard-and-accessibility-barriers</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-ux-specialist/scenarios.yaml">dev-ux-specialist / missing-runtime-evidence</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
       <dl class="compact-list">
         <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: BLOCKED</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-verify-documentation-page"
+      data-kind="skill" data-status="direct-probe" data-search="verify-documentation-page use when verifying mixed, unknown, custom, or shared methodology documentation concerns that do not have a clearer artifact-specific review skill. documentation-methodology probe-verify-documentation-page linked agent-suite outcomes only: pass, fail">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>verify-documentation-page</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Use when verifying mixed, unknown, custom, or shared methodology documentation concerns that do not have a clearer artifact-specific review skill.</p>
+      <p class="source-row"><a href="../skills/verify-documentation-page/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-verify-documentation-page</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>review-contract</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-artifact-reviewer-boundary</a>, <a href="../evals/agent-scenarios.yaml">wiki-artifact-reviewer-happy</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">documentation-methodology</a>, <a href="../evals/workflow-packs.yaml">project-setup</a>, <a href="../evals/workflow-packs.yaml">wiki-lifecycle</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, source-link-resolution, artifact-review-checklist</dd></div>
+          <div><dt>Model rubric</dt><dd>review-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <ul class="link-list"><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / valid-configuration-reuse</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / technology-routing</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/project-configurator/scenarios.yaml">project-configurator / invalid-configuration</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-documentation-writer/scenarios.yaml">dev-documentation-writer / verification-correction</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-artifact-reviewer/scenarios.yaml">dev-artifact-reviewer / accepted-artifact</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-artifact-reviewer/scenarios.yaml">dev-artifact-reviewer / material-findings</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-artifact-reviewer/scenarios.yaml">dev-artifact-reviewer / missing-review-authority</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-artifact-reviewer/scenarios.yaml">wiki-artifact-reviewer / accepted-wiki-methodology-artifact</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-artifact-reviewer/scenarios.yaml">wiki-artifact-reviewer / structural-and-maintenance-findings</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/wiki-artifact-reviewer/scenarios.yaml">wiki-artifact-reviewer / missing-review-authority</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml">methodology-artifact-reviewer / accepted-aligned-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml">methodology-artifact-reviewer / catalog-and-adapter-drift</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/methodology-artifact-reviewer/scenarios.yaml">methodology-artifact-reviewer / incomplete-verification-evidence</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, FAIL</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
         <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
       </dl>

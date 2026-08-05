@@ -3,10 +3,10 @@ agent-claim-mcp
 careful-coding
 create-project-configuration
 detect-technology-skills
-development-methodology
-documentation-bootstrap
-documentation-page-verify
-documentation-reverse-engineer
+route-documentation-work
+bootstrap-project-documentation
+verify-documentation-page
+reverse-engineer-project-documentation
 fastapi
 maintain-methodology-documentation
 nextjs-app-router

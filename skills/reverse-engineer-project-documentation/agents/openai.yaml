@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Documentation Page Verify
+  display_name: Reverse Engineer Project Documentation
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Use when verifying mixed, unknown, custom, or shared methodology documentation concerns that do...
+  short_description: Use when deriving a complete source-backed documentation hierarchy from an existing codebase...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $documentation-page-verify to verify this documentation page against the methodology template and sources.
+  default_prompt: Use $reverse-engineer-project-documentation to derive source-backed project documentation from this repository.
 
 # Optional invocation policy placeholder.
 # policy:

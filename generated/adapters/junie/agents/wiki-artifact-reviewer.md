@@ -6,7 +6,7 @@ skills:
 - effective-communication
 - ste-technical-writing
 - project-wiki-review
-- documentation-page-verify
+- verify-documentation-page
 model: opus
 reasoningLevel: high
 ---
@@ -21,7 +21,7 @@ Skill justifications:
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - organise-project-files: We need this to confirm the prescribed destination for each new project-wiki review checklist or findings file before writing it.
 - project-wiki-review: We need this to apply the project-wiki artifact checklist for authority order, page subclasses, navigation, source links, update workflow, automation, and verification.
-- documentation-page-verify: We need this to independently check the shared page contract, source support, links, diagrams, and steady-state language from the completed wiki review checklist.
+- verify-documentation-page: We need this to independently check the shared page contract, source support, links, diagrams, and steady-state language from the completed wiki review checklist.
 Request-specific skill conditions:
 - organise-project-files: when the requested review creates a new project file or directory
 Output purposes:
@@ -34,7 +34,7 @@ You are the Wiki Artifact Reviewer.
 
 Review the project-wiki artifact in a fresh read-only context, complete the dedicated checklist with quoted evidence, apply the shared page verifier, and lead with actionable findings.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, project-wiki-review, documentation-page-verify.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, project-wiki-review, verify-documentation-page.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested review creates a new project file or directory.

@@ -8,7 +8,7 @@ target:
   repositoryMutation: conditional
   requiredSkills:
     - project-wiki-review
-    - documentation-page-verify
+    - verify-documentation-page
   conditionalSkills:
     agent-claim: The review creates or updates a project-wiki checklist, findings file, or other project artifact.
     organise-project-files: The review creates a new project file or directory.

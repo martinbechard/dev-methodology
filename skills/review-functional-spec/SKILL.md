@@ -18,7 +18,7 @@ Require an appropriate Mermaid diagram whenever a workflow contains two or more 
 ## Required Inputs
 
 - The functional specification under review.
-- The functional specification template from development-methodology assets when available.
+- The functional specification template from route-documentation-work assets when available.
 - Related product notes, source files, tests, routes, UI surfaces, procedures, and wiki pages.
 
 For the functional-specification current reverse-engineering pass, accepted architecture and lower-level designs plus source, routes, UI surfaces, commands, jobs, tests, procedures, and runtime evidence are the required inputs. Intentionally absent later wiki pages are not missing mandatory inputs.
@@ -42,7 +42,7 @@ Use exactly one allowed status and never qualify a status with wording such as p
 2. Read references/review-checklist-functional-spec.md.
 3. Complete every applicable checklist question with the Completed Checklist Evidence fields.
 4. Save the completed review checklist next to the artifact using this form: artifact-name.review-checklist-functional-spec.md.
-5. Use documentation-page-verify with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
+5. Use verify-documentation-page with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
 6. Verify functional sections against the checklist, especially actor goal, entry points, workflow steps, workflow diagrams, states, permissions, edge cases, acceptance behavior, and verification blocks. Perform operation inventory reconciliation across every primary and supporting route, API, command, event, job, notification, and reference-data lookup named by the artifact or authoritative sources.
 7. Judge documentation acceptance against source evidence, accepted design prerequisites, and current reverse-engineering pass requirements. Do not fail the artifact solely because later wiki pages are intentionally absent, or because a known defect, unimplemented behavior, open decision, or limitation is recorded accurately.
 8. Judge implementation readiness separately. A review may accept the documentation while confirming BLOCKED implementation readiness; preserve the reason for downstream reconciliation and planning.

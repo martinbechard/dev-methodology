@@ -1,6 +1,6 @@
 ---
 name: create-architecture
-description: Use when creating or substantially rewriting an architecture artifact from the development-methodology architecture-template asset, including system scope, context, technology stack, file organization, layers, components, data flow, lifecycle, cross-cutting concerns, risks, invariants, and verification.
+description: Use when creating or substantially rewriting an architecture artifact from the route-documentation-work architecture-template asset, including system scope, context, technology stack, file organization, layers, components, data flow, lifecycle, cross-cutting concerns, risks, invariants, and verification.
 metadata:
   category: artifact-creation
 ---
@@ -13,7 +13,7 @@ For planned development, treat architecture as solution design rather than only 
 
 ## Template
 
-Use skills/development-methodology/assets/templates/architecture-template.md as the starting asset.
+Use skills/route-documentation-work/assets/templates/architecture-template.md as the starting asset.
 
 Copy the template only when a local editable artifact is needed. Replace every TODO instruction with source-backed content from the target repository.
 
@@ -42,7 +42,7 @@ Create one architecture artifact that defines:
 
 Use create-high-level-design when the work is one subsystem or feature family. Use create-module-design when the work is one module, service, component, task, utility, or tightly scoped implementation unit.
 
-Use documentation-reverse-engineer when the user asks to derive an architecture set from an existing codebase.
+Use reverse-engineer-project-documentation when the user asks to derive an architecture set from an existing codebase.
 
 ## Reverse-Engineering Acceptance
 
@@ -57,7 +57,7 @@ Documentation acceptance asks whether the architecture accurately reconciles the
 3. Copy the architecture template into the target documentation location when a new artifact is needed.
 4. Replace each TODO with source-backed architecture content.
 5. Keep the shared page contract sections first.
-6. Add Mermaid diagrams from objective relationship triggers. Whenever a section describes two or more ordered actions or phases, or any handoff, data movement, lifecycle transition, branch, retry, recovery path, startup or shutdown dependency, or dependent implementation phase, include an appropriate sequence, state, or flow diagram; prose, numbered lists, and tables may add constraints but must not carry the complete sequence alone. Add a structural diagram when a section defines a non-tabular topology: one system-context, scope, ownership, layer, component, dependency, principle, risk, or verification node connects to two or more others; a dependency or ownership path spans three or more nodes; a cycle exists; containment spans two or more levels; or an edge crosses a system, trust, or runtime boundary. Treat every architecture-template section-specific diagram trigger as an additive minimum under the shared development-methodology rule; satisfying one section-specific trigger does not waive another shared trigger.
+6. Add Mermaid diagrams from objective relationship triggers. Whenever a section describes two or more ordered actions or phases, or any handoff, data movement, lifecycle transition, branch, retry, recovery path, startup or shutdown dependency, or dependent implementation phase, include an appropriate sequence, state, or flow diagram; prose, numbered lists, and tables may add constraints but must not carry the complete sequence alone. Add a structural diagram when a section defines a non-tabular topology: one system-context, scope, ownership, layer, component, dependency, principle, risk, or verification node connects to two or more others; a dependency or ownership path spans three or more nodes; a cycle exists; containment spans two or more levels; or an edge crosses a system, trust, or runtime boundary. Treat every architecture-template section-specific diagram trigger as an additive minimum under the shared route-documentation-work rule; satisfying one section-specific trigger does not waive another shared trigger.
 7. Say Not yet identified for related code, tests, backlog items, or wiki pages that do not exist yet.
 8. Keep risks, trade-offs, and open questions concrete enough to guide future implementation and review.
 9. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
@@ -67,7 +67,7 @@ Documentation acceptance asks whether the architecture accurately reconciles the
 Before finishing:
 
 1. Use review-architecture on the completed artifact.
-2. Use documentation-page-verify with the artifact, source evidence, and completed review checklist when the review skill calls for it.
+2. Use verify-documentation-page with the artifact, source evidence, and completed review checklist when the review skill calls for it.
 3. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.
 4. Search the artifact for unresolved TODO markers that are not intentional.
 5. Confirm every architectural claim names source evidence, a verification path, or an open question.

@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Documentation Reverse Engineer
+  display_name: Route Documentation Work
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Use when deriving a complete source-backed documentation hierarchy from an existing codebase...
+  short_description: Use when creating or revising software project documentation, choosing a methodology template...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $documentation-reverse-engineer to derive source-backed project documentation from this repository.
+  default_prompt: Use $route-documentation-work to choose the right documentation workflow, template, and verification path.
 
 # Optional invocation policy placeholder.
 # policy:

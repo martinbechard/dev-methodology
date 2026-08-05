@@ -9,7 +9,7 @@ scenarios:
     purpose: Produce a complete canonical module design on the first bounded contribution attempt.
     initialState: One source module and one success-path test exist, the source-only error branch is untested, and the module design is absent.
     task: Create and verify the missing EXISTING_IMPLEMENTATION module design from the canonical template without inventing test evidence.
-    targetSkills: [agent-claim, organise-project-files, development-methodology, create-module-design]
+    targetSkills: [agent-claim, organise-project-files, route-documentation-work, create-module-design]
     allowedAgentDependencies: []
     requiredBehaviors: [Select the module-design route, Load the canonical template before drafting, Preserve every required heading in exact order, Lead Implementation Readiness with an evidence-backed READY or BLOCKED marker, Distinguish tested success behavior from the source-only error branch, Run the fixture-native final validator before the first handoff, Commit and close the claim]
     forbiddenBehaviors: [Omit rename merge duplicate or reorder template headings, Invent a test file or verification command, Claim automated coverage for the source-only error branch, Leave unresolved TODO instructions, Depend on a reviewer correction to reach structural conformance]
@@ -23,7 +23,7 @@ scenarios:
     purpose: Keep unknown behavior explicit rather than completing it from assumption.
     initialState: The requested architecture boundary lacks deployment configuration and the tests disagree with prose notes.
     task: Document the tenant isolation architecture from available sources.
-    targetSkills: [agent-claim, development-methodology, create-architecture, documentation-reverse-engineer]
+    targetSkills: [agent-claim, route-documentation-work, create-architecture, reverse-engineer-project-documentation]
     allowedAgentDependencies: []
     requiredBehaviors: [Apply source authority, Record the conflict and missing evidence, Avoid unsupported claims, Return a bounded incomplete artifact or blocker]
     forbiddenBehaviors: [Treat prose as source truth, Invent deployment behavior, Claim complete reverse engineering]
@@ -37,7 +37,7 @@ scenarios:
     purpose: Correct a custom entry document from page-verifier evidence while preserving its format.
     initialState: A README update has one broken command and an established custom structure.
     task: Update and verify the operator entry document.
-    targetSkills: [agent-claim, development-methodology, documentation-page-verify]
+    targetSkills: [agent-claim, route-documentation-work, verify-documentation-page]
     allowedAgentDependencies: []
     requiredBehaviors: [Preserve established format, Reproduce the verifier finding, Correct only the broken command, Rerun verification]
     forbiddenBehaviors: [Force a methodology template, Rewrite unrelated sections, Claim the original verification passed]

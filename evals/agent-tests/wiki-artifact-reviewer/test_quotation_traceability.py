@@ -150,7 +150,7 @@ class QuotationTraceabilityTests(unittest.TestCase):
             SUITE_ROOT.parents[2] / "skills" / "project-wiki-review" / "SKILL.md"
         ).read_text(encoding="utf-8")
         verifier = (
-            SUITE_ROOT.parents[2] / "skills" / "documentation-page-verify" / "SKILL.md"
+            SUITE_ROOT.parents[2] / "skills" / "verify-documentation-page" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         for skill in (structured, wiki_review, verifier):

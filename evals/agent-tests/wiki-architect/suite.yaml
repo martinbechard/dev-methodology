@@ -12,7 +12,7 @@ target:
   conditionalSkills:
     organise-project-files: The setup creates a new project file or directory.
     project-wiki-create: The repository needs a project-wiki methodology artifact in addition to the operational wiki structure.
-    documentation-bootstrap: The repository lacks established documentation roots or ownership guidance needed for wiki setup.
+    bootstrap-project-documentation: The repository lacks established documentation roots or ownership guidance needed for wiki setup.
   allowedAgentDependencies: []
   requiredOutputs:
     - setup recommendation pack

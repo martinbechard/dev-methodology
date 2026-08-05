@@ -188,7 +188,7 @@ role_agent_set:
       - "Methodology artifact review to methodology-artifact-reviewer when a separate documentation review is required."
     skills:
       - maintain-methodology-documentation
-      - development-methodology
+      - route-documentation-work
       - structured-explanation
     completion_checks:
       - "Run all validation commands required by AGENTS.md."
@@ -201,8 +201,8 @@ role_agent_set:
     skills:
       - detect-technology-skills
       - create-project-configuration
-      - development-methodology
-      - documentation-page-verify
+      - route-documentation-work
+      - verify-documentation-page
     completion_checks:
       - "Rerun representative-scope detection and compare AGENTS.md with this plan."
   - role: dev-coder

@@ -132,7 +132,7 @@ skills:
       runtime outputs.
 - name-methodology-artifacts:
     justification: We need this to keep category prefixes, actor-form conceptual agent definition names, and skill operation names consistent whenever the catalog changes.
-- development-methodology:
+- route-documentation-work:
     justification: We need this to preserve the bundle's artifact routing and documentation contracts while its own methodology is changed.
 - structured-design:
     justification: We need this when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation.

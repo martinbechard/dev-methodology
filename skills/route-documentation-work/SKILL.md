@@ -1,11 +1,11 @@
 ---
-name: development-methodology
+name: route-documentation-work
 description: Use when creating or revising software project documentation, choosing a methodology template, or routing setup, reverse engineering, code wiki, or page verification work.
 metadata:
   category: documentation-methodology
 ---
 
-# Development Methodology
+# Route Documentation Work
 
 Use this skill as the router for software project documentation work from this bundle. It keeps artifact selection, format selection, the shared page contract, and template asset policy in one place while delegating specialized workflows to focused skills.
 
@@ -17,8 +17,8 @@ Conceptual agent definitions contain required and conditional technology-agnosti
 
 ## Required Companion Skills
 
-- Use documentation-bootstrap for first-time setup in a target repository.
-- Use documentation-reverse-engineer when deriving documentation from an existing codebase.
+- Use bootstrap-project-documentation for first-time setup in a target repository.
+- Use reverse-engineer-project-documentation when deriving documentation from an existing codebase.
 - Use code-project-wiki for code-aware docs/wiki maintenance, commit-range sync, Related Code upkeep, or Related Tests upkeep.
 - Use create-project-configuration when creating or substantially rewriting a PROJECT.yaml project agent and skill configuration.
 - Use maintain-methodology-documentation when changing this bundle's skills, conceptual agent definitions, generated adapters, generated documentation data, or design pages.
@@ -35,7 +35,7 @@ Conceptual agent definitions contain required and conditional technology-agnosti
 - Use review-high-level-design before finishing high-level design artifacts.
 - Use review-module-design before finishing module design artifacts.
 - Use review-unit-test-plan before finishing unit test plan artifacts.
-- Use documentation-page-verify for shared checks on mixed, unknown, or custom documentation artifacts.
+- Use verify-documentation-page for shared checks on mixed, unknown, or custom documentation artifacts.
 - Use project-wiki before creating, maintaining, or validating docs/wiki content.
 - Use project-wiki-query for wiki-backed project questions.
 - Use project-wiki-research for sourced raw reports that should feed a wiki later.
@@ -47,7 +47,7 @@ Load only the skills needed for the current job. Use this skill to choose the ar
 
 Treat generated conceptual agent definition conditions as judgment guidance, not deterministic prompt keywords. Interpret the requested outcome, existing artifact, and source evidence together when wording is ambiguous. Ask for clarification only when different plausible routes would materially change the result and the intended route cannot be inferred.
 
-For a normal creation job, load this skill and exactly one artifact creation skill, plus source-domain skills that the repository evidence requires. Load the matching review skill only when the artifact is ready to review. Use documentation-page-verify for mixed, unknown, or custom artifacts, or when an artifact review skill calls for it.
+For a normal creation job, load this skill and exactly one artifact creation skill, plus source-domain skills that the repository evidence requires. Load the matching review skill only when the artifact is ready to review. Use verify-documentation-page for mixed, unknown, or custom artifacts, or when an artifact review skill calls for it.
 
 Harness-native preloading remains authoritative. Do not reread a skill through MCP when its complete content is already in context. When routing has selected several exact skill names but the harness has not inserted their content, use one skill_load call for the complete selected set instead of listing the catalog or loading each skill separately. Load required supporting resources in one skill_resource_load call after reading the selected skill instructions. Use harness-native loading or direct installed packages only when the MCP tools are absent or the server cannot initialize or connect before request dispatch. Never use direct loading to bypass a path, root, authorization, input-policy, or other structured rejection.
 
@@ -89,17 +89,17 @@ Use the smallest document type that fully explains the work:
 Use this route table when the task is to create or substantially rewrite a methodology artifact:
 
 - Project wiki methodology artifact: use project-wiki-create, template project-wiki-template.md, and project-wiki-review.
-- Agent and skill configuration: use create-project-configuration, template project-template.yaml, and documentation-page-verify.
+- Agent and skill configuration: use create-project-configuration, template project-template.yaml, and verify-documentation-page.
 - Functional specification artifact: use create-functional-spec, template functional-spec-template.md, and review-functional-spec.
 - Architecture artifact: use create-architecture, template architecture-template.md, and review-architecture.
 - High-level design artifact: use create-high-level-design, template high-level-design-template.md, and review-high-level-design.
 - Module design artifact: use create-module-design, template module-design-template.md, and review-module-design.
 - Unit test plan artifact: use create-unit-test-plan, template unit-test-plan-template.md, and review-unit-test-plan.
-Use project-wiki-topic-write for ordinary docs/wiki topic pages that summarize or link source material without becoming one of the specialized methodology artifacts. Use documentation-reverse-engineer when the user asks for a source-derived documentation set rather than one artifact.
+Use project-wiki-topic-write for ordinary docs/wiki topic pages that summarize or link source material without becoming one of the specialized methodology artifacts. Use reverse-engineer-project-documentation when the user asks for a source-derived documentation set rather than one artifact.
 
 ## Template Assets
 
-Template assets live under skills/development-methodology/assets/templates. Read an already staged template directly. When the required template is not staged and mcp-agent-ops is available, retrieve it through skill_resource_load. Use the direct skill-relative asset as the fallback only when the tool is absent or its server cannot initialize or connect before dispatch; do not bypass a structured policy rejection.
+Template assets live under skills/route-documentation-work/assets/templates. Read an already staged template directly. When the required template is not staged and mcp-agent-ops is available, retrieve it through skill_resource_load. Use the direct skill-relative asset as the fallback only when the tool is absent or its server cannot initialize or connect before dispatch; do not bypass a structured policy rejection.
 
 - project-wiki-template.md defines project wiki setup and code-aware maintenance rules.
 - project-template.yaml defines project conceptual agent definitions, ordered project-level skill extensions, folder technology skillsets, root and nested AGENTS.md operational guidance, proprietary validation notes, and customer-safe example boundaries in one project-root configuration.
@@ -132,7 +132,7 @@ When a target project needs a local editable document, copy only the matching te
 Before finishing documentation or wiki work:
 
 1. Use the artifact-specific review skill when the artifact type is project wiki, functional specification, architecture, high-level design, module design, or unit test plan.
-2. Use documentation-page-verify for mixed, unknown, or custom documentation artifacts.
+2. Use verify-documentation-page for mixed, unknown, or custom documentation artifacts.
 3. Confirm the document follows the selected structure or format. Use the shared page contract only when the selected artifact type requires it.
 4. Run project wiki status and lint when docs/wiki exists.
 5. Run OKF validation when topic pages changed.

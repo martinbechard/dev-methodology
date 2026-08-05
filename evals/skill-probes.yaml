@@ -527,9 +527,9 @@ probes:
     executableCases: [project-configuration-routing]
     coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
-  - id: probe-development-methodology
-    skill: development-methodology
-    source: skills/development-methodology/SKILL.md
+  - id: probe-route-documentation-work
+    skill: route-documentation-work
+    source: skills/route-documentation-work/SKILL.md
     evaluationCategory: documentation-methodology
     evaluationKind: routing
     activationCondition: Software documentation work needs one methodology artifact, setup, reverse-engineering, wiki, or page-verification route.
@@ -541,9 +541,9 @@ probes:
     executableCases: [documentation-functional-spec, project-configuration-routing]
     coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
-  - id: probe-documentation-bootstrap
-    skill: documentation-bootstrap
-    source: skills/documentation-bootstrap/SKILL.md
+  - id: probe-bootstrap-project-documentation
+    skill: bootstrap-project-documentation
+    source: skills/bootstrap-project-documentation/SKILL.md
     evaluationCategory: documentation-methodology
     evaluationKind: workflow-invariant
     activationCondition: The development methodology is applied meaningfully to a target repository for the first time.
@@ -555,9 +555,9 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
-  - id: probe-documentation-page-verify
-    skill: documentation-page-verify
-    source: skills/documentation-page-verify/SKILL.md
+  - id: probe-verify-documentation-page
+    skill: verify-documentation-page
+    source: skills/verify-documentation-page/SKILL.md
     evaluationCategory: documentation-methodology
     evaluationKind: review-contract
     activationCondition: A mixed, unknown, custom, or shared documentation concern has no clearer artifact-specific review route.
@@ -569,9 +569,9 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
-  - id: probe-documentation-reverse-engineer
-    skill: documentation-reverse-engineer
-    source: skills/documentation-reverse-engineer/SKILL.md
+  - id: probe-reverse-engineer-project-documentation
+    skill: reverse-engineer-project-documentation
+    source: skills/reverse-engineer-project-documentation/SKILL.md
     evaluationCategory: documentation-methodology
     evaluationKind: workflow-invariant
     activationCondition: A complete source-backed documentation hierarchy is derived from an existing repository.
@@ -1254,7 +1254,7 @@ probes:
     workflowAssociations: [wiki-lifecycle]
     executableCases: []
     coverageStatus: declared
-    ablation: {omitTargetSkill: true, wrongSkillControl: documentation-reverse-engineer}
+    ablation: {omitTargetSkill: true, wrongSkillControl: reverse-engineer-project-documentation}
   - id: probe-project-wiki-review
     skill: project-wiki-review
     source: skills/project-wiki-review/SKILL.md

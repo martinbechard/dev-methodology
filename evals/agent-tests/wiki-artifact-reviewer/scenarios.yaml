@@ -11,7 +11,7 @@ scenarios:
     task: Review accepted-wiki.md in a fresh read-only context and return the complete checklist and assessment.
     targetSkills:
       - project-wiki-review
-      - documentation-page-verify
+      - verify-documentation-page
     requiredBehaviors:
       - Complete every applicable checklist item with labeled evidence before synthesis.
       - Resolve every exact quotation
@@ -37,7 +37,7 @@ scenarios:
     task: Review defective-wiki.md against wiki-authority.md and verification-procedure.md.
     targetSkills:
       - project-wiki-review
-      - documentation-page-verify
+      - verify-documentation-page
     requiredBehaviors:
       - Lead with prioritized file- and section-specific findings derived from the checklist.
       - Require explicit refresh ownership, navigational hub structure, and complete automation checks.
@@ -61,7 +61,7 @@ scenarios:
     task: Review unauthoritative-wiki.md using only the supplied evidence.
     targetSkills:
       - project-wiki-review
-      - documentation-page-verify
+      - verify-documentation-page
     requiredBehaviors:
       - Mark unsupported authority and ownership claims as questions or failures with exact evidence gaps.
       - State the governing inputs required before acceptance.

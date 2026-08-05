@@ -3350,7 +3350,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 self.assertFalse(
                     (
                         context.skill_location
-                        / "development-methodology"
+                        / "route-documentation-work"
                         / "assets"
                         / "templates"
                         / "project-template.yaml"
@@ -3409,7 +3409,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 self.assertTrue(
                     (
                         mcp.skill_root
-                        / "development-methodology"
+                        / "route-documentation-work"
                         / "assets"
                         / "templates"
                         / "project-template.yaml"

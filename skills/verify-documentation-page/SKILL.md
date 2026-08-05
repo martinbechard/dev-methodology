@@ -1,11 +1,11 @@
 ---
-name: documentation-page-verify
+name: verify-documentation-page
 description: Use when verifying mixed, unknown, custom, or shared methodology documentation concerns that do not have a clearer artifact-specific review skill.
 metadata:
   category: documentation-methodology
 ---
 
-# Documentation Page Verify
+# Verify Documentation Page
 
 Use this skill for shared methodology documentation checks when the artifact type is mixed, unknown, custom, or not covered by a clearer artifact-specific review skill. The verifier checks that a page is source-backed, format-appropriate, steady-state, and useful to future agents.
 
@@ -20,7 +20,7 @@ Use this skill for shared methodology documentation checks when the artifact typ
 ## Verification Inputs
 
 - The page being verified.
-- The matching template from development-methodology assets.
+- The matching template from route-documentation-work assets.
 - The completed review checklist when an artifact-specific review skill produced one.
 - Related source files, tests, procedures, backlog items, wiki pages, and project metadata.
 - Project-specific documentation rules from AGENTS.md or procedures.

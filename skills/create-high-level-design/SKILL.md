@@ -1,6 +1,6 @@
 ---
 name: create-high-level-design
-description: Use when creating or substantially rewriting a high-level design artifact from the development-methodology high-level-design-template asset, including subsystem scope, parent architecture, data anchors, constituent components, interaction model, lifecycle, contracts, configuration, implementation order, invariants, and verification.
+description: Use when creating or substantially rewriting a high-level design artifact from the route-documentation-work high-level-design-template asset, including subsystem scope, parent architecture, data anchors, constituent components, interaction model, lifecycle, contracts, configuration, implementation order, invariants, and verification.
 metadata:
   category: artifact-creation
 ---
@@ -11,7 +11,7 @@ Use this skill to create or substantially rewrite one high-level design artifact
 
 ## Template
 
-Use skills/development-methodology/assets/templates/high-level-design-template.md as the starting asset.
+Use skills/route-documentation-work/assets/templates/high-level-design-template.md as the starting asset.
 
 Copy the template only when a local editable artifact is needed. Replace every TODO instruction with content supported by the authoritative inputs for the selected design mode.
 
@@ -59,7 +59,7 @@ Create one high-level design that defines:
 
 Use create-architecture when the work defines a whole system, project-wide boundary, technology choice, layer model, or cross-cutting concern. Use create-module-design when the work is one module, service, component, task, utility, or tightly scoped implementation unit.
 
-Use documentation-reverse-engineer when the user asks to derive subsystem designs from an existing codebase.
+Use reverse-engineer-project-documentation when the user asks to derive subsystem designs from an existing codebase.
 
 ## Workflow
 
@@ -85,7 +85,7 @@ Use documentation-reverse-engineer when the user asks to derive subsystem design
 Before finishing:
 
 1. Use review-high-level-design on the completed artifact.
-2. Use documentation-page-verify with the artifact, source evidence, and completed review checklist when the review skill calls for it.
+2. Use verify-documentation-page with the artifact, source evidence, and completed review checklist when the review skill calls for it.
 3. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.
 4. Search the artifact for unresolved TODO markers that are not intentional.
 5. Confirm every component, interaction, data contract, implementation step, and verification claim has source evidence or an open question.

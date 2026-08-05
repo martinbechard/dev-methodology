@@ -1003,13 +1003,13 @@
           </tr>
           <tr>
             <td><span class="name">Dev Artifact Reviewer</span></td>
-            <td>review-structured-artifact, documentation-page-verify</td>
+            <td>review-structured-artifact, verify-documentation-page</td>
             <td>The matching review skill for a functional specification, architecture, high-level design, module design, or unit test plan; organise-project-files only when the review writes an artifact; project guidance supplies resource coordination separately</td>
           </tr>
           <tr>
             <td><span class="name">Project Configurator</span></td>
-            <td>detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify; PROJECT.yaml selects none or agent-claim and conditionally selects how the claim helper is invoked</td>
-            <td>organise-project-files when adding a path not fixed by the configuration contract; documentation-bootstrap when the project lacks the required documentation structure</td>
+            <td>detect-technology-skills, create-project-configuration, route-documentation-work, verify-documentation-page; PROJECT.yaml selects none or agent-claim and conditionally selects how the claim helper is invoked</td>
+            <td>organise-project-files when adding a path not fixed by the configuration contract; bootstrap-project-documentation when the project lacks the required documentation structure</td>
           </tr>
           <tr>
             <td><span class="name">Dev Backlog Steward</span></td>
@@ -1043,7 +1043,7 @@
     </div>
     <aside class="note">
       <div class="tag-row"><span class="tag reference">Conditional MCP delivery path</span></div>
-      <p>Request-specific optional skills are selected only after their conditions are evaluated against the current request and evidence. Delivery then follows the harness-specific lifecycle above. Within the development-methodology workflow, when mcp-agent-ops is configured and selected content is not already in context, that skill directs the agent to load the complete selected set in one bounded <code>skill_load</code> call and to use <code>skill_resource_load</code> only for required supporting resources.</p>
+      <p>Request-specific optional skills are selected only after their conditions are evaluated against the current request and evidence. Delivery then follows the harness-specific lifecycle above. Within the route-documentation-work workflow, when mcp-agent-ops is configured and selected content is not already in context, that skill directs the agent to load the complete selected set in one bounded <code>skill_load</code> call and to use <code>skill_resource_load</code> only for required supporting resources.</p>
       <p>This conditional <a href="../README.md#preferred-mcp-operations-layer">MCP path</a> is a bundle procedure rather than a universal harness mechanism. It avoids constructing shell commands or helper code for retrieval while preserving native Claude Code and Codex invocation paths when MCP is absent or not selected.</p>
     </aside>
   </section>

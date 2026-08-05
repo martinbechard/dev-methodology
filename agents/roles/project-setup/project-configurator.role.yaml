@@ -41,13 +41,13 @@ skills:
     justification: We need this to base each folder's technology skillset on repository evidence and to expose missing requirements, conflicts, or explicit no-variant results.
 - create-project-configuration:
     justification: We need this to produce the reviewable PROJECT.yaml that governs project conceptual agent definitions, skillsets, and folder routing.
-- development-methodology:
+- route-documentation-work:
     justification: We need this to select methodology conceptual agent definitions and artifact routes that fit the target project's actual work and documentation needs.
-- documentation-bootstrap:
+- bootstrap-project-documentation:
     justification: We need this when the target lacks the documentation and routing structure required for agents to load and follow the configuration consistently.
     condition: when the target lacks the documentation and routing structure needed
       for agents to load and follow the configuration consistently
-- documentation-page-verify:
+- verify-documentation-page:
     justification: We need this to confirm that generated guidance and every referenced conceptual agent definition or skill remain grounded in project evidence and bundle contracts.
 outputContract:
 - PROJECT.yaml:

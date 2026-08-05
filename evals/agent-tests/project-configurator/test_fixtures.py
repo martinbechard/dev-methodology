@@ -328,13 +328,13 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
                 "agent-claim",
                 "detect-technology-skills",
                 "create-project-configuration",
-                "development-methodology",
-                "documentation-page-verify",
+                "route-documentation-work",
+                "verify-documentation-page",
             },
             fixed_skills,
         )
         self.assertEqual(
-            {"organise-project-files", "documentation-bootstrap"},
+            {"organise-project-files", "bootstrap-project-documentation"},
             set(conditional_skills),
         )
         self.assertTrue(all(condition.strip() for condition in conditional_skills.values()))

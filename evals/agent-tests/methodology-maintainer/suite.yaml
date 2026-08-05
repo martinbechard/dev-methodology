@@ -12,7 +12,7 @@ target:
     - skill-authoring
     - agent-role-authoring
     - name-methodology-artifacts
-    - development-methodology
+    - route-documentation-work
     - structured-explanation
   conditionalSkills:
     organise-project-files: The maintenance creates a new project file or directory.
