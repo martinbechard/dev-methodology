@@ -154,6 +154,7 @@ packs:
       - typescript-order-pricing
       - spring-boot-order-cancellation
       - typescript-code-review
+      - direct-main-unrelated-dirty-contract
     caseCoverageStatus: partial
     coverageStatus: declared
   - id: documentation-methodology
@@ -450,5 +451,6 @@ packs:
       - provider-placeholder-matrix
       - file-work-item-no-mutation
       - file-work-item-template-contract
+      - work-item-management-provider-operations
     caseCoverageStatus: partial
     coverageStatus: declared

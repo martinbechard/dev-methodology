@@ -20,20 +20,20 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 29 conceptual agents and 127 bundled skills have structural coverage.
-- [x] 28 agents are scenario-declared and 126 skills are probe-declared.
+- [x] 30 conceptual agents and 129 bundled skills have structural coverage.
+- [x] 29 agents are scenario-declared and 126 skills are probe-declared.
 - Agents missing scenario declarations: dev-skill-lint-reviewer.
-- Skills missing probe declarations: backlog-crisis-mode.
-- [x] 64 agent scenarios and 5 workflow packs are declared.
+- Skills missing probe declarations: analyze-document-topics, backlog-crisis-mode, revise-document-topics.
+- [x] 66 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
-- 12 cases are fixture-backed and 12 fixtures are structurally executable before harness readiness is considered.
-- 12 cases can run locally through Codex and 12 can run locally through Junie.
-- 12 cases use the ordinary local tier; 0 explicitly high-risk cases require the externally-contained tier.
-- 6 agents have at least one case-backed scenario; 5 are partial and 1 have all declared scenarios backed.
-- 27 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
-- 1 agents and 0 skills have executable full fixtures.
+- 14 cases are fixture-backed and 14 fixtures are structurally executable before harness readiness is considered.
+- 14 cases can run locally through Codex and 14 can run locally through Junie.
+- 14 cases use the ordinary local tier; 0 explicitly high-risk cases require the externally-contained tier.
+- 7 agents have at least one case-backed scenario; 5 are partial and 2 have all declared scenarios backed.
+- 29 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
+- 2 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 28 agents and 103 skills have pending Model Judge status.
+- 29 agents and 103 skills have pending Model Judge status.
 - 0 agents and 23 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -59,14 +59,15 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | dev-artifact-reviewer | documentation | [x] | [x] dev-artifact-reviewer-boundary, dev-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-backlog-coordinator | advanced-long | [x] | [x] dev-backlog-coordinator-boundary, dev-backlog-coordinator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| dev-backlog-steward | default | [x] | [x] dev-backlog-steward-boundary, dev-backlog-steward-happy, dev-backlog-steward-provider-boundary | [x] dev-backlog-steward-boundary, dev-backlog-steward-happy, dev-backlog-steward-provider-boundary | [x] backlog-lifecycle, file-work-item-no-mutation, file-work-item-template-contract, github-work-item-provider, provider-placeholder-matrix | [x] backlog-lifecycle, file-work-item-no-mutation, file-work-item-template-contract, github-work-item-provider, provider-placeholder-matrix | pending | none | none | none | none |
+| dev-backlog-steward | simple | [x] | [x] dev-backlog-steward-boundary, dev-backlog-steward-happy, dev-backlog-steward-provider-boundary | [x] dev-backlog-steward-boundary, dev-backlog-steward-happy, dev-backlog-steward-provider-boundary | [x] backlog-lifecycle, file-work-item-no-mutation, file-work-item-template-contract, github-work-item-provider, provider-placeholder-matrix, work-item-management-provider-operations | [x] backlog-lifecycle, file-work-item-no-mutation, file-work-item-template-contract, github-work-item-provider, provider-placeholder-matrix, work-item-management-provider-operations | pending | none | none | none | none |
 | dev-backlog-watchdog | simple | [x] | [x] dev-backlog-watchdog-boundary, dev-backlog-watchdog-exit-condition, dev-backlog-watchdog-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-browser-operator | advanced | [x] | [x] dev-browser-operator-boundary, dev-browser-operator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-code-reviewer | advanced | [x] | [x] dev-code-reviewer-boundary, dev-code-reviewer-happy | [x] dev-code-reviewer-happy | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-coder | advanced | [x] | [x] dev-coder-boundary, dev-coder-happy | [x] dev-coder-happy | [ ] none | [ ] none | pending | none | none | none | none |
+| dev-document-topic-editor | documentation | [x] | [x] dev-document-topic-editor-authorized-revision, dev-document-topic-editor-read-only | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-documentation-writer | documentation | [x] | [x] dev-documentation-writer-boundary, dev-documentation-writer-happy | [x] dev-documentation-writer-happy | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-merge-coordinator | advanced | [x] | [x] dev-merge-coordinator-boundary, dev-merge-coordinator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| dev-orchestrator | advanced-long | [x] | [x] dev-orchestrator-boundary, dev-orchestrator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
+| dev-orchestrator | advanced-long | [x] | [x] dev-orchestrator-boundary, dev-orchestrator-happy | [x] dev-orchestrator-boundary, dev-orchestrator-happy | [x] direct-main-unrelated-dirty-contract | [x] direct-main-unrelated-dirty-contract | pending | none | none | none | none |
 | dev-prompt-reviewer | advanced | [x] | [x] dev-prompt-reviewer-boundary, dev-prompt-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-runtime-diagnostician | advanced | [x] | [x] dev-runtime-diagnostician-boundary, dev-runtime-diagnostician-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-security-reviewer | advanced | [x] | [x] dev-security-reviewer-boundary, dev-security-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
@@ -107,6 +108,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | Skill | Structural | Probe-declared | Positive case | Negative case | Paired controls | Full probe | Executable full fixture | Judge calibration | Executed | Judge-passed | Security-contained | Stale-by-digest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | agent-role-authoring | [x] | [x] probe-agent-role-authoring | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| analyze-document-topics | [x] | [ ] none | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | missing | none | none | none | none |
 | create-project-configuration | [x] | [x] probe-create-project-configuration | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | development-methodology | [x] | [x] probe-development-methodology | [x] documentation-functional-spec, project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | documentation-bootstrap | [x] | [x] probe-documentation-bootstrap | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
@@ -114,6 +116,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | documentation-reverse-engineer | [x] | [x] probe-documentation-reverse-engineer | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | maintain-methodology-documentation | [x] | [x] probe-maintain-methodology-documentation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | name-methodology-artifacts | [x] | [x] probe-name-methodology-artifacts | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| revise-document-topics | [x] | [ ] none | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | missing | none | none | none | none |
 | skill-authoring | [x] | [x] probe-skill-authoring | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | ste-technical-writing | [x] | [x] probe-ste-technical-writing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 
@@ -155,7 +158,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | code-execution-tracing | [x] | [x] probe-code-execution-tracing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | code-review-evidence | [x] | [x] probe-code-review-evidence | [x] typescript-code-review | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | codex-workitem-coordination | [x] | [x] probe-codex-workitem-coordination | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| complete-work-item-direct-main | [x] | [x] probe-complete-work-item-direct-main | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| complete-work-item-direct-main | [x] | [x] probe-complete-work-item-direct-main | [x] direct-main-unrelated-dirty-contract | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | complete-work-item-feature-branch | [x] | [x] probe-complete-work-item-feature-branch | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-azure-devops-work-item | [x] | [x] probe-create-azure-devops-work-item | [x] provider-placeholder-matrix | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-file-work-item | [x] | [x] probe-create-file-work-item | [x] file-work-item-template-contract | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
@@ -167,11 +170,11 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | effective-communication | [x] | [x] probe-effective-communication | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | end-to-end-verification | [x] | [x] probe-end-to-end-verification | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | fix-explanation | [x] | [x] probe-fix-explanation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| manage-azure-devops-work-items | [x] | [x] probe-manage-azure-devops-work-items | [x] provider-placeholder-matrix | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| manage-file-work-items | [x] | [x] probe-manage-file-work-items | [x] backlog-lifecycle | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| manage-github-work-items | [x] | [x] probe-manage-github-work-items | [x] github-work-item-provider | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| manage-gitlab-work-items | [x] | [x] probe-manage-gitlab-work-items | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| manage-jira-work-items | [x] | [x] probe-manage-jira-work-items | [x] provider-placeholder-matrix | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| manage-azure-devops-work-items | [x] | [x] probe-manage-azure-devops-work-items | [x] provider-placeholder-matrix, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| manage-file-work-items | [x] | [x] probe-manage-file-work-items | [x] backlog-lifecycle, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| manage-github-work-items | [x] | [x] probe-manage-github-work-items | [x] github-work-item-provider, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| manage-gitlab-work-items | [x] | [x] probe-manage-gitlab-work-items | [x] work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| manage-jira-work-items | [x] | [x] probe-manage-jira-work-items | [x] provider-placeholder-matrix, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | organise-project-files | [x] | [x] probe-organise-project-files | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | prompt-contracts | [x] | [x] probe-prompt-contracts | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | root-cause-analysis | [x] | [x] probe-root-cause-analysis | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
@@ -310,12 +313,12 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 
 - Calibration policy status: pending.
 - Calibrated Model Judge rubrics: none.
-- Pending Model Judge rubrics: artifact-contract, diagnosis-quality, review-quality, security-quality, source-faithfulness, ux-quality, workflow-quality.
+- Pending Model Judge rubrics: artifact-contract, diagnosis-quality, documentation-quality, review-quality, security-quality, source-faithfulness, ux-quality, workflow-quality.
 - Judge outcome and calibration are separate: a raw Model Judge pass does not become calibrated until the governed calibration policy is enabled and satisfied.
 
 ## Repository Verification Layers
 
-- [ ] Every live skill has exactly one probe declaration. Missing declarations: backlog-crisis-mode.
+- [ ] Every live skill has exactly one probe declaration. Missing declarations: analyze-document-topics, backlog-crisis-mode, revise-document-topics.
 - [ ] Every live conceptual agent has exactly one scenario declaration with at least one scenario. Missing declarations: dev-skill-lint-reviewer.
 - [x] Evaluation catalog references, fixture paths, Judge plans, harnesses, workflow links, and sandbox profiles are validated.
 - [x] Codex and Junie are the only supported evaluation harnesses.

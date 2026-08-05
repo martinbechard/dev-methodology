@@ -652,7 +652,7 @@ probes:
     workflowAssociations: [backlog]
     executableCases: [work-item-management-provider-operations]
     coverageStatus: fixture-backed
-    ablation: {omitTargetSkill: true, wrongSkillControl: manage-github-work-items}
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
   - id: probe-java
     skill: java
     source: skills/java/SKILL.md
@@ -1044,7 +1044,7 @@ probes:
     workflowAssociations: [backlog]
     executableCases: [provider-placeholder-matrix, work-item-management-provider-operations]
     coverageStatus: fixture-backed
-    ablation: {omitTargetSkill: true, wrongSkillControl: manage-file-work-items}
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
   - id: probe-manage-jira-work-items
     skill: manage-jira-work-items
     source: skills/manage-jira-work-items/SKILL.md
@@ -1058,7 +1058,7 @@ probes:
     workflowAssociations: [backlog]
     executableCases: [provider-placeholder-matrix, work-item-management-provider-operations]
     coverageStatus: fixture-backed
-    ablation: {omitTargetSkill: true, wrongSkillControl: manage-file-work-items}
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
   - id: probe-name-methodology-artifacts
     skill: name-methodology-artifacts
     source: skills/name-methodology-artifacts/SKILL.md

@@ -413,6 +413,7 @@ agents:
           modelRubric: workflow-quality
         executableCases:
           - file-work-item-no-mutation
+          - work-item-management-provider-operations
         coverageStatus: fixture-backed
     coverageStatus: fixture-backed
   - id: dev-browser-operator
@@ -822,8 +823,9 @@ agents:
             - claim-lifecycle
             - output-contract-presence
           modelRubric: workflow-quality
-        executableCases: []
-        coverageStatus: declared
+        executableCases:
+          - direct-main-unrelated-dirty-contract
+        coverageStatus: fixture-backed
       - id: dev-orchestrator-boundary
         kind: boundary-failure
         fixtureProfile: multi-contribution-integration
@@ -841,8 +843,9 @@ agents:
             - correction-loop-cap
             - readiness-consistency
           modelRubric: workflow-quality
-        executableCases: []
-        coverageStatus: declared
+        executableCases:
+          - direct-main-unrelated-dirty-contract
+        coverageStatus: fixture-backed
   - id: dev-prompt-reviewer
     source: agents/roles/dev-activities/dev-prompt-reviewer.role.yaml
     scenarioFamily: code-delivery

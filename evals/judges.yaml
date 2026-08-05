@@ -73,6 +73,30 @@ checks:
     type: deterministic
     critical: true
     description: Every required conceptual agent definition output-contract field is present and non-empty.
+  - id: source-unchanged
+    type: deterministic
+    critical: true
+    description: Read-only document-topic analysis leaves every source byte unchanged.
+  - id: topic-coverage
+    type: deterministic
+    critical: true
+    description: Document-topic analysis accounts for every source topic and content block exactly once without omission or invention.
+  - id: authority-present
+    type: deterministic
+    critical: true
+    description: A document-topic revision proceeds only when the captured request explicitly authorizes mutation of the named source.
+  - id: semantic-preservation
+    type: deterministic
+    critical: true
+    description: An authorized structural revision preserves every source content block, identifier, value, owner, and stated relationship.
+  - id: justification-entailment
+    type: deterministic
+    critical: true
+    description: Every reported topic-placement rationale is supported by captured source evidence rather than invented content.
+  - id: requested-artifact-policy
+    type: deterministic
+    critical: true
+    description: Document-topic work retains a durable analysis or before-and-after artifact only when the caller explicitly requests it.
   - id: source-link-resolution
     type: deterministic
     critical: false
@@ -406,6 +430,18 @@ rubrics:
       - inference-labeling
       - source-conflict-preservation
       - scope-discipline
+    passRules:
+      noAggregateCompensation: true
+      minimumDimensionScore: 3
+  - id: documentation-quality
+    type: model
+    scale: 0-to-4-per-dimension
+    dimensions:
+      - source-coverage
+      - topic-structure
+      - rationale-grounding
+      - semantic-preservation
+      - artifact-scope-discipline
     passRules:
       noAggregateCompensation: true
       minimumDimensionScore: 3
