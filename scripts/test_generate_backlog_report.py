@@ -1555,14 +1555,24 @@ Do not proceed.
         )
 
     def test_series_index_reports_escaped_child_without_reading_target(self) -> None:
-        """An outward symlink is reported without reading external target bytes."""
+        """An escaped unknown member prevents a false terminal diagnosis."""
         external = self.root / "external-child.md"
         external.write_text("# External Child Secret\n", encoding="utf-8")
+        index_relative = "backlog/feature-backlog/release/index.md"
         index = self.root / "backlog/feature-backlog/release/index.md"
         index.parent.mkdir(parents=True)
         index.write_text(
-            "# Release Series\n\n## Work Items\n\n1. [Child](child.md)\n",
+            "# Release Series\n\n## Work Items\n\n"
+            "1. [Done](../../completed-backlog/features/done.md)\n"
+            "2. [Child](child.md)\n",
             encoding="utf-8",
+        )
+        self.write_item(
+            "backlog/completed-backlog/features/done.md",
+            title="Done",
+            status="Completed",
+            item_type="Feature",
+            series=index_relative,
         )
         (index.parent / "child.md").symlink_to(external)
         original_read_text = Path.read_text
@@ -1581,7 +1591,156 @@ Do not proceed.
             "Series index target escapes canonical ordinary work-item authority",
             rendered,
         )
+        self.assertNotIn(
+            "Terminal series index remains in an active typed backlog", rendered
+        )
         self.assertNotIn("External Child Secret", rendered)
+
+    def test_broken_series_member_prevents_terminal_diagnosis(self) -> None:
+        """A broken linked member keeps reciprocal membership incomplete."""
+        index_relative = "backlog/feature-backlog/release/index.md"
+        index = self.root / index_relative
+        index.parent.mkdir(parents=True)
+        index.write_text(
+            "# Release Series\n\n## Work Items\n\n"
+            "1. [Done](../../completed-backlog/features/done.md)\n"
+            "2. [Missing](missing.md)\n",
+            encoding="utf-8",
+        )
+        self.write_item(
+            "backlog/completed-backlog/features/done.md",
+            title="Done",
+            status="Completed",
+            item_type="Feature",
+            series=index_relative,
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("Broken series index link", rendered)
+        self.assertNotIn(
+            "Terminal series index remains in an active typed backlog", rendered
+        )
+
+    def test_missing_status_series_member_prevents_terminal_diagnosis(self) -> None:
+        """A reciprocal member without Status keeps terminality unknown."""
+        index_relative = "backlog/feature-backlog/release/index.md"
+        index = self.root / index_relative
+        index.parent.mkdir(parents=True)
+        index.write_text(
+            "# Release Series\n\n## Work Items\n\n"
+            "1. [Done](../../completed-backlog/features/done.md)\n"
+            "2. [Unknown](unknown.md)\n",
+            encoding="utf-8",
+        )
+        self.write_item(
+            "backlog/completed-backlog/features/done.md",
+            title="Done",
+            status="Completed",
+            item_type="Feature",
+            series=index_relative,
+        )
+        self.write_item(
+            "backlog/feature-backlog/release/unknown.md",
+            title="Unknown",
+            status="",
+            item_type="Feature",
+            series=index_relative,
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("Series child has no Status value", rendered)
+        self.assertNotIn(
+            "Terminal series index remains in an active typed backlog", rendered
+        )
+
+    def test_unreadable_series_member_prevents_terminal_diagnosis(self) -> None:
+        """An unreadable linked member keeps reciprocal membership incomplete."""
+        index_relative = "backlog/feature-backlog/release/index.md"
+        index = self.root / index_relative
+        index.parent.mkdir(parents=True)
+        index.write_text(
+            "# Release Series\n\n## Work Items\n\n"
+            "1. [Done](../../completed-backlog/features/done.md)\n"
+            "2. [Unreadable](unreadable.md)\n",
+            encoding="utf-8",
+        )
+        self.write_item(
+            "backlog/completed-backlog/features/done.md",
+            title="Done",
+            status="Completed",
+            item_type="Feature",
+            series=index_relative,
+        )
+        unreadable = self.root / "backlog/feature-backlog/release/unreadable.md"
+        self.write_item(
+            "backlog/feature-backlog/release/unreadable.md",
+            title="Unreadable",
+            status="Completed",
+            item_type="Feature",
+            series=index_relative,
+        )
+        original_read_text = Path.read_text
+
+        def reject_child_read(
+            path: Path, *args: object, **kwargs: object
+        ) -> str:
+            if path.resolve() == unreadable.resolve():
+                raise OSError("series child is unreadable")
+            return original_read_text(path, *args, **kwargs)
+
+        with mock.patch.object(Path, "read_text", reject_child_read):
+            rendered = self.generate()
+
+        self.assertIn("Unreadable series child", rendered)
+        self.assertNotIn(
+            "Terminal series index remains in an active typed backlog", rendered
+        )
+
+    def test_symlinked_parent_escape_prevents_terminal_diagnosis(self) -> None:
+        """A link through an escaped directory alias is rejected without a read."""
+        external_dir = self.root / "external-series"
+        external_dir.mkdir()
+        external_child = external_dir / "child.md"
+        external_child.write_text("# Escaped Parent Secret\n", encoding="utf-8")
+        index_relative = "backlog/feature-backlog/release/index.md"
+        index = self.root / index_relative
+        index.parent.mkdir(parents=True)
+        index.write_text(
+            "# Release Series\n\n## Work Items\n\n"
+            "1. [Done](../../completed-backlog/features/done.md)\n"
+            "2. [Escaped](alias/child.md)\n",
+            encoding="utf-8",
+        )
+        self.write_item(
+            "backlog/completed-backlog/features/done.md",
+            title="Done",
+            status="Completed",
+            item_type="Feature",
+            series=index_relative,
+        )
+        (index.parent / "alias").symlink_to(external_dir, target_is_directory=True)
+        original_read_text = Path.read_text
+
+        def reject_external_read(
+            path: Path, *args: object, **kwargs: object
+        ) -> str:
+            if path.resolve() == external_child.resolve():
+                raise AssertionError("report read escaped series target")
+            return original_read_text(path, *args, **kwargs)
+
+        with mock.patch.object(Path, "read_text", reject_external_read):
+            rendered = self.generate()
+
+        self.assertIn(
+            "Series index target escapes canonical ordinary work-item authority",
+            rendered,
+        )
+        self.assertNotIn(
+            "Terminal series index remains in an active typed backlog", rendered
+        )
+        self.assertNotIn("Escaped Parent Secret", rendered)
 
     def test_nonterminal_or_mixed_series_index_remains_active(self) -> None:
         """Any linked nonterminal child prevents premature terminal-series findings."""

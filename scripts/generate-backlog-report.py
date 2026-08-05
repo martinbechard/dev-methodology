@@ -278,6 +278,26 @@ def _ordinary_queue_relative(relative: Path) -> bool:
     )
 
 
+def _series_link_target_state(
+    path: Path,
+    queue_root: Path,
+    repository_root: Path,
+) -> str:
+    """Classify an ordinary-queue link target without reading its bytes."""
+    try:
+        resolved_path = path.resolve(strict=True)
+    except (OSError, RuntimeError):
+        return "broken"
+    try:
+        resolved_path.relative_to(queue_root.resolve(strict=True))
+        resolved_path.relative_to(repository_root.resolve(strict=True))
+    except (OSError, RuntimeError):
+        return "broken"
+    except ValueError:
+        return "escaped"
+    return "valid" if resolved_path.is_file() else "broken"
+
+
 def _series_orders(
     backlog_root: Path,
 ) -> tuple[dict[str, tuple[str, int]], list[str], list[tuple[str, str]]]:
@@ -287,7 +307,7 @@ def _series_orders(
     ignored: list[str] = []
     findings: list[tuple[str, str]] = []
     item_fields: dict[str, tuple[Path, dict[str, str]]] = {}
-    invalid_item_paths: set[str] = set()
+    unreadable_items: dict[str, str] = {}
 
     for folder_name in SCAN_FOLDERS:
         folder = backlog_root / folder_name
@@ -298,17 +318,18 @@ def _series_orders(
                 continue
             relative_item = path.relative_to(repository_root).as_posix()
             if not _is_resolved_regular_file_within(path, folder, repository_root):
-                invalid_item_paths.add(relative_item)
                 continue
             try:
                 _, fields, _ = _parse_document(path)
-            except (OSError, UnicodeError):
+            except (OSError, UnicodeError) as exc:
+                unreadable_items[relative_item] = f"{type(exc).__name__}: {exc}"
                 continue
             item_fields[relative_item] = (path, fields)
 
     indexes: dict[str, Path] = {}
     index_links: dict[str, set[str]] = {}
     members: dict[str, dict[str, str]] = {}
+    membership_complete: dict[str, bool] = {}
     for folder_name in SCAN_FOLDERS:
         folder = backlog_root / folder_name
         if not folder.is_dir():
@@ -338,6 +359,7 @@ def _series_orders(
             indexes[relative_index] = index
             index_links[relative_index] = set()
             members[relative_index] = {}
+            membership_complete[relative_index] = True
             for position, target in enumerate(
                 MARKDOWN_LINK_PATTERN.findall(content), start=1
             ):
@@ -364,7 +386,15 @@ def _series_orders(
                     )
                     continue
                 relative_child = relative_child_path.as_posix()
-                if relative_child in invalid_item_paths:
+                queue_root = (
+                    repository_root
+                    / relative_child_path.parts[0]
+                    / relative_child_path.parts[1]
+                )
+                target_state = _series_link_target_state(
+                    child, queue_root, repository_root
+                )
+                if target_state == "escaped":
                     findings.append(
                         (
                             relative_index,
@@ -372,14 +402,37 @@ def _series_orders(
                             f"work-item authority: {target}.",
                         )
                     )
+                    membership_complete[relative_index] = False
                     continue
-                child_entry = item_fields.get(relative_child)
-                if child_entry is None:
-                    if child.name not in {"README.md", "index.md"} and not child.exists():
+                if target_state == "broken":
+                    if child.name not in {"README.md", "index.md"}:
                         findings.append(
                             (relative_index, f"Broken series index link: {target}.")
                         )
+                        membership_complete[relative_index] = False
                     continue
+                if child.name in {"README.md", "index.md"}:
+                    continue
+                child_entry = item_fields.get(relative_child)
+                if child_entry is None:
+                    unreadable = unreadable_items.get(relative_child)
+                    if unreadable is None:
+                        try:
+                            _, child_fields, _ = _parse_document(child)
+                        except (OSError, UnicodeError) as exc:
+                            unreadable = f"{type(exc).__name__}: {exc}"
+                        else:
+                            child_entry = (child, child_fields)
+                            item_fields[relative_child] = child_entry
+                    if unreadable is not None:
+                        findings.append(
+                            (
+                                relative_child,
+                                f"Unreadable series child: {unreadable}",
+                            )
+                        )
+                        membership_complete[relative_index] = False
+                        continue
                 child_path, child_fields = child_entry
                 index_links[relative_index].add(relative_child)
                 child_series = child_fields.get("Series", "")
@@ -390,6 +443,15 @@ def _series_orders(
                 child_status = child_fields.get("Status", "")
                 if child_status:
                     members[relative_index][relative_child] = child_status
+                else:
+                    findings.append(
+                        (
+                            relative_child,
+                            "Series child has no Status value required for "
+                            "terminal evaluation.",
+                        )
+                    )
+                    membership_complete[relative_index] = False
                 if not child_series:
                     findings.append(
                         (
@@ -398,6 +460,7 @@ def _series_orders(
                             f"expected {relative_index}.",
                         )
                     )
+                    membership_complete[relative_index] = False
                 elif child_series != relative_index:
                     findings.append(
                         (
@@ -406,6 +469,7 @@ def _series_orders(
                             f"expected {relative_index}, found {child_series}.",
                         )
                     )
+                    membership_complete[relative_index] = False
 
     for relative_child, (_, child_fields) in item_fields.items():
         declared_series = child_fields.get("Series", "")
@@ -441,11 +505,22 @@ def _series_orders(
         child_status = child_fields.get("Status", "")
         if child_status:
             members[relative_index][relative_child] = child_status
+        else:
+            membership_complete[relative_index] = False
+            if relative_child not in index_links[relative_index]:
+                findings.append(
+                    (
+                        relative_child,
+                        "Series child has no Status value required for terminal "
+                        "evaluation.",
+                    )
+                )
         orders.setdefault(
             relative_child,
             (index_entry.parent.name, 10**9),
         )
         if relative_child not in index_links[relative_index]:
+            membership_complete[relative_index] = False
             findings.append(
                 (
                     relative_child,
@@ -459,6 +534,7 @@ def _series_orders(
         relative_to_backlog = index.relative_to(backlog_root)
         if (
             relative_to_backlog.parts[0] in ACTIVE_FOLDERS
+            and membership_complete[relative_index]
             and member_statuses
             and all(
                 status in TERMINAL_SERIES_STATUSES
