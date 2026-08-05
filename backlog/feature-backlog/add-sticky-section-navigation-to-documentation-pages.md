@@ -1,6 +1,8 @@
 # Add Sticky Section Navigation To Documentation Pages
 
-Status: Running
+Status: Blocked
+
+Owner: Unowned
 
 Type: Feature
 
@@ -70,6 +72,40 @@ None.
 None.
 
 ## Notes
+
+## Blocked Handoff
+
+Transition: Running -> Blocked.
+
+Blocked At: 2026-08-05T15:25:01Z.
+
+Canonical Work-Item Thread and Root Agent Task: 019faef0-2663-7e50-a6ab-0de973661fbf.
+
+Branch: codex/add-sticky-section-navigation-to-documentation-pages.
+
+Worktree: /Users/martinbechard/.codex/worktrees/cf9b/dev-methodology.
+
+Preserved Candidate: 1ff0c9f093f20d084ca829438ee5daa0dba3842c.
+
+Candidate Chain: 3d58e99b -> 6a33b6b -> 1ff0c9f.
+
+Confirmed-Defect Commits: 07a7edfa80abc135fedc3e87775fb919a73e5bb1 and ef9fa1909c3aec98c83203974f926baeb4560fea.
+
+Blocking Evidence: After two bounded correction attempts, the same focused-test false-positive remains. The sole invalid href fixture conflates non-fragment and cross-page conditions, so removing either validator predicate can leave the adversarial test green. Empty-href and cross-page-with-fragment branches are not independently guarded.
+
+Review and Browser Evidence: Preserved with the canonical work-item Thread.
+
+Claim and Resource Disposition: Browser, port, and provider claims released before this transition; no execution owner remains.
+
+Blocker Owner: Dev Backlog Coordinator.
+
+Coordinator-Owned Next Action: Authorize one later fresh correction cycle or a replacement candidate; do not dispatch replacement work before that authorization.
+
+Unblock Condition: A later Coordinator-authorized fresh correction cycle or replacement candidate adds independent adversarial fixtures for every invalid href branch, including empty href and cross-page href with fragment, then fresh review and final verification pass before delivery.
+
+Requested Recovery Action: Preserve the canonical task and candidate history. When the unblock condition is satisfied, restore Ready with Owner Unowned, then follow the separate Ready -> Starting -> Running lifecycle transactions using the same canonical Thread.
+
+Permitted Resumption Transition: Blocked -> Ready only after the Coordinator validates the unblock condition.
 
 ## Missed-Settlement Reconciliation
 
