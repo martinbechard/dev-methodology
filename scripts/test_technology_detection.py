@@ -410,8 +410,8 @@ class TechnologyDetectionTests(unittest.TestCase):
 
         self.assertIn("Default persistence file: create with create-file-work-item", rendered)
         self.assertIn("services/** persistence github: create with create-github-work-item", rendered)
-        self.assertIn("Default commit direct-main: use complete-work-item-direct-main", rendered)
-        self.assertIn("release/** commit feature-branch: use complete-work-item-feature-branch", rendered)
+        self.assertIn("Default commit direct-main: use deliver-work-item-direct-main", rendered)
+        self.assertIn("release/** commit feature-branch: use deliver-work-item-feature-branch", rendered)
         self.assertIn(
             "Normalized workflow_selection.backlog to workflow_selection.persistence",
             rendered,
@@ -2703,8 +2703,8 @@ class TechnologyDetectionTests(unittest.TestCase):
             "UNSET": "Default persistence UNSET: when durable work-item management is first requested, ask whether to select the available file provider.",
         }
         commit_guidance = {
-            "direct-main": "Default commit direct-main: use complete-work-item-direct-main.",
-            "feature-branch": "Default commit feature-branch: use complete-work-item-feature-branch.",
+            "direct-main": "Default commit direct-main: use deliver-work-item-direct-main.",
+            "feature-branch": "Default commit feature-branch: use deliver-work-item-feature-branch.",
             "UNSET": "Default commit UNSET: the pertinent agent asks for the Commit decision before implementation or publication.",
         }
 
@@ -2758,11 +2758,11 @@ class TechnologyDetectionTests(unittest.TestCase):
             rendered,
         )
         self.assertIn(
-            "Default commit feature-branch: use complete-work-item-feature-branch.",
+            "Default commit feature-branch: use deliver-work-item-feature-branch.",
             rendered,
         )
         self.assertIn(
-            "services/** commit direct-main: use complete-work-item-direct-main.",
+            "services/** commit direct-main: use deliver-work-item-direct-main.",
             rendered,
         )
         self.assertIn("Most-specific matching folder pattern wins independently", rendered)
@@ -3367,7 +3367,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         self.assertEqual("gitlab", workflow_selection["provider"]["default"])
         self.assertEqual("direct-main", workflow_selection["completion"]["default"])
         self.assertIn("create-gitlab-work-item", rendered)
-        self.assertIn("complete-work-item-direct-main", rendered)
+        self.assertIn("deliver-work-item-direct-main", rendered)
 
     def test_agents_section_references_technology_skills_by_default_with_inline_override(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

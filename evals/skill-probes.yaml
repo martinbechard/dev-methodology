@@ -177,9 +177,9 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
-  - id: probe-agent-work-merge
-    skill: agent-work-merge
-    source: skills/agent-work-merge/SKILL.md
+  - id: probe-integrate-agent-work
+    skill: integrate-agent-work
+    source: skills/integrate-agent-work/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
     activationCondition: Several agent worktrees or branches must be integrated into one target lane.
@@ -471,9 +471,9 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: structured-design}
-  - id: probe-complete-work-item-direct-main
-    skill: complete-work-item-direct-main
-    source: skills/complete-work-item-direct-main/SKILL.md
+  - id: probe-deliver-work-item-direct-main
+    skill: deliver-work-item-direct-main
+    source: skills/deliver-work-item-direct-main/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
     activationCondition: A reviewed and verified work item must complete through the explicitly selected direct-main completion process.
@@ -485,9 +485,9 @@ probes:
     executableCases: [direct-main-unrelated-dirty-contract]
     coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-complete-work-item-feature-branch
-    skill: complete-work-item-feature-branch
-    source: skills/complete-work-item-feature-branch/SKILL.md
+  - id: probe-deliver-work-item-feature-branch
+    skill: deliver-work-item-feature-branch
+    source: skills/deliver-work-item-feature-branch/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
     activationCondition: The selected completion process is feature-branch or explicit task direction requires reviewed feature-branch delivery through an observed merge.

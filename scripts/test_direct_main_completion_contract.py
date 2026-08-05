@@ -13,7 +13,7 @@ from pathlib import Path
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SKILL_PATH = (
-    REPOSITORY_ROOT / "skills" / "complete-work-item-direct-main" / "SKILL.md"
+    REPOSITORY_ROOT / "skills" / "deliver-work-item-direct-main" / "SKILL.md"
 )
 
 

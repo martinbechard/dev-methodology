@@ -33,8 +33,8 @@ Provider skill identifiers are symmetric: create-provider-work-item and manage-p
 
 | Value | Meaning | Completion skill | Operational support |
 | --- | --- | --- | --- |
-| direct-main | Integrate the final verified commit into main and observe it there before completion. | complete-work-item-direct-main | Supported |
-| feature-branch | Publish a verified feature branch, wait for required review and checks, and observe the configured merge before completion. | complete-work-item-feature-branch | Supported |
+| direct-main | Integrate the final verified commit into main and observe it there before completion. | deliver-work-item-direct-main | Supported |
+| feature-branch | Publish a verified feature branch, wait for required review and checks, and observe the configured merge before completion. | deliver-work-item-feature-branch | Supported |
 | UNSET | The project has not selected a completion process. | Not resolved | The pertinent agent asks for a user decision before repository mutation or delivery publication |
 
 Completion skill identifiers are action-centered because each skill owns the terminal delivery operation. Pull-request or merge-request creation is a subordinate publication capability, not a completion process.
@@ -242,7 +242,7 @@ Azure DevOps and Jira placeholder operations return BLOCKED without creating a r
 
 ### Direct main
 
-The complete-work-item-direct-main skill owns these stages:
+The deliver-work-item-direct-main skill owns these stages:
 
 1. Confirm the scoped implementation commit, independent review, and required checks.
 2. Acquire the exact shared integration authority.
@@ -256,7 +256,7 @@ The work is not completed while the accepted commit exists only on an isolated b
 
 ### Feature branch
 
-The complete-work-item-feature-branch skill owns these stages:
+The deliver-work-item-feature-branch skill owns these stages:
 
 1. Confirm the scoped implementation commit, independent review, and required local checks.
 2. Publish the intended feature branch.
@@ -301,15 +301,15 @@ The migration is atomic at the accepted steady state. Compatibility behavior exi
 | manage-backlog | manage-file-work-items | Rename and move file inventory, lifecycle, recovery, archive, and short backlog-claim behavior into the file provider manage skill. |
 | file-based-backlog | create-file-work-item and manage-file-work-items | Absorb routing and authority rules into the symmetric pair, then retire the routing skill. No compatibility alias after the migration gate. |
 | github-issues-backlog | create-github-work-item and manage-github-work-items | Split creation from management while preserving GitHub issue authority and no-shadow-file behavior, then retire the combined skill. |
-| execute-workitem | complete-work-item-direct-main and complete-work-item-feature-branch | Move normalized shared work-item fields into this contract and split completion behavior by selector. Retire process selection from execute-workitem after all callers migrate. |
+| execute-workitem | deliver-work-item-direct-main and deliver-work-item-feature-branch | Move normalized shared work-item fields into this contract and split completion behavior by selector. Retire process selection from execute-workitem after all callers migrate. |
 | execute-workitem terminal READY | Completion disposition READY plus provider lifecycle COMPLETED | Preserve READY as the completion skill's successful delivery disposition, not a provider lifecycle state. Migrate roles, callers, examples, and evaluations so READY authorizes the required provider lifecycle update; only the provider manager, or the provider-none task result, records lifecycle COMPLETED. |
 | simple-workitem | direct-main | Replace the prototype process value and reference with the direct-main completion selector and skill. Preserve the stricter main-observation terminal rule. |
 | feature-branch-workitem | feature-branch | Replace the prototype process value and reference with the feature-branch completion selector and skill. Extend publication-only AWAITING_REVIEW into observed-merge completion. |
-| create-pull-request | complete-work-item-feature-branch | Retain as a subordinate GitHub publication capability when used by the completion skill. It does not own terminal completion. GitLab uses a merge-request capability and terminology. |
-| agent-work-merge | completion skill selected by PROJECT.yaml | Retain as an integration capability for concurrent branches and worktrees. It supplies merge evidence but does not own provider lifecycle. |
+| create-pull-request | deliver-work-item-feature-branch | Retain as a subordinate GitHub publication capability when used by the completion skill. It does not own terminal completion. GitLab uses a merge-request capability and terminology. |
+| integrate-agent-work | completion skill selected by PROJECT.yaml | Retain as an integration capability for concurrent branches and worktrees. It supplies merge evidence but does not own provider lifecycle. |
 | agent-claim | provider and completion skills | Retain as shared mutation-authority infrastructure. File provider operations and completion operations use separate narrow claim scopes. |
 
-New provider skills are create-gitlab-work-item, manage-gitlab-work-items, create-azure-devops-work-item, manage-azure-devops-work-items, create-jira-work-item, and manage-jira-work-items. New completion skills are complete-work-item-direct-main and complete-work-item-feature-branch.
+New provider skills are create-gitlab-work-item, manage-gitlab-work-items, create-azure-devops-work-item, manage-azure-devops-work-items, create-jira-work-item, and manage-jira-work-items. New completion skills are deliver-work-item-direct-main and deliver-work-item-feature-branch.
 
 ## Migration Coverage And Acceptance Gate
 
@@ -390,7 +390,7 @@ Each downstream implementation must provide focused evidence for its owned part 
 
 ## Source Reconciliation
 
-The file-provider creation and management procedures are owned by [create-file-work-item](../skills/create-file-work-item/SKILL.md) and [manage-file-work-items](../skills/manage-file-work-items/SKILL.md). The migration table above records how create-backlog, manage-backlog, file-based-backlog, github-issues-backlog, and execute-workitem were replaced before their packages and active callers were removed. [create-pull-request](../skills/create-pull-request/SKILL.md) remains a subordinate GitHub publication capability of feature-branch completion, while [agent-work-merge](../skills/agent-work-merge/SKILL.md) and [agent-claim](../skills/agent-claim/SKILL.md) retain their independent integration and ownership responsibilities.
+The file-provider creation and management procedures are owned by [create-file-work-item](../skills/create-file-work-item/SKILL.md) and [manage-file-work-items](../skills/manage-file-work-items/SKILL.md). The migration table above records how create-backlog, manage-backlog, file-based-backlog, github-issues-backlog, and execute-workitem were replaced before their packages and active callers were removed. [create-pull-request](../skills/create-pull-request/SKILL.md) remains a subordinate GitHub publication capability of feature-branch completion, while [integrate-agent-work](../skills/integrate-agent-work/SKILL.md) and [agent-claim](../skills/agent-claim/SKILL.md) retain their independent integration and ownership responsibilities.
 
 The [project configuration template](../skills/development-methodology/assets/templates/project-template.yaml), this repository's root PROJECT.yaml, and [render-agents-technology-skills.py](../scripts/render-agents-technology-skills.py) implement workflow_selection.persistence and workflow_selection.commit. Generated workflow guidance references the selected create, manage, and completion skills by name, while the existing folder technology mechanism remains separately inlined.
 

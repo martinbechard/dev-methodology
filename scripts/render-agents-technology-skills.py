@@ -47,8 +47,8 @@ PROVIDER_SKILLS = {
 }
 PROVIDER_VALUES = (*PROVIDER_SKILLS, "none", "UNSET")
 COMPLETION_SKILLS = {
-    "direct-main": "complete-work-item-direct-main",
-    "feature-branch": "complete-work-item-feature-branch",
+    "direct-main": "deliver-work-item-direct-main",
+    "feature-branch": "deliver-work-item-feature-branch",
 }
 COMPLETION_VALUES = (*COMPLETION_SKILLS, "UNSET")
 SETUP_MODES = ("basic", "advanced")

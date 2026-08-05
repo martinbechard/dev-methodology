@@ -150,7 +150,7 @@
       <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
       <div><dt>Documentation snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>57e0430debd2b68733a38ac488261e45d6d525d8ebb961177ab1506fe4aa44e9</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source snapshot</dt><dd><code>3dc1669c04b4619ed53c17513ed6a65c156a54aec49fc5c639190fb251028c77</code>; regenerated and compared by the focused check</dd></div>
     </dl>
     <div style="margin-top:2rem"><h3>Campaign verdict results</h3></div>
     <div class="grid" style="margin-top:1rem">
@@ -2240,36 +2240,6 @@
       </dl>
     </article>
 
-    <article class="evaluation-card skill-card" id="skill-agent-work-merge"
-      data-kind="skill" data-status="direct-probe" data-search="agent-work-merge use when combining accepted work from multiple branches, worktrees, or agents. development-practice probe-agent-work-merge linked agent-suite outcomes only: pass, blocked">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>agent-work-merge</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Use when combining accepted work from multiple branches, worktrees, or agents.</p>
-      <p class="source-row"><a href="../skills/agent-work-merge/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-agent-work-merge</a></dd></div>
-          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
-          <div><dt>Executable cases</dt><dd>None declared</dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-merge-coordinator-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-orchestrator-happy</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, claim-lifecycle, required-command-outcome, allowed-paths-only</dd></div>
-          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <ul class="link-list"><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / clean-integration</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / conflict-handling</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / incomplete-contribution-evidence</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, BLOCKED</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
     <article class="evaluation-card skill-card" id="skill-analyze-document-topics"
       data-kind="skill" data-status="indirect-only" data-search="analyze-document-topics analyze a document without changing it by reconstructing its complete topic hierarchy and evaluating source-grounded parent containment and sibling sequence. documentation-methodology none no governed campaign link">
       <div class="card-heading">
@@ -2607,66 +2577,6 @@
           <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-coder-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-code-reviewer-boundary</a></dd></div>
           <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
           <div><dt>Deterministic checks</dt><dd>skill-read-trace, operation-coverage, test-state-transition</dd></div>
-          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
-    <article class="evaluation-card skill-card" id="skill-complete-work-item-direct-main"
-      data-kind="skill" data-status="direct-probe" data-search="complete-work-item-direct-main complete a verified work item by deliberately integrating its accepted commit into the configured main branch, verifying the integrated state, and observing exact main reachability before any provider lifecycle closure. use when the effective completion selector is direct-main. development-practice probe-complete-work-item-direct-main no governed campaign link">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>complete-work-item-direct-main</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Complete a verified work item by deliberately integrating its accepted commit into the configured main branch, verifying the integrated state, and observing exact main reachability before any provider lifecycle closure. Use when the effective completion selector is direct-main.</p>
-      <p class="source-row"><a href="../skills/complete-work-item-direct-main/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-complete-work-item-direct-main</a></dd></div>
-          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
-          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">direct-main-unrelated-dirty-contract</a></dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-orchestrator-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-orchestrator-boundary</a>, <a href="../evals/agent-scenarios.yaml">dev-merge-coordinator-happy</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, claim-lifecycle, required-command-outcome, operation-coverage, tool-authority, readiness-consistency</dd></div>
-          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
-    <article class="evaluation-card skill-card" id="skill-complete-work-item-feature-branch"
-      data-kind="skill" data-status="direct-probe" data-search="complete-work-item-feature-branch complete a normalized work item through one reviewable feature branch, provider-accurate pull-request or merge-request publication, accepted corrections, required checks, observed merge, and final provider lifecycle evidence. use when the selected completion process is feature-branch or a request explicitly requires reviewed branch delivery through merge. development-practice probe-complete-work-item-feature-branch no governed campaign link">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>complete-work-item-feature-branch</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Complete a normalized work item through one reviewable feature branch, provider-accurate pull-request or merge-request publication, accepted corrections, required checks, observed merge, and final provider lifecycle evidence. Use when the selected completion process is feature-branch or a request explicitly requires reviewed branch delivery through merge.</p>
-      <p class="source-row"><a href="../skills/complete-work-item-feature-branch/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-complete-work-item-feature-branch</a></dd></div>
-          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
-          <div><dt>Executable cases</dt><dd>None declared</dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-coder-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-verifier-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-merge-coordinator-happy</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, claim-lifecycle, required-command-outcome, operation-coverage, tool-authority, readiness-consistency</dd></div>
           <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
         </dl>
 
@@ -3099,6 +3009,66 @@
       </dl>
     </article>
 
+    <article class="evaluation-card skill-card" id="skill-deliver-work-item-direct-main"
+      data-kind="skill" data-status="direct-probe" data-search="deliver-work-item-direct-main complete a verified work item by deliberately integrating its accepted commit into the configured main branch, verifying the integrated state, and observing exact main reachability before any provider lifecycle closure. use when the effective completion selector is direct-main. development-practice probe-deliver-work-item-direct-main no governed campaign link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>deliver-work-item-direct-main</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Complete a verified work item by deliberately integrating its accepted commit into the configured main branch, verifying the integrated state, and observing exact main reachability before any provider lifecycle closure. Use when the effective completion selector is direct-main.</p>
+      <p class="source-row"><a href="../skills/deliver-work-item-direct-main/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-deliver-work-item-direct-main</a></dd></div>
+          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
+          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">direct-main-unrelated-dirty-contract</a></dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-orchestrator-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-orchestrator-boundary</a>, <a href="../evals/agent-scenarios.yaml">dev-merge-coordinator-happy</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, claim-lifecycle, required-command-outcome, operation-coverage, tool-authority, readiness-consistency</dd></div>
+          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-deliver-work-item-feature-branch"
+      data-kind="skill" data-status="direct-probe" data-search="deliver-work-item-feature-branch complete a normalized work item through one reviewable feature branch, provider-accurate pull-request or merge-request publication, accepted corrections, required checks, observed merge, and final provider lifecycle evidence. use when the selected completion process is feature-branch or a request explicitly requires reviewed branch delivery through merge. development-practice probe-deliver-work-item-feature-branch no governed campaign link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>deliver-work-item-feature-branch</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Complete a normalized work item through one reviewable feature branch, provider-accurate pull-request or merge-request publication, accepted corrections, required checks, observed merge, and final provider lifecycle evidence. Use when the selected completion process is feature-branch or a request explicitly requires reviewed branch delivery through merge.</p>
+      <p class="source-row"><a href="../skills/deliver-work-item-feature-branch/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-deliver-work-item-feature-branch</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-coder-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-verifier-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-merge-coordinator-happy</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, claim-lifecycle, required-command-outcome, operation-coverage, tool-authority, readiness-consistency</dd></div>
+          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
     <article class="evaluation-card skill-card" id="skill-detect-technology-skills"
       data-kind="skill" data-status="direct-probe" data-search="detect-technology-skills detect specialized technology and domain skills from source-backed folder scopes during project agent setup. use when creating or updating project.yaml and unconditional agents.md folder skillsets, or when technology boundaries change. development-practice probe-detect-technology-skills linked agent-suite outcomes only: pass">
       <div class="card-heading">
@@ -3454,6 +3424,36 @@
       <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
       <dl class="compact-list">
         <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-integrate-agent-work"
+      data-kind="skill" data-status="direct-probe" data-search="integrate-agent-work use when combining accepted work from multiple branches, worktrees, or agents. development-practice probe-integrate-agent-work linked agent-suite outcomes only: pass, blocked">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>integrate-agent-work</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Use when combining accepted work from multiple branches, worktrees, or agents.</p>
+      <p class="source-row"><a href="../skills/integrate-agent-work/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-integrate-agent-work</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-merge-coordinator-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-orchestrator-happy</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, claim-lifecycle, required-command-outcome, allowed-paths-only</dd></div>
+          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <ul class="link-list"><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / clean-integration</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / conflict-handling</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / incomplete-contribution-evidence</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, BLOCKED</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
         <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
       </dl>

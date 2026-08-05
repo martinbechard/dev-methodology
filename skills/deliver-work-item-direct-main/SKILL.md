@@ -1,13 +1,17 @@
 ---
-name: complete-work-item-direct-main
+name: deliver-work-item-direct-main
 description: Complete a verified work item by deliberately integrating its accepted commit into the configured main branch, verifying the integrated state, and observing exact main reachability before any provider lifecycle closure. Use when the effective completion selector is direct-main.
 metadata:
   category: development-practice
 ---
 
-# Complete Work Item Direct Main
+# Deliver Work Item Direct Main
 
 Complete delivery only after the accepted behavior is verified on the configured main branch. Direct main describes the observed final state; implementation may occur in the primary worktree or a private worktree.
+
+## Deliver Work Item
+
+Deliver the accepted work item through the evidence gate, current-main reconciliation, deliberate integration, focused integrated verification, and main observation defined below.
 
 ## Inputs
 
@@ -77,7 +81,7 @@ After integration mutation, recapture the same evidence. Prove the unrelated sta
 
 ## Deliberate Integration
 
-When the accepted commit is not yet represented on main, load and apply agent-work-merge or hand the commit to the repository's accepted integration owner while retaining the same evidence requirements.
+When the accepted commit is not yet represented on main, load and apply integrate-agent-work or hand the commit to the repository's accepted integration owner while retaining the same evidence requirements.
 
 - Use the repository-approved merge, cherry-pick, rebase-and-fast-forward, squash, or equivalent integration strategy.
 - Record the source-to-integration commit mapping when the strategy changes commit identity.

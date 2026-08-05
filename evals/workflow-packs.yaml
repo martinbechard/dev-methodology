@@ -41,7 +41,7 @@ packs:
     skillProbes:
       - probe-agent-claim
       - probe-agent-harness
-      - probe-agent-work-merge
+      - probe-integrate-agent-work
       - probe-api-routes
       - probe-application-security
       - probe-ast-grep
@@ -51,8 +51,8 @@ packs:
       - probe-code-discovery
       - probe-code-execution-tracing
       - probe-code-review-evidence
-      - probe-complete-work-item-direct-main
-      - probe-complete-work-item-feature-branch
+      - probe-deliver-work-item-direct-main
+      - probe-deliver-work-item-feature-branch
       - probe-create-pull-request
       - probe-electron-main
       - probe-electron-preload

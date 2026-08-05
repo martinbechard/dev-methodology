@@ -1,13 +1,13 @@
 ---
-name: agent-work-merge
+name: integrate-agent-work
 description: Use when combining accepted work from multiple branches, worktrees, or agents.
 metadata:
   category: development-practice
 ---
 
-# Agent Work Merge
+# Integrate Agent Work
 
-Use this skill when accepted work from separate branches or worktrees must be combined and merged into main.
+Use this skill when accepted work from separate branches or worktrees must be integrated into main.
 
 ## Goal
 

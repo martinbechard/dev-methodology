@@ -1,13 +1,17 @@
 ---
-name: complete-work-item-feature-branch
+name: deliver-work-item-feature-branch
 description: Complete a normalized work item through one reviewable feature branch, provider-accurate pull-request or merge-request publication, accepted corrections, required checks, observed merge, and final provider lifecycle evidence. Use when the selected completion process is feature-branch or a request explicitly requires reviewed branch delivery through merge.
 metadata:
   category: development-practice
 ---
 
-# Complete Work Item Feature Branch
+# Deliver Work Item Feature Branch
 
 Carry one accepted candidate from branch publication through host review and observed merge without confusing publication with implementation or completion.
+
+## Deliver Work Item
+
+Deliver the accepted work item through candidate publication, the review and check loop, and the observed merge and completion gate defined below.
 
 ## Dependencies
 

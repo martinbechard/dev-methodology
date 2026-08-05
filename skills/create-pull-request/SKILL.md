@@ -25,7 +25,7 @@ Use the first applicable template:
 
 Keep repository-required sections. Add Review Order and Review State when a repository template does not already capture them. Remove placeholders before publication.
 
-## Workflow
+## Create Or Update Pull Request
 
 1. Inspect the live branch, base, commits, diff, worktree state, remote state, existing pull requests, and completed verification.
 2. Stop if the branch contains unrelated work, is dirty without an accepted explanation, exposes sensitive data, or lacks the commits intended for review.

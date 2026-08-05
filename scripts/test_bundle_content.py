@@ -107,7 +107,7 @@ NEW_DEVELOPMENT_SKILLS = (
     "root-cause-analysis",
     "runtime-evidence-collection",
     "organise-project-files",
-    "complete-work-item-direct-main",
+    "deliver-work-item-direct-main",
     "create-file-work-item",
     "manage-file-work-items",
     "create-github-work-item",
@@ -118,7 +118,7 @@ NEW_DEVELOPMENT_SKILLS = (
     "manage-azure-devops-work-items",
     "create-jira-work-item",
     "manage-jira-work-items",
-    "complete-work-item-feature-branch",
+    "deliver-work-item-feature-branch",
     "create-pull-request",
     "create-unit-test-plan",
     "review-unit-test-plan",
@@ -828,8 +828,8 @@ DOCUMENT_REQUIRED_CONTENT_LINKS = {
         "../skills/create-file-work-item/SKILL.md",
         "../skills/manage-file-work-items/SKILL.md",
         "../skills/agent-claim/SKILL.md",
-        "../skills/complete-work-item-direct-main/SKILL.md",
-        "../skills/complete-work-item-feature-branch/SKILL.md",
+        "../skills/deliver-work-item-direct-main/SKILL.md",
+        "../skills/deliver-work-item-feature-branch/SKILL.md",
         "../skills/create-pull-request/SKILL.md",
         "../skills/agent-claim-command/SKILL.md",
         "../skills/agent-claim-mcp/SKILL.md",
@@ -1765,8 +1765,8 @@ class BundleContentTests(unittest.TestCase):
 
         for phrase in (
             "Only the delivery owner applies the effective Commit-selected skill.",
-            "For direct-main, the delivery owner applies complete-work-item-direct-main.",
-            "For feature-branch, the delivery owner applies complete-work-item-feature-branch.",
+            "For direct-main, the delivery owner applies deliver-work-item-direct-main.",
+            "For feature-branch, the delivery owner applies deliver-work-item-feature-branch.",
             "Evidence-only or no mutation authority is terminal: return the evidence handoff without applying a Commit skill or creating a commit.",
             "When repository delivery is required and Commit is UNSET, ask for the Commit selection and stop before delivery.",
             "Do not create a commit outside the effective Commit-selected skill.",
@@ -2387,6 +2387,9 @@ class BundleContentTests(unittest.TestCase):
         skill_text = skill_path.read_text(encoding="utf-8")
         template_text = template_path.read_text(encoding="utf-8")
 
+        self.assertIn("## Create Or Update Pull Request", skill_text)
+        self.assertNotIn("## Workflow", skill_text)
+
         for phrase in (
             "create the base dependency first",
             "recreate the pull requests in dependency order before handoff",
@@ -2419,7 +2422,7 @@ class BundleContentTests(unittest.TestCase):
             {next(iter(entry)) for entry in role["skills"]},
         )
         feature_completion_text = (
-            SKILLS_ROOT / "complete-work-item-feature-branch" / "SKILL.md"
+            SKILLS_ROOT / "deliver-work-item-feature-branch" / "SKILL.md"
         ).read_text(encoding="utf-8")
         self.assertIn(
             "Apply [create-pull-request]",
@@ -2456,13 +2459,16 @@ class BundleContentTests(unittest.TestCase):
             ),
         )
 
-    def test_complete_work_item_feature_branch_requires_observed_provider_accurate_merge(
+    def test_deliver_work_item_feature_branch_requires_observed_provider_accurate_merge(
         self,
     ) -> None:
         skill_path = (
-            SKILLS_ROOT / "complete-work-item-feature-branch" / "SKILL.md"
+            SKILLS_ROOT / "deliver-work-item-feature-branch" / "SKILL.md"
         )
         skill_text = skill_path.read_text(encoding="utf-8")
+
+        self.assertIn("# Deliver Work Item Feature Branch", skill_text)
+        self.assertIn("## Deliver Work Item", skill_text)
 
         for phrase in (
             "Consume an already accepted, independently reviewed and verified candidate commit.",
@@ -2482,7 +2488,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(phrase, skill_text)
 
         self.assertIn(
-            "- complete-work-item-feature-branch",
+            "- deliver-work-item-feature-branch",
             README_PATH.read_text(encoding="utf-8"),
         )
         self.assertIn(
@@ -2496,9 +2502,9 @@ class BundleContentTests(unittest.TestCase):
         probe = next(
             entry
             for entry in probes["probes"]
-            if entry["id"] == "probe-complete-work-item-feature-branch"
+            if entry["id"] == "probe-deliver-work-item-feature-branch"
         )
-        self.assertEqual("complete-work-item-feature-branch", probe["skill"])
+        self.assertEqual("deliver-work-item-feature-branch", probe["skill"])
         self.assertIn("configured base-branch reachability", probe["expectedBehavior"])
         self.assertIn(
             "return AWAITING_REVIEW while review checks dependencies or merge remain pending",
@@ -2530,7 +2536,7 @@ class BundleContentTests(unittest.TestCase):
             entry for entry in workflow_packs["packs"] if entry["id"] == "code-delivery"
         )
         self.assertIn(
-            "probe-complete-work-item-feature-branch",
+            "probe-deliver-work-item-feature-branch",
             code_delivery["skillProbes"],
         )
 
@@ -2591,8 +2597,8 @@ class BundleContentTests(unittest.TestCase):
                     "manage-file-work-items",
                     "create-github-work-item",
                     "manage-github-work-items",
-                    "complete-work-item-direct-main",
-                    "complete-work-item-feature-branch",
+                    "deliver-work-item-direct-main",
+                    "deliver-work-item-feature-branch",
                 }
             )
         )
@@ -2659,7 +2665,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("## Work-Item Workflow Skill References", agents_text)
         self.assertIn("create-file-work-item", agents_text)
         self.assertIn("manage-file-work-items", agents_text)
-        self.assertIn("complete-work-item-direct-main", agents_text)
+        self.assertIn("deliver-work-item-direct-main", agents_text)
         self.assertIn("technology skill routing remains separate", agents_text)
 
         probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
@@ -2669,8 +2675,8 @@ class BundleContentTests(unittest.TestCase):
             "probe-manage-github-work-items",
             "probe-create-file-work-item",
             "probe-manage-file-work-items",
-            "probe-complete-work-item-direct-main",
-            "probe-complete-work-item-feature-branch",
+            "probe-deliver-work-item-direct-main",
+            "probe-deliver-work-item-feature-branch",
         ):
             self.assertIn(probe_id, probe_ids)
         for retired_probe_id in (
@@ -2688,8 +2694,8 @@ class BundleContentTests(unittest.TestCase):
             "manage-github-work-items",
             "create-file-work-item",
             "manage-file-work-items",
-            "complete-work-item-direct-main",
-            "complete-work-item-feature-branch",
+            "deliver-work-item-direct-main",
+            "deliver-work-item-feature-branch",
         ):
             self.assertIn(f"- {skill_name}", readme_text)
         for retired_skill in (
@@ -2813,11 +2819,11 @@ class BundleContentTests(unittest.TestCase):
                 continue
             with self.subTest(dev_coder_case=case["id"]):
                 self.assertNotIn(
-                    "complete-work-item-direct-main",
+                    "deliver-work-item-direct-main",
                     case.get("requiredSkills", []),
                 )
                 self.assertNotIn(
-                    "complete-work-item-direct-main",
+                    "deliver-work-item-direct-main",
                     case.get("contextPack", {}).get("stagedSkillPackages", []),
                 )
 
@@ -2832,9 +2838,12 @@ class BundleContentTests(unittest.TestCase):
                 self.assertNotIn("until their separately governed callers move", migration)
 
     def test_direct_main_completion_requires_integrated_main_evidence(self) -> None:
-        skill_name = "complete-work-item-direct-main"
+        skill_name = "deliver-work-item-direct-main"
         skill_path = SKILLS_ROOT / skill_name / "SKILL.md"
         skill_text = skill_path.read_text(encoding="utf-8")
+
+        self.assertIn("# Deliver Work Item Direct Main", skill_text)
+        self.assertIn("## Deliver Work Item", skill_text)
 
         required_phrases = (
             "This skill owns Git delivery and main observation.",
@@ -2863,7 +2872,7 @@ class BundleContentTests(unittest.TestCase):
         probe = next(
             entry
             for entry in probes["probes"]
-            if entry["id"] == "probe-complete-work-item-direct-main"
+            if entry["id"] == "probe-deliver-work-item-direct-main"
         )
         self.assertEqual(skill_name, probe["skill"])
         self.assertIn("unmerged temporary branch", probe["negativeCondition"])
@@ -2875,7 +2884,7 @@ class BundleContentTests(unittest.TestCase):
             entry for entry in workflow_packs["packs"] if entry["id"] == "code-delivery"
         )
         self.assertIn(
-            "probe-complete-work-item-direct-main",
+            "probe-deliver-work-item-direct-main",
             code_delivery["skillProbes"],
         )
         self.assertTrue(
@@ -7084,7 +7093,7 @@ class BundleContentTests(unittest.TestCase):
         claim_skill = (SKILLS_ROOT / "agent-claim" / "SKILL.md").read_text(encoding="utf-8")
         mcp_skill = (SKILLS_ROOT / "agent-claim-mcp" / "SKILL.md").read_text(encoding="utf-8")
         command_skill = (SKILLS_ROOT / "agent-claim-command" / "SKILL.md").read_text(encoding="utf-8")
-        merge_skill = (SKILLS_ROOT / "agent-work-merge" / "SKILL.md").read_text(encoding="utf-8")
+        merge_skill = (SKILLS_ROOT / "integrate-agent-work" / "SKILL.md").read_text(encoding="utf-8")
         claim_script = SKILLS_ROOT / "agent-claim-command" / "scripts" / "claim.py"
         self.assertTrue(claim_script.is_file())
         self.assertFalse((SKILLS_ROOT / "agent-claim" / "scripts" / "claim.py").exists())
@@ -7140,7 +7149,7 @@ class BundleContentTests(unittest.TestCase):
         mcp_text = (SKILLS_ROOT / "agent-claim-mcp" / "SKILL.md").read_text(
             encoding="utf-8"
         )
-        merge_text = (SKILLS_ROOT / "agent-work-merge" / "SKILL.md").read_text(encoding="utf-8")
+        merge_text = (SKILLS_ROOT / "integrate-agent-work" / "SKILL.md").read_text(encoding="utf-8")
         coordination_text = (
             SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
@@ -7500,7 +7509,7 @@ class BundleContentTests(unittest.TestCase):
                     self.assertIn(closeout_term, completion_text.lower())
 
         orchestrator = roles_by_name["dev-orchestrator"]
-        self.assertNotIn("agent-work-merge", orchestrator.skills)
+        self.assertNotIn("integrate-agent-work", orchestrator.skills)
         self.assertNotIn("review-structured-artifact", orchestrator.skills)
 
         direct_lane_example = next(
@@ -7947,10 +7956,10 @@ class BundleContentTests(unittest.TestCase):
         dependent_skills = (
             "agent-claim-command",
             "agent-claim-mcp",
-            "agent-work-merge",
+            "integrate-agent-work",
             "coordinate-codex-work-items",
-            "complete-work-item-direct-main",
-            "complete-work-item-feature-branch",
+            "deliver-work-item-direct-main",
+            "deliver-work-item-feature-branch",
             "create-file-work-item",
             "create-project-configuration",
             "end-to-end-verification",
@@ -10856,7 +10865,7 @@ class BundleContentTests(unittest.TestCase):
                 [
                     "Dev Coder returns a clean verified candidate commit without applying terminal delivery.",
                     "Dev Orchestrator obtains fresh independent review and source verification, combines accepted candidates when needed, then applies or resumes the effective Commit-selected skill referenced by applicable AGENTS.md guidance.",
-                    "The complete-work-item-feature-branch completion contract consumes the accepted candidate without modifying source and preserves one delivery identity through host review and corrections.",
+                    "The deliver-work-item-feature-branch completion contract consumes the accepted candidate without modifying source and preserves one delivery identity through host review and corrections.",
                     "Every source correction returns through Dev Orchestrator to the original Dev Coder for a replacement candidate, fresh independent review, and verification before delivery resumes.",
                     "The completion contract loads create-pull-request only as its subordinate GitHub publication capability and returns AWAITING_REVIEW until required review, checks, dependency order, merge, and configured base-branch reachability are observed.",
                     "Persistence closure begins only after Commit returns READY.",

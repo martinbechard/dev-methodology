@@ -148,7 +148,6 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | agent-claim | [x] | [x] probe-agent-claim | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | agent-claim-command | [x] | [x] probe-agent-claim-command | [x] backlog-lifecycle, documentation-functional-spec, spring-boot-order-cancellation, typescript-order-pricing, wiki-raw-ingest | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | agent-claim-mcp | [x] | [x] probe-agent-claim-mcp | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
-| agent-work-merge | [x] | [x] probe-agent-work-merge | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | application-security | [x] | [x] probe-application-security | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | ast-grep | [x] | [x] probe-ast-grep | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | careful-coding | [x] | [x] probe-careful-coding | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
@@ -156,8 +155,6 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | code-discovery | [x] | [x] probe-code-discovery | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | code-execution-tracing | [x] | [x] probe-code-execution-tracing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | code-review-evidence | [x] | [x] probe-code-review-evidence | [x] typescript-code-review | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| complete-work-item-direct-main | [x] | [x] probe-complete-work-item-direct-main | [x] direct-main-unrelated-dirty-contract | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| complete-work-item-feature-branch | [x] | [x] probe-complete-work-item-feature-branch | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | coordinate-codex-work-items | [x] | [x] probe-coordinate-codex-work-items | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-azure-devops-work-item | [x] | [x] probe-create-azure-devops-work-item | [x] provider-placeholder-matrix | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-file-work-item | [x] | [x] probe-create-file-work-item | [x] file-work-item-template-contract | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
@@ -165,10 +162,13 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | create-gitlab-work-item | [x] | [x] probe-create-gitlab-work-item | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-jira-work-item | [x] | [x] probe-create-jira-work-item | [x] provider-placeholder-matrix | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-pull-request | [x] | [x] probe-create-pull-request | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| deliver-work-item-direct-main | [x] | [x] probe-deliver-work-item-direct-main | [x] direct-main-unrelated-dirty-contract | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| deliver-work-item-feature-branch | [x] | [x] probe-deliver-work-item-feature-branch | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | detect-technology-skills | [x] | [x] probe-detect-technology-skills | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | effective-communication | [x] | [x] probe-effective-communication | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | end-to-end-verification | [x] | [x] probe-end-to-end-verification | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | explain-code-fix | [x] | [x] probe-explain-code-fix | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| integrate-agent-work | [x] | [x] probe-integrate-agent-work | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | manage-azure-devops-work-items | [x] | [x] probe-manage-azure-devops-work-items | [x] provider-placeholder-matrix, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | manage-file-work-items | [x] | [x] probe-manage-file-work-items | [x] backlog-lifecycle, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | manage-github-work-items | [x] | [x] probe-manage-github-work-items | [x] github-work-item-provider, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |

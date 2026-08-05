@@ -44,7 +44,7 @@ skills:
 - organise-project-files:
     justification: We need this to validate the destination of any new file introduced or created while integrating contributions.
     condition: when the requested integration creates or introduces a new project file or directory.
-- agent-work-merge:
+- integrate-agent-work:
     justification: We need this to combine independent contributions through an explicit
       integration workflow that preserves evidence for any conflicts encountered.
 - review-structured-artifact:

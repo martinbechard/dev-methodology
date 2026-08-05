@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Verifies feature-branch completion states, provider terminology, and Git merge evidence.
+# Summary: Verifies feature-branch delivery states, provider terminology, and Git merge evidence.
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from pathlib import Path
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SKILL_PATH = (
-    REPOSITORY_ROOT / "skills" / "complete-work-item-feature-branch" / "SKILL.md"
+    REPOSITORY_ROOT / "skills" / "deliver-work-item-feature-branch" / "SKILL.md"
 )
 DEV_CODER_PATH = (
     REPOSITORY_ROOT / "agents" / "roles" / "dev-activities" / "dev-coder.role.yaml"
@@ -108,7 +108,7 @@ def evaluate_mock_host(state: MockHostState) -> str:
     return "AWAITING_REVIEW"
 
 
-class CompleteWorkItemFeatureBranchTests(unittest.TestCase):
+class DeliverWorkItemFeatureBranchTests(unittest.TestCase):
     def test_mocked_host_states_cover_review_merge_and_failure_boundaries(self) -> None:
         scenarios = {
             "Ready publication": MockHostState(),

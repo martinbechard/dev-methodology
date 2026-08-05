@@ -513,7 +513,7 @@ The development practice skills are:
 - manage-azure-devops-work-items
 - create-jira-work-item
 - manage-jira-work-items
-- complete-work-item-direct-main
+- deliver-work-item-direct-main
 - explain-code-fix
 - effective-communication
 - structured-explanation
@@ -522,12 +522,12 @@ The development practice skills are:
 - agent-claim
 - agent-claim-mcp
 - agent-claim-command
-- agent-work-merge
+- integrate-agent-work
 - coordinate-codex-work-items
 - resolve-backlog-blockage
 - set-solo-mode
 - set-multitask-mode
-- complete-work-item-feature-branch
+- deliver-work-item-feature-branch
 - create-pull-request
 - code-review-evidence
 - test-driven-development

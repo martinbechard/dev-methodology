@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Complete Work Item Feature Branch
+  display_name: Deliver Work Item Feature Branch
   # User-facing summary shown in Codex skill surfaces.
   short_description: Complete a normalized work item through one reviewable feature branch, provider-accurate...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $complete-work-item-feature-branch to publish, review, and verify a feature-branch work item through observed merge.
+  default_prompt: Use $deliver-work-item-feature-branch to publish, review, and verify a feature-branch work item through observed merge.
 
 # Optional invocation policy placeholder.
 # policy:

@@ -117,11 +117,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
-            "agent-work-merge",
+            "integrate-agent-work",
             "review-structured-artifact",
             "explain-code-fix"
           ],
-          "sha256": "4d5961261162b208aab5878f0aee05fa170d5fad7b82ff1066efc722f0f81de6",
+          "sha256": "738fbb8e14e0efe7293b290adaf54496e8f823e89d2dc239f5e40504f944b5ad",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -509,12 +509,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
-            "agent-work-merge",
+            "integrate-agent-work",
             "review-structured-artifact",
             "explain-code-fix",
             "codex-harness-directives"
           ],
-          "sha256": "8a7049b785e834239eda5bccb793f71eee03b675119a2824997270c62217d63d",
+          "sha256": "ab635e144559d87c145eb8b609adff63e78fda6bade64dbad8ac8047dae28c81",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -918,11 +918,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
-            "agent-work-merge",
+            "integrate-agent-work",
             "review-structured-artifact",
             "explain-code-fix"
           ],
-          "sha256": "bfc10a3129ba89dae2dea6ebd8fc8112b5bbd7108e7a0c0dd3f299e1f665d59b",
+          "sha256": "6eb501c84c5f9130ec95ea3b3af5a55e39e3ac4a48d8473ebdb46414a382b6df",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -1302,11 +1302,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
-            "agent-work-merge",
+            "integrate-agent-work",
             "review-structured-artifact",
             "explain-code-fix"
           ],
-          "sha256": "96475b907abdb2b39fc631f51124442b1c8449aa23a4d2ac0bd35f5551a4b5f3",
+          "sha256": "989f18cfe43611a57c6352ddf92151d5737dcb82a839d1a70d6006a2a44376b8",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
