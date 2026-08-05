@@ -1,12 +1,12 @@
 # Apply Skill Interface Notation To Skill Group Designs
 
-Status: Ready
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/apply-skill-interface-notation-to-skill-group-designs.md
+Provider Reference: backlog/completed-backlog/defects/apply-skill-interface-notation-to-skill-group-designs.md
 
 Completion: direct-main
 
@@ -53,6 +53,18 @@ None.
 - Resolve every local Markdown link in the changed design and review files.
 - Run the focused bundle-content assertions that consume the applied skill-group design contract.
 - Run Git diff whitespace validation.
+
+## Completion Evidence
+
+- Accepted design commit: e31ceb0506547ae48fe2469d31789182bd65794c on main.
+- Independent artifact re-review: PASS with no material findings remaining.
+- Focused design assertions: eight design files, sixteen Provider Skill nodes, sixteen correctly directed realizations, complete provider-interface members, and consistent repeated contracts.
+- Focused source assertions: forty-three unique skill sources and 107 responsibility-table procedure entries matched current SKILL.md headings.
+- Documentation checks: 108 local links resolved, eight Mermaid blocks had balanced fences and class braces, inline backticks occurred only in fences, and Git whitespace validation passed.
+- Delivery observation: the accepted commit is the current main HEAD and contains exactly the nine audited design and review files.
+- Residual gap: the eight Mermaid diagrams were not rendered because no local Mermaid runtime is installed; editable source and relationship validation passed.
+- Resource coordination: the project-files claim was released before this terminal backlog mutation.
+- Completed at: 2026-08-05T23:12:38Z.
 
 ## Open Questions
 
