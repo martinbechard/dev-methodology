@@ -1,14 +1,44 @@
 # Require Essential Section Openings
 
-Status: Ready
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/require-essential-section-openings.md
+Provider Reference: backlog/completed-backlog/features/require-essential-section-openings.md
 
 Completion: direct-main
+
+Owner: Completed by the root Codex task for section-essence-opening
+
+## Completion Evidence
+
+Disposition: READY.
+
+Completion: direct-main.
+
+Accepted Source Candidate And Integration Commit: 9b16ab8527651c0555d98bc5484ba03aa7e8a903.
+
+Observed Main Tip: 9b16ab8527651c0555d98bc5484ba03aa7e8a903 before the terminal provider transaction. The accepted commit is reachable from main.
+
+Delivered Paths: skills/ste-technical-writing/SKILL.md, scripts/test_ste_technical_writing.py, and design/generated/skill-definitions.js.
+
+Definition Authority: The pre-mutation check returned ALLOWED_APPROVED_DEFINITION_CHANGE for skills/ste-technical-writing/SKILL.md. The generated-mirror check returned ALLOWED_APPROVED_REGENERATION for design/generated/skill-definitions.js from that approved canonical source.
+
+Post-Integration Verification: Fourteen focused STE technical-writing tests passed with Python 3.11. Skill validation passed. Generated methodology documentation was current. Git whitespace validation passed. The initial Apple Python 3.9 run failed before test loading because tomllib was unavailable; the required Python 3.11 rerun passed.
+
+Independent Review: Omitted for this bounded three-file change under the task's single-agent execution constraint. This omission is recorded and is not represented as independent evidence. Focused self-review found no unresolved findings.
+
+Workspace Evidence: No staged or unstaged integration residue remained in the delivered paths. The unrelated pre-existing edit to design/object-oriented-agent-and-skill-model.md remained untouched.
+
+Implementation Claim Release: RELEASED event 19344ab5-d2f6-494e-9a83-a3e21c59318e for claim section-essence-opening-implementation-20260804.
+
+Completed At: 2026-08-05T03:07:44Z.
+
+Archive Path: backlog/completed-backlog/features/require-essential-section-openings.md.
+
+Terminal Provider-Mutation Claim Evidence: SHARED_CHECKOUT_ACQUIRED claim section-essence-opening-completion-20260804; incarnation 34d74ef6-df5f-4e1d-a3ed-f7042272610b; journal event 89f57564-967f-4d33-ad5b-f04e5c66b88e; exact active and archive provider paths claimed in the primary main checkout.
 
 ## Summary
 
