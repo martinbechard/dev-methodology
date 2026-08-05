@@ -1,6 +1,6 @@
 # Split Backlog Blockage And Dispatch-Mode Skills
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -134,4 +134,30 @@ Confirmed Finding: The candidate removes the live backlog-crisis-mode identity, 
 
 Reproduction: python3 scripts/build-support-checklist.py --check and /opt/homebrew/bin/python3.11 -m unittest scripts.test_eval_coverage_catalog fail identically at base 6f45b362 and at the candidate, reporting four unknown dev-document-topic-editor Judge checks. The generated checklist must not be edited by hand.
 
-Scope And Recovery: This is evidence recording only. Status remains Running, and the current owner and canonical work-item Thread remain unchanged. The missing dev-document-topic-editor Judge checks and generator infrastructure are outside this item's governed scope. A separately authorized owner must supply those four checks, then refresh the candidate with python3 scripts/build-support-checklist.py on current main, rerun both freshness commands, and obtain fresh review and verification. The unblock condition is a supported generator run that succeeds on current main and removes the stale identity.
+Scope And Recovery: At the time this review evidence was recorded, Status remained Running and the canonical work-item Thread remained unchanged. The missing dev-document-topic-editor Judge checks and generator infrastructure are outside this item's governed scope. A separately authorized owner must supply those four checks, then refresh the candidate with python3 scripts/build-support-checklist.py on current main, rerun both freshness commands, and obtain fresh review and verification. The unblock condition is a supported generator run that succeeds on current main and removes the stale identity.
+
+## Blocked Handoff
+
+Transition: Running -> Blocked.
+
+Owner: Unowned.
+
+Coordinator Decision Owner: /root/apply_skill_group_design_backlog.
+
+Canonical Thread and Root Agent Task: /root/apply_skill_group_design_backlog/split_backlog_blockage_dispatch_modes.
+
+Preserved Delivery Identity: Branch codex/split-backlog-blockage-dispatch-modes-019fab; worktree /Users/martinbechard/dev/dev-methodology/.worktrees/split-backlog-blockage-dispatch-modes-019fab; candidate 62a32992b0572f7d60dc55dc3eeea470d6c794aa.
+
+Known Technical Blocker: Candidate 62a32992b0572f7d60dc55dc3eeea470d6c794aa correctly changes the live inventory, but the unchanged generated design/agent-skill-test-coverage-checklist.md is semantically stale at lines 26, 151, and 318. The supported generator fails on four unknown dev-document-topic-editor Judge checks: authority-present, semantic-preservation, source-unchanged, and topic-coverage.
+
+Blocker Owner: Missing-check/generator infrastructure outside this item's authority.
+
+Coordinator-Requested Recovery Action: The Coordinator must obtain separately authorized work that registers or corrects those four checks. This item must not modify the generator infrastructure or create a separate defect item because the dependency is technical and has a known recovery owner.
+
+Observable Unblock Condition: The separately authorized work registers or corrects those four checks; current main successfully runs python3 scripts/build-support-checklist.py, python3 scripts/build-support-checklist.py --check, and /opt/homebrew/bin/python3.11 -m unittest scripts.test_eval_coverage_catalog; then the preserved candidate is rebased or refreshed and receives fresh independent review and verification.
+
+Preserved Evidence: Defect evidence commit 38e8875d records review FAIL only for the semantically stale catalog. Verification was FAIL/BLOCKED only for that same catalog dependency; all listed functional and governance gates passed. Preserve the canonical root, branch, worktree, candidate, review, verification, and user-owned primary modification to design/object-oriented-agent-and-skill-model.md byte-for-byte unstaged.
+
+Claim Evidence: Before this lifecycle transaction, claim status returned STATUS with no live claims. Exact-file claim block-split-backlog-blockage-and-dispatch-mode-skills-019fab acquired with outcome SHARED_CHECKOUT_ACQUIRED and event eaa2fdf2-834b-46da-80c5-7e5dd1435375.
+
+Safe Resumption: On the observable unblock condition, the parent Coordinator must restore Ready in a distinct provider transaction, preserving the canonical Thread. The normal Ready -> Starting -> Running sequence then applies. No replacement Thread is permitted while the preserved canonical identity remains valid.
