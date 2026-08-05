@@ -1,12 +1,12 @@
 # Align Project Setup Skills
 
-Status: Blocked
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/apply-object-oriented-skill-group-design/align-project-setup-skills.md
+Provider Reference: backlog/completed-backlog/features/align-project-setup-skills.md
 
 Completion: direct-main
 
@@ -139,3 +139,15 @@ Evidence: Candidate 1ef05295 passed fresh source review. The independent artifac
 ### Approval Resolution
 
 Approved at creation on 2026-08-04 by the user statement in the active Codex task: "create separate work items to update skills according to the new design, and update individual evals." Approval is limited to the two governed canonical paths listed above. Any additional governed definition requires new explicit user approval recorded in this item.
+
+## Crisis Completion
+
+Completed At: 2026-08-05T20:09:33Z.
+
+Disposition: Completed directly by the backlog-blockage Coordinator from the preserved candidate chain after applying the recorded catalog-validation unblock condition.
+
+Delivery Commits: 9c232add and 54d78c2f.
+
+Verification: Both governed skill packages passed explicit-path validation. The Project Configurator and Project Bootstrapper routing evaluators now validate stripped, unique identifiers against an explicit confirmed catalog; focused positive and adversarial cases reject empty, whitespace-only, duplicate, unknown, aggregate, and selected-skill-set output while accepting single and composed exact-name routes. The focused Configurator case, all 21 Bootstrapper tests, three technology-confirmation tests, the project-setup bundle contract, 118 skill-evaluation tests, and eighteen coverage-catalog tests passed. Generated skill, hierarchy, evaluation, and support-checklist outputs are current; Python compilation and diff checks passed. One unrelated Configurator fixture still expects agent-claim in a role where current policy removed it; the affected routing cases pass and that baseline assertion was not changed.
+
+Outcome: detect-technology-skills exposes Detect Technology Skills; create-project-configuration exposes Configure Project Agents And Skills, Render Project Guidance, and Verify Project Configuration; setup evaluation rejects synthetic aggregate routing and validates every exact technology skill against its confirmed catalog.
