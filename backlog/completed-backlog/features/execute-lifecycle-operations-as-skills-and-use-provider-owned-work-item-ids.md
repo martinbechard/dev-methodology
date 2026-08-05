@@ -1,6 +1,6 @@
 # Execute Lifecycle Operations as Skills and Use Provider-Owned Work Item IDs
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -8,11 +8,11 @@ Priority: High
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/execute-lifecycle-operations-as-skills-and-use-provider-owned-work-item-ids.md
+Work Item ID: execute-lifecycle-operations-as-skills-and-use-provider-owned-work-item-ids
 
 Completion: direct-main
 
-Owner: Root Dev Backlog Coordinator
+Owner: Unowned
 
 ## Summary
 
@@ -106,3 +106,12 @@ Priority Authority: Direct user instruction on 2026-08-05 to deal with Steward c
 Current Phase: Source discovery and smallest-complete implementation planning.
 
 Coordination Mode: Backlog Crisis Mode; single-threaded delivery, no claim operations, and one committed crisis item before the next item begins.
+
+## Delivery Evidence
+
+- Direct lifecycle execution and Steward-scope simplification: `7d216a0d`.
+- Provider-owned Work Item ID contract, provider boundaries, report migration, focused tests, documentation, and supported generated artifacts: `b9603b48`.
+- Focused verification: 113 tests passed across lifecycle coordination, file-provider reporting, exact-path Git behavior, configured-provider ID boundaries, completion contracts, and the work-item template.
+- All 13 changed skill definitions passed the configured skill validator with no findings.
+- Generated documentation freshness and `git diff --check` passed.
+- Completion was recorded directly by the owning Root Dev Backlog Coordinator through the selected file-provider management contract; no Dev Backlog Steward child or claim operation was used.
