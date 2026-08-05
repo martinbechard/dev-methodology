@@ -1,6 +1,6 @@
 # Fix Index Page Settings Control Placement
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -158,7 +158,7 @@ Required Resumption: The same canonical task must complete a new Ready -> Starti
 
 Reconciliation: Ready.
 
-## Current Dispatch Reservation (Fresh Settlement)
+## Historical Dispatch Reservation (Fresh Settlement)
 
 Transition: Ready -> Starting.
 
@@ -277,6 +277,28 @@ Preserved Review and Verification: GOOD review; focused PASS; browser PASS; two 
 Required Resumption: The same canonical task must complete a fresh Ready -> Starting -> Running sequence before exact replay or other repository mutation.
 
 Reconciliation: Ready.
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Launch Reservation: One parent-coordinator launch reservation; no runtime work-item Thread has been created by this reservation.
+
+Normalized Objective: Fix index settings placement.
+
+Dispatch Time: 2026-08-05T14:15:47.093584Z.
+
+Intended Root Dev Orchestrator: Dev Orchestrator.
+
+Preserved Canonical Work-Item Thread: 019faec8-943a-7902-adaa-c2c00a370169; it remains the required resumption identity.
+
+Runtime Launch Evidence: None. This provider transaction reserves capacity only and does not create or accept a runtime task.
+
+Owner: Unowned.
+
+Reconciliation: Starting reservation recorded by the parent Coordinator's Dev Backlog Steward.
 
 ## Notes
 
