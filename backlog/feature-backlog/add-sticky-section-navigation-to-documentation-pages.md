@@ -1,6 +1,6 @@
 # Add Sticky Section Navigation To Documentation Pages
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -83,7 +83,7 @@ Source Mutation Evidence: None observed.
 Required Resumption: Reuse the same canonical task through a new Ready -> Starting -> Running sequence.
 Reconciliation: Ready.
 
-## Current Dispatch Reservation
+## Historical Dispatch Reservation
 
 Transition: Ready -> Starting.
 Parent Coordination Thread: 019faef0-2663-7e50-a6ab-0de973661fbf.
@@ -106,5 +106,25 @@ Runtime Launch Result: Direct conversation-title handoff accepted for the synchr
 Canonical Conversation: 019faef0-2663-7e50-a6ab-0de973661fbf.
 Owner Acceptance: Pending.
 Reconciliation: Pending.
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Launch Reservation: One parent-coordinator launch reservation; no runtime work-item Thread has been created by this reservation.
+
+Normalized Objective: Add sticky documentation section navigation.
+
+Dispatch Time: 2026-08-05T14:16:41.530718Z.
+
+Intended Root Dev Orchestrator: Dev Orchestrator.
+
+Runtime Launch Evidence: None. This provider transaction reserves capacity only and does not create or accept a runtime task.
+
+Owner: Unowned.
+
+Reconciliation: Starting reservation recorded by the parent Coordinator's Dev Backlog Steward.
 
 This item applies to HTML documentation detail pages linked from the toolkit index. It does not add a section menu to the root index page, whose primary purpose is choosing a document rather than navigating a long document body.
