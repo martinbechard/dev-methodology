@@ -1,6 +1,6 @@
 # Execute Lifecycle Operations as Skills and Use Provider-Owned Work Item IDs
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -11,6 +11,8 @@ Provider: file
 Provider Reference: backlog/feature-backlog/execute-lifecycle-operations-as-skills-and-use-provider-owned-work-item-ids.md
 
 Completion: direct-main
+
+Owner: Root Dev Backlog Coordinator
 
 ## Summary
 
@@ -91,4 +93,16 @@ None. This item is independently actionable and high priority. It overlaps lifec
 - This work does not combine Commit delivery with lifecycle persistence.
 - This work does not standardize all providers on one identifier format or expose provider-specific locations globally.
 - The current file-provider record still uses Provider Reference because that is the live provider contract being replaced by this work item.
-- Backlog Crisis Mode remains active at creation time. The item is Ready and high priority, but ordinary dispatch remains paused until crisis exit unless the user explicitly adds this item to the crisis set.
+- Backlog Crisis Mode was active at creation time. On 2026-08-05, the user explicitly prioritized this item after identifying repeated Dev Backlog Steward commit failures and per-transition handoff waste. The Root Dev Backlog Coordinator adopted it as the current crisis item and executed this lifecycle mutation directly through the selected file-work-item management skill, without a Steward child or claim operation.
+
+## Crisis Execution Evidence
+
+Transition: Ready -> Running.
+
+Execution Owner: Root Dev Backlog Coordinator in canonical task 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Priority Authority: Direct user instruction on 2026-08-05 to deal with Steward commit failures and wasted lifecycle-transition time.
+
+Current Phase: Source discovery and smallest-complete implementation planning.
+
+Coordination Mode: Backlog Crisis Mode; single-threaded delivery, no claim operations, and one committed crisis item before the next item begins.
