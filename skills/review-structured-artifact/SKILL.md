@@ -75,7 +75,7 @@ The completed review checklist comes first. The findings file must be derived
 from the completed review checklist rather than written as an independent
 opinion.
 
-## Workflow
+## Review Structured Artifact
 
 ### 1. Establish review trace
 

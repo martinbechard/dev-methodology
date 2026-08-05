@@ -23,7 +23,7 @@ Keep this structure:
 
 When docs/project-taxonomy.md is absent and project guidance names no alternative, use explicit repository conventions and report that no taxonomy exists. Create a taxonomy only when the user or project setup scope includes introducing one; do not invent it as a side effect of an ordinary placement decision.
 
-## Placement Workflow
+## Choose Project File Placement
 
 1. Apply the project instructions already in context and read any task-relevant placement procedure they reference.
 2. Inspect the proposed content or a concrete description of it. Identify its purpose, owner, lifecycle, consumers, mutability, and whether it is source, test, fixture, configuration, documentation, generated output, cache, or operational evidence.

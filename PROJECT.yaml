@@ -215,7 +215,7 @@ role_agent_set:
       - careful-coding
       - code-comments
       - code-discovery
-      - fix-explanation
+      - explain-code-fix
     completion_checks:
       - "Run the focused and repository-level checks applicable to the changed scope."
   - role: dev-code-reviewer

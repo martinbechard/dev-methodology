@@ -7,7 +7,7 @@ metadata:
 
 # Test-Driven Development
 
-## Workflow
+## Run Red-Green-Refactor Loop
 
 1. State one observable behavior and the smallest useful test boundary.
 2. Write or select one focused test that fails for the expected reason.

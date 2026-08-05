@@ -6,7 +6,7 @@ target:
   conceptualRole: agents/roles/dev-activities/dev-merge-coordinator.role.yaml
   nativeAgent: generated/adapters/codex/agents/dev-merge-coordinator.toml
   repositoryMutation: required
-  requiredSkills: [agent-work-merge, review-structured-artifact, fix-explanation]
+  requiredSkills: [agent-work-merge, review-structured-artifact, explain-code-fix]
   conditionalSkills:
     agent-claim: Resource coordination selects agent-claim.
     organise-project-files: Integration introduces a project file or directory.

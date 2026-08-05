@@ -33,7 +33,7 @@ Use this skill for:
 Use it for both architecture and design documents, but keep those two scopes
 distinct.
 
-## Output And Artifact Modes
+## Create Structured Design
 
 Use design-response mode by default when the request asks to formulate,
 propose, explain, or design something without explicitly requesting a durable
@@ -590,7 +590,7 @@ When refining a document over multiple passes:
 3. Justification-quality pass
 4. Modification pass
 
-## Self-Review
+## Self-Review Structured Design
 
 Check all of these before returning:
 

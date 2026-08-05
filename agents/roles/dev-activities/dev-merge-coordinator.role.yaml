@@ -50,7 +50,7 @@ skills:
 - review-structured-artifact:
     justification: We need this to evaluate the combined result for regressions and
       omissions that may only appear after individually valid changes are integrated.
-- fix-explanation:
+- explain-code-fix:
     justification: We need this to make conflict resolutions and integration decisions
       understandable to reviewers and the owners of the original contributions.
 outputContract:

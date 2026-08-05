@@ -1067,6 +1067,73 @@ def wcag_contrast_ratio(first_hex: str, second_hex: str) -> float:
 
 
 class BundleContentTests(unittest.TestCase):
+    def test_baseline_development_skills_expose_approved_operations_and_rename(
+        self,
+    ) -> None:
+        """Keep Baseline Development procedures, probes, and direct role references aligned."""
+
+        expected_operations = {
+            "careful-coding": (
+                "## Confirm Work Before Coding",
+                "## Validate Authorized Contract",
+                "## Execute Goal-Driven Loop",
+            ),
+            "code-comments": (
+                "## Write Structured Comments",
+                "## Add Code Artifact Header",
+                "## Document Public Constructs",
+                "## Review Code Comments",
+            ),
+            "code-discovery": (
+                "## Discover Code Context",
+                "## Determine Change Scope",
+            ),
+            "test-driven-development": ("## Run Red-Green-Refactor Loop",),
+            "structured-design": (
+                "## Create Structured Design",
+                "## Self-Review Structured Design",
+            ),
+            "structured-explanation": ("## Create Structured Explanation",),
+            "organise-project-files": ("## Choose Project File Placement",),
+            "review-structured-artifact": ("## Review Structured Artifact",),
+            "explain-code-fix": ("## Explain Code Fix",),
+        }
+        for skill_id, headings in expected_operations.items():
+            skill_text = (SKILLS_ROOT / skill_id / "SKILL.md").read_text(
+                encoding="utf-8"
+            )
+            for heading in headings:
+                with self.subTest(skill=skill_id, heading=heading):
+                    self.assertIn(heading, skill_text)
+
+        self.assertFalse((SKILLS_ROOT / "fix-explanation").exists())
+
+        expected_probe_phrases = {
+            "probe-careful-coding": "Confirm Work Before Coding, Validate Authorized Contract, and Execute Goal-Driven Loop",
+            "probe-code-comments": "Write Structured Comments, Add Code Artifact Header, Document Public Constructs, and Review Code Comments",
+            "probe-code-discovery": "Discover Code Context before Determine Change Scope",
+            "probe-test-driven-development": "Run Red-Green-Refactor Loop",
+            "probe-structured-design": "Create Structured Design and Self-Review Structured Design",
+            "probe-structured-explanation": "Create Structured Explanation",
+            "probe-organise-project-files": "Choose Project File Placement",
+            "probe-review-structured-artifact": "Review Structured Artifact",
+            "probe-explain-code-fix": "Explain Code Fix",
+        }
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probes_by_id = {probe["id"]: probe for probe in probes["probes"]}
+        for probe_id, phrase in expected_probe_phrases.items():
+            with self.subTest(probe=probe_id):
+                self.assertIn(phrase, probes_by_id[probe_id]["expectedBehavior"])
+
+        for role_name in ("dev-coder", "dev-merge-coordinator"):
+            role = load_yaml_object(
+                ROLES_ROOT / "dev-activities" / f"{role_name}.role.yaml"
+            )
+            role_skills = {next(iter(entry)) for entry in role["skills"]}
+            with self.subTest(role=role_name):
+                self.assertIn("explain-code-fix", role_skills)
+                self.assertNotIn("fix-explanation", role_skills)
+
     def test_fix_explanation_separates_concept_roles_from_item_types(self) -> None:
         structured_text = (
             SKILLS_ROOT / "structured-explanation" / "SKILL.md"
@@ -1088,7 +1155,7 @@ class BundleContentTests(unittest.TestCase):
             set(re.findall(r"^- `([A-Z-]+)`$", core_model, re.MULTILINE)),
         )
 
-        fix_text = (SKILLS_ROOT / "fix-explanation" / "SKILL.md").read_text(
+        fix_text = (SKILLS_ROOT / "explain-code-fix" / "SKILL.md").read_text(
             encoding="utf-8"
         )
         relationship_rules = fix_text.split("## Relationship Rules", 1)[1].split(
@@ -1222,7 +1289,7 @@ class BundleContentTests(unittest.TestCase):
 
         build_skill_docs = load_build_skill_docs_module()
         rendered_html = build_skill_docs.build_payload()["skills"][
-            "fix-explanation"
+            "explain-code-fix"
         ]["html"]
         policy_clauses = (
             "The six item types from structured-explanation remain authoritative: QUERY, SUB-QUERY, FACT, HYPOTHESIS, UNKNOWN, and ANSWER.",
@@ -3097,7 +3164,7 @@ class BundleContentTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
 
         for phrase in (
-            "Mandatory Code Artifact Header",
+            "Add Code Artifact Header",
             "Do not require code headers in configuration",
             "load structured-explanation",
             "copyright statement supplied by the applicable project instructions",

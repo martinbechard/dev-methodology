@@ -58,7 +58,7 @@ packs:
       - probe-electron-preload
       - probe-end-to-end-verification
       - probe-fastapi
-      - probe-fix-explanation
+      - probe-explain-code-fix
       - probe-java
       - probe-java-design
       - probe-jest

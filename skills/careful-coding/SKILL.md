@@ -11,7 +11,7 @@ Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-s
 
 These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
-## Think Before Coding
+## Confirm Work Before Coding
 
 Do not assume, hide confusion, or skip tradeoffs.
 
@@ -54,14 +54,14 @@ Every changed line must trace directly to the user's request.
 
 Handle errors at the boundary that owns recovery, translation, retry, or user communication. Preserve useful causes and do not swallow failures to make a test or command appear successful.
 
-## Preserve Authorized Contracts
+## Validate Authorized Contract
 
 - Preserve every public input and output value allowed by accepted authority unless the user or a stronger accepted source authorizes narrowing it.
 - Do not turn internal arithmetic, rounding, storage, type, or representation choices into stricter public validation. Keep those choices behind the public boundary when the accepted contract permits it.
 - When a material public constraint is ambiguous and the broader behavior cannot be implemented safely, stop and request the contract decision instead of silently selecting a narrower rule.
 - Trace every new rejection condition to accepted authority and cover it without reclassifying supported values as invalid.
 
-## Goal-Driven Execution
+## Execute Goal-Driven Loop
 
 Define success criteria and loop until verified.
 

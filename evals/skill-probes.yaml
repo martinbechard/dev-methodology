@@ -240,7 +240,7 @@ probes:
     evaluationKind: workflow-invariant
     activationCondition: Implementation, modification, refactoring, or debugging requires explicit assumptions, surgical scope, and success criteria.
     negativeCondition: The skill does not justify speculative features, adjacent cleanup, or abstractions unrelated to the request.
-    expectedBehavior: Inspect intent and callers, choose the simplest complete design, preserve unrelated work, handle errors at the owning boundary, and verify stated success criteria.
+    expectedBehavior: Use Confirm Work Before Coding, Validate Authorized Contract, and Execute Goal-Driven Loop to inspect intent and callers, choose the simplest complete design, preserve unrelated work, handle errors at the owning boundary, and verify stated success criteria.
     judgePlan: {deterministicChecks: [skill-read-trace, allowed-paths-only, required-command-outcome], modelRubric: null}
     scenarioAssociations: [dev-coder-happy, dev-coder-boundary]
     workflowAssociations: [code-delivery]
@@ -268,7 +268,7 @@ probes:
     evaluationKind: artifact-contract
     activationCondition: Code artifacts, public constructs, executable scripts, tests, or migrations are created or materially changed.
     negativeCondition: Configuration, documentation, data, lock, and manifest files do not receive mandatory code headers.
-    expectedBehavior: Preserve syntax-leading directives, apply the exact project copyright and truthful AI attribution, document public contracts and non-obvious rationale, and keep comments aligned with behavior.
+    expectedBehavior: Use Write Structured Comments, Add Code Artifact Header, Document Public Constructs, and Review Code Comments to preserve syntax-leading directives, apply exact project metadata, document public contracts and non-obvious rationale, and keep comments aligned with behavior.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, allowed-paths-only], modelRubric: source-faithfulness}
     scenarioAssociations: [dev-coder-happy, dev-code-reviewer-happy]
     workflowAssociations: [code-delivery]
@@ -282,7 +282,7 @@ probes:
     evaluationKind: workflow-invariant
     activationCondition: Change boundaries, ownership, dependencies, callers, contracts, tests, or impact must be established from live code.
     negativeCondition: An unavailable optional structural-search tool does not stop direct source discovery.
-    expectedBehavior: Trace the named behavior through callers, dependencies, state, errors, configuration, and tests, then record the smallest evidence-backed scope and uncertainty.
+    expectedBehavior: Discover Code Context before Determine Change Scope by tracing the named behavior through callers, dependencies, state, errors, configuration, and tests, then recording the smallest evidence-backed scope and uncertainty.
     judgePlan: {deterministicChecks: [skill-read-trace, allowed-paths-only], modelRubric: source-faithfulness}
     scenarioAssociations: [dev-coder-happy, dev-runtime-diagnostician-happy]
     workflowAssociations: [code-delivery]
@@ -639,14 +639,14 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-fix-explanation
-    skill: fix-explanation
-    source: skills/fix-explanation/SKILL.md
+  - id: probe-explain-code-fix
+    skill: explain-code-fix
+    source: skills/explain-code-fix/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: artifact-contract
     activationCondition: A completed code fix or patch must be explained with cause, mechanism, conformance, relationships, and classification.
     negativeCondition: One fix receives exactly one supported classification and is not mislabeled as optimization, compatibility, or new functionality.
-    expectedBehavior: Use structured explanation, ground facts in changed evidence, distinguish downstream non-conformity from an undesirable upstream contract, and end with one taxonomy classification.
+    expectedBehavior: Explain Code Fix with structured explanation, ground facts in changed evidence, distinguish downstream non-conformity from an undesirable upstream contract, and end with one taxonomy classification.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, source-link-resolution], modelRubric: source-faithfulness}
     scenarioAssociations: [dev-coder-happy, dev-merge-coordinator-happy]
     workflowAssociations: [code-delivery]
@@ -1150,7 +1150,7 @@ probes:
     evaluationKind: workflow-invariant
     activationCondition: Work must determine, audit, create, move, or validate repository paths for artifacts.
     negativeCondition: A known path explicitly fixed by the owning contract does not require speculative reorganization.
-    expectedBehavior: Inspect repository guidance and comparable artifacts, select the owning location before creation, explain ambiguous placement, avoid duplicates, and audit the final path against project conventions.
+    expectedBehavior: Choose Project File Placement by inspecting repository guidance and comparable artifacts, selecting the owning location before creation, explaining ambiguous placement, avoiding duplicates, and auditing the final path against project conventions.
     judgePlan: {deterministicChecks: [skill-read-trace, allowed-paths-only, artifact-structure], modelRubric: workflow-quality}
     scenarioAssociations: [project-organiser-happy, project-organiser-boundary]
     workflowAssociations: [code-delivery, documentation-methodology, project-setup, wiki-lifecycle, backlog]
@@ -1542,7 +1542,7 @@ probes:
     evaluationKind: review-contract
     activationCondition: A structured design, plan, specification, or comparable artifact needs a source-backed review and no narrower review skill owns it.
     negativeCondition: A target with a dedicated review skill routes to that narrower contract instead of this fallback.
-    expectedBehavior: Identify the governing schema and sources, create or use the applicable checklist, separate completeness, correctness, contradictions, and readiness, report findings in severity order, and preserve review evidence.
+    expectedBehavior: Review Structured Artifact by identifying the governing schema and sources, creating or using the applicable checklist, separating completeness, correctness, contradictions, and readiness, reporting findings in severity order, and preserving review evidence.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-review-checklist, finding-recall, contradiction-scan, readiness-consistency], modelRubric: review-quality}
     scenarioAssociations: [dev-artifact-reviewer-happy, dev-artifact-reviewer-boundary]
     workflowAssociations: [code-delivery, documentation-methodology]
@@ -1576,7 +1576,7 @@ probes:
     workflowAssociations: [code-delivery]
     executableCases: []
     coverageStatus: declared
-    ablation: {omitTargetSkill: true, wrongSkillControl: fix-explanation}
+    ablation: {omitTargetSkill: true, wrongSkillControl: explain-code-fix}
   - id: probe-runtime-evidence-collection
     skill: runtime-evidence-collection
     source: skills/runtime-evidence-collection/SKILL.md
@@ -1682,7 +1682,7 @@ probes:
     evaluationKind: artifact-contract
     activationCondition: A structured technical design or plan must be formulated, returned, authored, or revised and no narrower artifact-creation skill owns it.
     negativeCondition: A response-only design request does not authorize a design file or arbitrary path, and a target with a dedicated creation skill routes to that specific contract rather than this fallback.
-    expectedBehavior: Default to a structured Markdown response when no artifact is requested; author or revise a file only for explicit file-backed design work or an authorized workflow that maintains an existing authoritative design; use the requested path, existing authority, or repository placement mechanism; preserve the structured-design schema, governing sources, decisions, risks, traceability, and verification.
+    expectedBehavior: Create Structured Design and Self-Review Structured Design; default to a structured Markdown response when no artifact is requested; author or revise a file only for explicit file-backed design work or an authorized workflow that maintains an existing authoritative design; use the requested path, existing authority, or repository placement mechanism; preserve the structured-design schema, governing sources, decisions, risks, traceability, and verification.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, operation-coverage, actor-boundary-coverage, contradiction-scan, readiness-consistency], modelRubric: artifact-contract}
     scenarioAssociations: [dev-documentation-writer-happy, dev-artifact-reviewer-boundary]
     workflowAssociations: [code-delivery, documentation-methodology, project-setup]
@@ -1696,7 +1696,7 @@ probes:
     evaluationKind: answer-contract
     activationCondition: Reasoning, behavior, a decision, or a workflow needs a concise structured explanation rather than a durable design artifact.
     negativeCondition: Explanation structure does not invent evidence or conceal uncertainty and does not replace a required formal artifact.
-    expectedBehavior: Lead with the outcome, organize causes, evidence, constraints, tradeoffs, and next actions at the reader's altitude, distinguish fact from inference, and use only the minimum structure that improves comprehension.
+    expectedBehavior: Create Structured Explanation by leading with the outcome, organizing causes, evidence, constraints, tradeoffs, and next actions at the reader's altitude, distinguishing fact from inference, and using only the minimum structure that improves comprehension.
     judgePlan: {deterministicChecks: [skill-read-trace, contradiction-scan, readiness-consistency, no-sensitive-output], modelRubric: source-faithfulness}
     scenarioAssociations: [dev-documentation-writer-happy, wiki-query-responder-happy]
     workflowAssociations: [code-delivery, documentation-methodology, project-setup, wiki-lifecycle, backlog]
@@ -1752,7 +1752,7 @@ probes:
     evaluationKind: workflow-invariant
     activationCondition: Behavior is being implemented through a framework-neutral red-green-refactor development loop.
     negativeCondition: A pre-existing failing suite, non-behavioral generation, or an infeasible test seam is classified honestly instead of fabricating a red step.
-    expectedBehavior: Define one observable behavior, add the smallest meaningful failing test, capture the expected failure, implement only enough to pass, refactor under green, and repeat without weakening assertions.
+    expectedBehavior: Run Red-Green-Refactor Loop by defining one observable behavior, adding the smallest meaningful failing test, capturing the expected failure, implementing only enough to pass, refactoring under green, and repeating without weakening assertions.
     judgePlan: {deterministicChecks: [skill-read-trace, test-state-transition, required-command-outcome, contradiction-scan], modelRubric: workflow-quality}
     scenarioAssociations: [dev-coder-happy, dev-coder-boundary]
     workflowAssociations: [code-delivery]
@@ -1772,7 +1772,7 @@ probes:
     workflowAssociations: [code-delivery]
     executableCases: []
     coverageStatus: declared
-    ablation: {omitTargetSkill: true, wrongSkillControl: fix-explanation}
+    ablation: {omitTargetSkill: true, wrongSkillControl: explain-code-fix}
   - id: probe-tool-runtime
     skill: tool-runtime
     source: skills/tool-runtime/SKILL.md

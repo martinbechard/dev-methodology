@@ -83,9 +83,9 @@
             "careful-coding",
             "code-comments",
             "code-discovery",
-            "fix-explanation"
+            "explain-code-fix"
           ],
-          "sha256": "da84d016f4a3f1cb8771e41058e297bd5bef85d2d5bd61aa9af7a75322f9c89e",
+          "sha256": "8f426d3eccd63edab8b05d2f8ec5839610b4f251948c0613343dd2a4205d155b",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -119,9 +119,9 @@
             "ste-technical-writing",
             "agent-work-merge",
             "review-structured-artifact",
-            "fix-explanation"
+            "explain-code-fix"
           ],
-          "sha256": "81d4410c8d36e3e1a29b5664c846911abff3a46a1be06f6f1d550b37f7ec074d",
+          "sha256": "4d5961261162b208aab5878f0aee05fa170d5fad7b82ff1066efc722f0f81de6",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -472,10 +472,10 @@
             "careful-coding",
             "code-comments",
             "code-discovery",
-            "fix-explanation",
+            "explain-code-fix",
             "codex-harness-directives"
           ],
-          "sha256": "6742f4ecd475da26eeee583d62a7dd78910be95e31d3f5f62a2c638e7eb53f8f",
+          "sha256": "fb6caa16913f485affceb9ee93946c590646657d0a8a8a7472cd798caf21d0e8",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -511,10 +511,10 @@
             "ste-technical-writing",
             "agent-work-merge",
             "review-structured-artifact",
-            "fix-explanation",
+            "explain-code-fix",
             "codex-harness-directives"
           ],
-          "sha256": "fe488984c2279c9eb4d5ce85eb738dc4bed354f224ebd28890f20bca3771e627",
+          "sha256": "8a7049b785e834239eda5bccb793f71eee03b675119a2824997270c62217d63d",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -884,9 +884,9 @@
             "careful-coding",
             "code-comments",
             "code-discovery",
-            "fix-explanation"
+            "explain-code-fix"
           ],
-          "sha256": "8dfc998206709bee561e11cea3fc877c19b0f70fd815e73a34eda99fe3b420ac",
+          "sha256": "ff81033b3f00a6e2e78947617846928ae2ff955837d0e1707a8ad35a2eefa7b1",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -920,9 +920,9 @@
             "ste-technical-writing",
             "agent-work-merge",
             "review-structured-artifact",
-            "fix-explanation"
+            "explain-code-fix"
           ],
-          "sha256": "38c9fce3d045392d833977af2bce0301648c40d50d7c85d156013ccd716135ce",
+          "sha256": "bfc10a3129ba89dae2dea6ebd8fc8112b5bbd7108e7a0c0dd3f299e1f665d59b",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -1268,9 +1268,9 @@
             "careful-coding",
             "code-comments",
             "code-discovery",
-            "fix-explanation"
+            "explain-code-fix"
           ],
-          "sha256": "cf9794d378b4e04e3a58e3cedb72e4ea251c1588f4d4ee361744506f0dbaebcf",
+          "sha256": "e94121d991f88c6123b93515341f9474ef2eaabd696533dbcbc0d66264098921",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -1304,9 +1304,9 @@
             "ste-technical-writing",
             "agent-work-merge",
             "review-structured-artifact",
-            "fix-explanation"
+            "explain-code-fix"
           ],
-          "sha256": "292e76d5552e42e799b29256872a7668a2b2903472173214a0452e2f1cc0b955",
+          "sha256": "96475b907abdb2b39fc631f51124442b1c8449aa23a4d2ac0bd35f5551a4b5f3",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {

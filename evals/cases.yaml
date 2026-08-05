@@ -54,7 +54,7 @@ cases:
       - careful-coding
       - code-comments
       - code-discovery
-      - fix-explanation
+      - explain-code-fix
       - structured-explanation
       - test-driven-development
       - typescript
@@ -67,7 +67,7 @@ cases:
       - probe-careful-coding
       - probe-code-comments
       - probe-code-discovery
-      - probe-fix-explanation
+      - probe-explain-code-fix
       - probe-structured-explanation
       - probe-test-driven-development
       - probe-typescript
@@ -87,7 +87,7 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/typescript-order-pricing
       include: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
-      stagedSkillPackages: [agent-claim, agent-claim-command, careful-coding, code-comments, code-discovery, fix-explanation, structured-explanation, test-driven-development, typescript, typescript-strict, typescript-esm, code-review-evidence]
+      stagedSkillPackages: [agent-claim, agent-claim-command, careful-coding, code-comments, code-discovery, explain-code-fix, structured-explanation, test-driven-development, typescript, typescript-strict, typescript-esm, code-review-evidence]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
@@ -97,7 +97,7 @@ cases:
       careful-coding: [SKILL.md]
       code-comments: [SKILL.md, references/review-checklist-code-comments.md]
       code-discovery: [SKILL.md]
-      fix-explanation: [SKILL.md]
+      explain-code-fix: [SKILL.md]
       structured-explanation: [SKILL.md]
       test-driven-development: [SKILL.md]
       typescript: [SKILL.md, references/review-checklist-typescript.md]
@@ -134,7 +134,7 @@ cases:
       - careful-coding
       - code-comments
       - code-discovery
-      - fix-explanation
+      - explain-code-fix
       - structured-explanation
       - test-driven-development
       - java
@@ -147,7 +147,7 @@ cases:
       - probe-careful-coding
       - probe-code-comments
       - probe-code-discovery
-      - probe-fix-explanation
+      - probe-explain-code-fix
       - probe-structured-explanation
       - probe-test-driven-development
       - probe-java
@@ -167,7 +167,7 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/spring-boot-order-cancellation
       include: [.gitignore, TASK.md, pom.xml, src]
-      stagedSkillPackages: [agent-claim, agent-claim-command, careful-coding, code-comments, code-discovery, fix-explanation, structured-explanation, test-driven-development, java, spring-boot, sql, code-review-evidence]
+      stagedSkillPackages: [agent-claim, agent-claim-command, careful-coding, code-comments, code-discovery, explain-code-fix, structured-explanation, test-driven-development, java, spring-boot, sql, code-review-evidence]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [.gitignore, TASK.md, pom.xml, src]
@@ -177,7 +177,7 @@ cases:
       careful-coding: [SKILL.md]
       code-comments: [SKILL.md, references/review-checklist-code-comments.md]
       code-discovery: [SKILL.md]
-      fix-explanation: [SKILL.md]
+      explain-code-fix: [SKILL.md]
       structured-explanation: [SKILL.md]
       test-driven-development: [SKILL.md]
       java: [SKILL.md, references/coding-guidelines-java.md, references/review-checklist-java.md]
@@ -214,7 +214,7 @@ cases:
       - careful-coding
       - code-comments
       - code-discovery
-      - fix-explanation
+      - explain-code-fix
       - structured-explanation
       - test-driven-development
       - java
@@ -226,7 +226,7 @@ cases:
       - probe-careful-coding
       - probe-code-comments
       - probe-code-discovery
-      - probe-fix-explanation
+      - probe-explain-code-fix
       - probe-structured-explanation
       - probe-test-driven-development
       - probe-java
@@ -242,7 +242,7 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/java-comment-placement
       include: [TASK.md, verify.py, src, negative-fixtures]
-      stagedSkillPackages: [agent-claim, agent-claim-command, careful-coding, code-comments, code-discovery, fix-explanation, structured-explanation, test-driven-development, java, java-comment, code-review-evidence]
+      stagedSkillPackages: [agent-claim, agent-claim-command, careful-coding, code-comments, code-discovery, explain-code-fix, structured-explanation, test-driven-development, java, java-comment, code-review-evidence]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md, verify.py, src, negative-fixtures]
@@ -252,7 +252,7 @@ cases:
       careful-coding: [SKILL.md]
       code-comments: [SKILL.md, references/review-checklist-code-comments.md]
       code-discovery: [SKILL.md]
-      fix-explanation: [SKILL.md]
+      explain-code-fix: [SKILL.md]
       structured-explanation: [SKILL.md]
       test-driven-development: [SKILL.md]
       java: [SKILL.md, references/coding-guidelines-java.md, references/review-checklist-java.md]

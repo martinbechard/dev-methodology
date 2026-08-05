@@ -10,7 +10,7 @@ target:
     - careful-coding
     - code-comments
     - code-discovery
-    - fix-explanation
+    - explain-code-fix
   conditionalSkills:
     agent-claim: Resource coordination selects agent-claim.
     organise-project-files: The implementation creates a new project file or directory.

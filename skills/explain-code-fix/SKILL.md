@@ -1,11 +1,11 @@
 ---
-name: fix-explanation
+name: explain-code-fix
 description: Explain a code fix or patch in a structured way, using the structured-explanation skill and classifying the nature of the fix. Use when the agent needs to explain what changed, why it was needed, and whether the fix is new functionality, a functional improvement, an optimization, backwards-compatibility work, or a migration.
 metadata:
   category: development-practice
 ---
 
-# Fix Explanation
+# Explain Code Fix
 
 Use structured-explanation to explain the fix.
 
@@ -20,7 +20,7 @@ the reader can inspect:
 - what kind of fix it is
 - how the explanation items relate to each other
 
-## Workflow
+## Explain Code Fix
 
 1. Use structured-explanation.
 2. State the top-level question as the fix being explained.

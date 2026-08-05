@@ -97,7 +97,7 @@ skills:
 - code-discovery:
     justification: We need this to identify callers, contracts, dependencies, and existing
       coverage before editing so a local change does not violate a wider runtime path.
-- fix-explanation:
+- explain-code-fix:
     justification: We need this to translate the completed patch and its verification
       into a concise handoff that reviewers and maintainers can evaluate.
 outputContract:

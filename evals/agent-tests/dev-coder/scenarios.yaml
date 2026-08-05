@@ -17,7 +17,7 @@ scenarios:
       - careful-coding
       - code-comments
       - code-discovery
-      - fix-explanation
+      - explain-code-fix
       - test-driven-development
       - typescript
       - typescript-strict
@@ -58,7 +58,7 @@ scenarios:
       - careful-coding
       - code-comments
       - code-discovery
-      - fix-explanation
+      - explain-code-fix
       - test-driven-development
       - java
       - spring-boot

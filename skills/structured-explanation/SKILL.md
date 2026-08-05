@@ -31,7 +31,7 @@ Use this skill when you need to:
 - separate known facts from guesses
 - show what is still unknown
 
-## Core Model
+## Create Structured Explanation
 
 The format has six item types:
 
