@@ -265,6 +265,47 @@ cases:
       - JAVA-COMMENT-DUPLICATE-REJECTED
       - JAVA-COMMENT-MISSING-REJECTED
       - REVIEW-SYNTHESIS
+  - id: direct-main-unrelated-dirty-contract
+    coverageStatus: fixture-backed
+    executionStatus: runnable
+    project: evals/projects/direct-main-unrelated-dirty-contract
+    task: TASK.md
+    readOnly: true
+    resultDestination: external-evidence
+    allowedWritePaths: []
+    ephemeralWritePaths: []
+    install: null
+    verify:
+      argv: [python3, -c, "raise SystemExit(0)"]
+      modelVisible: false
+    harnesses: [codex, junie]
+    risk: {level: ordinary, reasons: []}
+    executionTier: local
+    securityContainmentRequired: false
+    harnessExecutionStatus: {codex: runnable, junie: runnable}
+    requiredAgents: [dev-orchestrator]
+    agentScenarios: [dev-orchestrator-happy, dev-orchestrator-boundary]
+    requiredSkills: [structured-design, structured-explanation, complete-work-item-direct-main, agent-claim]
+    skillProbes: [probe-complete-work-item-direct-main]
+    fixtureBackedProbeClaims: [probe-complete-work-item-direct-main]
+    workflowPack: code-delivery
+    sandboxProfiles: {codex: codex-read-only, junie: junie-read-only}
+    judgePlan:
+      deterministicChecks: [model-input-safety, skill-read-trace, forbidden-skill-absence, harness-agent-identity, no-forbidden-mutation, operation-coverage, tool-authority, readiness-consistency, snapshot-reset, local-execution-boundary]
+      modelRubric: workflow-quality
+    contextPack:
+      fixtureRoot: evals/projects/direct-main-unrelated-dirty-contract
+      include: [TASK.md]
+      stagedSkillPackages: [structured-design, structured-explanation, complete-work-item-direct-main, agent-claim]
+      wholeRepositoryAllowed: false
+      approvedSensitiveData: false
+    modelVisiblePaths: [TASK.md]
+    skillResourceAllowlist:
+      structured-design: [SKILL.md]
+      structured-explanation: [SKILL.md]
+      complete-work-item-direct-main: [SKILL.md]
+      agent-claim: [SKILL.md]
+    requiredEvidence: [UNRELATED-DIRTY-READY, OVERLAP-BLOCKED, STAGED-BLOCKED, AMBIGUOUS-BLOCKED, UNBOUNDED-BLOCKED, SOURCE-INTEGRATION-MAPPING, CLEAN-VERIFICATION-CHECKOUT, NO-PROVIDER-MUTATION]
   - id: typescript-code-review
     coverageStatus: fixture-backed
     executionStatus: runnable

@@ -426,6 +426,143 @@ class DirectMainCompletionContractTests(unittest.TestCase):
         self.assertEqual(integration_commit, verification_commit)
         self.assertEqual("", verification_status)
 
+    def test_dirty_route_rejects_accepted_path_overlap_without_mutation(self) -> None:
+        self.repository.git("switch", "-c", "temporary-delivery")
+        source_commit = self.repository.commit_file(
+            "base.txt",
+            "candidate\n",
+            "Candidate overlap",
+        )
+        self.repository.git("switch", "main")
+        dirty_path = self.repository.path / "base.txt"
+        dirty_path.write_bytes(b"owner bytes\x00remain\n")
+        accepted_paths = set(
+            self.repository.git(
+                "diff-tree",
+                "--no-commit-id",
+                "--name-only",
+                "-r",
+                source_commit,
+            ).stdout.splitlines()
+        )
+        dirty_paths = set(
+            self.repository.git("diff", "--name-only").stdout.splitlines()
+        )
+        head_before = self.repository.rev_parse("HEAD")
+        status_before = self.repository.git("status", "--porcelain=v1").stdout
+        bytes_before = dirty_path.read_bytes()
+        index_before = self.repository.git("ls-files", "--stage").stdout
+
+        self.assertEqual({"base.txt"}, accepted_paths & dirty_paths)
+        self.assertIn("Reject any overlap", SKILL_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(head_before, self.repository.rev_parse("HEAD"))
+        self.assertEqual(" M base.txt\n", status_before)
+        self.assertEqual(
+            status_before,
+            self.repository.git("status", "--porcelain=v1").stdout,
+        )
+        self.assertEqual(bytes_before, dirty_path.read_bytes())
+        self.assertEqual(
+            index_before,
+            self.repository.git("ls-files", "--stage").stdout,
+        )
+
+    def test_dirty_route_rejects_staged_state_without_mutation(self) -> None:
+        dirty_path = self.repository.path / "base.txt"
+        dirty_path.write_bytes(b"staged owner bytes\x00remain\n")
+        self.repository.git("add", "base.txt")
+        staged_paths = self.repository.git("diff", "--cached", "--name-only").stdout
+        head_before = self.repository.rev_parse("HEAD")
+        status_before = self.repository.git("status", "--porcelain=v1").stdout
+        bytes_before = dirty_path.read_bytes()
+        index_before = self.repository.git("ls-files", "--stage").stdout
+
+        self.assertEqual("base.txt\n", staged_paths)
+        self.assertIn(
+            "Return BLOCKED for any pre-existing staged entry",
+            SKILL_PATH.read_text(encoding="utf-8"),
+        )
+        self.assertEqual(head_before, self.repository.rev_parse("HEAD"))
+        self.assertEqual("M  base.txt\n", status_before)
+        self.assertEqual(
+            status_before,
+            self.repository.git("status", "--porcelain=v1").stdout,
+        )
+        self.assertEqual(bytes_before, dirty_path.read_bytes())
+        self.assertEqual(
+            index_before,
+            self.repository.git("ls-files", "--stage").stdout,
+        )
+
+    def test_dirty_route_rejects_ambiguous_rename_without_mutation(self) -> None:
+        original_path = self.repository.path / "base.txt"
+        renamed_path = self.repository.path / "renamed.txt"
+        self.repository.git("mv", "base.txt", "renamed.txt")
+        head_before = self.repository.rev_parse("HEAD")
+        status_before = self.repository.git("status", "--porcelain=v1").stdout
+        bytes_before = (original_path.exists(), renamed_path.read_bytes())
+        index_before = self.repository.git("ls-files", "--stage").stdout
+
+        self.assertIn(
+            "renamed, copied, type-changed, or untracked collision is ambiguous",
+            SKILL_PATH.read_text(encoding="utf-8"),
+        )
+        self.assertEqual(head_before, self.repository.rev_parse("HEAD"))
+        self.assertEqual("R  base.txt -> renamed.txt\n", status_before)
+        self.assertEqual(
+            status_before,
+            self.repository.git("status", "--porcelain=v1").stdout,
+        )
+        self.assertEqual(
+            bytes_before,
+            (original_path.exists(), renamed_path.read_bytes()),
+        )
+        self.assertEqual(
+            index_before,
+            self.repository.git("ls-files", "--stage").stdout,
+        )
+
+    def test_dirty_route_rejects_unbounded_source_scope_without_mutation(self) -> None:
+        self.repository.git("switch", "-c", "temporary-delivery")
+        (self.repository.path / "feature.txt").write_text("candidate\n", encoding="utf-8")
+        (self.repository.path / "extra.txt").write_text("extra\n", encoding="utf-8")
+        self.repository.git("add", "feature.txt", "extra.txt")
+        self.repository.git("commit", "-m", "Candidate with extra scope")
+        source_commit = self.repository.rev_parse("HEAD")
+        self.repository.git("switch", "main")
+        accepted_paths = {"feature.txt"}
+        source_paths = set(
+            self.repository.git(
+                "diff-tree",
+                "--no-commit-id",
+                "--name-only",
+                "-r",
+                source_commit,
+            ).stdout.splitlines()
+        )
+        base_path = self.repository.path / "base.txt"
+        head_before = self.repository.rev_parse("HEAD")
+        status_before = self.repository.git("status", "--porcelain=v1").stdout
+        bytes_before = base_path.read_bytes()
+        index_before = self.repository.git("ls-files", "--stage").stdout
+
+        self.assertNotEqual(accepted_paths, source_paths)
+        self.assertIn(
+            "Return BLOCKED when the source scope is unbounded",
+            SKILL_PATH.read_text(encoding="utf-8"),
+        )
+        self.assertEqual(head_before, self.repository.rev_parse("HEAD"))
+        self.assertEqual("", status_before)
+        self.assertEqual(
+            status_before,
+            self.repository.git("status", "--porcelain=v1").stdout,
+        )
+        self.assertEqual(bytes_before, base_path.read_bytes())
+        self.assertEqual(
+            index_before,
+            self.repository.git("ls-files", "--stage").stdout,
+        )
+
     def test_provider_handoff_receives_exact_observed_main_commit(self) -> None:
         source_commit = self.repository.commit_file(
             "feature.txt",

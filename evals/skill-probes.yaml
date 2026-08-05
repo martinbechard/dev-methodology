@@ -436,12 +436,12 @@ probes:
     evaluationKind: workflow-invariant
     activationCondition: A reviewed and verified work item must complete through the explicitly selected direct-main completion process.
     negativeCondition: An unmerged temporary branch, pushed branch, pull request, merge request, clean worktree, or successful merge command without observed main reachability does not activate terminal provider closure or return READY.
-    expectedBehavior: Preserve provider independence, acquire exact main integration authority, reconcile current main without discarding unrelated advances, deliberately integrate the accepted commit, rerun focused verification, prove the integration commit reachable from configured main, release cleanly, and only then return exact READY evidence to the caller without dispatching Persistence; provider none records the task-local terminal result, while a later provider recording failure remains separate from Commit READY.
+    expectedBehavior: Preserve provider independence, use the normal clean route when available, accept unrelated dirty main state only with exact non-overlapping accepted paths and byte-for-byte and index-for-index preservation, reject overlap staged ambiguous or unbounded state without mutation, map the exact source to the resulting integration commit, verify from a clean checkout at the observed main tip, distinguish preserved dirt from integration residue, and return exact READY evidence without dispatching Persistence; provider none records the task-local terminal result, while a later provider recording failure remains separate from Commit READY.
     judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, required-command-outcome, operation-coverage, tool-authority, readiness-consistency], modelRubric: workflow-quality}
     scenarioAssociations: [dev-orchestrator-happy, dev-orchestrator-boundary, dev-merge-coordinator-happy]
     workflowAssociations: [code-delivery]
-    executableCases: []
-    coverageStatus: declared
+    executableCases: [direct-main-unrelated-dirty-contract]
+    coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
   - id: probe-complete-work-item-feature-branch
     skill: complete-work-item-feature-branch
