@@ -1,16 +1,18 @@
 # Align Work-Item Creation Provider Skills
 
-Status: Blocked
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/apply-object-oriented-skill-group-design/align-work-item-creation-provider-skills.md
+Provider Reference: backlog/completed-backlog/features/align-work-item-creation-provider-skills.md
 
 Completion: direct-main
 
 Series: backlog/feature-backlog/apply-object-oriented-skill-group-design/index.md
+
+Owner: Unowned
 
 ## Summary
 
@@ -54,7 +56,19 @@ The user directed in the active Codex task on 2026-08-04: "create separate work 
 
 ## Open Questions
 
-Determine the strongest truthful negative evaluation for the two placeholder providers without fabricating unavailable external behavior.
+Resolved. The Azure DevOps and Jira probes retain their zero-mutation unsupported-provider boundaries as the strongest truthful negative evaluations.
+
+## Crisis Completion
+
+Terminal Disposition: Completed.
+
+Delivery Commit: 19f0c867.
+
+Verification Evidence: all five governed provider packages passed `skill_validate`; the shared `Create Work Item` procedure and all provider-specific boundaries passed five focused bundle contracts; the GitHub provider fixture passed; all agent-skill evaluation and coverage-catalog tests passed; OpenAI metadata, skill documentation, and evaluation documentation are current; Python compilation and `git diff --check` passed.
+
+Scoped Baseline Evidence: two existing Dev Backlog Steward fixture failures concern Future Idea promotion atomicity and a role output-contract phrase. This nomenclature change does not alter those contracts, and all directly affected provider checks pass.
+
+Dependency Result: enforce-dependency-aware-file-work-item-lifecycle may now be reconciled from Blocked because this item reached a terminal successful disposition on current main.
 
 ## Crisis Dependency Reclassification
 
