@@ -1,6 +1,6 @@
 # Add Sticky Section Navigation To Documentation Pages
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -126,5 +126,29 @@ Runtime Launch Evidence: None. This provider transaction reserves capacity only 
 Owner: Unowned.
 
 Reconciliation: Starting reservation recorded by the parent Coordinator's Dev Backlog Steward.
+
+## Running Acceptance
+
+Transition: Starting -> Running.
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Canonical Work-Item Thread and Root Agent Task: 019faef0-2663-7e50-a6ab-0de973661fbf.
+
+Root Dev Orchestrator: Dev Orchestrator.
+
+Owner: Root Dev Orchestrator 019faef0-2663-7e50-a6ab-0de973661fbf.
+
+Branch: codex/add-sticky-section-navigation-to-documentation-pages.
+
+Worktree: /Users/martinbechard/.codex/worktrees/cf9b/dev-methodology.
+
+Phase: Provider acceptance complete; implementation may begin.
+
+Accepted At: 2026-08-05T14:21:37.470068Z.
+
+Claim Evidence: Shared-checkout exact-file claim starting-running-sticky-section-navigation-019faef0 acquired as journal event b49086b8-dd27-41dc-a330-3ea774b90234.
+
+Reconciliation: Running acceptance recorded by the canonical root Dev Orchestrator's Dev Backlog Steward.
 
 This item applies to HTML documentation detail pages linked from the toolkit index. It does not add a section menu to the root index page, whose primary purpose is choosing a document rather than navigating a long document body.
