@@ -1,12 +1,12 @@
 # Align Review And Verification Skills
 
-Status: Blocked
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/apply-object-oriented-skill-group-design/align-review-and-verification-skills.md
+Provider Reference: backlog/completed-backlog/features/align-review-and-verification-skills.md
 
 Completion: direct-main
 
@@ -135,3 +135,15 @@ Coordinator Next Action: Keep this item in the crisis dependency set and do not 
 ### Approval Resolution
 
 Approved at creation on 2026-08-04 by the user statement in the active Codex task: "create separate work items to update skills according to the new design, and update individual evals." The reviewed Review And Verification diagram shows the exact skill identities and six exact Agent definitions covered here. Approval is limited to the governed canonical paths listed above. Any additional governed definition requires new explicit user approval recorded in this item.
+
+## Crisis Completion
+
+Completed At: 2026-08-05T19:55:58Z.
+
+Disposition: Completed directly by the backlog-blockage Coordinator after the integration-and-delivery dependency reached a terminal successful disposition.
+
+Delivery Commit: 8fcb6218.
+
+Verification: All seven affected skill packages passed explicit-path validation. Four focused bundle interface and authority tests, 118 skill-evaluation tests, eighteen coverage-catalog tests, fourteen code-review fixtures, and four runtime-diagnosis fixtures passed. The runtime fixture required normal localhost socket permission and passed unchanged outside the restricted sandbox. OpenAI metadata, generated skill, role, hierarchy, evaluation, technology-detection, and support-checklist outputs are current; Python compilation and diff checks passed. Browser, UX, verifier, and prompt suites have no local deterministic fixture runner, so their maintained suite contracts were verified through the passing evaluation catalog instead of adding a new harness.
+
+Outcome: review-code-with-evidence, verify-end-to-end-workflow, analyze-root-cause, collect-runtime-evidence, trace-code-execution, and review-prompt-contracts are the maintained live skill identities; test-strategy exposes Select And Run Tests; affected roles, suites, probes, catalogs, checklists, and generated outputs use the new interfaces while retaining their existing authority boundaries.
