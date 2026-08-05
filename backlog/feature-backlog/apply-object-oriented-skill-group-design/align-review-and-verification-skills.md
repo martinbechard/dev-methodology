@@ -1,6 +1,6 @@
 # Align Review And Verification Skills
 
-Status: Ready
+Status: Blocked
 
 Type: Feature
 
@@ -56,6 +56,22 @@ The user directed in the active Codex task on 2026-08-04: "create separate work 
 ## Open Questions
 
 Resolve whether any generic Workflow heading contains more than one independent public procedure; add another heading only when the source instructions establish a separate invocation boundary.
+
+## Crisis Dependency Reclassification
+
+Reclassified At: 2026-08-05T17:10:30Z.
+
+Transition: Ready -> Blocked.
+
+Owner: Unowned.
+
+Exact Blocker: Required dependency backlog/feature-backlog/apply-object-oriented-skill-group-design/align-integration-and-delivery-skills.md is Blocked.
+
+Blocker Owner: Dev Backlog Coordinator resolving the named dependency chain in Backlog Crisis Mode.
+
+Unblock Condition: Align Integration And Delivery Skills reaches a terminal successful disposition and its delivered integration and delivery identities are available on current main.
+
+Coordinator Next Action: Keep this item in the crisis dependency set and do not dispatch it. After the unblock condition is satisfied, reconcile it through Blocked -> Ready under the normal lifecycle.
 
 ## Governed Definition Approval
 
