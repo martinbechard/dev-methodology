@@ -1,6 +1,6 @@
 # Split Backlog Blockage And Dispatch-Mode Skills
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -11,6 +11,19 @@ Provider Reference: backlog/feature-backlog/apply-object-oriented-skill-group-de
 Completion: direct-main
 
 Series: backlog/feature-backlog/apply-object-oriented-skill-group-design/index.md
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+Parent Coordination Thread: /root/apply_skill_group_design_backlog.
+Launch Reservation: One distinct bounded launch reservation for this provider record.
+Normalized Objective: Split backlog blockage and dispatch-mode skills according to the approved object-oriented design and update their individual evaluations.
+Dispatch Time: 2026-08-05T03:44:21Z.
+Intended Root Dev Orchestrator Role: Dev Orchestrator.
+Owner: Unowned pending accepted root.
+Current Launch Evidence: Parent Coordinator authorized this exact reservation; exact-file backlog claim reserve-split-backlog-blockage-and-dispatch-mode-skills acquired with outcome SHARED_CHECKOUT_ACQUIRED and event a0c275eb-5663-4ae8-a6f8-652c448390df. Runtime Thread creation and root acceptance have not occurred.
+Required Next Lifecycle Transition: The root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
+Reconciliation: Pending.
 
 ## Summary
 
