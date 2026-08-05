@@ -13,7 +13,7 @@ Follow agent-claim for all claim rules. This skill explains only how to call the
 
 ## Current Availability
 
-Do not configure the current mcp-agent-ops provider as the claim helper yet. It has not been verified to support claim deadlines or claim_extend_deadline.
+Do not configure the current mcp-agent-ops provider as the claim helper yet. It has not been verified to support claim deadlines or claim_extend_deadline. It also lacks verified parity evidence for journal maintenance and contention reporting.
 
 ## Helper Setup
 
@@ -23,42 +23,27 @@ If a required tool is missing or the server cannot start, ask Project Configurat
 
 If a tool returns result.outcome, the helper ran. Follow agent-claim for that outcome.
 
-## MCP Operations
-
-Use exactly the tool matching the intended operation:
-
-| Operation | Tool | Required arguments |
-|---|---|---|
-| Read live ownership | claim_status | repository |
-| Acquire ownership | claim_acquire | repository, claim_id, agent, task, root_task_id, and one supported scope |
-| Extend scope | claim_extend | repository, claim_id, and net-new scope |
-| Extend a deadline | claim_extend_deadline | repository, claim_id, requested_hard_stop_duration_seconds, and extension_evidence |
-| Refresh heartbeat | claim_heartbeat | repository, claim_id |
-| Release ownership | claim_release | repository and claim_id |
-| Maintain journal | claim_maintain_journal | repository; hot_days defaults to 2 |
-| Report contention | claim_report | repository; since defaults to 2d |
-
-Pass the absolute project-root path in repository.
-
-Use files, project_files, or resources for the scope chosen from the Claim Events table.
-
-Project_files also requires scope_reason.
-
-A resource request accepts one resources value plus resource_class, resource_id, expected_duration_seconds, and requested_hard_stop_duration_seconds. The result includes the configured limits and calculated deadlines.
-
 ## Tool Results
 
 Each completed tool call returns exit_code and result. Read result.outcome before deciding what to do next.
 
 A nonzero exit_code can still contain a valid claim outcome. Follow agent-claim for that outcome. Do not repeat the operation through another claim helper.
 
-## Tool Examples
+Pass the absolute project-root path in repository for every operation below.
 
-Read live ownership:
+## Read Claim Status
+
+Call claim_status with repository.
 
 ```json
 {"repository": "/workspace/project"}
 ```
+
+## Acquire Claim
+
+Call claim_acquire with repository, claim_id, agent, task, root_task_id, and one scope selected through agent-claim.
+
+Use files, project_files, or resources for the scope. Project_files also requires scope_reason. A resource request accepts one resources value plus resource_class, resource_id, expected_duration_seconds, and requested_hard_stop_duration_seconds. The result includes the configured limits and calculated deadlines.
 
 File-scope acquisition:
 
@@ -104,7 +89,9 @@ Resource acquisition:
 }
 ```
 
-Resource-scope extension:
+## Extend Claim
+
+Call claim_extend with repository, claim_id, and the net-new scope. A resource extension also requires resource_class, resource_id, expected_duration_seconds, and requested_hard_stop_duration_seconds.
 
 ```json
 {
@@ -118,7 +105,9 @@ Resource-scope extension:
 }
 ```
 
-Deadline extension:
+## Extend Claim Deadline
+
+Call claim_extend_deadline with repository, claim_id, requested_hard_stop_duration_seconds, and extension_evidence.
 
 ```json
 {
@@ -129,13 +118,17 @@ Deadline extension:
 }
 ```
 
-Heartbeat:
+## Heartbeat Claim
+
+Call claim_heartbeat with repository and claim_id.
 
 ```json
 {"repository": "/workspace/project", "claim_id": "task-123"}
 ```
 
-Release:
+## Release Claim
+
+Call claim_release with repository and claim_id.
 
 ```json
 {"repository": "/workspace/project", "claim_id": "task-123"}
@@ -143,11 +136,17 @@ Release:
 
 Release removes only the exact named live claim under the configured helper's registry lock and appends RELEASED journal evidence. Release does not inspect Git state, file contents, delivery evidence, or completion state.
 
+## Maintain Claim Journal
+
+Call claim_maintain_journal with repository. Hot_days defaults to 2.
+
 ```json
 {"repository": "/workspace/project", "hot_days": 2}
 ```
 
-Report:
+## Report Claim Contention
+
+Call claim_report with repository. Since defaults to 2d.
 
 ```json
 {"repository": "/workspace/project", "since": "2d"}
@@ -155,8 +154,8 @@ Report:
 
 ## Uncertain Tool Outcome
 
-If the connection fails after sending a tool call that changes claim state, the operation may have completed. Do not repeat it.
+Apply the uncertain-outcome policy from agent-claim if the connection fails after sending a mutating tool call. Do not repeat it.
 
-Reconnect to the same server. Call claim_status for the same repository. Continue from the reported claim state.
+Reconnect to the same server. Run Read Claim Status by calling claim_status for the same repository, then continue from the reported claim state.
 
 If the server cannot return status, ask Project Configurator for help. Do not use another helper to guess what happened.

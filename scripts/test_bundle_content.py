@@ -6544,6 +6544,100 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("needs no claim", lifecycle_text)
         self.assertNotIn("claim-free", lifecycle_text)
 
+    def test_resource_coordination_skills_expose_aligned_operations(self) -> None:
+        """Expose policy and transport operations without overstating MCP support."""
+        claim_text = (SKILLS_ROOT / "agent-claim" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        command_text = (
+            SKILLS_ROOT / "agent-claim-command" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        mcp_text = (SKILLS_ROOT / "agent-claim-mcp" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probes_by_skill = {probe["skill"]: probe for probe in probes["probes"]}
+
+        policy_operations = (
+            "Coordinate Shared Resource",
+            "Acquire Claim",
+            "Extend Claim",
+            "Extend Claim Deadline",
+            "Heartbeat Claim",
+            "Read Claim Status",
+            "Release Claim",
+        )
+        helper_operations = (
+            "Read Claim Status",
+            "Acquire Claim",
+            "Extend Claim",
+            "Extend Claim Deadline",
+            "Heartbeat Claim",
+            "Release Claim",
+            "Maintain Claim Journal",
+            "Report Claim Contention",
+        )
+        for operation in policy_operations:
+            with self.subTest(skill="agent-claim", operation=operation):
+                self.assertIn(f"## {operation}", claim_text)
+        for skill, text in (
+            ("agent-claim-command", command_text),
+            ("agent-claim-mcp", mcp_text),
+        ):
+            for operation in helper_operations:
+                with self.subTest(skill=skill, operation=operation):
+                    self.assertIn(f"## {operation}", text)
+
+        self.assertIn("## Claim Events", claim_text)
+        self.assertIn("Follow agent-claim for all claim rules.", command_text)
+        self.assertIn("Follow agent-claim for all claim rules.", mcp_text)
+        self.assertIn("Read result.outcome", command_text)
+        self.assertIn("Read result.outcome", mcp_text)
+        self.assertIn("same script", command_text)
+        self.assertIn("same server", mcp_text)
+        self.assertIn("## Current Availability", mcp_text)
+        self.assertIn("Do not configure the current mcp-agent-ops provider", mcp_text)
+
+        expected_probe_terms = {
+            "agent-claim": (
+                "status",
+                "acquire",
+                "scope extension",
+                "deadline extension",
+                "heartbeat",
+                "release",
+                "uncertain",
+            ),
+            "agent-claim-command": (
+                "status",
+                "acquire",
+                "scope extension",
+                "deadline extension",
+                "heartbeat",
+                "release",
+                "journal maintenance",
+                "contention reporting",
+                "uncertain",
+            ),
+            "agent-claim-mcp": (
+                "status",
+                "acquire",
+                "scope extension",
+                "deadline extension",
+                "heartbeat",
+                "release",
+                "journal maintenance",
+                "contention reporting",
+                "uncertain",
+                "unavailable",
+            ),
+        }
+        for skill, required_terms in expected_probe_terms.items():
+            behavior = probes_by_skill[skill]["expectedBehavior"].casefold()
+            for term in required_terms:
+                with self.subTest(skill=skill, probe_term=term):
+                    self.assertIn(term, behavior)
+
     def test_file_work_item_management_has_no_claim_knowledge(self) -> None:
         manage_text = (SKILLS_ROOT / "manage-file-work-items" / "SKILL.md").read_text(
             encoding="utf-8"

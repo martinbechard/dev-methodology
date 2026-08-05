@@ -58,7 +58,7 @@ probes:
     evaluationKind: workflow-invariant
     activationCondition: The loaded agent-claim skill identifies a matching row in its Claim Events table.
     negativeCondition: No row in the Claim Events table matches the work.
-    expectedBehavior: Use the matching row for acquisition timing, scope, and release timing; preserve non-overlapping owners; wait for a direct release or recovery notification after a conflict; and retain claim history.
+    expectedBehavior: Coordinate the shared resource from the matching Claim Events row; use read-only status, acquire, scope extension, deadline extension, heartbeat, and release under the policy boundaries; reconcile an uncertain mutating outcome through status on the same transport; preserve non-overlapping owners; wait for a direct release or recovery notification after a conflict; and retain claim history.
     judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, allowed-paths-only], modelRubric: null}
     scenarioAssociations: [dev-coder-happy, dev-orchestrator-boundary, dev-backlog-steward-happy, wiki-ingester-happy]
     workflowAssociations: [code-delivery, documentation-methodology, project-setup, wiki-lifecycle, backlog]
@@ -70,9 +70,9 @@ probes:
     source: skills/agent-claim-mcp/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
-    activationCondition: PROJECT.yaml selects and verifies the MCP claim helper.
-    negativeCondition: PROJECT.yaml selects the command-line claim helper.
-    expectedBehavior: Call the configured MCP tool, read result.outcome, and use claim_status after an uncertain mutating call.
+    activationCondition: PROJECT.yaml selects an MCP claim helper only after deadline extension, journal maintenance, contention reporting, and structured-result parity are verified.
+    negativeCondition: PROJECT.yaml selects the command-line claim helper, or the MCP provider remains unavailable because required parity is unverified.
+    expectedBehavior: Keep an unverified MCP helper unavailable; once verified and selected, call the configured MCP tools for status, acquire, scope extension, deadline extension, heartbeat, release, journal maintenance, and contention reporting; read result.outcome instead of exit_code; and reconcile an uncertain mutating call through status on the same server without switching transports.
     judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, required-command-outcome, allowed-paths-only], modelRubric: null}
     scenarioAssociations: [project-configurator-happy]
     workflowAssociations: [project-setup]
@@ -86,7 +86,7 @@ probes:
     evaluationKind: workflow-invariant
     activationCondition: PROJECT.yaml selects and verifies the command-line claim helper.
     negativeCondition: PROJECT.yaml selects the MCP claim helper.
-    expectedBehavior: Run the configured script, read result.outcome, and run status through the same script after an uncertain mutating command.
+    expectedBehavior: Run the configured script for status, acquire, scope extension, deadline extension, heartbeat, release, journal maintenance, and contention reporting; read result.outcome instead of the process exit code; and reconcile an uncertain mutating command through status on the same script without switching transports.
     judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, required-command-outcome, allowed-paths-only], modelRubric: null}
     scenarioAssociations: [project-configurator-happy]
     workflowAssociations: [project-setup]
