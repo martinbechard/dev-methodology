@@ -102,7 +102,7 @@ Show only the Agent members needed by the diagram. Leave the member area empty w
 
 ### 2.3 Agent Loads A Skill By Exact Name
 
-An Agent Skill is a SKILL.md that an Agent definition references by exact skill name.
+An Agent Skill is a SKILL.md that an Agent definition references by exact skill name. This makes the skill a declared dependency of that Agent role rather than a project-selected implementation.
 
 - **RULE: RULE-5** An Agent Skill is referenced by its exact skill name
   - **SYNOPSIS:** The Agent definition knows the exact skill identity and follows the procedures and instructions in the resolved SKILL.md.
@@ -135,7 +135,7 @@ Documentation Agent and verify-document-page are analysis vocabulary for this ex
 
 ### 2.4 Agent Conditionally Loads A Skill By Exact Name
 
-A conditional Agent Skill is still named directly by the Agent definition, but the reference applies only when its condition is satisfied.
+A conditional Agent Skill is still named directly by the Agent definition, but the reference applies only when its condition is satisfied. The condition lets one Agent role use specialized guidance without applying it to every execution.
 
 - **RULE: RULE-7** A condition routes an Agent to a named Agent Skill
   - **SYNOPSIS:** The Agent definition knows the exact skill name but uses that skill only when the declared condition matches the request and available evidence.
@@ -164,7 +164,7 @@ The test-driven-development member area is empty because the skill describes one
 
 ### 2.5 Agent Indirectly Loads A Skill Via AGENTS.md
 
-It is usually desirable to define Agents with general rules and procedures while allowing AGENTS.md to select project-specific skills indirectly, such as technology skills. The Agent instruction says what must be done without naming the skill that will do it. AGENTS.md names the skill to use for that project. When the Agent instruction, AGENTS.md, and the selected skill use the same procedure wording, that wording forms the Skill interface in this analogy.
+Indirect loading separates the procedure an Agent requires from the project-specific skill that provides it. This keeps the Agent definition general while AGENTS.md selects a technology-specific or procedure-specific skill. The Agent instruction says what must be done without naming the skill that will do it. AGENTS.md names the skill to use for that project. When the Agent instruction, AGENTS.md, and the selected skill use the same procedure wording, that wording forms the Skill interface in this analogy.
 
 - **RULE: RULE-1** An Agent can request a procedure without naming its skill implementation
   - **SYNOPSIS:** The procedure name describes the work that is needed. The Agent instruction can request that work while AGENTS.md chooses the skill that explains how to do it.
@@ -378,11 +378,11 @@ The use cases differ at their selection boundary:
 
 ## 3. Skill Organization
 
-A Skill Group is a set of related skills that together cover one methodology capability. An expanded diagram displays the skills in that set, while a collapsed diagram represents the set as a single group node.
+A Skill Group is a set of related skills that together cover one methodology capability. Grouping makes a divided capability understandable without implying that every member is loaded together. An expanded diagram displays the skills in that set, while a collapsed diagram represents the set as a single group node.
 
 ### 3.1 Skill Group
 
-The set describes organizational membership only. Loading, invocation, and dependencies require separate relationships.
+A Skill Group records organizational membership: its members are the skills that together cover the grouped capability. The group does not, by itself, say which skills are loaded, invoked, or dependent on one another; those facts require separate relationships.
 
 - **RULE: RULE-28** Skill Group members divide a larger responsibility without overlap
   - **SYNOPSIS:** Each member owns one cohesive part of the grouped capability while using compatible domain vocabulary.
@@ -493,7 +493,7 @@ The repository-specific group models are maintained separately in [Object-Orient
 
 ## 4. From User Request To Skill Interface
 
-This section separates understanding the user’s request from choosing the implementation.
+A user request supplies work intent that an Agent translates into a Skill interface invocation. Provider selection remains separate, so neither the request nor the Agent logic needs provider details.
 
 - **PROCESS: PROCESS-1** Receive a user request
   - **SYNOPSIS:** The Agent receives natural language describing a new enhancement.
@@ -524,7 +524,7 @@ At this point, newEnhancement() has referred to the creation procedure, but the 
 
 ## 5. Skills Injection Through AGENTS.md
 
-AGENTS.md links a procedure name to a concrete SKILL.md.
+AGENTS.md links a procedure name to a concrete SKILL.md. This keeps the project-specific provider choice outside the calling Agent.
 
 - **PROCESS: PROCESS-3** Provide the injection instruction
   - **SYNOPSIS:** Effective project guidance tells the agent which skill to load when the procedure is needed.
@@ -540,7 +540,7 @@ Skills injection is an instruction relationship. The model does not require a co
 
 ## 6. Loading And Invoking The Selected SKILL.md
 
-The agent follows the injection instruction only when it needs the Skill interface.
+Loading and invocation turn an AGENTS.md selection into action. The Agent reads the selected SKILL.md and follows its matching procedure only when that Skill interface is needed.
 
 - **PROCESS: PROCESS-4** Load the selected skill
   - **SYNOPSIS:** The agent reads the SKILL.md named by AGENTS.md.
@@ -628,7 +628,7 @@ The interface and implementation names are analysis vocabulary for this example.
 
 ## 8. A Second Injected Example: Deliver Workitem
 
-The same relationship applies to completion procedures.
+Delivery is another injectable procedure: a development workflow requests completion through a stable procedure name while AGENTS.md selects the project’s delivery skill. This keeps the workflow independent of direct-main and feature-branch delivery details.
 
 - **PROCESS: PROCESS-7** Request delivery after review and testing
   - **SYNOPSIS:** A development workflow invokes Deliver Workitem with the accepted change after its required gates pass.
@@ -771,6 +771,8 @@ The open-diamond arrow says that every represented Agent names review-structured
 
 ## 11. Constraints
 
+The constraints keep the class analogy focused on skill loading, substitution, and organization without turning it into an unsupported runtime design.
+
 - **RULE: RULE-20** A loaded skill is not necessarily injectable
   - **SYNOPSIS:** A SKILL.md is injectable only when it and its invokers share a procedure name and invocation meaning that another implementation can also use.
   - **EXAMPLE:** An Agent can load code-discovery by name as an Agent Skill without making code-discovery injectable.
@@ -788,6 +790,8 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **EXAMPLE:** The diagrams show manage-work-item-* as an Interface Skill and Project-specific directives as AGENTS.md routing without specifying a new YAML field for either relationship.
 
 ## 12. Definition Of Good
+
+A good model makes skill dependencies, dispatch, and organization understandable and traceable without implying unsupported runtime behavior.
 
 - **RULE: RULE-52** Class views make dependency and dispatch paths understandable
   - **SYNOPSIS:** A reader can identify which skills an Agent names, which procedures it expects, which conditions affect loading, and where AGENTS.md selects an implementation.
@@ -831,7 +835,7 @@ The open-diamond arrow says that every represented Agent names review-structured
 
 ## 13. Glossary
 
-The glossary summarizes concepts after the examples have established them.
+The glossary defines the relationship and diagram terms used by the analysis after the examples have established their context.
 
 | Term | Meaning | Example |
 | --- | --- | --- |
@@ -873,6 +877,8 @@ The glossary summarizes concepts after the examples have established them.
 | Empty SKILL.md node | A concrete skill class with no displayed members because the SKILL.md describes one procedure and its identity already represents that operation. | verify-document-page under Documentation Agent. |
 
 ## Authoritative Inputs
+
+The analysis is grounded in the user-directed conventions and repository sources below.
 
 - The user-supplied object-oriented analysis, vocabulary corrections, and containment convention for this document.
 - [Bundled Skill Inventory](../README.md)

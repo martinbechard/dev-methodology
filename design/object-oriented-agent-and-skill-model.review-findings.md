@@ -13,6 +13,9 @@ No material findings.
 
 ## Verified Clarifications
 
+- **CHECK:** DIR-52, SENT-1 through SENT-8
+  - **RESULT:** All twenty-seven section and subsection openings were inspected individually. Each opening now establishes its subject, central relationship, or purpose before supporting rules, properties, steps, examples, or sources. The first structured goal supplies the essence of Finality directly, while the remaining openings use a short framing statement. The adjacent checklist records the result for every heading.
+
 - **CHECK:** DIR-1, DIR-2, DIR-3
   - **RESULT:** The glossary is section 13, and the former all-relations and applied-design legends are absent. Sections 2.1 and 2.2 introduce SKILL.md and Agent nodes. Sections 2.3 through 2.5 establish direct, conditional, and AGENTS.md-mediated loading before Section 2.6 explains the Skill interface concept and Section 2.7 composes an Interface Skill, Provider Skill, and AGENTS.md factory.
 
