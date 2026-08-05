@@ -13,7 +13,7 @@ Azure DevOps work-item creation is not implemented in this bundle. This package 
 
 A future implementation owns representation, lookup, collision checks, and stability for an Azure DevOps organization/project plus numeric work-item identity. Generic callers pass Work Item ID unchanged. This placeholder returns none and must not fabricate an ID or diagnostic URL.
 
-## Required Result
+## Create Work Item
 
 For every creation request, return all of these fields:
 

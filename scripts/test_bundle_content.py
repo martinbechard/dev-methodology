@@ -2063,6 +2063,30 @@ class BundleContentTests(unittest.TestCase):
                 )
                 self.assertNotIn("dependencies:\n  tools:", metadata_text)
 
+    def test_work_item_creation_providers_expose_shared_public_procedure(self) -> None:
+        expected_boundaries = {
+            "create-file-work-item": "exclusive-create",
+            "create-github-work-item": "ambiguous create response",
+            "create-gitlab-work-item": "Never retry by creating a second issue",
+            "create-azure-devops-work-item": "Status: BLOCKED.",
+            "create-jira-work-item": "Status: BLOCKED.",
+        }
+
+        for skill_name, provider_boundary in expected_boundaries.items():
+            with self.subTest(skill_name=skill_name):
+                skill_text = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                self.assertEqual(1, skill_text.count("## Create Work Item"))
+                self.assertIn(provider_boundary, skill_text)
+
+        placeholder_skill_names = {
+            "create-azure-devops-work-item",
+            "manage-azure-devops-work-items",
+            "create-jira-work-item",
+            "manage-jira-work-items",
+        }
+
         canonical_examples = {
             "manage-azure-devops-work-items": (
                 "Requested operation: reconcile-work-item-completion",
@@ -2086,13 +2110,13 @@ class BundleContentTests(unittest.TestCase):
 
         probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
         probe_ids = {entry["id"] for entry in probes["probes"]}
-        for skill_name in expected:
+        for skill_name in placeholder_skill_names:
             self.assertIn(f"probe-{skill_name}", probe_ids)
 
         placeholder_probes = {
             entry["id"]: entry for entry in probes["probes"] if entry["id"] in probe_ids
         }
-        for skill_name in expected:
+        for skill_name in placeholder_skill_names:
             probe = placeholder_probes[f"probe-{skill_name}"]
             self.assertIn("provider-placeholder-matrix", probe["executableCases"])
             self.assertEqual("fixture-backed", probe["coverageStatus"])

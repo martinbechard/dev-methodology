@@ -13,7 +13,7 @@ Jira issue creation is not implemented in this bundle. This package preserves th
 
 A future implementation owns representation, lookup, collision checks, and stability for the Jira site/project issue key. Generic callers pass Work Item ID unchanged. This placeholder returns none and must not fabricate an ID or diagnostic URL.
 
-## Required Result
+## Create Work Item
 
 For every creation request, return all of these fields:
 

@@ -29,7 +29,7 @@ Create one independently actionable GitHub issue. The GitHub provider record is 
 4. When one issue represents the same durable work, do not create another. Return the observed existing issue and state, and identify any authorized management update that remains.
 5. When several plausible matches cannot be distinguished safely, return BLOCKED with their issue references instead of guessing or creating a duplicate.
 
-## Creation
+## Create Work Item
 
 1. Normalize one complete issue body with the work type, summary and context, requirements, acceptance criteria, dependencies, verification expectations, source evidence, and initial lifecycle status READY.
 2. Use provider-native issue links or task-list relationships when repository convention supports them. Preserve GitHub issue terminology.

@@ -7,7 +7,7 @@ metadata:
 
 # Create File Work Item
 
-## Purpose
+## Create Work Item
 
 Create one durable file-provider work item that is clear, typed, and safe to manage later, or deliberately capture one lightweight Future Idea without misrepresenting it as work. Ordinary active items must be dispatchable without the original conversation. User-action-required items must preserve the exact decision or information only the user can provide and must remain separate from unattended work.
 

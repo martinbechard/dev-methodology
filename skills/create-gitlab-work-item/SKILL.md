@@ -22,7 +22,7 @@ Create one independently actionable GitLab issue without creating a shadow queue
 - Use GitLab provider reads and mutations as the sole issue authority. Do not create repository backlog files, cached issue mirrors, GitHub issues, or generic external records as a fallback.
 - Keep sensitive, private, proprietary, credential, or company-internal evidence out of an issue whose visibility is unsuitable. An explicitly requested export is non-authoritative and must identify itself as an export.
 
-## Workflow
+## Create Work Item
 
 1. Search open and recently closed issues in the observed target project for the same durable outcome. Read plausible matches and compare their title, content, labels, milestone, relationships, and state.
 2. When one durable duplicate exists, do not create another issue. Return the observed GitLab instance, namespace, project, issue internal identifier, URL, state, and ownership evidence for the existing item. When several plausible matches exist, return BLOCKED with the candidates rather than guessing.

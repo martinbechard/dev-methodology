@@ -352,7 +352,7 @@ probes:
     evaluationKind: artifact-contract
     activationCondition: The effective provider is file and one requested or independently identified defect, feature, analysis, or investigation must become a durable work item.
     negativeCondition: Non-file providers, isolated worktrees, non-main authorities, completed archives, and duplicate outcomes receive no new backlog file or shadow queue.
-    expectedBehavior: Require file provider authority and create a uniquely named item atomically without a claim; reject context-only source evidence; keep authorized agent-resolvable uncertainty Ready under Open Questions; use complete User Action Required fields only for a genuine user-owned blocker; accept explicit Holding and series shapes; and reject governed-definition work without exact canonical paths, separately allowed dependents, and exact user-message provenance while treating checker YAML as derived evidence that cannot widen approval.
+    expectedBehavior: Expose Create Work Item, require file provider authority, and create a uniquely named item atomically without a claim; reject context-only source evidence; keep authorized agent-resolvable uncertainty Ready under Open Questions; use complete User Action Required fields only for a genuine user-owned blocker; accept explicit Holding and series shapes; and reject governed-definition work without exact canonical paths, separately allowed dependents, and exact user-message provenance while treating checker YAML as derived evidence that cannot widen approval.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, queue-state-transition, claim-lifecycle, tool-authority], modelRubric: null}
     scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary, dev-backlog-steward-provider-boundary]
     workflowAssociations: [backlog]
@@ -366,7 +366,7 @@ probes:
     evaluationKind: workflow-invariant
     activationCondition: Azure DevOps is the selected work-item provider and creation of a durable work item is requested.
     negativeCondition: No connector, credential, remote, browser, network client, file queue, or alternative provider activates unsupported behavior or authorizes mutation.
-    expectedBehavior: Return BLOCKED with provider azure-devops, operation create, the missing capability, no identifier, zero-mutation evidence, and the next implementation decision without probing or falling back.
+    expectedBehavior: Expose Create Work Item and return BLOCKED with provider azure-devops, operation create, the missing capability, no identifier, zero-mutation evidence, and the next implementation decision without probing or falling back.
     judgePlan: {deterministicChecks: [skill-read-trace, no-forbidden-mutation, output-contract-presence], modelRubric: workflow-quality}
     scenarioAssociations: [dev-backlog-steward-boundary]
     workflowAssociations: [backlog]
@@ -380,7 +380,7 @@ probes:
     evaluationKind: workflow-invariant
     activationCondition: Jira is the selected work-item provider and creation of a durable issue is requested.
     negativeCondition: No connector, credential, remote, browser, network client, file queue, or alternative provider activates unsupported behavior or authorizes mutation.
-    expectedBehavior: Return BLOCKED with provider jira, operation create, the missing capability, no identifier, zero-mutation evidence, and the next implementation decision without probing or falling back.
+    expectedBehavior: Expose Create Work Item and return BLOCKED with provider jira, operation create, the missing capability, no identifier, zero-mutation evidence, and the next implementation decision without probing or falling back.
     judgePlan: {deterministicChecks: [skill-read-trace, no-forbidden-mutation, output-contract-presence], modelRubric: workflow-quality}
     scenarioAssociations: [dev-backlog-steward-boundary]
     workflowAssociations: [backlog]
@@ -422,7 +422,7 @@ probes:
     evaluationKind: artifact-contract
     activationCondition: The effective provider is GitLab or an explicit one-item request selects GitLab issue creation.
     negativeCondition: The skill does not infer the provider, create duplicates, write a shadow backlog, retry ambiguous creation, or expose unsuitable evidence.
-    expectedBehavior: Resolve observed GitLab project authority, prevent duplicates, create one typed issue, verify provider-native identity and fields, and preserve partial-mutation evidence without fallback writes.
+    expectedBehavior: Expose Create Work Item, resolve observed GitLab project authority, prevent duplicates, create one typed issue, verify provider-native identity and fields, and preserve partial-mutation evidence without fallback writes.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, operation-coverage, tool-authority, no-forbidden-mutation], modelRubric: workflow-quality}
     scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary]
     workflowAssociations: [backlog]
@@ -660,7 +660,7 @@ probes:
     evaluationKind: workflow-invariant
     activationCondition: The effective provider is github or an explicit one-item request selects GitHub issue creation.
     negativeCondition: The skill does not infer the provider, create a duplicate issue, retry an ambiguous creation blindly, or write a repository-file shadow on any outcome.
-    expectedBehavior: Confirm repository authority, read plausible duplicate matches, create one typed issue through the authenticated provider, verify all observed fields, and reconcile partial mutation before returning CREATED, EXISTING, or BLOCKED.
+    expectedBehavior: Expose Create Work Item, confirm repository authority, read plausible duplicate matches, create one typed issue through the authenticated provider, verify all observed fields, and reconcile partial mutation before returning CREATED, EXISTING, or BLOCKED.
     judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, tool-authority, queue-state-transition], modelRubric: workflow-quality}
     scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary]
     workflowAssociations: [backlog]
