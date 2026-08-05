@@ -378,17 +378,15 @@ The use cases differ at their selection boundary:
 
 ## 3. Skill Organization
 
-A Skill Group and a Skill Group diagram are different things. The Skill Group is the actual named set of skills. Expanded and collapsed diagrams are two ways to display that set.
+A Skill Group is a set of related skills that together cover one methodology capability. An expanded diagram displays the skills in that set, while a collapsed diagram represents the set as a single group node.
 
 ### 3.1 Skill Group
 
-A Skill Group is the actual set of cohesive SKILL.md definitions that contribute to one capability.
+The set describes organizational membership only. Loading, invocation, and dependencies require separate relationships.
 
 - **RULE: RULE-28** Skill Group members divide a larger responsibility without overlap
   - **SYNOPSIS:** Each member owns one cohesive part of the grouped capability while using compatible domain vocabulary.
   - **EXAMPLE:** In the Work Item Skill Group, work-item-base defines work items, states, and rules; work-item-dispatch changes status under dispatch rules; and work-item-monitor observes work items and raises alarms.
-
-The Skill Group is an organizational set. Membership does not mean that one member loads, invokes, or depends on another member.
 
 ### 3.2 Expanded Skill Group Diagram
 
