@@ -124,3 +124,34 @@ Resolve the most source-faithful final heading wording when a current section mi
 ### Approval Resolution
 
 Approved at creation on 2026-08-04 by the user statement in the active Codex task: "create separate work items to update skills according to the new design, and update individual evals." The reviewed Baseline Development design names the exact current and proposed skill identities and shows the Agent relationships covered here. Approval is limited to the governed canonical paths listed above. Any additional governed definition requires new explicit user approval recorded in this item.
+
+## Confirmed Review Defects
+
+### Defect A: stale fix-explanation references after the rename
+
+Independent review found that candidate b296fc61526468869d8aa2cc0a428e10a347d0af removes skills/fix-explanation/SKILL.md but leaves active fix-explanation references and a broken removed-source link in the private-copy model at design/object-oriented-agent-and-skill-model.md around lines 31, 689, 708, 726, 731, and 891. It also leaves a stale generated reference in design/agent-skill-test-coverage-checklist.md around line 169.
+
+Reproduction:
+
+```text
+rg -n 'fix-explanation' design/object-oriented-agent-and-skill-model.md design/agent-skill-test-coverage-checklist.md
+test ! -e skills/fix-explanation/SKILL.md
+```
+
+The exact authorized correction scope is the task-owned model hunks only. The user-owned primary diff in design/object-oriented-agent-and-skill-model.md must remain byte-for-byte unchanged. Do not hand-edit the generated checklist or unrelated dev-document-topic-editor validator inputs. The supported generator's inability to produce the required coherent generated output remains a concrete delivery blocker.
+
+### Defect B: structured-explanation probe does not exercise its public contract
+
+Independent review found that evals/skill-probes.yaml probe-structured-explanation expects generic outcome-first prose instead of the skill's QUERY -> FACT/HYPOTHESIS/UNKNOWN support -> ANSWER contract and its structured-design boundary. scripts/test_bundle_content.py currently checks only a heading phrase, so it does not enforce that semantic boundary.
+
+The exact authorized correction scope is to revise that probe semantically and strengthen the focused assertion.
+
+## Correction Attempt History
+
+- The prior approved correction transformed candidate aa8cc8fa into candidate b296fc61526468869d8aa2cc0a428e10a347d0af.
+- Independent review task /root/apply_skill_group_design_backlog/align_baseline_development_skills/review_baseline_candidate returned FAIL for the two defects recorded above.
+- The Dev Backlog Coordinator authorized one bounded correction attempt 2, limited to the safe task-owned changes stated in each defect. No third attempt and no new defect item are authorized.
+
+## Coordinator Disposition
+
+Status remains Running under the preserved canonical Thread and Owner recorded above. The next action is the authorized correction attempt 2: correct only the task-owned model hunks for Defect A while preserving the user-owned primary diff byte-for-byte, and revise the Defect B probe with its focused assertion. Preserve candidate b296fc61526468869d8aa2cc0a428e10a347d0af and the aa8cc8fa -> b296fc61526468869d8aa2cc0a428e10a347d0af history as delivery evidence. The Dev Backlog Coordinator owns disposition; the delivery owner must not create a third attempt or a separate defect work item.
