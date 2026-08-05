@@ -13,7 +13,7 @@ import yaml
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 README_PATH = REPOSITORY_ROOT / "README.md"
-SKILL_PATH = REPOSITORY_ROOT / "skills" / "codex-workitem-coordination" / "SKILL.md"
+SKILL_PATH = REPOSITORY_ROOT / "skills" / "coordinate-codex-work-items" / "SKILL.md"
 MANAGE_FILE_WORK_ITEMS_PATH = REPOSITORY_ROOT / "skills" / "manage-file-work-items" / "SKILL.md"
 MAINTAIN_METHODOLOGY_PATH = (
     REPOSITORY_ROOT / "skills" / "maintain-methodology-documentation" / "SKILL.md"
@@ -34,7 +34,7 @@ HISTORICAL_PARENT_TASK_ID = "019f8b00-e6d7-7841-854a-40a50ca4e7f2"
 HISTORICAL_REPOSITORY_ROOT = "/Users/martinbechard/dev/dev-methodology"
 HISTORICAL_STANDING_PROMPT = """Act as the dedicated read-only Dev Methodology backlog watchdog for parent task 019f8b00-e6d7-7841-854a-40a50ca4e7f2 in /Users/martinbechard/dev/dev-methodology.
 
-Apply skills/codex-workitem-coordination/SKILL.md, especially Active Execution, Capacity, And Conversation Titles, Dedicated Read-Only Watchdog, and Fifteen-Minute Parent Review. On each cycle, read current file-backed work items, Git state, configured claim registry state, and Codex runtime state. Evaluate active eligibility and capacity, Starting age and next-reconciliation evidence, Running Active Execution Evidence, conversation-title synchronization, phases and age, estimates/hard stops/evidence progress, Blocked unblock conditions, accepted work stranded before integration, integrated work awaiting provider closeout, terminal cleanup anomalies, waits at or beyond 30 minutes, and unsafe/stale/broad shared ownership.
+Apply skills/coordinate-codex-work-items/SKILL.md, especially Active Execution, Capacity, And Conversation Titles, Dedicated Read-Only Watchdog, and Fifteen-Minute Parent Review. On each cycle, read current file-backed work items, Git state, configured claim registry state, and Codex runtime state. Evaluate active eligibility and capacity, Starting age and next-reconciliation evidence, Running Active Execution Evidence, conversation-title synchronization, phases and age, estimates/hard stops/evidence progress, Blocked unblock conditions, accepted work stranded before integration, integrated work awaiting provider closeout, terminal cleanup anomalies, waits at or beyond 30 minutes, and unsafe/stale/broad shared ownership.
 
 Remain strictly read-only. Do not mutate repository files, lifecycle state, claims, tasks, branches, worktrees, or shared resources; do not dispatch, integrate, clean up, or run expensive/live verification. Notify parent task 019f8b00-e6d7-7841-854a-40a50ca4e7f2 only when an actionable condition exists, with exact evidence and the smallest recommended parent action. When healthy, record only a concise no-action cycle result here."""
 HISTORICAL_HEARTBEAT_PROMPT = """Run one complete read-only watchdog cycle now using the task's standing contract. Notify parent task 019f8b00-e6d7-7841-854a-40a50ca4e7f2 only if an actionable condition exists; otherwise record a concise no-action cycle note here."""
@@ -435,7 +435,7 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
         self.assertEqual("read-only", role["isolation"])
         self.assertEqual("simple", role["modelProfile"])
         self.assertEqual(
-            {"resolve-backlog-blockage", "codex-workitem-coordination"},
+            {"resolve-backlog-blockage", "coordinate-codex-work-items"},
             {next(iter(entry)) for entry in role["skills"]},
         )
         self.assertIn("outside provider queue and active capacity", role_text)
@@ -1078,7 +1078,7 @@ class CentralActiveExecutionAndConversationTitleTests(unittest.TestCase):
             selected = {next(iter(entry)) for entry in role["skills"]}
             role_text = json.dumps(role, sort_keys=True)
             with self.subTest(role=role_name):
-                self.assertIn("codex-workitem-coordination", selected)
+                self.assertIn("coordinate-codex-work-items", selected)
                 self.assertIn(section, role_text)
                 for phrase in policy_phrases:
                     self.assertNotIn(phrase, role_text)
@@ -1294,7 +1294,7 @@ class CentralActiveExecutionAndConversationTitleTests(unittest.TestCase):
             selected = {next(iter(entry)) for entry in role["skills"]}
             role_text = json.dumps(role, sort_keys=True)
             with self.subTest(role=role_name):
-                self.assertIn("codex-workitem-coordination", selected)
+                self.assertIn("coordinate-codex-work-items", selected)
                 self.assertIn(central_section, role_text)
                 for marker in normative_markers:
                     self.assertNotIn(marker, role_text)
@@ -1326,8 +1326,8 @@ class CentralActiveExecutionAndConversationTitleTests(unittest.TestCase):
         for forbidden_loading in (
             "load manage-file-work-items",
             "read skills/manage-file-work-items",
-            "load codex-workitem-coordination",
-            "read skills/codex-workitem-coordination",
+            "load coordinate-codex-work-items",
+            "read skills/coordinate-codex-work-items",
         ):
             with self.subTest(forbidden_loading=forbidden_loading):
                 self.assertNotIn(

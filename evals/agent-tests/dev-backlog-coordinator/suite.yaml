@@ -6,9 +6,9 @@ target:
   conceptualRole: agents/roles/dev-activities/dev-backlog-coordinator.role.yaml
   nativeAgent: generated/adapters/codex/agents/dev-backlog-coordinator.toml
   repositoryMutation: conditional
-  requiredSkills: [structured-explanation, codex-workitem-coordination]
+  requiredSkills: [structured-explanation, coordinate-codex-work-items]
   conditionalSkills:
-    codex-workitem-coordination: Codex user-visible tasks coordinate multiple backlog items.
+    coordinate-codex-work-items: Codex user-visible tasks coordinate multiple backlog items.
     agent-claim: Parent recovery or cleanup mutates a repository-global resource.
     resolve-backlog-blockage: A user or Watchdog declaration begins or continues backlog-blockage recovery.
     set-solo-mode: A secondary-thread dispatch mechanism exists when sequential blockage recovery begins.

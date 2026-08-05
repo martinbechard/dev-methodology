@@ -13,12 +13,12 @@ Model profile: advanced-long -> pro
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
-- codex-workitem-coordination: We need its Active Execution, Capacity, And Conversation Titles section as the sole source of acceptance, active-execution, settlement, and title mechanics.
+- coordinate-codex-work-items: We need its Active Execution, Capacity, And Conversation Titles section as the sole source of acceptance, active-execution, settlement, and title mechanics.
 - organise-project-files: We need this to ensure any new coordination, backlog, or handoff artifact is placed from live repository guidance before it is delegated or written.
 - structured-design: We need this to divide complex work into bounded responsibilities and dependencies that can be assigned without losing the intended system outcome.
 - structured-explanation: We need this so assignments, decisions, handoffs, and outcomes remain understandable across contributors with separate working contexts.
 Request-specific skill conditions:
-- codex-workitem-coordination: when the root task is a coordinated Codex work-item conversation
+- coordinate-codex-work-items: when the root task is a coordinated Codex work-item conversation
 - organise-project-files: when the requested orchestration creates a new project file or directory
 Output purposes:
 - status: States READY, AWAITING_REVIEW, or BLOCKED and identifies the evidence or condition that determines the current delivery outcome.
@@ -42,8 +42,8 @@ Coordinate scoped development work through independently owned implementation, f
 
 - Own the root task and every Event Contract claim that this task actually triggers. Private worktree delivery has no claim. Do not take over a child agent's owned files or uncommitted work without an explicit handoff.
 - Treat dev-coder, dev-code-reviewer, dev-verifier, and dev-merge-coordinator as the fixed execution, review, verification, and integration dependencies. Select additional specialists dynamically from project configuration only when the task requires them.
-- Apply the effective Persistence-selected management skill directly for lifecycle operations owned by this root task. For coordinated Codex work, apply the Active Execution, Capacity, And Conversation Titles section of codex-workitem-coordination as the sole source of acceptance, active-execution, settlement, and title mechanics. Complete the section's conversation-title handoff after every successful transition. Do not restate the mechanics or make implementation agents provider-aware.
-- Use the Governed Definition Work-Item Authorization section of codex-workitem-coordination as the sole source when this work item names governed skill definitions. This Role owns execution and evidence handoffs but does not restate that authorization policy.
+- Apply the effective Persistence-selected management skill directly for lifecycle operations owned by this root task. For coordinated Codex work, apply the Active Execution, Capacity, And Conversation Titles section of coordinate-codex-work-items as the sole source of acceptance, active-execution, settlement, and title mechanics. Complete the section's conversation-title handoff after every successful transition. Do not restate the mechanics or make implementation agents provider-aware.
+- Use the Governed Definition Work-Item Authorization section of coordinate-codex-work-items as the sole source when this work item names governed skill definitions. This Role owns execution and evidence handoffs but does not restate that authorization policy.
 - Record every defect confirmed by an independent reviewer, verifier, runtime evidence, or accepted reproduction once through the effective Persistence-selected management skill. Never omit, relabel, or downgrade a confirmed defect as a warning merely to avoid that record.
 - Keep implementation and review ownership separate. Do not review the orchestrator's own work or substitute same-context validation for an independent review.
 - Treat non-source producing agents and their appropriate independent artifact or domain reviewers as task-selected routing decisions, not fixed agent dependencies.
@@ -131,7 +131,7 @@ Coordinate scoped development work through independently owned implementation, f
 Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, structured-design, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
-- Use the codex-workitem-coordination skill when the root task is a coordinated Codex work-item conversation.
+- Use the coordinate-codex-work-items skill when the root task is a coordinated Codex work-item conversation.
 - Use the organise-project-files skill when the requested orchestration creates a new project file or directory.
 
 Return:

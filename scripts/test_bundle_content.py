@@ -1473,7 +1473,7 @@ class BundleContentTests(unittest.TestCase):
             SKILLS_ROOT / "create-file-work-item" / "SKILL.md"
         ).read_text(encoding="utf-8")
         coordination_skill = (
-            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         self.assertIn(
@@ -1501,7 +1501,7 @@ class BundleContentTests(unittest.TestCase):
         """Canonical roles reference one policy whose generated mirrors remain current."""
 
         coordination_text = (
-            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
         provider_text = (
             SKILLS_ROOT / "manage-file-work-items" / "SKILL.md"
@@ -1539,7 +1539,7 @@ class BundleContentTests(unittest.TestCase):
             selected_skills = {next(iter(entry)) for entry in role["skills"]}
             role_text = json.dumps(role, sort_keys=True)
             with self.subTest(role=role_name):
-                self.assertIn("codex-workitem-coordination", selected_skills)
+                self.assertIn("coordinate-codex-work-items", selected_skills)
                 self.assertIn(central_section, role_text)
                 for marker in duplicated_markers:
                     self.assertNotIn(marker, role_text)
@@ -1604,7 +1604,7 @@ class BundleContentTests(unittest.TestCase):
 
     def test_codex_coordination_controls_long_running_tasks(self) -> None:
         skill_text = (
-            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         for phrase in (
@@ -1629,7 +1629,7 @@ class BundleContentTests(unittest.TestCase):
         """Protect focused per-item delivery and one later combined regression."""
 
         skill_text = (
-            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
         role_text = (
             ROLES_ROOT / "dev-activities" / "dev-backlog-coordinator.role.yaml"
@@ -1664,7 +1664,7 @@ class BundleContentTests(unittest.TestCase):
         """The user may answer in place without losing lifecycle or delivery gates."""
 
         coordination_text = (
-            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
         manage_text = (
             SKILLS_ROOT / "manage-file-work-items" / "SKILL.md"
@@ -1728,7 +1728,7 @@ class BundleContentTests(unittest.TestCase):
     ) -> None:
         """Coordination must stay neutral across Persistence and Commit selections."""
         skill_text = (
-            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         for phrase in (
@@ -5059,7 +5059,7 @@ class BundleContentTests(unittest.TestCase):
             SKILLS_ROOT / "manage-file-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
         coordination_text = (
-            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
         role = load_yaml_object(
             ROLES_ROOT / "dev-activities" / "dev-backlog-steward.role.yaml"
@@ -7034,7 +7034,7 @@ class BundleContentTests(unittest.TestCase):
             encoding="utf-8"
         )
         coordination_text = (
-            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         for provider_contract in (
@@ -7142,7 +7142,7 @@ class BundleContentTests(unittest.TestCase):
         )
         merge_text = (SKILLS_ROOT / "agent-work-merge" / "SKILL.md").read_text(encoding="utf-8")
         coordination_text = (
-            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
         design_text = (
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
@@ -7792,7 +7792,7 @@ class BundleContentTests(unittest.TestCase):
             "Provider UNSET or an unavailable selected skill",
             "effective Commit-selected skill",
             "Do not reproduce provider or Commit procedures",
-            "active queue defined by codex-workitem-coordination",
+            "active queue defined by coordinate-codex-work-items",
             "Retry only when that notification arrives",
             "Only the watchdog investigates stale claim ownership",
             "Every fifteen minutes",
@@ -7890,7 +7890,7 @@ class BundleContentTests(unittest.TestCase):
         for role in (coordinator_role, watchdog_role):
             role_text = json.dumps(role, sort_keys=True)
             selected = {next(iter(entry)) for entry in role["skills"]}
-            self.assertIn("codex-workitem-coordination", selected)
+            self.assertIn("coordinate-codex-work-items", selected)
             self.assertIn(central_section, role_text)
             for phrase in prohibited_mechanics:
                 self.assertNotIn(phrase, role_text)
@@ -7948,7 +7948,7 @@ class BundleContentTests(unittest.TestCase):
             "agent-claim-command",
             "agent-claim-mcp",
             "agent-work-merge",
-            "codex-workitem-coordination",
+            "coordinate-codex-work-items",
             "complete-work-item-direct-main",
             "complete-work-item-feature-branch",
             "create-file-work-item",
@@ -10903,7 +10903,7 @@ class BundleContentTests(unittest.TestCase):
             self.assertEqual(1, len(coordination_unordered))
             self.assertEqual(
                 [
-                    "Dev Backlog Coordinator loads codex-workitem-coordination only when user-visible Codex tasks coordinate several work items.",
+                    "Dev Backlog Coordinator loads coordinate-codex-work-items only when user-visible Codex tasks coordinate several work items.",
                     "It reads inventory and lifecycle through the effective Persistence-selected manager.",
                     "It delegates provider mutation to Dev Backlog Steward.",
                     "It sends active delivery to Dev Orchestrator with the effective Commit-selected skill.",
@@ -11023,7 +11023,7 @@ class BundleContentTests(unittest.TestCase):
             ),
             (
                 "<p>Codex multi-item coordination is request-specific:</p>",
-                "Dev Backlog Coordinator loads codex-workitem-coordination only when user-visible Codex tasks coordinate several work items.",
+                "Dev Backlog Coordinator loads coordinate-codex-work-items only when user-visible Codex tasks coordinate several work items.",
                 "Codex multi-item coordination is request-specific:",
             ),
         )

@@ -93,9 +93,9 @@ probes:
     executableCases: [typescript-order-pricing, spring-boot-order-cancellation, documentation-functional-spec, wiki-raw-ingest, backlog-lifecycle]
     coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-codex-workitem-coordination
-    skill: codex-workitem-coordination
-    source: skills/codex-workitem-coordination/SKILL.md
+  - id: probe-coordinate-codex-work-items
+    skill: coordinate-codex-work-items
+    source: skills/coordinate-codex-work-items/SKILL.md
     evaluationCategory: prompt-and-agent
     evaluationKind: workflow-invariant
     activationCondition: A parent Codex coordinator is explicitly asked to coordinate multiple user-visible backlog tasks through lifecycle handoffs, notifications, and terminal housekeeping.

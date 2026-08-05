@@ -9,7 +9,7 @@ scenarios:
     purpose: Restore ten Running items from a selected durable provider without a separate registry.
     initialState: The effective manager returns seven Running items, five Ready items, and blocked or decision-owned work.
     task: Reconcile canonical tasks and dispatch exactly enough eligible work to restore ten Running items.
-    targetSkills: [structured-explanation, codex-workitem-coordination]
+    targetSkills: [structured-explanation, coordinate-codex-work-items]
     allowedAgentDependencies: [dev-orchestrator, dev-backlog-steward]
     requiredBehaviors: [Identify as Dev Backlog Coordinator, Count Running from the effective manager, Dispatch three Ready items, Delegate each Running transition to Dev Backlog Steward, Persist one canonical task id in each selected provider record, Avoid placeholder and wait-only tasks]
     forbiddenBehaviors: [Create a separate task ledger, Count Blocked or User Action Required as Running, Dispatch more than ten, Match a task by title alone, Read or create a shadow provider record]
@@ -23,7 +23,7 @@ scenarios:
     purpose: Enter sequential blockage recovery after disabling only new dispatch to secondary threads.
     initialState: The Watchdog declares a backlog blockage, a configured secondary-thread mechanism is enabled, and existing secondary work is still running.
     task: Enter blockage recovery, repeat the same observation once, and report stable mode and recovery evidence.
-    targetSkills: [structured-explanation, codex-workitem-coordination, resolve-backlog-blockage, set-solo-mode]
+    targetSkills: [structured-explanation, coordinate-codex-work-items, resolve-backlog-blockage, set-solo-mode]
     allowedAgentDependencies: []
     requiredBehaviors: [Identify as Dev Backlog Coordinator, Disable only new secondary-thread dispatch, Preserve already-running secondary work, Process one blockage item at a time, Preserve the first declaration and solo result on repeated entry, Report DISABLED then ALREADY_SOLO]
     forbiddenBehaviors: [Load set-multitask-mode during entry, Cancel interrupt or reassign existing secondary work, Diagnose the blockage through set-solo-mode, Repeat lifecycle or dispatch mutation for unchanged state, Acquire claims or delegate delivery]
@@ -37,7 +37,7 @@ scenarios:
     purpose: Recover an unavailable delivery resource and complete through the effective Commit skill.
     initialState: One reviewed candidate is Running and a resource required by its selected completion skill is unavailable.
     task: Record one immediate claim attempt, retry only after a release or recovery notification, and require selected-Commit, provider-completion, test, and cleanup evidence.
-    targetSkills: [structured-explanation, codex-workitem-coordination, agent-claim]
+    targetSkills: [structured-explanation, coordinate-codex-work-items, agent-claim]
     allowedAgentDependencies: [dev-orchestrator, dev-backlog-steward]
     requiredBehaviors: [Attempt immediately, Preserve the structured conflict outcome task-locally, Request a direct release or recovery handoff, Retry only after that notification, Leave stale-ownership investigation to the watchdog, Route delivery through Dev Orchestrator with the effective Commit-selected skill, Run focused tests, Require Persistence completion only after Commit READY, Remove clean worktree, Safely delete merged branch]
     forbiddenBehaviors: [Create a waiting task, Poll the claim registry, Retry because time elapsed, Mutate provider state merely to wait, Steal active unpreserved work, Reproduce the selected completion procedure, Run the complete agent catalog for one item, Report Done before provider completion and cleanup evidence]
@@ -51,7 +51,7 @@ scenarios:
     purpose: Contain a delayed duplicate while preserving one provider identity and one resolved user answer.
     initialState: A creation response timed out, the immediate list is empty, two matches become visible after settlement, and the user already resolved one decision.
     task: Adopt one canonical task, contain the duplicate, and preserve the decision without treating it as delivery.
-    targetSkills: [structured-explanation, codex-workitem-coordination]
+    targetSkills: [structured-explanation, coordinate-codex-work-items]
     allowedAgentDependencies: [dev-orchestrator, dev-backlog-steward]
     requiredBehaviors: [Wait one bounded settlement interval, Reconcile active and archived tasks, Retry no more than once, Persist one canonical task id through the effective manager, Stop verify and archive duplicates before mutation, Record the exact user answer once]
     forbiddenBehaviors: [Infer absence from one immediate read, Match by title alone, Create a separate registry, Ask the resolved question again, Treat approval as completion]
@@ -65,7 +65,7 @@ scenarios:
     purpose: Preserve provider-specific identities and ask a clear file-provider question when Persistence is UNSET.
     initialState: The request matrix selects file, GitHub, GitLab, Azure DevOps, Jira, none, UNSET, and one unavailable selected manager.
     task: Route each inventory boundary through the effective Persistence manager and report its exact supported or blocked result.
-    targetSkills: [structured-explanation, codex-workitem-coordination]
+    targetSkills: [structured-explanation, coordinate-codex-work-items]
     allowedAgentDependencies: [dev-backlog-steward]
     requiredBehaviors: [Use the file manager for backlog paths, Use GitHub issue identities, Use GitLab issue identities, Preserve Azure DevOps and Jira placeholder BLOCKED results, Coordinate provider none without durable inventory, Ask whether to select the available file provider when UNSET, Make no work-item mutation before the answer, Stop when the selected manager is unavailable]
     forbiddenBehaviors: [Create shadow files for GitHub or GitLab, Translate GitLab records into GitHub terminology, Fall back from a placeholder, Invent a provider-none queue, Infer UNSET from repository or hosting evidence]
@@ -79,7 +79,7 @@ scenarios:
     purpose: Resume an answered User Action Required item in its existing canonical task without discarding early work.
     initialState: A previously Running item is User Action Required, the user answered in its canonical Thread, and that Thread contains preserved work produced before lifecycle reconciliation; a provider-none variant has no durable manager or capacity.
     task: Record the answer, reuse the canonical Thread and Agent Task through Ready then Starting then Running, reconcile preserved work through normal gates, and keep provider-none evidence task-local.
-    targetSkills: [structured-explanation, codex-workitem-coordination]
+    targetSkills: [structured-explanation, coordinate-codex-work-items]
     allowedAgentDependencies: [dev-orchestrator, dev-backlog-steward]
     requiredBehaviors: [Accept the answer in the canonical work-item Thread, Preserve canonical Thread and Agent Task identities separately, Record User Action Required to Ready, Reserve Ready to Starting for the same Thread, Accept Starting to Running in the same Thread, Route selected-provider mutations through Dev Backlog Steward, Keep provider-none evidence task-local without capacity inference, Preserve out-of-sequence work and dirty ownership, Reconcile scope review verification and delivery]
     forbiddenBehaviors: [Require the user to repeat the answer in the parent Thread, Create a replacement Thread, Replace the Thread while retaining the Agent Task id, Mutate a selected provider directly, Dispatch Dev Backlog Steward for provider none, Reject work solely because of Thread location, Release or override dirty ownership, Treat the answer or preserved artifacts as delivery]
@@ -93,7 +93,7 @@ scenarios:
     purpose: End exhausted correction loops with exactly one concrete evidence-backed disposition.
     initialState: A Blocked item retains its canonical task, candidate, review, verification, Git, claim, unresolved-finding, and two-attempt history without a current disposition.
     task: Produce exactly one recovery action, bounded retry, genuine User Action Required decision, or continuing external or technical dependency decision, then have a distinct Steward operation apply it.
-    targetSkills: [structured-explanation, codex-workitem-coordination]
+    targetSkills: [structured-explanation, coordinate-codex-work-items]
     allowedAgentDependencies: [dev-backlog-steward]
     requiredBehaviors: [Preserve canonical task and candidate evidence, Preserve review verification Git claim and attempt history, Link recovery and retry evidence to every unresolved finding, Consume the one bounded retry before a new reconciliation, Record an explanation exact user options and tradeoffs only for a genuine user-owned decision, Keep concrete technical or external dependencies Blocked with an observable trigger, Apply provider state only through the Steward operation]
     forbiddenBehaviors: [Record more than one active outcome, Wait indefinitely, Repeat the bounded retry, Ask the user without an exact user-owned decision, Discard candidate review verification Git claim or attempt evidence, Mutate a provider from the Coordinator decision operation]
@@ -107,7 +107,7 @@ scenarios:
     purpose: Run focused verification per item and one combined regression after all selected items reach main.
     initialState: Three related work items have independent focused delivery evidence, but only two are initially present on main.
     task: Keep individual merges independent, wait for all selected items, then run the system-wide regression once against the exact combined main commit.
-    targetSkills: [structured-explanation, codex-workitem-coordination]
+    targetSkills: [structured-explanation, coordinate-codex-work-items]
     allowedAgentDependencies: [dev-orchestrator]
     requiredBehaviors: [Record the selected work items, Keep each accepted merge independent, Wait until every selected item is on main, Record the tested main commit, Run one combined regression, Route a distinct failure as a defect against tested main]
     forbiddenBehaviors: [Run the system-wide regression for every item, Delay an accepted item for the combined regression, Run before every selected item reaches main, Run the same combined regression twice, Invalidate unrelated focused evidence automatically]
@@ -121,7 +121,7 @@ scenarios:
     purpose: Resume new secondary-thread dispatch only after every blockage exit condition passes.
     initialState: One variant has a configured mechanism already in solo mode; another has no secondary-thread dispatch mechanism. Both have satisfied every blockage exit condition.
     task: Record recovery completion, resume dispatch when possible, repeat the completed transition, and reconcile provider inventory in both variants.
-    targetSkills: [structured-explanation, codex-workitem-coordination, resolve-backlog-blockage, set-multitask-mode]
+    targetSkills: [structured-explanation, coordinate-codex-work-items, resolve-backlog-blockage, set-multitask-mode]
     allowedAgentDependencies: [dev-backlog-steward]
     requiredBehaviors: [Confirm every blockage exit condition, Report ENABLED then ALREADY_MULTITASK for the configured mechanism, Report NOT_APPLICABLE without mutation when no mechanism exists, Reread provider inventory, Apply the central active-queue outcome]
     forbiddenBehaviors: [Load set-solo-mode during resumption, Enable dispatch before recovery completes, Launch secondary work from set-multitask-mode, Diagnose lifecycle state through set-multitask-mode, Require a dispatch-mode skill when no mechanism exists]

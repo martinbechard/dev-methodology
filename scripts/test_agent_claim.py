@@ -1174,7 +1174,7 @@ class AgentClaimTests(unittest.TestCase):
         completed = self.claim(
             *self.acquire_arguments("integration"),
             "--file",
-            "skills/codex-workitem-coordination/SKILL.md",
+            "skills/coordinate-codex-work-items/SKILL.md",
             "--file",
             "design/generated/skill-definitions.js",
             *self.timed_resource_arguments(
@@ -1239,7 +1239,7 @@ class AgentClaimTests(unittest.TestCase):
         completed = self.claim(
             *self.acquire_arguments("integration"),
             "--file",
-            "skills/codex-workitem-coordination/SKILL.md",
+            "skills/coordinate-codex-work-items/SKILL.md",
             "--file",
             "design/generated/skill-definitions.js",
             *self.timed_resource_arguments(
@@ -1351,7 +1351,7 @@ class AgentClaimTests(unittest.TestCase):
         self.claim(
             *self.acquire_arguments("isolated"),
             "--file",
-            "skills/codex-workitem-coordination/SKILL.md",
+            "skills/coordinate-codex-work-items/SKILL.md",
             *isolated,
         )
         self.claim("release", "--claim-id", "first")
@@ -1359,7 +1359,7 @@ class AgentClaimTests(unittest.TestCase):
         completed = self.claim(
             *self.acquire_arguments("integration"),
             "--file",
-            "skills/codex-workitem-coordination/SKILL.md",
+            "skills/coordinate-codex-work-items/SKILL.md",
             "--file",
             "design/generated/skill-definitions.js",
             *self.timed_resource_arguments(

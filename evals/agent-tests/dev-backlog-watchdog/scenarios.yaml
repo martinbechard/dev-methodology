@@ -9,7 +9,7 @@ scenarios:
     purpose: Observe healthy active work without interrupting the parent or mutating coordination state.
     initialState: One Running item remains inside its estimate, hard-stop, and productive-evidence boundaries.
     task: Run one canonical read-only watchdog cycle and report no action.
-    targetSkills: [codex-workitem-coordination]
+    targetSkills: [coordinate-codex-work-items]
     allowedAgentDependencies: []
     requiredBehaviors: [Identify as Dev Backlog Watchdog, Use the canonical heartbeat prompt, Read provider and task evidence, Return one concise no-action result, Preserve observed state byte-identically]
     forbiddenBehaviors: [Notify the parent without an actionable condition, Infer failure from silence or title age, Mutate provider task claim Git branch worktree or resource state, Dispatch another agent]
@@ -23,7 +23,7 @@ scenarios:
     purpose: Alert on a crossed progress boundary while preserving unknown-cause and read-only boundaries.
     initialState: One Running item crossed its recorded hard stop and progress boundary, but no preventing cause is known.
     task: Report the exact evidence and smallest Coordinator investigation action without choosing a lifecycle state.
-    targetSkills: [codex-workitem-coordination]
+    targetSkills: [coordinate-codex-work-items]
     allowedAgentDependencies: []
     requiredBehaviors: [Identify the provider identity, Report canonical Thread and root Agent Task evidence, Explain why attention is required, Recommend Coordinator investigation, Preserve observed state byte-identically]
     forbiddenBehaviors: [Set Stalled Blocked User Action Required or a terminal state, Recover or replace the task, Mutate coordination state, Run expensive or live verification]
@@ -37,7 +37,7 @@ scenarios:
     purpose: Surface satisfied Stalled and Blocked exit conditions while leaving disposition to the Coordinator.
     initialState: One Stalled item or Blocked item has source-backed evidence satisfying its recorded exit condition.
     task: Send one actionable alert that identifies the evidence and recommends Coordinator validation.
-    targetSkills: [codex-workitem-coordination]
+    targetSkills: [coordinate-codex-work-items]
     allowedAgentDependencies: []
     requiredBehaviors: [Identify the affected provider identity, Report the satisfied exit condition, Recommend Coordinator validation and disposition, Preserve owner and diagnostic evidence, Leave provider mutation to Dev Backlog Steward after a Coordinator decision]
     forbiddenBehaviors: [Choose Running Ready Blocked User Action Required or terminal disposition, Create a synthetic inventory, Mutate a provider record task claim branch or worktree, Dispatch another agent]
@@ -51,7 +51,7 @@ scenarios:
     purpose: Retain one complete reconciliation for every Blocked item while alerting only on actionable evidence.
     initialState: Two Blocked items retain blocker, ownership, dependency, delivery, task, Git, claim, attempt-history, and structured-disposition evidence; one has exhausted corrections without a disposition.
     task: Reconcile both items read-only, retain both per-item results, and send one aggregate alert containing only the actionable item.
-    targetSkills: [codex-workitem-coordination]
+    targetSkills: [coordinate-codex-work-items]
     allowedAgentDependencies: []
     requiredBehaviors: [Reconcile every Blocked item, Retain one per-item result for each, Alert on exhausted corrections without a disposition, Alert on malformed or inconsistent disposition receipts, Preserve candidate review verification Git task claim attempt and disposition evidence, Leave lifecycle outcome selection to Dev Backlog Coordinator]
     forbiddenBehaviors: [Omit a quiet Blocked item from retained results, Treat vague disposition text as healthy, Alert on a healthy continuing Blocked item, Choose a lifecycle outcome, Mutate provider task claim Git branch worktree or resource state]
@@ -65,7 +65,7 @@ scenarios:
     purpose: Observe continued sequential blockage recovery without repeating an unchanged alert or changing dispatch mode.
     initialState: A declared blockage remains active, its exit conditions are not satisfied, and the same active-state notice was already sent.
     task: Run one read-only cycle, retain the active blockage result, and keep routine alerts suppressed.
-    targetSkills: [codex-workitem-coordination, resolve-backlog-blockage]
+    targetSkills: [coordinate-codex-work-items, resolve-backlog-blockage]
     allowedAgentDependencies: []
     requiredBehaviors: [Apply Resolve Backlog Blockage Watchdog Behavior, Return ACTIVE_UNCHANGED, Suppress a repeated parent alert, Preserve provider task Git claim and dispatch state byte-identically]
     forbiddenBehaviors: [Load set-solo-mode or set-multitask-mode, Restart blockage recovery, Repeat an unchanged alert, Choose lifecycle state, Mutate dispatch mode]
@@ -79,7 +79,7 @@ scenarios:
     purpose: Surface completed blockage-recovery exit conditions without resuming dispatch or mutating lifecycle.
     initialState: Every declared blockage item is terminal, no active item is Blocked, all changes are committed, and required combined regression results have dispositions.
     task: Send one recovery-ready alert with the resolved items and final main commit.
-    targetSkills: [codex-workitem-coordination, resolve-backlog-blockage]
+    targetSkills: [coordinate-codex-work-items, resolve-backlog-blockage]
     allowedAgentDependencies: []
     requiredBehaviors: [Confirm every blockage exit condition, Return RECOVERY_READY, Name resolved items and final main commit, Recommend Coordinator recovery closeout, Preserve observed state byte-identically]
     forbiddenBehaviors: [Load set-solo-mode or set-multitask-mode, Enable secondary-thread dispatch, Choose or mutate lifecycle state, Dispatch another agent, Send routine capacity or blocker alerts]

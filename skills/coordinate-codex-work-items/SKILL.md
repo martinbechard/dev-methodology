@@ -1,11 +1,11 @@
 ---
-name: codex-workitem-coordination
+name: coordinate-codex-work-items
 description: Coordinate multiple provider-selected work items through one parent backlog coordinator and one Dev Orchestrator Thread per Starting or Running item. Use when Codex must sustain a queue, deliver reviewed work, close completed items, and recover stalled delivery without a separate task registry.
 metadata:
   category: development-practice
 ---
 
-# Codex Work-Item Coordination
+# Coordinate Codex Work Items
 
 Use one Dev Backlog Coordinator as the parent dispatcher. Reserve each selected work item as Starting, then give its one user-visible work-item conversation to a root Dev Orchestrator Agent that owns candidate production, independent review, verification, effective Commit delivery, Persistence closure, and terminal handoff after Starting -> Running acceptance.
 
@@ -609,7 +609,7 @@ When the user requests background supervision for a sustained queue, the parent 
 ```text
 Act as the dedicated read-only Dev Methodology backlog watchdog for parent task {parent_task_id} in {repository_root}.
 
-Apply skills/codex-workitem-coordination/SKILL.md, especially Active Execution, Capacity, And Conversation Titles, Dedicated Read-Only Watchdog, and Fifteen-Minute Parent Review. On each cycle, read current file-backed work items, Git state, configured claim registry state, and Codex runtime state. Evaluate active eligibility and capacity, Starting age and next-reconciliation evidence, Running Active Execution Evidence, conversation-title synchronization, phases and age, estimates/hard stops/evidence progress, Blocked unblock conditions, accepted work stranded before integration, integrated work awaiting provider closeout, terminal cleanup anomalies, waits at or beyond 30 minutes, and unsafe/stale/broad shared ownership.
+Apply skills/coordinate-codex-work-items/SKILL.md, especially Active Execution, Capacity, And Conversation Titles, Dedicated Read-Only Watchdog, and Fifteen-Minute Parent Review. On each cycle, read current file-backed work items, Git state, configured claim registry state, and Codex runtime state. Evaluate active eligibility and capacity, Starting age and next-reconciliation evidence, Running Active Execution Evidence, conversation-title synchronization, phases and age, estimates/hard stops/evidence progress, Blocked unblock conditions, accepted work stranded before integration, integrated work awaiting provider closeout, terminal cleanup anomalies, waits at or beyond 30 minutes, and unsafe/stale/broad shared ownership.
 
 Remain strictly read-only. Do not mutate repository files, lifecycle state, claims, tasks, branches, worktrees, or shared resources; do not dispatch, integrate, clean up, or run expensive/live verification. Notify parent task {parent_task_id} only when an actionable condition exists, with exact evidence and the smallest recommended parent action. When healthy, record only a concise no-action cycle result here.
 ```

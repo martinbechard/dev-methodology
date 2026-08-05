@@ -6,7 +6,7 @@ target:
   conceptualRole: agents/roles/dev-activities/dev-backlog-watchdog.role.yaml
   nativeAgent: generated/adapters/codex/agents/dev-backlog-watchdog.toml
   repositoryMutation: never
-  requiredSkills: [codex-workitem-coordination]
+  requiredSkills: [coordinate-codex-work-items]
   conditionalSkills:
     resolve-backlog-blockage: A declaration criterion is met, the user declares a blockage, or blockage recovery remains active.
   allowedAgentDependencies: []

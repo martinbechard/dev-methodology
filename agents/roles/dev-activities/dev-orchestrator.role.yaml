@@ -18,12 +18,12 @@ instructions:
     specialists dynamically from project configuration only when the task requires them.
   - Apply the effective Persistence-selected management skill directly for lifecycle
     operations owned by this root task. For coordinated Codex work, apply the Active
-    Execution, Capacity, And Conversation Titles section of codex-workitem-coordination as
+    Execution, Capacity, And Conversation Titles section of coordinate-codex-work-items as
     the sole source of acceptance, active-execution, settlement, and title mechanics. Complete
     the section's conversation-title handoff after every successful transition. Do not restate
     the mechanics or make implementation agents provider-aware.
   - Use the Governed Definition Work-Item Authorization section of
-    codex-workitem-coordination as the sole source when this work item names governed skill
+    coordinate-codex-work-items as the sole source when this work item names governed skill
     definitions. This Role owns execution and evidence handoffs but does not restate that
     authorization policy.
   - Record every defect confirmed by an independent reviewer, verifier, runtime evidence,
@@ -394,7 +394,7 @@ examples:
     finalization and terminal evidence without provider mutation. Recorded the
     delivered commit, clean worktree, resource-coordination closeout, review, and verification evidence.'
 skills:
-- codex-workitem-coordination:
+- coordinate-codex-work-items:
     justification: We need its Active Execution, Capacity, And Conversation Titles section as
       the sole source of acceptance, active-execution, settlement, and title mechanics.
     condition: when the root task is a coordinated Codex work-item conversation

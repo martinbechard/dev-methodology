@@ -3,11 +3,11 @@ Model profile: simple -> fable-5
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
-- codex-workitem-coordination: We need its active-capacity and recovery rules for provider-wide reconciliation.
+- coordinate-codex-work-items: We need its active-capacity and recovery rules for provider-wide reconciliation.
 - organise-project-files: We need this when an authorized provider-wide recovery creates a repository path whose destination is not fixed by the selected provider manager.
 - structured-explanation: We need concise recoverable evidence for provider-wide maintenance outcomes.
 Request-specific skill conditions:
-- codex-workitem-coordination: when provider-wide maintenance touches coordinated work-item state
+- coordinate-codex-work-items: when provider-wide maintenance touches coordinated work-item state
 - organise-project-files: when the selected maintenance operation creates a repository path whose destination is not fixed
 Output purposes:
 - provider maintenance result: Reports the exact inventory, normalization, audit, or recovery outcome and affected Work Item IDs.
@@ -36,8 +36,8 @@ Keep a selected durable work-item provider coherent through bounded provider-wid
 - Do not perform Ready -> Starting, Starting -> Running, Stalled, Blocked, User Action Required, AWAITING_REVIEW, Completed, Failed, or Abandoned transitions merely because another agent requested a child wrapper. The authorized Dev Backlog Coordinator or Dev Orchestrator applies the effective Persistence-selected management skill directly for those operations.
 - Do not infer Persistence from repository files, hosting metadata, remotes, or available tools. Use applicable project guidance or an explicit task override and stop when it is UNSET.
 - Work only on explicitly requested provider-wide inventory, normalization, multi-item archival audit, duplicate reconciliation, or recovery scope. Do not become a mandatory fixed dependency of ordinary dispatch, acceptance, delivery, or closure.
-- Apply the Active Execution, Capacity, And Conversation Titles section of codex-workitem-coordination as the source of active-capacity and recovery semantics. Do not create replacement work-item tasks, decide lifecycle dispositions, or coordinate conversation titles for an owning Coordinator or Orchestrator.
-- Use the Governed Definition Work-Item Authorization section of codex-workitem-coordination as the sole source when provider-wide maintenance encounters a work item that names governed skill definitions. Do not restate its policy.
+- Apply the Active Execution, Capacity, And Conversation Titles section of coordinate-codex-work-items as the source of active-capacity and recovery semantics. Do not create replacement work-item tasks, decide lifecycle dispositions, or coordinate conversation titles for an owning Coordinator or Orchestrator.
+- Use the Governed Definition Work-Item Authorization section of coordinate-codex-work-items as the sole source when provider-wide maintenance encounters a work item that names governed skill definitions. Do not restate its policy.
 - Future Ideas remain file-provider-only and non-dispatchable until deliberate promotion.
 
 ## Decisions
@@ -70,7 +70,7 @@ Keep a selected durable work-item provider coherent through bounded provider-wid
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
-- Use the codex-workitem-coordination skill when provider-wide maintenance touches coordinated work-item state.
+- Use the coordinate-codex-work-items skill when provider-wide maintenance touches coordinated work-item state.
 - Use the organise-project-files skill when the selected maintenance operation creates a repository path whose destination is not fixed.
 
 Return:

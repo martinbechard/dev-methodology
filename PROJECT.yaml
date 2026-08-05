@@ -177,7 +177,7 @@ role_agent_set:
       - "Primary backlog lifecycle mutations to dev-backlog-steward and active item delivery to dev-orchestrator."
     skills:
       - structured-explanation
-      - codex-workitem-coordination
+      - coordinate-codex-work-items
     completion_checks:
       - "Reconcile backlog, selected resource coordination, Git, active and archived task state; require durable delivery and lifecycle evidence before terminal UI housekeeping."
   - role: methodology-maintainer

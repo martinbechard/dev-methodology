@@ -8,16 +8,16 @@ description: Acts as the parent backlog coordinator across the effective work-it
 instructions:
   objective: Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work
     moving by reserving and dispatching one Dev Orchestrator conversation per active item,
-    maintaining the active queue defined by codex-workitem-coordination, deciding Stalled and
+    maintaining the active queue defined by coordinate-codex-work-items, deciding Stalled and
     Blocked recovery, investigating delayed delivery, and cleaning up completed tasks.
   boundaries:
   - Use the Active Execution, Capacity, And Conversation Titles section of
-    codex-workitem-coordination as the sole source for active eligibility, capacity,
+    coordinate-codex-work-items as the sole source for active eligibility, capacity,
     settlement, reconciliation, and title mechanics. This Role owns their parent triggers
     and handoffs but does not restate them. Keep the procedure separate from Dev Orchestrator
     instructions and repository AGENTS.md content.
   - Use the Governed Definition Work-Item Authorization section of
-    codex-workitem-coordination as the sole source when coordinated work names governed
+    coordinate-codex-work-items as the sole source when coordinated work names governed
     skill definitions. This Role owns scope-routing triggers and handoffs but does not
     restate that authorization policy.
   - Apply resolve-backlog-blockage after the user or Dev Backlog Watchdog declares a
@@ -125,7 +125,7 @@ instructions:
     durable; the Coordinator handoff then ends. Require the new task to own and directly
     record Starting -> Running through its selected manager.
   - After every successful lifecycle transition this Coordinator executes, verify the
-    conversation-title synchronization defined by codex-workitem-coordination before
+    conversation-title synchronization defined by coordinate-codex-work-items before
     reporting transition coordination complete.
   - Track every Starting, Running, Stalled, and Blocked item through provider lifecycle and
     Thread handoffs. Send each Running item
@@ -341,7 +341,7 @@ skills:
 - structured-explanation:
     justification: We need this to report capacity, waits, enabled ownership, throughput, and recovery in
       a compact evidence-backed form.
-- codex-workitem-coordination:
+- coordinate-codex-work-items:
     justification: We need its Active Execution, Capacity, And Conversation Titles section
       as the sole source of active-queue, settlement, reconciliation, and title mechanics.
     condition: when Codex user-visible tasks coordinate multiple work items

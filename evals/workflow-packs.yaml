@@ -374,7 +374,7 @@ packs:
       - dev-backlog-watchdog
     skillProbes:
       - probe-agent-claim
-      - probe-codex-workitem-coordination
+      - probe-coordinate-codex-work-items
       - probe-resolve-backlog-blockage
       - probe-set-solo-mode
       - probe-set-multitask-mode

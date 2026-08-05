@@ -150,7 +150,7 @@
       <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
       <div><dt>Documentation snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>82ab59ea55abdd72809c76251a785143bfbd23a17a62aa537189c3bafa458dce</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source snapshot</dt><dd><code>57e0430debd2b68733a38ac488261e45d6d525d8ebb961177ab1506fe4aa44e9</code>; regenerated and compared by the focused check</dd></div>
     </dl>
     <div style="margin-top:2rem"><h3>Campaign verdict results</h3></div>
     <div class="grid" style="margin-top:1rem">
@@ -2589,36 +2589,6 @@
       </dl>
     </article>
 
-    <article class="evaluation-card skill-card" id="skill-codex-workitem-coordination"
-      data-kind="skill" data-status="direct-probe" data-search="codex-workitem-coordination coordinate multiple provider-selected work items through one parent backlog coordinator and one dev orchestrator thread per starting or running item. use when codex must sustain a queue, deliver reviewed work, close completed items, and recover stalled delivery without a separate task registry. development-practice probe-codex-workitem-coordination no governed campaign link">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>codex-workitem-coordination</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Coordinate multiple provider-selected work items through one parent backlog coordinator and one Dev Orchestrator Thread per Starting or Running item. Use when Codex must sustain a queue, deliver reviewed work, close completed items, and recover stalled delivery without a separate task registry.</p>
-      <p class="source-row"><a href="../skills/codex-workitem-coordination/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-codex-workitem-coordination</a></dd></div>
-          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
-          <div><dt>Executable cases</dt><dd>None declared</dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-backlog-coordinator-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-coordinator-boundary</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-watchdog-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-watchdog-boundary</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-watchdog-exit-condition</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, suite-simulator-tests, phase-order, lifecycle-baton-evidence, task-identity-fields, delayed-visibility-settlement, settled-zero-retry, retry-limit, duplicate-containment, canonical-id-persistence, done-success-title, just-in-time-dispatch, fifteen-minute-wake-audit, concrete-successor-chain, completion-evidence-gate, archive-eligibility</dd></div>
-          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
     <article class="evaluation-card skill-card" id="skill-collaboration-patterns"
       data-kind="skill" data-status="direct-probe" data-search="collaboration-patterns design or review observer or mediator when state changes notify independent subscribers or many peers need coordinated interaction without direct pairwise coupling. design-patterns probe-collaboration-patterns no governed campaign link">
       <div class="card-heading">
@@ -2728,6 +2698,36 @@
           <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
           <div><dt>Deterministic checks</dt><dd>skill-read-trace, operation-coverage, contradiction-scan</dd></div>
           <div><dt>Model rubric</dt><dd>source-faithfulness</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-coordinate-codex-work-items"
+      data-kind="skill" data-status="direct-probe" data-search="coordinate-codex-work-items coordinate multiple provider-selected work items through one parent backlog coordinator and one dev orchestrator thread per starting or running item. use when codex must sustain a queue, deliver reviewed work, close completed items, and recover stalled delivery without a separate task registry. development-practice probe-coordinate-codex-work-items no governed campaign link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>coordinate-codex-work-items</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Coordinate multiple provider-selected work items through one parent backlog coordinator and one Dev Orchestrator Thread per Starting or Running item. Use when Codex must sustain a queue, deliver reviewed work, close completed items, and recover stalled delivery without a separate task registry.</p>
+      <p class="source-row"><a href="../skills/coordinate-codex-work-items/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-coordinate-codex-work-items</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-backlog-coordinator-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-coordinator-boundary</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-watchdog-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-watchdog-boundary</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-watchdog-exit-condition</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, suite-simulator-tests, phase-order, lifecycle-baton-evidence, task-identity-fields, delayed-visibility-settlement, settled-zero-retry, retry-limit, duplicate-containment, canonical-id-persistence, done-success-title, just-in-time-dispatch, fifteen-minute-wake-audit, concrete-successor-chain, completion-evidence-gate, archive-eligibility</dd></div>
+          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
         </dl>
 
       <h4>Governed campaign links</h4>

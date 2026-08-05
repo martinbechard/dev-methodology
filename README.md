@@ -377,7 +377,7 @@ Wiki work remains separate from general documentation, coding, review, backlog, 
 Dev Backlog Coordinator owns parent-level, just-in-time coordination only when a user
 explicitly requests several user-visible Codex work-item tasks. It obtains provider inventory
 through the effective Persistence-selected manager and applies the portable
-[codex-workitem-coordination skill](skills/codex-workitem-coordination/SKILL.md) as the
+[coordinate-codex-work-items skill](skills/coordinate-codex-work-items/SKILL.md) as the
 single authority for active-execution eligibility, Starting handoff and recovery,
 Running evidence, capacity, runtime reconciliation, and conversation-title synchronization.
 It directly applies the effective Persistence-selected manager for its authorized lifecycle
@@ -523,7 +523,7 @@ The development practice skills are:
 - agent-claim-mcp
 - agent-claim-command
 - agent-work-merge
-- codex-workitem-coordination
+- coordinate-codex-work-items
 - resolve-backlog-blockage
 - set-solo-mode
 - set-multitask-mode

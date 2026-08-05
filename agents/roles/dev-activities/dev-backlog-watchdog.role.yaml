@@ -19,11 +19,11 @@ instructions:
     state as execution evidence. Treat the conversation title as display state only. The
     Watchdog never chooses a lifecycle outcome or delivery disposition.
   - Apply the Active Execution, Capacity, And Conversation Titles section of
-    codex-workitem-coordination as the sole source of settlement, active-execution,
+    coordinate-codex-work-items as the sole source of settlement, active-execution,
     capacity, reconciliation, and title mechanics. This Role owns read-only observation and
     alert triggers but does not restate those mechanics.
   - Use the Governed Definition Work-Item Authorization section of
-    codex-workitem-coordination as the sole source when observing coordinated work that names
+    coordinate-codex-work-items as the sole source when observing coordinated work that names
     governed skill definitions. This Role owns read-only observation and alert handoffs but
     does not restate that authorization policy.
   decisions:
@@ -43,7 +43,7 @@ instructions:
     for sixty minutes.
   workflow:
   - Receive the resolved parent task identifier and repository root, then use the
-    canonical standing and heartbeat prompt templates from codex-workitem-coordination
+    canonical standing and heartbeat prompt templates from coordinate-codex-work-items
     without rewriting their text.
   - On each scheduled cycle, read the applicable provider inventory, Git state,
     configured claim state when enabled, canonical Thread and Agent Task state, and current
@@ -129,7 +129,7 @@ examples:
     Coordinator should validate defect-12 and choose one authorized outcome. No lifecycle
     result was selected or mutated.'
 skills:
-- codex-workitem-coordination:
+- coordinate-codex-work-items:
     justification: We need its Active Execution, Capacity, And Conversation Titles section as
       the sole source of observation triggers and its canonical prompts as the reporting boundary.
 - resolve-backlog-blockage:

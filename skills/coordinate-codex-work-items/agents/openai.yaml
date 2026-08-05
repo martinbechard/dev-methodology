@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Codex Workitem Coordination
+  display_name: Coordinate Codex Work Items
   # User-facing summary shown in Codex skill surfaces.
   short_description: Coordinate multiple provider-selected work items through one parent backlog coordinator and one...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $codex-workitem-coordination to coordinate this backlog queue through canonical Codex tasks, selected resource coordination, serialized lifecycle batons, and evidence-based closeout.
+  default_prompt: Use $coordinate-codex-work-items to coordinate this backlog queue through canonical Codex tasks, direct provider lifecycle operations, selected resource coordination, and evidence-based closeout.
 
 # Optional invocation policy placeholder.
 # policy:

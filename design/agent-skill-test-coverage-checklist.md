@@ -156,9 +156,9 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | code-discovery | [x] | [x] probe-code-discovery | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | code-execution-tracing | [x] | [x] probe-code-execution-tracing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | code-review-evidence | [x] | [x] probe-code-review-evidence | [x] typescript-code-review | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| codex-workitem-coordination | [x] | [x] probe-codex-workitem-coordination | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | complete-work-item-direct-main | [x] | [x] probe-complete-work-item-direct-main | [x] direct-main-unrelated-dirty-contract | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | complete-work-item-feature-branch | [x] | [x] probe-complete-work-item-feature-branch | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| coordinate-codex-work-items | [x] | [x] probe-coordinate-codex-work-items | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-azure-devops-work-item | [x] | [x] probe-create-azure-devops-work-item | [x] provider-placeholder-matrix | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-file-work-item | [x] | [x] probe-create-file-work-item | [x] file-work-item-template-contract | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | create-github-work-item | [x] | [x] probe-create-github-work-item | [x] github-work-item-provider | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |

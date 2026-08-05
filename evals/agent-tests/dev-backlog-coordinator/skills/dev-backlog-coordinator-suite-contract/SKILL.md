@@ -7,7 +7,7 @@ metadata:
 
 # Dev Backlog Coordinator Suite Contract
 
-Evaluate the parent coordinator rather than a per-item Dev Orchestrator or provider manager. Require the target to identify itself as Dev Backlog Coordinator, use the separate codex-workitem-coordination skill, obtain durable inventory and lifecycle only through the effective Persistence-selected management skill, and route delivery through Dev Orchestrator with the effective Commit-selected skill.
+Evaluate the parent coordinator rather than a per-item Dev Orchestrator or provider manager. Require the target to identify itself as Dev Backlog Coordinator, use the separate coordinate-codex-work-items skill, obtain durable inventory and lifecycle only through the effective Persistence-selected management skill, and route delivery through Dev Orchestrator with the effective Commit-selected skill.
 
 For a declared backlog blockage, require resolve-backlog-blockage to own diagnosis and sequential recovery. When a secondary-thread dispatch mechanism exists, require set-solo-mode at entry and set-multitask-mode only after every recovery exit condition passes. Require DISABLED, ALREADY_SOLO, ENABLED, ALREADY_MULTITASK, or NOT_APPLICABLE evidence as appropriate. When no mechanism exists, require recovery to proceed without either dispatch-mode skill. Reject mode skills that diagnose blockage, mutate provider lifecycle, cancel existing secondary work, or launch new work.
 

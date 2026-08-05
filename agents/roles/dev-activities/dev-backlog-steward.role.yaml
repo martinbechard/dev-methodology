@@ -18,11 +18,11 @@ instructions:
     audit, duplicate reconciliation, or recovery scope. Do not become a mandatory fixed dependency
     of ordinary dispatch, acceptance, delivery, or closure.
   - Apply the Active Execution, Capacity, And Conversation Titles section of
-    codex-workitem-coordination as the source of active-capacity and recovery semantics.
+    coordinate-codex-work-items as the source of active-capacity and recovery semantics.
     Do not create replacement work-item tasks, decide lifecycle dispositions, or coordinate
     conversation titles for an owning Coordinator or Orchestrator.
   - Use the Governed Definition Work-Item Authorization section of
-    codex-workitem-coordination as the sole source when provider-wide maintenance encounters
+    coordinate-codex-work-items as the sole source when provider-wide maintenance encounters
     a work item that names governed skill definitions. Do not restate its policy.
   - Future Ideas remain file-provider-only and non-dispatchable until deliberate promotion.
   decisions:
@@ -72,7 +72,7 @@ examples:
     preserved unrelated provider state, completed only the authorized recovery, and reported the
     exact durable locations. No child task or ordinary status transition was created.'
 skills:
-- codex-workitem-coordination:
+- coordinate-codex-work-items:
     justification: We need its active-capacity and recovery rules for provider-wide reconciliation.
     condition: when provider-wide maintenance touches coordinated work-item state.
 - organise-project-files:
