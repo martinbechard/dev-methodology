@@ -1,6 +1,6 @@
 # Scope Skill-Under-Test Protection To Agent Tests
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/scope-skill-under-test-protection-to-
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Root Dev Orchestrator
 
 ## Summary
 
@@ -103,3 +103,25 @@ Last Contact: 2026-08-05T16:12:59Z; parent Coordinator reservation recorded by D
 Next Reconciliation: No later than 2026-08-05T16:27:59Z.
 
 Required Next Lifecycle Transition: A root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
+
+## Current Running Acceptance Evidence
+
+Transition: Starting -> Running.
+
+Canonical Work-Item Thread: 019fd2b6-8e14-7f60-bac1-ef3566d83492.
+
+Canonical Root Agent Task: /root.
+
+Parent Coordinator Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Accepted Owner: Root Dev Orchestrator.
+
+Branch: main delivery context; implementation worktree initially detached at f82c2c8d597143694a1c42383797b764c5aac806.
+
+Execution Worktree: /Users/martinbechard/.codex/worktrees/6c5c/dev-methodology.
+
+Accepted At: 2026-08-05T16:17:28Z.
+
+Active Execution Evidence: Root Dev Orchestrator accepted ownership and began active discovery/provider startup.
+
+Provider-Mutation Claim: scope-skill-under-test-protection-to-agent-tests-starting-running-019fd2b6; exact file claim acquired by Dev Backlog Steward at 2026-08-05T16:18:39.269433Z, outcome SHARED_CHECKOUT_ACQUIRED, journal event 95dcf87e-f74a-48cd-ba8e-7de2ee2463aa.
