@@ -74,7 +74,7 @@ Determine whether an unmet dependency should be represented solely in the canoni
 
 - skills/create-file-work-item/SKILL.md
 - skills/manage-file-work-items/SKILL.md
-- skills/codex-workitem-coordination/SKILL.md
+- skills/coordinate-codex-work-items/SKILL.md
 
 ### Allowed Dependent Artifacts
 
@@ -93,7 +93,7 @@ Determine whether an unmet dependency should be represented solely in the canoni
 
 ### Approval Resolution
 
-Approved at creation on 2026-08-05 by the user's direct request in the active Codex task to create this work item and implement the stated coherent dependency-based lifecycle across the relevant skill definitions, report validation, and focused tests. Approval is limited to the three governed canonical paths listed above. Any additional governed definition requires new explicit user approval.
+Approved at creation on 2026-08-05 by the user's direct request in the active Codex task to create this work item and implement the stated coherent dependency-based lifecycle across the relevant skill definitions, report validation, and focused tests. The coordination package had already been renamed; source discovery therefore resolves that approved function to the live canonical path `skills/coordinate-codex-work-items/SKILL.md`, not the retired `skills/codex-workitem-coordination/SKILL.md`. Approval is limited to the three governed canonical paths listed above. Any additional governed definition requires new explicit user approval.
 
 ## Notes
 
