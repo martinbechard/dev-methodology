@@ -114,3 +114,31 @@ Determine whether current MCP capability evidence is sufficient to expose mainte
 ### Approval Resolution
 
 Approved at creation on 2026-08-04 by the user statement in the active Codex task: "create separate work items to update skills according to the new design, and update individual evals." Approval is limited to the three governed canonical paths listed above. Any additional governed definition requires new explicit user approval recorded in this item.
+
+## Confirmed Defect Record
+
+Recorded: 2026-08-05.
+
+Severity: High.
+
+Candidate: 216cc890a3db0d41d4a0a9c8850025825b338a97.
+
+Reviewer Task: /root/apply_skill_group_design_backlog/align_resource_coordination_skills/review_resource_coordination_candidate.
+
+Finding: approval-record-align-resource-coordination-skills.yaml commits definition_scope only as skills/agent-claim-mcp/SKILL.md while its precheck audit claims approval for skills/agent-claim/SKILL.md and skills/agent-claim-command/SKILL.md. The supported checker requires scalar definition_scope equality, so the claimed approval evidence cannot be reproduced for the first two governed paths.
+
+Reproduction from /Users/martinbechard/dev/dev-methodology/.worktrees/align-resource-coordination-skills-019fb:
+
+```sh
+python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change skills/agent-claim/SKILL.md --approval-record approval-record-align-resource-coordination-skills.yaml
+python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change skills/agent-claim-command/SKILL.md --approval-record approval-record-align-resource-coordination-skills.yaml
+python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change skills/agent-claim-mcp/SKILL.md --approval-record approval-record-align-resource-coordination-skills.yaml
+```
+
+Observed outcomes, in command order: BLOCKED_APPROVAL_REQUIRED; BLOCKED_APPROVAL_REQUIRED; ALLOWED_APPROVED_DEFINITION_CHANGE.
+
+Impact: The candidate claims governed-definition approval evidence that fresh exact-path prechecks do not reproduce.
+
+Runnable Next Action: The original coder must replace the invalid combined evidence with committed exact per-path retained approval records, or another supported durable exact-path representation authorized by project guidance, without broadening the approved governed scope. Correct the audit, rerun all three exact prechecks to ALLOWED, commit the replacement, and obtain fresh review.
+
+Delivery Scope: This is one confirmed defect record attached to the current feature item. Its Status remains Running, and correction remains in this same delivery rather than becoming a separate backlog item.
