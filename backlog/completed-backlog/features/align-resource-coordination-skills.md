@@ -1,12 +1,12 @@
 # Align Resource Coordination Skills
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/apply-object-oriented-skill-group-design/align-resource-coordination-skills.md
+Provider Reference: backlog/completed-backlog/features/align-resource-coordination-skills.md
 
 Owner: Dev Orchestrator
 
@@ -96,6 +96,36 @@ Independent Review: Fresh review PASS.
 Verification: PASS; 268 tests.
 Integration Claim: No live integration claim observed.
 Attempt State: Direct-main completion cannot begin while the user-owned primary-main design modification remains present.
+
+## Terminal Completion Evidence
+
+Completed At: 2026-08-05T14:45:35Z.
+
+Completion Disposition: READY from complete-work-item-direct-main.
+
+Completion Selector: direct-main.
+
+Accepted Delivery Commit: 0f8fb32c1f0c1114de4d9f57219d23ca7126f911.
+
+Main Delivery Mapping: source 216cc890a3db0d41d4a0a9c8850025825b338a97 was integrated as main commit 521c9d71be850fb833cd14426dd45e6cd006c4fe; source 0f8fb32c1f0c1114de4d9f57219d23ca7126f911 was integrated as main commit 14629533686ebd01739f6f14f44d9a99e43a203f.
+
+Main Observation: main at 14629533686ebd01739f6f14f44d9a99e43a203f. Both integration commits are ancestors of the observed main tip. The two source commits are non-ancestral replays; their ten changed paths were byte-equivalent on main, verified by an empty exact-path diff.
+
+Independent Review: PASS with no material findings.
+
+Independent Verification: PASS. Candidate-scoped coverage: 268 tests; 3 of 3 definition prechecks, 3 skill-package validators, generated freshness, YAML audit, and diff check all passed.
+
+Post-Integration Checks: All three exact definition prechecks returned ALLOWED_APPROVED_DEFINITION_CHANGE. BundleContentTests.test_resource_coordination_skills_expose_aligned_operations passed. Three skill-package validations passed. scripts/build-skill-docs.py --check passed. git diff --check f52596ac53070679bb075a49575e0c7476469f37..HEAD passed. The exact ten-path candidate-to-main diff was empty.
+
+Approval-Evidence Defect: The defect was durably recorded at c30d48b9 and resolved in accepted candidate 0f8fb32c through fresh review and verification.
+
+Integration Claim Evidence: integrate-resource-coordination-main-019fb2 acquired with SHARED_CHECKOUT_ACQUIRED event 715cbe00-8cc9-4be4-8eaa-17e17b850fe6 and released with RELEASED event b6f7d816-6ab6-48c3-8625-851163bd858d.
+
+Terminal Provider Claim: complete-archive-align-resource-coordination-019fb2 acquired with SHARED_CHECKOUT_ACQUIRED event 4ef8d00a-e285-411d-b3cb-e565698c0f33 for the active and archive paths.
+
+Archive Path: backlog/completed-backlog/features/align-resource-coordination-skills.md.
+
+Terminal Backlog Commit: The Git commit containing this status-and-archive transition is the terminal provider transaction.
 
 ## Summary
 
