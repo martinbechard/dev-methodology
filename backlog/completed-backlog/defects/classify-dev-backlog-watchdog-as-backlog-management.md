@@ -1,12 +1,12 @@
 # Classify Dev Backlog Watchdog As Backlog Management
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/classify-dev-backlog-watchdog-as-backlog-management.md
+Provider Reference: backlog/completed-backlog/defects/classify-dev-backlog-watchdog-as-backlog-management.md
 
 Completion: direct-main
 
@@ -66,6 +66,20 @@ None.
 None.
 
 ## Notes
+
+## Completion Evidence
+
+Completed At: 2026-08-05.
+
+Accepted Source Candidate: 029a36ae1a3360a9f714c7f2fdfd4196dc998339.
+
+Current-Main Delivery: 9fd42732 classifies Dev Backlog Watchdog under the Backlog Management presentation category while preserving its dev-activities conceptual source and governed role definition unchanged.
+
+Verification: The focused role-catalog and hierarchy tests pass under Python 3.11. The role-definition catalog and agent-to-skill hierarchy freshness checks pass, and Git diff validation is clean.
+
+Review: Current-main reconciliation retained the candidate's authoritative role-catalog override and focused positive and negative membership assertions while regenerating outputs from current sources.
+
+Terminal State: Completed and Unowned. No implementation or provider claim remains.
 
 ## Current Dispatch Reservation (Fresh Settlement)
 
