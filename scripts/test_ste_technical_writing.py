@@ -140,6 +140,10 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
             "Preserve the source meaning",
             "Preserve each requirement, condition, permission, prohibition",
             "Keep a description descriptive",
+            "The opening of a section gives readers the conceptual frame",
+            "Write this essential definition before properties, components, examples",
+            "Do not open a section with an enumeration",
+            "Identify the essence and central idea of each section",
             "Let the artifact-specific skill control document structure",
             "does not verify or certify formal ASD-STE100 compliance",
             "Do not rewrite code blocks, machine-readable data, syntax examples",
@@ -157,6 +161,21 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
         self.assertIn(
             "$ste-technical-writing",
             metadata["interface"]["default_prompt"],
+        )
+
+    def test_section_opening_contract_defines_the_topic_before_enumeration(self) -> None:
+        skill_text = SKILL_PATH.read_text(encoding="utf-8")
+        section = skill_text.split("## Establish the Topic First\n", 1)[1]
+        section = section.split("\n## ", 1)[0].strip()
+
+        definition = "The opening of a section gives readers the conceptual frame"
+        first_rule = "- Write this essential definition before properties"
+        self.assertTrue(section.startswith(definition))
+        self.assertLess(section.index(definition), section.index(first_rule))
+        self.assertIn(
+            "- Do not open a section with an enumeration unless preceding prose "
+            "has already established that frame.",
+            section,
         )
 
     def test_every_conceptual_agent_receives_the_shared_ste_contract(self) -> None:

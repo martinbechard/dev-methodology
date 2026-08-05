@@ -26,6 +26,13 @@ Apply the principles to prose in headings, list items, table cells, captions, an
 
 Do not rewrite code blocks, machine-readable data, syntax examples, fixed format labels, or verbatim quotations.
 
+## Establish the Topic First
+
+The opening of a section gives readers the conceptual frame for the details that follow. It defines what the topic is and states the central idea that readers need to understand the section.
+
+- Write this essential definition before properties, components, examples, exceptions, or other details.
+- Do not open a section with an enumeration unless preceding prose has already established that frame.
+
 ## Write Clear Prose
 
 - Use common and precise words.
@@ -62,10 +69,11 @@ Do not rewrite code blocks, machine-readable data, syntax examples, fixed format
 ## Workflow
 
 1. Identify the source meaning and the artifact-specific structure.
-2. Mark exact technical content, normative words, conditions, ownership, and quotations that must not change.
-3. Write or revise the technical prose with the principles in this skill.
-4. Compare the result with the source.
-5. Correct each semantic change before accepting the prose.
+2. Identify the essence and central idea of each section before you write its details.
+3. Mark exact technical content, normative words, conditions, ownership, and quotations that must not change.
+4. Write or revise the technical prose with the principles in this skill.
+5. Compare the result with the source.
+6. Correct each semantic change before accepting the prose.
 
 ## Review Result
 
