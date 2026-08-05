@@ -535,6 +535,10 @@
       html { scroll-behavior: auto; }
     }
 
+    @media print {
+      .chapter-nav { display: none; }
+    }
+
     @media (prefers-color-scheme: dark) {
       :root {
         --ink: #edf5ff;

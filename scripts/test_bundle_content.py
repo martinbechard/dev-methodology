@@ -989,6 +989,101 @@ class VisibleProseParser(HTMLParser):
             self._buffer = []
 
 
+class DocumentationNavigationParser(HTMLParser):
+    """Inventory section targets, element IDs, and documentation navigation links."""
+
+    _VOID_ELEMENTS = {
+        "area",
+        "base",
+        "br",
+        "col",
+        "embed",
+        "hr",
+        "img",
+        "input",
+        "link",
+        "meta",
+        "param",
+        "source",
+        "track",
+        "wbr",
+    }
+    _SECTION_NAVIGATION_LABELS = {"Page sections", "Lifecycle chapters"}
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._elements: list[str] = []
+        self._section_navigation_depth: int | None = None
+        self._document_navigation_depth: int | None = None
+        self.element_id_counts: dict[str, int] = {}
+        self.duplicate_element_ids: set[str] = set()
+        self.major_section_targets: list[str | None] = []
+        self.section_navigation_count = 0
+        self.section_navigation_hrefs: list[str] = []
+        self.section_navigation_targets: list[str] = []
+        self.document_navigation_count = 0
+        self.document_sequence_links: list[tuple[str, str]] = []
+
+    def handle_starttag(
+        self,
+        tag: str,
+        attrs: list[tuple[str, str | None]],
+    ) -> None:
+        attributes = dict(attrs)
+        parent = self._elements[-1] if self._elements else None
+        classes = set((attributes.get("class") or "").split())
+        element_id = attributes.get("id")
+
+        if element_id:
+            element_id_count = self.element_id_counts.get(element_id, 0) + 1
+            self.element_id_counts[element_id] = element_id_count
+            if element_id_count > 1:
+                self.duplicate_element_ids.add(element_id)
+
+        if tag == "section" and parent == "main" and "section" in classes:
+            target = attributes.get("id") or attributes.get("aria-labelledby")
+            target_tokens = target.split() if target else []
+            self.major_section_targets.append(
+                target_tokens[0] if len(target_tokens) == 1 else None
+            )
+
+        if tag == "nav":
+            label = attributes.get("aria-label")
+            if label in self._SECTION_NAVIGATION_LABELS:
+                self.section_navigation_count += 1
+                self._section_navigation_depth = len(self._elements) + 1
+            elif label == "Documentation navigation":
+                self.document_navigation_count += 1
+                self._document_navigation_depth = len(self._elements) + 1
+
+        if tag == "a":
+            href = attributes.get("href") or ""
+            if self._section_navigation_depth is not None:
+                self.section_navigation_hrefs.append(href)
+                if href.startswith("#"):
+                    self.section_navigation_targets.append(href[1:])
+            if self._document_navigation_depth is not None:
+                relation = attributes.get("rel")
+                if relation in {"prev", "next"}:
+                    self.document_sequence_links.append((relation, href))
+
+        if tag not in self._VOID_ELEMENTS:
+            self._elements.append(tag)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag not in self._elements:
+            return
+        depth = len(self._elements)
+        if tag == "nav" and depth == self._section_navigation_depth:
+            self._section_navigation_depth = None
+        if tag == "nav" and depth == self._document_navigation_depth:
+            self._document_navigation_depth = None
+        while self._elements:
+            open_tag = self._elements.pop()
+            if open_tag == tag:
+                break
+
+
 def visible_prose_blocks(path: Path) -> list[str]:
     return visible_prose_from_html(path.read_text(encoding="utf-8"))
 
@@ -1155,6 +1250,165 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(role=role_name):
                 self.assertIn("explain-code-fix", role_skills)
                 self.assertNotIn("fix-explanation", role_skills)
+
+    def _assert_documentation_navigation(
+        self,
+        html: str,
+        expected_sequence_links: list[tuple[str, str]],
+    ) -> None:
+        parser = DocumentationNavigationParser()
+        parser.feed(html)
+
+        self.assertFalse(
+            parser.duplicate_element_ids,
+            f"Duplicate element IDs: {sorted(parser.duplicate_element_ids)}",
+        )
+        self.assertEqual(1, parser.section_navigation_count)
+        unusable_section_indexes = [
+            index
+            for index, target in enumerate(parser.major_section_targets, start=1)
+            if target is None
+        ]
+        self.assertFalse(
+            unusable_section_indexes,
+            "Every top-level section must expose exactly one usable target",
+        )
+        for href in parser.section_navigation_hrefs:
+            parsed_href = urlsplit(href)
+            self.assertTrue(
+                parsed_href.fragment
+                and not parsed_href.scheme
+                and not parsed_href.netloc
+                and not parsed_href.path
+                and not parsed_href.query,
+                "Section navigation href must be a non-empty same-page fragment",
+            )
+        usable_major_section_targets = [
+            target for target in parser.major_section_targets if target is not None
+        ]
+        self.assertEqual(
+            usable_major_section_targets,
+            parser.section_navigation_targets,
+        )
+        self.assertEqual(
+            len(parser.section_navigation_targets),
+            len(set(parser.section_navigation_targets)),
+        )
+        for target in parser.section_navigation_targets:
+            self.assertEqual(
+                1,
+                parser.element_id_counts.get(target, 0),
+                f"Section target #{target} must resolve exactly once",
+            )
+        self.assertEqual(1, parser.document_navigation_count)
+        self.assertEqual(
+            expected_sequence_links,
+            parser.document_sequence_links,
+            "Documentation links must match the adjacent index detail pages",
+        )
+
+    def test_index_detail_pages_expose_complete_section_navigation(self) -> None:
+        """Every index detail page has one complete menu and keeps sequence links."""
+        index_text = (REPOSITORY_ROOT / "index.html").read_text(encoding="utf-8")
+        detail_pages = re.findall(
+            r'<a class="doc-card\b[^"]*"[^>]*href="(design/[^"#]+\.html)"',
+            index_text,
+        )
+
+        self.assertEqual(9, len(detail_pages))
+        for page_index, relative_path in enumerate(detail_pages):
+            with self.subTest(detail_page=relative_path):
+                expected_sequence_links: list[tuple[str, str]] = []
+                if page_index > 0:
+                    expected_sequence_links.append(
+                        ("prev", Path(detail_pages[page_index - 1]).name)
+                    )
+                if page_index < len(detail_pages) - 1:
+                    expected_sequence_links.append(
+                        ("next", Path(detail_pages[page_index + 1]).name)
+                    )
+                self._assert_documentation_navigation(
+                    (REPOSITORY_ROOT / relative_path).read_text(encoding="utf-8"),
+                    expected_sequence_links,
+                )
+
+    def test_documentation_navigation_rejects_invalid_ids_and_sequence_links(
+        self,
+    ) -> None:
+        """Adversarial pages fail for broken IDs and document sequence links."""
+        valid_html = """
+            <main>
+              <nav aria-label="Documentation navigation">
+                <a href="previous.html" rel="prev">Previous</a>
+                <a href="next.html" rel="next">Next</a>
+              </nav>
+              <nav aria-label="Page sections">
+                <a href="#overview">Overview</a>
+                <a href="#details">Details</a>
+              </nav>
+              <section class="section" aria-labelledby="overview">
+                <h2 id="overview">Overview</h2>
+              </section>
+              <section class="section" id="details" aria-labelledby="details-heading">
+                <h2 id="details-heading">Details</h2>
+              </section>
+            </main>
+        """
+        expected_sequence_links = [
+            ("prev", "previous.html"),
+            ("next", "next.html"),
+        ]
+        invalid_cases = {
+            "missing_target_id": (
+                valid_html.replace('id="overview"', 'id="missing-overview"'),
+                r"Section target #overview must resolve exactly once",
+            ),
+            "duplicate_id": (
+                valid_html.replace(
+                    "<h2 id=\"overview\">Overview</h2>",
+                    '<h2 id="overview">Overview</h2><span id="overview"></span>',
+                ),
+                r"Duplicate element IDs",
+            ),
+            "missing_interior_relation": (
+                valid_html.replace(
+                    '<a href="next.html" rel="next">Next</a>',
+                    "",
+                ),
+                r"Documentation links must match",
+            ),
+            "wrong_adjacent_destination": (
+                valid_html.replace("next.html", "missing.html"),
+                r"Documentation links must match",
+            ),
+            "untargeted_top_level_section": (
+                valid_html.replace(
+                    "              </section>\n            </main>",
+                    """              </section>
+              <section class="section">
+                <h2 id="untargeted">Untargeted</h2>
+              </section>
+            </main>""",
+                ),
+                r"Every top-level section must expose exactly one usable target",
+            ),
+            "non_fragment_section_link": (
+                valid_html.replace(
+                    '<a href="#details">Details</a>',
+                    """<a href="#details">Details</a>
+                <a href="missing.html">Missing</a>""",
+                ),
+                r"Section navigation href must be a non-empty same-page fragment",
+            ),
+        }
+
+        for case_name, (html, expected_error) in invalid_cases.items():
+            with self.subTest(case=case_name):
+                with self.assertRaisesRegex(AssertionError, expected_error):
+                    self._assert_documentation_navigation(
+                        html,
+                        expected_sequence_links,
+                    )
 
     def test_fix_explanation_separates_concept_roles_from_item_types(self) -> None:
         structured_text = (

@@ -1,0 +1,68 @@
+/* Copyright (c) 2026 Martin.Bechard@DevConsult.ca */
+/* AI attribution: Generated with AI assistance. */
+/* Summary: Provides the shared sticky section-navigation treatment for toolkit detail pages. */
+
+.page-section-nav {
+  position: sticky;
+  top: 0.75rem;
+  z-index: 10;
+  display: flex;
+  gap: 0.35rem;
+  margin: 1rem 0 4rem;
+  padding: 0.55rem;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  border: 1px solid var(--color-line, #d9e1ea);
+  border-radius: 999px;
+  background: var(--color-panel, #ffffff);
+  box-shadow: var(--shadow-panel, 0 12px 30px rgba(31, 41, 55, 0.12));
+  scrollbar-width: thin;
+}
+
+.page-section-nav a {
+  flex: 0 0 auto;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  color: var(--color-muted, #596579);
+  font-size: 0.8rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.page-section-nav a:hover {
+  background: var(--color-soft-green, #e4f7f4);
+  color: var(--color-green, #0f766e);
+}
+
+.page-section-nav a:focus-visible {
+  outline: 3px solid var(--color-blue, #2563eb);
+  outline-offset: 2px;
+}
+
+main > .section[id],
+main > .section > h2[id],
+main > .section > .section-heading h2[id] {
+  scroll-margin-top: 6rem;
+}
+
+@media (max-width: 760px) {
+  .page-section-nav {
+    position: static;
+    flex-wrap: wrap;
+    overflow-x: visible;
+    border-radius: 0.85rem;
+  }
+
+  main > .section[id],
+  main > .section > h2[id],
+  main > .section > .section-heading h2[id] {
+    scroll-margin-top: 1rem;
+  }
+}
+
+@media print {
+  .page-section-nav {
+    display: none;
+  }
+}
