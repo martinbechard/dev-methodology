@@ -9,6 +9,11 @@ metadata:
 
 Create one independently actionable GitLab issue without creating a shadow queue.
 
+## Work Item ID
+
+- Represent Work Item ID as the observed GitLab instance, namespace, project, and issue IID. Resolve and collision-check it only through GitLab provider operations; generic lifecycle callers pass it unchanged.
+- Keep the issue URL as diagnostic location evidence. Native state changes and terminal organization preserve the same Work Item ID.
+
 ## Authority And Inputs
 
 - Use the configured GitLab instance, namespace, and project when GitLab is the effective provider. A one-item explicit request may select GitLab for that item but does not rewrite the project default.
@@ -34,4 +39,4 @@ Create one independently actionable GitLab issue without creating a shadow queue
 
 ## Result
 
-Return the selected provider, observed GitLab instance, namespace, project, issue internal identifier, issue URL, native state, canonical lifecycle status, type, labels, assignees, milestone or project fields, relationships, ownership evidence, duplicate decision, and next runnable action or blocker.
+Return the selected provider, Work Item ID, observed GitLab instance, namespace, project, issue IID, diagnostic URL, native state, canonical lifecycle status, type, labels, assignees, milestone or project fields, relationships, ownership evidence, duplicate decision, and next runnable action or blocker.

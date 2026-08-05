@@ -9,12 +9,17 @@ metadata:
 
 Manage GitLab issue state while keeping provider lifecycle and delivery completion distinct.
 
+## Work Item ID
+
+- Accept the GitLab Work Item ID as one opaque input. This provider resolves it to the observed instance, namespace, project, and issue IID, checks collisions through GitLab, and reports the URL only as diagnostic location evidence.
+- Preserve the same Work Item ID across native state changes and terminal organization. Generic callers must not parse its provider-specific components.
+
 ## Authority And Lookup
 
 - Use the configured GitLab instance, namespace, and project when GitLab is the effective provider. A one-item explicit request may select GitLab for that item but does not rewrite the project default.
 - Require an authenticated GitLab issue interface with project authority and every capability needed by the requested operation. Return BLOCKED without mutation when authentication, project authority, permission, or a required capability is unavailable.
 - Use GitLab provider reads and mutations as the sole issue authority. Do not read from or write repository backlog files, cached issue mirrors, GitHub issues, or generic external records as a fallback.
-- Resolve each item by the observed GitLab instance, namespace, project, and issue internal identifier. Treat the issue URL as its canonical reference; a branch, commit, or merge request never replaces that identity.
+- Resolve each item from its Work Item ID to the observed GitLab instance, namespace, project, and issue IID. Treat the issue URL as diagnostic location evidence; a branch, commit, or merge request never replaces that identity.
 - Keep sensitive, private, proprietary, credential, or company-internal evidence out of an issue whose visibility is unsuitable. An explicitly requested export is non-authoritative and must identify itself as an export.
 
 ## Inventory Work Items
@@ -49,4 +54,4 @@ Report ambiguous matches and their observed identities instead of guessing which
 
 ## Report Work Items
 
-Return the selected provider, observed GitLab instance, namespace, project, issue internal identifier, issue URL, native state, canonical lifecycle status, labels, assignees, relationships, milestone or project fields, delivery and recovery evidence, mutations verified from GitLab, next runnable action, and any blocker or reconciliation requirement.
+Return the selected provider, Work Item ID, observed GitLab instance, namespace, project, issue IID, diagnostic URL, native state, canonical lifecycle status, labels, assignees, relationships, milestone or project fields, delivery and recovery evidence, mutations verified from GitLab, next runnable action, and any blocker or reconciliation requirement.

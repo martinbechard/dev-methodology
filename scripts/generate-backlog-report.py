@@ -98,6 +98,7 @@ INLINE_MARKDOWN_PATTERN = re.compile(r"(`[^`]*`|\*\*([^*]+)\*\*|\*([^*]+)\*|\[([
 class _Item:
     path: str
     slug: str
+    work_item_id: str
     title: str
     queue: str
     declared_type: str
@@ -110,7 +111,6 @@ class _Item:
     question: str = ""
     resolution: str = ""
     provider: str = ""
-    provider_reference: str = ""
     completion: str = ""
     owner: str = ""
     diagnostic_owner: str = ""
@@ -367,7 +367,7 @@ def _read_items(
                 path, folder, repository_root
             ):
                 item = _Item(
-                    relative_text, path.stem, path.stem, queue, "", "", "", []
+                    relative_text, path.stem, path.stem, path.stem, queue, "", "", "", []
                 )
                 item.authority_valid = False
                 item.anomalies.append(
@@ -379,7 +379,7 @@ def _read_items(
             try:
                 title, fields, sections = _parse_document(path)
             except (OSError, UnicodeError) as exc:
-                item = _Item(relative_text, path.stem, path.stem, queue, "", "", "", [])
+                item = _Item(relative_text, path.stem, path.stem, path.stem, queue, "", "", "", [])
                 item.anomalies.append(f"Unreadable item: {type(exc).__name__}: {exc}")
                 items.append(item)
                 continue
@@ -404,6 +404,7 @@ def _read_items(
             item = _Item(
                 path=relative_text,
                 slug=path.stem,
+                work_item_id=fields.get("Work Item ID", "") or path.stem,
                 title=title or path.stem,
                 queue=queue,
                 declared_type=fields.get("Type", ""),
@@ -418,7 +419,6 @@ def _read_items(
                 question=_plain_text(sections.get("Question for the User", "")),
                 resolution=_plain_text(sections.get("Resolution", "")),
                 provider=fields.get("Provider", ""),
-                provider_reference=fields.get("Provider Reference", ""),
                 completion=fields.get("Completion", ""),
                 owner=fields.get("Owner", ""),
                 diagnostic_owner=fields.get("Diagnostic Owner", ""),
@@ -446,6 +446,11 @@ def _read_items(
                 )
             if item.status == "Proposed":
                 item.anomalies.append("Migration anomaly: Status Proposed is not an operational state.")
+            if item.work_item_id != path.stem:
+                item.anomalies.append(
+                    "Work Item ID does not match the immutable filename stem: "
+                    f"{item.work_item_id}."
+                )
             if item.missing:
                 item.anomalies.append("Missing required fields: " + ", ".join(item.missing) + ".")
             if item.stalled_evidence_missing:
@@ -481,7 +486,7 @@ def _read_items(
                 and not item.stalled_evidence_missing
                 and promotion_type_valid
                 and item.provider == "file"
-                and item.provider_reference == item.path
+                and item.work_item_id == path.stem
                 and item.completion in ALLOWED_COMPLETIONS
                 and bool(item.source_evidence.strip())
                 and bool(sections.get("Open Questions", "").strip())
@@ -510,6 +515,16 @@ def _read_items(
                 )
             )
             items.append(item)
+    items_by_id: dict[str, list[_Item]] = {}
+    for item in items:
+        items_by_id.setdefault(item.work_item_id, []).append(item)
+    for work_item_id, matches in items_by_id.items():
+        if work_item_id and len(matches) > 1:
+            locations = ", ".join(sorted(item.path for item in matches))
+            for item in matches:
+                item.anomalies.append(
+                    f"Duplicate Work Item ID {work_item_id}: {locations}."
+                )
     return items, scanned, sorted(set(ignored)), scope_findings
 
 
@@ -534,6 +549,7 @@ def _read_future_ideas(
     if not ideas_root.is_dir():
         return [], [], []
     work_items_by_path = {item.path: item for item in work_items}
+    work_items_by_id = {item.work_item_id: item for item in work_items}
     ideas: list[_FutureIdea] = []
     ignored: list[str] = []
     for path in sorted(ideas_root.rglob("*.md")):
@@ -589,16 +605,20 @@ def _read_future_ideas(
                 and target.parts[0] == "backlog"
                 and target.suffix == ".md"
             )
+            valid_identifier = bool(DEPENDENCY_PATTERN.fullmatch(idea.promoted_to))
             target_item = (
-                work_items_by_path.get(idea.promoted_to) if valid_parts else None
+                work_items_by_id.get(idea.promoted_to)
+                if valid_identifier
+                else None
             )
+            if target_item is None and valid_parts:
+                target_item = work_items_by_path.get(idea.promoted_to)
             if (
-                not valid_parts
-                or target_item is None
+                target_item is None
                 or target_item.queue not in FUTURE_IDEA_PROMOTION_QUEUES
             ):
                 idea.anomalies.append(
-                    f"Invalid Promoted To work-item path: {idea.promoted_to}."
+                    f"Invalid Promoted To Work Item ID: {idea.promoted_to}."
                 )
             elif not target_item.authority_valid:
                 idea.anomalies.append(
@@ -624,8 +644,8 @@ def _read_future_ideas(
 
 def _reconcile(items: list[_Item]) -> None:
     """Resolve dependency evidence and effective dispatch eligibility in place."""
-    completed = {item.slug for item in items if item.queue == "completed"}
-    known = {item.slug for item in items}
+    completed = {item.work_item_id for item in items if item.queue == "completed"}
+    known = {item.work_item_id for item in items}
     for item in items:
         for dependency in item.dependencies:
             if not DEPENDENCY_PATTERN.fullmatch(dependency):
@@ -779,6 +799,8 @@ def _item_card(item: _Item) -> str:
         f'<div class="badges">{"".join(metadata)}</div>'
         f'<h3>{_escape(item.title)}</h3>'
         f'<p>{_escape(item.summary or "No summary provided.")}</p>'
+        f'<p class="detail"><strong>Work Item ID:</strong> '
+        f'<code>{_escape(item.work_item_id)}</code></p>'
         f'<p class="detail"><strong>Dependencies:</strong> {_escape(dependency_text)}</p>'
         f'{detail}<p class="source"><strong>Source:</strong> <code>{_escape(item.path)}</code></p>'
         '</article>'

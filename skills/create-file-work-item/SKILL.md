@@ -21,7 +21,7 @@ Create one durable file-provider work item that is clear, typed, and safe to man
 
 ## File Authority
 
-Only the primary worktree on main may create canonical files under backlog. The repository-relative backlog path is both work_item_id and provider_reference.
+Only the primary worktree on main may create canonical files under backlog. The file provider's Work Item ID is the immutable lowercase filename stem. It is unique across active, non-dispatchable, completed, and failed work-item folders. The current repository-relative path is provider-owned storage and diagnostic evidence, not generic identity.
 
 Another worktree may inspect backlog but must not create the item. If the primary worktree is not on main, it must not create the item. Return BLOCKED with the observed worktree, branch, and required handoff. Do not create another queue elsewhere.
 
@@ -43,7 +43,7 @@ Refuse an unknown operation, a multi-path ordinary creation, a promotion with ei
 Apply ordinary creation only to canonical file-provider records under backlog. Apply promotion only to one retained Future Idea source and one canonical file-provider destination under backlog. Do not apply either transaction to arbitrary repository files. Resolve path roles before mutation:
 
 - A current source must exist with the exact saved bytes and current identity required by its record type.
-- A created destination must be absent and must name itself as its intended final Provider Reference.
+- A created destination must be absent and must declare the Work Item ID that matches its filename stem.
 
 The exclusive-create remains authoritative for every created destination. Never substitute an overwrite-capable write merely because Git path limits are available. For promotion, update the retained idea with Promoted To and create the complete reciprocal work item exclusively in the same transaction.
 
@@ -61,9 +61,9 @@ git commit --only -m "Promote Future Idea" -- backlog/future-ideas/idea.md backl
 
 Do not use git add ., git add -A, a directory or wildcard pathspec, or an implicit index-wide git commit. Do not clear, replace, or commit unrelated staged entries. Preserve every unrelated staged blob, tracked dirty byte sequence, and untracked dirty byte sequence exactly.
 
-Verify the resulting immutable commit object before reporting success. For ordinary creation, require its changed-path set to equal the one-path manifest and the committed record's Provider Reference and bytes to equal the final path and validated bytes. For promotion, require its changed-path set to equal the source-and-destination manifest, the retained source bytes to contain the exact Promoted To destination, the destination bytes to contain the exact reciprocal Source Evidence path, and the destination Provider Reference to equal the final destination.
+Verify the resulting immutable commit object before reporting success. For ordinary creation, require its changed-path set to equal the one-path manifest and the committed record's Work Item ID and bytes to equal the filename stem and validated bytes. For promotion, require its changed-path set to equal the source-and-destination manifest, the retained source bytes to contain the promoted Work Item ID, the destination bytes to contain the exact reciprocal Source Evidence path, and the destination Work Item ID to equal its filename stem.
 
-A manifest-role, coordination-evidence, Git-argument, changed-path, committed-byte, reciprocal-link, Provider Reference, or unrelated-state mismatch makes the attempt failed or BLOCKED, never successful.
+A manifest-role, coordination-evidence, Git-argument, changed-path, committed-byte, reciprocal-link, Work Item ID, or unrelated-state mismatch makes the attempt failed or BLOCKED, never successful.
 
 ## Template Workflow
 
@@ -103,7 +103,7 @@ Capture an idea only when the user explicitly asks to remember it or the active 
 - Optional Notes and Revisit Trigger sections.
 - An optional Promoted To field after deliberate promotion.
 
-Do not require Status, Type, Owner, Provider, Provider Reference, Completion, Context, Source Evidence, Requirements, Acceptance Criteria, Dependencies, Verification, or a user decision merely to preserve an idea. Keep revisit triggers as free text; they are reminders for deliberate ideation, not machine schedules or dispatch conditions.
+Do not require Status, Type, Owner, Provider, Work Item ID, Completion, Context, Source Evidence, Requirements, Acceptance Criteria, Dependencies, Verification, or a user decision merely to preserve an idea. Keep revisit triggers as free text; they are reminders for deliberate ideation, not machine schedules or dispatch conditions.
 
 Future Ideas are not work items or lifecycle states. Do not include them in ordinary duplicate scans, inventory, runnable counts, unattended selection, dispatch, ownership, lifecycle transitions, dependency reconciliation, or archive movement. List or validate them only when the user explicitly requests Future Ideas, ideation, or promotion work.
 
@@ -118,7 +118,7 @@ Promote an idea only through a deliberate user-authorized operation:
 3. Create one complete typed work item in its applicable active, Holding, or User Action Required destination with every field and section required by Required Item Shape, including Open Questions, and any destination-specific sections. Holding may retain its underlying dispatchable Type or declare Type: Holding; User Action Required must retain its underlying dispatchable Type.
 4. Set Completion to exactly direct-main, feature-branch, or UNSET.
 5. Include the exact canonical source idea path in the promoted work item's Source Evidence section.
-6. Retain the original idea in backlog/future-ideas and add Promoted To with the promoted item's canonical provider reference.
+6. Retain the original idea in backlog/future-ideas and add Promoted To with the promoted item's Work Item ID.
 7. Validate both complete files, destination rules, and links in both directions.
 8. Construct the exact two-path manifest with the retained source role, exclusive destination role, and atomic rationale. Execute only the Future Idea promotion shape in Exact Backlog Creation Transaction, including resource coordination for both exact paths, exact Git argument vectors, the path-limited commit, immutable proof, and unrelated-state preservation.
 
@@ -195,7 +195,7 @@ Keep change-control manifests out of Design Principles. They are approval eviden
 
 Use a stable, lowercase, hyphen-separated filename ending in .md. Derive the slug from the filename stem. Prefer names that describe the durable work, not a temporary symptom, date, owner, status, or vague cleanup label.
 
-Before writing, search every active typed folder, backlog/user-action-required, and backlog/holding for the same canonical path, slug, source reference, or overlapping outcome. Search backlog/future-ideas only during explicit idea capture or promotion. Update an existing active item only when the new request is clearly the same work. Create a new item only when it has a distinct outcome or can be completed independently. Never use a second provider or a different repository path to bypass a duplicate.
+Before writing, search every active typed folder, backlog/user-action-required, backlog/holding, and every completed or failed archive for the same Work Item ID. Also search active and non-dispatchable work for the same source evidence or overlapping outcome. Search backlog/future-ideas only during explicit idea capture or promotion. Update an existing active item only when the new request is clearly the same work. Create a new item only when it has a distinct outcome or can be completed independently. Never use a second provider or a different repository path to bypass a duplicate.
 
 ## Required Item Shape
 
@@ -205,14 +205,14 @@ Write each item as a self-contained work package with these fields and sections:
 - Status: Ready for authorized active work, User Action Required for a user-owned answer, or Holding for explicit deferral.
 - Type: Defect, Feature, Analysis, Investigation, or Holding.
 - Provider: file.
-- Provider Reference: the canonical repository-relative backlog path.
+- Work Item ID: the immutable filename stem, without `.md`.
 - Completion: the selected completion process when known, or UNSET.
 - Summary: the desired outcome.
 - Context: facts, current behavior, user impact, constraints, and source references.
 - Source Evidence: the request, finding, or decision that authorizes creation.
 - Requirements: concrete behavior or deliverables.
 - Acceptance Criteria: observable completion conditions.
-- Dependencies: canonical provider references or None.
+- Dependencies: opaque Work Item IDs or None.
 - Verification: expected tests, builds, checks, review, or artifacts.
 - Open Questions: unresolved agent-resolvable technical matters, or None.
 - Governed Definition Approval: optional exact canonical sources, allowed dependent artifacts, and approval resolution when governed definitions are expected to change.
@@ -227,7 +227,7 @@ For an item in backlog/user-action-required, also include:
 - Resolution, initially Pending.
 - Unattended Work Boundary.
 
-The creation commit and result must preserve work_item_id, provider_reference, source evidence, provider selection, completion selection, creation authority, creation time when the repository records it, and applicable claim evidence. Keep Requirements, Acceptance Criteria, Dependencies, and Verification so the item remains complete after it moves into an active typed backlog.
+The creation commit and result must preserve Work Item ID, current provider-owned location evidence, source evidence, provider selection, completion selection, creation authority, creation time when the repository records it, and applicable coordination evidence. Keep Requirements, Acceptance Criteria, Dependencies, and Verification so the item remains complete after it moves into an active typed backlog.
 
 ## Writing Rules
 
@@ -235,14 +235,14 @@ The creation commit and result must preserve work_item_id, provider_reference, s
 - Reject Source Evidence that only says See the conversation above, As discussed, or equivalent context-dependent wording. Preserve the concrete request, finding, or decision and its provenance so the item stands alone.
 - Mark unknown facts as questions or assumptions instead of inventing them.
 - Keep requirements testable and separate them from acceptance criteria.
-- Use provider-accurate dependency references so blocked work can be detected mechanically.
+- Use opaque Work Item IDs for dependencies so the provider can resolve them after movement.
 - Phrase user questions neutrally and expose viable tradeoffs.
 - Keep completed or failed outcomes out of newly created active items.
 - Use imperative, steady-state language.
 
 ## Coordinator Notification
 
-After a new work-item file is committed successfully, use the current runtime's normal task-message feature to send its provider reference to the existing Dev Backlog Coordinator task.
+After a new work-item file is committed successfully, use the current runtime's normal task-message feature to send its Work Item ID to the existing Dev Backlog Coordinator task.
 
 The message only reports that the backlog changed. It does not reserve capacity, change lifecycle state, create a delivery task, or start implementation.
 
@@ -256,7 +256,7 @@ Before reporting completion:
 - Confirm the ordinary creation assignment carried the complete exact canonical repository-relative provider-path manifest and every mutating Git argument vector used exactly that path after --.
 - Confirm uniquely named atomic no-overwrite creation succeeded.
 - Confirm the captured immutable commit object contains exactly the authorized path and validated bytes while unrelated staged and dirty state remains unchanged.
-- Confirm the item is in the right typed folder and has a stable unique path.
+- Confirm the item is in the right typed folder and has a stable globally unique Work Item ID.
 - Confirm related multi-item goals have an index.md and linked independently runnable children.
 - Confirm the complete required item shape, source evidence, dependencies, and verification expectations are present.
 - Confirm Open Questions contain only agent-resolvable uncertainty and do not create a false user-action gate.
@@ -265,7 +265,7 @@ Before reporting completion:
 - For Future Ideas, confirm the minimal idea shape, exclusion from ordinary work-item scans, resolved regular-file authority within backlog/future-ideas, and any reciprocal Promoted To and exact Source Evidence link.
 - Confirm no provider issue, mirror, shadow queue, or duplicate file was created.
 
-For an ordinary work item, return provider file, work_item_id and provider_reference, item type, lifecycle status, source evidence, dependencies, completion selection, creation commit, and next runnable action. For a Future Idea, return its path, synopsis, origin or rationale, optional revisit trigger, capture commit, and the fact that it is not runnable or approved work.
+For an ordinary work item, return provider file, opaque Work Item ID, current diagnostic location, item type, lifecycle status, source evidence, dependency Work Item IDs, completion selection, creation commit, and next runnable action. For a Future Idea, return its path, synopsis, origin or rationale, optional revisit trigger, capture commit, and the fact that it is not runnable or approved work.
 
 ## Migration
 

@@ -20,7 +20,7 @@ Carry one accepted candidate from branch publication through host review and obs
 
 Resolve these inputs before repository mutation:
 
-- Normalized work-item identifier, provider, provider reference, title, requirements, acceptance criteria, dependencies, and verification expectations.
+- Opaque Work Item ID, provider selector, title, requirements, acceptance criteria, dependencies, and verification expectations.
 - Target repository, code host, remote, configured base branch, intended feature branch, and merge policy.
 - Accepted candidate commit plus fresh independent review, verification, changed-path, and clean-worktree evidence.
 - Required review approvals, checks or pipelines, dependency merge order, and any user-requested draft state.
@@ -48,7 +48,7 @@ Consume an already accepted, independently reviewed and verified candidate commi
    - For GitLab, use the configured merge-request capability and GitLab evidence. Call it a merge request.
    - For another host, use only a configured capability whose terminology, readiness, review, checks, and merge evidence are explicit.
 5. Publish accepted work ready for host review. Use draft only when the user requests it or a concrete publication, host-check, or dependency gate remains incomplete.
-6. Record and verify the canonical work-item identifier and provider reference, publication URL, code host, base, head, commit, dependencies, review order, required checks, and observed ready or draft state.
+6. Record and verify the opaque Work Item ID and provider selector without parsing the ID, plus publication URL, code host, base, head, commit, dependencies, review order, required checks, and observed ready or draft state.
 
 Successful publication returns AWAITING_REVIEW while any required approval, check, dependency merge, or configured merge remains outstanding. A ready publication is not READY delivery evidence. AWAITING_REVIEW performs no Persistence mutation.
 
@@ -114,7 +114,7 @@ A provider-backed Persistence recording failure happens after this skill returns
 
 Return exactly one disposition with deciding evidence:
 
-- AWAITING_REVIEW: canonical work-item identifier and provider reference, branch, pushed commit, pull-request or merge-request URL, base and head, ready or draft state, review and dependency order, completed checks, and every outstanding review, check, dependency, or merge gate.
+- AWAITING_REVIEW: Work Item ID and provider selector, branch, pushed commit, pull-request or merge-request URL, base and head, ready or draft state, review and dependency order, completed checks, and every outstanding review, check, dependency, or merge gate.
 - READY: all publication evidence plus required approvals and checks, merged state, final merge commit, configured base-branch reachability, applicable claim results, and the provider lifecycle update this evidence authorizes.
 - BLOCKED: preserved branch, commits, publication URL when one exists, provider-accurate state, applicable claim results, exact missing evidence or authority, and the next safe action.
 

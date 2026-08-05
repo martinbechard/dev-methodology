@@ -9,6 +9,11 @@ metadata:
 
 Create one independently actionable GitHub issue. The GitHub provider record is the sole durable work-item authority.
 
+## Work Item ID
+
+- Represent Work Item ID as the observed GitHub repository identity plus issue number. Resolve, collision-check, and compare it only through GitHub provider operations; generic lifecycle callers pass it unchanged.
+- Keep the issue URL as diagnostic location evidence. Closing, reopening, transferring, or archiving provider views must not create a new logical Work Item ID.
+
 ## Inputs And Authority
 
 - Resolve the repository owner and name, item type, title, summary and context, requirements, acceptance criteria, dependencies, verification expectations, source evidence, requested labels, relationships, and initial ownership evidence.
@@ -47,4 +52,4 @@ Create one independently actionable GitHub issue. The GitHub provider record is 
 
 ## Result
 
-Return CREATED or EXISTING, the observed repository, canonical work-item identifier, issue number and URL, native state, lifecycle status, type, labels, assignees, relationships, source evidence, and next action. Return BLOCKED with the failed provider boundary and observed remote state when creation cannot finish safely.
+Return CREATED or EXISTING, Work Item ID, the observed repository, issue number and diagnostic URL, native state, lifecycle status, type, labels, assignees, relationships, source evidence, and next action. Return BLOCKED with the failed provider boundary and observed remote state when creation cannot finish safely.

@@ -76,9 +76,8 @@ Every provider maps its native record to the following logical fields. Providers
 
 | Field | Contract |
 | --- | --- |
-| work_item_id | Stable canonical provider identifier. It is never a branch, pull request, or merge request identifier. |
+| work_item_id | Opaque stable identifier owned and resolved by the selected provider. Generic callers pass it unchanged and never parse provider syntax. |
 | provider | Effective provider selector value that owns the durable record. |
-| provider_reference | Provider-accurate path, URL, or native reference used to retrieve the item. |
 | type | Feature, Defect, Analysis, Investigation, or another project-authorized work type. |
 | title | Durable, concise outcome name. |
 | summary | Desired outcome and relevant current context. |
@@ -136,77 +135,79 @@ Sensitive, private, proprietary, credential, or company-internal evidence must r
 
 Every file-provider creation, lifecycle update, move, archive, or justified atomic multi-record operation starts from a complete exact canonical repository-relative provider-path manifest. The manifest identifies every current source and created destination. Ordinary creation and update each use exactly one path. A move or archive uses exactly one current source and one created destination. A generic atomic operation uses at least two paths and a nonempty rationale, including when exactly two records participate. An unknown operation, invalid role shape, or missing, title-derived, inferred, wildcard, directory, partial, or mismatched manifest is invalid. Conversation titles remain display text and never provider identity or mutation scope.
 
-The transaction applies only to canonical provider records under backlog, plus the retained Future Idea source in create-file-work-item's promotion operation. Current work-item sources must exist with matching current Provider References and saved bytes. Created destinations must be absent, use exclusive-create, and declare their intended final Provider References. In-place records keep their reference. Move and archive sources become absent while their destinations contain the final destination reference. Immutable proof covers the full manifest even when pre-mutation roles differ.
+The transaction applies only to canonical provider records under backlog, plus the retained Future Idea source in create-file-work-item's promotion operation. The file provider resolves the opaque Work Item ID before constructing its internal exact-path manifest. Current sources must exist with matching Work Item IDs and saved bytes. Created destinations must be absent, use exclusive-create, and preserve the same Work Item ID for a move or archive. Immutable proof covers the full provider-owned manifest even when pre-mutation roles differ.
 
 The loaded resource-coordination procedure remains independent from file-provider behavior. Apply it before mutation and require its coordination evidence to agree with the exact manifest without copying its policy into the provider manager.
 
 Every mutating Git argument vector names all and only the authorized provider paths after --. Staging must not use git add ., git add -A, directories, wildcards, or inferred paths. Commit creation uses a path-limited form such as git commit --only with the exact manifest paths instead of reusing the implicit full index. Unrelated staged blobs, tracked dirty bytes, and untracked dirty bytes remain exact.
 
-The resulting immutable commit object must have a changed-path set, committed bytes, deletions, destination bytes, and final Provider References that match the full manifest and every path role. Any mismatch is BLOCKED or failed and never lifecycle success.
+The resulting immutable commit object must have a changed-path set, committed bytes, deletions, destination bytes, and Work Item IDs that match the full provider-owned manifest and every path role. Any mismatch is BLOCKED or failed and never lifecycle success.
 
 ## Future Ideas Are Not Work Items
 
 The file provider reserves backlog/future-ideas for explicitly requested lightweight thoughts that are not yet actionable, approved, scheduled, or recognized as work. Durable Future Ideas are file-provider-only. When another Persistence provider applies, capture is BLOCKED unless the user explicitly selects file as the one-item override for that idea; the steward creates neither a provider issue nor a shadow file.
 
-An idea contains a title, Synopsis, and Origin or Rationale. Notes and a free-text Revisit Trigger are optional. It has no lifecycle Status, Type, Owner, Dependencies, Acceptance Criteria, Verification, Provider, Provider Reference, or Completion field and does not enter ordinary provider inventory, runnable counts, dispatch, ownership, lifecycle transitions, or archives.
+An idea contains a title, Synopsis, and Origin or Rationale. Notes and a free-text Revisit Trigger are optional. It has no lifecycle Status, Type, Owner, Dependencies, Acceptance Criteria, Verification, Provider, Work Item ID, or Completion field and does not enter ordinary provider inventory, runnable counts, dispatch, ownership, lifecycle transitions, or archives.
 
 Only an explicit ideation or promotion operation reads or validates this folder. Idea and promotion target records must resolve to regular files inside their canonical file-provider authority. A symlink or resolved path that escapes the canonical root is rejected without reading external bytes.
 
-Deliberate promotion retains the idea, adds Promoted To with the canonical work-item reference, and creates one complete work item in an active, Holding, or User Action Required destination. The promoted item records file as Provider, its exact canonical path as Provider Reference, exactly direct-main, feature-branch, or UNSET as Completion, and the retained idea path as an exact Source Evidence entry. Holding accepts the underlying dispatchable Type or the Holding Type. User Action Required retains its underlying dispatchable Type.
+Deliberate promotion retains the idea, adds Promoted To with the new Work Item ID, and creates one complete work item in an active, Holding, or User Action Required destination. The promoted item records file as Provider, its immutable filename-stem Work Item ID, exactly direct-main, feature-branch, or UNSET as Completion, and the retained idea path as an exact Source Evidence entry. Holding accepts the underlying dispatchable Type or the Holding Type. User Action Required retains its underlying dispatchable Type.
 
-create-file-work-item owns one exact-path promotion transaction under the file-provider contract above. Its durable two-path manifest identifies the retained Future Idea as the current source, the promoted item as the exclusive destination, and the reciprocal-record atomic rationale. The loaded resource coordination applies to both exact promotion paths. The immutable commit object must contain exactly the retained source with Promoted To and the destination with reciprocal Source Evidence and its final Provider Reference. manage-file-work-items routes promotion to this owner and does not define a second procedure.
+create-file-work-item owns one exact-path promotion transaction under the file-provider contract above. Its durable two-path manifest identifies the retained Future Idea as the current source, the promoted item as the exclusive destination, and the reciprocal-record atomic rationale. The loaded resource coordination applies to both exact promotion paths. The immutable commit object must contain exactly the retained source with Promoted To, the destination with reciprocal Source Evidence, and the destination's immutable Work Item ID. manage-file-work-items routes promotion to this owner and does not define a second procedure.
 
-## Provider Authority And References
+## Provider-Owned Work Item IDs
+
+Generic create, inventory, read, transition, reconcile, complete, fail, and report operations accept one opaque Work Item ID. The selected provider owns its representation, uniqueness scope, lookup, storage, concurrency protection, mutation, publication, collision handling, terminal organization, and diagnostic location reporting. Generic lifecycle and Commit logic must not parse paths, URLs, issue numbers, or keys from that ID.
 
 ### File
 
 - Authority exists exclusively under backlog in the primary worktree whose branch is main.
-- The canonical identifier is the repository-relative backlog path. The stable filename slug may be used as a display shorthand only when it is unambiguous.
+- The Work Item ID is the immutable lowercase filename stem. It is globally unique across active, non-dispatchable, completed, and failed work-item folders. Existing records without an explicit field resolve to their filename stem during migration.
 - Unique atomic creation uses no claim. Existing-item and archive claim behavior remains owned by Agent Claim. Every provider mutation still carries its complete exact path manifest and remains a separate verified commit.
 - Isolated worktrees may read backlog state but do not author or archive the canonical backlog record.
-- A completed item moves to the matching type folder under backlog/completed-backlog. The destination path becomes the terminal provider reference.
+- A completed item moves to the matching type folder under backlog/completed-backlog. Its Work Item ID remains unchanged; the destination path is diagnostic provider location evidence only.
 
-Example provider reference: backlog/feature-backlog/retry-queued-jobs.md.
+Example Work Item ID: retry-queued-jobs.
 
 ### GitHub
 
 - The configured GitHub issue interface owns creation, search, assignment, labels, project fields, comments, close, reopen, and retrieval.
-- The canonical identifier is repository identity plus issue number. The canonical reference is the issue URL.
+- The provider-owned Work Item ID is repository identity plus issue number. The issue URL is diagnostic provider location evidence.
 - A pull request is a delivery reference. It is never the work-item identifier unless a separate project contract explicitly makes pull requests the provider, which this selector does not.
 - No shadow file is created under backlog. An explicitly requested export is a non-authoritative export and must say so.
 
-Example provider identifier: organization/repository issue 42. Example reference shape: https://github.com/organization/repository/issues/42.
+Example Work Item ID: organization/repository issue 42.
 
 ### GitLab
 
 - The configured GitLab issue interface owns creation, search, assignment, labels, milestones or project fields, notes, close, reopen, and retrieval.
-- The canonical identifier is GitLab instance plus namespace, project, and issue internal identifier. The canonical reference is the issue URL.
+- The provider-owned Work Item ID is GitLab instance plus namespace, project, and issue internal identifier. The issue URL is diagnostic provider location evidence.
 - A merge request is a delivery reference and retains merge-request terminology. It is not renamed to pull request and is not the work-item identifier.
 - No shadow file is created under backlog. An explicitly requested export is a non-authoritative export and must say so.
 
-Example provider identifier: gitlab.example/namespace/project issue 42. Example reference shape: https://gitlab.example/namespace/project/-/issues/42.
+Example Work Item ID: gitlab.example/namespace/project issue 42.
 
 ### Azure DevOps
 
-- The canonical identifier shape is organization, project, and Azure DevOps work-item numeric identifier. The reference shape is the configured organization and project work-item URL.
+- The provider-owned Work Item ID is organization, project, and Azure DevOps work-item numeric identifier. Its URL is diagnostic provider location evidence.
 - The placeholder create and manage skills report BLOCKED with the selected provider, attempted operation, missing implementation capability, and next action.
 - The placeholder performs no Azure DevOps mutation, creates no local queue item, and does not fall back to GitHub, GitLab, file, or none.
 
-Example provider identifier: organization/project work item 42. Example reference shape: https://dev.azure.com/organization/project/_workitems/edit/42.
+Example Work Item ID: organization/project work item 42.
 
 ### Jira
 
-- The canonical identifier is Jira site plus issue key. The project key and numeric sequence retain Jira issue terminology. The reference shape is the configured Jira browse URL.
+- The provider-owned Work Item ID is Jira site plus issue key. The project key and numeric sequence retain Jira issue terminology. The browse URL is diagnostic provider location evidence.
 - The placeholder create and manage skills report BLOCKED with the selected provider, attempted operation, missing implementation capability, and next action.
 - The placeholder performs no Jira mutation, creates no local queue item, and does not fall back to GitHub, GitLab, file, or none.
 
-Example provider identifier: jira.example issue PROJ-42. Example reference shape: https://jira.example/browse/PROJ-42.
+Example Work Item ID: jira.example issue PROJ-42.
 
 ### None and UNSET
 
 Provider none is an explicit decision that durable provider lifecycle is out of scope. It permits an interactive work item normalized in the active task, but it cannot satisfy a request to create, inventory, recover, or close a durable work item.
 
-For provider none, the active task result is the complete non-durable record. It carries the normalized interactive work-item fields, completion disposition, source and integration commits, review and check evidence, main observation, clean claim state, lifecycle status COMPLETED, and completed-at time. Provider reference, provider-native state, provider ownership mutation, provider terminal update, and provider manager are not applicable. The completion skill performs this task-local finalization after its delivery proof and does not dispatch a nonexistent provider skill.
+For provider none, the active task result is the complete non-durable record. It carries the normalized interactive work-item fields, completion disposition, source and integration commits, review and check evidence, main observation, clean claim state, lifecycle status COMPLETED, and completed-at time. Work Item ID, provider-native state, provider ownership mutation, provider terminal update, and provider manager are not applicable. The completion skill performs this task-local finalization after its delivery proof and does not dispatch a nonexistent provider skill.
 
 Provider UNSET preserves the undecided state. At the first operation that requires provider persistence, the pertinent agent asks the user to choose file, github, gitlab, azure-devops, jira, or none. The answer is recorded as project intent before provider mutation. Silence and environmental evidence never resolve UNSET.
 

@@ -63,7 +63,7 @@ When an active folder contains a subfolder with index.md, treat it as one relate
 
 - Keep the index current as the series map.
 - Preserve links between the index and every child.
-- Use child provider references for dependencies and execution state.
+- Use child Work Item IDs for dependencies and execution state.
 - Archive each child according to its outcome.
 - Derive the series as active while any required child remains Ready, Starting, Running, or
   Awaiting Review; stalled when every required nonterminal child is Stalled; blocked when
@@ -106,9 +106,9 @@ Missing result evidence, missing logs, a stopped process, a commit, branch publi
 When asked for status:
 
 - Scan active folders, User Action Required, Holding, completed archives, failed archives, and applicable runner state.
-- Classify each Markdown item by canonical path, slug, status, type, provider, dependencies, series, owner, phase, and archive location.
+- Classify each Markdown item by opaque Work Item ID, current diagnostic path, status, type, provider, dependency Work Item IDs, series, owner, phase, and archive location.
 - Treat backlog/user-action-required/README.md and series index.md files as guidance or coordination artifacts unless explicitly runnable.
-- Validate required user-action fields and canonical provider fields.
+- Validate required user-action fields, Work Item ID uniqueness, and provider fields.
 - Report invalid, unreadable, duplicated, shadow, or provider-mismatched items rather than silently skipping them.
 - Separate backlog status from unrelated workspace status.
 - Report Status: Proposed as invalid migration debt.
@@ -123,7 +123,8 @@ If closed items remain in active folders, explicit status is the open or closed 
 - Read the exact current item and verify that its current state permits the requested
   caller-authorized transition.
 - Require the caller's lifecycle decision, transition evidence, owner, next action, and
-  provider reference. Reject a request that asks this file manager to infer runtime state,
+  opaque Work Item ID. Resolve that ID across active and archive folders before mutation.
+  Reject a request that asks this file manager to infer runtime state,
   active eligibility, capacity, or a conversation disposition.
 - For Ready -> Starting, record the caller-supplied parent coordination identity,
   reservation, normalized objective, dispatch time, and Starting handoff evidence atomically.
@@ -162,7 +163,7 @@ Do not move an independently identified defect, enhancement, or idea into a type
 
 Record durable evidence appropriate to every transition:
 
-- READY: source evidence, requirements, acceptance criteria, dependencies, verification expectations, provider_reference, and completion selection.
+- READY: source evidence, requirements, acceptance criteria, dependency Work Item IDs, verification expectations, Work Item ID, and completion selection.
 - STARTING: caller-supplied parent coordination identity, dispatch reservation, normalized objective, dispatch time, intended root Dev Orchestrator Role, launch result, last contact, and next reconciliation time.
 - RUNNING: caller-supplied owner, canonical conversation and Task identities when applicable, branch or worktree, phase, started-at evidence, and accepted execution evidence.
 - STALLED: last known productive evidence, phase estimate and hard stop when present,
@@ -314,7 +315,7 @@ Archive movement is explicit and serialized:
   backlog/failed-backlog type folder. Stalled is nonterminal and cannot be archived directly;
   first record Failed or Abandoned with the applicable terminal evidence.
 
-Record the destination as the terminal provider_reference. Preserve review, checks, source evidence, delivery evidence, recovery notes, and failure reasons. A conflict, missing proof, or terminal-update failure prohibits lifecycle COMPLETED.
+Preserve the same Work Item ID at the terminal destination and report that destination only as provider-owned diagnostic location evidence. Preserve review, checks, source evidence, delivery evidence, recovery notes, and failure reasons. A conflict, missing proof, or terminal-update failure prohibits lifecycle COMPLETED.
 
 ## Recover Work Item
 
@@ -338,7 +339,7 @@ Record the destination as the terminal provider_reference. Preserve review, chec
 
 For each considered work item, report dispatch eligibility, any unmet hard blocker, any coordination-only overlap constraint, and any deferred edit, shared-resource, or integration event as distinct facts.
 
-Return the provider file, canonical active or archive path, lifecycle counts, separate Stalled inventory with diagnostic owners and next investigation actions, User Action Required questions, next runnable items, dependencies, blockers, owner, canonical task, delivery evidence, review and check results, main observation, archive evidence, commit references, invalid or duplicate records, and the next safe action. For an explicit Future Ideas operation, also return the idea paths, validation findings, revisit triggers, and promotion links without adding them to work-item counts.
+Return provider file, each opaque Work Item ID with its current diagnostic active or archive path, lifecycle counts, separate Stalled inventory with diagnostic owners and next investigation actions, User Action Required questions, next runnable items, dependency Work Item IDs, blockers, owner, canonical task, delivery evidence, review and check results, main observation, archive evidence, commit references, invalid or duplicate records, and the next safe action. For an explicit Future Ideas operation, also return the idea paths, validation findings, revisit triggers, and promotion links without adding them to work-item counts.
 
 Keep the report grounded in current files and state, not prior conversation memory.
 

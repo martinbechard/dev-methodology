@@ -11,7 +11,7 @@ Type: TODO Defect, Feature, Analysis, Investigation, or Holding
 
 Provider: file
 
-Provider Reference: TODO canonical repository-relative backlog path
+Work Item ID: TODO immutable filename stem without .md
 
 Completion: TODO direct-main, feature-branch, or UNSET
 
@@ -51,9 +51,9 @@ TODO: Record the request, finding, or decision that authorizes creation. Include
 
 ## Dependencies
 
-> This section prevents work from starting or closing without accounting for prerequisite items. Coordinators and implementers use it during dispatch and status review to list canonical provider references or explicitly state that none exist.
+> This section prevents work from starting or closing without accounting for prerequisite items. Coordinators and implementers use it during dispatch and status review to list opaque Work Item IDs or explicitly state that none exist.
 
-TODO: List canonical provider references, or state None.
+TODO: List Work Item IDs, or state None.
 
 ## Verification
 

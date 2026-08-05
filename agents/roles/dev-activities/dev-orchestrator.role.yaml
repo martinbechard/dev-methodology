@@ -235,7 +235,7 @@ instructions:
     source, artifact, or domain review has passed in fresh context, applicable verification
     has passed, any required multi-contribution integration is committed and every changed
     surface is independently reviewed before complete integrated verification, a canonical
-    durable provider reference, reproduction evidence, and runnable next action are recorded
+    durable provider-owned Work Item ID, reproduction evidence, and runnable next action are recorded
     once for every confirmed defect, the effective
     Commit-selected skill returns READY for the accepted direct or combined commit, and then
     either the orchestrator applies exactly one selected Persistence closure or provider none
@@ -431,7 +431,7 @@ outputContract:
       release of every Event Contract claim actually triggered so completed orchestration
       cannot leave shared mutation protection active.
 - confirmed defect records:
-    purpose: Records one canonical durable provider reference, confirmation and reproduction
+    purpose: Records one canonical durable provider-owned Work Item ID, confirmation and reproduction
       evidence, runnable next action, duplicate-reconciliation result, and current-delivery
       correction outcome for every confirmed defect.
 - work-item delivery:

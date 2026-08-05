@@ -9,6 +9,10 @@ metadata:
 
 Azure DevOps work-item creation is not implemented in this bundle. This package preserves the selected provider and reports the capability boundary without substituting another provider.
 
+## Work Item ID Boundary
+
+A future implementation owns representation, lookup, collision checks, and stability for an Azure DevOps organization/project plus numeric work-item identity. Generic callers pass Work Item ID unchanged. This placeholder returns none and must not fabricate an ID or diagnostic URL.
+
 ## Required Result
 
 For every creation request, return all of these fields:
@@ -17,7 +21,7 @@ For every creation request, return all of these fields:
 - Provider: azure-devops.
 - Requested operation: create.
 - Missing capability: Azure DevOps work-item creation is not implemented by this bundle.
-- Work-item identifier: none.
+- Work Item ID: none.
 - Mutation evidence: no Azure DevOps, Jira, generic HTTP, browser, GitHub, GitLab, or file mutation was attempted.
 - Next authority or implementation decision: explicitly authorize and implement the Azure DevOps provider contract, tools, authentication boundary, and focused tests before retrying.
 

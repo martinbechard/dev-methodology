@@ -248,7 +248,7 @@ class PathLimitedBacklogGitTests(unittest.TestCase):
         self._assert_immutable_commit(commit_oid, {path: content})
         self._assert_unrelated_state()
 
-    def test_source_destination_move_preserves_state_and_final_reference(self) -> None:
+    def test_source_destination_move_preserves_state_and_work_item_id(self) -> None:
         self._seed_unrelated_state()
         source = "backlog/feature-backlog/move.md"
         destination = "backlog/completed-backlog/features/move.md"
@@ -268,7 +268,7 @@ class PathLimitedBacklogGitTests(unittest.TestCase):
             commit_oid, {source: None, destination: content}
         )
         self.assertIn(
-            f"Provider Reference: {destination}".encode(),
+            b"Work Item ID: move",
             self._git_bytes("show", f"{commit_oid}:{destination}"),
         )
         self._assert_unrelated_state()
@@ -313,7 +313,7 @@ class PathLimitedBacklogGitTests(unittest.TestCase):
             else:
                 self.assertEqual(0, observed.returncode)
                 self.assertEqual(content, observed.stdout)
-                self.assertEqual([path], self._provider_references(content))
+                self.assertEqual([Path(path).stem], self._work_item_ids(content))
 
     def _seed_unrelated_state(self) -> None:
         self._write("README.md", b"staged\n")
@@ -334,11 +334,11 @@ class PathLimitedBacklogGitTests(unittest.TestCase):
         self.assertEqual("?? scratch.txt", self._status_line("scratch.txt"))
 
     @staticmethod
-    def _provider_references(content: bytes) -> list[str]:
+    def _work_item_ids(content: bytes) -> list[str]:
         return [
-            line.removeprefix("Provider Reference: ").strip()
+            line.removeprefix("Work Item ID: ").strip()
             for line in content.decode().splitlines()
-            if line.startswith("Provider Reference: ")
+            if line.startswith("Work Item ID: ")
         ]
 
     @staticmethod
@@ -348,7 +348,7 @@ class PathLimitedBacklogGitTests(unittest.TestCase):
             f"Status: {status}\n\n"
             "Type: Feature\n\n"
             "Provider: file\n\n"
-            f"Provider Reference: {reference}\n\n"
+            f"Work Item ID: {Path(reference).stem}\n\n"
             "Completion: direct-main\n\n"
             "## Summary\n\nFixture.\n\n"
             "## Context\n\nFixture.\n\n"

@@ -68,7 +68,7 @@ instructions:
     deciding whether to reserve, reconcile, or dispatch an item. Never infer active
     eligibility from provider state alone or create placeholder or wait-only Tasks.
   - Use exactly one user-visible work-item Thread per work item. Reconcile identity by parent
-    Thread id, canonical provider identifier and reference, normalized objective, creation time,
+    Thread id, opaque provider-owned Work Item ID, normalized objective, creation time,
     canonical root Agent Task id when applicable, and status rather than title.
   - Require the Dev Orchestrator to retain each item through the effective Commit-selected skill
     until it returns READY or a truthful non-terminal result. Do not equate publication,
@@ -109,7 +109,7 @@ instructions:
     resource coordination, worktrees, active and archived Threads, and unread handoffs. Resume
     valid Starting or Running ownership
     before dispatching new work.
-  - When a successful work-item creation message supplies a provider reference, reread current
+  - When a successful work-item creation message supplies a Work Item ID, reread current
     provider inventory before any reservation or dispatch decision. Treat repeated messages as
     reconciliation prompts, not lifecycle authority. A message never creates a delivery task.
   - For durable providers, own the dispatch trigger and directly apply the selected manager

@@ -402,7 +402,7 @@ verification. When explicitly related items require a broader check, the Coordin
 one combined regression after every selected item is present on main and records the tested
 commit.
 
-After a new file-backed work item is committed, its creator sends the provider reference to the existing Coordinator task. The message only prompts a fresh inventory read; it does not reserve capacity, change lifecycle state, create a delivery task, or begin implementation. If no Coordinator task is available, the committed item remains discoverable in the backlog.
+After a new file-backed work item is committed, its creator sends the opaque Work Item ID to the existing Coordinator task. The message only prompts a fresh inventory read; it does not reserve capacity, change lifecycle state, create a delivery task, or begin implementation. If no Coordinator task is available, the committed item remains discoverable in the backlog.
 
 When the user or Watchdog declares a backlog crisis, the existing Coordinator pauses normal dispatch and claim operations and works through the crisis set one item at a time. Each item must reach Completed, Abandoned, or Superseded before the next item begins. The Coordinator resumes normal dispatch only after every crisis item is terminal, no Blocked item remains, all crisis changes are committed, and required focused verification is recorded.
 

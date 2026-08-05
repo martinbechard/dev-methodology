@@ -9,6 +9,11 @@ metadata:
 
 Manage GitHub issues as authoritative work items while keeping provider lifecycle separate from delivery completion.
 
+## Work Item ID
+
+- Accept the GitHub Work Item ID as one opaque input. This provider resolves it to the observed repository identity and issue number, checks collisions through GitHub, and reports the URL only as diagnostic location evidence.
+- Preserve the same Work Item ID across open, closed, reopened, transferred, and terminal lifecycle states. Generic callers must not parse its repository or number components.
+
 ## Inputs And Authority
 
 - Resolve the repository owner and name, issue number or selection criteria, requested operation, expected current state, owner, dependencies, lifecycle evidence, delivery references, and fields authorized to change.
@@ -56,4 +61,4 @@ Manage GitHub issues as authoritative work items while keeping provider lifecycl
 
 ## Report Work Items
 
-Return the observed repository, canonical work-item identifier, issue number and URL, native state, lifecycle status, ownership, dependencies, relationships, delivery and terminal evidence, fields changed, verification readback, and next runnable action. Return BLOCKED with the failed provider boundary and observed remote state when management cannot finish safely.
+Return Work Item ID, the observed repository, issue number and diagnostic URL, native state, lifecycle status, ownership, dependencies, relationships, delivery and terminal evidence, fields changed, verification readback, and next runnable action. Return BLOCKED with the failed provider boundary and observed remote state when management cannot finish safely.

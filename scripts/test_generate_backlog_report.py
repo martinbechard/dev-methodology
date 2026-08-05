@@ -66,6 +66,7 @@ class BacklogReportTest(unittest.TestCase):
         owner: str = "",
         diagnostic_owner: str = "",
         next_investigation_action: str = "",
+        work_item_id: str | None = None,
         source_evidence: str = "",
         stalled_evidence: dict[str, str] | None = None,
         extra: str = "",
@@ -108,7 +109,7 @@ Type: {item_type}
 
 Provider: file
 
-Provider Reference: {relative}
+Work Item ID: {work_item_id or path.stem}
 
 Completion: {completion}
 {lifecycle_fields}
@@ -437,6 +438,32 @@ The source path appears here instead: {misplaced_source}
 
         self.assertIn(
             f"Promotion target is not a complete work item: {target}.",
+            rendered,
+        )
+
+    def test_promotion_resolves_the_provider_owned_work_item_id(self) -> None:
+        """Future Ideas link to an opaque item ID rather than a current path."""
+        source = "backlog/future-ideas/provider-owned-id.md"
+        target = "backlog/feature-backlog/provider-owned-id.md"
+        self.write_idea(
+            source,
+            title="Provider Owned ID",
+            promoted_to="provider-owned-id",
+        )
+        self.write_item(
+            target,
+            title="Provider Owned ID Work",
+            status="Ready",
+            item_type="Feature",
+            extra=f"## Source Evidence\n\n- {source}\n",
+        )
+
+        rendered = self.generate(include_future_ideas=True)
+
+        self.assertNotIn("Invalid Promoted To Work Item ID", rendered)
+        self.assertNotIn("Promotion target is not a complete work item", rendered)
+        self.assertIn(
+            "<strong>Promoted To:</strong> provider-owned-id",
             rendered,
         )
 
@@ -1088,6 +1115,75 @@ Do not continue without the answer.
                 )
                 self.assertNotIn(title, runnable)
         self.assertNotIn("base (satisfied)", rendered)
+
+    def test_legacy_file_item_uses_filename_stem_as_work_item_id(self) -> None:
+        """Existing records remain discoverable without a migration-only field edit."""
+        relative = "backlog/feature-backlog/legacy-item.md"
+        self.write_item(
+            relative,
+            title="Legacy Item",
+            status="Ready",
+            item_type="Feature",
+        )
+        path = self.root / relative
+        path.write_text(
+            path.read_text(encoding="utf-8").replace(
+                "Work Item ID: legacy-item\n\n",
+                "",
+            ),
+            encoding="utf-8",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn(
+            "<strong>Work Item ID:</strong> <code>legacy-item</code>",
+            rendered,
+        )
+        self.assertNotIn("Work Item ID does not match", rendered)
+
+    def test_archive_move_preserves_work_item_id_and_reports_current_location(self) -> None:
+        """The file identity is stable while its diagnostic path changes."""
+        relative = "backlog/completed-backlog/features/stable-item.md"
+        self.write_item(
+            relative,
+            title="Stable Item",
+            status="Completed",
+            item_type="Feature",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn(
+            "<strong>Work Item ID:</strong> <code>stable-item</code>",
+            rendered,
+        )
+        self.assertIn(
+            "<strong>Source:</strong> <code>"
+            "backlog/completed-backlog/features/stable-item.md</code>",
+            rendered,
+        )
+
+    def test_duplicate_work_item_id_across_active_and_archive_is_reported(self) -> None:
+        """File-provider identity is unique across active and terminal storage."""
+        self.write_item(
+            "backlog/feature-backlog/duplicate.md",
+            title="Active Duplicate",
+            status="Ready",
+            item_type="Feature",
+        )
+        self.write_item(
+            "backlog/completed-backlog/features/duplicate.md",
+            title="Archived Duplicate",
+            status="Completed",
+            item_type="Feature",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("Duplicate Work Item ID duplicate:", rendered)
+        self.assertIn("backlog/feature-backlog/duplicate.md", rendered)
+        self.assertIn("backlog/completed-backlog/features/duplicate.md", rendered)
 
     def test_lifecycle_and_metadata_anomalies_are_visible(self) -> None:
         """Invalid states and archive or dependency drift remain visible without source mutation."""

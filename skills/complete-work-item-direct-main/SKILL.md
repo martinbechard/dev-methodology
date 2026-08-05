@@ -13,7 +13,7 @@ Complete delivery only after the accepted behavior is verified on the configured
 
 Resolve these inputs before integration:
 
-- Canonical work-item identifier, provider selector, and provider reference when one exists.
+- Opaque Work Item ID and provider selector.
 - Effective completion selector and explicit configured main branch.
 - Accepted source commit, source branch, worktree, changed paths, and clean-state evidence.
 - Independent review result and the checks accepted for the source commit.
@@ -27,7 +27,7 @@ Return BLOCKED when the completion selector is not direct-main, required evidenc
 
 This skill owns Git delivery and main observation. It also owns terminal handoff preparation. It does not create, inventory, assign, close, move, or otherwise mutate provider records for file, GitHub, GitLab, Azure DevOps, or Jira providers. It must not dispatch a provider manager, Dev Backlog Steward, or any Persistence mutation.
 
-- Preserve the canonical work-item identifier independently of the delivery branch and commit identifiers.
+- Preserve the opaque Work Item ID independently of provider location, delivery branch, and commit identifiers. Do not parse provider-specific ID syntax.
 - After successful delivery, return the exact terminal evidence to the caller for the owning orchestrator to route through its Persistence phase.
 - For provider none, record lifecycle COMPLETED in the task-local result before returning READY, together with the complete terminal evidence, because no provider manager exists.
 - A provider-backed Persistence recording failure happens after this skill returns. It does not change Commit READY into BLOCKED or erase the delivery evidence; the provider-backed item remains nonterminal until the owning orchestrator reconciles Persistence.
@@ -111,7 +111,7 @@ Use graph reachability for ancestral delivery, such as Git's merge-base ancestor
 
 When a provider is selected, prepare one terminal update containing:
 
-- work-item identifier and provider reference;
+- Work Item ID and provider selector;
 - completion selector direct-main;
 - accepted source commit and integration commit;
 - observed main branch and tip;
@@ -128,7 +128,7 @@ Return the prepared terminal handoff to the caller after integration is complete
 
 Return READY only when the complete direct-main delivery proof exists. Return:
 
-- canonical work-item and provider references;
+- Work Item ID and provider selector;
 - source and integration commits;
 - configured main branch and observed main tip;
 - exact reachability or integration-mapping evidence;

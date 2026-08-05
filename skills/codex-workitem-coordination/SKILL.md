@@ -282,7 +282,7 @@ List or validate backlog/future-ideas only when the parent request explicitly in
 
 ## New Work-Item Notification
 
-After a provider creates a new work item successfully, it may send the provider reference to the existing Coordinator task through the runtime's normal task-message feature.
+After a provider creates a new work item successfully, it may send the opaque Work Item ID to the existing Coordinator task through the runtime's normal task-message feature.
 
 On receipt, reread current provider inventory before deciding whether to reserve or dispatch anything. Reconcile dependencies, capacity, lifecycle state, and existing canonical tasks. The message is not lifecycle authority and does not itself reserve capacity, create a delivery task, or start implementation.
 
@@ -295,7 +295,7 @@ Treat a conversation-creation error, timeout, disconnect, or ambiguous response 
 Reconcile active and archived conversations using all available identity evidence:
 
 - source parent conversation identifier
-- canonical provider identity and provider reference when one exists
+- provider selector and opaque Work Item ID when one exists
 - normalized objective
 - creation time
 - conversation status

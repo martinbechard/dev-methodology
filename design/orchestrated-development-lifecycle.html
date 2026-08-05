@@ -702,7 +702,7 @@
 ├── completed-backlog/
 └── failed-backlog/</pre>
       <div class="anatomy" aria-label="Anatomy of a work item">
-        <div><b>01</b><strong>Identity</strong><p>Title, type, provider reference, and completion path.</p></div>
+        <div><b>01</b><strong>Identity</strong><p>Title, type, opaque Work Item ID, and completion path.</p></div>
         <div><b>02</b><strong>Intent</strong><p>Summary, context, source evidence, requirements, and acceptance criteria.</p></div>
         <div><b>03</b><strong>Readiness</strong><p>Status, dependencies, open questions, approval evidence, and verification plan.</p></div>
         <div><b>04</b><strong>Execution</strong><p>Current owner, branch, worktree, phase, accepted candidate, waits, and blockers.</p></div>
@@ -710,7 +710,7 @@
       </div>
     </div>
     <p class="source-note">The Work item is the only durable provider record. File-provider creation and lifecycle procedures are defined by <a href="../skills/create-file-work-item/SKILL.md">Create File Work Item</a> and <a href="../skills/manage-file-work-items/SKILL.md">Manage File Work Items</a>.</p>
-    <aside class="thread-context"><h3>New Work-Item Notification</h3><p>After a new work-item file is committed, its creator sends the provider reference to the existing Coordinator task. The message prompts a fresh inventory read. It does not reserve capacity, change lifecycle state, create a delivery task, or start implementation. If no Coordinator task is available, the committed item remains in the backlog for the next inventory read.</p></aside>
+    <aside class="thread-context"><h3>New Work-Item Notification</h3><p>After a new work item is persisted, its creator sends the opaque provider-owned Work Item ID to the existing Coordinator task. The message prompts a fresh inventory read. It does not reserve capacity, change lifecycle state, create a delivery task, or start implementation. If no Coordinator task is available, the committed item remains in provider inventory for the next read.</p></aside>
   </section>
 
   <section class="section" id="agents" aria-labelledby="agents-title">

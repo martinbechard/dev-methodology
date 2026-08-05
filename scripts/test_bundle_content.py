@@ -1299,7 +1299,7 @@ class BundleContentTests(unittest.TestCase):
             create_skill,
         )
         self.assertIn(
-            "send its provider reference to the existing Dev Backlog Coordinator task",
+            "send its Work Item ID to the existing Dev Backlog Coordinator task",
             create_skill,
         )
         self.assertIn(
@@ -1860,7 +1860,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(f"Provider: {provider}.", skill_text)
                 self.assertIn(f"Requested operation: {operation}", skill_text)
                 self.assertIn("Missing capability:", skill_text)
-                self.assertIn("Work-item identifier: none.", skill_text)
+                self.assertIn("Work Item ID: none.", skill_text)
                 self.assertIn("Mutation evidence:", skill_text)
                 self.assertIn("Next authority or implementation decision:", skill_text)
                 self.assertIn("Do not replace", skill_text)
@@ -1915,6 +1915,51 @@ class BundleContentTests(unittest.TestCase):
         deterministic_checks = placeholder_case["judgePlan"]["deterministicChecks"]
         self.assertIn("no-forbidden-mutation", deterministic_checks)
         self.assertIn("output-contract-presence", deterministic_checks)
+
+    def test_configured_providers_own_work_item_id_resolution(self) -> None:
+        """Generic callers pass IDs unchanged while each provider owns their meaning."""
+        expected = {
+            "create-github-work-item": (
+                "observed GitHub repository identity plus issue number",
+                "issue URL as diagnostic location evidence",
+            ),
+            "manage-github-work-items": (
+                "Accept the GitHub Work Item ID as one opaque input",
+                "Generic callers must not parse",
+            ),
+            "create-gitlab-work-item": (
+                "observed GitLab instance, namespace, project, and issue IID",
+                "issue URL as diagnostic location evidence",
+            ),
+            "manage-gitlab-work-items": (
+                "Accept the GitLab Work Item ID as one opaque input",
+                "Generic callers must not parse",
+            ),
+            "create-azure-devops-work-item": (
+                "Work Item ID Boundary",
+                "must not fabricate an ID",
+            ),
+            "manage-azure-devops-work-items": (
+                "Work Item ID Boundary",
+                "must not parse or fabricate one",
+            ),
+            "create-jira-work-item": (
+                "Work Item ID Boundary",
+                "must not fabricate an ID",
+            ),
+            "manage-jira-work-items": (
+                "Work Item ID Boundary",
+                "must not parse or fabricate one",
+            ),
+        }
+
+        for skill_name, phrases in expected.items():
+            with self.subTest(skill_name=skill_name):
+                skill_text = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                for phrase in phrases:
+                    self.assertIn(phrase, skill_text)
 
     def test_work_item_management_providers_share_operations_without_losing_native_behavior(
         self,
@@ -2248,7 +2293,7 @@ class BundleContentTests(unittest.TestCase):
             "The pull request or merge request reports a merged state",
             "reachable from the configured base branch in Git",
             "A closed-unmerged, abandoned, replaced, or superseded publication cannot return READY.",
-            "canonical work-item identifier and provider reference",
+            "Work Item ID and provider selector",
             "the provider lifecycle update this evidence authorizes",
         ):
             with self.subTest(skill_phrase=phrase):
@@ -5806,7 +5851,7 @@ class BundleContentTests(unittest.TestCase):
             "Status: TODO Ready, User Action Required, or Holding",
             "Type: TODO Defect, Feature, Analysis, Investigation, or Holding",
             "Provider: file",
-            "Provider Reference: TODO canonical repository-relative backlog path",
+            "Work Item ID: TODO immutable filename stem without .md",
             "Completion: TODO direct-main, feature-branch, or UNSET",
             "## Summary",
             "## Context",
@@ -5823,7 +5868,7 @@ class BundleContentTests(unittest.TestCase):
         for optional_comment in (
             "<!-- OPTIONAL: Series child metadata",
             "<!-- OPTIONAL: User Action Required",
-            "<!-- OPTIONAL: Governed definition pre-answer evidence",
+            "<!-- OPTIONAL: Governed Definition Approval",
             "<!-- OPTIONAL: Notes",
         ):
             self.assertIn(optional_comment, template_text)
