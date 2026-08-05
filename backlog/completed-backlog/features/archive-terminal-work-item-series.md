@@ -1,12 +1,12 @@
 # Archive Terminal Work-Item Series
 
-Status: Blocked
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/archive-terminal-work-item-series.md
+Provider Reference: backlog/completed-backlog/features/archive-terminal-work-item-series.md
 
 Completion: direct-main
 
@@ -144,6 +144,46 @@ Non-Blocking Baseline: Five pre-existing missing-backlink diagnostics are out of
 Permitted Resumption Transition: Blocked -> Ready only after the unblock condition is satisfied and the Coordinator records the recovery transaction.
 
 ## Notes
+
+## Completion Evidence
+
+Completed At: 2026-08-05T21:15:34Z
+
+Accepted Source Candidate: 6e7755614aaa71b6fb1cd9097ac20b9e36b26bd5
+
+Current-Main Reconciliation: `360ad973`, `09070eb0`, and `7bbbaa75` preserve the accepted
+candidate on the current dependency-aware lifecycle baseline. Focused correction `fd18da91`
+rejects URI scheme/netloc, whitespace, query, and fragment targets before local Path
+construction and proves the target-state helper is never called for those links.
+
+Delivery Commit: fd18da91
+
+Delivered Behavior: The file provider now archives terminal series indexes under the matching
+completed or failed typed archive, preserves stable series identity and child terminal evidence,
+updates reciprocal index and child links in one recoverable series transaction, and keeps mixed
+or nonterminal series active.
+
+Approval Reconciliation: The historical standalone approval-record/precheck requirement in this
+record was superseded on current main by `828574f1`, which removed standalone definition approval
+records and the repository-wide precheck from the single-purpose renderer. The user's exact
+work-item request remains the authority for `skills/manage-file-work-items/SKILL.md`; the obsolete
+standalone record was not reintroduced.
+
+Verification:
+
+- `skills/manage-file-work-items/SKILL.md` passed the supported `skill_validate` operation on
+  delivered main.
+- Sixty backlog-report tests passed, including completed, failed, mixed, broken, escaped,
+  unreadable, reciprocal-link, and nonordinary no-target-state cases.
+- The focused manage-file-work-items bundle contract and current dependency-lifecycle contract
+  passed.
+- The supported skill-definition mirror is current, Python compilation passed, the real report
+  generated successfully, and `git diff --check` passed.
+
+Review: Crisis-mode root review accepted the preserved methodology content and verified that the
+new URI regression closes the only final-review finding without adding a framework or expanding
+governed scope. The five pre-existing archived-series missing-backlink diagnostics remain
+separate baseline evidence.
 
 ## Missed-Settlement Reconciliation
 
