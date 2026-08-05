@@ -1,16 +1,18 @@
 # Align Documentation Methodology Skills
 
-Status: Blocked
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/apply-object-oriented-skill-group-design/align-documentation-methodology-skills.md
+Provider Reference: backlog/completed-backlog/features/align-documentation-methodology-skills.md
 
 Completion: direct-main
 
 Series: backlog/feature-backlog/apply-object-oriented-skill-group-design/index.md
+
+Owner: Unowned
 
 ## Summary
 
@@ -55,7 +57,21 @@ The user directed in the active Codex task on 2026-08-04: "create separate work 
 
 ## Open Questions
 
-Resolve whether any nonhistorical example must mention both old and new names for migration explanation; default to removing the old name from live instructions.
+Resolved. Maintained live sources use only the canonical names. Historical and migration evidence may retain the former names when the old identity is the subject of the record.
+
+## Crisis Completion
+
+Terminal Disposition: Completed.
+
+Delivery Commit: b1c1bdc4.
+
+Delivered Identities: route-documentation-work, bootstrap-project-documentation, reverse-engineer-project-documentation, and verify-documentation-page.
+
+Verification Evidence: all four governed skill packages passed `skill_validate`; 38 Dev Documentation Writer fixtures, 21 Project Bootstrapper fixtures, 118 agent-skill evaluation tests, 18 evaluation-coverage tests, focused bundle and installer contracts, 14 STE tests, and all generated outline, hierarchy, evaluation-document, metadata, support-checklist, and technology-detection freshness checks passed. `git diff --check` and Python compilation passed.
+
+Scoped Baseline Evidence: the full role-mutation suite retains two unrelated stale assertions about a removed Steward phrase and a fixed 28-role count; one Dev Documentation Writer model-profile set assertion omits the existing document-topic editor; one Project Configurator fixture retains an unrelated `agent-claim` expectation. None is caused by the four skill renames, and their directly affected focused contracts pass.
+
+Dependency Result: align-work-item-creation-provider-skills may now be reconciled from Blocked because its named documentation-methodology prerequisite is terminal and available on current main.
 
 ## Crisis Dependency Reclassification
 
