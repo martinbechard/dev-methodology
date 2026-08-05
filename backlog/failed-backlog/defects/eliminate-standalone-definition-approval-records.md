@@ -1,14 +1,16 @@
 # Eliminate Standalone Definition Approval Records
 
-Status: Blocked
+Status: Abandoned
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/eliminate-standalone-definition-approval-records.md
+Provider Reference: backlog/failed-backlog/defects/eliminate-standalone-definition-approval-records.md
 
 Completion: direct-main
+
+Owner: Unowned
 
 ## Summary
 
@@ -247,3 +249,19 @@ Candidate Disposition: Candidate 7cca88fee05db053e452729fcc094cc8309623ed must n
 Reusable Evidence: Shared evidence for checker-interface removal and approval-record deletion may be reused only when it is consistent with the newer item's test-scoped policy.
 
 Coordinator Next Action: Dispatch and reconcile the newer item as the authoritative correction; do not resume this item's preserved global-policy delivery.
+
+## Terminal Superseded Disposition
+
+Terminal Disposition: Superseded; recorded as lifecycle Abandoned because the file provider has no separate Superseded status.
+
+Superseded At: 2026-08-05T17:29:12Z.
+
+Superseding Work Item: backlog/completed-backlog/defects/scope-skill-under-test-protection-to-agent-tests.md.
+
+Superseding Delivery: 828574f159d6cfbdd367642b8689cc9e57743511, completed by provider commit 68521c437659165e4ab617ca8b49e3d86a7c5720.
+
+Outcome: The superseding delivery removed the obsolete checker interface and standalone approval records while placing the special no-mutation rule only in the agent-test subtree. This item's conflicting repository-wide approval-policy outcome is rejected.
+
+Preserved Candidate: 7cca88fee05db053e452729fcc094cc8309623ed is historical evidence only and must never resume or integrate.
+
+Crisis Verification: The tracked root approval-record count is zero, the obsolete renderer options are absent from the maintained renderer and guidance surfaces, and the superseding work item records GOOD independent review, READY verification, focused tests, renderer reproduction, diff checks, and main observation.
