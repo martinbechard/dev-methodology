@@ -1,6 +1,6 @@
 # Align Work-Item Creation Provider Skills
 
-Status: Ready
+Status: Blocked
 
 Type: Feature
 
@@ -55,6 +55,22 @@ The user directed in the active Codex task on 2026-08-04: "create separate work 
 ## Open Questions
 
 Determine the strongest truthful negative evaluation for the two placeholder providers without fabricating unavailable external behavior.
+
+## Crisis Dependency Reclassification
+
+Reclassified At: 2026-08-05T17:10:30Z.
+
+Transition: Ready -> Blocked.
+
+Owner: Unowned.
+
+Exact Blocker: Required dependency backlog/feature-backlog/apply-object-oriented-skill-group-design/align-documentation-methodology-skills.md is Blocked.
+
+Blocker Owner: Dev Backlog Coordinator resolving the named dependency chain in Backlog Crisis Mode.
+
+Unblock Condition: Align Documentation Methodology Skills reaches a terminal successful disposition and its delivered documentation identities are available on current main.
+
+Coordinator Next Action: Keep this item in the crisis dependency set and do not dispatch it. After the unblock condition is satisfied, reconcile it through Blocked -> Ready under the normal lifecycle.
 
 ## Governed Definition Approval
 
