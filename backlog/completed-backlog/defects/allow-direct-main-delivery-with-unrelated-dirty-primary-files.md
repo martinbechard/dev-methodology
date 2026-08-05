@@ -1,14 +1,14 @@
 # Allow Direct-Main Delivery With Unrelated Dirty Primary Files
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/allow-direct-main-delivery-with-unrelated-dirty-primary-files.md
+Provider Reference: backlog/completed-backlog/defects/allow-direct-main-delivery-with-unrelated-dirty-primary-files.md
 
-Owner: Root Dev Orchestrator
+Owner: Root Dev Orchestrator (completed)
 
 Completion: direct-main
 
@@ -37,6 +37,24 @@ Phase: Implementation.
 Started At: 2026-08-05T14:47:10Z.
 Claim Evidence: This exact primary-main backlog mutation is protected by exact-file claim provider-running-direct-main-unrelated-dirty-019fd25f-stage, acquired with outcome SHARED_CHECKOUT_ACQUIRED and event f5778dec-a0d6-4902-9c2e-f9ba4050b2c3.
 Preserved Coordination: Parent Coordination Thread 019fb057-1767-7ef2-b5fa-41f4417b20b3 and its Ready -> Starting launch reservation remain canonical.
+
+## Completion Evidence
+
+Completion Selector: direct-main.
+Delivery Disposition: READY.
+Canonical Thread and Root Agent Task: 019fd25f-7adb-7490-bdb8-b73aadc8e79b.
+Accepted Candidate Commit: b6ef35eb06fda89ebe16521b478ad06ac72cda7b.
+Accepted Source Commits: 2747221d and b6ef35eb.
+Integration Mappings: 2747221d -> 58cd7d78cd1c68ae77b24c16d02e1ce895ff012b; b6ef35eb -> 192353c565e2a8577bb04257fd389768e1311603.
+Main Observation: main at 192353c565e2a8577bb04257fd389768e1311603. Both integration commits are ancestors of the observed main tip. The accepted sources are non-ancestral; the recorded mappings and content proof establish the integrated accepted contribution.
+Independent Review: GOOD.
+Independent Verification: VERIFIED.
+Post-Main Checks: PASS — 14 direct tests, 1 bundle test, 3 focused eval-runner tests, treatment preflight, generator freshness, skill validation, and diff validation.
+Scoped Limitation: The supplemental live semantic treatment was not executed because external-egress policy rejected it. The treatment preflight passed, but the live treatment remains unverified.
+Integration Claim Evidence: The integration claim was released at event 8b988cbe-a384-49aa-86f9-363e20153c8b.
+Remote Observation: origin/main observed at c5f4df8d. Local main was ahead 166; publication was not required and was not performed.
+Completed At: 2026-08-05T15:31:30Z.
+Terminal Provider Claim Evidence: Exact source and destination claim complete-direct-main-unrelated-dirty-019fd25f acquired with outcome SHARED_CHECKOUT_ACQUIRED and event bd08ce44-b5c3-472c-aca7-6522a5a77f4d.
 
 ## Summary
 
