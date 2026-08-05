@@ -9,6 +9,18 @@ cases:
         root_task: task-quiet
         last_productive_evidence: focused test started within estimate
     expectedMessage: No actionable watchdog condition observed.
+  active-blockage-observation:
+    active: true
+    exitConditionsSatisfied: false
+    stateAlreadyReported: true
+    expectedStatus: ACTIVE_UNCHANGED
+  blockage-recovery-ready:
+    active: true
+    exitConditionsSatisfied: true
+    stateAlreadyReported: false
+    resolvedItems: [provider:blocked-a, provider:blocked-b]
+    finalMainCommit: abc123
+    expectedStatus: RECOVERY_READY
   suspected-stall-alert:
     item:
       provider_identity: backlog/feature-backlog/suspected.md

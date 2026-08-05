@@ -404,7 +404,7 @@ commit.
 
 After a new file-backed work item is committed, its creator sends the opaque Work Item ID to the existing Coordinator task. The message only prompts a fresh inventory read; it does not reserve capacity, change lifecycle state, create a delivery task, or begin implementation. If no Coordinator task is available, the committed item remains discoverable in the backlog.
 
-When the user or Watchdog declares a backlog crisis, the existing Coordinator pauses normal dispatch and claim operations and works through the crisis set one item at a time. Each item must reach Completed, Abandoned, or Superseded before the next item begins. The Coordinator resumes normal dispatch only after every crisis item is terminal, no Blocked item remains, all crisis changes are committed, and required focused verification is recorded.
+When the user or Watchdog declares a backlog blockage, [Resolve Backlog Blockage](skills/resolve-backlog-blockage/SKILL.md) owns diagnosis and one-item-at-a-time recovery without claims or delegated delivery. If a secondary-thread dispatch mechanism is configured, [Set Solo Mode](skills/set-solo-mode/SKILL.md) disables new dispatch at recovery entry and [Set Multitask Mode](skills/set-multitask-mode/SKILL.md) enables it only after every exit condition passes. Both mode changes are idempotent and leave already-running secondary work unchanged. Without such a mechanism, blockage recovery proceeds without either dispatch-mode skill.
 
 Normal coordination avoids crisis accumulation by classifying preventing conditions before
 selecting lifecycle state. Requested-outcome blockers use Blocked; genuine user decisions use
@@ -524,7 +524,9 @@ The development practice skills are:
 - agent-claim-command
 - agent-work-merge
 - codex-workitem-coordination
-- backlog-crisis-mode
+- resolve-backlog-blockage
+- set-solo-mode
+- set-multitask-mode
 - complete-work-item-feature-branch
 - create-pull-request
 - code-review-evidence

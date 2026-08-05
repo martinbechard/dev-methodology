@@ -15,7 +15,7 @@ ACTIVE_CAPACITY_STATUSES = {"Starting", "Running"}
 ACTIVE_CAPACITY_LIMIT = 10
 ACTIVE_SERIES_STATUSES = {"Ready", "Starting", "Running", "Awaiting Review"}
 TERMINAL_STATUSES = {"Completed", "Failed", "Abandoned"}
-CRISIS_EXCLUDED_STATUSES = {
+BLOCKAGE_EXCLUDED_STATUSES = {
     "User Action Required",
     "Holding",
     "Future Idea",
@@ -123,15 +123,24 @@ class CycleResult:
     mutated: bool = False
 
 
-def backlog_crisis_reasons(
+@dataclass(frozen=True)
+class BlockageObservation:
+    """Describe one read-only observation of active blockage recovery."""
+
+    status: str
+    alert_parent: bool
+    mutated: bool = False
+
+
+def backlog_blockage_reasons(
     items: Iterable[WorkItem],
     *,
     minutes_without_progress: int = 0,
     user_declared: bool = False,
 ) -> tuple[str, ...]:
-    """Return the deterministic reasons that require backlog crisis mode."""
+    """Return the deterministic reasons that declare a backlog blockage."""
 
-    active = [item for item in items if item.status not in CRISIS_EXCLUDED_STATUSES]
+    active = [item for item in items if item.status not in BLOCKAGE_EXCLUDED_STATUSES]
     blocked = [item for item in active if item.status == "Blocked"]
     causes: dict[str, int] = {}
     for item in blocked:
@@ -151,6 +160,31 @@ def backlog_crisis_reasons(
     if user_declared:
         reasons.append("user-declared")
     return tuple(reasons)
+
+
+def observe_backlog_blockage(
+    *,
+    active: bool,
+    exit_conditions_satisfied: bool,
+    state_already_reported: bool,
+) -> BlockageObservation:
+    """Report active or recovered blockage state without repeating an alert.
+
+    active identifies an existing declared recovery. exit_conditions_satisfied
+    indicates that the Coordinator may end recovery. state_already_reported
+    suppresses a duplicate active-state alert. The function never mutates the
+    observed provider, task, Git, claim, or dispatch state.
+    """
+
+    if not active:
+        if exit_conditions_satisfied:
+            raise ValueError("inactive blockage cannot satisfy recovery exit conditions")
+        return BlockageObservation("INACTIVE", False)
+    if exit_conditions_satisfied:
+        return BlockageObservation("RECOVERY_READY", True)
+    if state_already_reported:
+        return BlockageObservation("ACTIVE_UNCHANGED", False)
+    return BlockageObservation("ACTIVE", True)
 
 
 class WatchdogCycle:

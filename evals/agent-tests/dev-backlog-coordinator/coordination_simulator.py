@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Simulates provider-selected capacity, blocked dispositions, claims, and terminal cleanup.
+# Summary: Simulates provider capacity, blockage dispatch modes, claims, and terminal cleanup.
 # Governing design: design/orchestrated-development-lifecycle.html
 # Test plan: evals/agent-tests/dev-backlog-coordinator/requirements-matrix.md
 
@@ -167,6 +167,43 @@ class NewItemNotification:
     provider_reference: str | None
     coordinator_reconciles_inventory: bool
     lifecycle_mutated: bool = False
+
+
+@dataclass(frozen=True)
+class DispatchModeTransition:
+    """Describe one secondary-thread dispatch-mode result."""
+
+    result: str
+    dispatch_enabled: bool | None
+    mutated: bool
+
+
+def dispatch_mode_transition(
+    *,
+    mechanism_configured: bool,
+    dispatch_enabled: bool | None,
+    blockage_active: bool,
+) -> DispatchModeTransition:
+    """Apply one idempotent dispatch-mode transition around blockage recovery.
+
+    mechanism_configured identifies whether a secondary-thread dispatch setting
+    exists. dispatch_enabled is its current value, or None when no mechanism
+    exists. blockage_active selects solo mode while true and multitask mode when
+    false. The result changes only that setting and reports whether mutation was
+    needed.
+    """
+
+    if not mechanism_configured:
+        return DispatchModeTransition("NOT_APPLICABLE", None, False)
+    if dispatch_enabled is None:
+        raise ValueError("configured dispatch requires a current setting")
+    if blockage_active:
+        if not dispatch_enabled:
+            return DispatchModeTransition("ALREADY_SOLO", False, False)
+        return DispatchModeTransition("DISABLED", False, True)
+    if dispatch_enabled:
+        return DispatchModeTransition("ALREADY_MULTITASK", True, False)
+    return DispatchModeTransition("ENABLED", True, True)
 
 
 @dataclass(frozen=True)

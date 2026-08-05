@@ -5,10 +5,14 @@ Skill justifications:
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - structured-explanation: We need this to report capacity, waits, enabled ownership, throughput, and recovery in a compact evidence-backed form.
 - codex-workitem-coordination: We need its Active Execution, Capacity, And Conversation Titles section as the sole source of active-queue, settlement, reconciliation, and title mechanics.
-- backlog-crisis-mode: We need this to replace ordinary dispatch with one-task sequential delivery during a declared backlog crisis.
+- resolve-backlog-blockage: We need this to diagnose and resolve a declared backlog blockage one item at a time.
+- set-solo-mode: We need this to disable new dispatch to secondary threads while sequential work continues.
+- set-multitask-mode: We need this to enable new dispatch to secondary threads after sequential work ends.
 Request-specific skill conditions:
 - codex-workitem-coordination: when Codex user-visible tasks coordinate multiple work items
-- backlog-crisis-mode: when the user or Dev Backlog Watchdog declares crisis mode, or a crisis remains active
+- resolve-backlog-blockage: when the user or Dev Backlog Watchdog declares a backlog blockage, or blockage recovery remains active
+- set-solo-mode: when a secondary-thread dispatch mechanism is configured and sequential blockage recovery begins
+- set-multitask-mode: when a secondary-thread dispatch mechanism is configured and every blockage-recovery exit condition is satisfied
 Output purposes:
 - status: States READY or BLOCKED and names the evidence or unavailable condition.
 - provider lifecycle snapshot: Reports selected provider, READY, STARTING, RUNNING, STALLED, BLOCKED, USER_ACTION_REQUIRED, HOLDING, AWAITING_REVIEW, and terminal counts, or states that provider none has no durable inventory.
@@ -40,7 +44,9 @@ Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work mov
 
 - Use the Active Execution, Capacity, And Conversation Titles section of codex-workitem-coordination as the sole source for active eligibility, capacity, settlement, reconciliation, and title mechanics. This Role owns their parent triggers and handoffs but does not restate them. Keep the procedure separate from Dev Orchestrator instructions and repository AGENTS.md content.
 - Use the Governed Definition Work-Item Authorization section of codex-workitem-coordination as the sole source when coordinated work names governed skill definitions. This Role owns scope-routing triggers and handoffs but does not restate that authorization policy.
-- Apply backlog-crisis-mode after the user or Dev Backlog Watchdog declares a crisis. During that crisis, stop ordinary dispatch and complete the crisis set sequentially in this Coordinator task without claims or delegated delivery.
+- Apply resolve-backlog-blockage after the user or Dev Backlog Watchdog declares a backlog blockage. Complete the blockage set sequentially in this Coordinator task without claims or delegated delivery. When no secondary-thread dispatch mechanism exists, continue recovery without requiring a dispatch-mode skill.
+- Apply set-solo-mode when a secondary-thread dispatch mechanism is configured and sequential blockage recovery begins. The mode change disables only new dispatch to secondary threads and must be safe to repeat.
+- Apply set-multitask-mode when a secondary-thread dispatch mechanism is configured and every blockage-recovery exit condition is satisfied. The mode change enables only new dispatch to secondary threads and must be safe to repeat.
 - Obtain inventory, lifecycle counts, provider identities, and dispatchable state only through the effective Persistence-selected management skill. Treat the selected provider record as the only durable work-item record and do not create a separate task ledger, baton registry, waiting-task registry, or task database.
 - Send delivery through Dev Orchestrator with the effective Commit-selected skill. Do not reproduce provider or Commit procedures in this role.
 - Treat Git as delivery evidence, the project-selected resource-coordination registry as shared mutation authority when enabled, and runtime conversation state and the conversation title as display or execution state only.
@@ -82,10 +88,13 @@ Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work mov
 9. When a canonical Task is failed, stopped, or missing, immediately apply the central coordination section, then directly record its required provider transition before replacement dispatch.
 10. On an immediate Dev Orchestrator blocker notification, acknowledge the blocker notification, validate its exact blocker and ownership evidence, choose the smallest authorized coordination or recovery action, and directly record Blocked when the cause and Coordinator-owned next action are concrete. Retain responsibility until resolution, User Action Required, or terminal disposition.
 11. On a Watchdog Blocked-reconciliation alert, validate the retained per-item evidence, correct any stale or contradictory lifecycle evidence or next-action owner, and decide the one evidence-backed recovery, retry, user-decision, or continuing-Blocked route. Apply only the resulting provider mutation through the selected manager. A failed bounded retry is consumed before a new reconciliation, and another bounded retry is prohibited.
-12. When an Event Contract claim is unavailable, require one immediate attempt, task-local structured evidence, and a direct release or recovery handoff. Retry only when that notification arrives; do not poll or mutate provider state merely to record the wait. Only the watchdog investigates stale claim ownership on its normal cycle.
-13. Accept terminal handoff only after the effective Commit-selected skill returns READY with independent review, focused verification, delivery and main-observation evidence, released triggered Event Contract claims, a clean task worktree, and cleanup eligibility. For a durable provider, also require the root Dev Orchestrator to record terminal evidence through the effective manager; for provider none, require the completion skill's full task-local terminal result.
-14. After terminal handoff, verify the branch is fully merged when one existed, remove the clean worktree, safely delete the merged branch, prune worktree metadata, require Dev the root Dev Orchestrator's verified terminal conversation-title coordination, and archive the conversation when supported. For durable providers, immediately reconcile active eligibility and apply the central active-queue outcome.
-15. Every fifteen minutes, report active capacity when durable inventory exists, phase ages, delivery waits, enabled ownership pressure, accepted work awaiting delivery, delivered work awaiting provider closeout, task anomalies, interval gate throughput, completed-item throughput, and active versus blocked task averages. Make a recovery or dispatch adjustment in the same review when needed.
+12. On a user or Watchdog backlog-blockage declaration, apply set-solo-mode first only when a secondary-thread dispatch mechanism is configured, then apply resolve-backlog-blockage. If no such mechanism exists, apply only resolve-backlog-blockage. Preserve an existing solo result and blockage declaration when repeated entry reports the same state.
+13. While blockage recovery remains active, continue the current blockage item through resolve-backlog-blockage and retain the existing mode result. Do not repeat a mode mutation or restart recovery merely because another cycle observes the same state.
+14. After the Watchdog confirms every blockage exit condition, record the recovery result. Apply set-multitask-mode only when a secondary-thread dispatch mechanism is configured, then reread provider inventory and apply the central active-queue outcome. Without such a mechanism, reread inventory and continue without a dispatch-mode skill.
+15. When an Event Contract claim is unavailable, require one immediate attempt, task-local structured evidence, and a direct release or recovery handoff. Retry only when that notification arrives; do not poll or mutate provider state merely to record the wait. Only the watchdog investigates stale claim ownership on its normal cycle.
+16. Accept terminal handoff only after the effective Commit-selected skill returns READY with independent review, focused verification, delivery and main-observation evidence, released triggered Event Contract claims, a clean task worktree, and cleanup eligibility. For a durable provider, also require the root Dev Orchestrator to record terminal evidence through the effective manager; for provider none, require the completion skill's full task-local terminal result.
+17. After terminal handoff, verify the branch is fully merged when one existed, remove the clean worktree, safely delete the merged branch, prune worktree metadata, require Dev the root Dev Orchestrator's verified terminal conversation-title coordination, and archive the conversation when supported. For durable providers, immediately reconcile active eligibility and apply the central active-queue outcome.
+18. Every fifteen minutes, report active capacity when durable inventory exists, phase ages, delivery waits, enabled ownership pressure, accepted work awaiting delivery, delivered work awaiting provider closeout, task anomalies, interval gate throughput, completed-item throughput, and active versus blocked task averages. Make a recovery or dispatch adjustment in the same review when needed.
 
 ## Delegation
 
@@ -124,7 +133,9 @@ These definition-owned skills are preloaded and govern the work: effective-commu
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the codex-workitem-coordination skill when Codex user-visible tasks coordinate multiple work items.
-- Use the backlog-crisis-mode skill when the user or Dev Backlog Watchdog declares crisis mode, or a crisis remains active.
+- Use the resolve-backlog-blockage skill when the user or Dev Backlog Watchdog declares a backlog blockage, or blockage recovery remains active.
+- Use the set-solo-mode skill when a secondary-thread dispatch mechanism is configured and sequential blockage recovery begins.
+- Use the set-multitask-mode skill when a secondary-thread dispatch mechanism is configured and every blockage-recovery exit condition is satisfied.
 
 Return:
 

@@ -7,7 +7,8 @@ target:
   nativeAgent: generated/adapters/codex/agents/dev-backlog-watchdog.toml
   repositoryMutation: never
   requiredSkills: [codex-workitem-coordination]
-  conditionalSkills: {}
+  conditionalSkills:
+    resolve-backlog-blockage: A declaration criterion is met, the user declares a blockage, or blockage recovery remains active.
   allowedAgentDependencies: []
   requiredOutputs: [cycle result, actionable parent alert]
 projectAgents:

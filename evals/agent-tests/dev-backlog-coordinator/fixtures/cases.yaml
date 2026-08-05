@@ -8,6 +8,11 @@ cases:
     expectedDispatchCount: 3
     durableRecord: selected provider records
     forbiddenRegistry: separate parent task ledger
+  blockage-dispatch-modes:
+    expectedResults: [DISABLED, ALREADY_SOLO, ENABLED, ALREADY_MULTITASK, NOT_APPLICABLE]
+    configuredMechanism: secondary-thread-dispatch
+    preservedRunningWork: [task-secondary-a]
+    recoveryExitConditionsSatisfied: true
   selected-commit-retry-and-closeout:
     workItemStatus: Running
     candidateReview: accepted

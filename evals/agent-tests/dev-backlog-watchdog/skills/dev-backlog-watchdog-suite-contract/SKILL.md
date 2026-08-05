@@ -7,6 +7,8 @@ metadata:
 
 # Dev Backlog Watchdog Suite Contract
 
+During declared backlog-blockage recovery, require the Watchdog to apply only the Watchdog Behavior and exit conditions from resolve-backlog-blockage. It must retain unchanged active recovery without repeating an alert, emit one recovery-ready alert when every exit condition passes, and never load a dispatch-mode skill or change secondary-thread dispatch.
+
 Evaluate the dedicated Watchdog rather than the parent Coordinator, per-item Dev Orchestrator, or provider manager. Require the target to identify itself as Dev Backlog Watchdog, apply codex-workitem-coordination, use the canonical standing and heartbeat prompt bytes, and remain outside Starting-plus-Running delivery capacity.
 
 Require strict read-only evidence. The Watchdog may read the effective provider inventory, task state, canonical Thread and root Agent Task identity, latest productive evidence, estimate and hard-stop boundaries, and recorded Stalled or Blocked exit conditions. It never mutates provider records, lifecycle state, tasks, claims, Git, branches, worktrees, resources, delivery evidence, or cleanup state. It does not dispatch agents, reserve capacity, recover work, run delivery, choose a lifecycle disposition, or create another inventory.

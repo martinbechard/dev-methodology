@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies provider-selected capacity, blocked dispositions, claims, and cleanup.
+# Summary: Verifies provider-selected capacity, blockage dispatch modes, claims, and cleanup.
 # Governing design: design/orchestrated-development-lifecycle.html
 # Test plan: evals/agent-tests/dev-backlog-coordinator/requirements-matrix.md
 
@@ -18,6 +18,7 @@ from coordination_simulator import (
     TaskCleanupEvidence,
     TaskCandidate,
     WorkItem,
+    dispatch_mode_transition,
 )
 
 
@@ -68,6 +69,51 @@ class CoordinationSimulatorTests(unittest.TestCase):
 
         self.assertEqual(("ready",), simulator.dispatch_to_target())
         self.assertEqual(2, simulator.running_count())
+
+    def test_blockage_entry_and_resumption_change_only_secondary_dispatch(self) -> None:
+        """Make entry, repeat, recovery, and resumption safe and explicit."""
+
+        case = _fixture_cases()["blockage-dispatch-modes"]
+
+        entered = dispatch_mode_transition(
+            mechanism_configured=True,
+            dispatch_enabled=True,
+            blockage_active=True,
+        )
+        continued = dispatch_mode_transition(
+            mechanism_configured=True,
+            dispatch_enabled=entered.dispatch_enabled,
+            blockage_active=True,
+        )
+        resumed = dispatch_mode_transition(
+            mechanism_configured=True,
+            dispatch_enabled=continued.dispatch_enabled,
+            blockage_active=False,
+        )
+        already_resumed = dispatch_mode_transition(
+            mechanism_configured=True,
+            dispatch_enabled=resumed.dispatch_enabled,
+            blockage_active=False,
+        )
+        absent = dispatch_mode_transition(
+            mechanism_configured=False,
+            dispatch_enabled=None,
+            blockage_active=True,
+        )
+
+        self.assertEqual(case["expectedResults"], [
+            entered.result,
+            continued.result,
+            resumed.result,
+            already_resumed.result,
+            absent.result,
+        ])
+        self.assertFalse(entered.dispatch_enabled)
+        self.assertFalse(continued.dispatch_enabled)
+        self.assertTrue(resumed.dispatch_enabled)
+        self.assertTrue(already_resumed.dispatch_enabled)
+        self.assertIsNone(absent.dispatch_enabled)
+        self.assertFalse(absent.mutated)
 
     def test_user_action_resumes_same_task_and_preserves_early_work(self) -> None:
         """Adopt the answered canonical task and reconcile rather than reject its work."""

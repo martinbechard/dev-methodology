@@ -10,6 +10,9 @@
 | UNSET asks whether to select the available file provider; unavailable selected skills stop without fallback | Selector decision rules | test_persistence_routes_cover_supported_providers_without_fallback |
 | Successful new-item creation wakes the existing Coordinator for a fresh inventory read without dispatching from the notification path | New work-item notification contract | test_new_item_notification_only_prompts_inventory_reconciliation |
 | Running capacity target is ten for durable inventory | Coordination queue target and parent role decisions | test_dispatches_ready_items_until_ten_are_running |
+| Blockage entry disables only new secondary-thread dispatch and is safe to repeat | Coordinator role plus set-solo-mode | blockage-entry-disables-secondary-dispatch and test_blockage_entry_and_resumption_change_only_secondary_dispatch |
+| Blockage recovery remains usable without a secondary-thread dispatch mechanism | Coordinator role plus resolve-backlog-blockage | blockage-recovery-resumes-secondary-dispatch and NOT_APPLICABLE simulator assertion |
+| Dispatch resumes only after every blockage exit condition and is safe to repeat | Coordinator role plus set-multitask-mode | blockage-recovery-resumes-secondary-dispatch and test_blockage_entry_and_resumption_change_only_secondary_dispatch |
 | No placeholder work when fewer than ten eligible items exist | Coordination queue target | test_dispatches_every_ready_item_when_queue_has_less_than_ten |
 | Canonical task id is stored through the provider manager | Coordination execution record and dispatch rules | capacity test plus canonical-id-persistence |
 | User Action Required resumption preserves canonical Thread and Agent Task identities separately | Same-Thread user-decision contract | test_user_action_resumes_same_task_and_preserves_early_work and replacement rejection tests |

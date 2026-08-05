@@ -20,9 +20,16 @@ instructions:
     codex-workitem-coordination as the sole source when coordinated work names governed
     skill definitions. This Role owns scope-routing triggers and handoffs but does not
     restate that authorization policy.
-  - Apply backlog-crisis-mode after the user or Dev Backlog Watchdog declares a crisis.
-    During that crisis, stop ordinary dispatch and complete the crisis set sequentially
-    in this Coordinator task without claims or delegated delivery.
+  - Apply resolve-backlog-blockage after the user or Dev Backlog Watchdog declares a
+    backlog blockage. Complete the blockage set sequentially in this Coordinator task
+    without claims or delegated delivery. When no secondary-thread dispatch mechanism
+    exists, continue recovery without requiring a dispatch-mode skill.
+  - Apply set-solo-mode when a secondary-thread dispatch mechanism is configured and
+    sequential blockage recovery begins. The mode change disables only new dispatch to
+    secondary threads and must be safe to repeat.
+  - Apply set-multitask-mode when a secondary-thread dispatch mechanism is configured and
+    every blockage-recovery exit condition is satisfied. The mode change enables only new
+    dispatch to secondary threads and must be safe to repeat.
   - Obtain inventory, lifecycle counts, provider identities, and dispatchable state only through
     the effective Persistence-selected management skill. Treat the selected provider record as
     the only durable work-item record and do not create a separate task ledger, baton registry,
@@ -145,6 +152,18 @@ instructions:
     the one evidence-backed recovery, retry, user-decision, or continuing-Blocked route.
     Apply only the resulting provider mutation through the selected manager. A failed bounded
     retry is consumed before a new reconciliation, and another bounded retry is prohibited.
+  - On a user or Watchdog backlog-blockage declaration, apply set-solo-mode first only when
+    a secondary-thread dispatch mechanism is configured, then apply
+    resolve-backlog-blockage. If no such mechanism exists, apply only
+    resolve-backlog-blockage. Preserve an existing solo result and blockage declaration
+    when repeated entry reports the same state.
+  - While blockage recovery remains active, continue the current blockage item through
+    resolve-backlog-blockage and retain the existing mode result. Do not repeat a mode
+    mutation or restart recovery merely because another cycle observes the same state.
+  - After the Watchdog confirms every blockage exit condition, record the recovery result.
+    Apply set-multitask-mode only when a secondary-thread dispatch mechanism is configured,
+    then reread provider inventory and apply the central active-queue outcome. Without such
+    a mechanism, reread inventory and continue without a dispatch-mode skill.
   - When an Event Contract claim is unavailable, require one immediate attempt, task-local
     structured evidence, and a direct release or recovery handoff. Retry only when that
     notification arrives; do not poll or mutate provider state merely to record the wait.
@@ -326,9 +345,15 @@ skills:
     justification: We need its Active Execution, Capacity, And Conversation Titles section
       as the sole source of active-queue, settlement, reconciliation, and title mechanics.
     condition: when Codex user-visible tasks coordinate multiple work items
-- backlog-crisis-mode:
-    justification: We need this to replace ordinary dispatch with one-task sequential delivery during a declared backlog crisis.
-    condition: when the user or Dev Backlog Watchdog declares crisis mode, or a crisis remains active
+- resolve-backlog-blockage:
+    justification: We need this to diagnose and resolve a declared backlog blockage one item at a time.
+    condition: when the user or Dev Backlog Watchdog declares a backlog blockage, or blockage recovery remains active
+- set-solo-mode:
+    justification: We need this to disable new dispatch to secondary threads while sequential work continues.
+    condition: when a secondary-thread dispatch mechanism is configured and sequential blockage recovery begins
+- set-multitask-mode:
+    justification: We need this to enable new dispatch to secondary threads after sequential work ends.
+    condition: when a secondary-thread dispatch mechanism is configured and every blockage-recovery exit condition is satisfied
 outputContract:
 - status:
     purpose: States READY or BLOCKED and names the evidence or unavailable condition.

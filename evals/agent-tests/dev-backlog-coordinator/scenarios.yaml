@@ -16,8 +16,22 @@ scenarios:
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, task-identity-fields, provider-selected-workitem-ownership, running-capacity-refill, output-contract-presence]
     expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
     expectedTerminalStatus: PASS
-  - id: selected-commit-retry-and-closeout
+  - id: blockage-entry-disables-secondary-dispatch
     priority: 2
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Enter sequential blockage recovery after disabling only new dispatch to secondary threads.
+    initialState: The Watchdog declares a backlog blockage, a configured secondary-thread mechanism is enabled, and existing secondary work is still running.
+    task: Enter blockage recovery, repeat the same observation once, and report stable mode and recovery evidence.
+    targetSkills: [structured-explanation, codex-workitem-coordination, resolve-backlog-blockage, set-solo-mode]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Identify as Dev Backlog Coordinator, Disable only new secondary-thread dispatch, Preserve already-running secondary work, Process one blockage item at a time, Preserve the first declaration and solo result on repeated entry, Report DISABLED then ALREADY_SOLO]
+    forbiddenBehaviors: [Load set-multitask-mode during entry, Cancel interrupt or reassign existing secondary work, Diagnose the blockage through set-solo-mode, Repeat lifecycle or dispatch mutation for unchanged state, Acquire claims or delegate delivery]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, queue-state-transition, output-contract-presence]
+    expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions]
+    expectedTerminalStatus: PASS
+  - id: selected-commit-retry-and-closeout
+    priority: 3
     status: executable
     executableCase: fixtures/cases.yaml
     purpose: Recover an unavailable delivery resource and complete through the effective Commit skill.
@@ -31,7 +45,7 @@ scenarios:
     expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
     expectedTerminalStatus: PASS
   - id: ambiguous-dispatch-and-user-decision-integrity
-    priority: 3
+    priority: 4
     status: executable
     executableCase: fixtures/cases.yaml
     purpose: Contain a delayed duplicate while preserving one provider identity and one resolved user answer.
@@ -45,7 +59,7 @@ scenarios:
     expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
     expectedTerminalStatus: BLOCKED
   - id: provider-selector-boundaries
-    priority: 4
+    priority: 5
     status: executable
     executableCase: fixtures/cases.yaml
     purpose: Preserve provider-specific identities and ask a clear file-provider question when Persistence is UNSET.
@@ -59,7 +73,7 @@ scenarios:
     expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
     expectedTerminalStatus: BLOCKED
   - id: same-thread-user-action-resumption
-    priority: 5
+    priority: 6
     status: executable
     executableCase: fixtures/cases.yaml
     purpose: Resume an answered User Action Required item in its existing canonical task without discarding early work.
@@ -73,7 +87,7 @@ scenarios:
     expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
     expectedTerminalStatus: PASS
   - id: exhausted-correction-disposition
-    priority: 6
+    priority: 7
     status: executable
     executableCase: fixtures/cases.yaml
     purpose: End exhausted correction loops with exactly one concrete evidence-backed disposition.
@@ -87,7 +101,7 @@ scenarios:
     expectedOutputs: [status, provider lifecycle snapshot, stalled delivery actions]
     expectedTerminalStatus: PASS
   - id: combined-regression-after-independent-merges
-    priority: 7
+    priority: 8
     status: executable
     executableCase: fixtures/cases.yaml
     purpose: Run focused verification per item and one combined regression after all selected items reach main.
@@ -99,4 +113,18 @@ scenarios:
     forbiddenBehaviors: [Run the system-wide regression for every item, Delay an accepted item for the combined regression, Run before every selected item reaches main, Run the same combined regression twice, Invalidate unrelated focused evidence automatically]
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, focused-item-verification, combined-regression-scheduling, output-contract-presence]
     expectedOutputs: [status, provider lifecycle snapshot, combined regression set and tested main commit, defect routing when applicable]
+    expectedTerminalStatus: PASS
+  - id: blockage-recovery-resumes-secondary-dispatch
+    priority: 9
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Resume new secondary-thread dispatch only after every blockage exit condition passes.
+    initialState: One variant has a configured mechanism already in solo mode; another has no secondary-thread dispatch mechanism. Both have satisfied every blockage exit condition.
+    task: Record recovery completion, resume dispatch when possible, repeat the completed transition, and reconcile provider inventory in both variants.
+    targetSkills: [structured-explanation, codex-workitem-coordination, resolve-backlog-blockage, set-multitask-mode]
+    allowedAgentDependencies: [dev-backlog-steward]
+    requiredBehaviors: [Confirm every blockage exit condition, Report ENABLED then ALREADY_MULTITASK for the configured mechanism, Report NOT_APPLICABLE without mutation when no mechanism exists, Reread provider inventory, Apply the central active-queue outcome]
+    forbiddenBehaviors: [Load set-solo-mode during resumption, Enable dispatch before recovery completes, Launch secondary work from set-multitask-mode, Diagnose lifecycle state through set-multitask-mode, Require a dispatch-mode skill when no mechanism exists]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, running-capacity-refill, output-contract-presence]
+    expectedOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions]
     expectedTerminalStatus: PASS

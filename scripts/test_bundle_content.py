@@ -1249,9 +1249,15 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, skill_text)
 
-    def test_backlog_crisis_mode_is_conditional_and_sequential(self) -> None:
-        skill_text = (
-            SKILLS_ROOT / "backlog-crisis-mode" / "SKILL.md"
+    def test_backlog_blockage_and_dispatch_modes_are_separate(self) -> None:
+        blockage_text = (
+            SKILLS_ROOT / "resolve-backlog-blockage" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        solo_text = (SKILLS_ROOT / "set-solo-mode" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        multitask_text = (
+            SKILLS_ROOT / "set-multitask-mode" / "SKILL.md"
         ).read_text(encoding="utf-8")
         coordinator = yaml.safe_load(
             (
@@ -1268,23 +1274,121 @@ class BundleContentTests(unittest.TestCase):
             ).read_text(encoding="utf-8")
         )
 
+        self.assertFalse((SKILLS_ROOT / "backlog-crisis-mode" / "SKILL.md").exists())
+        self.assertFalse(
+            (SKILLS_ROOT / "backlog-crisis-mode" / "agents" / "openai.yaml").exists()
+        )
         for phrase in (
-            "Stop ordinary dispatch.",
             "Stop claim operations.",
-            "Process one crisis item at a time.",
+            "Process one blockage item at a time.",
             "Commit the current item before starting another item.",
             "Moving an item to Ready does not resolve it.",
+            "When the same blockage state and recovery result are observed again, return the existing result without repeating lifecycle mutation.",
         ):
-            self.assertIn(phrase, skill_text)
+            self.assertIn(phrase, blockage_text)
 
-        for role in (coordinator, watchdog):
-            crisis_entries = [
-                entry["backlog-crisis-mode"]
-                for entry in role["skills"]
-                if "backlog-crisis-mode" in entry
-            ]
-            self.assertEqual(1, len(crisis_entries))
-            self.assertIn("condition", crisis_entries[0])
+        for skill_text, action, unchanged_result, sibling in (
+            (
+                solo_text,
+                "Disable dispatch to secondary threads.",
+                "ALREADY_SOLO",
+                "set-multitask-mode",
+            ),
+            (
+                multitask_text,
+                "Enable dispatch to secondary threads.",
+                "ALREADY_MULTITASK",
+                "set-solo-mode",
+            ),
+        ):
+            self.assertIn(action, skill_text)
+            self.assertIn(unchanged_result, skill_text)
+            self.assertIn(
+                "When no secondary-thread dispatch mechanism is configured, return NOT_APPLICABLE without mutation.",
+                skill_text,
+            )
+            for forbidden in (
+                "Blocked",
+                "lifecycle mutation",
+                "resolve-backlog-blockage",
+                sibling,
+            ):
+                self.assertNotIn(forbidden, skill_text)
+
+        coordinator_skills = {
+            name: contract
+            for entry in coordinator["skills"]
+            for name, contract in entry.items()
+        }
+        watchdog_skills = {
+            name: contract
+            for entry in watchdog["skills"]
+            for name, contract in entry.items()
+        }
+        self.assertTrue(
+            {"resolve-backlog-blockage", "set-solo-mode", "set-multitask-mode"}
+            <= coordinator_skills.keys()
+        )
+        for skill in (
+            "resolve-backlog-blockage",
+            "set-solo-mode",
+            "set-multitask-mode",
+        ):
+            self.assertIn("condition", coordinator_skills[skill])
+        self.assertIn("resolve-backlog-blockage", watchdog_skills)
+        self.assertIn("condition", watchdog_skills["resolve-backlog-blockage"])
+        self.assertNotIn("set-solo-mode", watchdog_skills)
+        self.assertNotIn("set-multitask-mode", watchdog_skills)
+
+        coordinator_contract = json.dumps(coordinator, sort_keys=True)
+        self.assertIn(
+            "when a secondary-thread dispatch mechanism is configured",
+            coordinator_contract,
+        )
+        self.assertIn(
+            "without requiring a dispatch-mode skill",
+            coordinator_contract,
+        )
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probes_by_skill = {probe["skill"]: probe for probe in probes["probes"]}
+        for skill in (
+            "resolve-backlog-blockage",
+            "set-solo-mode",
+            "set-multitask-mode",
+        ):
+            with self.subTest(probe=skill):
+                self.assertEqual("activation-and-behavior", probes_by_skill[skill]["evaluationKind"])
+                self.assertEqual("declared", probes_by_skill[skill]["coverageStatus"])
+
+        coordinator_scenarios = load_yaml_object(
+            REPOSITORY_ROOT
+            / "evals"
+            / "agent-tests"
+            / "dev-backlog-coordinator"
+            / "scenarios.yaml"
+        )
+        watchdog_scenarios = load_yaml_object(
+            REPOSITORY_ROOT
+            / "evals"
+            / "agent-tests"
+            / "dev-backlog-watchdog"
+            / "scenarios.yaml"
+        )
+        self.assertTrue(
+            {
+                "blockage-entry-disables-secondary-dispatch",
+                "blockage-recovery-resumes-secondary-dispatch",
+            }
+            <= {scenario["id"] for scenario in coordinator_scenarios["scenarios"]}
+        )
+        self.assertTrue(
+            {
+                "active-blockage-continues-without-repeat",
+                "blockage-exit-condition-recovery-alert",
+            }
+            <= {scenario["id"] for scenario in watchdog_scenarios["scenarios"]}
+        )
 
     def test_new_file_item_notifies_coordinator_without_dispatch(self) -> None:
         create_skill = (
@@ -8403,7 +8507,10 @@ class BundleContentTests(unittest.TestCase):
             '<figcaption id="watchdog-cycle-title">Watchdog Observation Is Read-Only',
             runtime_section,
         )
-        self.assertIn("<h3>Backlog Crisis Mode</h3>", runtime_section)
+        self.assertIn(
+            "<h3>Backlog Blockage Recovery And Dispatch Mode</h3>",
+            runtime_section,
+        )
         self.assertIn(
             'aria-label="Lifecycle terminology"',
             agents_section,
@@ -8606,7 +8713,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("overflow-x: auto", lifecycle_text)
 
     def test_completed_work_items_are_reflected_in_human_facing_documentation(self) -> None:
-        """Document the delivered Persistence, notification, crisis, and claim behavior."""
+        """Document Persistence, notification, blockage, mode, and claim behavior."""
 
         lifecycle_text = (
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
@@ -8619,8 +8726,10 @@ class BundleContentTests(unittest.TestCase):
         for phrase in (
             "After a new work-item file is committed",
             "It does not reserve capacity, change lifecycle state, create a delivery task, or start implementation.",
-            "The existing Coordinator pauses normal dispatch and claim operations",
-            "Each item must become Completed, Abandoned, or Superseded before the next begins.",
+            "Resolve Backlog Blockage owns diagnosis and one-item-at-a-time recovery",
+            "Set Solo Mode disables only new secondary-thread dispatch",
+            "Set Multitask Mode enables new dispatch only after every blockage item is terminal",
+            "Repeated transitions preserve the effective setting",
             "Release removes the named live claim while the registry is locked",
             "reset creates an empty claim registry before new work is dispatched.",
         ):
@@ -8635,7 +8744,9 @@ class BundleContentTests(unittest.TestCase):
 
         for phrase in (
             "After a new file-backed work item is committed",
-            "pauses normal dispatch and claim operations",
+            "Resolve Backlog Blockage",
+            "Set Solo Mode",
+            "Set Multitask Mode",
         ):
             with self.subTest(readme_phrase=phrase):
                 self.assertIn(phrase, readme_text)
@@ -9837,9 +9948,9 @@ class BundleContentTests(unittest.TestCase):
                         },
                     )
                 elif entry["id"] == "dev-backlog-coordinator":
-                    self.assertEqual(6, len(scenarios["scenarios"]))
+                    self.assertEqual(9, len(scenarios["scenarios"]))
                 elif entry["id"] == "dev-backlog-watchdog":
-                    self.assertEqual(4, len(scenarios["scenarios"]))
+                    self.assertEqual(6, len(scenarios["scenarios"]))
                 else:
                     self.assertEqual(3, len(scenarios["scenarios"]))
 

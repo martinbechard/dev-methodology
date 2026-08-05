@@ -375,6 +375,9 @@ packs:
     skillProbes:
       - probe-agent-claim
       - probe-codex-workitem-coordination
+      - probe-resolve-backlog-blockage
+      - probe-set-solo-mode
+      - probe-set-multitask-mode
       - probe-create-file-work-item
       - probe-create-github-work-item
       - probe-create-gitlab-work-item

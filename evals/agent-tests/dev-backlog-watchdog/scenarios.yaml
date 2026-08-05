@@ -58,3 +58,31 @@ scenarios:
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, blocked-reconciliation-results, singular-alert]
     expectedOutputs: [blocked reconciliation results, actionable parent alert]
     expectedTerminalStatus: PASS
+  - id: active-blockage-continues-without-repeat
+    priority: 5
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Observe continued sequential blockage recovery without repeating an unchanged alert or changing dispatch mode.
+    initialState: A declared blockage remains active, its exit conditions are not satisfied, and the same active-state notice was already sent.
+    task: Run one read-only cycle, retain the active blockage result, and keep routine alerts suppressed.
+    targetSkills: [codex-workitem-coordination, resolve-backlog-blockage]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Apply Resolve Backlog Blockage Watchdog Behavior, Return ACTIVE_UNCHANGED, Suppress a repeated parent alert, Preserve provider task Git claim and dispatch state byte-identically]
+    forbiddenBehaviors: [Load set-solo-mode or set-multitask-mode, Restart blockage recovery, Repeat an unchanged alert, Choose lifecycle state, Mutate dispatch mode]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, singular-alert, output-contract-presence]
+    expectedOutputs: [cycle result]
+    expectedTerminalStatus: PASS
+  - id: blockage-exit-condition-recovery-alert
+    priority: 6
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Surface completed blockage-recovery exit conditions without resuming dispatch or mutating lifecycle.
+    initialState: Every declared blockage item is terminal, no active item is Blocked, all changes are committed, and required combined regression results have dispositions.
+    task: Send one recovery-ready alert with the resolved items and final main commit.
+    targetSkills: [codex-workitem-coordination, resolve-backlog-blockage]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Confirm every blockage exit condition, Return RECOVERY_READY, Name resolved items and final main commit, Recommend Coordinator recovery closeout, Preserve observed state byte-identically]
+    forbiddenBehaviors: [Load set-solo-mode or set-multitask-mode, Enable secondary-thread dispatch, Choose or mutate lifecycle state, Dispatch another agent, Send routine capacity or blocker alerts]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, singular-alert, output-contract-presence]
+    expectedOutputs: [actionable parent alert]
+    expectedTerminalStatus: PASS

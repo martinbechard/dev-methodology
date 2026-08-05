@@ -107,6 +107,48 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-resolve-backlog-blockage
+    skill: resolve-backlog-blockage
+    source: skills/resolve-backlog-blockage/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: activation-and-behavior
+    activationCondition: The user or Dev Backlog Watchdog declares a backlog blockage, or an existing blockage recovery remains active.
+    negativeCondition: No blockage is declared and ordinary queue coordination remains valid.
+    expectedBehavior: Diagnose the declared blockage, recover one item at a time without claims or delegated delivery, keep Watchdog reporting bounded, avoid changing secondary-thread dispatch mode, and return the existing result when the observed recovery state is unchanged.
+    judgePlan: {deterministicChecks: [skill-read-trace, queue-state-transition, no-forbidden-mutation, output-contract-presence, readiness-consistency], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-backlog-coordinator-boundary, dev-backlog-watchdog-boundary, dev-backlog-watchdog-exit-condition]
+    workflowAssociations: [backlog]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-set-solo-mode
+    skill: set-solo-mode
+    source: skills/set-solo-mode/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: activation-and-behavior
+    activationCondition: A configured secondary-thread dispatch mechanism must stop accepting new dispatch while the current Agent continues work.
+    negativeCondition: New dispatch may continue and no solo-work condition exists.
+    expectedBehavior: Disable only new dispatch to secondary threads, preserve work already running, return ALREADY_SOLO for an unchanged disabled state, and return NOT_APPLICABLE without mutation when no mechanism exists.
+    judgePlan: {deterministicChecks: [skill-read-trace, no-forbidden-mutation, operation-coverage, output-contract-presence, readiness-consistency], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-backlog-coordinator-boundary]
+    workflowAssociations: [backlog]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-set-multitask-mode
+    skill: set-multitask-mode
+    source: skills/set-multitask-mode/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: activation-and-behavior
+    activationCondition: A configured secondary-thread dispatch mechanism may resume accepting new dispatch after a solo-work condition ends.
+    negativeCondition: The solo-work condition remains active and new secondary-thread dispatch must stay disabled.
+    expectedBehavior: Enable only new dispatch to secondary threads without launching work, return ALREADY_MULTITASK for an unchanged enabled state, and return NOT_APPLICABLE without mutation when no mechanism exists.
+    judgePlan: {deterministicChecks: [skill-read-trace, no-forbidden-mutation, operation-coverage, output-contract-presence, readiness-consistency], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-backlog-coordinator-happy]
+    workflowAssociations: [backlog]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
   - id: probe-agent-harness
     skill: agent-harness
     source: skills/agent-harness/SKILL.md

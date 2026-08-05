@@ -20,10 +20,10 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 30 conceptual agents and 129 bundled skills have structural coverage.
-- [x] 29 agents are scenario-declared and 126 skills are probe-declared.
+- [x] 30 conceptual agents and 131 bundled skills have structural coverage.
+- [x] 29 agents are scenario-declared and 129 skills are probe-declared.
 - Agents missing scenario declarations: dev-skill-lint-reviewer.
-- Skills missing probe declarations: analyze-document-topics, backlog-crisis-mode, revise-document-topics.
+- Skills missing probe declarations: analyze-document-topics, revise-document-topics.
 - [x] 66 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
 - 14 cases are fixture-backed and 14 fixtures are structurally executable before harness readiness is considered.
@@ -33,7 +33,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 29 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 2 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 29 agents and 103 skills have pending Model Judge status.
+- 29 agents and 106 skills have pending Model Judge status.
 - 0 agents and 23 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -151,7 +151,6 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | agent-work-merge | [x] | [x] probe-agent-work-merge | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | application-security | [x] | [x] probe-application-security | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | ast-grep | [x] | [x] probe-ast-grep | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
-| backlog-crisis-mode | [x] | [ ] none | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | missing | none | none | none | none |
 | careful-coding | [x] | [x] probe-careful-coding | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | code-comments | [x] | [x] probe-code-comments | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | code-discovery | [x] | [x] probe-code-discovery | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
@@ -177,8 +176,11 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | manage-jira-work-items | [x] | [x] probe-manage-jira-work-items | [x] provider-placeholder-matrix, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | organise-project-files | [x] | [x] probe-organise-project-files | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | prompt-contracts | [x] | [x] probe-prompt-contracts | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| resolve-backlog-blockage | [x] | [x] probe-resolve-backlog-blockage | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | root-cause-analysis | [x] | [x] probe-root-cause-analysis | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | runtime-evidence-collection | [x] | [x] probe-runtime-evidence-collection | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| set-multitask-mode | [x] | [x] probe-set-multitask-mode | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| set-solo-mode | [x] | [x] probe-set-solo-mode | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | structured-design | [x] | [x] probe-structured-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | structured-explanation | [x] | [x] probe-structured-explanation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | test-driven-development | [x] | [x] probe-test-driven-development | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
@@ -318,7 +320,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 
 ## Repository Verification Layers
 
-- [ ] Every live skill has exactly one probe declaration. Missing declarations: analyze-document-topics, backlog-crisis-mode, revise-document-topics.
+- [ ] Every live skill has exactly one probe declaration. Missing declarations: analyze-document-topics, revise-document-topics.
 - [ ] Every live conceptual agent has exactly one scenario declaration with at least one scenario. Missing declarations: dev-skill-lint-reviewer.
 - [x] Evaluation catalog references, fixture paths, Judge plans, harnesses, workflow links, and sandbox profiles are validated.
 - [x] Codex and Junie are the only supported evaluation harnesses.

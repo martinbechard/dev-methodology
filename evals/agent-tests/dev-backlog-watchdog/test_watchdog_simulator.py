@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies read-only watchdog alerts plus retained Stalled and Blocked reconciliation evidence.
+# Summary: Verifies read-only blockage observation plus retained Stalled and Blocked evidence.
 # Governing design: design/orchestrated-development-lifecycle.html
 # Governing test plan: evals/agent-tests/dev-backlog-watchdog/requirements-matrix.md
 
@@ -19,7 +19,8 @@ from watchdog_simulator import (
     WorkItem,
     WatchdogCycle,
     active_capacity,
-    backlog_crisis_reasons,
+    backlog_blockage_reasons,
+    observe_backlog_blockage,
     series_state,
     terminal_archive_destination,
 )
@@ -52,7 +53,7 @@ class WatchdogSimulatorTests(unittest.TestCase):
         self.assertIsNone(result.alert)
         self.assertEqual(before, items)
 
-    def test_backlog_crisis_declaration_criteria_are_deterministic(self) -> None:
+    def test_backlog_blockage_declaration_criteria_are_deterministic(self) -> None:
         """Each automatic criterion and the user declaration have a direct result."""
 
         five_blocked = [
@@ -65,15 +66,15 @@ class WatchdogSimulatorTests(unittest.TestCase):
                 "all-active-work-blocked",
                 "shared-blocker",
             ),
-            backlog_crisis_reasons(five_blocked),
+            backlog_blockage_reasons(five_blocked),
         )
         self.assertEqual(
             ("all-active-work-blocked",),
-            backlog_crisis_reasons([WorkItem("one", "Blocked")]),
+            backlog_blockage_reasons([WorkItem("one", "Blocked")]),
         )
         self.assertEqual(
             ("shared-blocker",),
-            backlog_crisis_reasons(
+            backlog_blockage_reasons(
                 [
                     WorkItem(
                         f"blocked-{index}",
@@ -87,18 +88,18 @@ class WatchdogSimulatorTests(unittest.TestCase):
         )
         self.assertEqual(
             ("no-progress-for-sixty-minutes",),
-            backlog_crisis_reasons(
+            backlog_blockage_reasons(
                 [WorkItem("ready", "Ready")],
                 minutes_without_progress=60,
             ),
         )
         self.assertEqual(
             ("user-declared",),
-            backlog_crisis_reasons([], user_declared=True),
+            backlog_blockage_reasons([], user_declared=True),
         )
 
-    def test_crisis_counts_exclude_deferred_and_terminal_items(self) -> None:
-        """Deferred and terminal records do not create an automatic crisis."""
+    def test_blockage_counts_exclude_deferred_and_terminal_items(self) -> None:
+        """Deferred and terminal records do not create an automatic blockage."""
 
         excluded = [
             WorkItem(status.lower().replace(" ", "-"), status)
@@ -111,7 +112,36 @@ class WatchdogSimulatorTests(unittest.TestCase):
                 "Abandoned",
             )
         ]
-        self.assertEqual((), backlog_crisis_reasons(excluded))
+        self.assertEqual((), backlog_blockage_reasons(excluded))
+
+    def test_active_blockage_observation_is_idempotent_and_read_only(self) -> None:
+        """Report continued recovery once and surface a satisfied exit without mutation."""
+
+        active = observe_backlog_blockage(
+            active=True,
+            exit_conditions_satisfied=False,
+            state_already_reported=False,
+        )
+        repeated = observe_backlog_blockage(
+            active=True,
+            exit_conditions_satisfied=False,
+            state_already_reported=True,
+        )
+        recovered = observe_backlog_blockage(
+            active=True,
+            exit_conditions_satisfied=True,
+            state_already_reported=False,
+        )
+
+        self.assertEqual("ACTIVE", active.status)
+        self.assertTrue(active.alert_parent)
+        self.assertEqual("ACTIVE_UNCHANGED", repeated.status)
+        self.assertFalse(repeated.alert_parent)
+        self.assertEqual("RECOVERY_READY", recovered.status)
+        self.assertTrue(recovered.alert_parent)
+        self.assertFalse(active.mutated)
+        self.assertFalse(repeated.mutated)
+        self.assertFalse(recovered.mutated)
 
     def test_suspected_stall_alerts_parent_without_setting_stalled(self) -> None:
         """The Watchdog reports evidence while leaving lifecycle state unchanged."""

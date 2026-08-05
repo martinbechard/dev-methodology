@@ -968,11 +968,11 @@ class RepositoryCoverageCliTests(unittest.TestCase):
             ROOT / "design" / "agent-skill-test-coverage-checklist.md"
         ).read_text(encoding="utf-8")
         self.assertIn(
-            "30 conceptual agents and 129 bundled skills have structural coverage",
+            "30 conceptual agents and 131 bundled skills have structural coverage",
             checklist,
         )
         self.assertIn(
-            "29 agents are scenario-declared and 126 skills are probe-declared",
+            "29 agents are scenario-declared and 129 skills are probe-declared",
             checklist,
         )
         self.assertIn(
@@ -981,13 +981,12 @@ class RepositoryCoverageCliTests(unittest.TestCase):
         )
         self.assertIn(
             "Skills missing probe declarations: analyze-document-topics, "
-            "backlog-crisis-mode, revise-document-topics",
+            "revise-document-topics",
             checklist,
         )
         self.assertIn(
             "- [ ] Every live skill has exactly one probe declaration. "
-            "Missing declarations: analyze-document-topics, backlog-crisis-mode, "
-            "revise-document-topics.",
+            "Missing declarations: analyze-document-topics, revise-document-topics.",
             checklist,
         )
         self.assertIn(

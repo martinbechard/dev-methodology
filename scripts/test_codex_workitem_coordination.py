@@ -435,7 +435,7 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
         self.assertEqual("read-only", role["isolation"])
         self.assertEqual("simple", role["modelProfile"])
         self.assertEqual(
-            {"backlog-crisis-mode", "codex-workitem-coordination"},
+            {"resolve-backlog-blockage", "codex-workitem-coordination"},
             {next(iter(entry)) for entry in role["skills"]},
         )
         self.assertIn("outside provider queue and active capacity", role_text)

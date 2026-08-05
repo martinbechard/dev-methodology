@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Backlog Crisis Mode
+  display_name: Set Multitask Mode
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Resolve a blocked backlog sequentially in one Coordinator task without claims or delegated...
+  short_description: Enable dispatch to secondary threads after the condition requiring solo work has ended.
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $backlog-crisis-mode to resolve the declared backlog crisis.
+  default_prompt: Use $set-multitask-mode to enable dispatch to secondary threads for the current coordination context.
 
 # Optional invocation policy placeholder.
 # policy:
