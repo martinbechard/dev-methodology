@@ -1,6 +1,6 @@
 # Claim Work Items By ID And Record Lifecycle Events
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -35,6 +35,33 @@ Worktree: /Users/martinbechard/.codex/worktrees/1de0/dev-methodology.
 Phase: implementation startup.
 Started At: 2026-08-05T22:41:43Z.
 Exact Claim Acquisition Evidence: claim record-running-claim-work-items-019fd414 acquired with outcome SHARED_CHECKOUT_ACQUIRED; acquisition event fcc3aa93-33d8-4ac4-9a04-7143ab4dbc67; incarnation 8993a895-857a-4646-8858-e40546f13425.
+
+## Completion Evidence
+
+Transition: Running -> Completed.
+Completion Disposition: READY from the direct-main delivery contract.
+Completed At: 2026-08-05T23:57:49Z.
+Canonical Thread: 019fd414-a82c-75e3-b8e3-988fb862b7ed.
+Root Agent Task: /root.
+Accepted Source Commit: 9b97d86df763e0e4b1e0e6151bc49ffbf815fcac.
+Accepted Source Branch: codex/claim-work-items-by-id-and-record-lifecycle-events.
+Accepted Source Worktree: /Users/martinbechard/.codex/worktrees/1de0/dev-methodology.
+Integration Strategy: Four accepted commits replayed without conflicts onto current main, followed by a fast-forward of primary main.
+Source To Integration Mapping: 19ca9ceac8850e2ceafba77caaf735c5904eb950 -> 2c0551e6; 8ebac965a3ea400002b40fa904466fa2a7ee7176 -> ae65c5d4; 43319970068b6c2a5eaf1f35e44e52348984dd13 -> 8835f53c; 9b97d86df763e0e4b1e0e6151bc49ffbf815fcac -> fd9467f8.
+Observed Main Branch: main.
+Observed Main Tip: fd9467f81f524a002a7e28663c9387965d068860.
+Reachability Evidence: Integration tip fd9467f81f524a002a7e28663c9387965d068860 is the observed main tip; range-diff marked all four source-to-integration pairs equal.
+Independent Review: GOOD from fresh recovery reviewer review_recovery on source commit 9b97d86df763e0e4b1e0e6151bc49ffbf815fcac, with no material findings.
+Independent Verification: GOOD from fresh verifier verify_final_candidate; 117 claim tests, 24 transport tests, the targeted coordinator/provider contract test, nine changed-skill validators, generated-document freshness, Python compilation, and diff checks passed.
+Post-Integration Verification: 142 focused claim, transport, and coordinator/provider contract tests passed on main in 61.983 seconds; generated documentation was current; diff checks passed; primary main was clean.
+Scoped Omissions: No broad repository suite or live MCP call was run. MCP parity is verified as an explicit documentation and structured-fixture contract because no maintained MCP implementation is available in this repository.
+Remote Observation: origin/main was not updated. Local main already contained 231 unrelated unpublished commits before this integration, and this work item did not authorize publishing that accumulated history.
+Integration Claim: integrate-work-item-claims-019fd414 acquired the exact 15 changed paths with event e7ba19ee-604d-47f4-962f-4de4025ee851 and released after verification with event f594b9a3-9522-429a-8850-e05d067ac155.
+Terminal Work Item Claim: close-work-item-claims-019fd414 acquired Work Item ID claim-work-items-by-id-and-record-lifecycle-events with activity update and event e1e27a7f-5f80-40c0-a9a6-59076d6c21f5; disposition-bearing release follows this provider commit.
+Terminal Path Claim: archive-work-item-claims-019fd414 acquired the exact active and archive paths with event a48731b4-92ad-470e-bae2-aa2a78994475; release follows this provider commit.
+Terminal Provider Reference: backlog/completed-backlog/features/claim-work-items-by-id-and-record-lifecycle-events.md.
+Terminal Backlog Commit: This status-and-archive transaction; the exact commit is recorded by the enclosing Git history and terminal handoff.
+Outcome: The provider-independent exact Work Item ID claim, command and MCP contract parity, deterministic lifecycle reporting, focused regression coverage, generated documentation, and provider guidance are delivered on main.
 
 ## Summary
 
