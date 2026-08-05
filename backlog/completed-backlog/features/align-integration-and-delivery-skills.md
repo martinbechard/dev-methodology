@@ -1,12 +1,12 @@
 # Align Integration And Delivery Skills
 
-Status: Blocked
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/apply-object-oriented-skill-group-design/align-integration-and-delivery-skills.md
+Provider Reference: backlog/completed-backlog/features/align-integration-and-delivery-skills.md
 
 Completion: direct-main
 
@@ -124,3 +124,15 @@ Coordinator Next Action: Keep this item in the crisis dependency set and do not 
 ### Approval Resolution
 
 Approved at creation on 2026-08-04 by the user statement in the active Codex task: "create separate work items to update skills according to the new design, and update individual evals." The reviewed Concurrent Tasking and Direct Main Delivery diagrams show the exact renames, delivery family, and governed relationships covered here. Approval is limited to the governed canonical paths listed above. Any additional governed definition requires new explicit user approval recorded in this item.
+
+## Crisis Completion
+
+Completed At: 2026-08-05T19:43:28Z.
+
+Disposition: Completed directly by the backlog-blockage Coordinator after both declared dependencies reached terminal successful dispositions.
+
+Delivery Commit: e283f805e84ef7f3719d76d9fa759872990e8d0a.
+
+Verification: All four affected skill packages passed explicit-path validation. Five feature-branch delivery tests, fourteen direct-main delivery tests, five focused bundle interface tests, 118 skill-evaluation tests, eighteen coverage-catalog tests, two Dev Merge Coordinator fixture tests, and focused renderer and role-policy checks passed. OpenAI metadata, generated skill, role, hierarchy, evaluation, technology-detection, and support-checklist outputs are current; Python compilation and diff checks passed. Two unrelated broad legacy assertions in role-mutation and technology-detection tests were unchanged by this delivery and their affected-path-specific cases passed.
+
+Outcome: integrate-agent-work, deliver-work-item-direct-main, and deliver-work-item-feature-branch are the only maintained live identities for these responsibilities; both delivery providers expose Deliver Work Item; create-pull-request exposes Create Or Update Pull Request; configured Commit selection, end-to-end verification references, roles, probes, catalogs, and generated outputs use the new interfaces.
