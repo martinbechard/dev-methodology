@@ -23,7 +23,7 @@ Apply the approved skill names and public procedure headings from the object-ori
 ## Work Items
 
 1. [Align Baseline Development Skills](align-baseline-development-skills.md)
-2. [Align Project Setup Skills](align-project-setup-skills.md)
+2. [Align Project Setup Skills](align-project-setup-skills.md) — Blocked: evaluator catalog-validation recovery required.
 3. [Align Documentation Methodology Skills](align-documentation-methodology-skills.md)
 4. [Align Work-Item Creation Provider Skills](align-work-item-creation-provider-skills.md)
 5. [Align Work-Item Management Provider Skills](../../user-action-required/align-work-item-management-provider-skills.md) — User Action Required before direct-main integration.

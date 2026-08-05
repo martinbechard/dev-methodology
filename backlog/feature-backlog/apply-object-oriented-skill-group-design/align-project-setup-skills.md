@@ -1,6 +1,6 @@
 # Align Project Setup Skills
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -88,6 +88,26 @@ None.
 ## Open Questions
 
 None.
+
+## Blocked Handoff
+
+Transition: Running -> Blocked.
+Coordinator Decision: The fresh independent methodology-artifact review confirmed that the same acceptance criterion remains unresolved after the two permitted correction attempts. No third correction attempt is authorized.
+Canonical Thread: /root/apply_skill_group_design_backlog/align_project_setup_skills.
+Canonical Root Agent Task: /root/apply_skill_group_design_backlog/align_project_setup_skills.
+Owner: Unowned.
+Preserved Clean Candidates:
+
+- 49e8616b1c00b0e241a5fd5e4cd1a498562e2c2a
+- e27b51e8d885b30bf195198c116d79817b219dee
+- 1ef05295
+
+Blocker: The Project Configurator and Project Bootstrapper evaluators still accept whitespace-only identifiers and a well-shaped synthetic selected-skill-set. They validate only non-empty strings and container shape, rather than identifiers from an explicit confirmed repository/runtime catalog.
+Blocker Owner: Dev Backlog Coordinator.
+Attempt History: The first fresh code review passed after correction attempt 2. A subsequent independent methodology-artifact review confirmed the unresolved criterion. The first and second correction attempts are therefore exhausted.
+Requested Recovery Action: Preserve this evidence and candidate history. Do not mutate the implementation or integrate it while Blocked.
+Unblock Condition: A later parent-authorized recovery must retain this same canonical task, record Blocked -> Ready -> Starting -> Running through the normal provider boundaries, then validate stripped identifiers against an explicit confirmed catalog. It must reject empty, whitespace-only, duplicate, unknown, and synthetic identifiers including selected-skill-set; preserve valid single identifiers and the composed [fastapi, python] route; add executable FAIL controls in both agents; and obtain fresh source review, artifact review, and verifier acceptance. If any material finding remains, keep this item Blocked.
+Evidence: Candidate 1ef05295 passed fresh source review. The independent artifact review found the catalog-validation gap described above. No delivery or main-integration claim was acquired.
 
 ## Governed Definition Approval
 
