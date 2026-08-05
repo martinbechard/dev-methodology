@@ -1,6 +1,6 @@
 # Align Documentation Methodology Skills
 
-Status: Ready
+Status: Blocked
 
 Type: Feature
 
@@ -56,6 +56,22 @@ The user directed in the active Codex task on 2026-08-04: "create separate work 
 ## Open Questions
 
 Resolve whether any nonhistorical example must mention both old and new names for migration explanation; default to removing the old name from live instructions.
+
+## Crisis Dependency Reclassification
+
+Reclassified At: 2026-08-05T17:10:30Z.
+
+Transition: Ready -> Blocked.
+
+Owner: Unowned.
+
+Exact Blocker: Both declared prerequisites are currently Blocked: backlog/feature-backlog/apply-object-oriented-skill-group-design/align-baseline-development-skills.md and backlog/feature-backlog/apply-object-oriented-skill-group-design/align-project-setup-skills.md.
+
+Blocker Owner: Dev Backlog Coordinator resolving the named dependencies in Backlog Crisis Mode.
+
+Unblock Condition: Align Baseline Development Skills and Align Project Setup Skills both reach terminal successful dispositions and their delivered definitions and evaluation contracts are available on current main.
+
+Coordinator Next Action: Keep this item in the crisis dependency set and do not dispatch it. After both unblock conditions are satisfied, reconcile it through Blocked -> Ready under the normal lifecycle.
 
 ## Governed Definition Approval
 
