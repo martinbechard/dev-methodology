@@ -56,6 +56,10 @@ Fresh Dev Code Reviewer task /root/apply_skill_group_design_backlog/align_projec
 
 Runnable next action: correction attempt 1 remains assigned to the original coder in this delivery. Add adversarial Project Configurator and Project Bootstrapper verdict cases that reject synthetic aggregate or selected-skill-set output and accept exact per-skill routing. Run the new targeted methods through the two existing test files, then obtain fresh independent review and verification. This is evidence attached to this provider record, not a separate delivery.
 
+Fresh re-review task /root/apply_skill_group_design_backlog/align_project_setup_skills/rereview_correction confirmed a second Medium defect in replacement candidate e27b51e8d885b30bf195198c116d79817b219dee. Project Configurator test_fixtures.py around line 26 and Project Bootstrapper scripted_orchestration.py around line 72 require len(required_skills) == 1, which rejects valid composed exact-name folder routes. Canonical PROJECT.yaml around line 447 validly routes [fastapi, python], and the production renderer around line 1709 iterates every listed skill. A reproduction using one folder with required_skills [fastapi, python] returns configurator=FAIL and bootstrapper=FAIL.
+
+Correction attempt 1 failed. Correction attempt 2 is assigned to the original coder in this delivery: accept any non-empty list of non-empty exact skill identifiers in both evaluators; add the [fastapi, python] one-folder positive control; retain exact FAIL for aggregate-interface or selected-skill-set output; and rerun the three focused methods. This remains evidence attached to this provider record, not a separate delivery.
+
 ## Requirements
 
 - Rename the generic Workflow headings to the two proposed public procedure headings.
