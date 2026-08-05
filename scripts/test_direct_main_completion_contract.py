@@ -348,6 +348,84 @@ class DirectMainCompletionContractTests(unittest.TestCase):
         self.assertEqual("BLOCKED", without_mapping.disposition)
         self.assertEqual("READY", with_mapping.disposition)
 
+    def test_exact_path_replay_preserves_unrelated_unstaged_dirty_state(self) -> None:
+        self.repository.git("switch", "-c", "temporary-delivery")
+        source_commit = self.repository.commit_file(
+            "feature.txt",
+            "candidate\n",
+            "Candidate",
+        )
+        self.repository.git("switch", "main")
+        self.repository.commit_file(
+            "main-advance.txt",
+            "preserve main advance\n",
+            "Advance main",
+        )
+        dirty_path = self.repository.path / "base.txt"
+        dirty_path.write_bytes(b"owner bytes\x00remain\n")
+        accepted_paths = self.repository.git(
+            "diff-tree",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+            source_commit,
+        ).stdout.splitlines()
+        before_status = self.repository.git("status", "--porcelain=v1").stdout
+        before_bytes = dirty_path.read_bytes()
+        before_diff = self.repository.git("diff", "--binary", "--", "base.txt").stdout
+        before_index = self.repository.git(
+            "ls-files", "--stage", "--", "base.txt"
+        ).stdout
+        before_staged_paths = self.repository.git(
+            "diff", "--cached", "--name-only"
+        ).stdout
+
+        self.repository.git("cherry-pick", source_commit)
+        integration_commit = self.repository.rev_parse("HEAD")
+        after_status = self.repository.git("status", "--porcelain=v1").stdout
+        after_bytes = dirty_path.read_bytes()
+        after_diff = self.repository.git("diff", "--binary", "--", "base.txt").stdout
+        after_index = self.repository.git(
+            "ls-files", "--stage", "--", "base.txt"
+        ).stdout
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            verification_checkout = Path(temporary_directory) / "verification"
+            self.repository.git(
+                "worktree",
+                "add",
+                "--detach",
+                str(verification_checkout),
+                "main",
+            )
+            verification_status = self.repository.git(
+                "-C", str(verification_checkout), "status", "--porcelain"
+            ).stdout
+            verification_commit = self.repository.git(
+                "-C", str(verification_checkout), "rev-parse", "HEAD"
+            ).stdout.strip()
+            self.repository.git("worktree", "remove", str(verification_checkout))
+
+        self.assertEqual(["feature.txt"], accepted_paths)
+        self.assertEqual("", before_staged_paths)
+        self.assertEqual(" M base.txt\n", before_status)
+        self.assertEqual(before_status, after_status)
+        self.assertEqual(before_bytes, after_bytes)
+        self.assertEqual(before_diff, after_diff)
+        self.assertEqual(before_index, after_index)
+        self.assertNotEqual(source_commit, integration_commit)
+        self.assertEqual(
+            self.repository.patch_id(source_commit),
+            self.repository.patch_id(integration_commit),
+        )
+        self.assertEqual(
+            "main",
+            self.repository.git("branch", "--show-current").stdout.strip(),
+        )
+        self.assertEqual(integration_commit, self.repository.rev_parse("main"))
+        self.assertEqual(integration_commit, verification_commit)
+        self.assertEqual("", verification_status)
+
     def test_provider_handoff_receives_exact_observed_main_commit(self) -> None:
         source_commit = self.repository.commit_file(
             "feature.txt",
@@ -381,6 +459,23 @@ class DirectMainCompletionContractTests(unittest.TestCase):
             "Return the prepared terminal handoff to the caller",
             "does not change Commit READY into BLOCKED",
             "record lifecycle COMPLETED in the task-local result before returning READY",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
+    def test_unrelated_dirty_route_contract_is_explicit(self) -> None:
+        skill_text = SKILL_PATH.read_text(encoding="utf-8")
+
+        for phrase in (
+            "globally clean route remains the normal route",
+            "exact accepted-path set",
+            "exact worktree and index path inventories",
+            "unmerged, renamed, copied, type-changed, or untracked collision",
+            "byte-for-byte and index-for-index",
+            "clean verification checkout",
+            "Classify the original paths as preserved unrelated dirt",
+            "Classify every additional staged, unstaged, untracked",
+            "must not stash, reset, discard",
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, skill_text)
