@@ -378,13 +378,13 @@ The use cases differ at their selection boundary:
 
 ## 3. Skill Organization
 
-Skill Groups can be shown in two forms. An expanded view draws a box around the member skills so their responsibilities and loading relationships can be compared at once. A compact view replaces the box with solid-diamond containment lines and can also show nested groups.
+A Skill Group is a named set of cohesive skills used to organize one capability for comprehension. The group can be shown in two forms: an expanded box that displays its members together, or compact solid-diamond containment that can also show nested groups.
 
 Both forms describe membership in the same kind of Skill Group. Neither form means that a member loads, invokes, or depends on another member.
 
 ### 3.1 Expanded Skill Group
 
-An expanded Skill Group is useful when one large skill has been divided into several cohesive SKILL.md files with non-overlapping responsibilities. A Mermaid namespace supplies the visible group box. Separate references from Agents or AGENTS.md show which group members they load.
+An expanded Skill Group is useful when one large skill has been divided into several SKILL.md files with non-overlapping responsibilities. A Mermaid namespace supplies the visible group box.
 
 - **RULE: RULE-28** Skill Group members divide a larger responsibility without overlap
   - **SYNOPSIS:** Each member owns one cohesive part of the grouped capability while using compatible domain vocabulary.
@@ -393,10 +393,6 @@ An expanded Skill Group is useful when one large skill has been divided into sev
 - **RULE: RULE-29** Group membership and skill loading remain separate relationships
   - **SYNOPSIS:** The group box shows which skills belong together for comprehension. Agent or AGENTS.md references separately show which exact members are loaded for a use case.
   - **EXAMPLE:** Work Item Coordinator loads work-item-base and work-item-dispatch, while Work Item Watchdog loads work-item-base and work-item-monitor; the surrounding box places all three skills in the same Work Item Skill Group.
-
-- **RULE: RULE-30** Direct references between group members create stronger coupling
-  - **SYNOPSIS:** A member that names another member creates a skill-to-skill dependency that must be traced in addition to their common group membership.
-  - **EXAMPLE:** If work-item-dispatch named work-item-base directly, the diagram would need an open-diamond reference between those skills; placing both skills in the Work Item Skill Group does not create that reference.
 
 ```mermaid
 classDiagram
@@ -440,19 +436,9 @@ classDiagram
     WorkItemWatchdog o--> work-item-monitor
 ```
 
-The namespace box identifies one Work Item Skill Group. It is an expanded organizational view, not a loading relationship. The open diamonds separately mean that each Agent knows the exact skill names it loads. No arrows connect the three member skills because no member-to-member dependency is asserted.
+The namespace box identifies one Work Item Skill Group. The open-diamond references use the loading notation introduced in Section 2.3: Work Item Coordinator loads work-item-base and work-item-dispatch, while Work Item Watchdog loads work-item-base and work-item-monitor. The box itself does not mean that either Agent loads the entire group.
 
-The members without parentheses are exposed data; the members with parentheses are functions. They clarify the responsibility split but do not create member-level dependencies. Work Item Coordinator and Work Item Watchdog each load work-item-base as shared domain context, then load only the specialized member needed by that role. Whether a harness caches or rereads an already selected SKILL.md is a runtime concern outside this analysis.
-
-AGENTS.md can own the same exact-name loading references when the choice of group members is project-specific rather than fixed in an Agent definition. Keeping those references in an Agent or AGENTS.md makes the loaded dependencies easier to inspect, change, and troubleshoot than a chain of skill-to-skill name references.
-
-Technology or provider selection remains a different use case because it selects one implementation among alternatives. For example, test-driven-development can refer to Run Project Tests while AGENTS.md selects JUnit or Jest. A direct skill-to-skill reference also remains valid when the invoking skill intentionally owns that dependency; its open-diamond arrow records stronger coupling than shared group membership.
-
-| Arrangement | What the view groups or selects | Loading or dependency meaning |
-| --- | --- | --- |
-| Expanded Skill Group | Several cohesive, non-overlapping skills shown inside one box. | None from the box itself; separate Agent, AGENTS.md, or SKILL.md arrows show loading and dependencies. |
-| Technology or provider selection | One implementation among alternatives. | The caller knows a procedure; AGENTS.md knows the selected skill name. |
-| Direct member-to-member reference | One named group member required by another member. | The invoking SKILL.md knows the referenced skill by exact name. |
+The members without parentheses are exposed data; the members with parentheses are functions. These members make the responsibility split visible. No arrows connect the three skills because group membership does not create a dependency between them.
 
 The Work Item Skill Group names and displayed members are analysis vocabulary supplied for this example. They do not assert that those exact skill definitions already exist in the repository.
 
@@ -460,23 +446,19 @@ The Work Item Skill Group names and displayed members are analysis vocabulary su
 
 A compact Skill Group view uses solid-diamond containment instead of drawing a box around every member. It is useful when member details are unnecessary or when a diagram needs to show one group nested in another.
 
-A Skill Group is a named set used to organize skills for comprehension. It collects skills that contribute to one methodology capability or setup option, whether those skills are listed directly in the group or reached through a nested Skill Group.
-
 A nested skill group is the same kind of object as its parent. The word subgroup describes only its position inside that parent; it does not introduce a second kind of group. For any skill group:
 
 - direct skills are the skills listed immediately in that group;
 - nested skill groups are smaller named sets included by that group; and
 - the group’s complete skill set is its direct skills plus the complete skill sets of all its nested groups.
 
-This organization answers “Which skills should I consider part of this capability?” It does not answer “Which skill loads or invokes another skill?”
-
 - **RULE: RULE-54** A solid diamond is the compact form of Skill Group membership
   - **SYNOPSIS:** A solid diamond from a Skill Group to a SKILL.md replaces the expanded group box for one direct member. A solid diamond from one Skill Group to another records that the parent includes the child’s complete skill set.
   - **EXAMPLE:** Concurrent Tasking directly contains codex-workitem-coordination and includes the Resource Coordination skill group, whose direct skills include agent-claim.
 
-- **RULE: RULE-55** Containment does not imply use or dependency
-  - **SYNOPSIS:** A containment line only builds the organizational set. An Agent, AGENTS.md, or SKILL.md still needs a separate regular or open-diamond reference when it invokes a procedure or names a skill.
-  - **EXAMPLE:** Concurrent Tasking includes every Resource Coordination skill for comprehension, but that does not mean codex-workitem-coordination loads agent-claim or that every Concurrent Tasking skill uses it.
+- **RULE: RULE-55** Nested containment includes the child group’s complete skill set
+  - **SYNOPSIS:** A parent group contains its direct skills plus every skill reached through its nested groups.
+  - **EXAMPLE:** Concurrent Tasking contains agent-claim through its nested Resource Coordination group even though agent-claim is not a direct member of Concurrent Tasking.
 
 ```mermaid
 classDiagram
@@ -503,7 +485,7 @@ classDiagram
     ResourceCoordination *-- agent-claim
 ```
 
-Concurrent Tasking has one direct skill in this compact view: codex-workitem-coordination. It also includes the nested Resource Coordination set, so agent-claim belongs to the complete Concurrent Tasking set through that nesting. An expanded view could instead draw boxes around the same members, but the solid-diamond form shows nesting more concisely. The solid diamonds do not say that codex-workitem-coordination loads agent-claim or that Resource Coordination loads anything. Loading and invocation remain visible through the reference forms introduced in Section 2.
+Concurrent Tasking has one direct skill in this compact view: codex-workitem-coordination. It also includes the nested Resource Coordination set, so agent-claim belongs to the complete Concurrent Tasking set through that nesting. An expanded view could instead draw boxes around the same members, but the solid-diamond form shows nesting more concisely.
 
 The repository-specific group models are maintained separately in [Object-Oriented Skill Group Models](object-oriented-skill-group-models.md).
 
@@ -874,8 +856,6 @@ The glossary summarizes concepts after the examples have established them.
 | Skills injection | The AGENTS.md selection that links an interface procedure to one concrete SKILL.md. | When create-new-work-item() is needed, Project-specific directives select manage-work-item-gitlab. |
 | Request-triggered skill selection | Selection caused by an explicit skill name or marker in the request, or by a match between the request and the skill’s declared purpose. It does not require an Agent-definition reference or AGENTS.md binding. | A structural-search request selects ast-grep for the current request. |
 | Expanded Skill Group | A Skill Group shown as a box around its member SKILL.md nodes so their responsibilities and separate loading references can be viewed together. The box itself creates no loading or dependency relationship. | The Work Item Skill Group box contains work-item-base, work-item-dispatch, and work-item-monitor. |
-| Group-member loading | An Agent or AGENTS.md exact-name reference to one member of a Skill Group. It is independent of the member’s organizational placement in the group. | Work Item Watchdog loads work-item-base and work-item-monitor from the Work Item Skill Group. |
-| Direct group-member reference | An exact-name dependency declared by one group member on another. It is stronger coupling than membership in the same Skill Group. | If work-item-dispatch named work-item-base, an open-diamond skill-to-skill reference would show that dependency. |
 | Exact-name reference | An open-diamond arrow from a node that knows a skill’s exact name to that SKILL.md. | DevCoder o--> careful-coding. |
 | Procedure-name reference | A regular arrow from an invoker to the procedure it knows without naming the implementing SKILL.md. | BacklogManager --> manage-work-item. |
 | Conditional reference | A dotted regular or open-diamond arrow whose label states the loading condition. | DevCoder o..> test-driven-development, labeled “when the user requests TDD.” |
