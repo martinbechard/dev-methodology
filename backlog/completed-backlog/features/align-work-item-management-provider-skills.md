@@ -1,12 +1,12 @@
 # Align Work-Item Management Provider Skills
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/apply-object-oriented-skill-group-design/align-work-item-management-provider-skills.md
+Provider Reference: backlog/completed-backlog/features/align-work-item-management-provider-skills.md
 
 Owner: Dev Orchestrator
 
@@ -229,3 +229,25 @@ Worktree Evidence: The source and integration worktrees are clean.
 Claim Evidence: Before this provider transaction, claim status returned STATUS with no live claims. This transition is protected by exact-file claim uar-align-work-item-management-provider-skills-019fab, acquired with outcome SHARED_CHECKOUT_ACQUIRED and event c471fd95-f7c1-4039-a067-212013d506f1.
 
 Safe Resumption: Preserve the canonical Thread, root Agent Task, source candidate, review, verification, integration evidence, and the user-owned primary-main diff. After the user answers, record the answer once and move this item to Ready in its typed active folder. The parent Coordinator must then reserve Ready -> Starting on this same Thread, and its root Dev Orchestrator must accept Starting -> Running before further repository mutation. Do not create a replacement Thread while this canonical identity remains valid.
+
+## Completion Evidence
+
+Lifecycle Transition: Running -> Completed.
+
+Completion Disposition: READY from complete-work-item-direct-main.
+
+Canonical Thread and Root Agent Task: /root/apply_skill_group_design_backlog/align_work_item_management_providers.
+
+Accepted Source Candidate: 1ce2f98cce8d7ee2ca498a7507f422d802ea3166. This intentionally non-ancestral candidate is represented by exact-path integration commit db58d7130d3e7c06979d7f963bb44b967f15e622, whose 16 accepted paths are byte-equivalent to the source candidate.
+
+Main Observation: Integration commit db58d7130d3e7c06979d7f963bb44b967f15e622 is an ancestor of observed clean main 59fe889e8b134f402709fd294f6eaf109375ddbe. The reconciled head 230bdba3d6545f7ec0c3c7426f2c77c4c31ca891 preserved the integration and then-current main before later non-overlapping main advances.
+
+Independent Gates: Review PASS; verifier PASS; correction attempt 2 resolved the recorded provider-token defect; five of five definition prechecks and five of five regeneration checks passed.
+
+Post-Main Verification: Four focused BundleContentTests passed under Python 3.11. scripts/build-skill-docs.py --check and git diff --check passed.
+
+Known Unrelated Warning: dev-document-topic-editor is missing four Judge checks. This terminal update does not alter that separate evaluator defect.
+
+Delivery Claim Evidence: The direct-main project-files claim direct-main-align-work-item-management-providers-019fab acquired event cb05d7d9-ab8a-4477-856e-e0f3104029bb and released event 2ad3bfe6-7f32-4cd2-8335-68490209ced5. No remote push was required.
+
+Terminal Provider Transaction: This file moves to backlog/completed-backlog/features/align-work-item-management-provider-skills.md under exact-path claim terminal-align-work-item-management-provider-skills-019fab, acquired with event fda05264-8b40-4792-bd2d-5cdc88ae0313. The archive commit and release evidence are verified after this transaction.
