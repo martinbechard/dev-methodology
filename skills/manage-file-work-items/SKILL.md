@@ -101,7 +101,7 @@ the pending update.
 
 Missing result evidence, missing logs, a stopped process, a commit, branch publication, or absence of errors is never completion.
 
-## Inventory Workflow
+## Inventory Work Items
 
 When asked for status:
 
@@ -118,7 +118,7 @@ When asked for status:
 
 If closed items remain in active folders, explicit status is the open or closed signal. If the repository moves closed items to archives, archive location is durable outcome evidence.
 
-## Dispatch Workflow
+## Transition Work Item
 
 - Read the exact current item and verify that its current state permits the requested
   caller-authorized transition.
@@ -292,7 +292,7 @@ technical or external blocker in Blocked with an exact owner and unblock conditi
 
 Work performed before User Action Required -> Ready -> Starting -> Running reconciliation is not automatically accepted or discarded. Preserve its diff, commits, branch, worktree, review, verification, and delivery evidence. Report the sequence problem to the parent. Do not continue delivery until the parent and the same root Orchestrator reconcile the provider state, commits, independent gates, and delivery state.
 
-## Completion And Archive Workflow
+## Reconcile Work Item Completion
 
 Only the work-item conversation's root Dev Orchestrator may request terminal completion, and only its Dev Backlog Steward child performs the atomic status-and-archive mutation. Only record COMPLETED when all of these exist:
 
@@ -316,7 +316,7 @@ Archive movement is explicit and serialized:
 
 Record the destination as the terminal provider_reference. Preserve review, checks, source evidence, delivery evidence, recovery notes, and failure reasons. A conflict, missing proof, or terminal-update failure prohibits lifecycle COMPLETED.
 
-## Recovery Workflow
+## Recover Work Item
 
 - Read visible active items first.
 - Reconcile the provider record's owner, parent and work-item conversation identifiers,
@@ -334,7 +334,7 @@ Record the destination as the terminal provider_reference. Preserve review, chec
 - Do not rerun accepted delivery solely because a terminal provider update failed unless the evidence is stale or contradictory.
 - Ask for human direction only when state and evidence cannot determine the next safe action.
 
-## Reporting
+## Report Work Items
 
 For each considered work item, report dispatch eligibility, any unmet hard blocker, any coordination-only overlap constraint, and any deferred edit, shared-resource, or integration event as distinct facts.
 

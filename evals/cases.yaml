@@ -612,6 +612,97 @@ cases:
       agent-claim-command: [SKILL.md, scripts/claim.py]
       structured-explanation: [SKILL.md]
     requiredEvidence: [BACKLOG-ITEM, OWNERSHIP-RECORD, STATE-TRANSITION, TERMINAL-SUMMARY]
+  - id: work-item-management-provider-operations
+    coverageStatus: fixture-backed
+    executionStatus: runnable
+    project: evals/projects/work-item-management-provider-operations
+    task: TASK.md
+    readOnly: true
+    resultDestination: external-evidence
+    allowedWritePaths: []
+    ephemeralWritePaths: []
+    install: null
+    verify:
+      argv: [python3, -c, "raise SystemExit(0)"]
+      modelVisible: false
+    harnesses: [codex, junie]
+    risk: {level: ordinary, reasons: []}
+    executionTier: local
+    securityContainmentRequired: false
+    harnessExecutionStatus: {codex: runnable, junie: runnable}
+    requiredAgents: [dev-backlog-steward]
+    agentScenarios: [dev-backlog-steward-provider-boundary]
+    requiredSkills:
+      - manage-file-work-items
+      - manage-github-work-items
+      - manage-gitlab-work-items
+      - manage-azure-devops-work-items
+      - manage-jira-work-items
+      - structured-explanation
+    skillProbes:
+      - probe-manage-file-work-items
+      - probe-manage-github-work-items
+      - probe-manage-gitlab-work-items
+      - probe-manage-azure-devops-work-items
+      - probe-manage-jira-work-items
+      - probe-structured-explanation
+    fixtureBackedProbeClaims:
+      - probe-manage-file-work-items
+      - probe-manage-github-work-items
+      - probe-manage-gitlab-work-items
+      - probe-manage-azure-devops-work-items
+      - probe-manage-jira-work-items
+    workflowPack: backlog
+    sandboxProfiles: {codex: codex-read-only, junie: junie-read-only}
+    judgePlan:
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, operation-coverage, tool-authority, queue-state-transition, no-forbidden-mutation, output-contract-presence, snapshot-reset, local-execution-boundary]
+      modelRubric: workflow-quality
+    contextPack:
+      fixtureRoot: evals/projects/work-item-management-provider-operations
+      include: [TASK.md]
+      stagedSkillPackages:
+        - manage-file-work-items
+        - manage-github-work-items
+        - manage-gitlab-work-items
+        - manage-azure-devops-work-items
+        - manage-jira-work-items
+        - structured-explanation
+      wholeRepositoryAllowed: false
+      approvedSensitiveData: false
+    modelVisiblePaths: [TASK.md]
+    skillResourceAllowlist:
+      manage-file-work-items: [SKILL.md]
+      manage-github-work-items: [SKILL.md]
+      manage-gitlab-work-items: [SKILL.md]
+      manage-azure-devops-work-items: [SKILL.md]
+      manage-jira-work-items: [SKILL.md]
+      structured-explanation: [SKILL.md]
+    requiredEvidence:
+      - FILE-INVENTORY
+      - FILE-TRANSITION
+      - FILE-RECONCILE
+      - FILE-RECOVER
+      - FILE-REPORT
+      - GITHUB-INVENTORY
+      - GITHUB-TRANSITION
+      - GITHUB-RECONCILE
+      - GITHUB-RECOVER
+      - GITHUB-REPORT
+      - GITLAB-INVENTORY
+      - GITLAB-TRANSITION
+      - GITLAB-RECONCILE
+      - GITLAB-RECOVER
+      - GITLAB-REPORT
+      - AZURE-DEVOPS-INVENTORY
+      - AZURE-DEVOPS-TRANSITION
+      - AZURE-DEVOPS-RECONCILE
+      - AZURE-DEVOPS-RECOVER
+      - AZURE-DEVOPS-REPORT
+      - JIRA-INVENTORY
+      - JIRA-TRANSITION
+      - JIRA-RECONCILE
+      - JIRA-RECOVER
+      - JIRA-REPORT
   - id: github-work-item-provider
     coverageStatus: fixture-backed
     executionStatus: runnable

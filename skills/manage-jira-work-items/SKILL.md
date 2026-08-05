@@ -9,13 +9,33 @@ metadata:
 
 Jira issue management is not implemented in this bundle. This package preserves the selected provider and reports the capability boundary without substituting another provider.
 
+## Inventory Work Items
+
+Return Required Result with Requested operation: inventory-work-items. Do not inspect Jira or any fallback source.
+
+## Transition Work Item
+
+Return Required Result with Requested operation: transition-work-item. Do not attempt a lifecycle mutation in Jira or any fallback source.
+
+## Reconcile Work Item Completion
+
+Return Required Result with Requested operation: reconcile-work-item-completion. Do not infer completion or attempt a terminal mutation.
+
+## Recover Work Item
+
+Return Required Result with Requested operation: recover-work-item. Do not inspect or mutate remote or local recovery state.
+
+## Report Work Items
+
+Return Required Result with Requested operation: report-work-items. Do not probe Jira or fabricate provider state for a report.
+
 ## Required Result
 
 For every management request, return all of these fields:
 
 - Status: BLOCKED.
 - Provider: jira.
-- Requested operation: the requested read, inspect, update, transition, assign, comment, link, close, reopen, reconcile, or other management operation; use manage when no narrower operation was supplied.
+- Requested operation: the requested public operation token from the matching procedure above; use manage only when no narrower operation was supplied.
 - Missing capability: Jira issue management is not implemented by this bundle.
 - Work-item identifier: none.
 - Mutation evidence: no Jira, Azure DevOps, generic HTTP, browser, GitHub, GitLab, or file mutation was attempted.
@@ -33,7 +53,7 @@ Do not report READY, COMPLETED, a persisted lifecycle transition, or a success-s
 
 ## Example
 
-A request to transition a Jira issue returns Status: BLOCKED, Provider: jira, Requested operation: transition, the missing implementation capability, no identifier, zero-mutation evidence, and the implementation decision required next. It does not inspect or update Jira or a local substitute.
+A request to transition a Jira issue returns Status: BLOCKED, Provider: jira, Requested operation: transition-work-item, the missing implementation capability, no identifier, zero-mutation evidence, and the implementation decision required next. It does not inspect or update Jira or a local substitute.
 
 ## Implementation Boundary
 

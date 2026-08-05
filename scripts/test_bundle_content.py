@@ -1871,6 +1871,27 @@ class BundleContentTests(unittest.TestCase):
                 )
                 self.assertNotIn("dependencies:\n  tools:", metadata_text)
 
+        canonical_examples = {
+            "manage-azure-devops-work-items": (
+                "Requested operation: reconcile-work-item-completion",
+                "Requested operation: close,",
+            ),
+            "manage-jira-work-items": (
+                "Requested operation: transition-work-item",
+                "Requested operation: transition,",
+            ),
+        }
+        for skill_name, (canonical, legacy) in canonical_examples.items():
+            skill_text = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(
+                encoding="utf-8"
+            )
+            example = skill_text.split("## Example", 1)[1].split(
+                "## Implementation Boundary", 1
+            )[0]
+            with self.subTest(example_operation=skill_name):
+                self.assertIn(canonical, example)
+                self.assertNotIn(legacy, example)
+
         probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
         probe_ids = {entry["id"] for entry in probes["probes"]}
         for skill_name in expected:
@@ -1881,7 +1902,7 @@ class BundleContentTests(unittest.TestCase):
         }
         for skill_name in expected:
             probe = placeholder_probes[f"probe-{skill_name}"]
-            self.assertEqual(["provider-placeholder-matrix"], probe["executableCases"])
+            self.assertIn("provider-placeholder-matrix", probe["executableCases"])
             self.assertEqual("fixture-backed", probe["coverageStatus"])
 
         cases = load_yaml_object(REPOSITORY_ROOT / "evals" / "cases.yaml")
@@ -1895,6 +1916,201 @@ class BundleContentTests(unittest.TestCase):
         deterministic_checks = placeholder_case["judgePlan"]["deterministicChecks"]
         self.assertIn("no-forbidden-mutation", deterministic_checks)
         self.assertIn("output-contract-presence", deterministic_checks)
+
+    def test_work_item_management_providers_share_operations_without_losing_native_behavior(
+        self,
+    ) -> None:
+        """Each provider operation keeps one representative provider-specific contract."""
+
+        headings = (
+            "Inventory Work Items",
+            "Transition Work Item",
+            "Reconcile Work Item Completion",
+            "Recover Work Item",
+            "Report Work Items",
+        )
+        expected_behavior = {
+            "manage-file-work-items": (
+                "Scan active folders",
+                "current state permits the requested",
+                "configured completion process returned disposition READY",
+                "Read visible active items first",
+                "lifecycle counts",
+            ),
+            "manage-github-work-items": (
+                "Report ambiguous matches rather than guessing",
+                "After every mutation, re-read the issue",
+                "completion disposition READY",
+                "ambiguous mutation response as possibly applied",
+                "issue number and URL",
+            ),
+            "manage-gitlab-work-items": (
+                "provider-native filters",
+                "update only configured labels",
+                "completion disposition READY",
+                "Do not repeat an ambiguous mutation",
+                "issue internal identifier",
+            ),
+            "manage-azure-devops-work-items": (
+                "Requested operation: inventory-work-items",
+                "Requested operation: transition-work-item",
+                "Requested operation: reconcile-work-item-completion",
+                "Requested operation: recover-work-item",
+                "Requested operation: report-work-items",
+            ),
+            "manage-jira-work-items": (
+                "Requested operation: inventory-work-items",
+                "Requested operation: transition-work-item",
+                "Requested operation: reconcile-work-item-completion",
+                "Requested operation: recover-work-item",
+                "Requested operation: report-work-items",
+            ),
+        }
+
+        for skill_name, phrases in expected_behavior.items():
+            text = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(encoding="utf-8")
+            with self.subTest(skill_name=skill_name):
+                self.assertEqual(
+                    list(headings),
+                    [heading for heading in headings if f"## {heading}\n" in text],
+                )
+                for phrase in phrases:
+                    self.assertIn(phrase, text)
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probes_by_id = {probe["id"]: probe for probe in probes["probes"]}
+        case_id = "work-item-management-provider-operations"
+        for skill_name in expected_behavior:
+            with self.subTest(eval_probe=skill_name):
+                self.assertIn(
+                    case_id,
+                    probes_by_id[f"probe-{skill_name}"]["executableCases"],
+                )
+
+        cases = load_yaml_object(REPOSITORY_ROOT / "evals" / "cases.yaml")
+        operation_case = next(case for case in cases["cases"] if case["id"] == case_id)
+        self.assertEqual(
+            {
+                f"{provider.upper()}-{operation.upper()}"
+                for provider in (
+                    "file",
+                    "github",
+                    "gitlab",
+                    "azure-devops",
+                    "jira",
+                )
+                for operation in (
+                    "inventory",
+                    "transition",
+                    "reconcile",
+                    "recover",
+                    "report",
+                )
+            },
+            set(operation_case["requiredEvidence"]),
+        )
+
+    def test_work_item_management_provider_approval_records_reproduce_allowed_outcomes(
+        self,
+    ) -> None:
+        """Every governed provider path has one saved scalar approval record."""
+
+        manifest_path = (
+            REPOSITORY_ROOT
+            / "approval-record-align-work-item-management-provider-skills.yaml"
+        )
+        manifest = load_yaml_object(manifest_path)
+        self.assertEqual("governed-definition-manifest", manifest["record_role"])
+        self.assertNotIn("definition_scope", manifest)
+        self.assertEqual(
+            manifest["approved_definition_manifest"],
+            [entry["definition_scope"] for entry in manifest["checker_records"]],
+        )
+
+        checker_script = (
+            REPOSITORY_ROOT / "scripts" / "render-agents-technology-skills.py"
+        )
+        project_path = REPOSITORY_ROOT / "PROJECT.yaml"
+        generated_path = "design/generated/skill-definitions.js"
+        for entry in manifest["checker_records"]:
+            definition_scope = entry["definition_scope"]
+            record_path = REPOSITORY_ROOT / entry["approval_record"]
+            record = load_yaml_object(record_path)
+            with self.subTest(definition_scope=definition_scope):
+                self.assertEqual(definition_scope, record["definition_scope"])
+                self.assertEqual(manifest["basis"], record["basis"])
+                self.assertEqual(manifest["direction"], record["direction"])
+                self.assertEqual(manifest["provenance"], record["provenance"])
+                self.assertEqual(manifest_path.name, record["approval_manifest"])
+                self.assertEqual(
+                    "python3 scripts/render-agents-technology-skills.py "
+                    f"--project PROJECT.yaml --check-definition-change {definition_scope} "
+                    f"--approval-record {entry['approval_record']}",
+                    entry["definition_check"],
+                )
+                self.assertEqual(
+                    "python3 scripts/render-agents-technology-skills.py "
+                    f"--project PROJECT.yaml --check-definition-change {generated_path} "
+                    f"--approval-record {entry['approval_record']} "
+                    f"--regenerated-from {definition_scope}",
+                    entry["regeneration_check"],
+                )
+
+                definition_command = [
+                    sys.executable,
+                    str(checker_script),
+                    "--project",
+                    str(project_path),
+                    "--check-definition-change",
+                    definition_scope,
+                    "--approval-record",
+                    str(record_path),
+                ]
+                definition_result = subprocess.run(
+                    definition_command,
+                    cwd=REPOSITORY_ROOT,
+                    check=False,
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertEqual(
+                    0,
+                    definition_result.returncode,
+                    definition_result.stdout + definition_result.stderr,
+                )
+                self.assertEqual(
+                    "ALLOWED_APPROVED_DEFINITION_CHANGE",
+                    json.loads(definition_result.stdout)["outcome"],
+                )
+
+                regeneration_command = [
+                    sys.executable,
+                    str(checker_script),
+                    "--project",
+                    str(project_path),
+                    "--check-definition-change",
+                    generated_path,
+                    "--approval-record",
+                    str(record_path),
+                    "--regenerated-from",
+                    definition_scope,
+                ]
+                regeneration_result = subprocess.run(
+                    regeneration_command,
+                    cwd=REPOSITORY_ROOT,
+                    check=False,
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertEqual(
+                    0,
+                    regeneration_result.returncode,
+                    regeneration_result.stdout + regeneration_result.stderr,
+                )
+                self.assertEqual(
+                    "ALLOWED_APPROVED_REGENERATION",
+                    json.loads(regeneration_result.stdout)["outcome"],
+                )
 
     def test_gitlab_work_item_skills_define_provider_native_authority_and_lifecycle(self) -> None:
         create_text = (SKILLS_ROOT / "create-gitlab-work-item" / "SKILL.md").read_text(
@@ -9303,7 +9519,7 @@ class BundleContentTests(unittest.TestCase):
             probes_by_id["probe-create-file-work-item"]["executableCases"],
         )
         self.assertEqual(
-            ["backlog-lifecycle"],
+            ["backlog-lifecycle", "work-item-management-provider-operations"],
             probes_by_id["probe-manage-file-work-items"]["executableCases"],
         )
 

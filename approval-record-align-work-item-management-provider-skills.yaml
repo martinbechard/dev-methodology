@@ -1,0 +1,46 @@
+basis: explicit-user-direction
+record_role: governed-definition-manifest
+direction: "create separate work items to update skills according to the new design, and update individual evals."
+approved_definition_manifest:
+  - skills/manage-file-work-items/SKILL.md
+  - skills/manage-github-work-items/SKILL.md
+  - skills/manage-gitlab-work-items/SKILL.md
+  - skills/manage-azure-devops-work-items/SKILL.md
+  - skills/manage-jira-work-items/SKILL.md
+approval_source:
+  provider_reference: backlog/feature-backlog/apply-object-oriented-skill-group-design/align-work-item-management-provider-skills.md
+  reviewed_design_baseline: c426c970153948f9d5d2d92f1b7b718613a8d4f7
+checker_records:
+  - definition_scope: skills/manage-file-work-items/SKILL.md
+    approval_record: approval-record-align-work-item-management-provider-skills-manage-file-work-items.yaml
+    definition_check: >-
+      python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change skills/manage-file-work-items/SKILL.md --approval-record approval-record-align-work-item-management-provider-skills-manage-file-work-items.yaml
+    regeneration_check: >-
+      python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change design/generated/skill-definitions.js --approval-record approval-record-align-work-item-management-provider-skills-manage-file-work-items.yaml --regenerated-from skills/manage-file-work-items/SKILL.md
+  - definition_scope: skills/manage-github-work-items/SKILL.md
+    approval_record: approval-record-align-work-item-management-provider-skills-manage-github-work-items.yaml
+    definition_check: >-
+      python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change skills/manage-github-work-items/SKILL.md --approval-record approval-record-align-work-item-management-provider-skills-manage-github-work-items.yaml
+    regeneration_check: >-
+      python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change design/generated/skill-definitions.js --approval-record approval-record-align-work-item-management-provider-skills-manage-github-work-items.yaml --regenerated-from skills/manage-github-work-items/SKILL.md
+  - definition_scope: skills/manage-gitlab-work-items/SKILL.md
+    approval_record: approval-record-align-work-item-management-provider-skills-manage-gitlab-work-items.yaml
+    definition_check: >-
+      python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change skills/manage-gitlab-work-items/SKILL.md --approval-record approval-record-align-work-item-management-provider-skills-manage-gitlab-work-items.yaml
+    regeneration_check: >-
+      python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change design/generated/skill-definitions.js --approval-record approval-record-align-work-item-management-provider-skills-manage-gitlab-work-items.yaml --regenerated-from skills/manage-gitlab-work-items/SKILL.md
+  - definition_scope: skills/manage-azure-devops-work-items/SKILL.md
+    approval_record: approval-record-align-work-item-management-provider-skills-manage-azure-devops-work-items.yaml
+    definition_check: >-
+      python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change skills/manage-azure-devops-work-items/SKILL.md --approval-record approval-record-align-work-item-management-provider-skills-manage-azure-devops-work-items.yaml
+    regeneration_check: >-
+      python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change design/generated/skill-definitions.js --approval-record approval-record-align-work-item-management-provider-skills-manage-azure-devops-work-items.yaml --regenerated-from skills/manage-azure-devops-work-items/SKILL.md
+  - definition_scope: skills/manage-jira-work-items/SKILL.md
+    approval_record: approval-record-align-work-item-management-provider-skills-manage-jira-work-items.yaml
+    definition_check: >-
+      python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change skills/manage-jira-work-items/SKILL.md --approval-record approval-record-align-work-item-management-provider-skills-manage-jira-work-items.yaml
+    regeneration_check: >-
+      python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change design/generated/skill-definitions.js --approval-record approval-record-align-work-item-management-provider-skills-manage-jira-work-items.yaml --regenerated-from skills/manage-jira-work-items/SKILL.md
+provenance:
+  source: delegated-user-direction
+  reference: thread:align-work-item-management-providers-019fab/delegation:implementation
