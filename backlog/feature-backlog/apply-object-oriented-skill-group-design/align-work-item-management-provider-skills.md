@@ -8,6 +8,8 @@ Provider: file
 
 Provider Reference: backlog/feature-backlog/apply-object-oriented-skill-group-design/align-work-item-management-provider-skills.md
 
+Owner: Dev Orchestrator
+
 Completion: direct-main
 
 Series: backlog/feature-backlog/apply-object-oriented-skill-group-design/index.md
@@ -153,3 +155,77 @@ Preserved Candidates:
 Correction Assignment: Original Dev Coder, correction attempt 2 of 2.
 
 Runnable Next Action: Replace the examples with matching canonical tokens, add negative regression assertions, regenerate design/generated/skill-definitions.js, rerun the affected scalar definition and regeneration checks plus focused tests, then obtain fresh review.
+
+## User Action Required
+
+Transition: Running -> User Action Required.
+
+Ownership: The canonical root Dev Orchestrator and its Thread are preserved for same-Thread resumption. No unattended direct-main integration or provider-completion action is authorized while this item is in User Action Required.
+
+Question: Please make design/object-oriented-agent-and-skill-model.md clean in the primary main checkout without us touching your edit, then tell us to resume; alternatively, do you explicitly authorize a scoped preservation/clean/restore procedure for that one edit?
+
+Why Input Is Required: Completion is configured as direct-main, and complete-work-item-direct-main cannot mutate configured main while the primary checkout contains the explicitly protected user-owned modification to design/object-oriented-agent-and-skill-model.md. The user must either make that file clean without agent changes or grant the limited preservation, clean, and restore authority.
+
+Unattended Boundary: No primary-main mutation, main-integration claim, Commit READY, or terminal provider closure is authorized. Other private work may continue.
+
+Resolution: Answered on 2026-08-05 in the parent coordination Thread /root/apply_skill_group_design_backlog. The user authorized committing all remaining document changes. Primary main is clean at 90f68d037d345da896a476dbd43f83dcaa3b3bae, containing the formerly protected design/object-oriented-agent-and-skill-model.md change only, and that project's project-files claim was released.
+
+## User Action Required Resolution
+
+Transition: User Action Required -> Ready.
+
+Recorded Answer and Provenance: Answered on 2026-08-05 in the parent coordination Thread /root/apply_skill_group_design_backlog. The user authorized committing all remaining document changes. Primary main is clean at 90f68d037d345da896a476dbd43f83dcaa3b3bae, containing the formerly protected design/object-oriented-agent-and-skill-model.md change only, and that project's project-files claim was released.
+
+Disposition: The direct-main cleanliness condition is satisfied. This item returns to its typed series folder as Ready with Owner Unowned. The existing canonical Thread /root/apply_skill_group_design_backlog/align_work_item_management_providers and Root Agent Task remain preserved; no Starting reservation or Running acceptance is created by this provider transaction.
+
+## Current Resumption Dispatch Reservation
+
+Transition: Ready -> Starting.
+Parent Coordination Thread: /root/apply_skill_group_design_backlog.
+Launch Reservation: One distinct bounded resumption reservation for the preserved canonical work-item Thread.
+Normalized Objective: Align the work-item management provider skills with the approved object-oriented design and update their individual evaluations.
+Dispatch Time: 2026-08-05T14:35:08Z.
+Intended Root Dev Orchestrator Role: Dev Orchestrator.
+Canonical Thread: /root/apply_skill_group_design_backlog/align_work_item_management_providers.
+Canonical Root Agent Task: /root/apply_skill_group_design_backlog/align_work_item_management_providers.
+Owner: Unowned pending accepted root.
+Current Launch Evidence: Coordinator-authorized resumption reservation recorded under exact-file claim reserve-resumed-management-provider-019fb1, acquired with outcome SHARED_CHECKOUT_ACQUIRED and event 9a77a464-d691-4f0b-8c83-3f00c3c73775.
+Required Acknowledgement: The preserved canonical root Dev Orchestrator must acknowledge this exact reservation and separately record Starting -> Running with the same canonical identities before further repository mutation. Do not create a replacement Thread.
+
+## Current Resumption Running Acceptance
+
+Transition: Starting -> Running.
+Canonical Thread: /root/apply_skill_group_design_backlog/align_work_item_management_providers.
+Root Agent Task: /root/apply_skill_group_design_backlog/align_work_item_management_providers.
+Owner: Dev Orchestrator.
+Branch: codex/align-work-item-management-providers-019fab.
+Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/align-work-item-management-providers-019fab.
+Phase: Resumed direct-main current-main reconciliation.
+Started At: 2026-08-05T14:38:53Z.
+Claim Evidence: Exact-file primary-main claim running-resumed-management-provider-019fb1 acquired with outcome SHARED_CHECKOUT_ACQUIRED and event ff379abe-4d79-4c56-8aed-a7849f7230c5. Claim status immediately before acquisition reported only unrelated sticky-navigation browser-server and database-port resource claims; neither overlaps this backlog record or the private source and integration lanes.
+Preserved Delivery Evidence: Source candidate 1ce2f98cce8d7ee2ca498a7507f422d802ea3166 is clean and independently reviewed PASS and verified PASS. The five exact governed-definition prechecks and five required regeneration checks passed. Exact-path integration commit db58d7130d3e7c06979d7f963bb44b967f15e622 is retained in clean reconciled integration head 230bdba3d6545f7ec0c3c7426f2c77c4c31ca891. Correction history and confirmed defect record remain preserved.
+Preserved Coordination: Parent Coordination Thread /root/apply_skill_group_design_backlog and its Ready -> Starting resumption reservation remain canonical. No replacement Thread was created.
+
+## Preserved Delivery Evidence
+
+Canonical Thread and Root Agent Task: /root/apply_skill_group_design_backlog/align_work_item_management_providers.
+
+Accepted Source Candidate: 1ce2f98cce8d7ee2ca498a7507f422d802ea3166.
+
+Independent Review: PASS.
+
+Verification: PASS.
+
+Definition Checks: 5/5 exact governed-definition prechecks passed; 5/5 required regeneration checks passed.
+
+Correction History: Two correction attempts completed.
+
+Exact-Path Integration Commit: db58d7130d3e7c06979d7f963bb44b967f15e622.
+
+Reconciled Clean Head: 230bdba3d6545f7ec0c3c7426f2c77c4c31ca891, with the integration commit and then-current main as ancestors.
+
+Worktree Evidence: The source and integration worktrees are clean.
+
+Claim Evidence: Before this provider transaction, claim status returned STATUS with no live claims. This transition is protected by exact-file claim uar-align-work-item-management-provider-skills-019fab, acquired with outcome SHARED_CHECKOUT_ACQUIRED and event c471fd95-f7c1-4039-a067-212013d506f1.
+
+Safe Resumption: Preserve the canonical Thread, root Agent Task, source candidate, review, verification, integration evidence, and the user-owned primary-main diff. After the user answers, record the answer once and move this item to Ready in its typed active folder. The parent Coordinator must then reserve Ready -> Starting on this same Thread, and its root Dev Orchestrator must accept Starting -> Running before further repository mutation. Do not create a replacement Thread while this canonical identity remains valid.

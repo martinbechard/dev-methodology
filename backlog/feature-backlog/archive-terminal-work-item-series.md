@@ -1,6 +1,6 @@
 # Archive Terminal Work-Item Series
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -123,7 +123,7 @@ Source Mutation Evidence: None observed.
 Required Resumption: Reuse the same canonical task through a new Ready -> Starting -> Running sequence.
 Reconciliation: Ready.
 
-## Current Dispatch Reservation
+## Historical Dispatch Reservation
 
 Transition: Ready -> Starting.
 Parent Coordination Thread: 019faeef-e932-7352-a53d-fdb1535f5994.
@@ -146,6 +146,50 @@ Runtime Launch Result: Direct conversation-title handoff accepted for the synchr
 Canonical Conversation: 019faeef-e932-7352-a53d-fdb1535f5994.
 Owner Acceptance: Pending.
 Reconciliation: Pending.
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Launch Reservation: One parent-coordinator launch reservation; no runtime work-item Thread has been created by this reservation.
+
+Normalized Objective: Archive terminal work-item series.
+
+Dispatch Time: 2026-08-05T14:17:30.754473Z.
+
+Intended Root Dev Orchestrator: Dev Orchestrator.
+
+Runtime Launch Evidence: None. This provider transaction reserves capacity only and does not create or accept a runtime task.
+
+Owner: Unowned.
+
+Reconciliation: Starting reservation recorded by the parent Coordinator's Dev Backlog Steward.
+
+## Running Acceptance
+
+Transition: Starting -> Running.
+
+Canonical Thread and Root Agent Task: 019faeef-e932-7352-a53d-fdb1535f5994.
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Owner: Root Dev Orchestrator.
+
+Branch: codex/archive-terminal-work-item-series-019faeef.
+
+Worktree: /Users/martinbechard/.codex/worktrees/2d69/dev-methodology.
+
+Observed HEAD at Acceptance: 2879c116fe637224ec181b93e966e5a1ee3022a6.
+
+Phase: implementation / root-execution.
+
+Started At and Acceptance Evidence: Root Dev Orchestrator accepted ownership at 2026-08-05T14:19:49Z.
+
+Provider Mutation Claim: starting-running-archive-terminal-series-019faeef; outcome SHARED_CHECKOUT_ACQUIRED; event 77005449-442c-41f4-b4f4-2bfb16362592; exact path backlog/feature-backlog/archive-terminal-work-item-series.md.
+
+Reconciliation: Canonical root ownership accepted; this transaction records the required provider lifecycle transition before governed-source mutation.
 
 - Commit b5a48776d8dca621f4dc069e8805b4d924fe3abc is migration evidence, not a substitute for the steady-state contract and regression tests.
 - Do not reintroduce a Status field on index.md merely to make terminal state visible; derive series state from required children and use archive location as terminal evidence.

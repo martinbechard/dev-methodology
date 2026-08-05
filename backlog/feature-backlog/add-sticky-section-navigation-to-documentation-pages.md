@@ -1,6 +1,6 @@
 # Add Sticky Section Navigation To Documentation Pages
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -83,7 +83,7 @@ Source Mutation Evidence: None observed.
 Required Resumption: Reuse the same canonical task through a new Ready -> Starting -> Running sequence.
 Reconciliation: Ready.
 
-## Current Dispatch Reservation
+## Historical Dispatch Reservation
 
 Transition: Ready -> Starting.
 Parent Coordination Thread: 019faef0-2663-7e50-a6ab-0de973661fbf.
@@ -106,5 +106,63 @@ Runtime Launch Result: Direct conversation-title handoff accepted for the synchr
 Canonical Conversation: 019faef0-2663-7e50-a6ab-0de973661fbf.
 Owner Acceptance: Pending.
 Reconciliation: Pending.
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Launch Reservation: One parent-coordinator launch reservation; no runtime work-item Thread has been created by this reservation.
+
+Normalized Objective: Add sticky documentation section navigation.
+
+Dispatch Time: 2026-08-05T14:16:41.530718Z.
+
+Intended Root Dev Orchestrator: Dev Orchestrator.
+
+Runtime Launch Evidence: None. This provider transaction reserves capacity only and does not create or accept a runtime task.
+
+Owner: Unowned.
+
+Reconciliation: Starting reservation recorded by the parent Coordinator's Dev Backlog Steward.
+
+## Running Acceptance
+
+Transition: Starting -> Running.
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Canonical Work-Item Thread and Root Agent Task: 019faef0-2663-7e50-a6ab-0de973661fbf.
+
+Root Dev Orchestrator: Dev Orchestrator.
+
+Owner: Root Dev Orchestrator 019faef0-2663-7e50-a6ab-0de973661fbf.
+
+Branch: codex/add-sticky-section-navigation-to-documentation-pages.
+
+Worktree: /Users/martinbechard/.codex/worktrees/cf9b/dev-methodology.
+
+Phase: Provider acceptance complete; implementation may begin.
+
+Accepted At: 2026-08-05T14:21:37.470068Z.
+
+Claim Evidence: Shared-checkout exact-file claim starting-running-sticky-section-navigation-019faef0 acquired as journal event b49086b8-dd27-41dc-a330-3ea774b90234.
+
+Reconciliation: Running acceptance recorded by the canonical root Dev Orchestrator's Dev Backlog Steward.
+
+## Confirmed In-Scope Defect
+
+Observed At: 2026-08-05T14:37:18.079111Z.
+
+Scope: Print media for design/orchestrated-development-lifecycle.html.
+
+Evidence: Its single nav[aria-label="Lifecycle chapters"] remains visible in print because the existing print CSS does not include .chapter-nav. The computed display under emulated print media was flex.
+
+Expected: The lifecycle chapter navigator has computed display none in print, matching the print-hidden section and chapter menus on the other index-linked documentation pages.
+
+Reproduction: Serve the current candidate, open design/orchestrated-development-lifecycle.html, emulate print media, and inspect the computed display of nav[aria-label="Lifecycle chapters"].
+
+Runnable Next Action: Add .chapter-nav to that page's existing print-hide rule, without changing its chapter links, sticky desktop behavior, or previous and next controls; rerun focused inventory and browser print checks.
 
 This item applies to HTML documentation detail pages linked from the toolkit index. It does not add a section menu to the root index page, whose primary purpose is choosing a document rather than navigating a long document body.

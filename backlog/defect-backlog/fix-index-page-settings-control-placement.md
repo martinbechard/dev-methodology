@@ -1,6 +1,6 @@
 # Fix Index Page Settings Control Placement
 
-Status: Ready
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/fix-index-page-settings-control-place
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Root Dev Orchestrator
 
 ## Superseded User Action Question
 
@@ -158,7 +158,7 @@ Required Resumption: The same canonical task must complete a new Ready -> Starti
 
 Reconciliation: Ready.
 
-## Current Dispatch Reservation (Fresh Settlement)
+## Historical Dispatch Reservation (Fresh Settlement)
 
 Transition: Ready -> Starting.
 
@@ -277,6 +277,54 @@ Preserved Review and Verification: GOOD review; focused PASS; browser PASS; two 
 Required Resumption: The same canonical task must complete a fresh Ready -> Starting -> Running sequence before exact replay or other repository mutation.
 
 Reconciliation: Ready.
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Launch Reservation: One parent-coordinator launch reservation; no runtime work-item Thread has been created by this reservation.
+
+Normalized Objective: Fix index settings placement.
+
+Dispatch Time: 2026-08-05T14:15:47.093584Z.
+
+Intended Root Dev Orchestrator: Dev Orchestrator.
+
+Preserved Canonical Work-Item Thread: 019faec8-943a-7902-adaa-c2c00a370169; it remains the required resumption identity.
+
+Runtime Launch Evidence: None. This provider transaction reserves capacity only and does not create or accept a runtime task.
+
+Owner: Unowned.
+
+Reconciliation: Starting reservation recorded by the parent Coordinator's Dev Backlog Steward.
+
+## Active Execution Evidence
+
+Transition: Starting -> Running.
+
+Canonical Thread: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Root Agent Task: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Root Role: Dev Orchestrator.
+
+Owner: Root Dev Orchestrator.
+
+Branch: codex/fix-index-page-settings-control-placement.
+
+Worktree: /Users/martinbechard/.codex/worktrees/1bad/dev-methodology.
+
+Preserved Accepted Candidate: 4c06ab5e002b18706834c15b31317bfb3594d76f; no reimplementation.
+
+Preserved Review and Verification: GOOD independent review; focused PASS; browser PASS.
+
+Current Phase: Current-main reconciliation and direct-main delivery preparation; no source replay or other repository mutation has occurred in this acceptance transaction.
+
+Started At: 2026-08-05T14:19:22.253749000Z (Root Dev Orchestrator acceptance).
+
+Claim Evidence: starting-running-current-main-019faec8 acquired as SHARED_CHECKOUT_ACQUIRED; claim journal event 920f6287-e6d9-42a0-8516-12eff22fd268.
 
 ## Notes
 

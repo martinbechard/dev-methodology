@@ -1,6 +1,6 @@
 # Align Baseline Development Skills
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -152,6 +152,28 @@ The exact authorized correction scope is to revise that probe semantically and s
 - Independent review task /root/apply_skill_group_design_backlog/align_baseline_development_skills/review_baseline_candidate returned FAIL for the two defects recorded above.
 - The Dev Backlog Coordinator authorized one bounded correction attempt 2, limited to the safe task-owned changes stated in each defect. No third attempt and no new defect item are authorized.
 
-## Coordinator Disposition
+## Blocked Handoff
 
-Status remains Running under the preserved canonical Thread and Owner recorded above. The next action is the authorized correction attempt 2: correct only the task-owned model hunks for Defect A while preserving the user-owned primary diff byte-for-byte, and revise the Defect B probe with its focused assertion. Preserve candidate b296fc61526468869d8aa2cc0a428e10a347d0af and the aa8cc8fa -> b296fc61526468869d8aa2cc0a428e10a347d0af history as delivery evidence. The Dev Backlog Coordinator owns disposition; the delivery owner must not create a third attempt or a separate defect work item.
+Transition: Running -> Blocked.
+
+Owner: Unowned.
+
+Coordinator Decision Owner: /root/apply_skill_group_design_backlog.
+
+Canonical Thread and Root Agent Task: /root/apply_skill_group_design_backlog/align_baseline_development_skills.
+
+Preserved Delivery Identity: Branch codex/align-baseline-development-skills-019fab; worktree /Users/martinbechard/dev/dev-methodology/.worktrees/align-baseline-development-skills-019fab; candidate 173e0f52aefde679b6bc8b8f59bc8acdd49ca24c.
+
+Known Technical Blocker: The supported command python3 scripts/build-support-checklist.py --check fails on four unknown dev-document-topic-editor Judge checks: authority-present, semantic-preservation, source-unchanged, and topic-coverage. Consequently, the unchanged generated design/agent-skill-test-coverage-checklist.md remains semantically stale at line 169 with fix-explanation and probe-fix-explanation.
+
+Blocker Owner: The separately owned evaluation/checklist generator inputs.
+
+Coordinator-Requested Recovery Action: The Coordinator must obtain separately authorized work to define or correct those four Judge checks. This item must not create a separate defect, a third correction attempt, or User Action Required because the dependency is technical and has a known recovery owner.
+
+Observable Unblock Condition: Those exact checks are defined or corrected; supported checklist regeneration succeeds on current main; and scripts.test_eval_coverage_catalog plus the focused Baseline Development tests pass.
+
+Preserved Evidence: Independent review PASS; verification WARN only because of this external generator dependency while candidate-owned gates passed; 14/14 approval replay passed; two correction attempts are exhausted. Preserve the earlier aa8cc8fa -> b296fc61526468869d8aa2cc0a428e10a347d0af history and the candidate evidence. The user-owned primary modification to design/object-oriented-agent-and-skill-model.md remains unstaged and byte-for-byte unchanged (unstaged diff SHA-256 bfc65316285b96c8d34b5f9ceb46233449bb905abbbc465f295642437be82a22; index version SHA-256 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855).
+
+Claim Evidence: Before this lifecycle transaction, claim status returned STATUS with no live claims. Exact-file claim block-align-baseline-development-skills-019fab acquired with outcome SHARED_CHECKOUT_ACQUIRED and event 6baf9d73-83fc-4ce2-8360-c1418e9f12a7.
+
+Safe Resumption: Retain this canonical Thread, candidate, review, verification, and user-owned diff. On the observable unblock condition, the parent Coordinator must restore Ready in a distinct provider transaction before the normal Ready -> Starting -> Running sequence. No replacement Thread is permitted while the preserved canonical identity remains valid.
