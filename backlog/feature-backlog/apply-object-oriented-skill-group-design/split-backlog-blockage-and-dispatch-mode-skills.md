@@ -1,6 +1,6 @@
 # Split Backlog Blockage And Dispatch-Mode Skills
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -23,7 +23,20 @@ Intended Root Dev Orchestrator Role: Dev Orchestrator.
 Owner: Unowned pending accepted root.
 Current Launch Evidence: Parent Coordinator authorized this exact reservation; exact-file backlog claim reserve-split-backlog-blockage-and-dispatch-mode-skills acquired with outcome SHARED_CHECKOUT_ACQUIRED and event a0c275eb-5663-4ae8-a6f8-652c448390df. Runtime Thread creation and root acceptance have not occurred.
 Required Next Lifecycle Transition: The root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
-Reconciliation: Pending.
+Reconciliation: Accepted by the canonical root Dev Orchestrator below.
+
+## Current Delivery Ownership
+
+Transition: Starting -> Running.
+Canonical Work-Item Thread: /root/apply_skill_group_design_backlog/split_backlog_blockage_dispatch_modes.
+Canonical Root Agent Task: /root/apply_skill_group_design_backlog/split_backlog_blockage_dispatch_modes.
+Root Dev Orchestrator Owner: /root/apply_skill_group_design_backlog/split_backlog_blockage_dispatch_modes.
+Branch: codex/split-backlog-blockage-dispatch-modes-019fab.
+Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/split-backlog-blockage-dispatch-modes-019fab.
+Phase: Accepted delivery ownership; implementation not started.
+Started At: 2026-08-05T03:49:54Z.
+Claim Evidence: Private-worktree delivery is claim-free by the configured Event Contract; live claim status was STATUS with empty claims before acceptance. The primary-main provider mutation is protected separately by exact-file claim running-split-backlog-blockage-and-dispatch-mode-skills, acquired with outcome SHARED_CHECKOUT_ACQUIRED and event 97c44759-9614-4eeb-8218-b5d0dd694047.
+Accepted Ownership Evidence: The canonical root Dev Orchestrator explicitly accepted this Starting -> Running transition after parent reservation commit 86828daf.
 
 ## Summary
 
