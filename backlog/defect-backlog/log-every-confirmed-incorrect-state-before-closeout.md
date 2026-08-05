@@ -1,6 +1,6 @@
 # Log Every Confirmed Incorrect State Before Closeout
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -9,6 +9,19 @@ Provider: file
 Work Item ID: log-every-confirmed-incorrect-state-before-closeout
 
 Completion: direct-main
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+Parent Coordination Thread: /root/apply_skill_group_design_backlog.
+Launch Reservation: One distinct bounded launch reservation for this provider record.
+Normalized Objective: Require a durable, duplicate-reconciled record for every confirmed incorrect state before closeout, including correction of the stale completed skill-group series index.
+Dispatch Time: 2026-08-05T22:37:35Z.
+Intended Root Dev Orchestrator Role: Dev Orchestrator.
+Effective Commit Selector: complete-work-item-direct-main.
+Canonical Runtime Evidence: None at reservation time. The parent Coordinator must reconcile this reservation before creating one canonical work-item Thread.
+Current Launch Evidence: Parent Coordinator authorized this exact reservation; exact-file backlog claim reserve-confirmed-defect-closeout-019fb4 acquired with outcome SHARED_CHECKOUT_ACQUIRED and event 61488f73-df6a-49ee-a76e-8622bb304cc4.
+Required Next Lifecycle Transition: The canonical root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
 
 ## Summary
 
