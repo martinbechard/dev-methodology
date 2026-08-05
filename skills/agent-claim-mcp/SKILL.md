@@ -35,6 +35,8 @@ Pass the absolute project-root path in repository for every operation below.
 
 Call claim_status with repository.
 
+Each live work-item claim includes work_item_id and activity together with claim_id, incarnation_id, agent, root_task_id, claimed_at, heartbeat, acquisition_outcome, and the existing ownership fields.
+
 ```json
 {"repository": "/workspace/project"}
 ```
@@ -43,7 +45,23 @@ Call claim_status with repository.
 
 Call claim_acquire with repository, claim_id, agent, task, root_task_id, and one scope selected through agent-claim.
 
-Use files, project_files, or resources for the scope. Project_files also requires scope_reason. A resource request accepts one resources value plus resource_class, resource_id, expected_duration_seconds, and requested_hard_stop_duration_seconds. The result includes the configured limits and calculated deadlines.
+Use work_item_id with activity, or use files, project_files, or resources for the scope. Work-item activity must be exactly work or update and cannot be combined with path or resource scope. Project_files also requires scope_reason. A resource request accepts one resources value plus resource_class, resource_id, expected_duration_seconds, and requested_hard_stop_duration_seconds. The result includes the configured limits and calculated deadlines.
+
+Work-item acquisition:
+
+```json
+{
+  "repository": "/workspace/project",
+  "claim_id": "work-item-123-work",
+  "agent": "implementation-agent",
+  "task": "work-item-123",
+  "root_task_id": "work-item-123",
+  "work_item_id": "provider-opaque-id-123",
+  "activity": "work"
+}
+```
+
+Another live claim for the same Work Item ID returns CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED regardless of activity. Distinct Work Item IDs coexist.
 
 File-scope acquisition:
 
@@ -134,6 +152,27 @@ Call claim_release with repository and claim_id.
 {"repository": "/workspace/project", "claim_id": "task-123"}
 ```
 
+A work-item claim requires disposition with exactly done, blocked, or handoff. Blocked also requires one bounded opaque blocker_reference. blocker_reference is prohibited for done and handoff.
+
+```json
+{
+  "repository": "/workspace/project",
+  "claim_id": "work-item-123-work",
+  "disposition": "handoff"
+}
+```
+
+```json
+{
+  "repository": "/workspace/project",
+  "claim_id": "work-item-123-update",
+  "disposition": "blocked",
+  "blocker_reference": "dependency-456"
+}
+```
+
+The result and RELEASED journal event preserve work_item_id, activity, disposition, blocker_reference, claim and incarnation identity, owner, root task, timestamps, and outcome. Invalid or missing work-item combinations return INVALID_WORK_ITEM_RELEASE without changing the registry. Non-work-item claims retain the legacy release call without disposition.
+
 Release removes only the exact named live claim under the configured helper's registry lock and appends RELEASED journal evidence. Release does not inspect Git state, file contents, delivery evidence, or completion state.
 
 ## Maintain Claim Journal
@@ -151,6 +190,8 @@ Call claim_report with repository. Since defaults to 2d.
 ```json
 {"repository": "/workspace/project", "since": "2d"}
 ```
+
+The result retains the existing report schema and adds work_items with schema_version 1. That section groups deterministic activity segments by work_item_id. Each segment reports acquired and released times, activity, disposition, owner, duration, and open and live state. Diagnostics identify missing release, release without acquisition, contradictory events, and historical non-work-item events without inventing Work Item IDs.
 
 ## Uncertain Tool Outcome
 

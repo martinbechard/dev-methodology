@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Implements claim ownership, overlap, journal, deadline, and release operations without inspecting working-tree state.
+# Summary: Implements path, resource, and work-item claim ownership, lifecycle journaling, deadlines, releases, and reports.
+# Design: design/work-item-provider-and-completion-contracts.md
 
 from __future__ import annotations
 
@@ -40,6 +41,7 @@ EVENT_SCHEMA_VERSION = 1
 RESULT_SCHEMA_VERSION = 2
 SUMMARY_SCHEMA_VERSION = 2
 REPORT_SCHEMA_VERSION = 2
+WORK_ITEM_REPORT_SCHEMA_VERSION = 1
 DEFAULT_HOT_DAYS = 2
 MAX_SCOPE_REASON_LENGTH = 200
 MAX_IDENTIFIER_LENGTH = 200
@@ -81,6 +83,13 @@ class _ScopeError(ValueError):
 
 
 class _DeadlineError(ValueError):
+    def __init__(self, message: str, field: str, reason: str) -> None:
+        super().__init__(message)
+        self.field = field
+        self.reason = reason
+
+
+class _WorkItemError(ValueError):
     def __init__(self, message: str, field: str, reason: str) -> None:
         super().__init__(message)
         self.field = field
@@ -655,6 +664,8 @@ def _empty_scope() -> dict[str, Any]:
         "file_domain": "none",
         "resources": [],
         "scope_reason": None,
+        "work_item_id": None,
+        "activity": None,
     }
 
 
@@ -791,6 +802,50 @@ def _scope_from_args(args: argparse.Namespace, repository: Path) -> tuple[dict[s
             "scope_reason_required",
         )
     scope["scope_reason"] = reason
+    work_item_id = getattr(args, "work_item_id", None)
+    activity = getattr(args, "activity", None)
+    if (work_item_id is None) != (activity is None):
+        missing = "activity" if activity is None else "work_item_id"
+        raise _WorkItemError(
+            "Work-item acquisition requires both work_item_id and activity.",
+            missing,
+            "incomplete_work_item_scope",
+        )
+    if work_item_id is not None:
+        if (
+            not isinstance(work_item_id, str)
+            or not work_item_id
+            or work_item_id != work_item_id.strip()
+            or "\n" in work_item_id
+            or "\r" in work_item_id
+            or len(work_item_id) > MAX_IDENTIFIER_LENGTH
+        ):
+            raise _WorkItemError(
+                "work_item_id must be a canonical non-empty single-line value of at most 200 characters.",
+                "work_item_id",
+                "invalid_work_item_id",
+            )
+        if activity not in {"work", "update"}:
+            raise _WorkItemError(
+                "activity must be exactly work or update.",
+                "activity",
+                "invalid_activity",
+            )
+        if (
+            scope["files"]
+            or scope["trees"]
+            or scope["project_files"]
+            or scope["backlog"]
+            or scope["all_files"]
+            or scope["resources"]
+        ):
+            raise _WorkItemError(
+                "A work-item claim cannot combine path or resource scope.",
+                "work_item_id",
+                "mixed_work_item_and_operational_scope",
+            )
+        scope["work_item_id"] = work_item_id
+        scope["activity"] = activity
     return scope, warnings
 
 
@@ -804,6 +859,8 @@ def _claim_scope(claim: dict[str, Any]) -> dict[str, Any]:
         "file_domain": str(claim.get("file_domain") or _legacy_file_domain(claim)),
         "resources": [str(value) for value in claim.get("resources", [])],
         "scope_reasons": dict(claim.get("scope_reasons", {})),
+        "work_item_id": claim.get("work_item_id"),
+        "activity": claim.get("activity"),
     }
 
 
@@ -917,6 +974,8 @@ def _claim_scope_for_comparison(
         scope["backlog"] = False
         scope["all_files"] = True
         scope["file_domain"] = "all_files"
+        scope["work_item_id"] = claim.get("work_item_id")
+        scope["activity"] = claim.get("activity")
     return scope
 
 
@@ -993,6 +1052,18 @@ def _overlap_details(
     claimed: dict[str, Any],
 ) -> list[dict[str, str]]:
     details: list[dict[str, str]] = []
+    requested_work_item_id = requested.get("work_item_id")
+    claimed_work_item_id = claimed.get("work_item_id")
+    if requested_work_item_id and requested_work_item_id == claimed_work_item_id:
+        details.append(
+            {
+                "scope_kind": "work_item",
+                "requested_kind": "work_item",
+                "requested": str(requested_work_item_id),
+                "claimed_kind": "work_item",
+                "claimed": str(claimed_work_item_id),
+            }
+        )
     for requested_kind, requested_path in _path_scopes(requested):
         for claimed_kind, claimed_path in _path_scopes(claimed):
             if _path_scope_overlap(
@@ -1129,7 +1200,11 @@ def _scope_has_file_values(scope: dict[str, Any]) -> bool:
 
 
 def _scope_has_values(scope: dict[str, Any]) -> bool:
-    return bool(_scope_has_file_values(scope) or scope["resources"])
+    return bool(
+        _scope_has_file_values(scope)
+        or scope["resources"]
+        or scope.get("work_item_id")
+    )
 
 
 def _apply_scope(claim: dict[str, Any], added: dict[str, Any]) -> None:
@@ -1201,6 +1276,14 @@ def _event(
         "worktree_id": _worktree_identifier(claim) if claim else None,
         "baseline_commit": claim.get("baseline_commit") if claim else None,
         "deadline": claim.get("deadline") if claim else None,
+        "work_item_id": (
+            claim.get("work_item_id")
+            if claim
+            else _bounded_identifier(getattr(args, "work_item_id", None))
+        ),
+        "activity": (
+            claim.get("activity") if claim else getattr(args, "activity", None)
+        ),
         "resulting_commit": extra.pop("resulting_commit", None),
         "command_warnings": extra.pop("command_warnings", []),
         "journal_warnings": [],
@@ -1363,6 +1446,40 @@ def _invalid_deadline_result(
     )
 
 
+def _invalid_work_item_result(
+    common_directory: Path,
+    action: str,
+    args: argparse.Namespace,
+    error: _WorkItemError,
+    claim: dict[str, Any] | None = None,
+) -> int:
+    outcome = (
+        "INVALID_WORK_ITEM_RELEASE"
+        if action == "release"
+        else "INVALID_WORK_ITEM_SCOPE"
+    )
+    rejection = {
+        "message": str(error),
+        "field": error.field,
+        "reason": error.reason,
+    }
+    event = _event(
+        action,
+        outcome,
+        args,
+        claim=claim,
+        rejection=rejection,
+    )
+    return _journaled_result(
+        ERROR,
+        common_directory,
+        event,
+        message=str(error),
+        field=error.field,
+        rejection=rejection,
+    )
+
+
 def _primary_required_result(
     common_directory: Path,
     action: str,
@@ -1474,9 +1591,16 @@ def _acquire(args: argparse.Namespace) -> int:
             requested_scope, scope_warnings = _scope_from_args(args, repository)
         except _ScopeError as error:
             return _invalid_scope_result(common_directory, "acquire", args, error)
+        except _WorkItemError as error:
+            return _invalid_work_item_result(
+                common_directory,
+                "acquire",
+                args,
+                error,
+            )
         if not _scope_has_values(requested_scope):
             error = _ScopeError(
-                "Acquisition requires at least one file, tree, broad file domain, or named resource.",
+                "Acquisition requires a work item, file, tree, broad file domain, or named resource.",
                 "none",
                 "provide an Event Contract scope",
                 "missing_scope",
@@ -1600,6 +1724,10 @@ def _acquire(args: argparse.Namespace) -> int:
             "trees": requested_scope["trees"],
             "worktree": str(target_worktree),
         }
+        if requested_scope["work_item_id"] is not None:
+            claim["acquisition_outcome"] = _canonical_outcome(outcome)
+            claim["work_item_id"] = requested_scope["work_item_id"]
+            claim["activity"] = requested_scope["activity"]
         if deadline is not None:
             claim["deadline"] = deadline
         claims.append(claim)
@@ -1878,8 +2006,82 @@ def _release(args: argparse.Namespace) -> int:
         for index, claim in enumerate(claims):
             if claim.get("claim_id") != args.claim_id:
                 continue
+            work_item_id = claim.get("work_item_id")
+            if work_item_id is not None:
+                try:
+                    disposition = args.disposition
+                    blocker_reference = args.blocker_reference
+                    if disposition not in {"done", "blocked", "handoff"}:
+                        raise _WorkItemError(
+                            "Work-item release requires disposition done, blocked, or handoff.",
+                            "disposition",
+                            (
+                                "disposition_required"
+                                if disposition is None
+                                else "invalid_disposition"
+                            ),
+                        )
+                    if disposition == "blocked":
+                        if blocker_reference is None:
+                            raise _WorkItemError(
+                                "Blocked release requires blocker_reference.",
+                                "blocker_reference",
+                                "blocker_reference_required",
+                            )
+                        if (
+                            not blocker_reference
+                            or blocker_reference != blocker_reference.strip()
+                            or "\n" in blocker_reference
+                            or "\r" in blocker_reference
+                            or len(blocker_reference) > MAX_IDENTIFIER_LENGTH
+                        ):
+                            raise _WorkItemError(
+                                "blocker_reference must be a canonical non-empty single-line value of at most 200 characters.",
+                                "blocker_reference",
+                                "invalid_blocker_reference",
+                            )
+                    elif blocker_reference is not None:
+                        raise _WorkItemError(
+                            "blocker_reference is allowed only for blocked disposition.",
+                            "blocker_reference",
+                            "blocker_reference_not_allowed",
+                        )
+                except _WorkItemError as error:
+                    return _invalid_work_item_result(
+                        common_directory,
+                        "release",
+                        args,
+                        error,
+                        claim,
+                    )
+            elif args.disposition is not None or args.blocker_reference is not None:
+                return _invalid_work_item_result(
+                    common_directory,
+                    "release",
+                    args,
+                    _WorkItemError(
+                        "Work-item release fields require a work-item claim.",
+                        "disposition",
+                        "work_item_claim_required",
+                    ),
+                    claim,
+                )
             released = claims.pop(index)
-            event = _event("release", "RELEASED", args, claim=released)
+            release_details = (
+                {
+                    "disposition": args.disposition,
+                    "blocker_reference": args.blocker_reference,
+                }
+                if work_item_id is not None
+                else {}
+            )
+            event = _event(
+                "release",
+                "RELEASED",
+                args,
+                claim=released,
+                **release_details,
+            )
             _write_registry(registry_file, data)
             try:
                 journal_path = _append_event(common_directory, event)
@@ -1898,6 +2100,7 @@ def _release(args: argparse.Namespace) -> int:
                 event["outcome"],
                 journal={"event_id": event["event_id"], "path": str(journal_path)},
                 claim=released,
+                **release_details,
             )
             return SUCCESS
         event = _event("release", "CLAIM_NOT_FOUND", args)
@@ -2340,6 +2543,168 @@ def _render_text_report(report: dict[str, Any]) -> str:
     )
 
 
+def _work_item_report(
+    events: Sequence[dict[str, Any]],
+    live_claims: Sequence[dict[str, Any]],
+    start: datetime,
+    end: datetime,
+) -> dict[str, Any]:
+    successful_acquisitions = {
+        "SHARED_CHECKOUT_ACQUIRED",
+        "ISOLATED_CHECKOUT_ACQUIRED",
+        "DIRTY_CHECKOUT_RECOVERY_ACQUIRED",
+    }
+    live_identities = {
+        (str(claim.get("claim_id") or ""), str(claim.get("incarnation_id") or ""))
+        for claim in live_claims
+        if claim.get("work_item_id")
+    }
+    segments_by_work_item: dict[str, list[dict[str, Any]]] = {}
+    open_by_identity: dict[tuple[str, str], dict[str, Any]] = {}
+    open_by_work_item: dict[str, list[dict[str, Any]]] = {}
+    missing_release_event_ids: list[str] = []
+    release_without_acquisition_event_ids: list[str] = []
+    contradictory_event_ids: list[str] = []
+    historical_non_work_item_event_ids: list[str] = []
+
+    def in_window(event: dict[str, Any]) -> bool:
+        timestamp = _parse_timestamp(str(event.get("timestamp")))
+        return start <= timestamp <= end
+
+    for event in sorted(events, key=_event_sort_key):
+        event_id = str(event.get("event_id") or "")
+        work_item_id = event.get("work_item_id")
+        if not isinstance(work_item_id, str) or not work_item_id:
+            if in_window(event):
+                historical_non_work_item_event_ids.append(event_id)
+            continue
+        action = str(event.get("action") or "")
+        outcome = _canonical_outcome(str(event.get("outcome") or ""))
+        identity = (
+            str(event.get("claim_id") or ""),
+            str(event.get("incarnation_id") or ""),
+        )
+        if action == "acquire" and outcome in successful_acquisitions:
+            activity = event.get("activity")
+            if activity not in {"work", "update"} or open_by_work_item.get(work_item_id):
+                if in_window(event):
+                    contradictory_event_ids.append(event_id)
+                continue
+            segment = {
+                "work_item_id": work_item_id,
+                "claim_id": identity[0],
+                "incarnation_id": identity[1] or None,
+                "owner": event.get("agent"),
+                "root_task_id": event.get("root_task_id"),
+                "activity": activity,
+                "acquired_at": event.get("timestamp"),
+                "released_at": None,
+                "disposition": None,
+                "blocker_reference": None,
+                "duration_seconds": None,
+                "open": True,
+                "live": identity in live_identities,
+                "acquisition_event_id": event_id,
+                "release_event_id": None,
+            }
+            segments_by_work_item.setdefault(work_item_id, []).append(segment)
+            open_by_identity[identity] = segment
+            open_by_work_item.setdefault(work_item_id, []).append(segment)
+        elif action == "release" and outcome == "RELEASED":
+            segment = open_by_identity.get(identity)
+            if segment is None:
+                if in_window(event):
+                    release_without_acquisition_event_ids.append(event_id)
+                continue
+            disposition = event.get("disposition")
+            blocker_reference = event.get("blocker_reference")
+            contradictory = (
+                work_item_id != segment["work_item_id"]
+                or event.get("activity") != segment["activity"]
+                or event.get("agent") != segment["owner"]
+                or event.get("root_task_id") != segment["root_task_id"]
+                or disposition not in {"done", "blocked", "handoff"}
+                or disposition == "blocked" and not blocker_reference
+                or disposition != "blocked" and blocker_reference is not None
+            )
+            if contradictory:
+                if in_window(event):
+                    contradictory_event_ids.append(event_id)
+                continue
+            released_at = str(event.get("timestamp"))
+            segment["released_at"] = released_at
+            segment["disposition"] = disposition
+            segment["blocker_reference"] = blocker_reference
+            segment["duration_seconds"] = max(
+                0.0,
+                (
+                    _parse_timestamp(released_at)
+                    - _parse_timestamp(str(segment["acquired_at"]))
+                ).total_seconds(),
+            )
+            segment["open"] = False
+            segment["live"] = False
+            segment["release_event_id"] = event_id
+            open_by_identity.pop(identity, None)
+            open_by_work_item[work_item_id].remove(segment)
+            if not open_by_work_item[work_item_id]:
+                open_by_work_item.pop(work_item_id)
+
+    for segments in segments_by_work_item.values():
+        for segment in segments:
+            identity = (
+                str(segment["claim_id"] or ""),
+                str(segment["incarnation_id"] or ""),
+            )
+            segment["live"] = identity in live_identities
+            acquired_at = _parse_timestamp(str(segment["acquired_at"]))
+            if segment["open"] and not segment["live"] and start <= acquired_at <= end:
+                missing_release_event_ids.append(str(segment["acquisition_event_id"]))
+
+    filtered_items: list[dict[str, Any]] = []
+    for work_item_id, segments in sorted(segments_by_work_item.items()):
+        visible_segments = []
+        for segment in segments:
+            acquired_at = _parse_timestamp(str(segment["acquired_at"]))
+            released_at = (
+                _parse_timestamp(str(segment["released_at"]))
+                if segment["released_at"] is not None
+                else None
+            )
+            if acquired_at <= end and (released_at is None or released_at >= start):
+                rendered = dict(segment)
+                rendered.pop("work_item_id")
+                visible_segments.append(rendered)
+        if visible_segments:
+            filtered_items.append(
+                {
+                    "work_item_id": work_item_id,
+                    "segments": sorted(
+                        visible_segments,
+                        key=lambda segment: (
+                            str(segment["acquired_at"]),
+                            str(segment["claim_id"]),
+                        ),
+                    ),
+                }
+            )
+
+    return {
+        "schema_version": WORK_ITEM_REPORT_SCHEMA_VERSION,
+        "items": filtered_items,
+        "diagnostics": {
+            "missing_release_event_ids": sorted(missing_release_event_ids),
+            "release_without_acquisition_event_ids": sorted(
+                release_without_acquisition_event_ids
+            ),
+            "contradictory_event_ids": sorted(contradictory_event_ids),
+            "historical_non_work_item_event_ids": sorted(
+                historical_non_work_item_event_ids
+            ),
+        },
+    }
+
+
 def _report(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
     common_directory = _git_common_directory(repository)
@@ -2383,6 +2748,7 @@ def _report(args: argparse.Namespace) -> int:
         "window": {"since": args.since, "start": _format_timestamp(start), "end": _format_timestamp(end)},
         "event_count": len(filtered),
         "metrics": _aggregate(filtered, end, live_claims),
+        "work_items": _work_item_report(events, live_claims, start, end),
         "coverage_gaps": coverage_gaps,
     }
     if args.format == "text":
@@ -2440,6 +2806,8 @@ def _parser() -> argparse.ArgumentParser:
     acquire.add_argument("--task", required=True)
     acquire.add_argument("--root-task-id", required=True)
     acquire.add_argument("--parent-claim-id")
+    acquire.add_argument("--work-item-id")
+    acquire.add_argument("--activity")
     _add_scope_arguments(acquire)
     acquire.add_argument("--branch")
     acquire.add_argument(
@@ -2475,6 +2843,8 @@ def _parser() -> argparse.ArgumentParser:
 
     release = subparsers.add_parser("release", help="Remove one exact live claim and journal its release.")
     release.add_argument("--claim-id", required=True)
+    release.add_argument("--disposition")
+    release.add_argument("--blocker-reference")
     release.set_defaults(handler=_release)
 
     reset = subparsers.add_parser("reset", help="Replace the live claim registry with an empty claim list.")

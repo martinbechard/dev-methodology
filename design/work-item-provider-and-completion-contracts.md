@@ -131,6 +131,18 @@ Every provider maps its native record to the following logical fields. Providers
 
 Sensitive, private, proprietary, credential, or company-internal evidence must remain in an appropriate private evidence store. A public provider record may link to a safe reference but must not disclose unsuitable content.
 
+## Exact Work-Item Claim Contract
+
+The claim system exposes one provider-independent scope keyed by the complete opaque work_item_id. The scope does not parse or infer provider type, repository, issue number, path, URL, lifecycle state, or delivery metadata. A live claim excludes every other activity on the same ID while distinct IDs coexist. Activity is exactly work for outcome work or update for provider mutation.
+
+A work-item claim is separate from path and shared-resource claims. Apply each independently when its event occurs. A work-item claim does not grant repository-path or runtime-resource ownership, and those operational claims do not grant work-item ownership.
+
+Before outcome work or provider mutation begins, the owner acquires the exact Work Item ID. At the activity boundary it releases with disposition exactly done, blocked, or handoff. Blocked requires one bounded opaque blocker reference; done and handoff prohibit that reference. Strict handoff sequencing uses ordinary exclusivity: the current owner releases with handoff before the next owner acquires the same ID. The provider remains the durable lifecycle authority throughout this claim sequence.
+
+The live registry and status preserve work_item_id and activity with the existing claim ID, incarnation ID, owner, root task, claim and heartbeat timestamps, checkout fields, and acquisition outcome. Acquisition, conflict, and release journal events preserve the same identity plus event outcome, release disposition, and blocker reference when applicable. Invalid or missing acquisition and release combinations are structured rejections and do not change the live registry. Legacy non-work-item releases remain disposition-free.
+
+Claim reports retain their existing top-level version and add a separately versioned work_items section. It groups deterministic activity segments by Work Item ID with acquired and released times, activity, disposition, owner, duration, open state, and live state. Diagnostics identify missing release, release without acquisition, contradictory events, and historical non-work-item events. Historical records without a Work Item ID remain explicit diagnostics; the report never invents an ID.
+
 ## Exact File-Provider Transactions
 
 Every file-provider creation, lifecycle update, move, archive, or justified atomic multi-record operation starts from a complete exact canonical repository-relative provider-path manifest. The manifest identifies every current source and created destination. Ordinary creation and update each use exactly one path. A move or archive uses exactly one current source and one created destination. A generic atomic operation uses at least two paths and a nonempty rationale, including when exactly two records participate. An unknown operation, invalid role shape, or missing, title-derived, inferred, wildcard, directory, partial, or mismatched manifest is invalid. Conversation titles remain display text and never provider identity or mutation scope.

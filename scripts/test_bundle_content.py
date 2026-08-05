@@ -1,6 +1,7 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
 # Summary: Verifies the distributable methodology bundle, generated artifacts, roles, and documentation contracts.
+# Design: design/work-item-provider-and-completion-contracts.md
 
 from __future__ import annotations
 
@@ -7457,48 +7458,39 @@ class BundleContentTests(unittest.TestCase):
                 with self.subTest(skill=skill, probe_term=term):
                     self.assertIn(term, behavior)
 
-    def test_file_work_item_management_has_no_claim_knowledge(self) -> None:
-        manage_text = (SKILLS_ROOT / "manage-file-work-items" / "SKILL.md").read_text(
-            encoding="utf-8"
-        )
+    def test_coordinator_and_providers_require_exact_work_item_lifecycle_claims(self) -> None:
         coordination_text = (
             SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
-
-        for provider_contract in (
-            "Only the primary worktree on main may change canonical files under backlog.",
-            "Each startup or terminal transition remains its own short primary-main provider transaction.",
-            "Keep delivery ownership isolated from provider mutation ownership.",
-            "Provider mutation protection cannot substitute for delivery ownership.",
-            "any deferred edit, shared-resource, or integration event as distinct facts.",
-        ):
-            with self.subTest(provider_contract=provider_contract):
-                self.assertIn(provider_contract, manage_text)
-
-        for coordination_contract in (
-            "A coordination-only overlap note does not block a safe private-worktree start.",
-            "Defer only that event; continue non-conflicting work in isolated private worktrees.",
-        ):
-            with self.subTest(coordination_contract=coordination_contract):
-                self.assertIn(coordination_contract, coordination_text)
-
-        for forbidden_coupling in (
-            "agent-claim",
-            "claim events",
-            "claim evidence",
-            "claim result",
-            "claim outcome",
-            "live claim",
-            "live-claim",
-            "claim helper",
-            "claim transport",
-            "claim registry",
-            "structured claim cleanup",
-            "structured claim outcome",
-            "agent-claims.json",
-        ):
-            with self.subTest(forbidden_coupling=forbidden_coupling):
-                self.assertNotIn(forbidden_coupling, manage_text.casefold())
+        provider_texts = {
+            skill_name: (SKILLS_ROOT / skill_name / "SKILL.md").read_text(
+                encoding="utf-8"
+            )
+            for skill_name in (
+                "manage-file-work-items",
+                "manage-github-work-items",
+                "manage-gitlab-work-items",
+                "manage-azure-devops-work-items",
+                "manage-jira-work-items",
+            )
+        }
+        required_contracts = (
+            "Acquire the exact opaque Work Item ID before any work or provider mutation.",
+            "Use activity work for outcome work and activity update for provider mutation.",
+            "Release the work-item claim with disposition done, blocked, or handoff at the activity boundary.",
+            "Path and resource claims remain independently applicable.",
+            "The provider remains the lifecycle authority.",
+        )
+        for source_name, text in {
+            "coordinate-codex-work-items": coordination_text,
+            **provider_texts,
+        }.items():
+            for required_contract in required_contracts:
+                with self.subTest(
+                    source=source_name,
+                    required_contract=required_contract,
+                ):
+                    self.assertIn(required_contract, text)
 
     def test_roles_keep_mutation_independent_from_resource_coordination(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
@@ -7592,11 +7584,11 @@ class BundleContentTests(unittest.TestCase):
         event_rows = [
             line
             for line in event_contract.splitlines()
-            if re.match(r"^\| [1-8] \|", line)
+            if re.match(r"^\| [1-9] \|", line)
         ]
-        self.assertEqual(8, len(event_rows))
+        self.assertEqual(9, len(event_rows))
         self.assertEqual(
-            [f"| {number} |" for number in range(1, 9)],
+            [f"| {number} |" for number in range(1, 10)],
             ["|".join(row.split("|")[:2]) + "|" for row in event_rows],
         )
         for adapter_text in (command_text, mcp_text):

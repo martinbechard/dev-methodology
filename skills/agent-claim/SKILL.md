@@ -7,7 +7,7 @@ metadata:
 
 # Agent Claim
 
-Claims prevent two agents from changing the same shared file or resource at the same time. A claim and its release do not prove that work is complete.
+Claims prevent two agents from changing the same shared file or resource at the same time. Exact work-item claims also prevent concurrent activity on one opaque Work Item ID. A claim and its release do not prove that work is complete.
 
 The claim system tracks declared ownership and scope overlap only. Acquisition, extension,
 status, and release do not inspect or gate on staged, unstaged, untracked, renamed, or deleted
@@ -36,6 +36,7 @@ Acquire a claim only for an event in this table. Acquire it immediately before s
 | 6 | Call a shared live model or run a suite against it | live-model:&lt;provider&gt;:&lt;suite&gt;. | After the claimed call or suite ends and its evidence is saved. |
 | 7 | Change a shared installed runtime | shared-install:&lt;target&gt;. | After the claimed installation is verified and stable. |
 | 8 | Change a shared deployment | deployment:&lt;environment&gt;. | After the claimed deployment or rollback reaches a verified final state. |
+| 9 | Perform outcome work or mutate a provider record for one recognized work item | The exact opaque Work Item ID with activity work or update. | At the activity boundary, with disposition done, blocked, or handoff. |
 
 ## Shared Claim Records
 
@@ -64,6 +65,10 @@ Do not store prompts, reasoning, responses, arbitrary tool output, task descript
 Claim scope is the file, set of files, or shared resource that a claim protects.
 
 Every claim request must specify a scope. Use the Claim column in the Claim Events table to select that scope.
+
+A work-item scope contains one canonical non-empty single-line Work Item ID of at most 200 characters and activity exactly work or update. The ID is opaque: the claim system compares the complete value for equality and does not parse provider, path, repository, issue, or lifecycle metadata from it. A live claim conflicts with every request for the same Work Item ID regardless of activity. Distinct IDs coexist.
+
+Keep work-item claims separate from path and resource claims. Path and resource claims remain independently applicable when their Claim Events occur; they do not replace the work-item claim and the work-item claim does not replace them.
 
 A project-files claim must also include a short reason explaining why the work must occur in the primary worktree.
 
@@ -137,9 +142,13 @@ Status reports overdue resource claims but never releases one. A configured watc
 
 Release the exact named live claim when the matching event ends or ownership is handed off. Release no other claim and treat cleanup as separate from completion, delivery, and provider lifecycle state.
 
+Release of a work-item claim requires disposition exactly done, blocked, or handoff. Blocked also requires one canonical non-empty single-line blocker reference of at most 200 characters. A blocker reference is prohibited for done and handoff. Invalid or missing combinations are rejected without changing the live registry. Release of a non-work-item claim keeps the legacy disposition-free behavior.
+
+Use ordinary exclusivity for a strict handoff: the current owner releases with handoff, then the next owner acquires the same Work Item ID. Never acquire the successor while the prior claim remains live or use a path or resource claim to bypass same-ID contention.
+
 ## Release Cleanup
 
-Release is claim cleanup only. While holding the registry lock, locate the exact named live claim, remove only that claim, persist the registry through the locked file, and append a RELEASED journal event.
+Release is claim cleanup only. While holding the registry lock, locate the exact named live claim, validate required work-item release evidence, remove only that claim, persist the registry through the locked file, and append a RELEASED journal event.
 
 Release does not inspect or gate on worktree cleanliness, branches, baseline or current HEAD, ancestry, commits, file contents, delivery state, no-change evidence, or out-of-domain changes. Keep completion, delivery, provider lifecycle, and claim cleanup as separate operations.
 

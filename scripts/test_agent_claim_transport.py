@@ -2,6 +2,7 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
 # Summary: Verifies claim-helper interfaces, deadline-policy rendering, invocation behavior, and evaluation staging.
+# Design: design/work-item-provider-and-completion-contracts.md
 
 from __future__ import annotations
 
@@ -951,6 +952,35 @@ class AgentClaimInterfaceTests(unittest.TestCase):
                 self.assertIn("Uncertain", adapter)
                 self.assertIn("status", adapter)
                 self.assertIn("Do not use another helper", adapter)
+
+    def test_command_and_mcp_document_equivalent_work_item_lifecycle_contracts(self) -> None:
+        """Keep exact work-item acquisition, release, status, and reporting transport-neutral."""
+
+        command = COMMAND_SKILL.read_text(encoding="utf-8")
+        mcp = MCP_SKILL.read_text(encoding="utf-8")
+        equivalent_terms = (
+            ("--work-item-id", '"work_item_id"'),
+            ("--activity", '"activity"'),
+            ("--disposition", '"disposition"'),
+            ("--blocker-reference", '"blocker_reference"'),
+            ("CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED", "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED"),
+            ("work_item_id", "work_item_id"),
+            ("activity", "activity"),
+            ("work_items", "work_items"),
+            ("missing release", "missing release"),
+            ("release without acquisition", "release without acquisition"),
+            ("contradictory events", "contradictory events"),
+            ("historical non-work-item events", "historical non-work-item events"),
+        )
+        for command_term, mcp_term in equivalent_terms:
+            with self.subTest(command_term=command_term, mcp_term=mcp_term):
+                self.assertIn(command_term, command)
+                self.assertIn(mcp_term, mcp)
+
+        for disposition in ("done", "blocked", "handoff"):
+            with self.subTest(disposition=disposition):
+                self.assertIn(disposition, command)
+                self.assertIn(disposition, mcp)
 
     def test_portable_command_is_owned_by_command_adapter(self) -> None:
         """Ship the command implementation only with its independently distributable adapter."""

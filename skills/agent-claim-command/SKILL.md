@@ -51,6 +51,8 @@ Several outcomes share an exit code. The JSON outcome, not the exit code, identi
 
 Run status with no operation-specific arguments. Read result.outcome from the returned JSON document.
 
+Each live work-item claim includes work_item_id and activity together with claim_id, incarnation_id, agent, root_task_id, claimed_at, heartbeat, acquisition_outcome, and the existing ownership fields.
+
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . status
 ```
@@ -59,7 +61,21 @@ python3 "$CLAIM_SCRIPT" --repo . status
 
 Acquire requires claim-id, agent, task, root-task-id, and the scope selected through agent-claim.
 
-Use file, project-files, or resource for that scope. A project-files request also requires scope-reason. A resource request also requires resource-class, resource-id, expected-duration-seconds, and requested-hard-stop-duration-seconds.
+Use work-item-id with activity, or use file, project-files, or resource for that scope. Work-item activity must be exactly work or update and cannot be combined with path or resource scope. A project-files request also requires scope-reason. A resource request also requires resource-class, resource-id, expected-duration-seconds, and requested-hard-stop-duration-seconds.
+
+Work-item acquisition:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id work-item-123-work \
+  --agent implementation-agent \
+  --task work-item-123 \
+  --root-task-id work-item-123 \
+  --work-item-id "provider-opaque-id-123" \
+  --activity work
+```
+
+Another live claim for the same Work Item ID returns CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED regardless of activity. Distinct Work Item IDs coexist.
 
 File-scope acquisition:
 
@@ -136,6 +152,21 @@ python3 "$CLAIM_SCRIPT" --repo . heartbeat --claim-id task-123
 python3 "$CLAIM_SCRIPT" --repo . release --claim-id task-123
 ```
 
+A work-item claim requires --disposition with exactly done, blocked, or handoff. Blocked also requires a bounded opaque --blocker-reference. The blocker reference is prohibited for done and handoff.
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . release \
+  --claim-id work-item-123-work \
+  --disposition handoff
+
+python3 "$CLAIM_SCRIPT" --repo . release \
+  --claim-id work-item-123-update \
+  --disposition blocked \
+  --blocker-reference "dependency-456"
+```
+
+The result and RELEASED journal event preserve work_item_id, activity, disposition, blocker_reference, claim and incarnation identity, owner, root task, timestamps, and outcome. Invalid or missing work-item combinations return INVALID_WORK_ITEM_RELEASE without changing the registry. Non-work-item claims retain the legacy release command without disposition.
+
 Release removes only the exact named live claim while the helper holds an exclusive OS lock directly on agent-claims.json. The helper updates that same locked file without replacing its inode and appends RELEASED journal evidence. Release does not inspect Git state, file contents, delivery evidence, or completion state.
 
 ## Reset Claim Registry
@@ -163,6 +194,8 @@ Report accepts optional since and format.
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . report --since 2d --format json
 ```
+
+The JSON report retains schema_version 2 and adds work_items with its own schema_version 1. That section groups deterministic activity segments by work_item_id. Each segment reports acquired and released times, activity, disposition, owner, duration, and open and live state. Diagnostics identify missing release, release without acquisition, contradictory events, and historical non-work-item events without inventing Work Item IDs.
 
 ## Uncertain Command Outcome
 

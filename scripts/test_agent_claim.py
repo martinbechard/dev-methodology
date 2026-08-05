@@ -1,6 +1,7 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies command claims, resource deadlines, journaling, isolation, recovery, and release invariants.
+# Summary: Verifies command claims, work-item lifecycles, resource deadlines, journaling, isolation, recovery, and reporting.
+# Design: design/work-item-provider-and-completion-contracts.md
 
 from __future__ import annotations
 
@@ -90,6 +91,21 @@ class AgentClaimTests(unittest.TestCase):
             f"task {claim_id}",
             "--root-task-id",
             claim_id,
+        ]
+
+    def work_item_arguments(
+        self,
+        claim_id: str,
+        work_item_id: str,
+        activity: str = "work",
+    ) -> list[str]:
+        """Build an exact work-item acquisition without path or resource scope."""
+        return [
+            *self.acquire_arguments(claim_id),
+            "--work-item-id",
+            work_item_id,
+            "--activity",
+            activity,
         ]
 
     def isolated_arguments(self, claim_id: str, path_name: str | None = None) -> tuple[list[str], Path]:
@@ -274,6 +290,366 @@ class AgentClaimTests(unittest.TestCase):
             [incarnation_id, incarnation_id, incarnation_id],
             [event["incarnation_id"] for event in self.journal_events()],
         )
+
+    def test_work_item_claims_contend_by_exact_id_and_distinct_ids_coexist(self) -> None:
+        first = self.claim(*self.work_item_arguments("first", "opaque/item:42"))
+        conflict = self.claim(
+            *self.work_item_arguments("second", "opaque/item:42", "update")
+        )
+        distinct = self.claim(
+            *self.work_item_arguments("third", "opaque/item:43", "update")
+        )
+
+        self.assertEqual(0, first.returncode, first.stderr)
+        self.assertEqual(3, conflict.returncode)
+        self.assertEqual(
+            "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
+            self.output(conflict)["outcome"],
+        )
+        self.assertEqual(
+            [
+                {
+                    "claim_id": "first",
+                    "claimed": "opaque/item:42",
+                    "claimed_kind": "work_item",
+                    "requested": "opaque/item:42",
+                    "requested_kind": "work_item",
+                    "scope_kind": "work_item",
+                }
+            ],
+            self.output(conflict)["overlaps"],
+        )
+        self.assertEqual(0, distinct.returncode, distinct.stderr)
+        handed_off = self.claim(
+            "release",
+            "--claim-id",
+            "first",
+            "--disposition",
+            "handoff",
+        )
+        successor = self.claim(
+            *self.work_item_arguments("second", "opaque/item:42", "update")
+        )
+        self.assertEqual(0, handed_off.returncode, handed_off.stderr)
+        self.assertEqual(0, successor.returncode, successor.stderr)
+        registry = json.loads(self.registry_path().read_text(encoding="utf-8"))
+        self.assertEqual(
+            [("opaque/item:42", "update"), ("opaque/item:43", "update")],
+            sorted(
+                (claim["work_item_id"], claim["activity"])
+                for claim in registry["claims"]
+            ),
+        )
+
+    def test_work_item_claim_fields_are_preserved_in_status_and_journal(self) -> None:
+        acquired = self.claim(
+            *self.work_item_arguments("provider-update", "provider#17", "update")
+        )
+        status = self.claim("status")
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        claim = self.output(status)["claims"][0]
+        self.assertEqual("provider#17", claim["work_item_id"])
+        self.assertEqual("update", claim["activity"])
+        self.assertEqual("provider-update", claim["claim_id"])
+        self.assertEqual("provider-update", claim["agent"])
+        self.assertEqual("provider-update", claim["root_task_id"])
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", claim["acquisition_outcome"])
+        self.assertIn("incarnation_id", claim)
+        self.assertIn("claimed_at", claim)
+        event = self.journal_events()[-1]
+        expected_fields = {
+            "work_item_id": claim["work_item_id"],
+            "activity": claim["activity"],
+            "claim_id": claim["claim_id"],
+            "incarnation_id": claim["incarnation_id"],
+            "agent": claim["agent"],
+            "root_task_id": claim["root_task_id"],
+        }
+        for field, expected in expected_fields.items():
+            with self.subTest(field=field):
+                self.assertEqual(expected, event[field])
+        self.assertIn("timestamp", event)
+        self.assertEqual("PRIMARY", event["outcome"])
+
+    def test_work_item_contention_is_independent_of_invalid_stored_path_metadata(self) -> None:
+        self.claim(*self.work_item_arguments("first", "item-path-independent"))
+        registry = json.loads(self.registry_path().read_text(encoding="utf-8"))
+        registry["claims"][0]["files"] = ["../outside"]
+        self.registry_path().write_text(
+            json.dumps(registry, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        registry_before = self.registry_path().read_bytes()
+
+        conflict = self.claim(
+            *self.work_item_arguments(
+                "second",
+                "item-path-independent",
+                "update",
+            )
+        )
+
+        self.assertEqual(3, conflict.returncode)
+        self.assertEqual(
+            "work_item",
+            self.output(conflict)["overlaps"][0]["scope_kind"],
+        )
+        self.assertEqual(registry_before, self.registry_path().read_bytes())
+
+    def test_invalid_work_item_acquisition_preserves_registry_bytes(self) -> None:
+        self.claim(*self.acquire_arguments("legacy"), "--file", "README.md")
+        registry_before = self.registry_path().read_bytes()
+        invalid_requests = (
+            [*self.acquire_arguments("missing-activity"), "--work-item-id", "item-1"],
+            [*self.acquire_arguments("missing-id"), "--activity", "work"],
+            [*self.work_item_arguments("invalid-activity", "item-2", "review")],
+            [
+                *self.work_item_arguments("mixed-scope", "item-3"),
+                "--file",
+                "src/one.py",
+            ],
+            [*self.work_item_arguments("blank-id", " ")],
+            [*self.work_item_arguments("multiline-id", "item\n3")],
+        )
+
+        for arguments in invalid_requests:
+            with self.subTest(arguments=arguments):
+                rejected = self.claim(*arguments)
+                self.assertEqual(1, rejected.returncode)
+                self.assertEqual(
+                    "INVALID_WORK_ITEM_SCOPE",
+                    self.output(rejected)["outcome"],
+                )
+                self.assertEqual(registry_before, self.registry_path().read_bytes())
+
+    def test_work_item_release_requires_valid_disposition_and_blocker_pairing(self) -> None:
+        invalid_cases = (
+            ([], "disposition_required"),
+            (["--disposition", "paused"], "invalid_disposition"),
+            (["--disposition", "blocked"], "blocker_reference_required"),
+            (
+                [
+                    "--disposition",
+                    "done",
+                    "--blocker-reference",
+                    "dependency-7",
+                ],
+                "blocker_reference_not_allowed",
+            ),
+        )
+        for index, (release_arguments, reason) in enumerate(invalid_cases):
+            claim_id = f"invalid-release-{index}"
+            self.claim(*self.work_item_arguments(claim_id, f"item-{index}"))
+            registry_before = self.registry_path().read_bytes()
+            rejected = self.claim(
+                "release",
+                "--claim-id",
+                claim_id,
+                *release_arguments,
+            )
+            self.assertEqual(1, rejected.returncode)
+            self.assertEqual("INVALID_WORK_ITEM_RELEASE", self.output(rejected)["outcome"])
+            self.assertEqual(reason, self.output(rejected)["rejection"]["reason"])
+            self.assertEqual(registry_before, self.registry_path().read_bytes())
+
+        releases = (
+            ("done", None),
+            ("handoff", None),
+            ("blocked", "dependency-9"),
+        )
+        for disposition, blocker_reference in releases:
+            claim_id = f"release-{disposition}"
+            self.claim(*self.work_item_arguments(claim_id, f"item-{disposition}"))
+            arguments = ["release", "--claim-id", claim_id, "--disposition", disposition]
+            if blocker_reference:
+                arguments.extend(["--blocker-reference", blocker_reference])
+            released = self.claim(*arguments)
+            self.assertEqual(0, released.returncode, released.stderr)
+            result = self.output(released)
+            self.assertEqual(disposition, result["disposition"])
+            self.assertEqual(blocker_reference, result["blocker_reference"])
+            event = self.journal_events()[-1]
+            self.assertEqual(disposition, event["disposition"])
+            self.assertEqual(blocker_reference, event["blocker_reference"])
+
+    def test_legacy_release_remains_disposition_free(self) -> None:
+        self.claim(*self.acquire_arguments("legacy-release"), "--file", "README.md")
+        released = self.claim("release", "--claim-id", "legacy-release")
+
+        self.assertEqual(0, released.returncode, released.stderr)
+        self.assertNotIn("disposition", self.output(released))
+
+    def test_work_item_path_and_resource_claims_remain_independently_applicable(self) -> None:
+        path_claim = self.claim(
+            *self.acquire_arguments("path-owner"),
+            "--file",
+            "README.md",
+        )
+        resource_claim = self.claim(
+            *self.acquire_arguments("resource-owner"),
+            *self.timed_resource_arguments(),
+        )
+        work_item_claim = self.claim(
+            *self.work_item_arguments("work-item-owner", "item-independent")
+        )
+
+        self.assertEqual(0, path_claim.returncode, path_claim.stderr)
+        self.assertEqual(0, resource_claim.returncode, resource_claim.stderr)
+        self.assertEqual(0, work_item_claim.returncode, work_item_claim.stderr)
+        self.assertEqual(
+            ["path-owner", "resource-owner", "work-item-owner"],
+            sorted(
+                claim["claim_id"]
+                for claim in self.output(self.claim("status"))["claims"]
+            ),
+        )
+
+    def test_report_groups_versioned_work_item_segments_and_diagnostics(self) -> None:
+        acquire_time = {"AGENT_CLAIM_TEST_NOW": "2026-08-05T10:00:00Z"}
+        release_time = {"AGENT_CLAIM_TEST_NOW": "2026-08-05T10:05:00Z"}
+        open_time = {"AGENT_CLAIM_TEST_NOW": "2026-08-05T10:06:00Z"}
+        self.claim(
+            *self.work_item_arguments("claim-a", "item-a", "work"),
+            environment=acquire_time,
+        )
+        self.claim(
+            "release",
+            "--claim-id",
+            "claim-a",
+            "--disposition",
+            "done",
+            environment=release_time,
+        )
+        self.claim(
+            *self.work_item_arguments("claim-b", "item-b", "update"),
+            environment=open_time,
+        )
+        existing = self.journal_events()
+        synthetic = [
+            self.synthetic_event(
+                "duplicate-acquire",
+                "2026-08-05T10:07:00Z",
+                "acquire",
+                "PRIMARY",
+                "claim-b-duplicate",
+                work_item_id="item-b",
+                activity="work",
+                incarnation_id="incarnation-b-duplicate",
+                agent="owner-b-duplicate",
+                root_task_id="root-b-duplicate",
+            ),
+            self.synthetic_event(
+                "missing-release",
+                "2026-08-05T10:08:00Z",
+                "acquire",
+                "PRIMARY",
+                "claim-d",
+                work_item_id="item-d",
+                activity="work",
+                incarnation_id="incarnation-d",
+                agent="owner-d",
+                root_task_id="root-d",
+            ),
+            self.synthetic_event(
+                "release-only",
+                "2026-08-05T10:09:00Z",
+                "release",
+                "RELEASED",
+                "claim-c",
+                work_item_id="item-c",
+                activity="update",
+                disposition="handoff",
+                blocker_reference=None,
+                incarnation_id="incarnation-c",
+                agent="owner-c",
+                root_task_id="root-c",
+            ),
+            self.synthetic_event(
+                "legacy-event",
+                "2026-08-05T10:10:00Z",
+                "acquire",
+                "PRIMARY",
+                "legacy-claim",
+            ),
+        ]
+        self.write_daily_events("2026-08-05", [*existing, *synthetic])
+
+        completed = self.claim(
+            "report",
+            "--since",
+            "1d",
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-08-05T12:00:00Z"},
+        )
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        report = self.output(completed)
+        self.assertEqual(2, report["schema_version"])
+        work_items = report["work_items"]
+        self.assertEqual(1, work_items["schema_version"])
+        self.assertEqual(
+            ["item-a", "item-b", "item-d"],
+            [item["work_item_id"] for item in work_items["items"]],
+        )
+        item_a = work_items["items"][0]["segments"][0]
+        self.assertEqual("2026-08-05T10:00:00.000000Z", item_a["acquired_at"])
+        self.assertEqual("2026-08-05T10:05:00.000000Z", item_a["released_at"])
+        self.assertEqual(300.0, item_a["duration_seconds"])
+        self.assertEqual("work", item_a["activity"])
+        self.assertEqual("done", item_a["disposition"])
+        self.assertFalse(item_a["open"])
+        self.assertFalse(item_a["live"])
+        item_b_segments = work_items["items"][1]["segments"]
+        self.assertTrue(item_b_segments[0]["open"])
+        self.assertTrue(item_b_segments[0]["live"])
+        diagnostics = work_items["diagnostics"]
+        self.assertEqual(["missing-release"], diagnostics["missing_release_event_ids"])
+        self.assertEqual(["release-only"], diagnostics["release_without_acquisition_event_ids"])
+        self.assertEqual(
+            ["duplicate-acquire"],
+            diagnostics["contradictory_event_ids"],
+        )
+        self.assertEqual(
+            ["legacy-event"],
+            diagnostics["historical_non_work_item_event_ids"],
+        )
+
+    def test_report_reconstructs_work_item_segments_across_window_boundary(self) -> None:
+        before_window = {"AGENT_CLAIM_TEST_NOW": "2026-08-03T10:00:00Z"}
+        inside_window = {"AGENT_CLAIM_TEST_NOW": "2026-08-05T10:00:00Z"}
+        report_time = {"AGENT_CLAIM_TEST_NOW": "2026-08-05T12:00:00Z"}
+        self.claim(
+            *self.work_item_arguments("live-old", "item-live-old"),
+            environment=before_window,
+        )
+        self.claim(
+            *self.work_item_arguments("released-now", "item-released-now"),
+            environment=before_window,
+        )
+        self.claim(
+            "release",
+            "--claim-id",
+            "released-now",
+            "--disposition",
+            "done",
+            environment=inside_window,
+        )
+
+        report = self.output(
+            self.claim("report", "--since", "1d", environment=report_time)
+        )["work_items"]
+
+        self.assertEqual(
+            ["item-live-old", "item-released-now"],
+            [item["work_item_id"] for item in report["items"]],
+        )
+        live_segment = report["items"][0]["segments"][0]
+        released_segment = report["items"][1]["segments"][0]
+        self.assertTrue(live_segment["open"])
+        self.assertTrue(live_segment["live"])
+        self.assertFalse(released_segment["open"])
+        self.assertEqual("done", released_segment["disposition"])
+        self.assertEqual([], report["diagnostics"]["release_without_acquisition_event_ids"])
 
     def test_release_cleans_only_the_exact_claim_without_git_or_delivery_validation(
         self,

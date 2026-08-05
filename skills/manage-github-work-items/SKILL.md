@@ -14,6 +14,8 @@ Manage GitHub issues as authoritative work items while keeping provider lifecycl
 - Accept the GitHub Work Item ID as one opaque input. This provider resolves it to the observed repository identity and issue number, checks collisions through GitHub, and reports the URL only as diagnostic location evidence.
 - Preserve the same Work Item ID across open, closed, reopened, transferred, and terminal lifecycle states. Generic callers must not parse its repository or number components.
 
+Acquire the exact opaque Work Item ID before any work or provider mutation. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. Use blocked only with its bounded blocker reference. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The provider remains the lifecycle authority.
+
 ## Inputs And Authority
 
 - Resolve the repository owner and name, issue number or selection criteria, requested operation, expected current state, owner, dependencies, lifecycle evidence, delivery references, and fields authorized to change.

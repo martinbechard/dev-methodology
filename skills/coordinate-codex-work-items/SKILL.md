@@ -192,6 +192,8 @@ capacity; preserve the successful provider mutation and report title coordinatio
 
 When agent-claim is loaded, use its Claim Events table and supporting rules. Do not define claim behavior in this skill.
 
+Acquire the exact opaque Work Item ID before any work or provider mutation. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. Use blocked only with its bounded blocker reference. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The provider remains the lifecycle authority.
+
 At each mutation or integration event, supply the smallest currently known exact path or
 resource manifest to the selected coordination skill. Do not request a whole-project claim
 when a fixed subset is known. A broader request needs an evidence-backed reason that the

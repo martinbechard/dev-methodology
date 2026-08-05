@@ -13,6 +13,8 @@ Jira issue management is not implemented in this bundle. This package preserves 
 
 A future implementation owns representation, lookup, collision checks, and stability for the Jira site/project issue key. Generic callers pass Work Item ID unchanged. This placeholder returns none and must not parse or fabricate one.
 
+Acquire the exact opaque Work Item ID before any work or provider mutation. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. Use blocked only with its bounded blocker reference. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The provider remains the lifecycle authority. The current zero-mutation placeholder performs none of these claim events; a future supported implementation must apply them.
+
 ## Inventory Work Items
 
 Return Required Result with Requested operation: inventory-work-items. Do not inspect Jira or any fallback source.
