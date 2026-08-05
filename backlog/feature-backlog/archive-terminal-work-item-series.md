@@ -1,6 +1,6 @@
 # Archive Terminal Work-Item Series
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -166,6 +166,30 @@ Runtime Launch Evidence: None. This provider transaction reserves capacity only 
 Owner: Unowned.
 
 Reconciliation: Starting reservation recorded by the parent Coordinator's Dev Backlog Steward.
+
+## Running Acceptance
+
+Transition: Starting -> Running.
+
+Canonical Thread and Root Agent Task: 019faeef-e932-7352-a53d-fdb1535f5994.
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Owner: Root Dev Orchestrator.
+
+Branch: codex/archive-terminal-work-item-series-019faeef.
+
+Worktree: /Users/martinbechard/.codex/worktrees/2d69/dev-methodology.
+
+Observed HEAD at Acceptance: 2879c116fe637224ec181b93e966e5a1ee3022a6.
+
+Phase: implementation / root-execution.
+
+Started At and Acceptance Evidence: Root Dev Orchestrator accepted ownership at 2026-08-05T14:19:49Z.
+
+Provider Mutation Claim: starting-running-archive-terminal-series-019faeef; outcome SHARED_CHECKOUT_ACQUIRED; event 77005449-442c-41f4-b4f4-2bfb16362592; exact path backlog/feature-backlog/archive-terminal-work-item-series.md.
+
+Reconciliation: Canonical root ownership accepted; this transaction records the required provider lifecycle transition before governed-source mutation.
 
 - Commit b5a48776d8dca621f4dc069e8805b4d924fe3abc is migration evidence, not a substitute for the steady-state contract and regression tests.
 - Do not reintroduce a Status field on index.md merely to make terminal state visible; derive series state from required children and use archive location as terminal evidence.
