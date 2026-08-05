@@ -1,8 +1,10 @@
 # Object-Oriented Skill Group Models
 
-This document applies the reusable [Skill Groups And Containment](object-oriented-agent-and-skill-model.md#42-skill-groups-and-containment) method to the development-methodology skill groups. It owns the current-versus-proposed comparison model, shared applied legend, group navigation, and application checks. Each detailed group keeps its current and proposed diagrams in a separate document.
+This document applies the reusable [Skill Organization](object-oriented-agent-and-skill-model.md#3-skill-organization) method to the development-methodology skill groups. It owns the current-versus-proposed comparison model, shared applied legend, group navigation, and application checks. Each detailed group keeps its current and proposed diagrams in a separate document.
 
 ## 1. Application Scope
+
+The application scope defines the common content and ownership rules for every detailed group document.
 
 Every group document contains:
 
@@ -47,6 +49,7 @@ classDiagram
 
         class CurrentDelivery["complete-work-item-*"] {
             <<AGENTS.md>>
+            <<routing>>
             +deliver-work-item(acceptedCommit)
         }
     }
@@ -73,6 +76,7 @@ classDiagram
 
         class ProposedDelivery["deliver-work-item-*"] {
             <<AGENTS.md>>
+            <<routing>>
             +deliver-work-item(acceptedCommit)
         }
     }
@@ -105,7 +109,36 @@ The Current Design namespace keeps the current skill identity, current Workflow 
 
 The Cross Group Repetitions namespace repeats the same visible route-documentation-work and set-multitask-mode identities shown in Proposed Design. The repeated rename keeps the gold treatment and renamed-from member, while the repeated extraction keeps the blue treatment and extracted-from member. Cross-group identifies the repeated placement; it does not create another recommendation. No line connects a Current Design node to a Proposed Design node because the two namespaces compare design states rather than declare runtime dependencies.
 
-## 3. Group Designs
+## 3. Proposal Name Registry
+
+The proposal name registry gives every changed skill identity one canonical spelling and one primary direct group. A verb-first name identifies a skill with one dominant operation. A stable subject name remains appropriate for a package that exposes several related procedures or reference structures.
+
+| Current skill or source | Proposed skill | Change | Primary direct group |
+| --- | --- | --- | --- |
+| fix-explanation | explain-code-fix | Rename | Baseline Development |
+| development-methodology | route-documentation-work | Rename | Documentation Methodology |
+| documentation-bootstrap | bootstrap-project-documentation | Rename | Documentation Methodology |
+| documentation-reverse-engineer | reverse-engineer-project-documentation | Rename | Documentation Methodology |
+| documentation-page-verify | verify-documentation-page | Rename | Documentation Methodology |
+| backlog-crisis-mode | resolve-backlog-blockage | Rename retained responsibility | Backlog Management |
+| backlog-crisis-mode | set-solo-mode | Extract | Concurrent Tasking |
+| backlog-crisis-mode | set-multitask-mode | Extract | Concurrent Tasking |
+| codex-workitem-coordination | coordinate-codex-work-items | Rename | Concurrent Tasking |
+| agent-work-merge | integrate-agent-work | Rename | Feature Branch And Worktrees |
+| complete-work-item-feature-branch | deliver-work-item-feature-branch | Rename | Feature Branch And Worktrees |
+| complete-work-item-direct-main | deliver-work-item-direct-main | Rename | Direct Main Delivery |
+| code-review-evidence | review-code-with-evidence | Rename | Review And Verification |
+| end-to-end-verification | verify-end-to-end-workflow | Rename | Review And Verification |
+| root-cause-analysis | analyze-root-cause | Rename | Review And Verification |
+| runtime-evidence-collection | collect-runtime-evidence | Rename | Review And Verification |
+| code-execution-tracing | trace-code-execution | Rename | Review And Verification |
+| prompt-contracts | review-prompt-contracts | Rename | Review And Verification |
+
+Every repeated proposed node in another group document uses the same canonical spelling and preserves the same renamed-from or extracted-from source.
+
+## 4. Group Designs
+
+The group designs apply one comparison contract to seven distinct methodology capabilities.
 
 - [Baseline Development](skill-groups/baseline-development.md)
 - [Project Setup](skill-groups/project-setup.md)
@@ -115,7 +148,9 @@ The Cross Group Repetitions namespace repeats the same visible route-documentati
 - [Direct Main Delivery](skill-groups/direct-main-delivery.md)
 - [Review And Verification](skill-groups/review-and-verification.md)
 
-## 4. Definition Of Good
+## 5. Definition Of Good
+
+The applied model is successful when every group is complete, current vocabulary remains distinct from proposed vocabulary, and every recommendation is traceable to its source skill.
 
 - **RULE: RULE-56** Each established skill group has independent current and proposed designs
   - **SYNOPSIS:** A reader can inspect one responsibility boundary and compare its current and recommended organization without loading the other six groups.
@@ -137,7 +172,13 @@ The Cross Group Repetitions namespace repeats the same visible route-documentati
   - **SYNOPSIS:** A blue node distinguishes a new extracted package from a rename, and extracted-from preserves the current source boundary.
   - **EXAMPLE:** set-solo-mode and set-multitask-mode are direct members of Concurrent Tasking and appear as Cross-group dependencies in Backlog Management.
 
+- **RULE: RULE-64** Every proposed skill identity has one coherent canonical name
+  - **SYNOPSIS:** The proposal name registry owns the spelling and primary direct group for every rename and extraction, while repeated Cross-group nodes reuse that identity unchanged.
+  - **EXAMPLE:** analyze-root-cause is defined once in Review And Verification and is repeated with the same spelling in Baseline Development.
+
 ## Authoritative Inputs
+
+The applied model is grounded in the user-directed grouping decisions and the repository sources below.
 
 - The user-supplied methodology skill-group organization and current-versus-proposed comparison requirements for this document.
 - The forty-one SKILL.md files and conceptual Agent definitions linked from the seven group documents.

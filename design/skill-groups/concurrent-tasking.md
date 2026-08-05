@@ -8,6 +8,8 @@ The applied-model legend and comparison contract are defined in [Object-Oriented
 
 ## Current Design
 
+The Current Design shows the direct Concurrent Tasking skill, both nested Skill Groups, and the loading relationships that are separate from containment.
+
 ```mermaid
 classDiagram
     direction TB
@@ -25,77 +27,72 @@ classDiagram
     }
 
     class ConcurrentTasking {
-        <<Skill group>>
+        <<Skill Group>>
     }
 
     class ResourceCoordination {
-        <<Skill group>>
+        <<Skill Group>>
     }
 
     class FeatureBranchAndWorktrees {
-        <<Skill group>>
+        <<Skill Group>>
     }
 
-    namespace ConcurrentTaskingSkills {
-        class codex-workitem-coordination {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            <<Peer Skill>>
-            +resource-coordination()
-            +queue-target-and-dispatch()
-            +effective-commit-delivery-and-persistence-closure()
-        }
+    class codex-workitem-coordination {
+        <<SKILL.md>>
+        <<Agent Skill>>
+        +resource-coordination()
+        +queue-target-and-dispatch()
+        +effective-commit-delivery-and-persistence-closure()
+    }
 
-        class agent-claim {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            +claim-events()
-            +timed-resource-claims()
-            +release-cleanup()
-        }
+    class agent-claim {
+        <<SKILL.md>>
+        <<Injectable Skill>>
+        +claim-events()
+        +timed-resource-claims()
+        +release-cleanup()
+    }
 
-        class agent-claim-command {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            +command-contract()
-            +uncertain-command-outcome()
-        }
+    class agent-claim-command {
+        <<SKILL.md>>
+        <<Injectable Skill>>
+        +command-contract()
+        +uncertain-command-outcome()
+    }
 
-        class agent-claim-mcp {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            <<Unavailable implementation>>
-            +mcp-operations()
-            +uncertain-tool-outcome()
-        }
+    class agent-claim-mcp {
+        <<SKILL.md>>
+        <<Injectable Skill>>
+        <<Unavailable implementation>>
+        +mcp-operations()
+        +uncertain-tool-outcome()
+    }
 
-        class agent-work-merge {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            <<Peer Skill>>
-            +merge-workflow()
-            +verification()
-        }
+    class agent-work-merge {
+        <<SKILL.md>>
+        <<Agent Skill>>
+        +merge-workflow()
+        +verification()
+    }
 
-        class complete-work-item-feature-branch {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            <<Peer Skill>>
-            +candidate-publication()
-            +review-and-check-loop()
-            +merge-and-completion-gate()
-        }
+    class complete-work-item-feature-branch {
+        <<SKILL.md>>
+        <<Injectable Skill>>
+        +candidate-publication()
+        +review-and-check-loop()
+        +merge-and-completion-gate()
+    }
 
-        class create-pull-request {
-            <<SKILL.md>>
-            <<Peer Skill>>
-            +workflow()
-            +review-order()
-        }
+    class create-pull-request {
+        <<SKILL.md>>
+        +workflow()
+        +review-order()
     }
 
     class ManageWorkItem["manage-*-work-items"] {
         <<AGENTS.md>>
+        <<routing>>
         <<Cross-group>>
         +inventory-work-items(selection)
         +transition-work-item(workItem, transition)
@@ -104,11 +101,13 @@ classDiagram
 
     class ResourceCoordinationBinding["resource-coordination"] {
         <<AGENTS.md>>
+        <<routing>>
         +coordinate-shared-resource(resourceManifest)
     }
 
     class ClaimHelper["agent-claim-*"] {
         <<AGENTS.md>>
+        <<routing>>
         +read-claim-status()
         +acquire-claim(scope)
         +extend-claim(scope)
@@ -117,6 +116,7 @@ classDiagram
 
     class DeliverWorkItem["complete-work-item-*"] {
         <<AGENTS.md>>
+        <<routing>>
         +deliver-work-item(acceptedCommit)
     }
 
@@ -158,6 +158,8 @@ The current coordination skill also says “when agent-claim is loaded,” so it
 
 ## Proposed Design
 
+The Proposed Design renames coordination, integration, and feature-branch delivery skills and adds two direct dispatch-mode skills without changing the nested group structure.
+
 The proposed diagram applies the recommendations below. Gold SKILL.md nodes have a proposed name change, and renamed-from records the current name. Blue SKILL.md nodes are proposed extractions, and extracted-from records their current source. Neutral SKILL.md nodes keep their current names; their method-like members show proposed procedure headings.
 
 ```mermaid
@@ -177,111 +179,104 @@ classDiagram
     }
 
     class ConcurrentTasking {
-        <<Skill group>>
+        <<Skill Group>>
     }
 
     class ResourceCoordination {
-        <<Skill group>>
+        <<Skill Group>>
     }
 
     class FeatureBranchAndWorktrees {
-        <<Skill group>>
+        <<Skill Group>>
     }
 
-    namespace ConcurrentTaskingSkills {
-        class coordinate-codex-work-items:::renamed {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            <<Peer Skill>>
-            renamed-from codex-workitem-coordination
-            +resource-coordination()
-            +queue-target-and-dispatch()
-            +effective-commit-delivery-and-persistence-closure()
-        }
+    class coordinate-codex-work-items:::renamed {
+        <<SKILL.md>>
+        <<Agent Skill>>
+        renamed-from codex-workitem-coordination
+        +resource-coordination()
+        +queue-target-and-dispatch()
+        +effective-commit-delivery-and-persistence-closure()
+    }
 
-        class agent-claim {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            +coordinate-shared-resource()
-            +acquire-claim()
-            +extend-claim()
-            +extend-claim-deadline()
-            +heartbeat-claim()
-            +read-claim-status()
-            +release-claim()
-        }
+    class agent-claim {
+        <<SKILL.md>>
+        <<Injectable Skill>>
+        +coordinate-shared-resource()
+        +acquire-claim()
+        +extend-claim()
+        +extend-claim-deadline()
+        +heartbeat-claim()
+        +read-claim-status()
+        +release-claim()
+    }
 
-        class agent-claim-command {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            +read-claim-status()
-            +acquire-claim()
-            +extend-claim()
-            +extend-claim-deadline()
-            +heartbeat-claim()
-            +release-claim()
-            +maintain-claim-journal()
-            +report-claim-contention()
-        }
+    class agent-claim-command {
+        <<SKILL.md>>
+        <<Injectable Skill>>
+        +read-claim-status()
+        +acquire-claim()
+        +extend-claim()
+        +extend-claim-deadline()
+        +heartbeat-claim()
+        +release-claim()
+        +maintain-claim-journal()
+        +report-claim-contention()
+    }
 
-        class agent-claim-mcp {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            <<Unavailable implementation>>
-            +read-claim-status()
-            +acquire-claim()
-            +extend-claim()
-            +extend-claim-deadline()
-            +heartbeat-claim()
-            +release-claim()
-            +maintain-claim-journal()
-            +report-claim-contention()
-        }
+    class agent-claim-mcp {
+        <<SKILL.md>>
+        <<Injectable Skill>>
+        <<Unavailable implementation>>
+        +read-claim-status()
+        +acquire-claim()
+        +extend-claim()
+        +extend-claim-deadline()
+        +heartbeat-claim()
+        +release-claim()
+        +maintain-claim-journal()
+        +report-claim-contention()
+    }
 
-        class integrate-agent-work:::renamed {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            <<Peer Skill>>
-            renamed-from agent-work-merge
-            +merge-workflow()
-            +verification()
-        }
+    class integrate-agent-work:::renamed {
+        <<SKILL.md>>
+        <<Agent Skill>>
+        renamed-from agent-work-merge
+        +merge-workflow()
+        +verification()
+    }
 
-        class deliver-work-item-feature-branch:::renamed {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            <<Peer Skill>>
-            renamed-from complete-work-item-feature-branch
-            +deliver-work-item()
-            +candidate-publication()
-            +review-and-check-loop()
-            +merge-and-completion-gate()
-        }
+    class deliver-work-item-feature-branch:::renamed {
+        <<SKILL.md>>
+        <<Injectable Skill>>
+        renamed-from complete-work-item-feature-branch
+        +deliver-work-item()
+        +candidate-publication()
+        +review-and-check-loop()
+        +merge-and-completion-gate()
+    }
 
-        class create-pull-request {
-            <<SKILL.md>>
-            <<Peer Skill>>
-            +create-or-update-pull-request()
-            +review-order()
-        }
+    class create-pull-request {
+        <<SKILL.md>>
+        +create-or-update-pull-request()
+        +review-order()
+    }
 
-        class set-solo-mode:::extracted {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            <<Peer Skill>>
-            extracted-from backlog-crisis-mode
-        }
+    class set-solo-mode:::extracted {
+        <<SKILL.md>>
+        <<Agent Skill>>
+        extracted-from backlog-crisis-mode
+    }
 
-        class set-multitask-mode:::extracted {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            <<Peer Skill>>
-            extracted-from backlog-crisis-mode
-        }
+    class set-multitask-mode:::extracted {
+        <<SKILL.md>>
+        <<Agent Skill>>
+        extracted-from backlog-crisis-mode
     }
 
     class ManageWorkItem["manage-*-work-items"] {
         <<AGENTS.md>>
+        <<routing>>
         <<Cross-group>>
         +inventory-work-items(selection)
         +transition-work-item(workItem, transition)
@@ -290,11 +285,13 @@ classDiagram
 
     class ResourceCoordinationBinding["resource-coordination"] {
         <<AGENTS.md>>
+        <<routing>>
         +coordinate-shared-resource(resourceManifest)
     }
 
     class ClaimHelper["agent-claim-*"] {
         <<AGENTS.md>>
+        <<routing>>
         +read-claim-status()
         +acquire-claim(scope)
         +extend-claim(scope)
@@ -303,6 +300,7 @@ classDiagram
 
     class DeliverWorkItem["deliver-work-item-*"] {
         <<AGENTS.md>>
+        <<routing>>
         +deliver-work-item(acceptedCommit)
     }
 
@@ -349,12 +347,16 @@ Dev Backlog Coordinator loads each skill by name for the matching transition. No
 
 ## Proposed Skill Extractions
 
+The proposed extractions separate secondary-thread dispatch control from backlog blockage recovery.
+
 | Proposed skill | Extracted source boundary | Responsibility | Reason |
 | --- | --- | --- | --- |
 | set-solo-mode | Execution step 1 stops ordinary dispatch. | Disable dispatch to secondary threads while the current Agent continues the work itself. | The procedure is useful whenever work must temporarily become sequential, not only during backlog blockage recovery. |
 | set-multitask-mode | Exit resumes normal dispatch. | Enable dispatch to secondary threads after the condition requiring sequential work has ended. | The complementary procedure makes resumption explicit and keeps dispatch policy out of the backlog-resolution skill. |
 
 ## Skill Recommendations
+
+The recommendations align coordination, integration, delivery, and helper procedure names without changing their group boundaries.
 
 | Skill | Current source boundary | Recommendation | Reason |
 | --- | --- | --- | --- |
@@ -367,6 +369,8 @@ Dev Backlog Coordinator loads each skill by name for the matching transition. No
 | create-pull-request | Workflow performs create or update behavior; Review Order and Draft And Ready State constrain it. | Keep the skill name. Rename Workflow to Create Or Update Pull Request. | The new heading identifies the procedure that complete-work-item-feature-branch invokes and covers both new and resumed publication. |
 
 ## Authoritative Inputs
+
+The current relationships, nested membership, and proposed procedure boundaries are grounded in these Agent and skill definitions.
 
 - [Dev Backlog Coordinator](../../agents/roles/dev-activities/dev-backlog-coordinator.role.yaml)
 - [Dev Orchestrator](../../agents/roles/dev-activities/dev-orchestrator.role.yaml)

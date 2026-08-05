@@ -8,6 +8,8 @@ The applied-model legend and comparison contract are defined in [Object-Oriented
 
 ## Current Design
 
+The Current Design shows which review and verification skills each Agent loads and which direct skill dependencies connect diagnosis procedures.
+
 ```mermaid
 classDiagram
     direction TB
@@ -58,21 +60,18 @@ classDiagram
         class root-cause-analysis {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
             +workflow()
         }
 
         class runtime-evidence-collection {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
             +workflow()
         }
 
         class code-execution-tracing {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
             +workflow()
         }
 
@@ -120,6 +119,7 @@ classDiagram
 
     class DeliverWorkItem["complete-work-item-*"] {
         <<AGENTS.md>>
+        <<routing>>
         <<Cross-group>>
         +deliver-work-item(acceptedCommit)
     }
@@ -160,9 +160,11 @@ classDiagram
 
 The four Agent nodes show their actual fixed and conditional skill references instead of implying that every review Agent loads every review skill. Placement Aware Review Agents is only a compression stand-in for the shared conditional organise-project-files reference.
 
-The Peer Skill arrows expose current direct coupling among diagnosis procedures. end-to-end-verification names agent-claim when a claim event occurs, so that relationship uses an open diamond. Its regular dotted delivery arrow is different: the verifier returns accepted evidence to the project-selected delivery owner without naming the Commit implementation.
+The skill-to-skill arrows expose current direct coupling among diagnosis procedures. end-to-end-verification names agent-claim when a claim event occurs, so that relationship uses an open diamond. Its regular dotted delivery arrow is different: the verifier returns accepted evidence to the project-selected delivery owner without naming the Commit implementation.
 
 ## Proposed Design
+
+The Proposed Design gives each single-operation review and diagnosis skill a verb-first name and gives test-strategy a clear public procedure.
 
 The proposed diagram applies the recommendations below. Gold SKILL.md nodes have a proposed name change, and renamed-from records the current name. Neutral SKILL.md nodes keep their current names; their method-like members show proposed procedure headings.
 
@@ -216,21 +218,18 @@ classDiagram
         class analyze-root-cause:::renamed {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
             renamed-from root-cause-analysis
         }
 
         class collect-runtime-evidence:::renamed {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
             renamed-from runtime-evidence-collection
         }
 
         class trace-code-execution:::renamed {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
             renamed-from code-execution-tracing
         }
 
@@ -263,8 +262,8 @@ classDiagram
         <<Cross-group>>
         +discover-code-context(requested-work)
         +determine-change-scope(discovered-context)
-        +reference contract-authority-rules
-        +reference discovery-boundaries
+        +contract-authority-rules
+        +discovery-boundaries
     }
 
     class organise-project-files {
@@ -292,6 +291,7 @@ classDiagram
 
     class DeliverWorkItem["deliver-work-item-*"] {
         <<AGENTS.md>>
+        <<routing>>
         <<Cross-group>>
         +deliver-work-item(acceptedCommit)
     }
@@ -334,6 +334,8 @@ classDiagram
 
 ## Skill Recommendations
 
+The recommendations make each primary review or diagnosis operation explicit while retaining Test Strategy as a recognizable domain skill.
+
 | Skill | Current source boundary | Recommendation | Reason |
 | --- | --- | --- | --- |
 | code-review-evidence | Workflow, Evidence Packet, and Synthesis Rules define one evidence-first code review procedure. | Rename the skill to review-code-with-evidence. | The proposed name states the operation and avoids making the package sound like stored evidence rather than the procedure that produces and evaluates it. |
@@ -345,6 +347,8 @@ classDiagram
 | prompt-contracts | Workflow reviews model-facing instructions, state, tools, retries, and outputs. | Rename the skill to review-prompt-contracts. | The current name identifies the subject but not the action; the proposed name matches the reviewer’s invocation. |
 
 ## Authoritative Inputs
+
+The current relationships and proposed names are grounded in these Agent and skill definitions.
 
 - [Dev Code Reviewer](../../agents/roles/dev-activities/dev-code-reviewer.role.yaml)
 - [Dev Verifier](../../agents/roles/dev-activities/dev-verifier.role.yaml)

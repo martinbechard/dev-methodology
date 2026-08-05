@@ -8,6 +8,8 @@ The applied-model legend and comparison contract are defined in [Object-Oriented
 
 ## Current Design
 
+The Current Design shows the two direct Project Setup skills and the exact-name documentation and placement skills loaded from other groups.
+
 ```mermaid
 classDiagram
     direction LR
@@ -56,10 +58,6 @@ classDiagram
         <<AGENTS.md>>
     }
 
-    class ConfirmedTechnologySkills {
-        <<Selected SKILL.md set>>
-    }
-
     ProjectConfigurator o--> detect-technology-skills
     ProjectConfigurator o--> create-project-configuration
     ProjectConfigurator o--> development-methodology
@@ -71,7 +69,7 @@ classDiagram
     ProjectBootstrapper o--> documentation-bootstrap
     ProjectBootstrapper o..> organise-project-files : when an unfixed project path must be chosen
 
-    AgentsGuidance o--> ConfirmedTechnologySkills
+    note for AgentsGuidance "AGENTS.md names each confirmed technology skill directly"
 ```
 
 Project Configurator and Project Bootstrapper name their skills directly. The generated AGENTS.md also names each confirmed folder technology skill directly. The current definitions do not promise that all technology skills implement one shared procedure, so the selected set is not drawn as an injectable interface.
@@ -79,6 +77,8 @@ Project Configurator and Project Bootstrapper name their skills directly. The ge
 documentation-bootstrap, documentation-page-verify, and development-methodology belong to Documentation Methodology. organise-project-files belongs to Baseline Development. Their Cross-group nodes expose current setup use without changing primary ownership.
 
 ## Proposed Design
+
+The Proposed Design keeps both direct Project Setup skill names and applies the canonical Documentation Methodology renames to the Cross-group dependencies.
 
 The proposed diagram applies the recommendations below. Gold SKILL.md nodes have a proposed name change, and renamed-from records the current name. Neutral SKILL.md nodes keep their current names; their method-like members show proposed procedure headings.
 
@@ -138,10 +138,6 @@ classDiagram
         <<AGENTS.md>>
     }
 
-    class ConfirmedTechnologySkills {
-        <<Selected SKILL.md set>>
-    }
-
     ProjectConfigurator o--> detect-technology-skills
     ProjectConfigurator o--> create-project-configuration
     ProjectConfigurator o--> route-documentation-work
@@ -153,12 +149,14 @@ classDiagram
     ProjectBootstrapper o--> bootstrap-project-documentation
     ProjectBootstrapper o..> organise-project-files : when an unfixed project path must be chosen
 
-    AgentsGuidance o--> ConfirmedTechnologySkills
+    note for AgentsGuidance "AGENTS.md names each confirmed technology skill directly"
 
     classDef renamed fill:#fff3bf,stroke:#b45309,stroke-width:3px,color:#111827
 ```
 
 ## Skill Recommendations
+
+The recommendations keep both Project Setup skill identities while making their public procedures explicit.
 
 | Skill | Current source boundary | Recommendation | Reason |
 | --- | --- | --- | --- |
@@ -166,6 +164,8 @@ classDiagram
 | create-project-configuration | Setup Contract, Scope, Workflow, and Verification combine configuration decisions, PROJECT.yaml authoring, AGENTS.md rendering, and validation. | Keep the skill name. Introduce Configure Project Agents And Skills, Render Project Guidance, and Verify Project Configuration as operation headings. | The package contains several related operations. Named headings let another skill refer to the required part without treating the complete package as one create call. |
 
 ## Authoritative Inputs
+
+The current relationships and proposed procedure boundaries are grounded in these Agent and skill definitions.
 
 - [Project Configurator](../../agents/roles/project-setup/project-configurator.role.yaml)
 - [Project Bootstrapper](../../agents/roles/project-setup/project-bootstrapper.role.yaml)

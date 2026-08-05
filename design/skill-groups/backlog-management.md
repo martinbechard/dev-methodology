@@ -8,6 +8,8 @@ The applied-model legend and comparison contract are defined in [Object-Oriented
 
 ## Current Design
 
+The Current Design shows the current blockage-recovery skill and both AGENTS.md procedure families that select a Persistence provider.
+
 ```mermaid
 classDiagram
     direction TB
@@ -22,13 +24,13 @@ classDiagram
 
     class CreateWorkItem["create-*-work-item"] {
         <<AGENTS.md>>
-        <<abstract>>
+        <<routing>>
         +create-work-item(workItemDescription)
     }
 
     class ManageWorkItem["manage-*-work-items"] {
         <<AGENTS.md>>
-        <<abstract>>
+        <<routing>>
         +inventory-work-items(selection)
         +transition-work-item(workItem, transition)
         +reconcile-work-item-completion(workItem, deliveryEvidence)
@@ -112,6 +114,7 @@ classDiagram
 
     class ResourceCoordination["resource-coordination"] {
         <<AGENTS.md>>
+        <<routing>>
         <<Cross-group>>
         +coordinate-shared-resource(resourceManifest)
     }
@@ -152,6 +155,8 @@ Crisis mode continues to use the selected Persistence provider while disabling c
 
 ## Proposed Design
 
+The Proposed Design separates blockage recovery from concurrent dispatch mode and gives every provider implementation the same creation or management procedure vocabulary.
+
 The proposed diagram applies the recommendations below. Gold SKILL.md nodes have a proposed name change, and renamed-from records the current name. Blue SKILL.md nodes are proposed extractions, and extracted-from records their current source. Neutral SKILL.md nodes keep their current names; their method-like members show proposed procedure headings.
 
 ```mermaid
@@ -168,13 +173,13 @@ classDiagram
 
     class CreateWorkItem["create-*-work-item"] {
         <<AGENTS.md>>
-        <<abstract>>
+        <<routing>>
         +create-work-item(workItemDescription)
     }
 
     class ManageWorkItem["manage-*-work-items"] {
         <<AGENTS.md>>
-        <<abstract>>
+        <<routing>>
         +inventory-work-items(selection)
         +transition-work-item(workItem, transition)
         +reconcile-work-item-completion(workItem, deliveryEvidence)
@@ -278,19 +283,18 @@ classDiagram
     class set-solo-mode:::extracted {
         <<SKILL.md>>
         <<Cross-group>>
-        <<Peer Skill>>
         extracted-from backlog-crisis-mode
     }
 
     class set-multitask-mode:::extracted {
         <<SKILL.md>>
         <<Cross-group>>
-        <<Peer Skill>>
         extracted-from backlog-crisis-mode
     }
 
     class ResourceCoordination["resource-coordination"] {
         <<AGENTS.md>>
+        <<routing>>
         <<Cross-group>>
         +coordinate-shared-resource(resourceManifest)
     }
@@ -334,6 +338,8 @@ When Concurrent Tasking is not configured, no secondary-thread dispatch exists t
 
 ## Skill Recommendations
 
+The recommendations preserve provider-specific behavior while aligning shared creation and management procedure names across implementations.
+
 | Skill | Current source boundary | Recommendation | Reason |
 | --- | --- | --- | --- |
 | backlog-crisis-mode | Declaration, blocked-item recovery, Watchdog Behavior, and Result define blockage resolution. Execution stops ordinary dispatch, while Exit resumes it. | Rename the remaining skill to resolve-backlog-blockage. Extract set-solo-mode to disable dispatch to secondary threads and set-multitask-mode to enable it. | Blockage resolution remains backlog-specific, while dispatch-mode changes become reusable Concurrent Tasking procedures. Dev Backlog Coordinator can load each sibling skill for the matching transition without making the skills name one another. |
@@ -349,6 +355,8 @@ When Concurrent Tasking is not configured, no secondary-thread dispatch exists t
 | manage-jira-work-items | Required Result handles every management request with one BLOCKED result. | Keep the skill name. Add Inventory Work Items, Transition Work Item, Reconcile Work Item Completion, Recover Work Item, and Report Work Items headings that route to Required Result. | Consistent headings let AGENTS.md select the Jira placeholder through the same management interfaces. |
 
 ## Authoritative Inputs
+
+The current provider relationships and proposed procedure boundaries are grounded in these Agent and skill definitions.
 
 - [Dev Backlog Steward](../../agents/roles/dev-activities/dev-backlog-steward.role.yaml)
 - [Dev Backlog Coordinator](../../agents/roles/dev-activities/dev-backlog-coordinator.role.yaml)

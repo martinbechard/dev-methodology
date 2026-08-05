@@ -8,6 +8,8 @@ The applied-model legend and comparison contract are defined in [Object-Oriented
 
 ## Current Design
 
+The Current Design shows the exact skill identities, group membership, and direct loading relationships used by the current Agent and skill definitions.
+
 ```mermaid
 classDiagram
     direction LR
@@ -33,7 +35,6 @@ classDiagram
         class code-comments {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
         }
 
         class code-discovery {
@@ -44,19 +45,16 @@ classDiagram
         class test-driven-development {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
         }
 
         class structured-design {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
         }
 
         class structured-explanation {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
         }
 
         class organise-project-files {
@@ -67,13 +65,11 @@ classDiagram
         class review-structured-artifact {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
         }
 
         class fix-explanation {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
         }
     }
 
@@ -109,9 +105,11 @@ classDiagram
 
 The empty skill nodes are deliberate. The Agent definitions load these skills as whole packages rather than invoking a shared AGENTS.md procedure. Structured Artifact Reviewers stands in for the current reviewer, verifier, prompt-reviewer, and merge-coordinator definitions that name review-structured-artifact.
 
-The skill-to-skill open diamonds expose stronger Peer Skill coupling. For example, fix-explanation names structured-explanation directly, while structured-explanation names structured-design only when system structure must be described.
+The skill-to-skill open diamonds expose direct coupling between skills. For example, fix-explanation names structured-explanation directly, while structured-explanation names structured-design only when system structure must be described.
 
 ## Proposed Design
+
+The Proposed Design keeps the nine Baseline Development responsibilities together, renames fix-explanation, and exposes clearer procedures inside the multi-operation skills.
 
 The proposed diagram applies the recommendations below. Gold SKILL.md nodes have a proposed name change, and renamed-from records the current name. Neutral SKILL.md nodes keep their current names; their method-like members show proposed procedure headings.
 
@@ -143,7 +141,6 @@ classDiagram
         class code-comments {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
             +write-structured-comments()
             +add-code-artifact-header()
             +document-public-constructs()
@@ -155,21 +152,19 @@ classDiagram
             <<Agent Skill>>
             +discover-code-context(requested-work)
             +determine-change-scope(discovered-context)
-            +reference contract-authority-rules
-            +reference discovery-boundaries
+            +contract-authority-rules
+            +discovery-boundaries
         }
 
         class test-driven-development {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
             +run-red-green-refactor-loop()
         }
 
         class structured-design {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
             +create-structured-design()
             +self-review-structured-design()
         }
@@ -177,7 +172,6 @@ classDiagram
         class structured-explanation {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
             +create-structured-explanation()
         }
 
@@ -190,14 +184,12 @@ classDiagram
         class review-structured-artifact {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
             +review-structured-artifact()
         }
 
         class explain-code-fix:::renamed {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
             renamed-from fix-explanation
         }
     }
@@ -253,6 +245,8 @@ These skills are primarily exact-name Agent Skills. They do not need to become i
 | fix-explanation | Workflow and Required Output explain a code fix; the remaining sections supply classification and relationship rules. | Rename the skill to explain-code-fix. | The proposed name removes the noun-or-verb ambiguity in fix-explanation and states the operation the package performs. |
 
 ## Authoritative Inputs
+
+The current relationships and proposed procedure boundaries are grounded in these Agent and skill definitions.
 
 - [Dev Coder](../../agents/roles/dev-activities/dev-coder.role.yaml)
 - [Project Organiser](../../agents/roles/project-setup/project-organiser.role.yaml)

@@ -8,6 +8,8 @@ The applied-model legend and comparison contract are defined in [Object-Oriented
 
 ## Current Design
 
+The Current Design shows four documentation skills that Agents and sibling skills load by exact name under specific routing conditions.
+
 ```mermaid
 classDiagram
     direction LR
@@ -28,25 +30,21 @@ classDiagram
         class development-methodology {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
         }
 
         class documentation-bootstrap {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
         }
 
         class documentation-reverse-engineer {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
         }
 
         class documentation-page-verify {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
         }
     }
 
@@ -82,6 +80,8 @@ documentation-reverse-engineer names Project Setup procedures for its configurat
 
 ## Proposed Design
 
+The Proposed Design gives all four Documentation Methodology skills verb-first names while preserving their current routing and direct-loading relationships.
+
 The proposed diagram applies the recommendations below. Gold SKILL.md nodes have a proposed name change, and renamed-from records the current name. Neutral SKILL.md nodes keep their current names; their method-like members show proposed procedure headings.
 
 ```mermaid
@@ -104,28 +104,24 @@ classDiagram
         class route-documentation-work:::renamed {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
             renamed-from development-methodology
         }
 
         class bootstrap-project-documentation:::renamed {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
             renamed-from documentation-bootstrap
         }
 
         class reverse-engineer-project-documentation:::renamed {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
             renamed-from documentation-reverse-engineer
         }
 
         class verify-documentation-page:::renamed {
             <<SKILL.md>>
             <<Agent Skill>>
-            <<Peer Skill>>
             renamed-from documentation-page-verify
         }
     }
@@ -164,6 +160,8 @@ classDiagram
 
 ## Skill Recommendations
 
+The recommendations give every Documentation Methodology skill a verb-first name that identifies its primary operation.
+
 | Skill | Current source boundary | Recommendation | Reason |
 | --- | --- | --- | --- |
 | development-methodology | Required Companion Skills and Artifact Creation Routes route documentation work; the name sounds like the complete development methodology. | Rename the skill to route-documentation-work. | The proposed name states the actual operation and avoids implying that ordinary development Agents need a general methodology package. |
@@ -172,6 +170,8 @@ classDiagram
 | documentation-page-verify | Format Selection through Output performs one custom-page verification procedure. | Rename the skill to verify-documentation-page. | The verb-first name can serve directly as the procedure vocabulary used by documentation callers. |
 
 ## Authoritative Inputs
+
+The current relationships and proposed names are grounded in these Agent and skill definitions.
 
 - [Dev Documentation Writer](../../agents/roles/dev-activities/dev-documentation-writer.role.yaml)
 - [Methodology Maintainer](../../agents/roles/methodology-maintenance/methodology-maintainer.role.yaml)

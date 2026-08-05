@@ -8,6 +8,8 @@ The applied-model legend and comparison contract are defined in [Object-Oriented
 
 ## Current Design
 
+The Current Design shows direct-main delivery as one selected Commit implementation with exact-name dependencies on claim and integration skills.
+
 ```mermaid
 classDiagram
     direction LR
@@ -18,6 +20,7 @@ classDiagram
 
     class DeliverWorkItem["complete-work-item-*"] {
         <<AGENTS.md>>
+        <<routing>>
         +deliver-work-item(acceptedCommit)
     }
 
@@ -56,6 +59,8 @@ agent-claim and agent-work-merge remain in Concurrent Tasking. The open diamonds
 
 ## Proposed Design
 
+The Proposed Design renames the direct-main Commit skill so its identity and public procedure both express delivery rather than provider lifecycle completion.
+
 The proposed diagram applies the recommendations below. Gold SKILL.md nodes have a proposed name change, and renamed-from records the current name. Neutral SKILL.md nodes keep their current names; their method-like members show proposed procedure headings.
 
 ```mermaid
@@ -68,6 +73,7 @@ classDiagram
 
     class DeliverWorkItem["deliver-work-item-*"] {
         <<AGENTS.md>>
+        <<routing>>
         +deliver-work-item(acceptedCommit)
     }
 
@@ -105,11 +111,15 @@ classDiagram
 
 ## Skill Recommendations
 
+The recommendation aligns the skill name and public procedure with the Deliver Work Item interface used by its caller.
+
 | Skill | Current source boundary | Recommendation | Reason |
 | --- | --- | --- | --- |
 | complete-work-item-direct-main | Evidence Gate, Main Reconciliation, Deliberate Integration, and Integrated Verification And Main Observation implement delivery; Lifecycle Handoff returns provider evidence without closing the provider record. | Rename the skill to deliver-work-item-direct-main and introduce Deliver Work Item as its interface heading. | Deliver matches the caller’s Commit procedure and avoids implying that the skill itself completes provider lifecycle closure. |
 
 ## Authoritative Inputs
+
+The current delivery relationship and proposed name are grounded in these Agent and skill definitions.
 
 - [Dev Orchestrator](../../agents/roles/dev-activities/dev-orchestrator.role.yaml)
 - [Complete Work Item Direct Main](../../skills/complete-work-item-direct-main/SKILL.md)
