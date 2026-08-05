@@ -1,5 +1,4 @@
 basis: explicit-user-direction
-definition_scope: skills/agent-claim-mcp/SKILL.md
 direction: "create separate work items to update skills according to the new design, and update individual evals."
 provenance:
   source: delegated-user-direction
@@ -8,10 +7,23 @@ approved_definition_manifest:
   - skills/agent-claim/SKILL.md
   - skills/agent-claim-command/SKILL.md
   - skills/agent-claim-mcp/SKILL.md
+checker_records:
+  - definition_scope: skills/agent-claim/SKILL.md
+    approval_record: approval-record-align-resource-coordination-skills-agent-claim.yaml
+    command: /opt/homebrew/bin/python3.11 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change skills/agent-claim/SKILL.md --approval-record approval-record-align-resource-coordination-skills-agent-claim.yaml
+  - definition_scope: skills/agent-claim-command/SKILL.md
+    approval_record: approval-record-align-resource-coordination-skills-agent-claim-command.yaml
+    command: /opt/homebrew/bin/python3.11 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change skills/agent-claim-command/SKILL.md --approval-record approval-record-align-resource-coordination-skills-agent-claim-command.yaml
+  - definition_scope: skills/agent-claim-mcp/SKILL.md
+    approval_record: approval-record-align-resource-coordination-skills-agent-claim-mcp.yaml
+    command: /opt/homebrew/bin/python3.11 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change skills/agent-claim-mcp/SKILL.md --approval-record approval-record-align-resource-coordination-skills-agent-claim-mcp.yaml
 precheck_audit:
   - definition_scope: skills/agent-claim/SKILL.md
+    approval_record: approval-record-align-resource-coordination-skills-agent-claim.yaml
     outcome: ALLOWED_APPROVED_DEFINITION_CHANGE
   - definition_scope: skills/agent-claim-command/SKILL.md
+    approval_record: approval-record-align-resource-coordination-skills-agent-claim-command.yaml
     outcome: ALLOWED_APPROVED_DEFINITION_CHANGE
   - definition_scope: skills/agent-claim-mcp/SKILL.md
+    approval_record: approval-record-align-resource-coordination-skills-agent-claim-mcp.yaml
     outcome: ALLOWED_APPROVED_DEFINITION_CHANGE
