@@ -1392,11 +1392,17 @@ class BundleContentTests(unittest.TestCase):
                 ),
                 r"Every top-level section must expose exactly one usable target",
             ),
-            "non_fragment_section_link": (
+            "empty_section_link": (
                 valid_html.replace(
                     '<a href="#details">Details</a>',
-                    """<a href="#details">Details</a>
-                <a href="missing.html">Missing</a>""",
+                    '<a href="">Details</a>',
+                ),
+                r"Section navigation href must be a non-empty same-page fragment",
+            ),
+            "cross_page_section_link": (
+                valid_html.replace(
+                    '<a href="#details">Details</a>',
+                    '<a href="other.html#details">Details</a>',
                 ),
                 r"Section navigation href must be a non-empty same-page fragment",
             ),
