@@ -1,6 +1,6 @@
 # Align Codex Work-Item Coordination Skill
 
-Status: Blocked
+Status: Completed
 
 Type: Feature
 
@@ -112,3 +112,15 @@ Coordinator Next Action: Keep this item in the crisis dependency set and do not 
 ### Approval Resolution
 
 Approved at creation on 2026-08-04 by the user statement in the active Codex task: "create separate work items to update skills according to the new design, and update individual evals." The reviewed Concurrent Tasking diagram shows the exact skill rename and the four exact Agent relationships covered here. Approval is limited to the governed canonical paths listed above. Any additional governed definition requires new explicit user approval recorded in this item.
+
+## Crisis Completion
+
+Completed At: 2026-08-05T19:22:53Z.
+
+Disposition: Completed directly by the Backlog Crisis Mode Coordinator after all three declared dependencies reached terminal successful dispositions.
+
+Delivery Commit: 84eb9937.
+
+Verification: The renamed skill validated; 106 claim-contract tests and focused coordination, skill-evaluation, coverage-catalog, evaluation-documentation, bundle-contract, Coordinator, Steward, Watchdog, and Orchestrator checks passed where current-main baselines apply; generated skill, role, hierarchy, evaluation, and support-checklist outputs are current; diff checks passed. Pre-existing Steward Future-Idea fixture failures remain unchanged and outside this item.
+
+Outcome: coordinate-codex-work-items is the sole live skill identity, the four owning roles and focused evaluation surfaces use it, and the three approved public procedure headings remain intact.
