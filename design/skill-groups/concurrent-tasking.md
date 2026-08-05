@@ -8,7 +8,7 @@ The applied-model conventions are defined in [Object-Oriented Skill Group Models
 
 ## Design
 
-The design shows direct Concurrent Tasking skills, the two nested groups, and the loading relationships that remain separate from containment.
+The design shows direct Concurrent Tasking skills, the two nested groups, and the loading relationships that remain separate from containment. Resource coordination, claim-helper transport, Persistence management, and Commit delivery appear as abstract Skill interfaces; concrete selectable implementations appear as Provider Skills with separate AGENTS.md factories.
 
 ```mermaid
 classDiagram
@@ -47,41 +47,37 @@ classDiagram
     }
 
     class agent-claim {
-        <<SKILL.md>>
-        <<Injectable Skill>>
-        +coordinate-shared-resource()
-        +acquire-claim()
-        +extend-claim()
-        +extend-claim-deadline()
-        +heartbeat-claim()
+        <<Provider Skill>>
+        +coordinate-shared-resource(resourceManifest)
+        +acquire-claim(scope)
+        +extend-claim(scope)
+        +extend-claim-deadline(claimId, duration, evidence)
+        +heartbeat-claim(claimId)
         +read-claim-status()
-        +release-claim()
+        +release-claim(claimId)
     }
 
     class agent-claim-command {
-        <<SKILL.md>>
-        <<Injectable Skill>>
+        <<Provider Skill>>
         +read-claim-status()
-        +acquire-claim()
-        +extend-claim()
-        +extend-claim-deadline()
-        +heartbeat-claim()
-        +release-claim()
+        +acquire-claim(scope)
+        +extend-claim(scope)
+        +extend-claim-deadline(claimId, duration, evidence)
+        +heartbeat-claim(claimId)
+        +release-claim(claimId)
         +reset-claim-registry()
         +maintain-claim-journal()
         +report-claim-contention()
     }
 
     class agent-claim-mcp {
-        <<SKILL.md>>
-        <<Injectable Skill>>
-        <<Unavailable implementation>>
+        <<Provider Skill>>
         +read-claim-status()
-        +acquire-claim()
-        +extend-claim()
-        +extend-claim-deadline()
-        +heartbeat-claim()
-        +release-claim()
+        +acquire-claim(scope)
+        +extend-claim(scope)
+        +extend-claim-deadline(claimId, duration, evidence)
+        +heartbeat-claim(claimId)
+        +release-claim(claimId)
         +maintain-claim-journal()
         +report-claim-contention()
     }
@@ -94,9 +90,8 @@ classDiagram
     }
 
     class deliver-work-item-feature-branch {
-        <<SKILL.md>>
-        <<Injectable Skill>>
-        +deliver-work-item()
+        <<Provider Skill>>
+        +deliver-work-item(acceptedCommit)
         +candidate-publication()
         +review-and-check-loop()
         +merge-and-completion-gate()
@@ -119,33 +114,53 @@ classDiagram
     }
 
     class ManageWorkItem["manage-*-work-items"] {
-        <<AGENTS.md>>
-        <<routing>>
-        <<Cross-group>>
+        <<Skill interface>>
+        +work-item-id
         +inventory-work-items(selection)
         +transition-work-item(workItem, transition)
         +reconcile-work-item-completion(workItem, deliveryEvidence)
+        +recover-work-item(workItem, recoveryEvidence)
+        +report-work-items(selection)
     }
 
     class ResourceCoordinationBinding["resource-coordination"] {
-        <<AGENTS.md>>
-        <<routing>>
+        <<Skill interface>>
         +coordinate-shared-resource(resourceManifest)
     }
 
-    class ClaimHelper["agent-claim-*"] {
+    class ResourceCoordinationFactory["Resource coordination selection"] {
         <<AGENTS.md>>
         <<routing>>
+        +route coordinate-shared-resource => selected provider
+    }
+
+    class ClaimHelper["agent-claim-*"] {
+        <<Skill interface>>
         +read-claim-status()
         +acquire-claim(scope)
         +extend-claim(scope)
-        +release-claim()
+        +extend-claim-deadline(claimId, duration, evidence)
+        +heartbeat-claim(claimId)
+        +release-claim(claimId)
+        +maintain-claim-journal()
+        +report-claim-contention()
+    }
+
+    class ClaimHelperFactory["Claim helper selection"] {
+        <<AGENTS.md>>
+        <<routing>>
+        +route claim-helper-operation => selected provider
     }
 
     class DeliverWorkItem["deliver-work-item-*"] {
+        <<Skill interface>>
+        +deliver-work-item(acceptedCommit)
+    }
+
+    class DeliverWorkItemFactory["Commit delivery selection"] {
         <<AGENTS.md>>
         <<routing>>
-        +deliver-work-item(acceptedCommit)
+        +route deliver-work-item => selected provider
     }
 
     ConcurrentTasking *-- coordinate-codex-work-items
@@ -165,22 +180,37 @@ classDiagram
     DevBacklogCoordinator o..> set-multitask-mode : when dispatch to secondary threads may resume
     DevOrchestrator o..> coordinate-codex-work-items : when the task is a coordinated Codex work-item conversation
     DevOrchestrator --> DeliverWorkItem
+    DevOrchestrator --> DeliverWorkItemFactory
     DevMergeCoordinator o--> integrate-agent-work
 
     coordinate-codex-work-items --> ManageWorkItem
     coordinate-codex-work-items --> ResourceCoordinationBinding
+    coordinate-codex-work-items --> ResourceCoordinationFactory
     coordinate-codex-work-items --> DeliverWorkItem
+    coordinate-codex-work-items --> DeliverWorkItemFactory
     coordinate-codex-work-items o..> agent-claim : when agent-claim is loaded
-    ResourceCoordinationBinding o--> agent-claim
-    ResourceCoordinationBinding --> ClaimHelper
-    ClaimHelper o--> agent-claim-command
-    ClaimHelper o--> agent-claim-mcp
-    DeliverWorkItem o--> deliver-work-item-feature-branch
+    ResourceCoordinationFactory o--> agent-claim
+    agent-claim ..|> ResourceCoordinationBinding
+    agent-claim --> ClaimHelper
+    agent-claim --> ClaimHelperFactory
+    ClaimHelperFactory o--> agent-claim-command
+    agent-claim-command ..|> ClaimHelper
+    agent-claim-mcp ..|> ClaimHelper
+    DeliverWorkItemFactory o--> deliver-work-item-feature-branch
+    deliver-work-item-feature-branch ..|> DeliverWorkItem
 
     integrate-agent-work o--> agent-claim
     deliver-work-item-feature-branch o--> agent-claim
     deliver-work-item-feature-branch o..> create-pull-request : for GitHub pull-request publication
+
+    note for ManageWorkItem "Cross-group interface; its Persistence factory is shown in Backlog Management"
+    note for agent-claim-mcp "Unavailable implementation"
+    note for ResourceCoordinationFactory "One effective project selects one coordination provider"
+    note for ClaimHelperFactory "The current project selects the verified command helper"
+    note for DeliverWorkItemFactory "The feature-branch configuration selects this group provider"
 ```
+
+The four abstract Skill interface contracts keep consumer knowledge separate from provider choice. Persistence management uses the provider family defined in Backlog Management. Resource coordination selects agent-claim, the current claim-helper factory selects the verified command provider, and Commit delivery selects the feature-branch provider for this configuration. agent-claim-mcp remains an unavailable provider specification that realizes the helper contract but is not selectable until its helper is configured and verified. Realization records conformance; the open-diamond dependencies on agent-claim remain separate because the current coordinating, integration, and delivery skills also name that policy skill directly when it is loaded.
 
 set-solo-mode disables dispatch to secondary threads, while set-multitask-mode enables it. They belong to Concurrent Tasking because they control whether work is dispatched concurrently rather than how a backlog blockage is resolved.
 

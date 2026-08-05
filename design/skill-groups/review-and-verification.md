@@ -8,7 +8,7 @@ The applied-model conventions are defined in [Object-Oriented Skill Group Models
 
 ## Design
 
-The design gives each single-operation review or diagnosis skill an operation-shaped identity and exposes named members only when a skill contains several relevant procedures or data definitions.
+The design gives each single-operation review or diagnosis skill an operation-shaped identity and exposes named members only when a skill contains several relevant procedures or data definitions. Verification returns evidence to the delivery owner, so it does not consume or select the Commit Skill interface itself.
 
 ```mermaid
 classDiagram
@@ -125,13 +125,6 @@ classDiagram
         <<Cross-group>>
     }
 
-    class DeliverWorkItem["deliver-work-item-*"] {
-        <<AGENTS.md>>
-        <<routing>>
-        <<Cross-group>>
-        +deliver-work-item(acceptedCommit)
-    }
-
     DevCodeReviewer o--> review-code-with-evidence
     DevCodeReviewer o--> careful-coding
     DevCodeReviewer o--> code-comments
@@ -163,8 +156,9 @@ classDiagram
     analyze-root-cause o..> collect-runtime-evidence : when runtime facts are missing
     trace-code-execution o..> collect-runtime-evidence : when source cannot identify the actual path
     verify-end-to-end-workflow o..> agent-claim : when verification triggers a claim event
-    verify-end-to-end-workflow ..> DeliverWorkItem : when repository delivery is required
 ```
+
+The absence of a delivery-interface arrow is deliberate. verify-end-to-end-workflow owns evidence capture and handoff, while the delivery owner applies the effective Commit provider after verification. Showing a direct interface dependency here would incorrectly assign delivery authority to the verifier.
 
 ## Skill Responsibilities
 

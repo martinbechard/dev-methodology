@@ -59,10 +59,6 @@ classDiagram
         +choose-project-file-placement()
     }
 
-    class AgentsGuidance {
-        <<AGENTS.md>>
-    }
-
     ProjectConfigurator o--> detect-technology-skills
     ProjectConfigurator o--> create-project-configuration
     ProjectConfigurator o--> route-documentation-work
@@ -73,9 +69,9 @@ classDiagram
     ProjectBootstrapper o--> route-documentation-work
     ProjectBootstrapper o--> bootstrap-project-documentation
     ProjectBootstrapper o..> organise-project-files : when an unfixed project path must be chosen
-
-    note for AgentsGuidance "AGENTS.md names each confirmed technology skill directly"
 ```
+
+The diagram does not add a disconnected AGENTS.md class for generated project guidance. create-project-configuration produces that file, but production is an output relationship rather than a skill-loading, procedure-reference, interface-realization, or group-containment relationship covered by this class view.
 
 ## Skill Responsibilities
 

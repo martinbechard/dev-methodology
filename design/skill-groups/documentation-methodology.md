@@ -68,6 +68,7 @@ classDiagram
     DevDocumentationWriter o..> verify-documentation-page : when a custom non-wiki document needs verification
 
     MethodologyMaintainer o--> route-documentation-work
+    ProjectBootstrapper o--> route-documentation-work
     ProjectBootstrapper o--> bootstrap-project-documentation
 
     route-documentation-work o..> bootstrap-project-documentation : for first-time methodology setup

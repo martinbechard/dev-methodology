@@ -8,7 +8,7 @@ The applied-model conventions are defined in [Object-Oriented Skill Group Models
 
 ## Design
 
-The design exposes the same Deliver Work Item procedure used by feature-branch delivery while keeping direct-main reconciliation and evidence inside its selected implementation.
+The design separates the shared Commit interface from project selection and implementation. Dev Orchestrator consumes the abstract Deliver Work Item Skill interface, AGENTS.md selects one Commit Provider Skill, and the direct-main provider realizes the shared contract while keeping reconciliation and evidence internal.
 
 ```mermaid
 classDiagram
@@ -19,16 +19,20 @@ classDiagram
     }
 
     class DeliverWorkItem["deliver-work-item-*"] {
+        <<Skill interface>>
+        +deliver-work-item(acceptedCommit)
+    }
+
+    class DeliverWorkItemFactory["Commit delivery selection"] {
         <<AGENTS.md>>
         <<routing>>
-        +deliver-work-item(acceptedCommit)
+        +route deliver-work-item => selected provider
     }
 
     namespace DirectMainDelivery {
         class deliver-work-item-direct-main {
-            <<SKILL.md>>
-            <<Injectable Skill>>
-            +deliver-work-item()
+            <<Provider Skill>>
+            +deliver-work-item(acceptedCommit)
             +evidence-gate()
             +main-reconciliation()
             +deliberate-integration()
@@ -47,10 +51,16 @@ classDiagram
     }
 
     DevOrchestrator --> DeliverWorkItem
-    DeliverWorkItem o--> deliver-work-item-direct-main
+    DevOrchestrator --> DeliverWorkItemFactory
+    DeliverWorkItemFactory o--> deliver-work-item-direct-main
+    deliver-work-item-direct-main ..|> DeliverWorkItem
     deliver-work-item-direct-main o--> agent-claim
     deliver-work-item-direct-main o..> integrate-agent-work : when the accepted commit is not represented on main
+
+    note for DeliverWorkItemFactory "One effective project selects one Commit provider"
 ```
+
+The regular arrow from Dev Orchestrator to DeliverWorkItem shows a procedure-name dependency on the abstract interface. The other regular arrow delegates provider selection to the AGENTS.md factory, the factory names the direct-main Provider Skill for this configuration, and the realization arrow states that the provider implements the shared delivery contract. None of those relationships replaces the provider's exact-name dependencies on agent-claim or integrate-agent-work.
 
 ## Skill Responsibility
 

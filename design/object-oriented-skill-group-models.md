@@ -13,6 +13,8 @@ Every detailed group document contains:
 - a responsibility table for every skill whose primary direct group appears in the document; and
 - links to the Agent and skill definitions that authorize the model.
 
+Provider-family Skill interface nodes are abstract analysis contracts rather than additional entries in the maintained skill inventory. Their wildcard display labels identify the procedure family shared by the concrete Provider Skills. The adjacent AGENTS.md factory node owns project selection, while realization arrows show which providers satisfy the interface.
+
 Concurrent Tasking contains three direct skills and two nested groups. Resource Coordination and Feature Branch And Worktrees each contain three direct skills. Membership inherited from a nested group does not assign a skill a second primary group.
 
 Each skill has one primary direct group. A skill repeated outside that group and outside a containing ancestor is marked Cross-group. The repeated node exposes a dependency or loading relationship without changing ownership.
@@ -27,6 +29,11 @@ The applied diagrams use the relationship and member conventions defined by the 
 - An empty member area means that the skill describes one procedure and its identity already names that operation.
 - An Agent Skill is loaded by exact name from an Agent definition.
 - An Injectable Skill implements procedure vocabulary selected through AGENTS.md.
+- A Skill interface is an abstract contract that lists the public data and function members its consumers know and every Provider Skill must provide or respect. The applied diagrams use the Skill interface stereotype because no wildcard family is a maintained package.
+- An Interface Skill is a distinct named SKILL.md package that publishes an interface. None of the wildcard provider families in this applied model currently has such a package, so the Interface Skill stereotype is not used for them.
+- A Provider Skill supplies one implementation of a Skill interface. It uses Provider Skill as its visible stereotype instead of stacking SKILL.md and Injectable Skill stereotypes.
+- A dashed realization arrow with a hollow triangular arrowhead points from a Provider Skill to the Skill interface it implements. Realization is conformance, not loading.
+- An AGENTS.md factory is a separate routing node that selects one Provider Skill by exact name. It does not replace the Skill interface used by an Agent or another skill.
 - A Cross-group node repeats a skill outside its primary group because another group depends on it.
 - A dotted line represents conditional loading and states the condition on the line.
 - An open diamond represents an exact-name skill reference.
@@ -60,7 +67,6 @@ classDiagram
 
     class nested-skill {
         <<SKILL.md>>
-        <<Injectable Skill>>
         +selected-procedure()
     }
 
@@ -69,9 +75,21 @@ classDiagram
         <<Cross-group>>
     }
 
-    class ProcedureFamily["procedure-family-*"] {
+    class ProcedureInterface["procedure-family-*"] {
+        <<Skill interface>>
+        +shared-definition
+        +selected-procedure(request)
+    }
+
+    class ProcedureFactory["Procedure provider selection"] {
         <<AGENTS.md>>
         <<routing>>
+        +route selected-procedure => selected provider
+    }
+
+    class provider-skill {
+        <<Provider Skill>>
+        +shared-definition
         +selected-procedure(request)
     }
 
@@ -81,11 +99,13 @@ classDiagram
 
     ExampleAgent o--> direct-skill
     ExampleAgent o..> cross-group-skill : when the condition applies
-    ExampleAgent --> ProcedureFamily
-    ProcedureFamily o--> nested-skill
+    ExampleAgent --> ProcedureInterface
+    ExampleAgent --> ProcedureFactory
+    ProcedureFactory o--> provider-skill
+    provider-skill ..|> ProcedureInterface
 ```
 
-The solid-diamond lines describe the contents of Parent Group and Nested Group. The other lines describe loading or procedure relationships. A reader must not infer a dependency between direct-skill and nested-skill merely because both are contained by Parent Group.
+The solid-diamond lines describe the contents of Parent Group and Nested Group. The regular arrow from ExampleAgent to ProcedureInterface shows a procedure-name dependency on the abstract contract. The other regular arrow delegates project-specific selection to ProcedureFactory, the factory names one provider, and the realization arrow records provider conformance. A reader must not infer a dependency between direct-skill and nested-skill merely because both are contained by Parent Group.
 
 ## 3. Skill Group Registry
 
@@ -136,8 +156,12 @@ The applied model is complete when it describes the maintained skill inventory a
   - **EXAMPLE:** verify-documentation-page is a Documentation Methodology skill and appears in Baseline Development because review-structured-artifact loads it.
 
 - **RULE: RULE-60** Provider families share coherent public procedure names
-  - **SYNOPSIS:** Injectable implementations use the vocabulary selected through AGENTS.md while keeping provider-specific behavior inside each SKILL.md.
-  - **EXAMPLE:** every management provider exposes Inventory Work Items, Transition Work Item, Reconcile Work Item Completion, Recover Work Item, and Report Work Items.
+  - **SYNOPSIS:** A Skill interface owns the public vocabulary, each Provider Skill realizes that contract, and a separate AGENTS.md factory selects one provider without changing the consumer.
+  - **EXAMPLE:** The manage-*-work-items interface exposes Inventory Work Items, Transition Work Item, Reconcile Work Item Completion, Recover Work Item, and Report Work Items; every management provider realizes those procedures while Persistence selection remains in AGENTS.md.
+
+- **RULE: RULE-65** Interface realization remains distinct from loading
+  - **SYNOPSIS:** A realization arrow records that a provider supplies or respects the interface members. It does not assert that either node loads the other.
+  - **EXAMPLE:** manage-github-work-items realizes manage-*-work-items, while Dev Backlog Steward separately consumes the interface and the Persistence factory separately selects the GitHub provider.
 
 - **RULE: RULE-64** Containment remains distinct from dependency
   - **SYNOPSIS:** Nested groups organize a larger comprehension set; loading arrows separately identify which Agents or skills actually reference another skill.
