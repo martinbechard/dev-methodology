@@ -427,7 +427,22 @@ class AgentClaimTests(unittest.TestCase):
         invalid_cases = (
             ([], "disposition_required"),
             (["--disposition", "paused"], "invalid_disposition"),
-            (["--disposition", "blocked"], "blocker_reference_required"),
+            (
+                ["--disposition", "blocked", "--blocker-reference", ""],
+                "invalid_blocker_reference",
+            ),
+            (
+                ["--disposition", "blocked", "--blocker-reference", " dependency-7"],
+                "invalid_blocker_reference",
+            ),
+            (
+                ["--disposition", "blocked", "--blocker-reference", "dependency\n7"],
+                "invalid_blocker_reference",
+            ),
+            (
+                ["--disposition", "blocked", "--blocker-reference", "x" * 201],
+                "invalid_blocker_reference",
+            ),
             (
                 [
                     "--disposition",
@@ -472,6 +487,38 @@ class AgentClaimTests(unittest.TestCase):
             event = self.journal_events()[-1]
             self.assertEqual(disposition, event["disposition"])
             self.assertEqual(blocker_reference, event["blocker_reference"])
+
+    def test_blocked_work_item_release_accepts_no_blocker_reference(self) -> None:
+        acquired = self.claim(
+            *self.work_item_arguments("blocked-no-reference", "item-blocked-no-reference")
+        )
+        released = self.claim(
+            "release",
+            "--claim-id",
+            "blocked-no-reference",
+            "--disposition",
+            "blocked",
+        )
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(0, released.returncode, released.stderr)
+        result = self.output(released)
+        self.assertEqual("RELEASED", result["outcome"])
+        self.assertEqual("blocked", result["disposition"])
+        self.assertIsNone(result["blocker_reference"])
+        registry = json.loads(self.registry_path().read_text(encoding="utf-8"))
+        self.assertEqual([], registry["claims"])
+        event = self.journal_events()[-1]
+        self.assertEqual("RELEASED", event["outcome"])
+        self.assertEqual("item-blocked-no-reference", event["work_item_id"])
+        self.assertEqual("blocked", event["disposition"])
+        self.assertIsNone(event["blocker_reference"])
+
+        report = self.output(self.claim("report", "--since", "1d"))["work_items"]
+        segment = report["items"][0]["segments"][0]
+        self.assertEqual("blocked", segment["disposition"])
+        self.assertIsNone(segment["blocker_reference"])
+        self.assertEqual([], report["diagnostics"]["contradictory_event_ids"])
 
     def test_legacy_release_remains_disposition_free(self) -> None:
         self.claim(*self.acquire_arguments("legacy-release"), "--file", "README.md")

@@ -142,7 +142,7 @@ Status reports overdue resource claims but never releases one. A configured watc
 
 Release the exact named live claim when the matching event ends or ownership is handed off. Release no other claim and treat cleanup as separate from completion, delivery, and provider lifecycle state.
 
-Release of a work-item claim requires disposition exactly done, blocked, or handoff. Blocked also requires one canonical non-empty single-line blocker reference of at most 200 characters. A blocker reference is prohibited for done and handoff. Invalid or missing combinations are rejected without changing the live registry. Release of a non-work-item claim keeps the legacy disposition-free behavior.
+Release of a work-item claim requires disposition exactly done, blocked, or handoff. Blocked may include one blocker reference; when present, it must be a canonical non-empty single-line opaque value of at most 200 characters. A blocker reference is prohibited for done and handoff. Invalid combinations are rejected without changing the live registry. Release of a non-work-item claim keeps the legacy disposition-free behavior.
 
 Use ordinary exclusivity for a strict handoff: the current owner releases with handoff, then the next owner acquires the same Work Item ID. Never acquire the successor while the prior claim remains live or use a path or resource claim to bypass same-ID contention.
 

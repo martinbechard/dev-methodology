@@ -974,13 +974,39 @@ class AgentClaimInterfaceTests(unittest.TestCase):
 
         command = COMMAND_SKILL.read_text(encoding="utf-8")
         mcp = MCP_SKILL.read_text(encoding="utf-8")
+        command_status = _markdown_section(command, "Read Claim Status")
         command_acquire = _markdown_section(command, "Acquire Claim")
         command_release = _markdown_section(command, "Release Claim")
         command_report = _markdown_section(command, "Report Claim Contention")
+        command_result_contract = _markdown_section(command, "Work-Item Result Contract")
         mcp_availability = _markdown_section(mcp, "Current Availability")
+        mcp_status = _markdown_section(mcp, "Read Claim Status")
         mcp_acquire = _markdown_section(mcp, "Acquire Claim")
         mcp_release = _markdown_section(mcp, "Release Claim")
         mcp_report = _markdown_section(mcp, "Report Claim Contention")
+        mcp_result_contract = _markdown_section(mcp, "Work-Item Result Contract")
+
+        command_status_example = _fenced_examples(command_status, "bash")[0]
+        mcp_status_example = json.loads(_fenced_examples(mcp_status, "json")[0])
+        self.assertEqual(
+            {"repo"},
+            set(re.findall(r"--([a-z-]+)", command_status_example)),
+        )
+        self.assertEqual({"repository"}, set(mcp_status_example))
+        for field in (
+            "work_item_id",
+            "activity",
+            "claim_id",
+            "incarnation_id",
+            "agent",
+            "root_task_id",
+            "claimed_at",
+            "heartbeat",
+            "acquisition_outcome",
+        ):
+            with self.subTest(status_field=field):
+                self.assertIn(field, command_status)
+                self.assertIn(field, mcp_status)
 
         command_acquire_examples = _fenced_examples(command_acquire, "bash")
         mcp_acquire_examples = [
@@ -1068,6 +1094,263 @@ class AgentClaimInterfaceTests(unittest.TestCase):
         self.assertIn(
             "No MCP implementation of this work-item lifecycle contract is currently available.",
             mcp_availability,
+        )
+        command_contract = json.loads(
+            _fenced_examples(command_result_contract, "json")[0]
+        )
+        mcp_contract = json.loads(_fenced_examples(mcp_result_contract, "json")[0])
+        self.assertEqual(command_contract, mcp_contract)
+        self.assertEqual(
+            {
+                "acquire_success",
+                "same_id_conflict",
+                "status_live",
+                "release_blocked_without_reference",
+                "release_blocked_with_reference",
+                "release_done",
+                "release_handoff",
+                "invalid_acquire",
+                "invalid_release",
+                "report",
+            },
+            set(command_contract),
+        )
+        self.assertEqual(
+            "SHARED_CHECKOUT_ACQUIRED",
+            command_contract["acquire_success"]["outcome"],
+        )
+        self.assertEqual(
+            "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
+            command_contract["same_id_conflict"]["outcome"],
+        )
+        self.assertEqual(
+            ["conflicting_claim_ids", "overlaps.scope_kind=work_item"],
+            command_contract["same_id_conflict"]["evidence"],
+        )
+        self.assertIn(
+            "acquisition_outcome",
+            command_contract["status_live"]["claim_fields"],
+        )
+        self.assertIsNone(
+            command_contract["release_blocked_without_reference"]["blocker_reference"]
+        )
+        self.assertEqual(
+            "dependency-456",
+            command_contract["release_blocked_with_reference"]["blocker_reference"],
+        )
+        for case, disposition in (
+            ("release_blocked_without_reference", "blocked"),
+            ("release_blocked_with_reference", "blocked"),
+            ("release_done", "done"),
+            ("release_handoff", "handoff"),
+        ):
+            with self.subTest(release_case=case):
+                self.assertEqual("RELEASED", command_contract[case]["outcome"])
+                self.assertEqual(disposition, command_contract[case]["disposition"])
+        for case, outcome in (
+            ("invalid_acquire", "INVALID_WORK_ITEM_SCOPE"),
+            ("invalid_release", "INVALID_WORK_ITEM_RELEASE"),
+        ):
+            with self.subTest(validation_case=case):
+                self.assertEqual(outcome, command_contract[case]["outcome"])
+                self.assertTrue(command_contract[case]["registry_unchanged"])
+        self.assertEqual(2, command_contract["report"]["schema_version"])
+        self.assertEqual(1, command_contract["report"]["work_items_schema_version"])
+        self.assertEqual(
+            [
+                "missing_release_event_ids",
+                "release_without_acquisition_event_ids",
+                "contradictory_event_ids",
+                "historical_non_work_item_event_ids",
+            ],
+            command_contract["report"]["diagnostics"],
+        )
+
+    def test_command_work_item_contract_fixtures_match_actual_helper_results(self) -> None:
+        """Execute the command contract while MCP remains documentation-only."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            repository = Path(directory) / "repository"
+            repository.mkdir()
+            subprocess.run(
+                ["git", "init", "--initial-branch=main", str(repository)],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            subprocess.run(
+                ["git", "-C", str(repository), "config", "user.email", "test@example.invalid"],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            subprocess.run(
+                ["git", "-C", str(repository), "config", "user.name", "Claim Transport Test"],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            (repository / "PROJECT.yaml").write_text(
+                yaml.safe_dump(project_with_transport("command"), sort_keys=False),
+                encoding="utf-8",
+            )
+            subprocess.run(
+                ["git", "-C", str(repository), "add", "PROJECT.yaml"],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            subprocess.run(
+                ["git", "-C", str(repository), "commit", "-m", "baseline"],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            registry_path = repository / ".git" / "agent-claims.json"
+
+            def run_claim(*arguments: str) -> tuple[int, dict[str, object]]:
+                completed = subprocess.run(
+                    [
+                        sys.executable,
+                        str(COMMAND_SCRIPT),
+                        "--repo",
+                        str(repository),
+                        *arguments,
+                    ],
+                    check=False,
+                    text=True,
+                    capture_output=True,
+                )
+                return completed.returncode, json.loads(completed.stdout)
+
+            def acquire(
+                claim_id: str,
+                work_item_id: str,
+                activity: str = "work",
+            ) -> tuple[int, dict[str, object]]:
+                return run_claim(
+                    "acquire",
+                    "--claim-id",
+                    claim_id,
+                    "--agent",
+                    claim_id,
+                    "--task",
+                    f"contract {claim_id}",
+                    "--root-task-id",
+                    "contract-root",
+                    "--work-item-id",
+                    work_item_id,
+                    "--activity",
+                    activity,
+                )
+
+            acquire_code, acquired = acquire("owner", "item-contract")
+            conflict_code, conflict = acquire("contender", "item-contract", "update")
+            status_code, status = run_claim("status")
+            registry_before_invalid = registry_path.read_bytes()
+            invalid_acquire_code, invalid_acquire = run_claim(
+                "acquire",
+                "--claim-id",
+                "invalid-acquire",
+                "--agent",
+                "invalid-acquire",
+                "--task",
+                "invalid acquire",
+                "--root-task-id",
+                "contract-root",
+                "--work-item-id",
+                "item-invalid",
+                "--activity",
+                "work",
+                "--file",
+                "PROJECT.yaml",
+            )
+            self.assertEqual(registry_before_invalid, registry_path.read_bytes())
+            invalid_release_code, invalid_release = run_claim(
+                "release",
+                "--claim-id",
+                "owner",
+                "--disposition",
+                "done",
+                "--blocker-reference",
+                "not-allowed",
+            )
+            self.assertEqual(registry_before_invalid, registry_path.read_bytes())
+            blocked_code, blocked = run_claim(
+                "release",
+                "--claim-id",
+                "owner",
+                "--disposition",
+                "blocked",
+            )
+            acquire("blocked-reference", "item-blocked-reference")
+            blocked_reference_code, blocked_reference = run_claim(
+                "release",
+                "--claim-id",
+                "blocked-reference",
+                "--disposition",
+                "blocked",
+                "--blocker-reference",
+                "dependency-456",
+            )
+            acquire("done", "item-done")
+            done_code, done = run_claim(
+                "release", "--claim-id", "done", "--disposition", "done"
+            )
+            acquire("handoff", "item-handoff")
+            handoff_code, handoff = run_claim(
+                "release", "--claim-id", "handoff", "--disposition", "handoff"
+            )
+            report_code, report = run_claim("report", "--since", "1d")
+
+        self.assertEqual((0, "SHARED_CHECKOUT_ACQUIRED"), (acquire_code, acquired["outcome"]))
+        self.assertEqual("item-contract", acquired["claim"]["work_item_id"])
+        self.assertEqual("work", acquired["claim"]["activity"])
+        self.assertEqual((3, "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED"), (conflict_code, conflict["outcome"]))
+        self.assertEqual(["owner"], conflict["conflicting_claim_ids"])
+        self.assertEqual("work_item", conflict["overlaps"][0]["scope_kind"])
+        self.assertEqual((0, "STATUS"), (status_code, status["outcome"]))
+        live_claim = status["claims"][0]
+        for field in (
+            "work_item_id",
+            "activity",
+            "claim_id",
+            "incarnation_id",
+            "agent",
+            "root_task_id",
+            "claimed_at",
+            "heartbeat",
+            "acquisition_outcome",
+        ):
+            self.assertIn(field, live_claim)
+        self.assertEqual((1, "INVALID_WORK_ITEM_SCOPE"), (invalid_acquire_code, invalid_acquire["outcome"]))
+        self.assertEqual((1, "INVALID_WORK_ITEM_RELEASE"), (invalid_release_code, invalid_release["outcome"]))
+        self.assertEqual((0, "RELEASED"), (blocked_code, blocked["outcome"]))
+        self.assertEqual("blocked", blocked["disposition"])
+        self.assertIsNone(blocked["blocker_reference"])
+        self.assertEqual((0, "RELEASED"), (blocked_reference_code, blocked_reference["outcome"]))
+        self.assertEqual("dependency-456", blocked_reference["blocker_reference"])
+        self.assertEqual((0, "RELEASED"), (done_code, done["outcome"]))
+        self.assertEqual((0, "RELEASED"), (handoff_code, handoff["outcome"]))
+        self.assertEqual(0, report_code)
+        self.assertEqual(2, report["schema_version"])
+        self.assertEqual(1, report["work_items"]["schema_version"])
+        self.assertEqual(
+            ["blocked", "blocked", "done", "handoff"],
+            sorted(
+                segment["disposition"]
+                for item in report["work_items"]["items"]
+                for segment in item["segments"]
+            ),
+        )
+        self.assertEqual(
+            {
+                "missing_release_event_ids": [],
+                "release_without_acquisition_event_ids": [],
+                "contradictory_event_ids": [],
+                "historical_non_work_item_event_ids": [],
+            },
+            report["work_items"]["diagnostics"],
         )
 
     def test_portable_command_is_owned_by_command_adapter(self) -> None:

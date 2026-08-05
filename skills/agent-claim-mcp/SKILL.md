@@ -156,7 +156,7 @@ Call claim_release with repository and claim_id.
 {"repository": "/workspace/project", "claim_id": "task-123"}
 ```
 
-A work-item claim requires disposition with exactly done, blocked, or handoff. Blocked also requires one bounded opaque blocker_reference. blocker_reference is prohibited for done and handoff.
+A work-item claim requires disposition with exactly done, blocked, or handoff. Blocked may include one bounded opaque blocker_reference; when present, it must be canonical, non-empty, single-line, and at most 200 characters. blocker_reference is prohibited for done and handoff.
 
 ```json
 {
@@ -196,6 +196,52 @@ Call claim_report with repository. Since defaults to 2d.
 ```
 
 The result retains the existing report schema and adds work_items with schema_version 1. That section groups deterministic activity segments by work_item_id. Each segment reports acquired and released times, activity, disposition, owner, duration, and open and live state. Diagnostics identify missing release, release without acquisition, contradictory events, and historical non-work-item events without inventing Work Item IDs.
+
+## Work-Item Result Contract
+
+No live MCP execution is claimed here. A future verified MCP provider must return the same structured work-item outcomes and evidence as the command helper, including unchanged-registry semantics for validation failures.
+
+```json
+{
+  "acquire_success": {
+    "outcome": "SHARED_CHECKOUT_ACQUIRED",
+    "claim_fields": ["work_item_id", "activity", "acquisition_outcome"]
+  },
+  "same_id_conflict": {
+    "outcome": "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
+    "evidence": ["conflicting_claim_ids", "overlaps.scope_kind=work_item"]
+  },
+  "status_live": {
+    "outcome": "STATUS",
+    "claim_fields": ["work_item_id", "activity", "claim_id", "incarnation_id", "agent", "root_task_id", "claimed_at", "heartbeat", "acquisition_outcome"]
+  },
+  "release_blocked_without_reference": {
+    "outcome": "RELEASED",
+    "disposition": "blocked",
+    "blocker_reference": null
+  },
+  "release_blocked_with_reference": {
+    "outcome": "RELEASED",
+    "disposition": "blocked",
+    "blocker_reference": "dependency-456"
+  },
+  "release_done": {"outcome": "RELEASED", "disposition": "done"},
+  "release_handoff": {"outcome": "RELEASED", "disposition": "handoff"},
+  "invalid_acquire": {
+    "outcome": "INVALID_WORK_ITEM_SCOPE",
+    "registry_unchanged": true
+  },
+  "invalid_release": {
+    "outcome": "INVALID_WORK_ITEM_RELEASE",
+    "registry_unchanged": true
+  },
+  "report": {
+    "schema_version": 2,
+    "work_items_schema_version": 1,
+    "diagnostics": ["missing_release_event_ids", "release_without_acquisition_event_ids", "contradictory_event_ids", "historical_non_work_item_event_ids"]
+  }
+}
+```
 
 ## Uncertain Tool Outcome
 

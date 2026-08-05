@@ -601,6 +601,17 @@ def _bounded_identifier(value: str | None) -> str | None:
     return value.strip()[:MAX_IDENTIFIER_LENGTH]
 
 
+def _valid_blocker_reference(value: Any) -> bool:
+    return bool(
+        isinstance(value, str)
+        and value
+        and value == value.strip()
+        and "\n" not in value
+        and "\r" not in value
+        and len(value) <= MAX_IDENTIFIER_LENGTH
+    )
+
+
 def _deduplicate(values: Sequence[str]) -> list[str]:
     return list(dict.fromkeys(values))
 
@@ -2035,18 +2046,9 @@ def _release(args: argparse.Namespace) -> int:
                             ),
                         )
                     if disposition == "blocked":
-                        if blocker_reference is None:
-                            raise _WorkItemError(
-                                "Blocked release requires blocker_reference.",
-                                "blocker_reference",
-                                "blocker_reference_required",
-                            )
                         if (
-                            not blocker_reference
-                            or blocker_reference != blocker_reference.strip()
-                            or "\n" in blocker_reference
-                            or "\r" in blocker_reference
-                            or len(blocker_reference) > MAX_IDENTIFIER_LENGTH
+                            blocker_reference is not None
+                            and not _valid_blocker_reference(blocker_reference)
                         ):
                             raise _WorkItemError(
                                 "blocker_reference must be a canonical non-empty single-line value of at most 200 characters.",
@@ -2637,7 +2639,11 @@ def _work_item_report(
                 or event.get("agent") != segment["owner"]
                 or event.get("root_task_id") != segment["root_task_id"]
                 or disposition not in {"done", "blocked", "handoff"}
-                or disposition == "blocked" and not blocker_reference
+                or (
+                    disposition == "blocked"
+                    and blocker_reference is not None
+                    and not _valid_blocker_reference(blocker_reference)
+                )
                 or disposition != "blocked" and blocker_reference is not None
             )
             if contradictory:
