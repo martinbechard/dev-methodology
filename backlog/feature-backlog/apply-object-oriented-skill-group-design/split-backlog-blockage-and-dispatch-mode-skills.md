@@ -121,3 +121,17 @@ Determine the smallest stable result evidence that proves dispatch was disabled 
 ### Approval Resolution
 
 Approved at creation on 2026-08-04 by the user's explicit prior split direction and the current request to create implementation work items for the new design and individual evals. The reviewed diagrams show the three exact resulting skill identities and the two exact Agent definitions covered here. Approval is limited to the governed canonical paths listed above. Any additional governed definition requires new explicit user approval recorded in this item.
+
+## Review Defect Evidence
+
+Reviewer: /root/apply_skill_group_design_backlog/split_backlog_blockage_dispatch_modes/review_split_candidate.
+
+Verdict: FAIL.
+
+Delivery Under Review: Candidate 62a32992b0572f7d60dc55dc3eeea470d6c794aa on branch codex/split-backlog-blockage-dispatch-modes-019fab in worktree /Users/martinbechard/dev/dev-methodology/.worktrees/split-backlog-blockage-dispatch-modes-019fab.
+
+Confirmed Finding: The candidate removes the live backlog-crisis-mode identity, but the unchanged generated design/agent-skill-test-coverage-checklist.md blob 47d4dd066a1764538960c842b06ffba973c38b16 still presents backlog-crisis-mode as live or missing-probe at lines 26, 151, and 318. The identical base and candidate checklist is therefore semantically false after the candidate changes the inventory, violating the stale-identity and catalog-freshness acceptance criteria.
+
+Reproduction: python3 scripts/build-support-checklist.py --check and /opt/homebrew/bin/python3.11 -m unittest scripts.test_eval_coverage_catalog fail identically at base 6f45b362 and at the candidate, reporting four unknown dev-document-topic-editor Judge checks. The generated checklist must not be edited by hand.
+
+Scope And Recovery: This is evidence recording only. Status remains Running, and the current owner and canonical work-item Thread remain unchanged. The missing dev-document-topic-editor Judge checks and generator infrastructure are outside this item's governed scope. A separately authorized owner must supply those four checks, then refresh the candidate with python3 scripts/build-support-checklist.py on current main, rerun both freshness commands, and obtain fresh review and verification. The unblock condition is a supported generator run that succeeds on current main and removes the stale identity.
