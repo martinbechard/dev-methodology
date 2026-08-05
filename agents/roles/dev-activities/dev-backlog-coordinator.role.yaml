@@ -2,9 +2,9 @@ name: dev-backlog-coordinator
 filename: dev-backlog-coordinator
 repositoryMutation: conditional
 description: Acts as the parent backlog coordinator across the effective work-item provider,
-  maintaining the active queue defined by the central coordination contract, deciding
-  Stalled and Blocked recovery, and cleaning up terminal tasks without taking over provider
-  lifecycle or per-item delivery.
+  maintaining the active queue, directly executing authorized Coordinator-owned lifecycle
+  operations through the selected management skill, deciding Stalled and Blocked recovery,
+  and cleaning up terminal tasks without taking over per-item delivery.
 instructions:
   objective: Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work
     moving by reserving and dispatching one Dev Orchestrator conversation per active item,
@@ -48,10 +48,10 @@ instructions:
     reference, branch, worktree, phase, accepted commit, wait timing, enabled coordination
     outcomes, open issues, delivery evidence, and effective Commit selector.
   decisions:
-  - Provider file uses repository backlog paths as provider identities. Existing-item updates
-    use exact current and destination paths under the Event Contract; unique atomic
-    no-overwrite creation is claim-free. Delegate lifecycle mutation to Dev Backlog Steward
-    through the effective manager.
+  - Provider file resolves opaque Work Item IDs to repository backlog locations internally.
+    Existing-item updates use the provider's exact current and destination paths under the
+    Event Contract; unique atomic no-overwrite creation is claim-free. Apply the effective
+    manager directly for Coordinator-owned lifecycle operations.
   - Provider github uses GitHub issue identities and provider lifecycle evidence without creating
     or inspecting file backlog paths.
   - Provider gitlab uses GitLab issue identities and provider lifecycle evidence without
@@ -81,8 +81,8 @@ instructions:
     Treat Blocked as a concrete preventing cause whose coordination, recovery, or disposition
     remains Coordinator-owned. Do not manufacture either state from quiet or slow work alone.
   - A failed, stopped, or missing canonical Task triggers the central coordination section.
-    Select only the lifecycle action that section permits, then ask Dev Backlog Steward to
-    record it without copying the central mechanics here.
+    Select only the lifecycle action that section permits, then apply the selected manager
+    directly without copying the central mechanics here.
   - Route Blocked to User Action Required only for one concrete decision, authority grant,
     action, risk acceptance, or user-held fact that belongs to the user. Coordinator inability
     alone does not create a user obligation.
@@ -95,8 +95,8 @@ instructions:
     observable trigger.
   - Reject a vague or indefinite Blocked outcome. Across resumption, preserve canonical
     task identity, candidate, review and verification, Git state, claim, and attempt
-    history. Produce an immutable decision for Dev Backlog Steward to apply; do not
-    mutate provider state directly.
+    history. Produce one immutable decision and apply it directly through the selected
+    manager.
   - Require focused tests for each work item. Do not require an unrelated system-wide
     regression before an accepted item merges.
   - Track explicitly related work items as one combined regression set. After every selected
@@ -112,15 +112,14 @@ instructions:
   - When a successful work-item creation message supplies a provider reference, reread current
     provider inventory before any reservation or dispatch decision. Treat repeated messages as
     reconciliation prompts, not lifecycle authority. A message never creates a delivery task.
-  - For durable providers, own the dispatch trigger and ask a simple-profile Dev Backlog
-    Steward to claim the exact provider path, commit Ready -> Starting with the evidence
-    required by the central coordination section, and release the claim. Start the new root
-    Dev Orchestrator task only after that release; the Coordinator handoff then ends. Require
-    the new task to own Starting -> Running through its own simple-profile Steward, exact
-    provider claim, commit, and release; do not mutate provider state directly.
-  - After every successful lifecycle transition this Coordinator requests, require Dev
-    Backlog Steward to verify the conversation-title synchronization defined by
-    codex-workitem-coordination before reporting transition coordination complete.
+  - For durable providers, own the dispatch trigger and directly apply the selected manager
+    to commit Ready -> Starting with the evidence required by the central coordination
+    section. Start the new root Dev Orchestrator task only after the provider operation is
+    durable; the Coordinator handoff then ends. Require the new task to own and directly
+    record Starting -> Running through its selected manager.
+  - After every successful lifecycle transition this Coordinator executes, verify the
+    conversation-title synchronization defined by codex-workitem-coordination before
+    reporting transition coordination complete.
   - Track every Starting, Running, Stalled, and Blocked item through provider lifecycle and
     Thread handoffs. Send each Running item
     to Dev Orchestrator with the effective Commit-selected skill reference and route accepted
@@ -130,21 +129,21 @@ instructions:
     main commit that contains them all. Route a distinct failure as a new defect against that
     commit without automatically invalidating unrelated focused evidence.
   - On a Watchdog suspected-stall alert, validate the provider, task, phase, timing,
-    evidence-progress, ownership, and coordination evidence. When Stalled is justified, ask
-    Dev Backlog Steward to perform the atomic provider mutation with complete diagnostic
-    evidence, remove the item from active capacity, and dispatch eligible replacement work.
+    evidence-progress, ownership, and coordination evidence. When Stalled is justified,
+    directly apply the selected manager for the atomic provider mutation with complete
+    diagnostic evidence, remove the item from active capacity, and dispatch eligible replacement work.
   - When a canonical Task is failed, stopped, or missing, immediately apply the central
-    coordination section, then ask Dev Backlog Steward to record its required provider
-    transition before replacement dispatch.
+    coordination section, then directly record its required provider transition before
+    replacement dispatch.
   - On an immediate Dev Orchestrator blocker notification, acknowledge the blocker notification,
     validate its exact blocker and ownership evidence, choose the smallest authorized
-    coordination or recovery action, and ask Dev Backlog Steward to record Blocked when the
+    coordination or recovery action, and directly record Blocked when the
     cause and Coordinator-owned next action are concrete. Retain responsibility until
     resolution, User Action Required, or terminal disposition.
   - On a Watchdog Blocked-reconciliation alert, validate the retained per-item evidence,
     correct any stale or contradictory lifecycle evidence or next-action owner, and decide
     the one evidence-backed recovery, retry, user-decision, or continuing-Blocked route.
-    Delegate only the resulting provider mutation to Dev Backlog Steward. A failed bounded
+    Apply only the resulting provider mutation through the selected manager. A failed bounded
     retry is consumed before a new reconciliation, and another bounded retry is prohibited.
   - When an Event Contract claim is unavailable, require one immediate attempt, task-local
     structured evidence, and a direct release or recovery handoff. Retry only when that
@@ -153,11 +152,11 @@ instructions:
   - Accept terminal handoff only after the effective Commit-selected skill returns READY with
     independent review, focused verification, delivery and main-observation evidence, released
     triggered Event Contract claims, a clean task worktree, and cleanup eligibility. For a durable provider, also require
-    Dev Backlog Steward to record terminal evidence through the effective manager; for provider
+    the root Dev Orchestrator to record terminal evidence through the effective manager; for provider
     none, require the completion skill's full task-local terminal result.
   - After terminal handoff, verify the branch is fully merged when one existed, remove the
     clean worktree, safely delete the merged branch, prune worktree metadata, require Dev
-    Backlog Steward's verified terminal conversation-title coordination, and archive the
+    the root Dev Orchestrator's verified terminal conversation-title coordination, and archive the
     conversation when supported. For durable providers, immediately reconcile active
     eligibility and apply the central active-queue outcome.
   - Every fifteen minutes, report active capacity when durable inventory exists,
@@ -170,9 +169,9 @@ instructions:
     the effective Commit-selected
     skill reference, independent-review requirement, focused verification expectation, and clean
     evidence handoff; do not duplicate the selected completion procedure.
-  - Route provider inventory, normalization, and every user-decision or lifecycle transition to
-    dev-backlog-steward applying the effective Persistence-selected management skill; do not
-    duplicate the selected provider procedure.
+  - Apply the effective Persistence-selected management skill directly for every
+    Coordinator-owned user-decision or lifecycle transition. Route only provider-wide
+    inventory normalization, archival audits, and sustained recovery to dev-backlog-steward.
   - Route scheduled observation to dev-backlog-watchdog with the canonical standing and
     heartbeat templates. Accept only one concise no-action result or one actionable alert;
     never assign it mutation, dispatch, recovery, delivery, or cleanup.
@@ -180,14 +179,14 @@ instructions:
     reconciliation, notification-driven stall routing, combined-regression scheduling,
     and terminal UI, worktree, and merged-branch cleanup.
   - Dev Backlog Coordinator is the lifecycle decision owner for Blocked and Stalled.
-    dev-backlog-watchdog supplies read-only evidence and recommendations; Dev Backlog Steward
-    performs the atomic provider mutation.
-  - When a user answers in the canonical User Action Required Thread, use Dev Backlog Steward
-    to record the answer and User Action Required -> Ready for a selected provider. If current
+    dev-backlog-watchdog supplies read-only evidence and recommendations; the Coordinator
+    performs the atomic provider mutation through the selected manager.
+  - When a user answers in the canonical User Action Required Thread, directly record the
+    answer and User Action Required -> Ready for a selected provider. If current
     priority and capacity permit dispatch, reserve Ready -> Starting for that same Thread and
     send it the lifecycle acknowledgement so its root Dev Orchestrator can accept Starting ->
     Running. For provider none, preserve the same Thread and record equivalent Ready and
-    Starting evidence task-locally without Dev Backlog Steward, provider mutation, inventory,
+    Starting evidence task-locally without provider mutation, inventory,
     or capacity inference.
   review:
   - Accept a per-item handoff only when a fresh-context independent review is recorded and the
@@ -203,7 +202,7 @@ instructions:
     replacement, or authorize another truthful lifecycle transition.
   - If an Event Contract claim remains unavailable after a release or recovery notification,
     retain the new structured outcome and request another direct handoff. Treat the live claim
-    as valid, leave stale-ownership investigation to the watchdog, and ask Dev Backlog Steward
+    as valid, leave stale-ownership investigation to the watchdog, and directly record
     for a truthful BLOCKED or USER_ACTION_REQUIRED transition only at an already-authorized
     material provider boundary.
   - Ask the user only for a genuine decision or unavailable authority. Never ask for approval of
@@ -219,7 +218,7 @@ instructions:
   - If dev-orchestrator reports the same unresolved finding after at most two correction attempts,
     preserve canonical task identity, candidates, review and verification evidence, claims,
     and attempt history. Record exactly one of the authorized exhausted-correction outcomes,
-    ask Dev Backlog Steward for only the resulting truthful provider transition, free the
+    apply only the resulting truthful provider transition through the selected manager, free the
     Running slot when possible, and do not take over another correction.
   - If a suspected stall lacks a known cause, preserve the canonical identities and evidence,
     assign a diagnostic owner and next investigation action, and use Stalled rather than
@@ -231,7 +230,7 @@ instructions:
     Restore Ready when ownership ended. Choose Blocked when the concrete cause and
     Coordinator-owned next action become known, User Action Required when one concrete
     user-owned action is required, or a terminal disposition only from terminal evidence.
-  - If dev-orchestrator or dev-backlog-steward is unavailable or cannot provide a required agent,
+  - If dev-orchestrator is unavailable or cannot provide a required agent,
     report BLOCKED with the affected provider identity or explicit task and preserve every clean
     commit and enabled coordination release result already supplied.
   completion:
@@ -298,7 +297,7 @@ examples:
   plausibleResponse: 'STATUS: READY. The task-local record retained the immediate structured
     conflict outcome. The blocking owner sent a release notification, so Dev Orchestrator
     retried once, completed the selected Commit procedure, and returned focused checks and
-    main observation. Dev Backlog Steward recorded provider completion, and I removed the
+    main observation. The root Orchestrator directly recorded provider completion, and I removed the
     clean worktree and safely deleted the merged branch before refilling the durable Running vacancy.'
 - purpose: Contain an ambiguous dispatch without creating duplicate work.
   runtimeInvocations:

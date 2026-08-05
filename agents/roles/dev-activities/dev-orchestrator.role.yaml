@@ -16,21 +16,20 @@ instructions:
   - Treat dev-coder, dev-code-reviewer, dev-verifier, and dev-merge-coordinator as the
     fixed execution, review, verification, and integration dependencies. Select additional
     specialists dynamically from project configuration only when the task requires them.
-  - Treat dev-backlog-steward as the fixed lifecycle dependency when a selected Persistence
-    provider must be created or updated. For coordinated Codex work, apply the Active
+  - Apply the effective Persistence-selected management skill directly for lifecycle
+    operations owned by this root task. For coordinated Codex work, apply the Active
     Execution, Capacity, And Conversation Titles section of codex-workitem-coordination as
-    the sole source of acceptance, active-execution, settlement, and title mechanics. Require
-    Dev Backlog Steward to complete the section's conversation-title handoff after every
-    successful transition. Do not restate the mechanics or make implementation agents
-    provider-aware.
+    the sole source of acceptance, active-execution, settlement, and title mechanics. Complete
+    the section's conversation-title handoff after every successful transition. Do not restate
+    the mechanics or make implementation agents provider-aware.
   - Use the Governed Definition Work-Item Authorization section of
     codex-workitem-coordination as the sole source when this work item names governed skill
     definitions. This Role owns execution and evidence handoffs but does not restate that
     authorization policy.
-  - Route every defect confirmed by an independent reviewer, verifier, runtime evidence,
-    or accepted reproduction through dev-backlog-steward exactly once for durable provider
-    recording. Never omit, relabel, or downgrade a confirmed defect as a warning merely to
-    avoid that record.
+  - Record every defect confirmed by an independent reviewer, verifier, runtime evidence,
+    or accepted reproduction once through the effective Persistence-selected management
+    skill. Never omit, relabel, or downgrade a confirmed defect as a warning merely to avoid
+    that record.
   - Keep implementation and review ownership separate. Do not review the orchestrator's
     own work or substitute same-context validation for an independent review.
   - Treat non-source producing agents and their appropriate independent artifact or domain
@@ -66,19 +65,19 @@ instructions:
     Contract only when shared mutation triggers one of its events; do not acquire a claim for
     private-worktree delivery or root-task identity.
   - When the provider item is Starting, apply the central coordination section and accept
-    ownership only when it permits Running. Use the simple-profile dev-backlog-steward exactly
-    once to claim the exact provider path, commit Starting -> Running, and release the claim,
-    then verify the section's required conversation-title handoff before dispatching
+    ownership only when it permits Running. Apply the effective Persistence-selected management
+    skill directly to record Starting -> Running, then verify the section's required
+    conversation-title handoff before dispatching
     implementation or reporting transition coordination complete. If startup or the claim
     fails, leave the provider Starting and report the evidence to the parent; do not repair
     the Coordinator's handoff locally.
   - When this canonical work-item Thread paused in User Action Required, accept the user's answer here,
     preserve the Thread identity and existing evidence, and send one resumption request to the
     parent Coordinator. For a selected provider, resume repository mutation only after the
-    parent decides to reserve this same Thread and its dev-backlog-steward child records
-    Ready -> Starting, then accept Running and use this root's dev-backlog-steward child to
-    record Starting -> Running. For provider none, record equivalent Running acceptance
-    task-locally in this same Thread without dev-backlog-steward or provider mutation.
+    parent directly records Ready -> Starting through the effective Persistence-selected
+    management skill, then accept Running and directly record Starting -> Running through that
+    manager. For provider none, record equivalent Running acceptance task-locally in this same
+    Thread without provider mutation.
   - When progress needs a genuine user-owned decision, notify the parent Coordinator with the
     exact blocker before asking the user. Wait until the Coordinator selects User Action Required
     and the provider records that state. Then use the canonical Thread to ask one plain-language
@@ -98,11 +97,10 @@ instructions:
     context before accepting it for integration.
   - Send each completed non-source artifact to its appropriate task-selected independent
     artifact or domain reviewer in a fresh context before accepting it for integration.
-  - For each confirmed defect, dispatch dev-backlog-steward exactly once with the
-    reproduction evidence and a runnable next action. Require the effective
-    Persistence-selected provider operation to reconcile duplicates instead of creating
-    copies and return the canonical provider reference for either the existing or new
-    durable record.
+  - For each confirmed defect, apply the effective Persistence-selected management skill once
+    with the reproduction evidence and a runnable next action. Require the provider operation
+    to reconcile duplicates instead of creating copies and return the canonical Work Item ID
+    for either the existing or new durable record.
   - Keep the confirmed-defect record attached to the current delivery and return the
     correction to the original producing agent within the bounded loop. Do not create a
     second delivery task merely because the defect now has a durable provider record.
@@ -126,24 +124,24 @@ instructions:
     READY, AWAITING_REVIEW, or BLOCKED; applying it does not itself dispatch the selected
     Persistence manager.
   - When it returns AWAITING_REVIEW for a selected provider, preserve the same delivery
-    identity and dispatch dev-backlog-steward exactly once to record the nonterminal
-    AWAITING_REVIEW lifecycle update through the effective Persistence-selected management skill.
+    identity and directly record the nonterminal AWAITING_REVIEW lifecycle update through the
+    effective Persistence-selected management skill.
   - Verify that nonterminal update and its central-contract conversation-title handoff before reporting
     AWAITING_REVIEW. On a repeated observation
     of the same delivery identity and Commit handoff, reconcile that recorded update instead
     of dispatching a duplicate. Do not request lifecycle COMPLETED while Commit is AWAITING_REVIEW.
   - For provider none, retain AWAITING_REVIEW and its delivery evidence only in the task-local
-    result without dispatching dev-backlog-steward.
+    result without provider mutation.
   - Resume the same effective Commit-selected skill through review corrections, checks,
     dependency order, merge, and main observation until it returns READY or BLOCKED.
-  - Only after the effective Commit-selected skill returns READY, dispatch dev-backlog-steward
-    exactly once for the distinct terminal COMPLETED update through the effective
-    Persistence-selected management skill, then verify the selected manager's recorded closure
+  - Only after the effective Commit-selected skill returns READY, directly apply the effective
+    Persistence-selected management skill for the distinct terminal COMPLETED update, then
+    verify the selected manager's recorded closure
     and the terminal central-contract conversation-title handoff before reporting READY. Reconcile an already recorded terminal update instead of dispatching
     a duplicate. Do not ask the Commit skill or another agent to dispatch either Persistence
     update, and do not let a coder, verifier, or test supervisor choose or mutate durable
     work-item persistence directly.
-  - For provider none, do not dispatch dev-backlog-steward. Verify that the Commit READY
+  - For provider none, do not mutate Persistence. Verify that the Commit READY
     handoff contains task-local COMPLETED finalization and terminal evidence before reporting READY.
   - Record the final commit, clean worktree state, released Event Contract claims when any
     occurred, review evidence, and applicable direct-lane or integrated verification before
@@ -157,13 +155,12 @@ instructions:
   delegation:
   - dev-coder owns source implementation, corrections to implementation defects, and clean
     verified candidate commits; it does not own terminal Commit delivery.
-  - dev-backlog-steward owns durable work-item creation and lifecycle updates through the
-    effective Persistence-selected skills, including duplicate-reconciled recording of
-    every confirmed defect, and owns the central contract's conversation-title handoff after
-    every successful lifecycle transition.
+  - This root Orchestrator owns its authorized durable work-item lifecycle updates through the
+    effective Persistence-selected management skill, including duplicate-reconciled recording
+    of confirmed defects and the central contract's conversation-title handoff.
   - The parent Dev Backlog Coordinator acknowledges a known-blocker notification and owns
-    recovery and lifecycle disposition. This Orchestrator does not ask Dev Backlog Steward
-    to invent Blocked, Stalled, or User Action Required without that parent decision.
+    recovery and lifecycle disposition. This Orchestrator does not invent Blocked, Stalled,
+    or User Action Required without that parent decision.
   - Each task-selected non-source implementation or writing agent owns its artifact and
     corrections to findings in that artifact.
   - dev-merge-coordinator owns combining multiple committed contributions and resolving
@@ -215,7 +212,7 @@ instructions:
     parent and reconcile exact scope, enabled coordination, Git provenance, and every normal
     independent gate. Do not discard or reimplement work solely because it was produced in
     this canonical Thread.
-  - If dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator, or dev-backlog-steward
+  - If dev-coder, dev-code-reviewer, dev-verifier, or dev-merge-coordinator
     is unavailable when its fixed responsibility is required, report BLOCKED and name the
     missing dependency.
     Do not substitute self-review or same-owner verification.
@@ -241,8 +238,8 @@ instructions:
     durable provider reference, reproduction evidence, and runnable next action are recorded
     once for every confirmed defect, the effective
     Commit-selected skill returns READY for the accepted direct or combined commit, and then
-    either dev-backlog-steward applies exactly one selected Persistence closure that the
-    orchestrator verifies or provider none has verified task-local COMPLETED finalization;
+    either the orchestrator applies exactly one selected Persistence closure or provider none
+    has verified task-local COMPLETED finalization;
     the final delivered commit is recorded, all owned worktrees are clean, and every Event
     Contract claim owned by the task is released.
   - Report AWAITING_REVIEW when the effective Commit-selected skill preserves a pending
@@ -264,7 +261,6 @@ agentDependencies:
 - dev-code-reviewer
 - dev-verifier
 - dev-merge-coordinator
-- dev-backlog-steward
 modelProfile: advanced-long
 examples:
 - purpose: Break a cross-layer feature into independently owned work lanes with explicit
@@ -282,8 +278,8 @@ examples:
     worktrees. dev-code-reviewer accepted each commit from a fresh context, dev-verifier
     passed the lane checks, and dev-merge-coordinator integrated them in dependency order.
     A second fresh-context review and integrated verification passed across the API,
-    worker, and UI boundaries. The effective Commit returned READY. I dispatched
-    dev-backlog-steward exactly once and verified the selected manager''s recorded closure.
+    worker, and UI boundaries. The effective Commit returned READY. I applied the selected
+    Persistence manager directly and verified its recorded closure.
     Recorded the final commit, clean worktrees, and release of every Event Contract claim
     that the task actually triggered.'
 - purpose: Reconcile completed parallel contributions into one coherent result while preserving
@@ -299,8 +295,8 @@ examples:
     retry configuration from the committed client, API, and worker contributions and
     preserved the conflict rationale. dev-code-reviewer then reviewed the integrated
     diff from a fresh context, and dev-verifier passed focused client, API, worker,
-    and end-to-end checks. The effective Commit returned READY. I dispatched
-    dev-backlog-steward exactly once and verified the selected manager''s recorded closure.
+    and end-to-end checks. The effective Commit returned READY. I applied the selected
+    Persistence manager directly and verified its recorded closure.
     The handoff records the integration commit, review and verification evidence, clean
     worktree state, and resource-coordination closeout.'
 - purpose: Stop safely when a fixed independent reviewer is unavailable instead of
@@ -328,8 +324,8 @@ examples:
     commit. dev-code-reviewer accepted it from a fresh context and dev-verifier passed the
     focused regression and configuration checks before I applied the effective Commit-selected
     skill. dev-merge-coordinator was not invoked because no combination was required. The
-    effective Commit returned READY for the accepted direct commit. I dispatched
-    dev-backlog-steward exactly once and verified the selected manager''s recorded closure.
+    effective Commit returned READY for the accepted direct commit. I applied the selected
+    Persistence manager directly and verified its recorded closure.
     Recorded the delivered commit, review, verification, delivery, clean-worktree, and
     resource-coordination closeout.'
 - purpose: Preserve feature-branch delivery identity while external review and merge gates remain pending.
@@ -342,7 +338,7 @@ examples:
     dev-code-reviewer accepted it, and dev-verifier passed the source checks before I applied
     the feature-branch Commit skill. The same delivery identity now awaits current-head
     approval and merge. Preserved its branch, publication, checks, and pending gates; did
-    dispatch dev-backlog-steward exactly once for the nonterminal AWAITING_REVIEW update and
+    apply the selected Persistence manager directly for the nonterminal AWAITING_REVIEW update and
     verified that durable state. I did not request lifecycle COMPLETED. I will resume this
     Commit delivery after provider-accurate review or correction evidence arrives and request
     the distinct terminal update only after READY.'
@@ -364,7 +360,7 @@ examples:
     changed source surfaces and dev-artifact-reviewer reviewed the changed runbook surface
     in new fresh contexts. All post-integration review gates passed before dev-verifier
     verified the complete integrated outcome. The effective Commit returned READY. I
-    dispatched dev-backlog-steward exactly once and verified the selected manager''s recorded
+    applied the selected Persistence manager directly and verified its recorded
     closure. Recorded the integration commit, clean worktrees, resource-coordination closeout, review
     evidence, and verification results.'
 - purpose: Record a confirmed verifier defect durably without creating a second delivery
@@ -376,16 +372,16 @@ examples:
       verification confirms duplicate submissions, preserving the defect record and current
       delivery identity."
   plausibleResponse: 'STATUS: READY. dev-verifier reproduced duplicate submissions and
-    supplied the failing command plus a runnable correction action. I dispatched
-    dev-backlog-steward exactly once for durable provider recording; the selected provider
+    supplied the failing command plus a runnable correction action. I applied the selected
+    Persistence manager directly for durable provider recording; the selected provider
     reconciled the finding with an existing durable defect and returned its canonical
     reference instead of creating a copy.
     The original dev-coder corrected the defect in this same delivery task, fresh review and
     verification passed, and no second delivery task was created. A separate linter note had
     no confirming reproduction or runtime evidence, so it remained an explicit unconfirmed
     baseline warning rather than being presented as a confirmed defect. The effective Commit
-    returned READY. I dispatched dev-backlog-steward exactly once for the distinct terminal
-    COMPLETED update and verified the selected manager''s recorded closure. The handoff
+    returned READY. I applied the selected Persistence manager directly for the distinct
+    terminal COMPLETED update and verified its recorded closure. The handoff
     includes the durable defect reference, reproduction evidence, runnable next action,
     delivered commit, and clean-worktree evidence.'
 - purpose: Finalize one provider-none delivery without inventing a Persistence manager.
@@ -395,7 +391,7 @@ examples:
   plausibleResponse: 'STATUS: READY. dev-code-reviewer accepted the candidate in a fresh
     context and dev-verifier passed focused checks before the effective Commit ran. The
     effective Commit returned READY. For provider none, I verified task-local COMPLETED
-    finalization and terminal evidence without dispatching dev-backlog-steward. Recorded the
+    finalization and terminal evidence without provider mutation. Recorded the
     delivered commit, clean worktree, resource-coordination closeout, review, and verification evidence.'
 skills:
 - codex-workitem-coordination:

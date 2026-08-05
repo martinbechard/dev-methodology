@@ -151,7 +151,9 @@ A Codex user-level installation uses the installed copy:
 python3 "${HOME}/.agents/skills/agent-claim-command/scripts/claim.py" --help
 ```
 
-For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, Ready -> Starting reservations, task launch, and Stalled or Blocked dispositions. After the exact provider claim is released, the Coordinator launches the root Dev Orchestrator task and its handoff is done. The root Dev Orchestrator independently owns Starting -> Running acceptance and terminal closure requests. The simple-profile Dev Backlog Steward performs each authorized provider mutation for either owner. Dev Backlog Watchdog detects overly old Starting items and reports recovery evidence to the Coordinator. Each agent follows Agent Claim when its work reaches an event in the Claim Events table.
+For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, directly applies the selected provider manager for Ready -> Starting reservations and Coordinator-owned dispositions, launches the root Dev Orchestrator task, and finishes its handoff. The root Dev Orchestrator independently applies the selected provider manager for Starting -> Running acceptance and its later lifecycle operations. Dev Backlog Steward is optional and limited to provider-wide inventory, normalization, archival audit, and recovery. Dev Backlog Watchdog detects overly old Starting items and reports recovery evidence to the Coordinator. Each agent follows Agent Claim when its work reaches an event in the Claim Events table.
+
+An explicit user-authorized work item that names exact skill definition paths supplies the required user direction for those named skills; only additional skill-definition paths require additional approval.
 
 Coordinated capacity is adaptive. Ten active items is a ceiling, not a target. The
 Coordinator lowers the dispatch limit when work shares generated outputs, tests, integration
@@ -171,10 +173,10 @@ python3 scripts/generate-backlog-report.py --output /path/to/backlog-report.html
 The command writes one self-contained HTML file with no network dependencies. It reports
 Stalled, Blocked, and User Action Required as separate inventories from dispatchable work
 and treats any remaining active Status: Proposed item as a migration anomaly rather than an
-operational bucket. Starting begins after the Coordinator's Steward claims the exact provider
-path, commits Ready -> Starting, and releases the claim. The Coordinator then launches one
-root task and its handoff is complete. That task independently uses its Steward to claim the
-same provider path, commit Starting -> Running, and release the claim. A failed or missing
+operational bucket. Starting begins after the Coordinator directly applies the selected
+provider manager for Ready -> Starting. The Coordinator then launches one root task and its
+handoff is complete. That task independently applies the selected provider manager for
+Starting -> Running. A failed or missing
 launch remains Starting until the Watchdog reports its age and the Coordinator follows up,
 stops the task, starts one reconciled replacement, or selects another truthful disposition.
 Running consumes capacity only with complete Active Execution Evidence for active
@@ -191,7 +193,7 @@ python3 scripts/generate-backlog-report.py --output /path/to/backlog-report.html
 
 The explicit view lists Future Ideas separately. Each idea needs only a title, Synopsis, and Origin or Rationale; Notes and a free-text Revisit Trigger are optional. A promoted idea remains in place with Promoted To and the complete promoted work item carries the exact source idea path in its Source Evidence. Promotion Completion is direct-main, feature-branch, or UNSET. Holding accepts an underlying dispatchable Type or the Holding Type; User Action Required retains its underlying dispatchable Type.
 
-Promotion always runs as one primary-main transaction. Before mutation, the steward snapshots exact idea and target bytes and existence plus the exact full Git index file bytes and existence. It stages the reciprocal pair only, uses a path-limited commit, captures the new commit OID, verifies that exact immutable object contains exactly both records and bytes, and leaves unrelated staged state intact. A failed operation restores and verifies both worktree paths and the Git index. The steward follows [Agent Claim](skills/agent-claim/SKILL.md) when that skill is loaded. Unsafe recovery reports BLOCKED with preserved evidence and the Dev Backlog Steward recovery owner.
+Promotion always runs as one primary-main transaction. Before mutation, the authorized owner snapshots exact idea and target bytes and existence plus the exact full Git index file bytes and existence. It stages the reciprocal pair only, uses a path-limited commit, captures the new commit OID, verifies that exact immutable object contains exactly both records and bytes, and leaves unrelated staged state intact. A failed operation restores and verifies both worktree paths and the Git index. The owner follows [Agent Claim](skills/agent-claim/SKILL.md) when that skill is loaded. Unsafe recovery reports BLOCKED with preserved evidence and an explicit recovery owner.
 
 The report is read-only. It does not approve user-action items, mutate backlog files, acquire work, or dispatch agents.
 
@@ -378,17 +380,16 @@ through the effective Persistence-selected manager and applies the portable
 [codex-workitem-coordination skill](skills/codex-workitem-coordination/SKILL.md) as the
 single authority for active-execution eligibility, Starting handoff and recovery,
 Running evidence, capacity, runtime reconciliation, and conversation-title synchronization.
-It delegates every provider mutation to Dev Backlog Steward and sends each actively eligible
-work item to Dev Orchestrator with the effective Commit-selected skill. File, GitHub, and
+It directly applies the effective Persistence-selected manager for its authorized lifecycle
+operations and sends each actively eligible work item to Dev Orchestrator with the effective Commit-selected skill. File, GitHub, and
 GitLab retain native provider identities; placeholder providers, provider none, and UNSET
 preserve their defined zero-mutation or non-durable boundaries without fallback.
 
-Dev Backlog Steward remains accountable after every successful lifecycle transition. It
-directly renames the canonical conversation when runtime authority exists. Otherwise it sends
-the exact required conversation title to the canonical conversation owner or runtime
-coordinator and verifies that handoff before reporting transition coordination complete. The
-stable conversation identity remains unchanged, and the conversation title is display state,
-never provider, active-execution, or delivery authority.
+The Coordinator or Orchestrator that owns a successful lifecycle transition also owns its
+conversation-title handoff. Dev Backlog Steward remains available only for provider-wide
+inventory, normalization, archival audits, and recovery. The stable conversation identity
+remains unchanged, and the conversation title is display state, never provider,
+active-execution, or delivery authority.
 
 The dedicated Dev Backlog Watchdog observes provider, runtime, Active Execution Evidence,
 conversation-title, estimate, hard-stop, Stalled, and Blocked exit-condition evidence on its

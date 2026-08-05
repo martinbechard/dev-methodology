@@ -147,11 +147,11 @@ class CoordinationConstraintTaxonomyTests(unittest.TestCase):
         )
         cls.provider_dispatch = _markdown_section(
             cls.provider,
-            "Dispatch Workflow",
+            "Transition Work Item",
         )
         cls.provider_reporting = _markdown_section(
             cls.provider,
-            "Reporting",
+            "Report Work Items",
         )
 
     def test_hard_prerequisites_block_dispatch_but_overlap_notes_do_not(self) -> None:
@@ -508,8 +508,8 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
             with self.subTest(clause=clause):
                 self.assertIn(clause, contract)
 
-    def test_stalled_and_known_blocker_authority_stays_with_coordinator_and_steward(self) -> None:
-        """Observation, disposition, and provider mutation remain separate authorities."""
+    def test_stalled_and_known_blocker_authority_stays_with_coordinator(self) -> None:
+        """Observation and disposition stay separate while the Coordinator mutates directly."""
 
         provider = MANAGE_FILE_WORK_ITEMS_PATH.read_text(encoding="utf-8")
         coordinator = COORDINATOR_ROLE_PATH.read_text(encoding="utf-8")
@@ -527,7 +527,7 @@ class CodexWorkItemCoordinationWatchdogTests(unittest.TestCase):
             "concrete cause and Coordinator-owned next action are known",
             "concrete user-owned action is required",
             "Dev Backlog Coordinator is the lifecycle decision owner for Blocked",
-            "Dev Backlog Steward performs the atomic provider mutation",
+            "Dev Backlog Coordinator is the lifecycle decision owner for Blocked and directly applies the selected manager for the atomic provider mutation",
         ):
             with self.subTest(clause=clause):
                 self.assertIn(" ".join(clause.split()), normalized_contract)
@@ -664,7 +664,7 @@ class StartingLifecycleContractTests(unittest.TestCase):
         )
         cls.provider_dispatch_section = _markdown_section(
             cls.provider,
-            "Dispatch Workflow",
+            "Transition Work Item",
         )
         cls.blocked_handoff_section = _markdown_section(
             cls.provider,
@@ -676,7 +676,7 @@ class StartingLifecycleContractTests(unittest.TestCase):
         )
         cls.provider_recovery_section = _markdown_section(
             cls.provider,
-            "Recovery Workflow",
+            "Recover Work Item",
         )
         coordinator_role = yaml.safe_load(
             COORDINATOR_ROLE_PATH.read_text(encoding="utf-8")
@@ -692,7 +692,6 @@ class StartingLifecycleContractTests(unittest.TestCase):
         normalized_contract = " ".join(self.contract.split())
         required = (
             "Ready -> Starting",
-            "claims the same exact provider path",
             "Coordinator's handoff is complete",
             "Watchdog reports the stale Starting item",
             "start one replacement task after duplicate reconciliation",
@@ -804,8 +803,7 @@ class StartingLifecycleContractTests(unittest.TestCase):
 
         required = (
             "A retained Stalled owner must not resume repository or provider mutation",
-            "Coordinator decides Stalled -> Running",
-            "Dev Backlog Steward records that transition",
+            "Coordinator decides and directly records Stalled -> Running",
         )
         for source in (self.coordination, self.provider):
             for clause in required:
@@ -850,9 +848,10 @@ class StartingLifecycleContractTests(unittest.TestCase):
 
         readme = README_PATH.read_text(encoding="utf-8")
         for clause in (
-            "Dev Backlog Coordinator owns queue decisions, Ready -> Starting reservations, task launch, and Stalled or Blocked dispositions",
-            "root Dev Orchestrator independently owns Starting -> Running acceptance and terminal closure requests",
-            "simple-profile Dev Backlog Steward performs each authorized provider mutation",
+            "Dev Backlog Coordinator owns queue decisions",
+            "directly applies the selected provider manager for Ready -> Starting reservations",
+            "root Dev Orchestrator independently applies the selected provider manager for Starting -> Running acceptance",
+            "Dev Backlog Steward is optional",
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause, readme)
@@ -864,9 +863,9 @@ class StartingLifecycleContractTests(unittest.TestCase):
             "Starting -> Running",
             "leave Starting intact",
             "report exact evidence",
-            "branch, worktree, and applicable claim evidence",
+            "branch or worktree",
             "root Dev Orchestrator",
-            "Dev Backlog Steward child",
+            "directly applies the effective Persistence-selected management skill",
         )
         for clause in required:
             with self.subTest(clause=clause):
@@ -1116,20 +1115,19 @@ class CentralActiveExecutionAndConversationTitleTests(unittest.TestCase):
 
         readme = " ".join(README_PATH.read_text(encoding="utf-8").split())
         self.assertIn(
-            "A user-authorized work item that names exact skill definition paths supplies the required user direction for those named skills.",
+            "An explicit user-authorized work item that names exact skill definition paths supplies the required user direction for those named skills",
             readme,
         )
 
-    def test_starting_handoff_uses_two_exact_provider_transactions(self) -> None:
+    def test_starting_handoff_uses_two_direct_provider_transactions(self) -> None:
         normalized = " ".join(self.coordination.split())
         required = (
             "Starting Handoff Evidence",
             "Starting Recorded At",
-            "claim only its exact provider path",
-            "records Ready -> Starting",
-            "releases the claim",
+            "record Ready -> Starting atomically",
+            "directly applies the Persistence-selected management skill",
             "does not wait for or perform Starting -> Running",
-            "claims the same exact provider path",
+            "directly applies the Persistence-selected management skill to record Starting -> Running",
             "Canonical Conversation",
             "Next Reconciliation At",
         )
@@ -1161,7 +1159,7 @@ class CentralActiveExecutionAndConversationTitleTests(unittest.TestCase):
         for clause in (
             "The Coordinator's handoff is complete when task creation has been requested",
             "The new task independently accepts the item",
-            "records Starting -> Running",
+            "record Starting -> Running",
             "before implementation begins",
         ):
             with self.subTest(clause=clause):
@@ -1236,7 +1234,7 @@ class CentralActiveExecutionAndConversationTitleTests(unittest.TestCase):
 
         self.assertNotIn("neither timestamp has expired", normalized)
 
-    def test_steward_owns_verified_title_sync_after_every_transition(self) -> None:
+    def test_lifecycle_owner_owns_verified_title_sync_after_every_transition(self) -> None:
         normalized = " ".join(self.coordination.split())
         for lifecycle in (
             "Ready",
@@ -1259,25 +1257,18 @@ class CentralActiveExecutionAndConversationTitleTests(unittest.TestCase):
 
         for clause in (
             "after every successful lifecycle transition",
-            "directly rename the canonical conversation",
-            "send the exact required conversation title to the canonical conversation owner or runtime coordinator",
-            "verify that handoff before reporting transition coordination complete",
+            "directly renames the canonical conversation",
+            "sends the exact required title to the canonical conversation owner or runtime coordinator",
+            "verifies that handoff before reporting transition coordination complete",
             "conversation title is display state",
         ):
             with self.subTest(clause=clause):
                 self.assertIn(clause, normalized)
 
-        steward_text = json.dumps(
-            self.roles["dev-backlog-steward.role"],
-            sort_keys=True,
-        )
-        self.assertIn("after every successful lifecycle transition", steward_text)
-        self.assertIn(
-            "owns the conversation-title handoff required by "
-            "Active Execution, Capacity, And Conversation Titles",
-            steward_text,
-        )
-        self.assertNotIn("verify conversation-title synchronization", steward_text)
+        steward_text = json.dumps(self.roles["dev-backlog-steward.role"], sort_keys=True)
+        self.assertIn("provider-wide", steward_text)
+        self.assertIn("Do not perform Ready -> Starting", steward_text)
+        self.assertNotIn("owns the conversation-title handoff", steward_text)
 
     def test_roles_select_and_reference_coordination_without_normative_duplication(self) -> None:
         """Roles own triggers and handoffs while the central skill owns mechanics."""
@@ -1330,7 +1321,7 @@ class CentralActiveExecutionAndConversationTitleTests(unittest.TestCase):
                     self.assertNotIn(marker, definition_text)
 
         steward_text = definition_texts["dev-backlog-steward.role"]
-        self.assertIn("owns the conversation-title handoff required by", steward_text)
+        self.assertIn("ordinary lifecycle operations remain with the authorized Coordinator or Orchestrator", steward_text)
 
         for forbidden_loading in (
             "load manage-file-work-items",
@@ -1378,10 +1369,10 @@ class AwaitingReviewPersistenceContractTests(unittest.TestCase):
 
     def test_coordination_records_awaiting_review_once_before_terminal_closure(self) -> None:
         required = (
-            "ask Dev Backlog Steward exactly once to record the nonterminal lifecycle AWAITING_REVIEW",
-            "reconcile the existing update instead of dispatching a duplicate",
+            "applies the effective Persistence-selected management skill exactly once to record the nonterminal lifecycle AWAITING_REVIEW",
+            "reconcile the existing update instead of repeating it",
             "Never request lifecycle COMPLETED from an AWAITING_REVIEW handoff",
-            "ask Dev Backlog Steward exactly once for the distinct terminal lifecycle COMPLETED update",
+            "the Dev Orchestrator applies the effective Persistence-selected management skill exactly once for the distinct terminal lifecycle COMPLETED update",
         )
         for clause in required:
             with self.subTest(clause=clause):
@@ -1389,10 +1380,10 @@ class AwaitingReviewPersistenceContractTests(unittest.TestCase):
 
     def test_orchestrator_routes_the_same_two_phase_persistence_sequence(self) -> None:
         required = (
-            "dispatch dev-backlog-steward exactly once to record the nonterminal AWAITING_REVIEW lifecycle update",
+            "directly record the nonterminal AWAITING_REVIEW lifecycle update through the effective Persistence-selected management skill",
             "reconcile that recorded update instead of dispatching a duplicate",
             "Do not request lifecycle COMPLETED while Commit is AWAITING_REVIEW",
-            "dispatch dev-backlog-steward exactly once for the distinct terminal COMPLETED update",
+            "directly apply the effective Persistence-selected management skill for the distinct terminal COMPLETED update",
         )
         for clause in required:
             with self.subTest(clause=clause):

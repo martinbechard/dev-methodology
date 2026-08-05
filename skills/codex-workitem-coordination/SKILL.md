@@ -18,7 +18,7 @@ Use one Dev Backlog Coordinator as the parent dispatcher. Reserve each selected 
 - Dev Backlog Coordinator owns provider-routed queue inventory, priority, dispatch, Stalled
   and Blocked lifecycle decisions, stalled-delivery investigation, and terminal Thread cleanup.
 - Dev Orchestrator owns one work item after its root Agent accepts Starting -> Running through delivery or a truthful terminal outcome. It may assign bounded Tasks to Dev Coder, independent reviewer, and verifier child Agents inside that Thread.
-- Dev Backlog Steward applies the effective Persistence-selected management skill for provider inventory and lifecycle mutation. Dev Orchestrator applies the effective Commit-selected skill only after candidate review and verification accept a direct or combined commit.
+- Dev Backlog Coordinator and Dev Orchestrator apply the effective Persistence-selected management skill directly for lifecycle operations they are authorized to own. Dev Backlog Steward is optional and reserved for provider-wide inventory, normalization, archival audit, and recovery work that benefits from an independent backlog context. Dev Orchestrator applies the effective Commit-selected skill only after candidate review and verification accept a direct or combined commit.
 - Dev Backlog Watchdog owns scheduled read-only observation and actionable alerts. It never
   owns provider lifecycle, dispatch, delivery, recovery, claims, or cleanup.
 
@@ -78,15 +78,17 @@ preserved work.
 ### Starting Handoff And Recovery Contract
 
 Starting is the durable handoff between the parent Dev Backlog Coordinator and one new root
-Dev Orchestrator task. The Coordinator selects one Ready item, uses Dev Backlog Steward to
-claim only its exact provider path, records Ready -> Starting, commits that provider update,
-and releases the claim. Only after that transaction is durable does the Coordinator start the
-new task. The Coordinator's handoff is complete when task creation has been requested; it
-does not wait for or perform Starting -> Running.
+Dev Orchestrator task. The Coordinator selects one Ready item and directly applies the
+Persistence-selected management skill to record Ready -> Starting atomically. The selected
+provider resolves the Work Item ID, protects its required resources, commits or publishes the
+update, and releases its coordination resources. Only after that operation is durable does the
+Coordinator start the new task. The Coordinator's handoff is complete when task creation has
+been requested; it does not wait for or perform Starting -> Running.
 
-The new task independently accepts the item. Its Dev Backlog Steward claims the same exact
-provider path, records Starting -> Running with the canonical task identity and Active
-Execution Evidence, commits, and releases the claim before implementation begins.
+The new task independently accepts the item. Its root Dev Orchestrator directly applies the
+Persistence-selected management skill to record Starting -> Running with the canonical task
+identity and Active Execution Evidence before implementation begins. The provider owns its
+resource protection, durable mutation, and cleanup.
 
 Retain this evidence in the provider record:
 
@@ -179,15 +181,12 @@ Use this lifecycle and phase mapping:
 - Failed: Failed — short work-item title.
 - Abandoned: Abandoned — short work-item title.
 
-Dev Backlog Steward is accountable after every successful lifecycle transition. When the
-runtime grants rename authority, it must directly rename the canonical conversation. When
-it lacks that authority, it must send the exact required conversation title to the canonical
-conversation owner or runtime coordinator and verify that handoff before reporting transition
-coordination complete. Verification is a successful direct rename observation or an explicit
-acknowledgement that names the stable conversation identity and exact requested title. A
-failed title update does not roll back a durable lifecycle transition or change capacity;
-preserve the successful provider mutation, report transition coordination incomplete, and
-route title reconciliation to the canonical conversation owner.
+The owning Coordinator or Orchestrator is accountable after every successful lifecycle
+transition. When the runtime grants rename authority, it directly renames the canonical
+conversation. Otherwise it sends the exact required title to the canonical conversation owner
+or runtime coordinator and verifies that handoff before reporting transition coordination
+complete. A failed title update does not roll back a durable lifecycle transition or change
+capacity; preserve the successful provider mutation and report title coordination incomplete.
 
 ## Resource Coordination
 
@@ -250,21 +249,20 @@ For a provider that supports queue inventory and lifecycle transitions:
 2. Determine the effective dispatch limit from Adaptive Capacity And Finish-Lane Priority.
    Select eligible Ready items only while the active count is below that limit and no selected
    launch would delay compatible finish-lane work.
-3. For each selection, have the parent Coordinator's Dev Backlog Steward child atomically
-   record the Ready -> Starting reservation, Starting Handoff Evidence, and dispatch
-   evidence through the effective Persistence-selected management skill before creating a
-   runtime conversation.
+3. For each selection, the parent Coordinator directly applies the effective
+   Persistence-selected management skill to atomically record the Ready -> Starting
+   reservation, Starting Handoff Evidence, and dispatch evidence before creating a runtime
+   conversation.
 4. After the committed provider update and released claim, create at most one
    user-visible work-item conversation for the Starting work item. When the item already has
    one canonical conversation preserved from a prior Running to User Action Required
    transition, adopt that same conversation instead of creating a replacement.
    The Coordinator's handoff ends after requesting this launch.
-5. The conversation's root Dev Orchestrator Agent accepts ownership and produces valid
-   Active Execution Evidence. Its Dev Backlog Steward child independently claims the exact
-   provider path and atomically
-   records Starting -> Running with the canonical conversation identifier, root Agent Task
-   identifier when applicable, branch, worktree, and applicable claim evidence, then releases
-   that claim before implementation.
+5. The conversation's root Dev Orchestrator Agent accepts ownership, produces valid Active
+   Execution Evidence, and directly applies the effective Persistence-selected management
+   skill to atomically record Starting -> Running with the canonical conversation identifier,
+   root Agent Task identifier when applicable, branch, worktree, and provider-operation
+   evidence before implementation.
 6. Dispatch only work that can begin implementation or another bounded delivery phase. Do
    not create a conversation merely to wait for approval, a dependency, a reviewer, a shared
    resource, or a delivery window.
@@ -321,8 +319,8 @@ Create each Dev Orchestrator work-item conversation in an environment where its 
 - If the requested configuration and effective child runtime differ, or any representative operation fails, stop equivalent dispatch immediately. Record the exact requested and effective profiles, archive the failed pilot conversation, correct or replace the launch environment, and rerun the pilot. Do not treat a successful direct command, parent capability, config file, or earlier conversation as evidence for the failing child runtime.
 - If an ordinary required operation fails because the Agent environment lacks a capability, the Agent stops immediately, preserves its work, and reports the exact failed operation to the parent. It must not request escalation from the user.
 - The parent promptly re-homes the conversation or replaces its root Agent in a compatible
-  environment, asks Dev Backlog Steward to update canonical identifiers through the selected
-  Persistence manager, and reconciles active eligibility before filling any resulting
+  environment, directly updates canonical identifiers through the selected Persistence
+  manager, and reconciles active eligibility before filling any resulting
   vacancy. For provider none it updates only the task-local identity. Do not leave an
   approval prompt or an execution-incompatible Agent consuming active capacity.
 
@@ -346,12 +344,12 @@ independent review, verification, delivery, and stewardship Agents are children 
 work-item conversation.
 
 Ready -> Starting is the parent Coordinator's dispatch and capacity-reservation decision.
-Use its Dev Backlog Steward child to claim the exact provider path, record and commit the
-reservation through the selected manager, and release the claim before launch. After it
-requests the new root task, the Coordinator's handoff is done. Starting remains active until
-the new task records Running or the Coordinator records another truthful state. One work item
-must not create a duplicate conversation after a timeout, conversation-creation error, or
-ambiguous startup.
+The Coordinator directly applies the selected manager to record and commit the reservation
+before launch. The provider resolves the Work Item ID and owns its required claim or other
+concurrency control. After the Coordinator requests the new root task, its handoff is done.
+Starting remains active until the new task records Running or the Coordinator records another
+truthful state. One work item must not create a duplicate conversation after a timeout,
+conversation-creation error, or ambiguous startup.
 
 When a Running work item pauses in User Action Required, preserve its canonical work-item
 conversation, root Agent Task identity, branch, worktree, clean commits, and unresolved
@@ -361,16 +359,16 @@ Ready -> Starting; it must not require the user to repeat the answer in the pare
 conversation or create a replacement work-item conversation.
 
 After the work-item conversation's root Dev Orchestrator Agent accepts ownership and records
-valid Active Execution Evidence, it uses its Dev Backlog Steward child to claim the exact
-provider path, perform the atomic Starting -> Running transition, commit, and release. The
-record includes the canonical conversation identifier, canonical root Agent Task id when
-applicable, branch, worktree, applicable claim evidence, and Active Execution Evidence. If
-launch or provider acquisition fails, leave Starting intact and report exact evidence for
-Watchdog and Coordinator recovery.
+valid Active Execution Evidence, it directly applies the selected manager for the atomic
+Starting -> Running transition. The record includes the canonical conversation identifier,
+canonical root Agent Task id when applicable, branch, worktree, provider-operation evidence,
+and Active Execution Evidence. If launch or provider acquisition fails, leave Starting intact
+and report exact evidence for Watchdog and Coordinator recovery.
 
 The work-item Orchestrator owns candidate production, review, verification, Commit delivery,
-and terminal Persistence request. Its Steward child records the selected provider lifecycle
-changes and verifies conversation-title synchronization. The parent Coordinator never
+and direct terminal Persistence execution through the selected manager. It records the
+selected provider lifecycle changes and verifies conversation-title synchronization. The
+parent Coordinator never
 performs per-item delivery or completion; after the terminal Handoff it cleans the runtime
 conversation and worktree, reconciles active capacity, and dispatches replacement work.
 
@@ -385,10 +383,10 @@ For direct-main integration, start from current main and designate this fresh br
 3. When multiple accepted candidates must be combined, use Dev Merge Coordinator, then obtain the required fresh post-combination review and complete verification. A single accepted candidate remains the direct commit.
 4. Apply or resume the effective Commit-selected skill only after candidate review and source verification accept the direct or combined commit.
 5. Preserve AWAITING_REVIEW with the same delivery identity while review, checks, dependency order, correction, merge, or final observation remains pending. A source correction returns through Dev Coder, independent review, and verification before the same Commit delivery resumes.
-6. When Commit first returns AWAITING_REVIEW for a selected provider, ask Dev Backlog Steward exactly once to record the nonterminal lifecycle AWAITING_REVIEW through the effective Persistence-selected management skill. Include the delivery identity, publication reference, accepted commit, completed checks, and pending gates. Verify the recorded provider state before reporting AWAITING_REVIEW.
-7. On a repeated observation of the same delivery identity and Commit handoff, reconcile the existing update instead of dispatching a duplicate. Never request lifecycle COMPLETED from an AWAITING_REVIEW handoff. Provider none retains the same nonterminal evidence task-locally without a steward dispatch.
+6. When Commit first returns AWAITING_REVIEW for a selected provider, the Dev Orchestrator applies the effective Persistence-selected management skill exactly once to record the nonterminal lifecycle AWAITING_REVIEW. Include the delivery identity, publication reference, accepted commit, completed checks, and pending gates. Verify the recorded provider state before reporting AWAITING_REVIEW.
+7. On a repeated observation of the same delivery identity and Commit handoff, reconcile the existing update instead of repeating it. Never request lifecycle COMPLETED from an AWAITING_REVIEW handoff. Provider none retains the same nonterminal evidence task-locally without a provider operation.
 8. Resume the same effective Commit-selected skill through review corrections, checks, dependency order, merge, and main observation until it returns READY or BLOCKED.
-9. Only after the effective Commit-selected skill returns READY, ask Dev Backlog Steward exactly once for the distinct terminal lifecycle COMPLETED update through the effective Persistence-selected management skill. Verify the selected manager's recorded closure and reconcile an already successful terminal update instead of dispatching a duplicate.
+9. Only after the effective Commit-selected skill returns READY, the Dev Orchestrator applies the effective Persistence-selected management skill exactly once for the distinct terminal lifecycle COMPLETED update. Verify the selected manager's recorded closure and reconcile an already successful terminal update instead of repeating it.
 10. Provider file closure uses the file manager's archive procedure. GitHub and GitLab closure use their own provider identities, concurrency behavior, and lifecycle evidence. Placeholder providers preserve BLOCKED without fallback. Provider none records terminal evidence only in the task result and performs no durable provider mutation.
 11. Notify the parent with candidate provenance, independent review and verification, final Commit disposition, nonterminal and terminal provider results when selected, claims, branch or delivery identity, worktree, and cleanup eligibility.
 12. The parent removes only clean eligible worktrees and branches, verifies terminal
@@ -489,7 +487,7 @@ truthful lifecycle transition only when the Coordinator selects one.
 
 The Dev Backlog Watchdog reports suspected Stalled evidence but never chooses or mutates
 the lifecycle result. Dev Backlog Coordinator decides whether the evidence justifies
-Stalled and asks Dev Backlog Steward to perform the atomic provider mutation. Preserve:
+Stalled and directly applies the selected manager for the atomic provider mutation. Preserve:
 
 - last known productive evidence
 - phase estimate and hard stop when present
@@ -520,11 +518,11 @@ Dev Backlog Coordinator chooses exactly one evidence-backed disposition:
    that terminal contract.
 
 A retained Stalled owner must not resume repository or provider mutation until Dev Backlog
-Coordinator decides Stalled -> Running and Dev Backlog Steward records that transition.
+Coordinator decides and directly records Stalled -> Running through the selected manager.
 
 Blocked is a known preventing cause awaiting Coordinator-owned coordination, recovery, or
-disposition. Dev Backlog Coordinator is the lifecycle decision owner for Blocked. Dev
-Backlog Steward performs the atomic provider mutation. Do not use Blocked because a task is
+disposition. Dev Backlog Coordinator is the lifecycle decision owner for Blocked and directly
+applies the selected manager for the atomic provider mutation. Do not use Blocked because a task is
 quiet, appears slow, or lacks a recognized cause.
 
 When Dev Orchestrator recognizes a concrete blocker, it stops unsafe work, preserves commits
@@ -542,8 +540,8 @@ Backlog Coordinator. The notification contains:
 - whether the item remains safe to resume
 
 The Coordinator acknowledges the notification, validates the handoff, chooses an authorized
-coordination or recovery action, and asks Dev Backlog Steward to record Blocked when that is
-the truthful provider disposition. After the provider state changes, remove the item from
+coordination or recovery action, and directly records Blocked through the selected manager
+when that is the truthful provider disposition. After the provider state changes, remove the item from
 active capacity, dispatch eligible replacement work, and retain Coordinator responsibility
 until the blocker is resolved, routed to User Action Required, or terminally dispositioned.
 Coordinator inability alone does not create a user obligation; an unresolved technical or
@@ -581,9 +579,8 @@ When correction attempts are exhausted, record exactly one evidence-backed outco
 Reject a vague or indefinite Blocked outcome. A generic instruction to wait, keep trying,
 investigate later, or ask the user without an exact user-owned decision is not a disposition.
 Across resumption, preserve canonical task identity, candidate, review and verification,
-Git state, claim, and attempt history. Dev Backlog Coordinator returns one immutable
-decision without changing provider state. Dev Backlog Steward records only that delegated
-decision through the already-selected Persistence manager.
+Git state, claim, and attempt history. Dev Backlog Coordinator makes one immutable decision
+and directly records it through the already-selected Persistence manager.
 
 ## Fifteen-Minute Parent Review
 
@@ -674,8 +671,8 @@ A user answer resolves a decision gate once; it does not prove delivery. The use
 For approved work whose canonical Thread already exists:
 
 1. The canonical Thread records the answer, preserves its existing identity and evidence, and sends one resumption request to the parent Coordinator.
-2. For a selected provider, the parent Coordinator's Dev Backlog Steward child records User Action Required -> Ready. If the item is eligible under current priority and capacity, the parent Coordinator decides and reserves dispatch for that same Thread, and its Dev Backlog Steward child records Ready -> Starting rather than creating another Thread. Provider none records equivalent Ready and Starting evidence task-locally for its explicit task without Dev Backlog Steward, provider mutation, inventory, or capacity inference.
-3. For a selected provider, the same root Dev Orchestrator accepts Running and its own Dev Backlog Steward child records Starting -> Running before repository mutation or delivery resumes. Provider none records equivalent Running acceptance task-locally in the same root Thread without a provider or Steward operation.
+2. For a selected provider, the parent Coordinator applies the selected manager to record User Action Required -> Ready. If the item is eligible under current priority and capacity, the parent Coordinator decides and records Ready -> Starting for that same Thread rather than creating another Thread. Provider none records equivalent Ready and Starting evidence task-locally for its explicit task without provider mutation, inventory, or capacity inference.
+3. For a selected provider, the same root Dev Orchestrator accepts Running and applies the selected manager to record Starting -> Running before repository mutation or delivery resumes. Provider none records equivalent Running acceptance task-locally in the same root Thread without a provider operation.
 4. The parent acknowledges the lifecycle reconciliation in the canonical Thread. The user does not need to move to the parent Thread or repeat the answer there.
 
 If the canonical Thread produced work before lifecycle reconciliation completed, preserve that work as out-of-sequence evidence. Do not accept, reject, delete, duplicate, or reimplement it merely because of its timing. Reconcile the provider state, applicable claims, commits, review, verification, and delivery evidence. Resume the same Thread only after Running is durable and the ordinary review and verification gates still pass.

@@ -249,7 +249,7 @@ The complete-work-item-direct-main skill owns these stages:
 4. Run the smallest credible post-integration verification for the changed surface.
 5. Observe the final verified commit as reachable from main and record the main commit identity.
 6. Release integration authority from clean main.
-7. Return completion disposition READY with the prepared lifecycle update. When a provider is selected, return that handoff to the caller without dispatching Persistence; Dev Orchestrator owns the later steward dispatch and reconciliation. When provider is none, record lifecycle COMPLETED and the full terminal evidence in the active task result.
+7. Return completion disposition READY with the prepared lifecycle update. When a provider is selected, return that handoff to the caller; Dev Orchestrator directly applies the selected Persistence manager and reconciles the result. When provider is none, record lifecycle COMPLETED and the full terminal evidence in the active task result.
 
 The work is not completed while the accepted commit exists only on an isolated branch, coordination branch, detached worktree, patch, or unmerged pull request or merge request. A clean cherry-pick or merge command is insufficient until the commit is observed on main and focused post-integration verification has passed or a documented completion policy explicitly accepts a scoped omission.
 
@@ -261,11 +261,11 @@ The complete-work-item-feature-branch skill owns these stages:
 2. Publish the intended feature branch.
 3. Create or update the hosting-provider delivery record using provider-accurate terminology and tools: pull request for GitHub and merge request for GitLab.
 4. Verify the published base, head, commit, title, body, readiness, checks, and dependency order.
-5. Return AWAITING_REVIEW while any required review, check, approval, or configured merge remains incomplete. Dev Orchestrator asks Dev Backlog Steward exactly once to record that nonterminal lifecycle state for a selected provider and reconciles repeated observations without a duplicate update.
+5. Return AWAITING_REVIEW while any required review, check, approval, or configured merge remains incomplete. Dev Orchestrator directly applies the selected Persistence manager once to record that nonterminal lifecycle state and reconciles repeated observations without a duplicate update.
 6. Return accepted source correction requests through Dev Orchestrator to the original Dev Coder. Consume the replacement candidate only after fresh independent review and verification, then resume the same branch and publication identity.
 7. Observe required review approval, required checks, and the configured merge on the hosting service and in Git.
 8. Observe the merged commit as reachable from the configured main branch.
-9. Return completion disposition READY with the prepared lifecycle update. When a provider is selected, return that handoff to the caller without dispatching Persistence; Dev Orchestrator owns the later steward dispatch and reconciliation. When provider is none, record lifecycle COMPLETED and the full terminal evidence in the active task result.
+9. Return completion disposition READY with the prepared lifecycle update. When a provider is selected, return that handoff to the caller; Dev Orchestrator directly applies the selected Persistence manager and reconciles the result. When provider is none, record lifecycle COMPLETED and the full terminal evidence in the active task result.
 
 Branch publication, a ready review, an approved review, green checks, a closed delivery record, and a merge button action are each intermediate evidence. Completion requires the configured merge result and main observation. If a project uses a hosting service other than the work-item provider, the delivery reference records that host explicitly without changing the work-item provider.
 
@@ -337,31 +337,31 @@ Compatibility is transition-bounded:
 
 ## Contract Walkthroughs
 
-Applying the effective Commit skill yields the prepared delivery handoff; it does not dispatch a provider manager. Commit AWAITING_REVIEW causes Dev Orchestrator to dispatch Dev Backlog Steward exactly once for a nonterminal Persistence update, then preserve the same delivery identity. Repeated observation reconciles that update without duplication. Commit READY permits one distinct steward dispatch for terminal COMPLETED and verification of the selected manager's recorded result. Provider none retains AWAITING_REVIEW task-locally and returns READY with task-local COMPLETED finalization without manager dispatch.
+Applying the effective Commit skill yields the prepared delivery handoff. Commit AWAITING_REVIEW causes Dev Orchestrator to apply the selected Persistence manager once for a nonterminal update, then preserve the same delivery identity. Repeated observation reconciles that update without duplication. Commit READY permits one distinct direct terminal COMPLETED update and verification of the selected manager's result. Provider none retains AWAITING_REVIEW task-locally and returns READY with task-local COMPLETED finalization without provider mutation.
 
 ### File plus direct main
 
-The file create skill records a READY item under backlog on primary main through atomic no-overwrite creation without a claim. The file manage skill records RUNNING ownership by claiming the existing item's exact current path for that short transaction. Implementation, independent review, and verification occur separately and claim-free in the private worktree. The direct-main Commit skill claims project-files immediately before integrating the accepted commit, observes it on main, and returns Commit READY after release. Dev Orchestrator then dispatches Dev Backlog Steward exactly once for Persistence closure. The file manager claims the exact current and completed-backlog destination paths, records terminal evidence, moves the item, commits the move, and releases that move claim; the orchestrator verifies closure.
+The file create skill records a READY item under backlog on primary main through atomic no-overwrite creation without a claim. The file manage skill records RUNNING ownership through the provider operation. Implementation, independent review, and verification occur separately in the private worktree. The direct-main Commit skill integrates the accepted commit, observes it on main, and returns Commit READY. Dev Orchestrator then applies the file manager directly for Persistence closure; the manager records terminal evidence and archives the item, and the orchestrator verifies closure.
 
 ### File plus feature branch
 
-The file provider owns the backlog record while the feature-branch Commit skill owns publication and returns Commit AWAITING_REVIEW with the branch and delivery reference. Dev Orchestrator dispatches Dev Backlog Steward exactly once to persist nonterminal AWAITING_REVIEW, then preserves that delivery identity. Accepted corrections resume the same item and branch without duplicating the recorded update. After required review, checks, merge, and main observation, the Commit skill returns Commit READY. Dev Orchestrator then dispatches Dev Backlog Steward exactly once for the distinct terminal closure; the file manager records COMPLETED and archives the item, and the orchestrator verifies the result.
+The file provider owns the backlog record while the feature-branch Commit skill owns publication and returns Commit AWAITING_REVIEW with the branch and delivery reference. Dev Orchestrator directly applies the file manager once to persist nonterminal AWAITING_REVIEW, then preserves that delivery identity. Accepted corrections resume the same item and branch without duplicating the recorded update. After required review, checks, merge, and main observation, the Commit skill returns Commit READY. Dev Orchestrator directly applies the file manager for the distinct terminal closure; the manager records COMPLETED and archives the item, and the orchestrator verifies the result.
 
 ### GitHub plus direct main
 
-The GitHub create skill creates one issue and returns its issue URL. The GitHub manage skill records ownership without a shadow backlog file. The direct-main Commit skill integrates and verifies the commit, observes it on main, and returns Commit READY. Dev Orchestrator dispatches Dev Backlog Steward exactly once for Persistence closure, then verifies that the GitHub manager recorded evidence and closed the issue according to project convention.
+The GitHub create skill creates one issue and returns its issue URL. The GitHub manage skill records ownership without a shadow backlog file. The direct-main Commit skill integrates and verifies the commit, observes it on main, and returns Commit READY. Dev Orchestrator directly applies the GitHub manager for Persistence closure, then verifies that it recorded evidence and closed the issue according to project convention.
 
 ### GitHub plus feature branch
 
-The GitHub issue remains the work-item identifier. The feature-branch Commit skill publishes a GitHub pull request as the delivery reference and returns Commit AWAITING_REVIEW. Dev Orchestrator dispatches Dev Backlog Steward exactly once to persist that nonterminal state. The same Commit delivery resumes through required review, checks, pull-request merge, and main observation without duplicating the update, then returns Commit READY. Dev Orchestrator dispatches Dev Backlog Steward exactly once for the distinct terminal COMPLETED update and verifies that the GitHub manager closed the issue.
+The GitHub issue remains the work-item identifier. The feature-branch Commit skill publishes a GitHub pull request as the delivery reference and returns Commit AWAITING_REVIEW. Dev Orchestrator directly applies the GitHub manager once to persist that nonterminal state. The same Commit delivery resumes through required review, checks, pull-request merge, and main observation without duplicating the update, then returns Commit READY. Dev Orchestrator directly applies the GitHub manager for the distinct terminal COMPLETED update and verifies that it closed the issue.
 
 ### GitLab plus direct main
 
-The GitLab create skill creates one issue and returns its issue URL. The GitLab manage skill records ownership without a shadow backlog file. The direct-main Commit skill integrates and verifies the commit, observes it on main, and returns Commit READY. Dev Orchestrator dispatches Dev Backlog Steward exactly once for Persistence closure, then verifies that the GitLab manager recorded evidence and closed the issue according to project convention.
+The GitLab create skill creates one issue and returns its issue URL. The GitLab manage skill records ownership without a shadow backlog file. The direct-main Commit skill integrates and verifies the commit, observes it on main, and returns Commit READY. Dev Orchestrator directly applies the GitLab manager for Persistence closure, then verifies that it recorded evidence and closed the issue according to project convention.
 
 ### GitLab plus feature branch
 
-The GitLab issue remains the work-item identifier. The feature-branch Commit skill publishes a GitLab merge request as the delivery reference and returns Commit AWAITING_REVIEW. Dev Orchestrator dispatches Dev Backlog Steward exactly once to persist that nonterminal state. The same Commit delivery resumes through required review, checks, merge-request merge, and main observation without duplicating the update, then returns Commit READY. Dev Orchestrator dispatches Dev Backlog Steward exactly once for the distinct terminal COMPLETED update and verifies that the GitLab manager closed the issue.
+The GitLab issue remains the work-item identifier. The feature-branch Commit skill publishes a GitLab merge request as the delivery reference and returns Commit AWAITING_REVIEW. Dev Orchestrator directly applies the GitLab manager once to persist that nonterminal state. The same Commit delivery resumes through required review, checks, merge-request merge, and main observation without duplicating the update, then returns Commit READY. Dev Orchestrator directly applies the GitLab manager for the distinct terminal COMPLETED update and verifies that it closed the issue.
 
 ### Azure DevOps and Jira placeholders
 

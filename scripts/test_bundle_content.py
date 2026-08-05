@@ -1499,7 +1499,7 @@ class BundleContentTests(unittest.TestCase):
             "The user may answer and continue in that canonical conversation.",
             "must not require the user to repeat the answer in the parent conversation",
             "User Action Required -> Ready",
-            "its Dev Backlog Steward child records Ready -> Starting",
+            "the parent Coordinator decides and records Ready -> Starting for that same Thread",
             "preserve that work as out-of-sequence evidence",
             "Do not accept, reject, delete, duplicate, or reimplement it merely because of its timing.",
             "Resume the same Thread only after Running is durable",
@@ -1530,7 +1530,6 @@ class BundleContentTests(unittest.TestCase):
         role_paths = (
             ROLES_ROOT / "dev-activities" / "dev-backlog-coordinator.role.yaml",
             ROLES_ROOT / "dev-activities" / "dev-orchestrator.role.yaml",
-            ROLES_ROOT / "dev-activities" / "dev-backlog-steward.role.yaml",
         )
         for role_path in role_paths:
             with self.subTest(role=role_path.name):
@@ -2370,22 +2369,15 @@ class BundleContentTests(unittest.TestCase):
                 }
             )
         )
-        self.assertIn("dev-backlog-steward", orchestrator["agentDependencies"])
+        self.assertNotIn("dev-backlog-steward", orchestrator["agentDependencies"])
 
         backlog_steward = load_yaml_object(
             ROLES_ROOT / "dev-activities" / "dev-backlog-steward.role.yaml"
         )
-        backlog_decisions = "\n".join(
-            backlog_steward["instructions"]["decisions"]
-        )
-        self.assertIn(
-            "not a creation-time User Action Required condition",
-            backlog_decisions,
-        )
-        self.assertIn(
-            "only after execution reaches a distinct user-owned decision",
-            backlog_decisions,
-        )
+        backlog_text = json.dumps(backlog_steward, sort_keys=True)
+        self.assertIn("provider-wide", backlog_text)
+        self.assertIn("Do not perform Ready -> Starting", backlog_text)
+        self.assertIn("ordinary lifecycle operations remain with the authorized Coordinator or Orchestrator", backlog_text)
         backlog_skills = {
             skill_name: metadata
             for entry in backlog_steward["skills"]
@@ -2504,13 +2496,13 @@ class BundleContentTests(unittest.TestCase):
         for phrase in (
             "Apply or resume the effective Commit-selected skill to the accepted direct or combined commit only after independent review and source verification pass.",
             "The effective Commit-selected skill returns the prepared terminal delivery handoff",
-            "dispatch dev-backlog-steward exactly once to record the nonterminal AWAITING_REVIEW lifecycle update",
+            "directly record the nonterminal AWAITING_REVIEW lifecycle update through the effective Persistence-selected management skill",
             "reconcile that recorded update instead of dispatching a duplicate",
             "Do not request lifecycle COMPLETED while Commit is AWAITING_REVIEW",
             "Resume the same effective Commit-selected skill through review corrections, checks, dependency order, merge, and main observation until it returns READY or BLOCKED.",
-            "dispatch dev-backlog-steward exactly once for the distinct terminal COMPLETED update",
+            "directly apply the effective Persistence-selected management skill for the distinct terminal COMPLETED update",
             "verify the selected manager's recorded closure and the terminal central-contract conversation-title handoff before reporting READY",
-            "For provider none, do not dispatch dev-backlog-steward",
+            "For provider none, do not mutate Persistence",
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, orchestrator_text)
@@ -2522,7 +2514,7 @@ class BundleContentTests(unittest.TestCase):
             "Apply or resume the effective Commit-selected skill to the accepted direct or combined commit"
         )
         persistence_index = workflow_text.index(
-            "dispatch dev-backlog-steward exactly once to record the nonterminal AWAITING_REVIEW lifecycle update"
+            "directly record the nonterminal AWAITING_REVIEW lifecycle update through the effective Persistence-selected management skill"
         )
         self.assertLess(candidate_index, review_index)
         self.assertLess(review_index, commit_index)
@@ -2550,13 +2542,11 @@ class BundleContentTests(unittest.TestCase):
                 if "provider none" in response:
                     finalization_index = response.index("task-local COMPLETED finalization")
                 else:
-                    terminal_dispatch = "dev-backlog-steward exactly once"
+                    terminal_dispatch = "Persistence manager directly"
                     self.assertIn(terminal_dispatch, response)
-                    self.assertIn("verified the selected manager's recorded closure", response)
+                    self.assertIn("recorded closure", response)
                     finalization_index = response.rindex(terminal_dispatch)
-                    closure_index = response.index(
-                        "verified the selected manager's recorded closure"
-                    )
+                    closure_index = response.index("recorded closure")
                     self.assertLess(finalization_index, closure_index)
                 self.assertLess(commit_ready_index, finalization_index)
 
@@ -7211,7 +7201,6 @@ class BundleContentTests(unittest.TestCase):
                 "dev-code-reviewer",
                 "dev-verifier",
                 "dev-merge-coordinator",
-                "dev-backlog-steward",
             ),
             "methodology-maintainer": (
                 "dev-skill-lint-reviewer",
@@ -7459,14 +7448,14 @@ class BundleContentTests(unittest.TestCase):
             " ".join(instruction_sections["failureHandling"]).split()
         )
         self.assertIn(
-            "Route every defect confirmed by an independent reviewer, verifier, runtime "
-            "evidence, or accepted reproduction through dev-backlog-steward exactly once "
-            "for durable provider recording.",
+            "Record every defect confirmed by an independent reviewer, verifier, runtime "
+            "evidence, or accepted reproduction once through the effective Persistence-selected "
+            "management skill.",
             normalized_boundaries,
         )
         self.assertIn(
-            "For each confirmed defect, dispatch dev-backlog-steward exactly once with "
-            "the reproduction evidence and a runnable next action.",
+            "For each confirmed defect, apply the effective Persistence-selected management "
+            "skill once with the reproduction evidence and a runnable next action.",
             normalized_workflow,
         )
         self.assertIn(
@@ -7510,7 +7499,7 @@ class BundleContentTests(unittest.TestCase):
             defect_example["plausibleResponse"].split()
         ).lower()
         for phrase in (
-            "dispatched dev-backlog-steward exactly once",
+            "applied the selected persistence manager directly",
             "existing durable defect",
             "no second delivery task was created",
             "unconfirmed baseline warning",
@@ -7544,7 +7533,7 @@ class BundleContentTests(unittest.TestCase):
             ).lower()
             adapter_required_policy = (
                 *required_policy,
-                "exactly once for durable provider recording",
+                "once through the effective persistence-selected management skill",
                 "if provider none, unset, an unsupported provider, or missing user authority prevents durable recording",
                 "preserve the finding and report blocked for the required selection or authority",
                 "if durable recording of a confirmed defect fails, is ambiguous, lacks a usable provider, or cannot reconcile a duplicate safely",

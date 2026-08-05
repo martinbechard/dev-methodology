@@ -29,7 +29,7 @@ the requested atomic provider transition.
 
 ## File Authority
 
-Only the primary worktree on main may change canonical files under backlog. The repository-relative active or archive path is work_item_id and provider_reference. After archival, the destination path becomes the provider_reference.
+Only the primary worktree on main may change canonical files under backlog. The file provider resolves an opaque Work Item ID to its current active or archive path. Moving the backing file does not change the Work Item ID.
 
 Another worktree may inspect backlog but must not create, transition, or archive an item. If the primary worktree is not on main, it must not change the item. Return BLOCKED with the observed worktree, branch, requested transition, and required handoff. Never create another queue elsewhere.
 
@@ -204,15 +204,15 @@ section.
 
 ## Stalled Investigation And Disposition
 
-Only Dev Backlog Coordinator decides that current evidence justifies Stalled. Its Dev
-Backlog Steward child performs the atomic provider mutation. The Dev Backlog Watchdog may
+Only Dev Backlog Coordinator decides that current evidence justifies Stalled. The Coordinator
+directly applies this skill for the atomic provider mutation. The Dev Backlog Watchdog may
 report the evidence but cannot request or perform the transition independently.
 
 Set Status to Stalled. Preserve the canonical conversation, root Agent Task, branch, worktree,
 commits, current Owner, and coordination evidence as recovery context. Record the complete
 STALLED transition evidence above. The caller owns any capacity reconciliation.
 
-The Coordinator chooses one deterministic disposition and its Steward child performs the
+The Coordinator chooses one deterministic disposition and applies this skill for the
 provider mutation:
 
 1. Stalled -> Running only when the caller supplies its authorized active-eligibility
@@ -229,15 +229,15 @@ provider mutation:
 
 Neither a watchdog observation nor Stalled state alone authorizes a lifecycle mutation.
 A retained Stalled owner must not resume repository or provider mutation until Dev Backlog
-Coordinator decides Stalled -> Running and Dev Backlog Steward records that transition.
+Coordinator decides and directly records Stalled -> Running through this skill.
 Do not jump from Stalled to Running for a new owner, after ownership ended, or without
 demonstrated resumed progress.
 
 ## Blocked Handoff And Resumption
 
-Dev Backlog Coordinator is the lifecycle decision owner for Blocked. Dev Backlog Steward
-performs the atomic provider mutation after the Coordinator validates a known preventing
-cause and owns the next coordination or recovery action. Set Status to Blocked and Owner to Unowned.
+Dev Backlog Coordinator is the lifecycle decision owner for Blocked and directly applies this
+skill for the atomic provider mutation after validating a known preventing cause and owning
+the next coordination or recovery action. Set Status to Blocked and Owner to Unowned.
 Retain the blocker, blocker owner, unblock condition, requested Coordinator
 action, evidence, and acceptance criteria. Commit those fields. Do not use Blocked merely
 because an item is quiet, slow, or suspected to be stalled.
@@ -294,7 +294,7 @@ Work performed before User Action Required -> Ready -> Starting -> Running recon
 
 ## Reconcile Work Item Completion
 
-Only the work-item conversation's root Dev Orchestrator may request terminal completion, and only its Dev Backlog Steward child performs the atomic status-and-archive mutation. Only record COMPLETED when all of these exist:
+Only the work-item conversation's root Dev Orchestrator may perform terminal completion. It directly applies this skill for the atomic status-and-archive mutation after Commit returns READY. Only record COMPLETED when all of these exist:
 
 - The requested delivery or result exists.
 - Required verification and independent review succeeded or an explicitly accepted omission is recorded.
