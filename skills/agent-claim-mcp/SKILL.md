@@ -15,6 +15,8 @@ Follow agent-claim for all claim rules. This skill explains only how to call the
 
 Do not configure the current mcp-agent-ops provider as the claim helper yet. It has not been verified to support claim deadlines or claim_extend_deadline. It also lacks verified parity evidence for journal maintenance and contention reporting.
 
+No MCP implementation of this work-item lifecycle contract is currently available. The operation schemas below define the required interface for a future provider; they are not evidence that the current provider implements it.
+
 ## Helper Setup
 
 Project Configurator must verify every operation and result field in this skill before selecting an MCP server. After selection, use only that server for claim operations.
@@ -110,6 +112,8 @@ Resource acquisition:
 ## Extend Claim
 
 Call claim_extend with repository, claim_id, and the net-new scope. A resource extension also requires resource_class, resource_id, expected_duration_seconds, and requested_hard_stop_duration_seconds.
+
+A work-item claim cannot be extended with path or resource scope. Acquire each operational path or resource claim separately when its own Claim Event occurs.
 
 ```json
 {

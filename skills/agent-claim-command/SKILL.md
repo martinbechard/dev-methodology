@@ -119,6 +119,8 @@ python3 "$CLAIM_SCRIPT" --repo . acquire \
 
 Extend requires claim-id and the net-new scope. A resource extension also requires resource-class, resource-id, expected-duration-seconds, and requested-hard-stop-duration-seconds.
 
+A work-item claim cannot be extended with path or resource scope. Acquire each operational path or resource claim separately when its own Claim Event occurs.
+
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . extend \
   --claim-id task-123 \

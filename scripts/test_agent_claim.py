@@ -505,6 +505,38 @@ class AgentClaimTests(unittest.TestCase):
             ),
         )
 
+    def test_work_item_claim_rejects_operational_scope_extensions_without_registry_mutation(
+        self,
+    ) -> None:
+        extension_cases = (
+            ("file", ["--file", "README.md"]),
+            ("resource", self.timed_resource_arguments()),
+        )
+        for label, extension_arguments in extension_cases:
+            with self.subTest(scope=label):
+                claim_id = f"work-item-extend-{label}"
+                acquired = self.claim(
+                    *self.work_item_arguments(claim_id, f"item-extend-{label}")
+                )
+                self.assertEqual(0, acquired.returncode, acquired.stderr)
+                registry_before = self.registry_path().read_bytes()
+
+                rejected = self.claim(
+                    "extend",
+                    "--claim-id",
+                    claim_id,
+                    *extension_arguments,
+                )
+
+                self.assertEqual(1, rejected.returncode)
+                result = self.output(rejected)
+                self.assertEqual("INVALID_WORK_ITEM_SCOPE", result["outcome"])
+                self.assertEqual(
+                    "work_item_operational_extension",
+                    result["rejection"]["reason"],
+                )
+                self.assertEqual(registry_before, self.registry_path().read_bytes())
+
     def test_report_groups_versioned_work_item_segments_and_diagnostics(self) -> None:
         acquire_time = {"AGENT_CLAIM_TEST_NOW": "2026-08-05T10:00:00Z"}
         release_time = {"AGENT_CLAIM_TEST_NOW": "2026-08-05T10:05:00Z"}
@@ -634,21 +666,52 @@ class AgentClaimTests(unittest.TestCase):
             "done",
             environment=inside_window,
         )
+        before_window_events = [
+            json.loads(line)
+            for line in (
+                self.hot_directory() / "2026-08-03.jsonl"
+            ).read_text(encoding="utf-8").splitlines()
+        ]
+        self.write_daily_events(
+            "2026-08-03",
+            [
+                *before_window_events,
+                self.synthetic_event(
+                    "orphan-old-acquire",
+                    "2026-08-03T11:00:00.000000Z",
+                    "acquire",
+                    "PRIMARY",
+                    "orphan-old",
+                    work_item_id="item-orphan-old",
+                    activity="work",
+                    incarnation_id="incarnation-orphan-old",
+                    agent="owner-orphan-old",
+                    root_task_id="root-orphan-old",
+                ),
+            ],
+        )
 
         report = self.output(
             self.claim("report", "--since", "1d", environment=report_time)
         )["work_items"]
 
         self.assertEqual(
-            ["item-live-old", "item-released-now"],
+            ["item-live-old", "item-orphan-old", "item-released-now"],
             [item["work_item_id"] for item in report["items"]],
         )
         live_segment = report["items"][0]["segments"][0]
-        released_segment = report["items"][1]["segments"][0]
+        orphan_segment = report["items"][1]["segments"][0]
+        released_segment = report["items"][2]["segments"][0]
         self.assertTrue(live_segment["open"])
         self.assertTrue(live_segment["live"])
+        self.assertTrue(orphan_segment["open"])
+        self.assertFalse(orphan_segment["live"])
         self.assertFalse(released_segment["open"])
         self.assertEqual("done", released_segment["disposition"])
+        self.assertEqual(
+            ["orphan-old-acquire"],
+            report["diagnostics"]["missing_release_event_ids"],
+        )
         self.assertEqual([], report["diagnostics"]["release_without_acquisition_event_ids"])
 
     def test_release_cleans_only_the_exact_claim_without_git_or_delivery_validation(

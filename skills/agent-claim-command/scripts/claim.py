@@ -1769,6 +1769,19 @@ def _extend(args: argparse.Namespace) -> int:
         if claim is None:
             event = _event("extend", "CLAIM_NOT_FOUND", args, requested_scope=requested_scope)
             return _journaled_result(ERROR, common_directory, event, claim_id=args.claim_id)
+        if claim.get("work_item_id") is not None and _scope_has_values(requested_scope):
+            error = _WorkItemError(
+                "A work-item claim cannot be extended with path or resource scope; acquire a separate operational claim.",
+                "work_item_id",
+                "work_item_operational_extension",
+            )
+            return _invalid_work_item_result(
+                common_directory,
+                "extend",
+                args,
+                error,
+                claim,
+            )
         if (
             _scope_is_resource_only(_claim_scope(claim))
             and requested_scope["file_domain"] in {"backlog", "all_files"}
@@ -2658,7 +2671,7 @@ def _work_item_report(
             )
             segment["live"] = identity in live_identities
             acquired_at = _parse_timestamp(str(segment["acquired_at"]))
-            if segment["open"] and not segment["live"] and start <= acquired_at <= end:
+            if segment["open"] and not segment["live"] and acquired_at <= end:
                 missing_release_event_ids.append(str(segment["acquisition_event_id"]))
 
     filtered_items: list[dict[str, Any]] = []

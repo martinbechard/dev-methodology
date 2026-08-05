@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -48,6 +49,21 @@ CANONICAL_ACQUIRE_OUTCOMES = frozenset({
     "DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED",
     "INVALID_SCOPE",
 })
+
+
+def _markdown_section(document: str, heading: str) -> str:
+    """Return one level-two Markdown section without content from its siblings."""
+
+    marker = f"## {heading}\n"
+    start = document.index(marker) + len(marker)
+    end = document.find("\n## ", start)
+    return document[start:] if end < 0 else document[start:end]
+
+
+def _fenced_examples(section: str, language: str) -> list[str]:
+    """Return fenced examples from one already isolated Markdown section."""
+
+    return re.findall(rf"```{language}\n(.*?)\n```", section, flags=re.DOTALL)
 
 
 class _AmbiguousDispatch(RuntimeError):
@@ -958,29 +974,101 @@ class AgentClaimInterfaceTests(unittest.TestCase):
 
         command = COMMAND_SKILL.read_text(encoding="utf-8")
         mcp = MCP_SKILL.read_text(encoding="utf-8")
-        equivalent_terms = (
-            ("--work-item-id", '"work_item_id"'),
-            ("--activity", '"activity"'),
-            ("--disposition", '"disposition"'),
-            ("--blocker-reference", '"blocker_reference"'),
-            ("CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED", "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED"),
-            ("work_item_id", "work_item_id"),
-            ("activity", "activity"),
-            ("work_items", "work_items"),
-            ("missing release", "missing release"),
-            ("release without acquisition", "release without acquisition"),
-            ("contradictory events", "contradictory events"),
-            ("historical non-work-item events", "historical non-work-item events"),
-        )
-        for command_term, mcp_term in equivalent_terms:
-            with self.subTest(command_term=command_term, mcp_term=mcp_term):
-                self.assertIn(command_term, command)
-                self.assertIn(mcp_term, mcp)
+        command_acquire = _markdown_section(command, "Acquire Claim")
+        command_release = _markdown_section(command, "Release Claim")
+        command_report = _markdown_section(command, "Report Claim Contention")
+        mcp_availability = _markdown_section(mcp, "Current Availability")
+        mcp_acquire = _markdown_section(mcp, "Acquire Claim")
+        mcp_release = _markdown_section(mcp, "Release Claim")
+        mcp_report = _markdown_section(mcp, "Report Claim Contention")
 
-        for disposition in ("done", "blocked", "handoff"):
-            with self.subTest(disposition=disposition):
-                self.assertIn(disposition, command)
-                self.assertIn(disposition, mcp)
+        command_acquire_examples = _fenced_examples(command_acquire, "bash")
+        mcp_acquire_examples = [
+            json.loads(example) for example in _fenced_examples(mcp_acquire, "json")
+        ]
+        self.assertEqual(
+            {
+                "repo",
+                "claim-id",
+                "agent",
+                "task",
+                "root-task-id",
+                "work-item-id",
+                "activity",
+            },
+            set(re.findall(r"--([a-z-]+)", command_acquire_examples[0])),
+        )
+        self.assertEqual(
+            {
+                "repository",
+                "claim_id",
+                "agent",
+                "task",
+                "root_task_id",
+                "work_item_id",
+                "activity",
+            },
+            set(mcp_acquire_examples[0]),
+        )
+        for prohibited in ("--file", "--project-files", "--resource"):
+            self.assertNotIn(prohibited, command_acquire_examples[0])
+        for prohibited in ("files", "project_files", "resources"):
+            self.assertNotIn(prohibited, mcp_acquire_examples[0])
+        self.assertIn("cannot be combined with path or resource scope", command_acquire)
+        self.assertIn("cannot be combined with path or resource scope", mcp_acquire)
+        self.assertIn("CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED", command_acquire)
+        self.assertIn("CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED", mcp_acquire)
+
+        command_release_examples = _fenced_examples(command_release, "bash")
+        command_work_item_releases = command_release_examples[1].split("\n\n")
+        mcp_release_examples = [
+            json.loads(example) for example in _fenced_examples(mcp_release, "json")
+        ]
+        self.assertEqual(
+            {"repo", "claim-id", "disposition"},
+            set(re.findall(r"--([a-z-]+)", command_work_item_releases[0])),
+        )
+        self.assertEqual(
+            {"repo", "claim-id", "disposition", "blocker-reference"},
+            set(re.findall(r"--([a-z-]+)", command_work_item_releases[1])),
+        )
+        self.assertEqual(
+            {"repository", "claim_id", "disposition"},
+            set(mcp_release_examples[1]),
+        )
+        self.assertEqual(
+            {"repository", "claim_id", "disposition", "blocker_reference"},
+            set(mcp_release_examples[2]),
+        )
+        self.assertEqual("handoff", mcp_release_examples[1]["disposition"])
+        self.assertEqual("blocked", mcp_release_examples[2]["disposition"])
+        for section in (command_release, mcp_release):
+            self.assertIn("INVALID_WORK_ITEM_RELEASE", section)
+            self.assertIn("RELEASED journal event", section)
+            self.assertIn("prohibited for done and handoff", section)
+            self.assertIn("legacy release", section)
+
+        command_report_examples = _fenced_examples(command_report, "bash")
+        mcp_report_examples = [
+            json.loads(example) for example in _fenced_examples(mcp_report, "json")
+        ]
+        self.assertEqual(
+            {"repo", "since", "format"},
+            set(re.findall(r"--([a-z-]+)", command_report_examples[0])),
+        )
+        self.assertEqual({"repository", "since"}, set(mcp_report_examples[0]))
+        for section in (command_report, mcp_report):
+            self.assertIn("work_items", section)
+            self.assertIn("schema_version 1", section)
+            self.assertIn("missing release", section)
+            self.assertIn("release without acquisition", section)
+            self.assertIn("contradictory events", section)
+            self.assertIn("historical non-work-item events", section)
+
+        self.assertIn(
+            "No MCP implementation of this work-item lifecycle contract is currently available.",
+            mcp_availability,
+        )
 
     def test_portable_command_is_owned_by_command_adapter(self) -> None:
         """Ship the command implementation only with its independently distributable adapter."""
