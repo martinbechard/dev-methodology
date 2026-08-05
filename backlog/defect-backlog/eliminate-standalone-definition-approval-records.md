@@ -233,3 +233,17 @@ Methodology Review: Blocked solely by the configured-root skill_validate rejecti
 Resource Disposition: No source or integration mutation performed; candidate, branch, worktree, review, and verification evidence are preserved.
 
 Safe-to-Resume Assessment: Safe only after the stated unblock condition is satisfied and the normal Blocked -> Ready -> Starting -> Running lifecycle sequence is recorded for this same canonical task.
+
+## Supersession Reconciliation
+
+Reconciled At: 2026-08-05T16:12:59Z.
+
+Superseded By: backlog/defect-backlog/scope-skill-under-test-protection-to-agent-tests.md.
+
+Disposition: This item remains Blocked and unarchived. The newer item supersedes this item's conflicting repository-wide approval-policy and preserved-candidate outcome.
+
+Candidate Disposition: Candidate 7cca88fee05db053e452729fcc094cc8309623ed must not resume or integrate.
+
+Reusable Evidence: Shared evidence for checker-interface removal and approval-record deletion may be reused only when it is consistent with the newer item's test-scoped policy.
+
+Coordinator Next Action: Dispatch and reconcile the newer item as the authoritative correction; do not resume this item's preserved global-policy delivery.

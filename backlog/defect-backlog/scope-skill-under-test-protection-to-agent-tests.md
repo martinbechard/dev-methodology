@@ -1,6 +1,6 @@
 # Scope Skill-Under-Test Protection To Agent Tests
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -77,3 +77,29 @@ Coordinate overlapping removal of the checker interface and approval-record file
 ## Open Questions
 
 None. The existing `evals/agent-tests/AGENTS.md` is the confirmed common nested protocol for agent-evaluation work.
+
+## Current Starting Handoff Evidence
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Launch Reservation: One root Dev Orchestrator launch reservation for the highest-priority corrected-scope item.
+
+Normalized Objective: Scope skill-under-test protection to agent tests.
+
+Dispatch Time: 2026-08-05T16:12:59Z.
+
+Intended Root Role: Root Dev Orchestrator.
+
+Launch Result: Not attempted.
+
+Canonical Conversation: None.
+
+Owner: Unowned pending accepted root.
+
+Last Contact: 2026-08-05T16:12:59Z; parent Coordinator reservation recorded by Dev Backlog Steward.
+
+Next Reconciliation: No later than 2026-08-05T16:27:59Z.
+
+Required Next Lifecycle Transition: A root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
