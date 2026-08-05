@@ -1,6 +1,6 @@
 # Archive Terminal Work-Item Series
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -108,6 +108,40 @@ Exact user wording and provenance:
 - "ok create a workitem for this" in the same task after the exact governed source skills/manage-file-work-items/SKILL.md and its supported generated mirror and focused tests were identified.
 
 The approval covers exactly the governed canonical source listed above and only the allowed dependent artifacts listed separately. Additional governed paths require new explicit, scope-specific user approval.
+
+## Blocked Handoff
+
+Transition: Running -> Blocked.
+
+Blocked At: 2026-08-05T15:15:02Z.
+
+Coordinator Authorization: Parent Dev Backlog Coordinator 019fb057-1767-7ef2-b5fa-41f4417b20b3 validated the known-blocker handoff.
+
+Canonical Thread and Root Agent Task: 019faeef-e932-7352-a53d-fdb1535f5994.
+
+Owner: Unowned.
+
+Preserved Candidate: clean candidate HEAD 6e7755614aaa71b6fb1cd9097ac20b9e36b26bd5 on branch codex/archive-terminal-work-item-series-019faeef in /Users/martinbechard/.codex/worktrees/2d69/dev-methodology.
+
+Earlier Candidate Commits: 5ea1dff1dcc96a2e46a0d17a983c6cc6ee90704b and 44ac47ff085bc0d4006b931908c2dac856078a7b.
+
+Exact Blocker: Final independent source review reproduced URI-style Markdown links being misclassified as local ordinary children. The reporter invokes target-state/stat, emits a broken finding, and suppresses terminal detection, violating the nonordinary-target no-access boundary after both bounded correction attempts.
+
+Reproduction: state_calls=1, broken=True, terminal_active=False.
+
+Blocker Owner: Parent Dev Backlog Coordinator / next authorized correction owner.
+
+Unblock Condition: An explicitly Coordinator-authorized new correction cycle or later replacement work rejects URI scheme/netloc, whitespace, query, and fragment before local Path construction and adds a focused no-target-state regression, then repeats fresh review and verification.
+
+Requested Next Action: Preserve the candidate; do not integrate.
+
+Correction-Attempt History: Two bounded correction attempts were completed. The correction claim correct-terminal-series-report-019faeef-2 was released in event cba9283b-d652-4c24-ab1b-4e0fc990cf73. No live task claim remains.
+
+Evidence: Methodology review otherwise passed. Final source review failed. Fifty-five focused reporter tests plus contract, mirror, py_compile, real-report, and diff checks passed, but they do not override the failing review. The candidate worktree is clean.
+
+Non-Blocking Baseline: Five pre-existing missing-backlink diagnostics are out of scope for this item.
+
+Permitted Resumption Transition: Blocked -> Ready only after the unblock condition is satisfied and the Coordinator records the recovery transaction.
 
 ## Notes
 
