@@ -1,6 +1,6 @@
 # Align Work-Item Management Provider Skills
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -8,7 +8,7 @@ Provider: file
 
 Provider Reference: backlog/feature-backlog/apply-object-oriented-skill-group-design/align-work-item-management-provider-skills.md
 
-Owner: Unowned
+Owner: Unowned pending accepted root
 
 Completion: direct-main
 
@@ -177,6 +177,20 @@ Transition: User Action Required -> Ready.
 Recorded Answer and Provenance: Answered on 2026-08-05 in the parent coordination Thread /root/apply_skill_group_design_backlog. The user authorized committing all remaining document changes. Primary main is clean at 90f68d037d345da896a476dbd43f83dcaa3b3bae, containing the formerly protected design/object-oriented-agent-and-skill-model.md change only, and that project's project-files claim was released.
 
 Disposition: The direct-main cleanliness condition is satisfied. This item returns to its typed series folder as Ready with Owner Unowned. The existing canonical Thread /root/apply_skill_group_design_backlog/align_work_item_management_providers and Root Agent Task remain preserved; no Starting reservation or Running acceptance is created by this provider transaction.
+
+## Current Resumption Dispatch Reservation
+
+Transition: Ready -> Starting.
+Parent Coordination Thread: /root/apply_skill_group_design_backlog.
+Launch Reservation: One distinct bounded resumption reservation for the preserved canonical work-item Thread.
+Normalized Objective: Align the work-item management provider skills with the approved object-oriented design and update their individual evaluations.
+Dispatch Time: 2026-08-05T14:35:08Z.
+Intended Root Dev Orchestrator Role: Dev Orchestrator.
+Canonical Thread: /root/apply_skill_group_design_backlog/align_work_item_management_providers.
+Canonical Root Agent Task: /root/apply_skill_group_design_backlog/align_work_item_management_providers.
+Owner: Unowned pending accepted root.
+Current Launch Evidence: Coordinator-authorized resumption reservation recorded under exact-file claim reserve-resumed-management-provider-019fb1, acquired with outcome SHARED_CHECKOUT_ACQUIRED and event 9a77a464-d691-4f0b-8c83-3f00c3c73775.
+Required Acknowledgement: The preserved canonical root Dev Orchestrator must acknowledge this exact reservation and separately record Starting -> Running with the same canonical identities before further repository mutation. Do not create a replacement Thread.
 
 ## Preserved Delivery Evidence
 
