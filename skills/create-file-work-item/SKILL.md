@@ -27,7 +27,9 @@ Another worktree may inspect backlog but must not create the item. If the primar
 
 Resolve the final canonical path first, then create it with the platform's exclusive-create operation so the write fails when the path already exists. Never preflight with an existence check followed by an ordinary overwrite-capable write. Write the complete intended bytes through that exclusive descriptor, synchronize and close it, validate the created item, and remove only that newly created path if validation or commit fails. An existing target means duplicate reconciliation is required; do not overwrite or retry with a different name.
 
-Keep backlog creation separate from implementation ownership. When creation immediately authorizes delivery, record and commit the READY item first.
+Keep backlog creation separate from implementation ownership. Record and commit the complete
+canonical lifecycle first: Ready when no hard prerequisite remains, or Blocked when the
+authorized item is waiting for one.
 
 ## Exact Backlog Creation Transaction
 
@@ -69,7 +71,14 @@ A manifest-role, coordination-evidence, Git-argument, changed-path, committed-by
 
 Start each item from [file-work-item-template.md](../route-documentation-work/assets/templates/file-work-item-template.md). Replace every TODO instruction with source-backed content. Remove every guidance comment before commit. Remove an optional Series, User Action Required, or Notes section when it does not apply; do not leave empty headings or placeholder boilerplate.
 
-- Ready items keep Status: Ready and remain dispatchable while Open Questions contain only agent-resolvable technical uncertainty.
+- Before assigning Ready, resolve every declared hard dependency by immutable Work Item ID
+  across the active and terminal provider folders. Ready items have no unmet hard
+  prerequisite and remain dispatchable while Open Questions contain only agent-resolvable
+  technical uncertainty.
+- When authorized work has an unmet hard dependency, create it in its typed active folder
+  with Status: Blocked and Owner: Unowned. Record the dependency, the exact evidence that
+  will satisfy it, the blocker owner, and the observable Blocked -> Ready condition. Do not
+  create Ready and rely on a downstream dispatcher or report to reinterpret it.
 - User Action Required items keep the complete user question, reason, resolution, and unattended-work boundary in the item body.
 - Holding items keep Status: Holding and record the deferral authority and resumption condition without inventing a user question.
 - Related series children keep the optional Series field with the canonical repository-relative index.md path; standalone items remove it.
@@ -122,7 +131,13 @@ Promote an idea only through a deliberate user-authorized operation:
 7. Validate both complete files, destination rules, and links in both directions.
 8. Construct the exact two-path manifest with the retained source role, exclusive destination role, and atomic rationale. Execute only the Future Idea promotion shape in Exact Backlog Creation Transaction, including resource coordination for both exact paths, exact Git argument vectors, the path-limited commit, immutable proof, and unrelated-state preservation.
 
-Promotion does not copy the idea's optional revisit trigger into lifecycle scheduling. The promoted work item receives Status: Ready in its typed active folder when promotion authorizes active work, Status: Holding when the user deliberately defers the recognized work, or Status: User Action Required when a separate genuine user-owned question prevents safe work.
+Promotion does not copy the idea's optional revisit trigger into lifecycle scheduling. Resolve
+every declared hard dependency before selecting the promoted lifecycle. The promoted work
+item receives Status: Ready in its typed active folder only when promotion authorizes active
+work and no hard prerequisite remains, Status: Blocked in that typed folder when an authorized
+item is waiting for a hard dependency, Status: Holding when the user deliberately defers the
+recognized work, or Status: User Action Required when a separate genuine user-owned question
+prevents safe work.
 
 ## Related Item Series
 
@@ -169,11 +184,21 @@ Do not place an item in backlog/user-action-required merely because the task is 
 
 Do not turn a synthetic evaluation boundary into user-action-required work unless it represents a genuine unresolved project decision. A scenario designed to prove safe blocking is test evidence, not automatically a user obligation.
 
-A direct user request or explicit user authorization is sufficient authority to create an item in its typed active backlog with Status: Ready. This creation classification remains Ready even when discovery predicts that implementation may later reach a governed-definition approval boundary or another separate user-owned decision. Record that anticipated boundary as an implementation constraint or Note without framing it as a pending user question; do not manufacture a creation-time approval question for work the user already requested.
+A direct user request or explicit user authorization is sufficient authority to create an item
+in its typed active backlog. Authority does not satisfy a declared hard dependency. Assign
+Status: Ready only when dependency resolution proves that no hard prerequisite remains;
+otherwise assign Status: Blocked with the dependency and exact unblock condition. A predicted
+governed-definition boundary or other possible future user-owned decision is not by itself a
+hard dependency: record it as an implementation constraint or Note without manufacturing a
+creation-time approval question for work the user already requested.
 
 Use User Action Required at creation when an agent independently identifies definite work, such as a confirmed defect or necessary enhancement, while performing other work and the user has not requested or authorized that new work. Ask whether the newly identified work should proceed before moving it into a typed active backlog. Preserve an uncertain possibility as a Future Idea only when the active workflow explicitly authorizes lightweight capture.
 
-After creation, route a user-requested Ready item to backlog/user-action-required only when execution reaches a distinct concrete user-owned decision, authority grant, action, risk acceptance, or user-held fact that the original request did not resolve. Keep it Ready when ordinary evidence-backed dependencies remain, or route it to backlog/holding when the user explicitly defers it.
+After creation, route a user-requested item to backlog/user-action-required only when execution
+reaches a distinct concrete user-owned decision, authority grant, action, risk acceptance, or
+user-held fact that the original request did not resolve. Keep it Ready while no hard
+prerequisite remains, record it Blocked when an ordinary hard dependency prevents all bounded
+work, or route it to backlog/holding when the user explicitly defers it.
 
 Use Open Questions for unresolved technical matters. Agents resolve ordinary technical uncertainty through discovery, design, review, and verification. Technical questions do not make an otherwise authorized item non-dispatchable.
 
@@ -181,7 +206,12 @@ Treat a question as an invalid User Action Required classification when an agent
 
 ## Governed Definition Approval
 
-When the user explicitly requests creation of a work item whose requested outcome creates or modifies named skills, treat that request as approval for the exact named skill-definition paths resolved from the request and recorded in the work item. Create the item as Ready unless a separate unresolved user-owned decision exists. Do not ask the user to approve those same requested skill definitions again, and do not route the item to User Action Required solely because the recorded paths are governed.
+When the user explicitly requests creation of a work item whose requested outcome creates or
+modifies named skills, treat that request as approval for the exact named skill-definition
+paths resolved from the request and recorded in the work item. Assign Ready only when no hard
+prerequisite remains, or Blocked with the exact dependency and unblock condition otherwise.
+Do not ask the user to approve those same requested skill definitions again, and do not route
+the item to User Action Required solely because the recorded paths are governed.
 
 Use source discovery to identify the smallest governed skill-definition sources needed for the requested named skills and produce an exact canonical-path manifest. Record the exact scope, exact user wording, date, and exact user-message provenance durably in the work-item body as approval granted at creation. List supported generated mirrors and non-governed dependent artifacts separately from the governed canonical sources. Do not substitute a directory, wildcard, artifact category, or general permission for exact path-specific approval.
 
@@ -202,7 +232,9 @@ Before writing, search every active typed folder, backlog/user-action-required, 
 Write each item as a self-contained work package with these fields and sections:
 
 - Title: one clear heading naming the work.
-- Status: Ready for authorized active work, User Action Required for a user-owned answer, or Holding for explicit deferral.
+- Status: Ready for authorized active work without unmet hard prerequisites, Blocked for
+  authorized queued work waiting on a hard dependency, User Action Required for a user-owned
+  answer, or Holding for explicit deferral.
 - Type: Defect, Feature, Analysis, Investigation, or Holding.
 - Provider: file.
 - Work Item ID: the immutable filename stem, without `.md`.
@@ -259,6 +291,8 @@ Before reporting completion:
 - Confirm the item is in the right typed folder and has a stable globally unique Work Item ID.
 - Confirm related multi-item goals have an index.md and linked independently runnable children.
 - Confirm the complete required item shape, source evidence, dependencies, and verification expectations are present.
+- Confirm every declared hard dependency was resolved before lifecycle assignment, Ready has
+  none unmet, and Blocked dependency waits name the exact unblock condition.
 - Confirm Open Questions contain only agent-resolvable uncertainty and do not create a false user-action gate.
 - Confirm governed-definition approval evidence names exact canonical paths and user-message provenance before mutation.
 - Confirm user-action-required content has the complete question and unattended boundary.

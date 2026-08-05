@@ -915,8 +915,13 @@ Do not continue without the answer.
         blocked = rendered[blocked_start:rendered.index("Holding", blocked_start)]
         self.assertNotIn("Python Runtime", runnable)
         self.assertNotIn("Template Conformance", runnable)
-        self.assertIn("Python Runtime", blocked)
-        self.assertIn("Template Conformance", blocked)
+        self.assertNotIn("Python Runtime", blocked)
+        self.assertNotIn("Template Conformance", blocked)
+        self.assertIn(
+            "Invalid lifecycle: Ready status has unmet hard dependencies; "
+            "record Blocked with an exact unblock condition before dispatch.",
+            rendered,
+        )
 
     def test_embedded_local_markdown_link_remains_a_manual_prerequisite(self) -> None:
         """A local link embedded in prose cannot borrow same-stem completion evidence."""

@@ -5,7 +5,7 @@ File path: skills/route-documentation-work/assets/templates/file-work-item-templ
 
 # TODO Work Item Title
 
-Status: TODO Ready, User Action Required, or Holding
+Status: TODO Ready, Blocked, User Action Required, or Holding
 
 Type: TODO Defect, Feature, Analysis, Investigation, or Holding
 
@@ -51,7 +51,7 @@ TODO: Record the request, finding, or decision that authorizes creation. Include
 
 ## Dependencies
 
-> This section prevents work from starting or closing without accounting for prerequisite items. Coordinators and implementers use it during dispatch and status review to list opaque Work Item IDs or explicitly state that none exist.
+> This section prevents work from receiving Ready or closing without accounting for prerequisite items. Coordinators and implementers resolve each opaque Work Item ID before lifecycle assignment: no unmet hard prerequisite permits Ready; an unmet hard prerequisite requires Blocked and an exact unblock condition.
 
 TODO: List Work Item IDs, or state None.
 

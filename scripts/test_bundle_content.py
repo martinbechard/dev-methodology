@@ -6098,12 +6098,12 @@ class BundleContentTests(unittest.TestCase):
             "Why User Input Is Required",
             "Do not place an item in backlog/user-action-required merely because",
             "synthetic evaluation boundary",
-            "This creation classification remains Ready",
-            "do not manufacture a creation-time approval question",
+            "Status: Ready only when dependency resolution proves",
+            "without manufacturing a",
             "an agent independently identifies definite work",
             "Preserve an uncertain possibility as a Future Idea",
             "the user has not requested or authorized that new work",
-            "After creation, route a user-requested Ready item",
+            "After creation, route a user-requested item",
             "the original request did not resolve",
         ):
             with self.subTest(create_guidance=required_guidance):
@@ -6122,6 +6122,36 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(manage_guidance=required_guidance):
                 self.assertIn(required_guidance, manage_text)
         self.assertNotIn("set its active status according to project convention", manage_text)
+
+    def test_file_backlog_dependency_lifecycle_is_canonical_before_dispatch(self) -> None:
+        """Creation, mutation, and coordination enforce one Ready meaning."""
+        create_text = (SKILLS_ROOT / "create-file-work-item" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        manage_text = (SKILLS_ROOT / "manage-file-work-items" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        coordinate_text = (
+            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("Before assigning Ready", create_text)
+        self.assertIn("Status: Blocked", create_text)
+        self.assertIn("observable Blocked -> Ready condition", create_text)
+        self.assertIn("hard dependency", create_text)
+
+        self.assertIn(
+            "Before any creation, promotion, or transition that would write Status: Ready",
+            manage_text,
+        )
+        self.assertIn("Status: Blocked", manage_text)
+        self.assertIn("observable unblock", manage_text)
+        self.assertIn("hard dependency", manage_text)
+
+        self.assertIn("Canonical Status: Ready means", coordinate_text)
+        self.assertIn("reject dispatch", coordinate_text)
+        self.assertIn("provider reconcile that invalid lifecycle to Blocked", coordinate_text)
+        self.assertIn("effective lifecycle beside the provider record", coordinate_text)
 
     def test_file_work_item_template_and_approval_boundary_are_complete(self) -> None:
         """The real fixture enforces item shape and approval behavior."""
@@ -6146,7 +6176,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn(template_name, methodology_text)
 
         ordered_markers = (
-            "Status: TODO Ready, User Action Required, or Holding",
+            "Status: TODO Ready, Blocked, User Action Required, or Holding",
             "Type: TODO Defect, Feature, Analysis, Investigation, or Holding",
             "Provider: file",
             "Work Item ID: TODO immutable filename stem without .md",

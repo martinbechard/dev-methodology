@@ -235,7 +235,13 @@ Obtain queue inventory, lifecycle counts, provider identities, and dispatchable 
 - Provider none: do not inventory, count, create, transition, or close durable provider records; coordinate only the explicit task and retain task-local evidence.
 - Provider UNSET or an unavailable selected skill: stop before durable inventory or mutation and request the missing project selection or capability.
 
-Classify a candidate constraint as a hard prerequisite only when no bounded delivery phase can begin safely before it is satisfied. Treat a note that only predicts later overlap on an exact path, shared resource, or integration lane as coordination-only. An unmet hard prerequisite makes the item dispatch-ineligible. A coordination-only overlap note does not block a safe private-worktree start.
+Classify a candidate constraint as a hard prerequisite only when no bounded delivery phase can
+begin safely before it is satisfied. Treat a note that only predicts later overlap on an exact
+path, shared resource, or integration lane as coordination-only. Canonical Status: Ready means
+the file provider already resolved every hard prerequisite; dispatch does not calculate a
+second "effective eligibility" state. If a Ready record still has an unmet hard dependency,
+reject dispatch and have the provider reconcile that invalid lifecycle to Blocked with an exact
+unblock condition. A coordination-only overlap note does not block a safe private-worktree start.
 
 When a coordination-only note references a Blocked or Unowned item and no live claim protects the relevant exact conflict, the candidate remains dispatch-eligible; the referenced lifecycle and ownership state do not create a hard prerequisite.
 
@@ -683,4 +689,10 @@ Archive a terminal Thread only after the provider disposition is recorded, the w
 
 ## Reporting
 
-For each considered work item, report dispatch eligibility, any unmet hard blocker, any coordination-only overlap constraint, and any deferred edit, shared-resource, or integration event as distinct facts. Also return the provider identity, lifecycle state, owner and canonical task, dependency and claim evidence, current phase, branch and worktree, accepted commit, review and verification results, Commit and Persistence dispositions, cleanup eligibility, and next safe action.
+For each considered work item, report its canonical lifecycle state, any invalid Ready dependency
+state requiring provider reconciliation, any unmet hard blocker, any coordination-only overlap
+constraint, and any deferred edit, shared-resource, or integration event as distinct facts. Do
+not invent an effective lifecycle beside the provider record. Also return the provider identity,
+owner and canonical task, dependency and claim evidence, current phase, branch and worktree,
+accepted commit, review and verification results, Commit and Persistence dispositions, cleanup
+eligibility, and next safe action.

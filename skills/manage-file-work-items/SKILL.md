@@ -126,6 +126,12 @@ If closed items remain in active folders, explicit status is the open or closed 
   opaque Work Item ID. Resolve that ID across active and archive folders before mutation.
   Reject a request that asks this file manager to infer runtime state,
   active eligibility, capacity, or a conversation disposition.
+- Before any creation, promotion, or transition that would write Status: Ready, resolve every
+  declared hard dependency by immutable Work Item ID across active and terminal provider
+  folders. Reject Ready when any hard prerequisite is unresolved or nonterminal. When the
+  caller authorizes dependency reconciliation for queued work, record Status: Blocked,
+  Owner: Unowned, the exact dependency evidence, blocker owner, and observable unblock
+  condition instead of writing an invalid Ready state.
 - For Ready -> Starting, record the caller-supplied parent coordination identity,
   reservation, normalized objective, dispatch time, and Starting handoff evidence atomically.
 - For Starting -> Running, record the caller-supplied canonical conversation identity,
@@ -144,7 +150,13 @@ If closed items remain in active folders, explicit status is the open or closed 
 - Do not own, dispatch, implement, or resolve user-action-required work before the user
   answers its recorded question.
 
-Do not move an independently identified defect, enhancement, or idea into a typed active folder until the user explicitly authorizes that new work or deliberately authorizes Future Idea promotion. A direct request or explicit authorization to perform work creates Status: Ready even when implementation may later encounter a separate user-owned decision. A request only to capture an idea does not authorize promotion. Only after execution reaches a distinct concrete user-owned question that the original request did not resolve may the same item move from Ready to User Action Required. Ordinary dependencies stay with typed active work.
+Do not move an independently identified defect, enhancement, or idea into a typed active folder
+until the user explicitly authorizes that new work or deliberately authorizes Future Idea
+promotion. A direct request or explicit authorization permits active work but does not satisfy
+a hard dependency: create Ready only when every hard prerequisite is satisfied, otherwise
+create Blocked in the typed active folder. A request only to capture an idea does not authorize
+promotion. Only after execution reaches a distinct concrete user-owned question that the
+original request did not resolve may the same item move to User Action Required.
 
 ## Future Ideas Workflow
 
@@ -247,15 +259,21 @@ Resume blocked work through the same provider and startup boundaries as new work
 
 1. Read and retain the complete pre-attempt Blocked item bytes.
 2. Reconcile the blocker and confirm that the recorded unblock condition is satisfied.
-3. In one short provider transaction, restore Status: Ready with Owner: Unowned while retaining the blocker, unblock condition, evidence, and acceptance criteria as recovery history. If this transaction fails, restore the byte-for-byte pre-attempt Blocked item and do not infer execution ownership.
-4. When the parent Dev Backlog Coordinator authorizes Ready -> Starting, claim the exact
+3. Re-resolve every declared hard dependency against current provider state. Continue only
+   when each recorded hard prerequisite has a terminal successful disposition and the exact
+   unblock condition is satisfied. Otherwise leave Blocked unchanged.
+4. In one short provider transaction, restore Status: Ready with Owner: Unowned while retaining
+   the blocker, unblock condition, evidence, and acceptance criteria as recovery history. If
+   this transaction fails, restore the byte-for-byte pre-attempt Blocked item and do not infer
+   execution ownership.
+5. When the parent Dev Backlog Coordinator authorizes Ready -> Starting, claim the exact
    provider path, atomically record and commit its supplied reservation and dispatch
    evidence, then release the claim. This provider transaction does not grant execution
    ownership.
-5. If the new task fails to start or cannot claim the provider, leave the item Starting.
+6. If the new task fails to start or cannot claim the provider, leave the item Starting.
    Record a recovery transition only after the Coordinator supplies its Watchdog-informed
    decision. Do not inspect runtime conversations or choose that disposition here.
-6. When the root Dev Orchestrator authorizes Starting -> Running, claim the exact provider
+7. When the root Dev Orchestrator authorizes Starting -> Running, claim the exact provider
    path, atomically record and commit its
    supplied canonical conversation identifier, root Agent Task id when applicable, owner,
    branch, worktree, and accepted execution evidence, then release the claim.
@@ -337,7 +355,10 @@ Preserve the same Work Item ID at the terminal destination and report that desti
 
 ## Report Work Items
 
-For each considered work item, report dispatch eligibility, any unmet hard blocker, any coordination-only overlap constraint, and any deferred edit, shared-resource, or integration event as distinct facts.
+For each considered work item, report the canonical lifecycle state, any invalid Ready
+dependency state requiring reconciliation, any unmet hard blocker, any coordination-only
+overlap constraint, and any deferred edit, shared-resource, or integration event as distinct
+facts. Do not create a second effective lifecycle beside the provider record.
 
 Return provider file, each opaque Work Item ID with its current diagnostic active or archive path, lifecycle counts, separate Stalled inventory with diagnostic owners and next investigation actions, User Action Required questions, next runnable items, dependency Work Item IDs, blockers, owner, canonical task, delivery evidence, review and check results, main observation, archive evidence, commit references, invalid or duplicate records, and the next safe action. For an explicit Future Ideas operation, also return the idea paths, validation findings, revisit triggers, and promotion links without adding them to work-item counts.
 

@@ -643,7 +643,7 @@ def _read_future_ideas(
 
 
 def _reconcile(items: list[_Item]) -> None:
-    """Resolve dependency evidence and effective dispatch eligibility in place."""
+    """Resolve dependency evidence and validate canonical dispatch lifecycle in place."""
     completed = {item.work_item_id for item in items if item.queue == "completed"}
     known = {item.work_item_id for item in items}
     for item in items:
@@ -672,7 +672,10 @@ def _reconcile(items: list[_Item]) -> None:
                     f"Unmet dependency: {dependency} is not in the completed archive."
                 )
         if item.queue == "active" and item.status == "Ready" and item.unmet_dependencies:
-            item.anomalies.append("Ready status has unmet dependencies and is not effectively eligible.")
+            item.anomalies.append(
+                "Invalid lifecycle: Ready status has unmet hard dependencies; "
+                "record Blocked with an exact unblock condition before dispatch."
+            )
         item.eligible = (
             item.queue == "active"
             and item.status == "Ready"
@@ -876,12 +879,7 @@ def _render_report(
     needs_input = [item for item in ordered if item.queue == "user-action-required"]
     runnable = [item for item in active if item.eligible]
     stalled = [item for item in active if item.status == "Stalled"]
-    blocked = [
-        item
-        for item in active
-        if item.status == "Blocked"
-        or (item.unmet_dependencies and item.status != "Stalled")
-    ]
+    blocked = [item for item in active if item.status == "Blocked"]
     holding = [item for item in ordered if item.queue == "holding"]
     completed = [item for item in ordered if item.queue == "completed"]
     failed = [item for item in ordered if item.queue == "failed"]
@@ -957,9 +955,9 @@ def _render_report(
 <header><p class="meta">Repository backlog · source commit {_escape(snapshot.source_commit)}</p><h1>Backlog operator report</h1><p class="lede">A source-backed view of dispatchable work, lifecycle evidence, dependencies, archives, and decisions that need your input.</p><p class="meta">Generated {_escape(snapshot.generated_at)}</p></header>
 <section aria-labelledby="summary-title"><h2 id="summary-title">Summary</h2><div class="metric-grid">{metrics_html}</div><div class="count-grid"><div class="panel"><h3>Underlying type counts</h3><table><tbody>{count_rows}</tbody></table></div><div class="panel"><h3>Declared status counts</h3><table><tbody>{status_rows}</tbody></table></div></div></section>
 {_section("Needs Your Input", "Waiting for a decision, approval, action, or information from you. These items retain Status: User Action Required and are excluded from unattended work.", needs_input, "No user action is currently required.")}
-{_section("Runnable Work", "Ready items whose declared dependencies are satisfied. Workspace claims do not change this lifecycle classification.", runnable, "No items are effectively eligible for dispatch.")}
+{_section("Runnable Work", "Items whose canonical lifecycle is Ready. A malformed Ready record with an unmet hard dependency is rejected and reported for provider reconciliation.", runnable, "No canonical Ready items are dispatchable.")}
 {_section("Stalled Work", "Active items with evidence that progress has stopped while the cause remains unknown. Each item names its diagnostic owner and next investigation action.", stalled, "No stalled active items.")}
-{_section("Blocked Work", "Active items with unmet dependencies or a declared Blocked status.", blocked, "No blocked active items.")}
+{_section("Blocked Work", "Active items whose canonical provider status is Blocked.", blocked, "No blocked active items.")}
 {_section("Holding", "Visible work intentionally excluded from unattended dispatch.", holding, "No holding items.")}
 {_future_ideas_section(future_ideas) if include_future_ideas else ""}
 {_section("Active Typed Work", "All items found in typed active queues, including running and non-runnable states.", active, "No active typed items.")}
