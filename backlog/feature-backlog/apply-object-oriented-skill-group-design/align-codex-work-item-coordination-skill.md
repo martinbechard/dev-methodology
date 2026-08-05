@@ -1,6 +1,6 @@
 # Align Codex Work-Item Coordination Skill
 
-Status: Ready
+Status: Blocked
 
 Type: Feature
 
@@ -57,6 +57,22 @@ The user directed in the active Codex task on 2026-08-04: "create separate work 
 ## Open Questions
 
 Determine whether any internal heading should be split further to separate routing instructions from operational procedure content; do not broaden the approved responsibility set.
+
+## Crisis Dependency Reclassification
+
+Reclassified At: 2026-08-05T17:10:30Z.
+
+Transition: Ready -> Blocked.
+
+Owner: Unowned.
+
+Exact Blocker: Required dependency backlog/feature-backlog/apply-object-oriented-skill-group-design/split-backlog-blockage-and-dispatch-mode-skills.md is currently Blocked. The other two declared dependencies are Completed.
+
+Blocker Owner: Dev Backlog Coordinator resolving the named dependency in Backlog Crisis Mode.
+
+Unblock Condition: Split Backlog Blockage And Dispatch-Mode Skills reaches a terminal successful disposition and its delivered identities and interfaces are available on current main.
+
+Coordinator Next Action: Keep this item in the crisis dependency set and do not dispatch it. After the unblock condition is satisfied, reconcile it through Blocked -> Ready under the normal lifecycle.
 
 ## Governed Definition Approval
 
