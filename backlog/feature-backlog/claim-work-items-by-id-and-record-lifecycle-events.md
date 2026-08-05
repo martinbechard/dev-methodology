@@ -1,6 +1,6 @@
 # Claim Work Items By ID And Record Lifecycle Events
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -9,6 +9,19 @@ Provider: file
 Work Item ID: claim-work-items-by-id-and-record-lifecycle-events
 
 Completion: direct-main
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+Parent Coordination Thread: /root/apply_skill_group_design_backlog.
+Launch Reservation: One distinct bounded launch reservation for this provider record.
+Normalized Objective: Add provider-independent exclusive claims keyed by opaque Work Item ID, with structured acquisition, release, and report evidence across command and MCP transports.
+Dispatch Time: 2026-08-05T22:38:02Z.
+Intended Root Dev Orchestrator Role: Dev Orchestrator.
+Effective Commit Selector: complete-work-item-direct-main.
+Canonical Runtime Evidence: None at reservation time. The parent Coordinator must reconcile this reservation before creating one canonical work-item Thread.
+Current Launch Evidence: Parent Coordinator authorized this exact reservation; exact-file backlog claim reserve-work-item-id-claims-019fb4 acquired with outcome SHARED_CHECKOUT_ACQUIRED and event 342aa843-fc38-466a-b418-a23e1f026391.
+Required Next Lifecycle Transition: The canonical root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
 
 ## Summary
 
