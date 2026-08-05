@@ -1,12 +1,12 @@
 # Enforce Dependency-Aware File Work-Item Lifecycle
 
-Status: Blocked
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/enforce-dependency-aware-file-work-item-lifecycle.md
+Provider Reference: backlog/completed-backlog/defects/enforce-dependency-aware-file-work-item-lifecycle.md
 
 Work Item ID: enforce-dependency-aware-file-work-item-lifecycle
 
@@ -98,3 +98,37 @@ Approved at creation on 2026-08-05 by the user's direct request in the active Co
 ## Notes
 
 This item is created as `Blocked`, not `Ready`, because `align-work-item-creation-provider-skills` is an active crisis-chain item that modifies `skills/create-file-work-item/SKILL.md`. Its exact unblock condition is that the dependency reaches a terminal successful disposition on current `main`, leaving the shared creation-skill surface available for fresh reconciliation. The Dev Backlog Coordinator owns that dependency-chain sequencing. This source-overlap prerequisite must not be replaced with concurrent implementation or downstream effective-eligibility filtering.
+
+## Completion Evidence
+
+Completed At: 2026-08-05T21:01:19Z
+
+Delivery Commit: 15c7c781
+
+Dependency Resolution: `align-work-item-creation-provider-skills` completed successfully in
+provider archive commit `01756cf5`, satisfying this item's recorded unblock condition before
+implementation began.
+
+Delivered Behavior: Creation, Future Idea promotion, provider lifecycle mutation, and
+coordination now use one canonical dependency-aware meaning of Ready. Authorized queued work
+with an unmet hard dependency is Blocked with an exact unblock condition. The report rejects
+malformed Ready records and no longer presents them as canonical Blocked work.
+
+Inventory Reconciliation: A fresh report against current active provider records found no
+Ready item with an unmet hard dependency, so no existing active record required correction.
+Terminal archives were not rewritten.
+
+Verification:
+
+- All three governed skill packages passed the supported `skill_validate` operation.
+- `evals/skill-probes.yaml` passed structured YAML validation.
+- 47 backlog-report tests passed, including the negative malformed-Ready dependency case.
+- Focused bundle-content lifecycle and template tests passed.
+- Agent-skill evaluation documentation, evaluation catalogs, and coverage tests passed.
+- Skill documentation, template documentation, evaluation documentation, and support-checklist
+  freshness checks passed.
+- Python compilation and `git diff --check` passed.
+
+Review: Crisis-mode root review inspected the exact 11-path delivery diff and confirmed the
+requested lifecycle rule, focused scope, generated ownership, and absence of current inventory
+records requiring provider correction. No delegated delivery or broad suite was used.
