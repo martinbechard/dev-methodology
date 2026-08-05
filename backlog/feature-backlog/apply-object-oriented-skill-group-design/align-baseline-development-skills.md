@@ -1,6 +1,6 @@
 # Align Baseline Development Skills
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -23,7 +23,20 @@ Intended Root Dev Orchestrator Role: Dev Orchestrator.
 Owner: Unowned pending accepted root.
 Current Launch Evidence: Parent Coordinator authorized this exact reservation; exact-file backlog claim reserve-align-baseline-development-skills acquired with outcome SHARED_CHECKOUT_ACQUIRED and event ca2c93bc-1521-4af5-8060-7a4bf4970f72. Runtime Thread creation and root acceptance have not occurred.
 Required Next Lifecycle Transition: The root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
-Reconciliation: Pending.
+Reconciliation: Root acceptance recorded separately below; the parent reservation remains preserved.
+
+## Current Running Acceptance
+
+Transition: Starting -> Running.
+Canonical Thread: /root/apply_skill_group_design_backlog/align_baseline_development_skills.
+Root Agent Task: /root/apply_skill_group_design_backlog/align_baseline_development_skills.
+Owner: Dev Orchestrator.
+Branch: codex/align-baseline-development-skills-019fab.
+Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/align-baseline-development-skills-019fab.
+Phase: Implementation dispatch.
+Started At: 2026-08-05T03:47:05Z.
+Claim Evidence: The private delivery lane was claim-free immediately before this acceptance (claim status outcome STATUS with no live claims). This exact primary-main backlog mutation is protected by exact-file claim running-align-baseline-development-skills-019fab, acquired with outcome SHARED_CHECKOUT_ACQUIRED and event dba10391-6547-4015-99d3-ba8641406138.
+Preserved Coordination: Parent Coordination Thread /root/apply_skill_group_design_backlog and its Ready -> Starting launch reservation remain canonical.
 
 ## Summary
 
