@@ -45,7 +45,7 @@ skills:
 - organise-project-files:
     justification: We need this to confirm the destination of any new prompt review checklist, findings file, or evaluation artifact before writing it.
     condition: when the requested review creates a new project file or directory.
-- prompt-contracts:
+- review-prompt-contracts:
     justification: We need this to assess the full model-facing contract rather than
       reviewing prompt wording in isolation from state, tools, authority, and outputs.
 - review-structured-artifact:

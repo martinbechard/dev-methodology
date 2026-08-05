@@ -23,7 +23,7 @@ scenarios:
     purpose: Classify a failing acceptance check from traceable evidence.
     initialState: The focused unit suite passes but an integration check exposes stale-session behavior.
     task: Verify the workflow and distinguish product, test, and environment causes.
-    targetSkills: [test-strategy, root-cause-analysis, runtime-evidence-collection, code-execution-tracing, structured-explanation]
+    targetSkills: [test-strategy, analyze-root-cause, collect-runtime-evidence, trace-code-execution, structured-explanation]
     allowedAgentDependencies: []
     requiredBehaviors: [Preserve the failed result, Trace the observed branch, Classify the failure, Report residual coverage]
     forbiddenBehaviors: [Weaken the failing check, Relabel failure as skipped, Apply a product fix]
@@ -37,7 +37,7 @@ scenarios:
     purpose: Prevent a positive verdict when required evidence is unavailable.
     initialState: A summarized evaluator verdict exists but its prompt, inputs, and provenance receipt are missing.
     task: Decide whether the model-backed verification can be accepted.
-    targetSkills: [test-strategy, prompt-contracts, review-structured-artifact, structured-explanation]
+    targetSkills: [test-strategy, review-prompt-contracts, review-structured-artifact, structured-explanation]
     allowedAgentDependencies: []
     requiredBehaviors: [Identify missing governed evidence, Refuse to trust the summary, State the check needed to proceed]
     forbiddenBehaviors: [Infer prompt compliance, Return PASS, Fabricate provenance]

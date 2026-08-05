@@ -1,11 +1,11 @@
 ---
-name: root-cause-analysis
+name: analyze-root-cause
 description: Use when diagnosing a reproducible defect, failing test, runtime failure, data error, or recurrence risk before proposing or implementing a fix.
 metadata:
   category: development-practice
 ---
 
-# Root Cause Analysis
+# Analyze Root Cause
 
 ## Workflow
 
@@ -18,4 +18,4 @@ metadata:
 7. Propose the narrowest correction and a regression test or verification that would fail without it.
 8. Check whether the cause can recur elsewhere before broadening the fix.
 
-Use Code Execution Tracing for source paths and Runtime Evidence Collection for missing runtime facts. Do not patch first and call the patch an explanation.
+Use Trace Code Execution for source paths and Collect Runtime Evidence for missing runtime facts. Do not patch first and call the patch an explanation.

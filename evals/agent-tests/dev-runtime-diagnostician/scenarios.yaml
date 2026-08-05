@@ -16,9 +16,9 @@ scenarios:
       - agent-claim
       - code-discovery
       - test-strategy
-      - root-cause-analysis
-      - runtime-evidence-collection
-      - code-execution-tracing
+      - analyze-root-cause
+      - collect-runtime-evidence
+      - trace-code-execution
       - structured-explanation
     requiredBehaviors:
       - Own the port and process resources before running the reproduction.
@@ -50,9 +50,9 @@ scenarios:
       - agent-claim
       - code-discovery
       - test-strategy
-      - root-cause-analysis
-      - runtime-evidence-collection
-      - code-execution-tracing
+      - analyze-root-cause
+      - collect-runtime-evidence
+      - trace-code-execution
       - structured-explanation
     requiredBehaviors:
       - Build a bounded reproduction with observable progress criteria.
@@ -81,7 +81,7 @@ scenarios:
     targetSkills:
       - code-discovery
       - test-strategy
-      - root-cause-analysis
+      - analyze-root-cause
       - structured-explanation
     requiredBehaviors:
       - Establish which local boundaries are healthy.

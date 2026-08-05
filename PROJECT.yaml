@@ -225,7 +225,7 @@ role_agent_set:
     hands_off:
       - "Corrections to dev-coder."
     skills:
-      - code-review-evidence
+      - review-code-with-evidence
       - review-structured-artifact
       - careful-coding
       - code-comments

@@ -289,9 +289,9 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-code-execution-tracing
-    skill: code-execution-tracing
-    source: skills/code-execution-tracing/SKILL.md
+  - id: probe-trace-code-execution
+    skill: trace-code-execution
+    source: skills/trace-code-execution/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: activation-and-behavior
     activationCondition: The task asks for a source-level execution path, branch, state change, error, or exit explanation.
@@ -317,9 +317,9 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
-  - id: probe-code-review-evidence
-    skill: code-review-evidence
-    source: skills/code-review-evidence/SKILL.md
+  - id: probe-review-code-with-evidence
+    skill: review-code-with-evidence
+    source: skills/review-code-with-evidence/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: review-contract
     activationCondition: A source, diff, regression, or delegated evidence review is requested.
@@ -611,9 +611,9 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-end-to-end-verification
-    skill: end-to-end-verification
-    source: skills/end-to-end-verification/SKILL.md
+  - id: probe-verify-end-to-end-workflow
+    skill: verify-end-to-end-workflow
+    source: skills/verify-end-to-end-workflow/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
     activationCondition: Confidence depends on a complete user or system workflow across real runtime boundaries.
@@ -1156,7 +1156,7 @@ probes:
     workflowAssociations: [code-delivery, documentation-methodology, project-setup, wiki-lifecycle, backlog]
     executableCases: [project-configuration-routing]
     coverageStatus: fixture-backed
-    ablation: {omitTargetSkill: true, wrongSkillControl: runtime-evidence-collection}
+    ablation: {omitTargetSkill: true, wrongSkillControl: collect-runtime-evidence}
   - id: probe-plan-engine
     skill: plan-engine
     source: skills/plan-engine/SKILL.md
@@ -1297,9 +1297,9 @@ probes:
     executableCases: [wiki-raw-ingest]
     coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: create-functional-spec}
-  - id: probe-prompt-contracts
-    skill: prompt-contracts
-    source: skills/prompt-contracts/SKILL.md
+  - id: probe-review-prompt-contracts
+    skill: review-prompt-contracts
+    source: skills/review-prompt-contracts/SKILL.md
     evaluationCategory: prompt-and-agent
     evaluationKind: review-contract
     activationCondition: Work reviews model-facing instructions, tool schemas, state, inputs, outputs, or prompt boundaries.
@@ -1563,9 +1563,9 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: create-unit-test-plan}
-  - id: probe-root-cause-analysis
-    skill: root-cause-analysis
-    source: skills/root-cause-analysis/SKILL.md
+  - id: probe-analyze-root-cause
+    skill: analyze-root-cause
+    source: skills/analyze-root-cause/SKILL.md
     evaluationCategory: diagnosis
     evaluationKind: diagnosis-contract
     activationCondition: A reproducible defect, failing test, incident, or behavioral regression requires causal diagnosis.
@@ -1577,9 +1577,9 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: explain-code-fix}
-  - id: probe-runtime-evidence-collection
-    skill: runtime-evidence-collection
-    source: skills/runtime-evidence-collection/SKILL.md
+  - id: probe-collect-runtime-evidence
+    skill: collect-runtime-evidence
+    source: skills/collect-runtime-evidence/SKILL.md
     evaluationCategory: diagnosis
     evaluationKind: workflow-invariant
     activationCondition: A defect or execution path needs temporary instrumentation, logs, traces, or runtime probes to distinguish hypotheses.

@@ -7,7 +7,7 @@ target:
   nativeAgent: generated/adapters/codex/agents/dev-code-reviewer.toml
   repositoryMutation: conditional
   requiredSkills:
-    - code-review-evidence
+    - review-code-with-evidence
     - review-structured-artifact
     - careful-coding
     - code-comments

@@ -1,11 +1,11 @@
 ---
-name: prompt-contracts
+name: review-prompt-contracts
 description: Review model-facing instructions, inputs, state, outputs, tool authority, retry behavior, evaluation coverage, and data boundaries without assuming a particular orchestration framework or model provider. Use for prompt review, tool-contract review, planning-contract review, or model-runtime boundary assessment.
 metadata:
   category: development-practice
 ---
 
-# Prompt Contracts
+# Review Prompt Contracts
 
 Trace promises across instructions, state, tools, outputs, retries, and verification.
 
@@ -19,4 +19,4 @@ Trace promises across instructions, state, tools, outputs, retries, and verifica
 
 ## Review Evidence
 
-Read references/review-checklist-prompt-contracts.md during prompt or runtime contract review.
+Read references/review-checklist-review-prompt-contracts.md during prompt or runtime contract review.

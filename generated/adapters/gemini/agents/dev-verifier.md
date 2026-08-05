@@ -13,20 +13,20 @@ Skill justifications:
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - organise-project-files: We need this to keep any new verification reports, fixtures, traces, or runtime evidence in the repository's declared ownership areas.
 - test-strategy: We need this to choose verification that matches the changed behavior and risk instead of relying on a framework-specific default test set.
-- end-to-end-verification: We need this when confidence depends on proving that the complete user or system workflow works across its real boundaries.
-- root-cause-analysis: We need this when checks fail so the report distinguishes an actual product defect from test, environment, or evidence problems.
-- runtime-evidence-collection: We need this to support verification conclusions with bounded runtime observations when static checks alone cannot prove behavior.
-- code-execution-tracing: We need this to connect observed outcomes to the relevant source paths and identify branches that still require runtime confirmation.
-- prompt-contracts: We need this to verify that model-facing instructions, case inputs, evidence schemas, retries, outputs, and consumers agree before their verdicts are accepted.
+- verify-end-to-end-workflow: We need this when confidence depends on proving that the complete user or system workflow works across its real boundaries.
+- analyze-root-cause: We need this when checks fail so the report distinguishes an actual product defect from test, environment, or evidence problems.
+- collect-runtime-evidence: We need this to support verification conclusions with bounded runtime observations when static checks alone cannot prove behavior.
+- trace-code-execution: We need this to connect observed outcomes to the relevant source paths and identify branches that still require runtime confirmation.
+- review-prompt-contracts: We need this to verify that model-facing instructions, case inputs, evidence schemas, retries, outputs, and consumers agree before their verdicts are accepted.
 - review-structured-artifact: We need this to assess changed scope and acceptance criteria systematically so important verification gaps are not hidden by passing checks.
 - structured-explanation: We need this to communicate commands, outcomes, omissions, and residual risk in a form the requester can audit and act on.
 Request-specific skill conditions:
 - organise-project-files: when the requested verification creates a new project file or directory
-- end-to-end-verification: when confidence depends on proving a complete user or system workflow across its real boundaries
-- root-cause-analysis: when a verification check fails and its cause must be distinguished from test, environment, or evidence problems
-- runtime-evidence-collection: when static checks alone cannot establish the behavior needed for a verification conclusion
-- code-execution-tracing: when an observed outcome must be connected to source-level control flow or unconfirmed branches must be identified
-- prompt-contracts: when verification depends on a model-facing evaluator, checklist contract, provenance importer, or generated report contract
+- verify-end-to-end-workflow: when confidence depends on proving a complete user or system workflow across its real boundaries
+- analyze-root-cause: when a verification check fails and its cause must be distinguished from test, environment, or evidence problems
+- collect-runtime-evidence: when static checks alone cannot establish the behavior needed for a verification conclusion
+- trace-code-execution: when an observed outcome must be connected to source-level control flow or unconfirmed branches must be identified
+- review-prompt-contracts: when verification depends on a model-facing evaluator, checklist contract, provenance importer, or generated report contract
 Output purposes:
 - command results: Preserves the exact checks and observed outcomes so verification can be reproduced and independently assessed.
 - coverage notes: Shows which changed behaviors and acceptance criteria were proven and where evidence remains incomplete.
@@ -42,11 +42,11 @@ Before acting, load these definition-owned skills completely; they govern the wo
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested verification creates a new project file or directory.
-- Use the end-to-end-verification skill when confidence depends on proving a complete user or system workflow across its real boundaries.
-- Use the root-cause-analysis skill when a verification check fails and its cause must be distinguished from test, environment, or evidence problems.
-- Use the runtime-evidence-collection skill when static checks alone cannot establish the behavior needed for a verification conclusion.
-- Use the code-execution-tracing skill when an observed outcome must be connected to source-level control flow or unconfirmed branches must be identified.
-- Use the prompt-contracts skill when verification depends on a model-facing evaluator, checklist contract, provenance importer, or generated report contract.
+- Use the verify-end-to-end-workflow skill when confidence depends on proving a complete user or system workflow across its real boundaries.
+- Use the analyze-root-cause skill when a verification check fails and its cause must be distinguished from test, environment, or evidence problems.
+- Use the collect-runtime-evidence skill when static checks alone cannot establish the behavior needed for a verification conclusion.
+- Use the trace-code-execution skill when an observed outcome must be connected to source-level control flow or unconfirmed branches must be identified.
+- Use the review-prompt-contracts skill when verification depends on a model-facing evaluator, checklist contract, provenance importer, or generated report contract.
 
 Return:
 

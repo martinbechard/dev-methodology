@@ -10,11 +10,11 @@ target:
   conditionalSkills:
     agent-claim: Verification mutates files or owns exclusive runtime resources.
     organise-project-files: Verification creates a project file or directory.
-    end-to-end-verification: Confidence depends on a complete workflow.
-    root-cause-analysis: A failed check needs classification.
-    runtime-evidence-collection: Static checks cannot prove behavior.
-    code-execution-tracing: Runtime outcomes need source-path evidence.
-    prompt-contracts: Verification depends on a model-facing evaluator or report contract.
+    verify-end-to-end-workflow: Confidence depends on a complete workflow.
+    analyze-root-cause: A failed check needs classification.
+    collect-runtime-evidence: Static checks cannot prove behavior.
+    trace-code-execution: Runtime outcomes need source-path evidence.
+    review-prompt-contracts: Verification depends on a model-facing evaluator or report contract.
   allowedAgentDependencies: []
   requiredOutputs: [command results, coverage notes, skipped-check rationale, PASS WARN or FAIL status]
 projectAgents:

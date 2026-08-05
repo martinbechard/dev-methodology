@@ -7,7 +7,7 @@ target:
   nativeAgent: generated/adapters/codex/agents/dev-prompt-reviewer.toml
   repositoryMutation: conditional
   requiredSkills:
-    - prompt-contracts
+    - review-prompt-contracts
     - review-structured-artifact
   conditionalSkills:
     agent-claim: The review saves a checklist, findings file, evaluation artifact, or other project artifact.

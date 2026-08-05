@@ -45,15 +45,15 @@ skills:
 - test-strategy:
     justification: We need this to design a focused reproduction and regression check
       that can distinguish the suspected cause from nearby behavior.
-- root-cause-analysis:
+- analyze-root-cause:
     justification: We need this to test competing hypotheses and establish the mechanism
       of failure before recommending remediation.
-- runtime-evidence-collection:
+- collect-runtime-evidence:
     justification: We need this when the failure mechanism depends on runtime state
       that cannot be established reliably from source inspection alone.
     condition: when the suspected failure mechanism depends on runtime state that
       source inspection alone cannot establish reliably.
-- code-execution-tracing:
+- trace-code-execution:
     justification: We need this to map the relevant control flow so runtime observations
       are interpreted at the correct boundary.
 - structured-explanation:

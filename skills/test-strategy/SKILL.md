@@ -7,7 +7,7 @@ metadata:
 
 # Test Strategy
 
-## Workflow
+## Select And Run Tests
 
 1. Identify the changed contract, user-visible outcome, state transition, failure modes, and affected boundaries.
 2. Select the smallest useful test boundary for each risk.

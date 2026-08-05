@@ -96,16 +96,16 @@ NEW_DEVELOPMENT_SKILLS = (
     "detect-technology-skills",
     "code-discovery",
     "test-strategy",
-    "end-to-end-verification",
+    "verify-end-to-end-workflow",
     "application-security",
     "user-experience-review",
-    "prompt-contracts",
+    "review-prompt-contracts",
     "code-comments",
-    "code-review-evidence",
+    "review-code-with-evidence",
     "test-driven-development",
-    "code-execution-tracing",
-    "root-cause-analysis",
-    "runtime-evidence-collection",
+    "trace-code-execution",
+    "analyze-root-cause",
+    "collect-runtime-evidence",
     "organise-project-files",
     "deliver-work-item-direct-main",
     "create-file-work-item",
@@ -1760,7 +1760,7 @@ class BundleContentTests(unittest.TestCase):
     ) -> None:
         """Verification evidence must not grant the verifier delivery authority."""
         skill_text = (
-            SKILLS_ROOT / "end-to-end-verification" / "SKILL.md"
+            SKILLS_ROOT / "verify-end-to-end-workflow" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         for phrase in (
@@ -2890,6 +2890,47 @@ class BundleContentTests(unittest.TestCase):
         self.assertTrue(
             (REPOSITORY_ROOT / "scripts" / "test_direct_main_completion_contract.py").is_file()
         )
+
+    def test_review_and_verification_skills_use_operation_shaped_interfaces(self) -> None:
+        expected_titles = {
+            "review-code-with-evidence": "# Review Code With Evidence",
+            "verify-end-to-end-workflow": "# Verify End To End Workflow",
+            "analyze-root-cause": "# Analyze Root Cause",
+            "collect-runtime-evidence": "# Collect Runtime Evidence",
+            "trace-code-execution": "# Trace Code Execution",
+            "review-prompt-contracts": "# Review Prompt Contracts",
+        }
+        retired_names = (
+            "code-review-evidence",
+            "end-to-end-verification",
+            "root-cause-analysis",
+            "runtime-evidence-collection",
+            "code-execution-tracing",
+            "prompt-contracts",
+        )
+
+        for skill_name, title in expected_titles.items():
+            with self.subTest(skill_name=skill_name):
+                skill_path = SKILLS_ROOT / skill_name / "SKILL.md"
+                self.assertTrue(skill_path.is_file())
+                skill_text = skill_path.read_text(encoding="utf-8")
+                self.assertIn(f"name: {skill_name}", skill_text)
+                self.assertIn(title, skill_text)
+
+        for retired_name in retired_names:
+            with self.subTest(retired_name=retired_name):
+                self.assertFalse((SKILLS_ROOT / retired_name).exists())
+
+        test_strategy = (SKILLS_ROOT / "test-strategy" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("## Select And Run Tests", test_strategy)
+        self.assertNotIn("## Workflow", test_strategy)
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probe_ids = {entry["id"] for entry in probes["probes"]}
+        for skill_name in expected_titles:
+            self.assertIn(f"probe-{skill_name}", probe_ids)
 
     def test_jhipster_guidance_is_split_into_focused_skill_packages(self) -> None:
         expected_phrases = {
@@ -7962,7 +8003,7 @@ class BundleContentTests(unittest.TestCase):
             "deliver-work-item-feature-branch",
             "create-file-work-item",
             "create-project-configuration",
-            "end-to-end-verification",
+            "verify-end-to-end-workflow",
             "manage-file-work-items",
         )
         for skill_name in dependent_skills:
@@ -9340,12 +9381,12 @@ class BundleContentTests(unittest.TestCase):
             build_skill_docs.fixed_role_skills(role),
         )
         self.assertNotIn(
-            "prompt-contracts",
+            "review-prompt-contracts",
             build_skill_docs.fixed_role_skills(role),
         )
         self.assertNotIn("documentation-reverse-engineer", role.skill_conditions)
-        self.assertIn("prompt-contracts", role.skill_conditions)
-        self.assertIn("model-facing evaluator", role.skill_conditions["prompt-contracts"])
+        self.assertIn("review-prompt-contracts", role.skill_conditions)
+        self.assertIn("model-facing evaluator", role.skill_conditions["review-prompt-contracts"])
         self.assertIn("model-facing evaluator", role.instructions)
         self.assertEqual(2, len(role.examples))
 
@@ -9777,7 +9818,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("code-comments", case["requiredSkills"])
         review_case = by_id["typescript-code-review"]
         self.assertTrue(review_case["expectVerifyFailure"])
-        self.assertIn("code-review-evidence", review_case["requiredSkills"])
+        self.assertIn("review-code-with-evidence", review_case["requiredSkills"])
         self.assertEqual(3, len(review_case["requiredFindings"]))
 
         file_boundary_case = by_id["file-work-item-no-mutation"]

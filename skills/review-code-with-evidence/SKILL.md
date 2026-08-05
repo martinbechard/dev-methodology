@@ -1,11 +1,11 @@
 ---
-name: code-review-evidence
+name: review-code-with-evidence
 description: Use when reviewing source changes by loading applicable coding and stack skills, completing their evidence checklists, and synthesizing findings from cited evidence. Use for code review, diff review, regression review, or delegated low-cost evidence extraction.
 metadata:
   category: development-practice
 ---
 
-# Code Review Evidence
+# Review Code With Evidence
 
 Keep review knowledge with the skills that create the code. This skill owns the review protocol, not one universal catalog of language, framework, tier, or database rules.
 

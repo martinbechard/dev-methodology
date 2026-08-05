@@ -50,27 +50,27 @@ skills:
 - test-strategy:
     justification: We need this to choose verification that matches the changed behavior
       and risk instead of relying on a framework-specific default test set.
-- end-to-end-verification:
+- verify-end-to-end-workflow:
     justification: We need this when confidence depends on proving that the complete
       user or system workflow works across its real boundaries.
     condition: when confidence depends on proving a complete user or system workflow
       across its real boundaries.
-- root-cause-analysis:
+- analyze-root-cause:
     justification: We need this when checks fail so the report distinguishes an actual
       product defect from test, environment, or evidence problems.
     condition: when a verification check fails and its cause must be distinguished
       from test, environment, or evidence problems.
-- runtime-evidence-collection:
+- collect-runtime-evidence:
     justification: We need this to support verification conclusions with bounded runtime
       observations when static checks alone cannot prove behavior.
     condition: when static checks alone cannot establish the behavior needed for a
       verification conclusion.
-- code-execution-tracing:
+- trace-code-execution:
     justification: We need this to connect observed outcomes to the relevant source
       paths and identify branches that still require runtime confirmation.
     condition: when an observed outcome must be connected to source-level control
       flow or unconfirmed branches must be identified.
-- prompt-contracts:
+- review-prompt-contracts:
     justification: We need this to verify that model-facing instructions, case inputs, evidence schemas, retries, outputs, and consumers agree before their verdicts are accepted.
     condition: when verification depends on a model-facing evaluator, checklist contract, provenance importer, or generated report contract.
 - review-structured-artifact:

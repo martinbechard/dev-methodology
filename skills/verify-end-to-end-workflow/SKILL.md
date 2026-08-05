@@ -1,11 +1,11 @@
 ---
-name: end-to-end-verification
+name: verify-end-to-end-workflow
 description: Verify complete user or system workflows across real boundaries without assuming a particular automation framework. Use for end-to-end tests, acceptance workflows, authenticated or stateful journeys, runtime coordination, visible failure states, or reproducible system-level evidence.
 metadata:
   category: development-practice
 ---
 
-# End To End Verification
+# Verify End To End Workflow
 
 Prove the complete workflow with explicit environment ownership and observable assertions.
 
@@ -21,7 +21,7 @@ Prove the complete workflow with explicit environment ownership and observable a
 
 ## Evidence Handoff And Commit Authority
 
-End-to-end verification owns evidence capture and the verifier handoff. It does not own delivery integration, publication, or provider lifecycle mutation.
+Verify End To End Workflow owns evidence capture and the verifier handoff. It does not own delivery integration, publication, or provider lifecycle mutation.
 
 - Only the delivery owner applies the effective Commit-selected skill.
 - For direct-main, the delivery owner applies deliver-work-item-direct-main.
@@ -46,4 +46,4 @@ Return the commands, results, diagnostic artifacts, blockers, cleanup state, and
 
 ## Review Evidence
 
-Read references/review-checklist-end-to-end-verification.md during verification or review.
+Read references/review-checklist-verify-end-to-end-workflow.md during verification or review.

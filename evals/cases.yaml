@@ -60,7 +60,7 @@ cases:
       - typescript
       - typescript-strict
       - typescript-esm
-      - code-review-evidence
+      - review-code-with-evidence
     skillProbes:
       - probe-agent-claim
       - probe-agent-claim-command
@@ -73,7 +73,7 @@ cases:
       - probe-typescript
       - probe-typescript-strict
       - probe-typescript-esm
-      - probe-code-review-evidence
+      - probe-review-code-with-evidence
     fixtureBackedProbeClaims:
       - probe-agent-claim-command
       - probe-typescript
@@ -87,7 +87,7 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/typescript-order-pricing
       include: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
-      stagedSkillPackages: [agent-claim, agent-claim-command, careful-coding, code-comments, code-discovery, explain-code-fix, structured-explanation, test-driven-development, typescript, typescript-strict, typescript-esm, code-review-evidence]
+      stagedSkillPackages: [agent-claim, agent-claim-command, careful-coding, code-comments, code-discovery, explain-code-fix, structured-explanation, test-driven-development, typescript, typescript-strict, typescript-esm, review-code-with-evidence]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
@@ -103,7 +103,7 @@ cases:
       typescript: [SKILL.md, references/review-checklist-typescript.md]
       typescript-strict: [SKILL.md, references/review-checklist-typescript-strict.md]
       typescript-esm: [SKILL.md, references/review-checklist-typescript-esm.md]
-      code-review-evidence: [SKILL.md, references/review-checklist-code-evidence.md]
+      review-code-with-evidence: [SKILL.md, references/review-checklist-code-evidence.md]
     requiredEvidence:
       - TS-BOUNDARY
       - TS-CONTRACT
@@ -140,7 +140,7 @@ cases:
       - java
       - spring-boot
       - sql
-      - code-review-evidence
+      - review-code-with-evidence
     skillProbes:
       - probe-agent-claim
       - probe-agent-claim-command
@@ -153,7 +153,7 @@ cases:
       - probe-java
       - probe-spring-boot
       - probe-sql
-      - probe-code-review-evidence
+      - probe-review-code-with-evidence
     fixtureBackedProbeClaims:
       - probe-agent-claim-command
       - probe-java
@@ -167,7 +167,7 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/spring-boot-order-cancellation
       include: [.gitignore, TASK.md, pom.xml, src]
-      stagedSkillPackages: [agent-claim, agent-claim-command, careful-coding, code-comments, code-discovery, explain-code-fix, structured-explanation, test-driven-development, java, spring-boot, sql, code-review-evidence]
+      stagedSkillPackages: [agent-claim, agent-claim-command, careful-coding, code-comments, code-discovery, explain-code-fix, structured-explanation, test-driven-development, java, spring-boot, sql, review-code-with-evidence]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [.gitignore, TASK.md, pom.xml, src]
@@ -183,7 +183,7 @@ cases:
       java: [SKILL.md, references/coding-guidelines-java.md, references/review-checklist-java.md]
       spring-boot: [SKILL.md, references/coding-guidelines-spring-boot.md, references/review-checklist-spring-boot.md]
       sql: [SKILL.md, references/review-checklist-sql.md]
-      code-review-evidence: [SKILL.md, references/review-checklist-code-evidence.md]
+      review-code-with-evidence: [SKILL.md, references/review-checklist-code-evidence.md]
     requiredEvidence:
       - JAVA-CONTRACT
       - SPRING-BOUNDARY
@@ -219,7 +219,7 @@ cases:
       - test-driven-development
       - java
       - java-comment
-      - code-review-evidence
+      - review-code-with-evidence
     skillProbes:
       - probe-agent-claim
       - probe-agent-claim-command
@@ -231,7 +231,7 @@ cases:
       - probe-test-driven-development
       - probe-java
       - probe-java-comment
-      - probe-code-review-evidence
+      - probe-review-code-with-evidence
     fixtureBackedProbeClaims:
       - probe-java
       - probe-java-comment
@@ -242,7 +242,7 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/java-comment-placement
       include: [TASK.md, verify.py, src, negative-fixtures]
-      stagedSkillPackages: [agent-claim, agent-claim-command, careful-coding, code-comments, code-discovery, explain-code-fix, structured-explanation, test-driven-development, java, java-comment, code-review-evidence]
+      stagedSkillPackages: [agent-claim, agent-claim-command, careful-coding, code-comments, code-discovery, explain-code-fix, structured-explanation, test-driven-development, java, java-comment, review-code-with-evidence]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md, verify.py, src, negative-fixtures]
@@ -257,7 +257,7 @@ cases:
       test-driven-development: [SKILL.md]
       java: [SKILL.md, references/coding-guidelines-java.md, references/review-checklist-java.md]
       java-comment: [SKILL.md, references/review-checklist-java-comment.md]
-      code-review-evidence: [SKILL.md, references/review-checklist-code-evidence.md]
+      review-code-with-evidence: [SKILL.md, references/review-checklist-code-evidence.md]
     requiredEvidence:
       - JAVA-COMMENT-PACKAGE
       - JAVA-COMMENT-PACKAGED-TYPE
@@ -328,7 +328,7 @@ cases:
     agentScenarios:
       - dev-code-reviewer-happy
     requiredSkills:
-      - code-review-evidence
+      - review-code-with-evidence
       - review-structured-artifact
       - careful-coding
       - code-comments
@@ -336,7 +336,7 @@ cases:
       - typescript-strict
       - typescript-esm
     skillProbes:
-      - probe-code-review-evidence
+      - probe-review-code-with-evidence
       - probe-review-structured-artifact
       - probe-careful-coding
       - probe-code-comments
@@ -344,7 +344,7 @@ cases:
       - probe-typescript-strict
       - probe-typescript-esm
     fixtureBackedProbeClaims:
-      - probe-code-review-evidence
+      - probe-review-code-with-evidence
       - probe-typescript
       - probe-typescript-strict
       - probe-typescript-esm
@@ -356,12 +356,12 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/typescript-code-review
       include: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
-      stagedSkillPackages: [code-review-evidence, review-structured-artifact, careful-coding, code-comments, typescript, typescript-strict, typescript-esm]
+      stagedSkillPackages: [review-code-with-evidence, review-structured-artifact, careful-coding, code-comments, typescript, typescript-strict, typescript-esm]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
     skillResourceAllowlist:
-      code-review-evidence: [SKILL.md, references/review-checklist-code-evidence.md]
+      review-code-with-evidence: [SKILL.md, references/review-checklist-code-evidence.md]
       review-structured-artifact: [SKILL.md, references/review-checklist-structured.md]
       careful-coding: [SKILL.md]
       code-comments: [SKILL.md, references/review-checklist-code-comments.md]

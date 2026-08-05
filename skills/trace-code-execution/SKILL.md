@@ -1,11 +1,11 @@
 ---
-name: code-execution-tracing
+name: trace-code-execution
 description: Use when explaining a source-level execution path, including entry points, callers, branches, state changes, errors, and exits, without requiring runtime instrumentation or a proprietary tracing tool.
 metadata:
   category: development-practice
 ---
 
-# Code Execution Tracing
+# Trace Code Execution
 
 Trace what the source can establish and label inference honestly.
 
@@ -19,4 +19,4 @@ Trace what the source can establish and label inference honestly.
 6. Link relevant tests or runtime evidence that confirm the path.
 7. End with the observed or inferred result, unresolved branches, and evidence gaps.
 
-Use structure-aware tools when already available, but do not make them a dependency. Use Runtime Evidence Collection when source inspection cannot resolve the actual path taken.
+Use structure-aware tools when already available, but do not make them a dependency. Use Collect Runtime Evidence when source inspection cannot resolve the actual path taken.

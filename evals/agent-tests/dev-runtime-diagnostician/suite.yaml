@@ -9,13 +9,13 @@ target:
   requiredSkills:
     - code-discovery
     - test-strategy
-    - root-cause-analysis
-    - code-execution-tracing
+    - analyze-root-cause
+    - trace-code-execution
     - structured-explanation
   conditionalSkills:
     agent-claim: The diagnosis mutates files or owns exclusive runtime resources.
     organise-project-files: The diagnosis creates a new project file or directory.
-    runtime-evidence-collection: The failure mechanism depends on runtime state that source inspection cannot establish.
+    collect-runtime-evidence: The failure mechanism depends on runtime state that source inspection cannot establish.
     careful-coding: The diagnosis adds instrumentation or implements a verified remediation.
   allowedAgentDependencies: []
   requiredOutputs:

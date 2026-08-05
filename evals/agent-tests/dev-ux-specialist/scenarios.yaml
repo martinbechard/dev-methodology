@@ -15,7 +15,7 @@ scenarios:
     task: Review the complete account flow for interaction quality and accessibility without changing it.
     targetSkills:
       - user-experience-review
-      - end-to-end-verification
+      - verify-end-to-end-workflow
       - playwright
       - review-structured-artifact
     requiredBehaviors:
@@ -46,7 +46,7 @@ scenarios:
     task: Review the defective flow at wide and narrow layouts and prioritize the barriers.
     targetSkills:
       - user-experience-review
-      - end-to-end-verification
+      - verify-end-to-end-workflow
       - playwright
       - review-structured-artifact
     requiredBehaviors:
@@ -73,7 +73,7 @@ scenarios:
     task: Review the intended flow for focus and error recovery using the available evidence.
     targetSkills:
       - user-experience-review
-      - end-to-end-verification
+      - verify-end-to-end-workflow
       - review-structured-artifact
     requiredBehaviors:
       - Identify the exact interface states and runtime observations that are unavailable.

@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Code Execution Tracing
+  display_name: Trace Code Execution
   # User-facing summary shown in Codex skill surfaces.
   short_description: Use when explaining a source-level execution path, including entry points, callers, branches...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $code-execution-tracing to explain this execution path from source evidence.
+  default_prompt: Use $trace-code-execution to explain this execution path from source evidence.
 
 # Optional invocation policy placeholder.
 # policy:

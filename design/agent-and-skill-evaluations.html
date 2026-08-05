@@ -150,7 +150,7 @@
       <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
       <div><dt>Documentation snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>3dc1669c04b4619ed53c17513ed6a65c156a54aec49fc5c639190fb251028c77</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source snapshot</dt><dd><code>9324b48c3fdf4c3f22253e9f5a0b7bb1d5ace012bf9d832fd7ebd07ae1fea39f</code>; regenerated and compared by the focused check</dd></div>
     </dl>
     <div style="margin-top:2rem"><h3>Campaign verdict results</h3></div>
     <div class="grid" style="margin-top:1rem">
@@ -2259,6 +2259,36 @@
       </dl>
     </article>
 
+    <article class="evaluation-card skill-card" id="skill-analyze-root-cause"
+      data-kind="skill" data-status="direct-probe" data-search="analyze-root-cause use when diagnosing a reproducible defect, failing test, runtime failure, data error, or recurrence risk before proposing or implementing a fix. development-practice probe-analyze-root-cause linked agent-suite outcomes only: pass, fail">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>analyze-root-cause</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Use when diagnosing a reproducible defect, failing test, runtime failure, data error, or recurrence risk before proposing or implementing a fix.</p>
+      <p class="source-row"><a href="../skills/analyze-root-cause/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-analyze-root-cause</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>diagnosis-contract</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-runtime-diagnostician-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-runtime-diagnostician-boundary</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, test-state-transition, required-command-outcome, contradiction-scan</dd></div>
+          <div><dt>Model rubric</dt><dd>diagnosis-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <ul class="link-list"><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / retained-process-port</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / worker-stall-competing-hypotheses</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / unavailable-runtime-dependency</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-verifier/scenarios.yaml">dev-verifier / failed-verification</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, FAIL</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
     <article class="evaluation-card skill-card" id="skill-api-routes"
       data-kind="skill" data-status="direct-probe" data-search="api-routes use when coding, reviewing, or testing api route handlers, http request and response contracts, validation, auth boundaries, error semantics, or integration endpoints. stack-and-domain probe-api-routes no governed campaign link">
       <div class="card-heading">
@@ -2469,36 +2499,6 @@
       </dl>
     </article>
 
-    <article class="evaluation-card skill-card" id="skill-code-execution-tracing"
-      data-kind="skill" data-status="direct-probe" data-search="code-execution-tracing use when explaining a source-level execution path, including entry points, callers, branches, state changes, errors, and exits, without requiring runtime instrumentation or a proprietary tracing tool. development-practice probe-code-execution-tracing linked agent-suite outcomes only: pass, fail">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>code-execution-tracing</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Use when explaining a source-level execution path, including entry points, callers, branches, state changes, errors, and exits, without requiring runtime instrumentation or a proprietary tracing tool.</p>
-      <p class="source-row"><a href="../skills/code-execution-tracing/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-code-execution-tracing</a></dd></div>
-          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>activation-and-behavior</dd></div>
-          <div><dt>Executable cases</dt><dd>None declared</dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-runtime-diagnostician-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-verifier-boundary</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, source-link-resolution, operation-coverage</dd></div>
-          <div><dt>Model rubric</dt><dd>source-faithfulness</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <ul class="link-list"><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / retained-process-port</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / worker-stall-competing-hypotheses</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-verifier/scenarios.yaml">dev-verifier / failed-verification</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, FAIL</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
     <article class="evaluation-card skill-card" id="skill-code-project-wiki"
       data-kind="skill" data-status="direct-probe" data-search="code-project-wiki use when maintaining docs/wiki for a code repository, syncing recent commits, updating related code or related tests, or recording skipped wiki updates. wiki-and-knowledge probe-code-project-wiki linked agent-suite outcomes only: pass">
       <div class="card-heading">
@@ -2529,36 +2529,6 @@
       </dl>
     </article>
 
-    <article class="evaluation-card skill-card" id="skill-code-review-evidence"
-      data-kind="skill" data-status="direct-probe" data-search="code-review-evidence use when reviewing source changes by loading applicable coding and stack skills, completing their evidence checklists, and synthesizing findings from cited evidence. use for code review, diff review, regression review, or delegated low-cost evidence extraction. development-practice probe-code-review-evidence linked agent-suite outcomes only: pass, fail">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>code-review-evidence</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Use when reviewing source changes by loading applicable coding and stack skills, completing their evidence checklists, and synthesizing findings from cited evidence. Use for code review, diff review, regression review, or delegated low-cost evidence extraction.</p>
-      <p class="source-row"><a href="../skills/code-review-evidence/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-code-review-evidence</a></dd></div>
-          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>review-contract</dd></div>
-          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">typescript-code-review</a></dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-code-reviewer-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-code-reviewer-boundary</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-review-checklist, finding-recall, finding-precision, fresh-context-identity</dd></div>
-          <div><dt>Model rubric</dt><dd>review-quality</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <ul class="link-list"><li><a href="../evals/agent-tests/dev-code-reviewer/scenarios.yaml">dev-code-reviewer / seeded-typescript-defects</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-code-reviewer/scenarios.yaml">dev-code-reviewer / justified-clean-review</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-code-reviewer/scenarios.yaml">dev-code-reviewer / incomplete-review-evidence</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, FAIL</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
     <article class="evaluation-card skill-card" id="skill-collaboration-patterns"
       data-kind="skill" data-status="direct-probe" data-search="collaboration-patterns design or review observer or mediator when state changes notify independent subscribers or many peers need coordinated interaction without direct pairwise coupling. design-patterns probe-collaboration-patterns no governed campaign link">
       <div class="card-heading">
@@ -2584,6 +2554,36 @@
       <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
       <dl class="compact-list">
         <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-collect-runtime-evidence"
+      data-kind="skill" data-status="direct-probe" data-search="collect-runtime-evidence use when a defect or execution path requires temporary runtime observations from existing logs, debuggers, language-native output, processes, requests, or data while avoiding proprietary tracing dependencies. development-practice probe-collect-runtime-evidence linked agent-suite outcomes only: pass, fail">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>collect-runtime-evidence</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Use when a defect or execution path requires temporary runtime observations from existing logs, debuggers, language-native output, processes, requests, or data while avoiding proprietary tracing dependencies.</p>
+      <p class="source-row"><a href="../skills/collect-runtime-evidence/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-collect-runtime-evidence</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-runtime-diagnostician-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-runtime-diagnostician-boundary</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, no-sensitive-output, allowed-paths-only, required-command-outcome</dd></div>
+          <div><dt>Model rubric</dt><dd>diagnosis-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <ul class="link-list"><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / retained-process-port</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / worker-stall-competing-hypotheses</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-verifier/scenarios.yaml">dev-verifier / failed-verification</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, FAIL</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
         <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
       </dl>
@@ -3304,36 +3304,6 @@
       <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
       <dl class="compact-list">
         <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
-    <article class="evaluation-card skill-card" id="skill-end-to-end-verification"
-      data-kind="skill" data-status="direct-probe" data-search="end-to-end-verification verify complete user or system workflows across real boundaries without assuming a particular automation framework. use for end-to-end tests, acceptance workflows, authenticated or stateful journeys, runtime coordination, visible failure states, or reproducible system-level evidence. development-practice probe-end-to-end-verification linked agent-suite outcomes only: blocked">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>end-to-end-verification</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Verify complete user or system workflows across real boundaries without assuming a particular automation framework. Use for end-to-end tests, acceptance workflows, authenticated or stateful journeys, runtime coordination, visible failure states, or reproducible system-level evidence.</p>
-      <p class="source-row"><a href="../skills/end-to-end-verification/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-end-to-end-verification</a></dd></div>
-          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
-          <div><dt>Executable cases</dt><dd>None declared</dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-browser-operator-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-verifier-boundary</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, required-command-outcome, claim-lifecycle</dd></div>
-          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <ul class="link-list"><li><a href="../evals/agent-tests/dev-ux-specialist/scenarios.yaml">dev-ux-specialist / complete-responsive-flow</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-ux-specialist/scenarios.yaml">dev-ux-specialist / keyboard-and-accessibility-barriers</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-ux-specialist/scenarios.yaml">dev-ux-specialist / missing-runtime-evidence</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-browser-operator/scenarios.yaml">dev-browser-operator / persisted-setting-workflow</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-browser-operator/scenarios.yaml">dev-browser-operator / upload-boundary-failure</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-browser-operator/scenarios.yaml">dev-browser-operator / blocked-route-owned-cleanup</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: BLOCKED</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
         <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
       </dl>
@@ -4659,36 +4629,6 @@
       </dl>
     </article>
 
-    <article class="evaluation-card skill-card" id="skill-prompt-contracts"
-      data-kind="skill" data-status="direct-probe" data-search="prompt-contracts review model-facing instructions, inputs, state, outputs, tool authority, retry behavior, evaluation coverage, and data boundaries without assuming a particular orchestration framework or model provider. use for prompt review, tool-contract review, planning-contract review, or model-runtime boundary assessment. development-practice probe-prompt-contracts linked agent-suite outcomes only: pass">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>prompt-contracts</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Review model-facing instructions, inputs, state, outputs, tool authority, retry behavior, evaluation coverage, and data boundaries without assuming a particular orchestration framework or model provider. Use for prompt review, tool-contract review, planning-contract review, or model-runtime boundary assessment.</p>
-      <p class="source-row"><a href="../skills/prompt-contracts/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-prompt-contracts</a></dd></div>
-          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>review-contract</dd></div>
-          <div><dt>Executable cases</dt><dd>None declared</dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-prompt-reviewer-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-prompt-reviewer-boundary</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, contradiction-scan, operation-coverage, actor-boundary-coverage</dd></div>
-          <div><dt>Model rubric</dt><dd>review-quality</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <ul class="link-list"><li><a href="../evals/agent-tests/dev-verifier/scenarios.yaml">dev-verifier / incomplete-evidence</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-prompt-reviewer/scenarios.yaml">dev-prompt-reviewer / unsafe-retry-and-data-contracts</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-prompt-reviewer/scenarios.yaml">dev-prompt-reviewer / justified-contract-acceptance</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-prompt-reviewer/scenarios.yaml">dev-prompt-reviewer / unverifiable-provider-timeout</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
     <article class="evaluation-card skill-card" id="skill-python"
       data-kind="skill" data-status="direct-probe" data-search="python implement, refactor, test, or review python source with explicit module boundaries, type-aware interfaces, predictable resource handling, and project-native tooling. use for python files and python package work. stack-and-domain probe-python linked agent-suite outcomes only: pass">
       <div class="card-heading">
@@ -5049,6 +4989,36 @@
       </dl>
     </article>
 
+    <article class="evaluation-card skill-card" id="skill-review-code-with-evidence"
+      data-kind="skill" data-status="direct-probe" data-search="review-code-with-evidence use when reviewing source changes by loading applicable coding and stack skills, completing their evidence checklists, and synthesizing findings from cited evidence. use for code review, diff review, regression review, or delegated low-cost evidence extraction. development-practice probe-review-code-with-evidence linked agent-suite outcomes only: pass, fail">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>review-code-with-evidence</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Use when reviewing source changes by loading applicable coding and stack skills, completing their evidence checklists, and synthesizing findings from cited evidence. Use for code review, diff review, regression review, or delegated low-cost evidence extraction.</p>
+      <p class="source-row"><a href="../skills/review-code-with-evidence/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-review-code-with-evidence</a></dd></div>
+          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>review-contract</dd></div>
+          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">typescript-code-review</a></dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-code-reviewer-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-code-reviewer-boundary</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-review-checklist, finding-recall, finding-precision, fresh-context-identity</dd></div>
+          <div><dt>Model rubric</dt><dd>review-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <ul class="link-list"><li><a href="../evals/agent-tests/dev-code-reviewer/scenarios.yaml">dev-code-reviewer / seeded-typescript-defects</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-code-reviewer/scenarios.yaml">dev-code-reviewer / justified-clean-review</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-code-reviewer/scenarios.yaml">dev-code-reviewer / incomplete-review-evidence</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, FAIL</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
     <article class="evaluation-card skill-card" id="skill-review-functional-spec"
       data-kind="skill" data-status="direct-probe" data-search="review-functional-spec use when reviewing a functional specification artifact for actor workflow, entry points, states, permissions, acceptance behavior, and verification evidence. artifact-review probe-review-functional-spec linked agent-suite outcomes only: fail">
       <div class="card-heading">
@@ -5132,6 +5102,36 @@
 
       <h4>Governed campaign links</h4>
       <ul class="link-list"><li><a href="../evals/agent-tests/dev-artifact-reviewer/scenarios.yaml">dev-artifact-reviewer / accepted-artifact</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-review-prompt-contracts"
+      data-kind="skill" data-status="direct-probe" data-search="review-prompt-contracts review model-facing instructions, inputs, state, outputs, tool authority, retry behavior, evaluation coverage, and data boundaries without assuming a particular orchestration framework or model provider. use for prompt review, tool-contract review, planning-contract review, or model-runtime boundary assessment. development-practice probe-review-prompt-contracts linked agent-suite outcomes only: pass">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>review-prompt-contracts</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Review model-facing instructions, inputs, state, outputs, tool authority, retry behavior, evaluation coverage, and data boundaries without assuming a particular orchestration framework or model provider. Use for prompt review, tool-contract review, planning-contract review, or model-runtime boundary assessment.</p>
+      <p class="source-row"><a href="../skills/review-prompt-contracts/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-review-prompt-contracts</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>review-contract</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-prompt-reviewer-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-prompt-reviewer-boundary</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, contradiction-scan, operation-coverage, actor-boundary-coverage</dd></div>
+          <div><dt>Model rubric</dt><dd>review-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <ul class="link-list"><li><a href="../evals/agent-tests/dev-verifier/scenarios.yaml">dev-verifier / incomplete-evidence</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-prompt-reviewer/scenarios.yaml">dev-prompt-reviewer / unsafe-retry-and-data-contracts</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-prompt-reviewer/scenarios.yaml">dev-prompt-reviewer / justified-contract-acceptance</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-prompt-reviewer/scenarios.yaml">dev-prompt-reviewer / unverifiable-provider-timeout</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
       <dl class="compact-list">
         <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
@@ -5233,66 +5233,6 @@ available.
       <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
       <dl class="compact-list">
         <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
-    <article class="evaluation-card skill-card" id="skill-root-cause-analysis"
-      data-kind="skill" data-status="direct-probe" data-search="root-cause-analysis use when diagnosing a reproducible defect, failing test, runtime failure, data error, or recurrence risk before proposing or implementing a fix. development-practice probe-root-cause-analysis linked agent-suite outcomes only: pass, fail">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>root-cause-analysis</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Use when diagnosing a reproducible defect, failing test, runtime failure, data error, or recurrence risk before proposing or implementing a fix.</p>
-      <p class="source-row"><a href="../skills/root-cause-analysis/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-root-cause-analysis</a></dd></div>
-          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>diagnosis-contract</dd></div>
-          <div><dt>Executable cases</dt><dd>None declared</dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-runtime-diagnostician-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-runtime-diagnostician-boundary</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, test-state-transition, required-command-outcome, contradiction-scan</dd></div>
-          <div><dt>Model rubric</dt><dd>diagnosis-quality</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <ul class="link-list"><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / retained-process-port</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / worker-stall-competing-hypotheses</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / unavailable-runtime-dependency</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-verifier/scenarios.yaml">dev-verifier / failed-verification</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, FAIL</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
-    <article class="evaluation-card skill-card" id="skill-runtime-evidence-collection"
-      data-kind="skill" data-status="direct-probe" data-search="runtime-evidence-collection use when a defect or execution path requires temporary runtime observations from existing logs, debuggers, language-native output, processes, requests, or data while avoiding proprietary tracing dependencies. development-practice probe-runtime-evidence-collection linked agent-suite outcomes only: pass, fail">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>runtime-evidence-collection</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Use when a defect or execution path requires temporary runtime observations from existing logs, debuggers, language-native output, processes, requests, or data while avoiding proprietary tracing dependencies.</p>
-      <p class="source-row"><a href="../skills/runtime-evidence-collection/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-runtime-evidence-collection</a></dd></div>
-          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
-          <div><dt>Executable cases</dt><dd>None declared</dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-runtime-diagnostician-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-runtime-diagnostician-boundary</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, no-sensitive-output, allowed-paths-only, required-command-outcome</dd></div>
-          <div><dt>Model rubric</dt><dd>diagnosis-quality</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <ul class="link-list"><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / retained-process-port</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / worker-stall-competing-hypotheses</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-verifier/scenarios.yaml">dev-verifier / failed-verification</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, FAIL</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
         <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
       </dl>
@@ -5836,6 +5776,36 @@ inspect.
       </dl>
     </article>
 
+    <article class="evaluation-card skill-card" id="skill-trace-code-execution"
+      data-kind="skill" data-status="direct-probe" data-search="trace-code-execution use when explaining a source-level execution path, including entry points, callers, branches, state changes, errors, and exits, without requiring runtime instrumentation or a proprietary tracing tool. development-practice probe-trace-code-execution linked agent-suite outcomes only: pass, fail">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>trace-code-execution</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Use when explaining a source-level execution path, including entry points, callers, branches, state changes, errors, and exits, without requiring runtime instrumentation or a proprietary tracing tool.</p>
+      <p class="source-row"><a href="../skills/trace-code-execution/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-trace-code-execution</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>activation-and-behavior</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-runtime-diagnostician-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-verifier-boundary</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, source-link-resolution, operation-coverage</dd></div>
+          <div><dt>Model rubric</dt><dd>source-faithfulness</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <ul class="link-list"><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / retained-process-port</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-runtime-diagnostician/scenarios.yaml">dev-runtime-diagnostician / worker-stall-competing-hypotheses</a> &mdash; <span class="status status--fail">FAIL</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-verifier/scenarios.yaml">dev-verifier / failed-verification</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, FAIL</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
     <article class="evaluation-card skill-card" id="skill-traversal-patterns"
       data-kind="skill" data-status="direct-probe" data-search="traversal-patterns design or review iterator or visitor when aggregate traversal must be encapsulated or stable object structures need independently evolving operations. design-patterns probe-traversal-patterns no governed campaign link">
       <div class="card-heading">
@@ -6009,6 +5979,36 @@ inspect.
 
       <h4>Governed campaign links</h4>
       <ul class="link-list"><li><a href="../evals/agent-tests/dev-ux-specialist/scenarios.yaml">dev-ux-specialist / complete-responsive-flow</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-ux-specialist/scenarios.yaml">dev-ux-specialist / keyboard-and-accessibility-barriers</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-ux-specialist/scenarios.yaml">dev-ux-specialist / missing-runtime-evidence</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: BLOCKED</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-verify-end-to-end-workflow"
+      data-kind="skill" data-status="direct-probe" data-search="verify-end-to-end-workflow verify complete user or system workflows across real boundaries without assuming a particular automation framework. use for end-to-end tests, acceptance workflows, authenticated or stateful journeys, runtime coordination, visible failure states, or reproducible system-level evidence. development-practice probe-verify-end-to-end-workflow linked agent-suite outcomes only: blocked">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>verify-end-to-end-workflow</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Verify complete user or system workflows across real boundaries without assuming a particular automation framework. Use for end-to-end tests, acceptance workflows, authenticated or stateful journeys, runtime coordination, visible failure states, or reproducible system-level evidence.</p>
+      <p class="source-row"><a href="../skills/verify-end-to-end-workflow/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-verify-end-to-end-workflow</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-browser-operator-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-verifier-boundary</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, required-command-outcome, claim-lifecycle</dd></div>
+          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <ul class="link-list"><li><a href="../evals/agent-tests/dev-ux-specialist/scenarios.yaml">dev-ux-specialist / complete-responsive-flow</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-ux-specialist/scenarios.yaml">dev-ux-specialist / keyboard-and-accessibility-barriers</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-ux-specialist/scenarios.yaml">dev-ux-specialist / missing-runtime-evidence</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-browser-operator/scenarios.yaml">dev-browser-operator / persisted-setting-workflow</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-browser-operator/scenarios.yaml">dev-browser-operator / upload-boundary-failure</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-browser-operator/scenarios.yaml">dev-browser-operator / blocked-route-owned-cleanup</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
       <dl class="compact-list">
         <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: BLOCKED</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>

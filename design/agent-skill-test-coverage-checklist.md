@@ -148,13 +148,13 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | agent-claim | [x] | [x] probe-agent-claim | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | agent-claim-command | [x] | [x] probe-agent-claim-command | [x] backlog-lifecycle, documentation-functional-spec, spring-boot-order-cancellation, typescript-order-pricing, wiki-raw-ingest | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | agent-claim-mcp | [x] | [x] probe-agent-claim-mcp | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| analyze-root-cause | [x] | [x] probe-analyze-root-cause | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | application-security | [x] | [x] probe-application-security | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | ast-grep | [x] | [x] probe-ast-grep | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | careful-coding | [x] | [x] probe-careful-coding | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | code-comments | [x] | [x] probe-code-comments | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | code-discovery | [x] | [x] probe-code-discovery | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| code-execution-tracing | [x] | [x] probe-code-execution-tracing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| code-review-evidence | [x] | [x] probe-code-review-evidence | [x] typescript-code-review | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| collect-runtime-evidence | [x] | [x] probe-collect-runtime-evidence | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | coordinate-codex-work-items | [x] | [x] probe-coordinate-codex-work-items | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-azure-devops-work-item | [x] | [x] probe-create-azure-devops-work-item | [x] provider-placeholder-matrix | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-file-work-item | [x] | [x] probe-create-file-work-item | [x] file-work-item-template-contract | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
@@ -166,7 +166,6 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | deliver-work-item-feature-branch | [x] | [x] probe-deliver-work-item-feature-branch | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | detect-technology-skills | [x] | [x] probe-detect-technology-skills | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | effective-communication | [x] | [x] probe-effective-communication | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| end-to-end-verification | [x] | [x] probe-end-to-end-verification | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | explain-code-fix | [x] | [x] probe-explain-code-fix | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | integrate-agent-work | [x] | [x] probe-integrate-agent-work | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | manage-azure-devops-work-items | [x] | [x] probe-manage-azure-devops-work-items | [x] provider-placeholder-matrix, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
@@ -175,17 +174,18 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | manage-gitlab-work-items | [x] | [x] probe-manage-gitlab-work-items | [x] work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | manage-jira-work-items | [x] | [x] probe-manage-jira-work-items | [x] provider-placeholder-matrix, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | organise-project-files | [x] | [x] probe-organise-project-files | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| prompt-contracts | [x] | [x] probe-prompt-contracts | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | resolve-backlog-blockage | [x] | [x] probe-resolve-backlog-blockage | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| root-cause-analysis | [x] | [x] probe-root-cause-analysis | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| runtime-evidence-collection | [x] | [x] probe-runtime-evidence-collection | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| review-code-with-evidence | [x] | [x] probe-review-code-with-evidence | [x] typescript-code-review | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| review-prompt-contracts | [x] | [x] probe-review-prompt-contracts | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | set-multitask-mode | [x] | [x] probe-set-multitask-mode | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | set-solo-mode | [x] | [x] probe-set-solo-mode | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | structured-design | [x] | [x] probe-structured-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | structured-explanation | [x] | [x] probe-structured-explanation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | test-driven-development | [x] | [x] probe-test-driven-development | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | test-strategy | [x] | [x] probe-test-strategy | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| trace-code-execution | [x] | [x] probe-trace-code-execution | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | user-experience-review | [x] | [x] probe-user-experience-review | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| verify-end-to-end-workflow | [x] | [x] probe-verify-end-to-end-workflow | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 
 ### Design pattern skills
 

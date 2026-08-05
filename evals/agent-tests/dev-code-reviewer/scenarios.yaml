@@ -12,7 +12,7 @@ scenarios:
     initialState: A read-only TypeScript change contains three known behavioral or verification defects.
     task: Review the current change for regressions, missing tests, unsafe abstractions, and rule violations.
     targetSkills:
-      - code-review-evidence
+      - review-code-with-evidence
       - review-structured-artifact
       - careful-coding
       - code-comments
@@ -42,7 +42,7 @@ scenarios:
     initialState: A small source change matches its accepted contract and includes focused success and failure tests.
     task: Review the current change and report only actionable defects.
     targetSkills:
-      - code-review-evidence
+      - review-code-with-evidence
       - review-structured-artifact
       - careful-coding
       - code-comments
@@ -69,7 +69,7 @@ scenarios:
     task: Review the migration for compatibility regressions and verification gaps.
     requiresWorkspaceInventory: true
     targetSkills:
-      - code-review-evidence
+      - review-code-with-evidence
       - review-structured-artifact
       - careful-coding
     requiredBehaviors:
@@ -94,7 +94,7 @@ scenarios:
     initialState: Two candidate workspaces contain the same header-free src/price.ts; one supplies no policy and the other supplies fixture-policy.md with an explicit applicable rule.
     task: Review both candidate inputs separately, capture each final synthesis outside its candidate workspace, and run the evaluator-owned precision and recall controls.
     targetSkills:
-      - code-review-evidence
+      - review-code-with-evidence
       - review-structured-artifact
       - careful-coding
       - code-comments

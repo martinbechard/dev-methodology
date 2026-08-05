@@ -8,7 +8,7 @@ target:
   repositoryMutation: conditional
   requiredSkills:
     - user-experience-review
-    - end-to-end-verification
+    - verify-end-to-end-workflow
     - review-structured-artifact
   conditionalSkills:
     agent-claim: The UX work mutates files or uses exclusive runtime resources.

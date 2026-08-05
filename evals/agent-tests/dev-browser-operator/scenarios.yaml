@@ -15,7 +15,7 @@ scenarios:
     initialState: settings.html stores one notification preference in browser-local state when served from the declared fixture root.
     task: Start the fixture service, change the preference, reload, verify persistence, and clean up.
     targetSkills:
-      - end-to-end-verification
+      - verify-end-to-end-workflow
       - playwright
       - structured-explanation
     requiredBehaviors:
@@ -47,7 +47,7 @@ scenarios:
     initialState: upload.html accepts a synthetic file and sends it to a deliberately unavailable storage route.
     task: Reproduce the upload failure and capture enough evidence to identify the failing runtime boundary.
     targetSkills:
-      - end-to-end-verification
+      - verify-end-to-end-workflow
       - playwright
       - structured-explanation
     requiredBehaviors:
@@ -79,7 +79,7 @@ scenarios:
     initialState: runtime-manifest.yaml names a success route that the fixture intentionally does not provide.
     task: Attempt the declared success workflow, classify the missing route, and clean up every owned resource.
     targetSkills:
-      - end-to-end-verification
+      - verify-end-to-end-workflow
       - playwright
       - structured-explanation
     requiredBehaviors:

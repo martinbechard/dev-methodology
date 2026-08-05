@@ -1,11 +1,11 @@
 ---
-name: runtime-evidence-collection
+name: collect-runtime-evidence
 description: Use when a defect or execution path requires temporary runtime observations from existing logs, debuggers, language-native output, processes, requests, or data while avoiding proprietary tracing dependencies.
 metadata:
   category: development-practice
 ---
 
-# Runtime Evidence Collection
+# Collect Runtime Evidence
 
 ## Workflow
 

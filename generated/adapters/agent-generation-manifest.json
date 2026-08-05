@@ -54,10 +54,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
-            "end-to-end-verification",
+            "verify-end-to-end-workflow",
             "structured-explanation"
           ],
-          "sha256": "86ec4f611ed60d4599bb203f8465d85fe2041259918baa57e6d4fd78b5b006c7",
+          "sha256": "b8046ed4b0e7730723fb8e39ebc275f05409a28b5b8f07ae7abd6ac54286f533",
           "source": "agents/roles/dev-activities/dev-browser-operator.role.yaml"
         },
         {
@@ -66,12 +66,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
-            "code-review-evidence",
+            "review-code-with-evidence",
             "review-structured-artifact",
             "careful-coding",
             "code-comments"
           ],
-          "sha256": "a7f3a40b5c299220a127da0eb5f237a2e2ab919eaa096a92faf93a056c38ce55",
+          "sha256": "a9866e5bb4f1496c6f54e637ee2866c2464de540a258bb6007d3e6aabd9e7a7f",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
@@ -142,10 +142,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
-            "prompt-contracts",
+            "review-prompt-contracts",
             "review-structured-artifact"
           ],
-          "sha256": "ee457d9af1b8b1433652130ade8c4a6e02dfda51320977d989f6c7015cf220d3",
+          "sha256": "0175621e024671fe4df50910e854bbedb66450973b69d6489b19b3dd8534994c",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
@@ -156,11 +156,11 @@
             "ste-technical-writing",
             "code-discovery",
             "test-strategy",
-            "root-cause-analysis",
-            "code-execution-tracing",
+            "analyze-root-cause",
+            "trace-code-execution",
             "structured-explanation"
           ],
-          "sha256": "57762bcb605df47b706b93222dc673c3a0ee433d6c820103a8ce4f0e2bca5d30",
+          "sha256": "150a86fc3442bd08c6eef2d3ee214621cf2ec3084fc1e0bfcfc1ee527c39c698",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
@@ -195,10 +195,10 @@
             "effective-communication",
             "ste-technical-writing",
             "user-experience-review",
-            "end-to-end-verification",
+            "verify-end-to-end-workflow",
             "review-structured-artifact"
           ],
-          "sha256": "a9cd911e1dbfbcf410d2183ccce0c2d8be48f9cfccac6cfea65d6dc1a907fcdc",
+          "sha256": "7d6695b7372efb0c4b792f1e2d493249853a5b2d97ef88153ba50422938e5992",
           "source": "agents/roles/dev-activities/dev-ux-specialist.role.yaml"
         },
         {
@@ -211,7 +211,7 @@
             "review-structured-artifact",
             "structured-explanation"
           ],
-          "sha256": "f281da4d0db262116882b3e45f568e1495c980cf1d2915e5dec94374a8fa9350",
+          "sha256": "12cb8b392b0427e7422bd12815702740f6142bc9f48913dc3177a9b5e3b06567",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
@@ -441,11 +441,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
-            "end-to-end-verification",
+            "verify-end-to-end-workflow",
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "1ceccc6599418e4659c9573b95b64245b81e9517b346a41c056c5052e92adb62",
+          "sha256": "4048f5992a2baad72fc269ede1fd8ab6a0a247b9523d114fe6ba5f9fd5fe5cfe",
           "source": "agents/roles/dev-activities/dev-browser-operator.role.yaml"
         },
         {
@@ -454,13 +454,13 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
-            "code-review-evidence",
+            "review-code-with-evidence",
             "review-structured-artifact",
             "careful-coding",
             "code-comments",
             "codex-harness-directives"
           ],
-          "sha256": "4e1162d6e436b8f7a85cbe9e0b40c6aae6f899fac0544d94e21a04e274db3edf",
+          "sha256": "0746f9f8de737118ec2f1676729ccb6620ad2e44a1f6bc69e3963c5595afb6bb",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
@@ -536,11 +536,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
-            "prompt-contracts",
+            "review-prompt-contracts",
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "ba60efca20bcd9f13d977bebf3e984d40ce80093ee022b94c27bca327d9f476e",
+          "sha256": "103d22fcc859644b681c9018b1f6be23472587decfb8809fd6393bdfa69d79ac",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
@@ -551,12 +551,12 @@
             "ste-technical-writing",
             "code-discovery",
             "test-strategy",
-            "root-cause-analysis",
-            "code-execution-tracing",
+            "analyze-root-cause",
+            "trace-code-execution",
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "bc40ed1ea217828a4ed76e51f448066e3e18f60a5eedd2e0f72cb563eb361853",
+          "sha256": "1f984214f54228a1df3bc7489f554918131882964e2a595ec7ef8be1e9a960a6",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
@@ -593,11 +593,11 @@
             "effective-communication",
             "ste-technical-writing",
             "user-experience-review",
-            "end-to-end-verification",
+            "verify-end-to-end-workflow",
             "review-structured-artifact",
             "codex-harness-directives"
           ],
-          "sha256": "8bf978f2a54241b946eb344feec59cb68b67e8a6a309923b9cc475a8d2354ae8",
+          "sha256": "c83f48c4a76991e4297263fb72d52b07f3fff4691b171e13a2a83bb5bea7324f",
           "source": "agents/roles/dev-activities/dev-ux-specialist.role.yaml"
         },
         {
@@ -611,7 +611,7 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "10851eccac1086c5c1422d62f8a5304ba54621576d8a12a1b935a66dbe78b484",
+          "sha256": "d17d064358f32369a1a17eb6a2eb9e2087094e8cb4250551543f7d24110d5bc4",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
@@ -855,10 +855,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
-            "end-to-end-verification",
+            "verify-end-to-end-workflow",
             "structured-explanation"
           ],
-          "sha256": "6bc3e411a972eb5884dacc4e55bb993fab637b3141a35c4ec7fccec8205dafa1",
+          "sha256": "77ecaa6643d4c409468d77fbf1453f1a4535f2864bbefb2460dde5e449b368b4",
           "source": "agents/roles/dev-activities/dev-browser-operator.role.yaml"
         },
         {
@@ -867,12 +867,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
-            "code-review-evidence",
+            "review-code-with-evidence",
             "review-structured-artifact",
             "careful-coding",
             "code-comments"
           ],
-          "sha256": "a970f84749f17dea36361eb856cb56661e437cd9a0a4ca90db7e2adda561b55e",
+          "sha256": "96cb641a307c8fafeafbf0fcc25760e4a3f1ff3aff25c66c119eb70ec40b4d7c",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
@@ -943,10 +943,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
-            "prompt-contracts",
+            "review-prompt-contracts",
             "review-structured-artifact"
           ],
-          "sha256": "2d25c1647e3848af589a78d1dd366e4194fdd33eba2d83f06abf101a7b0b1ec1",
+          "sha256": "c135a27e62836550480405876c7294effe72b04275a37f96bf3a0e8cecb48e7b",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
@@ -957,11 +957,11 @@
             "ste-technical-writing",
             "code-discovery",
             "test-strategy",
-            "root-cause-analysis",
-            "code-execution-tracing",
+            "analyze-root-cause",
+            "trace-code-execution",
             "structured-explanation"
           ],
-          "sha256": "7332eebedea5aaf6aef44d4920a0898adf3f30461e9fc858f4e425e0b36ac1bf",
+          "sha256": "8610c30c990747b705a397bd2591d79521274f8f18a9b89e68e67d838910d452",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
@@ -996,10 +996,10 @@
             "effective-communication",
             "ste-technical-writing",
             "user-experience-review",
-            "end-to-end-verification",
+            "verify-end-to-end-workflow",
             "review-structured-artifact"
           ],
-          "sha256": "1c33e0d8015a769edd9f62c0cce7ebfa191a54a869e0a1243769a8f046b7dd9a",
+          "sha256": "44baac0d57b06328fa54e4ce913413270d351d839b1728dbd7cb49d8bc0b6873",
           "source": "agents/roles/dev-activities/dev-ux-specialist.role.yaml"
         },
         {
@@ -1012,7 +1012,7 @@
             "review-structured-artifact",
             "structured-explanation"
           ],
-          "sha256": "4bf779abdc325a2ede2ef1f04ecd7704734d070e3b969ae382e180665afea148",
+          "sha256": "8c26be22d31377e0b88289135110cc530064d90af153dfcf4f9378fb64a4561a",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
@@ -1239,10 +1239,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
-            "end-to-end-verification",
+            "verify-end-to-end-workflow",
             "structured-explanation"
           ],
-          "sha256": "55bd34676e3da39c12978f696b430ae25be873fe148cf583b9e4359716e441d9",
+          "sha256": "431ae8418b6e99bf93ed4c6ed8c5ea5d4650563d01ef9a292d55da5a6dd7781c",
           "source": "agents/roles/dev-activities/dev-browser-operator.role.yaml"
         },
         {
@@ -1251,12 +1251,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
-            "code-review-evidence",
+            "review-code-with-evidence",
             "review-structured-artifact",
             "careful-coding",
             "code-comments"
           ],
-          "sha256": "e59bff88657718663daed14d063bc2d53be1df2ac1ea6d032491355f6bc54486",
+          "sha256": "f5bbf97b67271f12b1b5b0863af6fe198b20c92bc577bfb49dc0f748911a24e3",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
@@ -1327,10 +1327,10 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
-            "prompt-contracts",
+            "review-prompt-contracts",
             "review-structured-artifact"
           ],
-          "sha256": "1a21c21e2369ef3ecba240a950d85b8567e0febd4d3cfffd65bf44ca7747fa47",
+          "sha256": "e4024328184c879edcc12a01de1b5531b8b3196c13da1a9834a769b03517af8b",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
@@ -1341,11 +1341,11 @@
             "ste-technical-writing",
             "code-discovery",
             "test-strategy",
-            "root-cause-analysis",
-            "code-execution-tracing",
+            "analyze-root-cause",
+            "trace-code-execution",
             "structured-explanation"
           ],
-          "sha256": "8161aaacbf836f32493298e50d3b145a316c322655389e1eb8d7a71fbaa99700",
+          "sha256": "2b78b562bfef3283c947349206093baa5fe026f9270727ced2b801a8fd424282",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
@@ -1380,10 +1380,10 @@
             "effective-communication",
             "ste-technical-writing",
             "user-experience-review",
-            "end-to-end-verification",
+            "verify-end-to-end-workflow",
             "review-structured-artifact"
           ],
-          "sha256": "979153fdeae6ed6e788004321d116111133c0f569f31984ccf55abb6d5466ff2",
+          "sha256": "02756da93d25343e4cd2895aa05f08ba3b830ffac7ce5149a46b22d2c6167dc3",
           "source": "agents/roles/dev-activities/dev-ux-specialist.role.yaml"
         },
         {
@@ -1396,7 +1396,7 @@
             "review-structured-artifact",
             "structured-explanation"
           ],
-          "sha256": "144216961a6a36b52a7f7027f8866a83e0e149c7617ae47d8b5dd5b4459c7219",
+          "sha256": "442e7b4320c8480c2ed36dddde0ecd366746482da0b102316015fa689e161a7b",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {

@@ -7,7 +7,7 @@ target:
   nativeAgent: generated/adapters/codex/agents/dev-browser-operator.toml
   repositoryMutation: conditional
   requiredSkills:
-    - end-to-end-verification
+    - verify-end-to-end-workflow
     - structured-explanation
   conditionalSkills:
     agent-claim: The workflow mutates repository evidence or uses exclusive runtime resources.

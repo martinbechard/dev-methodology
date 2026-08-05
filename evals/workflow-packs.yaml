@@ -49,14 +49,14 @@ packs:
       - probe-clerk-auth
       - probe-code-comments
       - probe-code-discovery
-      - probe-code-execution-tracing
-      - probe-code-review-evidence
+      - probe-trace-code-execution
+      - probe-review-code-with-evidence
       - probe-deliver-work-item-direct-main
       - probe-deliver-work-item-feature-branch
       - probe-create-pull-request
       - probe-electron-main
       - probe-electron-preload
-      - probe-end-to-end-verification
+      - probe-verify-end-to-end-workflow
       - probe-fastapi
       - probe-explain-code-fix
       - probe-java
@@ -78,14 +78,14 @@ packs:
       - probe-plan-engine
       - probe-playwright
       - probe-postgres-drizzle
-      - probe-prompt-contracts
+      - probe-review-prompt-contracts
       - probe-python
       - probe-quartz
       - probe-react-server-components
       - probe-react-vite-renderer
       - probe-review-structured-artifact
-      - probe-root-cause-analysis
-      - probe-runtime-evidence-collection
+      - probe-analyze-root-cause
+      - probe-collect-runtime-evidence
       - probe-spring-boot
       - probe-spring-boot-design
       - probe-spring-boot-testing
