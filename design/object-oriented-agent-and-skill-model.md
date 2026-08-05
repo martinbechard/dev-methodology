@@ -382,21 +382,11 @@ A Skill Group and a Skill Group diagram are different things. The Skill Group is
 
 ### 3.1 Skill Group
 
-A Skill Group contains cohesive skills that contribute to one capability. It can include skills directly and can include another Skill Group as a nested set. Its complete set of skills is the union of its direct skills and all skills in its nested groups.
-
-A nested Skill Group is the same kind of set as its parent. The word subgroup describes only its position inside the parent. For any Skill Group:
-
-- direct skills are the skills listed immediately in the group;
-- nested groups are named Skill Groups included by the group; and
-- the complete skill set contains the direct skills plus the complete skill sets of all nested groups.
+A Skill Group is the actual set of cohesive SKILL.md definitions that contribute to one capability.
 
 - **RULE: RULE-28** Skill Group members divide a larger responsibility without overlap
   - **SYNOPSIS:** Each member owns one cohesive part of the grouped capability while using compatible domain vocabulary.
   - **EXAMPLE:** In the Work Item Skill Group, work-item-base defines work items, states, and rules; work-item-dispatch changes status under dispatch rules; and work-item-monitor observes work items and raises alarms.
-
-- **RULE: RULE-55** A nested Skill Group contributes its complete skill set
-  - **SYNOPSIS:** The parent Skill Group contains its direct skills plus every skill reached through its nested groups.
-  - **EXAMPLE:** Concurrent Tasking contains agent-claim through its nested Resource Coordination group even though agent-claim is not a direct member of Concurrent Tasking.
 
 The Skill Group is an organizational set. Membership does not mean that one member loads, invokes, or depends on another member.
 
@@ -459,6 +449,16 @@ The Work Item Skill Group names and displayed members are analysis vocabulary su
 ### 3.3 Collapsed Skill Group Diagram
 
 A collapsed Skill Group Diagram represents the group as one node instead of drawing a box around its members. Solid-diamond containment lines connect that node to direct skills and nested Skill Groups. This form is useful when member details are unnecessary or when several nested groups must remain readable.
+
+A nested Skill Group is the same kind of set as its parent. The word subgroup describes only its position inside the parent. In a collapsed diagram:
+
+- a line to a skill displays direct membership;
+- a line to another Skill Group displays a nested group; and
+- the parent’s complete skill set includes its direct skills plus the complete skill sets of its nested groups.
+
+- **RULE: RULE-55** A nested Skill Group contributes its complete skill set
+  - **SYNOPSIS:** The parent Skill Group contains its direct skills plus every skill reached through its nested groups.
+  - **EXAMPLE:** Concurrent Tasking contains agent-claim through its nested Resource Coordination group even though agent-claim is not a direct member of Concurrent Tasking.
 
 - **RULE: RULE-54** A solid diamond represents containment in a collapsed diagram
   - **SYNOPSIS:** A solid diamond from a Skill Group node to a SKILL.md node records direct membership. A solid diamond from one Skill Group node to another records nested-group inclusion.
