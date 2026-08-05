@@ -1,6 +1,6 @@
 # Align Baseline Development Skills
 
-Status: Blocked
+Status: Completed
 
 Type: Feature
 
@@ -177,3 +177,17 @@ Preserved Evidence: Independent review PASS; verification WARN only because of t
 Claim Evidence: Before this lifecycle transaction, claim status returned STATUS with no live claims. Exact-file claim block-align-baseline-development-skills-019fab acquired with outcome SHARED_CHECKOUT_ACQUIRED and event 6baf9d73-83fc-4ce2-8360-c1418e9f12a7.
 
 Safe Resumption: Retain this canonical Thread, candidate, review, verification, and user-owned diff. On the observable unblock condition, the parent Coordinator must restore Ready in a distinct provider transaction before the normal Ready -> Starting -> Running sequence. No replacement Thread is permitted while the preserved canonical identity remains valid.
+
+## Crisis Completion
+
+Completed At: 2026-08-05T19:14:30Z.
+
+Disposition: Completed directly by the Backlog Crisis Mode Coordinator after the shared checklist-generator dependency was repaired.
+
+Accepted Candidate: 173e0f52aefde679b6bc8b8f59bc8acdd49ca24c.
+
+Delivery Tip: 01cc250e.
+
+Verification: Nine changed skills validated; focused skill-evaluation, coverage-catalog, evaluation-documentation, bundle-contract, Dev Coder fixture, and Dev Merge Coordinator fixture tests passed; all supported generated outputs are current; diff checks passed.
+
+Outcome: Baseline Development procedures now match the approved design, fix-explanation is renamed to explain-code-fix, direct Agent references and probes are aligned, and obsolete standalone approval records are absent.
