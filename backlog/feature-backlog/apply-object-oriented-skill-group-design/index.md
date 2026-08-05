@@ -28,7 +28,7 @@ Apply the approved skill names and public procedure headings from the object-ori
 4. [Align Work-Item Creation Provider Skills](align-work-item-creation-provider-skills.md)
 5. [Align Work-Item Management Provider Skills](align-work-item-management-provider-skills.md) — Ready; preserved canonical delivery evidence awaits parent dispatch.
 6. [Split Backlog Blockage And Dispatch-Mode Skills](split-backlog-blockage-and-dispatch-mode-skills.md)
-7. [Align Resource Coordination Skills](../../user-action-required/align-resource-coordination-skills.md) — User Action Required before direct-main integration.
+7. [Align Resource Coordination Skills](align-resource-coordination-skills.md) — Ready; preserved canonical delivery evidence awaits parent dispatch.
 8. [Align Codex Work-Item Coordination Skill](align-codex-work-item-coordination-skill.md)
 9. [Align Integration And Delivery Skills](align-integration-and-delivery-skills.md)
 10. [Align Review And Verification Skills](align-review-and-verification-skills.md)
