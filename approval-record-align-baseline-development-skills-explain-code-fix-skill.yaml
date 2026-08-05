@@ -1,0 +1,8 @@
+basis: explicit-user-direction
+definition_scope: skills/explain-code-fix/SKILL.md
+direction: "create separate work items to update skills according to the new design, and update individual evals."
+provenance:
+  source: user-message
+  reference: thread:align-baseline-development-skills/message:user-request
+  canonical_thread: /root/apply_skill_group_design_backlog/align_baseline_development_skills
+  work_item: backlog/feature-backlog/apply-object-oriented-skill-group-design/align-baseline-development-skills.md

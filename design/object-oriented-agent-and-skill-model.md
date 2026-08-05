@@ -28,7 +28,7 @@ The method concludes with an applied overview of the methodology skill groups. T
   - **BECAUSE:** Skills are loaded independently, so their instructions can clash when their relationships and responsibilities are unclear.
   - **BECAUSE:** Agents reference some skills directly, while project directives in AGENTS.md map other procedure names to specific skill implementations.
   - **BECAUSE:** Skills hide procedure details behind shared procedure names in a way that resembles object-oriented polymorphism.
-  - **EXAMPLE:** Class designs show Dev Coder naming fix-explanation and conditionally naming test-driven-development when the user requests TDD, while Backlog Manager invokes create-new-work-item() through an AGENTS.md mapping that can select a file-backed or GitLab-backed implementation. The independently loaded dependencies and interchangeable procedure providers become visible instead of remaining hidden in separate files.
+  - **EXAMPLE:** Class designs show Dev Coder naming explain-code-fix and conditionally naming test-driven-development when the user requests TDD, while Backlog Manager invokes create-new-work-item() through an AGENTS.md mapping that can select a file-backed or GitLab-backed implementation. The independently loaded dependencies and interchangeable procedure providers become visible instead of remaining hidden in separate files.
 
 - **GOAL: GOAL-2** Understand and improve skill organization
   - **SYNOPSIS:** The analysis compares skill responsibilities, procedure families, and dependencies so maintainable skill hierarchies can be designed.
@@ -677,7 +677,7 @@ An Agent can use named Agent Skills and Injected Skills together. A class view c
 
 - **RULE: RULE-14** An Agent class view records reusable expectations and dependencies
   - **SYNOPSIS:** The Agent node shows the behavior relevant to the analysis, the procedure names it invokes, and the Agent Skills it names.
-  - **EXAMPLE:** A coding-agent class can name fix-explanation directly and invoke Deliver Workitem without naming the delivery SKILL.md.
+  - **EXAMPLE:** A coding-agent class can name explain-code-fix directly and invoke Deliver Workitem without naming the delivery SKILL.md.
 
 - **RULE: RULE-15** Dependency views omit unrelated runtime state
   - **SYNOPSIS:** The class view shows the expectations and dispatch paths needed to understand skill use without modeling task values that do not change those relationships.
@@ -696,7 +696,7 @@ classDiagram
         +deliverAcceptedChange()
     }
 
-    class fix-explanation {
+    class explain-code-fix {
         <<SKILL.md>>
         <<Agent Skill>>
     }
@@ -714,12 +714,12 @@ classDiagram
         +host-state-decision-table
     }
 
-    CodingAgent o--> fix-explanation
+    CodingAgent o--> explain-code-fix
     CodingAgent --> DeliverWorkitem
     DeliverWorkitem o--> complete-work-item-feature-branch
 ```
 
-The Agent points directly to fix-explanation because its definition names that single-procedure skill. Its empty member area avoids repeating the procedure already identified by the operation-shaped skill name. The Agent points regularly to Deliver Workitem because it knows the procedure name. The AGENTS.md DII points by open diamond to the selected feature-branch skill.
+The Agent points directly to explain-code-fix because its definition names that single-procedure skill. Its empty member area avoids repeating the procedure already identified by the operation-shaped skill name. The Agent points regularly to Deliver Workitem because it knows the procedure name. The AGENTS.md DII points by open diamond to the selected feature-branch skill.
 
 The diagram explains dependencies and dispatch. It does not require the harness to construct software classes or imply an inheritance relationship.
 
@@ -879,7 +879,7 @@ The analysis is grounded in the user-directed conventions and repository sources
 - [Complete Work Item Direct Main](../skills/complete-work-item-direct-main/SKILL.md)
 - [Complete Work Item Feature Branch](../skills/complete-work-item-feature-branch/SKILL.md)
 - [Create Pull Request](../skills/create-pull-request/SKILL.md)
-- [Fix Explanation](../skills/fix-explanation/SKILL.md)
+- [Explain Code Fix](../skills/explain-code-fix/SKILL.md)
 - [Test-Driven Development](../skills/test-driven-development/SKILL.md)
 - [JUnit](../skills/junit/SKILL.md)
 - [Jest](../skills/jest/SKILL.md)

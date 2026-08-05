@@ -1114,7 +1114,6 @@ class BundleContentTests(unittest.TestCase):
             "probe-code-discovery": "Discover Code Context before Determine Change Scope",
             "probe-test-driven-development": "Run Red-Green-Refactor Loop",
             "probe-structured-design": "Create Structured Design and Self-Review Structured Design",
-            "probe-structured-explanation": "Create Structured Explanation",
             "probe-organise-project-files": "Choose Project File Placement",
             "probe-review-structured-artifact": "Review Structured Artifact",
             "probe-explain-code-fix": "Explain Code Fix",
@@ -1124,6 +1123,18 @@ class BundleContentTests(unittest.TestCase):
         for probe_id, phrase in expected_probe_phrases.items():
             with self.subTest(probe=probe_id):
                 self.assertIn(phrase, probes_by_id[probe_id]["expectedBehavior"])
+
+        self.assertEqual(
+            "Create Structured Explanation by starting with a top-level QUERY; "
+            "use SUB-QUERY items only when they help; classify direct evidence, "
+            "plausible unproven explanations, and unresolved gaps as FACT, "
+            "HYPOTHESIS, and UNKNOWN; close each query with an ANSWER supported "
+            "by the items directly under that query; end with an ANSWER to the "
+            "main QUERY; and use structured-design items only when concrete "
+            "system structure is needed, keeping them subordinate to the "
+            "explanation flow.",
+            probes_by_id["probe-structured-explanation"]["expectedBehavior"],
+        )
 
         for role_name in ("dev-coder", "dev-merge-coordinator"):
             role = load_yaml_object(

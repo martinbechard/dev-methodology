@@ -1696,7 +1696,7 @@ probes:
     evaluationKind: answer-contract
     activationCondition: Reasoning, behavior, a decision, or a workflow needs a concise structured explanation rather than a durable design artifact.
     negativeCondition: Explanation structure does not invent evidence or conceal uncertainty and does not replace a required formal artifact.
-    expectedBehavior: Create Structured Explanation by leading with the outcome, organizing causes, evidence, constraints, tradeoffs, and next actions at the reader's altitude, distinguishing fact from inference, and using only the minimum structure that improves comprehension.
+    expectedBehavior: Create Structured Explanation by starting with a top-level QUERY; use SUB-QUERY items only when they help; classify direct evidence, plausible unproven explanations, and unresolved gaps as FACT, HYPOTHESIS, and UNKNOWN; close each query with an ANSWER supported by the items directly under that query; end with an ANSWER to the main QUERY; and use structured-design items only when concrete system structure is needed, keeping them subordinate to the explanation flow.
     judgePlan: {deterministicChecks: [skill-read-trace, contradiction-scan, readiness-consistency, no-sensitive-output], modelRubric: source-faithfulness}
     scenarioAssociations: [dev-documentation-writer-happy, wiki-query-responder-happy]
     workflowAssociations: [code-delivery, documentation-methodology, project-setup, wiki-lifecycle, backlog]
