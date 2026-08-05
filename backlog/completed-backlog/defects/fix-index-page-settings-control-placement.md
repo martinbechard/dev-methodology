@@ -1,16 +1,16 @@
 # Fix Index Page Settings Control Placement
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/fix-index-page-settings-control-placement.md
+Provider Reference: backlog/completed-backlog/defects/fix-index-page-settings-control-placement.md
 
 Completion: direct-main
 
-Owner: Root Dev Orchestrator
+Owner: Unowned
 
 ## Superseded User Action Question
 
@@ -325,6 +325,36 @@ Current Phase: Current-main reconciliation and direct-main delivery preparation;
 Started At: 2026-08-05T14:19:22.253749000Z (Root Dev Orchestrator acceptance).
 
 Claim Evidence: starting-running-current-main-019faec8 acquired as SHARED_CHECKOUT_ACQUIRED; claim journal event 920f6287-e6d9-42a0-8516-12eff22fd268.
+
+## Completion Evidence
+
+Transition: Running -> Completed.
+
+Canonical Thread and Root Agent Task: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Completion Disposition: READY through direct-main delivery.
+
+Accepted Source Chain: 3b5116fcb658312ad10544041d2eb9c3f445ef65; e84298ebc28c87e189514cc0e3bc7796e41975e3; 4c06ab5e002b18706834c15b31317bfb3594d76f.
+
+Source Review and Verification: GOOD independent review; focused source tests PASS; browser PASS.
+
+Source-to-Integration Mapping: 3b5116fc -> 19def77ac3ea4efacfe20717370e4b08efa67bca (identical stable patch ID b8f24a...); e84298eb -> 371dafe134f495ca977a614727ef233f0cb5829f (identical stable patch ID 371a61b...); 4c06ab5e -> 7a5665bd73326d3ccaddbb39a2f988b71e02d700 (identical stable patch ID e184e0a...).
+
+Current-Main Reconciliation: 725f3e438ef3eab0d17690caa334b5ccab00f369 removes only the obsolete assertion for deleted agent-skill-explorer.html.
+
+Main Observation: main at 725f3e438ef3eab0d17690caa334b5ccab00f369; all three integration commits and the reconciliation commit are ancestors; index.html matches the accepted candidate.
+
+Post-Integration Verification: PASS — /Users/martinbechard/.pyenv/versions/3.11.10/bin/python3 -m unittest scripts.test_bundle_content.BundleContentTests.test_html_documentation_assigns_single_topic_owners scripts.test_bundle_content.BundleContentTests.test_html_documentation_loads_accessible_persistent_settings (2 tests); integration diff checks PASS.
+
+Superseded Environment Result: The initial Apple Python 3.9 attempt failed before collection because tomllib was unavailable; the Python 3.11 PASS supersedes that environment mismatch.
+
+Remote Observation: Publication is not configured as required. Local main is ahead of origin; no push was requested.
+
+Integration Claim Evidence: integrate-index-settings-placement-019faec8 acquired event 8f9f6b70-331b-43d7-9b4b-e76ed50fe0c8 and released event 34e9c5f0-ce48-4aad-bb47-e88be6dccadb.
+
+Terminal Provider Claim Evidence: complete-index-settings-placement-019faec8 acquired as SHARED_CHECKOUT_ACQUIRED; claim journal event 72920993-d0cd-4c7a-9c91-60167f50574e.
+
+Completed At: 2026-08-05T14:58:39.252614Z.
 
 ## Notes
 
