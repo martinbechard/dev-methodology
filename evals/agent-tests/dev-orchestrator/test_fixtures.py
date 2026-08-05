@@ -1,10 +1,11 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Verifies the disposable dependency-routing fixture and its omission diagnostics.
+# Summary: Verifies offline Dev Orchestrator fixtures, dependency routing, target preservation, and finding evidence.
 # Governing test plan: evals/agent-tests/dev-orchestrator/fixtures/dependency-routing/fixture-contract.yaml
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 import re
@@ -42,6 +43,115 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         self.assertNotIn("agent-claim", scenario["targetSkills"])
         self.assertNotIn("claim-lifecycle", scenario["deterministicChecks"])
         self.assertNotIn("claimRelease", scenario["requiredHandoffReceiptFields"])
+
+    def test_skill_under_test_finding_uses_separate_protected_and_provider_boundaries(self) -> None:
+        """Prove an unchanged target digest and a durable file-provider finding receipt."""
+
+        catalog = runner._load_catalog(_SUITE_ROOT.parent, {"dev-orchestrator"})
+        suite = catalog["dev-orchestrator"]
+        scenario = next(
+            item for item in suite.scenarios if item["id"] == "skill-under-test-defect-routing"
+        )
+        fixture = _SUITE_ROOT / scenario["executableCase"]
+        source_target = fixture / "target-skill" / "SKILL.md"
+        expected = runner._load_yaml(fixture / "expected-finding.yaml")
+        source_bytes = source_target.read_bytes()
+        self.assertNotIn(expected["missingBehavior"], source_bytes.decode("utf-8"))
+
+        protection = scenario["protectedTarget"]
+        allowed_mutations = scenario["allowedMutationPaths"]
+        self.assertEqual(protection["path"], source_target.relative_to(fixture).as_posix())
+        self.assertEqual(protection["sha256"], hashlib.sha256(source_bytes).hexdigest())
+        self.assertEqual(
+            allowed_mutations,
+            [f"{expected['providerPath']}/{expected['providerItem']}"],
+        )
+
+        with tempfile.TemporaryDirectory() as directory:
+            scenario_root = Path(directory)
+            protected_target = scenario_root / protection["path"]
+            protected_target.parent.mkdir(parents=True)
+            protected_target.write_bytes(source_bytes)
+            before_digest = hashlib.sha256(protected_target.read_bytes()).hexdigest()
+
+            finding = (
+                scenario_root
+                / expected["providerPath"]
+                / expected["providerItem"]
+            )
+            finding.parent.mkdir(parents=True)
+            finding.write_text(
+                "\n".join(
+                    (
+                        "# Synthetic Target Skill Missing Finding Receipt",
+                        "",
+                        "Status: Ready",
+                        "",
+                        "Type: Defect",
+                        "",
+                        "Provider: file",
+                        "",
+                        f"Provider Reference: {expected['providerPath']}/{expected['providerItem']}",
+                        "",
+                        "Completion: direct-main",
+                        "",
+                        "Owner: Unowned",
+                        "",
+                        "## Summary",
+                        "",
+                        "Record the missing synthetic target behavior without changing the target under test.",
+                        "",
+                        "## Source Evidence",
+                        "",
+                        f"Missing Behavior: {expected['missingBehavior']}",
+                        "",
+                        "Target Disposition: Preserved without mutation",
+                        "",
+                        "## Requirements",
+                        "",
+                        "- Preserve the frozen target bytes and digest.",
+                        "- Correct the target only through a separately authorized delivery task.",
+                        "",
+                        "## Acceptance Criteria",
+                        "",
+                        "- The target finding is reproducible from the governed evidence.",
+                        "- No evaluation run mutates the target to obtain a pass.",
+                        "",
+                        "## Dependencies",
+                        "",
+                        "None.",
+                        "",
+                        "## Verification",
+                        "",
+                        "Compare the frozen target digest before and after the evaluation.",
+                        "",
+                        "## Open Questions",
+                        "",
+                        "None.",
+                        "",
+                    )
+                ),
+                encoding="utf-8",
+            )
+
+            after_digest = hashlib.sha256(protected_target.read_bytes()).hexdigest()
+            finding_text = finding.read_text(encoding="utf-8")
+            observed_mutations = [finding.relative_to(scenario_root).as_posix()]
+
+        self.assertEqual(before_digest, after_digest)
+        self.assertEqual(protection["sha256"], after_digest)
+        self.assertEqual(allowed_mutations, observed_mutations)
+        self.assertIn("Status: Ready", finding_text)
+        self.assertIn("Provider: file", finding_text)
+        self.assertIn(expected["missingBehavior"], finding_text)
+        self.assertIn("Target Disposition: Preserved without mutation", finding_text)
+        self.assertNotIn("requiresWorkspaceInventory", scenario)
+        self.assertNotIn("requiresNoDetectedMutation", scenario)
+        self.assertEqual(["dev-backlog-steward"], scenario["allowedAgentDependencies"])
+        self.assertEqual(["finding"], scenario["requiredHandoffReceiptLanes"])
+        self.assertIn("allowed-paths-only", scenario["deterministicChecks"])
+        self.assertNotIn("no-forbidden-mutation", scenario["deterministicChecks"])
+        self.assertIn("committed-handoffs", scenario["deterministicChecks"])
 
     def test_resource_coordination_contract_keeps_both_selections(self) -> None:
         """The fixture keeps private file lanes claim-free and Event Contract claims scoped."""

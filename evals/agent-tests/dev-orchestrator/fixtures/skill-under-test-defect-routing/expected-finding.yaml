@@ -1,0 +1,6 @@
+provider: file
+providerPath: backlog/defect-backlog
+providerItem: synthetic-target-skill-missing-finding-receipt.md
+routeTo: Dev Backlog Steward
+missingBehavior: Preserve one durable finding receipt.
+expectedDisposition: PASS

@@ -1,6 +1,0 @@
-basis: explicit-user-direction
-definition_scope: skills/fix-explanation/SKILL.md
-direction: "I approve that you update the item and proceed with it"
-provenance:
-  source: user-message
-  reference: thread:019fa9f9-33f0-7db3-90d5-2dc77dd89c06/message:item-51

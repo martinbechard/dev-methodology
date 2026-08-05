@@ -1,6 +1,0 @@
-basis: explicit-user-direction
-definition_scope: agents/roles/wiki-activities/wiki-writer.role.yaml
-direction: "Make verifier interruption explicitly role-owned; preserve unverified writer edits; capture the invocation receipt and before-and-after writer-scope evidence; allow interruption-specific BLOCKED evidence without invented verifier findings; and keep the verifier non-mutating."
-provenance:
-  source: user-message
-  reference: thread:019faa19-0275-7210-aaf6-45931b8079ab/message:ok-approved-wiki-writer-role

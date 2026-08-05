@@ -1,6 +1,0 @@
-basis: explicit-user-direction
-definition_scope: skills/agent-claim/SKILL.md
-direction: "create separate work items to update skills according to the new design, and update individual evals."
-provenance:
-  source: delegated-user-direction
-  reference: thread:apply_skill_group_design_backlog/delegation:align-resource-coordination-skills

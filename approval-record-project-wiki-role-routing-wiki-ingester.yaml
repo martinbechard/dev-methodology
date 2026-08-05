@@ -1,6 +1,0 @@
-basis: explicit-user-direction
-definition_scope: agents/roles/wiki-activities/wiki-ingester.role.yaml
-direction: "Approve role-owned verifier and interruption handling that reports BLOCKED at pre-move and post-move interruption gates without bypassing the pre-move GOOD boundary."
-provenance:
-  source: user-message
-  reference: thread:019faa18-fe86-7110-9b9e-c7be3bdc8888/message:approved

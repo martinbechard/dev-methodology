@@ -1,6 +1,0 @@
-basis: explicit-user-direction
-definition_scope: skills/project-wiki-topic-write/SKILL.md
-direction: "Approve role-owned verification and interruption handoff, preservation of writer edits and verifier read-only boundaries, and executable helper resolution from the loaded project-wiki skill directory."
-provenance:
-  source: user-message
-  reference: thread:019faa19-0275-7210-aaf6-45931b8079ab/message:approved

@@ -1,6 +1,0 @@
-basis: explicit-user-direction
-definition_scope: skills/manage-file-work-items/SKILL.md
-direction: "ok I approve"
-provenance:
-  source: user-message
-  reference: thread:019fab2d-d9ac-7a82-8107-04260716d4d0/message:ok-i-approve-after-backlog-only-clarification

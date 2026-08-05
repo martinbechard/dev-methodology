@@ -1,5 +1,0 @@
-basis: explicit-user-direction
-definition_scope: agents/roles/dev-activities/dev-backlog-steward.role.yaml
-provenance:
-  source: user-message
-  reference: thread:019fa9be-c415-7bc0-9ce4-5282a6185769/message:yes-approved-uar-brief-reminder

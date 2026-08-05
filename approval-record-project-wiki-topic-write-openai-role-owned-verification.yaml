@@ -1,6 +1,0 @@
-basis: explicit-user-direction
-definition_scope: skills/project-wiki-topic-write/agents/openai.yaml
-direction: "Align the Codex summary and default prompt with the already-approved role-owned verification handoff, remove skill-owned retry and terminal BLOCKED instructions, and keep direct invocation consistent with skills/project-wiki-topic-write/SKILL.md."
-provenance:
-  source: user-message
-  reference: thread:019faa19-0275-7210-aaf6-45931b8079ab/message:I-approve-metadata

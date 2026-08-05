@@ -2010,107 +2010,65 @@ class BundleContentTests(unittest.TestCase):
             set(operation_case["requiredEvidence"]),
         )
 
-    def test_work_item_management_provider_approval_records_reproduce_allowed_outcomes(
-        self,
-    ) -> None:
-        """Every governed provider path has one saved scalar approval record."""
+    def test_renderer_has_no_standalone_definition_approval_contract(self) -> None:
+        """Keep obsolete approval records and checker options out of the bundle."""
 
-        manifest_path = (
-            REPOSITORY_ROOT
-            / "approval-record-align-work-item-management-provider-skills.yaml"
-        )
-        manifest = load_yaml_object(manifest_path)
-        self.assertEqual("governed-definition-manifest", manifest["record_role"])
-        self.assertNotIn("definition_scope", manifest)
-        self.assertEqual(
-            manifest["approved_definition_manifest"],
-            [entry["definition_scope"] for entry in manifest["checker_records"]],
-        )
+        self.assertEqual([], sorted(REPOSITORY_ROOT.glob("approval-record-*.yaml")))
+        self.assertFalse((REPOSITORY_ROOT / ".codex" / "approval-records").exists())
 
-        checker_script = (
+        renderer = (
             REPOSITORY_ROOT / "scripts" / "render-agents-technology-skills.py"
+        ).read_text(encoding="utf-8")
+        project = (REPOSITORY_ROOT / "PROJECT.yaml").read_text(encoding="utf-8")
+        agents = AGENTS_PATH.read_text(encoding="utf-8")
+        readme = README_PATH.read_text(encoding="utf-8")
+        rendered = subprocess.run(
+            [
+                sys.executable,
+                str(REPOSITORY_ROOT / "scripts" / "render-agents-technology-skills.py"),
+                "--project",
+                str(REPOSITORY_ROOT / "PROJECT.yaml"),
+            ],
+            cwd=REPOSITORY_ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
         )
-        project_path = REPOSITORY_ROOT / "PROJECT.yaml"
-        generated_path = "design/generated/skill-definitions.js"
-        for entry in manifest["checker_records"]:
-            definition_scope = entry["definition_scope"]
-            record_path = REPOSITORY_ROOT / entry["approval_record"]
-            record = load_yaml_object(record_path)
-            with self.subTest(definition_scope=definition_scope):
-                self.assertEqual(definition_scope, record["definition_scope"])
-                self.assertEqual(manifest["basis"], record["basis"])
-                self.assertEqual(manifest["direction"], record["direction"])
-                self.assertEqual(manifest["provenance"], record["provenance"])
-                self.assertEqual(manifest_path.name, record["approval_manifest"])
-                self.assertEqual(
-                    "python3 scripts/render-agents-technology-skills.py "
-                    f"--project PROJECT.yaml --check-definition-change {definition_scope} "
-                    f"--approval-record {entry['approval_record']}",
-                    entry["definition_check"],
-                )
-                self.assertEqual(
-                    "python3 scripts/render-agents-technology-skills.py "
-                    f"--project PROJECT.yaml --check-definition-change {generated_path} "
-                    f"--approval-record {entry['approval_record']} "
-                    f"--regenerated-from {definition_scope}",
-                    entry["regeneration_check"],
-                )
+        self.assertEqual(0, rendered.returncode, rendered.stderr)
+        self.assertEqual(agents, rendered.stdout)
+        for retired_text in (
+            "definition_change_authority",
+            "--check-definition-change",
+            "--approval-record",
+            "--regenerated-from",
+            "--update-authority-directive",
+            "Agent And Skill Definition Approval",
+        ):
+            with self.subTest(retired_text=retired_text):
+                self.assertNotIn(retired_text, renderer)
+                self.assertNotIn(retired_text, project)
+                self.assertNotIn(retired_text, agents)
+                self.assertNotIn(retired_text, readme)
 
-                definition_command = [
-                    sys.executable,
-                    str(checker_script),
-                    "--project",
-                    str(project_path),
-                    "--check-definition-change",
-                    definition_scope,
-                    "--approval-record",
-                    str(record_path),
-                ]
-                definition_result = subprocess.run(
-                    definition_command,
-                    cwd=REPOSITORY_ROOT,
-                    check=False,
-                    capture_output=True,
-                    text=True,
-                )
-                self.assertEqual(
-                    0,
-                    definition_result.returncode,
-                    definition_result.stdout + definition_result.stderr,
-                )
-                self.assertEqual(
-                    "ALLOWED_APPROVED_DEFINITION_CHANGE",
-                    json.loads(definition_result.stdout)["outcome"],
-                )
+    def test_agent_test_protocol_scopes_target_protection(self) -> None:
+        """Keep target no-repair and finding routing local to agent evaluation work."""
 
-                regeneration_command = [
-                    sys.executable,
-                    str(checker_script),
-                    "--project",
-                    str(project_path),
-                    "--check-definition-change",
-                    generated_path,
-                    "--approval-record",
-                    str(record_path),
-                    "--regenerated-from",
-                    definition_scope,
-                ]
-                regeneration_result = subprocess.run(
-                    regeneration_command,
-                    cwd=REPOSITORY_ROOT,
-                    check=False,
-                    capture_output=True,
-                    text=True,
-                )
-                self.assertEqual(
-                    0,
-                    regeneration_result.returncode,
-                    regeneration_result.stdout + regeneration_result.stderr,
-                )
-                self.assertEqual(
-                    "ALLOWED_APPROVED_REGENERATION",
-                    json.loads(regeneration_result.stdout)["outcome"],
-                )
+        protocol = (AGENT_TEST_SUITES_ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        for required_text in (
+            "must not change a skill under test",
+            "an agent definition or behavior under test",
+            "generated target behavior under test",
+            "or a product target merely to make the scenario pass",
+            "Preserve the target bytes, digests, transcript, and failing evidence",
+            "Log a target finding through the configured backlog path",
+            "routing it to Dev Backlog Steward",
+        ):
+            with self.subTest(required_text=required_text):
+                self.assertIn(required_text, protocol)
+
+        self.assertNotIn("## Agent And Skill Definition Approval", AGENTS_PATH.read_text(encoding="utf-8"))
+
+
 
     def test_gitlab_work_item_skills_define_provider_native_authority_and_lifecycle(self) -> None:
         create_text = (SKILLS_ROOT / "create-gitlab-work-item" / "SKILL.md").read_text(

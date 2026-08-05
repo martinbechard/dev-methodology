@@ -632,26 +632,10 @@ Invoke Project Bootstrapper once and describe the desired steady state:
 
 Separately requested deployment uses the user or project defaults, or caller-supplied destination overrides, under Scoped Target Deployment.
 
-The guidance renderer writes the selected coordination skill and claim helper, authority directives, workflow selectors, technology-skill sections, and root project-skill references to standard output. Project Configurator can merge that output into an existing AGENTS.md without disturbing project instructions. Missing or unsupported resource_coordination is a configuration error. Missing or unavailable agent_claim_transport is an error when agent-claim is selected. Unknown, unavailable, duplicate, or definition-owned project extensions stop rendering and identify the PROJECT.yaml field that needs correction. The --output option creates a file only when the target does not exist. If the target already exists, use --replace only when complete replacement is intentional. When definition_change_authority is configured, use --update-authority-directive with --output to replace only the generated authority section.
+The guidance renderer writes the selected coordination skill and claim helper, workflow selectors, technology-skill sections, and root project-skill references to standard output. Missing or unsupported resource_coordination is a configuration error. Missing or unavailable agent_claim_transport is an error when agent-claim is selected. Unknown, unavailable, duplicate, or definition-owned project extensions stop rendering and identify the PROJECT.yaml field that needs correction. The --output option creates a file only when the target does not exist. If the target already exists, use --replace only when complete replacement is intentional.
 
 ```bash
 python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --inline-tech-skills true
-
-python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --output AGENTS.md --update-authority-directive
-```
-
-A user-authorized work item that names exact skill definition paths supplies the required user direction for those named skills. Record that work-item authorization with its exact definition scope and auditable provenance, then run the renderer's operational pre-mutation check for every named path. Additional skill definitions outside the work item's named scope require new explicit user approval. The check validates the project policy and returns a JSON outcome with exit code 0 for an allowed change or 3 for a blocked change. It does not create approval or enforce filesystem permissions.
-
-```yaml
-basis: explicit-user-direction
-definition_scope: skills/example/SKILL.md
-provenance:
-  source: user-message
-  reference: thread:example/message:user-approval
-```
-
-```bash
-python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change skills/example/SKILL.md --approval-record approval-record.yaml
 ```
 
 ## Neutral Target Project Layout

@@ -1,44 +1,3 @@
-## Agent And Skill Definition Approval
-
-Every change to an agent definition or skill definition requires explicit, scope-specific user approval before mutation. Record the user's direction, the exact definition scope it authorizes, and the approval evidence in the work lifecycle. Silence, unrelated prior approval, and broad repository mutation authority are insufficient.
-
-When the user explicitly requests a work item whose requested outcome creates or modifies named skill definitions, that request is the approval for the exact named skill-definition paths recorded in the work item. Do not ask again or route the item to User Action Required solely because those recorded paths are governed. Require additional approval only for additional skill-definition paths outside the requested manifest. Preserve the exact request wording and provenance, record the exact canonical-path manifest, and run the supported pre-mutation check for every governed path.
-
-This work-item rule does not authorize an agent definition, schema, model input, or unrelated metadata definition unless the user's request also explicitly names or unambiguously requests that governed definition.
-
-Repository access, a failing test, a repair assignment, general write authority, review work, verification work, and a desire to make validation pass do not authorize a definition change.
-
-The harness-loaded directive is the project authority boundary. Before mutating a governed canonical source, run the supported pre-mutation check with an approval record that cites existing explicit user direction:
-
-```bash
-python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change path/to/definition --approval-record path/to/approval-record.yaml
-```
-
-The check validates the configured path boundary, exact scope, basis, and provenance record. It does not enforce filesystem permissions, create approval, or let an agent manufacture user-direction provenance.
-
-Governed canonical definition surfaces:
-
-- Conceptual agent definitions: agents/roles/**/*.role.yaml.
-- Agent definition schemas and model inputs: agents/role-schema.yaml, agents/model-profiles.yaml, adapters/*/model-profiles.yaml.
-- Distributed skill definitions: skills/*/SKILL.md.
-- Adapter-owned skill definitions: adapters/*/skills/*/SKILL.md.
-- Skill definition metadata: skills/*/agents/openai.yaml, adapters/*/skills/*/agents/openai.yaml.
-
-Generated definition mirrors are source-owned and must never be edited directly:
-
-- generated/adapters/**, design/generated/role-definitions.js, design/generated/skill-definitions.js.
-
-Supported source-category to generated-mirror relationships:
-
-- Conceptual agent definitions: generated/adapters/**, design/generated/role-definitions.js.
-- Agent definition schemas and model inputs: generated/adapters/**, design/generated/role-definitions.js.
-- Distributed skill definitions: generated/adapters/**, design/generated/skill-definitions.js.
-- Adapter-owned skill definitions: generated/adapters/**, design/generated/skill-definitions.js.
-- Skill definition metadata: generated/adapters/**, design/generated/skill-definitions.js.
-- Regenerate a mirror only when it is listed for the approved canonical source category. Cross-family role-to-skill and skill-to-role documentation regeneration is blocked. A supported regeneration does not require a second approval.
-
-When a test fails, investigate whether the test, fixture, assertion, or expected result is incorrect before proposing a definition change. Ordinary authorized implementation changes and corrections to incorrect tests remain allowed when they do not alter a governed definition.
-
 ## Resource Coordination Skill Reference
 
 Project Configurator selected resource-coordination skill agent-claim. Apply that bundled skill by reference before taking ownership of repository paths or exclusive runtime and integration resources.
@@ -106,41 +65,19 @@ Each completed command writes one JSON document to standard output. Read result.
 
 Several outcomes share an exit code. The JSON outcome, not the exit code, identifies the result. Do not switch helpers because a command rejected a request.
 
-## Command Arguments
+## Read Claim Status
 
-Acquire requires:
-
-- claim-id;
-- agent;
-- task;
-- root-task-id;
-- the scope selected through agent-claim.
-
-Use file, project-files, or resource for the scope chosen from the Claim Events table.
-
-A project-files request also requires scope-reason.
-
-A resource request also requires resource-class, resource-id, expected-duration-seconds, and requested-hard-stop-duration-seconds.
-
-Other operations require:
-
-| Operation | Arguments |
-|---|---|
-| extend | claim-id and additional scope |
-| extend-deadline | claim-id, requested-hard-stop-duration-seconds, and extension-evidence |
-| heartbeat | claim-id |
-| release | claim-id |
-| reset | no arguments |
-| maintain-journal | optional hot-days |
-| report | optional since and format |
-
-## Command Examples
-
-Read live ownership:
+Run status with no operation-specific arguments. Read result.outcome from the returned JSON document.
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . status
 ```
+
+## Acquire Claim
+
+Acquire requires claim-id, agent, task, root-task-id, and the scope selected through agent-claim.
+
+Use file, project-files, or resource for that scope. A project-files request also requires scope-reason. A resource request also requires resource-class, resource-id, expected-duration-seconds, and requested-hard-stop-duration-seconds.
 
 File-scope acquisition:
 
@@ -180,7 +117,9 @@ python3 "$CLAIM_SCRIPT" --repo . acquire \
   --requested-hard-stop-duration-seconds 1800
 ```
 
-Extend a claim, extend a resource deadline, send a heartbeat, and release a claim:
+## Extend Claim
+
+Extend requires claim-id and the net-new scope. A resource extension also requires resource-class, resource-id, expected-duration-seconds, and requested-hard-stop-duration-seconds.
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . extend \
@@ -190,18 +129,34 @@ python3 "$CLAIM_SCRIPT" --repo . extend \
   --resource-id port:3000 \
   --expected-duration-seconds 600 \
   --requested-hard-stop-duration-seconds 1200
+```
 
+## Extend Claim Deadline
+
+Extend-deadline requires claim-id, requested-hard-stop-duration-seconds, and extension-evidence.
+
+```bash
 python3 "$CLAIM_SCRIPT" --repo . extend-deadline \
   --claim-id browser-check-123 \
   --requested-hard-stop-duration-seconds 2400 \
   --extension-evidence "one final accessibility case remains"
+```
 
+## Heartbeat Claim
+
+```bash
 python3 "$CLAIM_SCRIPT" --repo . heartbeat --claim-id task-123
+```
 
+## Release Claim
+
+```bash
 python3 "$CLAIM_SCRIPT" --repo . release --claim-id task-123
 ```
 
 Release removes only the exact named live claim while the helper holds an exclusive OS lock directly on agent-claims.json. The helper updates that same locked file without replacing its inode and appends RELEASED journal evidence. Release does not inspect Git state, file contents, delivery evidence, or completion state.
+
+## Reset Claim Registry
 
 Reset the registry after all agents have stopped:
 
@@ -211,18 +166,27 @@ python3 "$CLAIM_SCRIPT" --repo . reset
 
 Reset locks agent-claims.json and replaces its contents with an empty claims list. It also creates the registry when it is missing and replaces malformed contents.
 
-Maintain the journal and report contention:
+## Maintain Claim Journal
+
+Maintain-journal accepts optional hot-days.
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . maintain-journal --hot-days 2
+```
+
+## Report Claim Contention
+
+Report accepts optional since and format.
+
+```bash
 python3 "$CLAIM_SCRIPT" --repo . report --since 2d --format json
 ```
 
 ## Uncertain Command Outcome
 
-If the process stops after sending a command that changes claim state, the operation may have completed. Do not repeat it.
+Apply the uncertain-outcome policy from agent-claim when the process stops after sending a mutating command. Do not repeat it.
 
-Run status through the same script. Continue from the reported claim state.
+Run Read Claim Status through the same script and continue from the reported claim state.
 
 If the script cannot return status, ask Project Configurator for help. Do not use another helper to guess what happened.
 ----- END INLINED CLAIM HELPER SKILL: agent-claim-command -----

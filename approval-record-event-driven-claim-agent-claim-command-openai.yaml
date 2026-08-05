@@ -1,5 +1,0 @@
-basis: explicit-user-direction
-definition_scope: skills/agent-claim-command/agents/openai.yaml
-provenance:
-  source: delegated-user-direction
-  reference: thread:019f9783/delegation:claim-helper-terminology

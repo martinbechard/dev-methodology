@@ -1,5 +1,0 @@
-basis: explicit-user-direction
-definition_scope: agents/roles/dev-activities/dev-backlog-coordinator.role.yaml
-provenance:
-  source: user-message
-  reference: thread:019f95a9-7eb5-7bf1-8c1b-bb4a40a8006a/message:approved-combined-regression

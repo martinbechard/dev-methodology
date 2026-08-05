@@ -1,6 +1,0 @@
-basis: explicit-user-direction
-definition_scope: skills/review-high-level-design/SKILL.md
-direction: "i approve"
-provenance:
-  source: user-message
-  reference: thread:019faa83-9a42-7e11-9c24-207fde14359b/message:i-approve

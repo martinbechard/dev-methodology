@@ -1,5 +1,0 @@
-basis: explicit-user-direction
-definition_scope: skills/analyze-document-topics/agents/openai.yaml
-provenance:
-  source: user-message
-  reference: thread:019fab9e-44bf-7571-9fbb-d9d63d3fa9da/message:workitem-scope-authorizes-named-definitions
