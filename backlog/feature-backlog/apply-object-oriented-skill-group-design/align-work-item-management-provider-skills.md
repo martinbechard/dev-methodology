@@ -115,3 +115,41 @@ Determine which shared data members can be named consistently without weakening 
 ### Approval Resolution
 
 Approved at creation on 2026-08-04 by the user statement in the active Codex task: "create separate work items to update skills according to the new design, and update individual evals." Approval is limited to the five governed canonical paths listed above. Any additional governed definition requires new explicit user approval recorded in this item.
+
+### Preserved Approval-Evidence Correction
+
+The prior approval-evidence correction remains in force. The existing approval record and its five-path governed-source manifest remain the sole authority for the bounded correction below; no new governed path or definition authority is inferred.
+
+## Independent Review Defect and Correction Attempt 2
+
+Lifecycle: Running unchanged.
+
+Canonical Thread and Root Agent Task: /root/apply_skill_group_design_backlog/align_work_item_management_providers.
+
+Owner: Dev Orchestrator.
+
+Branch and Worktree: codex/align-work-item-management-providers-019fab at /Users/martinbechard/dev/dev-methodology/.worktrees/align-work-item-management-providers-019fab.
+
+Review Verdict: CHANGES REQUIRED.
+
+Defect Severity: Medium, independently confirmed.
+
+Defect Evidence:
+
+- skills/manage-azure-devops-work-items/SKILL.md line 38 requires an exact canonical operation token, but line 56 uses the contradictory example Requested operation: close.
+- skills/manage-jira-work-items/SKILL.md line 38 requires an exact canonical operation token, but line 56 uses the contradictory example Requested operation: transition.
+
+Reproduction:
+
+```text
+rg -n '^## (Inventory Work Items|Transition Work Item|Reconcile Work Item Completion|Recover Work Item|Report Work Items)$|Requested operation:' skills/manage-azure-devops-work-items/SKILL.md skills/manage-jira-work-items/SKILL.md
+```
+
+Preserved Candidates:
+
+- Superseded candidate: 08542a3eb9e3870ec937a6986e83825ad8160a27.
+- Current preserved candidate: c34f2a899411721c48a385e342d57e850b44491c.
+
+Correction Assignment: Original Dev Coder, correction attempt 2 of 2.
+
+Runnable Next Action: Replace the examples with matching canonical tokens, add negative regression assertions, regenerate design/generated/skill-definitions.js, rerun the affected scalar definition and regeneration checks plus focused tests, then obtain fresh review.
