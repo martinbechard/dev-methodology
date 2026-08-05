@@ -220,10 +220,13 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         dev_group_start = self.rendered.index(">Dev Activities</text>")
         backlog_group_start = self.rendered.index(">Backlog Management</text>")
         self.assertLess(dev_group_start, backlog_group_start)
+        dev_group = self.rendered[dev_group_start:backlog_group_start]
+        self.assertNotIn('data-role="dev-backlog-watchdog"', dev_group)
         next_group_start = self.rendered.index(">Wiki Activities</text>")
         backlog_group = self.rendered[backlog_group_start:next_group_start]
         self.assertEqual(1, backlog_group.count('data-role="dev-backlog-coordinator"'))
         self.assertEqual(1, backlog_group.count('data-role="dev-backlog-steward"'))
+        self.assertEqual(1, backlog_group.count('data-role="dev-backlog-watchdog"'))
         self.assertNotIn('data-role="dev-orchestrator"', backlog_group)
 
     def test_skill_groups_start_with_development_then_wiki(self) -> None:

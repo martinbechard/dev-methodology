@@ -20,3 +20,7 @@ role_overrides:
     group: backlog-management
     source: agents/roles/dev-activities/dev-backlog-steward.role.yaml
     evidence: Owns provider-routed durable work-item creation, lifecycle mutation, recovery, completion, and archival.
+  dev-backlog-watchdog:
+    group: backlog-management
+    source: agents/roles/dev-activities/dev-backlog-watchdog.role.yaml
+    evidence: Observes backlog lifecycle, active capacity, coordination evidence, stalls, blockers, and crisis conditions on a read-only schedule.

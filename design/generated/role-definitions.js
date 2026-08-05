@@ -459,8 +459,8 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
     },
     "dev-backlog-watchdog": {
       "agentDependencies": [],
-      "catalogGroup": "dev-activities",
-      "catalogGroupLabel": "Dev Activities",
+      "catalogGroup": "backlog-management",
+      "catalogGroupLabel": "Backlog Management",
       "description": "Observes a sustained Codex work-item queue on a schedule and reports only actionable evidence or one concise healthy-cycle result without mutating coordination state.",
       "displayName": "Dev Backlog Watchdog",
       "examples": [

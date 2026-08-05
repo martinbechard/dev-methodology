@@ -9926,8 +9926,8 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertEqual(
             [
-                "backlog-management",
                 "dev-activities",
+                "backlog-management",
                 "wiki-activities",
                 "project-setup",
                 "methodology-maintenance",
@@ -9940,7 +9940,11 @@ class BundleContentTests(unittest.TestCase):
             if role["catalogGroup"] == "backlog-management"
         }
         self.assertEqual(
-            {"dev-backlog-coordinator", "dev-backlog-steward"},
+            {
+                "dev-backlog-coordinator",
+                "dev-backlog-steward",
+                "dev-backlog-watchdog",
+            },
             backlog_roles,
         )
         for role_name in backlog_roles:
