@@ -352,9 +352,11 @@ classDiagram
 
 The simplified view still means that Work Item Creator consumes manage-work-item-*. Each Provider Skill shown realizes that interface. Project-specific directives select one of those providers as shown in the detailed diagram; the simplified view omits that routing relationship and does not imply that all providers are loaded together. The provider identities are analysis vocabulary for this example rather than assertions that those skill definitions already exist.
 
-### 2.8 A Request Selects A Skill
+### 2.8 Skill Loaded by a User Request
 
 A request can select an available skill without a declared reference from an Agent definition or AGENTS.md.
+
+Request-triggered selection differs from predefined skills dependencies because the current request, rather than an Agent definition or AGENTS.md, triggers the selection. The request may identify a skill explicitly or match a skill’s declared purpose, and the selection applies only to the current request. It does not create a durable Agent Skill, procedure binding, or skill-to-skill dependency.
 
 - **RULE: RULE-50** Request-triggered selection is scoped to the request
   - **SYNOPSIS:** A skill loader can select a discovered skill because the request names it explicitly or because the request matches its declared purpose. This selection does not add a durable Agent Skill or AGENTS.md relationship.
@@ -364,17 +366,6 @@ The request-triggered forms are:
 
 - explicit selection by skill name or marker;
 - implicit selection from the request and a skill’s description or trigger conditions.
-
-No class diagram is needed for this case. The selection is a request-routing event rather than a persistent reference owned by an Agent definition or AGENTS.md. The running agent can still read and apply the selected SKILL.md after routing succeeds.
-
-The use cases differ at their selection boundary:
-
-| Use case | Selection source | Exact skill name known by | Scope |
-| --- | --- | --- | --- |
-| Unconditional Agent Skill | Agent definition | Agent definition | Every execution of that Agent role. |
-| Conditional Agent Skill | Agent definition condition | Agent definition | Executions whose request and evidence satisfy the condition. |
-| Procedure mapped through AGENTS.md | Shared procedure in the Agent; implementation binding in AGENTS.md | AGENTS.md | The effective project binding for that procedure. |
-| Request-triggered skill | Explicit request marker or request-to-description match | Skill loader or caller | The current request. |
 
 ## 3. Skill Organization
 
