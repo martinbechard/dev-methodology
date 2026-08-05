@@ -9,7 +9,7 @@ metadata:
 
 Run technology detection during project setup, not during ordinary coding, review, verification, or diagnosis.
 
-## Workflow
+## Detect Technology Skills
 
 1. Inventory project tiers, ownership boundaries, manifests, source roots, and tests.
 2. Choose representative folders that do not combine unrelated sibling technologies.

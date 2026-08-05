@@ -449,8 +449,8 @@ probes:
     evaluationCategory: documentation-methodology
     evaluationKind: artifact-contract
     activationCondition: The single root PROJECT.yaml and generated root or nested agent guidance are created or substantially rewritten.
-    negativeCondition: No nested PROJECT.yaml, workstation path, copied generic claim procedure, or invented skill is allowed.
-    expectedBehavior: Preserve complete conceptual definition skill metadata, ask for non-detectable work-item and backlog process selections or record UNSET, keep generated workflow guidance selector-only, use configured deterministic operations for availability and detection when present, detect pertinent folder variants against runtime availability, record NO_VARIANT and BLOCKED distinctly, generate matching guidance, and validate mutation policy.
+    negativeCondition: No nested PROJECT.yaml, workstation path, copied generic claim procedure, invented skill, aggregate interface, or selected-skill-set shortcut is allowed.
+    expectedBehavior: Configure Project Agents And Skills while preserving complete conceptual definition skill metadata, ask for non-detectable work-item and backlog process selections or record UNSET, keep generated workflow guidance selector-only, use configured deterministic operations for availability and detection when present, detect pertinent folder variants against runtime availability, record NO_VARIANT and BLOCKED distinctly, Render Project Guidance with matching per-skill routes, Verify Project Configuration, and validate mutation policy.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, technology-detection-evidence, source-link-resolution], modelRubric: source-faithfulness}
     scenarioAssociations: [project-configurator-happy, project-configurator-boundary]
     workflowAssociations: [project-setup]
@@ -519,8 +519,8 @@ probes:
     evaluationCategory: development-practice
     evaluationKind: routing
     activationCondition: Project setup, technology-boundary change, or runtime skill-catalog change requires folder technology loadouts.
-    negativeCondition: Ordinary coding, review, verification, or diagnosis consumes accepted routing and does not rerun detection.
-    expectedBehavior: Analyze representative non-mixed scopes, use configured deterministic detection when present, require a complete activation branch and pertinence, compare runtime availability, preserve conflicts and NO_VARIANT, and generate unconditional folder routing.
+    negativeCondition: Ordinary coding, review, verification, or diagnosis consumes accepted routing and does not rerun detection or invent an aggregate interface or selected-skill-set shortcut.
+    expectedBehavior: Detect Technology Skills across representative non-mixed scopes, use configured deterministic detection when present, require a complete activation branch and pertinence, compare runtime availability, preserve conflicts and NO_VARIANT, and generate unconditional per-skill folder routing.
     judgePlan: {deterministicChecks: [skill-read-trace, technology-detection-evidence, readiness-consistency], modelRubric: null}
     scenarioAssociations: [project-configurator-happy, project-configurator-boundary]
     workflowAssociations: [project-setup]

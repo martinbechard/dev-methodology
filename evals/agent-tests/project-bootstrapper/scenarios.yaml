@@ -64,7 +64,7 @@ scenarios:
       - dev-merge-coordinator
       - dev-verifier
     requiredBehaviors:
-      - Invoke project-configurator before documentation work.
+      - Invoke project-configurator for Configure Project Agents And Skills, Render Project Guidance, and Verify Project Configuration before documentation work.
       - Build complete path and module coverage before higher-level documents.
       - Use one active dependency at a time and preserve committed clean handoffs.
       - Route every artifact to the correct independent reviewer.
@@ -77,6 +77,7 @@ scenarios:
       - Run two dependency agents concurrently.
       - Substitute summary documents for incomplete module coverage.
       - Treat pre-integration review as sufficient after integration changes an artifact.
+      - Ask Project Configurator for an aggregate interface or selected-skill-set shortcut.
       - Report READY before the full integrated verification passes.
     deterministicChecks:
       - harness-agent-identity

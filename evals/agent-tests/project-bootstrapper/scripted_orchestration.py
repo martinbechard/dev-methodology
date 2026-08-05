@@ -55,16 +55,16 @@ _PRODUCERS = {
 }
 _TARGET_DIGESTS = {
     "agents/roles/project-setup/project-bootstrapper.role.yaml": (
-        "95f838104d8a08bb47acdfca1aebdf2e24d45814156ceb4d84575ad8daf48baf"
+        "a9c0dacbdb619dd0b4fed24e104fa0258c80c070ccb8f497ba8d8c3e951e73c5"
     ),
     "generated/adapters/codex/agents/project-bootstrapper.toml": (
-        "854931f616dc2318d8513ed6fac096c2eda3d6599b0cc132580b93aaa01232c3"
+        "55fbdedbfcfb9af332d748e9101040c73858a07b994f851b244f85e43df8228b"
     ),
     "agents/roles/wiki-activities/wiki-ingester.role.yaml": (
-        "31ae569975e3bc8bcdb5c03f784c71b43e7d55637cc7cf13898fffe0eddc31f8"
+        "8f6f1947076a7f8c66cff52e8eb555ce18c845ff82582ce13060a5a44fbd66b4"
     ),
     "generated/adapters/codex/agents/wiki-ingester.toml": (
-        "2ec08ac9f15a9201cad010d119a1d82d9a8df4ef73ffabac3925b4c354202885"
+        "1fe6317f67e3595174c296cc263844de4ae3e75c4fbf8a70f6100b8d2a17ea0b"
     ),
 }
 
@@ -623,9 +623,19 @@ def _run_worker(
                     targetContractBound=True,
                 )
 
-    configuration = invoke("project-configurator", "configure", "PROJECT.yaml")
-    if configuration != "PASS":
-        return _terminal(configuration, trace, copiedInputs=copied, targetContractBound=True)
+    for procedure, artifact in (
+        ("Configure Project Agents And Skills", "PROJECT.yaml"),
+        ("Render Project Guidance", "AGENTS.md"),
+        ("Verify Project Configuration", "PROJECT.yaml and AGENTS.md"),
+    ):
+        configuration = invoke("project-configurator", procedure, artifact)
+        if configuration != "PASS":
+            return _terminal(
+                configuration,
+                trace,
+                copiedInputs=copied,
+                targetContractBound=True,
+            )
     for artifact in _SETUP_OUTPUTS:
         _write_artifact(candidate, artifact, contribution_phase=reverse_engineering)
 

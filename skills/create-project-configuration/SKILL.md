@@ -83,7 +83,7 @@ repositoryMutation belongs to conceptual agent definitions and does not select c
 
 When agent-claim is selected, add /.worktrees/ to the root .gitignore. Describe .worktrees in root AGENTS.md as ignored worktree state under the primary worktree. Do not store a machine-specific absolute worktree path in PROJECT.yaml or AGENTS.md.
 
-## Workflow
+## Configure Project Agents And Skills
 
 1. Inspect the target repository before writing. Inspect existing AGENTS.md artifacts, then read README files, package metadata, build configuration, source roots, tests, docs, wiki pages, task-relevant procedures, backlog files, and current worktree status.
 2. Classify the project family, application tiers, technology stacks, documentation surfaces, runtime boundaries, data boundaries, and verification commands.
@@ -101,12 +101,14 @@ When agent-claim is selected, add /.worktrees/ to the root .gitignore. Describe 
 14. When an existing PROJECT.yaml contains maintainer edits, treat them as requested configuration intent. Preserve valid Persistence, Commit, and selector-specific folder-override corrections exactly. Report an invalid identifier, duplicate override, or incompatible operation with the exact evidence and constraint instead of silently replacing the edit or inferring another selector.
 15. Keep proprietary project validation notes inside the target project repository. Do not copy private project names, internal implementation details, customer data, secrets, or non-public workflows into distributable examples.
 16. Use fictitious names, synthetic paths, and generic behavior for customer-safe examples.
-17. After validating the configuration, run scripts/render-agents-technology-skills.py with PROJECT.yaml. Create or update the root and nested AGENTS.md files. Reference the selected resource-coordination skill only when enabled. For agent-claim, include only the selected claim helper. For none, include no claim skill, helper, procedure, or evidence. Do not render a worktree requirement. Keep technology skills by reference unless Advanced setup explicitly selected inline delivery. Add the Project Skill Extensions references only to the root AGENTS.md. When agent-claim is selected, mention .worktrees as operational state without copying claim procedures.
-18. When Claude Code is used, create thin CLAUDE.md bridge files that import the colocated AGENTS.md without copying its rules.
-19. Say Not yet identified for related sources, tests, commands, or conceptual agent definitions that do not exist yet.
-20. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
+## Render Project Guidance
 
-## Verification
+1. After validating the configuration, run scripts/render-agents-technology-skills.py with PROJECT.yaml. Create or update the root and nested AGENTS.md files. Reference the selected resource-coordination skill only when enabled. For agent-claim, include only the selected claim helper. For none, include no claim skill, helper, procedure, or evidence. Do not render a worktree requirement. Keep technology skills by reference unless Advanced setup explicitly selected inline delivery. Add the Project Skill Extensions references only to the root AGENTS.md. When agent-claim is selected, mention .worktrees as operational state without copying claim procedures.
+2. When Claude Code is used, create thin CLAUDE.md bridge files that import the colocated AGENTS.md without copying its rules.
+3. Say Not yet identified for related sources, tests, commands, or conceptual agent definitions that do not exist yet.
+4. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
+
+## Verify Project Configuration
 
 Before finishing:
 

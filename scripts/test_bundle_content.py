@@ -9243,6 +9243,44 @@ class BundleContentTests(unittest.TestCase):
                 self.assertEqual([], scenarios[scenario_id]["executableCases"])
                 self.assertEqual("declared", scenarios[scenario_id]["coverageStatus"])
 
+    def test_project_setup_skills_expose_reviewed_public_procedures(self) -> None:
+        """Keep setup procedure names explicit without inventing a technology aggregate."""
+
+        detection_text = (
+            SKILLS_ROOT / "detect-technology-skills" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        configuration_text = (
+            SKILLS_ROOT / "create-project-configuration" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("## Detect Technology Skills", detection_text)
+        self.assertNotIn("## Workflow", detection_text)
+        for heading in (
+            "## Configure Project Agents And Skills",
+            "## Render Project Guidance",
+            "## Verify Project Configuration",
+        ):
+            with self.subTest(configuration_heading=heading):
+                self.assertIn(heading, configuration_text)
+        self.assertNotIn("## Workflow", configuration_text)
+        self.assertNotIn("## Verification", configuration_text)
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probes_by_id = {probe["id"]: probe for probe in probes["probes"]}
+        detection_probe = probes_by_id["probe-detect-technology-skills"]
+        configuration_probe = probes_by_id["probe-create-project-configuration"]
+        self.assertIn("Detect Technology Skills", detection_probe["expectedBehavior"])
+        for procedure in (
+            "Configure Project Agents And Skills",
+            "Render Project Guidance",
+            "Verify Project Configuration",
+        ):
+            with self.subTest(probe_procedure=procedure):
+                self.assertIn(procedure, configuration_probe["expectedBehavior"])
+        for probe in (detection_probe, configuration_probe):
+            self.assertIn("aggregate interface", probe["negativeCondition"])
+            self.assertIn("selected-skill-set", probe["negativeCondition"])
+
     def test_project_configuration_documents_confirmation_reference_boundary(self) -> None:
         """Require an auditable reference without inventing one cross-project format."""
 

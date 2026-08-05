@@ -6,6 +6,8 @@ PROJECT.yaml must record the project family, selected conceptual agent definitio
 
 The API, web application, and automation folders have distinct runtime responsibilities. Do not infer a technology from a dependency that is not pertinent to a folder's source responsibility. Record NO_VARIANT with general model training when no pertinent specialized skill exists. Do not create nested PROJECT.yaml files or copy generic claim procedures into project guidance.
 
+Invoke Detect Technology Skills, then Configure Project Agents And Skills, Render Project Guidance, and Verify Project Configuration by those public procedure names. Keep every confirmed technology skill as an exact-name folder route. Do not invent an aggregate interface or selected-skill-set shortcut for the confirmed skills.
+
 Use only the skills listed in available-skills.txt. Keep the evidence files unchanged. Save eval-result.md with Skills Used, Evidence Packet, and Review Synthesis sections.
 
 Use the configured deterministic operations for runtime skill availability, technology detection, claims, YAML validation, and Markdown link verification. Do not probe or fall back to the claim command-line interface. A configured MCP claim-helper interface failure requires explicit reconfiguration, while a structured MCP rejection remains authoritative coordination evidence.

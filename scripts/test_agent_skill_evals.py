@@ -3382,14 +3382,22 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 }
                 self.assertEqual(set(expected_skills), staged_names)
                 self.assertNotIn("codex-harness-directives", staged_names)
-                self.assertIn(
-                    "# Create Project Configuration",
-                    (
-                        mcp.skill_root
-                        / "create-project-configuration"
-                        / "SKILL.md"
-                    ).read_text(encoding="utf-8"),
-                )
+                configuration_skill = (
+                    mcp.skill_root
+                    / "create-project-configuration"
+                    / "SKILL.md"
+                ).read_text(encoding="utf-8")
+                self.assertIn("# Create Project Configuration", configuration_skill)
+                for heading in (
+                    "## Configure Project Agents And Skills",
+                    "## Render Project Guidance",
+                    "## Verify Project Configuration",
+                ):
+                    self.assertIn(heading, configuration_skill)
+                detection_skill = (
+                    mcp.skill_root / "detect-technology-skills" / "SKILL.md"
+                ).read_text(encoding="utf-8")
+                self.assertIn("## Detect Technology Skills", detection_skill)
                 for skill_id in case["mcpAgentOps"]["mcpOnlySkills"]:
                     self.assertFalse((context.skill_location / skill_id).exists())
                     self.assertNotIn(

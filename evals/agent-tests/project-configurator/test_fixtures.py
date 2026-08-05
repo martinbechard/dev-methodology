@@ -162,6 +162,35 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
         self.assertIn("canonical-role-skill-ownership", routing["deterministicChecks"])
         self.assertIn("mutation-claim-consistency", routing["deterministicChecks"])
 
+    def test_routing_scenario_uses_public_setup_procedures_without_an_aggregate(self) -> None:
+        """The behavioral case invokes reviewed procedures and rejects a synthetic set."""
+
+        scenarios = yaml.safe_load(
+            (SUITE_ROOT / "scenarios.yaml").read_text(encoding="utf-8")
+        )["scenarios"]
+        routing = next(item for item in scenarios if item["id"] == "technology-routing")
+        task = (
+            SUITE_ROOT / "fixtures" / "technology-routing" / "TASK.md"
+        ).read_text(encoding="utf-8")
+        combined = "\n".join(
+            [
+                *routing["requiredBehaviors"],
+                *routing["forbiddenBehaviors"],
+                task,
+            ]
+        )
+
+        for procedure in (
+            "Detect Technology Skills",
+            "Configure Project Agents And Skills",
+            "Render Project Guidance",
+            "Verify Project Configuration",
+        ):
+            with self.subTest(procedure=procedure):
+                self.assertIn(procedure, combined)
+        self.assertIn("aggregate interface", combined)
+        self.assertIn("selected-skill-set", combined)
+
     def test_routing_scenario_requires_exact_functional_claude_bridges(self) -> None:
         """Bridge validation must inspect exact imports rather than prose or existence."""
         scenarios = yaml.safe_load((SUITE_ROOT / "scenarios.yaml").read_text(encoding="utf-8"))["scenarios"]

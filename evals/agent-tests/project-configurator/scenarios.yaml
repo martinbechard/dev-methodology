@@ -51,16 +51,18 @@ scenarios:
     targetSkills: [agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-bootstrap, documentation-page-verify, python, typescript]
     allowedAgentDependencies: []
     requiredBehaviors:
-      - Detect from representative evidence
+      - Invoke Detect Technology Skills from representative evidence
       - Compare with runtime-exposed skills
       - Record NO_VARIANT for unsupported scope
-      - Generate root and nested routing
+      - Invoke Configure Project Agents And Skills for the single root PROJECT.yaml
+      - Invoke Render Project Guidance for root and nested routing
+      - Invoke Verify Project Configuration before handoff
       - Write every root and nested Claude bridge as the exact functional import of its colocated AGENTS.md
       - Preserve the canonical project template structure and every mandatory section
       - Select and validate the required conceptual definitions
       - Preserve the Project Configurator fixed and conditional skill sets without omissions, duplicates, or reclassification
       - Evaluate mutation and claim agreement for every selected definition
-    forbiddenBehaviors: [Skip the unsupported scope, Flatten distinct scopes, Declare a nonexistent variant, Replace a functional Claude import with descriptive prose, Omit duplicate or reclassify a canonical Project Configurator skill]
+    forbiddenBehaviors: [Skip the unsupported scope, Flatten distinct scopes, Declare a nonexistent variant, Replace a functional Claude import with descriptive prose, Omit duplicate or reclassify a canonical Project Configurator skill, Treat confirmed technology skills as an aggregate interface, Use a selected-skill-set shortcut]
     deterministicChecks: [harness-agent-identity, claim-lifecycle, configuration-schema, mandatory-project-sections, conceptual-definition-validation, canonical-role-skill-ownership, mutation-claim-consistency, detection-evidence, no-variant-record, functional-claude-bridges, routing-reference-validation, output-contract-presence]
     expectedOutputs: [PROJECT.yaml, technology detection skillsets, nested AGENTS.md recommendations, runtime capability validation, AGENTS.md and CLAUDE.md routing, validation evidence]
     expectedTerminalStatus: PASS

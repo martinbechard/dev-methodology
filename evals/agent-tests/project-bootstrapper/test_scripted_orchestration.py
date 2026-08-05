@@ -74,6 +74,26 @@ class ScriptedBootstrapperTests(unittest.TestCase):
         }
         self.assertTrue({"PROJECT.yaml", "AGENTS.md"}.issubset(reviewed))
 
+    def test_configuration_dependency_invokes_each_public_setup_procedure(self) -> None:
+        """Bootstrap delegates the three configuration procedures in their public order."""
+
+        result = scripted.run_isolated()
+        phases = [
+            event["phase"]
+            for event in result["trace"]
+            if event["agent"] == "project-configurator"
+        ]
+
+        self.assertEqual(
+            [
+                "Configure Project Agents And Skills",
+                "Render Project Guidance",
+                "Verify Project Configuration",
+            ],
+            phases,
+        )
+        self.assertNotIn("configure", phases)
+
     def test_reverse_engineering_audit_routes_corrections_and_reaches_steady_state(self) -> None:
         result = scripted.run_isolated(reverse_engineering=True)
 
