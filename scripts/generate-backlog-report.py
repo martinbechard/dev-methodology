@@ -252,20 +252,78 @@ def _dependencies(section: str, item_path: Path, backlog_root: Path) -> list[str
     return values
 
 
+def _lexical_repository_target(
+    base: Path,
+    target: str,
+    repository_root: Path,
+) -> tuple[Path, Path] | None:
+    """Normalize a relative link without touching its target on the filesystem."""
+    target_path = Path(target)
+    if target_path.is_absolute():
+        return None
+    candidate = Path(os.path.normpath(os.fspath(base / target_path)))
+    try:
+        relative = candidate.relative_to(repository_root)
+    except ValueError:
+        return None
+    return candidate, relative
+
+
+def _ordinary_queue_relative(relative: Path) -> bool:
+    """Return whether a lexical path belongs to an ordinary work-item queue."""
+    return (
+        len(relative.parts) >= 3
+        and relative.parts[0] == "backlog"
+        and relative.parts[1] in SCAN_FOLDERS
+    )
+
+
 def _series_orders(
     backlog_root: Path,
 ) -> tuple[dict[str, tuple[str, int]], list[str], list[tuple[str, str]]]:
-    """Map series order and report unreadable, terminal-active, or broken navigation."""
+    """Derive reciprocal series membership and report navigation contract defects."""
+    repository_root = backlog_root.parent
     orders: dict[str, tuple[str, int]] = {}
     ignored: list[str] = []
     findings: list[tuple[str, str]] = []
+    item_fields: dict[str, tuple[Path, dict[str, str]]] = {}
+    invalid_item_paths: set[str] = set()
+
+    for folder_name in SCAN_FOLDERS:
+        folder = backlog_root / folder_name
+        if not folder.is_dir():
+            continue
+        for path in sorted(folder.rglob("*.md")):
+            if path.name in {"README.md", "index.md"}:
+                continue
+            relative_item = path.relative_to(repository_root).as_posix()
+            if not _is_resolved_regular_file_within(path, folder, repository_root):
+                invalid_item_paths.add(relative_item)
+                continue
+            try:
+                _, fields, _ = _parse_document(path)
+            except (OSError, UnicodeError):
+                continue
+            item_fields[relative_item] = (path, fields)
+
+    indexes: dict[str, Path] = {}
+    index_links: dict[str, set[str]] = {}
+    members: dict[str, dict[str, str]] = {}
     for folder_name in SCAN_FOLDERS:
         folder = backlog_root / folder_name
         if not folder.is_dir():
             continue
         for index in sorted(folder.rglob("index.md")):
-            relative_index = index.relative_to(backlog_root.parent).as_posix()
+            relative_index = index.relative_to(repository_root).as_posix()
             ignored.append(relative_index)
+            if not _is_resolved_regular_file_within(index, folder, repository_root):
+                findings.append(
+                    (
+                        relative_index,
+                        "Series index resolves outside canonical ordinary work-item authority.",
+                    )
+                )
+                continue
             try:
                 content = index.read_text(encoding="utf-8")
             except (OSError, UnicodeError) as exc:
@@ -277,43 +335,70 @@ def _series_orders(
                 )
                 continue
             series = index.parent.name
-            linked_statuses: list[str] = []
-            linked_items_complete = True
+            indexes[relative_index] = index
+            index_links[relative_index] = set()
+            members[relative_index] = {}
             for position, target in enumerate(
                 MARKDOWN_LINK_PATTERN.findall(content), start=1
             ):
-                child = (index.parent / target).resolve()
-                try:
-                    relative_child = child.relative_to(
-                        backlog_root.parent.resolve()
-                    ).as_posix()
-                except ValueError:
+                lexical_target = _lexical_repository_target(
+                    index.parent, target, repository_root
+                )
+                if lexical_target is None:
+                    findings.append(
+                        (
+                            relative_index,
+                            "Series index target is outside configured ordinary "
+                            f"work-item queues: {target}.",
+                        )
+                    )
+                    continue
+                child, relative_child_path = lexical_target
+                if not _ordinary_queue_relative(relative_child_path):
+                    findings.append(
+                        (
+                            relative_index,
+                            "Series index target is outside configured ordinary "
+                            f"work-item queues: {target}.",
+                        )
+                    )
+                    continue
+                relative_child = relative_child_path.as_posix()
+                if relative_child in invalid_item_paths:
+                    findings.append(
+                        (
+                            relative_index,
+                            "Series index target escapes canonical ordinary "
+                            f"work-item authority: {target}.",
+                        )
+                    )
+                    continue
+                child_entry = item_fields.get(relative_child)
+                if child_entry is None:
+                    if child.name not in {"README.md", "index.md"} and not child.exists():
+                        findings.append(
+                            (relative_index, f"Broken series index link: {target}.")
+                        )
+                    continue
+                child_path, child_fields = child_entry
+                index_links[relative_index].add(relative_child)
+                child_series = child_fields.get("Series", "")
+                nested_child = child_path.parent == index.parent
+                if child_series != relative_index and not nested_child:
                     continue
                 orders.setdefault(relative_child, (series, position))
-                try:
-                    child.relative_to(backlog_root.resolve())
-                except ValueError:
-                    continue
-                if not child.is_file():
-                    findings.append(
-                        (relative_index, f"Broken series index link: {target}.")
-                    )
-                    linked_items_complete = False
-                    continue
-                if child.name in {"README.md", "index.md"}:
-                    continue
-                try:
-                    _, child_fields, _ = _parse_document(child)
-                except (OSError, UnicodeError):
-                    linked_items_complete = False
-                    continue
                 child_status = child_fields.get("Status", "")
-                if not child_status:
-                    linked_items_complete = False
-                    continue
-                linked_statuses.append(child_status)
-                child_series = child_fields.get("Series", "")
-                if child_series and child_series != relative_index:
+                if child_status:
+                    members[relative_index][relative_child] = child_status
+                if not child_series:
+                    findings.append(
+                        (
+                            relative_child,
+                            "Series child has no exact canonical Series backlink: "
+                            f"expected {relative_index}.",
+                        )
+                    )
+                elif child_series != relative_index:
                     findings.append(
                         (
                             relative_child,
@@ -321,22 +406,71 @@ def _series_orders(
                             f"expected {relative_index}, found {child_series}.",
                         )
                     )
-            relative_to_backlog = index.relative_to(backlog_root)
-            if (
-                relative_to_backlog.parts[0] in ACTIVE_FOLDERS
-                and linked_items_complete
-                and linked_statuses
-                and all(
-                    status in TERMINAL_SERIES_STATUSES
-                    for status in linked_statuses
+
+    for relative_child, (_, child_fields) in item_fields.items():
+        declared_series = child_fields.get("Series", "")
+        if not declared_series:
+            continue
+        lexical_index = _lexical_repository_target(
+            repository_root, declared_series, repository_root
+        )
+        if (
+            lexical_index is None
+            or not _ordinary_queue_relative(lexical_index[1])
+            or lexical_index[1].name != "index.md"
+        ):
+            findings.append(
+                (
+                    relative_child,
+                    "Child Series reference is outside canonical ordinary "
+                    f"series-index authority: {declared_series}.",
                 )
-            ):
-                findings.append(
-                    (
-                        relative_index,
-                        "Terminal series index remains in an active typed backlog.",
-                    )
+            )
+            continue
+        relative_index = lexical_index[1].as_posix()
+        index_entry = indexes.get(relative_index)
+        if index_entry is None:
+            findings.append(
+                (
+                    relative_child,
+                    "Child Series reference does not identify an existing readable "
+                    f"series index: {declared_series}.",
                 )
+            )
+            continue
+        child_status = child_fields.get("Status", "")
+        if child_status:
+            members[relative_index][relative_child] = child_status
+        orders.setdefault(
+            relative_child,
+            (index_entry.parent.name, 10**9),
+        )
+        if relative_child not in index_links[relative_index]:
+            findings.append(
+                (
+                    relative_child,
+                    "Series index does not link back to its declared child: "
+                    f"{relative_index}.",
+                )
+            )
+
+    for relative_index, index in indexes.items():
+        member_statuses = members[relative_index]
+        relative_to_backlog = index.relative_to(backlog_root)
+        if (
+            relative_to_backlog.parts[0] in ACTIVE_FOLDERS
+            and member_statuses
+            and all(
+                status in TERMINAL_SERIES_STATUSES
+                for status in member_statuses.values()
+            )
+        ):
+            findings.append(
+                (
+                    relative_index,
+                    "Terminal series index remains in an active typed backlog.",
+                )
+            )
     return orders, ignored, findings
 
 

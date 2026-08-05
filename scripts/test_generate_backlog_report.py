@@ -257,6 +257,13 @@ Summary for {title}.
             "backlog/future-ideas/unscanned.md",
             title="Unscanned",
         )
+        series = self.root / "backlog/feature-backlog/release"
+        series.mkdir(parents=True)
+        (series / "index.md").write_text(
+            "# Release Series\n\n## References\n\n"
+            "- [Unscanned Idea](../../future-ideas/unscanned.md)\n",
+            encoding="utf-8",
+        )
         original_rglob = Path.rglob
         original_read_text = Path.read_text
         original_stat = Path.stat
@@ -295,6 +302,10 @@ Summary for {title}.
             rendered = self.generate()
 
         self.assertNotIn("Unscanned", rendered)
+        self.assertIn(
+            "Series index target is outside configured ordinary work-item queues",
+            rendered,
+        )
 
     def test_promoted_ideas_validate_active_holding_and_user_action_targets(self) -> None:
         """Promotion accepts complete targets in each deliberate destination."""
@@ -1452,14 +1463,15 @@ Do not proceed.
         self.assertNotIn("Child Series reference does not match its index", rendered)
 
     def test_active_terminal_series_index_is_reported(self) -> None:
-        """An active index cannot remain after every linked child becomes terminal."""
+        """An unrelated Ready reference cannot make a terminal series nonterminal."""
         index_relative = "backlog/feature-backlog/release/index.md"
         index = self.root / index_relative
         index.parent.mkdir(parents=True)
         index.write_text(
             "# Release Series\n\n## Work Items\n\n"
             "1. [Done](../../completed-backlog/features/done.md)\n"
-            "2. [Abandoned](../../failed-backlog/features/abandoned.md)\n",
+            "2. [Abandoned](../../failed-backlog/features/abandoned.md)\n"
+            "3. [Unrelated](../unrelated.md)\n",
             encoding="utf-8",
         )
         self.write_item(
@@ -1476,11 +1488,100 @@ Do not proceed.
             item_type="Feature",
             series=index_relative,
         )
+        self.write_item(
+            "backlog/feature-backlog/unrelated.md",
+            title="Unrelated",
+            status="Ready",
+            item_type="Feature",
+        )
 
         rendered = self.generate()
 
         self.assertIn("Terminal series index remains in an active typed backlog", rendered)
         self.assertIn(index_relative, rendered)
+
+    def test_series_child_requires_exact_reciprocal_backlink(self) -> None:
+        """A child beside its index is invalid without the canonical Series field."""
+        index = self.root / "backlog/feature-backlog/release/index.md"
+        index.parent.mkdir(parents=True)
+        index.write_text(
+            "# Release Series\n\n## Work Items\n\n1. [Child](child.md)\n",
+            encoding="utf-8",
+        )
+        self.write_item(
+            "backlog/feature-backlog/release/child.md",
+            title="Child",
+            status="Ready",
+            item_type="Feature",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("Series child has no exact canonical Series backlink", rendered)
+
+    def test_explicit_series_backlink_requires_index_link(self) -> None:
+        """Every explicit Series relationship must be reciprocal in the index."""
+        index_relative = "backlog/feature-backlog/release/index.md"
+        index = self.root / index_relative
+        index.parent.mkdir(parents=True)
+        index.write_text("# Release Series\n\n## Work Items\n\n", encoding="utf-8")
+        self.write_item(
+            "backlog/feature-backlog/child.md",
+            title="Child",
+            status="Ready",
+            item_type="Feature",
+            series=index_relative,
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("Series index does not link back to its declared child", rendered)
+
+    def test_explicit_series_backlink_requires_existing_index(self) -> None:
+        """A child cannot declare a Series path that has no readable index."""
+        self.write_item(
+            "backlog/feature-backlog/child.md",
+            title="Child",
+            status="Ready",
+            item_type="Feature",
+            series="backlog/feature-backlog/missing/index.md",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn(
+            "Child Series reference does not identify an existing readable series index",
+            rendered,
+        )
+
+    def test_series_index_reports_escaped_child_without_reading_target(self) -> None:
+        """An outward symlink is reported without reading external target bytes."""
+        external = self.root / "external-child.md"
+        external.write_text("# External Child Secret\n", encoding="utf-8")
+        index = self.root / "backlog/feature-backlog/release/index.md"
+        index.parent.mkdir(parents=True)
+        index.write_text(
+            "# Release Series\n\n## Work Items\n\n1. [Child](child.md)\n",
+            encoding="utf-8",
+        )
+        (index.parent / "child.md").symlink_to(external)
+        original_read_text = Path.read_text
+
+        def reject_external_read(
+            path: Path, *args: object, **kwargs: object
+        ) -> str:
+            if path.resolve() == external.resolve():
+                raise AssertionError("report read escaped series target")
+            return original_read_text(path, *args, **kwargs)
+
+        with mock.patch.object(Path, "read_text", reject_external_read):
+            rendered = self.generate()
+
+        self.assertIn(
+            "Series index target escapes canonical ordinary work-item authority",
+            rendered,
+        )
+        self.assertNotIn("External Child Secret", rendered)
 
     def test_nonterminal_or_mixed_series_index_remains_active(self) -> None:
         """Any linked nonterminal child prevents premature terminal-series findings."""
