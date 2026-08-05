@@ -1,6 +1,6 @@
 # Align Project Setup Skills
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -23,7 +23,20 @@ Intended Root Dev Orchestrator Role: Dev Orchestrator.
 Owner: Unowned pending accepted root.
 Current Launch Evidence: Parent Coordinator authorized this exact reservation; exact-file backlog claim reserve-align-project-setup-skills acquired with outcome SHARED_CHECKOUT_ACQUIRED and event 709aa785-38fb-4ecf-8964-3576c879aa80. Runtime Thread creation and root acceptance have not occurred.
 Required Next Lifecycle Transition: The root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
-Reconciliation: Pending.
+Reconciliation: Root acceptance recorded separately below; the parent reservation remains preserved.
+
+## Current Running Acceptance
+
+Transition: Starting -> Running.
+Canonical Thread: /root/apply_skill_group_design_backlog/align_project_setup_skills.
+Root Agent Task: /root/apply_skill_group_design_backlog/align_project_setup_skills.
+Owner: Dev Orchestrator.
+Branch: codex/align-project-setup-skills.
+Worktree: /Users/martinbechard/dev/dev-methodology/.worktrees/align-project-setup-skills.
+Phase: Accepted ownership / implementation preparation.
+Started At: 2026-08-05T03:47:58Z.
+Claim Evidence: The private delivery lane is claim-free because private-worktree implementation triggers no Event Contract claim. This exact primary-main backlog mutation is protected by exact-file claim running-align-project-setup-skills, acquired with outcome SHARED_CHECKOUT_ACQUIRED and event c8a908b3-a99d-44ce-9e04-b148c75cf1f3.
+Preserved Coordination: Parent Coordination Thread /root/apply_skill_group_design_backlog and its Ready -> Starting launch reservation remain canonical.
 
 ## Summary
 
