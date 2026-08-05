@@ -19,7 +19,7 @@ Object-oriented concepts are used as an analogy for understanding coupling. They
 
 The document explains relationships through examples while defining no schema, migration, or repository change sequence.
 
-The method concludes with an applied overview of the methodology skill groups. The detailed current and proposed diagrams remain in separate group documents so a reader can use the method without loading the complete applied inventory.
+The method concludes with an applied overview of the methodology skill groups. The detailed steady-state diagrams remain in separate group documents so a reader can use the method without loading the complete applied inventory.
 
 ## 1. Finality
 
@@ -74,7 +74,7 @@ An empty SKILL.md node means that the skill describes a single procedure, so the
 
 The plus sign means that a member is exposed to users of the skill. Parentheses distinguish a function member from a data member. A data member is not an outgoing reference to another object. Dependencies remain between whole Agent, AGENTS.md, or SKILL.md nodes because the complete referenced file is loaded into context.
 
-For example, verify-document-page stays empty because the example SKILL.md describes one procedure. The manage-work-item-gitlab node can show create-new-work-item() when the skill exposes that function among other members. A work-item interface can show work-item-definition without parentheses when that shared data structure matters to the relationship.
+For example, verify-documentation-page stays empty because that SKILL.md describes one procedure. The manage-work-item-gitlab node can show create-new-work-item() when the skill exposes that function among other members. A work-item interface can show work-item-definition without parentheses when that shared data structure matters to the relationship.
 
 When a visible class name contains characters that Mermaid cannot use in an identifier, the diagram uses a separate internal identifier and quoted display label. The display label is the analysis identity; the internal identifier exists only to render the diagram.
 
@@ -106,11 +106,11 @@ An Agent Skill is a SKILL.md that an Agent definition references by exact skill 
 
 - **RULE: RULE-5** An Agent Skill is referenced by its exact skill name
   - **SYNOPSIS:** The Agent definition knows the exact skill identity and follows the procedures and instructions in the resolved SKILL.md.
-  - **EXAMPLE:** A Documentation Agent can name verify-document-page directly in its skill list.
+  - **EXAMPLE:** A Documentation Agent can name verify-documentation-page directly in its skill list.
 
 - **RULE: RULE-6** An unconditional Agent Skill applies to every execution of the Agent role
   - **SYNOPSIS:** An Agent definition lists the skill without a condition because that dependency belongs to every execution of the role.
-  - **EXAMPLE:** A Documentation Agent can list verify-document-page without a condition so every execution applies it.
+  - **EXAMPLE:** A Documentation Agent can list verify-documentation-page without a condition so every execution applies it.
 
 ```mermaid
 classDiagram
@@ -121,17 +121,17 @@ classDiagram
         +writeDocumentation()
     }
 
-    class verify-document-page {
+    class verify-documentation-page {
         <<SKILL.md>>
         <<Agent Skill>>
     }
 
-    DocumentationAgent o--> verify-document-page
+    DocumentationAgent o--> verify-documentation-page
 ```
 
-The open diamond means that Documentation Agent knows the exact skill name. The solid line means that the reference is unconditional, so it needs no label. The verify-document-page member area is empty because that example skill describes one procedure; repeating the operation as a function member would add no information.
+The open diamond means that Documentation Agent knows the exact skill name. The solid line means that the reference is unconditional, so it needs no label. The verify-documentation-page member area is empty because the skill describes one procedure; repeating the operation as a function member would add no information.
 
-Documentation Agent and verify-document-page are analysis vocabulary for this example. They do not assert that those definitions exist in the repository.
+Documentation Agent is analysis vocabulary for this example. verify-documentation-page is a current repository skill used to demonstrate the exact-name relationship.
 
 ### 2.4 Agent Conditionally Loads A Skill By Exact Name
 
@@ -451,7 +451,7 @@ A nested Skill Group is the same kind of set as its parent. The word subgroup de
 
 - **RULE: RULE-54** A solid diamond represents containment in a collapsed diagram
   - **SYNOPSIS:** A solid diamond from a Skill Group node to a SKILL.md node records direct membership. A solid diamond from one Skill Group node to another records nested-group inclusion.
-  - **EXAMPLE:** Concurrent Tasking directly contains codex-workitem-coordination and includes the Resource Coordination skill group, whose direct skills include agent-claim.
+  - **EXAMPLE:** Concurrent Tasking directly contains coordinate-codex-work-items and includes the Resource Coordination skill group, whose direct skills include agent-claim.
 
 ```mermaid
 classDiagram
@@ -465,7 +465,7 @@ classDiagram
         <<Skill Group>>
     }
 
-    class codex-workitem-coordination {
+    class coordinate-codex-work-items {
         <<SKILL.md>>
     }
 
@@ -473,12 +473,12 @@ classDiagram
         <<SKILL.md>>
     }
 
-    ConcurrentTasking *-- codex-workitem-coordination
+    ConcurrentTasking *-- coordinate-codex-work-items
     ConcurrentTasking *-- ResourceCoordination
     ResourceCoordination *-- agent-claim
 ```
 
-The collapsed diagram shows Concurrent Tasking as one node. Its actual Skill Group contains codex-workitem-coordination directly and contains agent-claim through the nested Resource Coordination Skill Group. An expanded diagram could draw boxes around the same sets and display their member details.
+The collapsed diagram shows Concurrent Tasking as one node. Its actual Skill Group contains coordinate-codex-work-items directly and contains agent-claim through the nested Resource Coordination Skill Group. An expanded diagram could draw boxes around the same sets and display their member details.
 
 The repository-specific group models are maintained separately in [Object-Oriented Skill Group Models](object-oriented-skill-group-models.md).
 
@@ -627,7 +627,7 @@ Delivery is another injectable procedure: a development workflow requests comple
 
 - **RULE: RULE-13** AGENTS.md selects the delivery SKILL.md
   - **SYNOPSIS:** The calling workflow uses the same procedure name while project guidance selects direct-main or feature-branch delivery.
-  - **EXAMPLE:** AGENTS.md can link Deliver Workitem to complete-work-item-direct-main or complete-work-item-feature-branch.
+  - **EXAMPLE:** AGENTS.md can link Deliver Workitem to deliver-work-item-direct-main or deliver-work-item-feature-branch.
 
 ```mermaid
 classDiagram
@@ -643,7 +643,7 @@ classDiagram
         +deliverWorkitem(acceptedCommit)
     }
 
-    class complete-work-item-direct-main {
+    class deliver-work-item-direct-main {
         <<SKILL.md>>
         <<Injectable Skill>>
         +deliverWorkitem(acceptedCommit)
@@ -652,7 +652,7 @@ classDiagram
         +provider-independence
     }
 
-    class complete-work-item-feature-branch {
+    class deliver-work-item-feature-branch {
         <<SKILL.md>>
         <<Injectable Skill>>
         +deliverWorkitem(acceptedCommit)
@@ -663,8 +663,8 @@ classDiagram
     }
 
     DevelopmentWorkflow --> DeliverWorkitem
-    DeliverWorkitem o--> complete-work-item-direct-main
-    DeliverWorkitem o--> complete-work-item-feature-branch
+    DeliverWorkitem o--> deliver-work-item-direct-main
+    DeliverWorkitem o--> deliver-work-item-feature-branch
 
     note for DeliverWorkitem "AGENTS.md selects one implementation"
 ```
@@ -706,7 +706,7 @@ classDiagram
         +deliverWorkitem(acceptedCommit)
     }
 
-    class complete-work-item-feature-branch {
+    class deliver-work-item-feature-branch {
         <<SKILL.md>>
         <<Injectable Skill>>
         +deliverWorkitem(acceptedCommit)
@@ -716,7 +716,7 @@ classDiagram
 
     CodingAgent o--> explain-code-fix
     CodingAgent --> DeliverWorkitem
-    DeliverWorkitem o--> complete-work-item-feature-branch
+    DeliverWorkitem o--> deliver-work-item-feature-branch
 ```
 
 The Agent points directly to explain-code-fix because its definition names that single-procedure skill. Its empty member area avoids repeating the procedure already identified by the operation-shaped skill name. The Agent points regularly to Deliver Workitem because it knows the procedure name. The AGENTS.md DII points by open diamond to the selected feature-branch skill.
@@ -802,7 +802,7 @@ A good model makes skill dependencies, dispatch, and organization understandable
 
 - **RULE: RULE-26** Declared relationships and request-triggered selection have valid uses
   - **SYNOPSIS:** The model distinguishes exact Agent dependencies, Skill Group sets, expanded and collapsed Skill Group diagrams, AGENTS.md substitution, direct skill-to-skill coupling, and request-scoped selection.
-  - **EXAMPLE:** Dev Coder names careful-coding, the Work Item Skill Group contains three non-overlapping members while Work Item Coordinator loads two of them, Resource Coordination contains agent-claim, Project-specific directives select a Provider Skill for manage-work-item-*, complete-work-item-feature-branch names create-pull-request, and a structural-search request selects ast-grep only for that request.
+  - **EXAMPLE:** Dev Coder names careful-coding, the Work Item Skill Group contains three non-overlapping members while Work Item Coordinator loads two of them, Resource Coordination contains agent-claim, Project-specific directives select a Provider Skill for manage-work-item-*, deliver-work-item-feature-branch names create-pull-request, and a structural-search request selects ast-grep only for that request.
 
 - **RULE: RULE-51** The four skill-loading use cases remain distinct from factory composition
   - **SYNOPSIS:** The method separates unconditional exact-name loading, conditional exact-name loading, procedure mapping through AGENTS.md, request-triggered selection, and the factory pattern that combines an Agent-facing Interface Skill with an AGENTS.md-selected Provider Skill.
@@ -858,14 +858,14 @@ The glossary defines the relationship and diagram terms used by the analysis aft
 | Agent class view | A diagram node that represents the Agent behavior, expectations, and dependencies relevant to the analysis without asserting a runtime class. | Coding Agent names careful-coding and refers to Deliver Workitem. |
 | Skill Group | The actual named set of cohesive skills used to organize one capability. Its complete skill set contains its direct skills plus every skill in its nested Skill Groups. The set exists independently of how a diagram displays it. | The Work Item Skill Group contains work-item-base, work-item-dispatch, and work-item-monitor. |
 | Expanded Skill Group Diagram | A diagram that draws a box around the SKILL.md nodes belonging to one Skill Group so their responsibilities and separate loading references can be viewed together. The diagram displays the set; it does not create it. | The expanded Work Item Skill Group Diagram displays work-item-base, work-item-dispatch, and work-item-monitor inside one box. |
-| Collapsed Skill Group Diagram | A diagram that represents a Skill Group as one node and uses solid-diamond lines to show direct skill membership or nested-group inclusion. | The collapsed Concurrent Tasking diagram links the Concurrent Tasking node to codex-workitem-coordination and Resource Coordination. |
+| Collapsed Skill Group Diagram | A diagram that represents a Skill Group as one node and uses solid-diamond lines to show direct skill membership or nested-group inclusion. | The collapsed Concurrent Tasking diagram links the Concurrent Tasking node to coordinate-codex-work-items and Resource Coordination. |
 | Nested skill group | A skill group included inside another skill group. It is the same kind of object as its parent; subgroup is only a relative description of its position. | Resource Coordination is a skill group nested inside Concurrent Tasking. |
 | Direct group membership | A solid-diamond line in a collapsed diagram that displays a skill’s direct membership in a Skill Group. The line represents membership in the existing set; it does not create that membership. | Resource Coordination *-- agent-claim displays agent-claim as a direct member of Resource Coordination. |
 | Nested set containment | A solid-diamond line in a collapsed diagram that displays one Skill Group nested in another. The parent’s complete skill set includes the child’s complete skill set independently of the chosen diagram form. | Concurrent Tasking *-- Resource Coordination displays Resource Coordination as a nested group whose skills belong to the complete Concurrent Tasking set. |
 | Mermaid display label | The visible analysis identity used when Mermaid requires a different internal class identifier. | The internal manage-work-item identifier displays manage-work-item-*. |
 | Skill hierarchy | An organizational view of Skill Groups, families, responsibilities, procedures, loading references, and dependencies. It does not by itself assert software inheritance. | work-item-base, work-item-dispatch, and work-item-monitor form one Skill Group whose members are loaded in different combinations by two Agents. |
 | Agent superclass stand-in | A diagram-compression node representing several Agents that share the same relationship. It does not assert inheritance. | Structured Artifact Reviewers represents reviewers that all name review-structured-artifact. |
-| Empty SKILL.md node | A concrete skill class with no displayed members because the SKILL.md describes one procedure and its identity already represents that operation. | verify-document-page under Documentation Agent. |
+| Empty SKILL.md node | A concrete skill class with no displayed members because the SKILL.md describes one procedure and its identity already represents that operation. | verify-documentation-page under Documentation Agent. |
 
 ## Authoritative Inputs
 
@@ -876,8 +876,8 @@ The analysis is grounded in the user-directed conventions and repository sources
 - [Agentic Configuration](agentic-configuration.html)
 - [Agent Skill Architecture](skills-modularization.html)
 - [Work-Item Provider And Completion Contracts](work-item-provider-and-completion-contracts.md)
-- [Complete Work Item Direct Main](../skills/complete-work-item-direct-main/SKILL.md)
-- [Complete Work Item Feature Branch](../skills/complete-work-item-feature-branch/SKILL.md)
+- [Deliver Work Item Direct Main](../skills/deliver-work-item-direct-main/SKILL.md)
+- [Deliver Work Item Feature Branch](../skills/deliver-work-item-feature-branch/SKILL.md)
 - [Create Pull Request](../skills/create-pull-request/SKILL.md)
 - [Explain Code Fix](../skills/explain-code-fix/SKILL.md)
 - [Test-Driven Development](../skills/test-driven-development/SKILL.md)

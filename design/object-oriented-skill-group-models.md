@@ -1,144 +1,111 @@
 # Object-Oriented Skill Group Models
 
-This document applies the reusable [Skill Organization](object-oriented-agent-and-skill-model.md#3-skill-organization) method to the development-methodology skill groups. It owns the current-versus-proposed comparison model, shared applied legend, group navigation, and application checks. Each detailed group keeps its current and proposed diagrams in a separate document.
+This document applies the reusable [Skill Organization](object-oriented-agent-and-skill-model.md#3-skill-organization) method to the development-methodology skill groups. It owns the applied legend, group registry, navigation, and steady-state completeness checks. Each detailed group keeps its current relationship diagram in a separate document.
 
 ## 1. Application Scope
 
-The application scope defines the common content and ownership rules for every detailed group document.
+The application covers seven top-level comprehension groups and forty-three current skill packages.
 
-Every group document contains:
+Every detailed group document contains:
 
-- a Current Design class diagram of the Agent, AGENTS.md, and SKILL.md relationships;
-- a Proposed Design class diagram that applies the recommendations while retaining the same relationship view;
-- the current SKILL.md headings that act as procedure boundaries in that view;
-- one recommendation for every current skill whose primary direct group appears at the top level or as a nested group in that document; and
-- any proposed skill extractions assigned to that group.
+- one steady-state class diagram of the relevant Agent, AGENTS.md, SKILL.md, and Skill Group relationships;
+- the current skill names and public procedure headings needed in that view;
+- a responsibility table for every skill whose primary direct group appears in the document; and
+- links to the Agent and skill definitions that authorize the model.
 
-The seven group documents are top-level comprehension views covering forty-one current skills. Concurrent Tasking also contains two nested skill groups inside its document. The proposed designs retain the forty-one responsibilities and add two extracted Concurrent Tasking skills, producing forty-three proposed skill packages. Each skill has one primary direct group, which can be a top-level group or a nested group. Membership inherited from a nested group does not assign the skill a second primary group. A repeated skill outside its primary direct group and its containing ancestors is marked Cross-group.
+Concurrent Tasking contains three direct skills and two nested groups. Resource Coordination and Feature Branch And Worktrees each contain three direct skills. Membership inherited from a nested group does not assign a skill a second primary group.
 
-The current diagrams describe the current definitions. The proposed diagrams visualize possible definition improvements described by the recommendations. Neither a proposed diagram nor a recommendation changes a skill or claims that a recommended interface already exists.
-
-Each recommendation uses one or both improvement forms: a clearer operation-shaped skill name, or procedure headings that give invokers and alternative implementations consistent interface vocabulary. Keep the skill name means that only heading changes are recommended.
+Each skill has one primary direct group. A skill repeated outside that group and outside a containing ancestor is marked Cross-group. The repeated node exposes a dependency or loading relationship without changing ownership.
 
 ## 2. Applied Model Legend
 
-The relationship, node, member, containment, and display-label conventions come from the reusable method. This application adds only the conventions needed to compare current definitions with proposed improvements:
+The applied diagrams use the relationship and member conventions defined by the reusable analysis method.
 
-- A Current Design uses exact current skill names and procedure members derived from current headings. A generic current heading such as Workflow remains workflow() in that view.
-- A Proposed Design uses the recommended skill names and procedure headings.
-- A gold SKILL.md node has a proposed skill-name change. Its renamed-from member records the current exact name.
-- A blue SKILL.md node is a proposed skill extracted from part of a current skill. Its extracted-from member records the source skill.
-- A neutral SKILL.md node keeps its current skill name while its method-like members show proposed procedure headings.
-- A Cross-group node repeats a skill outside its primary direct group and outside any parent group that includes it through nesting.
-- A repeated gold or blue Cross-group node represents the same rename or extraction shown in the primary group, not another recommendation.
-- AGENTS.md procedure-family labels and relationship endpoints use the vocabulary for the design state being shown.
+- A SKILL.md node uses the exact current kebab-case skill name.
+- A function member with parentheses represents a public procedure described by the skill.
+- A data member without parentheses represents an exposed definition, rule set, structure, or other non-procedural contract.
+- An empty member area means that the skill describes one procedure and its identity already names that operation.
+- An Agent Skill is loaded by exact name from an Agent definition.
+- An Injectable Skill implements procedure vocabulary selected through AGENTS.md.
+- A Cross-group node repeats a skill outside its primary group because another group depends on it.
+- A dotted line represents conditional loading and states the condition on the line.
+- An open diamond represents an exact-name skill reference.
+- A regular arrow represents a procedure reference that does not name its implementation.
+- A solid diamond represents direct group membership or nested-group containment in a collapsed view. Containment does not assert that one member loads another.
+
+The legend diagram combines the applied node and relationship forms without asserting one runtime workflow.
 
 ```mermaid
 classDiagram
-    direction TB
+    direction LR
 
-    namespace CurrentDesign {
-        class CurrentAgentView["Agent"] {
-            <<Agent>>
-        }
-
-        class CurrentProvider["create-gitlab-work-item"] {
-            <<SKILL.md>>
-            +workflow()
-        }
-
-        class CurrentDelivery["complete-work-item-*"] {
-            <<AGENTS.md>>
-            <<routing>>
-            +deliver-work-item(acceptedCommit)
-        }
+    class ExampleAgent {
+        <<Agent>>
     }
 
-    namespace ProposedDesign {
-        class ProposedAgentView["Agent"] {
-            <<Agent>>
-        }
-
-        class ProposedProvider["create-gitlab-work-item"] {
-            <<SKILL.md>>
-            +create-work-item()
-        }
-
-        class route-documentation-work:::renamed {
-            <<SKILL.md>>
-            renamed-from development-methodology
-        }
-
-        class set-multitask-mode:::extracted {
-            <<SKILL.md>>
-            extracted-from backlog-crisis-mode
-        }
-
-        class ProposedDelivery["deliver-work-item-*"] {
-            <<AGENTS.md>>
-            <<routing>>
-            +deliver-work-item(acceptedCommit)
-        }
+    class ParentGroup {
+        <<Skill Group>>
     }
 
-    namespace CrossGroupRepetitions {
-        class CrossGroupRouteDocumentation["route-documentation-work"] {
-            <<SKILL.md>>
-            <<Cross-group>>
-            renamed-from development-methodology
-        }
-
-        class CrossGroupSetMultitask["set-multitask-mode"] {
-            <<SKILL.md>>
-            <<Cross-group>>
-            extracted-from backlog-crisis-mode
-        }
+    class NestedGroup {
+        <<Skill Group>>
     }
 
-    CurrentAgentView --> CurrentDelivery
-    ProposedAgentView --> ProposedDelivery
+    class direct-skill {
+        <<SKILL.md>>
+        <<Agent Skill>>
+        +primary-procedure()
+        +shared-definition
+    }
 
-    class CrossGroupRouteDocumentation:::renamed
-    class CrossGroupSetMultitask:::extracted
+    class nested-skill {
+        <<SKILL.md>>
+        <<Injectable Skill>>
+        +selected-procedure()
+    }
 
-    classDef renamed fill:#fff3bf,stroke:#b45309,stroke-width:3px,color:#111827
-    classDef extracted fill:#dbeafe,stroke:#1d4ed8,stroke-width:3px,color:#111827
+    class cross-group-skill {
+        <<SKILL.md>>
+        <<Cross-group>>
+    }
+
+    class ProcedureFamily["procedure-family-*"] {
+        <<AGENTS.md>>
+        <<routing>>
+        +selected-procedure(request)
+    }
+
+    ParentGroup *-- direct-skill
+    ParentGroup *-- NestedGroup
+    NestedGroup *-- nested-skill
+
+    ExampleAgent o--> direct-skill
+    ExampleAgent o..> cross-group-skill : when the condition applies
+    ExampleAgent --> ProcedureFamily
+    ProcedureFamily o--> nested-skill
 ```
 
-The Current Design namespace keeps the current skill identity, current Workflow member, and current AGENTS.md family label. The Proposed Design namespace shows four proposal forms: a neutral skill with a clearer procedure heading, a gold renamed skill, a blue extracted skill, and the proposed AGENTS.md family label. The two regular arrows demonstrate that a relationship endpoint uses the vocabulary of the design state in which it appears.
+The solid-diamond lines describe the contents of Parent Group and Nested Group. The other lines describe loading or procedure relationships. A reader must not infer a dependency between direct-skill and nested-skill merely because both are contained by Parent Group.
 
-The Cross Group Repetitions namespace repeats the same visible route-documentation-work and set-multitask-mode identities shown in Proposed Design. The repeated rename keeps the gold treatment and renamed-from member, while the repeated extraction keeps the blue treatment and extracted-from member. Cross-group identifies the repeated placement; it does not create another recommendation. No line connects a Current Design node to a Proposed Design node because the two namespaces compare design states rather than declare runtime dependencies.
+## 3. Skill Group Registry
 
-## 3. Proposal Name Registry
+The registry assigns every current skill one primary direct group and records nested-group membership explicitly.
 
-The proposal name registry gives every changed skill identity one canonical spelling and one primary direct group. A verb-first name identifies a skill with one dominant operation. A stable subject name remains appropriate for a package that exposes several related procedures or reference structures.
+| Top-level group | Direct skills | Nested groups | Total skills represented |
+| --- | --- | --- | ---: |
+| Baseline Development | careful-coding; code-comments; code-discovery; test-driven-development; structured-design; structured-explanation; organise-project-files; review-structured-artifact; explain-code-fix | None | 9 |
+| Project Setup | detect-technology-skills; create-project-configuration | None | 2 |
+| Documentation Methodology | route-documentation-work; bootstrap-project-documentation; reverse-engineer-project-documentation; verify-documentation-page | None | 4 |
+| Backlog Management | resolve-backlog-blockage; create-file-work-item; create-github-work-item; create-gitlab-work-item; create-azure-devops-work-item; create-jira-work-item; manage-file-work-items; manage-github-work-items; manage-gitlab-work-items; manage-azure-devops-work-items; manage-jira-work-items | None | 11 |
+| Concurrent Tasking | coordinate-codex-work-items; set-solo-mode; set-multitask-mode | Resource Coordination: agent-claim, agent-claim-command, agent-claim-mcp. Feature Branch And Worktrees: integrate-agent-work, deliver-work-item-feature-branch, create-pull-request. | 9 |
+| Direct Main Delivery | deliver-work-item-direct-main | None | 1 |
+| Review And Verification | review-code-with-evidence; test-strategy; verify-end-to-end-workflow; analyze-root-cause; collect-runtime-evidence; trace-code-execution; review-prompt-contracts | None | 7 |
 
-| Current skill or source | Proposed skill | Change | Primary direct group |
-| --- | --- | --- | --- |
-| fix-explanation | explain-code-fix | Rename | Baseline Development |
-| development-methodology | route-documentation-work | Rename | Documentation Methodology |
-| documentation-bootstrap | bootstrap-project-documentation | Rename | Documentation Methodology |
-| documentation-reverse-engineer | reverse-engineer-project-documentation | Rename | Documentation Methodology |
-| documentation-page-verify | verify-documentation-page | Rename | Documentation Methodology |
-| backlog-crisis-mode | resolve-backlog-blockage | Rename retained responsibility | Backlog Management |
-| backlog-crisis-mode | set-solo-mode | Extract | Concurrent Tasking |
-| backlog-crisis-mode | set-multitask-mode | Extract | Concurrent Tasking |
-| codex-workitem-coordination | coordinate-codex-work-items | Rename | Concurrent Tasking |
-| agent-work-merge | integrate-agent-work | Rename | Feature Branch And Worktrees |
-| complete-work-item-feature-branch | deliver-work-item-feature-branch | Rename | Feature Branch And Worktrees |
-| complete-work-item-direct-main | deliver-work-item-direct-main | Rename | Direct Main Delivery |
-| code-review-evidence | review-code-with-evidence | Rename | Review And Verification |
-| end-to-end-verification | verify-end-to-end-workflow | Rename | Review And Verification |
-| root-cause-analysis | analyze-root-cause | Rename | Review And Verification |
-| runtime-evidence-collection | collect-runtime-evidence | Rename | Review And Verification |
-| code-execution-tracing | trace-code-execution | Rename | Review And Verification |
-| prompt-contracts | review-prompt-contracts | Rename | Review And Verification |
-
-Every repeated proposed node in another group document uses the same canonical spelling and preserves the same renamed-from or extracted-from source.
+The totals count primary membership once. Cross-group repetitions in detailed diagrams do not increase the forty-three-skill inventory.
 
 ## 4. Group Designs
 
-The group designs apply one comparison contract to seven distinct methodology capabilities.
+The group documents provide independent views of the seven methodology capabilities.
 
 - [Baseline Development](skill-groups/baseline-development.md)
 - [Project Setup](skill-groups/project-setup.md)
@@ -150,38 +117,37 @@ The group designs apply one comparison contract to seven distinct methodology ca
 
 ## 5. Definition Of Good
 
-The applied model is successful when every group is complete, current vocabulary remains distinct from proposed vocabulary, and every recommendation is traceable to its source skill.
+The applied model is complete when it describes the maintained skill inventory and its current relationships without relying on migration history.
 
-- **RULE: RULE-56** Each established skill group has independent current and proposed designs
-  - **SYNOPSIS:** A reader can inspect one responsibility boundary and compare its current and recommended organization without loading the other six groups.
-  - **EXAMPLE:** Concurrent Tasking contains paired diagrams for resource coordination and feature-branch delivery without repeating the Backlog Management provider matrix.
+- **RULE: RULE-56** Each established skill group has an independent steady-state design
+  - **SYNOPSIS:** A reader can inspect one responsibility boundary without loading the other six group documents.
+  - **EXAMPLE:** Backlog Management shows its creation and management provider families without reproducing the Resource Coordination group inventory.
 
-- **RULE: RULE-57** Every current skill receives one source-backed improvement recommendation
-  - **SYNOPSIS:** A recommendation either improves the skill name or introduces procedure headings that can become stable interface vocabulary.
-  - **EXAMPLE:** create-gitlab-work-item keeps its current name but receives a proposed Create Work Item heading because its current entry procedure is only named Workflow.
+- **RULE: RULE-57** Every skill has one primary direct group
+  - **SYNOPSIS:** The registry and detailed documents assign each current skill package to one direct comprehension boundary.
+  - **EXAMPLE:** agent-claim belongs directly to Resource Coordination and appears elsewhere only as a Cross-group dependency.
 
-- **RULE: RULE-58** Current and recommended vocabulary remain visibly separate
-  - **SYNOPSIS:** Current Design shows current names and headings, while Proposed Design shows the vocabulary recommended by the table.
-  - **EXAMPLE:** The Backlog Management current diagram shows workflow() for create-gitlab-work-item, while its proposed diagram shows create-work-item().
+- **RULE: RULE-58** Diagrams use current skill and procedure vocabulary
+  - **SYNOPSIS:** Every skill identity resolves to a maintained SKILL.md, and every displayed procedure traces to a current heading or to a single-operation skill identity.
+  - **EXAMPLE:** code-discovery exposes Discover Code Context and Determine Change Scope because both headings exist in its current definition.
 
-- **RULE: RULE-59** Every proposed skill-name change is identifiable by color and text
-  - **SYNOPSIS:** A gold node distinguishes a proposed name from unchanged names, and renamed-from preserves the current identity for readers who do not rely on color.
-  - **EXAMPLE:** The proposed Concurrent Tasking diagram highlights integrate-agent-work and records renamed-from agent-work-merge inside the same node.
+- **RULE: RULE-59** Cross-group repetition does not duplicate ownership
+  - **SYNOPSIS:** A Cross-group node exposes a loading or dependency relationship while preserving the skill’s primary group.
+  - **EXAMPLE:** verify-documentation-page is a Documentation Methodology skill and appears in Baseline Development because review-structured-artifact loads it.
 
-- **RULE: RULE-60** Every proposed skill extraction identifies its source and primary direct group
-  - **SYNOPSIS:** A blue node distinguishes a new extracted package from a rename, and extracted-from preserves the current source boundary.
-  - **EXAMPLE:** set-solo-mode and set-multitask-mode are direct members of Concurrent Tasking and appear as Cross-group dependencies in Backlog Management.
+- **RULE: RULE-60** Provider families share coherent public procedure names
+  - **SYNOPSIS:** Injectable implementations use the vocabulary selected through AGENTS.md while keeping provider-specific behavior inside each SKILL.md.
+  - **EXAMPLE:** every management provider exposes Inventory Work Items, Transition Work Item, Reconcile Work Item Completion, Recover Work Item, and Report Work Items.
 
-- **RULE: RULE-64** Every proposed skill identity has one coherent canonical name
-  - **SYNOPSIS:** The proposal name registry owns the spelling and primary direct group for every rename and extraction, while repeated Cross-group nodes reuse that identity unchanged.
-  - **EXAMPLE:** analyze-root-cause is defined once in Review And Verification and is repeated with the same spelling in Baseline Development.
+- **RULE: RULE-64** Containment remains distinct from dependency
+  - **SYNOPSIS:** Nested groups organize a larger comprehension set; loading arrows separately identify which Agents or skills actually reference another skill.
+  - **EXAMPLE:** Concurrent Tasking contains Resource Coordination, but coordinate-codex-work-items references only the selected resource-coordination procedure and the loaded agent-claim policy rather than every helper implementation.
 
 ## Authoritative Inputs
 
-The applied model is grounded in the user-directed grouping decisions and the repository sources below.
+The applied model is grounded in the repository sources below.
 
-- The user-supplied methodology skill-group organization and current-versus-proposed comparison requirements for this document.
-- The forty-one SKILL.md files and conceptual Agent definitions linked from the seven group documents.
+- The forty-three SKILL.md files and conceptual Agent definitions linked from the seven group documents.
 - [Object-Oriented Analysis Of Agents And Skills](object-oriented-agent-and-skill-model.md)
 - [Bundled Skill Inventory](../README.md)
 - [Agentic Configuration](agentic-configuration.html)

@@ -2463,7 +2463,7 @@ class BundleContentTests(unittest.TestCase):
                 "After every mutation, re-read the issue",
                 "completion disposition READY",
                 "ambiguous mutation response as possibly applied",
-                "issue number and URL",
+                "issue number and diagnostic URL",
             ),
             "manage-gitlab-work-items": (
                 "provider-native filters",
