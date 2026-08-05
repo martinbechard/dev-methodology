@@ -150,7 +150,7 @@
       <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
       <div><dt>Documentation snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>8c386d3923703179e40cc66fd263bf8c5acc287e8c514e0edc8ddb0877b4ee24</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source snapshot</dt><dd><code>82ab59ea55abdd72809c76251a785143bfbd23a17a62aa537189c3bafa458dce</code>; regenerated and compared by the focused check</dd></div>
     </dl>
     <div style="margin-top:2rem"><h3>Campaign verdict results</h3></div>
     <div class="grid" style="margin-top:1rem">
@@ -3369,6 +3369,36 @@
       </dl>
     </article>
 
+    <article class="evaluation-card skill-card" id="skill-explain-code-fix"
+      data-kind="skill" data-status="direct-probe" data-search="explain-code-fix explain a code fix or patch in a structured way, using the structured-explanation skill and classifying the nature of the fix. use when the agent needs to explain what changed, why it was needed, and whether the fix is new functionality, a functional improvement, an optimization, backwards-compatibility work, or a migration. development-practice probe-explain-code-fix linked agent-suite outcomes only: pass, blocked">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>explain-code-fix</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Explain a code fix or patch in a structured way, using the structured-explanation skill and classifying the nature of the fix. Use when the agent needs to explain what changed, why it was needed, and whether the fix is new functionality, a functional improvement, an optimization, backwards-compatibility work, or a migration.</p>
+      <p class="source-row"><a href="../skills/explain-code-fix/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-explain-code-fix</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>artifact-contract</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-coder-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-merge-coordinator-happy</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, source-link-resolution</dd></div>
+          <div><dt>Model rubric</dt><dd>source-faithfulness</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <ul class="link-list"><li><a href="../evals/agent-tests/dev-coder/scenarios.yaml">dev-coder / typescript-behavior-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-coder/scenarios.yaml">dev-coder / spring-boundary-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / clean-integration</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / conflict-handling</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / incomplete-contribution-evidence</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, BLOCKED</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
     <article class="evaluation-card skill-card" id="skill-fastapi"
       data-kind="skill" data-status="direct-probe" data-search="fastapi implement, review, test, or diagnose fastapi applications, routers, dependencies, validation, exception handling, lifespan behavior, and async boundaries. use when python scope is owned by a fastapi project. stack-and-domain probe-fastapi no governed campaign link">
       <div class="card-heading">
@@ -3394,36 +3424,6 @@
       <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
       <dl class="compact-list">
         <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
-    <article class="evaluation-card skill-card" id="skill-fix-explanation"
-      data-kind="skill" data-status="direct-probe" data-search="fix-explanation explain a code fix or patch in a structured way, using the structured-explanation skill and classifying the nature of the fix. use when the agent needs to explain what changed, why it was needed, and whether the fix is new functionality, a functional improvement, an optimization, backwards-compatibility work, or a migration. development-practice probe-fix-explanation linked agent-suite outcomes only: pass, blocked">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>fix-explanation</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Explain a code fix or patch in a structured way, using the structured-explanation skill and classifying the nature of the fix. Use when the agent needs to explain what changed, why it was needed, and whether the fix is new functionality, a functional improvement, an optimization, backwards-compatibility work, or a migration.</p>
-      <p class="source-row"><a href="../skills/fix-explanation/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-fix-explanation</a></dd></div>
-          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>artifact-contract</dd></div>
-          <div><dt>Executable cases</dt><dd>None declared</dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-coder-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-merge-coordinator-happy</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, source-link-resolution</dd></div>
-          <div><dt>Model rubric</dt><dd>source-faithfulness</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <ul class="link-list"><li><a href="../evals/agent-tests/dev-coder/scenarios.yaml">dev-coder / typescript-behavior-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-coder/scenarios.yaml">dev-coder / spring-boundary-change</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / clean-integration</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / conflict-handling</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li><li><a href="../evals/agent-tests/dev-merge-coordinator/scenarios.yaml">dev-merge-coordinator / incomplete-contribution-evidence</a> &mdash; <span class="status status--blocked">BLOCKED</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS, BLOCKED</dd></div>
         <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
         <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
       </dl>

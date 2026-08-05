@@ -168,7 +168,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | detect-technology-skills | [x] | [x] probe-detect-technology-skills | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | effective-communication | [x] | [x] probe-effective-communication | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | end-to-end-verification | [x] | [x] probe-end-to-end-verification | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| fix-explanation | [x] | [x] probe-fix-explanation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| explain-code-fix | [x] | [x] probe-explain-code-fix | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | manage-azure-devops-work-items | [x] | [x] probe-manage-azure-devops-work-items | [x] provider-placeholder-matrix, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | manage-file-work-items | [x] | [x] probe-manage-file-work-items | [x] backlog-lifecycle, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | manage-github-work-items | [x] | [x] probe-manage-github-work-items | [x] github-work-item-provider, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
