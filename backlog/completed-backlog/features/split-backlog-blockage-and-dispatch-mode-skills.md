@@ -1,6 +1,6 @@
 # Split Backlog Blockage And Dispatch-Mode Skills
 
-Status: Blocked
+Status: Completed
 
 Type: Feature
 
@@ -161,3 +161,17 @@ Preserved Evidence: Defect evidence commit 38e8875d records review FAIL only for
 Claim Evidence: Before this lifecycle transaction, claim status returned STATUS with no live claims. Exact-file claim block-split-backlog-blockage-and-dispatch-mode-skills-019fab acquired with outcome SHARED_CHECKOUT_ACQUIRED and event eaa2fdf2-834b-46da-80c5-7e5dd1435375.
 
 Safe Resumption: On the observable unblock condition, the parent Coordinator must restore Ready in a distinct provider transaction, preserving the canonical Thread. The normal Ready -> Starting -> Running sequence then applies. No replacement Thread is permitted while the preserved canonical identity remains valid.
+
+## Crisis Completion
+
+Completed At: 2026-08-05T19:05:46Z.
+
+Disposition: Completed directly by the Backlog Crisis Mode Coordinator after the recorded generator unblock condition was satisfied.
+
+Accepted Source Candidate: 62a32992b0572f7d60dc55dc3eeea470d6c794aa.
+
+Delivery Commit: ef06ad2659bb5997c93eaf28ec61ffd0064cad03.
+
+Verification: The support-checklist generator and freshness check passed; 18 coverage-catalog tests, 27 evaluation-documentation tests, 25 Coordinator simulator tests, 22 Watchdog simulator tests, focused bundle contracts, skill validation for the three resulting skills, generated-output freshness, and diff checks passed. Two unrelated bundle assertions fail identically on the pre-delivery main baseline and remain outside this item.
+
+Outcome: backlog-crisis-mode is retired. resolve-backlog-blockage, set-solo-mode, and set-multitask-mode are independently defined, evaluated, generated, and documented.
