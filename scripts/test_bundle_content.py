@@ -7478,6 +7478,7 @@ class BundleContentTests(unittest.TestCase):
             "Acquire the exact opaque Work Item ID before any work or provider mutation.",
             "Use activity work for outcome work and activity update for provider mutation.",
             "Release the work-item claim with disposition done, blocked, or handoff at the activity boundary.",
+            "Blocked may include a bounded blocker reference; when present, it must be canonical, non-empty, single-line, and at most 200 characters.",
             "Path and resource claims remain independently applicable.",
             "The provider remains the lifecycle authority.",
         )

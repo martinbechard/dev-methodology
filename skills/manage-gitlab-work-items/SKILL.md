@@ -14,7 +14,7 @@ Manage GitLab issue state while keeping provider lifecycle and delivery completi
 - Accept the GitLab Work Item ID as one opaque input. This provider resolves it to the observed instance, namespace, project, and issue IID, checks collisions through GitLab, and reports the URL only as diagnostic location evidence.
 - Preserve the same Work Item ID across native state changes and terminal organization. Generic callers must not parse its provider-specific components.
 
-Acquire the exact opaque Work Item ID before any work or provider mutation. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. Use blocked only with its bounded blocker reference. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The provider remains the lifecycle authority.
+Acquire the exact opaque Work Item ID before any work or provider mutation. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. Blocked may include a bounded blocker reference; when present, it must be canonical, non-empty, single-line, and at most 200 characters. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The provider remains the lifecycle authority.
 
 ## Authority And Lookup
 

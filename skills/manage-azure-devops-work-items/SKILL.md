@@ -13,7 +13,7 @@ Azure DevOps work-item management is not implemented in this bundle. This packag
 
 A future implementation owns representation, lookup, collision checks, and stability for an Azure DevOps organization/project plus numeric work-item identity. Generic callers pass Work Item ID unchanged. This placeholder returns none and must not parse or fabricate one.
 
-Acquire the exact opaque Work Item ID before any work or provider mutation. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. Use blocked only with its bounded blocker reference. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The provider remains the lifecycle authority. The current zero-mutation placeholder performs none of these claim events; a future supported implementation must apply them.
+Acquire the exact opaque Work Item ID before any work or provider mutation. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. Blocked may include a bounded blocker reference; when present, it must be canonical, non-empty, single-line, and at most 200 characters. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The provider remains the lifecycle authority. The current zero-mutation placeholder performs none of these claim events; a future supported implementation must apply them.
 
 ## Inventory Work Items
 
