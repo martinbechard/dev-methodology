@@ -16,6 +16,12 @@ contents.
 
 Git provides one primary worktree for a repository. The primary worktree owns the backlog and the main branch. Other worktrees are private working copies.
 
+## Coordinate Shared Resource
+
+Use the Claim Events table to decide whether work requires temporary ownership. If a row matches, use its scope and release boundary, then apply the claim operations in this skill through the configured claim helper. If no row matches, continue without acquiring a claim.
+
+This skill owns claim policy. The selected claim helper explains only how to invoke each operation and read its structured result.
+
 ## Claim Events
 
 Acquire a claim only for an event in this table. Acquire it immediately before starting that event. Release it at the boundary shown in the same row.
@@ -67,7 +73,11 @@ For example, a request for backlog/feature-backlog/item.md from &lt;project-root
 
 The same request from &lt;project-root&gt; can continue.
 
-If a backlog update later requires another backlog file, add that file to the active claim before editing it.
+## Acquire Claim
+
+Acquire a claim immediately before the matching event starts. Request the scope selected from the Claim Events table and supply every identity, reason, duration, and deadline field required for that scope.
+
+Read the structured claim outcome and follow the applicable policy in this skill. Acquisition does not prove that work started or completed.
 
 ## Claim Conflicts
 
@@ -80,6 +90,12 @@ Ask its owner for a release or recovery notification. Retry only after receiving
 Do not poll, schedule retries, or acquire another claim to record that you are waiting.
 
 Treat every live claim as valid. A configured watchdog decides whether a live claim is stale.
+
+## Extend Claim
+
+Extend an active claim before adding a net-new file or resource to the event. Request only the additional scope and its required resource fields. Do not use extension to replace an existing owner or bypass a conflict outcome.
+
+For example, if a backlog update later requires another backlog file, extend the active claim with that file before editing it.
 
 ## Timed Resource Claims
 
@@ -101,9 +117,25 @@ These claim resources use the listed resource classes:
 
 Supply an expected duration and a requested hard-stop duration. The expected duration must not exceed the requested hard-stop duration. The requested hard-stop duration must not exceed the configured maximum.
 
-Extend a resource deadline only when concrete evidence explains why more time is needed. Measure an extension from the time its resource claim was acquired. Never extend beyond a configured maximum.
+## Extend Claim Deadline
 
-Claim status is read-only. It reports overdue resource claims but never releases one. A configured watchdog investigates an overdue claim whose owner has stopped.
+Extend a resource deadline only when concrete evidence explains why more time is needed. Measure an extension from the time its resource claim was acquired. Never extend beyond a configured maximum. A deadline extension changes no claim scope.
+
+## Heartbeat Claim
+
+Send a heartbeat during long resource use to show that the owner remains active. A heartbeat does not extend a deadline, change scope, or resolve an overdue claim.
+
+## Read Claim Status
+
+Read claim status to inspect live ownership and overdue resource claims. Status is read-only. It never acquires, extends, or releases a claim.
+
+If a mutating claim operation has an uncertain outcome, do not repeat it. Read status through the same configured transport, reconcile the reported claim state, and continue from that state. If that transport cannot return status, ask Project Configurator to restore the configured helper instead of switching transports or guessing.
+
+Status reports overdue resource claims but never releases one. A configured watchdog investigates an overdue claim whose owner has stopped.
+
+## Release Claim
+
+Release the exact named live claim when the matching event ends or ownership is handed off. Release no other claim and treat cleanup as separate from completion, delivery, and provider lifecycle state.
 
 ## Release Cleanup
 

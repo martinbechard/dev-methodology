@@ -47,41 +47,19 @@ Each completed command writes one JSON document to standard output. Read result.
 
 Several outcomes share an exit code. The JSON outcome, not the exit code, identifies the result. Do not switch helpers because a command rejected a request.
 
-## Command Arguments
+## Read Claim Status
 
-Acquire requires:
-
-- claim-id;
-- agent;
-- task;
-- root-task-id;
-- the scope selected through agent-claim.
-
-Use file, project-files, or resource for the scope chosen from the Claim Events table.
-
-A project-files request also requires scope-reason.
-
-A resource request also requires resource-class, resource-id, expected-duration-seconds, and requested-hard-stop-duration-seconds.
-
-Other operations require:
-
-| Operation | Arguments |
-|---|---|
-| extend | claim-id and additional scope |
-| extend-deadline | claim-id, requested-hard-stop-duration-seconds, and extension-evidence |
-| heartbeat | claim-id |
-| release | claim-id |
-| reset | no arguments |
-| maintain-journal | optional hot-days |
-| report | optional since and format |
-
-## Command Examples
-
-Read live ownership:
+Run status with no operation-specific arguments. Read result.outcome from the returned JSON document.
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . status
 ```
+
+## Acquire Claim
+
+Acquire requires claim-id, agent, task, root-task-id, and the scope selected through agent-claim.
+
+Use file, project-files, or resource for that scope. A project-files request also requires scope-reason. A resource request also requires resource-class, resource-id, expected-duration-seconds, and requested-hard-stop-duration-seconds.
 
 File-scope acquisition:
 
@@ -121,7 +99,9 @@ python3 "$CLAIM_SCRIPT" --repo . acquire \
   --requested-hard-stop-duration-seconds 1800
 ```
 
-Extend a claim, extend a resource deadline, send a heartbeat, and release a claim:
+## Extend Claim
+
+Extend requires claim-id and the net-new scope. A resource extension also requires resource-class, resource-id, expected-duration-seconds, and requested-hard-stop-duration-seconds.
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . extend \
@@ -131,18 +111,34 @@ python3 "$CLAIM_SCRIPT" --repo . extend \
   --resource-id port:3000 \
   --expected-duration-seconds 600 \
   --requested-hard-stop-duration-seconds 1200
+```
 
+## Extend Claim Deadline
+
+Extend-deadline requires claim-id, requested-hard-stop-duration-seconds, and extension-evidence.
+
+```bash
 python3 "$CLAIM_SCRIPT" --repo . extend-deadline \
   --claim-id browser-check-123 \
   --requested-hard-stop-duration-seconds 2400 \
   --extension-evidence "one final accessibility case remains"
+```
 
+## Heartbeat Claim
+
+```bash
 python3 "$CLAIM_SCRIPT" --repo . heartbeat --claim-id task-123
+```
 
+## Release Claim
+
+```bash
 python3 "$CLAIM_SCRIPT" --repo . release --claim-id task-123
 ```
 
 Release removes only the exact named live claim while the helper holds an exclusive OS lock directly on agent-claims.json. The helper updates that same locked file without replacing its inode and appends RELEASED journal evidence. Release does not inspect Git state, file contents, delivery evidence, or completion state.
+
+## Reset Claim Registry
 
 Reset the registry after all agents have stopped:
 
@@ -152,17 +148,26 @@ python3 "$CLAIM_SCRIPT" --repo . reset
 
 Reset locks agent-claims.json and replaces its contents with an empty claims list. It also creates the registry when it is missing and replaces malformed contents.
 
-Maintain the journal and report contention:
+## Maintain Claim Journal
+
+Maintain-journal accepts optional hot-days.
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . maintain-journal --hot-days 2
+```
+
+## Report Claim Contention
+
+Report accepts optional since and format.
+
+```bash
 python3 "$CLAIM_SCRIPT" --repo . report --since 2d --format json
 ```
 
 ## Uncertain Command Outcome
 
-If the process stops after sending a command that changes claim state, the operation may have completed. Do not repeat it.
+Apply the uncertain-outcome policy from agent-claim when the process stops after sending a mutating command. Do not repeat it.
 
-Run status through the same script. Continue from the reported claim state.
+Run Read Claim Status through the same script and continue from the reported claim state.
 
 If the script cannot return status, ask Project Configurator for help. Do not use another helper to guess what happened.
