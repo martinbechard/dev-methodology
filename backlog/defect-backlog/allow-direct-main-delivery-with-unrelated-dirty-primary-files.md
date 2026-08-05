@@ -1,6 +1,6 @@
 # Allow Direct-Main Delivery With Unrelated Dirty Primary Files
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -8,7 +8,22 @@ Provider: file
 
 Provider Reference: backlog/defect-backlog/allow-direct-main-delivery-with-unrelated-dirty-primary-files.md
 
+Owner: Unowned
+
 Completion: direct-main
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+Launch Reservation: One distinct bounded launch reservation for this provider record.
+Normalized Objective: Allow direct-main delivery with unrelated dirty primary files.
+Dispatch Time: 2026-08-05T14:39:34Z.
+Intended Root Dev Orchestrator Role: Dev Orchestrator.
+Owner: Unowned pending accepted root.
+Current Launch Evidence: Parent Coordinator authorized this exact reservation; exact-file backlog claim starting-direct-main-unrelated-dirty-019fb057 acquired with outcome SHARED_CHECKOUT_ACQUIRED and event 793f541f-f05b-4678-b2c6-5d8c70df3ecd. Runtime Thread creation and root acceptance have not occurred.
+Required Next Lifecycle Transition: The root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
+Reconciliation: Pending.
 
 ## Summary
 
