@@ -1462,6 +1462,28 @@ Do not proceed.
         self.assertNotIn("Broken series index link", rendered)
         self.assertNotIn("Child Series reference does not match its index", rendered)
 
+    def test_nonordinary_series_links_never_probe_target_state(self) -> None:
+        """URI, whitespace, query, and fragment targets remain non-repository links."""
+        index = self.root / "backlog/feature-backlog/release/index.md"
+        index.parent.mkdir(parents=True)
+        index.write_text(
+            "# Release Series\n\n## References\n\n"
+            "- [External](https://example.invalid/child.md)\n"
+            "- [Whitespace](child name.md)\n"
+            "- [Query](child.md?view=full)\n"
+            "- [Fragment](child.md#approval)\n",
+            encoding="utf-8",
+        )
+
+        with mock.patch.object(REPORT, "_series_link_target_state") as target_state:
+            rendered = self.generate()
+
+        target_state.assert_not_called()
+        self.assertNotIn("Broken series index link", rendered)
+        self.assertNotIn(
+            "Terminal series index remains in an active typed backlog", rendered
+        )
+
     def test_active_terminal_series_index_is_reported(self) -> None:
         """An unrelated Ready reference cannot make a terminal series nonterminal."""
         index_relative = "backlog/feature-backlog/release/index.md"

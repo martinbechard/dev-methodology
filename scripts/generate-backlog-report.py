@@ -90,7 +90,9 @@ STALLED_EVIDENCE_FIELDS = (
     "Next Investigation Action",
 )
 DEPENDENCY_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-MARKDOWN_LINK_PATTERN = re.compile(r"\[[^]]+\]\(([^)#?]+\.md)(?:#[^)]*)?\)")
+MARKDOWN_LINK_PATTERN = re.compile(
+    r"\[[^]]+\]\(([^)]*?\.md(?:[?#][^)]*)?)\)"
+)
 DEPENDENCY_LINK_PATTERN = re.compile(r"\[[^]\r\n]+\]\(([^)\r\n]+)\)")
 INLINE_MARKDOWN_PATTERN = re.compile(r"(`[^`]*`|\*\*([^*]+)\*\*|\*([^*]+)\*|\[([^]]+)\]\([^)]+\))")
 
@@ -258,7 +260,19 @@ def _lexical_repository_target(
     repository_root: Path,
 ) -> tuple[Path, Path] | None:
     """Normalize a relative link without touching its target on the filesystem."""
-    target_path = Path(target)
+    try:
+        parsed = urlsplit(target)
+    except ValueError:
+        return None
+    if (
+        parsed.scheme
+        or parsed.netloc
+        or "?" in target
+        or "#" in target
+        or any(character.isspace() for character in target)
+    ):
+        return None
+    target_path = Path(parsed.path)
     if target_path.is_absolute():
         return None
     candidate = Path(os.path.normpath(os.fspath(base / target_path)))
