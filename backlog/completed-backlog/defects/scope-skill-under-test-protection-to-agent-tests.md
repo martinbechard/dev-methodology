@@ -1,12 +1,12 @@
 # Scope Skill-Under-Test Protection To Agent Tests
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/scope-skill-under-test-protection-to-agent-tests.md
+Provider Reference: backlog/completed-backlog/defects/scope-skill-under-test-protection-to-agent-tests.md
 
 Completion: direct-main
 
@@ -125,3 +125,31 @@ Accepted At: 2026-08-05T16:17:28Z.
 Active Execution Evidence: Root Dev Orchestrator accepted ownership and began active discovery/provider startup.
 
 Provider-Mutation Claim: scope-skill-under-test-protection-to-agent-tests-starting-running-019fd2b6; exact file claim acquired by Dev Backlog Steward at 2026-08-05T16:18:39.269433Z, outcome SHARED_CHECKOUT_ACQUIRED, journal event 95dcf87e-f74a-48cd-ba8e-7de2ee2463aa.
+
+## Completion Evidence
+
+Completion Disposition: READY through direct-main delivery.
+
+Implementation Commit: 828574f159d6cfbdd367642b8689cc9e57743511.
+
+Independent Review: GOOD.
+
+Independent Verification: READY.
+
+Focused Tests: Four focused tests PASS.
+
+Renderer Reproduction: Exact renderer reproduction PASS.
+
+Diff Check: PASS.
+
+Governed Definitions: Unchanged.
+
+Excluded Candidate: 7cca88fe excluded and not an ancestor of post-integration main.
+
+Integration Claim: f98463a6-4f32-486c-bfe5-22f50fc8c778 released by journal event 2064d606-b1c3-4085-a341-4e141c511cee.
+
+Main Observation: 828574f159d6cfbdd367642b8689cc9e57743511 observed on main after integration.
+
+Terminal Provider Claim: scope-skill-under-test-protection-to-agent-tests-complete-019fd2b6; exact active and completed paths claimed by Dev Backlog Steward at 2026-08-05T16:48:36.840655Z, outcome SHARED_CHECKOUT_ACQUIRED, journal event 4d034ed5-99f2-4381-a6d9-44a123be94e2.
+
+Completed At: 2026-08-05T16:48:36Z.
