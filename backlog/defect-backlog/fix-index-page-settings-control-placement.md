@@ -1,6 +1,6 @@
 # Fix Index Page Settings Control Placement
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -10,7 +10,7 @@ Provider Reference: backlog/defect-backlog/fix-index-page-settings-control-place
 
 Completion: direct-main
 
-Owner: Unowned
+Owner: Root Dev Orchestrator
 
 ## Superseded User Action Question
 
@@ -299,6 +299,32 @@ Runtime Launch Evidence: None. This provider transaction reserves capacity only 
 Owner: Unowned.
 
 Reconciliation: Starting reservation recorded by the parent Coordinator's Dev Backlog Steward.
+
+## Active Execution Evidence
+
+Transition: Starting -> Running.
+
+Canonical Thread: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Root Agent Task: 019faec8-943a-7902-adaa-c2c00a370169.
+
+Root Role: Dev Orchestrator.
+
+Owner: Root Dev Orchestrator.
+
+Branch: codex/fix-index-page-settings-control-placement.
+
+Worktree: /Users/martinbechard/.codex/worktrees/1bad/dev-methodology.
+
+Preserved Accepted Candidate: 4c06ab5e002b18706834c15b31317bfb3594d76f; no reimplementation.
+
+Preserved Review and Verification: GOOD independent review; focused PASS; browser PASS.
+
+Current Phase: Current-main reconciliation and direct-main delivery preparation; no source replay or other repository mutation has occurred in this acceptance transaction.
+
+Started At: 2026-08-05T14:19:22.253749000Z (Root Dev Orchestrator acceptance).
+
+Claim Evidence: starting-running-current-main-019faec8 acquired as SHARED_CHECKOUT_ACQUIRED; claim journal event 920f6287-e6d9-42a0-8516-12eff22fd268.
 
 ## Notes
 
