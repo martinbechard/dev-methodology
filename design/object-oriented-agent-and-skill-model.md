@@ -10,7 +10,7 @@ It covers:
 - unconditional, conditional, procedure-mapped, and request-triggered skill use cases;
 - Agent Skills;
 - Injected Skills;
-- Skill Groups shown in expanded and compact forms;
+- Skill Groups and their expanded and collapsed diagram forms;
 - skill families and maintainable skill organization;
 - Skill interfaces and SKILL.md files;
 - diagram conventions introduced where each relationship first appears.
@@ -33,7 +33,7 @@ The method concludes with an applied overview of the methodology skill groups. T
 - **GOAL: GOAL-2** Understand and improve skill organization
   - **SYNOPSIS:** The analysis compares skill responsibilities, procedure families, and dependencies so maintainable skill hierarchies can be designed.
   - **BECAUSE:** A visible hierarchy makes skill ownership, extension, and substitution easier to reason about.
-  - **EXAMPLE:** A Work Item skill can be split into a Skill Group whose non-overlapping members define work items, dispatch them, and monitor them. The expanded group view shows all three members together, while Agent references show which members each Agent loads.
+  - **EXAMPLE:** A Work Item skill can be split into a Skill Group whose non-overlapping members define work items, dispatch them, and monitor them. An expanded diagram shows all three members together, while a collapsed diagram can represent the same set as one group node.
 
 ## 2. Skill Diagrams And Use Cases
 
@@ -378,21 +378,35 @@ The use cases differ at their selection boundary:
 
 ## 3. Skill Organization
 
-A Skill Group is a named set of cohesive skills used to organize one capability for comprehension. The group can be shown in two forms: an expanded box that displays its members together, or compact solid-diamond containment that can also show nested groups.
+A Skill Group and a Skill Group diagram are different things. The Skill Group is the actual named set of skills. Expanded and collapsed diagrams are two ways to display that set.
 
-Both forms describe membership in the same kind of Skill Group. Neither form means that a member loads, invokes, or depends on another member.
+### 3.1 Skill Group
 
-### 3.1 Expanded Skill Group
+A Skill Group contains cohesive skills that contribute to one capability. It can include skills directly and can include another Skill Group as a nested set. Its complete set of skills is the union of its direct skills and all skills in its nested groups.
 
-An expanded Skill Group is useful when one large skill has been divided into several SKILL.md files with non-overlapping responsibilities. A Mermaid namespace supplies the visible group box.
+A nested Skill Group is the same kind of set as its parent. The word subgroup describes only its position inside the parent. For any Skill Group:
+
+- direct skills are the skills listed immediately in the group;
+- nested groups are named Skill Groups included by the group; and
+- the complete skill set contains the direct skills plus the complete skill sets of all nested groups.
 
 - **RULE: RULE-28** Skill Group members divide a larger responsibility without overlap
   - **SYNOPSIS:** Each member owns one cohesive part of the grouped capability while using compatible domain vocabulary.
   - **EXAMPLE:** In the Work Item Skill Group, work-item-base defines work items, states, and rules; work-item-dispatch changes status under dispatch rules; and work-item-monitor observes work items and raises alarms.
 
-- **RULE: RULE-29** Group membership and skill loading remain separate relationships
-  - **SYNOPSIS:** The group box shows which skills belong together for comprehension. Agent or AGENTS.md references separately show which exact members are loaded for a use case.
-  - **EXAMPLE:** Work Item Coordinator loads work-item-base and work-item-dispatch, while Work Item Watchdog loads work-item-base and work-item-monitor; the surrounding box places all three skills in the same Work Item Skill Group.
+- **RULE: RULE-55** A nested Skill Group contributes its complete skill set
+  - **SYNOPSIS:** The parent Skill Group contains its direct skills plus every skill reached through its nested groups.
+  - **EXAMPLE:** Concurrent Tasking contains agent-claim through its nested Resource Coordination group even though agent-claim is not a direct member of Concurrent Tasking.
+
+The Skill Group is an organizational set. Membership does not mean that one member loads, invokes, or depends on another member.
+
+### 3.2 Expanded Skill Group Diagram
+
+An expanded Skill Group Diagram draws a box around the group’s skill nodes. It is useful when one large skill has been divided into several SKILL.md files and the reader needs to compare their non-overlapping responsibilities. A Mermaid namespace supplies the visible group box.
+
+- **RULE: RULE-29** An expanded diagram separates membership from loading
+  - **SYNOPSIS:** The box shows which skills belong to the Skill Group. Agent or AGENTS.md references separately show which exact skills are loaded for a use case.
+  - **EXAMPLE:** The Work Item Skill Group box contains three skills. Work Item Coordinator loads work-item-base and work-item-dispatch, while Work Item Watchdog loads work-item-base and work-item-monitor.
 
 ```mermaid
 classDiagram
@@ -436,40 +450,30 @@ classDiagram
     WorkItemWatchdog o--> work-item-monitor
 ```
 
-The namespace box identifies one Work Item Skill Group. The open-diamond references use the loading notation introduced in Section 2.3: Work Item Coordinator loads work-item-base and work-item-dispatch, while Work Item Watchdog loads work-item-base and work-item-monitor. The box itself does not mean that either Agent loads the entire group.
+The namespace box expands the Work Item Skill Group by displaying its three members. The open-diamond references use the loading notation introduced in Section 2.3: Work Item Coordinator loads work-item-base and work-item-dispatch, while Work Item Watchdog loads work-item-base and work-item-monitor. The box itself does not mean that either Agent loads the entire group.
 
 The members without parentheses are exposed data; the members with parentheses are functions. These members make the responsibility split visible. No arrows connect the three skills because group membership does not create a dependency between them.
 
 The Work Item Skill Group names and displayed members are analysis vocabulary supplied for this example. They do not assert that those exact skill definitions already exist in the repository.
 
-### 3.2 Compact Skill Group Containment
+### 3.3 Collapsed Skill Group Diagram
 
-A compact Skill Group view uses solid-diamond containment instead of drawing a box around every member. It is useful when member details are unnecessary or when a diagram needs to show one group nested in another.
+A collapsed Skill Group Diagram represents the group as one node instead of drawing a box around its members. Solid-diamond containment lines connect that node to direct skills and nested Skill Groups. This form is useful when member details are unnecessary or when several nested groups must remain readable.
 
-A nested skill group is the same kind of object as its parent. The word subgroup describes only its position inside that parent; it does not introduce a second kind of group. For any skill group:
-
-- direct skills are the skills listed immediately in that group;
-- nested skill groups are smaller named sets included by that group; and
-- the group’s complete skill set is its direct skills plus the complete skill sets of all its nested groups.
-
-- **RULE: RULE-54** A solid diamond is the compact form of Skill Group membership
-  - **SYNOPSIS:** A solid diamond from a Skill Group to a SKILL.md replaces the expanded group box for one direct member. A solid diamond from one Skill Group to another records that the parent includes the child’s complete skill set.
+- **RULE: RULE-54** A solid diamond represents containment in a collapsed diagram
+  - **SYNOPSIS:** A solid diamond from a Skill Group node to a SKILL.md node records direct membership. A solid diamond from one Skill Group node to another records nested-group inclusion.
   - **EXAMPLE:** Concurrent Tasking directly contains codex-workitem-coordination and includes the Resource Coordination skill group, whose direct skills include agent-claim.
-
-- **RULE: RULE-55** Nested containment includes the child group’s complete skill set
-  - **SYNOPSIS:** A parent group contains its direct skills plus every skill reached through its nested groups.
-  - **EXAMPLE:** Concurrent Tasking contains agent-claim through its nested Resource Coordination group even though agent-claim is not a direct member of Concurrent Tasking.
 
 ```mermaid
 classDiagram
     direction LR
 
     class ConcurrentTasking {
-        <<Skill group>>
+        <<Skill Group>>
     }
 
     class ResourceCoordination {
-        <<Skill group>>
+        <<Skill Group>>
     }
 
     class codex-workitem-coordination {
@@ -485,7 +489,7 @@ classDiagram
     ResourceCoordination *-- agent-claim
 ```
 
-Concurrent Tasking has one direct skill in this compact view: codex-workitem-coordination. It also includes the nested Resource Coordination set, so agent-claim belongs to the complete Concurrent Tasking set through that nesting. An expanded view could instead draw boxes around the same members, but the solid-diamond form shows nesting more concisely.
+The collapsed diagram shows Concurrent Tasking as one node. Its actual Skill Group contains codex-workitem-coordination directly and contains agent-claim through the nested Resource Coordination Skill Group. An expanded diagram could draw boxes around the same sets and display their member details.
 
 The repository-specific group models are maintained separately in [Object-Oriented Skill Group Models](object-oriented-skill-group-models.md).
 
@@ -792,8 +796,8 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **EXAMPLE:** The diagrams distinguish Dev Coder’s direct careful-coding reference from Backlog Manager’s procedure-name path through AGENTS.md to manage-work-item-gitlab.
 
 - **RULE: RULE-53** Class views make skill organization reviewable
-  - **SYNOPSIS:** A reader can see which skills own shared context, which own specialized procedures, how an expanded group relates to its loading references, which skills are direct group members, and which complete skill sets are included through nesting.
-  - **EXAMPLE:** The expanded Work Item Skill Group shows work-item-base shared by two Agents while work-item-dispatch and work-item-monitor remain specialized members; the compact view shows agent-claim contained by Resource Coordination.
+  - **SYNOPSIS:** A reader can distinguish the actual Skill Group from its expanded and collapsed diagram forms, see which skills are direct members, and see which complete skill sets are included through nesting.
+  - **EXAMPLE:** The Work Item Skill Group is an actual set of three skills shown in an expanded diagram, while the Concurrent Tasking Skill Group is shown in a collapsed diagram that includes Resource Coordination.
 
 - **RULE: RULE-24** The diagrams distinguish AGENTS.md from SKILL.md
   - **SYNOPSIS:** Diagrams label project routing with the AGENTS.md stereotype, the shared family contract with the Interface Skill stereotype, and the selected implementation with a concrete skill stereotype.
@@ -804,7 +808,7 @@ The open-diamond arrow says that every represented Agent names review-structured
   - **EXAMPLE:** Add a new Cancel button invokes newEnhancement(), which refers to create-new-work-item(); AGENTS.md selects manage-work-item-gitlab, whose Create New Work Item section performs the GitLab procedure.
 
 - **RULE: RULE-26** Declared relationships and request-triggered selection have valid uses
-  - **SYNOPSIS:** The model distinguishes exact Agent dependencies, expanded and compact Skill Group views, AGENTS.md substitution, direct skill-to-skill coupling, and request-scoped selection.
+  - **SYNOPSIS:** The model distinguishes exact Agent dependencies, Skill Group sets, expanded and collapsed Skill Group diagrams, AGENTS.md substitution, direct skill-to-skill coupling, and request-scoped selection.
   - **EXAMPLE:** Dev Coder names careful-coding, the Work Item Skill Group contains three non-overlapping members while Work Item Coordinator loads two of them, Resource Coordination contains agent-claim, Project-specific directives select a Provider Skill for manage-work-item-*, complete-work-item-feature-branch names create-pull-request, and a structural-search request selects ast-grep only for that request.
 
 - **RULE: RULE-51** The four skill-loading use cases remain distinct from factory composition
@@ -855,15 +859,16 @@ The glossary summarizes concepts after the examples have established them.
 | Injected Skill | The Injectable Skill selected through AGENTS.md for one procedure in an effective project configuration. | manage-work-item-gitlab is the Injected Skill when Project-specific directives route create-new-work-item to it. |
 | Skills injection | The AGENTS.md selection that links an interface procedure to one concrete SKILL.md. | When create-new-work-item() is needed, Project-specific directives select manage-work-item-gitlab. |
 | Request-triggered skill selection | Selection caused by an explicit skill name or marker in the request, or by a match between the request and the skill’s declared purpose. It does not require an Agent-definition reference or AGENTS.md binding. | A structural-search request selects ast-grep for the current request. |
-| Expanded Skill Group | A Skill Group shown as a box around its member SKILL.md nodes so their responsibilities and separate loading references can be viewed together. The box itself creates no loading or dependency relationship. | The Work Item Skill Group box contains work-item-base, work-item-dispatch, and work-item-monitor. |
 | Exact-name reference | An open-diamond arrow from a node that knows a skill’s exact name to that SKILL.md. | DevCoder o--> careful-coding. |
 | Procedure-name reference | A regular arrow from an invoker to the procedure it knows without naming the implementing SKILL.md. | BacklogManager --> manage-work-item. |
 | Conditional reference | A dotted regular or open-diamond arrow whose label states the loading condition. | DevCoder o..> test-driven-development, labeled “when the user requests TDD.” |
 | Agent class view | A diagram node that represents the Agent behavior, expectations, and dependencies relevant to the analysis without asserting a runtime class. | Coding Agent names careful-coding and refers to Deliver Workitem. |
-| Skill Group | A named set used to organize skills for comprehension. It can be drawn as an expanded box or as compact solid-diamond containment. Its complete skill set contains its direct skills plus every skill in its nested Skill Groups. The group does not itself load or invoke those skills. | The Work Item Skill Group can be expanded as a box; Concurrent Tasking uses compact containment to include codex-workitem-coordination and Resource Coordination. |
+| Skill Group | The actual named set of cohesive skills used to organize one capability. Its complete skill set contains its direct skills plus every skill in its nested Skill Groups. The set exists independently of how a diagram displays it. | The Work Item Skill Group contains work-item-base, work-item-dispatch, and work-item-monitor. |
+| Expanded Skill Group Diagram | A diagram that draws a box around the SKILL.md nodes belonging to one Skill Group so their responsibilities and separate loading references can be viewed together. The diagram displays the set; it does not create it. | The expanded Work Item Skill Group Diagram displays work-item-base, work-item-dispatch, and work-item-monitor inside one box. |
+| Collapsed Skill Group Diagram | A diagram that represents a Skill Group as one node and uses solid-diamond lines to show direct skill membership or nested-group inclusion. | The collapsed Concurrent Tasking diagram links the Concurrent Tasking node to codex-workitem-coordination and Resource Coordination. |
 | Nested skill group | A skill group included inside another skill group. It is the same kind of object as its parent; subgroup is only a relative description of its position. | Resource Coordination is a skill group nested inside Concurrent Tasking. |
-| Direct group membership | A solid-diamond line from a skill group to a SKILL.md that places the skill immediately in that group. | Resource Coordination *-- agent-claim makes agent-claim a direct member of Resource Coordination. |
-| Nested set containment | A solid-diamond line from a parent skill group to a child skill group. The parent’s complete skill set includes the child’s complete skill set. It is not a loading, invocation, or dependency reference. | Concurrent Tasking *-- Resource Coordination includes Resource Coordination and all of its skills in the Concurrent Tasking comprehension view. |
+| Direct group membership | A solid-diamond line in a collapsed diagram that displays a skill’s direct membership in a Skill Group. The line represents membership in the existing set; it does not create that membership. | Resource Coordination *-- agent-claim displays agent-claim as a direct member of Resource Coordination. |
+| Nested set containment | A solid-diamond line in a collapsed diagram that displays one Skill Group nested in another. The parent’s complete skill set includes the child’s complete skill set independently of the chosen diagram form. | Concurrent Tasking *-- Resource Coordination displays Resource Coordination as a nested group whose skills belong to the complete Concurrent Tasking set. |
 | Mermaid display label | The visible analysis identity used when Mermaid requires a different internal class identifier. | The internal manage-work-item identifier displays manage-work-item-*. |
 | Skill hierarchy | An organizational view of Skill Groups, families, responsibilities, procedures, loading references, and dependencies. It does not by itself assert software inheritance. | work-item-base, work-item-dispatch, and work-item-monitor form one Skill Group whose members are loaded in different combinations by two Agents. |
 | Agent superclass stand-in | A diagram-compression node representing several Agents that share the same relationship. It does not assert inheritance. | Structured Artifact Reviewers represents reviewers that all name review-structured-artifact. |
