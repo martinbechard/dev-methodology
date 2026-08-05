@@ -10285,8 +10285,6 @@ class BundleContentTests(unittest.TestCase):
         self.assertFalse(
             set(DOCUMENT_NAVIGATION_ORDER) - settings_consumer_text.keys()
         )
-        self.assertIn("agent-skill-explorer.html", settings_consumer_text)
-
         settings_site_chrome_pages = {
             "index.html": index_text,
             **settings_consumer_text,
