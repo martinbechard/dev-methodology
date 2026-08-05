@@ -94,6 +94,57 @@ class ScriptedBootstrapperTests(unittest.TestCase):
         )
         self.assertNotIn("configure", phases)
 
+    def test_configuration_output_rejects_an_aggregate_selected_skill_set(self) -> None:
+        """Bootstrap accepts exact routes but rejects the forbidden aggregate shortcut."""
+
+        composed_routes = {
+            "folder_routing": [
+                {
+                    "pattern": "service/**",
+                    "required_skills": ["fastapi", "python"],
+                },
+            ]
+        }
+        aggregate_output = {
+            "aggregate interface": {
+                "selected-skill-set": ["python", "typescript"],
+            }
+        }
+        confirmed_skills = {"fastapi", "python"}
+
+        self.assertEqual(
+            "PASS",
+            scripted._evaluate_project_configuration_output(
+                composed_routes, confirmed_skills
+            ),
+        )
+        self.assertEqual(
+            "FAIL",
+            scripted._evaluate_project_configuration_output(
+                aggregate_output, confirmed_skills
+            ),
+        )
+        for invalid_skills in (
+            [""],
+            [" "],
+            ["python", " python"],
+            ["python", "python"],
+            ["unknown-skill"],
+            ["selected-skill-set"],
+        ):
+            with self.subTest(invalid_skills=invalid_skills):
+                invalid = {
+                    "folder_routing": [
+                        {"pattern": "service/**", "required_skills": invalid_skills}
+                    ]
+                }
+                self.assertEqual(
+                    "FAIL",
+                    scripted._evaluate_project_configuration_output(
+                        invalid, confirmed_skills
+                    ),
+                )
+
     def test_reverse_engineering_audit_routes_corrections_and_reaches_steady_state(self) -> None:
         result = scripted.run_isolated(reverse_engineering=True)
 

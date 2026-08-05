@@ -4,5 +4,6 @@ detect-technology-skills
 development-methodology
 documentation-bootstrap
 documentation-page-verify
+fastapi
 python
 typescript

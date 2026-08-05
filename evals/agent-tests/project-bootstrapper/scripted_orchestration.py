@@ -17,7 +17,7 @@ import subprocess
 import sys
 import tempfile
 import time
-from collections.abc import Mapping, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -67,6 +67,51 @@ _TARGET_DIGESTS = {
         "1fe6317f67e3595174c296cc263844de4ae3e75c4fbf8a70f6100b8d2a17ea0b"
     ),
 }
+
+
+def _evaluate_project_configuration_output(
+    output: Mapping[str, Any],
+    confirmed_skills: Collection[str],
+) -> str:
+    """Accept only explicit folder rows with exact-name technology skills."""
+    catalog = tuple(confirmed_skills)
+    if (
+        not catalog
+        or any(
+            not isinstance(skill, str) or not skill or skill != skill.strip()
+            for skill in catalog
+        )
+        or len(set(catalog)) != len(catalog)
+    ):
+        return "FAIL"
+    allowed_skills = set(catalog)
+    if set(output) != {"folder_routing"}:
+        return "FAIL"
+    routes = output["folder_routing"]
+    if not isinstance(routes, list) or not routes:
+        return "FAIL"
+    for route in routes:
+        if not isinstance(route, Mapping):
+            return "FAIL"
+        if set(route) != {"pattern", "required_skills"}:
+            return "FAIL"
+        if not isinstance(route["pattern"], str) or not route["pattern"]:
+            return "FAIL"
+        skills = route["required_skills"]
+        if (
+            not isinstance(skills, list)
+            or not skills
+            or any(
+                not isinstance(skill, str)
+                or not skill
+                or skill != skill.strip()
+                or skill not in allowed_skills
+                for skill in skills
+            )
+            or len(set(skills)) != len(skills)
+        ):
+            return "FAIL"
+    return "PASS"
 
 
 class _ScriptedDependency:

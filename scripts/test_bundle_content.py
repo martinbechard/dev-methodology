@@ -1012,6 +1012,17 @@ def load_build_skill_docs_module() -> ModuleType:
     return module
 
 
+def load_python_module(path: Path, module_name: str) -> ModuleType:
+    """Load a repository Python module for executable contract assertions."""
+    spec = importlib.util.spec_from_file_location(module_name, path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Unable to load {path}.")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
 def load_yaml_object(path: Path) -> dict[str, object]:
     parsed = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(parsed, dict):
@@ -9244,7 +9255,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertEqual("declared", scenarios[scenario_id]["coverageStatus"])
 
     def test_project_setup_skills_expose_reviewed_public_procedures(self) -> None:
-        """Keep setup procedure names explicit without inventing a technology aggregate."""
+        """Keep public setup procedures and execute their routing-output boundary."""
 
         detection_text = (
             SKILLS_ROOT / "detect-technology-skills" / "SKILL.md"
@@ -9277,9 +9288,54 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(probe_procedure=procedure):
                 self.assertIn(procedure, configuration_probe["expectedBehavior"])
-        for probe in (detection_probe, configuration_probe):
-            self.assertIn("aggregate interface", probe["negativeCondition"])
-            self.assertIn("selected-skill-set", probe["negativeCondition"])
+        configurator_tests = load_python_module(
+            AGENT_TEST_SUITES_ROOT / "project-configurator" / "test_fixtures.py",
+            "project_configurator_fixture_contract",
+        )
+        bootstrapper_evaluator = load_python_module(
+            AGENT_TEST_SUITES_ROOT / "project-bootstrapper" / "scripted_orchestration.py",
+            "project_bootstrapper_routing_contract",
+        )
+        composed_routes = {
+            "folder_routing": [
+                {
+                    "pattern": "service/**",
+                    "required_skills": ["fastapi", "python"],
+                },
+            ]
+        }
+        aggregate_output = {
+            "aggregate interface": {
+                "selected-skill-set": ["python", "typescript"],
+            }
+        }
+        confirmed_skills = {"fastapi", "python"}
+        for evaluator in (
+            configurator_tests._evaluate_technology_routing_output,
+            bootstrapper_evaluator._evaluate_project_configuration_output,
+        ):
+            with self.subTest(evaluator=evaluator.__name__):
+                self.assertEqual("PASS", evaluator(composed_routes, confirmed_skills))
+                self.assertEqual("FAIL", evaluator(aggregate_output, confirmed_skills))
+                for invalid_skills in (
+                    [""],
+                    [" "],
+                    ["python", " python"],
+                    ["python", "python"],
+                    ["unknown-skill"],
+                    ["selected-skill-set"],
+                ):
+                    invalid = {
+                        "folder_routing": [
+                            {
+                                "pattern": "service/**",
+                                "required_skills": invalid_skills,
+                            }
+                        ]
+                    }
+                    self.assertEqual(
+                        "FAIL", evaluator(invalid, confirmed_skills)
+                    )
 
     def test_project_configuration_documents_confirmation_reference_boundary(self) -> None:
         """Require an auditable reference without inventing one cross-project format."""

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import subprocess
 import unittest
+from collections.abc import Collection, Mapping
 from pathlib import Path
 from typing import Any
 
@@ -20,6 +21,51 @@ SUITE_ROOT = Path(__file__).resolve().parent
 def _detection_evidence_rows(project: dict[str, Any]) -> list[Any]:
     """Return every detector evidence row without coercing its structure."""
     return [row for loadout in project["technology_skill_loadouts"] for row in loadout["sourceEvidence"]]
+
+
+def _evaluate_technology_routing_output(
+    output: Mapping[str, Any],
+    confirmed_skills: Collection[str],
+) -> str:
+    """Accept only explicit folder rows with exact-name technology skills."""
+    catalog = tuple(confirmed_skills)
+    if (
+        not catalog
+        or any(
+            not isinstance(skill, str) or not skill or skill != skill.strip()
+            for skill in catalog
+        )
+        or len(set(catalog)) != len(catalog)
+    ):
+        return "FAIL"
+    allowed_skills = set(catalog)
+    if set(output) != {"folder_routing"}:
+        return "FAIL"
+    routes = output["folder_routing"]
+    if not isinstance(routes, list) or not routes:
+        return "FAIL"
+    for route in routes:
+        if not isinstance(route, Mapping):
+            return "FAIL"
+        if set(route) != {"pattern", "required_skills"}:
+            return "FAIL"
+        if not isinstance(route["pattern"], str) or not route["pattern"]:
+            return "FAIL"
+        skills = route["required_skills"]
+        if (
+            not isinstance(skills, list)
+            or not skills
+            or any(
+                not isinstance(skill, str)
+                or not skill
+                or skill != skill.strip()
+                or skill not in allowed_skills
+                for skill in skills
+            )
+            or len(set(skills)) != len(skills)
+        ):
+            return "FAIL"
+    return "PASS"
 
 
 class ProjectConfiguratorFixtureTests(unittest.TestCase):
@@ -163,7 +209,7 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
         self.assertIn("mutation-claim-consistency", routing["deterministicChecks"])
 
     def test_routing_scenario_uses_public_setup_procedures_without_an_aggregate(self) -> None:
-        """The behavioral case invokes reviewed procedures and rejects a synthetic set."""
+        """The behavioral case invokes reviewed procedures and rejects aggregate output."""
 
         scenarios = yaml.safe_load(
             (SUITE_ROOT / "scenarios.yaml").read_text(encoding="utf-8")
@@ -188,8 +234,51 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
         ):
             with self.subTest(procedure=procedure):
                 self.assertIn(procedure, combined)
-        self.assertIn("aggregate interface", combined)
-        self.assertIn("selected-skill-set", combined)
+
+        composed_routes = {
+            "folder_routing": [
+                {
+                    "pattern": "service/**",
+                    "required_skills": ["fastapi", "python"],
+                },
+            ]
+        }
+        aggregate_output = {
+            "aggregate interface": {
+                "selected-skill-set": ["python", "typescript"],
+            }
+        }
+
+        confirmed_skills = (
+            SUITE_ROOT / "fixtures" / "technology-routing" / "available-skills.txt"
+        ).read_text(encoding="utf-8").splitlines()
+
+        self.assertEqual(
+            "PASS",
+            _evaluate_technology_routing_output(composed_routes, confirmed_skills),
+        )
+        self.assertEqual(
+            "FAIL",
+            _evaluate_technology_routing_output(aggregate_output, confirmed_skills),
+        )
+        for invalid_skills in (
+            [""],
+            [" "],
+            ["python", " python"],
+            ["python", "python"],
+            ["unknown-skill"],
+            ["selected-skill-set"],
+        ):
+            with self.subTest(invalid_skills=invalid_skills):
+                invalid = {
+                    "folder_routing": [
+                        {"pattern": "service/**", "required_skills": invalid_skills}
+                    ]
+                }
+                self.assertEqual(
+                    "FAIL",
+                    _evaluate_technology_routing_output(invalid, confirmed_skills),
+                )
 
     def test_routing_scenario_requires_exact_functional_claude_bridges(self) -> None:
         """Bridge validation must inspect exact imports rather than prose or existence."""
