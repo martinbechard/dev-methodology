@@ -165,4 +165,18 @@ Reproduction: Serve the current candidate, open design/orchestrated-development-
 
 Runnable Next Action: Add .chapter-nav to that page's existing print-hide rule, without changing its chapter links, sticky desktop behavior, or previous and next controls; rerun focused inventory and browser print checks.
 
+## Confirmed In-Scope Defect: Parser Verification Gap
+
+Evidence Source: Fresh independent source review.
+
+Scope: The focused nine-page documentation navigation inventory test.
+
+Evidence: DocumentationNavigationParser records declared aria-labelledby section targets and navigation fragments but does not inventory actual element IDs or previous and next link destinations. Its current assertions can therefore accept missing or duplicate section anchors and broken or missing adjacent-document hrefs.
+
+Reproduction: A malformed fixture with section aria-labelledby="missing-heading", h2 id="different-heading", section-nav href="#missing-heading", and document-nav href="missing-page.html" satisfies the current assertions.
+
+Expected: The focused test rejects that fixture and every equivalent mismatch.
+
+Runnable Next Action: Extend the focused parser and test to inventory all element IDs, reject duplicates, require every section-nav fragment to resolve to an actual unique ID, and require every previous and next href to resolve to the expected adjacent index-linked detail page. Keep the nine-page scope and do not run a broad suite.
+
 This item applies to HTML documentation detail pages linked from the toolkit index. It does not add a section menu to the root index page, whose primary purpose is choosing a document rather than navigating a long document body.
