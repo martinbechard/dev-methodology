@@ -73,6 +73,50 @@ When an active folder contains a subfolder with index.md, treat it as one relate
   Action Required, or Holding children, report the exact child-state inventory instead of
   collapsing it to one series state.
 
+### Terminal Series Archive
+
+Keep a series index in its active typed backlog while any required child is nonterminal. This
+includes an active, stalled, blocked, User Action Required, Holding, or mixed nonterminal
+child-state inventory. Do not add an independent Status field to the series index; derive the
+series outcome from its required children and use the index location as terminal evidence.
+
+After the last required child reaches a terminal outcome, archive the coordination index:
+
+- A completed series moves to
+  backlog/completed-backlog/TYPE/SERIES-SLUG/index.md. Completed required children and
+  intentionally abandoned children may contribute to this outcome only when no required
+  terminal failure prevents the series goal.
+- A failed or abandoned series moves to
+  backlog/failed-backlog/TYPE/SERIES-SLUG/index.md. Use this destination when a required
+  Failed or Abandoned child prevents the series goal or authorized direction abandons the
+  series itself.
+- TYPE is the matching plural archive group: defects, features, analyses, or investigations.
+  Preserve the stable series slug and index.md filename at the destination.
+
+Keep the last child transition and the series archive as two serialized provider transactions.
+Complete and commit the child's existing status-and-archive transaction first. Then re-read
+every required child from its canonical provider reference and derive the series outcome. This
+preserves child-level terminal evidence and prevents a series move from changing or replacing a
+child outcome.
+
+For the series transaction:
+
+1. Preserve the source index bytes, every affected child backlink, and confirmed destination
+   absence as recovery evidence.
+2. Before mutation, claim the exact active index path, archive destination, and every child
+   path whose explicit Series reference will change. Stop on a conflict or existing destination.
+3. Move index.md to the terminal destination while preserving the stable series slug. Rewrite
+   its child links to each child's canonical archive path, and update every explicit child Series
+   reference to the index's canonical archive path.
+4. Commit the index move and backlink updates together, without changing any child's terminal
+   status, outcome, or evidence. Confirm every index link and explicit child backlink resolves,
+   and confirm no index-only series folder remains under the active typed backlog.
+
+If the series transaction fails after a child transaction succeeds, leave the child archives and
+their provider outcomes intact. Restore the preserved series bytes when safe, retain explicit
+recovery evidence, and retry the series transaction from the preserved terminal child evidence.
+Do not move a nonterminal or mixed-state series merely to remove an active coordination folder.
+
 ## Lifecycle States
 
 Use explicit provider lifecycle states and never infer success from silence:

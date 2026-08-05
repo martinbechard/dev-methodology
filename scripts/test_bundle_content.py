@@ -6456,6 +6456,28 @@ class BundleContentTests(unittest.TestCase):
             manage_text,
         )
 
+    def test_manage_file_work_items_archives_terminal_series(self) -> None:
+        """The file provider defines recoverable terminal-series archival."""
+        manage_text = (SKILLS_ROOT / "manage-file-work-items" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        normalized = " ".join(manage_text.split()).lower()
+
+        for required_contract in (
+            "preserve the stable series slug and index.md filename",
+            "backlog/completed-backlog/type/series-slug/index.md",
+            "backlog/failed-backlog/type/series-slug/index.md",
+            "do not add an independent status field to the series index",
+            "two serialized provider transactions",
+            "every explicit child series reference",
+            "without changing any child's terminal status, outcome, or evidence",
+            "claim the exact active index path, archive destination, and every child",
+            "mixed nonterminal child-state inventory",
+            "retry the series transaction from the preserved terminal child evidence",
+        ):
+            with self.subTest(required_contract=required_contract):
+                self.assertIn(required_contract, normalized)
+
     def test_skill_names_follow_category_naming_rules(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         payload = build_skill_docs.build_payload()

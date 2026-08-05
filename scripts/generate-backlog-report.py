@@ -2,7 +2,7 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
 # Summary: Generates a deterministic, self-contained HTML view of repository work items and explicitly requested Future Ideas.
-# Governing backlog items: backlog/feature-backlog/add-styled-backlog-report-with-user-input.md, backlog/feature-backlog/add-lightweight-future-ideas-capture.md, and backlog/feature-backlog/add-dedicated-watchdog-and-stalled-lifecycle.md
+# Governing backlog items: backlog/feature-backlog/add-styled-backlog-report-with-user-input.md, backlog/feature-backlog/add-lightweight-future-ideas-capture.md, backlog/feature-backlog/add-dedicated-watchdog-and-stalled-lifecycle.md, and backlog/feature-backlog/archive-terminal-work-item-series.md
 
 """Generate an offline HTML report from the repository backlog."""
 
@@ -72,6 +72,7 @@ ALLOWED_STATUSES = {
     "Abandoned",
     "Holding",
 }
+TERMINAL_SERIES_STATUSES = {"Completed", "Failed", "Abandoned"}
 SEMANTIC_STATUS_CLASSES = {
     "Stalled": "stalled",
     "Blocked": "blocked",
@@ -254,7 +255,7 @@ def _dependencies(section: str, item_path: Path, backlog_root: Path) -> list[str
 def _series_orders(
     backlog_root: Path,
 ) -> tuple[dict[str, tuple[str, int]], list[str], list[tuple[str, str]]]:
-    """Map readable series indexes to order and report ignored or invalid indexes."""
+    """Map series order and report unreadable, terminal-active, or broken navigation."""
     orders: dict[str, tuple[str, int]] = {}
     ignored: list[str] = []
     findings: list[tuple[str, str]] = []
@@ -276,6 +277,8 @@ def _series_orders(
                 )
                 continue
             series = index.parent.name
+            linked_statuses: list[str] = []
+            linked_items_complete = True
             for position, target in enumerate(
                 MARKDOWN_LINK_PATTERN.findall(content), start=1
             ):
@@ -287,6 +290,53 @@ def _series_orders(
                 except ValueError:
                     continue
                 orders.setdefault(relative_child, (series, position))
+                try:
+                    child.relative_to(backlog_root.resolve())
+                except ValueError:
+                    continue
+                if not child.is_file():
+                    findings.append(
+                        (relative_index, f"Broken series index link: {target}.")
+                    )
+                    linked_items_complete = False
+                    continue
+                if child.name in {"README.md", "index.md"}:
+                    continue
+                try:
+                    _, child_fields, _ = _parse_document(child)
+                except (OSError, UnicodeError):
+                    linked_items_complete = False
+                    continue
+                child_status = child_fields.get("Status", "")
+                if not child_status:
+                    linked_items_complete = False
+                    continue
+                linked_statuses.append(child_status)
+                child_series = child_fields.get("Series", "")
+                if child_series and child_series != relative_index:
+                    findings.append(
+                        (
+                            relative_child,
+                            "Child Series reference does not match its index: "
+                            f"expected {relative_index}, found {child_series}.",
+                        )
+                    )
+            relative_to_backlog = index.relative_to(backlog_root)
+            if (
+                relative_to_backlog.parts[0] in ACTIVE_FOLDERS
+                and linked_items_complete
+                and linked_statuses
+                and all(
+                    status in TERMINAL_SERIES_STATUSES
+                    for status in linked_statuses
+                )
+            ):
+                findings.append(
+                    (
+                        relative_index,
+                        "Terminal series index remains in an active typed backlog.",
+                    )
+                )
     return orders, ignored, findings
 
 

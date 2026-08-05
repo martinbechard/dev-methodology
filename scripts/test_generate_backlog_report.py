@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
 # Summary: Verifies backlog report inventory, Future Ideas authority, reconciliation, ordering, and offline HTML output.
-# Governing backlog items: backlog/feature-backlog/add-styled-backlog-report-with-user-input.md, backlog/feature-backlog/add-lightweight-future-ideas-capture.md, and backlog/feature-backlog/add-dedicated-watchdog-and-stalled-lifecycle.md
+# Governing backlog items: backlog/feature-backlog/add-styled-backlog-report-with-user-input.md, backlog/feature-backlog/add-lightweight-future-ideas-capture.md, backlog/feature-backlog/add-dedicated-watchdog-and-stalled-lifecycle.md, and backlog/feature-backlog/archive-terminal-work-item-series.md
 
 """Focused tests for the styled backlog report generator."""
 
@@ -69,6 +69,7 @@ class BacklogReportTest(unittest.TestCase):
         work_item_id: str | None = None,
         source_evidence: str = "",
         stalled_evidence: dict[str, str] | None = None,
+        series: str = "",
         extra: str = "",
     ) -> None:
         """Write one complete backlog item with optional queue-specific sections."""
@@ -93,6 +94,7 @@ class BacklogReportTest(unittest.TestCase):
             if source_evidence
             else ""
         )
+        series_field = f"\nSeries: {series}\n" if series else ""
         stalled_evidence_section = ""
         if stalled_evidence is not None:
             stalled_evidence_section = "## Stalled Evidence\n\n"
@@ -113,6 +115,7 @@ Work Item ID: {work_item_id or path.stem}
 
 Completion: {completion}
 {lifecycle_fields}
+{series_field}
 
 ## Summary
 
@@ -1417,6 +1420,121 @@ Do not proceed.
         self.assertIn("Unreadable series index: UnicodeDecodeError", rendered)
         self.assertIn("backlog/feature-backlog/invalid-series/index.md", rendered)
         self.assertNotIn("invalid-series/index.md</code></p></article>", rendered)
+
+    def test_archived_terminal_series_preserve_complete_navigation(self) -> None:
+        """Completed and failed archives accept reciprocal index and child links."""
+        cases = (
+            ("completed-backlog", "Completed", "release"),
+            ("failed-backlog", "Failed", "withdrawn"),
+        )
+        for archive, status, slug in cases:
+            with self.subTest(archive=archive):
+                index_relative = f"backlog/{archive}/features/{slug}/index.md"
+                child_relative = f"backlog/{archive}/features/{slug}/child.md"
+                index = self.root / index_relative
+                index.parent.mkdir(parents=True, exist_ok=True)
+                index.write_text(
+                    f"# {slug.title()} Series\n\n## Work Items\n\n1. [Child](child.md)\n",
+                    encoding="utf-8",
+                )
+                self.write_item(
+                    child_relative,
+                    title=f"{slug.title()} Child",
+                    status=status,
+                    item_type="Feature",
+                    series=index_relative,
+                )
+
+        rendered = self.generate()
+
+        self.assertNotIn("Terminal series index remains in an active typed backlog", rendered)
+        self.assertNotIn("Broken series index link", rendered)
+        self.assertNotIn("Child Series reference does not match its index", rendered)
+
+    def test_active_terminal_series_index_is_reported(self) -> None:
+        """An active index cannot remain after every linked child becomes terminal."""
+        index_relative = "backlog/feature-backlog/release/index.md"
+        index = self.root / index_relative
+        index.parent.mkdir(parents=True)
+        index.write_text(
+            "# Release Series\n\n## Work Items\n\n"
+            "1. [Done](../../completed-backlog/features/done.md)\n"
+            "2. [Abandoned](../../failed-backlog/features/abandoned.md)\n",
+            encoding="utf-8",
+        )
+        self.write_item(
+            "backlog/completed-backlog/features/done.md",
+            title="Done",
+            status="Completed",
+            item_type="Feature",
+            series=index_relative,
+        )
+        self.write_item(
+            "backlog/failed-backlog/features/abandoned.md",
+            title="Abandoned",
+            status="Abandoned",
+            item_type="Feature",
+            series=index_relative,
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("Terminal series index remains in an active typed backlog", rendered)
+        self.assertIn(index_relative, rendered)
+
+    def test_nonterminal_or_mixed_series_index_remains_active(self) -> None:
+        """Any linked nonterminal child prevents premature terminal-series findings."""
+        index_relative = "backlog/feature-backlog/release/index.md"
+        index = self.root / index_relative
+        index.parent.mkdir(parents=True)
+        index.write_text(
+            "# Release Series\n\n## Work Items\n\n"
+            "1. [Done](../../completed-backlog/features/done.md)\n"
+            "2. [Pending](pending.md)\n",
+            encoding="utf-8",
+        )
+        self.write_item(
+            "backlog/completed-backlog/features/done.md",
+            title="Done",
+            status="Completed",
+            item_type="Feature",
+            series=index_relative,
+        )
+        self.write_item(
+            "backlog/feature-backlog/release/pending.md",
+            title="Pending",
+            status="Blocked",
+            item_type="Feature",
+            series=index_relative,
+        )
+
+        rendered = self.generate()
+
+        self.assertNotIn("Terminal series index remains in an active typed backlog", rendered)
+
+    def test_series_navigation_reports_broken_links_and_misaligned_backlinks(self) -> None:
+        """Archived series report missing children and stale child Series references."""
+        index_relative = "backlog/completed-backlog/features/release/index.md"
+        index = self.root / index_relative
+        index.parent.mkdir(parents=True)
+        index.write_text(
+            "# Release Series\n\n## Work Items\n\n"
+            "1. [Done](done.md)\n"
+            "2. [Missing](missing.md)\n",
+            encoding="utf-8",
+        )
+        self.write_item(
+            "backlog/completed-backlog/features/release/done.md",
+            title="Done",
+            status="Completed",
+            item_type="Feature",
+            series="backlog/feature-backlog/release/index.md",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("Broken series index link", rendered)
+        self.assertIn("Child Series reference does not match its index", rendered)
 
     def test_invalid_values_and_untyped_archive_placement_are_findings(self) -> None:
         """Unknown metadata and malformed archive groups remain visible as invalid evidence."""

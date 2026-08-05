@@ -1,0 +1,8 @@
+basis: explicit-user-direction
+definition_scope: skills/manage-file-work-items/SKILL.md
+provenance:
+  source: user-message
+  reference: thread:019faebe-b3cd-7ad0-b2b6-7a0abedf9787/message:create-archive-terminal-series-work-item
+user_direction:
+  - "this is not good, those folders should also be archived"
+  - "ok create a workitem for this"
