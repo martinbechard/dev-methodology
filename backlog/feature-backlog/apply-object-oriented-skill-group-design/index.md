@@ -26,7 +26,7 @@ Apply the approved skill names and public procedure headings from the object-ori
 2. [Align Project Setup Skills](align-project-setup-skills.md)
 3. [Align Documentation Methodology Skills](align-documentation-methodology-skills.md)
 4. [Align Work-Item Creation Provider Skills](align-work-item-creation-provider-skills.md)
-5. [Align Work-Item Management Provider Skills](align-work-item-management-provider-skills.md)
+5. [Align Work-Item Management Provider Skills](../../user-action-required/align-work-item-management-provider-skills.md) — User Action Required before direct-main integration.
 6. [Split Backlog Blockage And Dispatch-Mode Skills](split-backlog-blockage-and-dispatch-mode-skills.md)
 7. [Align Resource Coordination Skills](../../user-action-required/align-resource-coordination-skills.md) — User Action Required before direct-main integration.
 8. [Align Codex Work-Item Coordination Skill](align-codex-work-item-coordination-skill.md)

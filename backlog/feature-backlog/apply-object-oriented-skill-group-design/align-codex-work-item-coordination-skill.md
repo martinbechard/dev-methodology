@@ -42,7 +42,7 @@ The user directed in the active Codex task on 2026-08-04: "create separate work 
 
 ## Dependencies
 
-- backlog/feature-backlog/apply-object-oriented-skill-group-design/align-work-item-management-provider-skills.md
+- backlog/user-action-required/align-work-item-management-provider-skills.md
 - backlog/feature-backlog/apply-object-oriented-skill-group-design/split-backlog-blockage-and-dispatch-mode-skills.md
 - backlog/feature-backlog/apply-object-oriented-skill-group-design/align-resource-coordination-skills.md
 
