@@ -151,4 +151,18 @@ Claim Evidence: Shared-checkout exact-file claim starting-running-sticky-section
 
 Reconciliation: Running acceptance recorded by the canonical root Dev Orchestrator's Dev Backlog Steward.
 
+## Confirmed In-Scope Defect
+
+Observed At: 2026-08-05T14:37:18.079111Z.
+
+Scope: Print media for design/orchestrated-development-lifecycle.html.
+
+Evidence: Its single nav[aria-label="Lifecycle chapters"] remains visible in print because the existing print CSS does not include .chapter-nav. The computed display under emulated print media was flex.
+
+Expected: The lifecycle chapter navigator has computed display none in print, matching the print-hidden section and chapter menus on the other index-linked documentation pages.
+
+Reproduction: Serve the current candidate, open design/orchestrated-development-lifecycle.html, emulate print media, and inspect the computed display of nav[aria-label="Lifecycle chapters"].
+
+Runnable Next Action: Add .chapter-nav to that page's existing print-hide rule, without changing its chapter links, sticky desktop behavior, or previous and next controls; rerun focused inventory and browser print checks.
+
 This item applies to HTML documentation detail pages linked from the toolkit index. It does not add a section menu to the root index page, whose primary purpose is choosing a document rather than navigating a long document body.
