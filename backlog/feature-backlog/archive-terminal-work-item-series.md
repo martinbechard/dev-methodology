@@ -1,6 +1,6 @@
 # Archive Terminal Work-Item Series
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -123,7 +123,7 @@ Source Mutation Evidence: None observed.
 Required Resumption: Reuse the same canonical task through a new Ready -> Starting -> Running sequence.
 Reconciliation: Ready.
 
-## Current Dispatch Reservation
+## Historical Dispatch Reservation
 
 Transition: Ready -> Starting.
 Parent Coordination Thread: 019faeef-e932-7352-a53d-fdb1535f5994.
@@ -146,6 +146,26 @@ Runtime Launch Result: Direct conversation-title handoff accepted for the synchr
 Canonical Conversation: 019faeef-e932-7352-a53d-fdb1535f5994.
 Owner Acceptance: Pending.
 Reconciliation: Pending.
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Launch Reservation: One parent-coordinator launch reservation; no runtime work-item Thread has been created by this reservation.
+
+Normalized Objective: Archive terminal work-item series.
+
+Dispatch Time: 2026-08-05T14:17:30.754473Z.
+
+Intended Root Dev Orchestrator: Dev Orchestrator.
+
+Runtime Launch Evidence: None. This provider transaction reserves capacity only and does not create or accept a runtime task.
+
+Owner: Unowned.
+
+Reconciliation: Starting reservation recorded by the parent Coordinator's Dev Backlog Steward.
 
 - Commit b5a48776d8dca621f4dc069e8805b4d924fe3abc is migration evidence, not a substitute for the steady-state contract and regression tests.
 - Do not reintroduce a Status field on index.md merely to make terminal state visible; derive series state from required children and use archive location as terminal evidence.
