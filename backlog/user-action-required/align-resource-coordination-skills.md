@@ -1,12 +1,12 @@
 # Align Resource Coordination Skills
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/apply-object-oriented-skill-group-design/align-resource-coordination-skills.md
+Provider Reference: backlog/user-action-required/align-resource-coordination-skills.md
 
 Completion: direct-main
 
@@ -37,6 +37,28 @@ Phase: Governed definition precheck and source implementation preparation.
 Started At: 2026-08-05T03:48:55Z.
 Claim Evidence: The private delivery lane requires no claim. This exact primary-main backlog mutation is protected by exact-file claim running-align-resource-coordination-skills-019fb, acquired with outcome SHARED_CHECKOUT_ACQUIRED and event d2c8c1ff-af01-424c-a70e-2bcec75fa3f0.
 Preserved Coordination: Parent Coordination Thread /root/apply_skill_group_design_backlog and its Ready -> Starting launch reservation remain canonical.
+
+## User Action Required
+
+Transition: Running -> User Action Required.
+
+Ownership: The canonical root Dev Orchestrator and its Thread are preserved for same-Thread resumption. No unattended direct-main integration or provider-completion action is authorized while this item is in User Action Required.
+
+Question: Please make design/object-oriented-agent-and-skill-model.md clean in the primary main checkout without us touching your edit, then tell us to resume; alternatively, do you explicitly authorize a scoped preservation/clean/restore procedure for that one edit?
+
+Why Input Is Required: Completion is configured as direct-main and the required completion procedure stops when the primary main checkout is not clean. The only current primary-main modification is user-owned and must not be touched, staged, committed, reverted, stashed, or absorbed without the user's explicit direction.
+
+Unattended Boundary: Direct-main integration and provider completion stop. Unrelated private-worktree review and correction may continue.
+
+Resolution: Unanswered as of 2026-08-05.
+
+## Preserved Delivery Evidence
+
+Accepted Candidate: 0f8fb32c1f0c1114de4d9f57219d23ca7126f911.
+Independent Review: Fresh review PASS.
+Verification: PASS; 268 tests.
+Integration Claim: No live integration claim observed.
+Attempt State: Direct-main completion cannot begin while the user-owned primary-main design modification remains present.
 
 ## Summary
 
