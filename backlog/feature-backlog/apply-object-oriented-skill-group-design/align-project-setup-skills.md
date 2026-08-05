@@ -50,6 +50,12 @@ The reviewed Project Setup design rejects a synthetic selected-skill-set interfa
 
 The user directed in the active Codex task on 2026-08-04: "create separate work items to update skills according to the new design, and update individual evals." The exact approved design is design/skill-groups/project-setup.md at reviewed baseline commit c426c970153948f9d5d2d92f1b7b718613a8d4f7.
 
+## Confirmed Defect Record
+
+Fresh Dev Code Reviewer task /root/apply_skill_group_design_backlog/align_project_setup_skills/review_candidate confirmed a Medium defect in candidate 49e8616b1c00b0e241a5fd5e4cd1a498562e2c2a. evals/agent-tests/project-configurator/test_fixtures.py around line 165 and scripts/test_bundle_content.py around line 8705 only assert aggregate-interface or selected-skill-set prose. Project Bootstrapper scenarios.yaml around line 80 only declares the forbidden behavior. The tests still pass if an evaluator accepts a synthetic aggregate node, so the negative acceptance criterion is unproved.
+
+Runnable next action: correction attempt 1 remains assigned to the original coder in this delivery. Add adversarial Project Configurator and Project Bootstrapper verdict cases that reject synthetic aggregate or selected-skill-set output and accept exact per-skill routing. Run the new targeted methods through the two existing test files, then obtain fresh independent review and verification. This is evidence attached to this provider record, not a separate delivery.
+
 ## Requirements
 
 - Rename the generic Workflow headings to the two proposed public procedure headings.
