@@ -115,19 +115,19 @@ Provider Operation Evidence: Work Item ID update claim extract-future-idea-manag
 
 Condition Type: delegated-work.
 
-Owner: Dev Coder child /root/implement_future_ideas_split under root task 019fd5b5-aca7-7cb1-9ae0-010ac945c985.
+Owner: Fresh reviewers /root/review_future_ideas_candidate and /root/review_future_ideas_methodology under canonical root 019fd5b5-aca7-7cb1-9ae0-010ac945c985.
 
-Evidence: The child is currently running in /Users/martinbechard/.codex/worktrees/e9e9/dev-methodology on codex/extract-future-idea-management; all 5 governed sources and approved dependents are implemented; 5 focused Python 3.11 contract tests are green; supported regeneration has run; focused validation and candidate commit are active. Work-claim heartbeat: 2026-08-06T06:43:02.021553Z. Strict handoff release event: 7fc7e4c9-1d6f-4727-9cd9-0b3a87ae6b9a.
+Evidence: Clean candidate 20129c822f0ce78fe46a0aeaaa6e7b719d841dc6 committed at 2026-08-06T06:56:08Z. Dev Code Reviewer and Methodology Artifact Reviewer are currently running read-only fresh-context gates. Required title: Reviewing — Extract Future Idea Management. Work-claim heartbeat: 2026-08-06T06:57:25.883276Z. Strict handoff release event: caf9f49d-8744-4109-adb6-4c2e3ab7e2b5.
 
-Observed At: 2026-08-06T06:44:24Z.
+Observed At: 2026-08-06T06:58:08Z.
 
 Started At: 2026-08-06T06:17:25Z.
 
-Deadline or Expires At: 2026-08-06T08:44:24Z.
+Deadline or Expires At: 2026-08-06T08:58:08Z.
 
-Next Action: Finish focused skill/YAML/Future Ideas/report/template validation, freshness and diff checks, then produce the clean candidate commit for independent review.
+Next Action: Collect both fresh verdicts; route any correction to the original coder or, if both pass, dispatch the independent focused verifier.
 
-Next Reconciliation At: 2026-08-06T06:59:24Z.
+Next Reconciliation At: 2026-08-06T07:13:08Z.
 
 ## Verification
 
