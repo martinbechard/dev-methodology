@@ -6,6 +6,8 @@
 from __future__ import annotations
 
 import gzip
+import importlib.util
+import io
 import json
 import os
 import subprocess
@@ -14,8 +16,10 @@ import tempfile
 import time
 import unittest
 from collections.abc import Mapping
+from contextlib import redirect_stdout
 from datetime import date, timedelta
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,7 +37,10 @@ class AgentClaimTests(unittest.TestCase):
         (self.repository / "src").mkdir()
         (self.repository / "docs").mkdir()
         (self.repository / "backlog" / "feature-backlog").mkdir(parents=True)
-        (self.repository / ".gitignore").write_text("/.worktrees/\n", encoding="utf-8")
+        (self.repository / ".gitignore").write_text(
+            "/.worktrees/\n/.codex/agent-claim/\n",
+            encoding="utf-8",
+        )
         (self.repository / "README.md").write_text("baseline\n", encoding="utf-8")
         (self.repository / "src" / "one.py").write_text("one\n", encoding="utf-8")
         (self.repository / "docs" / "guide.md").write_text("guide\n", encoding="utf-8")
@@ -78,6 +85,46 @@ class AgentClaimTests(unittest.TestCase):
     def claim_command(self, *arguments: str, repo: Path | None = None) -> list[str]:
         """Build a subprocess command for concurrency tests without executing it."""
         return [sys.executable, str(CLAIM_SCRIPT), "--repo", str(repo or self.repository), *arguments]
+
+    def claim_with_denied_registry_path_read(
+        self,
+        denied_registry: Path,
+        *arguments: str,
+    ) -> tuple[int, dict[str, object]]:
+        """Run the command while a Windows-style second registry open is denied."""
+        module_name = f"agent_claim_path_denial_{id(self)}"
+        spec = importlib.util.spec_from_file_location(module_name, CLAIM_SCRIPT)
+        if spec is None or spec.loader is None:
+            raise RuntimeError("Unable to load the claim helper for path-denial testing.")
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[module_name] = module
+        self.addCleanup(sys.modules.pop, module_name, None)
+        spec.loader.exec_module(module)
+        denied_registry = denied_registry.resolve()
+        original_read_text = Path.read_text
+
+        def deny_registry_read(path: Path, *args: object, **kwargs: object) -> str:
+            if path.resolve() == denied_registry:
+                raise PermissionError("simulated Windows denial for a locked registry")
+            return original_read_text(path, *args, **kwargs)
+
+        output = io.StringIO()
+        with mock.patch.object(Path, "read_text", deny_registry_read):
+            with redirect_stdout(output):
+                exit_code = module.main(
+                    ["--repo", str(self.repository), *arguments]
+                )
+        return exit_code, json.loads(output.getvalue())
+
+    def claim_with_denied_canonical_path_read(
+        self,
+        *arguments: str,
+    ) -> tuple[int, dict[str, object]]:
+        """Deny a second pathname read of the canonical registry."""
+        return self.claim_with_denied_registry_path_read(
+            self.registry_path(),
+            *arguments,
+        )
 
     def acquire_arguments(self, claim_id: str) -> list[str]:
         """Build the common acquisition arguments for one independent test task."""
@@ -192,7 +239,37 @@ class AgentClaimTests(unittest.TestCase):
 
     def registry_path(self) -> Path:
         """Return the repository-global live registry path."""
+        return self.repository / ".codex" / "agent-claim" / "agent-claims.json"
+
+    def write_registry_fixture(self, payload: dict[str, object]) -> None:
+        """Write canonical versioned claim state for a stored-schema compatibility case."""
+        self.state_root().mkdir(parents=True, exist_ok=True)
+        self.registry_path().write_text(
+            json.dumps(payload, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        (self.state_root() / "state.json").write_text(
+            json.dumps(
+                {
+                    "migration_status": "complete",
+                    "origin": "fresh",
+                    "schema_version": 1,
+                    "state_layout_version": 2,
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+    def legacy_registry_path(self) -> Path:
+        """Return the pre-migration registry path in Git metadata."""
         return self.common_directory() / "agent-claims.json"
+
+    def state_root(self) -> Path:
+        """Return the canonical operational claim-state root."""
+        return self.repository / ".codex" / "agent-claim"
 
     def rewrite_claim_paths_as_legacy(
         self,
@@ -218,7 +295,7 @@ class AgentClaimTests(unittest.TestCase):
 
     def hot_directory(self) -> Path:
         """Return the repository-global hot journal directory."""
-        return self.common_directory() / "agent-claim-events" / "hot"
+        return self.state_root() / "agent-claim-events" / "hot"
 
     def journal_events(self) -> list[dict[str, object]]:
         """Read all hot events for lifecycle and concurrency assertions."""
@@ -272,6 +349,501 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("primary", event["checkout_topology"])
         self.assertEqual("primary", event["worktree_id"])
         self.assertNotIn(str(self.temporary_directory.name), json.dumps(event))
+
+    def test_primary_and_linked_worktrees_share_primary_operational_state(self) -> None:
+        """Every checkout resolves the primary worktree's ignored claim-state root."""
+        first_linked = self.existing_linked_worktree("first-linked")
+        second_linked = self.existing_linked_worktree("second-linked")
+
+        acquired = self.claim(
+            *self.acquire_arguments("shared"),
+            "--file",
+            "README.md",
+            repo=first_linked,
+        )
+        primary_status = self.claim("status")
+        second_status = self.claim("status", repo=second_linked)
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        expected_registry = str(self.registry_path().resolve())
+        self.assertEqual(expected_registry, self.output(primary_status)["registry"])
+        self.assertEqual(expected_registry, self.output(second_status)["registry"])
+        self.assertEqual(
+            ["shared"],
+            [claim["claim_id"] for claim in self.output(second_status)["claims"]],
+        )
+        self.assertFalse((first_linked / ".codex" / "agent-claim").exists())
+        self.assertFalse((second_linked / ".codex" / "agent-claim").exists())
+        self.assertFalse(self.legacy_registry_path().exists())
+
+    def test_claim_state_is_lazy_and_operational_paths_are_not_claimable(self) -> None:
+        """Read access stays write-free; the first mutation creates canonical state."""
+        self.assertFalse(self.state_root().exists())
+
+        status = self.claim("status")
+        self.assertEqual(0, status.returncode, status.stderr)
+        self.assertEqual([], self.output(status)["claims"])
+        self.assertFalse(self.state_root().exists())
+
+        created = self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+        rejected = self.claim(
+            *self.acquire_arguments("operational"),
+            "--file",
+            ".codex/agent-claim/agent-claims.json",
+        )
+
+        self.assertEqual(0, created.returncode, created.stderr)
+        self.assertEqual(
+            ["first"],
+            [claim["claim_id"] for claim in json.loads(self.registry_path().read_text(encoding="utf-8"))["claims"]],
+        )
+        self.assertFalse(self.legacy_registry_path().exists())
+        self.assertFalse((self.common_directory() / "agent-claim-events").exists())
+        self.assertEqual(1, rejected.returncode)
+        self.assertEqual("INVALID_SCOPE", self.output(rejected)["outcome"])
+        self.assertEqual(
+            "operational_path_not_claimable",
+            self.output(rejected)["rejection"]["reason"],
+        )
+
+    def test_empty_legacy_registry_and_history_migrate_with_incompatible_markers(self) -> None:
+        """An empty legacy registry migrates history and blocks old helper path types."""
+        legacy_registry = self.legacy_registry_path()
+        legacy_registry.write_text('{"claims":[]}\n', encoding="utf-8")
+        legacy_hot = self.common_directory() / "agent-claim-events" / "hot"
+        legacy_hot.mkdir(parents=True)
+        legacy_event = self.synthetic_event(
+            "legacy-event",
+            "2026-07-10T01:00:00Z",
+            "release",
+            "RELEASED",
+            "legacy",
+        )
+        (legacy_hot / "2026-07-10.jsonl").write_text(
+            json.dumps(legacy_event) + "\n",
+            encoding="utf-8",
+        )
+
+        status = self.claim(*self.acquire_arguments("migrated"), "--file", "README.md")
+
+        self.assertEqual(0, status.returncode, status.stderr)
+        self.assertEqual(str(self.registry_path().resolve()), self.output(status)["registry"])
+        self.assertTrue(legacy_registry.is_dir())
+        self.assertTrue((legacy_registry / "state.json").is_file())
+        legacy_events = self.common_directory() / "agent-claim-events"
+        self.assertTrue(legacy_events.is_file())
+        self.assertEqual(
+            legacy_event,
+            json.loads((self.hot_directory() / "2026-07-10.jsonl").read_text(encoding="utf-8")),
+        )
+        marker = json.loads((self.state_root() / "state.json").read_text(encoding="utf-8"))
+        self.assertEqual("complete", marker["migration_status"])
+        self.assertEqual("legacy", marker["origin"])
+
+    def test_fresh_state_validation_uses_its_locked_canonical_descriptor(self) -> None:
+        """Fresh setup succeeds when Windows denies reopening its locked registry path."""
+        exit_code, result = self.claim_with_denied_canonical_path_read("reset")
+
+        self.assertEqual(0, exit_code)
+        self.assertEqual("RESET", result["outcome"])
+        self.assertEqual([], result["claims"])
+        marker = json.loads((self.state_root() / "state.json").read_text())
+        self.assertEqual("complete", marker["migration_status"])
+        self.assertEqual("fresh", marker["origin"])
+
+    def test_legacy_migration_validation_uses_its_locked_canonical_descriptor(self) -> None:
+        """Migration succeeds when Windows denies reopening its locked registry path."""
+        self.legacy_registry_path().write_text('{"claims":[]}\n', encoding="utf-8")
+
+        exit_code, result = self.claim_with_denied_canonical_path_read("reset")
+
+        self.assertEqual(0, exit_code)
+        self.assertEqual("RESET", result["outcome"])
+        self.assertEqual([], result["claims"])
+        marker = json.loads((self.state_root() / "state.json").read_text())
+        self.assertEqual("complete", marker["migration_status"])
+        self.assertEqual("legacy", marker["origin"])
+        self.assertTrue(self.legacy_registry_path().is_dir())
+
+    def test_legacy_migration_reuses_payload_from_its_locked_legacy_descriptor(self) -> None:
+        """Migration succeeds when Windows denies reopening its locked legacy path."""
+        legacy_registry = self.legacy_registry_path()
+        legacy_registry.write_text('{"claims":[]}\n', encoding="utf-8")
+
+        exit_code, result = self.claim_with_denied_registry_path_read(
+            legacy_registry,
+            "reset",
+        )
+
+        self.assertEqual(0, exit_code)
+        self.assertEqual("RESET", result["outcome"])
+        self.assertEqual([], result["claims"])
+        marker = json.loads((self.state_root() / "state.json").read_text())
+        self.assertEqual("complete", marker["migration_status"])
+        self.assertEqual("legacy", marker["origin"])
+        self.assertTrue(legacy_registry.is_dir())
+
+    def test_live_legacy_registry_is_drain_only_before_migration(self) -> None:
+        """The upgraded helper can release, but cannot otherwise mutate, a live legacy claim."""
+        legacy_claim = {
+            "claim_id": "integration",
+            "incarnation_id": "legacy-incarnation",
+            "agent": "merge-coordinator",
+            "task": "integration",
+            "root_task_id": "integration",
+            "parent_claim_id": None,
+            "claimed_at": "2026-08-05T23:00:00Z",
+            "heartbeat": "2026-08-05T23:00:00Z",
+            "files": ["README.md"],
+            "trees": [],
+            "resources": [],
+            "project_files": False,
+            "backlog": False,
+            "all_files": False,
+            "file_domain": "project_files",
+            "scope_reasons": {},
+            "mode": "primary",
+            "checkout_topology": "primary",
+            "worktree": str(self.repository),
+            "branch": "main",
+            "baseline_commit": self.git("rev-parse", "HEAD").stdout.strip(),
+            "acquisition_outcome": "SHARED_CHECKOUT_ACQUIRED",
+        }
+        self.legacy_registry_path().write_text(
+            json.dumps({"claims": [legacy_claim]}, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        legacy_before = self.legacy_registry_path().read_bytes()
+
+        blocked_status = self.claim("status")
+        blocked_heartbeat = self.claim("heartbeat", "--claim-id", "integration")
+        blocked_acquire = self.claim(
+            *self.acquire_arguments("other"),
+            "--file",
+            "src/one.py",
+        )
+
+        for completed in (blocked_status, blocked_heartbeat, blocked_acquire):
+            self.assertEqual(3, completed.returncode)
+            self.assertEqual(
+                "CLAIM_STATE_MIGRATION_BLOCKED",
+                self.output(completed)["outcome"],
+            )
+            self.assertEqual("live_legacy_claims_require_drain", self.output(completed)["reason"])
+        self.assertEqual(legacy_before, self.legacy_registry_path().read_bytes())
+        self.assertFalse(self.state_root().exists())
+
+        released = self.claim("release", "--claim-id", "integration")
+        read_only = self.claim("status")
+
+        self.assertEqual(0, released.returncode, released.stderr)
+        self.assertEqual("RELEASED", self.output(released)["outcome"])
+        self.assertIn(
+            "/.git/agent-claim-events/hot/",
+            str(self.output(released)["journal"]["path"]),
+        )
+        self.assertEqual(0, read_only.returncode, read_only.stderr)
+        self.assertFalse(self.state_root().exists())
+
+        migrated = self.claim(*self.acquire_arguments("post-upgrade"), "--file", "src/one.py")
+
+        self.assertEqual(0, migrated.returncode, migrated.stderr)
+        self.assertTrue(self.legacy_registry_path().is_dir())
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", self.output(migrated)["outcome"])
+
+    def test_concurrent_legacy_release_re_resolves_after_migration(self) -> None:
+        """A stale legacy resolution follows migration instead of reopening its old path."""
+        self.legacy_registry_path().write_text(
+            json.dumps(
+                {
+                    "claims": [
+                        {
+                            "claim_id": "integration",
+                            "agent": "merge-coordinator",
+                            "root_task_id": "integration",
+                            "files": ["README.md"],
+                            "worktree": str(self.repository),
+                            "branch": "main",
+                            "mode": "primary",
+                            "checkout_topology": "primary",
+                        }
+                    ]
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        barrier = Path(self.temporary_directory.name) / "release-resolution"
+        command_environment = os.environ.copy()
+        command_environment.update(
+            {
+                "PYTHONDONTWRITEBYTECODE": "1",
+                "AGENT_CLAIM_TEST_RELEASE_RESOLVE_BARRIER": str(barrier),
+            }
+        )
+        first_release = subprocess.Popen(
+            self.claim_command("release", "--claim-id", "integration"),
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=command_environment,
+        )
+        self.addCleanup(lambda: first_release.poll() is None and first_release.kill())
+        ready = Path(f"{barrier}.ready")
+        deadline = time.monotonic() + 5
+        while not ready.exists() and time.monotonic() < deadline:
+            time.sleep(0.01)
+        self.assertTrue(ready.exists(), "first release did not reach the resolution barrier")
+
+        second_release = self.claim("release", "--claim-id", "integration")
+        migrated = self.claim("reset")
+        Path(f"{barrier}.continue").write_text("continue\n", encoding="utf-8")
+        stdout, stderr = first_release.communicate(timeout=5)
+
+        self.assertEqual(0, second_release.returncode, second_release.stderr)
+        self.assertEqual("RELEASED", self.output(second_release)["outcome"])
+        self.assertEqual(0, migrated.returncode, migrated.stderr)
+        self.assertEqual(1, first_release.returncode, stderr)
+        self.assertEqual("CLAIM_NOT_FOUND", json.loads(stdout)["outcome"])
+        self.assertNotIn("Traceback", stderr)
+        self.assertTrue(self.legacy_registry_path().is_dir())
+        self.assertTrue(self.registry_path().is_file())
+        self.assertEqual([], json.loads(self.registry_path().read_text())["claims"])
+
+    def test_legacy_resolution_rechecks_inode_after_its_first_lock(self) -> None:
+        """A waiter never migrates through the stale descriptor it opened before locking."""
+        self.legacy_registry_path().write_text(
+            json.dumps(
+                {
+                    "claims": [
+                        {
+                            "claim_id": "integration",
+                            "agent": "merge-coordinator",
+                            "root_task_id": "integration",
+                            "files": ["README.md"],
+                            "worktree": str(self.repository),
+                            "branch": "main",
+                            "mode": "primary",
+                            "checkout_topology": "primary",
+                        }
+                    ]
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        barrier = Path(self.temporary_directory.name) / "legacy-open"
+        command_environment = os.environ.copy()
+        command_environment.update(
+            {
+                "PYTHONDONTWRITEBYTECODE": "1",
+                "AGENT_CLAIM_TEST_RELEASE_LEGACY_OPEN_BARRIER": str(barrier),
+            }
+        )
+        first_release = subprocess.Popen(
+            self.claim_command("release", "--claim-id", "integration"),
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=command_environment,
+        )
+        self.addCleanup(lambda: first_release.poll() is None and first_release.kill())
+        ready = Path(f"{barrier}.ready")
+        deadline = time.monotonic() + 5
+        while not ready.exists() and time.monotonic() < deadline:
+            time.sleep(0.01)
+        self.assertTrue(ready.exists(), "first release did not open the legacy registry")
+
+        second_release = self.claim("release", "--claim-id", "integration")
+        canonical_acquire = self.claim(
+            *self.acquire_arguments("canonical-owner"),
+            "--file",
+            "src/one.py",
+        )
+        Path(f"{barrier}.continue").write_text("continue\n", encoding="utf-8")
+        stdout, stderr = first_release.communicate(timeout=5)
+
+        self.assertEqual(0, second_release.returncode, second_release.stderr)
+        self.assertEqual(0, canonical_acquire.returncode, canonical_acquire.stderr)
+        self.assertEqual(1, first_release.returncode, stderr)
+        self.assertEqual("CLAIM_NOT_FOUND", json.loads(stdout)["outcome"])
+        self.assertNotIn("Traceback", stderr)
+        marker = json.loads((self.state_root() / "state.json").read_text())
+        self.assertEqual("complete", marker["migration_status"])
+        self.assertEqual("legacy", marker["origin"])
+        self.assertTrue(self.legacy_registry_path().is_dir())
+        self.assertEqual(
+            ["canonical-owner"],
+            [
+                claim["claim_id"]
+                for claim in json.loads(self.registry_path().read_text())["claims"]
+            ],
+        )
+
+    def test_read_only_legacy_snapshot_rechecks_inode_after_its_first_lock(self) -> None:
+        """A stale-open reader retries and observes the new canonical owner."""
+        self.legacy_registry_path().write_text(
+            json.dumps(
+                {
+                    "claims": [
+                        {
+                            "claim_id": "integration",
+                            "agent": "merge-coordinator",
+                            "root_task_id": "integration",
+                            "files": ["README.md"],
+                            "worktree": str(self.repository),
+                            "branch": "main",
+                            "mode": "primary",
+                            "checkout_topology": "primary",
+                        }
+                    ]
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        barrier = Path(self.temporary_directory.name) / "read-only-legacy-open"
+        command_environment = os.environ.copy()
+        command_environment.update(
+            {
+                "PYTHONDONTWRITEBYTECODE": "1",
+                "AGENT_CLAIM_TEST_READ_ONLY_LEGACY_OPEN_BARRIER": str(barrier),
+            }
+        )
+        stale_status = subprocess.Popen(
+            self.claim_command("status"),
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=command_environment,
+        )
+        self.addCleanup(lambda: stale_status.poll() is None and stale_status.kill())
+        ready = Path(f"{barrier}.ready")
+        deadline = time.monotonic() + 5
+        while not ready.exists() and time.monotonic() < deadline:
+            time.sleep(0.01)
+        self.assertTrue(ready.exists(), "status did not open the legacy registry")
+
+        released = self.claim("release", "--claim-id", "integration")
+        canonical_acquire = self.claim(
+            *self.acquire_arguments("canonical-owner"),
+            "--file",
+            "src/one.py",
+        )
+        Path(f"{barrier}.continue").write_text("continue\n", encoding="utf-8")
+        stdout, stderr = stale_status.communicate(timeout=5)
+
+        self.assertEqual(0, released.returncode, released.stderr)
+        self.assertEqual(0, canonical_acquire.returncode, canonical_acquire.stderr)
+        self.assertEqual(0, stale_status.returncode, stderr)
+        status = json.loads(stdout)
+        self.assertEqual("STATUS", status["outcome"])
+        self.assertEqual(
+            ["canonical-owner"],
+            [claim["claim_id"] for claim in status["claims"]],
+        )
+        self.assertNotIn("Traceback", stderr)
+        marker = json.loads((self.state_root() / "state.json").read_text())
+        self.assertEqual("complete", marker["migration_status"])
+        self.assertEqual("legacy", marker["origin"])
+
+    def test_contradictory_dual_registries_stop_without_mutation(self) -> None:
+        """Two independently populated state locations are never reconciled by preference."""
+        self.state_root().mkdir(parents=True)
+        self.registry_path().write_text('{"claims":[]}\n', encoding="utf-8")
+        self.legacy_registry_path().write_text(
+            '{"claims":[{"claim_id":"legacy-live"}]}\n',
+            encoding="utf-8",
+        )
+        new_before = self.registry_path().read_bytes()
+        legacy_before = self.legacy_registry_path().read_bytes()
+
+        completed = self.claim("status")
+
+        self.assertEqual(3, completed.returncode)
+        self.assertEqual("CLAIM_STATE_MIGRATION_BLOCKED", self.output(completed)["outcome"])
+        self.assertEqual("contradictory_dual_state", self.output(completed)["reason"])
+        self.assertEqual(new_before, self.registry_path().read_bytes())
+        self.assertEqual(legacy_before, self.legacy_registry_path().read_bytes())
+
+    def test_report_reads_legacy_history_before_first_mutation(self) -> None:
+        """Read-only reporting preserves visible history until an empty legacy state migrates."""
+        self.legacy_registry_path().write_text('{"claims":[]}\n', encoding="utf-8")
+        legacy_hot = self.common_directory() / "agent-claim-events" / "hot"
+        legacy_hot.mkdir(parents=True)
+        event = self.synthetic_event(
+            "legacy-visible",
+            "2026-08-05T10:00:00Z",
+            "acquire",
+            "SHARED_CHECKOUT_ACQUIRED",
+            "legacy-visible",
+        )
+        (legacy_hot / "2026-08-05.jsonl").write_text(
+            json.dumps(event, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+
+        completed = self.claim(
+            "report",
+            "--since",
+            "1d",
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-08-05T12:00:00Z"},
+        )
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        self.assertEqual(1, self.output(completed)["event_count"])
+        self.assertFalse(self.state_root().exists())
+        self.assertTrue(self.legacy_registry_path().is_file())
+        self.assertTrue(legacy_hot.is_dir())
+
+    def test_fresh_state_rejects_legacy_state_created_after_rollout(self) -> None:
+        """A completed fresh boundary still detects an older helper's later split registry."""
+        first = self.claim("reset")
+        self.assertEqual(0, first.returncode, first.stderr)
+        self.legacy_registry_path().write_text('{"claims":[]}\n', encoding="utf-8")
+
+        completed = self.claim("status")
+
+        self.assertEqual(3, completed.returncode)
+        self.assertEqual("CLAIM_STATE_MIGRATION_BLOCKED", self.output(completed)["outcome"])
+        self.assertEqual("contradictory_dual_state", self.output(completed)["reason"])
+
+    def test_migrated_state_requires_exact_legacy_marker_types(self) -> None:
+        """A completed legacy boundary never trusts missing or replaced rollout markers."""
+        self.legacy_registry_path().write_text('{"claims":[]}\n', encoding="utf-8")
+        migrated = self.claim("reset")
+        self.assertEqual(0, migrated.returncode, migrated.stderr)
+        (self.legacy_registry_path() / "state.json").write_text("{}\n", encoding="utf-8")
+
+        completed = self.claim("status")
+
+        self.assertEqual(3, completed.returncode)
+        self.assertEqual("CLAIM_STATE_MIGRATION_BLOCKED", self.output(completed)["outcome"])
+        self.assertEqual("contradictory_dual_state", self.output(completed)["reason"])
+
+    def test_interrupted_empty_legacy_migration_recovers_deterministically(self) -> None:
+        """A migration stopped after moving history resumes from its versioned marker."""
+        self.legacy_registry_path().write_text('{"claims":[]}\n', encoding="utf-8")
+        legacy_hot = self.common_directory() / "agent-claim-events" / "hot"
+        legacy_hot.mkdir(parents=True)
+        (legacy_hot / "2026-08-05.jsonl").write_text("", encoding="utf-8")
+
+        interrupted = self.claim(
+            "reset",
+            environment={"AGENT_CLAIM_TEST_FAIL_MIGRATION_AFTER_EVENTS": "1"},
+        )
+        recovered = self.claim("reset")
+
+        self.assertEqual(3, interrupted.returncode)
+        self.assertEqual("migration_interrupted", self.output(interrupted)["reason"])
+        self.assertEqual(0, recovered.returncode, recovered.stderr)
+        self.assertTrue(self.legacy_registry_path().is_dir())
+        self.assertTrue((self.common_directory() / "agent-claim-events").is_file())
+        marker = json.loads((self.state_root() / "state.json").read_text(encoding="utf-8"))
+        self.assertEqual("complete", marker["migration_status"])
 
     def test_new_claim_events_share_one_immutable_incarnation_id(self) -> None:
         acquired = self.claim(*self.acquire_arguments("first"), "--file", "README.md")
@@ -395,7 +967,10 @@ class AgentClaimTests(unittest.TestCase):
             "work_item",
             self.output(conflict)["overlaps"][0]["scope_kind"],
         )
-        self.assertEqual(registry_before, self.registry_path().read_bytes())
+        if registry_before:
+            self.assertEqual(registry_before, self.registry_path().read_bytes())
+        else:
+            self.assertFalse(self.registry_path().exists())
 
     def test_invalid_work_item_acquisition_preserves_registry_bytes(self) -> None:
         self.claim(*self.acquire_arguments("legacy"), "--file", "README.md")
@@ -2486,7 +3061,7 @@ class AgentClaimTests(unittest.TestCase):
             "trees": [],
             "worktree": str(self.repository),
         }
-        self.registry_path().write_text(json.dumps({"claims": [legacy_claim]}), encoding="utf-8")
+        self.write_registry_fixture({"claims": [legacy_claim]})
 
         status = self.output(self.claim("status"))["claims"][0]
         extended = self.claim("extend", "--claim-id", "legacy-mixed", "--file", "docs/guide.md")
@@ -2537,7 +3112,7 @@ class AgentClaimTests(unittest.TestCase):
             "trees": [],
             "worktree": str(self.repository),
         }
-        self.registry_path().write_text(json.dumps({"claims": [legacy_claim]}), encoding="utf-8")
+        self.write_registry_fixture({"claims": [legacy_claim]})
 
         status = self.output(self.claim("status"))["claims"][0]
         extended = self.claim(
@@ -2576,7 +3151,7 @@ class AgentClaimTests(unittest.TestCase):
             "trees": [],
             "worktree": str(self.repository),
         }
-        self.registry_path().write_text(json.dumps({"claims": [legacy_claim]}), encoding="utf-8")
+        self.write_registry_fixture({"claims": [legacy_claim]})
 
         registry_before = self.registry_path().read_bytes()
         extended = self.claim(
@@ -2644,7 +3219,7 @@ class AgentClaimTests(unittest.TestCase):
             "trees": [],
             "worktree": str(self.repository),
         }
-        self.registry_path().write_text(json.dumps({"claims": [legacy_claim]}), encoding="utf-8")
+        self.write_registry_fixture({"claims": [legacy_claim]})
         extended = self.claim("extend", "--claim-id", "legacy-resource", "--file", "src/one.py")
         self.assertEqual(0, extended.returncode, extended.stderr)
         backlog_path = self.repository / "backlog" / "feature-backlog" / "queued.md"
@@ -3229,8 +3804,8 @@ class AgentClaimTests(unittest.TestCase):
             ["2026-07-12.jsonl", "2026-07-13.jsonl"],
             sorted(path.name for path in self.hot_directory().glob("*.jsonl")),
         )
-        archive_root = self.common_directory() / "agent-claim-events" / "archive" / "2026" / "07"
-        summary_root = self.common_directory() / "agent-claim-events" / "journal" / "2026" / "07"
+        archive_root = self.state_root() / "agent-claim-events" / "archive" / "2026" / "07"
+        summary_root = self.state_root() / "agent-claim-events" / "journal" / "2026" / "07"
         for day in ("2026-07-10", "2026-07-11"):
             archive = archive_root / f"{day}.jsonl.gz"
             summary = summary_root / f"{day}.json"
@@ -3251,7 +3826,7 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(1, interrupted.returncode)
         self.assertTrue(hot.exists())
-        archive = self.common_directory() / "agent-claim-events" / "archive" / "2026" / "07" / "2026-07-10.jsonl.gz"
+        archive = self.state_root() / "agent-claim-events" / "archive" / "2026" / "07" / "2026-07-10.jsonl.gz"
         self.assertFalse(archive.exists())
         completed = self.claim(
             "maintain-journal",
@@ -3263,7 +3838,7 @@ class AgentClaimTests(unittest.TestCase):
     def test_archive_validation_failure_preserves_hot_source(self) -> None:
         event = self.synthetic_event("old", "2026-07-10T12:00:00Z", "acquire", "PRIMARY", "old")
         hot = self.write_daily_events("2026-07-10", [event])
-        archive = self.common_directory() / "agent-claim-events" / "archive" / "2026" / "07" / "2026-07-10.jsonl.gz"
+        archive = self.state_root() / "agent-claim-events" / "archive" / "2026" / "07" / "2026-07-10.jsonl.gz"
         archive.parent.mkdir(parents=True)
         archive.write_bytes(gzip.compress(b'{"different":"event"}\n'))
 
@@ -3424,7 +3999,10 @@ class AgentClaimTests(unittest.TestCase):
         )
         self.assertEqual("merge:integration:main", metrics["integration_resources"][0]["scope"])
         self.assertEqual(1, metrics["journal_warning_count"])
-        self.assertEqual(registry_before, self.registry_path().read_bytes())
+        if registry_before:
+            self.assertEqual(registry_before, self.registry_path().read_bytes())
+        else:
+            self.assertFalse(self.registry_path().exists())
         self.assertEqual(journal_before, (self.hot_directory() / "2026-07-12.jsonl").read_bytes())
 
     def test_report_exposes_successful_exact_file_adoption_in_json_and_text(self) -> None:

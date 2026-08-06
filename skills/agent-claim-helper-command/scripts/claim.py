@@ -16,6 +16,7 @@ import os
 import re
 import stat
 import subprocess
+import time
 from collections import Counter
 from contextlib import contextmanager
 from datetime import date, datetime, timedelta, timezone
@@ -34,15 +35,21 @@ ISOLATION_SETUP_EXIT_CODE = 4
 BACKLOG_ROOT_DIRECTORY = "backlog"
 WORKTREE_ROOT_DIRECTORY = ".worktrees"
 WORKTREE_IGNORE_PATTERN = "/.worktrees/"
+CLAIM_STATE_DIRECTORY = ".codex/agent-claim"
+CLAIM_STATE_IGNORE_PATTERN = "/.codex/agent-claim/"
 ISOLATED_SPARSE_CHECKOUT_PATTERNS = ("/*", "!/backlog/")
 REGISTRY_FILE_NAME = "agent-claims.json"
 EVENT_DIRECTORY_NAME = "agent-claim-events"
+STATE_MARKER_FILE_NAME = "state.json"
+STATE_LAYOUT_VERSION = 2
+STATE_MARKER_SCHEMA_VERSION = 1
 EVENT_SCHEMA_VERSION = 1
 RESULT_SCHEMA_VERSION = 2
 SUMMARY_SCHEMA_VERSION = 2
 REPORT_SCHEMA_VERSION = 2
 WORK_ITEM_REPORT_SCHEMA_VERSION = 1
 DEFAULT_HOT_DAYS = 2
+REGISTRY_LOCK_RETRY_LIMIT = 16
 MAX_SCOPE_REASON_LENGTH = 200
 MAX_IDENTIFIER_LENGTH = 200
 MAX_EXTENSION_EVIDENCE_LENGTH = 1000
@@ -94,6 +101,13 @@ class _WorkItemError(ValueError):
         super().__init__(message)
         self.field = field
         self.reason = reason
+
+
+class _ClaimStateError(RuntimeError):
+    def __init__(self, reason: str, message: str, **details: Any) -> None:
+        super().__init__(message)
+        self.reason = reason
+        self.details = details
 
 
 def _git(worktree: Path, *arguments: str, check: bool = True) -> subprocess.CompletedProcess[str]:
@@ -170,9 +184,586 @@ def _claim_id_is_safe_worktree_component(claim_id: str) -> bool:
     return bool(WORKTREE_COMPONENT_PATTERN.fullmatch(claim_id))
 
 
+def _state_root(repository: Path) -> Path:
+    return (_primary_worktree(repository) / CLAIM_STATE_DIRECTORY).resolve()
+
+
 def _registry_path(repository: Path) -> Path:
-    common_directory = _git_common_directory(repository)
-    return common_directory / REGISTRY_FILE_NAME
+    return _state_root(repository) / REGISTRY_FILE_NAME
+
+
+def _legacy_registry_path(repository: Path) -> Path:
+    return _git_common_directory(repository) / REGISTRY_FILE_NAME
+
+
+def _state_marker_path(repository: Path) -> Path:
+    return _state_root(repository) / STATE_MARKER_FILE_NAME
+
+
+def _registry_payload(path: Path) -> dict[str, Any]:
+    try:
+        raw = path.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as error:
+        raise _ClaimStateError(
+            "invalid_registry",
+            f"Claim registry is unreadable or invalid: {path}: {error}",
+            registry=str(path),
+        ) from error
+    return _decode_registry_payload(raw, path)
+
+
+def _registry_payload_from_file(registry_file: TextIO, path: Path) -> dict[str, Any]:
+    """Decode registry state through the descriptor whose OS lock is already held."""
+    try:
+        registry_file.seek(0)
+        raw = registry_file.read()
+    except (OSError, UnicodeError) as error:
+        raise _ClaimStateError(
+            "invalid_registry",
+            f"Claim registry is unreadable or invalid: {path}: {error}",
+            registry=str(path),
+        ) from error
+    return _decode_registry_payload(raw, path)
+
+
+def _decode_registry_payload(raw: str, path: Path) -> dict[str, Any]:
+    """Validate decoded registry data from either a path or an existing descriptor."""
+    try:
+        data = json.loads(raw) if raw else {"claims": []}
+    except json.JSONDecodeError as error:
+        raise _ClaimStateError(
+            "invalid_registry",
+            f"Claim registry is unreadable or invalid: {path}: {error}",
+            registry=str(path),
+        ) from error
+    if not isinstance(data, dict) or not isinstance(data.get("claims"), list):
+        raise _ClaimStateError(
+            "invalid_registry",
+            f"Claim registry has an invalid claims field: {path}",
+            registry=str(path),
+        )
+    return data
+
+
+def _state_marker(repository: Path) -> dict[str, Any] | None:
+    marker_path = _state_marker_path(repository)
+    if not marker_path.exists():
+        return None
+    try:
+        marker = json.loads(marker_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise _ClaimStateError(
+            "invalid_state_marker",
+            f"Claim-state marker is unreadable or invalid: {marker_path}: {error}",
+            marker=str(marker_path),
+        ) from error
+    if (
+        not isinstance(marker, dict)
+        or marker.get("schema_version") != STATE_MARKER_SCHEMA_VERSION
+        or marker.get("state_layout_version") != STATE_LAYOUT_VERSION
+        or marker.get("migration_status") not in {"in_progress", "complete"}
+        or marker.get("origin") not in {"fresh", "legacy"}
+    ):
+        raise _ClaimStateError(
+            "invalid_state_marker",
+            f"Claim-state marker has an unsupported contract: {marker_path}",
+            marker=str(marker_path),
+        )
+    return marker
+
+
+def _write_state_marker(repository: Path, status: str, origin: str) -> None:
+    marker = {
+        "schema_version": STATE_MARKER_SCHEMA_VERSION,
+        "state_layout_version": STATE_LAYOUT_VERSION,
+        "migration_status": status,
+        "origin": origin,
+    }
+    _atomic_write(
+        _state_marker_path(repository),
+        (json.dumps(marker, indent=2, sort_keys=True) + "\n").encode("utf-8"),
+    )
+
+
+def _create_empty_registry(path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+    try:
+        os.write(descriptor, b'{\n  "claims": []\n}\n')
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+
+def _legacy_marker_payload(kind: str) -> bytes:
+    marker = {
+        "schema_version": STATE_MARKER_SCHEMA_VERSION,
+        "state_layout_version": STATE_LAYOUT_VERSION,
+        "migrated": kind,
+    }
+    return (json.dumps(marker, indent=2, sort_keys=True) + "\n").encode("utf-8")
+
+
+def _legacy_registry_is_marker(path: Path) -> bool:
+    marker = path / STATE_MARKER_FILE_NAME
+    try:
+        return path.is_dir() and marker.is_file() and marker.read_bytes() == _legacy_marker_payload("registry")
+    except OSError:
+        return False
+
+
+def _legacy_events_is_marker(path: Path) -> bool:
+    try:
+        return path.is_file() and path.read_bytes() == _legacy_marker_payload("events")
+    except OSError:
+        return False
+
+
+def _install_legacy_registry_marker(path: Path) -> None:
+    if _legacy_registry_is_marker(path):
+        return
+    if os.path.lexists(path):
+        raise _ClaimStateError(
+            "contradictory_dual_state",
+            f"Legacy registry path has an unexpected type or content: {path}",
+            legacy_registry=str(path),
+        )
+    path.mkdir()
+    (path / STATE_MARKER_FILE_NAME).write_bytes(_legacy_marker_payload("registry"))
+
+
+def _install_legacy_events_marker(path: Path) -> None:
+    if _legacy_events_is_marker(path):
+        return
+    if os.path.lexists(path):
+        raise _ClaimStateError(
+            "contradictory_dual_state",
+            f"Legacy event path has an unexpected type or content: {path}",
+            legacy_events=str(path),
+        )
+    path.write_bytes(_legacy_marker_payload("events"))
+
+
+@contextmanager
+def _migration_lock(repository: Path) -> Iterator[tuple[Path, TextIO]]:
+    registry_path = _registry_path(repository)
+    for _attempt in range(REGISTRY_LOCK_RETRY_LIMIT):
+        if not registry_path.exists():
+            try:
+                _create_empty_registry(registry_path)
+            except FileExistsError:
+                pass
+        try:
+            resolved = os.lstat(registry_path)
+            if not stat.S_ISREG(resolved.st_mode):
+                continue
+            descriptor = os.open(registry_path, os.O_RDWR)
+        except (FileNotFoundError, IsADirectoryError, NotADirectoryError):
+            continue
+        with os.fdopen(descriptor, "r+", encoding="utf-8") as registry_file:
+            fcntl.flock(registry_file.fileno(), fcntl.LOCK_EX)
+            try:
+                locked = os.fstat(registry_file.fileno())
+                try:
+                    current = os.lstat(registry_path)
+                except (FileNotFoundError, NotADirectoryError):
+                    continue
+                if (
+                    not stat.S_ISREG(locked.st_mode)
+                    or not stat.S_ISREG(current.st_mode)
+                    or locked.st_nlink == 0
+                    or (resolved.st_dev, resolved.st_ino)
+                    != (locked.st_dev, locked.st_ino)
+                    or (locked.st_dev, locked.st_ino)
+                    != (current.st_dev, current.st_ino)
+                ):
+                    continue
+                yield registry_path, registry_file
+                return
+            finally:
+                fcntl.flock(registry_file.fileno(), fcntl.LOCK_UN)
+    raise _ClaimStateError(
+        "registry_lock_race",
+        "Canonical claim registry storage kept changing during migration.",
+        registry=str(registry_path),
+    )
+
+
+def _finish_legacy_migration(
+    repository: Path,
+    canonical_registry_file: TextIO,
+    locked_legacy_payload: dict[str, Any] | None = None,
+) -> None:
+    state_root = _state_root(repository)
+    registry_path = state_root / REGISTRY_FILE_NAME
+    events_path = state_root / EVENT_DIRECTORY_NAME
+    legacy_root = _git_common_directory(repository)
+    legacy_registry = legacy_root / REGISTRY_FILE_NAME
+    legacy_events = legacy_root / EVENT_DIRECTORY_NAME
+
+    if _registry_payload_from_file(canonical_registry_file, registry_path)["claims"]:
+        raise _ClaimStateError(
+            "contradictory_dual_state",
+            "Interrupted migration found live canonical claims before the legacy boundary completed.",
+            canonical_registry=str(registry_path),
+            legacy_registry=str(legacy_registry),
+        )
+
+    if _legacy_events_is_marker(legacy_events):
+        events_path.mkdir(parents=True, exist_ok=True)
+    elif legacy_events.exists():
+        if not legacy_events.is_dir() or events_path.exists():
+            raise _ClaimStateError(
+                "contradictory_dual_state",
+                "Both legacy and canonical event-history locations contain state.",
+                legacy_events=str(legacy_events),
+                canonical_events=str(events_path),
+            )
+        os.rename(legacy_events, events_path)
+    else:
+        events_path.mkdir(parents=True, exist_ok=True)
+
+    if os.environ.get("AGENT_CLAIM_TEST_FAIL_MIGRATION_AFTER_EVENTS") == "1":
+        raise OSError("simulated interruption after moving legacy event history")
+
+    if _legacy_registry_is_marker(legacy_registry):
+        pass
+    elif legacy_registry.exists():
+        legacy_data = (
+            locked_legacy_payload
+            if locked_legacy_payload is not None
+            else _registry_payload(legacy_registry)
+        )
+        if legacy_data["claims"]:
+            raise _ClaimStateError(
+                "live_legacy_claims_require_drain",
+                "Release every live legacy claim before migrating claim state.",
+                legacy_registry=str(legacy_registry),
+                live_claim_ids=[str(claim.get("claim_id")) for claim in legacy_data["claims"]],
+            )
+        legacy_registry.unlink()
+    _install_legacy_registry_marker(legacy_registry)
+    _install_legacy_events_marker(legacy_events)
+    _write_state_marker(repository, "complete", "legacy")
+
+
+def _resolve_registry_path_once(
+    repository: Path,
+    operation: str,
+    claim_id: str | None,
+) -> Path | None:
+    registry_path = _registry_path(repository)
+    legacy_registry = _legacy_registry_path(repository)
+    legacy_events = _git_common_directory(repository) / EVENT_DIRECTORY_NAME
+    marker = _state_marker(repository)
+
+    if marker and marker["migration_status"] == "complete":
+        if not registry_path.exists():
+            raise _ClaimStateError(
+                "canonical_registry_missing",
+                "The completed claim-state marker has no canonical registry.",
+                registry=str(registry_path),
+            )
+        if marker["origin"] == "fresh":
+            if os.path.lexists(legacy_registry) or os.path.lexists(legacy_events):
+                raise _ClaimStateError(
+                    "contradictory_dual_state",
+                    "Fresh canonical claim state conflicts with state later created at a legacy path.",
+                    canonical_registry=str(registry_path),
+                    legacy_registry=str(legacy_registry),
+                    legacy_events=str(legacy_events),
+                )
+        elif not (
+            _legacy_registry_is_marker(legacy_registry)
+            and _legacy_events_is_marker(legacy_events)
+        ):
+            raise _ClaimStateError(
+                "contradictory_dual_state",
+                "Migrated claim state is missing an exact incompatible legacy-path marker.",
+                canonical_registry=str(registry_path),
+                legacy_registry=str(legacy_registry),
+                legacy_events=str(legacy_events),
+            )
+        return registry_path
+
+    if marker and marker["migration_status"] == "in_progress":
+        try:
+            with _migration_lock(repository) as (_locked_registry_path, registry_file):
+                _finish_legacy_migration(repository, registry_file)
+        except _ClaimStateError:
+            raise
+        except OSError as error:
+            raise _ClaimStateError(
+                "migration_interrupted",
+                f"Claim-state migration was interrupted and can be retried: {error}",
+                canonical_registry=str(registry_path),
+                legacy_registry=str(legacy_registry),
+            ) from error
+        return registry_path
+
+    if registry_path.exists() and (
+        os.path.lexists(legacy_registry) or os.path.lexists(legacy_events)
+    ):
+        raise _ClaimStateError(
+            "contradictory_dual_state",
+            "Both legacy and canonical claim registries exist without one storage alias.",
+            canonical_registry=str(registry_path),
+            legacy_registry=str(legacy_registry),
+        )
+
+    if not os.path.lexists(legacy_registry) and os.path.lexists(legacy_events):
+        raise _ClaimStateError(
+            "contradictory_dual_state",
+            "Legacy event history exists without its legacy registry.",
+            legacy_registry=str(legacy_registry),
+            legacy_events=str(legacy_events),
+        )
+
+    if os.path.lexists(legacy_registry):
+        try:
+            descriptor = os.open(legacy_registry, os.O_RDWR)
+        except (FileNotFoundError, IsADirectoryError, NotADirectoryError):
+            return None
+        with os.fdopen(descriptor, "r+", encoding="utf-8") as legacy_file:
+            _pause_release_after_legacy_open_for_test(operation)
+            fcntl.flock(legacy_file.fileno(), fcntl.LOCK_EX)
+            try:
+                locked = os.fstat(legacy_file.fileno())
+                try:
+                    current = os.lstat(legacy_registry)
+                except (FileNotFoundError, NotADirectoryError):
+                    return None
+                if (
+                    not stat.S_ISREG(locked.st_mode)
+                    or not stat.S_ISREG(current.st_mode)
+                    or locked.st_nlink == 0
+                    or (locked.st_dev, locked.st_ino)
+                    != (current.st_dev, current.st_ino)
+                ):
+                    return None
+                legacy_file.seek(0)
+                raw = legacy_file.read()
+                try:
+                    data = json.loads(raw) if raw else {"claims": []}
+                except json.JSONDecodeError as error:
+                    raise _ClaimStateError(
+                        "invalid_registry",
+                        f"Legacy claim registry contains invalid JSON: {legacy_registry}",
+                        legacy_registry=str(legacy_registry),
+                    ) from error
+                if not isinstance(data, dict) or not isinstance(data.get("claims"), list):
+                    raise _ClaimStateError(
+                        "invalid_registry",
+                        f"Legacy claim registry has an invalid claims field: {legacy_registry}",
+                        legacy_registry=str(legacy_registry),
+                    )
+                claims = data["claims"]
+                if claims:
+                    live_ids = [str(claim.get("claim_id")) for claim in claims]
+                    if operation == "release" and claim_id in live_ids:
+                        return legacy_registry
+                    raise _ClaimStateError(
+                        "live_legacy_claims_require_drain",
+                        "The legacy registry is drain-only until every live claim is released.",
+                        legacy_registry=str(legacy_registry),
+                        live_claim_ids=live_ids,
+                        allowed_operation="release",
+                    )
+                _state_root(repository).mkdir(parents=True, exist_ok=True)
+                _write_state_marker(repository, "in_progress", "legacy")
+                try:
+                    with _migration_lock(repository) as (_locked_registry_path, registry_file):
+                        _finish_legacy_migration(repository, registry_file, data)
+                except _ClaimStateError:
+                    raise
+                except OSError as error:
+                    raise _ClaimStateError(
+                        "migration_interrupted",
+                        f"Claim-state migration was interrupted and can be retried: {error}",
+                        canonical_registry=str(registry_path),
+                        legacy_registry=str(legacy_registry),
+                    ) from error
+                return registry_path
+            finally:
+                fcntl.flock(legacy_file.fileno(), fcntl.LOCK_UN)
+
+    with _migration_lock(repository) as (_locked_registry_path, registry_file):
+        _registry_payload_from_file(registry_file, registry_path)
+        _write_state_marker(repository, "complete", "fresh")
+    return registry_path
+
+
+def _resolve_registry_path(
+    repository: Path,
+    operation: str,
+    claim_id: str | None,
+) -> Path:
+    """Resolve mutation storage, retrying boundedly when migration changes its inode."""
+    for _attempt in range(REGISTRY_LOCK_RETRY_LIMIT):
+        registry_path = _resolve_registry_path_once(repository, operation, claim_id)
+        if registry_path is not None:
+            return registry_path
+    raise _ClaimStateError(
+        "registry_resolution_race",
+        "Claim registry storage kept changing while its migration lock was acquired.",
+        operation=operation,
+        claim_id=claim_id,
+    )
+
+
+def _read_only_registry_once(
+    repository: Path,
+) -> tuple[Path, dict[str, Any]] | None:
+    """Read claim state under its existing lock without creating or migrating storage."""
+    registry_path = _registry_path(repository)
+    legacy_registry = _legacy_registry_path(repository)
+    legacy_events = _git_common_directory(repository) / EVENT_DIRECTORY_NAME
+    marker = _state_marker(repository)
+
+    if marker and marker["migration_status"] == "in_progress":
+        raise _ClaimStateError(
+            "migration_interrupted",
+            "Claim-state migration is incomplete; retry with the next mutating operation.",
+            canonical_registry=str(registry_path),
+            legacy_registry=str(legacy_registry),
+        )
+    if marker and marker["migration_status"] == "complete":
+        if not registry_path.exists():
+            raise _ClaimStateError(
+                "canonical_registry_missing",
+                "The completed claim-state marker has no canonical registry.",
+                registry=str(registry_path),
+            )
+        if marker["origin"] == "fresh":
+            if os.path.lexists(legacy_registry) or os.path.lexists(legacy_events):
+                raise _ClaimStateError(
+                    "contradictory_dual_state",
+                    "Fresh canonical claim state conflicts with state later created at a legacy path.",
+                    canonical_registry=str(registry_path),
+                    legacy_registry=str(legacy_registry),
+                    legacy_events=str(legacy_events),
+                )
+        elif not (
+            _legacy_registry_is_marker(legacy_registry)
+            and _legacy_events_is_marker(legacy_events)
+        ):
+            raise _ClaimStateError(
+                "contradictory_dual_state",
+                "Migrated claim state is missing an exact incompatible legacy-path marker.",
+                canonical_registry=str(registry_path),
+                legacy_registry=str(legacy_registry),
+                legacy_events=str(legacy_events),
+            )
+    elif registry_path.exists() and (
+        os.path.lexists(legacy_registry) or os.path.lexists(legacy_events)
+    ):
+        raise _ClaimStateError(
+            "contradictory_dual_state",
+            "Both legacy and canonical claim registries exist without a completed boundary.",
+            canonical_registry=str(registry_path),
+            legacy_registry=str(legacy_registry),
+        )
+    elif not registry_path.exists() and os.path.lexists(legacy_registry):
+        if _legacy_registry_is_marker(legacy_registry):
+            raise _ClaimStateError(
+                "migration_interrupted",
+                "A legacy registry marker exists without a completed canonical boundary.",
+                canonical_registry=str(registry_path),
+                legacy_registry=str(legacy_registry),
+            )
+        try:
+            descriptor = os.open(legacy_registry, os.O_RDWR)
+        except (FileNotFoundError, IsADirectoryError, NotADirectoryError):
+            return None
+        with os.fdopen(descriptor, "r+", encoding="utf-8") as legacy_file:
+            _pause_read_only_after_legacy_open_for_test()
+            fcntl.flock(legacy_file.fileno(), fcntl.LOCK_EX)
+            try:
+                locked = os.fstat(legacy_file.fileno())
+                try:
+                    current = os.lstat(legacy_registry)
+                except (FileNotFoundError, NotADirectoryError):
+                    return None
+                if (
+                    not stat.S_ISREG(locked.st_mode)
+                    or not stat.S_ISREG(current.st_mode)
+                    or locked.st_nlink == 0
+                    or (locked.st_dev, locked.st_ino)
+                    != (current.st_dev, current.st_ino)
+                ):
+                    return None
+                legacy_file.seek(0)
+                raw = legacy_file.read()
+                try:
+                    data = json.loads(raw) if raw else {"claims": []}
+                except json.JSONDecodeError as error:
+                    raise _ClaimStateError(
+                        "invalid_registry",
+                        f"Legacy claim registry contains invalid JSON: {legacy_registry}",
+                        legacy_registry=str(legacy_registry),
+                    ) from error
+                if not isinstance(data, dict) or not isinstance(data.get("claims"), list):
+                    raise _ClaimStateError(
+                        "invalid_registry",
+                        f"Legacy claim registry has an invalid claims field: {legacy_registry}",
+                        legacy_registry=str(legacy_registry),
+                    )
+                if data["claims"]:
+                    raise _ClaimStateError(
+                        "live_legacy_claims_require_drain",
+                        "The legacy registry is drain-only until every live claim is released.",
+                        legacy_registry=str(legacy_registry),
+                        live_claim_ids=[str(claim.get("claim_id")) for claim in data["claims"]],
+                        allowed_operation="release",
+                    )
+                return registry_path, {"claims": []}
+            finally:
+                fcntl.flock(legacy_file.fileno(), fcntl.LOCK_UN)
+
+    if not os.path.lexists(legacy_registry) and os.path.lexists(legacy_events):
+        raise _ClaimStateError(
+            "contradictory_dual_state",
+            "Legacy event history exists without its legacy registry.",
+            legacy_registry=str(legacy_registry),
+            legacy_events=str(legacy_events),
+        )
+
+    if not registry_path.exists():
+        return registry_path, {"claims": []}
+    descriptor = os.open(registry_path, os.O_RDWR)
+    with os.fdopen(descriptor, "r+", encoding="utf-8") as registry_file:
+        fcntl.flock(registry_file.fileno(), fcntl.LOCK_EX)
+        try:
+            registry_file.seek(0)
+            raw = registry_file.read()
+            data = json.loads(raw) if raw else {"claims": []}
+            if not isinstance(data, dict) or not isinstance(data.get("claims"), list):
+                raise _ClaimStateError(
+                    "invalid_registry",
+                    f"Claim registry has an invalid claims field: {registry_path}",
+                    registry=str(registry_path),
+                )
+            return registry_path, data
+        except json.JSONDecodeError as error:
+            raise _ClaimStateError(
+                "invalid_registry",
+                f"Claim registry contains invalid JSON: {registry_path}",
+                registry=str(registry_path),
+            ) from error
+        finally:
+            fcntl.flock(registry_file.fileno(), fcntl.LOCK_UN)
+
+
+def _read_only_registry(repository: Path) -> tuple[Path, dict[str, Any]]:
+    """Read stable claim state, retrying boundedly across legacy migration."""
+    for _attempt in range(REGISTRY_LOCK_RETRY_LIMIT):
+        snapshot = _read_only_registry_once(repository)
+        if snapshot is not None:
+            return snapshot
+    raise _ClaimStateError(
+        "registry_read_race",
+        "Claim registry storage kept changing while its read lock was acquired.",
+    )
 
 
 def _journal_paths(common_directory: Path) -> tuple[Path, Path, Path, Path]:
@@ -180,30 +771,117 @@ def _journal_paths(common_directory: Path) -> tuple[Path, Path, Path, Path]:
     return root, root / "hot", root / "archive", root / "journal"
 
 
+def _pause_for_test(variable: str, description: str) -> None:
+    """Pause at a narrowly named deterministic concurrency barrier."""
+    barrier_value = os.environ.get(variable)
+    if not barrier_value:
+        return
+    ready = Path(f"{barrier_value}.ready")
+    continuation = Path(f"{barrier_value}.continue")
+    ready.write_text("ready\n", encoding="utf-8")
+    deadline = time.monotonic() + 10
+    while not continuation.exists():
+        if time.monotonic() >= deadline:
+            raise _ClaimStateError(
+                "test_barrier_timeout",
+                f"The {description} test barrier timed out.",
+                barrier=str(barrier_value),
+            )
+        time.sleep(0.01)
+
+
+def _pause_release_for_test(operation: str, variable: str, description: str) -> None:
+    """Pause one exact release at a deterministic concurrency barrier."""
+    if operation != "release":
+        return
+    _pause_for_test(variable, f"release {description}")
+
+
+def _pause_release_after_legacy_open_for_test(operation: str) -> None:
+    """Expose the interval between opening and locking the legacy registry."""
+    _pause_release_for_test(
+        operation,
+        "AGENT_CLAIM_TEST_RELEASE_LEGACY_OPEN_BARRIER",
+        "legacy-open",
+    )
+
+
+def _pause_read_only_after_legacy_open_for_test() -> None:
+    """Expose a read-only wait between opening and locking the legacy registry."""
+    _pause_for_test(
+        "AGENT_CLAIM_TEST_READ_ONLY_LEGACY_OPEN_BARRIER",
+        "read-only legacy-open",
+    )
+
+
+def _pause_release_after_resolution_for_test(operation: str) -> None:
+    """Expose the interval between resolving and operationally locking claim state."""
+    _pause_release_for_test(
+        operation,
+        "AGENT_CLAIM_TEST_RELEASE_RESOLVE_BARRIER",
+        "resolution",
+    )
+
+
 @contextmanager
 def _locked_registry_file(
     repository: Path,
+    operation: str,
+    claim_id: str | None = None,
 ) -> Iterator[tuple[Path, TextIO]]:
-    registry_path = _registry_path(repository)
-    registry_path.parent.mkdir(parents=True, exist_ok=True)
-    registry_descriptor = os.open(
-        registry_path,
-        os.O_CREAT | os.O_RDWR,
-        0o600,
-    )
-    with os.fdopen(registry_descriptor, "r+", encoding="utf-8") as registry_file:
-        fcntl.flock(registry_file.fileno(), fcntl.LOCK_EX)
+    paused_after_resolution = False
+    for _attempt in range(REGISTRY_LOCK_RETRY_LIMIT):
         try:
-            yield registry_path, registry_file
-        finally:
-            fcntl.flock(registry_file.fileno(), fcntl.LOCK_UN)
+            registry_path = _resolve_registry_path(repository, operation, claim_id)
+        except (FileNotFoundError, IsADirectoryError, NotADirectoryError):
+            continue
+        if not paused_after_resolution:
+            _pause_release_after_resolution_for_test(operation)
+            paused_after_resolution = True
+        try:
+            resolved = os.lstat(registry_path)
+            if not stat.S_ISREG(resolved.st_mode):
+                continue
+            registry_descriptor = os.open(registry_path, os.O_RDWR)
+        except (FileNotFoundError, IsADirectoryError, NotADirectoryError):
+            continue
+        with os.fdopen(registry_descriptor, "r+", encoding="utf-8") as registry_file:
+            fcntl.flock(registry_file.fileno(), fcntl.LOCK_EX)
+            try:
+                locked = os.fstat(registry_file.fileno())
+                try:
+                    current = os.lstat(registry_path)
+                except (FileNotFoundError, NotADirectoryError):
+                    continue
+                if (
+                    not stat.S_ISREG(locked.st_mode)
+                    or not stat.S_ISREG(current.st_mode)
+                    or locked.st_nlink == 0
+                    or (resolved.st_dev, resolved.st_ino)
+                    != (locked.st_dev, locked.st_ino)
+                    or (locked.st_dev, locked.st_ino)
+                    != (current.st_dev, current.st_ino)
+                ):
+                    continue
+                yield registry_path, registry_file
+                return
+            finally:
+                fcntl.flock(registry_file.fileno(), fcntl.LOCK_UN)
+    raise _ClaimStateError(
+        "registry_lock_race",
+        "Claim registry storage kept changing while its operational lock was acquired.",
+        operation=operation,
+        claim_id=claim_id,
+    )
 
 
 @contextmanager
 def _locked_registry(
     repository: Path,
+    operation: str,
+    claim_id: str | None = None,
 ) -> Iterator[tuple[Path, dict[str, Any], TextIO]]:
-    with _locked_registry_file(repository) as (registry_path, registry_file):
+    with _locked_registry_file(repository, operation, claim_id) as (registry_path, registry_file):
         try:
             registry_file.seek(0)
             raw_registry = registry_file.read()
@@ -655,9 +1333,12 @@ def _normalize_repository_path(
             "provide a repository-relative path",
         )
     normalized = normalized if case_sensitive else normalized.casefold()
-    if _path_is_within(normalized, WORKTREE_ROOT_DIRECTORY):
+    if _path_is_within(normalized, WORKTREE_ROOT_DIRECTORY) or _path_is_within(
+        normalized,
+        CLAIM_STATE_DIRECTORY,
+    ):
         raise _ScopeError(
-            "Ignored operational worktree state is outside file ownership domains.",
+            "Ignored operational state is outside file ownership domains.",
             normalized,
             "claim the project source path or an exclusive resource instead",
             "operational_path_not_claimable",
@@ -1596,7 +2277,7 @@ def _worktree_root_not_ignored_result(
 
 def _acquire(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
-    with _locked_registry(repository) as (registry_path, data, registry_file):
+    with _locked_registry(repository, "acquire", args.claim_id) as (registry_path, data, registry_file):
         common_directory = registry_path.parent
         try:
             requested_scope, scope_warnings = _scope_from_args(args, repository)
@@ -1769,7 +2450,7 @@ def _acquire(args: argparse.Namespace) -> int:
 
 def _extend(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
-    with _locked_registry(repository) as (registry_path, data, registry_file):
+    with _locked_registry(repository, "extend", args.claim_id) as (registry_path, data, registry_file):
         common_directory = registry_path.parent
         try:
             requested_scope, scope_warnings = _scope_from_args(args, repository)
@@ -1926,7 +2607,7 @@ def _extend(args: argparse.Namespace) -> int:
 
 def _heartbeat(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
-    with _locked_registry(repository) as (registry_path, data, registry_file):
+    with _locked_registry(repository, "heartbeat", args.claim_id) as (registry_path, data, registry_file):
         common_directory = registry_path.parent
         for claim in data["claims"]:
             if claim.get("claim_id") == args.claim_id:
@@ -1940,7 +2621,7 @@ def _heartbeat(args: argparse.Namespace) -> int:
 
 def _extend_deadline(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
-    with _locked_registry(repository) as (registry_path, data, registry_file):
+    with _locked_registry(repository, "extend-deadline", args.claim_id) as (registry_path, data, registry_file):
         common_directory = registry_path.parent
         claim = next(
             (item for item in data["claims"] if item.get("claim_id") == args.claim_id),
@@ -2024,7 +2705,7 @@ def _extend_deadline(args: argparse.Namespace) -> int:
 
 def _release(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
-    with _locked_registry(repository) as (registry_path, data, registry_file):
+    with _locked_registry(repository, "release", args.claim_id) as (registry_path, data, registry_file):
         common_directory = registry_path.parent
         claims: list[dict[str, Any]] = data["claims"]
         for index, claim in enumerate(claims):
@@ -2129,7 +2810,7 @@ def _release(args: argparse.Namespace) -> int:
 
 def _reset(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
-    with _locked_registry_file(repository) as (registry_path, registry_file):
+    with _locked_registry_file(repository, "reset") as (registry_path, registry_file):
         previous_valid = True
         previous_claim_count = 0
         try:
@@ -2162,13 +2843,13 @@ def _reset(args: argparse.Namespace) -> int:
 
 def _status_command(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
-    with _locked_registry(repository) as (registry_path, data, _registry_file):
-        evaluated_at = _now()
-        _print_result(
-            "STATUS",
-            registry=str(registry_path),
-            claims=[_claim_for_output(claim, evaluated_at) for claim in data["claims"]],
-        )
+    registry_path, data = _read_only_registry(repository)
+    evaluated_at = _now()
+    _print_result(
+        "STATUS",
+        registry=str(registry_path),
+        claims=[_claim_for_output(claim, evaluated_at) for claim in data["claims"]],
+    )
     return SUCCESS
 
 
@@ -2462,16 +3143,16 @@ def _write_validated_archive(path: Path, compressed: bytes, expected_raw: bytes)
 
 def _maintain_journal(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
-    common_directory = _git_common_directory(repository)
     if args.hot_days < 1:
         _print_result("INVALID_HOT_DAYS", hot_days=args.hot_days)
         return ERROR
-    _root, hot_directory, archive_directory, journal_directory = _journal_paths(common_directory)
     cutoff = _now().date() - timedelta(days=args.hot_days - 1)
     archived: list[dict[str, Any]] = []
     try:
-        with _locked_registry(repository):
-            with _maintenance_lock(common_directory):
+        with _locked_registry(repository, "maintain-journal") as (registry_path, _data, _registry_file):
+            state_root = registry_path.parent
+            _root, hot_directory, archive_directory, journal_directory = _journal_paths(state_root)
+            with _maintenance_lock(state_root):
                 candidates = sorted(hot_directory.glob("*.jsonl")) if hot_directory.exists() else []
                 for hot_path in candidates:
                     match = UTC_DAY_PATTERN.match(hot_path.name)
@@ -2726,7 +3407,6 @@ def _work_item_report(
 
 def _report(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
-    common_directory = _git_common_directory(repository)
     try:
         delta = _since_delta(args.since)
     except ValueError as error:
@@ -2734,18 +3414,21 @@ def _report(args: argparse.Namespace) -> int:
         return ERROR
     end = _now()
     start = end - delta
-    with _locked_registry(repository) as (
-        _registry_path,
-        data,
-        _registry_file,
-    ):
-        events, coverage_gaps = _load_events(common_directory)
-        filtered = [
-            event
-            for event in events
-            if start <= _parse_timestamp(str(event["timestamp"])) <= end
-        ]
-        live_claims = [dict(claim) for claim in data["claims"]]
+    registry_path, data = _read_only_registry(repository)
+    legacy_events = _git_common_directory(repository) / EVENT_DIRECTORY_NAME
+    state_marker = _state_marker(repository)
+    event_state_root = (
+        _git_common_directory(repository)
+        if state_marker is None and legacy_events.is_dir()
+        else registry_path.parent
+    )
+    events, coverage_gaps = _load_events(event_state_root)
+    filtered = [
+        event
+        for event in events
+        if start <= _parse_timestamp(str(event["timestamp"])) <= end
+    ]
+    live_claims = [dict(claim) for claim in data["claims"]]
     acquired_claim_ids = {
         str(event.get("claim_id"))
         for event in events
@@ -2764,7 +3447,6 @@ def _report(args: argparse.Namespace) -> int:
             )
     report = {
         "schema_version": REPORT_SCHEMA_VERSION,
-        "outcome": "REPORT",
         "window": {"since": args.since, "start": _format_timestamp(start), "end": _format_timestamp(end)},
         "event_count": len(filtered),
         "metrics": _aggregate(filtered, end, live_claims),
@@ -2896,7 +3578,17 @@ def main(argv: Sequence[str] | None = None) -> int:
         or journal according to their documented boundary; report remains read-only.
     """
     args = _parser().parse_args(argv)
-    return args.handler(args)
+    try:
+        return args.handler(args)
+    except _ClaimStateError as error:
+        _print_result(
+            "CLAIM_STATE_MIGRATION_BLOCKED",
+            reason=error.reason,
+            message=str(error),
+            registry_unchanged=True,
+            **error.details,
+        )
+        return COORDINATION_REQUIRED_EXIT_CODE
 
 
 if __name__ == "__main__":
