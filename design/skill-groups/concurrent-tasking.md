@@ -106,14 +106,14 @@ classDiagram
     BacklogManagementAgents --> ConcurrentTasking
     DevDeliveryAgents --> BaselineDevelopment
     DevDeliveryAgents --> BacklogManagement
-    DevDeliveryAgents ..> ConcurrentTasking : when a work item is coordinated
+    DevDeliveryAgents ..> ConcurrentTasking : when multiple agents work concurrently
     DevDeliveryAgents --> DirectMainDelivery
     DevDeliveryAgents --> FeatureBranchAndWorktrees
     DevDeliveryAgents --> ReviewAndVerification
 
     ConcurrentTasking *-- ResourceCoordination
     ConcurrentTasking *-- FeatureBranchAndWorktrees
-    DirectMainDelivery ..> FeatureBranchAndWorktrees : when the accepted change is not present on main
+    DirectMainDelivery ..> FeatureBranchAndWorktrees : when implementation uses a separate branch or worktree
 ```
 
 ### Backlog Management Agents And Skills
@@ -308,7 +308,7 @@ classDiagram
     DevOrchestrator o--> structured-design
     DevOrchestrator o--> structured-explanation
     DevOrchestrator o..> CreateWorkItem : when an excluded issue needs a work item
-    DevOrchestrator o..> coordinate-work-items : when the work item is coordinated
+    DevOrchestrator o..> coordinate-work-items : when multiple agents work concurrently
     DevOrchestrator o..> coordinate-codex-tasks : when the execution uses a Codex task
     DevOrchestrator o..> organise-project-files : when orchestration creates a project path
 
@@ -690,10 +690,10 @@ classDiagram
     deliver-work-item-feature-branch ..|> DeliverWorkItem
     deliver-work-item-direct-main ..|> DeliverWorkItem
     deliver-work-item-feature-branch o..> create-pull-request : when GitHub pull-request publication is required
-    deliver-work-item-direct-main o..> integrate-agent-work : when the accepted change is not present on main
+    deliver-work-item-direct-main o..> integrate-agent-work : when implementation uses a separate branch or worktree
 ```
 
-The provider realization arrows show conformance with the exact deliver-work-item contract. Feature-branch delivery loads create-pull-request only for a host that uses pull-request terminology. Direct-main delivery loads integrate-agent-work only when the accepted change is not already present on main.
+The provider realization arrows show conformance with the exact deliver-work-item contract. Feature-branch delivery loads create-pull-request only for a host that uses pull-request terminology. Direct main describes the final destination, not where implementation occurs. When implementation is isolated on a separate branch or worktree, especially for concurrent or independently delegated work, direct-main delivery uses integrate-agent-work to reconcile the accepted contribution with current main.
 
 ## Skill Responsibilities
 
@@ -718,7 +718,7 @@ The Task Management Agent hierarchy, Agent Group dependencies, Core and Optional
 
 ### Task Management Agent Groups And Roles
 
-The Agent-group views classify roles by task-management responsibility: stream management or single-task delivery. The Agent dependencies and exact skill relationships come from these role sources and the shared role schema.
+The Agent-group views classify roles by task-management responsibility: backlog management or development delivery. The Agent dependencies and exact skill relationships come from these role sources and the shared role schema.
 
 - [Conceptual Agent Role Schema](../../agents/role-schema.yaml)
 

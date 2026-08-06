@@ -55,6 +55,8 @@ An applied analysis uses this notation to explain the design rather than organiz
 
 Exact-name loading, conditional loading, procedure references, and realization are properties of the relationships inside those views.
 
+The class diagrams in this method are static dependency views, as class diagrams ordinarily are in code design. A conditional label should name the stable configuration, responsibility, or workflow condition that makes a dependency meaningful. It may summarize lower-level runtime predicates when that makes the reason for the dependency easier to understand. Use a dynamic diagram, such as a sequence, activity, or state diagram, when ordering, dispatch, waiting, transitions, or changing runtime state is the subject of the analysis.
+
 An arrow to an Agent Group or Skill Group summarizes one or more relationships at the group level. Use a regular arrow for that summary and a dotted regular arrow when it applies conditionally. Do not use an open diamond merely because an underlying Agent eventually loads a named skill; the open diamond is reserved for a source node that itself knows the exact target skill name shown in the diagram.
 
 Use engineering terms for the mechanism actually shown. Reserve transport for a concrete communication mechanism that carries protocol messages, such as stdio or WebSockets. MCP is a protocol rather than a transport. A skill that invokes a local command is a command-line helper or local command invocation, not a command transport. Prefer direct descriptions such as invokes a local command or calls an MCP tool when those statements explain the dependency more accurately.
@@ -516,7 +518,7 @@ A user request supplies work intent that an Agent translates into a Skill interf
   - **SYNOPSIS:** manageWorkItem() retains the transition request in Agent context. transition-work-item() delegates provider lifecycle state to the selected manage-work-items-* skill.
   - **EXAMPLE:** Move work item 42 to Running does not require manageWorkItem() to know a repository path, GitLab project identifier, label set, or issue URL.
 
-Sequence diagrams use solid messages for every request, action, and return. Their text is necessary because the diagram shows chronological actions rather than static references. Return messages begin with Return. Dotted lines remain reserved for conditional references in class diagrams.
+Sequence diagrams provide a dynamic view of one runtime scenario. They use solid messages for every request, action, and return because they show chronological behavior rather than static references. Return messages begin with Return. Dotted lines remain reserved for conditional references in class diagrams.
 
 ```mermaid
 sequenceDiagram
@@ -872,6 +874,10 @@ A good model makes skill dependencies, dispatch, and organization understandable
 - **RULE: RULE-43** Line and endpoint form expose name knowledge and conditionality
   - **SYNOPSIS:** In declared relationships, a regular line means procedure-name reference, an open diamond means exact skill-name reference, and the dotted form means the reference is conditional. Only a dotted class reference carries text, and that text states the condition.
   - **EXAMPLE:** The label “when the user requests TDD” on DevCoder o..> test-driven-development means that Dev Coder conditionally loads that exact named skill.
+
+- **RULE: RULE-71** Class-diagram conditions explain stable dependency reasons
+  - **SYNOPSIS:** A conditional class relationship names the configuration, responsibility, or workflow choice that makes the dependency relevant. Prefer the condition that helps a reader understand why the dependency exists over a lower-level execution-state test.
+  - **EXAMPLE:** “When implementation uses a separate branch or worktree” explains why Direct Main Delivery uses Feature Branch And Worktrees more clearly than “when the accepted commit is not on main.” A sequence diagram can separately show the current-main comparison and resulting integration call.
 
 - **RULE: RULE-61** Interface users and implementations remain semantically coherent
   - **SYNOPSIS:** Skill maintenance compares each Interface Skill with every known user and implementation, checking data-member names and meanings, provider refinements, function implementations, and invocation meanings. No specialized validator is required: simple deterministic inventories can locate files and matching names, but semantic acceptance requires an LLM judge to read the complete referenced skills.
