@@ -2775,6 +2775,8 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(heading, interface_text)
         for phrase in (
             "Opaque Work Item ID and provider selector.",
+            "Receive the already-resolved Commit provider",
+            "If Commit is UNSET, return BLOCKED without selecting a default.",
             "must not modify the accepted commit",
             "preserve one delivery identity",
             "READY, AWAITING_REVIEW, or BLOCKED",
@@ -2784,6 +2786,10 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(interface_contract=phrase):
                 self.assertIn(phrase, interface_text)
+        self.assertNotIn(
+            "Resolve the effective Commit-selected provider",
+            interface_text,
+        )
 
         self.assertTrue(openai_metadata_path(interface_name).is_file())
 
@@ -2841,6 +2847,36 @@ class BundleContentTests(unittest.TestCase):
             ["dev-orchestrator-happy", "dev-orchestrator-boundary"],
             probe["scenarioAssociations"],
         )
+
+        scenarios = load_yaml_object(
+            AGENT_TEST_SUITES_ROOT / "dev-orchestrator" / "scenarios.yaml"
+        )["scenarios"]
+        dependency_routing = next(
+            scenario
+            for scenario in scenarios
+            if scenario["id"] == "dependency-routing"
+        )
+        required_behaviors = dependency_routing["requiredBehaviors"]
+        forbidden_behaviors = dependency_routing["forbiddenBehaviors"]
+        self.assertIn(
+            "Return one structured Commit result with READY, AWAITING_REVIEW, or BLOCKED",
+            required_behaviors,
+        )
+        self.assertIn(
+            "Record Persistence COMPLETED only after Commit READY",
+            required_behaviors,
+        )
+        self.assertIn(
+            "Leave Persistence nonterminal after Commit AWAITING_REVIEW or BLOCKED",
+            required_behaviors,
+        )
+        self.assertIn(
+            "Treat Commit AWAITING_REVIEW or BLOCKED as Persistence COMPLETED",
+            forbidden_behaviors,
+        )
+        scenario_text = json.dumps(dependency_routing, sort_keys=True)
+        self.assertNotIn("NEEDS_REVIEW", scenario_text)
+        self.assertNotIn("delivery COMPLETED", scenario_text)
 
     def test_deliver_work_item_feature_branch_requires_observed_provider_accurate_merge(
         self,

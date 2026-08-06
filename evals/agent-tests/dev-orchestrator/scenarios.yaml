@@ -16,8 +16,8 @@ scenarios:
     requiredHandoffReceiptLanes: [source, documentation, integration, closeout]
     requiredHandoffReceiptFields: [lane, role, commit, review, verification]
     requiredDeliveryResultFields: [status]
-    requiredBehaviors: [Assign bounded lanes, Keep review ownership independent, Verify before and after required integration, Return one structured delivery result, Dispatch Dev Backlog Steward exactly once after delivery COMPLETED, Leave the work item open after delivery NEEDS_REVIEW or BLOCKED, Verify Persistence closure, Make no agent-claim call or claim evidence when resource coordination is none, Record commits and closeout]
-    forbiddenBehaviors: [Implement child work directly, Self-review, Run dependencies concurrently, Skip post-integration gates, Close the work item before delivery COMPLETED, Treat NEEDS_REVIEW or BLOCKED as completed, Duplicate the selected manager call]
+    requiredBehaviors: [Assign bounded lanes, Keep review ownership independent, Verify before and after required integration, "Return one structured Commit result with READY, AWAITING_REVIEW, or BLOCKED", Record Persistence COMPLETED only after Commit READY, Leave Persistence nonterminal after Commit AWAITING_REVIEW or BLOCKED, Verify Persistence closure, Make no agent-claim call or claim evidence when resource coordination is none, Record commits and closeout]
+    forbiddenBehaviors: [Implement child work directly, Self-review, Run dependencies concurrently, Skip post-integration gates, Close Persistence before Commit READY, Treat Commit AWAITING_REVIEW or BLOCKED as Persistence COMPLETED, Duplicate the selected manager call]
     deterministicChecks: [harness-agent-identity, dependency-identity-and-order, one-nested-dependency-at-a-time, committed-handoffs, structured-handoff-receipts, post-integration-reviews, output-contract-presence, readiness-consistency]
     expectedOutputs: [status, task breakdown, resolved definition-owned skillsets, assigned agents, handoff plan, integrated verification, committed integration, work-item delivery]
     expectedTerminalStatus: PASS

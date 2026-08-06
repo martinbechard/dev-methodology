@@ -11,19 +11,21 @@ Deliver Work Item is the provider-neutral delivery contract between an accepted 
 
 ## Accepted Commit Input
 
-Resolve one accepted input before delivery:
+The caller supplies one complete accepted input before delivery:
 
 - Opaque Work Item ID and provider selector.
-- Effective Commit selector, configured target branch, repository, remote or host when required, and delivery authority.
+- Already-resolved Commit provider, effective Commit selector, configured target branch, repository, remote or host when required, and delivery authority.
 - Accepted source commit, source branch, worktree, exact changed paths, and clean-worktree evidence.
 - Fresh independent review result and the source checks accepted for the commit.
 - Smallest credible delivery verification and any required local or remote observation.
 
 The accepted input contains provider-neutral facts. Provider-specific integration, publication, review, merge, and observation details remain inside the selected provider.
 
+The caller resolves the Commit provider before invoking this interface. If Commit is UNSET, return BLOCKED without selecting a default.
+
 ## Deliver Work Item
 
-1. Resolve the effective Commit-selected provider from applicable project guidance or an explicit task override.
+1. Receive the already-resolved Commit provider and confirm that it matches the effective Commit selector.
 2. Give the provider the complete accepted commit input.
 3. Require the provider to consume but never author or amend the accepted source change. The provider must not modify the accepted commit.
 4. Require the provider to preserve one delivery identity across pending gates, accepted corrections, retries, and final observation.
