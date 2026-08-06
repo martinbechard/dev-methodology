@@ -530,7 +530,7 @@ across queue dispatch, active-execution reconciliation, delivery, closure, and p
 
 ### Scenario: A Project Enables Concurrent Agents
 
-This scenario starts with the project goal: enable multiple agents to work concurrently. Concurrent work requires resource coordination, so project-specific directives make agent-claim and one verified helper provider available. These skills remain outside the default Agent context until a claim event requires resource ownership. agent-claim-helper defines the common operation, input, result, and uncertain-outcome interface. agent-claim-helper-command invokes a local command-line helper, while agent-claim-helper-mcp calls tools through the MCP protocol.
+This scenario starts with the project goal: enable multiple agents to work concurrently. Concurrent work requires resource coordination, so coordinate-work-items always loads agent-claim. Project-specific directives select one verified helper provider, which remains outside the default context until agent-claim performs a claim operation. agent-claim-helper defines the common operation, input, result, and uncertain-outcome interface. agent-claim-helper-command invokes a local command-line helper, while agent-claim-helper-mcp calls tools through the MCP protocol.
 
 ```mermaid
 classDiagram
@@ -552,7 +552,6 @@ classDiagram
     class project-specific-directives["Project-specific directives"] {
         <<AGENTS.md>>
         <<routing>>
-        +route resource coordination => agent-claim
         +route claim operations => agent-claim-helper
     }
 
@@ -602,17 +601,16 @@ classDiagram
         +report-claim-contention()
     }
 
-    project-specific-directives o..> agent-claim : when concurrent work reaches a claim event
     project-specific-directives o..> agent-claim-helper-command : when claim operations use the command-line helper
     project-specific-directives o..> agent-claim-helper-mcp : when claim operations use the verified MCP helper
-    coordinate-work-items ..> agent-claim : when a claim event requires resource ownership
-    integrate-agent-work ..> agent-claim : when a claim event requires resource ownership
+    coordinate-work-items o--> agent-claim
+    integrate-agent-work o--> agent-claim
     agent-claim --> ClaimHelper
     agent-claim-helper-command ..|> ClaimHelper
     agent-claim-helper-mcp ..|> ClaimHelper
 ```
 
-Enabling concurrent agents makes resource coordination required and available, but it does not preload every coordination instruction into every Agent context. The dotted relationships show the additional loads performed only when a claim event occurs. coordinate-work-items uses the policy while coordinating concurrent work, and integrate-agent-work uses it when concurrent contributions reach a shared integration event. agent-claim depends on the common claim operations, and the selected helper skill provides them. Solo workflows omit this resource-coordination route entirely.
+Enabling concurrent agents loads coordinate-work-items together with its fixed agent-claim dependency. integrate-agent-work uses the same policy when concurrent contributions reach shared integration. The solid open-diamond relationships show these exact-name loads. The dotted relationships keep the selected helper provider out of the default context until a claim operation needs it. agent-claim depends on the common claim operations, and the selected helper skill provides them. Solo workflows load neither coordinate-work-items nor agent-claim.
 
 The MCP helper route becomes selectable only after an MCP implementation satisfies agent-claim-helper and the verification boundary in agent-claim-helper-mcp. The current repository selects the command-line helper.
 

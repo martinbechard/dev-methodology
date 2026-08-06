@@ -159,7 +159,7 @@ A conditional Agent Skill is still named directly by the Agent definition, but t
 
 - **RULE: RULE-72** A conditional relationship keeps the referenced skill out of the default context
   - **SYNOPSIS:** Use a dotted relationship when the referenced skill is not loaded by default and satisfying the stated condition causes a separate load, which can require another tool call. Structural availability does not require eager loading.
-  - **EXAMPLE:** A project that enables concurrent agents makes agent-claim available, while coordinate-work-items loads it only when a claim event requires resource ownership.
+  - **EXAMPLE:** coordinate-work-items always loads agent-claim, while the selected agent-claim-helper provider remains outside the default context until agent-claim performs a claim operation.
 
 ```mermaid
 classDiagram
