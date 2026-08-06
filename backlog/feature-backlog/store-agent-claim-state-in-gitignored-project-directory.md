@@ -1,8 +1,8 @@
 # Store Agent Claim State In Gitignored Project Directory
 
-Status: Starting
+Status: Running
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Type: Feature
 
@@ -46,11 +46,13 @@ Branch: codex/store-agent-claim-state.
 
 Worktree: /Users/martinbechard/.codex/worktrees/b146/dev-methodology.
 
-Phase: Discovery.
+Phase: Windows tombstone correction.
 
-Started At: 2026-08-06T00:08:47.470415Z.
+Started At: 2026-08-06T12:15:15.607475Z.
 
-Claim Evidence: Exact-file claim record-running-store-agent-claim-state-019fd464 acquired with outcome SHARED_CHECKOUT_ACQUIRED and event 77d97076-c07f-46f8-9630-0471d0983784.
+Claim Evidence: Exact Work Item ID update claim update-store-agent-claim-state-019fd464-resume acquired with outcome SHARED_CHECKOUT_ACQUIRED and event e73efea6-3549-44af-b586-92ee4c778937; exact provider-path claim running-path-store-agent-claim-state-019fd464 acquired with outcome SHARED_CHECKOUT_ACQUIRED and event fe844d26-d6f5-4681-8f95-0a54d0581213.
+
+Accepted Execution Evidence: Direct user approval and provider lifecycle resumption are recorded in canonical task 019fd464-3875-75e2-aaa0-39a8e357d764. Preserved dev-methodology candidate d2744c62281b5fc2bfdabd0d95a72642aab2924e, external mcp-agent-ops candidate 660aef8be2cfc12926aef15c90250556760961a7, and native Windows run 31068038651 remain authoritative. The correction remains bounded by the fail-closed verified-empty, exclusively locked Windows legacy-registry tombstone boundary.
 
 ## User Action Required
 
