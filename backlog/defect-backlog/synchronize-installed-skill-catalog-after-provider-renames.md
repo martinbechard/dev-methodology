@@ -103,14 +103,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019fd919-a1d4-7471-b158-5068c1d7622d
 
-Evidence: The canonical root task is active on the fresh work-item branch and owns the bounded installation, catalog refresh, independent review, verification, direct-main delivery, and provider closure sequence.
+Evidence: The canonical root task remains active. It detected a main advance that changed a bundle-owned skill, invalidated the earlier installation snapshot, fast-forwarded the work-item branch to current main commit 851587a3ff4c668500b1adfabffd9617880c48d2, and owns the bounded replacement installation, catalog refresh, fresh independent gates, direct-main observation, and provider closure sequence.
 
-Observed At: 2026-08-06T22:04:27Z
+Observed At: 2026-08-06T22:14:36Z
 
 Started At: 2026-08-06T22:04:20Z
 
-Deadline or Expires At: 2026-08-06T23:04:20Z
+Deadline or Expires At: 2026-08-06T23:14:36Z
 
-Next Action: Commit this Starting-to-Running provider transaction, hand off the update claims, acquire outcome ownership, and run the focused installer dry run from authoritative current-main sources.
+Next Action: Commit this evidence refresh, hand off the update claims, reacquire outcome ownership, replace the user-level bundle from current main under a new shared-install claim, and restart the independent review and verification gates against the new immutable snapshot.
 
-Next Reconciliation At: 2026-08-06T22:19:20Z
+Next Reconciliation At: 2026-08-06T22:29:36Z
