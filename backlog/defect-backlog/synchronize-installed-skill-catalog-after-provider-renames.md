@@ -99,18 +99,18 @@ Intended Root Role: Dev Orchestrator.
 
 ## Active Execution Evidence
 
-Condition Type: root-execution
+Condition Type: delegated-work
 
 Owner: Dev Orchestrator task 019fd919-a1d4-7471-b158-5068c1d7622d
 
-Evidence: The canonical root task remains active. It detected a main advance that changed a bundle-owned skill, invalidated the earlier installation snapshot, fast-forwarded the work-item branch to current main commit 851587a3ff4c668500b1adfabffd9617880c48d2, and owns the bounded replacement installation, catalog refresh, fresh independent gates, direct-main observation, and provider closure sequence.
+Evidence: Fresh post-refresh Dev Code Reviewer task installed_catalog_review_v2 and Dev Verifier task installed_catalog_verify_v2 are actively evaluating immutable installation evidence sourced from commit 9c2bd564f6cd1502617c45df373df74c4e13f7df. Current main advanced only on the unrelated excluded design/skill-groups/concurrent-tasking.md path; installed bundle source and generated-agent paths remain unchanged.
 
-Observed At: 2026-08-06T22:14:36Z
+Observed At: 2026-08-06T22:26:52Z
 
 Started At: 2026-08-06T22:04:20Z
 
-Deadline or Expires At: 2026-08-06T23:14:36Z
+Deadline or Expires At: 2026-08-06T23:26:52Z
 
-Next Action: Commit this evidence refresh, hand off the update claims, reacquire outcome ownership, replace the user-level bundle from current main under a new shared-install claim, and restart the independent review and verification gates against the new immutable snapshot.
+Next Action: Commit this delegated-work evidence refresh, hand off the update claims, reacquire outcome ownership, evaluate the two terminal gate results, and proceed to direct-main observation only if both accept the unchanged immutable installation snapshot.
 
-Next Reconciliation At: 2026-08-06T22:29:36Z
+Next Reconciliation At: 2026-08-06T22:41:52Z
