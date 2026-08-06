@@ -131,17 +131,17 @@ This is a static responsibility split, not a diagram of one runtime scenario. Th
 
 Condition Type: root-execution
 Owner: Root Dev Orchestrator /root
-Evidence: Fresh methodology review is GOOD for clean candidate 53f81069. Work remains in isolated worktree /Users/martinbechard/.codex/worktrees/a3a9/dev-methodology under root task /root and canonical conversation 019fd63f-dc50-7252-b287-8489ad1c1a8f.
-Observed At: 2026-08-06T10:57:21Z
+Evidence: Accepted candidate 53f81069 has final methodology GOOD and independent verification PASS, and is ready for direct-main delivery from isolated worktree /Users/martinbechard/.codex/worktrees/a3a9/dev-methodology under root task /root and canonical conversation 019fd63f-dc50-7252-b287-8489ad1c1a8f.
+Observed At: 2026-08-06T11:05:38Z
 Started At: 2026-08-06T08:48:08Z
 Deadline or Expires At: 2026-08-06T11:00:00Z
-Next Action: Reacquire activity=work and launch an independent focused verifier.
-Next Reconciliation At: 2026-08-06T11:10:00Z
+Next Action: Reacquire activity=work, claim exact candidate paths at integration, replay accepted bytes onto current main, and run focused post-integration verification.
+Next Reconciliation At: 2026-08-06T11:15:00Z
 
 ## Running Evidence Refresh — 2026-08-06T08:57:18Z
 
 - Provider operation evidence: File provider Active Execution Evidence refreshed in place on main; Status, canonical identities, Started At, and Deadline or Expires At are unchanged.
-- Refresh claims: Work Item ID update claim separate-work-item-coordination-from-codex-task-control-update-refresh-1057 and provider-path claim separate-work-item-coordination-from-codex-task-control-path-refresh-1057 were acquired for this operation.
+- Refresh claims: Work Item ID update claim separate-work-item-coordination-from-codex-task-control-update-refresh-1105 and provider-path claim separate-work-item-coordination-from-codex-task-control-path-refresh-1105 were acquired for this operation.
 
 ## Deadline Extension Evidence — 2026-08-06T10:05:07Z
 
