@@ -1,6 +1,6 @@
 # Make Provider Naming Stale Scan Fixture-Aware
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -12,7 +12,7 @@ Completion: direct-main
 
 Owner: Dev Orchestrator task 019fd939-f5eb-7743-b023-6e9dc98c555e
 
-Phase: Verifying
+Phase: Complete
 
 Branch: codex/make-provider-naming-stale-scan-fixture-aware-019fd939
 
@@ -29,6 +29,8 @@ Parent Task ID: 019fb057-1767-7ef2-b5fa-41f4417b20b3
 Accepted Candidate Commit: e22f92ccb992cc8a121f84096c6a159cc02caf69
 
 Independent Review: GOOD; no material findings; exact scope, seven fixture allowances, exact accounting, unexpected-identity regression, fixture preservation, and focused candidate evidence accepted.
+
+Completed At: 2026-08-06T23:00:09Z
 
 ## Summary
 
@@ -121,3 +123,41 @@ Deadline or Expires At: 2026-08-06T23:54:15Z
 Next Action: Dispatch one independent verifier against the immutable candidate, then reconcile current main once for direct-main delivery if verification passes.
 
 Next Reconciliation At: 2026-08-06T23:09:15Z
+
+## Terminal Delivery Evidence
+
+Completion Disposition: READY
+
+Requested Lifecycle: COMPLETED
+
+Provider: file
+
+Completion Selector: direct-main
+
+Accepted Source Commit: e22f92ccb992cc8a121f84096c6a159cc02caf69
+
+Accepted Source Path: scripts/test_bundle_content.py
+
+Integration Commit: d02919c98859c465122e802b31bd7f5cec0151c0
+
+Observed Main Branch: main
+
+Observed Main Tip: d02919c98859c465122e802b31bd7f5cec0151c0
+
+Source-to-Integration Mapping: Candidate e22f92ccb992cc8a121f84096c6a159cc02caf69 was cherry-picked onto reconciled main 973eeb876add2a01eb70de99882d3c9846c1442b as d02919c98859c465122e802b31bd7f5cec0151c0; scripts/test_bundle_content.py has identical blob 9fd1cab50b1ee4684657c008dd872f064c90e33c in source and integration commits, and the integration commit is reachable from main.
+
+Independent Review Result: GOOD with no material findings on immutable candidate e22f92ccb992cc8a121f84096c6a159cc02caf69.
+
+Focused Source Verification: PASS; Python 3.11 ran six provider-family naming tests, one focused bundle assertion, and two fixture-allowance regressions; git diff --check passed; candidate worktree remained clean.
+
+Focused Integrated Verification: PASS at d02919c98859c465122e802b31bd7f5cec0151c0; the same nine Python 3.11 tests and integration diff check passed in the clean integration checkout.
+
+Scoped Omissions: No broad suite, simulator, framework, generator, provider rename, installed-skill deployment, or unrelated cleanup ran.
+
+Remote Observation: No remote publication was required or requested for this local direct-main transaction; origin was not changed.
+
+Primary Dirty-State Preservation: The unrelated design/skill-groups/concurrent-tasking.md wording remained the only primary-worktree dirt with worktree SHA-256 6714bfdffbe7bc06ec6a7d5a4bd64e01107846a12826ed279ad4d51d97ed732b and index blob 0aa0982eec87ec6851279c6a30706236b6579f48 before and after integration.
+
+Integration Claim Result: RELEASED; event 80caaea5-d01d-41ee-b63e-f6ef60e8a3c1.
+
+Terminal Archive Path: backlog/completed-backlog/defects/make-provider-naming-stale-scan-fixture-aware.md
