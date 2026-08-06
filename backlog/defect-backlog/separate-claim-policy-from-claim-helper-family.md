@@ -256,7 +256,7 @@ Worktree: /Users/martinbechard/.codex/worktrees/1bee/dev-methodology.
 
 Candidate Chain: ac8270d2570436738fd1b0b6bb2dbbedb690049a -> 9501f48c6b0f6f52c8fad8eab3df92d524e26a38 -> 5fa7620a6471574d2bf84a12e541805780d4bac6.
 
-Phase: Implementing — Fresh Bounded Recovery.
+Phase: Fresh Code and Methodology Review.
 
 Observed At: 2026-08-06T08:02:56Z.
 
@@ -269,3 +269,25 @@ Evidence: The same canonical Root Dev Orchestrator is active with the original c
 Next Action: Acquire the exact activity=work claim and dispatch only the three authorized findings to the same original coder.
 
 Next Reconciliation At: 2026-08-06T08:14:56Z.
+
+## Active Execution Evidence (Review Checkpoint)
+
+Condition Type: root-execution.
+
+Owner: Root Dev Orchestrator.
+
+Canonical Task and Conversation: 019fd5b5-aca7-7cb1-9ae0-012fb84e13db.
+
+Accepted Recovery Candidate: b953b9fe31fe3cb256a68defcc634f66b3233532.
+
+Observed At: 2026-08-06T08:10:06Z.
+
+Started At: 2026-08-06T08:10:06Z.
+
+Deadline or Expires At: 2026-08-06T09:10:06Z.
+
+Evidence: The candidate branch is clean. Its exact seven paths and four focused tests plus freshness checks are GREEN. Work claim separate-claim-policy-recovery-work-019fd5b5 was released with outcome RELEASED and disposition handoff at event 87409873-12c4-41f5-abb4-af3d8e5f366b. The canonical root will dispatch exactly one fresh Dev Code Reviewer and one fresh Methodology Artifact Reviewer, then a verifier only if both accept.
+
+Next Action: Reacquire exact activity=work and dispatch exactly one fresh Dev Code Reviewer plus one fresh Methodology Artifact Reviewer; run a verifier only if both accept.
+
+Next Reconciliation At: 2026-08-06T08:22:06Z.
