@@ -54,21 +54,21 @@ Claim Evidence: Exact-file claim record-running-store-agent-claim-state-019fd464
 
 ## Active Execution Evidence
 
-Condition Type: Active correction and release work.
+Condition Type: delegated-work.
 
 Owner: Dev Orchestrator.
 
-Evidence: Status remains Running for canonical task 019fd464-3875-75e2-aaa0-39a8e357d764 on branch codex/store-agent-claim-state in worktree /Users/martinbechard/.codex/worktrees/b146/dev-methodology. Preserved dev-methodology candidate d2744c62281b5fc2bfdabd0d95a72642aab2924e and external parity candidate 660aef8be2cfc12926aef15c90250556760961a7 have fresh independent review approval and verification PASS. Native Windows CI run 31068038651 isolated the remaining correction to Windows-safe retirement of the locked legacy registry; aligned same-directory staging and recovery design evidence is preserved, and delegated implementation was paused for this provider reconciliation.
+Evidence: Status remains Running for canonical task 019fd464-3875-75e2-aaa0-39a8e357d764 on branch codex/store-agent-claim-state in worktree /Users/martinbechard/.codex/worktrees/b146/dev-methodology. Preserved dev-methodology candidate d2744c62281b5fc2bfdabd0d95a72642aab2924e and external mcp-agent-ops candidate 660aef8be2cfc12926aef15c90250556760961a7 have fresh independent review approval and verification PASS. Native Windows CI run 31068038651 isolated the active correction unit to Windows-safe retirement of the locked legacy registry; the same canonical and external correction agents resumed with aligned same-directory staging and recovery design. Provider reconciliation commit 9a90a1da487794e5619f8cac0d38f9c614959b8e, work-claim incarnation d7c4a99e-cc43-4f31-83f9-ee182252027b, and prior dispatch and Running history remain preserved; delegated work is paused only for this strict provider-maintenance handoff.
 
-Observed At: 2026-08-06T03:30:05Z.
+Observed At: 2026-08-06T03:33:24Z.
 
 Started At: 2026-08-06T00:08:47.470415Z.
 
 Deadline: 2026-08-06T07:30:00Z.
 
-Next Action: Release update/path claims, reacquire activity=work, resume preserved correction at dev d2744c62 and external 660aef8.
+Next Action: Complete the active Windows-safe legacy registry retirement unit in the canonical helper and external mcp-agent-ops package, then obtain fresh independent review and verification, pass native Windows CI, release mcp-agent-ops 0.6.0, and complete direct-main delivery.
 
-Next Reconciliation At: 2026-08-06T03:44:00Z.
+Next Reconciliation At: 2026-08-06T03:47:00Z.
 
 ## Summary
 
