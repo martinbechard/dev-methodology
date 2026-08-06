@@ -8,7 +8,59 @@ The applied-model conventions are defined in [Object-Oriented Skill Group Models
 
 ## Design
 
-The design keeps nine baseline responsibilities together. Multi-operation skills expose the procedure headings that Agents or other skills can reference, while single-operation skills use their skill identity as the operation.
+Baseline Development supplies practices used across coding, project organization, review, and verification. The overall view shows the participating Agents and the shared Skill Group before the scenario views expand their exact skill dependencies.
+
+### Overall Agent And Skill Group Dependencies
+
+The overall view identifies the Agents that rely on Baseline Development without expanding the nine skills inside the group.
+
+```mermaid
+classDiagram
+    direction LR
+
+    namespace DevActivitiesAgents["Dev Activities Agents"] {
+        class DevCoder {
+            <<Agent>>
+        }
+        class DevArtifactReviewer {
+            <<Agent>>
+        }
+        class DevCodeReviewer {
+            <<Agent>>
+        }
+        class DevVerifier {
+            <<Agent>>
+        }
+        class DevPromptReviewer {
+            <<Agent>>
+        }
+        class DevMergeCoordinator {
+            <<Agent>>
+        }
+    }
+
+    namespace ProjectSetupAgents["Project Setup Agents"] {
+        class ProjectOrganiser {
+            <<Agent>>
+        }
+    }
+
+    class BaselineDevelopment["Baseline Development"] {
+        <<Skill Group>>
+    }
+
+    DevCoder --> BaselineDevelopment
+    DevArtifactReviewer --> BaselineDevelopment
+    DevCodeReviewer --> BaselineDevelopment
+    DevVerifier --> BaselineDevelopment
+    DevPromptReviewer --> BaselineDevelopment
+    DevMergeCoordinator --> BaselineDevelopment
+    ProjectOrganiser --> BaselineDevelopment
+```
+
+### Scenario: Coding A Change
+
+This scenario shows the Baseline Development skills that Dev Coder loads for every implementation and those added only when the requested work requires them.
 
 ```mermaid
 classDiagram
@@ -18,86 +70,47 @@ classDiagram
         <<Agent>>
     }
 
-    class ProjectOrganiser {
-        <<Agent>>
-    }
-
-    class StructuredArtifactReviewers {
-        <<Agent superclass stand-in>>
-    }
-
-    namespace BaselineDevelopment {
-        class careful-coding {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +confirm-work-before-coding()
-            +validate-authorized-contract()
-            +execute-goal-driven-loop()
-        }
-
-        class code-comments {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +write-structured-comments()
-            +add-code-artifact-header()
-            +document-public-constructs()
-            +review-code-comments()
-        }
-
-        class code-discovery {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +discover-code-context(requested-work)
-            +determine-change-scope(discovered-context)
-            +contract-authority-rules
-            +discovery-boundaries
-        }
-
-        class test-driven-development {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +run-red-green-refactor-loop()
-        }
-
-        class structured-design {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +create-structured-design()
-            +self-review-structured-design()
-        }
-
-        class structured-explanation {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +create-structured-explanation()
-        }
-
-        class organise-project-files {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +choose-project-file-placement()
-        }
-
-        class review-structured-artifact {
-            <<SKILL.md>>
-            <<Agent Skill>>
-            +review-structured-artifact()
-        }
-
-        class explain-code-fix {
-            <<SKILL.md>>
-            <<Agent Skill>>
-        }
-    }
-
-    class verify-documentation-page {
+    class careful-coding {
         <<SKILL.md>>
-        <<Cross-group>>
+        <<Agent Skill>>
+        +confirm-work-before-coding()
+        +validate-authorized-contract()
+        +execute-goal-driven-loop()
     }
 
-    class analyze-root-cause {
+    class code-comments {
         <<SKILL.md>>
-        <<Cross-group>>
+        <<Agent Skill>>
+        +write-structured-comments()
+        +add-code-artifact-header()
+        +document-public-constructs()
+        +review-code-comments()
+    }
+
+    class code-discovery {
+        <<SKILL.md>>
+        <<Agent Skill>>
+        +discover-code-context(requested-work)
+        +determine-change-scope(discovered-context)
+        +contract-authority-rules
+        +discovery-boundaries
+    }
+
+    class explain-code-fix {
+        <<SKILL.md>>
+        <<Agent Skill>>
+    }
+
+    class organise-project-files {
+        <<SKILL.md>>
+        <<Agent Skill>>
+        +choose-project-file-placement()
+    }
+
+    class test-driven-development {
+        <<SKILL.md>>
+        <<Agent Skill>>
+        +run-red-green-refactor-loop()
     }
 
     DevCoder o--> careful-coding
@@ -105,20 +118,128 @@ classDiagram
     DevCoder o--> code-discovery
     DevCoder o--> explain-code-fix
     DevCoder o..> organise-project-files : when implementation creates a project file or directory
-    DevCoder o..> test-driven-development : when executable tests should guide implementation
+    DevCoder o..> test-driven-development : when the user requests TDD
+```
+
+### Scenario: Organizing Project Artifacts
+
+This scenario shows how Project Organiser combines placement, design, and explanation skills when it classifies or audits project artifacts.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class ProjectOrganiser {
+        <<Agent>>
+    }
+
+    class organise-project-files {
+        <<SKILL.md>>
+        <<Agent Skill>>
+        +choose-project-file-placement()
+    }
+
+    class structured-design {
+        <<SKILL.md>>
+        <<Agent Skill>>
+        +create-structured-design()
+        +self-review-structured-design()
+    }
+
+    class structured-explanation {
+        <<SKILL.md>>
+        <<Agent Skill>>
+        +create-structured-explanation()
+    }
 
     ProjectOrganiser o--> organise-project-files
     ProjectOrganiser o--> structured-design
     ProjectOrganiser o--> structured-explanation
+```
 
-    StructuredArtifactReviewers o--> review-structured-artifact
+### Scenario: Reviewing A Structured Artifact
+
+This scenario shows the shared review skill loaded by five Dev Activities reviewers and the page verifier it uses for document-level checks.
+
+```mermaid
+classDiagram
+    direction LR
+
+    namespace StructuredArtifactReviewAgents["Structured Artifact Review Agents"] {
+        class DevArtifactReviewer {
+            <<Agent>>
+        }
+        class DevCodeReviewer {
+            <<Agent>>
+        }
+        class DevVerifier {
+            <<Agent>>
+        }
+        class DevPromptReviewer {
+            <<Agent>>
+        }
+        class DevMergeCoordinator {
+            <<Agent>>
+        }
+    }
+
+    class review-structured-artifact {
+        <<SKILL.md>>
+        <<Agent Skill>>
+        +review-structured-artifact()
+    }
+
+    class verify-documentation-page {
+        <<SKILL.md>>
+        <<Cross-group>>
+    }
+
+    DevArtifactReviewer o--> review-structured-artifact
+    DevCodeReviewer o--> review-structured-artifact
+    DevVerifier o--> review-structured-artifact
+    DevPromptReviewer o--> review-structured-artifact
+    DevMergeCoordinator o--> review-structured-artifact
+    review-structured-artifact o--> verify-documentation-page
+```
+
+### Scenario: A Baseline Skill Needs Supporting Guidance
+
+This scenario shows dependencies owned by Baseline Development skills themselves. A solid open-diamond relationship is always loaded by the referencing skill; a dotted relationship is loaded only under its stated condition.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class code-comments {
+        <<SKILL.md>>
+        +write-structured-comments()
+    }
+    class explain-code-fix {
+        <<SKILL.md>>
+    }
+    class structured-explanation {
+        <<SKILL.md>>
+    }
+    class structured-design {
+        <<SKILL.md>>
+        +create-structured-design()
+        +self-review-structured-design()
+    }
+    class test-driven-development {
+        <<SKILL.md>>
+    }
+    class analyze-root-cause {
+        <<SKILL.md>>
+        <<Cross-group>>
+    }
 
     code-comments o..> structured-explanation : when writing a non-trivial comment block
     explain-code-fix o--> structured-explanation
     structured-explanation o..> structured-design : when an explanation needs system structure
-    review-structured-artifact o--> verify-documentation-page
     test-driven-development o..> analyze-root-cause : when a test fails unexpectedly
 ```
+
+The scenario views include the complete Baseline Development membership across their skill nodes. Multi-operation skills expose the procedure headings relevant to their consumers, while a single-operation skill can use its skill identity as the operation.
 
 ## Skill Responsibilities
 

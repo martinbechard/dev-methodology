@@ -8,40 +8,146 @@ The applied-model conventions are defined in [Object-Oriented Skill Group Models
 
 ## Design
 
-The design separates blockage recovery from concurrent dispatch mode. Creation and management each have an abstract Skill interface, a separate AGENTS.md factory that selects the effective Persistence provider, and Provider Skills that realize the shared contract. A superclass stand-in represents Agents authorized to create durable work items, while the current Coordinator, Orchestrator, and Steward management roles consume the management interface for their distinct lifecycle or maintenance authority.
+Backlog Management owns work-item creation, provider lifecycle management, and blockage recovery. The overall view shows the participating Agents and related Skill Groups; the scenario views expand the two provider families, sequential blockage recovery, and optional resource coordination.
+
+### Overall Agent And Skill Group Dependencies
+
+The overall view shows which Agents use Backlog Management and where backlog procedures conditionally use Concurrent Tasking or Resource Coordination. An arrow between Skill Groups means that at least one skill in the source group depends on a skill in the target group under the stated condition.
 
 ```mermaid
 classDiagram
-    direction TB
+    direction LR
 
-    class DevBacklogSteward {
-        <<Agent>>
+    namespace BacklogManagementAgents["Backlog Management Agents"] {
+        class DevBacklogCoordinator {
+            <<Agent>>
+        }
+        class DevBacklogSteward {
+            <<Agent>>
+        }
+        class DevBacklogWatchdog {
+            <<Agent>>
+        }
     }
 
-    class DevBacklogCoordinator {
-        <<Agent>>
+    namespace DevActivitiesAgents["Dev Activities Agents"] {
+        class DevOrchestrator {
+            <<Agent>>
+        }
     }
+
+    class BacklogManagement["Backlog Management"] {
+        <<Skill Group>>
+    }
+    class ConcurrentTasking["Concurrent Tasking"] {
+        <<Skill Group>>
+    }
+    class ResourceCoordination["Resource Coordination"] {
+        <<Skill Group>>
+    }
+
+    DevBacklogCoordinator --> BacklogManagement
+    DevBacklogSteward --> BacklogManagement
+    DevBacklogWatchdog ..> BacklogManagement : when a blockage criterion or active recovery applies
+    DevOrchestrator --> BacklogManagement
+    BacklogManagement ..> ConcurrentTasking : when sequential recovery changes secondary-thread dispatch mode
+    BacklogManagement ..> ResourceCoordination : when the selected file provider mutates shared state
+```
+
+### Scenario: Creating A Work Item
+
+This scenario applies when an Agent must create one durable work item. The create-*-work-item interface states the shared procedure, while AGENTS.md selects the provider that matches the project Persistence setting.
+
+```mermaid
+classDiagram
+    direction LR
 
     class DevOrchestrator {
         <<Agent>>
     }
-
-    class WorkItemCreators {
-        <<Agent superclass stand-in>>
-    }
-
     class CreateWorkItem["create-*-work-item"] {
         <<Skill interface>>
         +work-item-id
         +create-work-item(workItemDescription)
     }
-
-    class CreateWorkItemFactory["Persistence creation selection"] {
+    class ProjectSpecificDirectives["Project-specific directives"] {
         <<AGENTS.md>>
         <<routing>>
-        +route create-work-item => selected provider
+        +route create-work-item => create-*-work-item
+    }
+    class create-file-work-item {
+        <<Provider Skill>>
+        +work-item-id
+        +create-work-item(workItemDescription)
+        +future-ideas-capture()
+        +future-idea-promotion()
+        +exact-backlog-creation-transaction()
+    }
+    class create-github-work-item {
+        <<Provider Skill>>
+        +work-item-id
+        +create-work-item(workItemDescription)
+    }
+    class create-gitlab-work-item {
+        <<Provider Skill>>
+        +work-item-id
+        +create-work-item(workItemDescription)
+    }
+    class create-azure-devops-work-item {
+        <<Provider Skill>>
+        +work-item-id
+        +create-work-item(workItemDescription)
+    }
+    class create-jira-work-item {
+        <<Provider Skill>>
+        +work-item-id
+        +create-work-item(workItemDescription)
     }
 
+    DevOrchestrator ..> CreateWorkItem : when an excluded issue needs a durable work item
+    ProjectSpecificDirectives o..> create-file-work-item : when Persistence is file
+    ProjectSpecificDirectives o..> create-github-work-item : when Persistence is github
+    ProjectSpecificDirectives o..> create-gitlab-work-item : when Persistence is gitlab
+    ProjectSpecificDirectives o..> create-azure-devops-work-item : when Persistence is azure-devops
+    ProjectSpecificDirectives o..> create-jira-work-item : when Persistence is jira
+    create-file-work-item ..|> CreateWorkItem
+    create-github-work-item ..|> CreateWorkItem
+    create-gitlab-work-item ..|> CreateWorkItem
+    create-azure-devops-work-item ..|> CreateWorkItem
+    create-jira-work-item ..|> CreateWorkItem
+```
+
+One effective project selects one creation provider. The Azure DevOps and Jira creation providers preserve the shared interface while returning their documented unsupported result.
+
+### Scenario: Managing Work-Item Lifecycle
+
+This scenario applies when an Agent or coordination skill inventories or changes durable provider lifecycle. The manage-*-work-items interface gives all consumers one vocabulary, while AGENTS.md selects the Persistence-specific implementation.
+
+```mermaid
+classDiagram
+    direction LR
+
+    namespace WorkItemManagementAgents["Work-item management Agents"] {
+        class DevBacklogCoordinator {
+            <<Agent>>
+        }
+        class DevBacklogSteward {
+            <<Agent>>
+        }
+        class DevBacklogWatchdog {
+            <<Agent>>
+        }
+        class DevOrchestrator {
+            <<Agent>>
+        }
+    }
+
+    class coordinate-codex-work-items {
+        <<SKILL.md>>
+        <<Cross-group>>
+        +reconcile-active-execution()
+        +coordinate-queue-and-dispatch()
+    }
     class ManageWorkItem["manage-*-work-items"] {
         <<Skill interface>>
         +work-item-id
@@ -51,180 +157,124 @@ classDiagram
         +recover-work-item(workItem, recoveryEvidence)
         +report-work-items(selection)
     }
-
-    class ManageWorkItemFactory["Persistence management selection"] {
+    class ProjectSpecificDirectives["Project-specific directives"] {
         <<AGENTS.md>>
         <<routing>>
-        +route manage-work-items => selected provider
+        +route manage-work-items => manage-*-work-items
+    }
+    class manage-file-work-items {
+        <<Provider Skill>>
+        +inventory-work-items(selection)
+        +transition-work-item(workItem, transition)
+    }
+    class manage-github-work-items {
+        <<Provider Skill>>
+        +inventory-work-items(selection)
+        +transition-work-item(workItem, transition)
+    }
+    class manage-gitlab-work-items {
+        <<Provider Skill>>
+        +inventory-work-items(selection)
+        +transition-work-item(workItem, transition)
+    }
+    class manage-azure-devops-work-items {
+        <<Provider Skill>>
+        +inventory-work-items(selection)
+        +transition-work-item(workItem, transition)
+    }
+    class manage-jira-work-items {
+        <<Provider Skill>>
+        +inventory-work-items(selection)
+        +transition-work-item(workItem, transition)
     }
 
-    namespace BacklogManagement {
-        class resolve-backlog-blockage {
-            <<SKILL.md>>
-            <<Agent Skill>>
-        }
+    DevBacklogCoordinator ..> ManageWorkItem : when a Persistence provider is selected
+    DevBacklogSteward ..> ManageWorkItem : when a Persistence provider is selected
+    DevBacklogWatchdog ..> ManageWorkItem : when a Persistence provider is selected
+    DevOrchestrator ..> ManageWorkItem : when a Persistence provider is selected
+    coordinate-codex-work-items ..> ManageWorkItem : when a Persistence provider is selected
 
-        class create-file-work-item {
-            <<Provider Skill>>
-            +work-item-id
-            +create-work-item(workItemDescription)
-            +future-ideas-capture()
-            +future-idea-promotion()
-            +exact-backlog-creation-transaction()
-        }
-
-        class create-github-work-item {
-            <<Provider Skill>>
-            +work-item-id
-            +create-work-item(workItemDescription)
-        }
-
-        class create-gitlab-work-item {
-            <<Provider Skill>>
-            +work-item-id
-            +create-work-item(workItemDescription)
-        }
-
-        class create-azure-devops-work-item {
-            <<Provider Skill>>
-            +work-item-id
-            +create-work-item(workItemDescription)
-        }
-
-        class create-jira-work-item {
-            <<Provider Skill>>
-            +work-item-id
-            +create-work-item(workItemDescription)
-        }
-
-        class manage-file-work-items {
-            <<Provider Skill>>
-            +work-item-id
-            +inventory-work-items(selection)
-            +transition-work-item(workItem, transition)
-            +reconcile-work-item-completion(workItem, deliveryEvidence)
-            +recover-work-item(workItem, recoveryEvidence)
-            +report-work-items(selection)
-        }
-
-        class manage-github-work-items {
-            <<Provider Skill>>
-            +work-item-id
-            +inventory-work-items(selection)
-            +transition-work-item(workItem, transition)
-            +reconcile-work-item-completion(workItem, deliveryEvidence)
-            +recover-work-item(workItem, recoveryEvidence)
-            +report-work-items(selection)
-        }
-
-        class manage-gitlab-work-items {
-            <<Provider Skill>>
-            +work-item-id
-            +inventory-work-items(selection)
-            +transition-work-item(workItem, transition)
-            +reconcile-work-item-completion(workItem, deliveryEvidence)
-            +recover-work-item(workItem, recoveryEvidence)
-            +report-work-items(selection)
-        }
-
-        class manage-azure-devops-work-items {
-            <<Provider Skill>>
-            +work-item-id
-            +inventory-work-items(selection)
-            +transition-work-item(workItem, transition)
-            +reconcile-work-item-completion(workItem, deliveryEvidence)
-            +recover-work-item(workItem, recoveryEvidence)
-            +report-work-items(selection)
-        }
-
-        class manage-jira-work-items {
-            <<Provider Skill>>
-            +work-item-id
-            +inventory-work-items(selection)
-            +transition-work-item(workItem, transition)
-            +reconcile-work-item-completion(workItem, deliveryEvidence)
-            +recover-work-item(workItem, recoveryEvidence)
-            +report-work-items(selection)
-        }
-    }
-
-    class set-solo-mode {
-        <<SKILL.md>>
-        <<Cross-group>>
-    }
-
-    class set-multitask-mode {
-        <<SKILL.md>>
-        <<Cross-group>>
-    }
-
-    class ResourceCoordination["resource-coordination"] {
-        <<Skill interface>>
-        +coordinate-shared-resource(resourceManifest)
-    }
-
-    class agent-claim {
-        <<SKILL.md>>
-        <<Cross-group>>
-    }
-
-    WorkItemCreators --> CreateWorkItem
-    WorkItemCreators --> CreateWorkItemFactory
-    DevBacklogSteward --> ManageWorkItem
-    DevBacklogSteward --> ManageWorkItemFactory
-    DevBacklogCoordinator --> ManageWorkItem
-    DevBacklogCoordinator --> ManageWorkItemFactory
-    DevOrchestrator --> ManageWorkItem
-    DevOrchestrator --> ManageWorkItemFactory
-    DevBacklogCoordinator o..> resolve-backlog-blockage : when a backlog blockage requires sequential recovery
-    DevBacklogCoordinator o..> set-solo-mode : when concurrent tasking is enabled and sequential blockage recovery begins
-    DevBacklogCoordinator o..> set-multitask-mode : when concurrent tasking is enabled and sequential recovery ends
-
-    CreateWorkItemFactory o--> create-file-work-item
-    CreateWorkItemFactory o--> create-github-work-item
-    CreateWorkItemFactory o--> create-gitlab-work-item
-    CreateWorkItemFactory o--> create-azure-devops-work-item
-    CreateWorkItemFactory o--> create-jira-work-item
-
-    create-file-work-item ..|> CreateWorkItem
-    create-github-work-item ..|> CreateWorkItem
-    create-gitlab-work-item ..|> CreateWorkItem
-    create-azure-devops-work-item ..|> CreateWorkItem
-    create-jira-work-item ..|> CreateWorkItem
-
-    ManageWorkItemFactory o--> manage-file-work-items
-    ManageWorkItemFactory o--> manage-github-work-items
-    ManageWorkItemFactory o--> manage-gitlab-work-items
-    ManageWorkItemFactory o--> manage-azure-devops-work-items
-    ManageWorkItemFactory o--> manage-jira-work-items
+    ProjectSpecificDirectives o..> manage-file-work-items : when Persistence is file
+    ProjectSpecificDirectives o..> manage-github-work-items : when Persistence is github
+    ProjectSpecificDirectives o..> manage-gitlab-work-items : when Persistence is gitlab
+    ProjectSpecificDirectives o..> manage-azure-devops-work-items : when Persistence is azure-devops
+    ProjectSpecificDirectives o..> manage-jira-work-items : when Persistence is jira
 
     manage-file-work-items ..|> ManageWorkItem
     manage-github-work-items ..|> ManageWorkItem
     manage-gitlab-work-items ..|> ManageWorkItem
     manage-azure-devops-work-items ..|> ManageWorkItem
     manage-jira-work-items ..|> ManageWorkItem
-
-    create-file-work-item ..> ResourceCoordination : when resource coordination is enabled
-    create-file-work-item o..> agent-claim : when classifying User Action Required and agent-claim is loaded
-    manage-file-work-items ..> ResourceCoordination : when resource coordination is enabled
-
-    note for CreateWorkItemFactory "One effective project selects one creation provider"
-    note for ManageWorkItemFactory "One effective project selects one management provider"
-    note for WorkItemCreators "Agents whose authorized task requires one durable work item"
-    note for create-azure-devops-work-item "Unsupported placeholder"
-    note for create-jira-work-item "Unsupported placeholder"
-    note for manage-azure-devops-work-items "Unsupported placeholder"
-    note for manage-jira-work-items "Unsupported placeholder"
-    note for ResourceCoordination "Cross-group interface"
 ```
 
-The abstract Skill interface nodes state what the applicable Agents can rely on without knowing the selected provider. Regular arrows show procedure-name dependencies on those contracts. The AGENTS.md factories hold the project-specific selection, and their open-diamond fan-outs enumerate exact provider names, although one effective project selects only one provider from each family. Every realization arrow points from a Provider Skill to the Skill interface whose members it supplies or respects.
+Persistence names the project selector, while manage-*-work-items names the provider-neutral management contract. Each provider supplies the complete set of lifecycle procedures, even when a provider reports that a requested operation is unsupported.
 
-The group keeps blockage analysis and sequential recovery in Backlog Management. set-solo-mode and set-multitask-mode belong to Concurrent Tasking because they disable or enable dispatch to secondary threads.
+### Scenario: Recovering From A Backlog Blockage
 
-Dev Backlog Coordinator loads each of the three skills by name when its matching condition occurs. The sibling skills do not name one another, so the Agent definition remains the visible place where the entry, recovery, and exit sequence is assembled.
+This scenario applies after the user or Dev Backlog Watchdog declares a backlog blockage. Dev Backlog Coordinator temporarily changes secondary-thread dispatch mode only when concurrent dispatch is configured, then runs the provider-neutral sequential recovery procedure.
 
-When Concurrent Tasking is not configured, no secondary-thread dispatch exists to change. resolve-backlog-blockage therefore remains usable without either dispatch-mode skill.
+```mermaid
+classDiagram
+    direction LR
+
+    class DevBacklogCoordinator {
+        <<Agent>>
+    }
+    class DevBacklogWatchdog {
+        <<Agent>>
+    }
+    class resolve-backlog-blockage {
+        <<SKILL.md>>
+        <<Agent Skill>>
+    }
+    class set-solo-mode {
+        <<SKILL.md>>
+        <<Cross-group>>
+    }
+    class set-multitask-mode {
+        <<SKILL.md>>
+        <<Cross-group>>
+    }
+
+    DevBacklogWatchdog o..> resolve-backlog-blockage : when a blockage criterion or active recovery applies
+    DevBacklogCoordinator o..> set-solo-mode : when concurrent dispatch is configured and recovery begins
+    DevBacklogCoordinator o..> resolve-backlog-blockage : when a backlog blockage is declared
+    DevBacklogCoordinator o..> set-multitask-mode : when concurrent dispatch is configured and recovery ends
+```
+
+The Agent definition owns this sequence, so the three skills do not need direct references to one another. resolve-backlog-blockage remains usable when no secondary-thread dispatch mechanism is configured.
+
+### Scenario: A File Provider Mutates Shared State
+
+This scenario applies when the file-backed creation or management provider needs the project-selected resource-coordination policy before mutating shared backlog state. AGENTS.md loads agent-claim when the project selects it, and the provider skills depend on its procedures under that condition.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class create-file-work-item {
+        <<Provider Skill>>
+    }
+    class manage-file-work-items {
+        <<Provider Skill>>
+    }
+    class ProjectSpecificDirectives["Project-specific directives"] {
+        <<AGENTS.md>>
+        <<routing>>
+        +route resource coordination => agent-claim
+    }
+    class agent-claim {
+        <<SKILL.md>>
+        <<Cross-group>>
+        +coordinate-shared-resource(resourceManifest)
+        +acquire-claim(scope)
+        +release-claim(claimId)
+    }
+
+    ProjectSpecificDirectives o..> agent-claim : when resource_coordination is agent-claim
+    create-file-work-item ..> agent-claim : when resource coordination is selected
+    manage-file-work-items ..> agent-claim : when resource coordination is selected
+```
 
 ## Skill Responsibilities
 
@@ -250,6 +300,7 @@ The provider relationships and procedure boundaries are grounded in these Agent 
 
 - [Dev Backlog Steward](../../agents/roles/dev-activities/dev-backlog-steward.role.yaml)
 - [Dev Backlog Coordinator](../../agents/roles/dev-activities/dev-backlog-coordinator.role.yaml)
+- [Dev Backlog Watchdog](../../agents/roles/dev-activities/dev-backlog-watchdog.role.yaml)
 - [Dev Orchestrator](../../agents/roles/dev-activities/dev-orchestrator.role.yaml)
 - [Resolve Backlog Blockage](../../skills/resolve-backlog-blockage/SKILL.md)
 - [Set Solo Mode](../../skills/set-solo-mode/SKILL.md)
@@ -264,4 +315,5 @@ The provider relationships and procedure boundaries are grounded in these Agent 
 - [Manage GitLab Work Items](../../skills/manage-gitlab-work-items/SKILL.md)
 - [Manage Azure DevOps Work Items](../../skills/manage-azure-devops-work-items/SKILL.md)
 - [Manage Jira Work Items](../../skills/manage-jira-work-items/SKILL.md)
+- [Coordinate Codex Work Items](../../skills/coordinate-codex-work-items/SKILL.md)
 - [Agent Claim](../../skills/agent-claim/SKILL.md)

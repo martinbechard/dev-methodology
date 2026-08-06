@@ -8,10 +8,13 @@ The application covers seven top-level comprehension groups and forty-three curr
 
 Every detailed group document contains:
 
-- one steady-state class diagram of the relevant Agent, AGENTS.md, SKILL.md, and Skill Group relationships;
+- an overall view when Agent groups, Skill Groups, or major cross-group dependencies are needed to establish the landscape;
+- scenario views that keep each detailed consumer, loading condition, interface, AGENTS.md route, and Provider Skill family together;
 - the current skill names and public procedure headings needed in that view;
 - a responsibility table for every skill whose primary direct group appears in the document; and
 - links to the Agent and skill definitions that authorize the model.
+
+The applied documents organize their diagrams around the capability and its use cases. Exact-name loading, conditional loading, project routing, and interface realization explain relationships inside those views; they are not substitute topics for the capability itself.
 
 Provider-family Skill interface nodes are abstract analysis contracts rather than additional entries in the maintained skill inventory. Their wildcard display labels identify the procedure family shared by the concrete Provider Skills. The adjacent AGENTS.md factory node owns project selection, while realization arrows show which providers satisfy the interface.
 
@@ -21,9 +24,10 @@ Each skill has one primary direct group. A skill repeated outside that group and
 
 ## 2. Applied Model Legend
 
-The applied diagrams use the relationship and member conventions defined by the reusable analysis method.
+The applied diagrams use the relationship and member conventions defined by the reusable analysis method. Each section first explains the capability or scenario being shown, then introduces the notation needed for that view.
 
 - A SKILL.md node uses the exact current kebab-case skill name.
+- An Agent Group is a labeled rectangle containing the actual Agent nodes that share a methodology role or participate in the same view. The rectangle does not create a superclass or share dependencies among its members.
 - A function member with parentheses represents a public procedure described by the skill.
 - A data member without parentheses represents an exposed definition, rule set, structure, or other non-procedural contract.
 - An empty member area means that the skill describes one procedure and its identity already names that operation.
@@ -35,10 +39,13 @@ The applied diagrams use the relationship and member conventions defined by the 
 - A dashed realization arrow with a hollow triangular arrowhead points from a Provider Skill to the Skill interface it implements. Realization is conformance, not loading.
 - An AGENTS.md factory is a separate routing node that selects one Provider Skill by exact name. It does not replace the Skill interface used by an Agent or another skill.
 - A Cross-group node repeats a skill outside its primary group because another group depends on it.
-- A dotted line represents conditional loading and states the condition on the line.
+- An arrow to an Agent Group or Skill Group summarizes one or more dependencies at that group boundary. It uses a regular line, dotted when conditional, because the group node is not an exact skill name loaded by the source.
+- A dotted line represents a conditional relationship and states the condition on the line. For a relationship to a SKILL.md node, that means conditional loading.
 - An open diamond represents an exact-name skill reference.
 - A regular arrow represents a procedure reference that does not name its implementation.
 - A solid diamond represents direct group membership or nested-group containment in a collapsed view. Containment does not assert that one member loads another.
+
+Labels use the most precise engineering term available. Transport identifies a concrete message-carrying mechanism such as stdio or WebSockets; MCP is identified as a protocol, and local command execution is described as command-line invocation rather than a command transport.
 
 The legend diagram combines the applied node and relationship forms without asserting one runtime workflow.
 
@@ -100,12 +107,11 @@ classDiagram
     ExampleAgent o--> direct-skill
     ExampleAgent o..> cross-group-skill : when the condition applies
     ExampleAgent --> ProcedureInterface
-    ExampleAgent --> ProcedureFactory
     ProcedureFactory o--> provider-skill
     provider-skill ..|> ProcedureInterface
 ```
 
-The solid-diamond lines describe the contents of Parent Group and Nested Group. The regular arrow from ExampleAgent to ProcedureInterface shows a procedure-name dependency on the abstract contract. The other regular arrow delegates project-specific selection to ProcedureFactory, the factory names one provider, and the realization arrow records provider conformance. A reader must not infer a dependency between direct-skill and nested-skill merely because both are contained by Parent Group.
+The solid-diamond lines describe the contents of Parent Group and Nested Group. The regular arrow from ExampleAgent to ProcedureInterface shows a procedure-name dependency on the abstract contract. The harness loads AGENTS.md automatically, so no Agent-to-ProcedureFactory arrow is drawn. The factory names one provider, and the realization arrow records provider conformance. A reader must not infer a dependency between direct-skill and nested-skill merely because both are contained by Parent Group.
 
 ## 3. Skill Group Registry
 
@@ -140,8 +146,8 @@ The group documents provide independent views of the seven methodology capabilit
 The applied model is complete when it describes the maintained skill inventory and its current relationships without relying on migration history.
 
 - **RULE: RULE-56** Each established skill group has an independent steady-state design
-  - **SYNOPSIS:** A reader can inspect one responsibility boundary without loading the other six group documents.
-  - **EXAMPLE:** Backlog Management shows its creation and management provider families without reproducing the Resource Coordination group inventory.
+  - **SYNOPSIS:** A reader can inspect one responsibility boundary without loading the other six group documents. The document establishes the overall landscape when needed and expands detailed relationships through concrete scenarios.
+  - **EXAMPLE:** Backlog Management shows its participating Agent groups, then expands work-item creation, work-item management, and blockage recovery without reproducing the Resource Coordination group inventory.
 
 - **RULE: RULE-57** Every skill has one primary direct group
   - **SYNOPSIS:** The registry and detailed documents assign each current skill package to one direct comprehension boundary.

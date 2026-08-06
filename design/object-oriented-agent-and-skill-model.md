@@ -10,6 +10,7 @@ It covers:
 - unconditional, conditional, procedure-mapped, and request-triggered skill use cases;
 - Agent Skills;
 - Injected Skills;
+- Agent Groups used to organize related Agent definitions;
 - Skill Groups and their expanded and collapsed diagram forms;
 - skill families and maintainable skill organization;
 - Skill interfaces and SKILL.md files;
@@ -22,6 +23,8 @@ The document explains relationships through examples while defining no schema, m
 The method concludes with an applied overview of the methodology skill groups. The detailed steady-state diagrams remain in separate group documents so a reader can use the method without loading the complete applied inventory.
 
 ## 1. Finality
+
+Finality states why the object-oriented analogy is useful for understanding Agent dependencies, skill dispatch, and skill organization.
 
 - **GOAL: GOAL-1** Use class designs to understand how Agents and skills are related
   - **SYNOPSIS:** The analysis makes Agent dependencies, procedure expectations, loading conditions, and AGENTS.md dispatch visible in one model.
@@ -44,6 +47,17 @@ Skill selection and skill loading are related but distinct. A declaration or req
 Every portable skill package stores its instructions in a file named SKILL.md. In this analysis, loading by file name means loading the package resolved from an exact skill name such as careful-coding. It does not mean that the shared literal filename SKILL.md uniquely identifies a skill.
 
 Part 2 introduces each node and relationship when the analysis first needs it. Loading and procedure arrows point from the referencing node to the referenced node. A realization arrow points from an implementing skill to the Interface Skill whose contract it supplies.
+
+An applied analysis uses this notation to explain the design rather than organizing the document around arrow types. The document progresses through two levels:
+
+1. Overall diagrams establish the Agent groups, Skill Groups, and major dependencies needed to understand the landscape.
+2. Scenario sections state a concrete situation, then keep its consumers, project routing, Interface Skills, and Provider Skills together.
+
+Exact-name loading, conditional loading, procedure references, and realization are properties of the relationships inside those views.
+
+An arrow to an Agent Group or Skill Group summarizes one or more relationships at the group level. Use a regular arrow for that summary and a dotted regular arrow when it applies conditionally. Do not use an open diamond merely because an underlying Agent eventually loads a named skill; the open diamond is reserved for a source node that itself knows the exact target skill name shown in the diagram.
+
+Use engineering terms for the mechanism actually shown. Reserve transport for a concrete communication mechanism that carries protocol messages, such as stdio or WebSockets. MCP is a protocol rather than a transport. A skill that invokes a local command is a command-line helper or local command invocation, not a command transport. Prefer direct descriptions such as invokes a local command or calls an MCP tool when those statements explain the dependency more accurately.
 
 ### 2.1 Showing A SKILL.md In A Diagram
 
@@ -179,7 +193,7 @@ Indirect loading separates the procedure an Agent requires from the project-spec
   - **EXAMPLE:** The Agent instruction only says to create a work item. The manage-work-item-gitlab skill explains the GitLab search, creation, and verification steps.
 
 - **RULE: RULE-4** AGENTS.md selects one of several implementations
-  - **SYNOPSIS:** AGENTS.md tells the Agent which skill to load when the work is needed.
+  - **SYNOPSIS:** Harness-loaded AGENTS.md names the skill that applies when the work is needed; the Agent definition does not reference AGENTS.md.
   - **EXAMPLE:** One project can say, “To create a new work item, use the manage-work-item-file skill.” Another can say, “To create a new work item, use the manage-work-item-gitlab skill.”
 
 The diagram uses method-like names to keep the routing relationship compact. AGENTS.md does not define the procedures; it only routes a procedure name to a project-specific skill, such as create-new-work-item to manage-work-item-gitlab. The procedure details belong to the selected SKILL.md. DII describes this indirect routing relationship in the analysis; it is not part of the AGENTS.md node’s stereotype.
@@ -205,7 +219,6 @@ classDiagram
         +create-new-work-item()
     }
 
-    BacklogManager --> project-specific-directives
     project-specific-directives o--> manage-work-item-gitlab
 
     note for BacklogManager "When a new enhancement is requested, create a new work item"
@@ -215,7 +228,7 @@ classDiagram
 - The project AGENTS.md says, “To create a new work item, use the manage-work-item-gitlab skill.”
 - The manage-work-item-gitlab SKILL.md has a Create New Work Item section that explains how to do that work in GitLab.
 
-The regular arrow shows that the Agent instruction asks for a new work item without naming a skill. The open-diamond arrow shows that AGENTS.md names the skill selected for the project. If a project stores work items in files, AGENTS.md can name manage-work-item-file instead. The Backlog Manager instruction remains unchanged.
+No arrow joins Backlog Manager to AGENTS.md because the harness loads project guidance automatically. The matching create-new-work-item wording connects the Agent instruction to the AGENTS.md route without making the Agent reference that file. The open-diamond arrow shows that AGENTS.md names the skill selected for the project. If a project stores work items in files, AGENTS.md can name manage-work-item-file instead. The Backlog Manager instruction remains unchanged.
 
 ### 2.6 Showing A Skill Interface In A Diagram
 
@@ -298,19 +311,17 @@ classDiagram
     }
 
     WorkItemCreator o--> manage-work-item
-    WorkItemCreator --> project-specific-directives
     project-specific-directives o--> manage-work-item-gitlab
     manage-work-item-gitlab ..|> manage-work-item
 ```
 
-Read the diagram as four related instructions:
+Read the diagram as three related instructions:
 
 - The Work Item Creator Agent directly loads manage-work-item-* and uses its public contract.
-- The Agent asks for a configured work-item provider without naming one.
 - The project AGENTS.md keeps the same routing annotation used for indirect loading and directly names manage-work-item-gitlab as the selected Provider Skill.
 - The selected Provider Skill realizes the manage-work-item-* interface.
 
-The factory analogy describes instruction selection rather than runtime object construction. AGENTS.md does not instantiate a provider object; it tells the Agent which provider SKILL.md to load. A different project can select another provider that realizes the same Interface Skill without changing the Agent’s direct dependency.
+The harness loads AGENTS.md automatically, so no Agent-to-AGENTS.md relationship is drawn. The factory analogy describes instruction selection rather than runtime object construction. AGENTS.md does not instantiate a provider object; it tells the Agent which provider SKILL.md to load. A different project can select another provider that realizes the same Interface Skill without changing the Agent’s direct dependency.
 
 #### Simplified View
 
@@ -525,7 +536,7 @@ AGENTS.md links a procedure name to a concrete SKILL.md. This keeps the project-
   - **SYNOPSIS:** The Agent retains newEnhancement() and its create-new-work-item() reference when project setup chooses another matching implementation.
   - **EXAMPLE:** Changing the AGENTS.md binding from manage-work-item-gitlab to manage-work-item-file does not change newEnhancement().
 
-Section 2.5 shows this binding as a regular arrow from Backlog Manager to the manage-work-item-* procedure family and an open-diamond arrow from AGENTS.md to manage-work-item-gitlab. The first reference preserves procedure-only knowledge in the Agent. The second reference records the exact skill name selected by project guidance.
+Section 2.5 shows the Agent instruction and the independent open-diamond arrow from AGENTS.md to manage-work-item-gitlab without inventing an Agent-to-AGENTS.md dependency. Section 2.7 adds the regular consumer-to-interface relationship when the complete factory pattern is in view. Together, those relationships preserve procedure-only knowledge in the Agent and record the exact skill name selected by project guidance.
 
 Skills injection is an instruction relationship. The model does not require a compiled interface object or a software dependency-injection container.
 
@@ -534,8 +545,8 @@ Skills injection is an instruction relationship. The model does not require a co
 Loading and invocation turn an AGENTS.md selection into action. The Agent reads the selected SKILL.md and follows its matching procedure only when that Skill interface is needed.
 
 - **PROCESS: PROCESS-4** Load the selected skill
-  - **SYNOPSIS:** The agent reads the SKILL.md named by AGENTS.md.
-  - **EXAMPLE:** The agent concludes, “AGENTS.md binds manage-work-item-* to manage-work-item-gitlab, so I will load that SKILL.md.”
+  - **SYNOPSIS:** The harness loads project guidance and makes the selected skill binding available; the agent then reads the selected SKILL.md when it needs the procedure.
+  - **EXAMPLE:** The harness supplies the manage-work-item-gitlab binding for manage-work-item-*, and the agent loads that SKILL.md when it must create a work item.
 
 - **PROCESS: PROCESS-5** Find the procedure with the shared name
   - **SYNOPSIS:** The loaded SKILL.md uses the same procedure name and explains the concrete steps.
@@ -545,15 +556,19 @@ Loading and invocation turn an AGENTS.md selection into action. The Agent reads 
   - **SYNOPSIS:** The implementing procedure reads the enhancement intent already held in Agent context and applies provider-specific steps.
   - **EXAMPLE:** The GitLab procedure reads Add a new Cancel button, then applies its own duplicate search, issue creation, and read-back rules.
 
+The following sequence is a runtime scenario for a project whose selected provider is manage-work-item-gitlab. It complements the static dependency views; it does not describe every provider configuration at once.
+
 ```mermaid
 sequenceDiagram
+    participant Harness
     participant Agent
     participant Guidance as AGENTS.md
     participant Skill as manage-work-item-gitlab SKILL.md
     participant GitLab
 
-    Agent->>Guidance: Resolve manage-work-item-*
-    Guidance->>Agent: Return selected skill manage-work-item-gitlab
+    Harness->>Guidance: Load project directives
+    Guidance->>Harness: Return manage-work-item-gitlab binding
+    Harness->>Agent: Provide selected skill binding
     Agent->>Skill: Load skill by name
     Skill->>Agent: Return section Create New Work Item
     Agent->>Skill: Follow create-new-work-item()
@@ -562,7 +577,7 @@ sequenceDiagram
     Skill->>Agent: Return created workitem
 ```
 
-Every message is solid. Direction and the Return prefix distinguish information coming back from an action. The Agent’s newEnhancement() behavior and create-new-work-item() reference stay the same when another matching skill is selected. The provider-specific actions come from the loaded SKILL.md.
+Every message is solid. Direction and the Return prefix distinguish information coming back from an action. The harness, rather than the Agent definition, loads AGENTS.md. The Agent’s newEnhancement() behavior and create-new-work-item() reference stay the same when another matching skill is selected. The provider-specific actions come from the loaded SKILL.md.
 
 ## 7. Data And Function Members In Skill Interfaces
 
@@ -639,13 +654,18 @@ classDiagram
     }
 
     class DeliverWorkitem {
-        <<AGENTS.md>>
+        <<Skill interface>>
         +deliverWorkitem(acceptedCommit)
     }
 
+    class project-specific-directives["Project-specific directives"] {
+        <<AGENTS.md>>
+        <<routing>>
+        +route deliverWorkitem => deliver-work-item-*
+    }
+
     class deliver-work-item-direct-main {
-        <<SKILL.md>>
-        <<Injectable Skill>>
+        <<Provider Skill>>
         +deliverWorkitem(acceptedCommit)
         +reconcileMain(acceptedCommit)
         +verifyIntegratedMain(integrationCommit)
@@ -653,8 +673,7 @@ classDiagram
     }
 
     class deliver-work-item-feature-branch {
-        <<SKILL.md>>
-        <<Injectable Skill>>
+        <<Provider Skill>>
         +deliverWorkitem(acceptedCommit)
         +publishCandidate(acceptedCommit)
         +runReviewAndCheckLoop(publication)
@@ -663,13 +682,15 @@ classDiagram
     }
 
     DevelopmentWorkflow --> DeliverWorkitem
-    DeliverWorkitem o--> deliver-work-item-direct-main
-    DeliverWorkitem o--> deliver-work-item-feature-branch
+    project-specific-directives o--> deliver-work-item-direct-main
+    project-specific-directives o--> deliver-work-item-feature-branch
+    deliver-work-item-direct-main ..|> DeliverWorkitem
+    deliver-work-item-feature-branch ..|> DeliverWorkitem
 
-    note for DeliverWorkitem "AGENTS.md selects one implementation"
+    note for project-specific-directives "AGENTS.md selects one implementation"
 ```
 
-The regular arrow shows that the development workflow knows Deliver Workitem by procedure name. The open-diamond arrows show the two exact skill names that AGENTS.md can select. The direct-main and feature-branch procedures remain different internally even though callers reach either one through the same procedure name.
+The regular arrow shows that the development workflow knows Deliver Workitem by procedure name. The open-diamond arrows show the two exact skill names that AGENTS.md can select, and the realization arrows show that both providers supply the delivery interface. No arrow joins the development workflow to AGENTS.md because the harness loads project guidance automatically. The direct-main and feature-branch procedures remain different internally even though callers reach either one through the same procedure name.
 
 ## 9. Agent Dependency Views
 
@@ -702,13 +723,18 @@ classDiagram
     }
 
     class DeliverWorkitem {
-        <<AGENTS.md>>
+        <<Skill interface>>
         +deliverWorkitem(acceptedCommit)
     }
 
+    class project-specific-directives["Project-specific directives"] {
+        <<AGENTS.md>>
+        <<routing>>
+        +route deliverWorkitem => deliver-work-item-feature-branch
+    }
+
     class deliver-work-item-feature-branch {
-        <<SKILL.md>>
-        <<Injectable Skill>>
+        <<Provider Skill>>
         +deliverWorkitem(acceptedCommit)
         +runReviewAndCheckLoop(publication)
         +host-state-decision-table
@@ -716,49 +742,58 @@ classDiagram
 
     CodingAgent o--> explain-code-fix
     CodingAgent --> DeliverWorkitem
-    DeliverWorkitem o--> deliver-work-item-feature-branch
+    project-specific-directives o--> deliver-work-item-feature-branch
+    deliver-work-item-feature-branch ..|> DeliverWorkitem
 ```
 
-The Agent points directly to explain-code-fix because its definition names that single-procedure skill. Its empty member area avoids repeating the procedure already identified by the operation-shaped skill name. The Agent points regularly to Deliver Workitem because it knows the procedure name. The AGENTS.md DII points by open diamond to the selected feature-branch skill.
+The Agent points directly to explain-code-fix because its definition names that single-procedure skill. Its empty member area avoids repeating the procedure already identified by the operation-shaped skill name. The Agent points regularly to Deliver Workitem because it knows the procedure name. AGENTS.md independently points by open diamond to the selected feature-branch skill, and the provider realizes the interface.
 
 The diagram explains dependencies and dispatch. It does not require the harness to construct software classes or imply an inheritance relationship.
 
-## 10. Agent Superclass Stand-Ins
+## 10. Agent Groups
 
-A shared relationship can appear once when many Agents reference the same skill in the same way. Drawing every Agent separately can hide the relationship behind repeated arrows.
+An Agent Group is a named set of Agent definitions that share a methodology role or participate in the same view. The group gives the reader a visible comprehension boundary while preserving each actual Agent and its own dependencies.
 
-A superclass stand-in is a diagram-compression device. It names the set of applicable Agents and carries their shared relationship. It is not a conceptual Agent definition and does not assert inheritance among those Agents.
+- **RULE: RULE-38** An Agent Group contains actual Agent nodes
+  - **SYNOPSIS:** Draw a labeled rectangle around the applicable Agents and leave their member areas empty when the view needs only their identities and dependencies.
+  - **EXAMPLE:** A Structured Artifact Review Agents rectangle can contain Dev Artifact Reviewer, Dev Code Reviewer, Dev Verifier, Dev Prompt Reviewer, and Dev Merge Coordinator.
 
-- **RULE: RULE-38** A superclass stand-in represents Agents that share one relationship
-  - **SYNOPSIS:** The stand-in replaces repeated Agent nodes only when every represented Agent reaches the same referenced node through the same reference form.
-  - **EXAMPLE:** Structured Artifact Reviewers can stand in for every reviewer that names review-structured-artifact directly.
+- **RULE: RULE-39** An Agent Group does not create an Agent type
+  - **SYNOPSIS:** The rectangle records membership in a comprehension set without inventing a superclass, shared runtime object, or inheritance relationship.
+  - **EXAMPLE:** Dev Code Reviewer and Dev Verifier can appear in the same review group while retaining different instructions and skill dependencies.
 
-- **RULE: RULE-39** A superclass stand-in does not assert Agent inheritance
-  - **SYNOPSIS:** The stand-in compresses the picture without claiming that the represented Agents inherit purpose, instructions, state, or behavior from a repository-defined base Agent.
-  - **EXAMPLE:** A code reviewer and a methodology artifact reviewer can share the stand-in without becoming subclasses of one another or of a generated Reviewing Agent.
-
-- **RULE: RULE-40** A stand-in is named after its applicability set
-  - **SYNOPSIS:** Its name describes which Agents share the relationship and avoids invented runtime behavior.
-  - **EXAMPLE:** Structured Artifact Reviewers is clearer than an invented Agent class with methods that do not exist in the Agent definitions.
+- **RULE: RULE-40** Dependencies remain attached to the Agent that owns them
+  - **SYNOPSIS:** Draw each dependency from the applicable Agent node. A shared group box does not mean that every member loads every skill shown near the group.
+  - **EXAMPLE:** Dev Verifier can conditionally load verify-end-to-end-workflow while Dev Code Reviewer in the same group does not.
 
 ```mermaid
 classDiagram
     direction LR
 
-    class StructuredArtifactReviewers {
-        <<Agent superclass stand-in>>
-        +represents applicable reviewing Agents
+    namespace StructuredArtifactReviewAgents["Structured Artifact Review Agents"] {
+        class DevCodeReviewer {
+            <<Agent>>
+        }
+        class DevVerifier {
+            <<Agent>>
+        }
     }
 
-    class review-structured-artifact {
+    class review-code-with-evidence {
         <<SKILL.md>>
         <<Agent Skill>>
     }
 
-    StructuredArtifactReviewers o--> review-structured-artifact
+    class test-strategy {
+        <<SKILL.md>>
+        <<Agent Skill>>
+    }
+
+    DevCodeReviewer o--> review-code-with-evidence
+    DevVerifier o--> test-strategy
 ```
 
-The open-diamond arrow says that every represented Agent names review-structured-artifact directly. No inheritance arrows are needed because the stand-in exists only to avoid drawing the same reference many times.
+The namespace renders the visible group rectangle. The two open-diamond arrows preserve the separate exact-name dependencies declared by the Agent definitions.
 
 ## 11. Constraints
 
@@ -772,9 +807,9 @@ The constraints keep the class analogy focused on skill loading, substitution, a
   - **SYNOPSIS:** A shared procedure name stabilizes the invoker. It does not make the file and GitLab procedures identical internally.
   - **EXAMPLE:** create-new-work-item() can produce a repository-backed record through manage-work-item-file and a GitLab issue through manage-work-item-gitlab while each procedure preserves provider-accurate evidence.
 
-- **RULE: RULE-41** A superclass stand-in is not an injection mechanism
-  - **SYNOPSIS:** A stand-in compresses repeated Agent relationships. An AGENTS.md DII selects a SKILL.md implementation for a procedure name.
-  - **EXAMPLE:** Structured Artifact Reviewers can summarize exact-name references to review-structured-artifact, while Project-specific directives still select a Provider Skill for manage-work-item-*.
+- **RULE: RULE-41** Agent grouping is independent of skill injection
+  - **SYNOPSIS:** An Agent Group organizes Agent definitions for comprehension. AGENTS.md separately selects a Provider Skill for a shared procedure interface.
+  - **EXAMPLE:** Work-item management Agents can share one group rectangle while Project-specific directives select manage-gitlab-work-items for the manage-*-work-items interface.
 
 - **RULE: RULE-23** The model remains conceptual
   - **SYNOPSIS:** The document explains the vocabulary and relationships without prescribing a schema, migration order, or repository change sequence.
@@ -783,6 +818,18 @@ The constraints keep the class analogy focused on skill loading, substitution, a
 ## 12. Definition Of Good
 
 A good model makes skill dependencies, dispatch, and organization understandable and traceable without implying unsupported runtime behavior.
+
+- **RULE: RULE-66** Applied views progress from the system landscape to concrete scenarios
+  - **SYNOPSIS:** Overall diagrams establish the relevant Agent groups, Skill Groups, and major dependencies. Scenario sections then expand the relationships that need their consumers, routing, interfaces, providers, and loading conditions shown together.
+  - **EXAMPLE:** A Concurrent Tasking overview shows Dev Activities Agents, Backlog Management Agents, and the major Skill Groups before a resource-coordination scenario expands agent-claim, its consumers, AGENTS.md routing, and the available claim-helper providers.
+
+- **RULE: RULE-67** A scenario section explains its situation before its notation
+  - **SYNOPSIS:** The opening states what the scenario represents and why its relationships matter before discussing arrow forms or exceptions. An absent alternative or unsupported path is mentioned only when it changes how the shown scenario must be understood.
+  - **EXAMPLE:** A resource-coordination section first says that it applies when project configuration selects agent-claim, then explains which skills consume the policy and how AGENTS.md selects the claim helper.
+
+- **RULE: RULE-68** Technical terms name the engineering mechanism shown
+  - **SYNOPSIS:** Use transport only for a concrete communication mechanism that carries protocol messages. Name protocols, command invocation, file access, and tool calls according to what they are instead of grouping them under a convenient but inaccurate abstraction.
+  - **EXAMPLE:** “Command transport” and “MCP transport” are bad descriptions: a local command is not a transport, and MCP is a protocol. State instead that agent-claim-command invokes a local command-line helper and agent-claim-mcp calls MCP tools. If the MCP connection uses stdio or WebSockets, those mechanisms can be identified separately as transports.
 
 - **RULE: RULE-52** Class views make dependency and dispatch paths understandable
   - **SYNOPSIS:** A reader can identify which skills an Agent names, which procedures it expects, which conditions affect loading, and where AGENTS.md selects an implementation.
@@ -864,7 +911,7 @@ The glossary defines the relationship and diagram terms used by the analysis aft
 | Nested set containment | A solid-diamond line in a collapsed diagram that displays one Skill Group nested in another. The parent’s complete skill set includes the child’s complete skill set independently of the chosen diagram form. | Concurrent Tasking *-- Resource Coordination displays Resource Coordination as a nested group whose skills belong to the complete Concurrent Tasking set. |
 | Mermaid display label | The visible analysis identity used when Mermaid requires a different internal class identifier. | The internal manage-work-item identifier displays manage-work-item-*. |
 | Skill hierarchy | An organizational view of Skill Groups, families, responsibilities, procedures, loading references, and dependencies. It does not by itself assert software inheritance. | work-item-base, work-item-dispatch, and work-item-monitor form one Skill Group whose members are loaded in different combinations by two Agents. |
-| Agent superclass stand-in | A diagram-compression node representing several Agents that share the same relationship. It does not assert inheritance. | Structured Artifact Reviewers represents reviewers that all name review-structured-artifact. |
+| Agent Group | A named comprehension set displayed as a rectangle containing actual Agent nodes. Membership does not create a superclass or assign one member’s dependencies to another. | Structured Artifact Review Agents contains Dev Code Reviewer and Dev Verifier while each retains its own skill references. |
 | Empty SKILL.md node | A concrete skill class with no displayed members because the SKILL.md describes one procedure and its identity already represents that operation. | verify-documentation-page under Documentation Agent. |
 
 ## Authoritative Inputs
