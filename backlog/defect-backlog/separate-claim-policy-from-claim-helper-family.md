@@ -1,0 +1,113 @@
+# Separate Claim Policy From Claim Helper Family
+
+Status: Ready
+
+Type: Defect
+
+Provider: file
+
+Work Item ID: separate-claim-policy-from-claim-helper-family
+
+Completion: direct-main
+
+## Summary
+
+Keep `agent-claim` as the resource-coordination policy, introduce an exact `agent-claim-helper` Interface Skill, and rename its command-line and MCP providers so policy, interface, and implementation identities are no longer conflated.
+
+## Context
+
+`agent-claim` owns claim events, scope, conflict, deadline, uncertainty, and cleanup policy. `agent-claim-command` and `agent-claim-mcp` do not provide alternative policies; they explain two ways to execute the same helper operations. The current `agent-claim-*` family label therefore overlaps the policy skill's name and makes it easy to mistake `agent-claim` for a provider or the helper implementations for policy owners.
+
+The corrected structure is:
+
+- Policy skill: `agent-claim`
+- Interface Skill: `agent-claim-helper`
+- Family notation: `agent-claim-helper-*`
+- Providers: `agent-claim-helper-command` and `agent-claim-helper-mcp`
+
+Source inspection also found `agent-claim` telling callers to read status through the same configured "transport." The command-line helper is not a transport, and MCP is a protocol. Current test and design names repeat the same inaccurate shorthand.
+
+## Source Evidence
+
+On 2026-08-05, the user requested further naming and responsibility changes to be logged as work items, required Provider Skills to match their interface stem, and reiterated that "transport" must be reserved for an actual transport layer. The current policy/helper boundaries are in `skills/agent-claim/SKILL.md`, `skills/agent-claim-command/SKILL.md`, `skills/agent-claim-mcp/SKILL.md`, and the Resource Coordination scenario in `design/skill-groups/concurrent-tasking.md`.
+
+## Requirements
+
+- Keep `agent-claim` responsible only for resource-coordination and claim policy.
+- Add `skills/agent-claim-helper/SKILL.md` as the exact Interface Skill publishing the common helper operations, inputs, structured outcomes, and uncertain-outcome reconciliation contract.
+- Rename the two provider packages and frontmatter identities to `agent-claim-helper-command` and `agent-claim-helper-mcp`.
+- Keep the command provider responsible for local command invocation and the MCP provider responsible for MCP tool calls and protocol-specific result handling.
+- Preserve the MCP provider's current unavailable-until-parity boundary; interface conformance does not imply runtime availability.
+- Make Project Configurator and generated AGENTS.md routing select exactly one verified helper provider only when resource coordination selects `agent-claim`.
+- Replace inaccurate non-network `transport` wording with `claim helper`, `command-line invocation`, `MCP protocol`, `tool call`, or an actual named transport such as stdio or WebSockets when one is evidenced.
+- Rename helper-focused tests and documentation whose `transport` label groups command invocation with MCP rather than testing an actual communication transport.
+- Update interface, policy, provider, setup, routing, migration, and unavailable-provider evaluations and stale-name checks.
+
+## Acceptance Criteria
+
+- `agent-claim`, `agent-claim-helper`, `agent-claim-helper-command`, and `agent-claim-helper-mcp` have distinct, non-overlapping documented responsibilities.
+- The helper providers share the complete `agent-claim-helper-` stem and realize the same helper contract.
+- Project guidance loads policy plus one verified helper provider when selected and loads neither when resource coordination is none.
+- No maintained source or generated output uses the retired helper identities.
+- Maintained resource-coordination documentation does not call command invocation or MCP itself a transport.
+- Command and MCP parity tests retain every existing operation and structured outcome, including the truthful unavailable MCP boundary.
+- Focused setup, helper, policy, bundle, migration, and stale-name checks pass.
+
+## Dependencies
+
+None.
+
+## Verification
+
+- Run the governed-definition pre-mutation check for every canonical source listed below.
+- Validate the policy, interface, both renamed providers, and Project Configurator package.
+- Run claim-policy tests, renamed helper parity tests, project-configuration tests, bundle tests, and evaluation coverage checks.
+- Regenerate skill metadata, Agent guidance, native adapters, hierarchy views, and documentation, then run freshness checks.
+- Search maintained sources for the retired helper identities and inaccurate `command transport` or `MCP transport` wording.
+- Run `git diff --check` and obtain fresh independent methodology review and verification.
+
+## Open Questions
+
+None. An implementation may name an evidenced stdio or WebSocket transport separately, but the provider identities remain command-line and MCP helper implementations.
+
+## Governed Definition Approval
+
+### Governed Canonical Sources
+
+- skills/agent-claim/SKILL.md
+- skills/agent-claim-command/SKILL.md
+- skills/agent-claim-mcp/SKILL.md
+- skills/agent-claim-helper/SKILL.md
+- skills/agent-claim-helper-command/SKILL.md
+- skills/agent-claim-helper-mcp/SKILL.md
+- skills/create-project-configuration/SKILL.md
+- agents/roles/project-setup/project-configurator.role.yaml
+
+### Allowed Dependent Artifacts
+
+- AGENTS.md
+- PROJECT.yaml
+- README.md
+- skills/agent-claim-command/scripts/claim.py moved with the renamed command provider.
+- scripts/render-agents-technology-skills.py
+- scripts/test_agent_claim.py
+- scripts/test_agent_claim_transport.py renamed to a claim-helper test identity.
+- scripts/test_bundle_content.py
+- design/object-oriented-agent-and-skill-model.md
+- design/object-oriented-skill-group-models.md
+- design/skill-groups/concurrent-tasking.md
+- design/agentic-configuration.html
+- design/orchestrated-development-lifecycle.html
+- evals/cases.yaml
+- evals/skill-probes.yaml
+- evals/workflow-packs.yaml
+- Provider package `agents/openai.yaml` metadata moved or generated for only the approved old and new package identities.
+- Supported generated Agent, skill, hierarchy, catalog, evaluation, and native-adapter outputs produced from the approved canonical sources.
+
+### Approval Resolution
+
+Approved at creation on 2026-08-05 by the user's request to identify naming and responsibility changes and log them as additional work items, including the directions that providers match their interface stem and engineering terms name the actual mechanism. Approval is limited to the exact governed canonical paths above and the stated rename destinations.
+
+## Notes
+
+The Running `store-agent-claim-state-in-gitignored-project-directory` item changes the same policy and helper sources. That is a current exact-path and integration overlap to coordinate; it is not a hard prerequisite because this item can complete independent discovery and reconcile from whichever accepted claim-state version reaches main first.
