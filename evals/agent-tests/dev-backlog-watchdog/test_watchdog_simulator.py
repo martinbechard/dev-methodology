@@ -679,9 +679,15 @@ class WatchdogSimulatorTests(unittest.TestCase):
 
         baseline = dict(self.cases["terminal-completely-reconciled"]["item"])
         cases = (
+            ("task identity", {"root_task": ""}, "identify canonical Codex task"),
             ("provider", {"provider_terminal_evidence": False}, "confirm provider terminal evidence"),
             ("delivery", {"code_merged": False}, "confirm merged delivery"),
             ("claim", {"live_claims": ["work-item:live"]}, "release live claim"),
+            (
+                "missing claim release",
+                {"claim_applicable": True, "released_claims": []},
+                "reconcile applicable terminal claim",
+            ),
             ("worktree", {"worktree_disposition": "clean-removable"}, "remove clean terminal worktree"),
             ("delivery branch", {"delivery_branch_disposition": "unmerged"}, "reconcile delivery branch disposition"),
             ("cleanup branch", {"cleanup_branch_disposition": "cleanup-eligible"}, "clean up terminal branch"),
@@ -699,6 +705,28 @@ class WatchdogSimulatorTests(unittest.TestCase):
                     expected_action,
                     result.terminal_reconciliations[0].actionable_reasons,
                 )
+
+    def test_failed_and_abandoned_do_not_require_merged_delivery(self) -> None:
+        """Failed and Abandoned reconcile terminal evidence without inventing merge."""
+
+        case = self.cases["terminal-failed-and-abandoned"]
+        for item_evidence in case["items"]:
+            with self.subTest(status=item_evidence["status"]):
+                result = WatchdogCycle().evaluate((WorkItem(**item_evidence),))
+                reconciliation = result.terminal_reconciliations[0]
+                self.assertEqual("ALERT", result.status)
+                self.assertEqual(
+                    (case["expectedAction"],),
+                    reconciliation.actionable_reasons,
+                )
+                self.assertNotIn(
+                    "confirm merged delivery",
+                    reconciliation.actionable_reasons,
+                )
+
+                archived = {**item_evidence, "codex_archived": True}
+                archived_result = WatchdogCycle().evaluate((WorkItem(**archived),))
+                self.assertEqual("NO_ACTION", archived_result.status)
 
     def test_preservation_alert_repeats_only_when_evidence_changes(self) -> None:
         """Unchanged acknowledged retention stays quiet; changed evidence alerts again."""

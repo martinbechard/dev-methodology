@@ -1925,6 +1925,7 @@ class BundleContentTests(unittest.TestCase):
                 "terminal-aggregate-all-anomalies",
                 "terminal-complete-no-action",
                 "terminal-preservation-alert-deduplication",
+                "terminal-failed-abandoned-status-aware",
             }
             <= scenario_ids
         )

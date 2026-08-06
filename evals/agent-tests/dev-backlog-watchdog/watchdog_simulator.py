@@ -102,6 +102,7 @@ class WorkItem:
     blocker_exit_satisfied: bool = False
     provider_terminal_evidence: bool = False
     code_merged: bool = False
+    claim_applicable: bool = False
     released_claims: tuple[str, ...] = ()
     worktree: str = ""
     worktree_disposition: str = ""
@@ -154,6 +155,8 @@ class TerminalReconciliation:
     lifecycle_status: str
     provider_terminal_evidence: bool
     code_merged: bool
+    claim_applicable: bool
+    claim_reconciliation_complete: bool
     live_claims: tuple[str, ...]
     released_claims: tuple[str, ...]
     worktree: str
@@ -415,12 +418,20 @@ class WatchdogCycle:
         """Evaluate every terminal gate while leaving all observed state unchanged."""
 
         reasons: list[str] = []
+        if not item.root_task.strip():
+            reasons.append("identify canonical Codex task")
         if not item.provider_terminal_evidence:
             reasons.append("confirm provider terminal evidence")
-        if not item.code_merged:
+        if item.status == "Completed" and not item.code_merged:
             reasons.append("confirm merged delivery")
         if item.live_claims:
             reasons.append("release live claim")
+        elif item.claim_applicable and not item.released_claims:
+            reasons.append("reconcile applicable terminal claim")
+        claim_reconciliation_complete = bool(
+            not item.live_claims
+            and (not item.claim_applicable or item.released_claims)
+        )
 
         if item.worktree_disposition == "clean-removable":
             reasons.append("remove clean terminal worktree")
@@ -467,6 +478,8 @@ class WatchdogCycle:
             lifecycle_status=item.status,
             provider_terminal_evidence=item.provider_terminal_evidence,
             code_merged=item.code_merged,
+            claim_applicable=item.claim_applicable,
+            claim_reconciliation_complete=claim_reconciliation_complete,
             live_claims=tuple(item.live_claims),
             released_claims=tuple(item.released_claims),
             worktree=item.worktree,
@@ -516,6 +529,9 @@ class WatchdogCycle:
                 "provider_terminal_evidence="
                 f"{str(reconciliation.provider_terminal_evidence).lower()}",
                 f"code_merged={str(reconciliation.code_merged).lower()}",
+                f"claim_applicable={str(reconciliation.claim_applicable).lower()}",
+                "claim_reconciliation_complete="
+                f"{str(reconciliation.claim_reconciliation_complete).lower()}",
                 f"live_claims={reconciliation.live_claims or ('none',)}",
                 f"released_claims={reconciliation.released_claims or ('none',)}",
                 f"worktree={reconciliation.worktree or 'none'}",

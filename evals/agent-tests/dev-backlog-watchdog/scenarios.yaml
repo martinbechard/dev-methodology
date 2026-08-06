@@ -170,3 +170,17 @@ scenarios:
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, singular-alert, output-contract-presence]
     expectedOutputs: [cycle result, actionable parent alert]
     expectedTerminalStatus: PASS
+  - id: terminal-failed-abandoned-status-aware
+    priority: 13
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Reconcile Failed and Abandoned terminal tasks without inventing a merged delivery gate.
+    initialState: Failed and Abandoned tasks have valid terminal evidence, complete claim and cleanup evidence, resolved notifications, and pending archival.
+    task: Require task archival, then permit NO_ACTION after archival without requiring merged delivery.
+    targetSkills: [coordinate-work-items, coordinate-codex-tasks]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Require valid terminal evidence, Require canonical Codex task identity, Reconcile applicable claim evidence, Reconcile cleanup notification and archival disposition, Apply merged delivery only to Completed, Preserve observed state byte-identically]
+    forbiddenBehaviors: [Require code merged for Failed or Abandoned, Return NO_ACTION with missing task identity, Return NO_ACTION with incomplete applicable claim reconciliation, Mutate provider task claim Git or runtime state]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, output-contract-presence]
+    expectedOutputs: [cycle result, actionable parent alert]
+    expectedTerminalStatus: PASS
