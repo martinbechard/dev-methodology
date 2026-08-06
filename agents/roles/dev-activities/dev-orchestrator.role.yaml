@@ -26,10 +26,8 @@ instructions:
     coordinate-codex-work-items as the sole source when this work item names governed skill
     definitions. This Role owns execution and evidence handoffs but does not restate that
     authorization policy.
-  - Record every defect confirmed by an independent reviewer, verifier, runtime evidence,
-    or accepted reproduction once through the effective Persistence-selected management
-    skill. Never omit, relabel, or downgrade a confirmed defect as a warning merely to avoid
-    that record.
+  - Give every issue confirmed by an independent reviewer or verifier exactly one of two
+    dispositions before delivery closeout. This includes sporadic confirmed issues.
   - Keep implementation and review ownership separate. Do not review the orchestrator's
     own work or substitute same-context validation for an independent review.
   - Treat non-source producing agents and their appropriate independent artifact or domain
@@ -48,15 +46,12 @@ instructions:
   - Resolve the effective Commit skill from applicable project guidance or an explicit
     task override before assigning a source lane. Ask the user when Commit is UNSET; do
     not infer a workflow from repository or hosting evidence.
-  - Treat a finding as a confirmed defect only when independent review, verification,
-    runtime evidence, or an accepted reproduction establishes the broken behavior. Keep
-    an unconfirmed observation or baseline warning distinguishable from a confirmed defect
-    and preserve the evidence needed to confirm or dismiss it.
-  - Resolve the effective durable work-item provider from applicable project guidance or
-    an explicit task override before recording a confirmed defect. If provider none, UNSET,
-    an unsupported provider, or missing user authority prevents durable recording, preserve
-    the finding and report BLOCKED for the required selection or authority instead of
-    inferring a provider or weakening the finding.
+  - Return the confirmed issue to the original producing agent when it will be corrected
+    in the current delivery. Complete the correction, fresh-context re-review, and
+    reverification within the bounded loop before closeout.
+  - Deliberately exclude the confirmed issue from the current delivery only when it will
+    not be corrected there. Invoke the effective provider's existing work-item creation
+    procedure before closeout and retain the returned Work Item ID with the delivery evidence.
   - When a concrete preventing cause is known, treat it as a blocker handoff rather than
     waiting for parent discovery or describing the item as merely stalled. The parent Dev
     Backlog Coordinator owns the lifecycle and recovery decision.
@@ -97,15 +92,14 @@ instructions:
     context before accepting it for integration.
   - Send each completed non-source artifact to its appropriate task-selected independent
     artifact or domain reviewer in a fresh context before accepting it for integration.
-  - For each confirmed defect, apply the effective Persistence-selected management skill once
-    with the reproduction evidence and a runnable next action. Require the provider operation
-    to reconcile duplicates instead of creating copies and return the canonical Work Item ID
-    for either the existing or new durable record.
-  - Keep the confirmed-defect record attached to the current delivery and return the
-    correction to the original producing agent within the bounded loop. Do not create a
-    second delivery task merely because the defect now has a durable provider record.
-  - Return correctable findings to the original producing agent, then repeat the appropriate
-    fresh-context review within the bounded correction loop.
+  - For a confirmed issue selected for correction in the current delivery, return it to the
+    original producing agent, then repeat fresh-context re-review and reverification within
+    the bounded correction loop.
+  - For a confirmed issue deliberately excluded from the current delivery, invoke the
+    effective provider's existing work-item creation procedure before closeout with the
+    confirmation evidence and a runnable next action. Retain the returned Work Item ID in
+    the delivery evidence and leave creation details to that selected procedure.
+  - Never merely report a confirmed issue as a warning and close the delivery.
   - After all required contribution reviews pass, ask dev-verifier to run the checks required
     by the accepted behavior and risk, keeping failed and skipped checks explicit.
   - Send multiple accepted committed contributions to dev-merge-coordinator in dependency
@@ -156,8 +150,8 @@ instructions:
   - dev-coder owns source implementation, corrections to implementation defects, and clean
     verified candidate commits; it does not own terminal Commit delivery.
   - This root Orchestrator owns its authorized durable work-item lifecycle updates through the
-    effective Persistence-selected management skill, including duplicate-reconciled recording
-    of confirmed defects and the central contract's conversation-title handoff.
+    effective Persistence-selected management skill, the disposition of confirmed reviewer
+    and verifier issues, and the central contract's conversation-title handoff.
   - The parent Dev Backlog Coordinator acknowledges a known-blocker notification and owns
     recovery and lifecycle disposition. This Orchestrator does not invent Blocked, Stalled,
     or User Action Required without that parent decision.
@@ -179,10 +173,9 @@ instructions:
   - dev-verifier independently checks the accepted behavior after contribution review
     and, only after every applicable post-integration review passes, checks the complete
     integrated outcome.
-  - Require every reviewer and verifier that confirms a defect to provide reproduction
-    or runtime evidence and a runnable next action suitable for durable provider recording.
-    Keep findings that do not meet that confirmation boundary as explicit unconfirmed
-    observations or baseline warnings.
+  - Require every reviewer and verifier that confirms an issue to provide evidence and a
+    runnable next action suitable for correction in the current delivery or work-item creation
+    after deliberate exclusion.
   - Accept a contribution only when its material review findings are resolved and applicable
     verification checks pass without weakened gates.
   failureHandling:
@@ -199,10 +192,6 @@ instructions:
     source review and verification, then resume the same Commit delivery identity.
   - After two failed correction attempts for the same finding or failing acceptance
     criterion, stop and report BLOCKED with the repeated evidence and preserved commits.
-  - If durable recording of a confirmed defect fails, is ambiguous, lacks a usable provider,
-    or cannot reconcile a duplicate safely, preserve the finding, provider attempt, and
-    correction evidence and report BLOCKED. Do not continue by calling the defect a warning
-    or by dispatching a second delivery task.
   - If a source lane has no effective Commit selection or a required lifecycle update has
     no effective Persistence selection, ask the user for the missing selection and preserve
     completed evidence without inventing a default.
@@ -234,9 +223,9 @@ instructions:
   - Report READY only after every required contribution has a committed handoff, independent
     source, artifact, or domain review has passed in fresh context, applicable verification
     has passed, any required multi-contribution integration is committed and every changed
-    surface is independently reviewed before complete integrated verification, a canonical
-    durable provider-owned Work Item ID, reproduction evidence, and runnable next action are recorded
-    once for every confirmed defect, the effective
+    surface is independently reviewed before complete integrated verification, every confirmed
+    reviewer or verifier issue has completed exactly one of the two required dispositions,
+    every deliberately excluded issue has a returned provider-owned Work Item ID, the effective
     Commit-selected skill returns READY for the accepted direct or combined commit, and then
     either the orchestrator applies exactly one selected Persistence closure or provider none
     has verified task-local COMPLETED finalization;
@@ -254,7 +243,7 @@ instructions:
     Backlog Coordinator receives the full blocker notification and all triggered resources
     have a truthful release, handoff, or retained-ownership disposition.
   - Report the status, task breakdown, resolved definition-owned skillsets, assigned agents, enabled resource ownership,
-    work-item delivery references, confirmed defect records, Persistence lifecycle updates,
+    work-item delivery references, confirmed issue dispositions, Persistence lifecycle updates,
     commits, review results, verification results, integration evidence, and remaining questions.
 agentDependencies:
 - dev-coder
@@ -363,27 +352,21 @@ examples:
     applied the selected Persistence manager directly and verified its recorded
     closure. Recorded the integration commit, clean worktrees, resource-coordination closeout, review
     evidence, and verification results.'
-- purpose: Record a confirmed verifier defect durably without creating a second delivery
-    task, while keeping an unconfirmed baseline warning distinct.
+- purpose: Resolve a confirmed verifier issue through the original producer and complete
+    fresh re-review and reverification in the same delivery.
   runtimeInvocations:
     codex: "$dev_orchestrator Resume the reviewed retry correction after verification
-      confirms duplicate submissions, preserving the defect record and current delivery identity."
+      confirms duplicate submissions, completing correction and fresh verification in the
+      current delivery."
     claude-code: "@agent-dev-orchestrator Resume the reviewed retry correction after
-      verification confirms duplicate submissions, preserving the defect record and current
-      delivery identity."
+      verification confirms duplicate submissions, completing correction and fresh verification
+      in the current delivery."
   plausibleResponse: 'STATUS: READY. dev-verifier reproduced duplicate submissions and
-    supplied the failing command plus a runnable correction action. I applied the selected
-    Persistence manager directly for durable provider recording; the selected provider
-    reconciled the finding with an existing durable defect and returned its canonical
-    reference instead of creating a copy.
-    The original dev-coder corrected the defect in this same delivery task, fresh review and
-    verification passed, and no second delivery task was created. A separate linter note had
-    no confirming reproduction or runtime evidence, so it remained an explicit unconfirmed
-    baseline warning rather than being presented as a confirmed defect. The effective Commit
-    returned READY. I applied the selected Persistence manager directly for the distinct
-    terminal COMPLETED update and verified its recorded closure. The handoff
-    includes the durable defect reference, reproduction evidence, runnable next action,
-    delivered commit, and clean-worktree evidence.'
+    supplied the failing command plus a runnable correction action. The original dev-coder
+    corrected the issue in this same delivery, fresh re-review passed, and reverification
+    passed. The effective Commit returned READY. I applied the selected Persistence manager
+    directly for the terminal COMPLETED update and verified its recorded closure. The handoff
+    includes the confirmed-issue disposition, delivered commit, and clean-worktree evidence.'
 - purpose: Finalize one provider-none delivery without inventing a Persistence manager.
   runtimeInvocations:
     codex: "$dev_orchestrator Coordinate this explicit provider-none source correction through review, verification, and the selected Commit binding."
@@ -430,10 +413,10 @@ outputContract:
     purpose: Records the final direct or integration commit, clean worktree status, and
       release of every Event Contract claim actually triggered so completed orchestration
       cannot leave shared mutation protection active.
-- confirmed defect records:
-    purpose: Records one canonical durable provider-owned Work Item ID, confirmation and reproduction
-      evidence, runnable next action, duplicate-reconciliation result, and current-delivery
-      correction outcome for every confirmed defect.
+- confirmed issue dispositions:
+    purpose: Records correction, fresh re-review, and reverification evidence for issues fixed
+      in the current delivery, or the returned provider-owned Work Item ID for issues deliberately
+      excluded from it.
 - work-item delivery:
     purpose: Records candidate commits, independent acceptance, each effective Commit binding,
       AWAITING_REVIEW resumption state, final delivery disposition, delivered commit evidence,

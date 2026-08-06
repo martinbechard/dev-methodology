@@ -3,4 +3,6 @@ providerPath: backlog/defect-backlog
 providerItem: synthetic-target-skill-missing-finding-receipt.md
 routeTo: Dev Backlog Steward
 missingBehavior: Preserve one durable finding receipt.
+currentDeliveryDisposition: deliberately-excluded
+creationProcedure: create-file-work-item
 expectedDisposition: PASS

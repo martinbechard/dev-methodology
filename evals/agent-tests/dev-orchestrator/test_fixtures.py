@@ -57,6 +57,8 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         expected = runner._load_yaml(fixture / "expected-finding.yaml")
         source_bytes = source_target.read_bytes()
         self.assertNotIn(expected["missingBehavior"], source_bytes.decode("utf-8"))
+        self.assertEqual("deliberately-excluded", expected["currentDeliveryDisposition"])
+        self.assertEqual("create-file-work-item", expected["creationProcedure"])
 
         protection = scenario["protectedTarget"]
         allowed_mutations = scenario["allowedMutationPaths"]
@@ -105,6 +107,10 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                         "",
                         f"Missing Behavior: {expected['missingBehavior']}",
                         "",
+                        "Current Delivery Disposition: Deliberately excluded",
+                        "",
+                        f"Creation Procedure: {expected['creationProcedure']}",
+                        "",
                         "Target Disposition: Preserved without mutation",
                         "",
                         "## Requirements",
@@ -144,6 +150,8 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         self.assertIn("Status: Ready", finding_text)
         self.assertIn("Provider: file", finding_text)
         self.assertIn(expected["missingBehavior"], finding_text)
+        self.assertIn("Current Delivery Disposition: Deliberately excluded", finding_text)
+        self.assertIn("Creation Procedure: create-file-work-item", finding_text)
         self.assertIn("Target Disposition: Preserved without mutation", finding_text)
         self.assertNotIn("requiresWorkspaceInventory", scenario)
         self.assertNotIn("requiresNoDetectedMutation", scenario)

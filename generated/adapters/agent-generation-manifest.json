@@ -133,7 +133,7 @@
             "structured-design",
             "structured-explanation"
           ],
-          "sha256": "40f3f184e16ea0e17cbb09a170fa1e74582094f479083466c6c5e39460acd9a5",
+          "sha256": "f887fb8b28fb1204ec47a9207debbb75cf1c6dc2ad2dd457723fe9eae692bf96",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -527,7 +527,7 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "2b004445608686b36e55c7c9a0ff9c153ce057f9a9845a9d04a7be576205009a",
+          "sha256": "9056b094881e9ccffaf680002f42c3754492061481a57ed4202ece3f5bf26607",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -934,7 +934,7 @@
             "structured-design",
             "structured-explanation"
           ],
-          "sha256": "dc63d73bc655cd71b8bfdba3c4fc0f95d3903c193c94bba45d96596bdbc18ee6",
+          "sha256": "cedcd935e0b2a0ae62daa447f51d38ab5dbcef6a9e69fc18ce202287a07903fa",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -1318,7 +1318,7 @@
             "structured-design",
             "structured-explanation"
           ],
-          "sha256": "d8a14513c85a102bfe214c1e4f80b6fc986540538b0c8d9131f5d424356af342",
+          "sha256": "13885209c7b00af8cf393992aa084051d14d898f82e93a65960ccd8a3431f093",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {

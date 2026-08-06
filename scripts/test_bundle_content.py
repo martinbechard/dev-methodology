@@ -8074,8 +8074,8 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(interruption_contract=required):
                 self.assertIn(required, interruption_contract)
 
-    def test_dev_orchestrator_durably_records_every_confirmed_defect(self) -> None:
-        """Source and native roles preserve mandatory duplicate-reconciled defect evidence."""
+    def test_dev_orchestrator_disposes_every_confirmed_review_issue_before_closeout(self) -> None:
+        """Source and native roles require correction or deliberate exclusion before closeout."""
 
         role_path = (
             ROLES_ROOT / "dev-activities" / "dev-orchestrator.role.yaml"
@@ -8083,76 +8083,81 @@ class BundleContentTests(unittest.TestCase):
         role = load_yaml_object(role_path)
         normalized_source = " ".join(role_path.read_text(encoding="utf-8").split())
         instruction_sections = role["instructions"]
-        normalized_boundaries = " ".join(
-            " ".join(instruction_sections["boundaries"]).split()
-        )
+        normalized_boundaries = " ".join(" ".join(instruction_sections["boundaries"]).split())
         normalized_decisions = " ".join(
             " ".join(instruction_sections["decisions"]).split()
         )
         normalized_workflow = " ".join(
             " ".join(instruction_sections["workflow"]).split()
         )
-        normalized_failure = " ".join(
-            " ".join(instruction_sections["failureHandling"]).split()
-        )
         self.assertIn(
-            "Record every defect confirmed by an independent reviewer, verifier, runtime "
-            "evidence, or accepted reproduction once through the effective Persistence-selected "
-            "management skill.",
+            "Give every issue confirmed by an independent reviewer or verifier exactly one "
+            "of two dispositions before delivery closeout.",
             normalized_boundaries,
         )
         self.assertIn(
-            "For each confirmed defect, apply the effective Persistence-selected management "
-            "skill once with the reproduction evidence and a runnable next action.",
+            "Return the confirmed issue to the original producing agent when it will be "
+            "corrected in the current delivery",
+            normalized_decisions,
+        )
+        self.assertIn(
+            "Deliberately exclude the confirmed issue from the current delivery only when it "
+            "will not be corrected there",
+            normalized_decisions,
+        )
+        self.assertIn(
+            "invoke the effective provider's existing work-item creation procedure before "
+            "closeout",
             normalized_workflow,
         )
         self.assertIn(
-            "If provider none, UNSET, an unsupported provider, or missing user authority "
-            "prevents durable recording",
-            normalized_decisions,
-        )
-        self.assertIn(
-            "preserve the finding and report BLOCKED for the required selection or authority",
-            normalized_decisions,
-        )
-        self.assertIn(
-            "If durable recording of a confirmed defect fails, is ambiguous, lacks a usable "
-            "provider, or cannot reconcile a duplicate safely",
-            normalized_failure,
-        )
-        self.assertIn(
-            "preserve the finding, provider attempt, and correction evidence and report BLOCKED",
-            normalized_failure,
+            "Never merely report a confirmed issue as a warning and close the delivery.",
+            normalized_workflow,
         )
         required_policy = (
-            "every defect confirmed by an independent reviewer, verifier, runtime evidence, or accepted reproduction",
-            "reproduction evidence and a runnable next action",
-            "reconcile duplicates instead of creating copies",
-            "Never omit, relabel, or downgrade a confirmed defect as a warning",
-            "unconfirmed observation or baseline warning",
-            "Do not create a second delivery task",
+            "exactly one of two dispositions before delivery closeout",
+            "original producing agent",
+            "fresh-context re-review",
+            "reverification",
+            "deliberately exclude",
+            "effective provider's existing work-item creation procedure",
+            "sporadic confirmed issues",
+            "Never merely report a confirmed issue as a warning and close",
         )
         for phrase in required_policy:
             with self.subTest(source_policy=phrase):
                 self.assertIn(phrase.lower(), normalized_source.lower())
 
+        for prohibited_policy in (
+            "unconfirmed observation",
+            "baseline warning",
+            "reconcile duplicates",
+            "duplicate-reconciliation",
+            "If provider none, UNSET, an unsupported provider",
+        ):
+            with self.subTest(prohibited_policy=prohibited_policy):
+                self.assertNotIn(prohibited_policy.lower(), normalized_source.lower())
+
+        self.assertIn(
+            "every confirmed reviewer or verifier issue has completed exactly one of the two "
+            "required dispositions",
+            " ".join(" ".join(instruction_sections["completion"]).split()),
+        )
         output_names = {next(iter(entry)) for entry in role["outputContract"]}
-        self.assertIn("confirmed defect records", output_names)
+        self.assertIn("confirmed issue dispositions", output_names)
         defect_example = next(
             example
             for example in role["examples"]
-            if "confirmed verifier defect" in example["purpose"]
+            if "confirmed verifier issue" in example["purpose"]
         )
         normalized_example = " ".join(
             defect_example["plausibleResponse"].split()
         ).lower()
         for phrase in (
-            "applied the selected persistence manager directly",
-            "existing durable defect",
-            "no second delivery task was created",
-            "unconfirmed baseline warning",
-            "reproduction evidence",
-            "runnable next action",
+            "original dev-coder corrected the issue",
+            "fresh re-review passed",
+            "reverification passed",
+            "same delivery",
         ):
             with self.subTest(example_evidence=phrase):
                 self.assertIn(phrase, normalized_example)
@@ -8179,18 +8184,43 @@ class BundleContentTests(unittest.TestCase):
             normalized_adapter = " ".join(
                 adapter_path.read_text(encoding="utf-8").split()
             ).lower()
-            adapter_required_policy = (
-                *required_policy,
-                "once through the effective persistence-selected management skill",
-                "if provider none, unset, an unsupported provider, or missing user authority prevents durable recording",
-                "preserve the finding and report blocked for the required selection or authority",
-                "if durable recording of a confirmed defect fails, is ambiguous, lacks a usable provider, or cannot reconcile a duplicate safely",
-                "preserve the finding, provider attempt, and correction evidence and report blocked",
-            )
-            for phrase in adapter_required_policy:
+            for phrase in required_policy:
                 with self.subTest(adapter=adapter, rendered_policy=phrase):
                     self.assertIn(phrase.lower(), normalized_adapter)
-            self.assertIn("confirmed defect records", normalized_adapter)
+            for prohibited_policy in (
+                "unconfirmed observation",
+                "baseline warning",
+                "reconcile duplicates",
+                "duplicate-reconciliation",
+                "if provider none, unset, an unsupported provider",
+            ):
+                with self.subTest(adapter=adapter, prohibited_policy=prohibited_policy):
+                    self.assertNotIn(prohibited_policy, normalized_adapter)
+            self.assertIn("confirmed issue dispositions", normalized_adapter)
+
+        scenarios = load_yaml_object(
+            AGENT_TEST_SUITES_ROOT / "dev-orchestrator" / "scenarios.yaml"
+        )["scenarios"]
+        correction = next(item for item in scenarios if item["id"] == "bounded-correction")
+        exclusion = next(
+            item for item in scenarios if item["id"] == "skill-under-test-defect-routing"
+        )
+        self.assertIn(
+            "Complete correction, fresh re-review, and reverification before closeout",
+            correction["requiredBehaviors"],
+        )
+        self.assertIn(
+            "Deliberately exclude the confirmed issue from the current delivery",
+            exclusion["requiredBehaviors"],
+        )
+        self.assertIn(
+            "Invoke the effective file-provider work-item creation procedure before closeout",
+            exclusion["requiredBehaviors"],
+        )
+        self.assertIn(
+            "Warn and close without either disposition",
+            exclusion["forbiddenBehaviors"],
+        )
 
     def test_dev_backlog_coordinator_uses_selected_provider_and_completion_routes(self) -> None:
         """The coordinator should supervise provider-neutral state and selected delivery."""
