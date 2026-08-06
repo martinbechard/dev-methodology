@@ -19,15 +19,24 @@ PROJECT.yaml owns both selectors. The canonical keys are workflow_selection.pers
 
 | Value | Meaning | Create skill | Manage skill | Operational support |
 | --- | --- | --- | --- | --- |
-| file | Repository files under backlog are authoritative. | create-work-item-file | manage-file-work-items | Supported |
-| github | GitHub issues are authoritative. | create-work-item-github | manage-github-work-items | Supported when the configured GitHub issue interface is available and authorized |
-| gitlab | GitLab issues are authoritative. | create-work-item-gitlab | manage-gitlab-work-items | Supported when the configured GitLab issue interface is available and authorized |
-| azure-devops | Azure DevOps work items are authoritative in principle. | create-work-item-azure-devops | manage-azure-devops-work-items | Unsupported placeholder; every create or manage operation returns BLOCKED without mutation |
-| jira | Jira issues are authoritative in principle. | create-work-item-jira | manage-jira-work-items | Unsupported placeholder; every create or manage operation returns BLOCKED without mutation |
+| file | Repository files under backlog are authoritative. | create-work-item-file | manage-work-items-file | Supported |
+| github | GitHub issues are authoritative. | create-work-item-github | manage-work-items-github | Supported when the configured GitHub issue interface is available and authorized |
+| gitlab | GitLab issues are authoritative. | create-work-item-gitlab | manage-work-items-gitlab | Supported when the configured GitLab issue interface is available and authorized |
+| azure-devops | Azure DevOps work items are authoritative in principle. | create-work-item-azure-devops | manage-work-items-azure-devops | Unsupported placeholder; every create or manage operation returns BLOCKED without mutation |
+| jira | Jira issues are authoritative in principle. | create-work-item-jira | manage-work-items-jira | Unsupported placeholder; every create or manage operation returns BLOCKED without mutation |
 | none | The project has no durable work-item provider. | None | None | Supported for explicitly interactive work only; terminal evidence remains in the task result and durable create or manage operations are invalid |
 | UNSET | The project has not selected a provider. | Not resolved | Not resolved | The pertinent agent asks for a user decision before a provider operation |
 
-The create-work-item Interface Skill owns the provider-neutral creation contract. Creation providers use create-work-item-provider, so every provider identity is a terminal member of the create-work-item-* family. Management providers retain manage-provider-work-items. The create form is singular because one operation creates one independently actionable item. The manage form is plural because inventory, selection, lifecycle, recovery, and reconciliation operate over a provider-backed collection.
+Management uses one exact manage-work-items Interface Skill and the manage-work-items-* Provider
+Skill family. The terminal provider suffix keeps the interface stem intact. Creation remains a
+separate one-item operation and does not belong to the management interface.
+
+The create-work-item Interface Skill owns the provider-neutral creation contract. Creation providers use the create-work-item-* family. The create form is singular because one operation creates one independently actionable item. The manage form is plural because inventory, selection, lifecycle, recovery, and reconciliation operate over a provider-backed collection.
+
+Every lifecycle consumer loads manage-work-items for the opaque identity, canonical lifecycle,
+result vocabulary, and five public procedures. Project guidance selects exactly one management
+provider from Persistence. The selected provider preserves the interface meanings while it owns
+native inventory, authority, mutation, recovery, completion, and reporting behavior.
 
 ### Commit selector
 
@@ -165,7 +174,7 @@ Only an explicit ideation or promotion operation reads or validates this folder.
 
 Deliberate promotion retains the idea, adds Promoted To with the new Work Item ID, and creates one complete work item in an active, Holding, or User Action Required destination. The promoted item records file as Provider, its immutable filename-stem Work Item ID, exactly direct-main, feature-branch, or UNSET as Completion, and the retained idea path as an exact Source Evidence entry. Holding accepts the underlying dispatchable Type or the Holding Type. User Action Required retains its underlying dispatchable Type.
 
-create-work-item-file owns one exact-path promotion transaction under the file-provider contract above. Its durable two-path manifest identifies the retained Future Idea as the current source, the promoted item as the exclusive destination, and the reciprocal-record atomic rationale. The loaded resource coordination applies to both exact promotion paths. The immutable commit object must contain exactly the retained source with Promoted To, the destination with reciprocal Source Evidence, and the destination's immutable Work Item ID. manage-file-work-items routes promotion to this owner and does not define a second procedure.
+create-work-item-file owns one exact-path promotion transaction under the file-provider contract above. Its durable two-path manifest identifies the retained Future Idea as the current source, the promoted item as the exclusive destination, and the reciprocal-record atomic rationale. The loaded resource coordination applies to both exact promotion paths. The immutable commit object must contain exactly the retained source with Promoted To, the destination with reciprocal Source Evidence, and the destination's immutable Work Item ID. manage-work-items-file routes promotion to this owner and does not define a second procedure.
 
 ## Provider-Owned Work Item IDs
 
@@ -316,9 +325,9 @@ The migration is atomic at the accepted steady state. Compatibility behavior exi
 | Prototype or legacy identifier | Canonical owner | Disposition |
 | --- | --- | --- |
 | create-backlog | create-work-item-file | Rename and move file creation, typing, series, user-decision, and short backlog-claim behavior into the file provider create skill. |
-| manage-backlog | manage-file-work-items | Rename and move file inventory, lifecycle, recovery, archive, and short backlog-claim behavior into the file provider manage skill. |
-| file-based-backlog | create-work-item-file and manage-file-work-items | Absorb routing and authority rules into the symmetric pair, then retire the routing skill. No compatibility alias after the migration gate. |
-| github-issues-backlog | create-work-item-github and manage-github-work-items | Split creation from management while preserving GitHub issue authority and no-shadow-file behavior, then retire the combined skill. |
+| manage-backlog | manage-work-items-file | Rename and move file inventory, lifecycle, recovery, archive, and short backlog-claim behavior into the file provider manage skill. |
+| file-based-backlog | create-work-item-file and manage-work-items-file | Absorb routing and authority rules into the symmetric pair, then retire the routing skill. No compatibility alias after the migration gate. |
+| github-issues-backlog | create-work-item-github and manage-work-items-github | Split creation from management while preserving GitHub issue authority and no-shadow-file behavior, then retire the combined skill. |
 | execute-workitem | deliver-work-item, deliver-work-item-direct-main, and deliver-work-item-feature-branch | Move normalized shared delivery fields into the interface and split completion behavior by selector. Retire process selection from execute-workitem after all callers migrate. |
 | execute-workitem terminal READY | Completion disposition READY plus provider lifecycle COMPLETED | Preserve READY as the completion skill's successful delivery disposition, not a provider lifecycle state. Migrate roles, callers, examples, and evaluations so READY authorizes the required provider lifecycle update; only the provider manager, or the provider-none task result, records lifecycle COMPLETED. |
 | simple-workitem | direct-main | Replace the prototype process value and reference with the direct-main completion selector and skill. Preserve the stricter main-observation terminal rule. |
@@ -327,7 +336,7 @@ The migration is atomic at the accepted steady state. Compatibility behavior exi
 | integrate-agent-work | completion skill selected by PROJECT.yaml | Retain as an integration capability for concurrent branches and worktrees. It supplies merge evidence but does not own provider lifecycle. |
 | agent-claim | provider and completion skills | Retain as shared mutation-authority infrastructure. File provider operations and completion operations use separate narrow claim scopes. |
 
-New provider skills are create-work-item-gitlab, manage-gitlab-work-items, create-work-item-azure-devops, manage-azure-devops-work-items, create-work-item-jira, and manage-jira-work-items. The completion interface is deliver-work-item. Its providers are deliver-work-item-direct-main and deliver-work-item-feature-branch.
+Creation providers belong to the create-work-item-* family, and create-work-item publishes their shared contract. Management providers belong to the manage-work-items-* family, and manage-work-items publishes their shared contract. The completion interface is deliver-work-item. Its providers are deliver-work-item-direct-main and deliver-work-item-feature-branch.
 
 ## Migration Coverage And Acceptance Gate
 
@@ -408,7 +417,7 @@ Each downstream implementation must provide focused evidence for its owned part 
 
 ## Source Reconciliation
 
-The provider-neutral creation contract is owned by [create-work-item](../skills/create-work-item/SKILL.md). File-provider creation and management are owned by [create-work-item-file](../skills/create-work-item-file/SKILL.md) and [manage-file-work-items](../skills/manage-file-work-items/SKILL.md). The migration table above records how create-backlog, manage-backlog, file-based-backlog, github-issues-backlog, and execute-workitem were replaced before their packages and active callers were removed. [create-pull-request](../skills/create-pull-request/SKILL.md) remains a subordinate GitHub publication capability of feature-branch completion, while [integrate-agent-work](../skills/integrate-agent-work/SKILL.md) and [agent-claim](../skills/agent-claim/SKILL.md) retain their independent integration and ownership responsibilities.
+The provider-neutral creation contract is owned by [create-work-item](../skills/create-work-item/SKILL.md), and the [manage-work-items Interface Skill](../skills/manage-work-items/SKILL.md) owns the shared management vocabulary. File-provider creation and management are owned by [create-work-item-file](../skills/create-work-item-file/SKILL.md) and [manage-work-items-file](../skills/manage-work-items-file/SKILL.md). The migration table above records how create-backlog, manage-backlog, file-based-backlog, github-issues-backlog, and execute-workitem were replaced before their packages and active callers were removed. [create-pull-request](../skills/create-pull-request/SKILL.md) remains a subordinate GitHub publication capability of feature-branch completion, while [integrate-agent-work](../skills/integrate-agent-work/SKILL.md) and [agent-claim](../skills/agent-claim/SKILL.md) retain their independent integration and ownership responsibilities.
 
 The [project configuration template](../skills/route-documentation-work/assets/templates/project-template.yaml), this repository's root PROJECT.yaml, and [render-agents-technology-skills.py](../scripts/render-agents-technology-skills.py) implement workflow_selection.persistence and workflow_selection.commit. Generated workflow guidance references the selected create, manage, and completion skills by name, while the existing folder technology mechanism remains separately inlined.
 

@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Manage Jira Work Items
+  display_name: Manage Work Items
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Report Jira issue lifecycle management as unsupported and BLOCKED without provider, browser...
+  short_description: Define the provider-neutral contract for work-item inventory, lifecycle transitions, completion...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $manage-jira-work-items to report this unsupported Jira management request truthfully.
+  default_prompt: Use $manage-work-items for work covered by this skill.
 
 # Optional invocation policy placeholder.
 # policy:

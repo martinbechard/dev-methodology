@@ -20,8 +20,8 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 30 conceptual agents and 133 bundled skills have structural coverage.
-- [x] 29 agents are scenario-declared and 131 skills are probe-declared.
+- [x] 30 conceptual agents and 134 bundled skills have structural coverage.
+- [x] 29 agents are scenario-declared and 132 skills are probe-declared.
 - Agents missing scenario declarations: dev-skill-lint-reviewer.
 - Skills missing probe declarations: analyze-document-topics, revise-document-topics.
 - [x] 66 agent scenarios and 5 workflow packs are declared.
@@ -30,10 +30,10 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 14 cases can run locally through Codex and 14 can run locally through Junie.
 - 14 cases use the ordinary local tier; 0 explicitly high-risk cases require the externally-contained tier.
 - 7 agents have at least one case-backed scenario; 5 are partial and 2 have all declared scenarios backed.
-- 30 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
+- 31 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 2 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 29 agents and 108 skills have pending Model Judge status.
+- 29 agents and 109 skills have pending Model Judge status.
 - 0 agents and 23 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -170,11 +170,12 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | effective-communication | [x] | [x] probe-effective-communication | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | explain-code-fix | [x] | [x] probe-explain-code-fix | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | integrate-agent-work | [x] | [x] probe-integrate-agent-work | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| manage-azure-devops-work-items | [x] | [x] probe-manage-azure-devops-work-items | [x] provider-placeholder-matrix, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| manage-file-work-items | [x] | [x] probe-manage-file-work-items | [x] backlog-lifecycle, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| manage-github-work-items | [x] | [x] probe-manage-github-work-items | [x] github-work-item-provider, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| manage-gitlab-work-items | [x] | [x] probe-manage-gitlab-work-items | [x] work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| manage-jira-work-items | [x] | [x] probe-manage-jira-work-items | [x] provider-placeholder-matrix, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| manage-work-items | [x] | [x] probe-manage-work-items | [x] work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| manage-work-items-azure-devops | [x] | [x] probe-manage-work-items-azure-devops | [x] provider-placeholder-matrix, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| manage-work-items-file | [x] | [x] probe-manage-work-items-file | [x] backlog-lifecycle, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| manage-work-items-github | [x] | [x] probe-manage-work-items-github | [x] github-work-item-provider, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| manage-work-items-gitlab | [x] | [x] probe-manage-work-items-gitlab | [x] work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| manage-work-items-jira | [x] | [x] probe-manage-work-items-jira | [x] provider-placeholder-matrix, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | organise-project-files | [x] | [x] probe-organise-project-files | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | resolve-backlog-blockage | [x] | [x] probe-resolve-backlog-blockage | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | review-code-with-evidence | [x] | [x] probe-review-code-with-evidence | [x] typescript-code-review | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |

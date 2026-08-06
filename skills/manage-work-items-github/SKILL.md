@@ -1,5 +1,5 @@
 ---
-name: manage-github-work-items
+name: manage-work-items-github
 description: Inventory, select, claim, update, recover, block, complete, reopen, and report authoritative GitHub issues through observed provider state. Use when the effective work-item provider is github or an explicit one-item request selects GitHub issue management.
 metadata:
   category: development-practice

@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Manage Gitlab Work Items
+  display_name: Manage Work Items Gitlab
   # User-facing summary shown in Codex skill surfaces.
   short_description: Manage authoritative GitLab issues through lookup, ownership, lifecycle, dependency, recovery...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $manage-gitlab-work-items to manage verified GitLab issue lifecycle without a fallback queue.
+  default_prompt: Use $manage-work-items-gitlab to manage verified GitLab issue lifecycle without a fallback queue.
 
 # Optional invocation policy placeholder.
 # policy:

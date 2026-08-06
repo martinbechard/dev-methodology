@@ -2694,11 +2694,11 @@ class TechnologyDetectionTests(unittest.TestCase):
     def test_agents_section_renders_every_persistence_as_reference_only_skill_guidance(self) -> None:
         renderer = load_renderer_module()
         persistence_guidance = {
-            "file": "Default persistence file: create with create-work-item-file; manage with manage-file-work-items.",
-            "github": "Default persistence github: create with create-work-item-github; manage with manage-github-work-items.",
-            "gitlab": "Default persistence gitlab: create with create-work-item-gitlab; manage with manage-gitlab-work-items.",
-            "azure-devops": "Default persistence azure-devops: create with create-work-item-azure-devops; manage with manage-azure-devops-work-items.",
-            "jira": "Default persistence jira: create with create-work-item-jira; manage with manage-jira-work-items.",
+            "file": "Default persistence file: create with create-work-item-file; manage with manage-work-items-file.",
+            "github": "Default persistence github: create with create-work-item-github; manage with manage-work-items-github.",
+            "gitlab": "Default persistence gitlab: create with create-work-item-gitlab; manage with manage-work-items-gitlab.",
+            "azure-devops": "Default persistence azure-devops: create with create-work-item-azure-devops; manage with manage-work-items-azure-devops.",
+            "jira": "Default persistence jira: create with create-work-item-jira; manage with manage-work-items-jira.",
             "none": "Default persistence none: no durable persistence skill; durable create and manage operations are invalid.",
             "UNSET": "Default persistence UNSET: when durable work-item management is first requested, ask whether to select the available file provider.",
         }
@@ -2750,11 +2750,11 @@ class TechnologyDetectionTests(unittest.TestCase):
         }))
 
         self.assertIn(
-            "Default persistence file: create with create-work-item-file; manage with manage-file-work-items.",
+            "Default persistence file: create with create-work-item-file; manage with manage-work-items-file.",
             rendered,
         )
         self.assertIn(
-            "services/** persistence github: create with create-work-item-github; manage with manage-github-work-items.",
+            "services/** persistence github: create with create-work-item-github; manage with manage-work-items-github.",
             rendered,
         )
         self.assertIn(
@@ -2796,7 +2796,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         self.assertIn("asks for the Commit decision before implementation or publication", unset_rendered)
         self.assertIn("does not infer either value from repository or hosting evidence", unset_rendered)
         self.assertIn("create-work-item-azure-devops", placeholder_rendered)
-        self.assertIn("manage-azure-devops-work-items", placeholder_rendered)
+        self.assertIn("manage-work-items-azure-devops", placeholder_rendered)
         self.assertIn("unsupported placeholder remains selected and reports BLOCKED", placeholder_rendered)
 
     def test_agents_section_keeps_workflow_references_distinct_from_inlined_technology(self) -> None:

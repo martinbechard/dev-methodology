@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Manage Github Work Items
+  display_name: Manage Work Items Github
   # User-facing summary shown in Codex skill surfaces.
   short_description: Inventory, select, claim, update, recover, block, complete, reopen, and report authoritative...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $manage-github-work-items to manage these GitHub issues without a shadow backlog file.
+  default_prompt: Use $manage-work-items-github to manage these GitHub issues without a shadow backlog file.
 
 # Optional invocation policy placeholder.
 # policy:

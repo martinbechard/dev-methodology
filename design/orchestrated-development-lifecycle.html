@@ -713,7 +713,7 @@
         <div><b>05</b><strong>Closeout</strong><p>Review, verification, integration, completion, and cleanup evidence, plus coordination release evidence only when enabled.</p></div>
       </div>
     </div>
-    <p class="source-note">The Work item is the only durable provider record. File-provider creation and lifecycle procedures are defined by <a href="../skills/create-work-item-file/SKILL.md">Create File Work Item</a> and <a href="../skills/manage-file-work-items/SKILL.md">Manage File Work Items</a>.</p>
+    <p class="source-note">The Work item is the only durable provider record. <a href="../skills/create-work-item/SKILL.md">Create Work Item</a> defines the provider-neutral creation contract, and <a href="../skills/manage-work-items/SKILL.md">Manage Work Items</a> defines the provider-neutral lifecycle contract. File-provider creation and lifecycle procedures are defined by <a href="../skills/create-work-item-file/SKILL.md">Create File Work Item</a> and <a href="../skills/manage-work-items-file/SKILL.md">Manage File Work Items</a>.</p>
     <aside class="thread-context"><h3>New Work-Item Notification</h3><p>After a new work item is persisted, its creator sends the opaque provider-owned Work Item ID to the existing Coordinator task. The message prompts a fresh inventory read. It does not reserve capacity, change lifecycle state, create a delivery task, or start implementation. If no Coordinator task is available, the committed item remains in provider inventory for the next read.</p></aside>
   </section>
 

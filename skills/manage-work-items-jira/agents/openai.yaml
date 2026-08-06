@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Manage File Work Items
+  display_name: Manage Work Items Jira
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Manage authoritative repository-backed work items through inventory, dispatch, lifecycle...
+  short_description: Report Jira issue lifecycle management as unsupported and BLOCKED without provider, browser...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $manage-file-work-items to manage authoritative file-backed work items.
+  default_prompt: Use $manage-work-items-jira to report this unsupported Jira management request truthfully.
 
 # Optional invocation policy placeholder.
 # policy:

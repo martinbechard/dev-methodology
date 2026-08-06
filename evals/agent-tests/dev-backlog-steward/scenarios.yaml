@@ -9,7 +9,7 @@ scenarios:
     purpose: Create a dispatchable typed item; this row declares project-selected resource coordination variants and does not claim both variants were executed.
     initialState: A directly authorized request has no backlog representation or active provider owner.
     task: Create a feature item for webhook idempotency and establish provider-selected ownership.
-    targetSkills: [organise-project-files, create-work-item-file, manage-file-work-items, structured-explanation]
+    targetSkills: [organise-project-files, create-work-item-file, manage-work-items-file, structured-explanation]
     allowedAgentDependencies: []
     resourceCoordinationCases:
       agent-claim:
@@ -43,7 +43,7 @@ scenarios:
     purpose: Reconcile interrupted work; this row declares project-selected resource coordination variants and does not claim both variants were executed.
     initialState: An active investigation has a completed result record and passing verification evidence.
     task: Reconcile the result and archive the item if completion is supported.
-    targetSkills: [manage-file-work-items, structured-explanation]
+    targetSkills: [manage-work-items-file, structured-explanation]
     allowedAgentDependencies: []
     resourceCoordinationCases:
       agent-claim:
@@ -77,7 +77,7 @@ scenarios:
     purpose: Preserve a blocked item; this row declares project-selected resource coordination variants and does not claim both variants were executed.
     initialState: A Running item with an active provider owner depends on an unavailable external schema decision and has durable acceptance evidence.
     task: Block the item for handoff, preserve its durable evidence, and clear prior provider ownership.
-    targetSkills: [manage-file-work-items, structured-explanation]
+    targetSkills: [manage-work-items-file, structured-explanation]
     allowedAgentDependencies: []
     resourceCoordinationCases:
       agent-claim:
@@ -111,7 +111,7 @@ scenarios:
     purpose: Reject an unowned direct Running shortcut; this row declares project-selected resource coordination variants and does not claim both variants were executed.
     initialState: A blocked item has preserved evidence, no active provider owner, and a satisfied unblock condition.
     task: Attempt to resume the item directly as Running without establishing provider ownership.
-    targetSkills: [manage-file-work-items, structured-explanation]
+    targetSkills: [manage-work-items-file, structured-explanation]
     allowedAgentDependencies: []
     resourceCoordinationCases:
       agent-claim:
@@ -145,7 +145,7 @@ scenarios:
     purpose: Resume eligible blocked work; this row declares project-selected resource coordination variants and does not claim both variants were executed.
     initialState: A blocked item has preserved evidence, no active provider owner, and a satisfied unblock condition.
     task: Make the item Ready and resume it through newly recorded provider ownership.
-    targetSkills: [manage-file-work-items, structured-explanation]
+    targetSkills: [manage-work-items-file, structured-explanation]
     allowedAgentDependencies: []
     resourceCoordinationCases:
       agent-claim:
@@ -179,7 +179,7 @@ scenarios:
     purpose: Preserve an exact blocked resumption failure; this row declares project-selected resource coordination variants and does not claim both variants were executed.
     initialState: A blocked item has preserved evidence, no active provider owner, a satisfied unblock condition, and provider ownership cannot be established.
     task: Attempt governed resumption and report the provider ownership failure without changing the item.
-    targetSkills: [manage-file-work-items, structured-explanation]
+    targetSkills: [manage-work-items-file, structured-explanation]
     allowedAgentDependencies: []
     resourceCoordinationCases:
       agent-claim:
@@ -213,7 +213,7 @@ scenarios:
     purpose: Capture and promote a Future Idea; this row declares project-selected resource coordination variants and does not claim both variants were executed.
     initialState: The file provider applies and the user explicitly requests idea capture but has not authorized implementation; a later explicit direction authorizes promotion. A non-file provider variant has no one-item file override.
     task: Capture the retry-dashboard thought as a Future Idea, then promote it into complete typed work while retaining the source idea.
-    targetSkills: [organise-project-files, create-work-item-file, manage-file-work-items, structured-explanation]
+    targetSkills: [organise-project-files, create-work-item-file, manage-work-items-file, structured-explanation]
     allowedAgentDependencies: []
     resourceCoordinationCases:
       agent-claim:

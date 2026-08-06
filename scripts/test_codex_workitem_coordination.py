@@ -14,7 +14,7 @@ import yaml
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 README_PATH = REPOSITORY_ROOT / "README.md"
 SKILL_PATH = REPOSITORY_ROOT / "skills" / "coordinate-codex-work-items" / "SKILL.md"
-MANAGE_FILE_WORK_ITEMS_PATH = REPOSITORY_ROOT / "skills" / "manage-file-work-items" / "SKILL.md"
+MANAGE_FILE_WORK_ITEMS_PATH = REPOSITORY_ROOT / "skills" / "manage-work-items-file" / "SKILL.md"
 MAINTAIN_METHODOLOGY_PATH = (
     REPOSITORY_ROOT / "skills" / "maintain-methodology-documentation" / "SKILL.md"
 )
@@ -1324,8 +1324,8 @@ class CentralActiveExecutionAndConversationTitleTests(unittest.TestCase):
         self.assertIn("ordinary lifecycle operations remain with the authorized Coordinator or Orchestrator", steward_text)
 
         for forbidden_loading in (
-            "load manage-file-work-items",
-            "read skills/manage-file-work-items",
+            "load manage-work-items-file",
+            "read skills/manage-work-items-file",
             "load coordinate-codex-work-items",
             "read skills/coordinate-codex-work-items",
         ):

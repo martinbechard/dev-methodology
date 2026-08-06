@@ -460,16 +460,16 @@ class CoordinationSimulatorTests(unittest.TestCase):
         """Preserve each selected provider's manager, inventory, and blocked semantics."""
 
         expected = {
-            "file": ("manage-file-work-items", True, "READY", False),
-            "github": ("manage-github-work-items", True, "READY", False),
-            "gitlab": ("manage-gitlab-work-items", True, "READY", False),
+            "file": ("manage-work-items-file", True, "READY", False),
+            "github": ("manage-work-items-github", True, "READY", False),
+            "gitlab": ("manage-work-items-gitlab", True, "READY", False),
             "azure-devops": (
-                "manage-azure-devops-work-items",
+                "manage-work-items-azure-devops",
                 False,
                 "BLOCKED",
                 True,
             ),
-            "jira": ("manage-jira-work-items", False, "BLOCKED", True),
+            "jira": ("manage-work-items-jira", False, "BLOCKED", True),
             "none": (None, False, "READY", True),
             "UNSET": (None, False, "USER_ACTION_REQUIRED", True),
         }
@@ -499,7 +499,7 @@ class CoordinationSimulatorTests(unittest.TestCase):
         unavailable = CoordinationSimulator.persistence_route(
             "github", selected_skill_available=False
         )
-        self.assertEqual("manage-github-work-items", unavailable.management_skill)
+        self.assertEqual("manage-work-items-github", unavailable.management_skill)
         self.assertEqual("BLOCKED", unavailable.status)
         self.assertTrue(unavailable.zero_mutation)
 

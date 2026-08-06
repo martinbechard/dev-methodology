@@ -385,11 +385,12 @@ packs:
       - probe-create-work-item-gitlab
       - probe-create-work-item-azure-devops
       - probe-create-work-item-jira
-      - probe-manage-file-work-items
-      - probe-manage-github-work-items
-      - probe-manage-gitlab-work-items
-      - probe-manage-azure-devops-work-items
-      - probe-manage-jira-work-items
+      - probe-manage-work-items
+      - probe-manage-work-items-file
+      - probe-manage-work-items-github
+      - probe-manage-work-items-gitlab
+      - probe-manage-work-items-azure-devops
+      - probe-manage-work-items-jira
       - probe-organise-project-files
       - probe-structured-explanation
     phases:

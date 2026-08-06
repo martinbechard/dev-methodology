@@ -1,5 +1,5 @@
 ---
-name: manage-gitlab-work-items
+name: manage-work-items-gitlab
 description: Manage authoritative GitLab issues through lookup, ownership, lifecycle, dependency, recovery, and terminal updates with verified provider evidence. Use when the effective work-item provider is GitLab or the user explicitly requests management of identified GitLab issues without changing the project default.
 metadata:
   category: development-practice

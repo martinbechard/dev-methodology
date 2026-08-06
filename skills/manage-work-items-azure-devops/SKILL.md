@@ -1,5 +1,5 @@
 ---
-name: manage-azure-devops-work-items
+name: manage-work-items-azure-devops
 description: Report Azure DevOps work-item lifecycle management as unsupported and BLOCKED without provider, browser, network, GitHub, GitLab, or file mutation. Use when Azure DevOps is the selected work-item provider and an existing work item must be read or changed.
 metadata:
   category: development-practice

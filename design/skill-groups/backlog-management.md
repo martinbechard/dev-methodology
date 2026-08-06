@@ -121,7 +121,7 @@ One effective project selects one creation provider. The Azure DevOps and Jira c
 
 ### Scenario: Managing Work-Item Lifecycle
 
-This scenario applies when an Agent or coordination skill inventories or changes durable provider lifecycle. The manage-*-work-items interface gives all consumers one vocabulary, while AGENTS.md selects the Persistence-specific implementation.
+This scenario applies when an Agent or coordination skill inventories or changes durable provider lifecycle. The manage-work-items Interface Skill gives all consumers one vocabulary, while AGENTS.md selects one manage-work-items-* implementation from Persistence.
 
 ```mermaid
 classDiagram
@@ -148,8 +148,8 @@ classDiagram
         +reconcile-active-execution()
         +coordinate-queue-and-dispatch()
     }
-    class ManageWorkItem["manage-*-work-items"] {
-        <<Skill interface>>
+    class ManageWorkItem["manage-work-items"] {
+        <<Interface Skill>>
         +work-item-id
         +inventory-work-items(selection)
         +transition-work-item(workItem, transition)
@@ -160,29 +160,29 @@ classDiagram
     class ProjectSpecificDirectives["Project-specific directives"] {
         <<AGENTS.md>>
         <<routing>>
-        +route manage-work-items => manage-*-work-items
+        +route manage-work-items => manage-work-items-*
     }
-    class manage-file-work-items {
+    class manage-work-items-file {
         <<Provider Skill>>
         +inventory-work-items(selection)
         +transition-work-item(workItem, transition)
     }
-    class manage-github-work-items {
+    class manage-work-items-github {
         <<Provider Skill>>
         +inventory-work-items(selection)
         +transition-work-item(workItem, transition)
     }
-    class manage-gitlab-work-items {
+    class manage-work-items-gitlab {
         <<Provider Skill>>
         +inventory-work-items(selection)
         +transition-work-item(workItem, transition)
     }
-    class manage-azure-devops-work-items {
+    class manage-work-items-azure-devops {
         <<Provider Skill>>
         +inventory-work-items(selection)
         +transition-work-item(workItem, transition)
     }
-    class manage-jira-work-items {
+    class manage-work-items-jira {
         <<Provider Skill>>
         +inventory-work-items(selection)
         +transition-work-item(workItem, transition)
@@ -194,20 +194,22 @@ classDiagram
     DevOrchestrator ..> ManageWorkItem : when a Persistence provider is selected
     coordinate-codex-work-items ..> ManageWorkItem : when a Persistence provider is selected
 
-    ProjectSpecificDirectives o..> manage-file-work-items : when Persistence is file
-    ProjectSpecificDirectives o..> manage-github-work-items : when Persistence is github
-    ProjectSpecificDirectives o..> manage-gitlab-work-items : when Persistence is gitlab
-    ProjectSpecificDirectives o..> manage-azure-devops-work-items : when Persistence is azure-devops
-    ProjectSpecificDirectives o..> manage-jira-work-items : when Persistence is jira
+    ProjectSpecificDirectives o..> manage-work-items-file : when Persistence is file
+    ProjectSpecificDirectives o..> manage-work-items-github : when Persistence is github
+    ProjectSpecificDirectives o..> manage-work-items-gitlab : when Persistence is gitlab
+    ProjectSpecificDirectives o..> manage-work-items-azure-devops : when Persistence is azure-devops
+    ProjectSpecificDirectives o..> manage-work-items-jira : when Persistence is jira
 
-    manage-file-work-items ..|> ManageWorkItem
-    manage-github-work-items ..|> ManageWorkItem
-    manage-gitlab-work-items ..|> ManageWorkItem
-    manage-azure-devops-work-items ..|> ManageWorkItem
-    manage-jira-work-items ..|> ManageWorkItem
+    manage-work-items-file ..|> ManageWorkItem
+    manage-work-items-github ..|> ManageWorkItem
+    manage-work-items-gitlab ..|> ManageWorkItem
+    manage-work-items-azure-devops ..|> ManageWorkItem
+    manage-work-items-jira ..|> ManageWorkItem
 ```
 
-Persistence names the project selector, while manage-*-work-items names the provider-neutral management contract. Each provider supplies the complete set of lifecycle procedures, even when a provider reports that a requested operation is unsupported.
+manage-work-items names the provider-neutral management contract. Persistence selects one
+manage-work-items-* provider. Each provider supplies the complete set of lifecycle procedures,
+even when a provider reports that a requested operation is unsupported.
 
 ### Scenario: Recovering From A Backlog Blockage
 
@@ -255,7 +257,7 @@ classDiagram
     class create-work-item-file {
         <<Provider Skill>>
     }
-    class manage-file-work-items {
+    class manage-work-items-file {
         <<Provider Skill>>
     }
     class ProjectSpecificDirectives["Project-specific directives"] {
@@ -273,7 +275,7 @@ classDiagram
 
     ProjectSpecificDirectives o..> agent-claim : when resource_coordination is agent-claim
     create-work-item-file ..> agent-claim : when resource coordination is selected
-    manage-file-work-items ..> agent-claim : when resource coordination is selected
+    manage-work-items-file ..> agent-claim : when resource coordination is selected
 ```
 
 ## Skill Responsibilities
@@ -289,11 +291,12 @@ Creation and management providers share public procedure names while retaining p
 | create-work-item-gitlab | Create Work Item | Creates and verifies one authoritative GitLab issue. |
 | create-work-item-azure-devops | Create Work Item | Returns a truthful blocked result because Azure DevOps creation is not implemented. |
 | create-work-item-jira | Create Work Item | Returns a truthful blocked result because Jira creation is not implemented. |
-| manage-file-work-items | Inventory Work Items; Transition Work Item; Reconcile Work Item Completion; Recover Work Item; Report Work Items | Manages the file-backed lifecycle, dependencies, recovery, completion, reporting, and archival. |
-| manage-github-work-items | Inventory Work Items; Transition Work Item; Reconcile Work Item Completion; Recover Work Item; Report Work Items | Maps the shared management procedures to GitHub issue state and evidence. |
-| manage-gitlab-work-items | Inventory Work Items; Transition Work Item; Reconcile Work Item Completion; Recover Work Item; Report Work Items | Maps the shared management procedures to GitLab issue state and evidence. |
-| manage-azure-devops-work-items | Inventory Work Items; Transition Work Item; Reconcile Work Item Completion; Recover Work Item; Report Work Items | Exposes the shared management interface while returning a truthful unsupported result. |
-| manage-jira-work-items | Inventory Work Items; Transition Work Item; Reconcile Work Item Completion; Recover Work Item; Report Work Items | Exposes the shared management interface while returning a truthful unsupported result. |
+| manage-work-items | Work Item Identity; Lifecycle Definitions; Result Vocabulary; Inventory Work Items; Transition Work Item; Reconcile Work Item Completion; Recover Work Item; Report Work Items | Publishes the provider-neutral management contract consumed by lifecycle roles. |
+| manage-work-items-file | Inventory Work Items; Transition Work Item; Reconcile Work Item Completion; Recover Work Item; Report Work Items | Manages the file-backed lifecycle, dependencies, recovery, completion, reporting, and archival. |
+| manage-work-items-github | Inventory Work Items; Transition Work Item; Reconcile Work Item Completion; Recover Work Item; Report Work Items | Maps the shared management procedures to GitHub issue state and evidence. |
+| manage-work-items-gitlab | Inventory Work Items; Transition Work Item; Reconcile Work Item Completion; Recover Work Item; Report Work Items | Maps the shared management procedures to GitLab issue state and evidence. |
+| manage-work-items-azure-devops | Inventory Work Items; Transition Work Item; Reconcile Work Item Completion; Recover Work Item; Report Work Items | Exposes the shared management interface while returning a truthful unsupported result. |
+| manage-work-items-jira | Inventory Work Items; Transition Work Item; Reconcile Work Item Completion; Recover Work Item; Report Work Items | Exposes the shared management interface while returning a truthful unsupported result. |
 
 ## Authoritative Inputs
 
@@ -312,10 +315,11 @@ The provider relationships and procedure boundaries are grounded in these Agent 
 - [Create GitLab Work Item](../../skills/create-work-item-gitlab/SKILL.md)
 - [Create Azure DevOps Work Item](../../skills/create-work-item-azure-devops/SKILL.md)
 - [Create Jira Work Item](../../skills/create-work-item-jira/SKILL.md)
-- [Manage File Work Items](../../skills/manage-file-work-items/SKILL.md)
-- [Manage GitHub Work Items](../../skills/manage-github-work-items/SKILL.md)
-- [Manage GitLab Work Items](../../skills/manage-gitlab-work-items/SKILL.md)
-- [Manage Azure DevOps Work Items](../../skills/manage-azure-devops-work-items/SKILL.md)
-- [Manage Jira Work Items](../../skills/manage-jira-work-items/SKILL.md)
+- [Manage Work Items](../../skills/manage-work-items/SKILL.md)
+- [Manage File Work Items](../../skills/manage-work-items-file/SKILL.md)
+- [Manage GitHub Work Items](../../skills/manage-work-items-github/SKILL.md)
+- [Manage GitLab Work Items](../../skills/manage-work-items-gitlab/SKILL.md)
+- [Manage Azure DevOps Work Items](../../skills/manage-work-items-azure-devops/SKILL.md)
+- [Manage Jira Work Items](../../skills/manage-work-items-jira/SKILL.md)
 - [Coordinate Codex Work Items](../../skills/coordinate-codex-work-items/SKILL.md)
 - [Agent Claim](../../skills/agent-claim/SKILL.md)

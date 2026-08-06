@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Manage Azure Devops Work Items
+  display_name: Manage Work Items File
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Report Azure DevOps work-item lifecycle management as unsupported and BLOCKED without provider...
+  short_description: Manage authoritative repository-backed work items through inventory, dispatch, lifecycle...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $manage-azure-devops-work-items to report this unsupported Azure DevOps management request truthfully.
+  default_prompt: Use $manage-work-items-file to manage authoritative file-backed work items.
 
 # Optional invocation policy placeholder.
 # policy:

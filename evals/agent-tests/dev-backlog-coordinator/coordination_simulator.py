@@ -35,11 +35,11 @@ SHARED_CLAIM_OPERATIONS = frozenset(
     }
 )
 PERSISTENCE_MANAGERS = {
-    "file": "manage-file-work-items",
-    "github": "manage-github-work-items",
-    "gitlab": "manage-gitlab-work-items",
-    "azure-devops": "manage-azure-devops-work-items",
-    "jira": "manage-jira-work-items",
+    "file": "manage-work-items-file",
+    "github": "manage-work-items-github",
+    "gitlab": "manage-work-items-gitlab",
+    "azure-devops": "manage-work-items-azure-devops",
+    "jira": "manage-work-items-jira",
 }
 PLACEHOLDER_PROVIDERS = frozenset({"azure-devops", "jira"})
 

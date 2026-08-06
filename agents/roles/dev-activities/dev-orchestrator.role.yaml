@@ -385,6 +385,9 @@ skills:
     justification: We need the provider-neutral identity, input, creation, and result contract
       when a confirmed issue is deliberately excluded from the current delivery.
     condition: when an excluded confirmed issue requires a durable provider-owned work item
+- manage-work-items:
+    justification: We need the provider-neutral identity, lifecycle, result, transition,
+      completion-reconciliation, recovery, and reporting contract for direct lifecycle ownership.
 - coordinate-codex-work-items:
     justification: We need its Active Execution, Capacity, And Conversation Titles section as
       the sole source of acceptance, active-execution, settlement, and title mechanics.

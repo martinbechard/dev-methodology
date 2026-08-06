@@ -77,7 +77,7 @@ cases:
     placeholderProviders: [azure-devops, jira]
     nonDurableProviders: [none]
     unresolvedProviders: [UNSET]
-    unavailableSelectedSkill: manage-github-work-items
+    unavailableSelectedSkill: manage-work-items-github
     fallbackAllowed: false
   exhausted-correction-dispositions:
     unresolvedFindings: [F-17]

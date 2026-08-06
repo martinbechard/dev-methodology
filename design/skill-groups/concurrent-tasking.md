@@ -233,7 +233,7 @@ AGENTS.md selects exactly one creation provider from the project Persistence set
 
 ### Scenario: Managing Provider Lifecycle
 
-This scenario applies when an Agent inventories or changes durable provider lifecycle. The manage-*-work-items interface organizes the Persistence-selected management providers and gives the Agent and coordination skill one shared management contract.
+This scenario applies when an Agent inventories or changes durable provider lifecycle. The manage-work-items Interface Skill publishes the shared management contract. Persistence selects one manage-work-items-* provider.
 
 ```mermaid
 classDiagram
@@ -269,11 +269,11 @@ classDiagram
     class project-specific-directives["Project-specific directives"] {
         <<AGENTS.md>>
         <<routing>>
-        +route manage-work-items => manage-*-work-items
+        +route manage-work-items => manage-work-items-*
     }
 
-    class ManageWorkItem["manage-*-work-items"] {
-        <<Skill interface>>
+    class ManageWorkItem["manage-work-items"] {
+        <<Interface Skill>>
         +work-item-id
         +inventory-work-items(selection)
         +transition-work-item(workItem, transition)
@@ -282,35 +282,35 @@ classDiagram
         +report-work-items(selection)
     }
 
-    class manage-file-work-items {
+    class manage-work-items-file {
         <<Provider Skill>>
         <<Cross-group>>
         +inventory-work-items(selection)
         +transition-work-item(workItem, transition)
     }
 
-    class manage-github-work-items {
+    class manage-work-items-github {
         <<Provider Skill>>
         <<Cross-group>>
         +inventory-work-items(selection)
         +transition-work-item(workItem, transition)
     }
 
-    class manage-gitlab-work-items {
+    class manage-work-items-gitlab {
         <<Provider Skill>>
         <<Cross-group>>
         +inventory-work-items(selection)
         +transition-work-item(workItem, transition)
     }
 
-    class manage-azure-devops-work-items {
+    class manage-work-items-azure-devops {
         <<Provider Skill>>
         <<Cross-group>>
         +inventory-work-items(selection)
         +transition-work-item(workItem, transition)
     }
 
-    class manage-jira-work-items {
+    class manage-work-items-jira {
         <<Provider Skill>>
         <<Cross-group>>
         +inventory-work-items(selection)
@@ -322,19 +322,21 @@ classDiagram
     DevBacklogSteward ..> ManageWorkItem : when provider-wide maintenance runs
     DevBacklogWatchdog ..> ManageWorkItem : when it observes a provider-backed queue
     coordinate-codex-work-items ..> ManageWorkItem : when a Persistence provider is selected
-    project-specific-directives o..> manage-file-work-items : when Persistence is file
-    project-specific-directives o..> manage-github-work-items : when Persistence is github
-    project-specific-directives o..> manage-gitlab-work-items : when Persistence is gitlab
-    project-specific-directives o..> manage-azure-devops-work-items : when Persistence is azure-devops
-    project-specific-directives o..> manage-jira-work-items : when Persistence is jira
-    manage-file-work-items ..|> ManageWorkItem
-    manage-github-work-items ..|> ManageWorkItem
-    manage-gitlab-work-items ..|> ManageWorkItem
-    manage-azure-devops-work-items ..|> ManageWorkItem
-    manage-jira-work-items ..|> ManageWorkItem
+    project-specific-directives o..> manage-work-items-file : when Persistence is file
+    project-specific-directives o..> manage-work-items-github : when Persistence is github
+    project-specific-directives o..> manage-work-items-gitlab : when Persistence is gitlab
+    project-specific-directives o..> manage-work-items-azure-devops : when Persistence is azure-devops
+    project-specific-directives o..> manage-work-items-jira : when Persistence is jira
+    manage-work-items-file ..|> ManageWorkItem
+    manage-work-items-github ..|> ManageWorkItem
+    manage-work-items-gitlab ..|> ManageWorkItem
+    manage-work-items-azure-devops ..|> ManageWorkItem
+    manage-work-items-jira ..|> ManageWorkItem
 ```
 
-Persistence names the project selector, while manage-*-work-items names the shared management procedure family. coordinate-codex-work-items uses this contract across queue dispatch, active-execution reconciliation, delivery, closure, and periodic review.
+manage-work-items names the shared management contract, and manage-work-items-* names its
+provider family. Persistence selects one provider. coordinate-codex-work-items uses the contract
+across queue dispatch, active-execution reconciliation, delivery, closure, and periodic review.
 
 ### Scenario: A Project Enables Resource Coordination
 
@@ -561,8 +563,9 @@ The scenario diagrams use these project-routed policy, helper, creation, managem
 - [Create GitLab Work Item](../../skills/create-work-item-gitlab/SKILL.md)
 - [Create Azure DevOps Work Item](../../skills/create-work-item-azure-devops/SKILL.md)
 - [Create Jira Work Item](../../skills/create-work-item-jira/SKILL.md)
-- [Manage File Work Items](../../skills/manage-file-work-items/SKILL.md)
-- [Manage GitHub Work Items](../../skills/manage-github-work-items/SKILL.md)
-- [Manage GitLab Work Items](../../skills/manage-gitlab-work-items/SKILL.md)
-- [Manage Azure DevOps Work Items](../../skills/manage-azure-devops-work-items/SKILL.md)
-- [Manage Jira Work Items](../../skills/manage-jira-work-items/SKILL.md)
+- [Manage Work Items](../../skills/manage-work-items/SKILL.md)
+- [Manage File Work Items](../../skills/manage-work-items-file/SKILL.md)
+- [Manage GitHub Work Items](../../skills/manage-work-items-github/SKILL.md)
+- [Manage GitLab Work Items](../../skills/manage-work-items-gitlab/SKILL.md)
+- [Manage Azure DevOps Work Items](../../skills/manage-work-items-azure-devops/SKILL.md)
+- [Manage Jira Work Items](../../skills/manage-work-items-jira/SKILL.md)

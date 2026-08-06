@@ -72,6 +72,9 @@ examples:
     preserved unrelated provider state, completed only the authorized recovery, and reported the
     exact durable locations. No child task or ordinary status transition was created.'
 skills:
+- manage-work-items:
+    justification: We need the provider-neutral inventory, recovery, reporting, identity,
+      lifecycle, and result contract for provider-wide maintenance.
 - coordinate-codex-work-items:
     justification: We need its active-capacity and recovery rules for provider-wide reconciliation.
     condition: when provider-wide maintenance touches coordinated work-item state.

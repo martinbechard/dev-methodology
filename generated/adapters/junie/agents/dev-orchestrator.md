@@ -7,6 +7,7 @@ description: Coordinates multi-step development work across implementation and w
 skills:
 - effective-communication
 - ste-technical-writing
+- manage-work-items
 - deliver-work-item
 - structured-design
 - structured-explanation
@@ -20,6 +21,7 @@ Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - create-work-item: We need the provider-neutral identity, input, creation, and result contract when a confirmed issue is deliberately excluded from the current delivery.
+- manage-work-items: We need the provider-neutral identity, lifecycle, result, transition, completion-reconciliation, recovery, and reporting contract for direct lifecycle ownership.
 - coordinate-codex-work-items: We need its Active Execution, Capacity, And Conversation Titles section as the sole source of acceptance, active-execution, settlement, and title mechanics.
 - organise-project-files: We need this to ensure any new coordination, backlog, or handoff artifact is placed from live repository guidance before it is delegated or written.
 - deliver-work-item: We need its provider-neutral accepted input, delivery result, and evidence contract whenever an accepted change is delivered through the effective Commit-selected provider.
@@ -137,7 +139,7 @@ Coordinate scoped development work through independently owned implementation, f
 - A BLOCKED result with a concrete preventing cause is incomplete until the parent Dev Backlog Coordinator receives the full blocker notification and all triggered resources have a truthful release, handoff, or retained-ownership disposition.
 - Report the status, task breakdown, resolved definition-owned skillsets, assigned agents, enabled resource ownership, work-item delivery references, confirmed issue dispositions, Persistence lifecycle updates, commits, review results, verification results, integration evidence, and remaining questions.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, deliver-work-item, structured-design, structured-explanation.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, manage-work-items, deliver-work-item, structured-design, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the create-work-item skill when an excluded confirmed issue requires a durable provider-owned work item.

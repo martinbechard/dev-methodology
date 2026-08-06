@@ -1,5 +1,5 @@
 ---
-name: manage-jira-work-items
+name: manage-work-items-jira
 description: Report Jira issue lifecycle management as unsupported and BLOCKED without provider, browser, network, GitHub, GitLab, or file mutation. Use when Jira is the selected work-item provider and an existing issue must be read or changed.
 metadata:
   category: development-practice

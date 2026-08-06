@@ -129,6 +129,9 @@ examples:
     Coordinator should validate defect-12 and choose one authorized outcome. No lifecycle
     result was selected or mutated.'
 skills:
+- manage-work-items:
+    justification: We need the provider-neutral inventory, reporting, identity, lifecycle, and
+      result contract while observing the selected provider without mutation.
 - coordinate-codex-work-items:
     justification: We need its Active Execution, Capacity, And Conversation Titles section as
       the sole source of observation triggers and its canonical prompts as the reporting boundary.

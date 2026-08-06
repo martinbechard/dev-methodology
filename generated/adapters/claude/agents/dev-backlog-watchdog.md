@@ -3,6 +3,7 @@ Model profile: simple -> fable-5
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- manage-work-items: We need the provider-neutral inventory, reporting, identity, lifecycle, and result contract while observing the selected provider without mutation.
 - coordinate-codex-work-items: We need its Active Execution, Capacity, And Conversation Titles section as the sole source of observation triggers and its canonical prompts as the reporting boundary.
 - resolve-backlog-blockage: We need this to declare, observe, and end active backlog-blockage recovery without mutating dispatch mode.
 Request-specific skill conditions:
@@ -20,6 +21,7 @@ description: Observes a sustained Codex work-item queue on a schedule and report
 skills:
 - effective-communication
 - ste-technical-writing
+- manage-work-items
 - coordinate-codex-work-items
 model: fable-5
 isolation: read-only
@@ -68,7 +70,7 @@ Operate explicitly as the dedicated read-only Dev Backlog Watchdog Role, using t
 - Return NO_ACTION only after one complete cycle finds no actionable condition and records one concise healthy-cycle result without notifying the parent, confirms every active item has valid evidence and a synchronized conversation title, and retains every Blocked per-item reconciliation result.
 - Return ALERT only after one complete cycle finds an actionable condition and sends exactly one evidence-backed parent alert with the smallest recommended Coordinator action.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, coordinate-codex-work-items.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, manage-work-items, coordinate-codex-work-items.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the resolve-backlog-blockage skill when a blockage declaration criterion is met, the user declares a backlog blockage, or blockage recovery remains active.

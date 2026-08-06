@@ -1,6 +1,6 @@
 # GitHub Work-Item Provider Evaluation
 
-Use the staged create-work-item-github and manage-github-work-items skills. Treat mock_github.py as the authenticated synthetic GitHub provider interface and provider-state.json as provider-owned remote state. Do not edit provider-state.json directly and do not create backlog or any other local queue.
+Use the staged create-work-item-github and manage-work-items-github skills. Treat mock_github.py as the authenticated synthetic GitHub provider interface and provider-state.json as provider-owned remote state. Do not edit provider-state.json directly and do not create backlog or any other local queue.
 
 Perform and verify these provider operations through mock_github.py:
 

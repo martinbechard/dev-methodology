@@ -122,8 +122,8 @@
     <div class="section-heading"><h2 id="coverage-title">Coverage and case catalogs</h2><p>Current catalog inventory remains separate from historical campaign results. Probe records retain their executable case, agent-scenario, and workflow associations without turning declarations into verified runs.</p></div>
     <h3>Current catalog inventory</h3>
     <div class="grid" style="margin-top:1rem">
-      <article class="metric"><strong>133</strong><span>Bundled skills</span></article>
-      <article class="metric"><strong>131</strong><span>Diagnostic probe records</span></article>
+      <article class="metric"><strong>134</strong><span>Bundled skills</span></article>
+      <article class="metric"><strong>132</strong><span>Diagnostic probe records</span></article>
       <article class="metric"><strong>30</strong><span>Conceptual agents</span></article>
       <article class="metric"><strong>30</strong><span>Current suites</span></article>
       <article class="metric"><strong>105</strong><span>Current suite scenarios</span></article>
@@ -135,7 +135,7 @@
       <article class="metric"><strong>5</strong><span>Workflow packs</span></article>
     </div>
     <div class="grid" style="margin-top:1rem">
-      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed skill result.</li><li>131 skills have a direct diagnostic probe declaration but no direct skill verdict.</li><li>1 skills have only indirect current-suite coverage without a direct probe or skill result.</li><li>1 skills have no recorded evaluation evidence.</li><li>53 skills are named by at least one selected-campaign scenario; 80 are not.</li></ul><p><strong>No skill-level verdict:</strong> the selected campaign publishes no skill receipts, so linked PASS outcomes remain agent-scenario evidence.</p></article>
+      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed skill result.</li><li>132 skills have a direct diagnostic probe declaration but no direct skill verdict.</li><li>1 skills have only indirect current-suite coverage without a direct probe or skill result.</li><li>1 skills have no recorded evaluation evidence.</li><li>53 skills are named by at least one selected-campaign scenario; 81 are not.</li></ul><p><strong>No skill-level verdict:</strong> the selected campaign publishes no skill receipts, so linked PASS outcomes remain agent-scenario evidence.</p></article>
     </div>
   </section>
 
@@ -150,7 +150,7 @@
       <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
       <div><dt>Documentation snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>6c8c0af6edc4499af897d0e5238494d7b733c1c9869ea4fb4bc5ed2266c0291c</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source snapshot</dt><dd><code>d1f3013699fac3c35d76dccf745bb404f92292961c508803f6efe435558f38d4</code>; regenerated and compared by the focused check</dd></div>
     </dl>
     <div style="margin-top:2rem"><h3>Campaign verdict results</h3></div>
     <div class="grid" style="margin-top:1rem">
@@ -2097,7 +2097,7 @@
       <label class="field" for="skill-status">Coverage status<select id="skill-status" data-filter-status="skill"><option value="all">All statuses</option><option value="direct-governed">Direct governed result</option><option value="direct-probe">Direct diagnostic probe</option><option value="indirect-only">Indirect suite only</option><option value="none">No recorded evidence</option></select></label>
       <button type="button" data-filter-clear="skill">Clear skill filters</button>
     </div>
-    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 133 skills.</p>
+    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 134 skills.</p>
     <noscript><p class="scope-note">JavaScript is disabled. All skill entries remain visible; text and status filtering are optional enhancements.</p></noscript>
     <div class="catalog" id="skill-catalog">
     <article class="evaluation-card skill-card" id="skill-agent-claim"
@@ -3919,18 +3919,48 @@
       </dl>
     </article>
 
-    <article class="evaluation-card skill-card" id="skill-manage-azure-devops-work-items"
-      data-kind="skill" data-status="direct-probe" data-search="manage-azure-devops-work-items report azure devops work-item lifecycle management as unsupported and blocked without provider, browser, network, github, gitlab, or file mutation. use when azure devops is the selected work-item provider and an existing work item must be read or changed. development-practice probe-manage-azure-devops-work-items no governed campaign link">
+    <article class="evaluation-card skill-card" id="skill-manage-work-items"
+      data-kind="skill" data-status="direct-probe" data-search="manage-work-items define the provider-neutral contract for work-item inventory, lifecycle transitions, completion reconciliation, recovery, and reporting. use when a lifecycle consumer or management provider needs the shared work-item identity, lifecycle, result, and procedure vocabulary. development-practice probe-manage-work-items no governed campaign link">
       <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>manage-azure-devops-work-items</h3></div>
+        <div><span class="card-kicker">Skill</span><h3>manage-work-items</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
       </div>
-      <p>Report Azure DevOps work-item lifecycle management as unsupported and BLOCKED without provider, browser, network, GitHub, GitLab, or file mutation. Use when Azure DevOps is the selected work-item provider and an existing work item must be read or changed.</p>
-      <p class="source-row"><a href="../skills/manage-azure-devops-work-items/SKILL.md">Skill source</a></p>
+      <p>Define the provider-neutral contract for work-item inventory, lifecycle transitions, completion reconciliation, recovery, and reporting. Use when a lifecycle consumer or management provider needs the shared work-item identity, lifecycle, result, and procedure vocabulary.</p>
+      <p class="source-row"><a href="../skills/manage-work-items/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe</h4>
 
         <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-manage-azure-devops-work-items</a></dd></div>
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-manage-work-items</a></dd></div>
+          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
+          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">work-item-management-provider-operations</a></dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-backlog-steward-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-steward-boundary</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-steward-provider-boundary</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, operation-coverage, tool-authority, output-contract-presence</dd></div>
+          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-manage-work-items-azure-devops"
+      data-kind="skill" data-status="direct-probe" data-search="manage-work-items-azure-devops report azure devops work-item lifecycle management as unsupported and blocked without provider, browser, network, github, gitlab, or file mutation. use when azure devops is the selected work-item provider and an existing work item must be read or changed. development-practice probe-manage-work-items-azure-devops no governed campaign link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>manage-work-items-azure-devops</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Report Azure DevOps work-item lifecycle management as unsupported and BLOCKED without provider, browser, network, GitHub, GitLab, or file mutation. Use when Azure DevOps is the selected work-item provider and an existing work item must be read or changed.</p>
+      <p class="source-row"><a href="../skills/manage-work-items-azure-devops/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-manage-work-items-azure-devops</a></dd></div>
           <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
           <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
           <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">provider-placeholder-matrix</a>, <a href="../evals/cases.yaml">work-item-management-provider-operations</a></dd></div>
@@ -3949,18 +3979,18 @@
       </dl>
     </article>
 
-    <article class="evaluation-card skill-card" id="skill-manage-file-work-items"
-      data-kind="skill" data-status="direct-probe" data-search="manage-file-work-items manage authoritative repository-backed work items through inventory, dispatch, lifecycle, recovery, completion, failure, and archival. use when the effective provider is file or the user explicitly requests management of file-backed items. development-practice probe-manage-file-work-items linked agent-suite outcomes only: pass, fail">
+    <article class="evaluation-card skill-card" id="skill-manage-work-items-file"
+      data-kind="skill" data-status="direct-probe" data-search="manage-work-items-file manage authoritative repository-backed work items through inventory, dispatch, lifecycle, recovery, completion, failure, and archival. use when the effective provider is file or the user explicitly requests management of file-backed items. development-practice probe-manage-work-items-file linked agent-suite outcomes only: pass, fail">
       <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>manage-file-work-items</h3></div>
+        <div><span class="card-kicker">Skill</span><h3>manage-work-items-file</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
       </div>
       <p>Manage authoritative repository-backed work items through inventory, dispatch, lifecycle, recovery, completion, failure, and archival. Use when the effective provider is file or the user explicitly requests management of file-backed items.</p>
-      <p class="source-row"><a href="../skills/manage-file-work-items/SKILL.md">Skill source</a></p>
+      <p class="source-row"><a href="../skills/manage-work-items-file/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe</h4>
 
         <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-manage-file-work-items</a></dd></div>
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-manage-work-items-file</a></dd></div>
           <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
           <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
           <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">backlog-lifecycle</a>, <a href="../evals/cases.yaml">work-item-management-provider-operations</a></dd></div>
@@ -3979,18 +4009,18 @@
       </dl>
     </article>
 
-    <article class="evaluation-card skill-card" id="skill-manage-github-work-items"
-      data-kind="skill" data-status="direct-probe" data-search="manage-github-work-items inventory, select, claim, update, recover, block, complete, reopen, and report authoritative github issues through observed provider state. use when the effective work-item provider is github or an explicit one-item request selects github issue management. development-practice probe-manage-github-work-items no governed campaign link">
+    <article class="evaluation-card skill-card" id="skill-manage-work-items-github"
+      data-kind="skill" data-status="direct-probe" data-search="manage-work-items-github inventory, select, claim, update, recover, block, complete, reopen, and report authoritative github issues through observed provider state. use when the effective work-item provider is github or an explicit one-item request selects github issue management. development-practice probe-manage-work-items-github no governed campaign link">
       <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>manage-github-work-items</h3></div>
+        <div><span class="card-kicker">Skill</span><h3>manage-work-items-github</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
       </div>
       <p>Inventory, select, claim, update, recover, block, complete, reopen, and report authoritative GitHub issues through observed provider state. Use when the effective work-item provider is github or an explicit one-item request selects GitHub issue management.</p>
-      <p class="source-row"><a href="../skills/manage-github-work-items/SKILL.md">Skill source</a></p>
+      <p class="source-row"><a href="../skills/manage-work-items-github/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe</h4>
 
         <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-manage-github-work-items</a></dd></div>
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-manage-work-items-github</a></dd></div>
           <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
           <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
           <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">github-work-item-provider</a>, <a href="../evals/cases.yaml">work-item-management-provider-operations</a></dd></div>
@@ -4009,18 +4039,18 @@
       </dl>
     </article>
 
-    <article class="evaluation-card skill-card" id="skill-manage-gitlab-work-items"
-      data-kind="skill" data-status="direct-probe" data-search="manage-gitlab-work-items manage authoritative gitlab issues through lookup, ownership, lifecycle, dependency, recovery, and terminal updates with verified provider evidence. use when the effective work-item provider is gitlab or the user explicitly requests management of identified gitlab issues without changing the project default. development-practice probe-manage-gitlab-work-items no governed campaign link">
+    <article class="evaluation-card skill-card" id="skill-manage-work-items-gitlab"
+      data-kind="skill" data-status="direct-probe" data-search="manage-work-items-gitlab manage authoritative gitlab issues through lookup, ownership, lifecycle, dependency, recovery, and terminal updates with verified provider evidence. use when the effective work-item provider is gitlab or the user explicitly requests management of identified gitlab issues without changing the project default. development-practice probe-manage-work-items-gitlab no governed campaign link">
       <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>manage-gitlab-work-items</h3></div>
+        <div><span class="card-kicker">Skill</span><h3>manage-work-items-gitlab</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
       </div>
       <p>Manage authoritative GitLab issues through lookup, ownership, lifecycle, dependency, recovery, and terminal updates with verified provider evidence. Use when the effective work-item provider is GitLab or the user explicitly requests management of identified GitLab issues without changing the project default.</p>
-      <p class="source-row"><a href="../skills/manage-gitlab-work-items/SKILL.md">Skill source</a></p>
+      <p class="source-row"><a href="../skills/manage-work-items-gitlab/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe</h4>
 
         <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-manage-gitlab-work-items</a></dd></div>
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-manage-work-items-gitlab</a></dd></div>
           <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
           <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
           <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">work-item-management-provider-operations</a></dd></div>
@@ -4039,18 +4069,18 @@
       </dl>
     </article>
 
-    <article class="evaluation-card skill-card" id="skill-manage-jira-work-items"
-      data-kind="skill" data-status="direct-probe" data-search="manage-jira-work-items report jira issue lifecycle management as unsupported and blocked without provider, browser, network, github, gitlab, or file mutation. use when jira is the selected work-item provider and an existing issue must be read or changed. development-practice probe-manage-jira-work-items no governed campaign link">
+    <article class="evaluation-card skill-card" id="skill-manage-work-items-jira"
+      data-kind="skill" data-status="direct-probe" data-search="manage-work-items-jira report jira issue lifecycle management as unsupported and blocked without provider, browser, network, github, gitlab, or file mutation. use when jira is the selected work-item provider and an existing issue must be read or changed. development-practice probe-manage-work-items-jira no governed campaign link">
       <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>manage-jira-work-items</h3></div>
+        <div><span class="card-kicker">Skill</span><h3>manage-work-items-jira</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
       </div>
       <p>Report Jira issue lifecycle management as unsupported and BLOCKED without provider, browser, network, GitHub, GitLab, or file mutation. Use when Jira is the selected work-item provider and an existing issue must be read or changed.</p>
-      <p class="source-row"><a href="../skills/manage-jira-work-items/SKILL.md">Skill source</a></p>
+      <p class="source-row"><a href="../skills/manage-work-items-jira/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe</h4>
 
         <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-manage-jira-work-items</a></dd></div>
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-manage-work-items-jira</a></dd></div>
           <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
           <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
           <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">provider-placeholder-matrix</a>, <a href="../evals/cases.yaml">work-item-management-provider-operations</a></dd></div>

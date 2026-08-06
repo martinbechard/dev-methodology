@@ -47,7 +47,7 @@ Create one independently actionable GitHub issue. The GitHub provider record is 
 
 - Do not create repository backlog files, cached issue mirrors, or fallback local queues on success, provider failure, authentication failure, permission denial, or partial mutation.
 - Do not create a pull request or treat a pull request as the work-item identifier.
-- Do not close, reopen, claim, resume, block, fail, abandon, or complete an existing issue; those operations belong to manage-github-work-items.
+- Do not close, reopen, claim, resume, block, fail, abandon, or complete an existing issue; those operations belong to manage-work-items-github.
 - Do not infer provider github from a remote, installed tool, existing issue, template, or hosting account.
 
 ## Result

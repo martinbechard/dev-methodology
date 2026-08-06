@@ -1,5 +1,5 @@
 ---
-name: manage-file-work-items
+name: manage-work-items-file
 description: Manage authoritative repository-backed work items through inventory, dispatch, lifecycle, recovery, completion, failure, and archival. Use when the effective provider is file or the user explicitly requests management of file-backed items.
 metadata:
   category: development-practice
@@ -138,7 +138,7 @@ Use explicit provider lifecycle states and never infer success from silence:
 READY as a completion disposition is not lifecycle READY. Starting, Running, unknown-cause
 Stalled, and known-cause Blocked remain active typed work items in their existing type folder;
 none moves to a holding or terminal queue solely because of that state. A file item remains in its current nonterminal
-lifecycle until manage-file-work-items records an authorized transition. Once AWAITING_REVIEW
+lifecycle until manage-work-items-file records an authorized transition. Once AWAITING_REVIEW
 is recorded for a feature-branch delivery, the same delivery identity remains lifecycle
 AWAITING_REVIEW through review corrections and merge preparation. A provider terminal-update
 failure after delivery disposition READY preserves the accepted delivery evidence but leaves
@@ -412,4 +412,4 @@ Keep the report grounded in current files and state, not prior conversation memo
 
 ## Migration
 
-Callers migrated file-provider inventory, lifecycle, recovery, completion, failure, and archival behavior to manage-file-work-items, and the legacy shells were removed. Historical mapping: manage-backlog and file-based-backlog management behavior moved into this skill; PROJECT.yaml and generated guidance now select Persistence file and reference manage-file-work-items for management.
+Callers migrated file-provider inventory, lifecycle, recovery, completion, failure, and archival behavior to manage-work-items-file, and the legacy shells were removed. Historical mapping: manage-backlog and file-based-backlog management behavior moved into this skill; PROJECT.yaml and generated guidance now select Persistence file and reference manage-work-items-file for management.

@@ -34,7 +34,7 @@ The applied diagrams use the relationship and member conventions defined by the 
 - An Agent Skill is loaded by exact name from an Agent definition.
 - An Injectable Skill implements procedure vocabulary selected through AGENTS.md.
 - A Skill interface is a contract that lists the public data and function members its consumers know and every Provider Skill must provide or respect. A wildcard family can represent an abstract interface, but it is not a maintained package.
-- An Interface Skill is a distinct named SKILL.md package that publishes an interface. The create-work-item and deliver-work-item packages publish the maintained interfaces for their provider families.
+- An Interface Skill is a distinct named SKILL.md package that publishes an interface. The create-work-item, manage-work-items, and deliver-work-item packages publish the maintained interfaces for their provider families.
 - A Provider Skill supplies one implementation of a Skill interface. It uses Provider Skill as its visible stereotype instead of stacking SKILL.md and Injectable Skill stereotypes.
 - A dashed realization arrow with a hollow triangular arrowhead points from a Provider Skill to the Skill interface it implements. Realization is conformance, not loading.
 - An AGENTS.md factory is a separate routing node that selects one Provider Skill by exact name. It does not replace the Skill interface used by an Agent or another skill.
@@ -122,7 +122,7 @@ The registry assigns every current skill one primary direct group and records ne
 | Baseline Development | careful-coding; code-comments; code-discovery; test-driven-development; structured-design; structured-explanation; organise-project-files; review-structured-artifact; explain-code-fix | None | 9 |
 | Project Setup | detect-technology-skills; create-project-configuration | None | 2 |
 | Documentation Methodology | route-documentation-work; bootstrap-project-documentation; reverse-engineer-project-documentation; verify-documentation-page | None | 4 |
-| Backlog Management | resolve-backlog-blockage; create-work-item; create-work-item-file; create-work-item-github; create-work-item-gitlab; create-work-item-azure-devops; create-work-item-jira; manage-file-work-items; manage-github-work-items; manage-gitlab-work-items; manage-azure-devops-work-items; manage-jira-work-items | None | 12 |
+| Backlog Management | resolve-backlog-blockage; create-work-item; create-work-item-file; create-work-item-github; create-work-item-gitlab; create-work-item-azure-devops; create-work-item-jira; manage-work-items; manage-work-items-file; manage-work-items-github; manage-work-items-gitlab; manage-work-items-azure-devops; manage-work-items-jira | None | 13 |
 | Concurrent Tasking | coordinate-codex-work-items; set-solo-mode; set-multitask-mode | Resource Coordination: agent-claim, agent-claim-command, agent-claim-mcp. Feature Branch And Worktrees: integrate-agent-work, deliver-work-item-feature-branch, create-pull-request. | 9 |
 | Direct Main Delivery | deliver-work-item; deliver-work-item-direct-main | None | 2 |
 | Review And Verification | review-code-with-evidence; test-strategy; verify-end-to-end-workflow; analyze-root-cause; collect-runtime-evidence; trace-code-execution; review-prompt-contracts | None | 7 |
@@ -162,12 +162,12 @@ The applied model is complete when it describes the maintained skill inventory a
   - **EXAMPLE:** verify-documentation-page is a Documentation Methodology skill and appears in Baseline Development because review-structured-artifact loads it.
 
 - **RULE: RULE-60** Provider families share coherent public procedure names
-  - **SYNOPSIS:** A Skill interface owns the public vocabulary, each Provider Skill realizes that contract, and a separate AGENTS.md factory selects one provider without changing the consumer.
-  - **EXAMPLE:** The manage-*-work-items interface exposes Inventory Work Items, Transition Work Item, Reconcile Work Item Completion, Recover Work Item, and Report Work Items; every management provider realizes those procedures while Persistence selection remains in AGENTS.md.
+  - **SYNOPSIS:** An Interface Skill owns the public vocabulary, each Provider Skill realizes that contract, and a separate AGENTS.md factory selects one provider without changing the consumer.
+  - **EXAMPLE:** manage-work-items exposes Inventory Work Items, Transition Work Item, Reconcile Work Item Completion, Recover Work Item, and Report Work Items; every manage-work-items-* provider realizes those procedures while Persistence selection remains in AGENTS.md.
 
 - **RULE: RULE-65** Interface realization remains distinct from loading
   - **SYNOPSIS:** A realization arrow records that a provider supplies or respects the interface members. It does not assert that either node loads the other.
-  - **EXAMPLE:** manage-github-work-items realizes manage-*-work-items, while Dev Backlog Steward separately consumes the interface and the Persistence factory separately selects the GitHub provider.
+  - **EXAMPLE:** manage-work-items-github realizes manage-work-items, while Dev Backlog Steward separately consumes the Interface Skill and the Persistence factory separately selects the GitHub provider.
 
 - **RULE: RULE-64** Containment remains distinct from dependency
   - **SYNOPSIS:** Nested groups organize a larger comprehension set; loading arrows separately identify which Agents or skills actually reference another skill.

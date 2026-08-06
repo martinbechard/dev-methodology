@@ -338,6 +338,9 @@ examples:
     remains Blocked until the published schema digest changes; that observable trigger starts
     a fresh reconciliation. No vague retry or user question was recorded.'
 skills:
+- manage-work-items:
+    justification: We need the provider-neutral identity, lifecycle, result, and management
+      procedure contract before project guidance selects one provider implementation.
 - structured-explanation:
     justification: We need this to report capacity, waits, enabled ownership, throughput, and recovery in
       a compact evidence-backed form.
