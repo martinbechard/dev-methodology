@@ -2,27 +2,29 @@
 
 ## Scope
 
-Concurrent Tasking directly contains work-item coordination and the two dispatch-mode skills. It also nests the Resource Coordination and Feature Branch And Worktrees skill groups. Its complete set therefore includes those three direct skills plus every skill in the two nested groups. Containment is for comprehension and does not mean that a direct skill uses every nested skill. Persistence remains an independent injected provider.
+Concurrent Tasking directly contains the two work-item coordination skills and the two dispatch-mode skills. It also nests the Resource Coordination and Feature Branch And Worktrees skill groups. Its complete set therefore includes those four direct skills plus every skill in the two nested groups. Containment is for comprehension and does not mean that a direct skill uses every nested skill. Persistence remains an independent injected provider.
+
+Concurrent Tasking names a Skill Group, not an Agent Group. Its consumers belong to the Task Management Agent hierarchy: Task Stream Management Agents manage a sustained stream of work items, while Single-Task Delivery Agents deliver one accepted work item. Both Agent Groups use Concurrent Tasking skills where their responsibilities require coordination.
 
 The applied-model conventions are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md#2-applied-model-legend).
 
 ## Design
 
-The design starts with the complete Agent landscape, then expands four scenarios that need more detail. The overall diagrams show static dependencies and groups. Each scenario identifies the condition being explained and keeps its consumers, project routing, interfaces, and provider skills together.
+The design starts with the Task Management Agent hierarchy and then shows the relationships between whole Agent Groups and Skill Groups. Two expanded diagrams identify the exact Agents and skills inside those Agent Group views. Four scenario diagrams then explain provider routing and other relationships that need more detail.
 
 A solid dependency is fixed by the referencing definition. A dotted dependency applies only under the condition written on the arrow. Project-selected skill loading originates at AGENTS.md. Agent- or skill-owned loading originates at the Agent or skill that makes that decision. Realization arrows show that a provider implements an interface; they do not load a file.
 
 When several provider skills expose the same public procedures, the scenario uses an exact Interface Skill when one exists. The interface gives consumers one shared contract, while AGENTS.md selects the provider skill for the project.
 
-### Overall Agent Dependencies
+### Agent Hierarchy
 
-The overall Agent dependency view shows how the Backlog Management and Dev Activities Agent groups cooperate. The namespace boxes are presentation groups from role-catalog-groups.yaml. Solid arrows identify fixed role dependencies, while dotted arrows identify conditional delegation.
+The Agent hierarchy separates task management by unit of responsibility. Task Stream Management Agents manage a sustained queue and its provider-wide state. Single-Task Delivery Agents implement, review, verify, integrate, and deliver one accepted work item. Solid arrows identify fixed Agent dependencies, while dotted arrows identify conditional delegation.
 
 ```mermaid
 classDiagram
     direction TB
 
-    namespace BacklogManagementAgents["Backlog Management Agents"] {
+    namespace TaskStreamManagementAgents["Task Stream Management Agents"] {
         class DevBacklogCoordinator {
             <<Agent>>
         }
@@ -34,7 +36,7 @@ classDiagram
         }
     }
 
-    namespace DevActivitiesAgents["Dev Activities Agents"] {
+    namespace SingleTaskDeliveryAgents["Single-Task Delivery Agents"] {
         class DevOrchestrator {
             <<Agent>>
         }
@@ -61,42 +63,20 @@ classDiagram
     DevOrchestrator ..> DevMergeCoordinator : when multiple contributions need integration
 ```
 
-### Overall Agent And Skill Group Dependencies
+### Agent Group And Skill Group Dependencies
 
-The overall Skill Group view shows where the Agents obtain their fixed and conditional capabilities without expanding the skills inside each group. An Agent-to-group arrow means that the Agent loads one or more skills from that group; it does not mean that the Agent loads the entire group. A solid-diamond arrow means that the parent Skill Group includes the nested group's complete skill set for comprehension.
+The high-level dependency view contains only Agent Groups and Skill Groups. An Agent Group arrow summarizes one or more dependencies owned by Agents in that group; it does not mean that every Agent loads every skill in the target group. A solid arrow means at least one member has a fixed dependency. A dotted arrow summarizes a conditional dependency. A solid-diamond arrow means that the parent Skill Group contains the nested group for comprehension.
 
 ```mermaid
 classDiagram
     direction LR
 
-    namespace BacklogManagementAgents["Backlog Management Agents"] {
-        class DevBacklogCoordinator {
-            <<Agent>>
-        }
-        class DevBacklogSteward {
-            <<Agent>>
-        }
-        class DevBacklogWatchdog {
-            <<Agent>>
-        }
+    class TaskStreamManagementAgents["Task Stream Management Agents"] {
+        <<Agent Group>>
     }
 
-    namespace DevActivitiesAgents["Dev Activities Agents"] {
-        class DevOrchestrator {
-            <<Agent>>
-        }
-        class DevCoder {
-            <<Agent>>
-        }
-        class DevCodeReviewer {
-            <<Agent>>
-        }
-        class DevVerifier {
-            <<Agent>>
-        }
-        class DevMergeCoordinator {
-            <<Agent>>
-        }
+    class SingleTaskDeliveryAgents["Single-Task Delivery Agents"] {
+        <<Agent Group>>
     }
 
     class BaselineDevelopment["Baseline Development"] {
@@ -121,41 +101,247 @@ classDiagram
         <<Skill Group>>
     }
 
-    DevBacklogCoordinator --> BaselineDevelopment
-    DevBacklogCoordinator ..> BacklogManagement : when provider lifecycle or blockage is coordinated
-    DevBacklogCoordinator ..> ConcurrentTasking : when multiple work items are coordinated
-    DevBacklogSteward --> BaselineDevelopment
-    DevBacklogSteward ..> BacklogManagement : when provider-wide maintenance runs
-    DevBacklogWatchdog --> ConcurrentTasking
-    DevOrchestrator --> BaselineDevelopment
-    DevOrchestrator ..> BacklogManagement : when provider lifecycle is updated
-    DevOrchestrator ..> ConcurrentTasking : when the work item is coordinated
-    DevOrchestrator ..> DirectMainDelivery : when Commit is direct-main
-    DevOrchestrator ..> FeatureBranchAndWorktrees : when Commit is feature-branch
-    DevCoder --> BaselineDevelopment
-    DevCodeReviewer --> BaselineDevelopment
-    DevCodeReviewer --> ReviewAndVerification
-    DevVerifier --> BaselineDevelopment
-    DevVerifier --> ReviewAndVerification
-    DevMergeCoordinator --> BaselineDevelopment
-    DevMergeCoordinator --> FeatureBranchAndWorktrees
+    TaskStreamManagementAgents --> BaselineDevelopment
+    TaskStreamManagementAgents --> BacklogManagement
+    TaskStreamManagementAgents --> ConcurrentTasking
+    SingleTaskDeliveryAgents --> BaselineDevelopment
+    SingleTaskDeliveryAgents --> BacklogManagement
+    SingleTaskDeliveryAgents ..> ConcurrentTasking : when a work item is coordinated
+    SingleTaskDeliveryAgents --> DirectMainDelivery
+    SingleTaskDeliveryAgents --> FeatureBranchAndWorktrees
+    SingleTaskDeliveryAgents --> ReviewAndVerification
 
     ConcurrentTasking *-- ResourceCoordination
     ConcurrentTasking *-- FeatureBranchAndWorktrees
+    DirectMainDelivery ..> FeatureBranchAndWorktrees : when the accepted change is not present on main
 ```
 
-### Overall Core And Optional Agent Skills
+### Task Stream Management Agents And Skills
 
-The Agent skill inventory states the exact files each relevant role always loads and the exact files it loads only under a recorded condition. The role schema adds effective-communication and ste-technical-writing to every conceptual Agent.
+Task Stream Management Agents coordinate a sustained queue, maintain provider-wide records, and observe whether the queue needs attention. The diagram expands their exact role-declared skill dependencies. Solid open-diamond arrows are Core Agent Skills. Dotted open-diamond arrows are Optional Agent Skills and state their loading conditions.
 
-| Agent scope | Additional Core Agent Skills | Optional Agent Skills and conditions |
-| --- | --- | --- |
-| Every conceptual Agent | effective-communication; ste-technical-writing | None |
-| Dev Backlog Coordinator | structured-explanation | coordinate-work-items for a sustained multi-item queue; coordinate-codex-tasks when executions use Codex tasks; resolve-backlog-blockage during a declared blockage; set-solo-mode when configured secondary dispatch must stop; set-multitask-mode when configured secondary dispatch may resume |
-| Dev Orchestrator | deliver-work-item; structured-design; structured-explanation | coordinate-work-items for a coordinated work item; coordinate-codex-tasks when the root execution is a Codex task; organise-project-files when orchestration creates a new project file or directory |
-| Dev Merge Coordinator | integrate-agent-work; review-structured-artifact; explain-code-fix | organise-project-files when integration creates or introduces a new project file or directory |
-| Dev Backlog Steward | structured-explanation | coordinate-work-items when provider-wide maintenance touches coordinated state; coordinate-codex-tasks when inspecting Codex task evidence; organise-project-files when recovery creates a path whose destination is not fixed |
-| Dev Backlog Watchdog | coordinate-work-items | coordinate-codex-tasks when observing Codex tasks; resolve-backlog-blockage when a blockage criterion or active recovery applies |
+```mermaid
+classDiagram
+    direction LR
+
+    namespace TaskStreamManagementAgents["Task Stream Management Agents"] {
+        class DevBacklogCoordinator {
+            <<Agent>>
+        }
+        class DevBacklogSteward {
+            <<Agent>>
+        }
+        class DevBacklogWatchdog {
+            <<Agent>>
+        }
+    }
+
+    namespace BacklogManagementSkills["Backlog Management skills"] {
+        class ManageWorkItems["manage-work-items"] {
+            <<Interface Skill>>
+        }
+        class manage-future-ideas {
+            <<SKILL.md>>
+        }
+        class resolve-backlog-blockage {
+            <<SKILL.md>>
+        }
+    }
+
+    namespace ConcurrentTaskingSkills["Concurrent Tasking skills"] {
+        class coordinate-work-items {
+            <<SKILL.md>>
+        }
+        class coordinate-codex-tasks {
+            <<SKILL.md>>
+        }
+        class set-solo-mode {
+            <<SKILL.md>>
+        }
+        class set-multitask-mode {
+            <<SKILL.md>>
+        }
+    }
+
+    namespace BaselineDevelopmentSkills["Baseline Development skills"] {
+        class structured-explanation {
+            <<SKILL.md>>
+        }
+        class organise-project-files {
+            <<SKILL.md>>
+        }
+    }
+
+    DevBacklogCoordinator o--> ManageWorkItems
+    DevBacklogCoordinator o--> structured-explanation
+    DevBacklogCoordinator o..> coordinate-work-items : when coordinating a sustained queue
+    DevBacklogCoordinator o..> coordinate-codex-tasks : when executions use Codex tasks
+    DevBacklogCoordinator o..> resolve-backlog-blockage : during declared blockage recovery
+    DevBacklogCoordinator o..> set-solo-mode : when secondary dispatch must stop
+    DevBacklogCoordinator o..> set-multitask-mode : when secondary dispatch may resume
+
+    DevBacklogSteward o--> ManageWorkItems
+    DevBacklogSteward o--> structured-explanation
+    DevBacklogSteward o..> coordinate-work-items : when maintenance touches coordinated state
+    DevBacklogSteward o..> coordinate-codex-tasks : when inspecting Codex task evidence
+    DevBacklogSteward o..> organise-project-files : when recovery creates a project path
+    DevBacklogSteward o..> manage-future-ideas : when Future Ideas work is requested
+
+    DevBacklogWatchdog o--> ManageWorkItems
+    DevBacklogWatchdog o--> coordinate-work-items
+    DevBacklogWatchdog o..> coordinate-codex-tasks : when observing Codex tasks
+    DevBacklogWatchdog o..> resolve-backlog-blockage : when blockage criteria apply
+```
+
+### Single-Task Delivery Agents And Skills
+
+Single-Task Delivery Agents implement, review, verify, integrate, and deliver one accepted work item. This diagram expands their exact role-declared skill dependencies while keeping provider implementations behind their Interface Skills.
+
+```mermaid
+classDiagram
+    direction LR
+
+    namespace SingleTaskDeliveryAgents["Single-Task Delivery Agents"] {
+        class DevOrchestrator {
+            <<Agent>>
+        }
+        class DevCoder {
+            <<Agent>>
+        }
+        class DevCodeReviewer {
+            <<Agent>>
+        }
+        class DevVerifier {
+            <<Agent>>
+        }
+        class DevMergeCoordinator {
+            <<Agent>>
+        }
+    }
+
+    namespace BacklogManagementSkills["Backlog Management skills"] {
+        class CreateWorkItem["create-work-item"] {
+            <<Interface Skill>>
+        }
+        class ManageWorkItems["manage-work-items"] {
+            <<Interface Skill>>
+        }
+    }
+
+    namespace ConcurrentTaskingSkills["Concurrent Tasking skills"] {
+        class coordinate-work-items {
+            <<SKILL.md>>
+        }
+        class coordinate-codex-tasks {
+            <<SKILL.md>>
+        }
+    }
+
+    namespace DirectMainDeliverySkills["Direct Main Delivery skills"] {
+        class DeliverWorkItem["deliver-work-item"] {
+            <<Interface Skill>>
+        }
+    }
+
+    namespace BaselineDevelopmentSkills["Baseline Development skills"] {
+        class organise-project-files {
+            <<SKILL.md>>
+        }
+        class careful-coding {
+            <<SKILL.md>>
+        }
+        class code-comments {
+            <<SKILL.md>>
+        }
+        class test-driven-development {
+            <<SKILL.md>>
+        }
+        class code-discovery {
+            <<SKILL.md>>
+        }
+        class explain-code-fix {
+            <<SKILL.md>>
+        }
+        class structured-design {
+            <<SKILL.md>>
+        }
+        class structured-explanation {
+            <<SKILL.md>>
+        }
+        class review-structured-artifact {
+            <<SKILL.md>>
+        }
+    }
+
+    namespace ReviewAndVerificationSkills["Review And Verification skills"] {
+        class review-code-with-evidence {
+            <<SKILL.md>>
+        }
+        class test-strategy {
+            <<SKILL.md>>
+        }
+        class verify-end-to-end-workflow {
+            <<SKILL.md>>
+        }
+        class analyze-root-cause {
+            <<SKILL.md>>
+        }
+        class collect-runtime-evidence {
+            <<SKILL.md>>
+        }
+        class trace-code-execution {
+            <<SKILL.md>>
+        }
+        class review-prompt-contracts {
+            <<SKILL.md>>
+        }
+    }
+
+    namespace FeatureBranchAndWorktreeSkills["Feature Branch And Worktrees skills"] {
+        class integrate-agent-work {
+            <<SKILL.md>>
+        }
+    }
+
+    DevOrchestrator o--> ManageWorkItems
+    DevOrchestrator o--> DeliverWorkItem
+    DevOrchestrator o--> structured-design
+    DevOrchestrator o--> structured-explanation
+    DevOrchestrator o..> CreateWorkItem : when an excluded issue needs a work item
+    DevOrchestrator o..> coordinate-work-items : when the work item is coordinated
+    DevOrchestrator o..> coordinate-codex-tasks : when the execution uses a Codex task
+    DevOrchestrator o..> organise-project-files : when orchestration creates a project path
+
+    DevCoder o--> careful-coding
+    DevCoder o--> code-comments
+    DevCoder o--> code-discovery
+    DevCoder o--> explain-code-fix
+    DevCoder o..> organise-project-files : when implementation creates a project path
+    DevCoder o..> test-driven-development : when executable tests guide implementation
+
+    DevCodeReviewer o--> review-code-with-evidence
+    DevCodeReviewer o--> review-structured-artifact
+    DevCodeReviewer o--> careful-coding
+    DevCodeReviewer o--> code-comments
+    DevCodeReviewer o..> organise-project-files : when review creates an evidence file
+
+    DevVerifier o--> test-strategy
+    DevVerifier o--> review-structured-artifact
+    DevVerifier o--> structured-explanation
+    DevVerifier o..> organise-project-files : when verification creates a project path
+    DevVerifier o..> verify-end-to-end-workflow : when an end-to-end workflow must be proven
+    DevVerifier o..> analyze-root-cause : when a check fails
+    DevVerifier o..> collect-runtime-evidence : when static evidence is insufficient
+    DevVerifier o..> trace-code-execution : when an outcome must be traced to source
+    DevVerifier o..> review-prompt-contracts : when verification uses a model-facing contract
+
+    DevMergeCoordinator o--> integrate-agent-work
+    DevMergeCoordinator o--> review-structured-artifact
+    DevMergeCoordinator o--> explain-code-fix
+    DevMergeCoordinator o..> organise-project-files : when integration creates a project path
+```
+
+The role schema also loads effective-communication and ste-technical-writing for every conceptual Agent. Those two shared dependencies are stated once here instead of adding the same two arrows to every Agent in both diagrams.
 
 ### Scenario: Creating A Work Item For An Excluded Issue
 
@@ -528,13 +714,12 @@ The direct skills control coordinated execution and dispatch mode. The nested gr
 
 ## Authoritative Inputs
 
-The Agent groups, dependencies, Core and Optional Agent Skills, scenario interfaces, and provider families are grounded in the following files.
+The Task Management Agent hierarchy, Agent Group dependencies, Core and Optional Agent Skills, scenario interfaces, and provider families are grounded in the following files.
 
-### Agent Groups And Roles
+### Task Management Agent Groups And Roles
 
-The Agent-group views use the catalog grouping and the dependency declarations in these role sources.
+The Agent-group views classify roles by task-management responsibility: stream management or single-task delivery. The Agent dependencies and exact skill relationships come from these role sources and the shared role schema.
 
-- [Agent Catalog Groups](../role-catalog-groups.yaml)
 - [Conceptual Agent Role Schema](../../agents/role-schema.yaml)
 
 - [Dev Backlog Coordinator](../../agents/roles/dev-activities/dev-backlog-coordinator.role.yaml)
