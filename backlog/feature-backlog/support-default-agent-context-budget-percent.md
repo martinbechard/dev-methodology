@@ -1,6 +1,6 @@
 # Support a Default Agent Context Budget Percent
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -61,6 +61,24 @@ None.
 
 - Which canonical source should own the default so schema validation, parser behavior, documentation, and generators cannot drift?
 - Should generated metadata distinguish whether the effective percentage came from the default or an explicit override, or is the effective value alone sufficient?
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-06T16:04:50Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Normalized Objective: Add a canonical 75% default context budget, preserve the explicit 35% and 50% role overrides, and generate the resolved effective percentage without changing unrelated agent behavior.
+
+Launch Result: Not attempted
+
+Canonical Conversation: None
+
+Last Contact At: None
+
+Next Reconciliation At: 2026-08-06T16:19:50Z
+
+Intended Root Role: Dev Orchestrator
 
 ## Governed Definition Approval
 
