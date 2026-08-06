@@ -25,12 +25,12 @@ _REQUIRED_EVIDENCE = (
 )
 
 _GOVERNED_SOURCES = (
-    "skills/create-file-work-item/SKILL.md",
+    "skills/create-work-item-file/SKILL.md",
     "agents/roles/dev-activities/dev-coder.role.yaml",
     "agents/role-schema.yaml",
     "agents/model-profiles.yaml",
     "adapters/codex/model-profiles.yaml",
-    "skills/create-file-work-item/agents/openai.yaml",
+    "skills/create-work-item-file/agents/openai.yaml",
     "adapters/codex/skills/codex-harness-directives/SKILL.md",
     "adapters/codex/skills/codex-harness-directives/agents/openai.yaml",
 )

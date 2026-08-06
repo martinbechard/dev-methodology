@@ -451,7 +451,7 @@ validation_plan:
     - "Confirm python and fastapi are installed and every accepted skillset retains source evidence."
     - "Confirm AGENTS.md requires matching folder skills before acting and does not tell ordinary agents to rerun detection."
   workflow_selector_checks:
-    - "Confirm Persistence file selects create-file-work-item and manage-file-work-items while Commit direct-main independently selects deliver-work-item-direct-main."
+    - "Confirm Persistence file selects create-work-item-file and manage-file-work-items while Commit direct-main independently selects deliver-work-item-direct-main."
     - "Confirm workflow skill names remain reference-only and folder technology skill bodies remain statically inlined under the separate Technology Skills section."
     - "Confirm legacy workitem and backlog selectors receive deterministic migration guidance and invalid values report their exact key and supported replacements."
   privacy_checks:

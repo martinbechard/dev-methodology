@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Create Gitlab Work Item
+  display_name: Create Work Item Azure Devops
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Create one authoritative GitLab issue with duplicate prevention, typed requirements...
+  short_description: Report Azure DevOps work-item creation as unsupported and BLOCKED without provider, browser...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $create-gitlab-work-item to create one verified GitLab issue without a fallback record.
+  default_prompt: Use $create-work-item-azure-devops to report this unsupported Azure DevOps creation request truthfully.
 
 # Optional invocation policy placeholder.
 # policy:

@@ -345,9 +345,23 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
-  - id: probe-create-file-work-item
-    skill: create-file-work-item
-    source: skills/create-file-work-item/SKILL.md
+  - id: probe-create-work-item
+    skill: create-work-item
+    source: skills/create-work-item/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: One durable work item must be created through the effective Persistence provider.
+    negativeCondition: Provider-specific identity, mutation, duplicate detection, or unsupported behavior does not move into the neutral interface.
+    expectedBehavior: Preserve one opaque provider-owned Work Item ID and one normalized input, Create Work Item, and result vocabulary while the exact selected create-work-item provider owns duplicate detection, mutation, partial recovery, verification, and no-fallback behavior.
+    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, tool-authority, output-contract-presence], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-orchestrator-happy, dev-orchestrator-boundary]
+    workflowAssociations: [backlog]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: manage-file-work-items}
+  - id: probe-create-work-item-file
+    skill: create-work-item-file
+    source: skills/create-work-item-file/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: artifact-contract
     activationCondition: The effective provider is file and one requested or independently identified defect, feature, analysis, or investigation must become a durable work item.
@@ -359,9 +373,9 @@ probes:
     executableCases: [file-work-item-template-contract]
     coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
-  - id: probe-create-azure-devops-work-item
-    skill: create-azure-devops-work-item
-    source: skills/create-azure-devops-work-item/SKILL.md
+  - id: probe-create-work-item-azure-devops
+    skill: create-work-item-azure-devops
+    source: skills/create-work-item-azure-devops/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
     activationCondition: Azure DevOps is the selected work-item provider and creation of a durable work item is requested.
@@ -372,10 +386,10 @@ probes:
     workflowAssociations: [backlog]
     executableCases: [provider-placeholder-matrix]
     coverageStatus: fixture-backed
-    ablation: {omitTargetSkill: true, wrongSkillControl: create-file-work-item}
-  - id: probe-create-jira-work-item
-    skill: create-jira-work-item
-    source: skills/create-jira-work-item/SKILL.md
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-work-item-file}
+  - id: probe-create-work-item-jira
+    skill: create-work-item-jira
+    source: skills/create-work-item-jira/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
     activationCondition: Jira is the selected work-item provider and creation of a durable issue is requested.
@@ -386,7 +400,7 @@ probes:
     workflowAssociations: [backlog]
     executableCases: [provider-placeholder-matrix]
     coverageStatus: fixture-backed
-    ablation: {omitTargetSkill: true, wrongSkillControl: create-file-work-item}
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-work-item-file}
   - id: probe-create-functional-spec
     skill: create-functional-spec
     source: skills/create-functional-spec/SKILL.md
@@ -415,9 +429,9 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
-  - id: probe-create-gitlab-work-item
-    skill: create-gitlab-work-item
-    source: skills/create-gitlab-work-item/SKILL.md
+  - id: probe-create-work-item-gitlab
+    skill: create-work-item-gitlab
+    source: skills/create-work-item-gitlab/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: artifact-contract
     activationCondition: The effective provider is GitLab or an explicit one-item request selects GitLab issue creation.
@@ -428,7 +442,7 @@ probes:
     workflowAssociations: [backlog]
     executableCases: []
     coverageStatus: declared
-    ablation: {omitTargetSkill: true, wrongSkillControl: create-github-work-item}
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-work-item-github}
   - id: probe-create-module-design
     skill: create-module-design
     source: skills/create-module-design/SKILL.md
@@ -667,9 +681,9 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-create-github-work-item
-    skill: create-github-work-item
-    source: skills/create-github-work-item/SKILL.md
+  - id: probe-create-work-item-github
+    skill: create-work-item-github
+    source: skills/create-work-item-github/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
     activationCondition: The effective provider is github or an explicit one-item request selects GitHub issue creation.
@@ -1240,7 +1254,7 @@ probes:
     workflowAssociations: [documentation-methodology, wiki-lifecycle]
     executableCases: []
     coverageStatus: declared
-    ablation: {omitTargetSkill: true, wrongSkillControl: create-file-work-item}
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-work-item-file}
   - id: probe-project-wiki-query
     skill: project-wiki-query
     source: skills/project-wiki-query/SKILL.md

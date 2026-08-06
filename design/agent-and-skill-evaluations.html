@@ -122,8 +122,8 @@
     <div class="section-heading"><h2 id="coverage-title">Coverage and case catalogs</h2><p>Current catalog inventory remains separate from historical campaign results. Probe records retain their executable case, agent-scenario, and workflow associations without turning declarations into verified runs.</p></div>
     <h3>Current catalog inventory</h3>
     <div class="grid" style="margin-top:1rem">
-      <article class="metric"><strong>132</strong><span>Bundled skills</span></article>
-      <article class="metric"><strong>130</strong><span>Diagnostic probe records</span></article>
+      <article class="metric"><strong>133</strong><span>Bundled skills</span></article>
+      <article class="metric"><strong>131</strong><span>Diagnostic probe records</span></article>
       <article class="metric"><strong>30</strong><span>Conceptual agents</span></article>
       <article class="metric"><strong>30</strong><span>Current suites</span></article>
       <article class="metric"><strong>105</strong><span>Current suite scenarios</span></article>
@@ -135,7 +135,7 @@
       <article class="metric"><strong>5</strong><span>Workflow packs</span></article>
     </div>
     <div class="grid" style="margin-top:1rem">
-      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed skill result.</li><li>130 skills have a direct diagnostic probe declaration but no direct skill verdict.</li><li>1 skills have only indirect current-suite coverage without a direct probe or skill result.</li><li>1 skills have no recorded evaluation evidence.</li><li>53 skills are named by at least one selected-campaign scenario; 79 are not.</li></ul><p><strong>No skill-level verdict:</strong> the selected campaign publishes no skill receipts, so linked PASS outcomes remain agent-scenario evidence.</p></article>
+      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed skill result.</li><li>131 skills have a direct diagnostic probe declaration but no direct skill verdict.</li><li>1 skills have only indirect current-suite coverage without a direct probe or skill result.</li><li>1 skills have no recorded evaluation evidence.</li><li>53 skills are named by at least one selected-campaign scenario; 80 are not.</li></ul><p><strong>No skill-level verdict:</strong> the selected campaign publishes no skill receipts, so linked PASS outcomes remain agent-scenario evidence.</p></article>
     </div>
   </section>
 
@@ -150,7 +150,7 @@
       <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
       <div><dt>Documentation snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>69bc36c511ed4f3a368fd895c90bb0fe5189852203d35c1fb55dc614ed4d6faa</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source snapshot</dt><dd><code>6c8c0af6edc4499af897d0e5238494d7b733c1c9869ea4fb4bc5ed2266c0291c</code>; regenerated and compared by the focused check</dd></div>
     </dl>
     <div style="margin-top:2rem"><h3>Campaign verdict results</h3></div>
     <div class="grid" style="margin-top:1rem">
@@ -2097,7 +2097,7 @@
       <label class="field" for="skill-status">Coverage status<select id="skill-status" data-filter-status="skill"><option value="all">All statuses</option><option value="direct-governed">Direct governed result</option><option value="direct-probe">Direct diagnostic probe</option><option value="indirect-only">Indirect suite only</option><option value="none">No recorded evidence</option></select></label>
       <button type="button" data-filter-clear="skill">Clear skill filters</button>
     </div>
-    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 132 skills.</p>
+    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 133 skills.</p>
     <noscript><p class="scope-note">JavaScript is disabled. All skill entries remain visible; text and status filtering are optional enhancements.</p></noscript>
     <div class="catalog" id="skill-catalog">
     <article class="evaluation-card skill-card" id="skill-agent-claim"
@@ -2719,66 +2719,6 @@
       </dl>
     </article>
 
-    <article class="evaluation-card skill-card" id="skill-create-azure-devops-work-item"
-      data-kind="skill" data-status="direct-probe" data-search="create-azure-devops-work-item report azure devops work-item creation as unsupported and blocked without provider, browser, network, github, gitlab, or file mutation. use when azure devops is the selected work-item provider and a new durable work item is requested. development-practice probe-create-azure-devops-work-item no governed campaign link">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>create-azure-devops-work-item</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Report Azure DevOps work-item creation as unsupported and BLOCKED without provider, browser, network, GitHub, GitLab, or file mutation. Use when Azure DevOps is the selected work-item provider and a new durable work item is requested.</p>
-      <p class="source-row"><a href="../skills/create-azure-devops-work-item/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-create-azure-devops-work-item</a></dd></div>
-          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
-          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">provider-placeholder-matrix</a></dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-backlog-steward-boundary</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, no-forbidden-mutation, output-contract-presence</dd></div>
-          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
-    <article class="evaluation-card skill-card" id="skill-create-file-work-item"
-      data-kind="skill" data-status="direct-probe" data-search="create-file-work-item create one authoritative repository-backed work item with typed placement, source evidence, user-action boundaries, and atomic no-overwrite creation when the effective provider is file. development-practice probe-create-file-work-item linked agent-suite outcomes only: pass">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>create-file-work-item</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Create one authoritative repository-backed work item with typed placement, source evidence, user-action boundaries, and atomic no-overwrite creation when the effective provider is file.</p>
-      <p class="source-row"><a href="../skills/create-file-work-item/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-create-file-work-item</a></dd></div>
-          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>artifact-contract</dd></div>
-          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">file-work-item-template-contract</a></dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-backlog-steward-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-steward-boundary</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-steward-provider-boundary</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, queue-state-transition, claim-lifecycle, tool-authority</dd></div>
-          <div><dt>Model rubric</dt><dd>None; deterministic plan only</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <ul class="link-list"><li><a href="../evals/agent-tests/dev-backlog-steward/scenarios.yaml">dev-backlog-steward / creation-and-claim</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
     <article class="evaluation-card skill-card" id="skill-create-functional-spec"
       data-kind="skill" data-status="direct-probe" data-search="create-functional-spec use when creating or substantially rewriting a functional specification artifact from the route-documentation-work functional-spec-template asset, including actors, entry points, workflows, states, edge cases, acceptance behavior, and verification evidence. artifact-creation probe-create-functional-spec no governed campaign link">
       <div class="card-heading">
@@ -2809,66 +2749,6 @@
       </dl>
     </article>
 
-    <article class="evaluation-card skill-card" id="skill-create-github-work-item"
-      data-kind="skill" data-status="direct-probe" data-search="create-github-work-item create one authoritative github issue after provider-backed duplicate detection. use when the effective work-item provider is github or an explicit one-item request selects github issue creation. development-practice probe-create-github-work-item no governed campaign link">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>create-github-work-item</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Create one authoritative GitHub issue after provider-backed duplicate detection. Use when the effective work-item provider is github or an explicit one-item request selects GitHub issue creation.</p>
-      <p class="source-row"><a href="../skills/create-github-work-item/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-create-github-work-item</a></dd></div>
-          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
-          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">github-work-item-provider</a></dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-backlog-steward-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-steward-boundary</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, operation-coverage, tool-authority, queue-state-transition</dd></div>
-          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
-    <article class="evaluation-card skill-card" id="skill-create-gitlab-work-item"
-      data-kind="skill" data-status="direct-probe" data-search="create-gitlab-work-item create one authoritative gitlab issue with duplicate prevention, typed requirements, provider-native relationships, and verified observed identity. use when the effective work-item provider is gitlab or the user explicitly requests one gitlab issue without changing the project default. development-practice probe-create-gitlab-work-item no governed campaign link">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>create-gitlab-work-item</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Create one authoritative GitLab issue with duplicate prevention, typed requirements, provider-native relationships, and verified observed identity. Use when the effective work-item provider is GitLab or the user explicitly requests one GitLab issue without changing the project default.</p>
-      <p class="source-row"><a href="../skills/create-gitlab-work-item/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-create-gitlab-work-item</a></dd></div>
-          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>artifact-contract</dd></div>
-          <div><dt>Executable cases</dt><dd>None declared</dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-backlog-steward-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-steward-boundary</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, operation-coverage, tool-authority, no-forbidden-mutation</dd></div>
-          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
     <article class="evaluation-card skill-card" id="skill-create-high-level-design"
       data-kind="skill" data-status="direct-probe" data-search="create-high-level-design use when creating or substantially rewriting a high-level design artifact from the route-documentation-work high-level-design-template asset, including subsystem scope, parent architecture, data anchors, constituent components, interaction model, lifecycle, contracts, configuration, implementation order, invariants, and verification. artifact-creation probe-create-high-level-design no governed campaign link">
       <div class="card-heading">
@@ -2888,36 +2768,6 @@
           <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">documentation-methodology</a></dd></div>
           <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, operation-coverage, actor-boundary-coverage, contradiction-scan, readiness-consistency</dd></div>
           <div><dt>Model rubric</dt><dd>artifact-contract</dd></div>
-        </dl>
-
-      <h4>Governed campaign links</h4>
-      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
-      <dl class="compact-list">
-        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
-        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
-        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
-      </dl>
-    </article>
-
-    <article class="evaluation-card skill-card" id="skill-create-jira-work-item"
-      data-kind="skill" data-status="direct-probe" data-search="create-jira-work-item report jira issue creation as unsupported and blocked without provider, browser, network, github, gitlab, or file mutation. use when jira is the selected work-item provider and a new durable issue is requested. development-practice probe-create-jira-work-item no governed campaign link">
-      <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>create-jira-work-item</h3></div>
-        <span class="status status--direct-probe">Direct diagnostic probe</span>
-      </div>
-      <p>Report Jira issue creation as unsupported and BLOCKED without provider, browser, network, GitHub, GitLab, or file mutation. Use when Jira is the selected work-item provider and a new durable issue is requested.</p>
-      <p class="source-row"><a href="../skills/create-jira-work-item/SKILL.md">Skill source</a></p>
-      <h4>Direct diagnostic probe</h4>
-
-        <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-create-jira-work-item</a></dd></div>
-          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
-          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
-          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">provider-placeholder-matrix</a></dd></div>
-          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-backlog-steward-boundary</a></dd></div>
-          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, no-forbidden-mutation, output-contract-presence</dd></div>
-          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
         </dl>
 
       <h4>Governed campaign links</h4>
@@ -3038,6 +2888,186 @@
           <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">documentation-methodology</a></dd></div>
           <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, operation-coverage</dd></div>
           <div><dt>Model rubric</dt><dd>artifact-contract</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-create-work-item"
+      data-kind="skill" data-status="direct-probe" data-search="create-work-item create one authoritative work item through the effective persistence provider while preserving provider-owned identity, duplicate detection, verification, and failure evidence. development-practice probe-create-work-item no governed campaign link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>create-work-item</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Create one authoritative work item through the effective Persistence provider while preserving provider-owned identity, duplicate detection, verification, and failure evidence.</p>
+      <p class="source-row"><a href="../skills/create-work-item/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-create-work-item</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-orchestrator-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-orchestrator-boundary</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, operation-coverage, tool-authority, output-contract-presence</dd></div>
+          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-create-work-item-azure-devops"
+      data-kind="skill" data-status="direct-probe" data-search="create-work-item-azure-devops report azure devops work-item creation as unsupported and blocked without provider, browser, network, github, gitlab, or file mutation. use when azure devops is the selected work-item provider and a new durable work item is requested. development-practice probe-create-work-item-azure-devops no governed campaign link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>create-work-item-azure-devops</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Report Azure DevOps work-item creation as unsupported and BLOCKED without provider, browser, network, GitHub, GitLab, or file mutation. Use when Azure DevOps is the selected work-item provider and a new durable work item is requested.</p>
+      <p class="source-row"><a href="../skills/create-work-item-azure-devops/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-create-work-item-azure-devops</a></dd></div>
+          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
+          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">provider-placeholder-matrix</a></dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-backlog-steward-boundary</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, no-forbidden-mutation, output-contract-presence</dd></div>
+          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-create-work-item-file"
+      data-kind="skill" data-status="direct-probe" data-search="create-work-item-file create one authoritative repository-backed work item with typed placement, source evidence, user-action boundaries, and atomic no-overwrite creation when the effective provider is file. development-practice probe-create-work-item-file linked agent-suite outcomes only: pass">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>create-work-item-file</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Create one authoritative repository-backed work item with typed placement, source evidence, user-action boundaries, and atomic no-overwrite creation when the effective provider is file.</p>
+      <p class="source-row"><a href="../skills/create-work-item-file/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-create-work-item-file</a></dd></div>
+          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>artifact-contract</dd></div>
+          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">file-work-item-template-contract</a></dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-backlog-steward-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-steward-boundary</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-steward-provider-boundary</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, queue-state-transition, claim-lifecycle, tool-authority</dd></div>
+          <div><dt>Model rubric</dt><dd>None; deterministic plan only</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <ul class="link-list"><li><a href="../evals/agent-tests/dev-backlog-steward/scenarios.yaml">dev-backlog-steward / creation-and-claim</a> &mdash; <span class="status status--pass">PASS</span> <span class="status status--historical-id-only">Historical ID alignment; definition freshness unknown</span></li></ul>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>Linked agent-suite outcomes only: PASS</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-create-work-item-github"
+      data-kind="skill" data-status="direct-probe" data-search="create-work-item-github create one authoritative github issue after provider-backed duplicate detection. use when the effective work-item provider is github or an explicit one-item request selects github issue creation. development-practice probe-create-work-item-github no governed campaign link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>create-work-item-github</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Create one authoritative GitHub issue after provider-backed duplicate detection. Use when the effective work-item provider is github or an explicit one-item request selects GitHub issue creation.</p>
+      <p class="source-row"><a href="../skills/create-work-item-github/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-create-work-item-github</a></dd></div>
+          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
+          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">github-work-item-provider</a></dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-backlog-steward-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-steward-boundary</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, operation-coverage, tool-authority, queue-state-transition</dd></div>
+          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-create-work-item-gitlab"
+      data-kind="skill" data-status="direct-probe" data-search="create-work-item-gitlab create one authoritative gitlab issue with duplicate prevention, typed requirements, provider-native relationships, and verified observed identity. use when the effective work-item provider is gitlab or the user explicitly requests one gitlab issue without changing the project default. development-practice probe-create-work-item-gitlab no governed campaign link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>create-work-item-gitlab</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Create one authoritative GitLab issue with duplicate prevention, typed requirements, provider-native relationships, and verified observed identity. Use when the effective work-item provider is GitLab or the user explicitly requests one GitLab issue without changing the project default.</p>
+      <p class="source-row"><a href="../skills/create-work-item-gitlab/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-create-work-item-gitlab</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>artifact-contract</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-backlog-steward-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-steward-boundary</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, artifact-structure, operation-coverage, tool-authority, no-forbidden-mutation</dd></div>
+          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-create-work-item-jira"
+      data-kind="skill" data-status="direct-probe" data-search="create-work-item-jira report jira issue creation as unsupported and blocked without provider, browser, network, github, gitlab, or file mutation. use when jira is the selected work-item provider and a new durable issue is requested. development-practice probe-create-work-item-jira no governed campaign link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>create-work-item-jira</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Report Jira issue creation as unsupported and BLOCKED without provider, browser, network, GitHub, GitLab, or file mutation. Use when Jira is the selected work-item provider and a new durable issue is requested.</p>
+      <p class="source-row"><a href="../skills/create-work-item-jira/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-create-work-item-jira</a></dd></div>
+          <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
+          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">provider-placeholder-matrix</a></dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-backlog-steward-boundary</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, no-forbidden-mutation, output-contract-presence</dd></div>
+          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
         </dl>
 
       <h4>Governed campaign links</h4>

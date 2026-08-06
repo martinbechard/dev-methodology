@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Create Github Work Item
+  display_name: Create Work Item File
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Create one authoritative GitHub issue after provider-backed duplicate detection.
+  short_description: Create one authoritative repository-backed work item with typed placement, source evidence...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $create-github-work-item to create this GitHub issue without a shadow backlog file.
+  default_prompt: Use $create-work-item-file to create one authoritative file-backed work item.
 
 # Optional invocation policy placeholder.
 # policy:

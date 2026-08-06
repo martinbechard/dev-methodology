@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Create Jira Work Item
+  display_name: Create Work Item Github
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Report Jira issue creation as unsupported and BLOCKED without provider, browser, network...
+  short_description: Create one authoritative GitHub issue after provider-backed duplicate detection.
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $create-jira-work-item to report this unsupported Jira creation request truthfully.
+  default_prompt: Use $create-work-item-github to create this GitHub issue without a shadow backlog file.
 
 # Optional invocation policy placeholder.
 # policy:

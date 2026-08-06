@@ -39,11 +39,11 @@ RESOURCE_COORDINATION_RESERVED_SKILLS = frozenset(
     {"agent-claim", *CLAIM_TRANSPORT_SKILLS.values()}
 )
 PROVIDER_SKILLS = {
-    "file": ("create-file-work-item", "manage-file-work-items"),
-    "github": ("create-github-work-item", "manage-github-work-items"),
-    "gitlab": ("create-gitlab-work-item", "manage-gitlab-work-items"),
-    "azure-devops": ("create-azure-devops-work-item", "manage-azure-devops-work-items"),
-    "jira": ("create-jira-work-item", "manage-jira-work-items"),
+    "file": ("create-work-item-file", "manage-file-work-items"),
+    "github": ("create-work-item-github", "manage-github-work-items"),
+    "gitlab": ("create-work-item-gitlab", "manage-gitlab-work-items"),
+    "azure-devops": ("create-work-item-azure-devops", "manage-azure-devops-work-items"),
+    "jira": ("create-work-item-jira", "manage-jira-work-items"),
 }
 PROVIDER_VALUES = (*PROVIDER_SKILLS, "none", "UNSET")
 COMPLETION_SKILLS = {

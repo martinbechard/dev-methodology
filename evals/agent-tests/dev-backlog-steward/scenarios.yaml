@@ -9,7 +9,7 @@ scenarios:
     purpose: Create a dispatchable typed item; this row declares project-selected resource coordination variants and does not claim both variants were executed.
     initialState: A directly authorized request has no backlog representation or active provider owner.
     task: Create a feature item for webhook idempotency and establish provider-selected ownership.
-    targetSkills: [organise-project-files, create-file-work-item, manage-file-work-items, structured-explanation]
+    targetSkills: [organise-project-files, create-work-item-file, manage-file-work-items, structured-explanation]
     allowedAgentDependencies: []
     resourceCoordinationCases:
       agent-claim:
@@ -213,7 +213,7 @@ scenarios:
     purpose: Capture and promote a Future Idea; this row declares project-selected resource coordination variants and does not claim both variants were executed.
     initialState: The file provider applies and the user explicitly requests idea capture but has not authorized implementation; a later explicit direction authorizes promotion. A non-file provider variant has no one-item file override.
     task: Capture the retry-dashboard thought as a Future Idea, then promote it into complete typed work while retaining the source idea.
-    targetSkills: [organise-project-files, create-file-work-item, manage-file-work-items, structured-explanation]
+    targetSkills: [organise-project-files, create-work-item-file, manage-file-work-items, structured-explanation]
     allowedAgentDependencies: []
     resourceCoordinationCases:
       agent-claim:

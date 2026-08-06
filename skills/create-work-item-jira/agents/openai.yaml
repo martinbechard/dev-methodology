@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Create Azure Devops Work Item
+  display_name: Create Work Item Jira
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Report Azure DevOps work-item creation as unsupported and BLOCKED without provider, browser...
+  short_description: Report Jira issue creation as unsupported and BLOCKED without provider, browser, network...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $create-azure-devops-work-item to report this unsupported Azure DevOps creation request truthfully.
+  default_prompt: Use $create-work-item-jira to report this unsupported Jira creation request truthfully.
 
 # Optional invocation policy placeholder.
 # policy:

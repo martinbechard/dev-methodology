@@ -110,15 +110,16 @@ NEW_DEVELOPMENT_SKILLS = (
     "organise-project-files",
     "deliver-work-item",
     "deliver-work-item-direct-main",
-    "create-file-work-item",
+    "create-work-item",
+    "create-work-item-file",
     "manage-file-work-items",
-    "create-github-work-item",
+    "create-work-item-github",
     "manage-github-work-items",
-    "create-gitlab-work-item",
+    "create-work-item-gitlab",
     "manage-gitlab-work-items",
-    "create-azure-devops-work-item",
+    "create-work-item-azure-devops",
     "manage-azure-devops-work-items",
-    "create-jira-work-item",
+    "create-work-item-jira",
     "manage-jira-work-items",
     "deliver-work-item-feature-branch",
     "create-pull-request",
@@ -827,7 +828,7 @@ DOCUMENT_REQUIRED_CONTENT_LINKS = {
         "../README.md#explicit-target-deployment",
     ),
     "orchestrated-development-lifecycle.html": (
-        "../skills/create-file-work-item/SKILL.md",
+        "../skills/create-work-item-file/SKILL.md",
         "../skills/manage-file-work-items/SKILL.md",
         "../skills/agent-claim/SKILL.md",
         "../skills/deliver-work-item-direct-main/SKILL.md",
@@ -1743,7 +1744,7 @@ class BundleContentTests(unittest.TestCase):
 
     def test_new_file_item_notifies_coordinator_without_dispatch(self) -> None:
         create_skill = (
-            SKILLS_ROOT / "create-file-work-item" / "SKILL.md"
+            SKILLS_ROOT / "create-work-item-file" / "SKILL.md"
         ).read_text(encoding="utf-8")
         coordination_skill = (
             SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
@@ -2298,11 +2299,156 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue((SKILLS_ROOT / skill_name / "SKILL.md").is_file())
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
 
+    def test_work_item_creation_interface_and_provider_names_are_canonical(self) -> None:
+        """Creation uses one interface stem and provider implementations preserve it."""
+        interface_name = "create-work-item"
+        provider_names = (
+            "create-work-item-file",
+            "create-work-item-github",
+            "create-work-item-gitlab",
+            "create-work-item-azure-devops",
+            "create-work-item-jira",
+        )
+        retired_names = (
+            "create-file-work-item",
+            "create-github-work-item",
+            "create-gitlab-work-item",
+            "create-azure-devops-work-item",
+            "create-jira-work-item",
+        )
+
+        interface_path = SKILLS_ROOT / interface_name / "SKILL.md"
+        interface_text = interface_path.read_text(encoding="utf-8")
+        interface_frontmatter = load_yaml_object_from_frontmatter(interface_path)
+        self.assertEqual(interface_name, interface_frontmatter["name"])
+        for heading in ("Work Item Identity", "Inputs", "Create Work Item", "Result"):
+            self.assertIn(f"## {heading}", interface_text)
+        for contract_statement in (
+            "Treat Work Item ID as one opaque provider-owned identifier.",
+            "Resolve the effective Persistence selection",
+            "Apply the exact selected create-work-item provider implementation. Do not call a different provider as a fallback.",
+            "Let the provider own duplicate detection, creation authority, mutation, partial-mutation recovery, and read-after-write verification.",
+            "Return CREATED, EXISTING, or BLOCKED",
+            "CREATED and EXISTING require provider-observed identity and state.",
+            "BLOCKED names the failed authority, capability, ambiguity, or verification boundary",
+        ):
+            with self.subTest(contract_statement=contract_statement):
+                self.assertIn(contract_statement, interface_text)
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        interface_probe = next(
+            probe for probe in probes["probes"] if probe["id"] == "probe-create-work-item"
+        )
+        self.assertEqual(interface_name, interface_probe["skill"])
+        self.assertEqual("declared", interface_probe["coverageStatus"])
+
+        for provider_name in provider_names:
+            with self.subTest(provider=provider_name):
+                provider_path = SKILLS_ROOT / provider_name / "SKILL.md"
+                self.assertTrue(provider_path.is_file())
+                self.assertTrue(openai_metadata_path(provider_name).is_file())
+                self.assertEqual(
+                    provider_name,
+                    load_yaml_object_from_frontmatter(provider_path)["name"],
+                )
+
+        for retired_name in retired_names:
+            with self.subTest(retired=retired_name):
+                self.assertFalse((SKILLS_ROOT / retired_name).exists())
+
+        maintained_surface_roots = (
+            REPOSITORY_ROOT / ".agents",
+            REPOSITORY_ROOT / ".codex",
+            REPOSITORY_ROOT / "adapters",
+            REPOSITORY_ROOT / "agents",
+            REPOSITORY_ROOT / "design",
+            REPOSITORY_ROOT / "evals",
+            REPOSITORY_ROOT / "generated",
+            REPOSITORY_ROOT / "legacy_procedures",
+            REPOSITORY_ROOT / "scripts",
+            REPOSITORY_ROOT / "skills",
+            AGENTS_PATH,
+            REPOSITORY_ROOT / "PROJECT.yaml",
+            README_PATH,
+            REPOSITORY_ROOT / "index.html",
+        )
+        maintained_text_suffixes = {
+            ".html",
+            ".js",
+            ".json",
+            ".md",
+            ".py",
+            ".sh",
+            ".svg",
+            ".toml",
+            ".txt",
+            ".yaml",
+            ".yml",
+        }
+        maintained_paths: set[Path] = set()
+        for root in maintained_surface_roots:
+            if root.is_file():
+                maintained_paths.add(root)
+                continue
+            maintained_paths.update(
+                path
+                for path in root.rglob("*")
+                if path.is_file() and path.suffix in maintained_text_suffixes
+            )
+
+        immutable_history_root = Path("evals/results")
+        intentional_literal_allowances = {
+            (
+                Path("scripts/test_bundle_content.py"),
+                f'"{retired_name}",',
+            ): 1
+            for retired_name in retired_names
+        }
+        remaining_literal_allowances = intentional_literal_allowances.copy()
+        retired_identities = (*retired_names, "create-" + "*-work-item")
+        stale_identity_violations: list[str] = []
+        for path in sorted(maintained_paths):
+            relative_path = path.relative_to(REPOSITORY_ROOT)
+            if relative_path.is_relative_to(immutable_history_root):
+                continue
+            for line_number, line in enumerate(
+                path.read_text(encoding="utf-8").splitlines(),
+                start=1,
+            ):
+                for retired_identity in retired_identities:
+                    if retired_identity not in line:
+                        continue
+                    allowance_key = (relative_path, line.strip())
+                    if remaining_literal_allowances.get(allowance_key, 0) > 0:
+                        remaining_literal_allowances[allowance_key] -= 1
+                        continue
+                    stale_identity_violations.append(
+                        f"{relative_path}:{line_number}: {retired_identity}"
+                    )
+
+        self.assertEqual([], stale_identity_violations)
+        self.assertEqual(
+            {},
+            {
+                allowance: remaining
+                for allowance, remaining in remaining_literal_allowances.items()
+                if remaining
+            },
+        )
+
+        file_provider_text = (
+            SKILLS_ROOT / "create-work-item-file" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        user_action_condition = (
+            "The item can state one concrete question whose answer changes what happens next."
+        )
+        self.assertEqual(1, file_provider_text.count(user_action_condition))
+
     def test_azure_devops_and_jira_placeholders_block_without_fallback(self) -> None:
         expected = {
-            "create-azure-devops-work-item": ("azure-devops", "create"),
+            "create-work-item-azure-devops": ("azure-devops", "create"),
             "manage-azure-devops-work-items": ("azure-devops", "the requested"),
-            "create-jira-work-item": ("jira", "create"),
+            "create-work-item-jira": ("jira", "create"),
             "manage-jira-work-items": ("jira", "the requested"),
         }
 
@@ -2327,11 +2473,11 @@ class BundleContentTests(unittest.TestCase):
 
     def test_work_item_creation_providers_expose_shared_public_procedure(self) -> None:
         expected_boundaries = {
-            "create-file-work-item": "exclusive-create",
-            "create-github-work-item": "ambiguous create response",
-            "create-gitlab-work-item": "Never retry by creating a second issue",
-            "create-azure-devops-work-item": "Status: BLOCKED.",
-            "create-jira-work-item": "Status: BLOCKED.",
+            "create-work-item-file": "exclusive-create",
+            "create-work-item-github": "ambiguous create response",
+            "create-work-item-gitlab": "Never retry by creating a second issue",
+            "create-work-item-azure-devops": "Status: BLOCKED.",
+            "create-work-item-jira": "Status: BLOCKED.",
         }
 
         for skill_name, provider_boundary in expected_boundaries.items():
@@ -2343,9 +2489,9 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(provider_boundary, skill_text)
 
         placeholder_skill_names = {
-            "create-azure-devops-work-item",
+            "create-work-item-azure-devops",
             "manage-azure-devops-work-items",
-            "create-jira-work-item",
+            "create-work-item-jira",
             "manage-jira-work-items",
         }
 
@@ -2398,7 +2544,7 @@ class BundleContentTests(unittest.TestCase):
     def test_configured_providers_own_work_item_id_resolution(self) -> None:
         """Generic callers pass IDs unchanged while each provider owns their meaning."""
         expected = {
-            "create-github-work-item": (
+            "create-work-item-github": (
                 "observed GitHub repository identity plus issue number",
                 "issue URL as diagnostic location evidence",
             ),
@@ -2406,7 +2552,7 @@ class BundleContentTests(unittest.TestCase):
                 "Accept the GitHub Work Item ID as one opaque input",
                 "Generic callers must not parse",
             ),
-            "create-gitlab-work-item": (
+            "create-work-item-gitlab": (
                 "observed GitLab instance, namespace, project, and issue IID",
                 "issue URL as diagnostic location evidence",
             ),
@@ -2414,7 +2560,7 @@ class BundleContentTests(unittest.TestCase):
                 "Accept the GitLab Work Item ID as one opaque input",
                 "Generic callers must not parse",
             ),
-            "create-azure-devops-work-item": (
+            "create-work-item-azure-devops": (
                 "Work Item ID Boundary",
                 "must not fabricate an ID",
             ),
@@ -2422,7 +2568,7 @@ class BundleContentTests(unittest.TestCase):
                 "Work Item ID Boundary",
                 "must not parse or fabricate one",
             ),
-            "create-jira-work-item": (
+            "create-work-item-jira": (
                 "Work Item ID Boundary",
                 "must not fabricate an ID",
             ),
@@ -2594,7 +2740,7 @@ class BundleContentTests(unittest.TestCase):
 
 
     def test_gitlab_work_item_skills_define_provider_native_authority_and_lifecycle(self) -> None:
-        create_text = (SKILLS_ROOT / "create-gitlab-work-item" / "SKILL.md").read_text(
+        create_text = (SKILLS_ROOT / "create-work-item-gitlab" / "SKILL.md").read_text(
             encoding="utf-8"
         )
         manage_text = (SKILLS_ROOT / "manage-gitlab-work-items" / "SKILL.md").read_text(
@@ -2961,13 +3107,13 @@ class BundleContentTests(unittest.TestCase):
 
     def test_workitem_provider_and_completion_processes_are_selector_driven(self) -> None:
         create_file_text = (
-            SKILLS_ROOT / "create-file-work-item" / "SKILL.md"
+            SKILLS_ROOT / "create-work-item-file" / "SKILL.md"
         ).read_text(encoding="utf-8")
         manage_file_text = (
             SKILLS_ROOT / "manage-file-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
         create_github_text = (
-            SKILLS_ROOT / "create-github-work-item" / "SKILL.md"
+            SKILLS_ROOT / "create-work-item-github" / "SKILL.md"
         ).read_text(encoding="utf-8")
         manage_github_text = (
             SKILLS_ROOT / "manage-github-work-items" / "SKILL.md"
@@ -3012,9 +3158,9 @@ class BundleContentTests(unittest.TestCase):
         self.assertTrue(
             orchestrator_skills.isdisjoint(
                 {
-                    "create-file-work-item",
+                    "create-work-item-file",
                     "manage-file-work-items",
-                    "create-github-work-item",
+                    "create-work-item-github",
                     "manage-github-work-items",
                     "deliver-work-item-direct-main",
                     "deliver-work-item-feature-branch",
@@ -3038,9 +3184,9 @@ class BundleContentTests(unittest.TestCase):
         self.assertTrue(
             backlog_skills.keys().isdisjoint(
                 {
-                    "create-file-work-item",
+                    "create-work-item-file",
                     "manage-file-work-items",
-                    "create-github-work-item",
+                    "create-work-item-github",
                     "manage-github-work-items",
                 }
             )
@@ -3082,7 +3228,7 @@ class BundleContentTests(unittest.TestCase):
         )
         agents_text = (REPOSITORY_ROOT / "AGENTS.md").read_text(encoding="utf-8")
         self.assertIn("## Work-Item Workflow Skill References", agents_text)
-        self.assertIn("create-file-work-item", agents_text)
+        self.assertIn("create-work-item-file", agents_text)
         self.assertIn("manage-file-work-items", agents_text)
         self.assertIn("deliver-work-item-direct-main", agents_text)
         self.assertIn("technology skill routing remains separate", agents_text)
@@ -3090,9 +3236,9 @@ class BundleContentTests(unittest.TestCase):
         probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
         probe_ids = {entry["id"] for entry in probes["probes"]}
         for probe_id in (
-            "probe-create-github-work-item",
+            "probe-create-work-item-github",
             "probe-manage-github-work-items",
-            "probe-create-file-work-item",
+            "probe-create-work-item-file",
             "probe-manage-file-work-items",
             "probe-deliver-work-item",
             "probe-deliver-work-item-direct-main",
@@ -3110,9 +3256,9 @@ class BundleContentTests(unittest.TestCase):
 
         readme_text = README_PATH.read_text(encoding="utf-8")
         for skill_name in (
-            "create-github-work-item",
+            "create-work-item-github",
             "manage-github-work-items",
-            "create-file-work-item",
+            "create-work-item-file",
             "manage-file-work-items",
             "deliver-work-item",
             "deliver-work-item-direct-main",
@@ -3248,7 +3394,7 @@ class BundleContentTests(unittest.TestCase):
                     case.get("contextPack", {}).get("stagedSkillPackages", []),
                 )
 
-        for skill_name in ("create-file-work-item", "manage-file-work-items"):
+        for skill_name in ("create-work-item-file", "manage-file-work-items"):
             migration = (
                 SKILLS_ROOT / skill_name / "SKILL.md"
             ).read_text(encoding="utf-8").split("## Migration", 1)[1]
@@ -5555,7 +5701,7 @@ class BundleContentTests(unittest.TestCase):
         """The suite covers staged resumption and lightweight Future Ideas."""
         suite_root = AGENT_TEST_SUITES_ROOT / "dev-backlog-steward"
         create_file_text = (
-            SKILLS_ROOT / "create-file-work-item" / "SKILL.md"
+            SKILLS_ROOT / "create-work-item-file" / "SKILL.md"
         ).read_text(encoding="utf-8")
         manage_file_text = (
             SKILLS_ROOT / "manage-file-work-items" / "SKILL.md"
@@ -6458,7 +6604,7 @@ class BundleContentTests(unittest.TestCase):
 
     def test_backlog_skills_separate_user_action_required_from_dispatchable_work(self) -> None:
         primary_root = resolve_primary_repository_root()
-        create_text = (SKILLS_ROOT / "create-file-work-item" / "SKILL.md").read_text(
+        create_text = (SKILLS_ROOT / "create-work-item-file" / "SKILL.md").read_text(
             encoding="utf-8"
         )
         manage_text = (SKILLS_ROOT / "manage-file-work-items" / "SKILL.md").read_text(
@@ -6466,7 +6612,7 @@ class BundleContentTests(unittest.TestCase):
         )
 
         for skill_name, skill_text in (
-            ("create-file-work-item", create_text),
+            ("create-work-item-file", create_text),
             ("manage-file-work-items", manage_text),
         ):
             with self.subTest(skill=skill_name):
@@ -6511,7 +6657,7 @@ class BundleContentTests(unittest.TestCase):
 
     def test_file_backlog_dependency_lifecycle_is_canonical_before_dispatch(self) -> None:
         """Creation, mutation, and coordination enforce one Ready meaning."""
-        create_text = (SKILLS_ROOT / "create-file-work-item" / "SKILL.md").read_text(
+        create_text = (SKILLS_ROOT / "create-work-item-file" / "SKILL.md").read_text(
             encoding="utf-8"
         )
         manage_text = (SKILLS_ROOT / "manage-file-work-items" / "SKILL.md").read_text(
@@ -6541,7 +6687,7 @@ class BundleContentTests(unittest.TestCase):
 
     def test_file_work_item_template_and_approval_boundary_are_complete(self) -> None:
         """The real fixture enforces item shape and approval behavior."""
-        create_text = (SKILLS_ROOT / "create-file-work-item" / "SKILL.md").read_text(
+        create_text = (SKILLS_ROOT / "create-work-item-file" / "SKILL.md").read_text(
             encoding="utf-8"
         )
         methodology_text = (
@@ -6614,7 +6760,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(required_contract, create_text)
 
         case_id = "file-work-item-template-contract"
-        probe_id = "probe-create-file-work-item"
+        probe_id = "probe-create-work-item-file"
         cases = load_yaml_object(REPOSITORY_ROOT / "evals" / "cases.yaml")
         probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
         scenarios = load_yaml_object(REPOSITORY_ROOT / "evals" / "agent-scenarios.yaml")
@@ -6666,12 +6812,12 @@ class BundleContentTests(unittest.TestCase):
 
         requests_text = (fixture_root / "requests.md").read_text(encoding="utf-8")
         for governed_source in (
-            "skills/create-file-work-item/SKILL.md",
+            "skills/create-work-item-file/SKILL.md",
             "agents/roles/dev-activities/dev-coder.role.yaml",
             "agents/role-schema.yaml",
             "agents/model-profiles.yaml",
             "adapters/codex/model-profiles.yaml",
-            "skills/create-file-work-item/agents/openai.yaml",
+            "skills/create-work-item-file/agents/openai.yaml",
             "adapters/codex/skills/codex-harness-directives/SKILL.md",
             "adapters/codex/skills/codex-harness-directives/agents/openai.yaml",
         ):
@@ -6683,12 +6829,12 @@ class BundleContentTests(unittest.TestCase):
     def test_file_work_item_skills_own_behavior_after_legacy_retirement(self) -> None:
         primary_root = resolve_primary_repository_root()
         canonical_contracts = {
-            "create-file-work-item": (
+            "create-work-item-file": (
                 "Only the primary worktree on main may create canonical files under backlog.",
                 "Do not create another queue elsewhere.",
                 "Before writing, search every active typed folder",
                 "Source Evidence",
-                "applicable claim evidence",
+                "applicable coordination evidence",
             ),
             "manage-file-work-items": (
                 "Only the primary worktree on main may change canonical files under backlog.",
@@ -6711,7 +6857,7 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(skill=skill_name):
                 self.assertEqual(skill_name, frontmatter["name"])
                 self.assertIn("effective provider is file", frontmatter["description"])
-                if skill_name == "create-file-work-item":
+                if skill_name == "create-work-item-file":
                     self.assertIn("atomic no-overwrite creation", frontmatter["description"])
                 else:
                     self.assertNotIn("claim", frontmatter["description"])
@@ -8231,8 +8377,8 @@ class BundleContentTests(unittest.TestCase):
             normalized_decisions,
         )
         self.assertIn(
-            "invoke the effective provider's existing work-item creation procedure before "
-            "closeout",
+            "apply create-work-item and the effective Persistence-selected provider "
+            "implementation before closeout",
             normalized_workflow,
         )
         self.assertIn(
@@ -8245,7 +8391,7 @@ class BundleContentTests(unittest.TestCase):
             "fresh-context re-review",
             "reverification",
             "deliberately exclude",
-            "effective provider's existing work-item creation procedure",
+            "create-work-item and the effective Persistence-selected provider implementation",
             "sporadic confirmed issues",
             "Never merely report a confirmed issue as a warning and close",
         )
@@ -8553,7 +8699,7 @@ class BundleContentTests(unittest.TestCase):
             "coordinate-codex-work-items",
             "deliver-work-item-direct-main",
             "deliver-work-item-feature-branch",
-            "create-file-work-item",
+            "create-work-item-file",
             "create-project-configuration",
             "verify-end-to-end-workflow",
             "manage-file-work-items",
@@ -10468,7 +10614,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertEqual([], file_boundary_case["fixtureBackedProbeClaims"])
         self.assertEqual(["eval-result.md"], file_boundary_case["allowedWritePaths"])
         self.assertEqual(
-            {"create-file-work-item", "manage-file-work-items"},
+            {"create-work-item-file", "manage-file-work-items"},
             set(file_boundary_case["requiredSkills"]) - {"structured-explanation"},
         )
 
@@ -10476,11 +10622,11 @@ class BundleContentTests(unittest.TestCase):
         probes_by_id = {probe["id"]: probe for probe in probes["probes"]}
         self.assertEqual(
             "fixture-backed",
-            probes_by_id["probe-create-file-work-item"]["coverageStatus"],
+            probes_by_id["probe-create-work-item-file"]["coverageStatus"],
         )
         self.assertEqual(
             ["file-work-item-template-contract"],
-            probes_by_id["probe-create-file-work-item"]["executableCases"],
+            probes_by_id["probe-create-work-item-file"]["executableCases"],
         )
         self.assertEqual(
             ["backlog-lifecycle", "work-item-management-provider-operations"],

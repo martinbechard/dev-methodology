@@ -159,7 +159,7 @@ The Agent skill inventory states the exact files each relevant role always loads
 
 ### Scenario: Creating A Work Item For An Excluded Issue
 
-This scenario applies when Dev Orchestrator deliberately excludes a confirmed issue from the current delivery and must create a durable work item. The create-*-work-item interface organizes the Persistence-selected creation providers because they expose the same creation procedure.
+This scenario applies when Dev Orchestrator deliberately excludes a confirmed issue from the current delivery and must create a durable work item. The create-work-item Interface Skill defines the shared contract. The create-work-item-* family contains the Persistence-selected providers.
 
 ```mermaid
 classDiagram
@@ -169,8 +169,8 @@ classDiagram
         <<Agent>>
     }
 
-    class CreateWorkItem["create-*-work-item"] {
-        <<Skill interface>>
+    class CreateWorkItem["create-work-item"] {
+        <<Interface Skill>>
         +work-item-id
         +create-work-item(workItemDescription)
     }
@@ -178,55 +178,55 @@ classDiagram
     class project-specific-directives["Project-specific directives"] {
         <<AGENTS.md>>
         <<routing>>
-        +route create-work-item => create-*-work-item
+        +route create-work-item => create-work-item-*
     }
 
-    class create-file-work-item {
+    class create-work-item-file {
         <<Provider Skill>>
         <<Cross-group>>
         +work-item-id
         +create-work-item(workItemDescription)
     }
 
-    class create-github-work-item {
+    class create-work-item-github {
         <<Provider Skill>>
         <<Cross-group>>
         +work-item-id
         +create-work-item(workItemDescription)
     }
 
-    class create-gitlab-work-item {
+    class create-work-item-gitlab {
         <<Provider Skill>>
         <<Cross-group>>
         +work-item-id
         +create-work-item(workItemDescription)
     }
 
-    class create-azure-devops-work-item {
+    class create-work-item-azure-devops {
         <<Provider Skill>>
         <<Cross-group>>
         +work-item-id
         +create-work-item(workItemDescription)
     }
 
-    class create-jira-work-item {
+    class create-work-item-jira {
         <<Provider Skill>>
         <<Cross-group>>
         +work-item-id
         +create-work-item(workItemDescription)
     }
 
-    DevOrchestrator ..> CreateWorkItem : when a confirmed issue is excluded from current delivery
-    project-specific-directives o..> create-file-work-item : when Persistence is file
-    project-specific-directives o..> create-github-work-item : when Persistence is github
-    project-specific-directives o..> create-gitlab-work-item : when Persistence is gitlab
-    project-specific-directives o..> create-azure-devops-work-item : when Persistence is azure-devops
-    project-specific-directives o..> create-jira-work-item : when Persistence is jira
-    create-file-work-item ..|> CreateWorkItem
-    create-github-work-item ..|> CreateWorkItem
-    create-gitlab-work-item ..|> CreateWorkItem
-    create-azure-devops-work-item ..|> CreateWorkItem
-    create-jira-work-item ..|> CreateWorkItem
+    DevOrchestrator o..> CreateWorkItem : when a confirmed issue is excluded from current delivery
+    project-specific-directives o..> create-work-item-file : when Persistence is file
+    project-specific-directives o..> create-work-item-github : when Persistence is github
+    project-specific-directives o..> create-work-item-gitlab : when Persistence is gitlab
+    project-specific-directives o..> create-work-item-azure-devops : when Persistence is azure-devops
+    project-specific-directives o..> create-work-item-jira : when Persistence is jira
+    create-work-item-file ..|> CreateWorkItem
+    create-work-item-github ..|> CreateWorkItem
+    create-work-item-gitlab ..|> CreateWorkItem
+    create-work-item-azure-devops ..|> CreateWorkItem
+    create-work-item-jira ..|> CreateWorkItem
 ```
 
 AGENTS.md selects exactly one creation provider from the project Persistence setting. Azure DevOps and Jira use placeholder provider skills that return their documented unsupported result.
@@ -555,11 +555,12 @@ The scenario diagrams use these project-routed policy, helper, creation, managem
 - [Deliver Work Item Direct Main](../../skills/deliver-work-item-direct-main/SKILL.md)
 - [Deliver Work Item](../../skills/deliver-work-item/SKILL.md)
 - [Create Pull Request](../../skills/create-pull-request/SKILL.md)
-- [Create File Work Item](../../skills/create-file-work-item/SKILL.md)
-- [Create GitHub Work Item](../../skills/create-github-work-item/SKILL.md)
-- [Create GitLab Work Item](../../skills/create-gitlab-work-item/SKILL.md)
-- [Create Azure DevOps Work Item](../../skills/create-azure-devops-work-item/SKILL.md)
-- [Create Jira Work Item](../../skills/create-jira-work-item/SKILL.md)
+- [Create Work Item](../../skills/create-work-item/SKILL.md)
+- [Create File Work Item](../../skills/create-work-item-file/SKILL.md)
+- [Create GitHub Work Item](../../skills/create-work-item-github/SKILL.md)
+- [Create GitLab Work Item](../../skills/create-work-item-gitlab/SKILL.md)
+- [Create Azure DevOps Work Item](../../skills/create-work-item-azure-devops/SKILL.md)
+- [Create Jira Work Item](../../skills/create-work-item-jira/SKILL.md)
 - [Manage File Work Items](../../skills/manage-file-work-items/SKILL.md)
 - [Manage GitHub Work Items](../../skills/manage-github-work-items/SKILL.md)
 - [Manage GitLab Work Items](../../skills/manage-gitlab-work-items/SKILL.md)

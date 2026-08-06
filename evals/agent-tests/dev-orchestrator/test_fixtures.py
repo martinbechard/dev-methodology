@@ -60,7 +60,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         self.assertEqual("dev-verifier", expected["confirmationOwner"])
         self.assertEqual("confirmation", expected["confirmationReceiptLane"])
         self.assertEqual("deliberately-excluded", expected["currentDeliveryDisposition"])
-        self.assertEqual("create-file-work-item", expected["creationProcedure"])
+        self.assertEqual("create-work-item-file", expected["creationProcedure"])
 
         protection = scenario["protectedTarget"]
         allowed_mutations = scenario["allowedMutationPaths"]
@@ -156,7 +156,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         self.assertIn(expected["missingBehavior"], finding_text)
         self.assertIn("Confirmation Receipt: dev-verifier", finding_text)
         self.assertIn("Current Delivery Disposition: Deliberately excluded", finding_text)
-        self.assertIn("Creation Procedure: create-file-work-item", finding_text)
+        self.assertIn("Creation Procedure: create-work-item-file", finding_text)
         self.assertIn("Target Disposition: Preserved without mutation", finding_text)
         self.assertNotIn("requiresWorkspaceInventory", scenario)
         self.assertNotIn("requiresNoDetectedMutation", scenario)

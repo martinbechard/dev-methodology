@@ -31,7 +31,7 @@ The core methodology keeps one shared wiki-compatible page contract and six docu
 4. High-level design: create-high-level-design, high-level-design-template.md, review-high-level-design
 5. Module design: create-module-design, module-design-template.md, review-module-design
 6. Unit test plan: create-unit-test-plan, unit-test-plan-template.md, review-unit-test-plan
-7. File-backed work item: create-file-work-item, file-work-item-template.md, verify-documentation-page
+7. File-backed work item: create-work-item-file, file-work-item-template.md, verify-documentation-page
 
 The shared page contract starts every durable page with Current Understanding, Authoritative Sources, Related Code, Related Tests, Related Backlog Items, Related Wiki Pages, Open Questions, and Maintenance Notes. Specialized documents keep those sections first, then add their own sections.
 
@@ -503,15 +503,16 @@ The development practice skills are:
 - careful-coding
 - code-comments
 - organise-project-files
-- create-file-work-item
+- create-work-item
+- create-work-item-file
 - manage-file-work-items
-- create-github-work-item
+- create-work-item-github
 - manage-github-work-items
-- create-gitlab-work-item
+- create-work-item-gitlab
 - manage-gitlab-work-items
-- create-azure-devops-work-item
+- create-work-item-azure-devops
 - manage-azure-devops-work-items
-- create-jira-work-item
+- create-work-item-jira
 - manage-jira-work-items
 - deliver-work-item
 - deliver-work-item-direct-main
@@ -545,9 +546,11 @@ The development practice skills are:
 - traversal-patterns
 - interpreter-pattern
 
-create-github-work-item and manage-github-work-items are the canonical split GitHub Persistence skills. They keep GitHub Issues authoritative and never create a shadow repository queue.
+create-work-item is the provider-neutral creation Interface Skill. The create-work-item-* providers implement that shared identity, input, procedure, and result contract while retaining provider-native authority and evidence.
 
-create-file-work-item and manage-file-work-items are the canonical file Persistence pair. They keep authoritative records only under backlog in the primary worktree on main and never mirror provider issues into repository files. Resource coordination is loaded and applied independently from manage-file-work-items; the manager does not define or condition provider lifecycle procedures on claims. PROJECT.yaml selects Persistence and Commit independently, while AGENTS.md supplies only the corresponding skill references. Conceptual agent definitions remain neutral to both selectors.
+create-work-item-github and manage-github-work-items are the canonical split GitHub Persistence skills. They keep GitHub Issues authoritative and never create a shadow repository queue.
+
+create-work-item-file and manage-file-work-items are the canonical file Persistence pair. They keep authoritative records only under backlog in the primary worktree on main and never mirror provider issues into repository files. Resource coordination is loaded and applied independently from manage-file-work-items; the manager does not define or condition provider lifecycle procedures on claims. PROJECT.yaml selects Persistence and Commit independently, while AGENTS.md supplies only the corresponding skill references. Conceptual agent definitions remain neutral to both selectors.
 
 deliver-work-item is the provider-neutral Commit interface consumed by Dev Orchestrator. It defines the accepted commit input, READY, AWAITING_REVIEW, and BLOCKED results, state-keyed evidence, and prepared Persistence handoff. AGENTS.md still selects deliver-work-item-direct-main or deliver-work-item-feature-branch from the effective Commit value.
 

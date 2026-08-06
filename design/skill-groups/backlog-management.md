@@ -56,7 +56,7 @@ classDiagram
 
 ### Scenario: Creating A Work Item
 
-This scenario applies when an Agent must create one durable work item. The create-*-work-item interface states the shared procedure, while AGENTS.md selects the provider that matches the project Persistence setting.
+This scenario applies when an Agent must create one durable work item. The create-work-item Interface Skill states the shared contract. The create-work-item-* family contains its providers, and AGENTS.md selects the provider that matches the project Persistence setting.
 
 ```mermaid
 classDiagram
@@ -65,17 +65,17 @@ classDiagram
     class DevOrchestrator {
         <<Agent>>
     }
-    class CreateWorkItem["create-*-work-item"] {
-        <<Skill interface>>
+    class CreateWorkItem["create-work-item"] {
+        <<Interface Skill>>
         +work-item-id
         +create-work-item(workItemDescription)
     }
     class ProjectSpecificDirectives["Project-specific directives"] {
         <<AGENTS.md>>
         <<routing>>
-        +route create-work-item => create-*-work-item
+        +route create-work-item => create-work-item-*
     }
-    class create-file-work-item {
+    class create-work-item-file {
         <<Provider Skill>>
         +work-item-id
         +create-work-item(workItemDescription)
@@ -83,38 +83,38 @@ classDiagram
         +future-idea-promotion()
         +exact-backlog-creation-transaction()
     }
-    class create-github-work-item {
+    class create-work-item-github {
         <<Provider Skill>>
         +work-item-id
         +create-work-item(workItemDescription)
     }
-    class create-gitlab-work-item {
+    class create-work-item-gitlab {
         <<Provider Skill>>
         +work-item-id
         +create-work-item(workItemDescription)
     }
-    class create-azure-devops-work-item {
+    class create-work-item-azure-devops {
         <<Provider Skill>>
         +work-item-id
         +create-work-item(workItemDescription)
     }
-    class create-jira-work-item {
+    class create-work-item-jira {
         <<Provider Skill>>
         +work-item-id
         +create-work-item(workItemDescription)
     }
 
-    DevOrchestrator ..> CreateWorkItem : when an excluded issue needs a durable work item
-    ProjectSpecificDirectives o..> create-file-work-item : when Persistence is file
-    ProjectSpecificDirectives o..> create-github-work-item : when Persistence is github
-    ProjectSpecificDirectives o..> create-gitlab-work-item : when Persistence is gitlab
-    ProjectSpecificDirectives o..> create-azure-devops-work-item : when Persistence is azure-devops
-    ProjectSpecificDirectives o..> create-jira-work-item : when Persistence is jira
-    create-file-work-item ..|> CreateWorkItem
-    create-github-work-item ..|> CreateWorkItem
-    create-gitlab-work-item ..|> CreateWorkItem
-    create-azure-devops-work-item ..|> CreateWorkItem
-    create-jira-work-item ..|> CreateWorkItem
+    DevOrchestrator o..> CreateWorkItem : when an excluded issue needs a durable work item
+    ProjectSpecificDirectives o..> create-work-item-file : when Persistence is file
+    ProjectSpecificDirectives o..> create-work-item-github : when Persistence is github
+    ProjectSpecificDirectives o..> create-work-item-gitlab : when Persistence is gitlab
+    ProjectSpecificDirectives o..> create-work-item-azure-devops : when Persistence is azure-devops
+    ProjectSpecificDirectives o..> create-work-item-jira : when Persistence is jira
+    create-work-item-file ..|> CreateWorkItem
+    create-work-item-github ..|> CreateWorkItem
+    create-work-item-gitlab ..|> CreateWorkItem
+    create-work-item-azure-devops ..|> CreateWorkItem
+    create-work-item-jira ..|> CreateWorkItem
 ```
 
 One effective project selects one creation provider. The Azure DevOps and Jira creation providers preserve the shared interface while returning their documented unsupported result.
@@ -252,7 +252,7 @@ This scenario applies when the file-backed creation or management provider needs
 classDiagram
     direction LR
 
-    class create-file-work-item {
+    class create-work-item-file {
         <<Provider Skill>>
     }
     class manage-file-work-items {
@@ -272,7 +272,7 @@ classDiagram
     }
 
     ProjectSpecificDirectives o..> agent-claim : when resource_coordination is agent-claim
-    create-file-work-item ..> agent-claim : when resource coordination is selected
+    create-work-item-file ..> agent-claim : when resource coordination is selected
     manage-file-work-items ..> agent-claim : when resource coordination is selected
 ```
 
@@ -283,11 +283,12 @@ Creation and management providers share public procedure names while retaining p
 | Skill | Public procedures or identity | Responsibility |
 | --- | --- | --- |
 | resolve-backlog-blockage | Resolve Backlog Blockage | Resolves a declared blockage sequentially without owning dispatch-mode changes. |
-| create-file-work-item | Create Work Item; Future Ideas Capture; Future Idea Promotion; Exact Backlog Creation Transaction | Creates file-backed work items and owns the file provider’s lightweight idea workflows. |
-| create-github-work-item | Create Work Item | Creates and verifies one authoritative GitHub issue. |
-| create-gitlab-work-item | Create Work Item | Creates and verifies one authoritative GitLab issue. |
-| create-azure-devops-work-item | Create Work Item | Returns a truthful blocked result because Azure DevOps creation is not implemented. |
-| create-jira-work-item | Create Work Item | Returns a truthful blocked result because Jira creation is not implemented. |
+| create-work-item | Work Item Identity; Inputs; Create Work Item; Result | Defines the provider-neutral creation contract consumed by Agents. |
+| create-work-item-file | Create Work Item; Future Ideas Capture; Future Idea Promotion; Exact Backlog Creation Transaction | Creates file-backed work items and owns the file provider’s lightweight idea workflows. |
+| create-work-item-github | Create Work Item | Creates and verifies one authoritative GitHub issue. |
+| create-work-item-gitlab | Create Work Item | Creates and verifies one authoritative GitLab issue. |
+| create-work-item-azure-devops | Create Work Item | Returns a truthful blocked result because Azure DevOps creation is not implemented. |
+| create-work-item-jira | Create Work Item | Returns a truthful blocked result because Jira creation is not implemented. |
 | manage-file-work-items | Inventory Work Items; Transition Work Item; Reconcile Work Item Completion; Recover Work Item; Report Work Items | Manages the file-backed lifecycle, dependencies, recovery, completion, reporting, and archival. |
 | manage-github-work-items | Inventory Work Items; Transition Work Item; Reconcile Work Item Completion; Recover Work Item; Report Work Items | Maps the shared management procedures to GitHub issue state and evidence. |
 | manage-gitlab-work-items | Inventory Work Items; Transition Work Item; Reconcile Work Item Completion; Recover Work Item; Report Work Items | Maps the shared management procedures to GitLab issue state and evidence. |
@@ -305,11 +306,12 @@ The provider relationships and procedure boundaries are grounded in these Agent 
 - [Resolve Backlog Blockage](../../skills/resolve-backlog-blockage/SKILL.md)
 - [Set Solo Mode](../../skills/set-solo-mode/SKILL.md)
 - [Set Multitask Mode](../../skills/set-multitask-mode/SKILL.md)
-- [Create File Work Item](../../skills/create-file-work-item/SKILL.md)
-- [Create GitHub Work Item](../../skills/create-github-work-item/SKILL.md)
-- [Create GitLab Work Item](../../skills/create-gitlab-work-item/SKILL.md)
-- [Create Azure DevOps Work Item](../../skills/create-azure-devops-work-item/SKILL.md)
-- [Create Jira Work Item](../../skills/create-jira-work-item/SKILL.md)
+- [Create Work Item](../../skills/create-work-item/SKILL.md)
+- [Create File Work Item](../../skills/create-work-item-file/SKILL.md)
+- [Create GitHub Work Item](../../skills/create-work-item-github/SKILL.md)
+- [Create GitLab Work Item](../../skills/create-work-item-gitlab/SKILL.md)
+- [Create Azure DevOps Work Item](../../skills/create-work-item-azure-devops/SKILL.md)
+- [Create Jira Work Item](../../skills/create-work-item-jira/SKILL.md)
 - [Manage File Work Items](../../skills/manage-file-work-items/SKILL.md)
 - [Manage GitHub Work Items](../../skills/manage-github-work-items/SKILL.md)
 - [Manage GitLab Work Items](../../skills/manage-gitlab-work-items/SKILL.md)

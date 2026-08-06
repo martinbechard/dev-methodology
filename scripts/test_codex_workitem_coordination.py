@@ -1091,7 +1091,7 @@ class CentralActiveExecutionAndConversationTitleTests(unittest.TestCase):
         paths = (
             SKILL_PATH,
             MANAGE_FILE_WORK_ITEMS_PATH,
-            REPOSITORY_ROOT / "skills" / "create-file-work-item" / "SKILL.md",
+            REPOSITORY_ROOT / "skills" / "create-work-item-file" / "SKILL.md",
             COORDINATOR_ROLE_PATH,
             STEWARD_ROLE_PATH,
             ORCHESTRATOR_ROLE_PATH,

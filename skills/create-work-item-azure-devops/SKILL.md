@@ -1,11 +1,11 @@
 ---
-name: create-azure-devops-work-item
+name: create-work-item-azure-devops
 description: Report Azure DevOps work-item creation as unsupported and BLOCKED without provider, browser, network, GitHub, GitLab, or file mutation. Use when Azure DevOps is the selected work-item provider and a new durable work item is requested.
 metadata:
   category: development-practice
 ---
 
-# Create Azure DevOps Work Item
+# Create Work Item Azure DevOps
 
 Azure DevOps work-item creation is not implemented in this bundle. This package preserves the selected provider and reports the capability boundary without substituting another provider.
 

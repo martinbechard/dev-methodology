@@ -51,8 +51,8 @@ examples:
 - purpose: Find critical contradictions in a long workflow skill without reporting
     minor prose issues.
   runtimeInvocations:
-    codex: "$dev_skill_lint_reviewer Review skills/create-file-work-item/SKILL.md for critical skill defects only."
-    claude-code: "@agent-dev-skill-lint-reviewer Review skills/create-file-work-item/SKILL.md for critical skill defects only."
+    codex: "$dev_skill_lint_reviewer Review skills/create-work-item-file/SKILL.md for critical skill defects only."
+    claude-code: "@agent-dev-skill-lint-reviewer Review skills/create-work-item-file/SKILL.md for critical skill defects only."
   plausibleResponse: Reported READY with one critical finding. The skill directed
     agents to both preserve a User Action Required item and delete it during the
     same terminal handoff. The finding cited both clauses, named contradiction as

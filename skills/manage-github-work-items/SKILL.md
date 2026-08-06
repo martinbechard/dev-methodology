@@ -56,7 +56,7 @@ Acquire the exact opaque Work Item ID before any work or provider mutation. Use 
 ## Boundaries
 
 - Do not create repository backlog files, cached issue mirrors, or fallback local queues on success, provider failure, authentication failure, permission denial, or partial mutation.
-- Do not create a new issue; creation and duplicate detection belong to create-github-work-item.
+- Do not create a new issue; creation and duplicate detection belong to create-work-item-github.
 - Do not infer provider github from a remote, installed tool, existing issue, template, or hosting account.
 - Do not alter unrelated labels, assignees, milestones, project fields, relationships, issue text, or comments.
 - Do not expose unsuitable evidence in an issue whose visibility is not appropriate.

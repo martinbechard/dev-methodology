@@ -1,11 +1,11 @@
 ---
-name: create-file-work-item
+name: create-work-item-file
 description: Create one authoritative repository-backed work item with typed placement, source evidence, user-action boundaries, and atomic no-overwrite creation when the effective provider is file.
 metadata:
   category: development-practice
 ---
 
-# Create File Work Item
+# Create Work Item File
 
 ## Create Work Item
 
@@ -303,4 +303,4 @@ For an ordinary work item, return provider file, opaque Work Item ID, current di
 
 ## Migration
 
-Callers migrated file-provider creation to create-file-work-item, and the legacy shells were removed. Historical mapping: create-backlog and file-based-backlog creation behavior moved into this skill; PROJECT.yaml and generated guidance now select Persistence file and reference create-file-work-item for creation.
+Callers migrated file-provider creation to create-work-item-file, and the legacy shells were removed. Historical mapping: create-backlog and file-based-backlog creation behavior moved into this skill; PROJECT.yaml and generated guidance now select Persistence file and reference create-work-item-file for creation.

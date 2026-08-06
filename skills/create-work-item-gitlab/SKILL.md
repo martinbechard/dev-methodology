@@ -1,11 +1,11 @@
 ---
-name: create-gitlab-work-item
+name: create-work-item-gitlab
 description: Create one authoritative GitLab issue with duplicate prevention, typed requirements, provider-native relationships, and verified observed identity. Use when the effective work-item provider is GitLab or the user explicitly requests one GitLab issue without changing the project default.
 metadata:
   category: development-practice
 ---
 
-# Create GitLab Work Item
+# Create Work Item GitLab
 
 Create one independently actionable GitLab issue without creating a shadow queue.
 

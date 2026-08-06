@@ -16,7 +16,7 @@ Every detailed group document contains:
 
 The applied documents organize their diagrams around the capability and its use cases. Exact-name loading, conditional loading, project routing, and interface realization explain relationships inside those views; they are not substitute topics for the capability itself.
 
-An Interface Skill is a maintained package when one exact SKILL.md publishes the shared contract. A wildcard family label remains analysis or routing notation and is not a package. The adjacent AGENTS.md factory node owns project selection, while realization arrows show which providers satisfy the interface.
+Provider-family interfaces can be abstract analysis contracts or maintained Interface Skills. A wildcard display label identifies a provider family and remains analysis or routing notation, not a package. A named Interface Skill is a maintained package when one exact SKILL.md publishes the shared contract. The adjacent AGENTS.md factory node owns project selection, while realization arrows show which providers satisfy the interface.
 
 Concurrent Tasking contains three direct skills and two nested groups. Resource Coordination and Feature Branch And Worktrees each contain three direct skills. Membership inherited from a nested group does not assign a skill a second primary group.
 
@@ -33,8 +33,8 @@ The applied diagrams use the relationship and member conventions defined by the 
 - An empty member area means that the skill describes one procedure and its identity already names that operation.
 - An Agent Skill is loaded by exact name from an Agent definition.
 - An Injectable Skill implements procedure vocabulary selected through AGENTS.md.
-- A Skill interface is a contract that lists the public data and function members its consumers know and every Provider Skill must provide or respect.
-- An Interface Skill is a distinct named SKILL.md package that publishes an interface. The deliver-work-item package is the maintained interface for the deliver-work-item-* provider family.
+- A Skill interface is a contract that lists the public data and function members its consumers know and every Provider Skill must provide or respect. A wildcard family can represent an abstract interface, but it is not a maintained package.
+- An Interface Skill is a distinct named SKILL.md package that publishes an interface. The create-work-item and deliver-work-item packages publish the maintained interfaces for their provider families.
 - A Provider Skill supplies one implementation of a Skill interface. It uses Provider Skill as its visible stereotype instead of stacking SKILL.md and Injectable Skill stereotypes.
 - A dashed realization arrow with a hollow triangular arrowhead points from a Provider Skill to the Skill interface it implements. Realization is conformance, not loading.
 - An AGENTS.md factory is a separate routing node that selects one Provider Skill by exact name. It does not replace the Skill interface used by an Agent or another skill.
@@ -122,7 +122,7 @@ The registry assigns every current skill one primary direct group and records ne
 | Baseline Development | careful-coding; code-comments; code-discovery; test-driven-development; structured-design; structured-explanation; organise-project-files; review-structured-artifact; explain-code-fix | None | 9 |
 | Project Setup | detect-technology-skills; create-project-configuration | None | 2 |
 | Documentation Methodology | route-documentation-work; bootstrap-project-documentation; reverse-engineer-project-documentation; verify-documentation-page | None | 4 |
-| Backlog Management | resolve-backlog-blockage; create-file-work-item; create-github-work-item; create-gitlab-work-item; create-azure-devops-work-item; create-jira-work-item; manage-file-work-items; manage-github-work-items; manage-gitlab-work-items; manage-azure-devops-work-items; manage-jira-work-items | None | 11 |
+| Backlog Management | resolve-backlog-blockage; create-work-item; create-work-item-file; create-work-item-github; create-work-item-gitlab; create-work-item-azure-devops; create-work-item-jira; manage-file-work-items; manage-github-work-items; manage-gitlab-work-items; manage-azure-devops-work-items; manage-jira-work-items | None | 12 |
 | Concurrent Tasking | coordinate-codex-work-items; set-solo-mode; set-multitask-mode | Resource Coordination: agent-claim, agent-claim-command, agent-claim-mcp. Feature Branch And Worktrees: integrate-agent-work, deliver-work-item-feature-branch, create-pull-request. | 9 |
 | Direct Main Delivery | deliver-work-item; deliver-work-item-direct-main | None | 2 |
 | Review And Verification | review-code-with-evidence; test-strategy; verify-end-to-end-workflow; analyze-root-cause; collect-runtime-evidence; trace-code-execution; review-prompt-contracts | None | 7 |

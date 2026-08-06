@@ -379,11 +379,12 @@ packs:
       - probe-resolve-backlog-blockage
       - probe-set-solo-mode
       - probe-set-multitask-mode
-      - probe-create-file-work-item
-      - probe-create-github-work-item
-      - probe-create-gitlab-work-item
-      - probe-create-azure-devops-work-item
-      - probe-create-jira-work-item
+      - probe-create-work-item
+      - probe-create-work-item-file
+      - probe-create-work-item-github
+      - probe-create-work-item-gitlab
+      - probe-create-work-item-azure-devops
+      - probe-create-work-item-jira
       - probe-manage-file-work-items
       - probe-manage-github-work-items
       - probe-manage-gitlab-work-items

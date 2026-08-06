@@ -28,7 +28,7 @@ Conceptual agent definitions contain required and conditional technology-agnosti
 - Use create-high-level-design when creating or substantially rewriting a high-level design artifact from the high-level design template.
 - Use create-module-design when creating or substantially rewriting a module design artifact from the module design template.
 - Use create-unit-test-plan when creating or substantially rewriting a durable unit test plan from the unit test plan template.
-- Use create-file-work-item when creating one file-backed work item from the file work-item template.
+- Use create-work-item-file when creating one file-backed work item from the file work-item template.
 - Use project-wiki-review before finishing project wiki pages or project-wiki-template artifacts.
 - Use review-functional-spec before finishing functional specification artifacts.
 - Use review-architecture before finishing architecture artifacts.

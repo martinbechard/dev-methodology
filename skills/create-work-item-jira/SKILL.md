@@ -1,11 +1,11 @@
 ---
-name: create-jira-work-item
+name: create-work-item-jira
 description: Report Jira issue creation as unsupported and BLOCKED without provider, browser, network, GitHub, GitLab, or file mutation. Use when Jira is the selected work-item provider and a new durable issue is requested.
 metadata:
   category: development-practice
 ---
 
-# Create Jira Work Item
+# Create Work Item Jira
 
 Jira issue creation is not implemented in this bundle. This package preserves the selected provider and reports the capability boundary without substituting another provider.
 

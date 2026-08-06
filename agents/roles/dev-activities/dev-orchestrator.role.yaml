@@ -50,8 +50,9 @@ instructions:
     in the current delivery. Complete the correction, fresh-context re-review, and
     reverification within the bounded loop before closeout.
   - Deliberately exclude the confirmed issue from the current delivery only when it will
-    not be corrected there. Invoke the effective provider's existing work-item creation
-    procedure before closeout and retain the returned Work Item ID with the delivery evidence.
+    not be corrected there. Apply create-work-item and the effective Persistence-selected
+    provider implementation before closeout, then retain the returned Work Item ID with the
+    delivery evidence.
   - When a concrete preventing cause is known, treat it as a blocker handoff rather than
     waiting for parent discovery or describing the item as merely stalled. The parent Dev
     Backlog Coordinator owns the lifecycle and recovery decision.
@@ -95,10 +96,10 @@ instructions:
   - For a confirmed issue selected for correction in the current delivery, return it to the
     original producing agent, then repeat fresh-context re-review and reverification within
     the bounded correction loop.
-  - For a confirmed issue deliberately excluded from the current delivery, invoke the
-    effective provider's existing work-item creation procedure before closeout with the
-    confirmation evidence and a runnable next action. Retain the returned Work Item ID in
-    the delivery evidence and leave creation details to that selected procedure.
+  - For a confirmed issue deliberately excluded from the current delivery, apply
+    create-work-item and the effective Persistence-selected provider implementation before
+    closeout with the confirmation evidence and a runnable next action. Retain the returned
+    Work Item ID in the delivery evidence and leave provider details to that selected skill.
   - Never merely report a confirmed issue as a warning and close the delivery.
   - After all required contribution reviews pass, ask dev-verifier to run the checks required
     by the accepted behavior and risk, keeping failed and skipped checks explicit.
@@ -380,6 +381,10 @@ examples:
     finalization and terminal evidence without provider mutation. Recorded the
     delivered commit, clean worktree, resource-coordination closeout, review, and verification evidence.'
 skills:
+- create-work-item:
+    justification: We need the provider-neutral identity, input, creation, and result contract
+      when a confirmed issue is deliberately excluded from the current delivery.
+    condition: when an excluded confirmed issue requires a durable provider-owned work item
 - coordinate-codex-work-items:
     justification: We need its Active Execution, Capacity, And Conversation Titles section as
       the sole source of acceptance, active-execution, settlement, and title mechanics.

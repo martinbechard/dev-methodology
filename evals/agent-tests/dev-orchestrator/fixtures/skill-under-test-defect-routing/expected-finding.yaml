@@ -6,5 +6,5 @@ missingBehavior: Preserve one durable finding receipt.
 confirmationOwner: dev-verifier
 confirmationReceiptLane: confirmation
 currentDeliveryDisposition: deliberately-excluded
-creationProcedure: create-file-work-item
+creationProcedure: create-work-item-file
 expectedDisposition: PASS

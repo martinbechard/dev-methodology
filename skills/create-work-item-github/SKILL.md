@@ -1,11 +1,11 @@
 ---
-name: create-github-work-item
+name: create-work-item-github
 description: Create one authoritative GitHub issue after provider-backed duplicate detection. Use when the effective work-item provider is github or an explicit one-item request selects GitHub issue creation.
 metadata:
   category: development-practice
 ---
 
-# Create GitHub Work Item
+# Create Work Item GitHub
 
 Create one independently actionable GitHub issue. The GitHub provider record is the sole durable work-item authority.
 

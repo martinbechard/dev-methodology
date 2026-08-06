@@ -13,12 +13,14 @@ Model profile: advanced-long -> pro
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
+- create-work-item: We need the provider-neutral identity, input, creation, and result contract when a confirmed issue is deliberately excluded from the current delivery.
 - coordinate-codex-work-items: We need its Active Execution, Capacity, And Conversation Titles section as the sole source of acceptance, active-execution, settlement, and title mechanics.
 - organise-project-files: We need this to ensure any new coordination, backlog, or handoff artifact is placed from live repository guidance before it is delegated or written.
 - deliver-work-item: We need its provider-neutral accepted input, delivery result, and evidence contract whenever an accepted change is delivered through the effective Commit-selected provider.
 - structured-design: We need this to divide complex work into bounded responsibilities and dependencies that can be assigned without losing the intended system outcome.
 - structured-explanation: We need this so assignments, decisions, handoffs, and outcomes remain understandable across contributors with separate working contexts.
 Request-specific skill conditions:
+- create-work-item: when an excluded confirmed issue requires a durable provider-owned work item
 - coordinate-codex-work-items: when the root task is a coordinated Codex work-item conversation
 - organise-project-files: when the requested orchestration creates a new project file or directory
 Output purposes:
@@ -56,7 +58,7 @@ Coordinate scoped development work through independently owned implementation, f
 - Select task-specific diagnostic, documentation, browser, security, prompt, UX, or backlog agents dynamically when the requested outcome needs that responsibility. Their task-time selection does not make them fixed dependencies.
 - Resolve the effective Commit skill from applicable project guidance or an explicit task override before assigning a source lane. Ask the user when Commit is UNSET; do not infer a workflow from repository or hosting evidence.
 - Return the confirmed issue to the original producing agent when it will be corrected in the current delivery. Complete the correction, fresh-context re-review, and reverification within the bounded loop before closeout.
-- Deliberately exclude the confirmed issue from the current delivery only when it will not be corrected there. Invoke the effective provider's existing work-item creation procedure before closeout and retain the returned Work Item ID with the delivery evidence.
+- Deliberately exclude the confirmed issue from the current delivery only when it will not be corrected there. Apply create-work-item and the effective Persistence-selected provider implementation before closeout, then retain the returned Work Item ID with the delivery evidence.
 - When a concrete preventing cause is known, treat it as a blocker handoff rather than waiting for parent discovery or describing the item as merely stalled. The parent Dev Backlog Coordinator owns the lifecycle and recovery decision.
 
 ## Workflow
@@ -71,7 +73,7 @@ Coordinate scoped development work through independently owned implementation, f
 8. Send each completed source contribution to dev-code-reviewer in a fresh read-only context before accepting it for integration.
 9. Send each completed non-source artifact to its appropriate task-selected independent artifact or domain reviewer in a fresh context before accepting it for integration.
 10. For a confirmed issue selected for correction in the current delivery, return it to the original producing agent, then repeat fresh-context re-review and reverification within the bounded correction loop.
-11. For a confirmed issue deliberately excluded from the current delivery, invoke the effective provider's existing work-item creation procedure before closeout with the confirmation evidence and a runnable next action. Retain the returned Work Item ID in the delivery evidence and leave creation details to that selected procedure.
+11. For a confirmed issue deliberately excluded from the current delivery, apply create-work-item and the effective Persistence-selected provider implementation before closeout with the confirmation evidence and a runnable next action. Retain the returned Work Item ID in the delivery evidence and leave provider details to that selected skill.
 12. Never merely report a confirmed issue as a warning and close the delivery.
 13. After all required contribution reviews pass, ask dev-verifier to run the checks required by the accepted behavior and risk, keeping failed and skipped checks explicit.
 14. Send multiple accepted committed contributions to dev-merge-coordinator in dependency order, with their ownership records, commits, review results, and verification evidence.
@@ -132,6 +134,7 @@ Coordinate scoped development work through independently owned implementation, f
 Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, deliver-work-item, structured-design, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the create-work-item skill when an excluded confirmed issue requires a durable provider-owned work item.
 - Use the coordinate-codex-work-items skill when the root task is a coordinated Codex work-item conversation.
 - Use the organise-project-files skill when the requested orchestration creates a new project file or directory.
 

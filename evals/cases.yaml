@@ -761,9 +761,9 @@ cases:
     harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents: [dev-backlog-steward]
     agentScenarios: [dev-backlog-steward-happy]
-    requiredSkills: [create-github-work-item, manage-github-work-items, structured-explanation]
-    skillProbes: [probe-create-github-work-item, probe-manage-github-work-items]
-    fixtureBackedProbeClaims: [probe-create-github-work-item, probe-manage-github-work-items]
+    requiredSkills: [create-work-item-github, manage-github-work-items, structured-explanation]
+    skillProbes: [probe-create-work-item-github, probe-manage-github-work-items]
+    fixtureBackedProbeClaims: [probe-create-work-item-github, probe-manage-github-work-items]
     workflowPack: backlog
     sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
     judgePlan:
@@ -772,12 +772,12 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/github-work-item-provider
       include: [TASK.md, mock_github.py, provider-state.json, verify.py]
-      stagedSkillPackages: [create-github-work-item, manage-github-work-items, structured-explanation]
+      stagedSkillPackages: [create-work-item-github, manage-github-work-items, structured-explanation]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md, mock_github.py, provider-state.json, verify.py]
     skillResourceAllowlist:
-      create-github-work-item: [SKILL.md]
+      create-work-item-github: [SKILL.md]
       manage-github-work-items: [SKILL.md]
       structured-explanation: [SKILL.md]
     requiredEvidence: [DUPLICATE, CREATED, LIFECYCLE, DEPENDENCY, TERMINAL, REOPEN, PARTIAL-MUTATION, AUTHENTICATION, PERMISSION, NO-SHADOW-FILE, COMPLETION-INDEPENDENCE]
@@ -802,20 +802,20 @@ cases:
     requiredAgents: [dev-backlog-steward]
     agentScenarios: [dev-backlog-steward-boundary]
     requiredSkills:
-      - create-azure-devops-work-item
+      - create-work-item-azure-devops
       - manage-azure-devops-work-items
-      - create-jira-work-item
+      - create-work-item-jira
       - manage-jira-work-items
       - structured-explanation
     skillProbes:
-      - probe-create-azure-devops-work-item
+      - probe-create-work-item-azure-devops
       - probe-manage-azure-devops-work-items
-      - probe-create-jira-work-item
+      - probe-create-work-item-jira
       - probe-manage-jira-work-items
     fixtureBackedProbeClaims:
-      - probe-create-azure-devops-work-item
+      - probe-create-work-item-azure-devops
       - probe-manage-azure-devops-work-items
-      - probe-create-jira-work-item
+      - probe-create-work-item-jira
       - probe-manage-jira-work-items
     workflowPack: backlog
     sandboxProfiles: {codex: codex-read-only, junie: junie-read-only}
@@ -826,18 +826,18 @@ cases:
       fixtureRoot: evals/projects/provider-placeholder-matrix
       include: [TASK.md]
       stagedSkillPackages:
-        - create-azure-devops-work-item
+        - create-work-item-azure-devops
         - manage-azure-devops-work-items
-        - create-jira-work-item
+        - create-work-item-jira
         - manage-jira-work-items
         - structured-explanation
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md]
     skillResourceAllowlist:
-      create-azure-devops-work-item: [SKILL.md]
+      create-work-item-azure-devops: [SKILL.md]
       manage-azure-devops-work-items: [SKILL.md]
-      create-jira-work-item: [SKILL.md]
+      create-work-item-jira: [SKILL.md]
       manage-jira-work-items: [SKILL.md]
       structured-explanation: [SKILL.md]
     requiredEvidence: [AZURE-DEVOPS-CREATE, AZURE-DEVOPS-MANAGE, JIRA-CREATE, JIRA-MANAGE, ZERO-MUTATION]
@@ -873,8 +873,8 @@ cases:
     harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents: [dev-backlog-steward]
     agentScenarios: [dev-backlog-steward-provider-boundary]
-    requiredSkills: [create-file-work-item, manage-file-work-items, structured-explanation]
-    skillProbes: [probe-create-file-work-item, probe-manage-file-work-items, probe-structured-explanation]
+    requiredSkills: [create-work-item-file, manage-file-work-items, structured-explanation]
+    skillProbes: [probe-create-work-item-file, probe-manage-file-work-items, probe-structured-explanation]
     fixtureBackedProbeClaims: []
     workflowPack: backlog
     sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
@@ -884,12 +884,12 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/file-work-item-no-mutation
       include: [TASK.md, AUTHORITY.yaml, backlog]
-      stagedSkillPackages: [create-file-work-item, manage-file-work-items, structured-explanation]
+      stagedSkillPackages: [create-work-item-file, manage-file-work-items, structured-explanation]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md, AUTHORITY.yaml, backlog]
     skillResourceAllowlist:
-      create-file-work-item: [SKILL.md]
+      create-work-item-file: [SKILL.md]
       manage-file-work-items: [SKILL.md]
       structured-explanation: [SKILL.md]
     requiredEvidence: [PROVIDER-MISMATCH, ISOLATED-WORKTREE, NON-MAIN-AUTHORITY, SHARED-CHECKOUT-REQUIRED, NO-SHADOW-WRITE]
@@ -909,9 +909,9 @@ cases:
     harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents: [dev-backlog-steward]
     agentScenarios: [dev-backlog-steward-happy]
-    requiredSkills: [create-file-work-item, route-documentation-work, agent-claim, agent-claim-command, structured-explanation]
-    skillProbes: [probe-create-file-work-item, probe-route-documentation-work, probe-agent-claim, probe-agent-claim-command, probe-structured-explanation]
-    fixtureBackedProbeClaims: [probe-create-file-work-item]
+    requiredSkills: [create-work-item-file, route-documentation-work, agent-claim, agent-claim-command, structured-explanation]
+    skillProbes: [probe-create-work-item-file, probe-route-documentation-work, probe-agent-claim, probe-agent-claim-command, probe-structured-explanation]
+    fixtureBackedProbeClaims: [probe-create-work-item-file]
     workflowPack: backlog
     sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
     judgePlan:
@@ -920,12 +920,12 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/file-work-item-template-contract
       include: [TASK.md, requests.md]
-      stagedSkillPackages: [create-file-work-item, route-documentation-work, agent-claim, agent-claim-command, structured-explanation]
+      stagedSkillPackages: [create-work-item-file, route-documentation-work, agent-claim, agent-claim-command, structured-explanation]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md, requests.md]
     skillResourceAllowlist:
-      create-file-work-item: [SKILL.md]
+      create-work-item-file: [SKILL.md]
       route-documentation-work: [SKILL.md, assets/templates/file-work-item-template.md]
       agent-claim: [SKILL.md]
       agent-claim-command: [SKILL.md, scripts/claim.py]
