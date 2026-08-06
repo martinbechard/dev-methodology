@@ -1,8 +1,8 @@
 # Store Agent Claim State In Gitignored Project Directory
 
-Status: Starting
+Status: Running
 
-Owner: Unowned
+Owner: Dev Orchestrator
 
 Type: Feature
 
@@ -31,6 +31,26 @@ Canonical Runtime Evidence: None at reservation time. No runtime task has been c
 Current Launch Evidence: Parent Coordinator authorized this exact reservation; exact-file backlog claim starting-store-agent-claim-state-in-gitignored-project-directory-019fb057 acquired with outcome SHARED_CHECKOUT_ACQUIRED and event 4bb2b1f7-39a8-4f95-9176-fa7e8946f779.
 
 Required Next Lifecycle Transition: The canonical root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
+
+## Current Execution Ownership
+
+Transition: Starting -> Running.
+
+Canonical Thread: 019fd464-3875-75e2-aaa0-39a8e357d764.
+
+Root Agent Task: /root.
+
+Owner: Dev Orchestrator.
+
+Branch: codex/store-agent-claim-state.
+
+Worktree: /Users/martinbechard/.codex/worktrees/b146/dev-methodology.
+
+Phase: Discovery.
+
+Started At: 2026-08-06T00:08:47.470415Z.
+
+Claim Evidence: Exact-file claim record-running-store-agent-claim-state-019fd464 acquired with outcome SHARED_CHECKOUT_ACQUIRED and event 77d97076-c07f-46f8-9630-0471d0983784.
 
 ## Summary
 
