@@ -1,6 +1,6 @@
 # Normalize Provider-Family Interface Naming
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -63,3 +63,29 @@ None. The exact package uses the interface stem without `*`; the terminal wildca
 ## Notes
 
 The provider-family rename items may proceed from the exact rule stated here without waiting for this documentation item to merge. Overlap on shared diagrams or validation files is a resource-coordination concern, not a hard lifecycle dependency.
+
+## Current Starting Handoff Evidence
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Launch Reservation: One Root Dev Orchestrator task for this exact work item.
+
+Normalized Objective: Normalize provider-family interface naming.
+
+Dispatch Time: 2026-08-06T04:00:57Z.
+
+Intended Root Role: Root Dev Orchestrator.
+
+Launch Result: Not attempted.
+
+Canonical Conversation: None.
+
+Owner: Unowned pending the task's Starting -> Running transition.
+
+Last Contact: 2026-08-06T04:00:57Z; parent Coordinator recorded the reservation.
+
+Next Reconciliation: No later than 2026-08-06T04:15:57Z.
+
+Required Next Lifecycle Transition: The new task must directly record Starting -> Running, establish its exact Work Item ID activity=work claim, and then begin scoped implementation. Final reconciliation follows the provider-name deliveries if their shared diagrams or validation files reach main first.
