@@ -1,0 +1,66 @@
+# Synchronize Installed Skill Catalog After Provider Renames
+
+Status: Ready
+
+Type: Defect
+
+Provider: file
+
+Work Item ID: synchronize-installed-skill-catalog-after-provider-renames
+
+Completion: direct-main
+
+## Summary
+
+Deploy the current methodology skill identities to the configured user-level installation, remove retired skill directories, refresh the installed catalog, and prove that installed definitions match the authoritative repository sources.
+
+## Context
+
+The repository contains the completed provider-family naming and responsibility changes, but the configured user-level installation remains on the earlier identities. The source checkout contains the current interface and provider skills, including `agent-claim-helper`, `agent-claim-helper-command`, `agent-claim-helper-mcp`, `create-work-item`, `create-work-item-file`, `manage-work-items`, `manage-work-items-file`, `coordinate-work-items`, `coordinate-codex-tasks`, `deliver-work-item`, and `manage-future-ideas`.
+
+The corresponding files were absent from `${HOME}/.agents/skills` during live verification. That installation still contained retired definitions including `agent-claim-command`, `agent-claim-mcp`, `create-file-work-item`, `manage-file-work-items`, and `coordinate-codex-work-items`. As a result, repository guidance and the runtime-visible skill catalog do not describe the same dependency and dispatch model.
+
+## Source Evidence
+
+On 2026-08-06, while answering the user's request to verify whether the naming and responsibility recommendations had been applied, a direct comparison of `skills/*/SKILL.md` with `${HOME}/.agents/skills/*/SKILL.md` found the current repository identities missing from the installation and the retired identities still present. The user previously directed that detected incorrect behavior must always be logged instead of ignored.
+
+## Requirements
+
+- Use the repository installer and recorded core-skill delivery mode to replace the configured user-level methodology installation from authoritative current-main sources.
+- Install every current skill and generated native-agent artifact owned by the methodology bundle, including all interface and provider identities introduced by the completed naming and responsibility work.
+- Remove retired bundle-owned skill directories without deleting unrelated user-owned or other-bundle content.
+- Update the installation ownership manifest and other installation metadata so they describe the installed bytes and selected delivery mode exactly.
+- Refresh the runtime skill catalog after the filesystem installation succeeds.
+- Reconcile partial or uncertain installation and catalog-refresh outcomes without reporting success from source state alone.
+- Preserve the repository source and backlog state; installation is a distinct shared-runtime deployment operation.
+
+## Acceptance Criteria
+
+- The configured user-level skill root contains the current interface and provider skill identities named in this item.
+- The installed bundle no longer exposes the retired identities `agent-claim-command`, `agent-claim-mcp`, `create-file-work-item`, `manage-file-work-items`, or `coordinate-codex-work-items`.
+- Installed bundle-owned skill and native-agent bytes match the authoritative integrated source and generated artifacts byte for byte.
+- The installation ownership manifest contains no orphaned retired paths and matches the installed files and selected core-skill delivery mode.
+- A refreshed runtime catalog resolves the current identities and does not resolve the retired identities.
+- A fresh runtime inventory agrees with repository `AGENTS.md`, `PROJECT.yaml`, role definitions, and the maintained skill catalog for the renamed families.
+
+## Dependencies
+
+None.
+
+## Verification
+
+- Run the installer dry run and inspect the exact replacement and retirement manifest.
+- Acquire the configured `shared-install` resource claim before changing the user-level installation.
+- Perform the approved replacement installation and compare installed file digests with current-main sources and generated artifacts.
+- Validate the installation ownership manifest and selected core-skill delivery metadata.
+- Refresh the runtime skill catalog and record its revision or equivalent immutable result.
+- Inspect a fresh runtime skill inventory for every current and retired identity named in this item.
+- Run focused installation, catalog, generated-artifact freshness, and stale-name tests.
+
+## Open Questions
+
+None.
+
+## Notes
+
+The completed source work remains valid. This defect concerns deployment parity between that source and the configured user-level runtime, not another rename or redesign of the skill families.
