@@ -140,7 +140,7 @@ Baseline/Main Coordinator Commit: cc5574b798c0fab87fb5c9c6b3c6acd935030feb.
 
 Delegated Source Task: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
 
-Phase: Implementation Correction Attempt 1.
+Phase: Reviewing Correction Attempt 1.
 
 Started At: 2026-08-06T06:19:50Z.
 
@@ -148,7 +148,7 @@ Accepted Execution Evidence: Root Dev Orchestrator accepted this exact Work Item
 
 Provider Operation Evidence: Work Item ID update claim separate-claim-policy-from-claim-helper-family-update-correction and exact provider path claim separate-claim-policy-from-claim-helper-family-path-correction both returned SHARED_CHECKOUT_ACQUIRED before this mutation.
 
-Verified Title Handoff: Implementing — Separate Claim Policy From Claim Helper Family.
+Verified Title Handoff: Reviewing — Separate Claim Policy From Claim Helper Family.
 
 Next Action: Reacquire the exact activity=work claim and resume the bounded Dev Coder lane from its preserved isolated diff.
 
@@ -162,16 +162,18 @@ Owner: Root Dev Orchestrator.
 
 Accepted Candidate Commit: ac8270d2570436738fd1b0b6bb2dbbedb690049a.
 
-Evidence: Root released work claim separate-claim-policy-work-019fd5b5-9 with disposition handoff; coder paused with no command. All five findings are implemented. GREEN evidence: helper26, report11, bundle4, resource/config3, MCP eval2, and mutation-policy1. Root AGENTS, skill docs, native adapters, manifest, and evaluation HTML were regenerated; metadata/docs/evaluation freshness and diff-check are GREEN. Catalog has only the same three unrelated outputContractFields mismatches. No project-config case finding remains. Stale identities are limited to three historical artifacts; terminology contains only anti-transport prose; no 44 prose remains and the table regression sums 47. Remaining estimate is 8-12 minutes. Candidate ac8270d2570436738fd1b0b6bb2dbbedb690049a remains preserved. The canonical Root Dev Orchestrator remains on branch codex/separate-claim-policy-from-claim-helper-family in worktree /Users/martinbechard/.codex/worktrees/1bee/dev-methodology. Intended title: Implementing — Separate Claim Policy From Claim Helper Family.
+Accepted Candidate Commit: 9501f48c6b0f6f52c8fad8eab3df92d524e26a38.
+
+Evidence: Root released work claim separate-claim-policy-work-019fd5b5-10 with disposition handoff. Original ac8270d2 is preserved; corrected head 9501f48c6b0f6f52c8fad8eab3df92d524e26a38 is clean. All five findings are resolved with GREEN helper26, report11, bundle4, config3, MCP2, and mutation1. Metadata, build-skill-docs, evaluation docs, and diff freshness are GREEN across 23 correction paths. The unrelated three catalog mismatches and structured private-root rejection remain recorded. Intended title: Reviewing — Separate Claim Policy From Claim Helper Family.
 
 Coordinator Scope Disposition: The seven paths scripts/agent_skill_evals/validation.py, scripts/test_role_mutation_policy.py, scripts/test_technology_detection.py, evals/agent-tests/dev-orchestrator/test_fixtures.py, evals/agent-tests/wiki-ingester/executable_harness.py, evals/projects/project-configuration-routing/TASK.md, and evals/projects/project-configuration-routing/available-skills.txt are ordinary non-governed support consumers already authorized by requirements and acceptance. Only minimal identity/path replacements are permitted. No User Action Required or lifecycle change, new approval, or broad suite is authorized.
 
-Observed At: 2026-08-06T07:26:55Z.
+Observed At: 2026-08-06T07:30:13Z.
 
 Started At: 2026-08-06T06:17:04Z.
 
-Deadline or Expires At: 2026-08-06T09:26:55Z.
+Deadline or Expires At: 2026-08-06T09:30:13Z.
 
-Next Action: Reacquire exact activity=work, run one short final freshness/test confirmation, stage exact 23 correction paths, commit correction on top of ac8270d2, verify clean, and hand off for fresh re-review.
+Next Action: Reacquire exact activity=work and dispatch new fresh-context Dev Code Reviewer and Methodology Artifact Reviewer against corrected head 9501f48c; verification waits for both gates.
 
-Next Reconciliation At: 2026-08-06T07:38:55Z.
+Next Reconciliation At: 2026-08-06T07:42:13Z.
