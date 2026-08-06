@@ -124,7 +124,7 @@ Branch: codex/require-complete-terminal-reconciliation-019fd80b.
 
 Worktree: /Users/martinbechard/.codex/worktrees/6db0/dev-methodology.
 
-Phase: Independent focused verification.
+Phase: Current-main direct-main integration.
 
 Started At: 2026-08-06T17:10:29Z.
 
@@ -132,9 +132,9 @@ Accepted Execution Evidence: This canonical Root Dev Orchestrator task accepted 
 
 Accepted Candidate Commit: 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391.
 
-Candidate Checks: Watchdog simulator 31 tests passed; five exact bundle, design, and generated assertions passed; changed skills validated; Python compilation and generator freshness passed; diff checks passed. One unrelated broad catalog expected-count mismatch remains outside this item.
+Candidate Checks: Independent verification PASS/READY. Watchdog simulator 31 tests passed; five exact bundle, design, and generated assertions passed; changed skills validated; Python compilation and generator freshness passed; exact 17-path scope and diff checks passed. One unrelated broad catalog expected-count mismatch remains outside this item.
 
-Next Action: Obtain the independent focused verifier verdict for candidate 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391, then prepare current-main direct-main integration only if verification passes.
+Next Action: Replay accepted candidate commits 1b07440ec4b875e6586c1da3921038ebc9d6c0c9, 9cde838a3099dbbcfef235bd9f5bc86601d0cbe9, and 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391 from current main, prove exact content mapping, and run the smallest integration-sensitive checks before direct-main delivery.
 
 ## Active Execution Evidence
 
@@ -142,19 +142,19 @@ Condition Type: delegated-work.
 
 Owner: Root Dev Orchestrator in task 019fd80b-9089-78c0-9272-26ac6b7d47ff.
 
-Evidence: Independent Dev Verifier child /root/verify_terminal_reconciliation is verifying clean review-approved candidate 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391 through the bounded Watchdog simulator, exact bundle/design/generated assertions, supported validators and freshness checks, scope proof, and diff hygiene. Verification owns no mutation.
+Evidence: Independent Dev Verifier child /root/verify_terminal_reconciliation returned PASS/READY for clean review-approved candidate 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391. The Root Dev Orchestrator holds the exact current-main project-files integration claim and is replaying the immutable candidate without expanding the approved 17-path scope.
 
-Observed At: 2026-08-06T17:51:56Z.
+Observed At: 2026-08-06T17:59:29Z.
 
 Started At: 2026-08-06T17:10:29Z.
 
-Deadline or Expires At: 2026-08-06T18:51:56Z.
+Deadline or Expires At: 2026-08-06T18:59:29Z.
 
-Next Action: Independent verifier returns PASS/READY or FAIL/BLOCKED with exact focused commands and evidence; no broad suite or live Codex cycle is permitted.
+Next Action: Create a fresh integration branch from current authoritative main, replay the three accepted candidate commits with traceable source mapping, then run only focused Watchdog and affected freshness checks.
 
-Next Reconciliation At: 2026-08-06T18:05:56Z.
+Next Reconciliation At: 2026-08-06T18:13:29Z.
 
-Conversation Title Evidence: The canonical conversation is Verifying — Require Complete Terminal Reconciliation.
+Conversation Title Evidence: The canonical conversation is Integrating — Require Complete Terminal Reconciliation.
 
 ## Correction History
 
