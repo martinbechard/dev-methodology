@@ -1180,6 +1180,35 @@ def wcag_contrast_ratio(first_hex: str, second_hex: str) -> float:
     return (lighter + 0.05) / (darker + 0.05)
 
 
+def _scan_stale_identities(
+    source_text_by_path: dict[Path, str],
+    retired_identities: tuple[str, ...],
+    literal_allowances: dict[tuple[Path, str], int],
+) -> tuple[list[str], dict[tuple[Path, str], int]]:
+    """Return violations and unconsumed exact-line fixture allowances."""
+
+    remaining_literal_allowances = literal_allowances.copy()
+    stale_identity_violations: list[str] = []
+    for relative_path, text in sorted(source_text_by_path.items()):
+        for line_number, line in enumerate(text.splitlines(), start=1):
+            for retired_identity in retired_identities:
+                if retired_identity not in line:
+                    continue
+                allowance_key = (relative_path, line.strip())
+                if remaining_literal_allowances.get(allowance_key, 0) > 0:
+                    remaining_literal_allowances[allowance_key] -= 1
+                    continue
+                stale_identity_violations.append(
+                    f"{relative_path}:{line_number}: {retired_identity}"
+                )
+
+    return stale_identity_violations, {
+        allowance: remaining
+        for allowance, remaining in remaining_literal_allowances.items()
+        if remaining
+    }
+
+
 class BundleContentTests(unittest.TestCase):
     def test_baseline_development_skills_expose_approved_operations_and_rename(
         self,
@@ -2528,6 +2557,9 @@ class BundleContentTests(unittest.TestCase):
             )
 
         immutable_history_root = Path("evals/results")
+        retired_identities = (*retired_names, "create-" + "*-work-item")
+        provider_naming_fixture = Path("scripts/test_provider_family_naming.py")
+        fixture_provider_identity = retired_names[0]
         intentional_literal_allowances = {
             (
                 Path("scripts/test_bundle_content.py"),
@@ -2535,37 +2567,39 @@ class BundleContentTests(unittest.TestCase):
             ): 1
             for retired_name in retired_names
         }
-        remaining_literal_allowances = intentional_literal_allowances.copy()
-        retired_identities = (*retired_names, "create-" + "*-work-item")
-        stale_identity_violations: list[str] = []
+        intentional_literal_allowances.update(
+            {
+                (
+                    provider_naming_fixture,
+                    f'class CreateWorkItem[\\"{retired_identities[-1]}\\"] {{',
+                ): 1,
+                (
+                    provider_naming_fixture,
+                    f"class {fixture_provider_identity} {{",
+                ): 3,
+                (
+                    provider_naming_fixture,
+                    f"{fixture_provider_identity} ..|> CreateWorkItem",
+                ): 3,
+            }
+        )
+        maintained_source_text: dict[Path, str] = {}
         for path in sorted(maintained_paths):
             relative_path = path.relative_to(REPOSITORY_ROOT)
             if relative_path.is_relative_to(immutable_history_root):
                 continue
-            for line_number, line in enumerate(
-                path.read_text(encoding="utf-8").splitlines(),
-                start=1,
-            ):
-                for retired_identity in retired_identities:
-                    if retired_identity not in line:
-                        continue
-                    allowance_key = (relative_path, line.strip())
-                    if remaining_literal_allowances.get(allowance_key, 0) > 0:
-                        remaining_literal_allowances[allowance_key] -= 1
-                        continue
-                    stale_identity_violations.append(
-                        f"{relative_path}:{line_number}: {retired_identity}"
-                    )
+            maintained_source_text[relative_path] = path.read_text(encoding="utf-8")
+
+        stale_identity_violations, unused_literal_allowances = (
+            _scan_stale_identities(
+                maintained_source_text,
+                retired_identities,
+                intentional_literal_allowances,
+            )
+        )
 
         self.assertEqual([], stale_identity_violations)
-        self.assertEqual(
-            {},
-            {
-                allowance: remaining
-                for allowance, remaining in remaining_literal_allowances.items()
-                if remaining
-            },
-        )
+        self.assertEqual({}, unused_literal_allowances)
 
         file_provider_text = (
             SKILLS_ROOT / "create-work-item-file" / "SKILL.md"
@@ -2574,6 +2608,56 @@ class BundleContentTests(unittest.TestCase):
             "The item can state one concrete question whose answer changes what happens next."
         )
         self.assertEqual(1, file_provider_text.count(user_action_condition))
+
+    def test_stale_identity_fixture_allowances_are_counted_exactly(self) -> None:
+        """Report removed and duplicated fixture lines through allowance accounting."""
+
+        retired_identity = "create-" + "file-work-item"
+        fixture_path = Path("scripts/example_fixture.py")
+        fixture_line = f'"{retired_identity}",'
+        allowances = {(fixture_path, fixture_line): 1}
+
+        with self.subTest(change="removed"):
+            violations, unused_allowances = _scan_stale_identities(
+                {fixture_path: ""},
+                (retired_identity,),
+                allowances,
+            )
+            self.assertEqual([], violations)
+            self.assertEqual(allowances, unused_allowances)
+
+        with self.subTest(change="duplicated"):
+            violations, unused_allowances = _scan_stale_identities(
+                {fixture_path: f"{fixture_line}\n{fixture_line}\n"},
+                (retired_identity,),
+                allowances,
+            )
+            self.assertEqual(
+                [f"{fixture_path}:2: {retired_identity}"],
+                violations,
+            )
+            self.assertEqual({}, unused_allowances)
+
+    def test_provider_naming_fixture_does_not_hide_unexpected_stale_identity(
+        self,
+    ) -> None:
+        """Scan unexpected stale identities even within the allowed fixture module."""
+
+        retired_identity = "create-" + "file-work-item"
+        fixture_path = Path("scripts/test_provider_family_naming.py")
+        allowed_line = f"class {retired_identity} {{"
+        unexpected_line = f'legacy_provider = "{retired_identity}"'
+        violations, unused_allowances = _scan_stale_identities(
+            {fixture_path: f"{allowed_line}\n{unexpected_line}\n"},
+            (retired_identity,),
+            {(fixture_path, allowed_line): 1},
+        )
+
+        self.assertEqual(
+            [f"{fixture_path}:2: {retired_identity}"],
+            violations,
+        )
+        self.assertEqual({}, unused_allowances)
 
     def test_azure_devops_and_jira_placeholders_block_without_fallback(self) -> None:
         expected = {
