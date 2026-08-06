@@ -124,17 +124,17 @@ Branch: codex/require-complete-terminal-reconciliation-019fd80b.
 
 Worktree: /Users/martinbechard/.codex/worktrees/6db0/dev-methodology.
 
-Phase: Bounded correction attempt 1.
+Phase: Fresh independent re-review.
 
 Started At: 2026-08-06T17:10:29Z.
 
 Accepted Execution Evidence: This canonical Root Dev Orchestrator task accepted the Coordinator handoff, established a clean work-item branch from main commit 654542af41884e28e340c0c1cb1bdcfa76931b48, and began the approved focused Watchdog correction under the exact governed-definition manifest.
 
-Accepted Candidate Commit: 1b07440ec4b875e6586c1da3921038ebc9d6c0c9.
+Accepted Candidate Commit: 9cde838a3099dbbcfef235bd9f5bc86601d0cbe9.
 
-Candidate Checks: Watchdog simulator 29 tests passed; five exact bundle, design, and generated assertions passed; changed skills validated; Python compilation and generator freshness passed; diff checks passed. One unrelated broad catalog expected-count mismatch remains outside this item.
+Candidate Checks: Watchdog simulator 30 tests passed; five exact bundle, design, and generated assertions passed; changed skills validated; Python compilation and generator freshness passed; diff checks passed. One unrelated broad catalog expected-count mismatch remains outside this item.
 
-Next Action: The original Dev Coder produces a clean replacement candidate that resolves both confirmed reviewer findings, then the same fresh reviewer re-reviews the replacement before independent verification.
+Next Action: Obtain a fresh-context re-review verdict for replacement candidate 9cde838a3099dbbcfef235bd9f5bc86601d0cbe9, then dispatch independent focused verification if accepted.
 
 ## Active Execution Evidence
 
@@ -142,19 +142,19 @@ Condition Type: delegated-work.
 
 Owner: Root Dev Orchestrator in task 019fd80b-9089-78c0-9272-26ac6b7d47ff.
 
-Evidence: Original Dev Coder child /root/implement_terminal_reconciliation is correcting immutable candidate 1b07440ec4b875e6586c1da3921038ebc9d6c0c9 after fresh review confirmed two high-impact focused simulator defects. The correction remains inside the existing Watchdog simulator/tests and directly dependent bounded artifacts.
+Evidence: Fresh Dev Code Reviewer child /root/rereview_terminal_reconciliation is re-reviewing clean replacement candidate 9cde838a3099dbbcfef235bd9f5bc86601d0cbe9. The replacement makes merge gates status-aware, requires canonical task identity, and distinguishes applicable claim-release evidence from no applicable claim.
 
-Observed At: 2026-08-06T17:33:36Z.
+Observed At: 2026-08-06T17:37:15Z.
 
 Started At: 2026-08-06T17:10:29Z.
 
-Deadline or Expires At: 2026-08-06T18:33:36Z.
+Deadline or Expires At: 2026-08-06T18:37:15Z.
 
-Next Action: Dev Coder makes terminal merge gates status-aware, makes missing canonical task identity actionable, resolves or records the released-claim evidence distinction, and returns a focused clean replacement candidate.
+Next Action: Fresh-context reviewer confirms both findings and the claim-evidence question are resolved without weakening the aggregate, read-only, archival, or NO_ACTION contracts.
 
-Next Reconciliation At: 2026-08-06T17:47:36Z.
+Next Reconciliation At: 2026-08-06T17:51:15Z.
 
-Conversation Title Evidence: The canonical conversation is Implementing — Require Complete Terminal Reconciliation.
+Conversation Title Evidence: The canonical conversation is Reviewing — Require Complete Terminal Reconciliation.
 
 ## Correction History
 
@@ -169,6 +169,10 @@ Confirmed Finding 2: A terminal Codex record without canonical task identity cou
 Residual Review Question: Reconcile whether the existing evidence model distinguishes no applicable claim from missing required released-claim evidence; add the smallest focused boundary when supported or preserve the exact residual risk.
 
 Disposition: Both confirmed findings are returned to the original Dev Coder for correction in this delivery. No finding is excluded or deferred.
+
+Correction Commit: 9cde838a3099dbbcfef235bd9f5bc86601d0cbe9.
+
+Correction Result: Both confirmed findings are implemented in focused simulator coverage. The claim-evidence question is resolved through an explicit claim-applicability field so required release evidence is never fabricated or silently omitted.
 
 ## Governed Definition Approval
 
