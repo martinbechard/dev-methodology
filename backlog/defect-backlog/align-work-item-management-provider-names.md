@@ -1,6 +1,6 @@
 # Align Work-Item Management Provider Names
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -147,3 +147,25 @@ Last Contact: 2026-08-06T03:46:35Z; parent Coordinator recorded the reservation.
 Next Reconciliation: No later than 2026-08-06T04:01:35Z.
 
 Required Next Lifecycle Transition: The new task must directly record Starting -> Running, establish its exact Work Item ID activity=work claim, and then begin scoped implementation. Its final direct-main integration follows the creation-provider naming item because their manifests overlap.
+
+## Current Running Evidence
+
+Transition: Starting -> Running.
+
+Owner: Root Dev Orchestrator in task 019fd52f-7ec5-7bf1-9cbc-65032dd1af06.
+
+Canonical Conversation: 019fd52f-7ec5-7bf1-9cbc-65032dd1af06.
+
+Root Agent Task: /root.
+
+Branch: Detached candidate checkout at bfd80b6e933805b5f152a295eb106a7c63aa7511.
+
+Worktree: /Users/martinbechard/.codex/worktrees/4bd4/dev-methodology.
+
+Phase: Scoped candidate implementation before dependency-ordered direct-main integration.
+
+Started At: 2026-08-06T03:49:41Z.
+
+Accepted Execution Evidence: The delegated Root Dev Orchestrator accepted ownership in the isolated worktree, recorded this transition through the configured file provider, and will defer only the final overlapping-manifest integration until the creation-provider naming item is represented on main.
+
+Next Action: Establish the exact Work Item ID activity=work claim and implement the approved governed definitions and dependent artifacts with focused verification.
