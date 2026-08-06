@@ -57,6 +57,8 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         expected = runner._load_yaml(fixture / "expected-finding.yaml")
         source_bytes = source_target.read_bytes()
         self.assertNotIn(expected["missingBehavior"], source_bytes.decode("utf-8"))
+        self.assertEqual("dev-verifier", expected["confirmationOwner"])
+        self.assertEqual("confirmation", expected["confirmationReceiptLane"])
         self.assertEqual("deliberately-excluded", expected["currentDeliveryDisposition"])
         self.assertEqual("create-file-work-item", expected["creationProcedure"])
 
@@ -107,6 +109,8 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                         "",
                         f"Missing Behavior: {expected['missingBehavior']}",
                         "",
+                        f"Confirmation Receipt: {expected['confirmationOwner']}",
+                        "",
                         "Current Delivery Disposition: Deliberately excluded",
                         "",
                         f"Creation Procedure: {expected['creationProcedure']}",
@@ -150,13 +154,24 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         self.assertIn("Status: Ready", finding_text)
         self.assertIn("Provider: file", finding_text)
         self.assertIn(expected["missingBehavior"], finding_text)
+        self.assertIn("Confirmation Receipt: dev-verifier", finding_text)
         self.assertIn("Current Delivery Disposition: Deliberately excluded", finding_text)
         self.assertIn("Creation Procedure: create-file-work-item", finding_text)
         self.assertIn("Target Disposition: Preserved without mutation", finding_text)
         self.assertNotIn("requiresWorkspaceInventory", scenario)
         self.assertNotIn("requiresNoDetectedMutation", scenario)
-        self.assertEqual(["dev-backlog-steward"], scenario["allowedAgentDependencies"])
-        self.assertEqual(["finding"], scenario["requiredHandoffReceiptLanes"])
+        self.assertEqual(
+            ["dev-verifier", "dev-backlog-steward"],
+            scenario["allowedAgentDependencies"],
+        )
+        self.assertEqual(
+            ["dev-verifier", "dev-backlog-steward"],
+            scenario["requiredDependencyOrder"],
+        )
+        self.assertEqual(
+            ["confirmation", "finding"],
+            scenario["requiredHandoffReceiptLanes"],
+        )
         self.assertIn("allowed-paths-only", scenario["deterministicChecks"])
         self.assertNotIn("no-forbidden-mutation", scenario["deterministicChecks"])
         self.assertIn("committed-handoffs", scenario["deterministicChecks"])

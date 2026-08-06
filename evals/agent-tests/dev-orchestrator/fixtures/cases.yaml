@@ -6,4 +6,5 @@ cases:
     requiresIntegration: true
     allDependenciesAvailable: true
   bounded-correction: {finding: missing authorization denial test, correctionVerdicts: [NEEDS_CORRECTION, NEEDS_CORRECTION]}
+  confirmed-issue-correction: {confirmationOwner: dev-code-reviewer, correctionOwner: dev-coder, reReviewVerdict: ACCEPTED, reverificationVerdict: PASS, expectedRoleStatus: READY}
   terminal-status-integrity: {handoff: clean committed source, unavailable: dev-code-reviewer, pending: [review, verification]}

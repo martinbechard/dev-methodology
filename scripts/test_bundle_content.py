@@ -8201,13 +8201,27 @@ class BundleContentTests(unittest.TestCase):
         scenarios = load_yaml_object(
             AGENT_TEST_SUITES_ROOT / "dev-orchestrator" / "scenarios.yaml"
         )["scenarios"]
-        correction = next(item for item in scenarios if item["id"] == "bounded-correction")
+        bounded = next(item for item in scenarios if item["id"] == "bounded-correction")
+        correction = next(
+            item for item in scenarios if item["id"] == "confirmed-issue-correction"
+        )
         exclusion = next(
             item for item in scenarios if item["id"] == "skill-under-test-defect-routing"
+        )
+        self.assertEqual("BLOCKED", bounded["expectedTerminalStatus"])
+        self.assertIn("Stop after two failed corrections", bounded["requiredBehaviors"])
+        self.assertNotIn(
+            "Complete correction, fresh re-review, and reverification before closeout",
+            bounded["requiredBehaviors"],
         )
         self.assertIn(
             "Complete correction, fresh re-review, and reverification before closeout",
             correction["requiredBehaviors"],
+        )
+        self.assertEqual("READY", correction["expectedRoleStatus"])
+        self.assertEqual(
+            ["dev-code-reviewer", "dev-coder", "dev-code-reviewer", "dev-verifier"],
+            correction["requiredDependencyOrder"],
         )
         self.assertIn(
             "Deliberately exclude the confirmed issue from the current delivery",
@@ -8219,6 +8233,18 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertIn(
             "Warn and close without either disposition",
+            exclusion["forbiddenBehaviors"],
+        )
+        self.assertEqual(
+            ["dev-verifier", "dev-backlog-steward"],
+            exclusion["requiredDependencyOrder"],
+        )
+        self.assertEqual(
+            ["confirmation", "finding"],
+            exclusion["requiredHandoffReceiptLanes"],
+        )
+        self.assertIn(
+            "Treat the issue as confirmed without an independent reviewer or verifier receipt",
             exclusion["forbiddenBehaviors"],
         )
 
@@ -10567,6 +10593,8 @@ class BundleContentTests(unittest.TestCase):
                     self.assertEqual(9, len(scenarios["scenarios"]))
                 elif entry["id"] == "dev-backlog-watchdog":
                     self.assertEqual(6, len(scenarios["scenarios"]))
+                elif entry["id"] == "dev-orchestrator":
+                    self.assertEqual(5, len(scenarios["scenarios"]))
                 else:
                     self.assertEqual(3, len(scenarios["scenarios"]))
 
