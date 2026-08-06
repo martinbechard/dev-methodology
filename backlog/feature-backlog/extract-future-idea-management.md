@@ -1,6 +1,6 @@
 # Extract Future Idea Management
 
-Status: User Action Required
+Status: Ready
 
 Owner: Unowned
 
@@ -155,6 +155,17 @@ Next Reconciliation At: 2026-08-06T07:33:31Z.
 - Question recorded first in the User Action Required section above.
 - Next action: Wait for the user answer before any implementation, correction, verification, integration, or delivery resumes.
 
+## User Answer and Ready Resumption — 2026-08-06
+
+- Transition: User Action Required -> Ready.
+- Exact answer: `I approve`.
+- Provenance: Direct user message in canonical work-item conversation `019fd5b5-aca7-7cb1-9ae0-010ac945c985` on 2026-08-06, immediately after the exact recorded question above.
+- Approved governed addition: Exactly `evals/agent-tests/dev-backlog-steward/skills/dev-backlog-steward-suite-contract/SKILL.md`.
+- Ordinary dependent clarification: `evals/agent-tests/dev-backlog-steward/agents/supervisor.toml`, `evals/agent-tests/dev-backlog-steward/agents/judge.toml`, `evals/agent-tests/dev-backlog-steward/fixtures/cases.yaml`, and `evals/agent-tests/dev-backlog-steward/test_contract.py` are non-governed support paths already covered by the executable-suite acceptance requirement.
+- Exclusions: No other skill, role, governed definition, broad suite, or framework is approved.
+- Preserved candidates: `20129c822f0ce78fe46a0aeaaa6e7b719d841dc6` and `c94dc4fd674405f9c96c10c51c99ed24fcd767f3`.
+- Next action: The parent Dev Backlog Coordinator may record Ready -> Starting for the same canonical task; implementation remains stopped until that task separately records Starting -> Running and reacquires the exact activity=work claim.
+
 ## Verification
 
 - Resolve both dependency Work Item IDs from provider state before lifecycle transition.
@@ -178,6 +189,7 @@ Next Reconciliation At: 2026-08-06T07:33:31Z.
 - skills/manage-future-ideas/SKILL.md
 - skills/commit-file-provider-transaction/SKILL.md
 - agents/roles/dev-activities/dev-backlog-steward.role.yaml
+- evals/agent-tests/dev-backlog-steward/skills/dev-backlog-steward-suite-contract/SKILL.md
 
 ### Allowed Dependent Artifacts
 
@@ -195,6 +207,10 @@ Next Reconciliation At: 2026-08-06T07:33:31Z.
 - evals/workflow-packs.yaml
 - evals/agent-tests/dev-backlog-steward/scenarios.yaml
 - evals/agent-tests/dev-backlog-steward/suite.yaml
+- evals/agent-tests/dev-backlog-steward/agents/supervisor.toml
+- evals/agent-tests/dev-backlog-steward/agents/judge.toml
+- evals/agent-tests/dev-backlog-steward/fixtures/cases.yaml
+- evals/agent-tests/dev-backlog-steward/test_contract.py
 - evals/projects/file-work-item-template-contract/requests.md
 - evals/projects/file-work-item-template-contract/verify.py
 - scripts/test_bundle_content.py
