@@ -140,7 +140,7 @@ Baseline/Main Coordinator Commit: cc5574b798c0fab87fb5c9c6b3c6acd935030feb.
 
 Delegated Source Task: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
 
-Phase: Reviewing Correction Attempt 1.
+Phase: Implementation Correction Attempt 2 (Final Bounded Attempt).
 
 Started At: 2026-08-06T06:19:50Z.
 
@@ -148,7 +148,7 @@ Accepted Execution Evidence: Root Dev Orchestrator accepted this exact Work Item
 
 Provider Operation Evidence: Work Item ID update claim separate-claim-policy-from-claim-helper-family-update-correction and exact provider path claim separate-claim-policy-from-claim-helper-family-path-correction both returned SHARED_CHECKOUT_ACQUIRED before this mutation.
 
-Verified Title Handoff: Reviewing — Separate Claim Policy From Claim Helper Family.
+Verified Title Handoff: Implementing — Separate Claim Policy From Claim Helper Family.
 
 Next Action: Reacquire the exact activity=work claim and resume the bounded Dev Coder lane from its preserved isolated diff.
 
@@ -164,16 +164,16 @@ Accepted Candidate Commit: ac8270d2570436738fd1b0b6bb2dbbedb690049a.
 
 Accepted Candidate Commit: 9501f48c6b0f6f52c8fad8eab3df92d524e26a38.
 
-Evidence: Root released work claim separate-claim-policy-work-019fd5b5-10 with disposition handoff. Original ac8270d2 is preserved; corrected head 9501f48c6b0f6f52c8fad8eab3df92d524e26a38 is clean. All five findings are resolved with GREEN helper26, report11, bundle4, config3, MCP2, and mutation1. Metadata, build-skill-docs, evaluation docs, and diff freshness are GREEN across 23 correction paths. The unrelated three catalog mismatches and structured private-root rejection remain recorded. Intended title: Reviewing — Separate Claim Policy From Claim Helper Family.
+Evidence: Root released work claim separate-claim-policy-work-019fd5b5-11 with disposition handoff. Fresh code and methodology reviews both returned NEEDS_CORRECTION on corrected head 9501f48c6b0f6f52c8fad8eab3df92d524e26a38. Prior five findings remain resolved with positive helper26/report11/bundle4/config3/MCP2/mutation1 and freshness evidence. New findings, none excluded, are: HIGH current Acquire/Extend outcome table lists outcomes unreachable from the current command provider; separate historical aliases/normalization from current invocation outcomes or restore reachability and test. MEDIUM concurrent-tasking diagram omits Extend, Extend Deadline, Heartbeat, Reset and line 506 cites retired Common Inputs/Operations instead of Operation Contract. MEDIUM focused bundle assertion is stale about “yet” wording. A further material failure on these criteria requires blocker handoff, not a third attempt. Intended title: Implementing — Separate Claim Policy From Claim Helper Family.
 
 Coordinator Scope Disposition: The seven paths scripts/agent_skill_evals/validation.py, scripts/test_role_mutation_policy.py, scripts/test_technology_detection.py, evals/agent-tests/dev-orchestrator/test_fixtures.py, evals/agent-tests/wiki-ingester/executable_harness.py, evals/projects/project-configuration-routing/TASK.md, and evals/projects/project-configuration-routing/available-skills.txt are ordinary non-governed support consumers already authorized by requirements and acceptance. Only minimal identity/path replacements are permitted. No User Action Required or lifecycle change, new approval, or broad suite is authorized.
 
-Observed At: 2026-08-06T07:30:13Z.
+Observed At: 2026-08-06T07:37:21Z.
 
 Started At: 2026-08-06T06:17:04Z.
 
-Deadline or Expires At: 2026-08-06T09:30:13Z.
+Deadline or Expires At: 2026-08-06T09:37:21Z.
 
-Next Action: Reacquire exact activity=work and dispatch new fresh-context Dev Code Reviewer and Methodology Artifact Reviewer against corrected head 9501f48c; verification waits for both gates.
+Next Action: Reacquire exact activity=work and return the complete final bounded correction set to the original Dev Coder; then run new fresh re-review and verification. A further material failure on the same criteria requires blocker handoff, not a third attempt.
 
-Next Reconciliation At: 2026-08-06T07:42:13Z.
+Next Reconciliation At: 2026-08-06T07:49:21Z.
