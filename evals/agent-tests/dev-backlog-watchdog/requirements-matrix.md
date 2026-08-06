@@ -4,7 +4,7 @@
 | --- | --- | --- |
 | Runtime identity is Dev Backlog Watchdog | Conceptual role and generated adapter | harness-agent-identity and generated identity tests |
 | One standing child remains outside delivery capacity | Coordination dedicated-role contract | healthy-cycle-stays-quiet and active_capacity simulator test |
-| Standing and heartbeat prompts render byte-identically | Coordination canonical templates | focused coordination template tests |
+| Codex standing and heartbeat prompts render byte-identically when the Codex mapping is active | coordinate-codex-tasks canonical templates with coordinate-work-items portable criteria | test_watchdog_prompt_templates_are_canonical_and_render_byte_identically |
 | Observation is strictly read-only | Watchdog role authority and coordination boundaries | no-forbidden-mutation and quiet-cycle deep-copy assertion |
 | Healthy cycles return one concise no-action result | Watchdog output contract | healthy-cycle-stays-quiet and test_quiet_work_returns_no_action_without_mutation |
 | Suspected lack of progress remains distinct from a known blocker | Stalled and Blocked semantics | suspected-stall-alert, test_suspected_stall_alerts_parent_without_setting_stalled, and test_known_preventing_cause_recommends_blocked_not_stalled |
@@ -16,6 +16,6 @@
 | Satisfied blockage exit conditions produce one recovery-ready alert without changing dispatch mode | Resolve Backlog Blockage exit contract | blockage-exit-condition-recovery-alert and test_active_blockage_observation_is_idempotent_and_read_only |
 | Only actionable Blocked reconciliations enter the single parent alert and the Watchdog never chooses the outcome | Watchdog alert and authority contract | blocked-inventory-reconciliation, singular-alert, and deep-copy assertion |
 | Starting and Running alone consume capacity | Coordinator capacity contract | test_stalled_is_outside_starting_plus_running_capacity |
-| Coordinator owns every Stalled disposition | Coordinator role and coordination workflow | test_coordinator_dispositions_are_evidence_gated and test_blocked_and_user_action_dispositions_reject_incomplete_evidence |
+| Coordinator owns every Stalled disposition and directly applies any authorized provider mutation | Coordinator role and coordination workflow | test_coordinator_dispositions_are_evidence_gated and test_blocked_and_user_action_dispositions_reject_incomplete_evidence |
 | Stalled remains nonterminal and separate in series state | File provider lifecycle contract | test_series_and_archive_rules_keep_stalled_nonterminal |
 | Failed and Abandoned archive only with terminal evidence | File provider lifecycle contract | terminal_archive_destination simulator assertions |

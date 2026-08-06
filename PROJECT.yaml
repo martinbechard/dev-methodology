@@ -170,16 +170,17 @@ claude_bridge_files:
 
 role_agent_set:
   - role: dev-backlog-coordinator
-    purpose: "Coordinate multiple user-visible Codex backlog tasks through live queue reconciliation, serialized lifecycle batons, just-in-time dispatch, bounded artifact concurrency, and terminal housekeeping."
+    purpose: "Coordinate multiple provider-selected work items through live queue reconciliation, lifecycle handoffs, just-in-time dispatch, bounded artifact concurrency, and terminal housekeeping."
     owns:
-      - "Parent queue and phase ledger, canonical task registry, immediate successor obligation, and coordination evidence."
+      - "Parent queue and phase ledger, canonical execution registry, immediate successor obligation, and coordination evidence."
     hands_off:
-      - "Primary backlog lifecycle mutations to dev-backlog-steward and active item delivery to dev-orchestrator."
+      - "Provider-wide inventory, normalization, archival audit, and recovery to dev-backlog-steward; active item delivery to dev-orchestrator. Authorized ordinary lifecycle operations remain direct through the effective Persistence-selected manager."
     skills:
       - structured-explanation
-      - coordinate-codex-work-items
+      - coordinate-work-items
+      - coordinate-codex-tasks
     completion_checks:
-      - "Reconcile backlog, selected resource coordination, Git, active and archived task state; require durable delivery and lifecycle evidence before terminal UI housekeeping."
+      - "Reconcile backlog, selected resource coordination, Git, and runtime execution state; require durable delivery and lifecycle evidence before terminal runtime housekeeping."
   - role: methodology-maintainer
     purpose: "Keep source skills, conceptual agent definitions, metadata, generated outputs, documentation, tests, and explicit deployment behavior aligned."
     owns:

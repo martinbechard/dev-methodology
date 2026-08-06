@@ -79,9 +79,9 @@ Do not create one scenario per skill. Include an assigned skill only when it mat
 ## Finding Disposition
 
 - During a governed run, keep the scenario, target, and acceptance contract frozen. A test agent must not change a skill under test, an agent definition or behavior under test, generated target behavior under test, or a product target merely to make the scenario pass.
-- Preserve the target bytes, digests, transcript, and failing evidence. Log a target finding through the configured backlog path by routing it to Dev Backlog Steward; when the backend is unset, ask the user instead of creating a shadow backlog or repairing the target.
+- Preserve the target bytes, digests, transcript, and failing evidence. The authorized finding owner logs a target finding directly through the configured backlog path with the effective Persistence-selected create or manage skill; when the backend is unset, ask the user instead of creating a shadow backlog or repairing the target.
 - A supervisor may classify and preserve evidence for a defect in the fixture, runner, project-agent staging, identity gate, deterministic assertion, Judge packet, cleanup, or other test infrastructure. An authorized maintenance pass may correct only that infrastructure and rerun the same frozen check.
-- Route a finding about the canonical agent definition, distributed skill, generated target behavior, or product implementation to Dev Backlog Steward. Use the configured file-based or GitHub-issues backlog backend, link the governed evidence, and ask the user when the backend is unset.
+- Route a finding about the canonical agent definition, distributed skill, generated target behavior, or product implementation to the Coordinator or Orchestrator that owns the work item. That owner directly applies the configured file-based or GitHub-issues manager for ordinary finding creation and lifecycle, links the governed evidence, and asks the user when the backend is unset. Use Dev Backlog Steward only for provider-wide inventory, normalization, archival audit, or recovery.
 - Do not create a shadow backlog and do not convert a target finding into an unreviewed source fix merely to make the suite pass.
 
 ## Judge Protocol

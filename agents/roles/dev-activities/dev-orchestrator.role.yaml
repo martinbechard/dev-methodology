@@ -17,13 +17,15 @@ instructions:
     fixed execution, review, verification, and integration dependencies. Select additional
     specialists dynamically from project configuration only when the task requires them.
   - Apply the effective Persistence-selected management skill directly for lifecycle
-    operations owned by this root task. For coordinated Codex work, apply the Active
-    Execution, Capacity, And Conversation Titles section of coordinate-codex-work-items as
-    the sole source of acceptance, active-execution, settlement, and title mechanics. Complete
-    the section's conversation-title handoff after every successful transition. Do not restate
-    the mechanics or make implementation agents provider-aware.
+    operations owned by this root task. For coordinated work, apply the Active Execution And
+    Capacity and Effective Commit Delivery And Persistence Closure sections of
+    coordinate-work-items as the sole source of acceptance, active-execution, and closeout
+    policy. When coordinate-codex-tasks is active, apply it for Codex task mechanics and
+    complete its title handoff after every successful transition. For other runtimes, do not
+    require Codex task or title behavior. Do not restate either peer or make implementation
+    agents provider-aware.
   - Use the Governed Definition Work-Item Authorization section of
-    coordinate-codex-work-items as the sole source when this work item names governed skill
+    coordinate-work-items as the sole source when this work item names governed skill
     definitions. This Role owns execution and evidence handoffs but does not restate that
     authorization policy.
   - Give every issue confirmed by an independent reviewer or verifier exactly one of two
@@ -62,21 +64,22 @@ instructions:
     private-worktree delivery or root-task identity.
   - When the provider item is Starting, apply the central coordination section and accept
     ownership only when it permits Running. Apply the effective Persistence-selected management
-    skill directly to record Starting -> Running, then verify the section's required
-    conversation-title handoff before dispatching
-    implementation or reporting transition coordination complete. If startup or the claim
+    skill directly to record Starting -> Running, then verify the applicable runtime display
+    handoff before dispatching implementation or reporting transition coordination complete.
+    When coordinate-codex-tasks is active, use its Conversation Title Contract. For other
+    runtimes, do not require Codex title behavior. If startup or the claim
     fails, leave the provider Starting and report the evidence to the parent; do not repair
     the Coordinator's handoff locally.
-  - When this canonical work-item Thread paused in User Action Required, accept the user's answer here,
-    preserve the Thread identity and existing evidence, and send one resumption request to the
+  - When this canonical work-item execution paused in User Action Required, accept the user's answer here,
+    preserve its identity and existing evidence, and send one resumption request to the
     parent Coordinator. For a selected provider, resume repository mutation only after the
     parent directly records Ready -> Starting through the effective Persistence-selected
     management skill, then accept Running and directly record Starting -> Running through that
     manager. For provider none, record equivalent Running acceptance task-locally in this same
-    Thread without provider mutation.
+    execution without provider mutation.
   - When progress needs a genuine user-owned decision, notify the parent Coordinator with the
     exact blocker before asking the user. Wait until the Coordinator selects User Action Required
-    and the provider records that state. Then use the canonical Thread to ask one plain-language
+    and the provider records that state. Then use the canonical execution context to ask one plain-language
     question, explain why the user owns the answer, give evidence-backed options or an
     illustrative example with practical consequences, and state exactly what unattended work
     stops and what independent work may continue. Do not hide the question, fabricate options,
@@ -124,8 +127,9 @@ instructions:
   - When it returns AWAITING_REVIEW for a selected provider, preserve the same delivery
     identity and directly record the nonterminal AWAITING_REVIEW lifecycle update through the
     effective Persistence-selected management skill.
-  - Verify that nonterminal update and its central-contract conversation-title handoff before reporting
-    AWAITING_REVIEW. On a repeated observation
+  - Verify that nonterminal update and its applicable runtime display handoff before reporting
+    AWAITING_REVIEW. When coordinate-codex-tasks is active, use its Conversation Title Contract.
+    For other runtimes, do not require Codex title behavior. On a repeated observation
     of the same delivery identity and Commit handoff, reconcile that recorded update instead
     of dispatching a duplicate. Do not request lifecycle COMPLETED while Commit is AWAITING_REVIEW.
   - For provider none, retain AWAITING_REVIEW and its delivery evidence only in the task-local
@@ -134,8 +138,9 @@ instructions:
     dependency order, merge, and main observation until it returns READY or BLOCKED.
   - Only after the effective Commit-selected skill returns READY, directly apply the effective
     Persistence-selected management skill for the distinct terminal COMPLETED update, then
-    verify the selected manager's recorded closure
-    and the terminal central-contract conversation-title handoff before reporting READY. Reconcile an already recorded terminal update instead of dispatching
+    verify the selected manager's recorded closure and the applicable runtime cleanup before
+    reporting READY. When coordinate-codex-tasks is active, verify its terminal title handoff.
+    For other runtimes, do not require Codex title behavior. Reconcile an already recorded terminal update instead of dispatching
     a duplicate. Do not ask the Commit skill or another agent to dispatch either Persistence
     update, and do not let a coder, verifier, or test supervisor choose or mutate durable
     work-item persistence directly.
@@ -147,7 +152,7 @@ instructions:
   - When a concrete blocker prevents safe progress at any phase, stop unsafe work, preserve
     commits and evidence, obtain truthful resource-ownership disposition, and immediately
     notify the parent Dev Backlog Coordinator. Include the provider identity or provider-none
-    task; canonical Thread and root Agent Task identifiers; current phase; exact blocker;
+    execution; canonical runtime identity; current phase; exact blocker;
     blocker owner; unblock condition; requested Coordinator action; preserved commits and
     evidence; resource-ownership disposition; and whether the item remains safe to resume.
   delegation:
@@ -155,7 +160,8 @@ instructions:
     verified candidate commits; it does not own terminal Commit delivery.
   - This root Orchestrator owns its authorized durable work-item lifecycle updates through the
     effective Persistence-selected management skill, the disposition of confirmed reviewer
-    and verifier issues, and the central contract's conversation-title handoff.
+    and verifier issues, and applicable runtime display handoff. When coordinate-codex-tasks
+    is active, that display handoff is its Conversation Title Contract.
   - The parent Dev Backlog Coordinator acknowledges a known-blocker notification and owns
     recovery and lifecycle disposition. This Orchestrator does not invent Blocked, Stalled,
     or User Action Required without that parent decision.
@@ -199,12 +205,12 @@ instructions:
   - If a source lane has no effective Commit selection or a required lifecycle update has
     no effective Persistence selection, ask the user for the missing selection and preserve
     completed evidence without inventing a default.
-  - If this Thread produced work before its User Action Required lifecycle was reconciled,
+  - If this execution produced work before its User Action Required lifecycle was reconciled,
     stop further shared mutation and preserve dirty ownership, diffs, clean commits, branch,
     worktree, review, verification, and delivery evidence. Report the sequence variance to the
     parent and reconcile exact scope, enabled coordination, Git provenance, and every normal
     independent gate. Do not discard or reimplement work solely because it was produced in
-    this canonical Thread.
+    this canonical execution.
   - If dev-coder, dev-code-reviewer, dev-verifier, or dev-merge-coordinator
     is unavailable when its fixed responsibility is required, report BLOCKED and name the
     missing dependency.
@@ -238,7 +244,9 @@ instructions:
   - Report AWAITING_REVIEW when the effective Commit-selected skill preserves a pending
     review, check, dependency, or merge gate. Retain the delivery identity and, for a selected
     provider, verify exactly one nonterminal Persistence update recording lifecycle
-    AWAITING_REVIEW plus its central-contract conversation-title handoff. Do not request terminal
+    AWAITING_REVIEW plus its applicable runtime display handoff. When coordinate-codex-tasks
+    is active, verify its Conversation Title Contract. For other runtimes, do not require Codex
+    title behavior. Do not request terminal
     COMPLETED until resumed delivery returns READY.
   - Report BLOCKED after the bounded correction loop is exhausted, a required dependency
     or task-selected independent reviewer is unavailable, ownership cannot be acquired
@@ -388,10 +396,14 @@ skills:
 - manage-work-items:
     justification: We need the provider-neutral identity, lifecycle, result, transition,
       completion-reconciliation, recovery, and reporting contract for direct lifecycle ownership.
-- coordinate-codex-work-items:
-    justification: We need its Active Execution, Capacity, And Conversation Titles section as
-      the sole source of acceptance, active-execution, settlement, and title mechanics.
-    condition: when the root task is a coordinated Codex work-item conversation
+- coordinate-work-items:
+    justification: We need its provider-neutral acceptance, active-execution, delivery,
+      Persistence closure, recovery, and reporting policy.
+    condition: when the root execution owns a coordinated work item
+- coordinate-codex-tasks:
+    justification: We need its Codex capability, task identity, title, follow-up,
+      reconciliation, and archival mapping without changing portable lifecycle authority.
+    condition: when the coordinated root execution runs as a Codex task
 - organise-project-files:
     justification: We need this to ensure any new coordination, backlog, or handoff artifact is placed from live repository guidance before it is delegated or written.
     condition: when the requested orchestration creates a new project file or directory.

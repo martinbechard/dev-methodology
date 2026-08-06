@@ -142,7 +142,7 @@ classDiagram
         }
     }
 
-    class coordinate-codex-work-items {
+    class coordinate-work-items {
         <<SKILL.md>>
         <<Cross-group>>
         +reconcile-active-execution()
@@ -192,7 +192,7 @@ classDiagram
     DevBacklogSteward o--> ManageWorkItem
     DevBacklogWatchdog o--> ManageWorkItem
     DevOrchestrator o--> ManageWorkItem
-    coordinate-codex-work-items ..> ManageWorkItem : when a Persistence provider is selected
+    coordinate-work-items ..> ManageWorkItem : when a Persistence provider is selected
 
     ProjectSpecificDirectives o..> manage-work-items-file : when Persistence is file
     ProjectSpecificDirectives o..> manage-work-items-github : when Persistence is github
@@ -321,5 +321,6 @@ The provider relationships and procedure boundaries are grounded in these Agent 
 - [Manage GitLab Work Items](../../skills/manage-work-items-gitlab/SKILL.md)
 - [Manage Azure DevOps Work Items](../../skills/manage-work-items-azure-devops/SKILL.md)
 - [Manage Jira Work Items](../../skills/manage-work-items-jira/SKILL.md)
-- [Coordinate Codex Work Items](../../skills/coordinate-codex-work-items/SKILL.md)
+- [Coordinate Work Items](../../skills/coordinate-work-items/SKILL.md)
+- [Coordinate Codex Tasks](../../skills/coordinate-codex-tasks/SKILL.md)
 - [Agent Claim](../../skills/agent-claim/SKILL.md)

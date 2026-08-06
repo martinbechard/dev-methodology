@@ -1749,7 +1749,7 @@ class BundleContentTests(unittest.TestCase):
             SKILLS_ROOT / "create-work-item-file" / "SKILL.md"
         ).read_text(encoding="utf-8")
         coordination_skill = (
-            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         self.assertIn(
@@ -1773,17 +1773,23 @@ class BundleContentTests(unittest.TestCase):
             coordination_skill,
         )
 
-    def test_active_execution_and_conversation_titles_route_through_one_skill(self) -> None:
-        """Canonical roles reference one policy whose generated mirrors remain current."""
+    def test_coordination_roles_select_portable_and_codex_peer_skills(self) -> None:
+        """Portable policy and Codex task mechanics remain separate peer contracts."""
 
         coordination_text = (
-            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-work-items" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        codex_text = (
+            SKILLS_ROOT / "coordinate-codex-tasks" / "SKILL.md"
         ).read_text(encoding="utf-8")
         provider_text = (
             SKILLS_ROOT / "manage-work-items-file" / "SKILL.md"
         ).read_text(encoding="utf-8")
         self.assertIn("single normative authority", coordination_text)
-        self.assertIn("conversation-title synchronization", coordination_text)
+        self.assertIn("## Active Execution And Capacity", coordination_text)
+        self.assertNotIn("Conversation Title Contract", coordination_text)
+        self.assertIn("## Conversation Title Contract", codex_text)
+        self.assertIn("Apply coordinate-work-items together with this skill", codex_text)
         self.assertNotIn("Active Execution Evidence", provider_text)
         self.assertNotIn("conversation-title synchronization", provider_text)
 
@@ -1793,7 +1799,7 @@ class BundleContentTests(unittest.TestCase):
             "dev-orchestrator",
             "dev-backlog-watchdog",
         )
-        central_section = "Active Execution, Capacity, And Conversation Titles"
+        central_section = "Active Execution And Capacity"
         duplicated_markers = (
             "60-second",
             "Reservation Started At",
@@ -1815,7 +1821,8 @@ class BundleContentTests(unittest.TestCase):
             selected_skills = {next(iter(entry)) for entry in role["skills"]}
             role_text = json.dumps(role, sort_keys=True)
             with self.subTest(role=role_name):
-                self.assertIn("coordinate-codex-work-items", selected_skills)
+                self.assertIn("coordinate-work-items", selected_skills)
+                self.assertIn("coordinate-codex-tasks", selected_skills)
                 self.assertIn(central_section, role_text)
                 for marker in duplicated_markers:
                     self.assertNotIn(marker, role_text)
@@ -1836,7 +1843,8 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(generated=generated_path):
                 generated_text = generated_path.read_text(encoding="utf-8")
-                self.assertIn("conversation title", generated_text.lower())
+                self.assertIn("coordinate-work-items", generated_text)
+                self.assertIn("coordinate-codex-tasks", generated_text)
 
     def test_redundant_root_manuals_are_removed(self) -> None:
         for file_name in REMOVED_ROOT_FILES:
@@ -1878,24 +1886,20 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue((SKILLS_ROOT / skill_name / "SKILL.md").is_file())
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
 
-    def test_codex_coordination_controls_long_running_tasks(self) -> None:
+    def test_portable_coordination_controls_long_running_execution(self) -> None:
         skill_text = (
-            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         for phrase in (
             "expected to take more than five minutes",
-            "the exact currently active unit and any later units that have not started",
-            "a hard stop condition and the retained evidence path",
-            "not a new provider transaction or parent approval gate",
-            "The task may start without waiting for parent acknowledgement.",
-            "This observation must not serialize healthy work.",
-            "must not describe queued work as running.",
-            "classify its failure signature before repeating anything",
+            "the exact active unit and later units not started",
+            "a hard stop condition and retained evidence path",
+            "not a provider transaction or approval gate",
+            "Distinguish active serial work from selected or queued work.",
+            "classify the failure before repeating anything",
             "add the smallest offline replay or deterministic regression",
-            "Run one cheapest representative first.",
-            "Stop or hand off its shared resources.",
-            "Follow agent-claim for any active claim.",
+            "follow agent-claim for any triggered claim",
             "Two unproductive attempts require parent investigation and a revised plan.",
         ):
             with self.subTest(phrase=phrase):
@@ -1905,7 +1909,7 @@ class BundleContentTests(unittest.TestCase):
         """Protect focused per-item delivery and one later combined regression."""
 
         skill_text = (
-            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
         role_text = (
             ROLES_ROOT / "dev-activities" / "dev-backlog-coordinator.role.yaml"
@@ -1936,11 +1940,14 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("one combined regression", readme_text)
         self.assertIn("One Combined Regression After Independent Merges", lifecycle_text)
 
-    def test_user_action_resumes_in_the_existing_canonical_thread(self) -> None:
-        """The user may answer in place without losing lifecycle or delivery gates."""
+    def test_user_action_resumption_splits_lifecycle_from_codex_identity(self) -> None:
+        """Portable lifecycle and Codex task identity preserve one resumption path."""
 
         coordination_text = (
-            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-work-items" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        codex_text = (
+            SKILLS_ROOT / "coordinate-codex-tasks" / "SKILL.md"
         ).read_text(encoding="utf-8")
         manage_text = (
             SKILLS_ROOT / "manage-work-items-file" / "SKILL.md"
@@ -1950,20 +1957,28 @@ class BundleContentTests(unittest.TestCase):
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
         ).read_text(encoding="utf-8")
         normalized_coordination = " ".join(coordination_text.split())
+        normalized_codex = " ".join(codex_text.split())
         normalized_manage = " ".join(manage_text.split())
         normalized_readme = " ".join(readme_text.split())
 
         for phrase in (
-            "The user may answer and continue in that canonical conversation.",
-            "must not require the user to repeat the answer in the parent conversation",
-            "User Action Required -> Ready",
-            "the parent Coordinator decides and records Ready -> Starting for that same Thread",
-            "preserve that work as out-of-sequence evidence",
-            "Do not accept, reject, delete, duplicate, or reimplement it merely because of its timing.",
-            "Resume the same Thread only after Running is durable",
+            "A user answer resolves a decision gate once",
+            "The user does not repeat the answer elsewhere.",
+            "the Coordinator records User Action Required -> Ready",
+            "Ready -> Starting for that same execution",
+            "Preserve out-of-sequence work as evidence.",
+            "Resume only after Running is durable",
         ):
             with self.subTest(coordination_contract=phrase):
                 self.assertIn(phrase, normalized_coordination)
+
+        for phrase in (
+            "When an existing canonical task was preserved through User Action Required",
+            "resume that task",
+            "Do not create a replacement merely because the task is idle.",
+        ):
+            with self.subTest(codex_contract=phrase):
+                self.assertIn(phrase, normalized_codex)
 
         for phrase in (
             "Accept the answer in the canonical work-item conversation that asked the question",
@@ -1976,7 +1991,15 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(phrase, normalized_manage)
 
         self.assertIn(
-            "The user may answer and continue in the canonical work-item conversation",
+            "When coordinate-codex-tasks is active, the user may answer and continue in the canonical work-item conversation",
+            normalized_readme,
+        )
+        self.assertIn(
+            "The Coordinator directly records Ready and Starting through the selected manager",
+            normalized_readme,
+        )
+        self.assertIn(
+            "the same root Orchestrator directly records Running through that manager",
             normalized_readme,
         )
         self.assertIn("Same-Thread Resume", lifecycle_text)
@@ -1992,7 +2015,7 @@ class BundleContentTests(unittest.TestCase):
         for role_path in role_paths:
             with self.subTest(role=role_path.name):
                 role_text = role_path.read_text(encoding="utf-8")
-                self.assertIn("canonical work-item Thread", role_text)
+                self.assertRegex(role_text, r"canonical(?: work-item)? execution")
                 self.assertIn("User Action Required", role_text)
                 self.assertRegex(
                     role_text,
@@ -2004,17 +2027,17 @@ class BundleContentTests(unittest.TestCase):
     ) -> None:
         """Coordination must stay neutral across Persistence and Commit selections."""
         skill_text = (
-            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         for phrase in (
             "Obtain queue inventory, lifecycle counts, provider identities, and dispatchable state only by applying the effective Persistence-selected management skill.",
-            "Provider file: treat ordinary repository backlog paths as provider identities and use the selected file-provider skill for creation and mutation.",
-            "Do not scan or count backlog/future-ideas unless the parent explicitly requests ideation or promotion.",
-            "Provider github: use GitHub issue identities and provider lifecycle evidence; do not create or inspect file backlog paths.",
-            "Provider gitlab: use GitLab issue identities and provider lifecycle evidence; do not translate them into GitHub or file records.",
-            "Provider azure-devops or jira: apply the selected placeholder management skill, preserve its BLOCKED zero-mutation result, and do not fall back.",
-            "Provider none: do not inventory, count, create, transition, or close durable provider records; coordinate only the explicit task and retain task-local evidence.",
+            "Provider file uses ordinary repository backlog identities through its selected file-provider manager.",
+            "Do not scan or count Future Ideas unless the parent explicitly requests ideation or promotion.",
+            "Provider github uses GitHub issue identities and provider lifecycle evidence.",
+            "Provider gitlab uses GitLab issue identities and provider lifecycle evidence.",
+            "Provider azure-devops or jira applies the selected placeholder management skill, preserves its BLOCKED zero-mutation result, and does not fall back.",
+            "Provider none has no durable inventory, count, creation, transition, or closure.",
             "Apply or resume the effective Commit-selected skill only after candidate review and source verification accept the direct or combined commit.",
             "Only after the effective Commit-selected skill returns READY",
         ):
@@ -2770,8 +2793,8 @@ class BundleContentTests(unittest.TestCase):
             "generated target behavior under test",
             "or a product target merely to make the scenario pass",
             "Preserve the target bytes, digests, transcript, and failing evidence",
-            "Log a target finding through the configured backlog path",
-            "routing it to Dev Backlog Steward",
+            "The authorized finding owner logs a target finding directly through the configured backlog path",
+            "Use Dev Backlog Steward only for provider-wide inventory, normalization, archival audit, or recovery",
         ):
             with self.subTest(required_text=required_text):
                 self.assertIn(required_text, protocol)
@@ -3342,11 +3365,17 @@ class BundleContentTests(unittest.TestCase):
             "Do not request lifecycle COMPLETED while Commit is AWAITING_REVIEW",
             "Resume the same effective Commit-selected skill through review corrections, checks, dependency order, merge, and main observation until it returns READY or BLOCKED.",
             "directly apply the effective Persistence-selected management skill for the distinct terminal COMPLETED update",
-            "verify the selected manager's recorded closure and the terminal central-contract conversation-title handoff before reporting READY",
+            "verify the selected manager's recorded closure and the applicable runtime cleanup before reporting READY",
+            "When coordinate-codex-tasks is active, verify its terminal title handoff",
+            "For other runtimes, do not require Codex title behavior",
             "For provider none, do not mutate Persistence",
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, orchestrator_text)
+        self.assertNotIn(
+            "terminal central-contract conversation-title handoff",
+            orchestrator_text,
+        )
 
         workflow_text = "\n".join(orchestrator["instructions"]["workflow"])
         candidate_index = workflow_text.index("candidate commit")
@@ -5753,7 +5782,7 @@ class BundleContentTests(unittest.TestCase):
             SKILLS_ROOT / "manage-work-items-file" / "SKILL.md"
         ).read_text(encoding="utf-8")
         coordination_text = (
-            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
         role = load_yaml_object(
             ROLES_ROOT / "dev-activities" / "dev-backlog-steward.role.yaml"
@@ -6710,7 +6739,7 @@ class BundleContentTests(unittest.TestCase):
             encoding="utf-8"
         )
         coordinate_text = (
-            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         self.assertIn("Before assigning Ready", create_text)
@@ -7850,7 +7879,7 @@ class BundleContentTests(unittest.TestCase):
 
     def test_coordinator_and_providers_require_exact_work_item_lifecycle_claims(self) -> None:
         coordination_text = (
-            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
         provider_texts = {
             skill_name: (SKILLS_ROOT / skill_name / "SKILL.md").read_text(
@@ -7872,16 +7901,24 @@ class BundleContentTests(unittest.TestCase):
             "Path and resource claims remain independently applicable.",
             "The provider remains the lifecycle authority.",
         )
-        for source_name, text in {
-            "coordinate-codex-work-items": coordination_text,
-            **provider_texts,
-        }.items():
+        for source_name, text in provider_texts.items():
             for required_contract in required_contracts:
                 with self.subTest(
                     source=source_name,
                     required_contract=required_contract,
                 ):
                     self.assertIn(required_contract, text)
+
+        for required_contract in (
+            "When agent-claim is loaded, use its Claim Events table and supporting rules.",
+            "Acquire the exact opaque Work Item ID only when an applicable Claim Event requires it.",
+            "Use activity work for outcome work and activity update for provider mutation.",
+            "Release the work-item claim with disposition done, blocked, or handoff at the activity boundary.",
+            "Path and resource claims remain independently applicable.",
+            "The provider remains the lifecycle authority.",
+        ):
+            with self.subTest(source="coordinate-work-items", required_contract=required_contract):
+                self.assertIn(required_contract, coordination_text)
 
     def test_roles_keep_mutation_independent_from_resource_coordination(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
@@ -7952,7 +7989,7 @@ class BundleContentTests(unittest.TestCase):
         )
         merge_text = (SKILLS_ROOT / "integrate-agent-work" / "SKILL.md").read_text(encoding="utf-8")
         coordination_text = (
-            SKILLS_ROOT / "coordinate-codex-work-items" / "SKILL.md"
+            SKILLS_ROOT / "coordinate-work-items" / "SKILL.md"
         ).read_text(encoding="utf-8")
         design_text = (
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
@@ -8027,7 +8064,7 @@ class BundleContentTests(unittest.TestCase):
             "Only after the effective Commit-selected skill returns READY",
             "Keep claim release, Commit delivery, and Persistence closure as distinct operations.",
             "a claim owner sends a release or recovery notification",
-            "the watchdog reports an actionable condition",
+            "the Watchdog reports an actionable condition",
             "fresh Work-item integration branch is fully merged",
             "prior candidate branch used only as a non-ancestral content source is not the Work-item cleanup branch",
             "GitHub and GitLab closure use their own provider identities",
@@ -8656,11 +8693,12 @@ class BundleContentTests(unittest.TestCase):
             "Provider UNSET or an unavailable selected skill",
             "effective Commit-selected skill",
             "Do not reproduce provider or Commit procedures",
-            "active queue defined by coordinate-codex-work-items",
+            "active queue defined by coordinate-work-items",
             "Retry only when that notification arrives",
             "Only the watchdog investigates stale claim ownership",
             "Every fifteen minutes",
-            "canonical task id",
+            "canonical execution identity",
+            "When coordinate-codex-tasks is active, also retain its canonical Codex task and conversation identifiers",
             "remove the clean worktree",
         ):
             with self.subTest(contract=required_contract):
@@ -8741,7 +8779,7 @@ class BundleContentTests(unittest.TestCase):
         )
         coordinator_role = load_yaml_object(coordinator_path)
         watchdog_role = load_yaml_object(watchdog_path)
-        central_section = "Active Execution, Capacity, And Conversation Titles"
+        central_section = "Active Execution And Capacity"
         prohibited_mechanics = (
             "exactly 60 seconds",
             "60-second",
@@ -8754,19 +8792,20 @@ class BundleContentTests(unittest.TestCase):
         for role in (coordinator_role, watchdog_role):
             role_text = json.dumps(role, sort_keys=True)
             selected = {next(iter(entry)) for entry in role["skills"]}
-            self.assertIn("coordinate-codex-work-items", selected)
+            self.assertIn("coordinate-work-items", selected)
+            self.assertIn("coordinate-codex-tasks", selected)
             self.assertIn(central_section, role_text)
             for phrase in prohibited_mechanics:
                 self.assertNotIn(phrase, role_text)
 
         self.assertIn(
-            "A failed, stopped, or missing canonical Task triggers the central "
+            "A failed, stopped, or missing canonical execution triggers the central "
             "coordination section.",
             " ".join(coordinator_role["instructions"]["decisions"]),
         )
         self.assertIn(
-            "For a failed, stopped, or missing canonical Task, report the "
-            "central-contract reconciliation trigger",
+            "For a failed, stopped, or missing canonical execution, report the "
+            "portable reconciliation trigger",
             " ".join(watchdog_role["instructions"]["workflow"]),
         )
         self.assertIn(
@@ -8798,8 +8837,10 @@ class BundleContentTests(unittest.TestCase):
                 )
             ).read_text(encoding="utf-8")
             with self.subTest(runtime=runtime):
-                self.assertIn(central_section, coordinator_generated)
-                self.assertIn(central_section, watchdog_generated)
+                self.assertIn("coordinate-work-items", coordinator_generated)
+                self.assertIn("coordinate-codex-tasks", coordinator_generated)
+                self.assertIn("coordinate-work-items", watchdog_generated)
+                self.assertIn("coordinate-codex-tasks", watchdog_generated)
                 for phrase in prohibited_mechanics:
                     self.assertNotIn(phrase, coordinator_generated)
                     self.assertNotIn(phrase, watchdog_generated)
@@ -8813,7 +8854,7 @@ class BundleContentTests(unittest.TestCase):
             "agent-claim-helper-command",
             "agent-claim-helper-mcp",
             "integrate-agent-work",
-            "coordinate-codex-work-items",
+            "coordinate-work-items",
             "deliver-work-item-direct-main",
             "deliver-work-item-feature-branch",
             "create-work-item-file",
@@ -9251,9 +9292,10 @@ class BundleContentTests(unittest.TestCase):
         state_map_label = state_map_match.group(1)
         for clause in (
             "The Coordinator commits Ready to Starting under one exact provider claim, "
-            "releases it, launches one root task, and ends its handoff.",
-            "The new task independently commits Starting to Running under its own exact "
+            "releases it, launches one root execution, and ends its handoff.",
+            "The new execution independently commits Starting to Running under its own exact "
             "provider claim before implementation.",
+            "When coordinate-codex-tasks is active, the root execution maps to one Codex task.",
             "A failed or missing launch remains Starting until the Watchdog reports it "
             "and the Coordinator performs recovery.",
             "Running is active only while both its finite condition deadline and "
@@ -9291,16 +9333,16 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertEqual(tuple(sorted(flow_positions)), flow_positions)
         for clause in (
-            "The Coordinator commits Ready to Starting, releases its claim, launches one task, and ends its handoff.",
-            "The new task commits Starting to Running through its own claim.",
+            "The Coordinator commits Ready to Starting, releases its claim, launches one root execution, and ends its handoff.",
+            "The new execution commits Starting to Running through its own claim.",
+            "When coordinate-codex-tasks is active, that execution maps to one Codex task.",
             "Failed or missing launches stay Starting until Watchdog evidence triggers Coordinator recovery.",
             "Observed and started times are history.",
             "Keep both future boundaries current",
             "Expiry of either boundary invalidates active eligibility.",
             "A failed launch remains Starting until Coordinator recovery.",
             "Absent, invalid, or expired evidence cannot preserve Running.",
-            "The Steward records any selected lifecycle transition before the "
-            "Coordinator fills the vacancy.",
+            "The Coordinator directly records its selected lifecycle transition through the effective Persistence manager before filling the vacancy.",
         ):
             with self.subTest(visible_clause=clause):
                 self.assertIn(clause, anomaly_section)
@@ -9357,7 +9399,7 @@ class BundleContentTests(unittest.TestCase):
             lifecycle_text.index('<section class="section" id="delivery"') :
             lifecycle_text.index('<section class="section" id="blocker-recovery"')
         ]
-        commit_to_steward_handoff = delivery_section[
+        commit_to_persistence_handoff = delivery_section[
             delivery_section.index('<li><span class="number">8</span>') :
             delivery_section.index('<li><span class="number">9</span>')
         ]
@@ -9411,7 +9453,7 @@ class BundleContentTests(unittest.TestCase):
             agents_section,
         )
         self.assertIn(
-            "The Dev Backlog Steward is a child Agent, not another work-item Thread or queue entry.",
+            "Dev Backlog Steward is optional and limited to provider-wide inventory, normalization, archival audits, and recovery.",
             agents_section,
         )
         self.assertIn(
@@ -9419,11 +9461,11 @@ class BundleContentTests(unittest.TestCase):
             agents_section,
         )
         self.assertIn(
-            '<figcaption id="steward-sequence-title">Steward Assignments Are Sequential',
+            '<figcaption id="steward-sequence-title">Provider-Wide Steward Assignments Are Sequential',
             runtime_section,
         )
         self.assertIn(
-            "only one mutating assignment may be active or queued at a time",
+            "only one provider-wide maintenance assignment may be active or queued at a time",
             runtime_section,
         )
         self.assertIn(
@@ -9443,7 +9485,7 @@ class BundleContentTests(unittest.TestCase):
             agents_section,
         )
         self.assertIn(
-            'role="img" aria-label="Assignment A performs and commits one lifecycle update.',
+            'role="img" aria-label="Assignment A performs one provider-wide maintenance operation.',
             runtime_section,
         )
         self.assertIn(
@@ -9508,20 +9550,20 @@ class BundleContentTests(unittest.TestCase):
         marker_offset = 0
         for marker in provider_none_delivery_markers:
             with self.subTest(provider_none_delivery_marker=marker):
-                marker_position = commit_to_steward_handoff.index(
+                marker_position = commit_to_persistence_handoff.index(
                     marker,
                     marker_offset,
                 )
                 marker_offset = marker_position + len(marker)
         self.assertEqual(
             2,
-            commit_to_steward_handoff.lower().count("provider none"),
+            commit_to_persistence_handoff.lower().count("provider none"),
         )
         self.assertIn(
             '<span class="actor">Root Orchestrator</span>'
             '<span class="direction" role="img" aria-label="sends to">'
-            '&rarr;</span><span class="actor">Steward</span>',
-            commit_to_steward_handoff,
+            '&rarr;</span><span class="actor">Persistence Manager</span>',
+            commit_to_persistence_handoff,
         )
 
         title_like_labels = (
@@ -9536,7 +9578,7 @@ class BundleContentTests(unittest.TestCase):
             "Integration Specialists",
             "Threads Contain Agents",
             "Execution Contexts",
-            "Steward Assignments Are Sequential",
+            "Provider-Wide Steward Assignments Are Sequential",
             "Parallel Workspaces",
             "Shared Resource Gate",
             "Claim Cleanup",
@@ -9628,12 +9670,12 @@ class BundleContentTests(unittest.TestCase):
             "one cheapest representative first",
             "A user answer resolves the decision gate",
             "Thread Evidence Boundary",
+            "When coordinate-codex-tasks is active, the root execution maps to one Codex task.",
         ):
             with self.subTest(lifecycle_phrase=phrase):
                 self.assertIn(phrase, lifecycle_text)
 
         for obsolete_phrase in (
-            "Codex task",
             "One user-visible Dev Orchestrator task",
             "ten are Running",
             "SHARED_CHECKOUT_RELEASE_REQUIRED",
@@ -9668,7 +9710,7 @@ class BundleContentTests(unittest.TestCase):
 
         for phrase in (
             "After a new work-item file is committed",
-            "It does not reserve capacity, change lifecycle state, create a delivery task, or start implementation.",
+            "It does not reserve capacity, change lifecycle state, create a delivery execution, or start implementation.",
             "Resolve Backlog Blockage owns diagnosis and one-item-at-a-time recovery",
             "Set Solo Mode disables only new secondary-thread dispatch",
             "Set Multitask Mode enables new dispatch only after every blockage item is terminal",
@@ -9709,9 +9751,9 @@ class BundleContentTests(unittest.TestCase):
             "Feature-branch delivery",
             "GitHub pull request or GitLab merge request",
             "Commit AWAITING_REVIEW without Persistence mutation",
-            "Dev Orchestrator separately dispatches Dev Backlog Steward exactly once for the nonterminal AWAITING_REVIEW update",
+            "Dev Orchestrator directly applies the effective Persistence manager exactly once for the nonterminal AWAITING_REVIEW update",
             "until Commit READY",
-            "dispatch exactly once for the distinct terminal Persistence closure",
+            "directly apply the manager exactly once for the distinct terminal Persistence closure",
             "Conditional integration role",
             "nested Merge Coordinator",
             "inside the same work item",
@@ -11789,7 +11831,7 @@ class BundleContentTests(unittest.TestCase):
             for heading in (
                 "Delivery Workflow",
                 "Persistence Selection",
-                "Codex Multi-Item Coordination",
+                "Work-Item Coordination",
             ):
                 self.assertIn(f"<h3>{heading}</h3>", catalog)
 
@@ -11830,14 +11872,14 @@ class BundleContentTests(unittest.TestCase):
             persistence_section = catalog.split(
                 "<h3>Persistence Selection</h3>",
                 maxsplit=1,
-            )[1].split("<h3>Codex Multi-Item Coordination</h3>", maxsplit=1)[0]
+            )[1].split("<h3>Work-Item Coordination</h3>", maxsplit=1)[0]
             self.assertEqual([], tag_containers(persistence_section, "ol"))
             persistence_unordered = tag_containers(persistence_section, "ul")
             self.assertEqual(1, len(persistence_unordered))
             persistence_items = list_item_texts(persistence_unordered[0], 2)
             self.assertCountEqual(
                 [
-                    "Dev Backlog Steward applies the effective Persistence-selected create or manage skill referenced by applicable AGENTS.md guidance.",
+                    "Dev Backlog Coordinator and Dev Orchestrator directly apply the effective Persistence-selected manager for lifecycle operations they own; Dev Backlog Steward uses it only for provider-wide inventory, normalization, archival audit, and recovery.",
                     "An UNSET selection requires a decision instead of fallback or shadow persistence.",
                 ],
                 persistence_items,
@@ -11848,7 +11890,7 @@ class BundleContentTests(unittest.TestCase):
             )
 
             coordination_section = catalog.split(
-                "<h3>Codex Multi-Item Coordination</h3>",
+                "<h3>Work-Item Coordination</h3>",
                 maxsplit=1,
             )[1]
             coordination_ordered = tag_containers(coordination_section, "ol")
@@ -11857,9 +11899,9 @@ class BundleContentTests(unittest.TestCase):
             self.assertEqual(1, len(coordination_unordered))
             self.assertEqual(
                 [
-                    "Dev Backlog Coordinator loads coordinate-codex-work-items only when user-visible Codex tasks coordinate several work items.",
+                    "Dev Backlog Coordinator loads coordinate-work-items for sustained multi-item queues and coordinate-codex-tasks only when those executions use Codex tasks.",
                     "It reads inventory and lifecycle through the effective Persistence-selected manager.",
-                    "It delegates provider mutation to Dev Backlog Steward.",
+                    "It directly applies the effective Persistence-selected manager for authorized Coordinator lifecycle operations.",
                     "It sends active delivery to Dev Orchestrator with the effective Commit-selected skill.",
                 ],
                 list_item_texts(coordination_ordered[0], 4),
@@ -11874,7 +11916,7 @@ class BundleContentTests(unittest.TestCase):
                 list_item_texts(coordination_unordered[0], 4),
             )
             self.assertIn(
-                "Codex multi-item coordination is request-specific:",
+                "Portable work-item coordination is provider-neutral; Codex task control is an optional runtime mapping:",
                 paragraph_texts(coordination_section),
             )
 
@@ -11972,13 +12014,13 @@ class BundleContentTests(unittest.TestCase):
             ),
             (
                 "<p>Work-item Persistence is an independent project selection:</p>",
-                "Dev Backlog Steward applies the effective Persistence-selected create or manage skill referenced by applicable AGENTS.md guidance.",
+                "Dev Backlog Coordinator and Dev Orchestrator directly apply the effective Persistence-selected manager for lifecycle operations they own; Dev Backlog Steward uses it only for provider-wide inventory, normalization, archival audit, and recovery.",
                 "Work-item Persistence is an independent project selection:",
             ),
             (
-                "<p>Codex multi-item coordination is request-specific:</p>",
-                "Dev Backlog Coordinator loads coordinate-codex-work-items only when user-visible Codex tasks coordinate several work items.",
-                "Codex multi-item coordination is request-specific:",
+                "<p>Portable work-item coordination is provider-neutral; Codex task control is an optional runtime mapping:</p>",
+                "Dev Backlog Coordinator loads coordinate-work-items for sustained multi-item queues and coordinate-codex-tasks only when those executions use Codex tasks.",
+                "Portable work-item coordination is provider-neutral; Codex task control is an optional runtime mapping:",
             ),
         )
         for paragraph_html, item_text, paragraph_text in paragraph_moves:
@@ -11998,6 +12040,9 @@ class BundleContentTests(unittest.TestCase):
     def test_agent_and_skill_definition_page_preserves_topic_hierarchy(self) -> None:
         page_text = (
             REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.html"
+        ).read_text(encoding="utf-8")
+        outline_text = (
+            REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.outline.md"
         ).read_text(encoding="utf-8")
         self.assertEqual(
             [
@@ -12019,6 +12064,20 @@ class BundleContentTests(unittest.TestCase):
                 ),
             ],
             re.findall(r'<h2 id="([^"]+)">([^<]+)</h2>', page_text),
+        )
+
+        outline_coordination_heading = re.search(
+            r"    └── ([^\n]+)\n```",
+            outline_text,
+        )
+        self.assertIsNotNone(outline_coordination_heading)
+        delivery_section = page_text.split(
+            '<section class="section" aria-labelledby="delivery-responsibilities-title">',
+            maxsplit=1,
+        )[1].split("</section>", maxsplit=1)[0]
+        self.assertEqual(
+            outline_coordination_heading.group(1),
+            re.findall(r"<h3>([^<]+)</h3>", delivery_section)[-1],
         )
 
         agent_section = page_text.split(

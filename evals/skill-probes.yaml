@@ -107,15 +107,29 @@ probes:
     executableCases: [typescript-order-pricing, spring-boot-order-cancellation, documentation-functional-spec, wiki-raw-ingest, backlog-lifecycle]
     coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-coordinate-codex-work-items
-    skill: coordinate-codex-work-items
-    source: skills/coordinate-codex-work-items/SKILL.md
+  - id: probe-coordinate-work-items
+    skill: coordinate-work-items
+    source: skills/coordinate-work-items/SKILL.md
     evaluationCategory: prompt-and-agent
     evaluationKind: workflow-invariant
-    activationCondition: A parent Codex coordinator is explicitly asked to coordinate multiple user-visible backlog tasks through lifecycle handoffs, notifications, and terminal housekeeping.
+    activationCondition: A parent coordinator is asked to sustain multiple provider-selected work items through lifecycle handoffs, scheduling, recovery, delivery, and terminal housekeeping.
     negativeCondition: One self-contained task or a parked preflight that cannot enter its current lifecycle or artifact window does not start a coordination campaign.
-    expectedBehavior: Reconcile canonical task identities and live repository state, trust canonical Ready only after the provider resolved hard dependencies, reject malformed Ready records for provider reconciliation instead of inventing effective eligibility, follow agent-claim when it is loaded, leave stale-claim investigation to the watchdog, and close only from durable review, verification, integration, lifecycle, and cleanup evidence.
-    judgePlan: {deterministicChecks: [skill-read-trace, suite-simulator-tests, phase-order, lifecycle-baton-evidence, task-identity-fields, delayed-visibility-settlement, settled-zero-retry, retry-limit, duplicate-containment, canonical-id-persistence, done-success-title, just-in-time-dispatch, fifteen-minute-wake-audit, concrete-successor-chain, completion-evidence-gate, archive-eligibility], modelRubric: workflow-quality}
+    expectedBehavior: Trust canonical Ready only after the provider resolved hard dependencies, reject malformed Ready records for provider reconciliation instead of inventing effective eligibility, reconcile active capacity from portable execution evidence, follow agent-claim when it is loaded, leave stale-claim investigation to the watchdog, and close only from durable review, verification, integration, lifecycle, and cleanup evidence.
+    judgePlan: {deterministicChecks: [skill-read-trace, suite-simulator-tests, phase-order, lifecycle-baton-evidence, just-in-time-dispatch, fifteen-minute-wake-audit, concrete-successor-chain, completion-evidence-gate], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-backlog-coordinator-happy, dev-backlog-coordinator-boundary, dev-backlog-watchdog-happy, dev-backlog-watchdog-boundary, dev-backlog-watchdog-exit-condition]
+    workflowAssociations: [backlog]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-coordinate-codex-tasks
+    skill: coordinate-codex-tasks
+    source: skills/coordinate-codex-tasks/SKILL.md
+    evaluationCategory: prompt-and-agent
+    evaluationKind: workflow-invariant
+    activationCondition: Coordinated work-item execution uses Codex tasks and needs runtime creation, resumption, identity, title, follow-up, reconciliation, Watchdog, or archival mapping.
+    negativeCondition: Work-item coordination runs through another runtime or needs only provider-neutral lifecycle, scheduling, recovery, delivery, and reporting policy.
+    expectedBehavior: Apply coordinate-work-items with this skill, reconcile ambiguous task creation without blind retry, preserve canonical task and conversation identities, synchronize lifecycle titles, follow up the same resumable task, and archive only after portable terminal closeout permits cleanup.
+    judgePlan: {deterministicChecks: [skill-read-trace, task-identity-fields, delayed-visibility-settlement, settled-zero-retry, retry-limit, duplicate-containment, canonical-id-persistence, done-success-title, archive-eligibility], modelRubric: workflow-quality}
     scenarioAssociations: [dev-backlog-coordinator-happy, dev-backlog-coordinator-boundary, dev-backlog-watchdog-happy, dev-backlog-watchdog-boundary, dev-backlog-watchdog-exit-condition]
     workflowAssociations: [backlog]
     executableCases: []

@@ -464,7 +464,7 @@ A nested Skill Group is the same kind of set as its parent. The word subgroup de
 
 - **RULE: RULE-54** A solid diamond represents containment in a collapsed diagram
   - **SYNOPSIS:** A solid diamond from a Skill Group node to a SKILL.md node records direct membership. A solid diamond from one Skill Group node to another records nested-group inclusion.
-  - **EXAMPLE:** Concurrent Tasking directly contains coordinate-codex-work-items and includes the Resource Coordination skill group, whose direct skills include agent-claim.
+  - **EXAMPLE:** Concurrent Tasking directly contains the coordinate-work-items and coordinate-codex-tasks peers and includes the Resource Coordination skill group, whose direct skills include agent-claim.
 
 ```mermaid
 classDiagram
@@ -478,7 +478,11 @@ classDiagram
         <<Skill Group>>
     }
 
-    class coordinate-codex-work-items {
+    class coordinate-work-items {
+        <<SKILL.md>>
+    }
+
+    class coordinate-codex-tasks {
         <<SKILL.md>>
     }
 
@@ -486,12 +490,13 @@ classDiagram
         <<SKILL.md>>
     }
 
-    ConcurrentTasking *-- coordinate-codex-work-items
+    ConcurrentTasking *-- coordinate-work-items
+    ConcurrentTasking *-- coordinate-codex-tasks
     ConcurrentTasking *-- ResourceCoordination
     ResourceCoordination *-- agent-claim
 ```
 
-The collapsed diagram shows Concurrent Tasking as one node. Its actual Skill Group contains coordinate-codex-work-items directly and contains agent-claim through the nested Resource Coordination Skill Group. An expanded diagram could draw boxes around the same sets and display their member details.
+The collapsed diagram shows Concurrent Tasking as one node. Its actual Skill Group contains the complementary coordinate-work-items and coordinate-codex-tasks peers directly and contains agent-claim through the nested Resource Coordination Skill Group. An expanded diagram could draw boxes around the same sets and display their member details.
 
 The repository-specific group models are maintained separately in [Object-Oriented Skill Group Models](object-oriented-skill-group-models.md).
 
@@ -910,7 +915,7 @@ The glossary defines the relationship and diagram terms used by the analysis aft
 | Agent class view | A diagram node that represents the Agent behavior, expectations, and dependencies relevant to the analysis without asserting a runtime class. | Coding Agent names careful-coding and refers to Deliver Workitem. |
 | Skill Group | The actual named set of cohesive skills used to organize one capability. Its complete skill set contains its direct skills plus every skill in its nested Skill Groups. The set exists independently of how a diagram displays it. | The Work Item Skill Group contains work-item-base, work-item-dispatch, and work-item-monitor. |
 | Expanded Skill Group Diagram | A diagram that draws a box around the SKILL.md nodes belonging to one Skill Group so their responsibilities and separate loading references can be viewed together. The diagram displays the set; it does not create it. | The expanded Work Item Skill Group Diagram displays work-item-base, work-item-dispatch, and work-item-monitor inside one box. |
-| Collapsed Skill Group Diagram | A diagram that represents a Skill Group as one node and uses solid-diamond lines to show direct skill membership or nested-group inclusion. | The collapsed Concurrent Tasking diagram links the Concurrent Tasking node to coordinate-codex-work-items and Resource Coordination. |
+| Collapsed Skill Group Diagram | A diagram that represents a Skill Group as one node and uses solid-diamond lines to show direct skill membership or nested-group inclusion. | The collapsed Concurrent Tasking diagram links the Concurrent Tasking node to both coordination peers and Resource Coordination. |
 | Nested skill group | A skill group included inside another skill group. It is the same kind of object as its parent; subgroup is only a relative description of its position. | Resource Coordination is a skill group nested inside Concurrent Tasking. |
 | Direct group membership | A solid-diamond line in a collapsed diagram that displays a skill’s direct membership in a Skill Group. The line represents membership in the existing set; it does not create that membership. | Resource Coordination *-- agent-claim displays agent-claim as a direct member of Resource Coordination. |
 | Nested set containment | A solid-diamond line in a collapsed diagram that displays one Skill Group nested in another. The parent’s complete skill set includes the child’s complete skill set independently of the chosen diagram form. | Concurrent Tasking *-- Resource Coordination displays Resource Coordination as a nested group whose skills belong to the complete Concurrent Tasking set. |

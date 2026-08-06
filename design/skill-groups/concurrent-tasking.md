@@ -151,11 +151,11 @@ The Agent skill inventory states the exact files each relevant role always loads
 | Agent scope | Additional Core Agent Skills | Optional Agent Skills and conditions |
 | --- | --- | --- |
 | Every conceptual Agent | effective-communication; ste-technical-writing | None |
-| Dev Backlog Coordinator | structured-explanation | coordinate-codex-work-items when Codex tasks coordinate multiple work items; resolve-backlog-blockage during a declared blockage; set-solo-mode when configured secondary dispatch must stop; set-multitask-mode when configured secondary dispatch may resume |
-| Dev Orchestrator | deliver-work-item; structured-design; structured-explanation | coordinate-codex-work-items for a coordinated Codex work-item conversation; organise-project-files when orchestration creates a new project file or directory |
+| Dev Backlog Coordinator | structured-explanation | coordinate-work-items for a sustained multi-item queue; coordinate-codex-tasks when executions use Codex tasks; resolve-backlog-blockage during a declared blockage; set-solo-mode when configured secondary dispatch must stop; set-multitask-mode when configured secondary dispatch may resume |
+| Dev Orchestrator | deliver-work-item; structured-design; structured-explanation | coordinate-work-items for a coordinated work item; coordinate-codex-tasks when the root execution is a Codex task; organise-project-files when orchestration creates a new project file or directory |
 | Dev Merge Coordinator | integrate-agent-work; review-structured-artifact; explain-code-fix | organise-project-files when integration creates or introduces a new project file or directory |
-| Dev Backlog Steward | structured-explanation | coordinate-codex-work-items when provider-wide maintenance touches coordinated state; organise-project-files when recovery creates a path whose destination is not fixed |
-| Dev Backlog Watchdog | coordinate-codex-work-items | resolve-backlog-blockage when a blockage criterion or active recovery applies |
+| Dev Backlog Steward | structured-explanation | coordinate-work-items when provider-wide maintenance touches coordinated state; coordinate-codex-tasks when inspecting Codex task evidence; organise-project-files when recovery creates a path whose destination is not fixed |
+| Dev Backlog Watchdog | coordinate-work-items | coordinate-codex-tasks when observing Codex tasks; resolve-backlog-blockage when a blockage criterion or active recovery applies |
 
 ### Scenario: Creating A Work Item For An Excluded Issue
 
@@ -257,7 +257,7 @@ classDiagram
         }
     }
 
-    class coordinate-codex-work-items {
+    class coordinate-work-items {
         <<SKILL.md>>
         <<Agent Skill>>
         +reconcile-active-execution()
@@ -321,7 +321,7 @@ classDiagram
     DevOrchestrator o--> ManageWorkItem
     DevBacklogSteward o--> ManageWorkItem
     DevBacklogWatchdog o--> ManageWorkItem
-    coordinate-codex-work-items ..> ManageWorkItem : when a Persistence provider is selected
+    coordinate-work-items ..> ManageWorkItem : when a Persistence provider is selected
     project-specific-directives o..> manage-work-items-file : when Persistence is file
     project-specific-directives o..> manage-work-items-github : when Persistence is github
     project-specific-directives o..> manage-work-items-gitlab : when Persistence is gitlab
@@ -335,7 +335,7 @@ classDiagram
 ```
 
 manage-work-items names the shared management contract, and manage-work-items-* names its
-provider family. Persistence selects one provider. coordinate-codex-work-items uses the contract
+provider family. Persistence selects one provider. coordinate-work-items uses the contract
 across queue dispatch, active-execution reconciliation, delivery, closure, and periodic review.
 
 ### Scenario: A Project Enables Resource Coordination
@@ -346,7 +346,7 @@ This scenario applies when project configuration selects agent-claim for resourc
 classDiagram
     direction LR
 
-    class coordinate-codex-work-items {
+    class coordinate-work-items {
         <<SKILL.md>>
         <<Agent Skill>>
         +resource-coordination()
@@ -425,7 +425,7 @@ classDiagram
     project-specific-directives o..> agent-claim : when resource_coordination is agent-claim
     project-specific-directives o..> agent-claim-helper-command : when the command-line helper is selected
     project-specific-directives o..> agent-claim-helper-mcp : when the verified MCP helper is selected
-    coordinate-codex-work-items ..> agent-claim : when resource coordination is selected
+    coordinate-work-items ..> agent-claim : when resource coordination is selected
     integrate-agent-work ..> agent-claim : when resource coordination is selected
     deliver-work-item-feature-branch ..> agent-claim : when resource coordination is selected
     deliver-work-item-direct-main ..> agent-claim : when resource coordination is selected
@@ -450,7 +450,7 @@ classDiagram
         <<Agent>>
     }
 
-    class coordinate-codex-work-items {
+    class coordinate-work-items {
         <<SKILL.md>>
         <<Agent Skill>>
         +effective-commit-delivery-and-persistence-closure()
@@ -494,7 +494,7 @@ classDiagram
     }
 
     DevOrchestrator o--> DeliverWorkItem
-    coordinate-codex-work-items ..> DeliverWorkItem : when a coordinated item reaches delivery
+    coordinate-work-items ..> DeliverWorkItem : when a coordinated item reaches delivery
     project-specific-directives o..> deliver-work-item-feature-branch : when Commit is feature-branch
     project-specific-directives o..> deliver-work-item-direct-main : when Commit is direct-main
     deliver-work-item-feature-branch ..|> DeliverWorkItem
@@ -511,7 +511,7 @@ The direct skills control coordinated execution and dispatch mode. The nested gr
 
 | Direct group | Skill | Public procedures or identity | Responsibility |
 | --- | --- | --- | --- |
-| Concurrent Tasking | coordinate-codex-work-items | Resource Coordination; Queue Target And Dispatch; Effective Commit Delivery And Persistence Closure | Coordinates capacity, dispatch, recovery, delivery, and provider closure across Codex work-item tasks. |
+| Concurrent Tasking | coordinate-work-items; coordinate-codex-tasks | Resource Coordination; Queue Target And Scheduling; Effective Commit Delivery And Persistence Closure | Separates portable work-item policy from conditional Codex task mapping. |
 | Concurrent Tasking | set-solo-mode | Set Solo Mode | Disables dispatch to secondary threads while the current Agent continues sequential work. |
 | Concurrent Tasking | set-multitask-mode | Set Multitask Mode | Enables dispatch to secondary threads after the sequential condition ends. |
 | Resource Coordination | agent-claim | Coordinate Shared Resource; Acquire Claim; Extend Claim; Extend Claim Deadline; Heartbeat Claim; Read Claim Status; Release Claim | Defines claim events, scope, conflicts, deadlines, and cleanup policy. |
@@ -553,7 +553,8 @@ The Core and Optional inventory uses the role schema and the complete skill list
 - [Organise Project Files](../../skills/organise-project-files/SKILL.md)
 - [Review Structured Artifact](../../skills/review-structured-artifact/SKILL.md)
 - [Explain Code Fix](../../skills/explain-code-fix/SKILL.md)
-- [Coordinate Codex Work Items](../../skills/coordinate-codex-work-items/SKILL.md)
+- [Coordinate Work Items](../../skills/coordinate-work-items/SKILL.md)
+- [Coordinate Codex Tasks](../../skills/coordinate-codex-tasks/SKILL.md)
 - [Resolve Backlog Blockage](../../skills/resolve-backlog-blockage/SKILL.md)
 - [Set Solo Mode](../../skills/set-solo-mode/SKILL.md)
 - [Set Multitask Mode](../../skills/set-multitask-mode/SKILL.md)

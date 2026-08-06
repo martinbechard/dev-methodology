@@ -725,16 +725,16 @@
     <h3>Persistence Selection</h3>
     <p>Work-item Persistence is an independent project selection:</p>
     <ul>
-      <li>Dev Backlog Steward applies the effective Persistence-selected create or manage skill referenced by applicable AGENTS.md guidance.</li>
+      <li>Dev Backlog Coordinator and Dev Orchestrator directly apply the effective Persistence-selected manager for lifecycle operations they own; Dev Backlog Steward uses it only for provider-wide inventory, normalization, archival audit, and recovery.</li>
       <li>An UNSET selection requires a decision instead of fallback or shadow persistence.</li>
     </ul>
 
-    <h3>Codex Multi-Item Coordination</h3>
-    <p>Codex multi-item coordination is request-specific:</p>
+    <h3>Work-Item Coordination</h3>
+    <p>Portable work-item coordination is provider-neutral; Codex task control is an optional runtime mapping:</p>
     <ol>
-      <li>Dev Backlog Coordinator loads coordinate-codex-work-items only when user-visible Codex tasks coordinate several work items.</li>
+      <li>Dev Backlog Coordinator loads coordinate-work-items for sustained multi-item queues and coordinate-codex-tasks only when those executions use Codex tasks.</li>
       <li>It reads inventory and lifecycle through the effective Persistence-selected manager.</li>
-      <li>It delegates provider mutation to Dev Backlog Steward.</li>
+      <li>It directly applies the effective Persistence-selected manager for authorized Coordinator lifecycle operations.</li>
       <li>It sends active delivery to Dev Orchestrator with the effective Commit-selected skill.</li>
     </ol>
     <ul>

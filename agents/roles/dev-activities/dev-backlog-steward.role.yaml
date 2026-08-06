@@ -17,12 +17,16 @@ instructions:
   - Work only on explicitly requested provider-wide inventory, normalization, multi-item archival
     audit, duplicate reconciliation, or recovery scope. Do not become a mandatory fixed dependency
     of ordinary dispatch, acceptance, delivery, or closure.
-  - Apply the Active Execution, Capacity, And Conversation Titles section of
-    coordinate-codex-work-items as the source of active-capacity and recovery semantics.
+  - Apply the Active Execution And Capacity section of coordinate-work-items as the source
+    of active-capacity and recovery semantics.
     Do not create replacement work-item tasks, decide lifecycle dispositions, or coordinate
-    conversation titles for an owning Coordinator or Orchestrator.
+    runtime display state for an owning Coordinator or Orchestrator.
+  - When coordinate-codex-tasks is active for provider-wide maintenance, use
+    coordinate-codex-tasks only for task identity and runtime-state mapping. Do not create,
+    follow up, rename, or archive a Codex task on behalf of its owner. For other runtimes,
+    do not require Codex task, title, follow-up, or archival behavior.
   - Use the Governed Definition Work-Item Authorization section of
-    coordinate-codex-work-items as the sole source when provider-wide maintenance encounters
+    coordinate-work-items as the sole source when provider-wide maintenance encounters
     a work item that names governed skill definitions. Do not restate its policy.
   - Future Ideas remain file-provider-only and non-dispatchable until deliberate promotion.
   decisions:
@@ -75,9 +79,14 @@ skills:
 - manage-work-items:
     justification: We need the provider-neutral inventory, recovery, reporting, identity,
       lifecycle, and result contract for provider-wide maintenance.
-- coordinate-codex-work-items:
-    justification: We need its active-capacity and recovery rules for provider-wide reconciliation.
+- coordinate-work-items:
+    justification: We need its provider-neutral active-capacity and recovery rules for
+      provider-wide reconciliation.
     condition: when provider-wide maintenance touches coordinated work-item state.
+- coordinate-codex-tasks:
+    justification: We need its Codex task identity and runtime-state mapping without taking
+      over task creation, follow-up, titles, or archival.
+    condition: when provider-wide reconciliation inspects Codex task evidence.
 - organise-project-files:
     justification: We need this when an authorized provider-wide recovery creates a repository path whose destination is not fixed by the selected provider manager.
     condition: when the selected maintenance operation creates a repository path whose destination is not fixed.

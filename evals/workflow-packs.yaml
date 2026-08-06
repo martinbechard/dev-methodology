@@ -375,7 +375,8 @@ packs:
       - dev-backlog-watchdog
     skillProbes:
       - probe-agent-claim
-      - probe-coordinate-codex-work-items
+      - probe-coordinate-work-items
+      - probe-coordinate-codex-tasks
       - probe-resolve-backlog-blockage
       - probe-set-solo-mode
       - probe-set-multitask-mode
@@ -411,7 +412,7 @@ packs:
         agents:
           - dev-backlog-watchdog
         requiredEvidence:
-          - canonical standing and heartbeat prompt rendering
+          - portable coordinate-work-items criteria plus byte-identical coordinate-codex-tasks standing and heartbeat prompt rendering when the Codex mapping is active
           - one concise no-action result or one actionable parent alert
           - unchanged provider, claim, task, Git, branch, worktree, and resource state
       - id: classify-and-create

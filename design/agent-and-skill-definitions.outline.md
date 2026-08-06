@@ -27,5 +27,5 @@ Conceptual Agent and Skill Definitions
 └── Work-Item Delivery Responsibilities
     ├── Delivery Workflow
     ├── Persistence Selection
-    └── Codex Multi-Item Coordination
+    └── Work-Item Coordination
 ```

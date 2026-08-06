@@ -157,7 +157,7 @@ A Codex user-level installation uses the installed copy:
 python3 "${HOME}/.agents/skills/agent-claim-helper-command/scripts/claim.py" --help
 ```
 
-For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, directly applies the selected provider manager for Ready -> Starting reservations and Coordinator-owned dispositions, launches the root Dev Orchestrator task, and finishes its handoff. The root Dev Orchestrator independently applies the selected provider manager for Starting -> Running acceptance and its later lifecycle operations. Dev Backlog Steward is optional and limited to provider-wide inventory, normalization, archival audit, and recovery. Dev Backlog Watchdog detects overly old Starting items and reports recovery evidence to the Coordinator. Each agent follows Agent Claim when its work reaches an event in the Claim Events table.
+For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, directly applies the selected provider manager for Ready -> Starting reservations and Coordinator-owned dispositions, launches the root Dev Orchestrator execution, and finishes its handoff. When coordinate-codex-tasks is active, that execution maps to one root Codex task. The root Dev Orchestrator independently applies the selected provider manager for Starting -> Running acceptance and its later lifecycle operations. Dev Backlog Steward is optional and limited to provider-wide inventory, normalization, archival audit, and recovery. Dev Backlog Watchdog detects overly old Starting items and reports recovery evidence to the Coordinator. Each agent follows Agent Claim when its work reaches an event in the Claim Events table.
 
 An explicit user-authorized work item that names exact skill definition paths supplies the required user direction for those named skills; only additional skill-definition paths require additional approval.
 
@@ -180,11 +180,11 @@ The command writes one self-contained HTML file with no network dependencies. It
 Stalled, Blocked, and User Action Required as separate inventories from dispatchable work
 and treats any remaining active Status: Proposed item as a migration anomaly rather than an
 operational bucket. Starting begins after the Coordinator directly applies the selected
-provider manager for Ready -> Starting. The Coordinator then launches one root task and its
-handoff is complete. That task independently applies the selected provider manager for
-Starting -> Running. A failed or missing
-launch remains Starting until the Watchdog reports its age and the Coordinator follows up,
-stops the task, starts one reconciled replacement, or selects another truthful disposition.
+provider manager for Ready -> Starting. The Coordinator then launches one root execution and
+its handoff is complete. That execution independently applies the selected provider manager for
+Starting -> Running. A failed or missing launch remains Starting until the Watchdog reports its
+age and the Coordinator selects the portable reconciliation action. When coordinate-codex-tasks
+is active, the Coordinator uses its follow-up, stop, replacement, and archival mapping.
 Running consumes capacity only with complete Active Execution Evidence for active
 root execution, live delegated work, or a bounded owned wait or progress condition. Its
 historical observation and start times do not control expiry; both its finite condition
@@ -380,25 +380,28 @@ After that analysis and explicit user approval, --replace-customized may be comb
 
 Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The [Wiki Skills And Project Context page](design/wiki-skills-and-project-context.html) owns the conceptual relationship among the LLM-wiki pattern, OKF-compatible files, project-wiki operations, and code-project-wiki synchronization. The generated [Core Agent and Skills](design/agent-and-skill-definitions.html) page owns catalog views of current conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. [Agent Skill Architecture](design/skills-modularization.html) explains technology-agnostic agent skills and setup-bound technology extensions. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns bootstrap, planned design progression, source-backed documentation, execution, review, verification, integration, configured delivery closeout, and execution evidence. [Agent Claim](skills/agent-claim/SKILL.md) owns all claim rules.
 
-Dev Backlog Coordinator owns parent-level, just-in-time coordination only when a user
-explicitly requests several user-visible Codex work-item tasks. It obtains provider inventory
-through the effective Persistence-selected manager and applies the portable
-[coordinate-codex-work-items skill](skills/coordinate-codex-work-items/SKILL.md) as the
-single authority for active-execution eligibility, Starting handoff and recovery,
-Running evidence, capacity, runtime reconciliation, and conversation-title synchronization.
+Dev Backlog Coordinator owns parent-level, just-in-time coordination when a user requests
+several provider-selected work items. It obtains provider inventory through the effective
+Persistence-selected manager and applies the portable
+[coordinate-work-items skill](skills/coordinate-work-items/SKILL.md) as the single authority
+for lifecycle, active-execution eligibility, capacity, scheduling, recovery, delivery, and
+reporting. When the execution runtime is Codex, the complementary
+[coordinate-codex-tasks skill](skills/coordinate-codex-tasks/SKILL.md) maps that policy to
+task creation, resumption, capability checks, identity, titles, follow-up, reconciliation,
+Watchdog operation, and archival. Neither peer owns the other's responsibility.
 It directly applies the effective Persistence-selected manager for its authorized lifecycle
 operations and sends each actively eligible work item to Dev Orchestrator with the effective Commit-selected skill. File, GitHub, and
 GitLab retain native provider identities; placeholder providers, provider none, and UNSET
 preserve their defined zero-mutation or non-durable boundaries without fallback.
 
-The Coordinator or Orchestrator that owns a successful lifecycle transition also owns its
-conversation-title handoff. Dev Backlog Steward remains available only for provider-wide
-inventory, normalization, archival audits, and recovery. The stable conversation identity
-remains unchanged, and the conversation title is display state, never provider,
+For Codex tasks, the Coordinator or Orchestrator that owns a successful lifecycle transition
+also owns its conversation-title handoff. Dev Backlog Steward remains available only for
+provider-wide inventory, normalization, archival audits, and recovery. The stable Codex
+conversation identity remains unchanged, and its title is display state, never provider,
 active-execution, or delivery authority.
 
 The dedicated Dev Backlog Watchdog observes provider, runtime, Active Execution Evidence,
-conversation-title, estimate, hard-stop, Stalled, and Blocked exit-condition evidence on its
+estimate, hard-stop, Stalled, and Blocked exit-condition evidence on its
 periodic read-only cycle. It stays quiet when no action is needed and alerts the Coordinator
 when investigation or disposition is required; it never mutates provider state, dispatches
 work, or chooses a lifecycle transition. The Coordinator retains capacity,
@@ -408,7 +411,7 @@ verification. When explicitly related items require a broader check, the Coordin
 one combined regression after every selected item is present on main and records the tested
 commit.
 
-After a new file-backed work item is committed, its creator sends the opaque Work Item ID to the existing Coordinator task. The message only prompts a fresh inventory read; it does not reserve capacity, change lifecycle state, create a delivery task, or begin implementation. If no Coordinator task is available, the committed item remains discoverable in the backlog.
+After a new file-backed work item is committed, its creator sends the opaque Work Item ID to the existing Coordinator execution. The message only prompts a fresh inventory read; it does not reserve capacity, change lifecycle state, create a delivery execution, or begin implementation. When coordinate-codex-tasks is active, send the message to the existing Coordinator task without creating another task. If no Coordinator execution is available, the committed item remains discoverable in the backlog.
 
 When the user or Watchdog declares a backlog blockage, [Resolve Backlog Blockage](skills/resolve-backlog-blockage/SKILL.md) owns diagnosis and one-item-at-a-time recovery without claims or delegated delivery. If a secondary-thread dispatch mechanism is configured, [Set Solo Mode](skills/set-solo-mode/SKILL.md) disables new dispatch at recovery entry and [Set Multitask Mode](skills/set-multitask-mode/SKILL.md) enables it only after every exit condition passes. Both mode changes are idempotent and leave already-running secondary work unchanged. Without such a mechanism, blockage recovery proceeds without either dispatch-mode skill.
 
@@ -438,11 +441,13 @@ Rationale; it is not recognized, approved, or runnable work. Recognized work who
 next safe step requires a user decision, approval, authority grant, value judgment, or
 user-held information belongs in [backlog/user-action-required](backlog/user-action-required/README.md)
 with its underlying Type and one concrete question. The user may answer and continue in the
-canonical work-item conversation that asked the question. The Coordinator decides routing;
-for a selected provider its Steward records the answer, Ready, and Starting, then the same
-root Orchestrator accepts Running through its Steward. Provider none records equivalent
+current work-item execution. When coordinate-codex-tasks is active, the user may answer and
+continue in the canonical work-item conversation that asked the question. The Coordinator
+directly records Ready and Starting through the selected manager, then the same root
+Orchestrator directly records Running through that manager. Provider none records equivalent
 evidence task-locally without provider mutation or capacity inference. Neither route requires
-the user to switch to the parent or creates a replacement conversation. Work produced before
+the user to switch to the parent execution. When coordinate-codex-tasks is active, neither route
+creates a replacement conversation. Work produced before
 reconciliation is preserved and checked through the normal ownership, review, verification,
 and delivery gates rather than rejected solely because of its conversation location.
 Evidence-backed ordinary dependencies remain with typed active work. Intentionally deferred
@@ -533,7 +538,8 @@ The development practice skills are:
 - agent-claim-helper-command
 - agent-claim-helper-mcp
 - integrate-agent-work
-- coordinate-codex-work-items
+- coordinate-work-items
+- coordinate-codex-tasks
 - resolve-backlog-blockage
 - set-solo-mode
 - set-multitask-mode

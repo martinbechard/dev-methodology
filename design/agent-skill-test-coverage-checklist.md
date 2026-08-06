@@ -20,8 +20,8 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 30 conceptual agents and 135 bundled skills have structural coverage.
-- [x] 29 agents are scenario-declared and 133 skills are probe-declared.
+- [x] 30 conceptual agents and 136 bundled skills have structural coverage.
+- [x] 29 agents are scenario-declared and 134 skills are probe-declared.
 - Agents missing scenario declarations: dev-skill-lint-reviewer.
 - Skills missing probe declarations: analyze-document-topics, revise-document-topics.
 - [x] 66 agent scenarios and 5 workflow packs are declared.
@@ -33,7 +33,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 31 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 2 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 29 agents and 109 skills have pending Model Judge status.
+- 29 agents and 110 skills have pending Model Judge status.
 - 0 agents and 24 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -156,7 +156,8 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | code-comments | [x] | [x] probe-code-comments | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | code-discovery | [x] | [x] probe-code-discovery | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | collect-runtime-evidence | [x] | [x] probe-collect-runtime-evidence | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| coordinate-codex-work-items | [x] | [x] probe-coordinate-codex-work-items | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| coordinate-codex-tasks | [x] | [x] probe-coordinate-codex-tasks | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| coordinate-work-items | [x] | [x] probe-coordinate-work-items | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-pull-request | [x] | [x] probe-create-pull-request | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-work-item | [x] | [x] probe-create-work-item | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-work-item-azure-devops | [x] | [x] probe-create-work-item-azure-devops | [x] provider-placeholder-matrix | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |

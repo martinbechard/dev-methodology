@@ -105,18 +105,19 @@ agents:
       - id: dev-backlog-coordinator-happy
         kind: happy-path
         fixtureProfile: backlog-state-machine
-        promptIntent: Reconcile a selected durable provider, restore ten Starting or Running work items, and ensure each canonical Dev Orchestrator applies the effective Commit-selected skill after review and verification.
-        expectedOutcome: Ten provider-backed Starting or Running items or an explicit eligible-work shortage, stable canonical task ids recorded through the effective manager, selected-Commit delivery without a separate integration queue, provider completion, and immediate capacity refill after cleanup.
+        promptIntent: Reconcile a selected durable provider, restore ten Starting or Running work items, and ensure each canonical Dev Orchestrator execution applies the effective Commit-selected skill after review and verification.
+        expectedOutcome: Ten provider-backed Starting or Running items or an explicit eligible-work shortage, stable canonical execution ids recorded through the effective manager, Codex task ids recorded only when that optional runtime mapping is active, selected-Commit delivery without a separate integration queue, provider completion, and immediate capacity refill after cleanup.
         requiredBehaviors:
           - Count only lifecycle STARTING and RUNNING items returned by the effective Persistence-selected management skill.
-          - Use one canonical Dev Orchestrator task for each Starting or Running work item.
-          - Delegate lifecycle transitions and provider evidence to Dev Backlog Steward through the effective manager.
-          - Record canonical task id, provider identity, branch, worktree, phase, accepted commit, waits, and delivery evidence in the provider record.
+          - Use one canonical Dev Orchestrator execution for each Starting or Running work item.
+          - Directly apply the effective Persistence-selected manager for authorized Coordinator lifecycle transitions and provider evidence.
+          - Require each Dev Orchestrator to directly apply the effective manager for the work-item lifecycle operations it owns.
+          - Record canonical execution id, provider identity, branch, worktree, phase, accepted commit, waits, and delivery evidence in the provider record; when coordinate-codex-tasks is active, also record its task and conversation ids.
           - Route accepted review immediately to that item's Dev Orchestrator with the effective Commit-selected skill.
           - Recount and refill Starting-plus-Running capacity toward ten after every terminal cleanup.
         forbiddenBehaviors:
-          - Treat task title, task status, or messages as provider or delivery authority.
-          - Create a separate task ledger, baton registry, waiting-task registry, or placeholder task.
+          - When coordinate-codex-tasks is active, treat task title, task status, or messages as provider or delivery authority.
+          - Create a separate execution ledger, baton registry, waiting registry, or placeholder execution.
           - Count Stalled, Blocked, User Action Required, Holding, Awaiting Review, terminal items, or pure waiting tasks as Starting-plus-Running capacity.
           - Reproduce provider or Commit procedures in the coordinator.
         judgePlan:
@@ -138,9 +139,9 @@ agents:
         kind: boundary-failure
         fixtureProfile: backlog-state-machine
         promptIntent: Reconcile file, GitHub, GitLab, placeholder, none, and UNSET provider boundaries while recovering an ambiguous dispatch and a selected-delivery resource wait.
-        expectedOutcome: Provider-native identities, no fallback or shadow records, bounded dispatch reconciliation, one canonical task id, one immediate claim attempt followed only by notification-driven retry, watchdog-only stale investigation, and a truthful disposition or capacity replacement.
+        expectedOutcome: Provider-native identities, no fallback or shadow records, bounded dispatch reconciliation, one canonical execution id and, when coordinate-codex-tasks is active, its canonical Codex task identity and archive behavior, one immediate claim attempt followed only by notification-driven retry, watchdog-only stale investigation, and a truthful disposition or capacity replacement.
         requiredBehaviors:
-          - Reconcile active and archived tasks by parent id, provider identifier and reference, normalized objective, creation time, and status.
+          - Reconcile active executions by parent execution id, provider identifier and reference, normalized objective, creation time, and runtime state; when coordinate-codex-tasks is active, also reconcile its active and archived tasks by canonical task identity and status.
           - Preserve file, GitHub, and GitLab manager routing and native identities without shadow records.
           - Preserve Azure DevOps and Jira placeholder BLOCKED results, provider-none non-durable state, and UNSET without fallback.
           - Record one immediate structured conflict outcome in task-local evidence and request a direct release or recovery handoff without provider mutation or registry polling.
@@ -149,7 +150,7 @@ agents:
           - Accept completion only with effective Commit READY, focused tests, required provider completion, released claims, and cleanup evidence.
           - Group explicitly related items only when one combined regression is required, and run it once after all selected items reach main.
         forbiddenBehaviors:
-          - Infer task absence from one immediate list read.
+          - When coordinate-codex-tasks is active, infer task absence from one immediate list read.
           - Infer or fall back to a provider from repository or hosting evidence.
           - Ask the user to approve ordinary Git, shell, review, test, integration, or cleanup operations.
           - Run the complete agent catalog for an individual work item when focused risk-relevant tests are available.
@@ -221,7 +222,7 @@ agents:
         expectedOutcome: One actionable alert with the provider identity, exact evidence, reason attention is required, and smallest recommended Coordinator action, with no lifecycle mutation.
         requiredBehaviors:
           - Distinguish suspected lack of progress from a known Blocked cause.
-          - Report the canonical Thread and root Agent Task evidence.
+          - Report the canonical execution evidence; when coordinate-codex-tasks is active, also report the canonical Thread and root Agent Task evidence.
           - Recommend Coordinator investigation without choosing Stalled.
           - Preserve byte-identical observed state.
         forbiddenBehaviors:
@@ -241,12 +242,12 @@ agents:
         kind: boundary-failure
         fixtureProfile: backlog-state-machine
         promptIntent: Observe a satisfied Stalled or Blocked exit condition and recommend the smallest Coordinator action.
-        expectedOutcome: One actionable alert that leaves Running, Ready, Blocked, User Action Required, and terminal disposition to the Coordinator and Steward.
+        expectedOutcome: One actionable alert that leaves Running, Ready, Blocked, User Action Required, and terminal disposition to the Coordinator.
         requiredBehaviors:
-          - Identify the affected provider identity or provider-none task.
+          - Identify the affected provider identity or provider-none execution.
           - Report the satisfied exit evidence and why attention is required.
           - Recommend Coordinator validation and one authorized disposition decision.
-          - Leave provider mutation to Dev Backlog Steward after the Coordinator decides.
+          - Leave ordinary lifecycle mutation to Dev Backlog Coordinator, which directly applies the effective Persistence-selected manager after deciding.
         forbiddenBehaviors:
           - Choose the lifecycle result.
           - Create a synthetic inventory or second registry.

@@ -122,8 +122,8 @@
     <div class="section-heading"><h2 id="coverage-title">Coverage and case catalogs</h2><p>Current catalog inventory remains separate from historical campaign results. Probe records retain their executable case, agent-scenario, and workflow associations without turning declarations into verified runs.</p></div>
     <h3>Current catalog inventory</h3>
     <div class="grid" style="margin-top:1rem">
-      <article class="metric"><strong>135</strong><span>Bundled skills</span></article>
-      <article class="metric"><strong>133</strong><span>Diagnostic probe records</span></article>
+      <article class="metric"><strong>136</strong><span>Bundled skills</span></article>
+      <article class="metric"><strong>134</strong><span>Diagnostic probe records</span></article>
       <article class="metric"><strong>30</strong><span>Conceptual agents</span></article>
       <article class="metric"><strong>30</strong><span>Current suites</span></article>
       <article class="metric"><strong>105</strong><span>Current suite scenarios</span></article>
@@ -135,7 +135,7 @@
       <article class="metric"><strong>5</strong><span>Workflow packs</span></article>
     </div>
     <div class="grid" style="margin-top:1rem">
-      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed skill result.</li><li>133 skills have a direct diagnostic probe declaration but no direct skill verdict.</li><li>1 skills have only indirect current-suite coverage without a direct probe or skill result.</li><li>1 skills have no recorded evaluation evidence.</li><li>53 skills are named by at least one selected-campaign scenario; 82 are not.</li></ul><p><strong>No skill-level verdict:</strong> the selected campaign publishes no skill receipts, so linked PASS outcomes remain agent-scenario evidence.</p></article>
+      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed skill result.</li><li>134 skills have a direct diagnostic probe declaration but no direct skill verdict.</li><li>1 skills have only indirect current-suite coverage without a direct probe or skill result.</li><li>1 skills have no recorded evaluation evidence.</li><li>53 skills are named by at least one selected-campaign scenario; 83 are not.</li></ul><p><strong>No skill-level verdict:</strong> the selected campaign publishes no skill receipts, so linked PASS outcomes remain agent-scenario evidence.</p></article>
     </div>
   </section>
 
@@ -150,7 +150,7 @@
       <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
       <div><dt>Documentation snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>0aea2d9a5398192d925cf12cd337cfaefd16305de6443d488d183ac0e5ce98cc</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source snapshot</dt><dd><code>552264cc45eb7e74c2d53fcf4958fecdead5721a5d29e3cfe408c8c59dbaacf3</code>; regenerated and compared by the focused check</dd></div>
     </dl>
     <div style="margin-top:2rem"><h3>Campaign verdict results</h3></div>
     <div class="grid" style="margin-top:1rem">
@@ -1807,12 +1807,12 @@
     </article>
 
     <article class="evaluation-card agent-card" id="agent-dev-backlog-coordinator"
-      data-kind="agent" data-status="missing" data-search="dev-backlog-coordinator acts as the parent backlog coordinator across the effective work-item provider, maintaining the active queue, directly executing authorized coordinator-owned lifecycle operations through the selected management skill, deciding stalled and blocked recovery, and cleaning up terminal tasks without taking over per-item delivery. missing provider-selected-ten-item-dispatch blockage-entry-disables-secondary-dispatch selected-commit-retry-and-closeout ambiguous-dispatch-and-user-decision-integrity provider-selector-boundaries same-thread-user-action-resumption exhausted-correction-disposition combined-regression-after-independent-merges blockage-recovery-resumes-secondary-dispatch pass 0, blocked 0, fail 0">
+      data-kind="agent" data-status="missing" data-search="dev-backlog-coordinator acts as the parent backlog coordinator across the effective work-item provider, maintaining the active queue, directly executing authorized coordinator-owned lifecycle operations through the selected management skill, deciding stalled and blocked recovery, and cleaning up terminal executions without taking over per-item delivery. missing provider-selected-ten-item-dispatch blockage-entry-disables-secondary-dispatch selected-commit-retry-and-closeout ambiguous-dispatch-and-user-decision-integrity provider-selector-boundaries same-thread-user-action-resumption exhausted-correction-disposition combined-regression-after-independent-merges blockage-recovery-resumes-secondary-dispatch pass 0, blocked 0, fail 0">
       <div class="card-heading">
         <div><span class="card-kicker">Conceptual agent</span><h3>dev-backlog-coordinator</h3></div>
         <span class="status status--missing">Missing campaign evidence</span>
       </div>
-      <p>Acts as the parent backlog coordinator across the effective work-item provider, maintaining the active queue, directly executing authorized Coordinator-owned lifecycle operations through the selected management skill, deciding Stalled and Blocked recovery, and cleaning up terminal tasks without taking over per-item delivery.</p>
+      <p>Acts as the parent backlog coordinator across the effective work-item provider, maintaining the active queue, directly executing authorized Coordinator-owned lifecycle operations through the selected management skill, deciding Stalled and Blocked recovery, and cleaning up terminal executions without taking over per-item delivery.</p>
       <p class="source-row">
         <a href="../agents/roles/dev-activities/dev-backlog-coordinator.role.yaml">Role source</a> &middot;
         <a href="../evals/agent-tests/dev-backlog-coordinator/suite.yaml">Suite</a> &middot;
@@ -1882,7 +1882,7 @@
 
             <tr data-campaign-verdict="">
               <th scope="row">same-thread-user-action-resumption</th>
-              <td>Resume an answered User Action Required item in its existing canonical task without discarding early work.</td>
+              <td>Resume an answered User Action Required item in its existing canonical execution without discarding early work.</td>
               <td>PASS</td>
               <td><span class="status status--missing">Missing campaign evidence</span></td>
               <td><span class="status status--missing">Missing campaign evidence</span></td>
@@ -1925,12 +1925,12 @@
     </article>
 
     <article class="evaluation-card agent-card" id="agent-dev-backlog-watchdog"
-      data-kind="agent" data-status="missing" data-search="dev-backlog-watchdog observes a sustained codex work-item queue on a schedule and reports only actionable evidence or one concise healthy-cycle result without mutating coordination state. missing healthy-cycle-stays-quiet suspected-stall-alert satisfied-exit-condition-alert blocked-inventory-reconciliation active-blockage-continues-without-repeat blockage-exit-condition-recovery-alert pass 0, blocked 0, fail 0">
+      data-kind="agent" data-status="missing" data-search="dev-backlog-watchdog observes a sustained work-item queue on a schedule and reports only actionable evidence or one concise healthy-cycle result without mutating coordination state. missing healthy-cycle-stays-quiet suspected-stall-alert satisfied-exit-condition-alert blocked-inventory-reconciliation active-blockage-continues-without-repeat blockage-exit-condition-recovery-alert pass 0, blocked 0, fail 0">
       <div class="card-heading">
         <div><span class="card-kicker">Conceptual agent</span><h3>dev-backlog-watchdog</h3></div>
         <span class="status status--missing">Missing campaign evidence</span>
       </div>
-      <p>Observes a sustained Codex work-item queue on a schedule and reports only actionable evidence or one concise healthy-cycle result without mutating coordination state.</p>
+      <p>Observes a sustained work-item queue on a schedule and reports only actionable evidence or one concise healthy-cycle result without mutating coordination state.</p>
       <p class="source-row">
         <a href="../agents/roles/dev-activities/dev-backlog-watchdog.role.yaml">Role source</a> &middot;
         <a href="../evals/agent-tests/dev-backlog-watchdog/suite.yaml">Suite</a> &middot;
@@ -2097,7 +2097,7 @@
       <label class="field" for="skill-status">Coverage status<select id="skill-status" data-filter-status="skill"><option value="all">All statuses</option><option value="direct-governed">Direct governed result</option><option value="direct-probe">Direct diagnostic probe</option><option value="indirect-only">Indirect suite only</option><option value="none">No recorded evidence</option></select></label>
       <button type="button" data-filter-clear="skill">Clear skill filters</button>
     </div>
-    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 135 skills.</p>
+    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 136 skills.</p>
     <noscript><p class="scope-note">JavaScript is disabled. All skill entries remain visible; text and status filtering are optional enhancements.</p></noscript>
     <div class="catalog" id="skill-catalog">
     <article class="evaluation-card skill-card" id="skill-agent-claim"
@@ -2689,24 +2689,54 @@
       </dl>
     </article>
 
-    <article class="evaluation-card skill-card" id="skill-coordinate-codex-work-items"
-      data-kind="skill" data-status="direct-probe" data-search="coordinate-codex-work-items coordinate multiple provider-selected work items through one parent backlog coordinator and one dev orchestrator thread per starting or running item. use when codex must sustain a queue, deliver reviewed work, close completed items, and recover stalled delivery without a separate task registry. development-practice probe-coordinate-codex-work-items no governed campaign link">
+    <article class="evaluation-card skill-card" id="skill-coordinate-codex-tasks"
+      data-kind="skill" data-status="direct-probe" data-search="coordinate-codex-tasks map portable work-item coordination to codex task creation, resumption, identity, titles, follow-up, reconciliation, watchdog operation, and archival. use only when coordinated work runs through codex tasks. development-practice probe-coordinate-codex-tasks no governed campaign link">
       <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>coordinate-codex-work-items</h3></div>
+        <div><span class="card-kicker">Skill</span><h3>coordinate-codex-tasks</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
       </div>
-      <p>Coordinate multiple provider-selected work items through one parent backlog coordinator and one Dev Orchestrator Thread per Starting or Running item. Use when Codex must sustain a queue, deliver reviewed work, close completed items, and recover stalled delivery without a separate task registry.</p>
-      <p class="source-row"><a href="../skills/coordinate-codex-work-items/SKILL.md">Skill source</a></p>
+      <p>Map portable work-item coordination to Codex task creation, resumption, identity, titles, follow-up, reconciliation, watchdog operation, and archival. Use only when coordinated work runs through Codex tasks.</p>
+      <p class="source-row"><a href="../skills/coordinate-codex-tasks/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe</h4>
 
         <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-coordinate-codex-work-items</a></dd></div>
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-coordinate-codex-tasks</a></dd></div>
           <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
           <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
           <div><dt>Executable cases</dt><dd>None declared</dd></div>
           <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-backlog-coordinator-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-coordinator-boundary</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-watchdog-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-watchdog-boundary</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-watchdog-exit-condition</a></dd></div>
           <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
-          <div><dt>Deterministic checks</dt><dd>skill-read-trace, suite-simulator-tests, phase-order, lifecycle-baton-evidence, task-identity-fields, delayed-visibility-settlement, settled-zero-retry, retry-limit, duplicate-containment, canonical-id-persistence, done-success-title, just-in-time-dispatch, fifteen-minute-wake-audit, concrete-successor-chain, completion-evidence-gate, archive-eligibility</dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, task-identity-fields, delayed-visibility-settlement, settled-zero-retry, retry-limit, duplicate-containment, canonical-id-persistence, done-success-title, archive-eligibility</dd></div>
+          <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-coordinate-work-items"
+      data-kind="skill" data-status="direct-probe" data-search="coordinate-work-items coordinate multiple provider-selected work items through one parent backlog coordinator and one root dev orchestrator execution per starting or running item. use when a sustained queue needs provider-neutral scheduling, reviewed delivery, lifecycle closure, and recovery. development-practice probe-coordinate-work-items no governed campaign link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>coordinate-work-items</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Coordinate multiple provider-selected work items through one parent backlog coordinator and one root Dev Orchestrator execution per Starting or Running item. Use when a sustained queue needs provider-neutral scheduling, reviewed delivery, lifecycle closure, and recovery.</p>
+      <p class="source-row"><a href="../skills/coordinate-work-items/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-coordinate-work-items</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-backlog-coordinator-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-coordinator-boundary</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-watchdog-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-watchdog-boundary</a>, <a href="../evals/agent-scenarios.yaml">dev-backlog-watchdog-exit-condition</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, suite-simulator-tests, phase-order, lifecycle-baton-evidence, just-in-time-dispatch, fifteen-minute-wake-audit, concrete-successor-chain, completion-evidence-gate</dd></div>
           <div><dt>Model rubric</dt><dd>workflow-quality</dd></div>
         </dl>
 

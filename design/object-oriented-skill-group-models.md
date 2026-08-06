@@ -123,7 +123,7 @@ The registry assigns every current skill one primary direct group and records ne
 | Project Setup | detect-technology-skills; create-project-configuration | None | 2 |
 | Documentation Methodology | route-documentation-work; bootstrap-project-documentation; reverse-engineer-project-documentation; verify-documentation-page | None | 4 |
 | Backlog Management | resolve-backlog-blockage; create-work-item; create-work-item-file; create-work-item-github; create-work-item-gitlab; create-work-item-azure-devops; create-work-item-jira; manage-work-items; manage-work-items-file; manage-work-items-github; manage-work-items-gitlab; manage-work-items-azure-devops; manage-work-items-jira | None | 13 |
-| Concurrent Tasking | coordinate-codex-work-items; set-solo-mode; set-multitask-mode | Resource Coordination: agent-claim, agent-claim-helper, agent-claim-helper-command, agent-claim-helper-mcp. Feature Branch And Worktrees: integrate-agent-work, deliver-work-item-feature-branch, create-pull-request. | 10 |
+| Concurrent Tasking | coordinate-work-items; coordinate-codex-tasks; set-solo-mode; set-multitask-mode | Resource Coordination: agent-claim, agent-claim-helper, agent-claim-helper-command, agent-claim-helper-mcp. Feature Branch And Worktrees: integrate-agent-work, deliver-work-item-feature-branch, create-pull-request. | 11 |
 | Direct Main Delivery | deliver-work-item; deliver-work-item-direct-main | None | 2 |
 | Review And Verification | review-code-with-evidence; test-strategy; verify-end-to-end-workflow; analyze-root-cause; collect-runtime-evidence; trace-code-execution; review-prompt-contracts | None | 7 |
 
@@ -175,7 +175,7 @@ The applied model is complete when it describes the maintained skill inventory a
 
 - **RULE: RULE-64** Containment remains distinct from dependency
   - **SYNOPSIS:** Nested groups organize a larger comprehension set; loading arrows separately identify which Agents or skills actually reference another skill.
-  - **EXAMPLE:** Concurrent Tasking contains Resource Coordination, but coordinate-codex-work-items references only the selected resource-coordination procedure and the loaded agent-claim policy rather than every helper implementation.
+  - **EXAMPLE:** Concurrent Tasking contains the complementary coordination peers and Resource Coordination. coordinate-work-items references only the selected resource-coordination procedure and loaded agent-claim policy; coordinate-codex-tasks adds no resource ownership.
 
 ## Authoritative Inputs
 

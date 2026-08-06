@@ -6,8 +6,9 @@ target:
   conceptualRole: agents/roles/dev-activities/dev-backlog-watchdog.role.yaml
   nativeAgent: generated/adapters/codex/agents/dev-backlog-watchdog.toml
   repositoryMutation: never
-  requiredSkills: [coordinate-codex-work-items]
+  requiredSkills: [coordinate-work-items, coordinate-codex-tasks]
   conditionalSkills:
+    coordinate-codex-tasks: The read-only observer runs as a Codex task or inspects Codex task evidence.
     resolve-backlog-blockage: A declaration criterion is met, the user declares a blockage, or blockage recovery remains active.
   allowedAgentDependencies: []
   requiredOutputs: [cycle result, actionable parent alert]
