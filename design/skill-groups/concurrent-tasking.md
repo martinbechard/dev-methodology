@@ -10,7 +10,9 @@ The applied-model conventions are defined in [Object-Oriented Skill Group Models
 
 The design uses several focused views because containment, Agent Skills, interface dispatch, provider realization, and exact-name dependencies answer different questions. Every interface view keeps the interface, its consumers, and its Provider Skill implementations together.
 
-These diagrams use the [simplified provider view](../object-oriented-agent-and-skill-model.md#simplified-view). The harness loads the project's single AGENTS.md automatically, so an Agent does not reference AGENTS.md and no Agent-to-AGENTS.md line is drawn. Unless a diagram explicitly shows another routing mechanism, AGENTS.md selects one Provider Skill for each project-selected interface.
+These are static dependency views, not traces of one execution. A solid loading relationship means the source always loads the referenced file under its own definition. A dotted loading relationship means the file is loaded only under the condition written on the arrow. Project-specific selection originates at AGENTS.md; an Agent- or skill-owned decision originates at that Agent or skill. A scenario-specific diagram must identify its scenario explicitly.
+
+The provider diagrams use the detailed AGENTS.md factory view because project dispatch is part of this analysis. The harness loads the project's single AGENTS.md automatically, so an Agent does not reference AGENTS.md and no Agent-to-AGENTS.md line is drawn. AGENTS.md points directly to each project-selected skill.
 
 ### Agent Groups And Agent Dependencies
 
@@ -65,7 +67,7 @@ classDiagram
     DevOrchestrator o..> DevMergeCoordinator : multiple contributions
 ```
 
-A solid Agent-to-Agent arrow is a fixed role dependency when that responsibility is required. A dotted arrow is conditional delegation. The direction runs from the Agent whose definition names or dispatches the dependency to the referenced Agent role.
+A solid Agent-to-Agent arrow is a fixed dependency declared by the role definition; it does not claim that every runtime invocation dispatches that Agent. A dotted arrow is a conditional role dependency, and its label gives the condition. The direction runs from the Agent whose definition names or dispatches the dependency to the referenced Agent role.
 
 The reusable object-oriented analysis currently defines Skill Groups but not Agent Groups or Agent-to-Agent dependency arrows. This page uses the existing role-catalog grouping as source-backed analysis vocabulary. The reusable guide must later incorporate that missing concept and notation.
 
@@ -88,7 +90,7 @@ These are file dependencies declared by the Agent definitions or added universal
 
 An Interface Skill is intended to be a real SKILL.md file containing the data and procedures that its consumers depend on and its providers implement. When that file is essential to an Agent, it belongs among the Agent's Core Agent Skills even though AGENTS.md selects the provider implementation separately.
 
-The current provider-family nodes below are still abstract analysis contracts. There is no maintained manage-*-work-items, create-*-work-item, resource-coordination, agent-claim-*, or deliver-work-item-* Interface Skill package in the current inventory. This prevents the Agent definitions from naming those contracts as core or optional skill files and is a design gap exposed by this analysis. The diagrams retain the Skill interface stereotype until a real Interface Skill file owns each contract.
+The current provider-family nodes below are still abstract analysis contracts. There is no maintained manage-*-work-items, create-*-work-item, agent-claim-*, or deliver-work-item-* Interface Skill package in the current inventory. This prevents the Agent definitions from naming those contracts as core or optional skill files and is a design gap exposed by this analysis. The diagrams retain the Skill interface stereotype until a real Interface Skill file owns each contract.
 
 After an Interface Skill file exists, an Agent or skill that requires its contract loads that file by exact name as a Core or Optional Agent Skill. AGENTS.md independently selects the Provider Skill implementation. The consumer-to-interface relationship then becomes an exact-name loading reference, while provider realization continues to show implementation of the interface contract.
 
@@ -108,6 +110,12 @@ classDiagram
         <<Skill interface>>
         +work-item-id
         +create-work-item(workItemDescription)
+    }
+
+    class project-specific-directives["Project-specific directives"] {
+        <<AGENTS.md>>
+        <<routing>>
+        +route work-item creation => create-*-work-item
     }
 
     class create-file-work-item {
@@ -145,7 +153,12 @@ classDiagram
         +create-work-item(workItemDescription)
     }
 
-    DevOrchestrator --> CreateWorkItem
+    DevOrchestrator ..> CreateWorkItem : when a confirmed issue is excluded from current delivery
+    project-specific-directives o..> create-file-work-item : when Persistence is file
+    project-specific-directives o..> create-github-work-item : when Persistence is GitHub
+    project-specific-directives o..> create-gitlab-work-item : when Persistence is GitLab
+    project-specific-directives o..> create-azure-devops-work-item : when Persistence is Azure DevOps
+    project-specific-directives o..> create-jira-work-item : when Persistence is Jira
     create-file-work-item ..|> CreateWorkItem
     create-github-work-item ..|> CreateWorkItem
     create-gitlab-work-item ..|> CreateWorkItem
@@ -153,7 +166,7 @@ classDiagram
     create-jira-work-item ..|> CreateWorkItem
 ```
 
-The Azure DevOps and Jira creation skills are truthful placeholder implementations: they satisfy the interface by returning their documented unsupported result rather than silently falling back to another provider.
+The dotted regular arrow from Dev Orchestrator is its conditional dependency on the creation procedure. The dotted open-diamond arrows from Project-specific directives are the project-selected exact skill loads. The Azure DevOps and Jira creation skills are truthful placeholder implementations: they satisfy the interface by returning their documented unsupported result rather than silently falling back to another provider.
 
 ### Work-Item Management Interface
 
@@ -190,6 +203,12 @@ classDiagram
         +coordinate-queue-and-dispatch()
         +coordinate-delivery-and-closure()
         +review-work-item-queue()
+    }
+
+    class project-specific-directives["Project-specific directives"] {
+        <<AGENTS.md>>
+        <<routing>>
+        +route work-item management => manage-*-work-items
     }
 
     class ManageWorkItem["manage-*-work-items"] {
@@ -237,11 +256,16 @@ classDiagram
         +transition-work-item(workItem, transition)
     }
 
-    DevBacklogCoordinator --> ManageWorkItem
-    DevOrchestrator --> ManageWorkItem
-    DevBacklogSteward --> ManageWorkItem
-    DevBacklogWatchdog --> ManageWorkItem
-    coordinate-codex-work-items --> ManageWorkItem
+    DevBacklogCoordinator ..> ManageWorkItem : when it coordinates provider lifecycle
+    DevOrchestrator ..> ManageWorkItem : when it updates provider lifecycle
+    DevBacklogSteward ..> ManageWorkItem : when provider-wide maintenance runs
+    DevBacklogWatchdog ..> ManageWorkItem : when it observes a provider-backed queue
+    coordinate-codex-work-items ..> ManageWorkItem : when a Persistence provider is selected
+    project-specific-directives o..> manage-file-work-items : when Persistence is file
+    project-specific-directives o..> manage-github-work-items : when Persistence is GitHub
+    project-specific-directives o..> manage-gitlab-work-items : when Persistence is GitLab
+    project-specific-directives o..> manage-azure-devops-work-items : when Persistence is Azure DevOps
+    project-specific-directives o..> manage-jira-work-items : when Persistence is Jira
     manage-file-work-items ..|> ManageWorkItem
     manage-github-work-items ..|> ManageWorkItem
     manage-gitlab-work-items ..|> ManageWorkItem
@@ -253,9 +277,11 @@ The coordinate-codex-work-items member list is a relevant view of the current sk
 
 The Codex qualifier is also substantive. The skill defines Codex task creation and reconciliation, conversation identity and titles, runtime capacity, watchdog operation, dispatch, delivery, and closure. It currently combines those runtime-specific procedures with provider-neutral work-item coordination rules. No coordinate-*-work-items Interface Skill or alternative runtime Provider Skill exists, so Agents load coordinate-codex-work-items directly today. A future provider split would need a real coordination Interface Skill before AGENTS.md could dispatch this dependency polymorphically; this diagram does not present that missing boundary as current behavior.
 
-### Resource Coordination And Claim Helper Interfaces
+### Optional Resource Coordination And Claim Helper Dispatch
 
-The resource view keeps each interface beside its consumer and its current implementation. The first interface connects work-item coordination to claim policy. The second connects that policy to the selected helper transport.
+Resource coordination currently has one named policy skill: agent-claim. It is either selected project-wide or absent. Because there is no alternative policy skill implementing the same resource-coordination contract, agent-claim is not a Provider Skill and no resource-coordination Interface Skill belongs between it and its consumers.
+
+The project AGENTS.md conditionally loads agent-claim when PROJECT.yaml selects resource_coordination: agent-claim. The selected policy then becomes available to skills that require resource coordination without becoming part of every Agent definition. The helper transport is different: agent-claim uses a shared helper contract, and project guidance selects the verified command or MCP transport.
 
 ```mermaid
 classDiagram
@@ -267,13 +293,15 @@ classDiagram
         +resource-coordination()
     }
 
-    class ResourceCoordinationBinding["resource-coordination"] {
-        <<Skill interface>>
-        +coordinate-shared-resource(resourceManifest)
+    class project-specific-directives["Project-specific directives"] {
+        <<AGENTS.md>>
+        <<routing>>
+        +route resource coordination => agent-claim
+        +route claim helper => agent-claim-*
     }
 
     class agent-claim {
-        <<Provider Skill>>
+        <<SKILL.md>>
         +coordinate-shared-resource(resourceManifest)
         +acquire-claim(scope)
         +release-claim(claimId)
@@ -297,13 +325,28 @@ classDiagram
         +report-claim-contention()
     }
 
-    coordinate-codex-work-items --> ResourceCoordinationBinding
-    agent-claim ..|> ResourceCoordinationBinding
+    class agent-claim-mcp {
+        <<Provider Skill>>
+        +read-claim-status()
+        +acquire-claim(scope)
+        +release-claim(claimId)
+        +maintain-claim-journal()
+        +report-claim-contention()
+    }
+
+    project-specific-directives o..> agent-claim : when resource_coordination is agent-claim
+    project-specific-directives o..> agent-claim-command : when agent-claim uses command transport
+    project-specific-directives o..> agent-claim-mcp : when agent-claim uses a verified MCP transport
     agent-claim --> ClaimHelper
     agent-claim-command ..|> ClaimHelper
+    agent-claim-mcp ..|> ClaimHelper
 ```
 
-agent-claim-mcp remains a Resource Coordination group member because it defines the required MCP result contract and provider-verification boundary. It does not appear as a Claim Helper Provider Skill because no verified MCP implementation currently realizes that interface.
+The dotted open-diamond arrows from Project-specific directives show conditional exact-name loading by AGENTS.md. No Agent-to-AGENTS.md arrow is implied; the harness loads AGENTS.md automatically. agent-claim has a fixed dependency on the configured Claim Helper interface whenever agent-claim itself is loaded.
+
+This selection is independent of the temporary solo and multitask dispatch setting. set-solo-mode prevents new secondary-thread dispatch but does not cancel existing concurrent work or remove shared primary-main, browser, database, port, installation, deployment, or work-item events. Those events still use agent-claim when resource coordination is selected. set-multitask-mode changes only whether new secondary-thread dispatch may resume.
+
+The static view includes both helper variants. agent-claim-command is available when the command transport is selected. agent-claim-mcp can be selected only after an MCP implementation passes the contract and provider-verification boundary defined by that skill; this repository currently selects command. That last statement describes this project's configuration and does not narrow the static dependency model.
 
 ### Commit Delivery Interface
 
@@ -321,6 +364,12 @@ classDiagram
         <<SKILL.md>>
         <<Agent Skill>>
         +effective-commit-delivery-and-persistence-closure()
+    }
+
+    class project-specific-directives["Project-specific directives"] {
+        <<AGENTS.md>>
+        <<routing>>
+        +route work-item delivery => deliver-work-item-*
     }
 
     class DeliverWorkItem["deliver-work-item-*"] {
@@ -344,8 +393,10 @@ classDiagram
         +deliberate-integration()
     }
 
-    DevOrchestrator --> DeliverWorkItem
-    coordinate-codex-work-items --> DeliverWorkItem
+    DevOrchestrator ..> DeliverWorkItem : when accepted work must be delivered
+    coordinate-codex-work-items ..> DeliverWorkItem : when a coordinated item reaches delivery
+    project-specific-directives o..> deliver-work-item-feature-branch : when Commit is feature-branch
+    project-specific-directives o..> deliver-work-item-direct-main : when Commit is direct-main
     deliver-work-item-feature-branch ..|> DeliverWorkItem
     deliver-work-item-direct-main ..|> DeliverWorkItem
 ```
@@ -374,23 +425,15 @@ classDiagram
         <<Cross-group>>
     }
 
-    class agent-claim {
-        <<SKILL.md>>
-        <<Cross-group>>
-    }
-
     class create-pull-request {
         <<SKILL.md>>
     }
 
-    integrate-agent-work o--> agent-claim
-    deliver-work-item-feature-branch o--> agent-claim
     deliver-work-item-feature-branch o..> create-pull-request : for GitHub pull-request publication
-    deliver-work-item-direct-main o--> agent-claim
     deliver-work-item-direct-main o..> integrate-agent-work : when the accepted commit is not represented on main
 ```
 
-The four interface views keep consumer knowledge separate from provider choice while making each complete relationship readable at ordinary page width. AGENTS.md selects one provider for each configured interface without becoming a node in these simplified diagrams. Realization records conformance; open-diamond references continue to show exact skill names known directly by an Agent or skill.
+The exact-name view contains only loading decisions owned by the referencing skill. Project-selected resource coordination and provider loading appear under their AGENTS.md shapes in the earlier interface views instead of being repeated here as if the consuming skill owned those choices. Realization records conformance; it is not a loading relationship.
 
 set-solo-mode disables dispatch to secondary threads, while set-multitask-mode enables it. They belong to Concurrent Tasking because they control whether work is dispatched concurrently rather than how a backlog blockage is resolved.
 
@@ -445,7 +488,7 @@ The Agent groups, dependencies, Core and Optional Agent Skills, interface contra
 - [Set Multitask Mode](../../skills/set-multitask-mode/SKILL.md)
 - [Integrate Agent Work](../../skills/integrate-agent-work/SKILL.md)
 
-### Provider Interfaces And Implementations
+### Project Routing And Provider Implementations
 
 - [Agent Claim](../../skills/agent-claim/SKILL.md)
 - [Agent Claim Command](../../skills/agent-claim-command/SKILL.md)
