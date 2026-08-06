@@ -1,6 +1,8 @@
 # Store Agent Claim State In Gitignored Project Directory
 
-Status: User Action Required
+Status: Ready
+
+Owner: Unowned
 
 Type: Feature
 
@@ -67,7 +69,8 @@ Native Windows CI run 31068038651 proves that an open locked legacy registry can
 
 ### Resolution
 
-Pending.
+Approved. On 2026-08-06, the user directly answered in canonical task
+019fd464-3875-75e2-aaa0-39a8e357d764: “I approve the verified-empty Windows legacy registry tombstone operation and the provider lifecycle resumption.” This approval applies only to the verified-empty, exclusively locked legacy registry boundary. Migration must stop without mutation if any live claim exists.
 
 ### Unattended Work Boundary
 
@@ -91,7 +94,21 @@ Windows Evidence: Native CI run 31068038651 isolated the remaining failure to un
 
 Preserved Provider And Claim History: Provider commits 9a90a1da487794e5619f8cac0d38f9c614959b8e, bf82de39b24ff1eb781859048e13b74070717590, b2d4ae3ece8fc7aff3035db73f2d892bad08bcef, b8f80c31eadeccbc140d40e2988d1ae2c8e6f76e, and 694f5e3c2bbc34b3dbee377c021d00e701a4679e; work-claim incarnations d7c4a99e-cc43-4f31-83f9-ee182252027b, 880f8773-f043-4592-83fc-4200652ba74d, 3bb4f520-7788-453d-9c57-6b08c8b5aed1, and 48b317e9-70f2-4dc8-9335-8c50fa9422f0; all prior dispatch and Running evidence remain history.
 
-Next Action: Ask the exact question above, record the answer once in this canonical task or the parent Coordinator conversation, and perform no outcome work until lifecycle resumption is complete.
+Next Action: Route the recorded approval through Ready -> Starting -> Running; do not perform outcome work before those transitions.
+
+## User Action Required -> Ready Transition Evidence
+
+Transition: User Action Required -> Ready.
+
+Transitioned At: 2026-08-06T12:11:30Z.
+
+Decision Owner: Parent Coordinator 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Canonical Thread And Root Task: 019fd464-3875-75e2-aaa0-39a8e357d764; /root.
+
+Decision Provenance: Direct user approval recorded in the canonical task conversation on 2026-08-06.
+
+Next Action: Parent Coordinator may perform Ready -> Starting for the same canonical task after this provider commit is verified.
 
 ## Summary
 
