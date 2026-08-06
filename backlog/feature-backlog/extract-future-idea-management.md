@@ -1,6 +1,6 @@
 # Extract Future Idea Management
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -86,6 +86,48 @@ Permitted Resumption Transition: Blocked -> Ready after the Coordinator verifies
 - Root Agent Task: Not assigned; no child task was created by this reservation transaction.
 - Launch result: Pending; this provider transaction does not start a task or create execution ownership.
 - Next action: Launch one root Dev Orchestrator and record Starting -> Running only after accepted execution evidence.
+
+## Current Execution
+
+Transition: Starting -> Running.
+
+Canonical Conversation: 019fd5b5-aca7-7cb1-9ae0-010ac945c985.
+
+Root Agent Task: /root.
+
+Owner: Root Dev Orchestrator 019fd5b5-aca7-7cb1-9ae0-010ac945c985.
+
+Branch: codex/extract-future-idea-management.
+
+Worktree: /Users/martinbechard/.codex/worktrees/e9e9/dev-methodology.
+
+Baseline / current main at launch: cc5574b798c0fab87fb5c9c6b3c6acd935030feb.
+
+Coordinator reservation commit: cd5878a187a4771e4f16ffdfca0bae890960e254.
+
+Phase: Provider lifecycle transition.
+
+Accepted Execution Evidence: The canonical root task accepted this exact Work Item ID, established the isolated execution branch and worktree, and acquired the exact update and provider-path claims required for this atomic transition.
+
+Provider Operation Evidence: Work Item ID update claim extract-future-idea-management-update and exact path claim extract-future-idea-management-file returned SHARED_CHECKOUT_ACQUIRED.
+
+## Active Execution Evidence
+
+Condition Type: root-execution.
+
+Owner: Root Dev Orchestrator 019fd5b5-aca7-7cb1-9ae0-010ac945c985.
+
+Evidence: The canonical root task is executing this authorized provider transaction from the isolated worktree and branch against baseline/current-main-at-launch cc5574b798c0fab87fb5c9c6b3c6acd935030feb; the coordinator reservation is recorded by commit cd5878a187a4771e4f16ffdfca0bae890960e254.
+
+Observed At: 2026-08-06T06:17:25Z.
+
+Started At: 2026-08-06T06:17:25Z.
+
+Deadline or Expires At: 2026-08-06T10:17:25Z.
+
+Next Action: Validate this provider record, commit only this provider file on primary main, then hand off the Work Item ID update claim and release the exact provider-path claim.
+
+Next Reconciliation At: 2026-08-06T06:32:25Z.
 
 ## Verification
 
