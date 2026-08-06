@@ -1,6 +1,6 @@
 # Separate Claim Policy From Claim Helper Family
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -142,6 +142,8 @@ Delegated Source Task: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
 
 Phase: Final Fresh Re-review After Correction Attempt 2.
 
+Owner: Unowned.
+
 Started At: 2026-08-06T06:19:50Z.
 
 Accepted Execution Evidence: Root Dev Orchestrator accepted this exact Work Item ID for the Starting -> Running transition in canonical task 019fd5b5-aca7-7cb1-9ae0-012fb84e13db and supplied the canonical branch, isolated worktree, and baseline commit.
@@ -179,3 +181,27 @@ Deadline or Expires At: 2026-08-06T09:45:27Z.
 Next Action: Reacquire exact activity=work and dispatch entirely new fresh-context Dev Code Reviewer and Methodology Artifact Reviewer against final head 5fa7620a; if either finds the same material criteria failing, perform blocker handoff, no third correction. Verification waits for both acceptance gates.
 
 Next Reconciliation At: 2026-08-06T07:57:27Z.
+
+## Blocked Evidence
+
+Transition: Running -> Blocked.
+
+Blocked At: 2026-08-06T07:53:48Z.
+
+Canonical Task and Conversation: 019fd5b5-aca7-7cb1-9ae0-012fb84e13db.
+
+Intended Title: Blocked — Separate Claim Policy From Claim Helper Family.
+
+Preserved Candidates: ac8270d2570436738fd1b0b6bb2dbbedb690049a; 9501f48c6b0f6f52c8fad8eab3df92d524e26a38; 5fa7620a6471574d2bf84a12e541805780d4bac6.
+
+Final Review Evidence: Both final independent reviews returned NEEDS_CORRECTION. Released work claim separate-claim-policy-work-019fd5b5-13 has outcome RELEASED, disposition blocked, blocker reference correction-loop-exhausted-final-review, and event 60585bc8-9252-4900-ba1c-8bfe49397529.
+
+Confirmed Findings: (1) The concurrent-tasking class diagram omits Extend Claim, Extend Claim Deadline, Heartbeat Claim, and Reset Claim Registry. (2) The agent-claim-helper report contract says segment agent and acquisition outcome, but the command/design schema uses owner and omits acquisition outcome. (3) create-project-configuration says the selected helper is loaded “by reference,” while the renderer, README, tests, and AGENTS inline it.
+
+Blocker Owner: Dev Backlog Coordinator.
+
+Observable Unblock Condition: One later evidence-backed Coordinator recovery disposition authorizes a fresh bounded cycle limited to these three findings after re-reading current main, using the same original coder and candidate only. Then transition Blocked -> Ready -> Starting -> Running before mutation.
+
+Requested Next Action Owner: Dev Backlog Coordinator.
+
+Scope Boundary: No correction attempt 3, no other changes, broad suites, or new framework.
