@@ -184,3 +184,17 @@ scenarios:
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, output-contract-presence]
     expectedOutputs: [cycle result, actionable parent alert]
     expectedTerminalStatus: PASS
+  - id: terminal-claim-applicability-evidence
+    priority: 14
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Require explicit claim applicability before terminal reconciliation can return NO_ACTION.
+    initialState: Three otherwise complete terminal tasks have unknown, explicitly non-applicable, and applicable-without-release claim evidence.
+    task: Alert for unknown applicability and missing applicable release evidence while accepting explicit non-applicability without a fabricated release.
+    targetSkills: [coordinate-work-items, coordinate-codex-tasks]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Keep claim applicability explicit, Alert on unknown applicability, Accept explicit non-applicability without release evidence, Alert when an applicable claim has no live or released evidence, Preserve observed state byte-identically]
+    forbiddenBehaviors: [Default missing applicability to non-applicable, Require release evidence for an explicitly non-applicable claim, Return NO_ACTION for unknown or incomplete applicable claim evidence, Mutate claim state]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, output-contract-presence]
+    expectedOutputs: [cycle result, actionable parent alert]
+    expectedTerminalStatus: PASS

@@ -1878,7 +1878,8 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(portable_clause=clause):
                 self.assertIn(clause, coordination_text)
         for clause in (
-            "Task archival is mandatory by default after code is merged",
+            "Completed requires merged delivery before default archival.",
+            "Failed and Abandoned require valid terminal evidence and do not require or imply merged delivery.",
             "Do not infer, inherit, carry forward, or persist a campaign-wide pause from earlier conversation.",
             "A valid pause suppresses archival only for its named tasks.",
         ):
@@ -1888,7 +1889,11 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Send exactly one aggregate parent alert", watchdog_text)
         self.assertIn("Never infer or inherit a campaign-wide pause", watchdog_text)
         self.assertIn(
-            "Task archival is mandatory by default after code is merged",
+            "Completed requires merged delivery before default archival.",
+            SKILL_DEFINITIONS_PATH.read_text(encoding="utf-8"),
+        )
+        self.assertIn(
+            "Failed and Abandoned require valid terminal evidence and do not require or imply merged delivery.",
             SKILL_DEFINITIONS_PATH.read_text(encoding="utf-8"),
         )
         for generated_path in (
@@ -1916,6 +1921,14 @@ class BundleContentTests(unittest.TestCase):
                     "Reconcile every terminal task associated with the observed Coordinator campaign",
                     generated_text,
                 )
+                self.assertIn(
+                    "For Completed, require merged delivery before default archival.",
+                    generated_text,
+                )
+                self.assertIn(
+                    "For Failed and Abandoned, require valid terminal evidence without inferring merged delivery.",
+                    generated_text,
+                )
                 self.assertIn("Send exactly one aggregate parent alert", generated_text)
         self.assertTrue(
             {
@@ -1926,11 +1939,16 @@ class BundleContentTests(unittest.TestCase):
                 "terminal-complete-no-action",
                 "terminal-preservation-alert-deduplication",
                 "terminal-failed-abandoned-status-aware",
+                "terminal-claim-applicability-evidence",
             }
             <= scenario_ids
         )
         self.assertIn(
             "A valid named-task archival pause suppresses no other terminal action.",
+            lifecycle_text,
+        )
+        self.assertIn(
+            "Failed and Abandoned require valid terminal evidence without a fabricated merge gate.",
             lifecycle_text,
         )
 

@@ -685,8 +685,13 @@ class WatchdogSimulatorTests(unittest.TestCase):
             ("claim", {"live_claims": ["work-item:live"]}, "release live claim"),
             (
                 "missing claim release",
-                {"claim_applicable": True, "released_claims": []},
+                {"claim_applicability": "applicable", "released_claims": []},
                 "reconcile applicable terminal claim",
+            ),
+            (
+                "unknown claim applicability",
+                {"claim_applicability": "unknown", "released_claims": []},
+                "determine terminal claim applicability",
             ),
             ("worktree", {"worktree_disposition": "clean-removable"}, "remove clean terminal worktree"),
             ("delivery branch", {"delivery_branch_disposition": "unmerged"}, "reconcile delivery branch disposition"),
@@ -728,6 +733,33 @@ class WatchdogSimulatorTests(unittest.TestCase):
                 archived_result = WatchdogCycle().evaluate((WorkItem(**archived),))
                 self.assertEqual("NO_ACTION", archived_result.status)
 
+    def test_terminal_claim_applicability_requires_explicit_evidence(self) -> None:
+        """Unknown, non-applicable, and applicable claim states stay distinct."""
+
+        case = self.cases["terminal-claim-applicability"]
+        unknown = WatchdogCycle().evaluate((WorkItem(**case["unknown"]),))
+        not_applicable = WatchdogCycle().evaluate(
+            (WorkItem(**case["notApplicable"]),)
+        )
+        missing_release = WatchdogCycle().evaluate(
+            (WorkItem(**case["applicableMissingRelease"]),)
+        )
+
+        self.assertEqual("ALERT", unknown.status)
+        self.assertIn(
+            case["expectedUnknownAction"],
+            unknown.terminal_reconciliations[0].actionable_reasons,
+        )
+        self.assertEqual("NO_ACTION", not_applicable.status)
+        self.assertTrue(
+            not_applicable.terminal_reconciliations[0].claim_reconciliation_complete
+        )
+        self.assertEqual("ALERT", missing_release.status)
+        self.assertIn(
+            case["expectedMissingReleaseAction"],
+            missing_release.terminal_reconciliations[0].actionable_reasons,
+        )
+
     def test_preservation_alert_repeats_only_when_evidence_changes(self) -> None:
         """Unchanged acknowledged retention stays quiet; changed evidence alerts again."""
 
@@ -745,6 +777,15 @@ class WatchdogSimulatorTests(unittest.TestCase):
         self.assertIn(
             case["expectedChangedAction"],
             changed_result.terminal_reconciliations[0].actionable_reasons,
+        )
+        changed_evidence = changed_result.alert.evidence if changed_result.alert else ""
+        self.assertIn(
+            f"acknowledged_source_branch_preservation_evidence={case['expectedPreviousEvidence']}",
+            changed_evidence,
+        )
+        self.assertIn(
+            f"source_branch_preservation_evidence={case['expectedCurrentEvidence']}",
+            changed_evidence,
         )
         self.assertEqual("ALERT", cleanup_result.status)
         self.assertIn(

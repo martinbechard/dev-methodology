@@ -112,7 +112,7 @@ If the Watchdog task is unavailable, the parent performs the portable review dir
 
 ## Task Archival
 
-Task archival is mandatory by default after code is merged and coordinate-work-items confirms terminal provider or task-local disposition, accepted delivery evidence, claim reconciliation, safe branch and worktree disposition, preservation acknowledgement, and no unresolved notification remains.
+Task archival is mandatory by default after the applicable ordinary terminal gates pass. Completed requires merged delivery before default archival. Failed and Abandoned require valid terminal evidence and do not require or imply merged delivery. Every terminal status still requires a canonical task identity, terminal provider or task-local disposition, claim reconciliation, safe branch and worktree disposition, preservation acknowledgement, and no unresolved notification.
 
 An archival pause is valid only when explicit current user direction names the exact Codex task, limits its scope to Codex task archival, records the exact direction and scope as evidence, and has a recorded acknowledgement. Do not infer, inherit, carry forward, or persist a campaign-wide pause from earlier conversation. A valid pause suppresses archival only for its named tasks. It never suppresses provider closeout, claim reconciliation, worktree cleanup, delivery-branch cleanup, source-branch cleanup, notification, or another terminal reconciliation action.
 

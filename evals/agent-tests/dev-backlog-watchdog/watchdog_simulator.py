@@ -27,6 +27,7 @@ _SAFE_DELIVERY_BRANCH_DISPOSITIONS = {"absent", "merged", "removed"}
 _SAFE_CLEANUP_BRANCH_DISPOSITIONS = {"absent", "removed"}
 _SAFE_SOURCE_BRANCH_DISPOSITIONS = {"absent", "removed"}
 _PRESERVABLE_SOURCE_BRANCH_RELATIONS = {"non-ancestral", "non-equivalent"}
+_CLAIM_APPLICABILITY_VALUES = {"unknown", "not-applicable", "applicable"}
 
 
 @dataclass(frozen=True)
@@ -102,7 +103,7 @@ class WorkItem:
     blocker_exit_satisfied: bool = False
     provider_terminal_evidence: bool = False
     code_merged: bool = False
-    claim_applicable: bool = False
+    claim_applicability: str = "unknown"
     released_claims: tuple[str, ...] = ()
     worktree: str = ""
     worktree_disposition: str = ""
@@ -155,7 +156,7 @@ class TerminalReconciliation:
     lifecycle_status: str
     provider_terminal_evidence: bool
     code_merged: bool
-    claim_applicable: bool
+    claim_applicability: str
     claim_reconciliation_complete: bool
     live_claims: tuple[str, ...]
     released_claims: tuple[str, ...]
@@ -169,6 +170,7 @@ class TerminalReconciliation:
     source_branch_relation: str
     source_branch_disposition: str
     source_branch_preservation_evidence: str
+    acknowledged_source_branch_preservation_evidence: str
     source_branch_deliberately_preserved: bool
     notification_pending: bool
     codex_archived: bool
@@ -424,13 +426,24 @@ class WatchdogCycle:
             reasons.append("confirm provider terminal evidence")
         if item.status == "Completed" and not item.code_merged:
             reasons.append("confirm merged delivery")
+        if (
+            item.claim_applicability not in _CLAIM_APPLICABILITY_VALUES
+            or item.claim_applicability == "unknown"
+        ):
+            reasons.append("determine terminal claim applicability")
         if item.live_claims:
             reasons.append("release live claim")
-        elif item.claim_applicable and not item.released_claims:
+        elif item.claim_applicability == "applicable" and not item.released_claims:
             reasons.append("reconcile applicable terminal claim")
         claim_reconciliation_complete = bool(
             not item.live_claims
-            and (not item.claim_applicable or item.released_claims)
+            and (
+                item.claim_applicability == "not-applicable"
+                or (
+                    item.claim_applicability == "applicable"
+                    and item.released_claims
+                )
+            )
         )
 
         if item.worktree_disposition == "clean-removable":
@@ -478,7 +491,7 @@ class WatchdogCycle:
             lifecycle_status=item.status,
             provider_terminal_evidence=item.provider_terminal_evidence,
             code_merged=item.code_merged,
-            claim_applicable=item.claim_applicable,
+            claim_applicability=item.claim_applicability,
             claim_reconciliation_complete=claim_reconciliation_complete,
             live_claims=tuple(item.live_claims),
             released_claims=tuple(item.released_claims),
@@ -493,6 +506,9 @@ class WatchdogCycle:
             source_branch_disposition=item.source_branch_disposition,
             source_branch_preservation_evidence=(
                 item.source_branch_preservation_evidence
+            ),
+            acknowledged_source_branch_preservation_evidence=(
+                item.acknowledged_source_branch_preservation_evidence
             ),
             source_branch_deliberately_preserved=preserved,
             notification_pending=item.notification_pending,
@@ -529,7 +545,7 @@ class WatchdogCycle:
                 "provider_terminal_evidence="
                 f"{str(reconciliation.provider_terminal_evidence).lower()}",
                 f"code_merged={str(reconciliation.code_merged).lower()}",
-                f"claim_applicable={str(reconciliation.claim_applicable).lower()}",
+                f"claim_applicability={reconciliation.claim_applicability}",
                 "claim_reconciliation_complete="
                 f"{str(reconciliation.claim_reconciliation_complete).lower()}",
                 f"live_claims={reconciliation.live_claims or ('none',)}",
@@ -548,6 +564,8 @@ class WatchdogCycle:
                 f"{reconciliation.source_branch_disposition or 'missing'}",
                 "source_branch_preservation_evidence="
                 f"{reconciliation.source_branch_preservation_evidence or 'none'}",
+                "acknowledged_source_branch_preservation_evidence="
+                f"{reconciliation.acknowledged_source_branch_preservation_evidence or 'none'}",
                 "source_branch_deliberately_preserved="
                 f"{str(reconciliation.source_branch_deliberately_preserved).lower()}",
                 "notification_pending="
