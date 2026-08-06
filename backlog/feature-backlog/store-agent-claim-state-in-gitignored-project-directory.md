@@ -54,21 +54,21 @@ Claim Evidence: Exact-file claim record-running-store-agent-claim-state-019fd464
 
 ## Active Execution Evidence
 
-Condition Type: delegated-work.
+Condition Type: owned-wait.
 
 Owner: Dev Orchestrator.
 
-Evidence: Status remains Running for canonical task 019fd464-3875-75e2-aaa0-39a8e357d764 on branch codex/store-agent-claim-state in worktree /Users/martinbechard/.codex/worktrees/b146/dev-methodology. Preserved dev-methodology candidate d2744c62281b5fc2bfdabd0d95a72642aab2924e and external mcp-agent-ops candidate 660aef8be2cfc12926aef15c90250556760961a7 retain fresh independent review approval and verification PASS. Native Windows CI run 31068038651 isolated the remaining unit to retirement of the locked empty legacy registry. After the safety reviewer required direct authorization for the same-inode tombstone, the user confirmed that this coordination context is ephemeral and that completion should leave no claims, or very few claims to drain, before migration. The authorized implementation remains fail-closed: it may rewrite only a verified-empty exclusively locked legacy registry; any live claim stops migration without mutation. The same canonical and external correction agents are resuming that unit. Provider commits 9a90a1da487794e5619f8cac0d38f9c614959b8e, bf82de39b24ff1eb781859048e13b74070717590, and b2d4ae3ece8fc7aff3035db73f2d892bad08bcef, work-claim incarnations d7c4a99e-cc43-4f31-83f9-ee182252027b, 880f8773-f043-4592-83fc-4200652ba74d, and 3bb4f520-7788-453d-9c57-6b08c8b5aed1, and all prior dispatch and Running history remain preserved.
+Evidence: Status remains Running for canonical task 019fd464-3875-75e2-aaa0-39a8e357d764 on branch codex/store-agent-claim-state in worktree /Users/martinbechard/.codex/worktrees/b146/dev-methodology. Preserved dev-methodology candidate d2744c62281b5fc2bfdabd0d95a72642aab2924e and external mcp-agent-ops candidate 660aef8be2cfc12926aef15c90250556760961a7 retain fresh independent review approval and verification PASS. Native Windows CI run 31068038651 isolated the remaining unit to retirement of the locked empty legacy registry. The user confirmed that the coordination context is ephemeral and should leave no claims, or only claims drained before migration, but the safety reviewer still rejected the production same-inode tombstone because that statement was not an explicit risk-aware approval to overwrite the verified-empty legacy registry bytes. No retirement implementation was applied; four red external regressions and one inert predicate remain uncommitted, both correction agents are paused, and no registry bytes or event history were changed. Provider commits 9a90a1da487794e5619f8cac0d38f9c614959b8e, bf82de39b24ff1eb781859048e13b74070717590, b2d4ae3ece8fc7aff3035db73f2d892bad08bcef, and b8f80c31eadeccbc140d40e2988d1ae2c8e6f76e, work-claim incarnations d7c4a99e-cc43-4f31-83f9-ee182252027b, 880f8773-f043-4592-83fc-4200652ba74d, 3bb4f520-7788-453d-9c57-6b08c8b5aed1, and 48b317e9-70f2-4dc8-9335-8c50fa9422f0, and all prior dispatch and Running history remain preserved.
 
-Observed At: 2026-08-06T03:48:52Z.
+Observed At: 2026-08-06T03:53:58Z.
 
 Started At: 2026-08-06T00:08:47.470415Z.
 
 Deadline: 2026-08-06T07:30:00Z.
 
-Next Action: Complete the authorized verified-empty Windows legacy registry tombstone unit in the canonical helper and external mcp-agent-ops package, then obtain fresh independent review and verification, pass native Windows CI, release mcp-agent-ops 0.6.0, and complete direct-main delivery.
+Next Action: Obtain one explicit risk-aware user approval to overwrite only a verified-empty exclusively locked Windows legacy registry with the exact tombstone marker, then resume the preserved correction, fresh independent gates, native Windows CI, mcp-agent-ops 0.6.0 release, and direct-main delivery.
 
-Next Reconciliation At: 2026-08-06T04:02:00Z.
+Next Reconciliation At: 2026-08-06T04:08:00Z.
 
 ## Summary
 
