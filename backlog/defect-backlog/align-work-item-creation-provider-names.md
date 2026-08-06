@@ -1,6 +1,6 @@
 # Align Work-Item Creation Provider Names
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -119,3 +119,29 @@ Approved at creation on 2026-08-05 by the user's request to identify naming and 
 ## Notes
 
 The naming-standard work item and this item can be implemented independently because this item records the exact target identities. Shared documentation and generated-output edits require normal resource coordination.
+
+## Current Starting Handoff Evidence
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Launch Reservation: One Root Dev Orchestrator task for this exact work item.
+
+Normalized Objective: Align work-item creation provider names.
+
+Dispatch Time: 2026-08-06T03:45:24Z.
+
+Intended Root Role: Root Dev Orchestrator.
+
+Launch Result: Not attempted.
+
+Canonical Conversation: None.
+
+Owner: Unowned pending the task's Starting -> Running transition.
+
+Last Contact: 2026-08-06T03:45:24Z; parent Coordinator recorded the reservation.
+
+Next Reconciliation: No later than 2026-08-06T04:00:24Z.
+
+Required Next Lifecycle Transition: The new task must directly record Starting -> Running, establish its exact Work Item ID activity=work claim, and then begin scoped implementation.
