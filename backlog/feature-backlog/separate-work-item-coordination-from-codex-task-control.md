@@ -131,14 +131,14 @@ This is a static responsibility split, not a diagram of one runtime scenario. Th
 
 Condition Type: root-execution
 Owner: Root Dev Orchestrator /root
-Evidence: Root task /root is executing this work item in canonical conversation 019fd63f-dc50-7252-b287-8489ad1c1a8f; the exact Work Item ID update claim and provider-path claim are held for this transition.
-Observed At: 2026-08-06T08:57:18Z
+Evidence: The same coder is actively implementing the two peer skills and four named roles in isolated worktree /Users/martinbechard/.codex/worktrees/a3a9/dev-methodology under root task /root and canonical conversation 019fd63f-dc50-7252-b287-8489ad1c1a8f.
+Observed At: 2026-08-06T09:08:38Z
 Started At: 2026-08-06T08:48:08Z
 Deadline or Expires At: 2026-08-06T10:00:00Z
-Next Action: Reacquire activity=work and resume the same cohesive coder in the isolated worktree.
-Next Reconciliation At: 2026-08-06T09:12:00Z
+Next Action: Reacquire activity=work and resume the same coder in the isolated worktree.
+Next Reconciliation At: 2026-08-06T09:20:00Z
 
 ## Running Evidence Refresh — 2026-08-06T08:57:18Z
 
 - Provider operation evidence: File provider Active Execution Evidence refreshed in place on main; Status, canonical identities, Started At, and Deadline or Expires At are unchanged.
-- Refresh claims: Work Item ID update claim separate-work-item-coordination-from-codex-task-control-update-refresh-0857 and provider-path claim separate-work-item-coordination-from-codex-task-control-path-refresh-0857 were acquired for this operation.
+- Refresh claims: Work Item ID update claim separate-work-item-coordination-from-codex-task-control-update-refresh-0908 and provider-path claim separate-work-item-coordination-from-codex-task-control-path-refresh-0908 were acquired for this operation.
