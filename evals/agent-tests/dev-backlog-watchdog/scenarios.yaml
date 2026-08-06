@@ -86,3 +86,87 @@ scenarios:
     deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, singular-alert, output-contract-presence]
     expectedOutputs: [actionable parent alert]
     expectedTerminalStatus: PASS
+  - id: terminal-archive-pause-does-not-pause-cleanup
+    priority: 7
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Keep clean worktree and branch cleanup actionable while a valid named-task archival pause is active.
+    initialState: One merged terminal task has a current acknowledged archival pause and an independently removable clean worktree.
+    task: Reconcile the complete terminal task read-only and alert for cleanup without requesting task archival.
+    targetSkills: [coordinate-work-items, coordinate-codex-tasks]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Require explicit current user direction for exact named Codex task archival, Retain exact pause scope evidence and acknowledgement, Report the independently removable clean worktree, Send one aggregate parent alert, Preserve observed state byte-identically]
+    forbiddenBehaviors: [Infer inherit or persist a campaign-wide archival pause, Suppress provider claim worktree branch notification or preservation reconciliation, Archive a task, Remove a worktree or branch, Mutate provider task claim Git or runtime state]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, singular-alert, output-contract-presence]
+    expectedOutputs: [actionable parent alert]
+    expectedTerminalStatus: PASS
+  - id: terminal-default-archival-notification
+    priority: 8
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Require archival by default after merge and every ordinary terminal gate passes.
+    initialState: One fully reconciled merged terminal task remains unarchived without a valid current named-task pause.
+    task: Send one actionable archival notification and reject inferred inherited broad or unacknowledged pause evidence.
+    targetSkills: [coordinate-work-items, coordinate-codex-tasks]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Require archival by default, Reject earlier-conversation campaign mismatched missing and unacknowledged pause evidence, Identify the exact Codex task, Preserve observed state byte-identically]
+    forbiddenBehaviors: [Treat an earlier conversation as a current pause, Treat a campaign pause as named-task evidence, Return NO_ACTION while archival remains actionable, Archive the task, Mutate runtime state]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, singular-alert, output-contract-presence]
+    expectedOutputs: [actionable parent alert]
+    expectedTerminalStatus: PASS
+  - id: terminal-preserved-branch-removable-worktree
+    priority: 9
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Preserve an evidence-backed non-equivalent source branch without retaining its clean terminal worktree.
+    initialState: One terminal task has an acknowledged non-equivalent source branch and a clean independently removable worktree.
+    task: Retain the deliberate branch disposition and alert only for the clean worktree removal.
+    targetSkills: [coordinate-work-items, coordinate-codex-tasks]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Record the source branch as deliberately preserved, Retain non-equivalent preservation evidence, Report the independently removable clean worktree, Preserve observed state byte-identically]
+    forbiddenBehaviors: [Alert again for unchanged acknowledged preservation evidence, Infer that a preserved branch retains its worktree, Delete a branch or worktree, Mutate Git or provider state]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, singular-alert, output-contract-presence]
+    expectedOutputs: [actionable parent alert]
+    expectedTerminalStatus: PASS
+  - id: terminal-aggregate-all-anomalies
+    priority: 10
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Aggregate every actionable anomaly across the complete campaign terminal set.
+    initialState: Multiple terminal tasks retain distinct archival claim worktree branch and notification anomalies.
+    task: Reconcile every terminal task and send exactly one parent alert naming every anomaly and smallest action.
+    targetSkills: [coordinate-work-items, coordinate-codex-tasks]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Inspect every terminal task after the first anomaly, Retain one reconciliation per terminal task, Name every task and anomaly, Send exactly one aggregate parent alert, Preserve observed state byte-identically]
+    forbiddenBehaviors: [Stop after the first anomaly, Send fragmented alerts, Omit an unacknowledged action, Choose or perform cleanup archival claim or provider mutation]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, singular-alert, output-contract-presence]
+    expectedOutputs: [actionable parent alert]
+    expectedTerminalStatus: PASS
+  - id: terminal-complete-no-action
+    priority: 11
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Permit NO_ACTION only after every terminal dimension is completely reconciled.
+    initialState: Every campaign terminal task has acknowledged provider claim worktree branch notification preservation and archival disposition.
+    task: Retain the complete terminal reconciliation and return one concise no-action result.
+    targetSkills: [coordinate-work-items, coordinate-codex-tasks]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Reconcile every terminal task, Confirm every terminal dimension is complete and acknowledged, Return one concise no-action result, Preserve observed state byte-identically]
+    forbiddenBehaviors: [Return NO_ACTION with an unacknowledged terminal action, Notify the parent, Mutate provider task claim Git or runtime state]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, output-contract-presence]
+    expectedOutputs: [cycle result]
+    expectedTerminalStatus: PASS
+  - id: terminal-preservation-alert-deduplication
+    priority: 12
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Suppress repeat alerts for unchanged acknowledged preservation and alert again when evidence or cleanup action changes.
+    initialState: One retained source branch has unchanged acknowledged evidence; comparison cases change that evidence or make cleanup actionable.
+    task: Keep the unchanged case quiet and alert for each changed-evidence or newly actionable cleanup case.
+    targetSkills: [coordinate-work-items, coordinate-codex-tasks]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Compare current preservation evidence with its acknowledged evidence, Suppress unchanged preservation alert, Alert on changed evidence, Alert on newly cleanup-eligible branch, Preserve observed state byte-identically]
+    forbiddenBehaviors: [Repeat an unchanged preservation alert, Suppress changed evidence, Suppress newly actionable cleanup, Mutate branch disposition]
+    deterministicChecks: [harness-agent-identity, suite-simulator-tests, no-forbidden-mutation, singular-alert, output-contract-presence]
+    expectedOutputs: [cycle result, actionable parent alert]
+    expectedTerminalStatus: PASS

@@ -97,6 +97,169 @@ cases:
     expectedActionableReasons:
       - correction attempts exhausted without current disposition
     expectedAlertProviders: [provider:exhausted-without-disposition]
+  terminal-archive-pause-cleanup:
+    item:
+      provider_identity: provider:paused-cleanup
+      status: Completed
+      root_task: task-paused-cleanup
+      provider_terminal_evidence: true
+      code_merged: true
+      released_claims: [work-item-claim:released]
+      worktree: /workspace/.worktrees/paused-cleanup
+      worktree_disposition: clean-removable
+      delivery_branch: integration/paused-cleanup
+      delivery_branch_disposition: merged
+      cleanup_branch: integration/paused-cleanup
+      cleanup_branch_disposition: removed
+      source_branch: source/paused-cleanup
+      source_branch_relation: non-equivalent
+      source_branch_disposition: deliberately-preserved
+      source_branch_preservation_evidence: source-only commit retained
+      acknowledged_source_branch_preservation_evidence: source-only commit retained
+      notification_pending: false
+      codex_archived: false
+    archive_pause:
+      source: current-user-direction
+      scope: codex-task-archival
+      task_ids: [task-paused-cleanup]
+      evidence: User paused archival for task-paused-cleanup.
+      acknowledged: true
+    expectedAction: remove clean terminal worktree
+  terminal-default-archival:
+    item:
+      provider_identity: provider:default-archive
+      status: Completed
+      root_task: task-default-archive
+      provider_terminal_evidence: true
+      code_merged: true
+      released_claims: [work-item-claim:released]
+      worktree_disposition: removed
+      delivery_branch_disposition: merged
+      cleanup_branch_disposition: removed
+      source_branch_disposition: removed
+      notification_pending: false
+      codex_archived: false
+    expectedAction: archive Codex task
+  terminal-preserved-branch-removable-worktree:
+    item:
+      provider_identity: provider:preserved-source
+      status: Completed
+      root_task: task-preserved-source
+      provider_terminal_evidence: true
+      code_merged: true
+      released_claims: [work-item-claim:released]
+      worktree: /workspace/.worktrees/preserved-source
+      worktree_disposition: clean-removable
+      delivery_branch: integration/preserved-source
+      delivery_branch_disposition: merged
+      cleanup_branch: integration/preserved-source
+      cleanup_branch_disposition: removed
+      source_branch: source/non-equivalent
+      source_branch_relation: non-equivalent
+      source_branch_disposition: deliberately-preserved
+      source_branch_preservation_evidence: non-equivalent source commit remains unique
+      acknowledged_source_branch_preservation_evidence: non-equivalent source commit remains unique
+      notification_pending: false
+      codex_archived: false
+    expectedPreservedBranch: source/non-equivalent
+    expectedAction: remove clean terminal worktree
+  terminal-aggregate-anomalies:
+    items:
+      - provider_identity: provider:archive-pending
+        status: Completed
+        root_task: task-archive-pending
+        provider_terminal_evidence: true
+        code_merged: true
+        released_claims: [work-item-a:released]
+        worktree_disposition: removed
+        delivery_branch_disposition: merged
+        cleanup_branch_disposition: removed
+        source_branch_disposition: removed
+        notification_pending: false
+        codex_archived: false
+      - provider_identity: provider:cleanup-pending
+        status: Completed
+        root_task: task-cleanup-pending
+        provider_terminal_evidence: true
+        code_merged: true
+        live_claims: [work-item-b:live]
+        worktree: /workspace/.worktrees/cleanup-pending
+        worktree_disposition: clean-removable
+        delivery_branch: integration/cleanup-pending
+        delivery_branch_disposition: merged
+        cleanup_branch: integration/cleanup-pending
+        cleanup_branch_disposition: cleanup-eligible
+        source_branch_disposition: removed
+        notification_pending: true
+        codex_archived: false
+    expectedTasks: [task-archive-pending, task-cleanup-pending]
+    expectedActions: [archive Codex task, release live claim, remove clean terminal worktree, clean up terminal branch, resolve terminal notification]
+  terminal-completely-reconciled:
+    item:
+      provider_identity: provider:complete-terminal
+      status: Completed
+      root_task: task-complete-terminal
+      provider_terminal_evidence: true
+      code_merged: true
+      released_claims: [work-item-complete:released]
+      worktree_disposition: removed
+      delivery_branch_disposition: merged
+      cleanup_branch_disposition: removed
+      source_branch_disposition: removed
+      notification_pending: false
+      codex_archived: true
+  terminal-preservation-evidence-change:
+    unchanged:
+      provider_identity: provider:unchanged-preservation
+      status: Completed
+      root_task: task-unchanged-preservation
+      provider_terminal_evidence: true
+      code_merged: true
+      released_claims: [work-item-unchanged:released]
+      worktree_disposition: removed
+      delivery_branch_disposition: merged
+      cleanup_branch_disposition: removed
+      source_branch: source/unchanged
+      source_branch_relation: non-ancestral
+      source_branch_disposition: deliberately-preserved
+      source_branch_preservation_evidence: unique commit abc123 retained
+      acknowledged_source_branch_preservation_evidence: unique commit abc123 retained
+      notification_pending: false
+      codex_archived: true
+    changed:
+      provider_identity: provider:changed-preservation
+      status: Completed
+      root_task: task-changed-preservation
+      provider_terminal_evidence: true
+      code_merged: true
+      released_claims: [work-item-changed:released]
+      worktree_disposition: removed
+      delivery_branch_disposition: merged
+      cleanup_branch_disposition: removed
+      source_branch: source/changed
+      source_branch_relation: non-ancestral
+      source_branch_disposition: deliberately-preserved
+      source_branch_preservation_evidence: unique commits abc123 and def456 retained
+      acknowledged_source_branch_preservation_evidence: unique commit abc123 retained
+      notification_pending: false
+      codex_archived: true
+    cleanupEligible:
+      provider_identity: provider:cleanup-eligible-source
+      status: Completed
+      root_task: task-cleanup-eligible-source
+      provider_terminal_evidence: true
+      code_merged: true
+      released_claims: [work-item-cleanup-eligible:released]
+      worktree_disposition: removed
+      delivery_branch_disposition: merged
+      cleanup_branch_disposition: removed
+      source_branch: source/cleanup-eligible
+      source_branch_relation: ancestral
+      source_branch_disposition: cleanup-eligible
+      notification_pending: false
+      codex_archived: true
+    expectedChangedAction: acknowledge changed source-branch preservation evidence
+    expectedCleanupAction: clean up terminal source branch
   stalled-dispositions:
     sameOwnerResumed:
       same_owner_resumed: true

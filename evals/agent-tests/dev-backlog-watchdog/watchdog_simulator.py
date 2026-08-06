@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Simulates read-only watchdog observations and retained Blocked reconciliation evidence.
+# Summary: Simulates read-only active, blocked, and terminal campaign reconciliation.
 # Governing design: design/orchestrated-development-lifecycle.html
 # Governing test plan: evals/agent-tests/dev-backlog-watchdog/requirements-matrix.md
 
@@ -22,6 +22,11 @@ BLOCKAGE_EXCLUDED_STATUSES = {
     *TERMINAL_STATUSES,
 }
 _TASK_ANOMALY_STATES = {"failed", "stopped", "missing"}
+_SAFE_TERMINAL_WORKTREE_DISPOSITIONS = {"absent", "removed"}
+_SAFE_DELIVERY_BRANCH_DISPOSITIONS = {"absent", "merged", "removed"}
+_SAFE_CLEANUP_BRANCH_DISPOSITIONS = {"absent", "removed"}
+_SAFE_SOURCE_BRANCH_DISPOSITIONS = {"absent", "removed"}
+_PRESERVABLE_SOURCE_BRANCH_RELATIONS = {"non-ancestral", "non-equivalent"}
 
 
 @dataclass(frozen=True)
@@ -36,14 +41,31 @@ class DispositionReceipt:
     unresolved_findings: tuple[str, ...] = ()
 
 
+@dataclass(frozen=True)
+class ArchivePauseEvidence:
+    """Describe current user direction that pauses named Codex task archival.
+
+    source identifies whether the evidence is current user direction. scope must
+    name Codex task archival. task_ids contains the exact affected task IDs.
+    evidence retains the direction, and acknowledged records Coordinator receipt.
+    """
+
+    source: str
+    scope: str
+    task_ids: tuple[str, ...]
+    evidence: str
+    acknowledged: bool
+
+
 @dataclass
 class WorkItem:
     """Represent the evidence visible to one deterministic watchdog cycle.
 
     provider_identity is the selected provider reference or provider-none task.
     status is the current lifecycle state. The remaining fields describe
-    observable progress, canonical execution identity, and exit-condition
-    evidence. Instances are read by WatchdogCycle and are never mutated.
+    observable progress, canonical execution identity, exit conditions, and
+    terminal cleanup evidence. Instances are read by WatchdogCycle and are
+    never mutated.
     """
 
     provider_identity: str
@@ -78,6 +100,23 @@ class WorkItem:
     next_action_owner_correct: bool = True
     stalled_exit_satisfied: bool = False
     blocker_exit_satisfied: bool = False
+    provider_terminal_evidence: bool = False
+    code_merged: bool = False
+    released_claims: tuple[str, ...] = ()
+    worktree: str = ""
+    worktree_disposition: str = ""
+    delivery_branch: str = ""
+    delivery_branch_disposition: str = ""
+    cleanup_branch: str = ""
+    cleanup_branch_disposition: str = ""
+    source_branch: str = ""
+    source_branch_relation: str = ""
+    source_branch_disposition: str = ""
+    source_branch_preservation_evidence: str = ""
+    acknowledged_source_branch_preservation_evidence: str = ""
+    notification_pending: bool = False
+    codex_archived: bool = False
+    archive_pause: ArchivePauseEvidence | None = None
 
 
 @dataclass(frozen=True)
@@ -102,6 +141,40 @@ class BlockedReconciliation:
 
 
 @dataclass(frozen=True)
+class TerminalReconciliation:
+    """Retain complete read-only reconciliation for one terminal campaign task.
+
+    The result records the observed lifecycle, delivery, claim, worktree,
+    branch, notification, preservation, archival, and exact pause evidence.
+    actionable_reasons contains only Coordinator-owned next actions.
+    """
+
+    provider_identity: str
+    task_id: str
+    lifecycle_status: str
+    provider_terminal_evidence: bool
+    code_merged: bool
+    live_claims: tuple[str, ...]
+    released_claims: tuple[str, ...]
+    worktree: str
+    worktree_disposition: str
+    delivery_branch: str
+    delivery_branch_disposition: str
+    cleanup_branch: str
+    cleanup_branch_disposition: str
+    source_branch: str
+    source_branch_relation: str
+    source_branch_disposition: str
+    source_branch_preservation_evidence: str
+    source_branch_deliberately_preserved: bool
+    notification_pending: bool
+    codex_archived: bool
+    archive_pause: ArchivePauseEvidence | None
+    archive_pause_valid: bool
+    actionable_reasons: tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class WatchdogAlert:
     """Describe one actionable observation for the parent Coordinator."""
 
@@ -114,12 +187,13 @@ class WatchdogAlert:
 
 @dataclass(frozen=True)
 class CycleResult:
-    """Return retained Blocked results plus one no-action or aggregate alert outcome."""
+    """Return retained reconciliations plus one no-action or aggregate alert outcome."""
 
     status: str
     message: str
     alert: WatchdogAlert | None
     blocked_reconciliations: tuple[BlockedReconciliation, ...] = ()
+    terminal_reconciliations: tuple[TerminalReconciliation, ...] = ()
     mutated: bool = False
 
 
@@ -200,8 +274,29 @@ class WatchdogCycle:
 
         observations: list[WatchdogAlert] = []
         blocked_reconciliations: list[BlockedReconciliation] = []
+        terminal_reconciliations: list[TerminalReconciliation] = []
         for item in items:
-            if item.status == "Blocked":
+            if item.status in TERMINAL_STATUSES:
+                reconciliation = self._reconcile_terminal(item)
+                terminal_reconciliations.append(reconciliation)
+                if reconciliation.actionable_reasons:
+                    actions = "; ".join(reconciliation.actionable_reasons)
+                    observations.append(
+                        WatchdogAlert(
+                            provider_identity=item.provider_identity,
+                            evidence=self._terminal_evidence(reconciliation),
+                            reason=(
+                                "Terminal reconciliation requires Coordinator "
+                                f"attention: {actions}"
+                            ),
+                            recommended_action=(
+                                f"Coordinator reconciles task {reconciliation.task_id}: "
+                                f"{actions}"
+                            ),
+                            preventing_cause="",
+                        )
+                    )
+            elif item.status == "Blocked":
                 reconciliation = self._reconcile_blocked(item)
                 blocked_reconciliations.append(reconciliation)
                 if reconciliation.actionable_reasons:
@@ -302,6 +397,7 @@ class WatchdogCycle:
                 "No actionable watchdog condition observed.",
                 None,
                 tuple(blocked_reconciliations),
+                tuple(terminal_reconciliations),
             )
         return CycleResult(
             "ALERT",
@@ -311,6 +407,140 @@ class WatchdogCycle:
             ),
             self._aggregate_alert(observations),
             tuple(blocked_reconciliations),
+            tuple(terminal_reconciliations),
+        )
+
+    @staticmethod
+    def _reconcile_terminal(item: WorkItem) -> TerminalReconciliation:
+        """Evaluate every terminal gate while leaving all observed state unchanged."""
+
+        reasons: list[str] = []
+        if not item.provider_terminal_evidence:
+            reasons.append("confirm provider terminal evidence")
+        if not item.code_merged:
+            reasons.append("confirm merged delivery")
+        if item.live_claims:
+            reasons.append("release live claim")
+
+        if item.worktree_disposition == "clean-removable":
+            reasons.append("remove clean terminal worktree")
+        elif item.worktree_disposition not in _SAFE_TERMINAL_WORKTREE_DISPOSITIONS:
+            reasons.append("reconcile terminal worktree disposition")
+
+        if item.delivery_branch_disposition not in _SAFE_DELIVERY_BRANCH_DISPOSITIONS:
+            reasons.append("reconcile delivery branch disposition")
+        if item.cleanup_branch_disposition == "cleanup-eligible":
+            reasons.append("clean up terminal branch")
+        elif item.cleanup_branch_disposition not in _SAFE_CLEANUP_BRANCH_DISPOSITIONS:
+            reasons.append("reconcile cleanup branch disposition")
+
+        preserved = (
+            item.source_branch_disposition == "deliberately-preserved"
+            and item.source_branch_relation in _PRESERVABLE_SOURCE_BRANCH_RELATIONS
+            and bool(item.source_branch_preservation_evidence.strip())
+        )
+        if item.source_branch_disposition == "cleanup-eligible":
+            reasons.append("clean up terminal source branch")
+        elif item.source_branch_disposition == "deliberately-preserved":
+            if not preserved:
+                reasons.append("reconcile unsupported source-branch preservation")
+            elif (
+                item.source_branch_preservation_evidence
+                != item.acknowledged_source_branch_preservation_evidence
+            ):
+                reasons.append(
+                    "acknowledge changed source-branch preservation evidence"
+                )
+        elif item.source_branch_disposition not in _SAFE_SOURCE_BRANCH_DISPOSITIONS:
+            reasons.append("reconcile terminal source branch disposition")
+
+        if item.notification_pending:
+            reasons.append("resolve terminal notification")
+
+        archive_pause_valid = WatchdogCycle._archive_pause_valid(item)
+        if not reasons and not item.codex_archived and not archive_pause_valid:
+            reasons.append("archive Codex task")
+
+        return TerminalReconciliation(
+            provider_identity=item.provider_identity,
+            task_id=item.root_task,
+            lifecycle_status=item.status,
+            provider_terminal_evidence=item.provider_terminal_evidence,
+            code_merged=item.code_merged,
+            live_claims=tuple(item.live_claims),
+            released_claims=tuple(item.released_claims),
+            worktree=item.worktree,
+            worktree_disposition=item.worktree_disposition,
+            delivery_branch=item.delivery_branch,
+            delivery_branch_disposition=item.delivery_branch_disposition,
+            cleanup_branch=item.cleanup_branch,
+            cleanup_branch_disposition=item.cleanup_branch_disposition,
+            source_branch=item.source_branch,
+            source_branch_relation=item.source_branch_relation,
+            source_branch_disposition=item.source_branch_disposition,
+            source_branch_preservation_evidence=(
+                item.source_branch_preservation_evidence
+            ),
+            source_branch_deliberately_preserved=preserved,
+            notification_pending=item.notification_pending,
+            codex_archived=item.codex_archived,
+            archive_pause=item.archive_pause,
+            archive_pause_valid=archive_pause_valid,
+            actionable_reasons=tuple(reasons),
+        )
+
+    @staticmethod
+    def _archive_pause_valid(item: WorkItem) -> bool:
+        """Accept only current, acknowledged user direction for this named task."""
+
+        pause = item.archive_pause
+        return bool(
+            pause
+            and pause.source == "current-user-direction"
+            and pause.scope == "codex-task-archival"
+            and item.root_task
+            and item.root_task in pause.task_ids
+            and pause.evidence.strip()
+            and pause.acknowledged
+        )
+
+    @staticmethod
+    def _terminal_evidence(reconciliation: TerminalReconciliation) -> str:
+        """Render every observed terminal dimension for one campaign task."""
+
+        return "; ".join(
+            (
+                f"task={reconciliation.task_id or 'missing'}",
+                f"provider={reconciliation.provider_identity}",
+                f"lifecycle_status={reconciliation.lifecycle_status}",
+                "provider_terminal_evidence="
+                f"{str(reconciliation.provider_terminal_evidence).lower()}",
+                f"code_merged={str(reconciliation.code_merged).lower()}",
+                f"live_claims={reconciliation.live_claims or ('none',)}",
+                f"released_claims={reconciliation.released_claims or ('none',)}",
+                f"worktree={reconciliation.worktree or 'none'}",
+                f"worktree_disposition={reconciliation.worktree_disposition or 'missing'}",
+                f"delivery_branch={reconciliation.delivery_branch or 'none'}",
+                "delivery_branch_disposition="
+                f"{reconciliation.delivery_branch_disposition or 'missing'}",
+                f"cleanup_branch={reconciliation.cleanup_branch or 'none'}",
+                "cleanup_branch_disposition="
+                f"{reconciliation.cleanup_branch_disposition or 'missing'}",
+                f"source_branch={reconciliation.source_branch or 'none'}",
+                f"source_branch_relation={reconciliation.source_branch_relation or 'none'}",
+                "source_branch_disposition="
+                f"{reconciliation.source_branch_disposition or 'missing'}",
+                "source_branch_preservation_evidence="
+                f"{reconciliation.source_branch_preservation_evidence or 'none'}",
+                "source_branch_deliberately_preserved="
+                f"{str(reconciliation.source_branch_deliberately_preserved).lower()}",
+                "notification_pending="
+                f"{str(reconciliation.notification_pending).lower()}",
+                f"codex_archived={str(reconciliation.codex_archived).lower()}",
+                f"archive_pause={reconciliation.archive_pause or 'none'}",
+                "archive_pause_valid="
+                f"{str(reconciliation.archive_pause_valid).lower()}",
+            )
         )
 
     @staticmethod

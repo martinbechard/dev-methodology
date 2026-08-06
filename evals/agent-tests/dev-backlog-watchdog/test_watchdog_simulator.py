@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies read-only blockage observation plus retained Stalled and Blocked evidence.
+# Summary: Verifies read-only active, blocked, and terminal campaign reconciliation.
 # Governing design: design/orchestrated-development-lifecycle.html
 # Governing test plan: evals/agent-tests/dev-backlog-watchdog/requirements-matrix.md
 
@@ -14,6 +14,7 @@ import unittest
 import yaml
 
 from watchdog_simulator import (
+    ArchivePauseEvidence,
     CoordinatorDisposition,
     DispositionReceipt,
     WorkItem,
@@ -561,6 +562,166 @@ class WatchdogSimulatorTests(unittest.TestCase):
         self.assertEqual(
             "upstream release is unavailable",
             alert.preventing_cause,
+        )
+
+    def test_valid_archive_pause_suppresses_only_named_task_archival(self) -> None:
+        """A current named-task pause leaves independent Git cleanup actionable."""
+
+        case = self.cases["terminal-archive-pause-cleanup"]
+        pause = ArchivePauseEvidence(**case["archive_pause"])
+        item = WorkItem(**case["item"], archive_pause=pause)
+        before = deepcopy(item)
+
+        result = WatchdogCycle().evaluate((item,))
+
+        self.assertEqual(before, item)
+        self.assertEqual("ALERT", result.status)
+        self.assertEqual(1, len(result.terminal_reconciliations))
+        reconciliation = result.terminal_reconciliations[0]
+        self.assertTrue(reconciliation.archive_pause_valid)
+        self.assertIs(pause, reconciliation.archive_pause)
+        self.assertIn(case["expectedAction"], reconciliation.actionable_reasons)
+        self.assertNotIn("archive Codex task", reconciliation.actionable_reasons)
+        self.assertIn(item.root_task, result.alert.evidence if result.alert else "")
+        self.assertIn("scope='codex-task-archival'", result.alert.evidence if result.alert else "")
+
+    def test_default_archival_requires_no_inferred_or_campaign_pause(self) -> None:
+        """Only current, exact, acknowledged user direction can pause archival."""
+
+        case = self.cases["terminal-default-archival"]
+        pauses = (
+            None,
+            ArchivePauseEvidence(
+                source="earlier-conversation",
+                scope="codex-task-archival",
+                task_ids=(case["item"]["root_task"],),
+                evidence="an earlier campaign pause was mentioned",
+                acknowledged=True,
+            ),
+            ArchivePauseEvidence(
+                source="current-user-direction",
+                scope="campaign",
+                task_ids=(case["item"]["root_task"],),
+                evidence="pause the campaign",
+                acknowledged=True,
+            ),
+            ArchivePauseEvidence(
+                source="current-user-direction",
+                scope="codex-task-archival",
+                task_ids=("another-task",),
+                evidence="pause another task",
+                acknowledged=True,
+            ),
+            ArchivePauseEvidence(
+                source="current-user-direction",
+                scope="codex-task-archival",
+                task_ids=(case["item"]["root_task"],),
+                evidence="",
+                acknowledged=False,
+            ),
+        )
+
+        for pause in pauses:
+            with self.subTest(pause=pause):
+                item = WorkItem(**case["item"], archive_pause=pause)
+                result = WatchdogCycle().evaluate((item,))
+                reconciliation = result.terminal_reconciliations[0]
+                self.assertEqual("ALERT", result.status)
+                self.assertFalse(reconciliation.archive_pause_valid)
+                self.assertIn(case["expectedAction"], reconciliation.actionable_reasons)
+
+    def test_preserved_source_branch_does_not_hide_removable_worktree(self) -> None:
+        """A retained non-equivalent source branch does not retain its clean worktree."""
+
+        case = self.cases["terminal-preserved-branch-removable-worktree"]
+        item = WorkItem(**case["item"])
+
+        result = WatchdogCycle().evaluate((item,))
+
+        reconciliation = result.terminal_reconciliations[0]
+        self.assertTrue(reconciliation.source_branch_deliberately_preserved)
+        self.assertEqual(case["expectedPreservedBranch"], reconciliation.source_branch)
+        self.assertEqual((case["expectedAction"],), reconciliation.actionable_reasons)
+        self.assertEqual("ALERT", result.status)
+
+    def test_terminal_cycle_aggregates_every_task_anomaly(self) -> None:
+        """One alert retains every terminal task and its smallest required action."""
+
+        case = self.cases["terminal-aggregate-anomalies"]
+        items = [WorkItem(**item) for item in case["items"]]
+
+        result = WatchdogCycle().evaluate(items)
+
+        self.assertEqual("ALERT", result.status)
+        self.assertEqual(len(items), len(result.terminal_reconciliations))
+        self.assertIn("one aggregate parent alert", result.message)
+        for task_id in case["expectedTasks"]:
+            with self.subTest(task_id=task_id):
+                self.assertIn(task_id, result.alert.evidence if result.alert else "")
+        for action in case["expectedActions"]:
+            with self.subTest(action=action):
+                self.assertIn(action, result.alert.recommended_action if result.alert else "")
+
+    def test_terminal_no_action_requires_complete_reconciliation(self) -> None:
+        """NO_ACTION is available only when every terminal action is complete."""
+
+        case = self.cases["terminal-completely-reconciled"]
+        item = WorkItem(**case["item"])
+
+        result = WatchdogCycle().evaluate((item,))
+
+        self.assertEqual("NO_ACTION", result.status)
+        self.assertIsNone(result.alert)
+        self.assertFalse(result.terminal_reconciliations[0].actionable_reasons)
+
+    def test_terminal_no_action_rejects_each_unacknowledged_dimension(self) -> None:
+        """Each incomplete terminal dimension independently prevents NO_ACTION."""
+
+        baseline = dict(self.cases["terminal-completely-reconciled"]["item"])
+        cases = (
+            ("provider", {"provider_terminal_evidence": False}, "confirm provider terminal evidence"),
+            ("delivery", {"code_merged": False}, "confirm merged delivery"),
+            ("claim", {"live_claims": ["work-item:live"]}, "release live claim"),
+            ("worktree", {"worktree_disposition": "clean-removable"}, "remove clean terminal worktree"),
+            ("delivery branch", {"delivery_branch_disposition": "unmerged"}, "reconcile delivery branch disposition"),
+            ("cleanup branch", {"cleanup_branch_disposition": "cleanup-eligible"}, "clean up terminal branch"),
+            ("source branch", {"source_branch_disposition": "cleanup-eligible"}, "clean up terminal source branch"),
+            ("notification", {"notification_pending": True}, "resolve terminal notification"),
+            ("archival", {"codex_archived": False}, "archive Codex task"),
+        )
+
+        for name, overrides, expected_action in cases:
+            with self.subTest(name=name):
+                evidence = {**baseline, **overrides}
+                result = WatchdogCycle().evaluate((WorkItem(**evidence),))
+                self.assertEqual("ALERT", result.status)
+                self.assertIn(
+                    expected_action,
+                    result.terminal_reconciliations[0].actionable_reasons,
+                )
+
+    def test_preservation_alert_repeats_only_when_evidence_changes(self) -> None:
+        """Unchanged acknowledged retention stays quiet; changed evidence alerts again."""
+
+        case = self.cases["terminal-preservation-evidence-change"]
+        unchanged = WorkItem(**case["unchanged"])
+        changed = WorkItem(**case["changed"])
+        cleanup_eligible = WorkItem(**case["cleanupEligible"])
+
+        unchanged_result = WatchdogCycle().evaluate((unchanged,))
+        changed_result = WatchdogCycle().evaluate((changed,))
+        cleanup_result = WatchdogCycle().evaluate((cleanup_eligible,))
+
+        self.assertEqual("NO_ACTION", unchanged_result.status)
+        self.assertEqual("ALERT", changed_result.status)
+        self.assertIn(
+            case["expectedChangedAction"],
+            changed_result.terminal_reconciliations[0].actionable_reasons,
+        )
+        self.assertEqual("ALERT", cleanup_result.status)
+        self.assertIn(
+            case["expectedCleanupAction"],
+            cleanup_result.terminal_reconciliations[0].actionable_reasons,
         )
 
     def test_coordinator_dispositions_are_evidence_gated(self) -> None:

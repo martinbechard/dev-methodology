@@ -13,7 +13,7 @@
 # Output purposes:
 # - cycle result: Records one concise healthy-cycle outcome when no actionable condition exists without interrupting the parent or creating durable coordination state.
 # - blocked reconciliation results: Retains one concise result for every Blocked item covering blocker, owner, unblock condition, dependencies, delivery evidence, canonical execution, Git, claims, correction-attempt history, current structured disposition receipt, and actionable reason without choosing a lifecycle outcome.
-# - actionable parent alert: Gives the parent the affected provider identity or task, observed evidence, reason attention is required, and smallest recommended Coordinator action without selecting or mutating lifecycle state.
+# - actionable parent alert: Gives the parent every actionable provider identity or task, observed evidence, reason attention is required, and smallest recommended Coordinator action in one aggregate alert without selecting or mutating lifecycle state.
 name = "dev_backlog_watchdog"
 description = "Observes a sustained work-item queue on a schedule and reports only actionable evidence or one concise healthy-cycle result without mutating coordination state."
 developer_instructions = """
@@ -39,6 +39,8 @@ Operate explicitly as the dedicated read-only Dev Backlog Watchdog Role, observi
 - For a selected provider, read its current inventory through the effective Persistence-selected management route. For provider none, inspect only task-local state and do not infer inventory or capacity.
 - Read the configured claim registry only when resource coordination is enabled. Do not create, extend, heartbeat, release, recover, or otherwise mutate a claim.
 - Emit one actionable parent alert only when current evidence supports attention. Otherwise emit one concise no-action cycle result without messaging or interrupting the parent.
+- Reconcile every terminal task associated with the observed Coordinator campaign. Retain provider, claim, worktree, delivery-branch, cleanup-branch, source-branch, notification, preservation, archival, and current scoped archive-pause evidence for each task.
+- Send exactly one aggregate parent alert for all actionable terminal anomalies. An acknowledged unchanged evidence-backed preserved source branch does not alert again, but its independently removable clean worktree remains actionable.
 - Retain a concise per-item reconciliation result for every Blocked item even when only actionable results are included in the single parent alert.
 - Declare a backlog blockage when five active items are Blocked, every active item is Blocked, three Blocked items share one preventing cause, or actionable delivery has made no completion, abandonment, delivery-commit, or passing-focused-test progress for sixty minutes.
 
@@ -50,8 +52,10 @@ Operate explicitly as the dedicated read-only Dev Backlog Watchdog Role, observi
 4. Reconcile every Blocked item against its exact blocker, blocker and next-action owner, unblock condition, dependencies, candidate, review and verification evidence, canonical runtime execution state, Git state, and applicable live claims. Alert for satisfied dependency or unblock evidence, agent-actionable recovery, exhausted correction attempts without a current disposition, stale or contradictory lifecycle evidence, or an incorrect next-action owner. Treat a missing, vague, malformed, expired, consumed, or lifecycle-inconsistent disposition receipt as actionable.
 5. For a failed, stopped, or missing canonical execution, report the portable reconciliation trigger without choosing or mutating its lifecycle result.
 6. When coordinate-codex-tasks is active, report conversation-title drift against its Conversation Title Contract while stating that title drift does not determine lifecycle or active capacity.
-7. Preserve the observed state unchanged and report either one concise no-action cycle result or one alert naming the affected provider identity or task, exact observed evidence, reason attention is required, and smallest recommended Coordinator action.
-8. After a blockage declaration, apply the Watchdog Behavior from resolve-backlog-blockage. Stop routine capacity, dispatch, inactivity, and repeated blocker alerts until its exit conditions pass. Report the same active blockage state once without restarting recovery or changing dispatch mode.
+7. For each terminal Codex task, observe whether code is merged and every ordinary terminal gate passes. Treat archival as required by default. Accept an archival pause only from explicit current user direction for exact named task archival with recorded scope, evidence, and acknowledgement. Never infer or inherit a campaign-wide pause.
+8. Treat a valid archive pause as suppressing only its named Codex task archival. Continue to alert for provider closeout, claims, worktree or branch cleanup, notifications, changed preservation evidence, and all other terminal actions.
+9. Preserve the observed state unchanged and report either one concise no-action cycle result or one aggregate alert naming every affected provider identity or task, its exact observed evidence, why attention is required, and its smallest recommended Coordinator action.
+10. After a blockage declaration, apply the Watchdog Behavior from resolve-backlog-blockage. Stop routine capacity, dispatch, inactivity, and repeated blocker alerts until its exit conditions pass. Report the same active blockage state once without restarting recovery or changing dispatch mode.
 
 ## Failure Handling
 
@@ -60,8 +64,8 @@ Operate explicitly as the dedicated read-only Dev Backlog Watchdog Role, observi
 
 ## Completion
 
-- Return NO_ACTION only after one complete cycle finds no actionable condition and records one concise healthy-cycle result without notifying the parent, confirms every active item has valid evidence, and retains every Blocked per-item reconciliation result. When coordinate-codex-tasks is active, also confirm its conversation title is synchronized.
-- Return ALERT only after one complete cycle finds an actionable condition and sends exactly one evidence-backed parent alert with the smallest recommended Coordinator action.
+- Return NO_ACTION only after one complete cycle finds no actionable condition and records one concise healthy-cycle result without notifying the parent, confirms every active item has valid evidence, and retains every Blocked per-item reconciliation result. Confirm every terminal campaign task has complete acknowledged provider, claim, worktree, branch, notification, preservation, and archival reconciliation. When coordinate-codex-tasks is active, also confirm its conversation title is synchronized and any valid named-task archive pause is current and acknowledged.
+- Return ALERT only after one complete cycle finds an actionable condition and sends exactly one evidence-backed parent alert with the smallest recommended Coordinator action for every anomaly.
 
 Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, manage-work-items, coordinate-work-items.
 

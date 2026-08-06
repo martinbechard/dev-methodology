@@ -286,12 +286,19 @@ The Watchdog reads provider inventory, Git state, runtime evidence, and applicab
 - every Blocked item's blocker, unblock condition, owner, dependencies, candidate, review and verification, runtime and Git state, claims, attempts, and disposition
 - accepted work stranded before Commit delivery
 - READY Commit delivery awaiting provider closeout
-- terminal work awaiting cleanup
+- every terminal task associated with the observed Coordinator campaign
+- terminal provider evidence, live and released claims, worktree disposition, delivery and cleanup branch disposition, source-branch disposition, unresolved notifications, and runtime archival state
 - stale, unsafe, or unnecessarily broad claims when agent-claim is loaded
+
+Reconcile each terminal task independently, even after one actionable anomaly is found. Retain its exact provider, task, claim, worktree, branch, notification, preservation, archival, and next-action evidence in the cycle result.
+
+A source branch may remain deliberately preserved only when current evidence proves that it is non-ancestral or non-equivalent. Retain that evidence-backed disposition without another alert after the Coordinator acknowledges the same evidence and required action. Alert again when the evidence or required action changes. A preserved source branch never suppresses an independently authorized alert to remove its clean terminal worktree.
+
+When a runtime mapping supports task archival, an archival pause may suppress only archival for the exact named runtime tasks validated by that mapping. It never suppresses provider closeout, claim reconciliation, worktree cleanup, delivery-branch cleanup, source-branch cleanup, notification, or another terminal action.
 
 The Watchdog is read-only. It must not change repository files, provider records, lifecycle state, claims, runtime state, branches, worktrees, or shared resources. It must not schedule work, integrate changes, perform cleanup, or run expensive or live verification.
 
-Notify the coordinator only when action is required. Identify the affected provider identity or provider-none execution, observed evidence, reason attention is required, and smallest recommended action. Treat quiet work as healthy only while its current evidence remains valid. When no intervention is needed, emit one concise no-action cycle result without messaging the parent. If the Watchdog is unavailable, the parent performs the review directly and does not create a replacement ledger.
+Notify the Coordinator only when action is required. Send exactly one aggregate parent alert that identifies every actionable item, its observed evidence, why attention is required, and its smallest recommended action. Treat quiet work as healthy only while its current evidence remains valid. NO_ACTION is valid only after every terminal task has complete acknowledged provider, claim, worktree, branch, notification, preservation, and archival reconciliation. If the Watchdog is unavailable, the parent performs the review directly and does not create a replacement ledger.
 
 ## User Decisions And Terminal State
 

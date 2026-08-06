@@ -37,6 +37,12 @@ instructions:
   - Emit one actionable parent alert only when current evidence supports attention.
     Otherwise emit one concise no-action cycle result without messaging or interrupting
     the parent.
+  - Reconcile every terminal task associated with the observed Coordinator campaign.
+    Retain provider, claim, worktree, delivery-branch, cleanup-branch, source-branch,
+    notification, preservation, archival, and current scoped archive-pause evidence for each task.
+  - Send exactly one aggregate parent alert for all actionable terminal anomalies.
+    An acknowledged unchanged evidence-backed preserved source branch does not alert again,
+    but its independently removable clean worktree remains actionable.
   - Retain a concise per-item reconciliation result for every Blocked item even when
     only actionable results are included in the single parent alert.
   - Declare a backlog blockage when five active items are Blocked, every active item
@@ -68,9 +74,16 @@ instructions:
   - When coordinate-codex-tasks is active, report conversation-title drift against its
     Conversation Title Contract while stating that title drift does not determine lifecycle
     or active capacity.
+  - For each terminal Codex task, observe whether code is merged and every ordinary
+    terminal gate passes. Treat archival as required by default. Accept an archival pause
+    only from explicit current user direction for exact named task archival with recorded
+    scope, evidence, and acknowledgement. Never infer or inherit a campaign-wide pause.
+  - Treat a valid archive pause as suppressing only its named Codex task archival.
+    Continue to alert for provider closeout, claims, worktree or branch cleanup,
+    notifications, changed preservation evidence, and all other terminal actions.
   - Preserve the observed state unchanged and report either one concise no-action cycle
-    result or one alert naming the affected provider identity or task, exact observed
-    evidence, reason attention is required, and smallest recommended Coordinator action.
+    result or one aggregate alert naming every affected provider identity or task, its exact
+    observed evidence, why attention is required, and its smallest recommended Coordinator action.
   - After a blockage declaration, apply the Watchdog Behavior from
     resolve-backlog-blockage. Stop routine capacity, dispatch, inactivity, and repeated
     blocker alerts until its exit conditions pass. Report the same active blockage state
@@ -85,9 +98,13 @@ instructions:
   - Return NO_ACTION only after one complete cycle finds no actionable condition and
     records one concise healthy-cycle result without notifying the parent, confirms every
     active item has valid evidence, and retains every Blocked per-item reconciliation result.
-    When coordinate-codex-tasks is active, also confirm its conversation title is synchronized.
+    Confirm every terminal campaign task has complete acknowledged provider, claim,
+    worktree, branch, notification, preservation, and archival reconciliation. When
+    coordinate-codex-tasks is active, also confirm its conversation title is synchronized
+    and any valid named-task archive pause is current and acknowledged.
   - Return ALERT only after one complete cycle finds an actionable condition and sends
-    exactly one evidence-backed parent alert with the smallest recommended Coordinator action.
+    exactly one evidence-backed parent alert with the smallest recommended Coordinator
+    action for every anomaly.
 modelProfile: simple
 contextBudgetPercent: 50
 examples:
@@ -157,7 +174,7 @@ outputContract:
       correction-attempt history, current structured disposition receipt, and actionable
       reason without choosing a lifecycle outcome.
 - actionable parent alert:
-    purpose: Gives the parent the affected provider identity or task, observed evidence,
-      reason attention is required, and smallest recommended Coordinator action without
-      selecting or mutating lifecycle state.
+    purpose: Gives the parent every actionable provider identity or task, observed evidence,
+      reason attention is required, and smallest recommended Coordinator action in one
+      aggregate alert without selecting or mutating lifecycle state.
 isolation: read-only

@@ -1849,6 +1849,90 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("coordinate-work-items", generated_text)
                 self.assertIn("coordinate-codex-tasks", generated_text)
 
+    def test_watchdog_requires_complete_terminal_task_reconciliation(self) -> None:
+        """The bundle keeps terminal reconciliation complete, scoped, and read-only."""
+
+        coordination_text = (
+            SKILLS_ROOT / "coordinate-work-items" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        codex_text = (
+            SKILLS_ROOT / "coordinate-codex-tasks" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        watchdog = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-backlog-watchdog.role.yaml"
+        )
+        watchdog_text = json.dumps(watchdog, sort_keys=True)
+        scenarios = load_yaml_object(
+            AGENT_TEST_SUITES_ROOT / "dev-backlog-watchdog" / "scenarios.yaml"
+        )
+        scenario_ids = {scenario["id"] for scenario in scenarios["scenarios"]}
+        lifecycle_text = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        ).read_text(encoding="utf-8")
+
+        for clause in (
+            "Reconcile each terminal task independently, even after one actionable anomaly is found.",
+            "A preserved source branch never suppresses an independently authorized alert to remove its clean terminal worktree.",
+            "NO_ACTION is valid only after every terminal task has complete acknowledged provider, claim, worktree, branch, notification, preservation, and archival reconciliation.",
+        ):
+            with self.subTest(portable_clause=clause):
+                self.assertIn(clause, coordination_text)
+        for clause in (
+            "Task archival is mandatory by default after code is merged",
+            "Do not infer, inherit, carry forward, or persist a campaign-wide pause from earlier conversation.",
+            "A valid pause suppresses archival only for its named tasks.",
+        ):
+            with self.subTest(codex_clause=clause):
+                self.assertIn(clause, codex_text)
+        self.assertNotIn("Respect any user pause on archival.", codex_text)
+        self.assertIn("Send exactly one aggregate parent alert", watchdog_text)
+        self.assertIn("Never infer or inherit a campaign-wide pause", watchdog_text)
+        self.assertIn(
+            "Task archival is mandatory by default after code is merged",
+            SKILL_DEFINITIONS_PATH.read_text(encoding="utf-8"),
+        )
+        for generated_path in (
+            ROLE_DEFINITIONS_PATH,
+            GENERATED_ADAPTERS_ROOT
+            / "claude"
+            / "agents"
+            / "dev-backlog-watchdog.md",
+            GENERATED_ADAPTERS_ROOT
+            / "codex"
+            / "agents"
+            / "dev-backlog-watchdog.toml",
+            GENERATED_ADAPTERS_ROOT
+            / "gemini"
+            / "agents"
+            / "dev-backlog-watchdog.md",
+            GENERATED_ADAPTERS_ROOT
+            / "junie"
+            / "agents"
+            / "dev-backlog-watchdog.md",
+        ):
+            with self.subTest(generated_path=generated_path):
+                generated_text = generated_path.read_text(encoding="utf-8")
+                self.assertIn(
+                    "Reconcile every terminal task associated with the observed Coordinator campaign",
+                    generated_text,
+                )
+                self.assertIn("Send exactly one aggregate parent alert", generated_text)
+        self.assertTrue(
+            {
+                "terminal-archive-pause-does-not-pause-cleanup",
+                "terminal-default-archival-notification",
+                "terminal-preserved-branch-removable-worktree",
+                "terminal-aggregate-all-anomalies",
+                "terminal-complete-no-action",
+                "terminal-preservation-alert-deduplication",
+            }
+            <= scenario_ids
+        )
+        self.assertIn(
+            "A valid named-task archival pause suppresses no other terminal action.",
+            lifecycle_text,
+        )
+
     def test_redundant_root_manuals_are_removed(self) -> None:
         for file_name in REMOVED_ROOT_FILES:
             with self.subTest(file_name=file_name):

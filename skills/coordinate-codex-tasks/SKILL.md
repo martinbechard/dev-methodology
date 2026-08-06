@@ -74,7 +74,7 @@ Treat a task-creation error, timeout, disconnect, or ambiguous response as an am
 - creation time
 - task and conversation state
 
-If exactly one match exists, adopt it as the canonical task. If multiple matches exist, preserve one canonical task, stop every duplicate before mutation, and verify that no unique work is lost. Respect any user pause on archival. A launch failure leaves the portable provider record in Starting for Watchdog and Coordinator recovery.
+If exactly one match exists, adopt it as the canonical task. If multiple matches exist, preserve one canonical task, stop every duplicate before mutation, and verify that no unique work is lost. Do not infer, inherit, carry forward, or persist an archival pause from another conversation, task, or earlier campaign direction. A launch failure leaves the portable provider record in Starting for Watchdog and Coordinator recovery.
 
 Map Codex task states into portable evidence without inventing lifecycle. A running Codex process can support active-root-execution evidence. A running child can support delegated-work evidence. An idle, completed, failed, interrupted, or missing task requires portable reconciliation and cannot choose a provider transition by itself.
 
@@ -93,9 +93,9 @@ When coordinate-work-items permits a dedicated read-only Watchdog, create one Co
 ```text
 Act as the dedicated read-only Dev Methodology backlog watchdog for parent task {parent_task_id} in {repository_root}.
 
-Apply skills/coordinate-work-items/SKILL.md for portable active-execution, capacity, lifecycle-reconciliation, Blocked, Stalled, and read-only Watchdog criteria. Apply skills/coordinate-codex-tasks/SKILL.md only for Codex task identity, conversation-title observation, follow-up, and archival mapping. On each cycle, read the selected provider inventory, Git state, configured resource-coordination state when enabled, and Codex runtime state. Evaluate Starting reconciliation, Running Active Execution Evidence, phase age, estimates, hard stops, evidence progress, Blocked and Stalled exit conditions, accepted work stranded before Commit delivery, READY delivery awaiting provider closeout, terminal cleanup anomalies, and unsafe, stale, or broad shared ownership.
+Apply skills/coordinate-work-items/SKILL.md for portable active-execution, capacity, lifecycle-reconciliation, Blocked, Stalled, and read-only Watchdog criteria. Apply skills/coordinate-codex-tasks/SKILL.md only for Codex task identity, conversation-title observation, follow-up, and archival mapping. On each cycle, read the selected provider inventory, Git state, configured resource-coordination state when enabled, and Codex runtime state. Evaluate Starting reconciliation, Running Active Execution Evidence, phase age, estimates, hard stops, evidence progress, Blocked and Stalled exit conditions, accepted work stranded before Commit delivery, READY delivery awaiting provider closeout, every terminal Codex task in this Coordinator campaign, complete provider, claim, worktree, branch, notification, preservation, archival, and current scoped archive-pause evidence, and unsafe, stale, or broad shared ownership.
 
-Remain strictly read-only. Do not mutate repository files, provider lifecycle, claims, tasks, branches, worktrees, or shared resources. Do not dispatch, integrate, clean up, or run expensive or live verification. Notify parent task {parent_task_id} only when an actionable condition exists, with exact evidence and the smallest recommended Coordinator action. When healthy, record only one concise no-action cycle result here.
+Remain strictly read-only. Do not mutate repository files, provider lifecycle, claims, tasks, branches, worktrees, or shared resources. Do not dispatch, integrate, clean up, archive, or run expensive or live verification. Notify parent task {parent_task_id} only when an actionable condition exists. Send exactly one aggregate alert containing every actionable anomaly, its exact evidence, and its smallest recommended Coordinator action. When healthy, record only one concise no-action cycle result here.
 ```
 
 ### Canonical Heartbeat Prompt Template
@@ -112,8 +112,10 @@ If the Watchdog task is unavailable, the parent performs the portable review dir
 
 ## Task Archival
 
-Archive a terminal Codex task only after coordinate-work-items confirms terminal provider or task-local disposition, accepted delivery evidence, cleanup eligibility, safe branch and worktree disposition, and no unresolved notification remains.
+Task archival is mandatory by default after code is merged and coordinate-work-items confirms terminal provider or task-local disposition, accepted delivery evidence, claim reconciliation, safe branch and worktree disposition, preservation acknowledgement, and no unresolved notification remains.
 
-Before archival, verify the terminal conversation title and preserve the canonical task identity with the terminal handoff. If archival fails or the runtime does not support it, record the limitation and do not report archival success. An idle, stopped, titled, or archived Codex task proves none of those facts.
+An archival pause is valid only when explicit current user direction names the exact Codex task, limits its scope to Codex task archival, records the exact direction and scope as evidence, and has a recorded acknowledgement. Do not infer, inherit, carry forward, or persist a campaign-wide pause from earlier conversation. A valid pause suppresses archival only for its named tasks. It never suppresses provider closeout, claim reconciliation, worktree cleanup, delivery-branch cleanup, source-branch cleanup, notification, or another terminal reconciliation action.
+
+Before archival, verify the terminal conversation title and preserve the canonical task identity with the terminal handoff. If no valid current named-task pause exists, archive the task after every ordinary gate passes. If archival fails or the runtime does not support it, record the limitation and do not report archival success. An idle, stopped, titled, or archived Codex task proves none of those facts.
 
 Task archival is a runtime cleanup mapping. It does not close a provider record, prove Commit delivery, release a claim, delete a worktree, or delete a branch.
