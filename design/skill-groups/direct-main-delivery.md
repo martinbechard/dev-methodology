@@ -66,14 +66,14 @@ classDiagram
         +deliver-work-item(acceptedCommit)
     }
 
-    DevOrchestrator --> DeliverWorkItem
+    DevOrchestrator o--> DeliverWorkItem
     ProjectSpecificDirectives o..> deliver-work-item-direct-main : when Commit is direct-main
     ProjectSpecificDirectives o..> deliver-work-item-feature-branch : when Commit is feature-branch
     deliver-work-item-direct-main ..|> DeliverWorkItem
     deliver-work-item-feature-branch ..|> DeliverWorkItem
 ```
 
-The harness loads AGENTS.md without an Agent-to-AGENTS.md dependency. The diagram therefore shows the consumer’s procedure dependency and project routing separately.
+The harness loads AGENTS.md without an Agent-to-AGENTS.md dependency. The diagram therefore shows the consumer’s exact Interface Skill dependency and project routing separately.
 
 ### Scenario: Delivering Directly To Main
 

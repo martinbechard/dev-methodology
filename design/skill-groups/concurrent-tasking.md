@@ -317,10 +317,10 @@ classDiagram
         +transition-work-item(workItem, transition)
     }
 
-    DevBacklogCoordinator ..> ManageWorkItem : when it coordinates provider lifecycle
-    DevOrchestrator ..> ManageWorkItem : when it updates provider lifecycle
-    DevBacklogSteward ..> ManageWorkItem : when provider-wide maintenance runs
-    DevBacklogWatchdog ..> ManageWorkItem : when it observes a provider-backed queue
+    DevBacklogCoordinator o--> ManageWorkItem
+    DevOrchestrator o--> ManageWorkItem
+    DevBacklogSteward o--> ManageWorkItem
+    DevBacklogWatchdog o--> ManageWorkItem
     coordinate-codex-work-items ..> ManageWorkItem : when a Persistence provider is selected
     project-specific-directives o..> manage-work-items-file : when Persistence is file
     project-specific-directives o..> manage-work-items-github : when Persistence is github
@@ -481,7 +481,7 @@ classDiagram
         +verification()
     }
 
-    DevOrchestrator ..> DeliverWorkItem : when accepted work must be delivered
+    DevOrchestrator o--> DeliverWorkItem
     coordinate-codex-work-items ..> DeliverWorkItem : when a coordinated item reaches delivery
     project-specific-directives o..> deliver-work-item-feature-branch : when Commit is feature-branch
     project-specific-directives o..> deliver-work-item-direct-main : when Commit is direct-main

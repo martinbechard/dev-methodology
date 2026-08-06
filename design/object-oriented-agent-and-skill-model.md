@@ -275,14 +275,14 @@ Realization describes conformance, not loading. The arrow does not mean that one
 
 ### 2.7 Skill Providers Using A Factory Pattern
 
-A Provider Skill is a SKILL.md that supplies one implementation of an Interface Skill. When a project must choose one provider without putting that provider’s name into the Agent definition, AGENTS.md can act as a factory. The Agent consumes the Interface Skill directly, while the AGENTS.md factory selects and loads one Provider Skill by exact name.
+A Provider Skill is a SKILL.md that realizes a shared Skill interface. When an exact Interface Skill package publishes that contract, consumers can load it directly; when the contract remains analysis-only, consumers depend on its public procedures. In both cases, AGENTS.md can act as a factory that selects and loads one Provider Skill by exact name without putting that provider’s name into the consumer definition.
 
 - **RULE: RULE-62** A factory-pattern consumer depends on the shared interface contract
   - **SYNOPSIS:** The consumer loads the exact Interface Skill when that package exists. For an analysis-only Skill interface, the consumer depends on its public procedures without claiming an exact skill load. Neither case names a provider.
   - **EXAMPLE:** Work Item Manager loads the exact manage-work-items Interface Skill and requests transition-work-item() without knowing whether files or GitLab store the work item.
 
 - **RULE: RULE-63** AGENTS.md acts as the provider factory
-  - **SYNOPSIS:** Project guidance selects one Provider Skill by exact name, and that provider realizes the Interface Skill consumed by the Agent.
+  - **SYNOPSIS:** Project guidance selects one Provider Skill by exact name, and that provider realizes the shared Skill interface. When an exact Interface Skill publishes the contract, the consumer can load that package separately.
   - **EXAMPLE:** One AGENTS.md can select manage-work-items-gitlab while another selects manage-work-items-file; Work Item Manager continues to consume manage-work-items.
 
 ```mermaid
@@ -889,7 +889,7 @@ The glossary defines the relationship and diagram terms used by the analysis aft
 | Skill interface | A shared contract containing public data members, function members, or both. It can exist only as analysis vocabulary. | agent-claim-* describes the public claim-helper procedures without naming a loadable wildcard package. |
 | Interface Skill | An exact loadable kebab-case skill package that publishes a Skill interface. Its provider-family label appends a terminal wildcard, but its directory and frontmatter identity do not contain that wildcard. | manage-work-items is the exact package identity and manage-work-items-* is its family label. |
 | Skill realization | A dashed line with a hollow triangular arrowhead from a Provider Skill to a Skill interface. It means that the provider supplies the interface functions and provides or respects its public data; it does not mean that either skill loads the other. | manage-work-items-gitlab ..\|> manage-work-items. |
-| Provider Skill | A SKILL.md whose exact name extends the complete Interface Skill identity with one provider suffix and supplies that interface contract. | manage-work-items-gitlab supplies the GitLab implementation of manage-work-items-*. |
+| Provider Skill | A SKILL.md whose exact name extends the complete interface identity with one provider suffix and realizes the shared Skill interface, whether or not a separate Interface Skill package publishes it. | manage-work-items-gitlab supplies the GitLab implementation of manage-work-items-*, while agent-claim-command realizes the analysis-only agent-claim-* helper contract. |
 | AGENTS.md factory | Project guidance that selects one Provider Skill by exact name while the consumer depends on an exact Interface Skill or its public procedures. The factory analogy describes instruction selection, not runtime object construction. | Project-specific directives route transition-work-item to manage-work-items-gitlab for a consumer of manage-work-items. |
 | Polymorphism | The object-oriented analogy in which one interface expectation can be supplied by different skill implementations without changing the invoker. It does not assert runtime language dispatch. | transition-work-item() can be supplied by a file-backed or GitLab-backed work-item skill. |
 | Procedure name | The name that identifies the operation an invoker needs. | transition-work-item. |

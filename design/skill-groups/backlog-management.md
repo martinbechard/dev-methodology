@@ -188,10 +188,10 @@ classDiagram
         +transition-work-item(workItem, transition)
     }
 
-    DevBacklogCoordinator ..> ManageWorkItem : when a Persistence provider is selected
-    DevBacklogSteward ..> ManageWorkItem : when a Persistence provider is selected
-    DevBacklogWatchdog ..> ManageWorkItem : when a Persistence provider is selected
-    DevOrchestrator ..> ManageWorkItem : when a Persistence provider is selected
+    DevBacklogCoordinator o--> ManageWorkItem
+    DevBacklogSteward o--> ManageWorkItem
+    DevBacklogWatchdog o--> ManageWorkItem
+    DevOrchestrator o--> ManageWorkItem
     coordinate-codex-work-items ..> ManageWorkItem : when a Persistence provider is selected
 
     ProjectSpecificDirectives o..> manage-work-items-file : when Persistence is file
