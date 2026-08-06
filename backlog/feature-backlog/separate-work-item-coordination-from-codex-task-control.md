@@ -1,6 +1,6 @@
 # Separate Work-Item Coordination From Codex Task Control
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
