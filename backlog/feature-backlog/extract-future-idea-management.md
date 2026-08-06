@@ -115,19 +115,19 @@ Provider Operation Evidence: Work Item ID update claim extract-future-idea-manag
 
 Condition Type: delegated-work.
 
-Owner: Fresh reviewers /root/review_future_ideas_candidate and /root/review_future_ideas_methodology under canonical root 019fd5b5-aca7-7cb1-9ae0-010ac945c985.
+Owner: /root/implement_future_ideas_split under canonical root 019fd5b5-aca7-7cb1-9ae0-010ac945c985.
 
-Evidence: Clean candidate 20129c822f0ce78fe46a0aeaaa6e7b719d841dc6 committed at 2026-08-06T06:56:08Z. Dev Code Reviewer and Methodology Artifact Reviewer are currently running read-only fresh-context gates. Required title: Reviewing — Extract Future Idea Management. Work-claim heartbeat: 2026-08-06T06:57:25.883276Z. Strict handoff release event: caf9f49d-8744-4109-adb6-4c2e3ab7e2b5.
+Evidence: Both fresh reviewers returned NEEDS_CORRECTION on candidate 20129c822f0ce78fe46a0aeaaa6e7b719d841dc6. The original producer is actively correcting approved-scope findings: post-claim drift revalidation/zero mutation, steward scope/routing, generated evaluation docs, and approved evaluation coverage. Required title: Implementing — Extract Future Idea Management. Work-claim heartbeat: 2026-08-06T07:09:10.243888Z. Strict handoff release event: 8a49f491-1ba2-48ed-bf15-808d57a9b487.
 
-Observed At: 2026-08-06T06:58:08Z.
+Observed At: 2026-08-06T07:10:18Z.
 
 Started At: 2026-08-06T06:17:25Z.
 
-Deadline or Expires At: 2026-08-06T08:58:08Z.
+Deadline or Expires At: 2026-08-06T09:10:18Z.
 
-Next Action: Collect both fresh verdicts; route any correction to the original coder or, if both pass, dispatch the independent focused verifier.
+Next Action: Wait for the producer to return a clean replacement candidate, then repeat fresh code and methodology reviews.
 
-Next Reconciliation At: 2026-08-06T07:13:08Z.
+Next Reconciliation At: 2026-08-06T07:25:18Z.
 
 ## Verification
 
