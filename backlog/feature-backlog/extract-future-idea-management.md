@@ -129,17 +129,17 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator 019fd5b5-aca7-7cb1-9ae0-010ac945c985.
 
-Evidence: Direct unblock repair 46b92c842693bb96b5e756632a8df35b241511bc was reviewed and verified. The canonical root is actively accepting the exact approved resumption. User approval and manifest expansion are durable in Ready commit d9e76dfb and Starting commit e37e082a. Reviewed candidate d97a44b87b31b6e0d2c75ec3b7ce315cc70715d3 received fresh code and methodology review NEEDS_CORRECTION, with no blocker or User Action Required because all fixes fit approved paths. Required corrections are to revert the unapproved contract_harness change, implement atomic two-path acquire, use reciprocal Work Item IDs, provide a runner-safe fixture-backed scenario without new fixture paths, and add actual failure-boundary behavior in approved test_contract.py. Work heartbeat event: 9198661c-f22a-4729-9595-ad0cb24b74a7. Handoff event: 474e61e3-30b0-4a87-a5ca-947452342c1b. Required title: Implementing — Extract Future Idea Management.
+Evidence: Direct unblock repair 46b92c842693bb96b5e756632a8df35b241511bc was reviewed and verified. The canonical root is actively accepting the exact approved resumption. User approval and manifest expansion are durable in Ready commit d9e76dfb and Starting commit e37e082a. Replacement candidate a7e44d92372f86c376de574b2e81d19d7b699743 is clean. Eighteen focused steward tests, runner validation, and staging passed. Fresh code and methodology rereviews are currently active. Work heartbeat event: 06cee7bd-ef54-470d-9d03-7a6643c99298. Handoff event: 97aacc61-c620-4adf-8789-9f1be97fc442. Required title: Reviewing — Extract Future Idea Management.
 
-Observed At: 2026-08-06T13:02:42Z.
+Observed At: 2026-08-06T13:18:01Z.
 
 Started At: 2026-08-06T12:32:17Z.
 
 Deadline or Expires At: 2026-08-06T14:32:17Z.
 
-Next Action: Original coder produces a replacement candidate, then fresh rereview runs. Exclude all other definitions, broad suites, and frameworks.
+Next Action: Resolve both fresh rereview verdicts, then dispatch independent verification if approved. Exclude all other definitions, broad suites, and frameworks.
 
-Next Reconciliation At: 2026-08-06T13:17:42Z.
+Next Reconciliation At: 2026-08-06T13:33:01Z.
 
 ## User Action Required Transition — 2026-08-06T07:27:07Z
 
