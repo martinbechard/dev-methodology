@@ -113,21 +113,21 @@ Provider Operation Evidence: Work Item ID update claim extract-future-idea-manag
 
 ## Active Execution Evidence
 
-Condition Type: root-execution.
+Condition Type: delegated-work.
 
-Owner: Root Dev Orchestrator 019fd5b5-aca7-7cb1-9ae0-010ac945c985.
+Owner: Dev Coder child /root/implement_future_ideas_split under root task 019fd5b5-aca7-7cb1-9ae0-010ac945c985.
 
-Evidence: The canonical root task is executing this authorized provider transaction from the isolated worktree and branch against baseline/current-main-at-launch cc5574b798c0fab87fb5c9c6b3c6acd935030feb; the coordinator reservation is recorded by commit cd5878a187a4771e4f16ffdfca0bae890960e254.
+Evidence: The child is currently running in /Users/martinbechard/.codex/worktrees/e9e9/dev-methodology on codex/extract-future-idea-management; all 5 governed sources and approved dependents are implemented; 5 focused Python 3.11 contract tests are green; supported regeneration has run; focused validation and candidate commit are active. Work-claim heartbeat: 2026-08-06T06:43:02.021553Z. Strict handoff release event: 7fc7e4c9-1d6f-4727-9cd9-0b3a87ae6b9a.
 
-Observed At: 2026-08-06T06:17:25Z.
+Observed At: 2026-08-06T06:44:24Z.
 
 Started At: 2026-08-06T06:17:25Z.
 
-Deadline or Expires At: 2026-08-06T10:17:25Z.
+Deadline or Expires At: 2026-08-06T08:44:24Z.
 
-Next Action: Validate this provider record, commit only this provider file on primary main, then hand off the Work Item ID update claim and release the exact provider-path claim.
+Next Action: Finish focused skill/YAML/Future Ideas/report/template validation, freshness and diff checks, then produce the clean candidate commit for independent review.
 
-Next Reconciliation At: 2026-08-06T06:32:25Z.
+Next Reconciliation At: 2026-08-06T06:59:24Z.
 
 ## Verification
 
