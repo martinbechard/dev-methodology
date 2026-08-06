@@ -1,6 +1,6 @@
 # Store Agent Claim State In Gitignored Project Directory
 
-Status: Blocked
+Status: Ready
 
 Owner: Unowned
 
@@ -81,6 +81,12 @@ Blocker Owner: Dev Backlog Coordinator.
 Exact Unblock Condition: `claim-work-items-by-id-and-record-lifecycle-events` reaches a terminal successful disposition on current main, its implementation and provider claims are released, the legacy claim registry contains no live claims, and the new item can reconcile from that delivered claim contract without concurrent edits.
 
 Permitted Resumption Transition: Blocked -> Ready after the Coordinator validates the exact unblock condition.
+
+## Recovery History
+
+### Blocked -> Ready — 2026-08-05
+
+The Dev Backlog Coordinator validated the recorded unblock condition. Dependency Work Item ID claim-work-items-by-id-and-record-lifecycle-events reached its successful provider closure at commit 5650b569d726044a5254e43f01ee233707279472. Its direct-main delivery commit fd9467f81f524a002a7e28663c9387965d068860 is an ancestor of current main. The configured claim helper reported an empty registry and no live claims before this transition.
 
 ## Verification
 
