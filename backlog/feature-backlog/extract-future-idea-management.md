@@ -129,17 +129,17 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator 019fd5b5-aca7-7cb1-9ae0-010ac945c985.
 
-Evidence: Direct unblock repair 46b92c842693bb96b5e756632a8df35b241511bc was reviewed and verified. The canonical root is actively accepting the exact approved resumption. User approval and manifest expansion are durable in Ready commit d9e76dfb and Starting commit e37e082a. Final candidate 211f11e17e1a52e8ed8f43dce52e39ad95e50ba5 is clean with no implementation defect, blocker, or User Action Required. Decisive code and methodology reviews are APPROVED. The independent focused verifier reports all executable checks PASS but overall FAIL only because the required Agent Skill validator rejects linked-worktree paths; the gate will rerun on authoritative current main after integration. Work heartbeat event: 2299d87f-0040-4020-8fb6-357f59ebcbcf. Handoff event: 43f6d6da-6534-476b-8a66-5e961bf416fe. Required title: Integrating — Extract Future Idea Management.
+Evidence: Direct unblock repair 46b92c842693bb96b5e756632a8df35b241511bc was reviewed and verified. The canonical root is actively accepting the exact approved resumption. User approval and manifest expansion are durable in Ready commit d9e76dfb and Starting commit e37e082a. Final candidate 211f11e17e1a52e8ed8f43dce52e39ad95e50ba5 is integrated as main commit d4773c4436f2bfd6c7c90563c1f76ddfbf1ee122. Integration claims were released in events ae8b16a5-1143-467d-b6ad-a7b789d5af01 and 133880fe-62df-445b-8ffb-338a562997bc. Decisive reviews are APPROVED; pre-integration executable verification passed, with only the linked-worktree skill-validation gate remaining for authoritative-main rerun. No blocker or User Action Required. Work heartbeat event: 3447ce72-1a94-49c5-8e45-50bb88155a66. Handoff event: 4aa009c2-6e2b-4b59-8247-2d2de53c9d0c. Required title: Verifying — Extract Future Idea Management.
 
-Observed At: 2026-08-06T14:03:56Z.
+Observed At: 2026-08-06T14:18:46Z.
 
 Started At: 2026-08-06T12:32:17Z.
 
 Deadline or Expires At: 2026-08-06T14:32:17Z.
 
-Next Action: Perform final current-main integration with exact project-files and main-integration claims, then rerun skill validation and complete post-integration verification and review. Exclude all other definitions, broad suites, and frameworks.
+Next Action: Reacquire the exact activity=work claim, run independent post-integration verification and authoritative-main skill validation, then complete fresh post-integration reviews and terminal lifecycle. Exclude all other definitions, broad suites, and frameworks.
 
-Next Reconciliation At: 2026-08-06T14:18:56Z.
+Next Reconciliation At: 2026-08-06T14:28:46Z.
 
 ## User Action Required Transition — 2026-08-06T07:27:07Z
 
