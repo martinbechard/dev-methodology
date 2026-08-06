@@ -1,8 +1,6 @@
 # Store Agent Claim State In Gitignored Project Directory
 
-Status: Running
-
-Owner: Dev Orchestrator
+Status: User Action Required
 
 Type: Feature
 
@@ -52,23 +50,48 @@ Started At: 2026-08-06T00:08:47.470415Z.
 
 Claim Evidence: Exact-file claim record-running-store-agent-claim-state-019fd464 acquired with outcome SHARED_CHECKOUT_ACQUIRED and event 77d97076-c07f-46f8-9630-0471d0983784.
 
-## Active Execution Evidence
+## User Action Required
 
-Condition Type: owned-wait.
+### Question for the User
 
-Owner: Dev Orchestrator.
+Do you explicitly approve permanently overwriting only a verified-empty, exclusively locked Windows legacy `.git/agent-claims.json` with the exact tombstone marker, with migration stopping without mutation if any live claim exists?
 
-Evidence: Status remains Running for canonical task 019fd464-3875-75e2-aaa0-39a8e357d764 on branch codex/store-agent-claim-state in worktree /Users/martinbechard/.codex/worktrees/b146/dev-methodology. Preserved dev-methodology candidate d2744c62281b5fc2bfdabd0d95a72642aab2924e and external mcp-agent-ops candidate 660aef8be2cfc12926aef15c90250556760961a7 retain fresh independent review approval and verification PASS. Native Windows CI run 31068038651 isolated the remaining unit to retirement of the locked empty legacy registry. The user confirmed that the coordination context is ephemeral and should leave no claims, or only claims drained before migration, but the safety reviewer still rejected the production same-inode tombstone because that statement was not an explicit risk-aware approval to overwrite the verified-empty legacy registry bytes. No retirement implementation was applied; four red external regressions and one inert predicate remain uncommitted, both correction agents are paused, and no registry bytes or event history were changed. Provider commits 9a90a1da487794e5619f8cac0d38f9c614959b8e, bf82de39b24ff1eb781859048e13b74070717590, b2d4ae3ece8fc7aff3035db73f2d892bad08bcef, and b8f80c31eadeccbc140d40e2988d1ae2c8e6f76e, work-claim incarnations d7c4a99e-cc43-4f31-83f9-ee182252027b, 880f8773-f043-4592-83fc-4200652ba74d, 3bb4f520-7788-453d-9c57-6b08c8b5aed1, and 48b317e9-70f2-4dc8-9335-8c50fa9422f0, and all prior dispatch and Running history remain preserved.
+### Why User Input Is Required
 
-Observed At: 2026-08-06T03:53:58Z.
+Native Windows CI run 31068038651 proves that an open locked legacy registry cannot be unlinked. The narrow same-inode tombstone design avoids that unlink but permanently replaces the verified-empty legacy registry bytes. The execution safety gate requires direct risk-aware approval for that destructive boundary despite the earlier authorization to retire the disposable legacy state.
 
-Started At: 2026-08-06T00:08:47.470415Z.
+### Options and Tradeoffs
 
-Deadline: 2026-08-06T07:30:00Z.
+- Approve: resume the preserved correction at dev-methodology candidate d2744c62281b5fc2bfdabd0d95a72642aab2924e and external mcp-agent-ops candidate 660aef8be2cfc12926aef15c90250556760961a7, apply only the fail-closed empty-and-locked tombstone retirement, rerun fresh independent gates and native Windows CI, release mcp-agent-ops 0.6.0, and complete direct-main delivery.
+- Decline: preserve both candidates and leave the legacy registry retirement—and therefore this delivery—unfinished while a different Windows-safe design is selected.
 
-Next Action: Obtain one explicit risk-aware user approval to overwrite only a verified-empty exclusively locked Windows legacy registry with the exact tombstone marker, then resume the preserved correction, fresh independent gates, native Windows CI, mcp-agent-ops 0.6.0 release, and direct-main delivery.
+### Resolution
 
-Next Reconciliation At: 2026-08-06T04:08:00Z.
+Pending.
+
+### Unattended Work Boundary
+
+Do not retry or apply the retirement mutation, wake correction agents, run release gates, publish mcp-agent-ops 0.6.0, integrate to main, or close this item before the answer is recorded and the same canonical task resumes through User Action Required -> Ready -> Starting -> Running. Read-only inspection may continue; unrelated work remains independent.
+
+## User Action Required Transition Evidence
+
+Transition: Running -> User Action Required.
+
+Transitioned At: 2026-08-06T03:57:14Z.
+
+Decision Owner: Parent Coordinator 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Canonical Thread And Root Task: 019fd464-3875-75e2-aaa0-39a8e357d764; /root.
+
+Preserved Branch And Worktree: codex/store-agent-claim-state; /Users/martinbechard/.codex/worktrees/b146/dev-methodology.
+
+Preserved Candidate Evidence: dev-methodology d2744c62281b5fc2bfdabd0d95a72642aab2924e; external mcp-agent-ops 660aef8be2cfc12926aef15c90250556760961a7; fresh independent review approval and verification PASS remain preserved.
+
+Windows Evidence: Native CI run 31068038651 isolated the remaining failure to unlinking the locked empty legacy registry. No retirement implementation was applied; the fail-closed empty-and-locked boundary remains mandatory.
+
+Preserved Provider And Claim History: Provider commits 9a90a1da487794e5619f8cac0d38f9c614959b8e, bf82de39b24ff1eb781859048e13b74070717590, b2d4ae3ece8fc7aff3035db73f2d892bad08bcef, b8f80c31eadeccbc140d40e2988d1ae2c8e6f76e, and 694f5e3c2bbc34b3dbee377c021d00e701a4679e; work-claim incarnations d7c4a99e-cc43-4f31-83f9-ee182252027b, 880f8773-f043-4592-83fc-4200652ba74d, 3bb4f520-7788-453d-9c57-6b08c8b5aed1, and 48b317e9-70f2-4dc8-9335-8c50fa9422f0; all prior dispatch and Running evidence remain history.
+
+Next Action: Ask the exact question above, record the answer once in this canonical task or the parent Coordinator conversation, and perform no outcome work until lifecycle resumption is complete.
 
 ## Summary
 
