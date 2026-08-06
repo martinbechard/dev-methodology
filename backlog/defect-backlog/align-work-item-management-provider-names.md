@@ -176,16 +176,16 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator in task 019fd52f-7ec5-7bf1-9cbc-65032dd1af06.
 
-Evidence: Accepted candidate 2925eca30eb0310d7b2c85299167ff4abdf1b070 remains clean, same-reviewer APPROVED, and independently VERIFIED PASS on the declared focused and freshness gates. The ordered predecessor is Completed through delivery main commit ac560d5e and terminal provider closure 793d4303. The sole Merge Coordinator was interrupted once after it could not return prompt concrete progress; its exact branch codex/integrate-align-work-item-management-provider-names-019fd52f and worktree /private/tmp/align-work-item-management-provider-names-integration.019fd52f remain preserved at current-main base 793d4303 with non-conflicting candidate changes staged, 26 exact overlapping files unresolved, and no integration commit or integration checks yet. Recovery will resume that same coordinator and preserved state without launching a duplicate or repeating unchanged source tests.
+Evidence: Accepted candidate 2925eca30eb0310d7b2c85299167ff4abdf1b070 remains clean, same-reviewer APPROVED, and independently VERIFIED PASS on the declared focused and freshness gates. The ordered predecessor is Completed through delivery main commit ac560d5e and terminal provider closure 793d4303. The same sole Merge Coordinator resumed its preserved branch codex/integrate-align-work-item-management-provider-names-019fd52f and worktree /private/tmp/align-work-item-management-provider-names-integration.019fd52f at base 793d4303. Canonical-source conflict decisions are complete and the conflict-marker scan is clean across project configuration, roles, hand-maintained design, evaluations, scripts, and skills. Only supported generator-owned outputs remain to be regenerated and staged; no integration commit or integration checks have run yet. No duplicate coordinator was launched and unchanged source tests will not be repeated.
 
-Observed At: 2026-08-06T05:17:43Z.
+Observed At: 2026-08-06T05:29:17Z.
 
 Started At: 2026-08-06T03:49:41Z.
 
-Deadline or Expires At: 2026-08-06T05:32:43Z.
+Deadline or Expires At: 2026-08-06T05:44:17Z.
 
-Next Action: Commit this path-limited recovery evidence, reacquire the exact Work Item ID activity=work claim, resume the same Merge Coordinator in the preserved worktree, then run only the required combined review and integration-sensitive verification before direct-main delivery.
+Next Action: Commit this path-limited generation-phase evidence, reacquire the exact Work Item ID activity=work claim, let the same Merge Coordinator regenerate supported outputs, and then run only the required combined review and integration-sensitive verification before direct-main delivery.
 
-Next Reconciliation At: 2026-08-06T05:32:43Z.
+Next Reconciliation At: 2026-08-06T05:44:17Z.
 
 Conversation Title Evidence: The canonical conversation is Integrating — Align Work-Item Management Provider Names for the released integration phase.
