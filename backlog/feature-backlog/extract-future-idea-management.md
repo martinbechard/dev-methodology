@@ -1,8 +1,8 @@
 # Extract Future Idea Management
 
-Status: Starting
+Status: Running
 
-Owner: Unowned
+Owner: Root Dev Orchestrator 019fd5b5-aca7-7cb1-9ae0-010ac945c985
 
 ## User Action Required
 
@@ -125,21 +125,21 @@ Provider Operation Evidence: Work Item ID update claim extract-future-idea-manag
 
 ## Active Execution Evidence
 
-Condition Type: delegated-work.
+Condition Type: root-execution.
 
-Owner: /root/rereview_future_ideas_candidate and /root/rereview_future_ideas_methodology under canonical root 019fd5b5-aca7-7cb1-9ae0-010ac945c985.
+Owner: Root Dev Orchestrator 019fd5b5-aca7-7cb1-9ae0-010ac945c985.
 
-Evidence: Replacement candidate c94dc4fd674405f9c96c10c51c99ed24fcd767f3 is clean; the original confirmed findings are corrected. Fresh reviewers /root/rereview_future_ideas_candidate and /root/rereview_future_ideas_methodology are actively reviewing the full replacement diff. Required title: Reviewing — Extract Future Idea Management. Work-claim heartbeat: 2026-08-06T07:17:51.734453Z. Strict handoff release event: 62ec6073-774f-486f-b7bb-6525d4841909.
+Evidence: Direct unblock repair 46b92c842693bb96b5e756632a8df35b241511bc was reviewed and verified. The canonical root is actively accepting the exact approved resumption. User approval and manifest expansion are durable in Ready commit d9e76dfb and Starting commit e37e082a. Preserved clean candidate c94dc4fd674405f9c96c10c51c99ed24fcd767f3 will return to original producer /root/implement_future_ideas_split immediately after this transaction. Required title after success: Implementing — Extract Future Idea Management.
 
-Observed At: 2026-08-06T07:18:31Z.
+Observed At: 2026-08-06T12:32:17Z.
 
-Started At: 2026-08-06T06:17:25Z.
+Started At: 2026-08-06T12:32:17Z.
 
-Deadline or Expires At: 2026-08-06T09:18:31Z.
+Deadline or Expires At: 2026-08-06T14:32:17Z.
 
-Next Action: Collect both fresh rereview verdicts; if accepted, dispatch the independent focused verifier.
+Next Action: After release, root reacquires the exact activity=work claim; the original coder corrects exactly the approved suite-contract definition and four ordinary support files, then fresh rereview and focused verification proceed. Exclude all other definitions, broad suites, and frameworks.
 
-Next Reconciliation At: 2026-08-06T07:33:31Z.
+Next Reconciliation At: 2026-08-06T12:47:17Z.
 
 ## User Action Required Transition — 2026-08-06T07:27:07Z
 
