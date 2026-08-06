@@ -8,7 +8,9 @@ The applied-model conventions are defined in [Object-Oriented Skill Group Models
 
 ## Design
 
-The design shows direct Concurrent Tasking skills, the two nested groups, and the loading relationships that remain separate from containment. Resource coordination, claim-helper transport, Persistence management, and Commit delivery appear as abstract Skill interfaces; concrete selectable implementations appear as Provider Skills with separate AGENTS.md factories.
+The design shows direct Concurrent Tasking skills, the two nested groups, and the loading relationships that remain separate from containment. Resource coordination, claim-helper transport, Persistence management, and Commit delivery appear as abstract Skill interfaces, while concrete implementations appear as Provider Skills.
+
+This diagram uses the [simplified provider view](../object-oriented-agent-and-skill-model.md#simplified-view). The harness loads the project's single AGENTS.md automatically, so an Agent does not reference AGENTS.md and no Agent-to-AGENTS.md line is drawn. Unless a diagram explicitly shows another routing mechanism, AGENTS.md selects one Provider Skill for each project-selected interface; omitting that factory keeps this view focused on consumers, contracts, implementations, and group membership.
 
 ```mermaid
 classDiagram
@@ -71,15 +73,9 @@ classDiagram
     }
 
     class agent-claim-mcp {
-        <<Provider Skill>>
-        +read-claim-status()
-        +acquire-claim(scope)
-        +extend-claim(scope)
-        +extend-claim-deadline(claimId, duration, evidence)
-        +heartbeat-claim(claimId)
-        +release-claim(claimId)
-        +maintain-claim-journal()
-        +report-claim-contention()
+        <<SKILL.md>>
+        +current-availability
+        +work-item-result-contract
     }
 
     class integrate-agent-work {
@@ -128,12 +124,6 @@ classDiagram
         +coordinate-shared-resource(resourceManifest)
     }
 
-    class ResourceCoordinationFactory["Resource coordination selection"] {
-        <<AGENTS.md>>
-        <<routing>>
-        +route coordinate-shared-resource => selected provider
-    }
-
     class ClaimHelper["agent-claim-*"] {
         <<Skill interface>>
         +read-claim-status()
@@ -146,21 +136,9 @@ classDiagram
         +report-claim-contention()
     }
 
-    class ClaimHelperFactory["Claim helper selection"] {
-        <<AGENTS.md>>
-        <<routing>>
-        +route claim-helper-operation => selected provider
-    }
-
     class DeliverWorkItem["deliver-work-item-*"] {
         <<Skill interface>>
         +deliver-work-item(acceptedCommit)
-    }
-
-    class DeliverWorkItemFactory["Commit delivery selection"] {
-        <<AGENTS.md>>
-        <<routing>>
-        +route deliver-work-item => selected provider
     }
 
     ConcurrentTasking *-- coordinate-codex-work-items
@@ -180,37 +158,25 @@ classDiagram
     DevBacklogCoordinator o..> set-multitask-mode : when dispatch to secondary threads may resume
     DevOrchestrator o..> coordinate-codex-work-items : when the task is a coordinated Codex work-item conversation
     DevOrchestrator --> DeliverWorkItem
-    DevOrchestrator --> DeliverWorkItemFactory
     DevMergeCoordinator o--> integrate-agent-work
 
     coordinate-codex-work-items --> ManageWorkItem
     coordinate-codex-work-items --> ResourceCoordinationBinding
-    coordinate-codex-work-items --> ResourceCoordinationFactory
     coordinate-codex-work-items --> DeliverWorkItem
-    coordinate-codex-work-items --> DeliverWorkItemFactory
     coordinate-codex-work-items o..> agent-claim : when agent-claim is loaded
-    ResourceCoordinationFactory o--> agent-claim
     agent-claim ..|> ResourceCoordinationBinding
     agent-claim --> ClaimHelper
-    agent-claim --> ClaimHelperFactory
-    ClaimHelperFactory o--> agent-claim-command
     agent-claim-command ..|> ClaimHelper
-    agent-claim-mcp ..|> ClaimHelper
-    DeliverWorkItemFactory o--> deliver-work-item-feature-branch
     deliver-work-item-feature-branch ..|> DeliverWorkItem
 
     integrate-agent-work o--> agent-claim
     deliver-work-item-feature-branch o--> agent-claim
     deliver-work-item-feature-branch o..> create-pull-request : for GitHub pull-request publication
 
-    note for ManageWorkItem "Cross-group interface; its Persistence factory is shown in Backlog Management"
-    note for agent-claim-mcp "Unavailable implementation"
-    note for ResourceCoordinationFactory "One effective project selects one coordination provider"
-    note for ClaimHelperFactory "The current project selects the verified command helper"
-    note for DeliverWorkItemFactory "The feature-branch configuration selects this group provider"
+    note for ManageWorkItem "Cross-group interface; provider implementations are shown in Backlog Management"
 ```
 
-The four abstract Skill interface contracts keep consumer knowledge separate from provider choice. Persistence management uses the provider family defined in Backlog Management. Resource coordination selects agent-claim, the current claim-helper factory selects the verified command provider, and Commit delivery selects the feature-branch provider for this configuration. agent-claim-mcp remains an unavailable provider specification that realizes the helper contract but is not selectable until its helper is configured and verified. Realization records conformance; the open-diamond dependencies on agent-claim remain separate because the current coordinating, integration, and delivery skills also name that policy skill directly when it is loaded.
+The four abstract Skill interface contracts keep consumer knowledge separate from provider choice. Persistence management uses the provider family defined in Backlog Management. The automatically loaded AGENTS.md selects the configured resource-coordination provider, claim-helper transport, Persistence provider, and Commit provider without becoming an Agent dependency in the diagram. agent-claim-command realizes the current claim-helper interface. agent-claim-mcp remains a Resource Coordination member because it defines the required MCP result contract and provider-verification boundary, but it does not realize the helper interface while no verified MCP implementation exists. Realization records conformance; the open-diamond dependencies on agent-claim remain separate because the current coordinating, integration, and delivery skills also name that policy skill directly when it is loaded.
 
 set-solo-mode disables dispatch to secondary threads, while set-multitask-mode enables it. They belong to Concurrent Tasking because they control whether work is dispatched concurrently rather than how a backlog blockage is resolved.
 
@@ -227,7 +193,7 @@ The direct skills control coordinated execution and dispatch mode. The nested gr
 | Concurrent Tasking | set-multitask-mode | Set Multitask Mode | Enables dispatch to secondary threads after the sequential condition ends. |
 | Resource Coordination | agent-claim | Coordinate Shared Resource; Acquire Claim; Extend Claim; Extend Claim Deadline; Heartbeat Claim; Read Claim Status; Release Claim | Defines claim events, scope, conflicts, deadlines, and cleanup policy. |
 | Resource Coordination | agent-claim-command | Read Claim Status; Acquire Claim; Extend Claim; Extend Claim Deadline; Heartbeat Claim; Release Claim; Reset Claim Registry; Maintain Claim Journal; Report Claim Contention | Invokes the configured command claim helper without redefining claim policy. |
-| Resource Coordination | agent-claim-mcp | Read Claim Status; Acquire Claim; Extend Claim; Extend Claim Deadline; Heartbeat Claim; Release Claim; Maintain Claim Journal; Report Claim Contention | Describes the matching MCP helper interface and its current availability boundary. |
+| Resource Coordination | agent-claim-mcp | Read Claim Status; Acquire Claim; Extend Claim; Extend Claim Deadline; Heartbeat Claim; Release Claim; Maintain Claim Journal; Report Claim Contention | Describes the matching MCP helper contract and the verification required before an MCP provider can be selected. |
 | Feature Branch And Worktrees | integrate-agent-work | Merge Workflow; Verification | Integrates accepted work from branches, worktrees, or agents and reconciles it with current main. |
 | Feature Branch And Worktrees | deliver-work-item-feature-branch | Deliver Work Item; Candidate Publication; Review And Check Loop; Merge And Completion Gate | Publishes, reviews, corrects, and observes feature-branch delivery before lifecycle closure. |
 | Feature Branch And Worktrees | create-pull-request | Create Or Update Pull Request; Review Order | Creates or updates a provider-accurate pull request and preserves its review order. |
