@@ -162,16 +162,16 @@ Owner: Root Dev Orchestrator.
 
 Accepted Candidate Commit: ac8270d2570436738fd1b0b6bb2dbbedb690049a.
 
-Evidence: Root released work claim separate-claim-policy-work-019fd5b5-7 with disposition handoff. Both terminal independent verdicts are NEEDS_CORRECTION: code review NEEDS_CORRECTION and methodology review NEEDS_CORRECTION. Candidate ac8270d2570436738fd1b0b6bb2dbbedb690049a remains preserved and clean. Accepted findings, all routed to the original coder with none excluded, are: HIGH complete realizable per-operation input/outcome/result contract including report shape and no blanket claim_id; HIGH MCP availability validator/fixture must include extend-deadline/reset or truthfully remain unavailable; MEDIUM unify MCP release outcome RELEASED; MEDIUM exact parity matrix and tests; LOW skill-group prose totals 44 while its table sums 47. The canonical Root Dev Orchestrator remains on branch codex/separate-claim-policy-from-claim-helper-family in worktree /Users/martinbechard/.codex/worktrees/1bee/dev-methodology. Intended title: Implementing — Separate Claim Policy From Claim Helper Family.
+Evidence: Root released work claim separate-claim-policy-work-019fd5b5-8 with disposition handoff; coder paused with no command. The first RED/GREEN slice resolves findings 1-4 with five exact GREEN tests covering the operation/result matrix, MCP RELEASED, truthful fixture UNAVAILABLE/schema v4, and JSON report REPORT. Current correction paths are exactly the interface, both provider skills, command claim.py, helper/claim tests, evaluation validator/cases/TASK, README, Project Configurator role, bundle test, and skill-group model 44->47. Generators remain pending; estimate is 20-30 minutes. Candidate ac8270d2570436738fd1b0b6bb2dbbedb690049a remains preserved. The canonical Root Dev Orchestrator remains on branch codex/separate-claim-policy-from-claim-helper-family in worktree /Users/martinbechard/.codex/worktrees/1bee/dev-methodology. Intended title: Implementing — Separate Claim Policy From Claim Helper Family.
 
 Coordinator Scope Disposition: The seven paths scripts/agent_skill_evals/validation.py, scripts/test_role_mutation_policy.py, scripts/test_technology_detection.py, evals/agent-tests/dev-orchestrator/test_fixtures.py, evals/agent-tests/wiki-ingester/executable_harness.py, evals/projects/project-configuration-routing/TASK.md, and evals/projects/project-configuration-routing/available-skills.txt are ordinary non-governed support consumers already authorized by requirements and acceptance. Only minimal identity/path replacements are permitted. No User Action Required or lifecycle change, new approval, or broad suite is authorized.
 
-Observed At: 2026-08-06T07:07:15Z.
+Observed At: 2026-08-06T07:18:13Z.
 
 Started At: 2026-08-06T06:17:04Z.
 
-Deadline or Expires At: 2026-08-06T09:07:15Z.
+Deadline or Expires At: 2026-08-06T09:18:13Z.
 
 Next Action: Reacquire exact activity=work and return all confirmed review findings to the original Dev Coder for one bounded correction commit, then fresh code/methodology re-review and verification.
 
-Next Reconciliation At: 2026-08-06T07:19:15Z.
+Next Reconciliation At: 2026-08-06T07:30:13Z.
