@@ -256,7 +256,7 @@ Worktree: /Users/martinbechard/.codex/worktrees/1bee/dev-methodology.
 
 Candidate Chain: ac8270d2570436738fd1b0b6bb2dbbedb690049a -> 9501f48c6b0f6f52c8fad8eab3df92d524e26a38 -> 5fa7620a6471574d2bf84a12e541805780d4bac6.
 
-Phase: Focused Verification.
+Phase: Direct-Main Integration.
 
 Observed At: 2026-08-06T08:02:56Z.
 
@@ -317,3 +317,25 @@ Review Evidence: Fresh Dev Code Reviewer recovery_code_review returned ACCEPTED 
 Next Action: Reacquire exact activity=work and dispatch exactly one fresh focused Dev Verifier; integrate only after verifier acceptance.
 
 Next Reconciliation At: 2026-08-06T08:27:41Z.
+
+## Active Execution Evidence (Integration Checkpoint)
+
+Condition Type: root-execution.
+
+Owner: Root Dev Orchestrator.
+
+Canonical Task and Conversation: 019fd5b5-aca7-7cb1-9ae0-012fb84e13db.
+
+Accepted Candidate: b953b9fe31fe3cb256a68defcc634f66b3233532 (clean).
+
+Observed At: 2026-08-06T08:21:30Z.
+
+Started At: 2026-08-06T08:21:30Z.
+
+Deadline or Expires At: 2026-08-06T09:21:30Z.
+
+Verification Evidence: Fresh code and methodology reviews ACCEPTED. Fresh focused verifier recovery_focused_verifier returned PASS for four regression methods, five freshness checks, range diff hygiene, clean state, and mapping all three criteria. Broad, live, browser, and simulator suites were excluded as directed. Verification claim separate-claim-policy-recovery-verify-work-019fd5b5 was released RELEASED/handoff at event 29bb794a-48f1-4468-95f9-c1a17f3f838b.
+
+Next Action: Reacquire exact activity=work, obtain the final project-files integration claim, create a fresh integration branch from current main, apply only accepted candidate content/commits, run smallest integration-sensitive checks, and integrate to main.
+
+Next Reconciliation At: 2026-08-06T08:33:30Z.
