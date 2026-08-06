@@ -256,7 +256,7 @@ Worktree: /Users/martinbechard/.codex/worktrees/1bee/dev-methodology.
 
 Candidate Chain: ac8270d2570436738fd1b0b6bb2dbbedb690049a -> 9501f48c6b0f6f52c8fad8eab3df92d524e26a38 -> 5fa7620a6471574d2bf84a12e541805780d4bac6.
 
-Phase: Fresh Code and Methodology Review.
+Phase: Focused Verification.
 
 Observed At: 2026-08-06T08:02:56Z.
 
@@ -291,3 +291,29 @@ Evidence: The candidate branch is clean. Its exact seven paths and four focused 
 Next Action: Reacquire exact activity=work and dispatch exactly one fresh Dev Code Reviewer plus one fresh Methodology Artifact Reviewer; run a verifier only if both accept.
 
 Next Reconciliation At: 2026-08-06T08:22:06Z.
+
+## Active Execution Evidence (Verification Checkpoint)
+
+Condition Type: root-execution.
+
+Owner: Root Dev Orchestrator.
+
+Canonical Task and Conversation: 019fd5b5-aca7-7cb1-9ae0-012fb84e13db.
+
+Branch: codex/separate-claim-policy-from-claim-helper-family.
+
+Worktree: /Users/martinbechard/.codex/worktrees/1bee/dev-methodology.
+
+Accepted Candidate: b953b9fe31fe3cb256a68defcc634f66b3233532 (clean).
+
+Observed At: 2026-08-06T08:15:41Z.
+
+Started At: 2026-08-06T08:15:41Z.
+
+Deadline or Expires At: 2026-08-06T09:15:41Z.
+
+Review Evidence: Fresh Dev Code Reviewer recovery_code_review returned ACCEPTED with no findings. Fresh Methodology Artifact Reviewer recovery_methodology_review returned ACCEPTED with no findings. Both confirmed the three exact corrections, seven-path scope, focused tests, generated alignment, and no current-main overlap. Review work claim separate-claim-policy-recovery-review-work-019fd5b5 was released RELEASED/handoff at event a2254dde-b3e8-411f-b42d-73897d8013a2.
+
+Next Action: Reacquire exact activity=work and dispatch exactly one fresh focused Dev Verifier; integrate only after verifier acceptance.
+
+Next Reconciliation At: 2026-08-06T08:27:41Z.
