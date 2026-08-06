@@ -1,6 +1,6 @@
 # Add Deliver Work Item Interface Skill
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -97,3 +97,29 @@ Approved at creation on 2026-08-05 by the user's request to identify naming and 
 ## Notes
 
 This item may share provider, role, documentation, and generated-output paths with other queued work. Those overlaps must be coordinated at mutation and integration time; they are not hard prerequisites.
+
+## Current Starting Handoff Evidence
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Launch Reservation: One Root Dev Orchestrator task for this exact work item.
+
+Normalized Objective: Add the deliver-work-item interface skill.
+
+Dispatch Time: 2026-08-06T03:51:56Z.
+
+Intended Root Role: Root Dev Orchestrator.
+
+Launch Result: Not attempted.
+
+Canonical Conversation: None.
+
+Owner: Unowned pending the task's Starting -> Running transition.
+
+Last Contact: 2026-08-06T03:51:56Z; parent Coordinator recorded the reservation.
+
+Next Reconciliation: No later than 2026-08-06T04:06:56Z.
+
+Required Next Lifecycle Transition: The new task must directly record Starting -> Running, establish its exact Work Item ID activity=work claim, and then begin scoped implementation. Final reconciliation must preserve the provider-name work that reaches main first.
