@@ -129,17 +129,17 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator 019fd5b5-aca7-7cb1-9ae0-010ac945c985.
 
-Evidence: Direct unblock repair 46b92c842693bb96b5e756632a8df35b241511bc was reviewed and verified. The canonical root is actively accepting the exact approved resumption. User approval and manifest expansion are durable in Ready commit d9e76dfb and Starting commit e37e082a. Preserved clean candidate c94dc4fd674405f9c96c10c51c99ed24fcd767f3 remains in scope. Current work-claim heartbeat event: e874a622-5f65-4985-8f53-e5c3de15d0b9. Subsequent work-claim handoff: cae18b6a-c3e7-458d-8c45-fff2fcabfc46. The original coder is implementing exact source and destination claims, post-claim drift revalidation, genuine filesystem-backed inventory validation, executable fixture linkage, and aligned suite prompts/staging across the approved suite-contract and support paths. No blocker. Required title: Implementing — Extract Future Idea Management.
+Evidence: Direct unblock repair 46b92c842693bb96b5e756632a8df35b241511bc was reviewed and verified. The canonical root is actively accepting the exact approved resumption. User approval and manifest expansion are durable in Ready commit d9e76dfb and Starting commit e37e082a. Reviewed candidate d97a44b87b31b6e0d2c75ec3b7ce315cc70715d3 received fresh code and methodology review NEEDS_CORRECTION, with no blocker or User Action Required because all fixes fit approved paths. Required corrections are to revert the unapproved contract_harness change, implement atomic two-path acquire, use reciprocal Work Item IDs, provide a runner-safe fixture-backed scenario without new fixture paths, and add actual failure-boundary behavior in approved test_contract.py. Work heartbeat event: 9198661c-f22a-4729-9595-ad0cb24b74a7. Handoff event: 474e61e3-30b0-4a87-a5ca-947452342c1b. Required title: Implementing — Extract Future Idea Management.
 
-Observed At: 2026-08-06T12:47:29Z.
+Observed At: 2026-08-06T13:02:42Z.
 
 Started At: 2026-08-06T12:32:17Z.
 
 Deadline or Expires At: 2026-08-06T14:32:17Z.
 
-Next Action: Finish focused checks and produce a replacement candidate, then run fresh code and methodology reviews. Exclude all other definitions, broad suites, and frameworks.
+Next Action: Original coder produces a replacement candidate, then fresh rereview runs. Exclude all other definitions, broad suites, and frameworks.
 
-Next Reconciliation At: 2026-08-06T13:02:29Z.
+Next Reconciliation At: 2026-08-06T13:17:42Z.
 
 ## User Action Required Transition — 2026-08-06T07:27:07Z
 
