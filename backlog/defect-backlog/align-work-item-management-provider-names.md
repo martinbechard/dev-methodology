@@ -162,7 +162,7 @@ Branch: Detached candidate checkout at bfd80b6e933805b5f152a295eb106a7c63aa7511.
 
 Worktree: /Users/martinbechard/.codex/worktrees/4bd4/dev-methodology.
 
-Phase: Fresh independent review of immutable candidate 4bbe64e48ffdd800b3eac03e47cfe31c9015ed69 before focused verification and dependency-ordered direct-main integration.
+Phase: One bounded one-file correction to immutable candidate 4bbe64e48ffdd800b3eac03e47cfe31c9015ed69 before same-reviewer confirmation and focused verification.
 
 Started At: 2026-08-06T03:49:41Z.
 
@@ -176,16 +176,16 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator in task 019fd52f-7ec5-7bf1-9cbc-65032dd1af06.
 
-Evidence: The root Agent accepted clean immutable candidate 4bbe64e48ffdd800b3eac03e47cfe31c9015ed69 after the bounded Dev Coder completed exact stale-name cleanup, six focused tests, six skill and metadata validations, four generator freshness checks, and Git diff checks. The task is starting one fresh independent review followed by one independent verifier, with no broad suite or source expansion.
+Evidence: The one fresh reviewer returned NEEDS_CORRECTION because the active runnable fixture evals/projects/github-work-item-provider/TASK.md still requests retired manage-github-work-items while its case stages manage-work-items-github. The parent Coordinator confirmed this non-governed active fixture is ordinary dependent cleanup directly required by the explicit stale-name acceptance criterion and authorized exactly one one-file correction by the original Dev Coder; no Blocked provider mutation was committed.
 
-Observed At: 2026-08-06T04:13:02Z.
+Observed At: 2026-08-06T04:23:00Z.
 
 Started At: 2026-08-06T03:49:41Z.
 
-Deadline or Expires At: 2026-08-06T04:28:02Z.
+Deadline or Expires At: 2026-08-06T04:38:00Z.
 
-Next Action: Commit this path-limited review-phase update, reacquire the exact Work Item ID activity=work claim, obtain one fresh independent review, then dispatch one independent verifier for only the declared focused and freshness checks.
+Next Action: Commit this path-limited Running evidence update, reacquire the exact Work Item ID activity=work claim, return exactly the one-file finding to the original coder, run the focused fixture and stale-name checks, obtain same-reviewer confirmation, then dispatch the single verifier.
 
-Next Reconciliation At: 2026-08-06T04:28:02Z.
+Next Reconciliation At: 2026-08-06T04:38:00Z.
 
-Conversation Title Evidence: The canonical conversation was directly renamed to Reviewing — Align Work-Item Management Provider Names for the current Running phase.
+Conversation Title Evidence: The canonical conversation was directly renamed to Implementing — Align Work-Item Management Provider Names for the bounded correction phase.
