@@ -1,6 +1,6 @@
 # Make Provider Naming Stale Scan Fixture-Aware
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -9,6 +9,22 @@ Provider: file
 Work Item ID: make-provider-naming-stale-scan-fixture-aware
 
 Completion: direct-main
+
+Owner: Dev Orchestrator task 019fd939-f5eb-7743-b023-6e9dc98c555e
+
+Phase: Implementing
+
+Branch: codex/make-provider-naming-stale-scan-fixture-aware-019fd939
+
+Worktree: /Users/martinbechard/.codex/worktrees/6c31/dev-methodology
+
+Canonical Conversation: Retained conversation for Codex task 019fd939-f5eb-7743-b023-6e9dc98c555e; the runtime exposes no separate conversation identifier.
+
+Codex Task ID: 019fd939-f5eb-7743-b023-6e9dc98c555e
+
+Root Role: Dev Orchestrator
+
+Parent Task ID: 019fb057-1767-7ef2-b5fa-41f4417b20b3
 
 ## Summary
 
@@ -74,12 +90,30 @@ Coordinator: Dev Backlog Coordinator task 019fb057-1767-7ef2-b5fa-41f4417b20b3.
 
 Normalized Objective: Make the provider-name stale-reference scan recognize only exact deliberate negative-test fixtures while continuing to reject real retired identities and broad test-module exclusions.
 
-Launch Result: Not attempted.
+Launch Result: Started.
 
-Canonical Conversation: None.
+Canonical Execution: Codex task 019fd939-f5eb-7743-b023-6e9dc98c555e.
 
-Last Contact At: None.
+Last Contact At: 2026-08-06T22:40:32Z.
 
 Next Reconciliation At: 2026-08-06T22:52:10Z.
 
 Intended Root Role: Dev Orchestrator.
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator task 019fd939-f5eb-7743-b023-6e9dc98c555e
+
+Evidence: The canonical Codex task is actively accepting the Starting handoff, recording Running, and beginning the bounded fixture-aware scanner correction on its canonical branch and worktree.
+
+Observed At: 2026-08-06T22:40:32Z
+
+Started At: 2026-08-06T22:40:32Z
+
+Deadline or Expires At: 2026-08-07T00:40:32Z
+
+Next Action: Acquire the exact Work Item ID activity=work claim, reproduce the focused failure, and dispatch the bounded source implementation.
+
+Next Reconciliation At: 2026-08-06T22:55:32Z
