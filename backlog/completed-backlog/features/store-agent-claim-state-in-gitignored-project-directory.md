@@ -1,8 +1,8 @@
 # Store Agent Claim State In Gitignored Project Directory
 
-Status: Running
+Status: Completed
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Type: Feature
 
@@ -11,6 +11,8 @@ Provider: file
 Work Item ID: store-agent-claim-state-in-gitignored-project-directory
 
 Completion: direct-main
+
+Provider Reference: backlog/completed-backlog/features/store-agent-claim-state-in-gitignored-project-directory.md
 
 ## Current Dispatch Reservation
 
@@ -31,28 +33,6 @@ Canonical Runtime Evidence: None at reservation time. No runtime task has been c
 Current Launch Evidence: Parent Coordinator authorized this exact reservation; exact-file backlog claim starting-store-agent-claim-state-in-gitignored-project-directory-019fb057 acquired with outcome SHARED_CHECKOUT_ACQUIRED and event 4bb2b1f7-39a8-4f95-9176-fa7e8946f779.
 
 Required Next Lifecycle Transition: The canonical root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
-
-## Current Execution Ownership
-
-Transition: Starting -> Running.
-
-Canonical Thread: 019fd464-3875-75e2-aaa0-39a8e357d764.
-
-Root Agent Task: /root.
-
-Owner: Dev Orchestrator.
-
-Branch: codex/store-agent-claim-state.
-
-Worktree: /Users/martinbechard/.codex/worktrees/b146/dev-methodology.
-
-Phase: Windows tombstone correction.
-
-Started At: 2026-08-06T12:15:15.607475Z.
-
-Claim Evidence: Exact Work Item ID update claim update-store-agent-claim-state-019fd464-resume acquired with outcome SHARED_CHECKOUT_ACQUIRED and event e73efea6-3549-44af-b586-92ee4c778937; exact provider-path claim running-path-store-agent-claim-state-019fd464 acquired with outcome SHARED_CHECKOUT_ACQUIRED and event fe844d26-d6f5-4681-8f95-0a54d0581213.
-
-Accepted Execution Evidence: Direct user approval and provider lifecycle resumption are recorded in canonical task 019fd464-3875-75e2-aaa0-39a8e357d764. Preserved dev-methodology candidate d2744c62281b5fc2bfdabd0d95a72642aab2924e, external mcp-agent-ops candidate 660aef8be2cfc12926aef15c90250556760961a7, and native Windows run 31068038651 remain authoritative. The correction remains bounded by the fail-closed verified-empty, exclusively locked Windows legacy-registry tombstone boundary.
 
 ## User Action Required
 
@@ -134,23 +114,41 @@ Current Launch Evidence: Parent Coordinator authorized this exact reservation; f
 
 Required Next Lifecycle Transition: The canonical root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
 
-## Active Execution Evidence
+## Completion Evidence
 
-Condition Type: root-execution.
+Transition: Running -> Completed.
 
-Owner: Dev Orchestrator.
+Disposition: READY.
 
-Evidence: Status remains Running for canonical task 019fd464-3875-75e2-aaa0-39a8e357d764 on branch codex/store-agent-claim-state in worktree /Users/martinbechard/.codex/worktrees/b146/dev-methodology. Direct user approval remains bounded to the verified-empty, exclusively locked Windows legacy-registry tombstone with fail-closed nonmutation for any live, extra-metadata, identity-mismatched, or contradictory state. Superseding dev-methodology candidate 0648629ab96f12f79e43e966e3cdc6ef461d09c8 and external mcp-agent-ops candidate 89f2df0d80fc91f3944849b5387e4ac82ba79e40 preserve candidates d2744c62281b5fc2bfdabd0d95a72642aab2924e and 660aef8be2cfc12926aef15c90250556760961a7. Fresh independent release review approved both exact candidates; fresh verification passed their focused dev, external, compatibility, parity, Windows-typing, marker-byte, compilation, version, and diff gates. Native runs 31102737360 and 31103173358 truthfully preserve the stale POSIX-only assertion and Windows CRLF-byte failures that led to the compatibility and binary-descriptor corrections. Native CI run 31103633065 and external-main CI run 31103775695 passed on exact external commit 89f2df0d80fc91f3944849b5387e4ac82ba79e40. External main remains pushed to that exact commit, and tag-triggered release run 31104384369 passed its Windows and Linux Python 3.11, 3.12, and 3.13 gates and published mcp-agent-ops v0.6.0 with wheel, runtime requirements, and checksums. Current-main dev helper compatibility remains durably restored at reviewed commit 46b92c842693bb96b5e756632a8df35b241511bc. Current-main reconciliation proved all accepted content through d2744c62281b5fc2bfdabd0d95a72642aab2924e already represented and applied only the remaining 0648629ab96f12f79e43e966e3cdc6ef461d09c8 tombstone delta to the renamed helper and focused test; the helper blob exactly matches the accepted source, eight tombstone regressions pass, both changed files compile, diff validation passes, and the configured helper returns structured STATUS. The exact integration path claim and main-integration lease remain live; no dev integration commit, dev push, or provider closure has occurred.
+Completion Selector: direct-main.
 
-Observed At: 2026-08-06T13:14:25Z.
+Completed At: 2026-08-06T13:23:19Z.
 
-Started At: 2026-08-06T12:15:15.607475Z.
+Canonical Thread And Root Agent Task: 019fd464-3875-75e2-aaa0-39a8e357d764; /root.
 
-Deadline or Expires At: 2026-08-06T13:50:49Z. This is the live main-integration lease hard stop; if fresh review, verification, direct-main delivery, and provider handoff are not terminal by then, stop shared mutation, preserve the candidates and current-main diff or commit, release bounded integration claims as applicable, and return a truthful recovery disposition to the Coordinator.
+Accepted Dev Source Commit: 0648629ab96f12f79e43e966e3cdc6ef461d09c8.
 
-Next Action: Release the provider update and path claims, reacquire activity=work, obtain fresh independent review and verification of the exact two-file current-main reconciliation, correct any findings within scope, commit and publish dev main, run focused integrated observation, and close the provider separately.
+Accepted External Source Commit: 89f2df0d80fc91f3944849b5387e4ac82ba79e40.
 
-Next Reconciliation At: 2026-08-06T13:28:00Z.
+Integration Commit: 28aa154253a81fdb4d546faf054e1d63325462bf.
+
+Integration Mapping: Current-main reconciliation proved content through d2744c62281b5fc2bfdabd0d95a72642aab2924e was already represented by 46b92c842693bb96b5e756632a8df35b241511bc and retargeted only 0648629ab96f12f79e43e966e3cdc6ef461d09c8 to the current renamed helper and focused test. The accepted source is non-ancestral, while helper blob afb34b0dc41e76899f3f41a6176fa139568e19a6 exactly matches the accepted source and the seven reviewed current-main adaptations are retained.
+
+Main Observation: Integration commit 28aa154253a81fdb4d546faf054e1d63325462bf is an ancestor of current main 8dea65361e2dd476cb91ec574eed8bb776051520. Current main and origin/main were matched at 28aa before the unrelated current-main advance; the checkout was clean after integrated gates.
+
+Independent Review: Fresh current-main review APPROVED with no findings.
+
+Independent Verification: PASS.
+
+Focused Integrated Checks: Eight tombstone and migration regressions passed; both changed Python files compiled; commit diff-check passed; the configured helper returned STATUS schema 2 at .codex/agent-claim.
+
+Native Verification: External CI run 31103633065 and external-main CI run 31103775695 passed. Release workflow 31104384369 passed Windows and Python 3.11, 3.12, and 3.13 checks and published mcp-agent-ops v0.6.0 with wheel, runtime requirements, and SHA256SUMS at https://github.com/martinbechard/mcp-agent-ops/releases/tag/v0.6.0.
+
+Preserved Approval And Safety Boundary: Direct user approval in canonical task 019fd464-3875-75e2-aaa0-39a8e357d764 authorized only the verified-empty, exclusively locked Windows legacy-registry tombstone operation. Migration remains fail-closed and nonmutating for live, extra-metadata, identity-mismatched, or contradictory state. Prior candidates d2744c62281b5fc2bfdabd0d95a72642aab2924e and 660aef8be2cfc12926aef15c90250556760961a7, and Windows run 31068038651, remain preserved history.
+
+Delivery Claim Evidence: Integration path release 65e7a2b6-960e-405f-b8bc-6211ffd1c272; main resource release f79175a0-88a8-40ef-8825-00ee1252a9d7; work handoff release 2cd5d676-242b-4442-a6a9-5aa8cd80c736.
+
+Archive Path: backlog/completed-backlog/features/store-agent-claim-state-in-gitignored-project-directory.md.
 
 ## Summary
 
