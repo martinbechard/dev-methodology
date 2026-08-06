@@ -4,7 +4,7 @@
 
 Concurrent Tasking directly contains the two work-item coordination skills and the two dispatch-mode skills. It also nests the Resource Coordination and Feature Branch And Worktrees skill groups. Its complete set therefore includes those four direct skills plus every skill in the two nested groups. Containment is for comprehension and does not mean that a direct skill uses every nested skill. Persistence remains an independent injected provider.
 
-Concurrent Tasking names a Skill Group, not an Agent Group. Its consumers belong to the Task Management Agent hierarchy: Task Stream Management Agents manage a sustained stream of work items, while Single-Task Delivery Agents deliver one accepted work item. Both Agent Groups use Concurrent Tasking skills where their responsibilities require coordination.
+Concurrent Tasking names a Skill Group, not an Agent Group. Its consumers belong to the Task Management Agent hierarchy: Backlog Management Agents manage a sustained stream of work items, while Dev Delivery Agents deliver one accepted work item. Both Agent Groups use Concurrent Tasking skills where their responsibilities require coordination.
 
 The applied-model conventions are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md#2-applied-model-legend).
 
@@ -18,13 +18,13 @@ When several provider skills expose the same public procedures, the scenario use
 
 ### Agent Hierarchy
 
-The Agent hierarchy separates task management by unit of responsibility. Task Stream Management Agents manage a sustained queue and its provider-wide state. Single-Task Delivery Agents implement, review, verify, integrate, and deliver one accepted work item. Solid arrows identify fixed Agent dependencies, while dotted arrows identify conditional delegation.
+The Agent hierarchy separates task management by unit of responsibility. Backlog Management Agents manage a sustained queue and its provider-wide state. Dev Delivery Agents implement, review, verify, integrate, and deliver one accepted work item. Solid arrows identify fixed Agent dependencies, while dotted arrows identify conditional delegation.
 
 ```mermaid
 classDiagram
     direction TB
 
-    namespace TaskStreamManagementAgents["Task Stream Management Agents"] {
+    namespace BacklogManagementAgents["Backlog Management Agents"] {
         class DevBacklogCoordinator {
             <<Agent>>
         }
@@ -36,7 +36,7 @@ classDiagram
         }
     }
 
-    namespace SingleTaskDeliveryAgents["Single-Task Delivery Agents"] {
+    namespace DevDeliveryAgents["Dev Delivery Agents"] {
         class DevOrchestrator {
             <<Agent>>
         }
@@ -71,11 +71,11 @@ The high-level dependency view contains only Agent Groups and Skill Groups. An A
 classDiagram
     direction LR
 
-    class TaskStreamManagementAgents["Task Stream Management Agents"] {
+    class BacklogManagementAgents["Backlog Management Agents"] {
         <<Agent Group>>
     }
 
-    class SingleTaskDeliveryAgents["Single-Task Delivery Agents"] {
+    class DevDeliveryAgents["Dev Delivery Agents"] {
         <<Agent Group>>
     }
 
@@ -101,30 +101,30 @@ classDiagram
         <<Skill Group>>
     }
 
-    TaskStreamManagementAgents --> BaselineDevelopment
-    TaskStreamManagementAgents --> BacklogManagement
-    TaskStreamManagementAgents --> ConcurrentTasking
-    SingleTaskDeliveryAgents --> BaselineDevelopment
-    SingleTaskDeliveryAgents --> BacklogManagement
-    SingleTaskDeliveryAgents ..> ConcurrentTasking : when a work item is coordinated
-    SingleTaskDeliveryAgents --> DirectMainDelivery
-    SingleTaskDeliveryAgents --> FeatureBranchAndWorktrees
-    SingleTaskDeliveryAgents --> ReviewAndVerification
+    BacklogManagementAgents --> BaselineDevelopment
+    BacklogManagementAgents --> BacklogManagement
+    BacklogManagementAgents --> ConcurrentTasking
+    DevDeliveryAgents --> BaselineDevelopment
+    DevDeliveryAgents --> BacklogManagement
+    DevDeliveryAgents ..> ConcurrentTasking : when a work item is coordinated
+    DevDeliveryAgents --> DirectMainDelivery
+    DevDeliveryAgents --> FeatureBranchAndWorktrees
+    DevDeliveryAgents --> ReviewAndVerification
 
     ConcurrentTasking *-- ResourceCoordination
     ConcurrentTasking *-- FeatureBranchAndWorktrees
     DirectMainDelivery ..> FeatureBranchAndWorktrees : when the accepted change is not present on main
 ```
 
-### Task Stream Management Agents And Skills
+### Backlog Management Agents And Skills
 
-Task Stream Management Agents coordinate a sustained queue, maintain provider-wide records, and observe whether the queue needs attention. The diagram expands their exact role-declared skill dependencies. Solid open-diamond arrows are Core Agent Skills. Dotted open-diamond arrows are Optional Agent Skills and state their loading conditions.
+Backlog Management Agents coordinate a sustained queue, maintain provider-wide records, and observe whether the queue needs attention. The diagram expands their exact role-declared skill dependencies. Solid open-diamond arrows are Core Agent Skills. Dotted open-diamond arrows are Optional Agent Skills and state their loading conditions.
 
 ```mermaid
 classDiagram
     direction LR
 
-    namespace TaskStreamManagementAgents["Task Stream Management Agents"] {
+    namespace BacklogManagementAgents["Backlog Management Agents"] {
         class DevBacklogCoordinator {
             <<Agent>>
         }
@@ -193,15 +193,15 @@ classDiagram
     DevBacklogWatchdog o..> resolve-backlog-blockage : when blockage criteria apply
 ```
 
-### Single-Task Delivery Agents And Skills
+### Dev Delivery Agents And Skills
 
-Single-Task Delivery Agents implement, review, verify, integrate, and deliver one accepted work item. This diagram expands their exact role-declared skill dependencies while keeping provider implementations behind their Interface Skills.
+Dev Delivery Agents implement, review, verify, integrate, and deliver one accepted work item. This diagram expands their exact role-declared skill dependencies while keeping provider implementations behind their Interface Skills.
 
 ```mermaid
 classDiagram
     direction LR
 
-    namespace SingleTaskDeliveryAgents["Single-Task Delivery Agents"] {
+    namespace DevDeliveryAgents["Dev Delivery Agents"] {
         class DevOrchestrator {
             <<Agent>>
         }
