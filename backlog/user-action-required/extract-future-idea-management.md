@@ -1,6 +1,18 @@
 # Extract Future Idea Management
 
-Status: Running
+Status: User Action Required
+
+Owner: Unowned
+
+## User Action Required
+
+Do you approve adding exactly evals/agent-tests/dev-backlog-steward/skills/dev-backlog-steward-suite-contract/SKILL.md to this work item’s governed manifest so the Dev Backlog Steward evaluation suite can be made executable and consistent?
+
+Why user input is required: This is the only newly required governed skill definition outside the existing manifest. The other four support paths—evals/agent-tests/dev-backlog-steward/agents/supervisor.toml, agents/judge.toml, fixtures/cases.yaml, and test_contract.py—are ordinary non-governed evaluation/test dependents covered by the executable-suite acceptance requirement and need no separate approval.
+
+Options and tradeoffs: Approve permits exactly that suite-contract SKILL.md addition plus corrections to those four already-authorized ordinary support files, then the same canonical task resumes through User Action Required -> Ready -> Starting -> Running and focused rereview/verification. Defer preserves candidates and evidence without implementation. Decline leaves acceptance unmet for later disposition.
+
+Unattended boundary: Stop all implementation, correction, verification, integration, and delivery until the user answers and lifecycle resumption occurs. Exclude every other skill, role, definition, and broad suite/framework.
 
 Type: Feature
 
@@ -128,6 +140,20 @@ Deadline or Expires At: 2026-08-06T09:18:31Z.
 Next Action: Collect both fresh rereview verdicts; if accepted, dispatch the independent focused verifier.
 
 Next Reconciliation At: 2026-08-06T07:33:31Z.
+
+## User Action Required Transition — 2026-08-06T07:27:07Z
+
+- Transition: Running -> User Action Required.
+- Recovery authority: Dev Backlog Coordinator authorized this exact provider transaction.
+- Owner: Unowned.
+- Canonical task: 019fd5b5-aca7-7cb1-9ae0-010ac945c985.
+- Source path: backlog/feature-backlog/extract-future-idea-management.md.
+- Destination path: backlog/user-action-required/extract-future-idea-management.md.
+- Review candidate: 20129c822f0ce78fe46a0aeaaa6e7b719d841dc6.
+- Corrected candidate: c94dc4fd674405f9c96c10c51c99ed24fcd767f3.
+- Released work-claim blocked-disposition event: b6665918-a435-4e73-a29f-0e31bfa4b8af.
+- Question recorded first in the User Action Required section above.
+- Next action: Wait for the user answer before any implementation, correction, verification, integration, or delivery resumes.
 
 ## Verification
 
