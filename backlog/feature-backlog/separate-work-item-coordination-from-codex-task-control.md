@@ -131,14 +131,14 @@ This is a static responsibility split, not a diagram of one runtime scenario. Th
 
 Condition Type: root-execution
 Owner: Root Dev Orchestrator /root
-Evidence: Correction attempt 1 restored the Watchdog template contract, added a deterministic test, guarded four roles, regenerated affected adapters and evaluation artifacts, and is in focused checks in isolated worktree /Users/martinbechard/.codex/worktrees/a3a9/dev-methodology under root task /root and canonical conversation 019fd63f-dc50-7252-b287-8489ad1c1a8f.
-Observed At: 2026-08-06T09:43:34Z
+Evidence: Prior two findings are corrected. Fresh reviewer confirms the split, guards, templates, and freshness for final candidate 4ca7f7d3, and is finishing one likely stale Steward lifecycle/title flow in the Watchdog evaluation and design in isolated worktree /Users/martinbechard/.codex/worktrees/a3a9/dev-methodology under root task /root and canonical conversation 019fd63f-dc50-7252-b287-8489ad1c1a8f.
+Observed At: 2026-08-06T09:53:42Z
 Started At: 2026-08-06T08:48:08Z
 Deadline or Expires At: 2026-08-06T10:00:00Z
-Next Action: Reacquire activity=work and resume the same coder to finish focused verification and commit.
-Next Reconciliation At: 2026-08-06T09:55:00Z
+Next Action: Reacquire activity=work and resume the same reviewer to deliver the final verdict.
+Next Reconciliation At: 2026-08-06T10:05:00Z
 
 ## Running Evidence Refresh — 2026-08-06T08:57:18Z
 
 - Provider operation evidence: File provider Active Execution Evidence refreshed in place on main; Status, canonical identities, Started At, and Deadline or Expires At are unchanged.
-- Refresh claims: Work Item ID update claim separate-work-item-coordination-from-codex-task-control-update-refresh-0943 and provider-path claim separate-work-item-coordination-from-codex-task-control-path-refresh-0943 were acquired for this operation.
+- Refresh claims: Work Item ID update claim separate-work-item-coordination-from-codex-task-control-update-refresh-0953 and provider-path claim separate-work-item-coordination-from-codex-task-control-path-refresh-0953 were acquired for this operation.
