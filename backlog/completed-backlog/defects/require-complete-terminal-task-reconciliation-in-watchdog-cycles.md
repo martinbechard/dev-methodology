@@ -212,6 +212,10 @@ Integration Claim Reconciliation: Project-files claim require-complete-terminal-
 
 Provider Closeout: This item moved from the active defect queue to the completed defect queue after direct-main delivery returned READY.
 
+Provider Closeout Claim Reconciliation: The exact active and completed provider-path claim was released with event e931eceb-f9ce-443b-909e-499ae50426a6 after completed-provider commit 0e1eec62fbd4bec992d82e0223fa04d02f9359b6.
+
+Work Claim Reconciliation: Exact Work Item ID activity=work claim require-complete-terminal-reconciliation-work-019fd80b was released with disposition done and event e2f2d4d0-d1fc-4011-94ac-7e4dd319ff70 after delivery and provider closeout.
+
 ## Explicit Current Task-Archival Pause
 
 Scope: Codex task 019fd80b-9089-78c0-9272-26ac6b7d47ff only.
