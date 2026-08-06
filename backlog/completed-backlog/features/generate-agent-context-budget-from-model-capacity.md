@@ -1,6 +1,6 @@
 # Generate Agent Context Budgets From Model Capacity
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -107,7 +107,7 @@ Branch: `codex/generate-agent-context-budgets`
 
 Worktree: `/Users/martinbechard/.codex/worktrees/07cf/dev-methodology`
 
-Phase: Implementation
+Phase: Completed
 
 Started At: 2026-08-06T14:22:32Z
 
@@ -177,3 +177,27 @@ Approved at creation. The user's 2026-08-06 message in the current Codex convers
 - Existing context labels such as extra-long are implementation evidence to reconcile, not a substitute for the canonical per-agent percentage or a proven concrete model capacity.
 - Runtime model capacities and supported configuration mechanisms are drift-prone. Implementation must refresh authoritative evidence rather than relying only on the repository's current prose.
 - This item does not authorize changing agent responsibilities or selecting different models merely to make context allocation easier.
+
+## Completion Evidence
+
+Completed At: 2026-08-06T15:19:16Z
+
+Canonical Conversation: `019fd770-9fd6-7c33-80f1-b6d4607c38e1`
+
+Parent Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Accepted Source Commit: `cd528bdfffc95916100f9f619a70e07f0ade3b07`
+
+Main Integration Commit: `8dc568ccfb5711422ad480a44009dc29846cb03e`
+
+Delivery Result: READY through direct-main delivery. Current main retained the independently completed Future Idea management commits and accepted the context-budget candidate without conflict.
+
+Independent Review: Fresh code and methodology-artifact reviewers returned GOOD after confirming percentage validation, deterministic floor calculation, primary and staged allocations, exact governed scope, authoritative capacity and mechanism evidence, source-to-generated consistency, and resolution of the Junie evidence-date and missing-evidence test findings.
+
+Independent Verification: READY. Python 3.11 compilation passed; the exact 15 focused schema, boundary, adapter, stage, preservation, documentation, and freshness tests passed; `build-skill-docs.py --check`, `build-agent-skill-hierarchy.py --check`, and `build-support-checklist.py --check` passed; 35 governed YAML documents, manifest version 5, 120 native agents, 120 primary allocations, and 44 stage allocations validated; output hashes and exact 162-path scope matched; `git diff --check` passed.
+
+Post-Integration Verification: On main, the same 15 focused tests passed in 4.023 seconds and all three required freshness checks passed. Main was clean at `8dc568ccfb5711422ad480a44009dc29846cb03e` before this terminal provider transaction.
+
+Provider Closure Claim: `generate-agent-context-budget-provider-complete-019fd770`
+
+Archive Destination: `backlog/completed-backlog/features/generate-agent-context-budget-from-model-capacity.md`
