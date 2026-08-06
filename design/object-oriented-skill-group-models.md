@@ -16,7 +16,7 @@ Every detailed group document contains:
 
 The applied documents organize their diagrams around the capability and its use cases. Exact-name loading, conditional loading, project routing, and interface realization explain relationships inside those views; they are not substitute topics for the capability itself.
 
-Provider-family interfaces can be abstract analysis contracts or maintained Interface Skills. A wildcard display label identifies a provider family and remains analysis or routing notation, not a package. A named Interface Skill is a maintained package when one exact SKILL.md publishes the shared contract. The adjacent AGENTS.md factory node owns project selection, while realization arrows show which providers satisfy the interface.
+Provider-family labels use one uniform mapping. An exact Interface Skill is a loadable kebab-case identity without a wildcard. Its family label appends a terminal wildcard to that complete identity, and each Provider Skill appends one provider suffix to the same complete stem. An applied node uses Interface Skill only when the exact package publishes the contract; an analysis-only contract uses Skill interface. The adjacent AGENTS.md factory names one exact Provider Skill, while realization arrows show which providers satisfy the shared interface.
 
 Concurrent Tasking contains three direct skills and two nested groups. Resource Coordination and Feature Branch And Worktrees each contain three direct skills. Membership inherited from a nested group does not assign a skill a second primary group.
 
@@ -33,9 +33,9 @@ The applied diagrams use the relationship and member conventions defined by the 
 - An empty member area means that the skill describes one procedure and its identity already names that operation.
 - An Agent Skill is loaded by exact name from an Agent definition.
 - An Injectable Skill implements procedure vocabulary selected through AGENTS.md.
-- A Skill interface is a contract that lists the public data and function members its consumers know and every Provider Skill must provide or respect. A wildcard family can represent an abstract interface, but it is not a maintained package.
-- An Interface Skill is a distinct named SKILL.md package that publishes an interface. The create-work-item, manage-work-items, and deliver-work-item packages publish the maintained interfaces for their provider families.
-- A Provider Skill supplies one implementation of a Skill interface. It uses Provider Skill as its visible stereotype instead of stacking SKILL.md and Injectable Skill stereotypes.
+- A Skill interface is an abstract contract that lists the public data and function members its consumers know and every Provider Skill must provide or respect.
+- An Interface Skill is a distinct loadable SKILL.md package whose exact identity contains no wildcard. A family label such as create-work-item-* maps to the exact create-work-item identity; the wildcard is display or routing notation rather than a filesystem character.
+- A Provider Skill supplies one implementation of a Skill interface. Its exact identity begins with the complete interface stem and adds one provider suffix. It uses Provider Skill as its visible stereotype instead of stacking SKILL.md and Injectable Skill stereotypes.
 - A dashed realization arrow with a hollow triangular arrowhead points from a Provider Skill to the Skill interface it implements. Realization is conformance, not loading.
 - An AGENTS.md factory is a separate routing node that selects one Provider Skill by exact name. It does not replace the Skill interface used by an Agent or another skill.
 - A Cross-group node repeats a skill outside its primary group because another group depends on it.
@@ -94,7 +94,7 @@ classDiagram
         +route selected-procedure => selected provider
     }
 
-    class provider-skill {
+    class procedure-family-example {
         <<Provider Skill>>
         +shared-definition
         +selected-procedure(request)
@@ -107,8 +107,8 @@ classDiagram
     ExampleAgent o--> direct-skill
     ExampleAgent o..> cross-group-skill : when the condition applies
     ExampleAgent --> ProcedureInterface
-    ProcedureFactory o--> provider-skill
-    provider-skill ..|> ProcedureInterface
+    ProcedureFactory o--> procedure-family-example
+    procedure-family-example ..|> ProcedureInterface
 ```
 
 The solid-diamond lines describe the contents of Parent Group and Nested Group. The regular arrow from ExampleAgent to ProcedureInterface shows a procedure-name dependency on the abstract contract. The harness loads AGENTS.md automatically, so no Agent-to-ProcedureFactory arrow is drawn. The factory names one provider, and the realization arrow records provider conformance. A reader must not infer a dependency between direct-skill and nested-skill merely because both are contained by Parent Group.
@@ -164,6 +164,10 @@ The applied model is complete when it describes the maintained skill inventory a
 - **RULE: RULE-60** Provider families share coherent public procedure names
   - **SYNOPSIS:** An Interface Skill owns the public vocabulary, each Provider Skill realizes that contract, and a separate AGENTS.md factory selects one provider without changing the consumer.
   - **EXAMPLE:** manage-work-items exposes Inventory Work Items, Transition Work Item, Reconcile Work Item Completion, Recover Work Item, and Report Work Items; every manage-work-items-* provider realizes those procedures while Persistence selection remains in AGENTS.md.
+
+- **RULE: RULE-69** Provider-family naming is mechanically coherent
+  - **SYNOPSIS:** A family label is the exact interface identity followed by -*, and every realizing Provider Skill begins with that complete interface stem followed by one provider suffix.
+  - **EXAMPLE:** create-work-item maps to create-work-item-* and create-work-item-file; moving the wildcard or provider suffix into the middle of that stem is invalid.
 
 - **RULE: RULE-65** Interface realization remains distinct from loading
   - **SYNOPSIS:** A realization arrow records that a provider supplies or respects the interface members. It does not assert that either node loads the other.

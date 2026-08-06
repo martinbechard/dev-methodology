@@ -234,7 +234,9 @@ No arrow joins Backlog Manager to AGENTS.md because the harness loads project gu
 
 The procedures a skill implements and the definitions it exposes can be considered a Skill interface when a calling Agent refers only to that public information. The Agent depends on those public members without needing to know the skill’s internal workflow, decision steps, or provider-specific details.
 
-A Skill interface does not require a separate file when only one skill owns and exposes the contract. When Agents and several provider skills must share the same public contract, a distinct SKILL.md can publish it independently. This method calls that separate package an Interface Skill. The exact create-work-item, manage-work-items, and deliver-work-item packages publish the interfaces shared by their provider families. A wildcard family label is not a package identity.
+A Skill interface is the public contract that consumers and providers share. It can remain analysis-only when no package publishes it. When a distinct SKILL.md publishes that contract, this method calls the exact loadable package an Interface Skill. Its identity is a kebab-case skill name without a wildcard, such as create-work-item. The provider-family label appends one terminal wildcard to that complete identity, producing create-work-item-*. Every Provider Skill appends one provider suffix to the same complete stem, such as create-work-item-gitlab. The wildcard is family notation and never part of a directory name, frontmatter name, or exact loading reference.
+
+A diagram uses the Interface Skill stereotype only when the exact skills/&lt;interface-identity&gt;/SKILL.md package exists and publishes the shown contract. Otherwise it uses Skill interface for an analysis-only contract. A consumer loads the exact Interface Skill when that package exists, or depends on the public procedures of an analysis-only Skill interface. AGENTS.md independently selects one exact Provider Skill; neither a consumer nor project guidance loads a wildcard identity.
 
 Mermaid represents an interface as a stereotyped class node. In this method, an Interface Skill node uses Interface Skill as its single visible stereotype. The stereotype identifies a SKILL.md, so the diagram does not stack a second SKILL.md stereotype above it. The node lists the public data and function members that consumers know and implementations must provide or respect. An interface can expose more than one data member, more than one function member, or both.
 
@@ -615,8 +617,7 @@ classDiagram
     }
 
     class manage-work-items-gitlab {
-        <<SKILL.md>>
-        <<Implementation Skill>>
+        <<Provider Skill>>
         +work-item-definition
         +work-item-states
         +gitlab-project-id
@@ -871,6 +872,10 @@ A good model makes skill dependencies, dispatch, and organization understandable
   - **SYNOPSIS:** Skill maintenance compares each Interface Skill with every known user and implementation, checking data-member names and meanings, provider refinements, function implementations, and invocation meanings. No specialized validator is required: simple deterministic inventories can locate files and matching names, but semantic acceptance requires an LLM judge to read the complete referenced skills.
   - **EXAMPLE:** A judge checks that a work-item provider preserves work-item-definition, makes any narrower state constraint usable by its Agents, and implements inventoryWorkItems(selection) with the interface meaning.
 
+- **RULE: RULE-69** Provider-family naming is mechanically coherent
+  - **SYNOPSIS:** A family label is the exact Interface Skill identity followed by -*, and every Provider Skill begins with that complete identity followed by one provider suffix. Deterministic naming checks locate spelling and stereotype defects; semantic review remains responsible for interface members, provider behavior, and consumer expectations.
+  - **EXAMPLE:** create-work-item maps to create-work-item-* and create-work-item-file. Placing the wildcard or provider suffix between create and work-item is invalid because it breaks the complete interface stem.
+
 ## 13. Glossary
 
 The glossary defines the relationship and diagram terms used by the analysis after the examples have established their context.
@@ -881,11 +886,11 @@ The glossary defines the relationship and diagram terms used by the analysis aft
 | Skill selection | A decision that one available skill applies to an Agent execution or request. Selection does not prove that the full instructions entered context. | A conditional rule selects test-driven-development when the user requests TDD. |
 | Skill loading | The complete selected SKILL.md entering the active context so its instructions can be followed. | After AGENTS.md selects manage-work-items-gitlab, the agent reads that SKILL.md. |
 | Exact skill name | The identity used to resolve one skill package and its SKILL.md. It is not the shared literal filename SKILL.md. | careful-coding resolves the careful-coding package. |
-| Skill interface | A shared contract containing public data members, function members, or both. | manage-work-items exposes work-item-definition, work-item-states, inventoryWorkItems(selection), and transitionWorkItem(workItem, state). |
-| Interface Skill | A SKILL.md shown with the Interface Skill stereotype that itemizes the data and function members an interface user must know and an implementation must provide or respect. | create-work-item, manage-work-items, and deliver-work-item publish shared member vocabularies for their provider families. |
-| Skill realization | A dashed line with a hollow triangular arrowhead from an implementing SKILL.md to an Interface Skill. It means that the implementation supplies the interface functions and provides or respects its public data; it does not mean that either skill loads the other. | manage-work-items-gitlab ..\|> manage-work-items. |
-| Provider Skill | A SKILL.md that supplies one implementation of an Interface Skill and can be selected without changing the interface consumer. | manage-work-items-gitlab supplies the GitLab implementation of manage-work-items. |
-| AGENTS.md factory | Project guidance that selects one Provider Skill by exact name while the Agent depends directly on an Interface Skill. The factory analogy describes instruction selection, not runtime object construction. | Project-specific directives route transition-work-item to manage-work-items-gitlab for an Agent that consumes manage-work-items. |
+| Skill interface | A shared contract containing public data members, function members, or both. It can exist only as analysis vocabulary. | agent-claim-* describes the public claim-helper procedures without naming a loadable wildcard package. |
+| Interface Skill | An exact loadable kebab-case skill package that publishes a Skill interface. Its provider-family label appends a terminal wildcard, but its directory and frontmatter identity do not contain that wildcard. | manage-work-items is the exact package identity and manage-work-items-* is its family label. |
+| Skill realization | A dashed line with a hollow triangular arrowhead from a Provider Skill to a Skill interface. It means that the provider supplies the interface functions and provides or respects its public data; it does not mean that either skill loads the other. | manage-work-items-gitlab ..\|> manage-work-items. |
+| Provider Skill | A SKILL.md whose exact name extends the complete Interface Skill identity with one provider suffix and supplies that interface contract. | manage-work-items-gitlab supplies the GitLab implementation of manage-work-items-*. |
+| AGENTS.md factory | Project guidance that selects one Provider Skill by exact name while the consumer depends on an exact Interface Skill or its public procedures. The factory analogy describes instruction selection, not runtime object construction. | Project-specific directives route transition-work-item to manage-work-items-gitlab for a consumer of manage-work-items. |
 | Polymorphism | The object-oriented analogy in which one interface expectation can be supplied by different skill implementations without changing the invoker. It does not assert runtime language dispatch. | transition-work-item() can be supplied by a file-backed or GitLab-backed work-item skill. |
 | Procedure name | The name that identifies the operation an invoker needs. | transition-work-item. |
 | Procedure context | Information already held by the invoking Agent for use by the named procedure. | Transition request: Move work item 42 to Running. |
@@ -909,7 +914,7 @@ The glossary defines the relationship and diagram terms used by the analysis aft
 | Nested skill group | A skill group included inside another skill group. It is the same kind of object as its parent; subgroup is only a relative description of its position. | Resource Coordination is a skill group nested inside Concurrent Tasking. |
 | Direct group membership | A solid-diamond line in a collapsed diagram that displays a skill’s direct membership in a Skill Group. The line represents membership in the existing set; it does not create that membership. | Resource Coordination *-- agent-claim displays agent-claim as a direct member of Resource Coordination. |
 | Nested set containment | A solid-diamond line in a collapsed diagram that displays one Skill Group nested in another. The parent’s complete skill set includes the child’s complete skill set independently of the chosen diagram form. | Concurrent Tasking *-- Resource Coordination displays Resource Coordination as a nested group whose skills belong to the complete Concurrent Tasking set. |
-| Mermaid display label | The visible analysis identity used when Mermaid requires a different internal class identifier. | The internal manage-work-items identifier displays manage-work-items. |
+| Mermaid display label | The visible analysis identity used when Mermaid requires a different internal class identifier. | An internal ProcedureInterface identifier can display the procedure-family-* family label. |
 | Skill hierarchy | An organizational view of Skill Groups, families, responsibilities, procedures, loading references, and dependencies. It does not by itself assert software inheritance. | work-item-base, work-item-dispatch, and work-item-monitor form one Skill Group whose members are loaded in different combinations by two Agents. |
 | Agent Group | A named comprehension set displayed as a rectangle containing actual Agent nodes. Membership does not create a superclass or assign one member’s dependencies to another. | Structured Artifact Review Agents contains Dev Code Reviewer and Dev Verifier while each retains its own skill references. |
 | Empty SKILL.md node | A concrete skill class with no displayed members because the SKILL.md describes one procedure and its identity already represents that operation. | verify-documentation-page under Documentation Agent. |
