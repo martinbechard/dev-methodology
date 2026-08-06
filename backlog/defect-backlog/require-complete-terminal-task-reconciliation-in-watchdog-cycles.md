@@ -12,7 +12,7 @@ Completion: direct-main
 
 ## Summary
 
-Make every Dev Backlog Watchdog cycle reconcile all terminal tasks associated with the observed Coordinator campaign before it can report NO_ACTION, and send one aggregate parent alert for every actionable terminal anomaly.
+Make every Dev Backlog Watchdog cycle reconcile all terminal tasks associated with the observed Coordinator campaign before it can report NO_ACTION, send one aggregate parent alert for every actionable terminal anomaly, and require Codex task archival by default after merged delivery and ordinary terminal gates pass.
 
 ## Context
 
@@ -39,8 +39,10 @@ This direct request authorizes creation of this Ready Defect and modification of
 ## Requirements
 
 - Require every Watchdog cycle to identify every terminal Codex task associated with the observed Coordinator campaign and reconcile each task independently.
-- Evaluate provider terminal evidence, live and released claims, worktree disposition, delivery and cleanup branch disposition, deliberately preserved source branches, unresolved notifications, Codex archival state, and any current user archive pause.
-- Define an archive pause as suppressing only Codex task archival. It must not suppress Git cleanup eligibility, worktree or branch cleanup alerts, provider closeout alerts, or other terminal reconciliation.
+- Evaluate provider terminal evidence, live and released claims, worktree disposition, delivery and cleanup branch disposition, deliberately preserved source branches, unresolved notifications, Codex archival state, and any explicit current user pause scoped to named Codex task archival.
+- Archive each completed Codex task by default after its delivery is merged and its ordinary terminal reconciliation gates pass.
+- Never infer, inherit, carry forward, or persist a campaign-wide archival pause from earlier conversation or another task. Treat a pause as valid only when current explicit user direction names its task-archival scope and the Watchdog can record and acknowledge that exact scope and evidence.
+- Define a valid scoped archive pause as suppressing only the named Codex task archival. It must not suppress Git cleanup eligibility, worktree or branch cleanup alerts, provider closeout alerts, notifications, or other terminal reconciliation.
 - Distinguish an ordinary cleanup-eligible branch from a deliberately preserved non-ancestral or non-equivalent source branch whose current evidence-backed disposition requires retention.
 - Remove a clean terminal worktree when authorized even when its associated source branch must remain deliberately preserved.
 - Send one aggregate parent alert covering every actionable terminal anomaly found in the cycle, with exact task, provider, worktree, branch, claim, archival, and next-action evidence.
@@ -50,11 +52,12 @@ This direct request authorizes creation of this Ready Defect and modification of
 
 ## Acceptance Criteria
 
-- A focused scenario with an active archive pause and an otherwise cleanup-eligible terminal worktree or branch produces one actionable aggregate parent alert; it does not suppress Git cleanup because task archival is paused.
-- A fully clean terminal task without an archive pause produces an archival notification when the Codex task remains unarchived.
+- A focused scenario with an explicit current pause scoped to one named Codex task and an otherwise cleanup-eligible terminal worktree or branch produces one actionable aggregate parent alert; it suppresses only that named task archival and does not suppress Git cleanup.
+- A fully clean terminal task without an explicit current scoped pause produces an archival action when the Codex task remains unarchived after merged delivery and ordinary terminal gates pass.
+- A prior conversational pause, an inherited campaign-wide pause, or a pause without current named-task scope and recorded evidence is invalid and cannot suppress the default archival action.
 - A terminal task with a non-ancestral or non-equivalent source branch records that branch as deliberately preserved while still reporting its clean worktree as independently removable.
 - A cycle containing multiple terminal anomalies emits one aggregate parent alert that names every anomaly and the smallest action for each, rather than stopping after the first finding or sending fragmented alerts.
-- NO_ACTION is emitted only after every terminal task in the observed Coordinator campaign has complete provider, claim, worktree, branch, notification, preservation, and archival reconciliation, including any acknowledged archive pause.
+- NO_ACTION is emitted only after every terminal task in the observed Coordinator campaign has complete provider, claim, worktree, branch, notification, preservation, and archival reconciliation, including exact acknowledgement of any valid current named-task archival pause.
 - Unchanged evidence-backed preservation decisions do not generate repeat alerts, while changed evidence or a newly actionable cleanup condition does.
 - The Watchdog remains read-only and no test or implementation grants it lifecycle, cleanup, claim, task archival, or repository mutation authority.
 
@@ -64,7 +67,7 @@ None.
 
 ## Verification
 
-- Add focused Dev Backlog Watchdog scenarios and fixtures for archive-pause scope, archival notification, independently removable worktrees, deliberately preserved non-equivalent branches, aggregate anomaly reporting, alert deduplication, and complete NO_ACTION reconciliation.
+- Add focused Dev Backlog Watchdog scenarios and fixtures for default archival, rejection of inferred or inherited pauses, explicit current named-task pause scope and evidence, archival notification, independently removable worktrees, deliberately preserved non-equivalent branches, aggregate anomaly reporting, alert deduplication, and complete NO_ACTION reconciliation.
 - Update the focused requirements matrix and executable Watchdog simulator or tests only where they directly consume the approved contract.
 - Add exact bundle assertions for the terminal reconciliation, archive-pause, aggregate-alert, and NO_ACTION boundaries.
 - Regenerate only affected design documentation and supported adapter outputs from the approved canonical sources.
@@ -74,6 +77,16 @@ None.
 ## Open Questions
 
 None.
+
+## Contract Correction Evidence
+
+Recorded At: 2026-08-06T17:14:41Z.
+
+Source: Direct user correction in canonical task 019fd80b-9089-78c0-9272-26ac6b7d47ff under parent task 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Controlling Rule: Once code is merged and ordinary terminal reconciliation gates pass, archive the completed Codex task by default. Do not infer, carry forward, or persist a campaign-wide archival pause. A pause is valid only from explicit current user direction scoped to named task archival with exact scope and evidence recorded and acknowledged, and it suppresses no provider closeout, worktree cleanup, branch cleanup, notification, or other terminal reconciliation.
+
+Scope Confirmation: This correction remains within the three already approved governed canonical sources and the bounded dependent artifacts listed below. It authorizes no additional governed definition.
 
 ## Starting Handoff Evidence
 
