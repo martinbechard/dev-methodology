@@ -176,16 +176,16 @@ Condition Type: owned-wait.
 
 Owner: Root Dev Orchestrator in task 019fd52f-7ec5-7bf1-9cbc-65032dd1af06.
 
-Evidence: Accepted candidate 2925eca30eb0310d7b2c85299167ff4abdf1b070 is clean, same-reviewer APPROVED, and independently VERIFIED PASS on the declared focused and freshness gates. Final reconciliation must follow align-work-item-creation-provider-names because their manifests overlap. That item has accepted candidate 7d87faee8dec5d7edc99c38a7517b4f1b2c91fca and an active independent verifier, but current main 2d8c800aee3a2e57b750e6729cf5068dedead79f does not yet contain its integration.
+Evidence: Accepted candidate 2925eca30eb0310d7b2c85299167ff4abdf1b070 is clean, same-reviewer APPROVED, and independently VERIFIED PASS on the declared focused and freshness gates. Final reconciliation must follow align-work-item-creation-provider-names because their manifests overlap. That item passed source verification, resolved eight expected current-main conflicts into clean integration commit 1370a335, and passed focused integration checks and freshness; it is completing required post-integration review and verification before main advances. Current main 50a34b31eeec12751325c3dad52baba7d70d6841 does not yet contain that integration.
 
-Observed At: 2026-08-06T04:31:31Z.
+Observed At: 2026-08-06T04:44:31Z.
 
 Started At: 2026-08-06T03:49:41Z.
 
-Deadline or Expires At: 2026-08-06T04:46:31Z.
+Deadline or Expires At: 2026-08-06T04:59:31Z.
 
 Next Action: Commit this path-limited owned-wait evidence, reacquire the exact Work Item ID activity=work claim, observe the named creation-provider integration event, then reconcile overlapping manifests and apply direct-main delivery without repeating accepted source gates.
 
-Next Reconciliation At: 2026-08-06T04:46:31Z.
+Next Reconciliation At: 2026-08-06T04:59:31Z.
 
 Conversation Title Evidence: The canonical conversation was directly renamed to Waiting for Claim — Align Work-Item Management Provider Names for the exact integration-order wait.
