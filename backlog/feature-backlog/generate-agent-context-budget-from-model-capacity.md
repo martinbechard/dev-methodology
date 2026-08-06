@@ -1,6 +1,6 @@
 # Generate Agent Context Budgets From Model Capacity
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -70,6 +70,26 @@ None.
 - Does each adapter expose a native per-agent context limit, require a generated instruction, or need to reject unsupported allocation, and how does that mechanism interact with modelStages?
 - Should the calculation use the advertised full model window or the usable window after a documented reserve for system instructions, tool results, and output tokens?
 - Which deterministic rounding unit is accepted by every supported adapter without exceeding the selected model's effective capacity?
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-06T13:50:41Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Normalized Objective: Add a provider-neutral context percentage to every canonical role and generate reproducible runtime context budgets from authoritative model capacities and adapter-supported mechanisms, preserving unrelated agent behavior.
+
+Launch Result: Not attempted
+
+Canonical Conversation: None
+
+Last Contact At: None
+
+Next Reconciliation At: 2026-08-06T14:05:41Z
+
+Intended Root Role: Dev Orchestrator
+
+Coordination Note: Future Idea Management may overlap later generated outputs and the Dev Backlog Steward role. Begin independent evidence collection and private-worktree implementation; defer only an exact conflicting shared edit or integration event.
 
 ## Governed Definition Approval
 
