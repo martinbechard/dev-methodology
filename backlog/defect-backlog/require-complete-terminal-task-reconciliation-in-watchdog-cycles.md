@@ -124,7 +124,7 @@ Branch: codex/require-complete-terminal-reconciliation-019fd80b.
 
 Worktree: /Users/martinbechard/.codex/worktrees/6db0/dev-methodology.
 
-Phase: Fresh independent re-review.
+Phase: Bounded correction attempt 2.
 
 Started At: 2026-08-06T17:10:29Z.
 
@@ -134,7 +134,7 @@ Accepted Candidate Commit: 9cde838a3099dbbcfef235bd9f5bc86601d0cbe9.
 
 Candidate Checks: Watchdog simulator 30 tests passed; five exact bundle, design, and generated assertions passed; changed skills validated; Python compilation and generator freshness passed; diff checks passed. One unrelated broad catalog expected-count mismatch remains outside this item.
 
-Next Action: Obtain a fresh-context re-review verdict for replacement candidate 9cde838a3099dbbcfef235bd9f5bc86601d0cbe9, then dispatch independent focused verification if accepted.
+Next Action: The original Dev Coder produces the final bounded replacement candidate resolving both re-review findings and the changed-preservation comparison risk, then fresh-context re-review determines acceptance.
 
 ## Active Execution Evidence
 
@@ -142,19 +142,19 @@ Condition Type: delegated-work.
 
 Owner: Root Dev Orchestrator in task 019fd80b-9089-78c0-9272-26ac6b7d47ff.
 
-Evidence: Fresh Dev Code Reviewer child /root/rereview_terminal_reconciliation is re-reviewing clean replacement candidate 9cde838a3099dbbcfef235bd9f5bc86601d0cbe9. The replacement makes merge gates status-aware, requires canonical task identity, and distinguishes applicable claim-release evidence from no applicable claim.
+Evidence: Original Dev Coder child /root/implement_terminal_reconciliation is performing correction attempt 2 after fresh re-review found canonical status wording remained broader than the simulator and missing claim-applicability evidence still defaulted to non-applicable. The correction remains inside the approved sources and bounded dependent artifacts.
 
-Observed At: 2026-08-06T17:37:15Z.
+Observed At: 2026-08-06T17:42:35Z.
 
 Started At: 2026-08-06T17:10:29Z.
 
-Deadline or Expires At: 2026-08-06T18:37:15Z.
+Deadline or Expires At: 2026-08-06T18:42:35Z.
 
-Next Action: Fresh-context reviewer confirms both findings and the claim-evidence question are resolved without weakening the aggregate, read-only, archival, or NO_ACTION contracts.
+Next Action: Dev Coder aligns canonical status-aware merge language, makes claim applicability explicit or unknown by default, and exposes prior/current preservation evidence for changed-evidence alerts before producing a clean final candidate.
 
-Next Reconciliation At: 2026-08-06T17:51:15Z.
+Next Reconciliation At: 2026-08-06T17:56:35Z.
 
-Conversation Title Evidence: The canonical conversation is Reviewing — Require Complete Terminal Reconciliation.
+Conversation Title Evidence: The canonical conversation is Implementing — Require Complete Terminal Reconciliation.
 
 ## Correction History
 
@@ -173,6 +173,18 @@ Disposition: Both confirmed findings are returned to the original Dev Coder for 
 Correction Commit: 9cde838a3099dbbcfef235bd9f5bc86601d0cbe9.
 
 Correction Result: Both confirmed findings are implemented in focused simulator coverage. The claim-evidence question is resolved through an explicit claim-applicability field so required release evidence is never fabricated or silently omitted.
+
+Attempt 2 Started At: 2026-08-06T17:42:35Z.
+
+Re-review Verdict: NEEDS_CORRECTION on candidate 9cde838a3099dbbcfef235bd9f5bc86601d0cbe9.
+
+Confirmed Finding 3: Canonical skill and role language still imposed merged delivery on Failed and Abandoned even though the corrected simulator restricted that gate to Completed.
+
+Confirmed Finding 4: Claim applicability defaulted to non-applicable, so missing applicability evidence could still allow NO_ACTION.
+
+Residual Risk To Resolve: Changed-preservation alerts must expose enough acknowledged prior and current evidence to verify why the alert recurred.
+
+Disposition: Both confirmed findings and the bounded residual risk are returned to the original Dev Coder for correction attempt 2. No finding is excluded or deferred. A later material failure of this same correction boundary will be handed to the parent Coordinator with preserved evidence rather than entering a third attempt.
 
 ## Governed Definition Approval
 
