@@ -1,6 +1,6 @@
 # Extract Future Idea Management
 
-Status: Blocked
+Status: Ready
 
 Type: Feature
 
@@ -65,6 +65,18 @@ Blocker Owner: Dev Backlog Coordinator.
 Exact Unblock Condition: Both dependency Work Item IDs reach terminal successful dispositions on current main; `skills/create-work-item-file/SKILL.md` and `skills/manage-work-items-file/SKILL.md` exist as the canonical provider definitions; and their source and integration claims are released.
 
 Permitted Resumption Transition: Blocked -> Ready after the Coordinator verifies that exact condition.
+
+## Ready Recovery — 2026-08-06
+
+- Transition: Blocked -> Ready.
+- Recovery authority: Dev Backlog Coordinator authorized this single provider transaction after reconciling both declared dependencies on current main.
+- Dependency reconciliation: align-work-item-creation-provider-names is terminal successful with archive commit 793d4303a7440803ad79f5440a77ffee7882081d; align-work-item-management-provider-names is terminal successful with archive commit 4182c62110e1a87c6687b68e40bdb1f8b3fbc155.
+- Current main: 4182c62110e1a87c6687b68e40bdb1f8b3fbc155; both dependency commits are ancestors of current main.
+- Canonical sources: skills/create-work-item-file/SKILL.md and skills/manage-work-items-file/SKILL.md exist on current main.
+- Claim reconciliation: The dependency source and integration claims are released; the current claim registry has no live claim for either dependency.
+- Exact unblock condition: Satisfied. Both dependency Work Item IDs have terminal successful dispositions on current main, both canonical provider definitions exist, and their source and integration claims are released.
+- Owner: Unowned.
+- Next action: Parent Dev Backlog Coordinator may reserve Ready -> Starting; this recovery does not create execution ownership.
 
 ## Verification
 
