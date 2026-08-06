@@ -1,6 +1,6 @@
 # Align Work-Item Creation Provider Names
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -217,3 +217,25 @@ Deadline or Expires At: 2026-08-06T09:01:00Z.
 Next Action: Dispatch exactly one integration-sensitive Dev Verifier against immutable integration commit 1370a3359120974c62bcc9d715d2a61a688307b6, then advance main only after PASS.
 
 Next Reconciliation At: 2026-08-06T05:16:00Z.
+
+## Completion Evidence
+
+Transition: Running -> Completed.
+
+Completed At: 2026-08-06T05:08:00Z.
+
+Accepted Candidate Commit: 7d87faee8dec5d7edc99c38a7517b4f1b2c91fca.
+
+Reviewed Integration Commit: 1370a3359120974c62bcc9d715d2a61a688307b6, based on 49a1471cc2fd15618f49655e4085709ce94b44fd.
+
+Review Result: GOOD. Parent recovery review found no material issue, confirmed both creation-provider and delivered deliver-work-item intents, confirmed generated/source alignment, and found no new stale creation-provider identity.
+
+Integration-Sensitive Verification: PASS. The single fresh Dev Verifier observed immutable 1370a3359120974c62bcc9d715d2a61a688307b6; four focused combined-interface tests, four declared freshness checks, the maintained stale-name scan, diff and show mapping, and clean worktree/index checks passed under Python 3.11. The broad suite remained deliberately skipped.
+
+Delivered Main Commit: ac560d5eb135840cfa57499ed35d8eff1f5aef44.
+
+Source-to-Main Mapping: Integration commit 1370a3359120974c62bcc9d715d2a61a688307b6 was replayed with -x onto current main. Both commits have stable patch ID 6531f1f2836c34118b5bd814c5ba91474f108444. Post-integration git diff validation passed and main was clean.
+
+Delivered Scope: Added the exact create-work-item Interface Skill; renamed the five creation providers to the create-work-item-<provider> family; preserved provider-specific behavior and the delivered deliver-work-item interface changes; updated approved routing, role, evaluation, documentation, metadata, and generated dependents; removed the duplicated User Action Required condition; and added focused stale-name and substantive-interface regressions.
+
+Provider Closure: The canonical file record is terminal Completed and archived at backlog/completed-backlog/defects/align-work-item-creation-provider-names.md. Exact update, source-path, and destination-path claims owned the atomic terminal transaction; all task-owned claims are released after commit verification.
