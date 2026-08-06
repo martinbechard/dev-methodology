@@ -140,17 +140,17 @@ Condition Type: owned-wait.
 
 Owner: Dev Orchestrator.
 
-Evidence: Status remains Running for canonical task 019fd464-3875-75e2-aaa0-39a8e357d764 on branch codex/store-agent-claim-state in worktree /Users/martinbechard/.codex/worktrees/b146/dev-methodology. Direct user approval remains bounded to the verified-empty, exclusively locked Windows legacy-registry tombstone with fail-closed nonmutation for any live, extra-metadata, identity-mismatched, or contradictory state. Dev-methodology candidate ee60082c14c4814bd1f734f5c6760c32f4b75309 and external mcp-agent-ops candidate 88541746588bf91b51e0f953bc3b2e16881940c2 preserve candidates d2744c62281b5fc2bfdabd0d95a72642aab2924e and 660aef8be2cfc12926aef15c90250556760961a7 and supersede the earlier Windows failure in run 31068038651. Fresh independent release review approved both immutable commits with no findings; fresh verification passed eight dev tests, twelve external tests, exact command/MCP marker-byte parity, configured Windows mypy, compilation, package-version, and diff checks. External commit 88541746588bf91b51e0f953bc3b2e16881940c2 is pushed on codex/store-agent-claim-state and native CI run 31102737360 is in progress. Current-main helper compatibility remains durably restored at reviewed commit 46b92c842693bb96b5e756632a8df35b241511bc. No publication, tag, external main integration, dev main integration, or provider closure has occurred.
+Evidence: Status remains Running for canonical task 019fd464-3875-75e2-aaa0-39a8e357d764 on branch codex/store-agent-claim-state in worktree /Users/martinbechard/.codex/worktrees/b146/dev-methodology. Direct user approval remains bounded to the verified-empty, exclusively locked Windows legacy-registry tombstone with fail-closed nonmutation for any live, extra-metadata, identity-mismatched, or contradictory state. Superseding dev-methodology candidate 0648629ab96f12f79e43e966e3cdc6ef461d09c8 and external mcp-agent-ops candidate 89f2df0d80fc91f3944849b5387e4ac82ba79e40 preserve candidates d2744c62281b5fc2bfdabd0d95a72642aab2924e and 660aef8be2cfc12926aef15c90250556760961a7. Fresh independent release review approved both exact commits; fresh verification passed the focused dev, external, compatibility, parity, Windows-typing, marker-byte, compilation, version, and diff gates. Native runs 31102737360 and 31103173358 truthfully preserve the stale POSIX-only assertion and Windows CRLF-byte failures that led to the compatibility and binary-descriptor corrections. Native CI run 31103633065 then passed all Windows compatibility, real stdio, Ruff, mypy, and Linux Python 3.11, 3.12, and 3.13 jobs for exact external commit 89f2df0d80fc91f3944849b5387e4ac82ba79e40. External main was fast-forwarded and pushed to that exact commit; main CI run 31103775695 is queued before tagging and publishing mcp-agent-ops 0.6.0. Current-main dev helper compatibility remains durably restored at reviewed commit 46b92c842693bb96b5e756632a8df35b241511bc. No tag, package publication, dev main integration, or provider closure has occurred.
 
-Observed At: 2026-08-06T12:45:38Z.
+Observed At: 2026-08-06T12:59:33Z.
 
 Started At: 2026-08-06T12:15:15.607475Z.
 
 Deadline: 2026-08-06T15:30:00Z.
 
-Next Action: Await native CI run 31102737360 for external commit 88541746588bf91b51e0f953bc3b2e16881940c2; if it passes, integrate and release mcp-agent-ops 0.6.0, then reconcile the dev candidate with current main, rerun focused delivery gates, integrate direct-main, and close the provider separately.
+Next Action: Await external-main CI run 31103775695 for commit 89f2df0d80fc91f3944849b5387e4ac82ba79e40; if it passes, tag and publish mcp-agent-ops 0.6.0, then reconcile dev candidate 0648629ab96f12f79e43e966e3cdc6ef461d09c8 with current main, rerun focused delivery gates, integrate direct-main, and close the provider separately.
 
-Next Reconciliation At: 2026-08-06T13:00:00Z.
+Next Reconciliation At: 2026-08-06T13:14:00Z.
 
 ## Summary
 
