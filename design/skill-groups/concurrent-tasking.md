@@ -530,7 +530,7 @@ across queue dispatch, active-execution reconciliation, delivery, closure, and p
 
 ### Scenario: A Project Enables Concurrent Agents
 
-This scenario starts with the project goal: enable multiple agents to work concurrently. Concurrent work requires resource coordination, so coordinate-work-items always loads agent-claim. Project-specific directives select one verified helper provider, which remains outside the default context until agent-claim performs a claim operation. agent-claim-helper defines the common operation, input, result, and uncertain-outcome interface. agent-claim-helper-command invokes a local command-line helper, while agent-claim-helper-mcp calls tools through the MCP protocol.
+This scenario starts with the project goal: enable multiple agents to work concurrently. Concurrent work requires resource coordination, so coordinate-work-items always loads agent-claim. agent-claim always loads the exact agent-claim-helper Interface Skill, which defines the common operation, input, result, and uncertain-outcome contract. Project-specific directives select one verified agent-claim-helper-* Provider Skill. The selected provider remains outside the default context until agent-claim performs a claim operation. agent-claim-helper-command invokes a local command-line helper, while agent-claim-helper-mcp calls tools through the MCP protocol.
 
 ```mermaid
 classDiagram
@@ -605,12 +605,12 @@ classDiagram
     project-specific-directives o..> agent-claim-helper-mcp : when claim operations use the verified MCP helper
     coordinate-work-items o--> agent-claim
     integrate-agent-work o--> agent-claim
-    agent-claim --> ClaimHelper
+    agent-claim o--> ClaimHelper
     agent-claim-helper-command ..|> ClaimHelper
     agent-claim-helper-mcp ..|> ClaimHelper
 ```
 
-Enabling concurrent agents loads coordinate-work-items together with its fixed agent-claim dependency. integrate-agent-work uses the same policy when concurrent contributions reach shared integration. The solid open-diamond relationships show these exact-name loads. The dotted relationships keep the selected helper provider out of the default context until a claim operation needs it. agent-claim depends on the common claim operations, and the selected helper skill provides them. Solo workflows load neither coordinate-work-items nor agent-claim.
+Enabling concurrent agents loads coordinate-work-items together with its fixed agent-claim dependency. integrate-agent-work uses the same policy when concurrent contributions reach shared integration. agent-claim then loads agent-claim-helper as a fixed exact-name Interface Skill dependency. The solid open-diamond relationships show these unconditional exact-name loads. Project-specific directives select one helper provider, and the dotted relationship keeps that provider out of the default context until a claim operation needs it. The selected helper skill realizes the interface operations. Solo workflows load neither coordinate-work-items nor agent-claim.
 
 The MCP helper route becomes selectable only after an MCP implementation satisfies agent-claim-helper and the verification boundary in agent-claim-helper-mcp. The current repository selects the command-line helper.
 
