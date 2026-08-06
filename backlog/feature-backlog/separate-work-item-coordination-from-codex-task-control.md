@@ -1,6 +1,6 @@
 # Separate Work-Item Coordination From Codex Task Control
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -107,3 +107,13 @@ Approved at creation on 2026-08-05 by the user's request to identify and log add
 ## Notes
 
 This is a static responsibility split, not a diagram of one runtime scenario. The portable skill states the dependencies and procedure ownership that always exist; the Codex skill states the conditional platform mapping used only in Codex tasks.
+
+## Starting Reservation — 2026-08-06T08:44:38Z
+
+- Transition: Ready -> Starting.
+- Coordinator reservation: Dev Backlog Coordinator reserved this Work Item ID on current main at 2026-08-06T08:44:38Z.
+- Dependency reconciliation: Dependencies are None. The claim-helper separation dependency is terminal successful at commit 5742e5973e58cbd533666d69b640aa3b3cc614ba, which is current main.
+- Owner handoff: Dev Backlog Coordinator retains reservation ownership and will hand off to one root Dev Orchestrator after launch acceptance.
+- Root Agent Task: Not assigned; no child task was created by this reservation transaction.
+- Launch result: Pending; this provider transaction does not start a task or create execution ownership.
+- Next action: Launch one root Dev Orchestrator and record Starting -> Running only after accepted execution evidence.
