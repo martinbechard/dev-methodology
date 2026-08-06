@@ -1,6 +1,6 @@
 # Require Complete Terminal Task Reconciliation in Watchdog Cycles
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -74,6 +74,24 @@ None.
 ## Open Questions
 
 None.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-06T17:06:55Z
+
+Coordinator: Dev Backlog Coordinator task 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Normalized Objective: Require complete campaign-wide terminal reconciliation, aggregate every actionable terminal anomaly, scope archive pauses only to task archival, and prohibit NO_ACTION while unacknowledged terminal cleanup remains.
+
+Launch Result: Not attempted.
+
+Canonical Conversation: None.
+
+Last Contact At: None.
+
+Next Reconciliation At: 2026-08-06T17:21:55Z.
+
+Intended Root Role: Dev Orchestrator.
 
 ## Governed Definition Approval
 
