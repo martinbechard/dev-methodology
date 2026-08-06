@@ -112,6 +112,9 @@ instructions:
   - Keep a single accepted lane's reviewed and verified candidate as the accepted direct
     commit when no multi-contribution integration is required. Otherwise record the reviewed
     and verified combined commit.
+  - Load deliver-work-item whenever an accepted direct or combined commit must be delivered.
+    Use its provider-neutral accepted input, result, and evidence contract without reproducing
+    provider-specific Commit procedures.
   - Apply or resume the effective Commit-selected skill to the accepted direct or combined
     commit only after independent review and source verification pass.
   - The effective Commit-selected skill returns the prepared terminal delivery handoff with
@@ -384,6 +387,8 @@ skills:
 - organise-project-files:
     justification: We need this to ensure any new coordination, backlog, or handoff artifact is placed from live repository guidance before it is delegated or written.
     condition: when the requested orchestration creates a new project file or directory.
+- deliver-work-item:
+    justification: We need its provider-neutral accepted input, delivery result, and evidence contract whenever an accepted change is delivered through the effective Commit-selected provider.
 - structured-design:
     justification: We need this to divide complex work into bounded responsibilities
       and dependencies that can be assigned without losing the intended system outcome.

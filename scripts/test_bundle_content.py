@@ -108,6 +108,7 @@ NEW_DEVELOPMENT_SKILLS = (
     "analyze-root-cause",
     "collect-runtime-evidence",
     "organise-project-files",
+    "deliver-work-item",
     "deliver-work-item-direct-main",
     "create-file-work-item",
     "manage-file-work-items",
@@ -2755,6 +2756,92 @@ class BundleContentTests(unittest.TestCase):
             ),
         )
 
+    def test_deliver_work_item_interface_routes_consumer_and_providers(self) -> None:
+        """Delivery consumers must use one interface while Commit selects providers."""
+        interface_name = "deliver-work-item"
+        interface_path = SKILLS_ROOT / interface_name / "SKILL.md"
+        interface_text = interface_path.read_text(encoding="utf-8")
+
+        self.assertIn("name: deliver-work-item", interface_text)
+        self.assertIn("# Deliver Work Item", interface_text)
+        for heading in (
+            "## Accepted Commit Input",
+            "## Deliver Work Item",
+            "## Delivery Results",
+            "## Delivery Evidence",
+            "## Provider Contract",
+        ):
+            with self.subTest(interface_heading=heading):
+                self.assertIn(heading, interface_text)
+        for phrase in (
+            "Opaque Work Item ID and provider selector.",
+            "must not modify the accepted commit",
+            "preserve one delivery identity",
+            "READY, AWAITING_REVIEW, or BLOCKED",
+            "prepared Persistence handoff",
+            "must not select a provider",
+            "must not mutate Persistence or dispatch a provider manager",
+        ):
+            with self.subTest(interface_contract=phrase):
+                self.assertIn(phrase, interface_text)
+
+        self.assertTrue(openai_metadata_path(interface_name).is_file())
+
+        orchestrator = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-orchestrator.role.yaml"
+        )
+        orchestrator_skills = {next(iter(entry)) for entry in orchestrator["skills"]}
+        self.assertIn(interface_name, orchestrator_skills)
+        self.assertTrue(
+            orchestrator_skills.isdisjoint(
+                {
+                    "deliver-work-item-direct-main",
+                    "deliver-work-item-feature-branch",
+                }
+            )
+        )
+
+        provider_results = {
+            "deliver-work-item-direct-main": ("READY", "BLOCKED"),
+            "deliver-work-item-feature-branch": (
+                "READY",
+                "AWAITING_REVIEW",
+                "BLOCKED",
+            ),
+        }
+        for provider_name, results in provider_results.items():
+            provider_text = (
+                SKILLS_ROOT / provider_name / "SKILL.md"
+            ).read_text(encoding="utf-8")
+            with self.subTest(provider=provider_name):
+                self.assertIn("## Interface Conformance", provider_text)
+                self.assertIn("deliver-work-item interface", provider_text)
+                self.assertIn("does not select the Commit provider", provider_text)
+                self.assertIn("does not mutate Persistence", provider_text)
+                for result in results:
+                    self.assertIn(result, provider_text)
+
+        project = load_yaml_object(REPOSITORY_ROOT / "PROJECT.yaml")
+        self.assertEqual(
+            "direct-main",
+            project["workflow_selection"]["commit"]["default"],
+        )
+        agents_text = AGENTS_PATH.read_text(encoding="utf-8")
+        self.assertIn("Default commit direct-main: use deliver-work-item-direct-main", agents_text)
+        self.assertNotIn("Default commit direct-main: use deliver-work-item.", agents_text)
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probe = next(
+            entry
+            for entry in probes["probes"]
+            if entry["id"] == "probe-deliver-work-item"
+        )
+        self.assertEqual(interface_name, probe["skill"])
+        self.assertEqual(
+            ["dev-orchestrator-happy", "dev-orchestrator-boundary"],
+            probe["scenarioAssociations"],
+        )
+
     def test_deliver_work_item_feature_branch_requires_observed_provider_accurate_merge(
         self,
     ) -> None:
@@ -2971,6 +3058,7 @@ class BundleContentTests(unittest.TestCase):
             "probe-manage-github-work-items",
             "probe-create-file-work-item",
             "probe-manage-file-work-items",
+            "probe-deliver-work-item",
             "probe-deliver-work-item-direct-main",
             "probe-deliver-work-item-feature-branch",
         ):
@@ -2990,6 +3078,7 @@ class BundleContentTests(unittest.TestCase):
             "manage-github-work-items",
             "create-file-work-item",
             "manage-file-work-items",
+            "deliver-work-item",
             "deliver-work-item-direct-main",
             "deliver-work-item-feature-branch",
         ):

@@ -6,7 +6,7 @@ target:
   conceptualRole: agents/roles/dev-activities/dev-orchestrator.role.yaml
   nativeAgent: generated/adapters/codex/agents/dev-orchestrator.toml
   repositoryMutation: required
-  requiredSkills: [structured-design, structured-explanation]
+  requiredSkills: [deliver-work-item, structured-design, structured-explanation]
   conditionalSkills:
     organise-project-files: Orchestration creates a project file or directory.
     agent-claim: Resource coordination selects agent-claim.

@@ -4,7 +4,7 @@ This document applies the reusable [Skill Organization](object-oriented-agent-an
 
 ## 1. Application Scope
 
-The application covers seven top-level comprehension groups and forty-three current skill packages.
+The application covers seven top-level comprehension groups and forty-four current skill packages.
 
 Every detailed group document contains:
 
@@ -16,7 +16,7 @@ Every detailed group document contains:
 
 The applied documents organize their diagrams around the capability and its use cases. Exact-name loading, conditional loading, project routing, and interface realization explain relationships inside those views; they are not substitute topics for the capability itself.
 
-Provider-family Skill interface nodes are abstract analysis contracts rather than additional entries in the maintained skill inventory. Their wildcard display labels identify the procedure family shared by the concrete Provider Skills. The adjacent AGENTS.md factory node owns project selection, while realization arrows show which providers satisfy the interface.
+An Interface Skill is a maintained package when one exact SKILL.md publishes the shared contract. A wildcard family label remains analysis or routing notation and is not a package. The adjacent AGENTS.md factory node owns project selection, while realization arrows show which providers satisfy the interface.
 
 Concurrent Tasking contains three direct skills and two nested groups. Resource Coordination and Feature Branch And Worktrees each contain three direct skills. Membership inherited from a nested group does not assign a skill a second primary group.
 
@@ -33,8 +33,8 @@ The applied diagrams use the relationship and member conventions defined by the 
 - An empty member area means that the skill describes one procedure and its identity already names that operation.
 - An Agent Skill is loaded by exact name from an Agent definition.
 - An Injectable Skill implements procedure vocabulary selected through AGENTS.md.
-- A Skill interface is an abstract contract that lists the public data and function members its consumers know and every Provider Skill must provide or respect. The applied diagrams use the Skill interface stereotype because no wildcard family is a maintained package.
-- An Interface Skill is a distinct named SKILL.md package that publishes an interface. None of the wildcard provider families in this applied model currently has such a package, so the Interface Skill stereotype is not used for them.
+- A Skill interface is a contract that lists the public data and function members its consumers know and every Provider Skill must provide or respect.
+- An Interface Skill is a distinct named SKILL.md package that publishes an interface. The deliver-work-item package is the maintained interface for the deliver-work-item-* provider family.
 - A Provider Skill supplies one implementation of a Skill interface. It uses Provider Skill as its visible stereotype instead of stacking SKILL.md and Injectable Skill stereotypes.
 - A dashed realization arrow with a hollow triangular arrowhead points from a Provider Skill to the Skill interface it implements. Realization is conformance, not loading.
 - An AGENTS.md factory is a separate routing node that selects one Provider Skill by exact name. It does not replace the Skill interface used by an Agent or another skill.
@@ -124,10 +124,10 @@ The registry assigns every current skill one primary direct group and records ne
 | Documentation Methodology | route-documentation-work; bootstrap-project-documentation; reverse-engineer-project-documentation; verify-documentation-page | None | 4 |
 | Backlog Management | resolve-backlog-blockage; create-file-work-item; create-github-work-item; create-gitlab-work-item; create-azure-devops-work-item; create-jira-work-item; manage-file-work-items; manage-github-work-items; manage-gitlab-work-items; manage-azure-devops-work-items; manage-jira-work-items | None | 11 |
 | Concurrent Tasking | coordinate-codex-work-items; set-solo-mode; set-multitask-mode | Resource Coordination: agent-claim, agent-claim-command, agent-claim-mcp. Feature Branch And Worktrees: integrate-agent-work, deliver-work-item-feature-branch, create-pull-request. | 9 |
-| Direct Main Delivery | deliver-work-item-direct-main | None | 1 |
+| Direct Main Delivery | deliver-work-item; deliver-work-item-direct-main | None | 2 |
 | Review And Verification | review-code-with-evidence; test-strategy; verify-end-to-end-workflow; analyze-root-cause; collect-runtime-evidence; trace-code-execution; review-prompt-contracts | None | 7 |
 
-The totals count primary membership once. Cross-group repetitions in detailed diagrams do not increase the forty-three-skill inventory.
+The totals count primary membership once. Cross-group repetitions in detailed diagrams do not increase the forty-four-skill inventory.
 
 ## 4. Group Designs
 
@@ -177,7 +177,7 @@ The applied model is complete when it describes the maintained skill inventory a
 
 The applied model is grounded in the repository sources below.
 
-- The forty-three SKILL.md files and conceptual Agent definitions linked from the seven group documents.
+- The forty-four SKILL.md files and conceptual Agent definitions linked from the seven group documents.
 - [Object-Oriented Analysis Of Agents And Skills](object-oriented-agent-and-skill-model.md)
 - [Bundled Skill Inventory](../README.md)
 - [Agentic Configuration](agentic-configuration.html)

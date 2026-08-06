@@ -513,6 +513,7 @@ The development practice skills are:
 - manage-azure-devops-work-items
 - create-jira-work-item
 - manage-jira-work-items
+- deliver-work-item
 - deliver-work-item-direct-main
 - explain-code-fix
 - effective-communication
@@ -547,6 +548,8 @@ The development practice skills are:
 create-github-work-item and manage-github-work-items are the canonical split GitHub Persistence skills. They keep GitHub Issues authoritative and never create a shadow repository queue.
 
 create-file-work-item and manage-file-work-items are the canonical file Persistence pair. They keep authoritative records only under backlog in the primary worktree on main and never mirror provider issues into repository files. Resource coordination is loaded and applied independently from manage-file-work-items; the manager does not define or condition provider lifecycle procedures on claims. PROJECT.yaml selects Persistence and Commit independently, while AGENTS.md supplies only the corresponding skill references. Conceptual agent definitions remain neutral to both selectors.
+
+deliver-work-item is the provider-neutral Commit interface consumed by Dev Orchestrator. It defines the accepted commit input, READY, AWAITING_REVIEW, and BLOCKED results, state-keyed evidence, and prepared Persistence handoff. AGENTS.md still selects deliver-work-item-direct-main or deliver-work-item-feature-branch from the effective Commit value.
 
 The stack and project-domain skill packs are:
 

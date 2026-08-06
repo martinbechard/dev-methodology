@@ -471,6 +471,20 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: structured-design}
+  - id: probe-deliver-work-item
+    skill: deliver-work-item
+    source: skills/deliver-work-item/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: Independent review and verification accepted a commit that Dev Orchestrator must deliver through the effective Commit-selected provider.
+    negativeCondition: Candidate implementation, review, or verification without accepted delivery input does not activate Commit delivery, and the interface never selects a provider or mutates Persistence.
+    expectedBehavior: Accept the opaque Work Item ID and provider selector, accepted commit and exact source evidence, configured delivery target and authority, fresh review and checks, preserve one delivery identity, consume without modifying the accepted commit, return READY AWAITING_REVIEW or BLOCKED with state-keyed evidence and a prepared Persistence handoff, and leave provider selection provider-specific procedure and lifecycle mutation outside the interface.
+    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, tool-authority, readiness-consistency], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-orchestrator-happy, dev-orchestrator-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: [direct-main-unrelated-dirty-contract]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
   - id: probe-deliver-work-item-direct-main
     skill: deliver-work-item-direct-main
     source: skills/deliver-work-item-direct-main/SKILL.md

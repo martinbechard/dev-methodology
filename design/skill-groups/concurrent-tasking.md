@@ -12,7 +12,7 @@ The design starts with the complete Agent landscape, then expands four scenarios
 
 A solid dependency is fixed by the referencing definition. A dotted dependency applies only under the condition written on the arrow. Project-selected skill loading originates at AGENTS.md. Agent- or skill-owned loading originates at the Agent or skill that makes that decision. Realization arrows show that a provider implements an interface; they do not load a file.
 
-When several provider skills expose the same public procedures, the scenario introduces a Skill interface that organizes the provider family and gives consumers one shared contract. AGENTS.md selects the provider skill for the project.
+When several provider skills expose the same public procedures, the scenario uses an exact Interface Skill when one exists. The interface gives consumers one shared contract, while AGENTS.md selects the provider skill for the project.
 
 ### Overall Agent Dependencies
 
@@ -152,7 +152,7 @@ The Agent skill inventory states the exact files each relevant role always loads
 | --- | --- | --- |
 | Every conceptual Agent | effective-communication; ste-technical-writing | None |
 | Dev Backlog Coordinator | structured-explanation | coordinate-codex-work-items when Codex tasks coordinate multiple work items; resolve-backlog-blockage during a declared blockage; set-solo-mode when configured secondary dispatch must stop; set-multitask-mode when configured secondary dispatch may resume |
-| Dev Orchestrator | structured-design; structured-explanation | coordinate-codex-work-items for a coordinated Codex work-item conversation; organise-project-files when orchestration creates a new project file or directory |
+| Dev Orchestrator | deliver-work-item; structured-design; structured-explanation | coordinate-codex-work-items for a coordinated Codex work-item conversation; organise-project-files when orchestration creates a new project file or directory |
 | Dev Merge Coordinator | integrate-agent-work; review-structured-artifact; explain-code-fix | organise-project-files when integration creates or introduces a new project file or directory |
 | Dev Backlog Steward | structured-explanation | coordinate-codex-work-items when provider-wide maintenance touches coordinated state; organise-project-files when recovery creates a path whose destination is not fixed |
 | Dev Backlog Watchdog | coordinate-codex-work-items | resolve-backlog-blockage when a blockage criterion or active recovery applies |
@@ -426,7 +426,7 @@ The MCP helper route becomes selectable only after an MCP implementation satisfi
 
 ### Scenario: Delivering Accepted Work
 
-This scenario applies after review and verification accept a commit for delivery. The deliver-work-item-* interface organizes the direct-main and feature-branch providers, while AGENTS.md selects the provider named by the project Commit setting.
+This scenario applies after review and verification accept a commit for delivery. The exact deliver-work-item Interface Skill organizes the direct-main and feature-branch providers. The deliver-work-item-* family label remains in routing because AGENTS.md selects the provider named by the project Commit setting.
 
 ```mermaid
 classDiagram
@@ -448,8 +448,8 @@ classDiagram
         +route deliver-work-item => deliver-work-item-*
     }
 
-    class DeliverWorkItem["deliver-work-item-*"] {
-        <<Skill interface>>
+    class DeliverWorkItem["deliver-work-item"] {
+        <<Interface Skill>>
         +deliver-work-item(acceptedCommit)
     }
 
@@ -489,7 +489,7 @@ classDiagram
     deliver-work-item-direct-main o..> integrate-agent-work : when the accepted commit is not represented on main
 ```
 
-The provider realization arrows show the shared delivery contract. Feature-branch delivery loads create-pull-request only for a host that uses pull-request terminology. Direct-main delivery loads integrate-agent-work only when the accepted commit is not already represented on main.
+The provider realization arrows show conformance with the exact deliver-work-item contract. Feature-branch delivery loads create-pull-request only for a host that uses pull-request terminology. Direct-main delivery loads integrate-agent-work only when the accepted commit is not already represented on main.
 
 ## Skill Responsibilities
 
@@ -553,6 +553,7 @@ The scenario diagrams use these project-routed policy, helper, creation, managem
 - [Agent Claim MCP](../../skills/agent-claim-mcp/SKILL.md)
 - [Deliver Work Item Feature Branch](../../skills/deliver-work-item-feature-branch/SKILL.md)
 - [Deliver Work Item Direct Main](../../skills/deliver-work-item-direct-main/SKILL.md)
+- [Deliver Work Item](../../skills/deliver-work-item/SKILL.md)
 - [Create Pull Request](../../skills/create-pull-request/SKILL.md)
 - [Create File Work Item](../../skills/create-file-work-item/SKILL.md)
 - [Create GitHub Work Item](../../skills/create-github-work-item/SKILL.md)

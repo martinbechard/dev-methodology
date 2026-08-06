@@ -13,6 +13,10 @@ Complete delivery only after the accepted behavior is verified on the configured
 
 Deliver the accepted work item through the evidence gate, current-main reconciliation, deliberate integration, focused integrated verification, and main observation defined below.
 
+## Interface Conformance
+
+This Provider Skill realizes the deliver-work-item interface. It consumes the accepted commit without modifying it, preserves one delivery identity through reconciliation and observation, and returns READY or BLOCKED with state-keyed evidence and the prepared Persistence handoff. It does not select the Commit provider and does not mutate Persistence or dispatch a provider manager.
+
 ## Inputs
 
 Resolve these inputs before integration:

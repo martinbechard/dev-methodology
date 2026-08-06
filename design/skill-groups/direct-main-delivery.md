@@ -2,7 +2,7 @@
 
 ## Scope
 
-Direct Main Delivery contains the Commit provider that delivers accepted work directly to main. It is selected as an alternative to the feature-branch provider.
+Direct Main Delivery contains the provider-neutral delivery interface and the Commit provider that delivers accepted work directly to main. The provider is selected as an alternative to the feature-branch provider.
 
 The applied-model conventions are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md#2-applied-model-legend).
 
@@ -38,7 +38,7 @@ classDiagram
 
 ### Scenario: Selecting A Delivery Provider
 
-This scenario applies after review and verification accept a commit for delivery. The deliver-work-item-* interface keeps the consumer stable while AGENTS.md selects either the direct-main or feature-branch Provider Skill from the project Commit setting.
+This scenario applies after review and verification accept a commit for delivery. The exact deliver-work-item Interface Skill keeps the consumer stable. The deliver-work-item-* family label identifies the providers that AGENTS.md can select from the project Commit setting.
 
 ```mermaid
 classDiagram
@@ -47,8 +47,8 @@ classDiagram
     class DevOrchestrator {
         <<Agent>>
     }
-    class DeliverWorkItem["deliver-work-item-*"] {
-        <<Skill interface>>
+    class DeliverWorkItem["deliver-work-item"] {
+        <<Interface Skill>>
         +deliver-work-item(acceptedCommit)
     }
     class ProjectSpecificDirectives["Project-specific directives"] {
@@ -111,10 +111,11 @@ classDiagram
 
 ## Skill Responsibility
 
-The group contains one selected Commit provider.
+The group contains one provider-neutral Interface Skill and one selected Commit provider.
 
 | Skill | Public procedures | Responsibility |
 | --- | --- | --- |
+| deliver-work-item | Accepted Commit Input; Deliver Work Item; Delivery Results; Delivery Evidence; Provider Contract | Defines the provider-neutral delivery contract consumed by Dev Orchestrator. |
 | deliver-work-item-direct-main | Deliver Work Item; Evidence Gate; Main Reconciliation; Deliberate Integration; Integrated Verification And Main Observation | Integrates an accepted candidate into main, verifies the integrated state, and returns evidence for separate provider lifecycle closure. |
 
 ## Authoritative Inputs
@@ -122,6 +123,7 @@ The group contains one selected Commit provider.
 The delivery relationship and procedure boundary are grounded in these Agent and skill definitions.
 
 - [Dev Orchestrator](../../agents/roles/dev-activities/dev-orchestrator.role.yaml)
+- [Deliver Work Item](../../skills/deliver-work-item/SKILL.md)
 - [Deliver Work Item Direct Main](../../skills/deliver-work-item-direct-main/SKILL.md)
 - [Deliver Work Item Feature Branch](../../skills/deliver-work-item-feature-branch/SKILL.md)
 - [Integrate Agent Work](../../skills/integrate-agent-work/SKILL.md)

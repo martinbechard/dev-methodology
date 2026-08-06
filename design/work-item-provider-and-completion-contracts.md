@@ -252,6 +252,12 @@ Azure DevOps and Jira placeholder operations return BLOCKED without creating a r
 
 ## Completion Contracts
 
+### Provider-neutral interface
+
+The deliver-work-item Interface Skill owns the accepted commit input, Deliver Work Item procedure, READY, AWAITING_REVIEW, and BLOCKED meanings, state-keyed delivery evidence, and prepared Persistence handoff. Dev Orchestrator consumes this interface after independent review and verification accept a commit. AGENTS.md separately selects one provider from the deliver-work-item-* family through the effective Commit value.
+
+The interface does not select a provider, implement integration or publication, mutate Persistence, or dispatch a provider manager. Each provider preserves this public meaning while retaining its own internal procedure and supported result refinements.
+
 ### Direct main
 
 The deliver-work-item-direct-main skill owns these stages:
@@ -313,7 +319,7 @@ The migration is atomic at the accepted steady state. Compatibility behavior exi
 | manage-backlog | manage-file-work-items | Rename and move file inventory, lifecycle, recovery, archive, and short backlog-claim behavior into the file provider manage skill. |
 | file-based-backlog | create-file-work-item and manage-file-work-items | Absorb routing and authority rules into the symmetric pair, then retire the routing skill. No compatibility alias after the migration gate. |
 | github-issues-backlog | create-github-work-item and manage-github-work-items | Split creation from management while preserving GitHub issue authority and no-shadow-file behavior, then retire the combined skill. |
-| execute-workitem | deliver-work-item-direct-main and deliver-work-item-feature-branch | Move normalized shared work-item fields into this contract and split completion behavior by selector. Retire process selection from execute-workitem after all callers migrate. |
+| execute-workitem | deliver-work-item, deliver-work-item-direct-main, and deliver-work-item-feature-branch | Move normalized shared delivery fields into the interface and split completion behavior by selector. Retire process selection from execute-workitem after all callers migrate. |
 | execute-workitem terminal READY | Completion disposition READY plus provider lifecycle COMPLETED | Preserve READY as the completion skill's successful delivery disposition, not a provider lifecycle state. Migrate roles, callers, examples, and evaluations so READY authorizes the required provider lifecycle update; only the provider manager, or the provider-none task result, records lifecycle COMPLETED. |
 | simple-workitem | direct-main | Replace the prototype process value and reference with the direct-main completion selector and skill. Preserve the stricter main-observation terminal rule. |
 | feature-branch-workitem | feature-branch | Replace the prototype process value and reference with the feature-branch completion selector and skill. Extend publication-only AWAITING_REVIEW into observed-merge completion. |
@@ -321,7 +327,7 @@ The migration is atomic at the accepted steady state. Compatibility behavior exi
 | integrate-agent-work | completion skill selected by PROJECT.yaml | Retain as an integration capability for concurrent branches and worktrees. It supplies merge evidence but does not own provider lifecycle. |
 | agent-claim | provider and completion skills | Retain as shared mutation-authority infrastructure. File provider operations and completion operations use separate narrow claim scopes. |
 
-New provider skills are create-gitlab-work-item, manage-gitlab-work-items, create-azure-devops-work-item, manage-azure-devops-work-items, create-jira-work-item, and manage-jira-work-items. New completion skills are deliver-work-item-direct-main and deliver-work-item-feature-branch.
+New provider skills are create-gitlab-work-item, manage-gitlab-work-items, create-azure-devops-work-item, manage-azure-devops-work-items, create-jira-work-item, and manage-jira-work-items. The completion interface is deliver-work-item. Its providers are deliver-work-item-direct-main and deliver-work-item-feature-branch.
 
 ## Migration Coverage And Acceptance Gate
 

@@ -51,6 +51,7 @@ packs:
       - probe-code-discovery
       - probe-trace-code-execution
       - probe-review-code-with-evidence
+      - probe-deliver-work-item
       - probe-deliver-work-item-direct-main
       - probe-deliver-work-item-feature-branch
       - probe-create-pull-request

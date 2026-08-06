@@ -130,10 +130,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "deliver-work-item",
             "structured-design",
             "structured-explanation"
           ],
-          "sha256": "f887fb8b28fb1204ec47a9207debbb75cf1c6dc2ad2dd457723fe9eae692bf96",
+          "sha256": "a5036957732e8f6c0d9271a340ef92c3d5ef1e84b41e823d0874c2e2da6f4b81",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -523,11 +524,12 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "deliver-work-item",
             "structured-design",
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "9056b094881e9ccffaf680002f42c3754492061481a57ed4202ece3f5bf26607",
+          "sha256": "d43315d2c2004f7028028d3ea81e8f4700f7b177e8bcbb604f3e44dd2799b728",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -931,10 +933,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "deliver-work-item",
             "structured-design",
             "structured-explanation"
           ],
-          "sha256": "cedcd935e0b2a0ae62daa447f51d38ab5dbcef6a9e69fc18ce202287a07903fa",
+          "sha256": "5ecbca0142aa26e1c397583b758d624b661d3343c7a8791d9e8af145defd2dcd",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -1315,10 +1318,11 @@
           "referencedFixedSkills": [
             "effective-communication",
             "ste-technical-writing",
+            "deliver-work-item",
             "structured-design",
             "structured-explanation"
           ],
-          "sha256": "13885209c7b00af8cf393992aa084051d14d898f82e93a65960ccd8a3431f093",
+          "sha256": "d2bf6989b238893040f86156a2124e9aa4a664457e8481e8a8279d8fe0fb74b4",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {

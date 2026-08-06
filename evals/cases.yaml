@@ -285,9 +285,9 @@ cases:
     harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents: [dev-orchestrator]
     agentScenarios: [dev-orchestrator-happy, dev-orchestrator-boundary]
-    requiredSkills: [structured-design, structured-explanation, deliver-work-item-direct-main, agent-claim]
-    skillProbes: [probe-deliver-work-item-direct-main]
-    fixtureBackedProbeClaims: [probe-deliver-work-item-direct-main]
+    requiredSkills: [structured-design, structured-explanation, deliver-work-item, deliver-work-item-direct-main, agent-claim]
+    skillProbes: [probe-deliver-work-item, probe-deliver-work-item-direct-main]
+    fixtureBackedProbeClaims: [probe-deliver-work-item, probe-deliver-work-item-direct-main]
     workflowPack: code-delivery
     sandboxProfiles: {codex: codex-read-only, junie: junie-read-only}
     judgePlan:
@@ -296,13 +296,14 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/direct-main-unrelated-dirty-contract
       include: [TASK.md]
-      stagedSkillPackages: [structured-design, structured-explanation, deliver-work-item-direct-main, agent-claim]
+      stagedSkillPackages: [structured-design, structured-explanation, deliver-work-item, deliver-work-item-direct-main, agent-claim]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md]
     skillResourceAllowlist:
       structured-design: [SKILL.md]
       structured-explanation: [SKILL.md]
+      deliver-work-item: [SKILL.md]
       deliver-work-item-direct-main: [SKILL.md]
       agent-claim: [SKILL.md]
     requiredEvidence: [UNRELATED-DIRTY-READY, OVERLAP-BLOCKED, STAGED-BLOCKED, AMBIGUOUS-BLOCKED, UNBOUNDED-BLOCKED, SOURCE-INTEGRATION-MAPPING, CLEAN-VERIFICATION-CHECKOUT, NO-PROVIDER-MUTATION]

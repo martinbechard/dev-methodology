@@ -20,8 +20,8 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 30 conceptual agents and 131 bundled skills have structural coverage.
-- [x] 29 agents are scenario-declared and 129 skills are probe-declared.
+- [x] 30 conceptual agents and 132 bundled skills have structural coverage.
+- [x] 29 agents are scenario-declared and 130 skills are probe-declared.
 - Agents missing scenario declarations: dev-skill-lint-reviewer.
 - Skills missing probe declarations: analyze-document-topics, revise-document-topics.
 - [x] 66 agent scenarios and 5 workflow packs are declared.
@@ -30,10 +30,10 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 14 cases can run locally through Codex and 14 can run locally through Junie.
 - 14 cases use the ordinary local tier; 0 explicitly high-risk cases require the externally-contained tier.
 - 7 agents have at least one case-backed scenario; 5 are partial and 2 have all declared scenarios backed.
-- 29 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
+- 30 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 2 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 29 agents and 106 skills have pending Model Judge status.
+- 29 agents and 107 skills have pending Model Judge status.
 - 0 agents and 23 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -162,6 +162,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | create-gitlab-work-item | [x] | [x] probe-create-gitlab-work-item | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-jira-work-item | [x] | [x] probe-create-jira-work-item | [x] provider-placeholder-matrix | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-pull-request | [x] | [x] probe-create-pull-request | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| deliver-work-item | [x] | [x] probe-deliver-work-item | [x] direct-main-unrelated-dirty-contract | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | deliver-work-item-direct-main | [x] | [x] probe-deliver-work-item-direct-main | [x] direct-main-unrelated-dirty-contract | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | deliver-work-item-feature-branch | [x] | [x] probe-deliver-work-item-feature-branch | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | detect-technology-skills | [x] | [x] probe-detect-technology-skills | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |

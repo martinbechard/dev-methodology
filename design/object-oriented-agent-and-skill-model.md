@@ -634,7 +634,7 @@ The interface and implementation names are analysis vocabulary for this example.
 
 ## 8. A Second Injected Example: Deliver Workitem
 
-Delivery is another injectable procedure: a development workflow requests completion through a stable procedure name while AGENTS.md selects the project’s delivery skill. This keeps the workflow independent of direct-main and feature-branch delivery details.
+Delivery is another injectable procedure. The exact deliver-work-item Interface Skill publishes the stable contract, while AGENTS.md selects the project’s delivery provider. This keeps the workflow independent of direct-main and feature-branch delivery details.
 
 - **PROCESS: PROCESS-7** Request delivery after review and testing
   - **SYNOPSIS:** A development workflow invokes Deliver Workitem with the accepted change after its required gates pass.
@@ -653,8 +653,8 @@ classDiagram
         +deliverAcceptedChange()
     }
 
-    class DeliverWorkitem {
-        <<Skill interface>>
+    class DeliverWorkitem["deliver-work-item"] {
+        <<Interface Skill>>
         +deliverWorkitem(acceptedCommit)
     }
 
@@ -690,7 +690,7 @@ classDiagram
     note for project-specific-directives "AGENTS.md selects one implementation"
 ```
 
-The regular arrow shows that the development workflow knows Deliver Workitem by procedure name. The open-diamond arrows show the two exact skill names that AGENTS.md can select, and the realization arrows show that both providers supply the delivery interface. No arrow joins the development workflow to AGENTS.md because the harness loads project guidance automatically. The direct-main and feature-branch procedures remain different internally even though callers reach either one through the same procedure name.
+The regular arrow shows that the development workflow consumes the exact deliver-work-item Interface Skill. The open-diamond arrows show the two exact Provider Skill names that AGENTS.md can select from the deliver-work-item-* family. The realization arrows show that both providers supply the delivery interface. No arrow joins the development workflow to AGENTS.md because the harness loads project guidance automatically. The direct-main and feature-branch procedures remain different internally even though callers reach either one through the same procedure name.
 
 ## 9. Agent Dependency Views
 
@@ -722,8 +722,8 @@ classDiagram
         <<Agent Skill>>
     }
 
-    class DeliverWorkitem {
-        <<Skill interface>>
+    class DeliverWorkitem["deliver-work-item"] {
+        <<Interface Skill>>
         +deliverWorkitem(acceptedCommit)
     }
 
@@ -746,7 +746,7 @@ classDiagram
     deliver-work-item-feature-branch ..|> DeliverWorkitem
 ```
 
-The Agent points directly to explain-code-fix because its definition names that single-procedure skill. Its empty member area avoids repeating the procedure already identified by the operation-shaped skill name. The Agent points regularly to Deliver Workitem because it knows the procedure name. AGENTS.md independently points by open diamond to the selected feature-branch skill, and the provider realizes the interface.
+The Agent points directly to explain-code-fix because its definition names that single-procedure skill. Its empty member area avoids repeating the procedure already identified by the operation-shaped skill name. The Agent points regularly to the exact deliver-work-item Interface Skill. AGENTS.md independently points by open diamond to the selected feature-branch skill, and the provider realizes the interface.
 
 The diagram explains dependencies and dispatch. It does not require the harness to construct software classes or imply an inheritance relationship.
 
@@ -882,7 +882,7 @@ The glossary defines the relationship and diagram terms used by the analysis aft
 | Skill loading | The complete selected SKILL.md entering the active context so its instructions can be followed. | After AGENTS.md selects manage-work-item-gitlab, the agent reads that SKILL.md. |
 | Exact skill name | The identity used to resolve one skill package and its SKILL.md. It is not the shared literal filename SKILL.md. | careful-coding resolves the careful-coding package. |
 | Skill interface | A shared contract containing public data members, function members, or both. | manage-work-item-* exposes work-item-definition, work-item-states, createWorkItem(description), and transitionWorkItem(workItem, state). |
-| Interface Skill | A SKILL.md shown with the Interface Skill stereotype that itemizes the data and function members an interface user must know and an implementation must provide or respect. | manage-work-item-* publishes the shared member vocabulary for the manage-work-item provider family. |
+| Interface Skill | A SKILL.md shown with the Interface Skill stereotype that itemizes the data and function members an interface user must know and an implementation must provide or respect. | deliver-work-item publishes the shared member vocabulary for the deliver-work-item-* provider family. |
 | Skill realization | A dashed line with a hollow triangular arrowhead from an implementing SKILL.md to an Interface Skill. It means that the implementation supplies the interface functions and provides or respects its public data; it does not mean that either skill loads the other. | manage-work-item-gitlab ..\|> manage-work-item-*. |
 | Provider Skill | A SKILL.md that supplies one implementation of an Interface Skill and can be selected without changing the interface consumer. | manage-work-item-gitlab supplies the GitLab implementation of manage-work-item-*. |
 | AGENTS.md factory | Project guidance that selects one Provider Skill by exact name while the Agent depends directly on an Interface Skill. The factory analogy describes instruction selection, not runtime object construction. | Project-specific directives route create-new-work-item to manage-work-item-gitlab for an Agent that consumes manage-work-item-*. |
@@ -923,6 +923,7 @@ The analysis is grounded in the user-directed conventions and repository sources
 - [Agentic Configuration](agentic-configuration.html)
 - [Agent Skill Architecture](skills-modularization.html)
 - [Work-Item Provider And Completion Contracts](work-item-provider-and-completion-contracts.md)
+- [Deliver Work Item](../skills/deliver-work-item/SKILL.md)
 - [Deliver Work Item Direct Main](../skills/deliver-work-item-direct-main/SKILL.md)
 - [Deliver Work Item Feature Branch](../skills/deliver-work-item-feature-branch/SKILL.md)
 - [Create Pull Request](../skills/create-pull-request/SKILL.md)

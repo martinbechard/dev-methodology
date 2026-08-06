@@ -13,6 +13,10 @@ Carry one accepted candidate from branch publication through host review and obs
 
 Deliver the accepted work item through candidate publication, the review and check loop, and the observed merge and completion gate defined below.
 
+## Interface Conformance
+
+This Provider Skill realizes the deliver-work-item interface. It consumes the accepted commit without modifying it, preserves one delivery identity through publication, correction, review, and merge, and returns READY, AWAITING_REVIEW, or BLOCKED with state-keyed evidence and the prepared Persistence handoff. It does not select the Commit provider and does not mutate Persistence or dispatch a provider manager.
+
 ## Dependencies
 
 - Follow the Claim Events table in agent-claim during publication.

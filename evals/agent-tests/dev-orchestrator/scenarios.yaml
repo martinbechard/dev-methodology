@@ -10,7 +10,7 @@ scenarios:
     purpose: Coordinate source and documentation lanes through their proper owners and gates.
     initialState: A source change and operator runbook update require separate clean contributions.
     task: Coordinate implementation, fresh review, verification, integration, and closeout.
-    targetSkills: [structured-design, structured-explanation]
+    targetSkills: [deliver-work-item, structured-design, structured-explanation]
     taskSelectedAgentDependencies: [dev-documentation-writer, dev-artifact-reviewer]
     requiredDependencyOrder: [dev-coder, dev-code-reviewer, dev-documentation-writer, dev-artifact-reviewer, dev-verifier, dev-merge-coordinator, dev-code-reviewer, dev-artifact-reviewer, dev-verifier, dev-backlog-steward]
     requiredHandoffReceiptLanes: [source, documentation, integration, closeout]
@@ -28,7 +28,7 @@ scenarios:
     purpose: Enforce the two-attempt correction boundary and preserve accepted work.
     initialState: A source review repeats the same material finding after two correction attempts.
     task: Coordinate the correction loop and report the terminal state.
-    targetSkills: [structured-design, structured-explanation, agent-claim]
+    targetSkills: [deliver-work-item, structured-design, structured-explanation, agent-claim]
     allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator, dev-backlog-steward]
     requiredBehaviors: [Return findings to the original owner, Use fresh review contexts, Stop after two failed corrections, Preserve commits and evidence]
     forbiddenBehaviors: [Create a third correction attempt, Approve same-context review, Discard accepted work]
@@ -42,7 +42,7 @@ scenarios:
     purpose: Complete the successful correction disposition for an independently confirmed issue.
     initialState: An independent source reviewer confirms one material issue in a clean candidate and returns an evidence-bearing finding.
     task: Return the confirmed issue to the original Dev Coder, obtain the corrected clean candidate, complete fresh independent re-review and reverification, and report READY.
-    targetSkills: [structured-design, structured-explanation]
+    targetSkills: [deliver-work-item, structured-design, structured-explanation]
     allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier]
     requiredDependencyOrder: [dev-code-reviewer, dev-coder, dev-code-reviewer, dev-verifier]
     requiredHandoffReceiptLanes: [confirmation, correction, re-review, reverification]
@@ -60,7 +60,7 @@ scenarios:
     purpose: Block completion when a fixed independent dependency is unavailable.
     initialState: A clean source commit exists but dev-code-reviewer cannot be invoked.
     task: Complete the source lane through release readiness.
-    targetSkills: [structured-design, structured-explanation, agent-claim]
+    targetSkills: [deliver-work-item, structured-design, structured-explanation, agent-claim]
     allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator, dev-backlog-steward]
     requiredBehaviors: [Name the missing dependency, Preserve the clean commit, Leave downstream gates pending, Return BLOCKED]
     forbiddenBehaviors: [Substitute self-review, Invoke verification before review, Report COMPLETED]
@@ -78,7 +78,7 @@ scenarios:
       path: target-skill/SKILL.md
       sha256: 1b5a7a580384ec2eb806c484760ea7e1cec2e94615cb86420d9b118930304138
     allowedMutationPaths: [backlog/defect-backlog/synthetic-target-skill-missing-finding-receipt.md]
-    targetSkills: [structured-design, structured-explanation]
+    targetSkills: [deliver-work-item, structured-design, structured-explanation]
     allowedAgentDependencies: [dev-verifier, dev-backlog-steward]
     requiredDependencyOrder: [dev-verifier, dev-backlog-steward]
     requiredHandoffReceiptLanes: [confirmation, finding]
