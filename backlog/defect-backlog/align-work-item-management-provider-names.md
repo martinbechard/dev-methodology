@@ -162,7 +162,7 @@ Branch: Detached candidate checkout at bfd80b6e933805b5f152a295eb106a7c63aa7511.
 
 Worktree: /Users/martinbechard/.codex/worktrees/4bd4/dev-methodology.
 
-Phase: One bounded one-file correction to immutable candidate 4bbe64e48ffdd800b3eac03e47cfe31c9015ed69 before same-reviewer confirmation and focused verification.
+Phase: Bounded owned wait for align-work-item-creation-provider-names to complete its already-running verification and integrate first on main.
 
 Started At: 2026-08-06T03:49:41Z.
 
@@ -172,20 +172,20 @@ Next Action: Establish the exact Work Item ID activity=work claim and implement 
 
 ## Active Execution Evidence
 
-Condition Type: root-execution.
+Condition Type: owned-wait.
 
 Owner: Root Dev Orchestrator in task 019fd52f-7ec5-7bf1-9cbc-65032dd1af06.
 
-Evidence: The one fresh reviewer returned NEEDS_CORRECTION because the active runnable fixture evals/projects/github-work-item-provider/TASK.md still requests retired manage-github-work-items while its case stages manage-work-items-github. The parent Coordinator confirmed this non-governed active fixture is ordinary dependent cleanup directly required by the explicit stale-name acceptance criterion and authorized exactly one one-file correction by the original Dev Coder; no Blocked provider mutation was committed.
+Evidence: Accepted candidate 2925eca30eb0310d7b2c85299167ff4abdf1b070 is clean, same-reviewer APPROVED, and independently VERIFIED PASS on the declared focused and freshness gates. Final reconciliation must follow align-work-item-creation-provider-names because their manifests overlap. That item has accepted candidate 7d87faee8dec5d7edc99c38a7517b4f1b2c91fca and an active independent verifier, but current main 2d8c800aee3a2e57b750e6729cf5068dedead79f does not yet contain its integration.
 
-Observed At: 2026-08-06T04:23:00Z.
+Observed At: 2026-08-06T04:31:31Z.
 
 Started At: 2026-08-06T03:49:41Z.
 
-Deadline or Expires At: 2026-08-06T04:38:00Z.
+Deadline or Expires At: 2026-08-06T04:46:31Z.
 
-Next Action: Commit this path-limited Running evidence update, reacquire the exact Work Item ID activity=work claim, return exactly the one-file finding to the original coder, run the focused fixture and stale-name checks, obtain same-reviewer confirmation, then dispatch the single verifier.
+Next Action: Commit this path-limited owned-wait evidence, reacquire the exact Work Item ID activity=work claim, observe the named creation-provider integration event, then reconcile overlapping manifests and apply direct-main delivery without repeating accepted source gates.
 
-Next Reconciliation At: 2026-08-06T04:38:00Z.
+Next Reconciliation At: 2026-08-06T04:46:31Z.
 
-Conversation Title Evidence: The canonical conversation was directly renamed to Implementing — Align Work-Item Management Provider Names for the bounded correction phase.
+Conversation Title Evidence: The canonical conversation was directly renamed to Waiting for Claim — Align Work-Item Management Provider Names for the exact integration-order wait.
