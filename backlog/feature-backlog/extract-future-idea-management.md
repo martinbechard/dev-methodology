@@ -129,17 +129,17 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator 019fd5b5-aca7-7cb1-9ae0-010ac945c985.
 
-Evidence: Direct unblock repair 46b92c842693bb96b5e756632a8df35b241511bc was reviewed and verified. The canonical root is actively accepting the exact approved resumption. User approval and manifest expansion are durable in Ready commit d9e76dfb and Starting commit e37e082a. Replacement candidate a7e44d92372f86c376de574b2e81d19d7b699743 is clean. Eighteen focused steward tests, runner validation, and staging passed. Fresh code and methodology rereviews are currently active. Work heartbeat event: 06cee7bd-ef54-470d-9d03-7a6643c99298. Handoff event: 97aacc61-c620-4adf-8789-9f1be97fc442. Required title: Reviewing — Extract Future Idea Management.
+Evidence: Direct unblock repair 46b92c842693bb96b5e756632a8df35b241511bc was reviewed and verified. The canonical root is actively accepting the exact approved resumption. User approval and manifest expansion are durable in Ready commit d9e76dfb and Starting commit e37e082a. Preserved candidate a7e44d92372f86c376de574b2e81d19d7b699743 remains in scope with an active second correction. Canonical fixture bytes and full-record validation, commit-parent proof, and unrelated-state gates are implemented. Nineteen focused Dev Backlog Steward tests are green. Exact bundle and freshness checks are pending before the replacement commit. Work heartbeat event: 98724fbe-1ad8-4840-ad01-b86e2837db8d. Handoff event: f0a5e0ac-26e1-4ce2-87e7-d8e4874c9de1. Required title: Implementing — Extract Future Idea Management.
 
-Observed At: 2026-08-06T13:18:01Z.
+Observed At: 2026-08-06T13:33:17Z.
 
 Started At: 2026-08-06T12:32:17Z.
 
 Deadline or Expires At: 2026-08-06T14:32:17Z.
 
-Next Action: Resolve both fresh rereview verdicts, then dispatch independent verification if approved. Exclude all other definitions, broad suites, and frameworks.
+Next Action: Commit the replacement, run fresh rereviews, then dispatch independent verification. Exclude all other definitions, broad suites, and frameworks.
 
-Next Reconciliation At: 2026-08-06T13:33:01Z.
+Next Reconciliation At: 2026-08-06T13:48:17Z.
 
 ## User Action Required Transition — 2026-08-06T07:27:07Z
 
