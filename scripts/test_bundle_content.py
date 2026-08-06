@@ -7228,7 +7228,7 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertTrue(ROLE_SCHEMA_PATH.is_file())
         role_schema = load_yaml_object(ROLE_SCHEMA_PATH)
-        self.assertEqual(6, role_schema["version"])
+        self.assertEqual(7, role_schema["version"])
         self.assertEqual(
             "instruction-content",
             role_schema["properties"]["instructions"],
@@ -10692,7 +10692,7 @@ class BundleContentTests(unittest.TestCase):
                 for profile in role.get("modelStages", {}).values():
                     self.assertIn(profile, source_profiles)
 
-    def test_context_budget_percent_is_required_whole_and_bounded(self) -> None:
+    def test_context_budget_percent_defaults_overrides_and_validation(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         skill_names = set(build_skill_docs.build_payload()["skills"])
         required, allowed, groups = build_skill_docs.load_role_schema()
@@ -10700,32 +10700,52 @@ class BundleContentTests(unittest.TestCase):
         source_path = ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml"
         source_role = load_yaml_object(source_path)
 
-        self.assertIn("contextBudgetPercent", required)
+        self.assertNotIn("contextBudgetPercent", required)
         self.assertEqual(
             "percentage-integer",
             load_yaml_object(ROLE_SCHEMA_PATH)["properties"]["contextBudgetPercent"],
         )
+        self.assertEqual(
+            75,
+            load_yaml_object(ROLE_SCHEMA_PATH)["defaults"]["contextBudgetPercent"],
+        )
+        self.assertEqual(75, build_skill_docs.load_default_context_budget_percent())
         context_budget_overrides = {
             "dev-backlog-coordinator": 35,
             "dev-backlog-watchdog": 50,
             "dev-documentation-writer": 50,
         }
+        loaded_role_list = build_skill_docs.load_role_definitions(skill_names)
+        loaded_roles = {role.name: role for role in loaded_role_list}
+        generated_role_data = build_skill_docs.build_role_payload(loaded_role_list)[
+            "roles"
+        ]
         for role_path in sorted(ROLES_ROOT.glob("*/*.role.yaml")):
             with self.subTest(role=role_path.stem):
                 role = load_yaml_object(role_path)
+                expected_percent = context_budget_overrides.get(role["name"], 75)
                 self.assertEqual(
-                    context_budget_overrides.get(role["name"], 80),
-                    role["contextBudgetPercent"],
+                    role["name"] in context_budget_overrides,
+                    "contextBudgetPercent" in role,
+                )
+                self.assertEqual(
+                    expected_percent,
+                    role.get("contextBudgetPercent", 75),
+                )
+                self.assertEqual(
+                    expected_percent,
+                    loaded_roles[role["name"]].context_budget_percent,
+                )
+                self.assertEqual(
+                    expected_percent,
+                    generated_role_data[role["name"]]["contextBudgetPercent"],
                 )
 
-        invalid_values = (None, 80.5, 0, -1, 101, True)
+        invalid_values = (None, 75.5, 0, -1, 101, True)
         for invalid_value in invalid_values:
             with self.subTest(invalid_value=invalid_value), tempfile.TemporaryDirectory() as directory:
                 invalid_role = dict(source_role)
-                if invalid_value is None:
-                    invalid_role.pop("contextBudgetPercent", None)
-                else:
-                    invalid_role["contextBudgetPercent"] = invalid_value
+                invalid_role["contextBudgetPercent"] = invalid_value
                 path = Path(directory) / "dev-activities" / source_path.name
                 path.parent.mkdir()
                 path.write_text(yaml.safe_dump(invalid_role, sort_keys=False), encoding="utf-8")
@@ -10737,6 +10757,7 @@ class BundleContentTests(unittest.TestCase):
                         groups,
                         skill_names,
                         model_profiles,
+                        default_context_budget_percent=75,
                     )
 
     def test_adapter_context_budget_metadata_is_complete_and_validated(self) -> None:
@@ -10818,7 +10839,7 @@ class BundleContentTests(unittest.TestCase):
     def test_context_budget_derivation_rounds_down_and_rejects_overflow(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
 
-        self.assertEqual(838_860, build_skill_docs.derive_context_budget(1_048_576, 80))
+        self.assertEqual(786_432, build_skill_docs.derive_context_budget(1_048_576, 75))
         self.assertEqual(1, build_skill_docs.derive_context_budget(101, 1))
         with self.assertRaisesRegex(ValueError, "exceeds model context capacity"):
             build_skill_docs.derive_context_budget(1_000_000, 101)
@@ -10835,24 +10856,24 @@ class BundleContentTests(unittest.TestCase):
         )
         expected_profile_budgets = {
             "codex": {
-                profile_id: 840_000
+                profile_id: 787_500
                 for profile_id in profile_ids
             },
             "claude": {
-                profile_id: 800_000
+                profile_id: 750_000
                 for profile_id in profile_ids
             },
             "gemini": {
-                profile_id: 838_860
+                profile_id: 786_432
                 for profile_id in profile_ids
             },
             "junie": {
-                "simple": 838_860,
-                "default": 800_000,
-                "documentation": 840_000,
-                "advanced": 800_000,
-                "advanced-long": 800_000,
-                "intermediate": 800_000,
+                "simple": 786_432,
+                "default": 750_000,
+                "documentation": 787_500,
+                "advanced": 750_000,
+                "advanced-long": 750_000,
+                "intermediate": 750_000,
             },
         }
 
@@ -10863,7 +10884,7 @@ class BundleContentTests(unittest.TestCase):
                 {
                     profile_id: build_skill_docs.resolve_context_budget(
                         profile_id,
-                        80,
+                        75,
                         profiles,
                     )["contextBudgetTokens"]
                     for profile_id in profile_ids
@@ -10888,7 +10909,7 @@ class BundleContentTests(unittest.TestCase):
                     if agent["name"] == role.name
                 )
                 allocation = agent_manifest["contextAllocation"]
-                self.assertEqual(80, allocation["contextBudgetPercent"])
+                self.assertEqual(75, allocation["contextBudgetPercent"])
                 self.assertEqual(expected_primary, allocation["primary"])
                 self.assertEqual(
                     set(role.model_stages),
@@ -10902,6 +10923,34 @@ class BundleContentTests(unittest.TestCase):
                             profiles,
                         ),
                         allocation["modelStages"][stage],
+                    )
+
+                for role_name, expected_percent in (
+                    ("dev-backlog-coordinator", 35),
+                    ("dev-backlog-watchdog", 50),
+                    ("dev-documentation-writer", 50),
+                ):
+                    override_role = next(
+                        candidate
+                        for candidate in roles
+                        if candidate.name == role_name
+                    )
+                    override_manifest = next(
+                        agent
+                        for agent in manifest["adapters"][adapter]["agents"]
+                        if agent["name"] == role_name
+                    )
+                    self.assertEqual(
+                        expected_percent,
+                        override_manifest["contextAllocation"]["contextBudgetPercent"],
+                    )
+                    self.assertEqual(
+                        build_skill_docs.resolve_context_budget(
+                            override_role.model_profile,
+                            expected_percent,
+                            profiles,
+                        ),
+                        override_manifest["contextAllocation"]["primary"],
                     )
 
     def test_context_budget_changes_preserve_unrelated_generated_fields(self) -> None:
@@ -10923,7 +10972,7 @@ class BundleContentTests(unittest.TestCase):
         for adapter in ("codex", "claude", "gemini", "junie"):
             profiles = build_skill_docs.load_adapter_model_profiles(adapter, profile_ids)
             renderer = getattr(build_skill_docs, f"render_{adapter}_agent")
-            changed_role = replace(role, context_budget_percent=79)
+            changed_role = replace(role, context_budget_percent=74)
             original = renderer(role, profiles)
             changed = renderer(changed_role, profiles)
             with self.subTest(adapter=adapter, change="percentage"):
@@ -10948,7 +10997,7 @@ class BundleContentTests(unittest.TestCase):
             capacity_changed = renderer(role, changed_profiles)
             with self.subTest(adapter=adapter, change="capacity"):
                 self.assertNotEqual(original, capacity_changed)
-                self.assertEqual(80, role.context_budget_percent)
+                self.assertEqual(75, role.context_budget_percent)
                 self.assertEqual(
                     without_context_instruction(
                         original,
@@ -10971,6 +11020,9 @@ class BundleContentTests(unittest.TestCase):
 
         for expected in (
             "contextBudgetPercent",
+            "defaults.contextBudgetPercent",
+            "sets it to 75",
+            "explicit override",
             "floor(contextCapacityTokens * contextBudgetPercent / 100)",
             "zero additional token reserve",
             "agent-generation-manifest.json",
@@ -10978,6 +11030,9 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(readme_contract=expected):
                 self.assertIn(expected, readme)
         for expected in (
+            "schema default of 75",
+            "explicit role value before the default",
+            "resolved effective percentage",
             "contextCapacityTokens",
             "contextBudgetMechanism",
             "Codex CLI 0.144.1",
@@ -10994,6 +11049,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(expected, source_design)
         self.assertNotIn("installed wrapper", source_design)
         self.assertIn("Context budget", catalog_design)
+        self.assertIn("schema-owned default", catalog_design)
         self.assertIn("role.contextBudgetPercent", catalog_design)
 
     def test_dev_documentation_writer_uses_dedicated_model_profile(self) -> None:

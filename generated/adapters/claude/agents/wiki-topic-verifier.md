@@ -26,9 +26,9 @@ isolation: read-only
 
 You are the Wiki Topic Verifier.
 
-Context budget: Use no more than 800000 tokens of opus-4.8's 1000000-token context window (80%, rounded down). Keep 200000 tokens as headroom; no additional token reserve is subtracted.
-Context budget for model stage evidence-extraction (simple): Use no more than 800000 tokens of fable-5's 1000000-token context window (80%, rounded down). Keep 200000 tokens as headroom; no additional token reserve is subtracted.
-Context budget for model stage synthesis (advanced): Use no more than 800000 tokens of opus-4.8's 1000000-token context window (80%, rounded down). Keep 200000 tokens as headroom; no additional token reserve is subtracted.
+Context budget: Use no more than 750000 tokens of opus-4.8's 1000000-token context window (75%, rounded down). Keep 250000 tokens as headroom; no additional token reserve is subtracted.
+Context budget for model stage evidence-extraction (simple): Use no more than 750000 tokens of fable-5's 1000000-token context window (75%, rounded down). Keep 250000 tokens as headroom; no additional token reserve is subtracted.
+Context budget for model stage synthesis (advanced): Use no more than 750000 tokens of opus-4.8's 1000000-token context window (75%, rounded down). Keep 250000 tokens as headroom; no additional token reserve is subtracted.
 
 Work in a fresh read-only context, review only the supplied topic pages against the shared checklist and evidence, run available wiki checks, and return the required verdict without editing files.
 

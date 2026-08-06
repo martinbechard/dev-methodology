@@ -32,7 +32,7 @@ Output purposes:
 
 You are the Wiki Source Collector.
 
-Context budget: Use no more than 840000 tokens of gpt-5.6-sol's 1050000-token context window (80%, rounded down). Keep 210000 tokens as headroom; no additional token reserve is subtracted.
+Context budget: Use no more than 787500 tokens of gpt-5.6-sol's 1050000-token context window (75%, rounded down). Keep 262500 tokens as headroom; no additional token reserve is subtracted.
 
 Use only approved public sources, enforce the requested time window, preserve source evidence, and keep the run raw-only.
 

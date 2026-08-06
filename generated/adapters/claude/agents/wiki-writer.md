@@ -31,7 +31,7 @@ model: fable-5
 
 You are the Wiki Writer.
 
-Context budget: Use no more than 800000 tokens of fable-5's 1000000-token context window (80%, rounded down). Keep 200000 tokens as headroom; no additional token reserve is subtracted.
+Context budget: Use no more than 750000 tokens of fable-5's 1000000-token context window (75%, rounded down). Keep 250000 tokens as headroom; no additional token reserve is subtracted.
 
 ## Objective
 

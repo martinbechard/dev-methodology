@@ -418,15 +418,15 @@
 
     <section class="section" aria-labelledby="generation-title">
       <h2 id="generation-title">From Conceptual Agent Definitions To Native Agent Definitions</h2>
-      <p class="lede"><code>agents/roles/&lt;role-category&gt;/&lt;role-name&gt;.role.yaml</code> is a conceptual agent definition source, not a file that an agent harness loads directly. It owns the selected profile ID and the provider-neutral <code>contextBudgetPercent</code>. <code>agents/role-schema.yaml</code> constrains those values. The conceptual profile catalog owns profile purposes. Adapter model-profile YAML owns the concrete model, effort, <code>contextCapacityTokens</code>, <code>contextBudgetMechanism</code>, and evidence. <code>scripts/build-skill-docs.py</code> owns the transformation that emits one native agent definition per supported harness.</p>
+      <p class="lede"><code>agents/roles/&lt;role-category&gt;/&lt;role-name&gt;.role.yaml</code> is a conceptual agent definition source, not a file that an agent harness loads directly. It owns the selected profile ID and may own an explicit provider-neutral <code>contextBudgetPercent</code> override. <code>agents/role-schema.yaml</code> owns the default percentage and constrains explicit values. The conceptual profile catalog owns profile purposes. Adapter model-profile YAML owns the concrete model, effort, <code>contextCapacityTokens</code>, <code>contextBudgetMechanism</code>, and evidence. <code>scripts/build-skill-docs.py</code> owns the transformation that emits one native agent definition per supported harness.</p>
       <div class="flow" aria-label="Conceptual agent definition generation flow">
         <div class="flow-row">
           <div><span class="name">1. Author The Conceptual Agent Definition</span></div>
-          <p>Define intent with conceptual properties such as <code>instructions</code>, <code>skills</code>, <code>modelProfile</code>, <code>contextBudgetPercent</code>, <code>tools</code>, and <code>outputContract</code>. The percentage is a required whole integer from 1 through 100. It does not identify a provider model or token capacity.</p>
+          <p>Define intent with conceptual properties such as <code>instructions</code>, <code>skills</code>, <code>modelProfile</code>, <code>tools</code>, and <code>outputContract</code>. Omit <code>contextBudgetPercent</code> to use the schema default of 75. Declare a whole integer from 1 through 100 only when the role needs an explicit override. The percentage does not identify a provider model or token capacity.</p>
         </div>
         <div class="flow-row">
           <div><span class="name">2. Validate And Resolve</span></div>
-          <p><code>agents/role-schema.yaml</code> defines the allowed conceptual agent definition properties. Skill IDs resolve against portable skill sources. Semantic profiles resolve through adapter model mappings. Each selected adapter profile must provide a positive capacity, an instruction mechanism, and HTTPS evidence. Missing capacity, unsupported mechanisms, invalid percentages, and derived values above capacity stop generation.</p>
+          <p><code>agents/role-schema.yaml</code> defines the allowed conceptual agent definition properties and <code>defaults.contextBudgetPercent</code>. The generator uses an explicit role value before the default. Skill IDs resolve against portable skill sources. Semantic profiles resolve through adapter model mappings. Each selected adapter profile must provide a positive capacity, an instruction mechanism, and HTTPS evidence. Missing capacity, unsupported mechanisms, invalid explicit percentages, and derived values above capacity stop generation.</p>
         </div>
         <div class="flow-row">
           <div><span class="name">3. Render Each Harness Format</span></div>
@@ -475,7 +475,7 @@
             <tr>
               <td><span class="name">Conceptual agent definition vocabulary</span></td>
               <td><code>agents/role-schema.yaml</code></td>
-              <td>Defines which conceptual properties a conceptual agent definition source may contain. Harnesses do not load this schema.</td>
+              <td>Defines which conceptual properties a conceptual agent definition source may contain and owns the default context-budget percentage. Harnesses do not load this schema.</td>
             </tr>
             <tr>
               <td><span class="name">Conceptual agent definition source</span></td>
@@ -508,12 +508,12 @@
             <tr>
               <td><span class="name">Native agent definition outputs</span></td>
               <td><code>generated/adapters/&lt;harness-name&gt;/agents/&lt;role-name&gt;.&lt;harness-extension&gt;</code></td>
-              <td>Each conceptual role owns its agent values; <code>agents/role-schema.yaml</code> owns vocabulary and fixed declarations; referenced skill sources own skill instructions; and the applicable adapter model-profile YAML owns its concrete model and any effort or context values present. <code>scripts/build-skill-docs.py</code> owns Codex runtime-name normalization, output-filename derivation from <code>role.filename</code> plus the native extension, native property and instruction mapping, skill handling, omission rules, and runtime file structure. Current formats are Codex TOML plus Claude Code, Gemini CLI, and Junie CLI Markdown.</td>
+              <td>Each conceptual role owns its agent values and optional context-budget override; <code>agents/role-schema.yaml</code> owns vocabulary, the default context-budget percentage, and fixed declarations; referenced skill sources own skill instructions; and the applicable adapter model-profile YAML owns its concrete model and any effort or context values present. <code>scripts/build-skill-docs.py</code> owns Codex runtime-name normalization, output-filename derivation from <code>role.filename</code> plus the native extension, native property and instruction mapping, skill handling, omission rules, and runtime file structure. Current formats are Codex TOML plus Claude Code, Gemini CLI, and Junie CLI Markdown.</td>
             </tr>
             <tr>
               <td><span class="name">Generation inventory</span></td>
               <td><code>generated/adapters/agent-generation-manifest.json</code></td>
-              <td>Conceptual roles directly supply agent names and source relationships. In by-reference mode, role-declared unconditional skills plus <code>agents/role-schema.yaml</code> <code>fixedBehavior.sharedSkills</code> supply <code>referencedFixedSkills</code>. For mutation-capable Codex roles in that mode, <code>scripts/build-skill-docs.py</code> also adds the adapter-owned <code>codex-harness-directives</code> skill to <code>referencedFixedSkills</code>. Inline mode leaves <code>referencedFixedSkills</code> empty because the skill bodies are embedded. Adapter-owned skills supply <code>harnessSkills</code> in either delivery mode. The generator owns the manifest transformation, formats, output paths, delivery-mode field, and digest calculation. Other schema declarations, skill content, and model-profile values can influence generated-output digests without being serialized as separate manifest fields.</td>
+              <td>Conceptual roles directly supply agent names, source relationships, and optional context-budget overrides. <code>agents/role-schema.yaml</code> supplies the default context-budget percentage. The manifest records the resolved effective percentage for every role. In by-reference mode, role-declared unconditional skills plus <code>fixedBehavior.sharedSkills</code> supply <code>referencedFixedSkills</code>. For mutation-capable Codex roles in that mode, <code>scripts/build-skill-docs.py</code> also adds the adapter-owned <code>codex-harness-directives</code> skill to <code>referencedFixedSkills</code>. Inline mode leaves <code>referencedFixedSkills</code> empty because the skill bodies are embedded. Adapter-owned skills supply <code>harnessSkills</code> in either delivery mode. The generator owns the manifest transformation, formats, output paths, delivery-mode field, and digest calculation. Other schema declarations, skill content, and model-profile values can influence generated-output digests without being serialized as separate manifest fields.</td>
             </tr>
             <tr>
               <td><span class="name">Generated skill documentation data</span></td>
@@ -523,7 +523,7 @@
             <tr>
               <td><span class="name">Generated role documentation data</span></td>
               <td><code>design/generated/role-definitions.js</code></td>
-              <td>Conceptual roles, <code>agents/role-schema.yaml</code> shared-skill declarations, and <code>design/role-catalog-groups.yaml</code> supply this projection; semantic model profiles constrain and validate roles, while adapter model mappings are not content owners. <code>scripts/build-skill-docs.py</code> adds schema-owned shared skills to effective roles and owns the role documentation-data transformation. The projection feeds the <a href="agent-and-skill-definitions.html">agent definition and skill map</a>; harnesses do not load it.</td>
+              <td>Conceptual roles, <code>agents/role-schema.yaml</code> defaults and shared-skill declarations, and <code>design/role-catalog-groups.yaml</code> supply this projection; semantic model profiles constrain and validate roles, while adapter model mappings are not content owners. <code>scripts/build-skill-docs.py</code> resolves each effective context-budget percentage, adds schema-owned shared skills to effective roles, and owns the role documentation-data transformation. The projection feeds the <a href="agent-and-skill-definitions.html">agent definition and skill map</a>; harnesses do not load it.</td>
             </tr>
           </tbody>
         </table>
@@ -608,7 +608,7 @@
           <tr>
             <td><span class="name">Context budget percentage</span></td>
             <td><code>contextBudgetPercent</code></td>
-            <td>Allocates a required whole-number percentage of each adapter-resolved model capacity. Provider model identifiers and token capacities remain outside the conceptual role.</td>
+            <td>Overrides the schema-owned default of 75 with a whole-number percentage from 1 through 100. Omission uses the default. Provider model identifiers and token capacities remain outside the conceptual role.</td>
           </tr>
           <tr>
             <td><span class="name">Stage model profiles</span></td>
@@ -680,10 +680,11 @@
 
     <section class="section" aria-labelledby="defaulted-properties-title">
       <h2 id="defaulted-properties-title">Schema Constraints: Behavior We Default</h2>
-      <p class="lede"><code>agents/role-schema.yaml</code> owns these fixed declarations. <code>fixedBehavior.sharedSkills</code> is consumed by <code>scripts/build-skill-docs.py</code> when it builds each role's effective skill set; <code>target</code>, <code>userInvocable</code>, and <code>automaticDelegation</code> remain schema declarations with the documented adapter treatment below.</p>
+      <p class="lede"><code>agents/role-schema.yaml</code> owns the overridable context-budget default and the fixed declarations. <code>scripts/build-skill-docs.py</code> resolves the default before rendering each adapter. It also consumes <code>fixedBehavior.sharedSkills</code> when it builds each role's effective skill set. <code>target</code>, <code>userInvocable</code>, and <code>automaticDelegation</code> remain fixed declarations with the documented adapter treatment below.</p>
       <table>
         <thead><tr><th>Behavior</th><th>Methodology Default</th><th>Adapter Rule</th></tr></thead>
         <tbody>
+          <tr><td><code>defaults.contextBudgetPercent</code></td><td>An omitted role value resolves to 75. A valid explicit role value takes precedence.</td><td>Use the resolved percentage for the primary model, every model stage, generated role data, runtime instructions, and manifest allocations.</td></tr>
           <tr><td><code>fixedBehavior.target</code></td><td>Every conceptual agent definition targets local development.</td><td>Do not emit a remote or cloud execution target unless a future schema version adds one.</td></tr>
           <tr><td><code>fixedBehavior.userInvocable</code></td><td>The schema declares every conceptual agent eligible for user invocation.</td><td>Emit the runtime's normal invocation metadata where supported.</td></tr>
           <tr><td><code>fixedBehavior.automaticDelegation</code></td><td>The schema declares every conceptual agent eligible for automatic delegation.</td><td>Use descriptions and runtime invocation fields to preserve automatic selection.</td></tr>

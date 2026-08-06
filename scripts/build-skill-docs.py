@@ -68,6 +68,7 @@ ROLE_FILE_SUFFIX = ".role.yaml"
 ROLE_SCHEMA_REQUIRED_KEY = "required"
 ROLE_SCHEMA_PROPERTIES_KEY = "properties"
 ROLE_SCHEMA_GROUPS_KEY = "roleGroups"
+ROLE_SCHEMA_DEFAULTS_KEY = "defaults"
 ROLE_SCHEMA_FIXED_BEHAVIOR_KEY = "fixedBehavior"
 ROLE_SCHEMA_SHARED_SKILLS_KEY = "sharedSkills"
 ROLE_NAME_FIELD_NAME = "name"
@@ -902,6 +903,32 @@ def load_role_schema() -> tuple[set[str], set[str], set[str]]:
     return set(required), set(properties), set(groups)
 
 
+def load_default_context_budget_percent() -> int:
+    """Return the schema-owned percentage for a role that omits an override.
+
+    Role loading calls this boundary before adapter generation. Invalid or missing
+    schema values raise ``ValueError`` instead of producing an implicit allocation.
+    """
+
+    schema = read_yaml_object(ROLE_SCHEMA_PATH)
+    defaults = schema.get(ROLE_SCHEMA_DEFAULTS_KEY)
+    if not isinstance(defaults, dict):
+        raise ValueError("role-schema.yaml must define defaults.")
+    context_budget_percent = defaults.get(ROLE_CONTEXT_BUDGET_PERCENT_FIELD_NAME)
+    if (
+        not isinstance(context_budget_percent, int)
+        or isinstance(context_budget_percent, bool)
+        or not MINIMUM_POSITIVE_INTEGER
+        <= context_budget_percent
+        <= MAXIMUM_PERCENTAGE_INTEGER
+    ):
+        raise ValueError(
+            "role-schema.yaml defaults.contextBudgetPercent must be a whole integer "
+            "from 1 through 100."
+        )
+    return context_budget_percent
+
+
 def load_shared_role_skills(
     skill_names: set[str],
 ) -> tuple[tuple[str, ...], dict[str, str]]:
@@ -941,6 +968,7 @@ def load_role_definition(
     model_profile_ids: set[str],
     shared_skills: tuple[str, ...] = (),
     shared_skill_justifications: dict[str, str] | None = None,
+    default_context_budget_percent: int | None = None,
 ) -> RoleDefinition:
     parsed = read_yaml_object(source_path)
     missing_fields = sorted(required_fields - set(parsed))
@@ -993,7 +1021,13 @@ def load_role_definition(
     model_profile = parsed.get(ROLE_MODEL_PROFILE_FIELD_NAME)
     if model_profile not in model_profile_ids:
         raise ValueError(f"Conceptual agent definition has unknown model profile {model_profile}: {source_path}")
-    context_budget_percent = parsed.get(ROLE_CONTEXT_BUDGET_PERCENT_FIELD_NAME)
+    if default_context_budget_percent is None:
+        default_context_budget_percent = load_default_context_budget_percent()
+    context_budget_percent = (
+        parsed[ROLE_CONTEXT_BUDGET_PERCENT_FIELD_NAME]
+        if ROLE_CONTEXT_BUDGET_PERCENT_FIELD_NAME in parsed
+        else default_context_budget_percent
+    )
     if (
         not isinstance(context_budget_percent, int)
         or isinstance(context_budget_percent, bool)
@@ -1100,7 +1134,11 @@ def load_role_definition(
         for field_name in sorted(
             set(parsed)
             - required_fields
-            - {ROLE_EXAMPLES_FIELD_NAME, ROLE_AGENT_DEPENDENCIES_FIELD_NAME}
+            - {
+                ROLE_EXAMPLES_FIELD_NAME,
+                ROLE_AGENT_DEPENDENCIES_FIELD_NAME,
+                ROLE_CONTEXT_BUDGET_PERCENT_FIELD_NAME,
+            }
         )
     }
     for field_name, values in list_values.items():
@@ -1142,6 +1180,7 @@ def load_role_definition(
 
 def load_role_definitions(skill_names: set[str]) -> list[RoleDefinition]:
     required_fields, allowed_fields, allowed_groups = load_role_schema()
+    default_context_budget_percent = load_default_context_budget_percent()
     model_profile_ids = set(load_model_profiles())
     shared_skills, shared_skill_justifications = load_shared_role_skills(skill_names)
     roles = [
@@ -1154,6 +1193,7 @@ def load_role_definitions(skill_names: set[str]) -> list[RoleDefinition]:
             model_profile_ids,
             shared_skills,
             shared_skill_justifications,
+            default_context_budget_percent,
         )
         for source_path in role_source_paths()
     ]

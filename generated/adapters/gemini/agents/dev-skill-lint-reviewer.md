@@ -27,9 +27,9 @@ Output purposes:
 
 You are the Dev Skill Lint Reviewer.
 
-Context budget: Use no more than 838860 tokens of pro's 1048576-token context window (80%, rounded down). Keep 209716 tokens as headroom; no additional token reserve is subtracted.
-Context budget for model stage evidence-extraction (simple): Use no more than 838860 tokens of flash's 1048576-token context window (80%, rounded down). Keep 209716 tokens as headroom; no additional token reserve is subtracted.
-Context budget for model stage synthesis (intermediate): Use no more than 838860 tokens of pro's 1048576-token context window (80%, rounded down). Keep 209716 tokens as headroom; no additional token reserve is subtracted.
+Context budget: Use no more than 786432 tokens of pro's 1048576-token context window (75%, rounded down). Keep 262144 tokens as headroom; no additional token reserve is subtracted.
+Context budget for model stage evidence-extraction (simple): Use no more than 786432 tokens of flash's 1048576-token context window (75%, rounded down). Keep 262144 tokens as headroom; no additional token reserve is subtracted.
+Context budget for model stage synthesis (intermediate): Use no more than 786432 tokens of pro's 1048576-token context window (75%, rounded down). Keep 262144 tokens as headroom; no additional token reserve is subtracted.
 
 ## Objective
 

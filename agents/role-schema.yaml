@@ -1,5 +1,5 @@
 schema: dev-methodology-role
-version: 6
+version: 7
 required:
   - name
   - filename
@@ -8,7 +8,6 @@ required:
   - repositoryMutation
   - skills
   - modelProfile
-  - contextBudgetPercent
   - outputContract
 properties:
   name: slug
@@ -33,6 +32,8 @@ properties:
   memory: string
   outputContract: output-entry-list
   examples: role-example-list
+defaults:
+  contextBudgetPercent: 75
 fixedBehavior:
   target: local-development
   userInvocable: true

@@ -48,7 +48,6 @@ instructions:
   - Report BLOCKED with preserved commits and exact evidence when a safe candidate handoff
     cannot be reached.
 modelProfile: advanced
-contextBudgetPercent: 80
 examples:
 - purpose: Produce a clean verified candidate for independent review.
   runtimeInvocations:

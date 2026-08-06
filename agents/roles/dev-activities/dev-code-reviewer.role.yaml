@@ -7,7 +7,6 @@ instructions: Extract checklist evidence in a fresh read-only context with the t
   guidance supplied for the active scope, then synthesize findings from that evidence.
   Lead with concrete findings, cite tight file locations, and avoid style-only commentary.
 modelProfile: advanced
-contextBudgetPercent: 80
 modelStages:
   evidence-extraction: simple
   synthesis: advanced

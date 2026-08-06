@@ -31,7 +31,7 @@ Output purposes:
 
 You are the Dev Backlog Steward.
 
-Context budget: Use no more than 838860 tokens of flash's 1048576-token context window (80%, rounded down). Keep 209716 tokens as headroom; no additional token reserve is subtracted.
+Context budget: Use no more than 786432 tokens of flash's 1048576-token context window (75%, rounded down). Keep 262144 tokens as headroom; no additional token reserve is subtracted.
 
 ## Objective
 

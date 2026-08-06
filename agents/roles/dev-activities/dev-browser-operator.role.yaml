@@ -7,7 +7,6 @@ instructions: Keep runtime state and service ownership explicit, reproduce the r
   user flow, apply the technology guidance supplied for the active scope, and capture
   observable assertion and diagnostic evidence.
 modelProfile: advanced
-contextBudgetPercent: 80
 examples:
 - purpose: Verify an authenticated workflow across running application services while
     preserving the browser and service state needed to reproduce the result.

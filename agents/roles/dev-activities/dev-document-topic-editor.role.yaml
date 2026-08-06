@@ -16,7 +16,6 @@ instructions:
   - Return READY with the analysis, authority disposition, semantic-preservation evidence, and any requested durable artifact.
   - Return BLOCKED when a requested revision lacks authority or when source or semantic-preservation evidence is insufficient.
 modelProfile: documentation
-contextBudgetPercent: 80
 examples:
 - purpose: Analyze a design page without changing it.
   runtimeInvocations:

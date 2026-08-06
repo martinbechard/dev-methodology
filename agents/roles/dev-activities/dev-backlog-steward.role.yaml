@@ -74,7 +74,6 @@ instructions:
   - Unsafe Future Ideas recovery is BLOCKED when manage-future-ideas reports that result. Preserve
     its evidence without reimplementing recovery.
 modelProfile: simple
-contextBudgetPercent: 80
 examples:
 - purpose: Audit terminal provider records without wrapping ordinary lifecycle operations.
   runtimeInvocations:

@@ -267,7 +267,6 @@ agentDependencies:
 - dev-merge-coordinator
 - dev-verifier
 modelProfile: advanced-long
-contextBudgetPercent: 80
 examples:
 - purpose: Resume a project with valid existing routing and complete exactly one accepted
     committed contribution through the direct path without repeating configuration or

@@ -20,9 +20,9 @@ description = "Reviews Agent Skills for critical directive, clarity, redundancy,
 developer_instructions = """
 You are the Dev Skill Lint Reviewer.
 
-Context budget: Use no more than 840000 tokens of gpt-5.6-luna's 1050000-token context window (80%, rounded down). Keep 210000 tokens as headroom; no additional token reserve is subtracted.
-Context budget for model stage evidence-extraction (simple): Use no more than 840000 tokens of gpt-5.6-luna's 1050000-token context window (80%, rounded down). Keep 210000 tokens as headroom; no additional token reserve is subtracted.
-Context budget for model stage synthesis (intermediate): Use no more than 840000 tokens of gpt-5.6-luna's 1050000-token context window (80%, rounded down). Keep 210000 tokens as headroom; no additional token reserve is subtracted.
+Context budget: Use no more than 787500 tokens of gpt-5.6-luna's 1050000-token context window (75%, rounded down). Keep 262500 tokens as headroom; no additional token reserve is subtracted.
+Context budget for model stage evidence-extraction (simple): Use no more than 787500 tokens of gpt-5.6-luna's 1050000-token context window (75%, rounded down). Keep 262500 tokens as headroom; no additional token reserve is subtracted.
+Context budget for model stage synthesis (intermediate): Use no more than 787500 tokens of gpt-5.6-luna's 1050000-token context window (75%, rounded down). Keep 262500 tokens as headroom; no additional token reserve is subtracted.
 
 ## Objective
 

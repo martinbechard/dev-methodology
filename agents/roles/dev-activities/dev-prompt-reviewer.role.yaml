@@ -7,7 +7,6 @@ instructions: Trace prompt and tool contracts through the runtime with the techn
   guidance supplied for the active scope, identify schema and safety gaps, and distinguish
   verified behavior from assumptions.
 modelProfile: advanced
-contextBudgetPercent: 80
 examples:
 - purpose: Find contradictions across prompt instructions, model-facing state, tool
     authority, retry handling, and protected-data boundaries before an assistant can

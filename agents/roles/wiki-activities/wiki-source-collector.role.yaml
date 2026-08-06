@@ -4,7 +4,6 @@ repositoryMutation: required
 description: Collects public raw source artifacts for approved wiki topics, records exclusions, and leaves synthesis to wiki ingest.
 instructions: Use only approved public sources, enforce the requested time window, preserve source evidence, and keep the run raw-only.
 modelProfile: documentation
-contextBudgetPercent: 80
 examples:
 - purpose: Collect a time-bounded set of public evidence for an approved topic while
     making publication-boundary decisions auditable for later wiki ingest.

@@ -10,7 +10,6 @@ instructions: Ground placement decisions in the live repository and its nearest 
   omit the approved path and return the explicit six-facet classification, exact blocker,
   rationale, and placement audit.
 modelProfile: default
-contextBudgetPercent: 80
 examples:
 - purpose: Choose the durable location for a new project artifact by classifying its
     purpose against the live repository taxonomy and nearest placement guidance.

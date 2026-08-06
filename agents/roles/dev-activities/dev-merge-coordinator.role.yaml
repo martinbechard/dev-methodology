@@ -8,7 +8,6 @@ instructions: Keep private-branch preparation claim-free. When integration mutat
   shared outputs after source integration, run integrated verification, commit the combined
   result, and release the triggered claim at its clean committed boundary.
 modelProfile: advanced
-contextBudgetPercent: 80
 examples:
 - purpose: Integrate committed contributions from dependent worktrees in the order required
     by their contracts while respecting enabled resource ownership and preserving clear ownership.
