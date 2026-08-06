@@ -1,28 +1,10 @@
-## Resource Coordination Skill Reference
+---
+name: agent-claim-helper-command
+description: Use the configured local command-line provider for the Agent Claim Helper interface.
+metadata:
+  category: development-practice
+---
 
-Project Configurator selected resource-coordination skill agent-claim. Apply that bundled skill by reference before taking ownership of repository paths or exclusive runtime and integration resources.
-
-The selected skill owns its coordination procedure and evidence. Work-item providers own durable assignment and lifecycle records; they do not own operational resources.
-
-Configured resource deadline policy:
-
-- backlog-mutation: maximum 600 seconds; cleanup grace 120 seconds
-- main-integration: maximum 2700 seconds; cleanup grace 600 seconds
-- browser-server: maximum 3600 seconds; cleanup grace 600 seconds
-- database-port: maximum 1800 seconds; cleanup grace 300 seconds
-- live-model-evaluation: maximum 14400 seconds; cleanup grace 1800 seconds
-
-Exact resource-id overrides:
-
-- None.
-
-## Agent Claim Helper
-
-Project Configurator selected and verified the command claim helper. Apply agent-claim for policy and use the inlined agent-claim-helper-command Provider Skill to realize agent-claim-helper.
-
-Use only this configured claim helper. If it cannot start, ask Project Configurator to configure a working helper.
-
------ BEGIN INLINED CLAIM HELPER SKILL: agent-claim-helper-command -----
 # Agent Claim Helper Command
 
 This Provider Skill realizes Agent Claim Helper through one local command-line program. Apply agent-claim for policy and agent-claim-helper for the common operation, input, result, and uncertain-outcome contract.
@@ -179,43 +161,3 @@ python3 "$CLAIM_SCRIPT" --repo . report --since 2d --format json
 If the process stops after it sends a mutating command, the outcome is uncertain. Do not repeat the command. Run Read Claim Status through this same script and reconcile the reported claim state.
 
 If the script cannot return status, ask Project Configurator for help. Do not use another helper to guess what happened.
------ END INLINED CLAIM HELPER SKILL: agent-claim-helper-command -----
-
-## Work-Item Workflow Skill References
-
-Project Configurator owns the independent Persistence and Commit selectors. Persistence routes durable work-item storage; Commit routes delivery. Workflow skills are referenced by name only and technology skill routing remains separate.
-
-- Default persistence file: create with create-work-item-file; manage with manage-work-items-file.
-- Default commit direct-main: use deliver-work-item-direct-main.
-
-Most-specific matching folder pattern wins independently for Persistence and Commit overrides. A folder override changes only its own selector.
-
-When a selector is UNSET, the pertinent agent asks at the stated operation boundary and does not infer either value from repository or hosting evidence, files, remotes, templates, plugins, or available tools.
-
-## Technology Skills
-
-Technology detection is owned by Project Configurator. Do not rerun detection during ordinary work.
-
-Before acting on files under a matching folder, every agent must read each listed skill completely. These folder skills govern technology-specific implementation, review, diagnosis, verification, security, interface, prompt, and technical documentation work together with the agent's definition-owned skills.
-
-Folder skillsets:
-
-When configured folder patterns overlap, the most-specific matching pattern wins.
-
-- scripts/**: load python before acting.
-  - python evidence: Python source evidence: scripts/build-agent-skill-hierarchy.py and sibling .py files
-- skills/project-wiki/scripts/**: load python before acting.
-  - python evidence: Python package evidence: skills/project-wiki/scripts/project_wiki_ops/__init__.py and sibling .py files
-- skills/detect-technology-skills/scripts/**: load python before acting.
-  - python evidence: Python source evidence: skills/detect-technology-skills/scripts/detect.py
-- evals/projects/python-inventory/**: load python before acting.
-  - python evidence: Python source evidence: evals/projects/python-inventory/src/inventory.py; Owning manifest evidence: evals/projects/python-inventory/pyproject.toml requires Python 3.11 or newer
-- evals/projects/fastapi-orders/**: load fastapi, python before acting.
-  - fastapi evidence: Owning manifest dependency: evals/projects/fastapi-orders/pyproject.toml declares fastapi; Framework source evidence: evals/projects/fastapi-orders/app/main.py imports FastAPI and declares an application route
-  - python evidence: Python source evidence: evals/projects/fastapi-orders/app/main.py
-
-## Project Skill Extensions
-
-These references apply through the root AGENTS.md only. Load each selected skill completely in the declared order when starting project work. Skill definitions remain in their bundled or registered catalogs and are not copied here.
-
-- dev-methodology-repository-maintenance

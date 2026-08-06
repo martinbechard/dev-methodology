@@ -278,7 +278,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
         )
         self.assertIn("agent_claim_transport:", template_text)
         self.assertIn("Load agent-claim only through resource_coordination", skill_text)
-        self.assertIn("Load agent-claim-command or agent-claim-mcp only as the selected helper", skill_text)
+        self.assertIn("Verify exactly one agent-claim-helper-command or agent-claim-helper-mcp Provider Skill against agent-claim-helper", skill_text)
         self.assertIn("Generated AGENTS.md references agent-claim and includes only the selected claim helper's instructions", skill_text)
 
     def test_role_schema_requires_repository_mutation(self) -> None:

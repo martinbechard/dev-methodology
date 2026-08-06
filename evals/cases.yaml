@@ -50,7 +50,8 @@ cases:
       - dev-coder-happy
     requiredSkills:
       - agent-claim
-      - agent-claim-command
+      - agent-claim-helper
+      - agent-claim-helper-command
       - careful-coding
       - code-comments
       - code-discovery
@@ -63,7 +64,8 @@ cases:
       - review-code-with-evidence
     skillProbes:
       - probe-agent-claim
-      - probe-agent-claim-command
+      - probe-agent-claim-helper
+      - probe-agent-claim-helper-command
       - probe-careful-coding
       - probe-code-comments
       - probe-code-discovery
@@ -75,7 +77,7 @@ cases:
       - probe-typescript-esm
       - probe-review-code-with-evidence
     fixtureBackedProbeClaims:
-      - probe-agent-claim-command
+      - probe-agent-claim-helper-command
       - probe-typescript
       - probe-typescript-strict
       - probe-typescript-esm
@@ -87,13 +89,14 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/typescript-order-pricing
       include: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
-      stagedSkillPackages: [agent-claim, agent-claim-command, careful-coding, code-comments, code-discovery, explain-code-fix, structured-explanation, test-driven-development, typescript, typescript-strict, typescript-esm, review-code-with-evidence]
+      stagedSkillPackages: [agent-claim, agent-claim-helper, agent-claim-helper-command, careful-coding, code-comments, code-discovery, explain-code-fix, structured-explanation, test-driven-development, typescript, typescript-strict, typescript-esm, review-code-with-evidence]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
     skillResourceAllowlist:
       agent-claim: [SKILL.md]
-      agent-claim-command: [SKILL.md, scripts/claim.py]
+      agent-claim-helper: [SKILL.md]
+      agent-claim-helper-command: [SKILL.md, scripts/claim.py]
       careful-coding: [SKILL.md]
       code-comments: [SKILL.md, references/review-checklist-code-comments.md]
       code-discovery: [SKILL.md]
@@ -130,7 +133,8 @@ cases:
       - dev-coder-happy
     requiredSkills:
       - agent-claim
-      - agent-claim-command
+      - agent-claim-helper
+      - agent-claim-helper-command
       - careful-coding
       - code-comments
       - code-discovery
@@ -143,7 +147,8 @@ cases:
       - review-code-with-evidence
     skillProbes:
       - probe-agent-claim
-      - probe-agent-claim-command
+      - probe-agent-claim-helper
+      - probe-agent-claim-helper-command
       - probe-careful-coding
       - probe-code-comments
       - probe-code-discovery
@@ -155,7 +160,7 @@ cases:
       - probe-sql
       - probe-review-code-with-evidence
     fixtureBackedProbeClaims:
-      - probe-agent-claim-command
+      - probe-agent-claim-helper-command
       - probe-java
       - probe-spring-boot
       - probe-sql
@@ -167,13 +172,14 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/spring-boot-order-cancellation
       include: [.gitignore, TASK.md, pom.xml, src]
-      stagedSkillPackages: [agent-claim, agent-claim-command, careful-coding, code-comments, code-discovery, explain-code-fix, structured-explanation, test-driven-development, java, spring-boot, sql, review-code-with-evidence]
+      stagedSkillPackages: [agent-claim, agent-claim-helper, agent-claim-helper-command, careful-coding, code-comments, code-discovery, explain-code-fix, structured-explanation, test-driven-development, java, spring-boot, sql, review-code-with-evidence]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [.gitignore, TASK.md, pom.xml, src]
     skillResourceAllowlist:
       agent-claim: [SKILL.md]
-      agent-claim-command: [SKILL.md, scripts/claim.py]
+      agent-claim-helper: [SKILL.md]
+      agent-claim-helper-command: [SKILL.md, scripts/claim.py]
       careful-coding: [SKILL.md]
       code-comments: [SKILL.md, references/review-checklist-code-comments.md]
       code-discovery: [SKILL.md]
@@ -210,7 +216,8 @@ cases:
     agentScenarios: []
     requiredSkills:
       - agent-claim
-      - agent-claim-command
+      - agent-claim-helper
+      - agent-claim-helper-command
       - careful-coding
       - code-comments
       - code-discovery
@@ -222,7 +229,8 @@ cases:
       - review-code-with-evidence
     skillProbes:
       - probe-agent-claim
-      - probe-agent-claim-command
+      - probe-agent-claim-helper
+      - probe-agent-claim-helper-command
       - probe-careful-coding
       - probe-code-comments
       - probe-code-discovery
@@ -242,13 +250,14 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/java-comment-placement
       include: [TASK.md, verify.py, src, negative-fixtures]
-      stagedSkillPackages: [agent-claim, agent-claim-command, careful-coding, code-comments, code-discovery, explain-code-fix, structured-explanation, test-driven-development, java, java-comment, review-code-with-evidence]
+      stagedSkillPackages: [agent-claim, agent-claim-helper, agent-claim-helper-command, careful-coding, code-comments, code-discovery, explain-code-fix, structured-explanation, test-driven-development, java, java-comment, review-code-with-evidence]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md, verify.py, src, negative-fixtures]
     skillResourceAllowlist:
       agent-claim: [SKILL.md]
-      agent-claim-command: [SKILL.md, scripts/claim.py]
+      agent-claim-helper: [SKILL.md]
+      agent-claim-helper-command: [SKILL.md, scripts/claim.py]
       careful-coding: [SKILL.md]
       code-comments: [SKILL.md, references/review-checklist-code-comments.md]
       code-discovery: [SKILL.md]
@@ -404,9 +413,9 @@ cases:
     harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents: [dev-documentation-writer]
     agentScenarios: [dev-documentation-writer-happy]
-    requiredSkills: [route-documentation-work, create-functional-spec, review-functional-spec, agent-claim, agent-claim-command]
-    skillProbes: [probe-route-documentation-work, probe-create-functional-spec, probe-review-functional-spec, probe-agent-claim, probe-agent-claim-command]
-    fixtureBackedProbeClaims: [probe-route-documentation-work, probe-create-functional-spec, probe-review-functional-spec, probe-agent-claim-command]
+    requiredSkills: [route-documentation-work, create-functional-spec, review-functional-spec, agent-claim, agent-claim-helper, agent-claim-helper-command]
+    skillProbes: [probe-route-documentation-work, probe-create-functional-spec, probe-review-functional-spec, probe-agent-claim, probe-agent-claim-helper, probe-agent-claim-helper-command]
+    fixtureBackedProbeClaims: [probe-route-documentation-work, probe-create-functional-spec, probe-review-functional-spec, probe-agent-claim-helper-command]
     workflowPack: documentation-methodology
     sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
     judgePlan:
@@ -415,7 +424,7 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/documentation-functional-spec
       include: [TASK.md, sources]
-      stagedSkillPackages: [route-documentation-work, create-functional-spec, review-functional-spec, agent-claim, agent-claim-command]
+      stagedSkillPackages: [route-documentation-work, create-functional-spec, review-functional-spec, agent-claim, agent-claim-helper, agent-claim-helper-command]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md, sources]
@@ -424,14 +433,15 @@ cases:
       create-functional-spec: [SKILL.md]
       review-functional-spec: [SKILL.md, references/review-checklist-functional-spec.md]
       agent-claim: [SKILL.md]
-      agent-claim-command: [SKILL.md, scripts/claim.py]
+      agent-claim-helper: [SKILL.md]
+      agent-claim-helper-command: [SKILL.md, scripts/claim.py]
     requiredEvidence: [FUNCTIONAL-OPERATIONS, ACTOR-BOUNDARIES, REVIEW-CHECKLIST, READINESS-VERDICT]
   - id: project-configuration-routing
     coverageStatus: fixture-backed
     executionStatus: runnable
     project: evals/projects/project-configuration-routing
     task: TASK.md
-    allowedWritePaths: [PROJECT.yaml, AGENTS.md, services/api/AGENTS.md, apps/web/AGENTS.md, automation/AGENTS.md, eval-result.md, mcp-operation-evidence.md]
+    allowedWritePaths: [PROJECT.yaml, eval-result.md, mcp-operation-evidence.md]
     ephemeralWritePaths: []
     install: null
     verify:
@@ -440,10 +450,11 @@ cases:
         - -c
         - |
           from pathlib import Path
-          required = [Path("PROJECT.yaml"), Path("AGENTS.md"), Path("services/api/AGENTS.md"), Path("apps/web/AGENTS.md"), Path("automation/AGENTS.md"), Path("eval-result.md"), Path("mcp-operation-evidence.md")]
+          required = [Path("PROJECT.yaml"), Path("eval-result.md"), Path("mcp-operation-evidence.md")]
           missing = [str(path) for path in required if not path.is_file()]
           nested = [path for path in Path(".").rglob("PROJECT.yaml") if path != Path("PROJECT.yaml")]
-          message = ("missing required output: " + ", ".join(missing)) if missing else (("nested PROJECT.yaml forbidden: " + ", ".join(map(str, nested))) if nested else "")
+          guidance = [path for path in Path(".").rglob("AGENTS.md")]
+          message = ("missing required output: " + ", ".join(missing)) if missing else (("nested PROJECT.yaml forbidden: " + ", ".join(map(str, nested))) if nested else (("guidance forbidden for unavailable helper: " + ", ".join(map(str, guidance))) if guidance else ""))
           raise SystemExit(message if message else 0)
       modelVisible: false
     harnesses: [codex, junie]
@@ -453,18 +464,19 @@ cases:
     harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents: [project-configurator]
     agentScenarios: [project-configurator-happy]
-    requiredSkills: [create-project-configuration, detect-technology-skills, route-documentation-work, verify-documentation-page, organise-project-files, agent-claim, agent-claim-mcp, skill-authoring, maintain-methodology-documentation]
-    executionSkills: [create-project-configuration, detect-technology-skills, route-documentation-work, verify-documentation-page, organise-project-files, agent-claim, agent-claim-mcp]
-    skillProbes: [probe-create-project-configuration, probe-detect-technology-skills, probe-route-documentation-work, probe-verify-documentation-page, probe-organise-project-files, probe-agent-claim, probe-agent-claim-mcp]
-    fixtureBackedProbeClaims: [probe-create-project-configuration, probe-detect-technology-skills, probe-route-documentation-work, probe-organise-project-files, probe-agent-claim-mcp]
+    requiredSkills: [create-project-configuration, detect-technology-skills, route-documentation-work, verify-documentation-page, organise-project-files, agent-claim, agent-claim-helper, agent-claim-helper-mcp, skill-authoring, maintain-methodology-documentation]
+    executionSkills: [create-project-configuration, detect-technology-skills, route-documentation-work, verify-documentation-page, organise-project-files, agent-claim, agent-claim-helper, agent-claim-helper-mcp]
+    skillProbes: [probe-create-project-configuration, probe-detect-technology-skills, probe-route-documentation-work, probe-verify-documentation-page, probe-organise-project-files, probe-agent-claim, probe-agent-claim-helper, probe-agent-claim-helper-mcp]
+    fixtureBackedProbeClaims: [probe-create-project-configuration, probe-detect-technology-skills, probe-route-documentation-work, probe-organise-project-files, probe-agent-claim-helper-mcp]
     workflowPack: project-setup
     sandboxProfiles: {codex: codex-permission-profile-git-write, junie: junie-workspace-write}
     judgePlan:
       deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, mcp-tool-trace, claim-lifecycle, technology-detection-evidence, artifact-structure, allowed-paths-only, contradiction-scan, snapshot-reset, local-execution-boundary]
       modelRubric: workflow-quality
     mcpAgentOps:
-      schemaVersion: 3
+      schemaVersion: 4
       claimResultSchemaVersion: 2
+      claimHelperAvailability: UNAVAILABLE
       enablement: base-case-only
       serverName: mcp-agent-ops
       enabledTools: [claim_status, claim_acquire, claim_extend, claim_heartbeat, claim_release, claim_maintain_journal, claim_report, skill_list, skill_load, skill_resource_load, skill_refresh, skill_validate, detect_technology_skills, verify_yaml, verify_markdown_links]
@@ -522,14 +534,14 @@ cases:
           paths: [PROJECT.yaml]
         verify_markdown_links:
           repository_root: $WORKSPACE
-          patterns: [AGENTS.md, services/api/AGENTS.md, apps/web/AGENTS.md, automation/AGENTS.md, eval-result.md, mcp-operation-evidence.md]
+          patterns: [eval-result.md, mcp-operation-evidence.md]
         claim_release:
           repository: $WORKSPACE
           claim_id: project-configuration-routing
     contextPack:
       fixtureRoot: evals/projects/project-configuration-routing
       include: [TASK.md, README.md, available-skills.txt, docs, services, apps, automation]
-      stagedSkillPackages: [create-project-configuration, detect-technology-skills, route-documentation-work, verify-documentation-page, organise-project-files, agent-claim, agent-claim-mcp]
+      stagedSkillPackages: [create-project-configuration, detect-technology-skills, route-documentation-work, verify-documentation-page, organise-project-files, agent-claim, agent-claim-helper, agent-claim-helper-mcp]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md, README.md, available-skills.txt, docs, services, apps, automation]
@@ -540,10 +552,11 @@ cases:
       verify-documentation-page: [SKILL.md]
       organise-project-files: [SKILL.md]
       agent-claim: [SKILL.md]
-      agent-claim-mcp: [SKILL.md]
+      agent-claim-helper: [SKILL.md]
+      agent-claim-helper-mcp: [SKILL.md]
       skill-authoring: [SKILL.md]
       maintain-methodology-documentation: [SKILL.md]
-    requiredEvidence: [PROJECT-CONFIGURATION, DETECTION-SKILLSETS, ROUTING-FILES, PLACEMENT-AUDIT, MCP-SKILL-LOAD, MCP-SKILL-VALIDATION, MCP-SKILL-REFRESH, MCP-CLAIM-STATUS, MCP-CLAIM-EXTENSION, MCP-CLAIM-HEARTBEAT]
+    requiredEvidence: [PROJECT-CONFIGURATION, DETECTION-SKILLSETS, PLACEMENT-AUDIT, MCP-SKILL-LOAD, MCP-SKILL-VALIDATION, MCP-SKILL-REFRESH, MCP-CLAIM-ACQUISITION, MCP-CLAIM-STATUS, MCP-CLAIM-HEARTBEAT, MCP-HELPER-UNAVAILABLE]
   - id: wiki-raw-ingest
     coverageStatus: fixture-backed
     executionStatus: runnable
@@ -571,9 +584,9 @@ cases:
     harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents: [wiki-ingester]
     agentScenarios: [wiki-ingester-happy]
-    requiredSkills: [project-wiki, project-wiki-topic-write, project-wiki-topic-verify, organise-project-files, agent-claim, agent-claim-command]
-    skillProbes: [probe-project-wiki, probe-project-wiki-topic-write, probe-project-wiki-topic-verify, probe-organise-project-files, probe-agent-claim, probe-agent-claim-command]
-    fixtureBackedProbeClaims: [probe-project-wiki, probe-project-wiki-topic-write, probe-project-wiki-topic-verify, probe-agent-claim-command]
+    requiredSkills: [project-wiki, project-wiki-topic-write, project-wiki-topic-verify, organise-project-files, agent-claim, agent-claim-helper, agent-claim-helper-command]
+    skillProbes: [probe-project-wiki, probe-project-wiki-topic-write, probe-project-wiki-topic-verify, probe-organise-project-files, probe-agent-claim, probe-agent-claim-helper, probe-agent-claim-helper-command]
+    fixtureBackedProbeClaims: [probe-project-wiki, probe-project-wiki-topic-write, probe-project-wiki-topic-verify, probe-agent-claim-helper-command]
     workflowPack: wiki-lifecycle
     sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
     judgePlan:
@@ -582,7 +595,7 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/wiki-raw-ingest
       include: [TASK.md, docs, raw]
-      stagedSkillPackages: [project-wiki, project-wiki-topic-write, project-wiki-topic-verify, organise-project-files, agent-claim, agent-claim-command]
+      stagedSkillPackages: [project-wiki, project-wiki-topic-write, project-wiki-topic-verify, organise-project-files, agent-claim, agent-claim-helper, agent-claim-helper-command]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md, docs, raw]
@@ -604,7 +617,8 @@ cases:
       project-wiki-topic-verify: [SKILL.md]
       organise-project-files: [SKILL.md]
       agent-claim: [SKILL.md]
-      agent-claim-command: [SKILL.md, scripts/claim.py]
+      agent-claim-helper: [SKILL.md]
+      agent-claim-helper-command: [SKILL.md, scripts/claim.py]
     requiredEvidence: [PRE-MOVE-VERDICT, PROCESSED-SOURCE-LINKS, POST-MOVE-VERDICT, QUEUE-CLOSEOUT]
   - id: backlog-lifecycle
     coverageStatus: fixture-backed
@@ -634,9 +648,9 @@ cases:
     harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents: [dev-backlog-steward]
     agentScenarios: [dev-backlog-steward-boundary]
-    requiredSkills: [manage-work-items, manage-work-items-file, agent-claim, agent-claim-command, structured-explanation]
-    skillProbes: [probe-manage-work-items-file, probe-agent-claim, probe-agent-claim-command, probe-structured-explanation]
-    fixtureBackedProbeClaims: [probe-manage-work-items-file, probe-agent-claim-command]
+    requiredSkills: [manage-work-items, manage-work-items-file, agent-claim, agent-claim-helper, agent-claim-helper-command, structured-explanation]
+    skillProbes: [probe-manage-work-items-file, probe-agent-claim, probe-agent-claim-helper, probe-agent-claim-helper-command, probe-structured-explanation]
+    fixtureBackedProbeClaims: [probe-manage-work-items-file, probe-agent-claim-helper-command]
     workflowPack: backlog
     sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
     judgePlan:
@@ -645,7 +659,7 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/backlog-lifecycle
       include: [TASK.md, backlog, .backlog-state]
-      stagedSkillPackages: [manage-work-items, manage-work-items-file, agent-claim, agent-claim-command, structured-explanation]
+      stagedSkillPackages: [manage-work-items, manage-work-items-file, agent-claim, agent-claim-helper, agent-claim-helper-command, structured-explanation]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md, backlog, .backlog-state]
@@ -653,7 +667,8 @@ cases:
       manage-work-items: [SKILL.md]
       manage-work-items-file: [SKILL.md]
       agent-claim: [SKILL.md]
-      agent-claim-command: [SKILL.md, scripts/claim.py]
+      agent-claim-helper: [SKILL.md]
+      agent-claim-helper-command: [SKILL.md, scripts/claim.py]
       structured-explanation: [SKILL.md]
     requiredEvidence: [BACKLOG-ITEM, OWNERSHIP-RECORD, STATE-TRANSITION, TERMINAL-SUMMARY]
   - id: work-item-management-provider-operations
@@ -921,8 +936,8 @@ cases:
     harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents: [dev-backlog-steward]
     agentScenarios: [dev-backlog-steward-happy]
-    requiredSkills: [manage-work-items, create-work-item-file, route-documentation-work, agent-claim, agent-claim-command, structured-explanation]
-    skillProbes: [probe-create-work-item-file, probe-route-documentation-work, probe-agent-claim, probe-agent-claim-command, probe-structured-explanation]
+    requiredSkills: [manage-work-items, create-work-item-file, route-documentation-work, agent-claim, agent-claim-helper, agent-claim-helper-command, structured-explanation]
+    skillProbes: [probe-create-work-item-file, probe-route-documentation-work, probe-agent-claim, probe-agent-claim-helper, probe-agent-claim-helper-command, probe-structured-explanation]
     fixtureBackedProbeClaims: [probe-create-work-item-file]
     workflowPack: backlog
     sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
@@ -932,7 +947,7 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/file-work-item-template-contract
       include: [TASK.md, requests.md]
-      stagedSkillPackages: [manage-work-items, create-work-item-file, route-documentation-work, agent-claim, agent-claim-command, structured-explanation]
+      stagedSkillPackages: [manage-work-items, create-work-item-file, route-documentation-work, agent-claim, agent-claim-helper, agent-claim-helper-command, structured-explanation]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md, requests.md]
@@ -941,6 +956,7 @@ cases:
       create-work-item-file: [SKILL.md]
       route-documentation-work: [SKILL.md, assets/templates/file-work-item-template.md]
       agent-claim: [SKILL.md]
-      agent-claim-command: [SKILL.md, scripts/claim.py]
+      agent-claim-helper: [SKILL.md]
+      agent-claim-helper-command: [SKILL.md, scripts/claim.py]
       structured-explanation: [SKILL.md]
     requiredEvidence: [READY-OPEN-QUESTIONS, CONTEXT-ONLY-REJECTED, GENUINE-USER-ACTION, HOLDING, SERIES-LINKAGE, GOVERNED-MANIFEST-REJECTED, EXACT-APPROVAL-ACCEPTED, OUT-OF-SCOPE-REJECTED, CHECKER-NOT-AUTHORITY]

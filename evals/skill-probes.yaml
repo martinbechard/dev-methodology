@@ -58,35 +58,49 @@ probes:
     evaluationKind: workflow-invariant
     activationCondition: The loaded agent-claim skill identifies a matching row in its Claim Events table.
     negativeCondition: No row in the Claim Events table matches the work.
-    expectedBehavior: Coordinate the shared resource from the matching Claim Events row; use read-only status, acquire, scope extension, deadline extension, heartbeat, and release under the policy boundaries; reconcile an uncertain mutating outcome through status on the same transport; preserve non-overlapping owners; wait for a direct release or recovery notification after a conflict; and retain claim history.
+    expectedBehavior: Coordinate the shared resource from the matching Claim Events row; use read-only status, acquire, scope extension, deadline extension, heartbeat, and release under the policy boundaries; reconcile an uncertain mutating outcome through status on the same configured helper; preserve non-overlapping owners; wait for a direct release or recovery notification after a conflict; and retain claim history.
     judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, allowed-paths-only], modelRubric: null}
     scenarioAssociations: [dev-coder-happy, dev-orchestrator-boundary, dev-backlog-steward-happy, wiki-ingester-happy]
     workflowAssociations: [code-delivery, documentation-methodology, project-setup, wiki-lifecycle, backlog]
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-agent-claim-mcp
-    skill: agent-claim-mcp
-    source: skills/agent-claim-mcp/SKILL.md
+  - id: probe-agent-claim-helper
+    skill: agent-claim-helper
+    source: skills/agent-claim-helper/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
-    activationCondition: PROJECT.yaml selects an MCP claim helper only after deadline extension, journal maintenance, contention reporting, and structured-result parity are verified.
+    activationCondition: A configured agent-claim-helper Provider Skill realizes claim operations selected by agent-claim.
+    negativeCondition: Resource coordination is none, or no claim operation is required.
+    expectedBehavior: Preserve the common repository, identity, scope, deadline, release, journal, and report inputs; expose the complete operation set and structured outcomes; and reconcile an uncertain mutation through status on the same configured provider without repeating it.
+    judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, allowed-paths-only], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, project-configurator-happy, wiki-ingester-happy]
+    workflowAssociations: [code-delivery, documentation-methodology, project-setup, wiki-lifecycle, backlog]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-agent-claim-helper-mcp
+    skill: agent-claim-helper-mcp
+    source: skills/agent-claim-helper-mcp/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: PROJECT.yaml selects an MCP claim helper only after deadline extension, registry reset, journal maintenance, contention reporting, and structured-result parity are verified.
     negativeCondition: PROJECT.yaml selects the command-line claim helper, or the MCP provider remains unavailable because required parity is unverified.
-    expectedBehavior: Keep an unverified MCP helper unavailable; once verified and selected, call the configured MCP tools for status, acquire, scope extension, deadline extension, heartbeat, release, journal maintenance, and contention reporting; read result.outcome instead of exit_code; and reconcile an uncertain mutating call through status on the same server without switching transports.
+    expectedBehavior: Keep an unverified MCP helper unavailable; once verified and selected, call the configured MCP tools for status, acquire, scope extension, deadline extension, heartbeat, release, registry reset, journal maintenance, and contention reporting; read result.outcome instead of exit_code; and reconcile an uncertain mutating call through status on the same server without switching providers.
     judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, required-command-outcome, allowed-paths-only], modelRubric: null}
     scenarioAssociations: [project-configurator-happy]
     workflowAssociations: [project-setup]
     executableCases: [project-configuration-routing]
     coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-agent-claim-command
-    skill: agent-claim-command
-    source: skills/agent-claim-command/SKILL.md
+  - id: probe-agent-claim-helper-command
+    skill: agent-claim-helper-command
+    source: skills/agent-claim-helper-command/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
     activationCondition: PROJECT.yaml selects and verifies the command-line claim helper.
     negativeCondition: PROJECT.yaml selects the MCP claim helper.
-    expectedBehavior: Run the configured script for status, acquire, scope extension, deadline extension, heartbeat, release, journal maintenance, and contention reporting; read result.outcome instead of the process exit code; and reconcile an uncertain mutating command through status on the same script without switching transports.
+    expectedBehavior: Run the configured script for status, acquire, scope extension, deadline extension, heartbeat, release, journal maintenance, and contention reporting; read result.outcome instead of the process exit code; and reconcile an uncertain mutating command through status on the same script without switching providers.
     judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, required-command-outcome, allowed-paths-only], modelRubric: null}
     scenarioAssociations: [project-configurator-happy]
     workflowAssociations: [project-setup]

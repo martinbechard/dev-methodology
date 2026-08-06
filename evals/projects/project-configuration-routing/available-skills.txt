@@ -1,5 +1,6 @@
 agent-claim
-agent-claim-mcp
+agent-claim-helper
+agent-claim-helper-mcp
 careful-coding
 create-project-configuration
 detect-technology-skills

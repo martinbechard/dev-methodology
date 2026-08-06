@@ -122,8 +122,8 @@
     <div class="section-heading"><h2 id="coverage-title">Coverage and case catalogs</h2><p>Current catalog inventory remains separate from historical campaign results. Probe records retain their executable case, agent-scenario, and workflow associations without turning declarations into verified runs.</p></div>
     <h3>Current catalog inventory</h3>
     <div class="grid" style="margin-top:1rem">
-      <article class="metric"><strong>134</strong><span>Bundled skills</span></article>
-      <article class="metric"><strong>132</strong><span>Diagnostic probe records</span></article>
+      <article class="metric"><strong>135</strong><span>Bundled skills</span></article>
+      <article class="metric"><strong>133</strong><span>Diagnostic probe records</span></article>
       <article class="metric"><strong>30</strong><span>Conceptual agents</span></article>
       <article class="metric"><strong>30</strong><span>Current suites</span></article>
       <article class="metric"><strong>105</strong><span>Current suite scenarios</span></article>
@@ -135,7 +135,7 @@
       <article class="metric"><strong>5</strong><span>Workflow packs</span></article>
     </div>
     <div class="grid" style="margin-top:1rem">
-      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed skill result.</li><li>132 skills have a direct diagnostic probe declaration but no direct skill verdict.</li><li>1 skills have only indirect current-suite coverage without a direct probe or skill result.</li><li>1 skills have no recorded evaluation evidence.</li><li>53 skills are named by at least one selected-campaign scenario; 81 are not.</li></ul><p><strong>No skill-level verdict:</strong> the selected campaign publishes no skill receipts, so linked PASS outcomes remain agent-scenario evidence.</p></article>
+      <article class="method-card"><h3>Skill catalog states</h3><ul><li>0 skills have a direct governed skill result.</li><li>133 skills have a direct diagnostic probe declaration but no direct skill verdict.</li><li>1 skills have only indirect current-suite coverage without a direct probe or skill result.</li><li>1 skills have no recorded evaluation evidence.</li><li>53 skills are named by at least one selected-campaign scenario; 82 are not.</li></ul><p><strong>No skill-level verdict:</strong> the selected campaign publishes no skill receipts, so linked PASS outcomes remain agent-scenario evidence.</p></article>
     </div>
   </section>
 
@@ -150,7 +150,7 @@
       <div><dt>Evidence level</dt><dd>Governed agent-suite campaign</dd></div>
       <div><dt>Documentation snapshot mode</dt><dd>Deterministic source snapshot</dd></div>
       <div><dt>Wall-clock build time</dt><dd>Not retained; deterministic output does not claim an unsupported generation timestamp</dd></div>
-      <div><dt>Current source snapshot</dt><dd><code>d1f3013699fac3c35d76dccf745bb404f92292961c508803f6efe435558f38d4</code>; regenerated and compared by the focused check</dd></div>
+      <div><dt>Current source snapshot</dt><dd><code>0aea2d9a5398192d925cf12cd337cfaefd16305de6443d488d183ac0e5ce98cc</code>; regenerated and compared by the focused check</dd></div>
     </dl>
     <div style="margin-top:2rem"><h3>Campaign verdict results</h3></div>
     <div class="grid" style="margin-top:1rem">
@@ -2097,7 +2097,7 @@
       <label class="field" for="skill-status">Coverage status<select id="skill-status" data-filter-status="skill"><option value="all">All statuses</option><option value="direct-governed">Direct governed result</option><option value="direct-probe">Direct diagnostic probe</option><option value="indirect-only">Indirect suite only</option><option value="none">No recorded evidence</option></select></label>
       <button type="button" data-filter-clear="skill">Clear skill filters</button>
     </div>
-    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 134 skills.</p>
+    <p class="result-count" id="skill-result-count" aria-live="polite">Showing all 135 skills.</p>
     <noscript><p class="scope-note">JavaScript is disabled. All skill entries remain visible; text and status filtering are optional enhancements.</p></noscript>
     <div class="catalog" id="skill-catalog">
     <article class="evaluation-card skill-card" id="skill-agent-claim"
@@ -2130,18 +2130,48 @@
       </dl>
     </article>
 
-    <article class="evaluation-card skill-card" id="skill-agent-claim-command"
-      data-kind="skill" data-status="direct-probe" data-search="agent-claim-command use the configured command-line claim helper. development-practice probe-agent-claim-command no governed campaign link">
+    <article class="evaluation-card skill-card" id="skill-agent-claim-helper"
+      data-kind="skill" data-status="direct-probe" data-search="agent-claim-helper use the common claim-helper operation, input, result, and uncertain-outcome contract through one configured provider. development-practice probe-agent-claim-helper no governed campaign link">
       <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>agent-claim-command</h3></div>
+        <div><span class="card-kicker">Skill</span><h3>agent-claim-helper</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
       </div>
-      <p>Use the configured command-line claim helper.</p>
-      <p class="source-row"><a href="../skills/agent-claim-command/SKILL.md">Skill source</a></p>
+      <p>Use the common claim-helper operation, input, result, and uncertain-outcome contract through one configured provider.</p>
+      <p class="source-row"><a href="../skills/agent-claim-helper/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe</h4>
 
         <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-agent-claim-command</a></dd></div>
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-agent-claim-helper</a></dd></div>
+          <div><dt>Coverage state</dt><dd>declared: catalog declaration, not a verified run</dd></div>
+          <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
+          <div><dt>Executable cases</dt><dd>None declared</dd></div>
+          <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-coder-happy</a>, <a href="../evals/agent-scenarios.yaml">project-configurator-happy</a>, <a href="../evals/agent-scenarios.yaml">wiki-ingester-happy</a></dd></div>
+          <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a>, <a href="../evals/workflow-packs.yaml">documentation-methodology</a>, <a href="../evals/workflow-packs.yaml">project-setup</a>, <a href="../evals/workflow-packs.yaml">wiki-lifecycle</a>, <a href="../evals/workflow-packs.yaml">backlog</a></dd></div>
+          <div><dt>Deterministic checks</dt><dd>skill-read-trace, claim-lifecycle, allowed-paths-only</dd></div>
+          <div><dt>Model rubric</dt><dd>None; deterministic plan only</dd></div>
+        </dl>
+
+      <h4>Governed campaign links</h4>
+      <p><span class="status status--missing">No governed campaign link</span></p><p>No selected-campaign scenario currently names this skill as a target skill.</p>
+      <dl class="compact-list">
+        <div><dt>Latest governed outcome</dt><dd>No governed campaign link</dd></div>
+        <div><dt>Evidence level</dt><dd>No skill-level verdict; linked outcomes remain agent-scenario evidence</dd></div>
+        <div><dt>Limitation</dt><dd>A probe declaration or linked agent-suite verdict is not a skill-level pass. The selected campaign publishes no skill-level receipt or calibrated skill verdict.</dd></div>
+      </dl>
+    </article>
+
+    <article class="evaluation-card skill-card" id="skill-agent-claim-helper-command"
+      data-kind="skill" data-status="direct-probe" data-search="agent-claim-helper-command use the configured local command-line provider for the agent claim helper interface. development-practice probe-agent-claim-helper-command no governed campaign link">
+      <div class="card-heading">
+        <div><span class="card-kicker">Skill</span><h3>agent-claim-helper-command</h3></div>
+        <span class="status status--direct-probe">Direct diagnostic probe</span>
+      </div>
+      <p>Use the configured local command-line provider for the Agent Claim Helper interface.</p>
+      <p class="source-row"><a href="../skills/agent-claim-helper-command/SKILL.md">Skill source</a></p>
+      <h4>Direct diagnostic probe</h4>
+
+        <dl class="compact-list">
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-agent-claim-helper-command</a></dd></div>
           <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
           <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
           <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">typescript-order-pricing</a>, <a href="../evals/cases.yaml">spring-boot-order-cancellation</a>, <a href="../evals/cases.yaml">documentation-functional-spec</a>, <a href="../evals/cases.yaml">wiki-raw-ingest</a>, <a href="../evals/cases.yaml">backlog-lifecycle</a></dd></div>
@@ -2160,18 +2190,18 @@
       </dl>
     </article>
 
-    <article class="evaluation-card skill-card" id="skill-agent-claim-mcp"
-      data-kind="skill" data-status="direct-probe" data-search="agent-claim-mcp use the configured mcp claim helper. development-practice probe-agent-claim-mcp no governed campaign link">
+    <article class="evaluation-card skill-card" id="skill-agent-claim-helper-mcp"
+      data-kind="skill" data-status="direct-probe" data-search="agent-claim-helper-mcp use a verified mcp provider for the agent claim helper interface when complete parity is available. development-practice probe-agent-claim-helper-mcp no governed campaign link">
       <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>agent-claim-mcp</h3></div>
+        <div><span class="card-kicker">Skill</span><h3>agent-claim-helper-mcp</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
       </div>
-      <p>Use the configured MCP claim helper.</p>
-      <p class="source-row"><a href="../skills/agent-claim-mcp/SKILL.md">Skill source</a></p>
+      <p>Use a verified MCP provider for the Agent Claim Helper interface when complete parity is available.</p>
+      <p class="source-row"><a href="../skills/agent-claim-helper-mcp/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe</h4>
 
         <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-agent-claim-mcp</a></dd></div>
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-agent-claim-helper-mcp</a></dd></div>
           <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
           <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
           <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">project-configuration-routing</a></dd></div>

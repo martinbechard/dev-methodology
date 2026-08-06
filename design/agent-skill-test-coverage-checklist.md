@@ -20,8 +20,8 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 30 conceptual agents and 134 bundled skills have structural coverage.
-- [x] 29 agents are scenario-declared and 132 skills are probe-declared.
+- [x] 30 conceptual agents and 135 bundled skills have structural coverage.
+- [x] 29 agents are scenario-declared and 133 skills are probe-declared.
 - Agents missing scenario declarations: dev-skill-lint-reviewer.
 - Skills missing probe declarations: analyze-document-topics, revise-document-topics.
 - [x] 66 agent scenarios and 5 workflow packs are declared.
@@ -34,7 +34,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 2 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
 - 29 agents and 109 skills have pending Model Judge status.
-- 0 agents and 23 skills use Deterministic Judges only and do not require Model Judge calibration.
+- 0 agents and 24 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
 - 0 agents and 0 skills have security-contained evidence.
@@ -146,8 +146,9 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | Skill | Structural | Probe-declared | Positive case | Negative case | Paired controls | Full probe | Executable full fixture | Judge calibration | Executed | Judge-passed | Security-contained | Stale-by-digest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | agent-claim | [x] | [x] probe-agent-claim | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
-| agent-claim-command | [x] | [x] probe-agent-claim-command | [x] backlog-lifecycle, documentation-functional-spec, spring-boot-order-cancellation, typescript-order-pricing, wiki-raw-ingest | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
-| agent-claim-mcp | [x] | [x] probe-agent-claim-mcp | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| agent-claim-helper | [x] | [x] probe-agent-claim-helper | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| agent-claim-helper-command | [x] | [x] probe-agent-claim-helper-command | [x] backlog-lifecycle, documentation-functional-spec, spring-boot-order-cancellation, typescript-order-pricing, wiki-raw-ingest | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| agent-claim-helper-mcp | [x] | [x] probe-agent-claim-helper-mcp | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | analyze-root-cause | [x] | [x] probe-analyze-root-cause | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | application-security | [x] | [x] probe-application-security | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | ast-grep | [x] | [x] probe-ast-grep | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |

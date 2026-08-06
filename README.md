@@ -23,7 +23,7 @@ Lifecycle roles load the manage-work-items Interface Skill for provider-neutral 
 lifecycle, result, and procedure vocabulary. PROJECT.yaml and generated AGENTS.md guidance select
 one manage-work-items-* Provider Skill from Persistence without changing that shared contract.
 
-Project Configurator also records every selected conceptual agent definition, ordered project-level skill extension, one verified claim helper, documentation mode, folder skillset, folder route, and root or nested AGENTS.md placement before rendering operational guidance. The historical field agent_claim_transport stores the claim helper selection. The project_skill_extensions list accepts bundled skill identifiers and explicit registered-skill mappings with availability and catalog evidence, rejects duplicates and definition-owned skills by normalized identifier, and renders its references in declared order at the end of root AGENTS.md only. Generated AGENTS.md guidance inlines only the selected claim helper and names selected extensions and Persistence and Commit workflow skills without copying their procedures. Folder technology skills remain a separate delivery mechanism. A maintainer may edit PROJECT.yaml to request a correction; Project Configurator preserves valid edits and reports invalid identifiers or combinations instead of silently replacing them. Claude Code projects also receive a thin CLAUDE.md beside each applicable AGENTS.md so Claude imports the same project guidance without duplicating it.
+Project Configurator also records every selected conceptual agent definition, ordered project-level skill extension, one verified claim helper provider, documentation mode, folder skillset, folder route, and root or nested AGENTS.md placement before rendering operational guidance. The historical field agent_claim_transport stores the provider selection. The project_skill_extensions list accepts bundled skill identifiers and explicit registered-skill mappings with availability and catalog evidence, rejects duplicates and definition-owned skills by normalized identifier, and renders its references in declared order at the end of root AGENTS.md only. Generated AGENTS.md guidance inlines only the selected claim helper provider and names selected extensions and Persistence and Commit workflow skills without copying their procedures. Folder technology skills remain a separate delivery mechanism. A maintainer may edit PROJECT.yaml to request a correction; Project Configurator preserves valid edits and reports invalid identifiers or combinations instead of silently replacing them. Claude Code projects also receive a thin CLAUDE.md beside each applicable AGENTS.md so Claude imports the same project guidance without duplicating it.
 
 When Persistence is UNSET and durable work-item management is first requested, ask whether to select the available file provider. Approval updates PROJECT.yaml and renders AGENTS.md.candidate for comparison with the existing AGENTS.md. Preserve project-specific directives; move reusable project guidance into project skills referenced by PROJECT.yaml when appropriate. Apply the generated guidance only after that comparison, then resume the original request. Deferral leaves Persistence UNSET, while an explicit none selection remains none.
 
@@ -127,9 +127,11 @@ python3 scripts/build-skill-docs.py --check
 
 ## Agent Claims And Worktrees
 
-PROJECT.yaml selects agent-claim or none. When agent-claim is selected, Project Configurator records resource deadlines and configures one claim helper. The field agent_claim_transport keeps its historical name but selects that helper. This repository uses the command helper because the current MCP provider has not been verified for deadline support.
+PROJECT.yaml selects agent-claim or none. When agent-claim is selected, Project Configurator records resource deadlines and configures one claim helper provider. The field agent_claim_transport keeps its historical name but selects that provider. This repository uses the command-line provider because the current MCP provider omits claim deadline extension and registry reset operations.
 
-[Agent Claim](skills/agent-claim/SKILL.md) is the only source for events that require claims, the scope for each event, conflict handling, and release timing. Skills that apply claims refer to that table instead of copying its rules.
+[Agent Claim](skills/agent-claim/SKILL.md) is the only source for events that require claims, the scope for each event, conflict handling, deadline policy, and release timing. [Agent Claim Helper](skills/agent-claim-helper/SKILL.md) defines the common operations, inputs, structured outcomes, and uncertain-outcome reconciliation. The command-line and MCP Provider Skills realize that interface without redefining policy.
+
+Skills that apply claims refer to that table instead of copying its rules.
 
 The primary worktree contains main and backlog. Private worktrees are separate checkouts under .worktrees.
 
@@ -143,16 +145,16 @@ After a private contribution is preserved on its branch or integrated into its t
 
 Every worktree uses the claim registry and claim history stored in the Git common directory. Agent transcripts are not claim history.
 
-The command helper is implemented by skills/agent-claim-command/scripts/claim.py:
+The command helper is implemented by skills/agent-claim-helper-command/scripts/claim.py:
 
 ```bash
-python3 skills/agent-claim-command/scripts/claim.py --help
+python3 skills/agent-claim-helper-command/scripts/claim.py --help
 ```
 
 A Codex user-level installation uses the installed copy:
 
 ```bash
-python3 "${HOME}/.agents/skills/agent-claim-command/scripts/claim.py" --help
+python3 "${HOME}/.agents/skills/agent-claim-helper-command/scripts/claim.py" --help
 ```
 
 For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, directly applies the selected provider manager for Ready -> Starting reservations and Coordinator-owned dispositions, launches the root Dev Orchestrator task, and finishes its handoff. The root Dev Orchestrator independently applies the selected provider manager for Starting -> Running acceptance and its later lifecycle operations. Dev Backlog Steward is optional and limited to provider-wide inventory, normalization, archival audit, and recovery. Dev Backlog Watchdog detects overly old Starting items and reports recovery evidence to the Coordinator. Each agent follows Agent Claim when its work reaches an event in the Claim Events table.
@@ -278,7 +280,7 @@ python3 scripts/install-skills.py \
 
 ### Preferred MCP Operations Layer
 
-Codex and Junie can use mcp-agent-ops for skill catalog reads, technology detection, skill validation, YAML verification, and Markdown link checks. Project Configurator may select it as the claim helper only after verifying every operation and result field required by [Agent Claim MCP](skills/agent-claim-mcp/SKILL.md). The current provider has not been verified for claim deadlines, so this repository uses the command-line claim helper.
+Codex and Junie can use mcp-agent-ops for skill catalog reads, technology detection, skill validation, YAML verification, and Markdown link checks. Project Configurator may select it as the claim helper only after verifying every operation and result field required by [Agent Claim Helper MCP](skills/agent-claim-helper-mcp/SKILL.md) and [Agent Claim Helper](skills/agent-claim-helper/SKILL.md). The current provider omits `claim_extend_deadline` and `claim_reset`, so this repository uses the command-line claim helper.
 
 Install and verify mcp-agent-ops before selecting it as the claim helper. Published release 0.4.0 does not support the required claim results and must not be selected for claims. Follow the companion project's [verified release installation procedure](https://github.com/martinbechard/mcp-agent-ops#install-the-latest-release), including checksum and installed-file verification. The bundle installer configures an existing server; it does not install the executable.
 
@@ -527,8 +529,9 @@ The development practice skills are:
 - structured-design
 - review-structured-artifact
 - agent-claim
-- agent-claim-mcp
-- agent-claim-command
+- agent-claim-helper
+- agent-claim-helper-command
+- agent-claim-helper-mcp
 - integrate-agent-work
 - coordinate-codex-work-items
 - resolve-backlog-blockage

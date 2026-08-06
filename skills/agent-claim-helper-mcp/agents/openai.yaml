@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Agent Claim Mcp
+  display_name: Agent Claim Helper Mcp
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Use the configured MCP claim helper.
+  short_description: Use a verified MCP provider for the Agent Claim Helper interface when complete parity is...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $agent-claim-mcp with $agent-claim to call the configured MCP claim helper.
+  default_prompt: Use $agent-claim-helper-mcp with $agent-claim and $agent-claim-helper to call the configured MCP claim helper.
 
 # Optional invocation policy placeholder.
 # policy:

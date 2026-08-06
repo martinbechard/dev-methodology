@@ -18,9 +18,9 @@ Git provides one primary worktree for a repository. The primary worktree owns th
 
 ## Coordinate Shared Resource
 
-Use the Claim Events table to decide whether work requires temporary ownership. If a row matches, use its scope and release boundary, then apply the claim operations in this skill through the configured claim helper. If no row matches, continue without acquiring a claim.
+Use the Claim Events table to decide whether work requires temporary ownership. If a row matches, use its scope and release boundary, then apply the agent-claim-helper operation contract through the configured Provider Skill. If no row matches, continue without acquiring a claim.
 
-This skill owns claim policy. The selected claim helper explains only how to invoke each operation and read its structured result.
+This skill owns claim policy. agent-claim-helper owns the common operation, input, result, and uncertain-outcome contract. The selected agent-claim-helper-* Provider Skill explains only how to invoke that contract.
 
 ## Claim Events
 
@@ -134,7 +134,7 @@ Send a heartbeat during long resource use to show that the owner remains active.
 
 Read claim status to inspect live ownership and overdue resource claims. Status is read-only. It never acquires, extends, or releases a claim.
 
-If a mutating claim operation has an uncertain outcome, do not repeat it. Read status through the same configured transport, reconcile the reported claim state, and continue from that state. If that transport cannot return status, ask Project Configurator to restore the configured helper instead of switching transports or guessing.
+If a mutating claim operation has an uncertain outcome, do not repeat it. Read status through the same configured claim helper, reconcile the reported claim state, and continue from that state. If that helper cannot return status, ask Project Configurator to restore the configured helper instead of switching providers or guessing.
 
 Status reports overdue resource claims but never releases one. A configured watchdog investigates an overdue claim whose owner has stopped.
 

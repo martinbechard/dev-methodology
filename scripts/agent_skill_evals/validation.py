@@ -72,10 +72,12 @@ _RECOGNIZED_EPHEMERAL_OUTPUT_LEAVES = frozenset({
 _MCP_AGENT_OPS_TOOL_NAMES = frozenset({
     "claim_acquire",
     "claim_extend",
+    "claim_extend_deadline",
     "claim_heartbeat",
     "claim_maintain_journal",
     "claim_release",
     "claim_report",
+    "claim_reset",
     "claim_status",
     "detect_technology_skills",
     "skill_list",
@@ -91,10 +93,12 @@ _MCP_AGENT_OPS_TOOL_NAMES = frozenset({
 _MCP_AGENT_OPS_CLAIM_TOOL_NAMES = frozenset({
     "claim_acquire",
     "claim_extend",
+    "claim_extend_deadline",
     "claim_heartbeat",
     "claim_maintain_journal",
     "claim_release",
     "claim_report",
+    "claim_reset",
     "claim_status",
 })
 _CATALOG_SPECS = {
@@ -370,6 +374,7 @@ def _validate_mcp_agent_ops_case(
     expected_fields = {
         "schemaVersion",
         "claimResultSchemaVersion",
+        "claimHelperAvailability",
         "enablement",
         "serverName",
         "enabledTools",
@@ -383,11 +388,16 @@ def _validate_mcp_agent_ops_case(
         "requiredToolArguments",
     }
     if set(value) != expected_fields:
-        errors.append("case.mcpAgentOps must define the complete version-three contract")
-    if value.get("schemaVersion") != 3:
-        errors.append("case.mcpAgentOps.schemaVersion must be 3")
+        errors.append("case.mcpAgentOps must define the complete version-four contract")
+    if value.get("schemaVersion") != 4:
+        errors.append("case.mcpAgentOps.schemaVersion must be 4")
     if value.get("claimResultSchemaVersion") != 2:
         errors.append("case.mcpAgentOps.claimResultSchemaVersion must be 2")
+    claim_helper_availability = value.get("claimHelperAvailability")
+    if claim_helper_availability not in {"AVAILABLE", "UNAVAILABLE"}:
+        errors.append(
+            "case.mcpAgentOps.claimHelperAvailability must be AVAILABLE or UNAVAILABLE"
+        )
     if value.get("enablement") != "base-case-only":
         errors.append("case.mcpAgentOps.enablement must be base-case-only")
     if value.get("serverName") != "mcp-agent-ops":
@@ -406,14 +416,20 @@ def _validate_mcp_agent_ops_case(
         errors.append(
             "case.mcpAgentOps.enabledTools must list unique known operations"
         )
-    if "agent-claim-mcp" in _string_items(
+    if "agent-claim-helper-mcp" in _string_items(
         case.get("executionSkills", case.get("requiredSkills"))
-    ) and not _MCP_AGENT_OPS_CLAIM_TOOL_NAMES.issubset(
-        set(_string_items(enabled_tools))
     ):
-        errors.append(
-            "case.mcpAgentOps.enabledTools must expose the complete MCP claim surface"
+        missing_claim_tools = _MCP_AGENT_OPS_CLAIM_TOOL_NAMES - set(
+            _string_items(enabled_tools)
         )
+        if claim_helper_availability == "AVAILABLE" and missing_claim_tools:
+            errors.append(
+                "case.mcpAgentOps.enabledTools must expose the complete MCP claim surface when claimHelperAvailability is AVAILABLE"
+            )
+        if claim_helper_availability == "UNAVAILABLE" and not missing_claim_tools:
+            errors.append(
+                "case.mcpAgentOps.claimHelperAvailability cannot be UNAVAILABLE when the complete MCP claim surface is enabled"
+            )
     if not isinstance(value.get("requiredVersion"), str) or not re.fullmatch(
         r"\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?",
         str(value.get("requiredVersion")),

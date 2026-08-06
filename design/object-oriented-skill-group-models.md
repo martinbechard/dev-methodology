@@ -4,7 +4,7 @@ This document applies the reusable [Skill Organization](object-oriented-agent-an
 
 ## 1. Application Scope
 
-The application covers seven top-level comprehension groups and forty-four current skill packages.
+The application covers seven top-level comprehension groups and forty-seven current skill packages.
 
 Every detailed group document contains:
 
@@ -123,11 +123,11 @@ The registry assigns every current skill one primary direct group and records ne
 | Project Setup | detect-technology-skills; create-project-configuration | None | 2 |
 | Documentation Methodology | route-documentation-work; bootstrap-project-documentation; reverse-engineer-project-documentation; verify-documentation-page | None | 4 |
 | Backlog Management | resolve-backlog-blockage; create-work-item; create-work-item-file; create-work-item-github; create-work-item-gitlab; create-work-item-azure-devops; create-work-item-jira; manage-work-items; manage-work-items-file; manage-work-items-github; manage-work-items-gitlab; manage-work-items-azure-devops; manage-work-items-jira | None | 13 |
-| Concurrent Tasking | coordinate-codex-work-items; set-solo-mode; set-multitask-mode | Resource Coordination: agent-claim, agent-claim-command, agent-claim-mcp. Feature Branch And Worktrees: integrate-agent-work, deliver-work-item-feature-branch, create-pull-request. | 9 |
+| Concurrent Tasking | coordinate-codex-work-items; set-solo-mode; set-multitask-mode | Resource Coordination: agent-claim, agent-claim-helper, agent-claim-helper-command, agent-claim-helper-mcp. Feature Branch And Worktrees: integrate-agent-work, deliver-work-item-feature-branch, create-pull-request. | 10 |
 | Direct Main Delivery | deliver-work-item; deliver-work-item-direct-main | None | 2 |
 | Review And Verification | review-code-with-evidence; test-strategy; verify-end-to-end-workflow; analyze-root-cause; collect-runtime-evidence; trace-code-execution; review-prompt-contracts | None | 7 |
 
-The totals count primary membership once. Cross-group repetitions in detailed diagrams do not increase the forty-four-skill inventory.
+The totals count primary membership once. Cross-group repetitions in detailed diagrams do not increase the forty-seven-skill inventory.
 
 ## 4. Group Designs
 
@@ -181,7 +181,7 @@ The applied model is complete when it describes the maintained skill inventory a
 
 The applied model is grounded in the repository sources below.
 
-- The forty-four SKILL.md files and conceptual Agent definitions linked from the seven group documents.
+- The forty-seven SKILL.md files and conceptual Agent definitions linked from the seven group documents.
 - [Object-Oriented Analysis Of Agents And Skills](object-oriented-agent-and-skill-model.md)
 - [Bundled Skill Inventory](../README.md)
 - [Agentic Configuration](agentic-configuration.html)

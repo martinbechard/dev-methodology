@@ -834,7 +834,7 @@
       <div><h3>Claim Cleanup</h3><p>Release removes the named live claim while the registry is locked and records a RELEASED event. It does not inspect Git state or decide whether delivery completed. After a Coordinator restart with all prior agents stopped, reset creates an empty claim registry before new work is dispatched.</p></div>
       <div><h3>Claim Limits</h3><p>A claim records temporary ownership. Request the smallest known exact path or resource manifest; do not request the whole project for a fixed subset. Review, verification, Git delivery, and work-item completion require separate evidence.</p></div>
     </div>
-    <p class="source-note"><a href="../skills/agent-claim/SKILL.md">Agent Claim</a> is the only source for claim events, scopes, conflicts, deadlines, recovery, and release timing. The <a href="../skills/agent-claim-command/SKILL.md">command helper</a> and <a href="../skills/agent-claim-mcp/SKILL.md">MCP helper</a> describe only how to invoke the configured helper.</p>
+    <p class="source-note"><a href="../skills/agent-claim/SKILL.md">Agent Claim</a> is the only source for claim events, scopes, conflicts, deadlines, recovery, and release timing. <a href="../skills/agent-claim-helper/SKILL.md">Agent Claim Helper</a> owns the common helper contract. The <a href="../skills/agent-claim-helper-command/SKILL.md">command-line provider</a> and <a href="../skills/agent-claim-helper-mcp/SKILL.md">MCP provider</a> describe only how to invoke that contract.</p>
   </section>
 
   <section class="section" id="delivery" aria-labelledby="delivery-title">

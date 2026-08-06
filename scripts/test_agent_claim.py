@@ -19,7 +19,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CLAIM_SCRIPT = ROOT / "skills" / "agent-claim-command" / "scripts" / "claim.py"
+CLAIM_SCRIPT = ROOT / "skills" / "agent-claim-helper-command" / "scripts" / "claim.py"
 
 
 class AgentClaimTests(unittest.TestCase):
@@ -663,6 +663,7 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(0, completed.returncode, completed.stderr)
         report = self.output(completed)
+        self.assertEqual("REPORT", report["outcome"])
         self.assertEqual(2, report["schema_version"])
         work_items = report["work_items"]
         self.assertEqual(1, work_items["schema_version"])
@@ -3464,6 +3465,7 @@ class AgentClaimTests(unittest.TestCase):
             self.output(json_report)["metrics"]["successful_scope_adoptions"]["exact_files"],
         )
         self.assertEqual(0, text_report.returncode, text_report.stderr)
+        self.assertNotIn('"outcome"', text_report.stdout)
         self.assertIn(
             "Successful exact-file adoptions: src/one.py=1",
             text_report.stdout,

@@ -31,8 +31,8 @@ agent_claim_transport:
   selected: command
   availability: AVAILABLE
   verification:
-    - "skills/agent-claim-command/SKILL.md defines direct command invocation, structured result handling, and same-transport ambiguous-dispatch reconciliation."
-    - "skills/agent-claim-command/scripts/claim.py is the bundle-owned command implementation distributed with the selected adapter."
+    - "skills/agent-claim-helper-command/SKILL.md defines direct command invocation, structured result handling, and same-helper ambiguous-dispatch reconciliation."
+    - "skills/agent-claim-helper-command/scripts/claim.py is the bundle-owned command implementation distributed with the selected provider."
 
 authoritative_sources:
   readme_files:

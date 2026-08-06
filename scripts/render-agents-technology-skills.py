@@ -20,7 +20,7 @@ SKILLS_ROOT = REPOSITORY_ROOT / "skills"
 SKILL_FILE_NAME = "SKILL.md"
 FRONTMATTER_DELIMITER = "---"
 SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
-CLAIM_TRANSPORT_HEADING = "## Agent Claim Helper"
+CLAIM_HELPER_HEADING = "## Agent Claim Helper"
 RESOURCE_COORDINATION_HEADING = "## Resource Coordination Skill Reference"
 _RESOURCE_DEADLINE_CLASS_IDS = (
     "backlog-mutation",
@@ -30,13 +30,13 @@ _RESOURCE_DEADLINE_CLASS_IDS = (
     "live-model-evaluation",
 )
 PROJECT_SKILL_EXTENSIONS_HEADING = "## Project Skill Extensions"
-CLAIM_TRANSPORT_SKILLS = {
-    "mcp": "agent-claim-mcp",
-    "command": "agent-claim-command",
+CLAIM_HELPER_PROVIDERS = {
+    "mcp": "agent-claim-helper-mcp",
+    "command": "agent-claim-helper-command",
 }
 RESOURCE_COORDINATION_VALUES = {"none", "agent-claim"}
 RESOURCE_COORDINATION_RESERVED_SKILLS = frozenset(
-    {"agent-claim", *CLAIM_TRANSPORT_SKILLS.values()}
+    {"agent-claim", "agent-claim-helper", *CLAIM_HELPER_PROVIDERS.values()}
 )
 PROVIDER_SKILLS = {
     "file": ("create-work-item-file", "manage-work-items-file"),
@@ -840,15 +840,15 @@ def resource_coordination_lines(value: dict[str, object]) -> list[str]:
     return lines
 
 
-def claim_transport_lines(value: dict[str, object]) -> list[str]:
+def claim_helper_lines(value: dict[str, object]) -> list[str]:
     """Render the setup-verified claim helper selected by Project Configurator.
 
     The input must contain agent_claim_transport with exactly selected, availability,
     and verification. selected is mcp or command, availability is AVAILABLE, and
     verification is a non-empty list of evidence strings. An unavailable selection
     produces a deterministic reconfiguration error instead of guidance that could fall
-    back at runtime. The returned lines inline only the matching bundled adapter body.
-    Invalid configuration or adapter content raises ValueError or OSError.
+    back at runtime. The returned lines inline only the matching bundled provider body.
+    Invalid configuration or provider content raises ValueError or OSError.
     """
 
     configuration = value.get("agent_claim_transport")
@@ -863,7 +863,7 @@ def claim_transport_lines(value: dict[str, object]) -> list[str]:
             "agent_claim_transport keys must be exactly: selected, availability, verification"
         )
     selected = configuration.get("selected")
-    if not isinstance(selected, str) or selected not in CLAIM_TRANSPORT_SKILLS:
+    if not isinstance(selected, str) or selected not in CLAIM_HELPER_PROVIDERS:
         raise ValueError("agent_claim_transport.selected must be mcp or command")
     availability = configuration.get("availability")
     if availability not in {"AVAILABLE", "UNAVAILABLE"}:
@@ -882,11 +882,11 @@ def claim_transport_lines(value: dict[str, object]) -> list[str]:
             f"configured claim helper {selected} is unavailable; run Project Configurator to select and verify one available helper"
         )
 
-    skill_name = CLAIM_TRANSPORT_SKILLS[selected]
+    skill_name = CLAIM_HELPER_PROVIDERS[selected]
     return [
-        CLAIM_TRANSPORT_HEADING,
+        CLAIM_HELPER_HEADING,
         "",
-        f"Project Configurator selected and verified the {selected} claim helper. Apply agent-claim for claim rules and use the inlined {skill_name} skill to run the helper.",
+        f"Project Configurator selected and verified the {selected} claim helper. Apply agent-claim for policy and use the inlined {skill_name} Provider Skill to realize agent-claim-helper.",
         "",
         "Use only this configured claim helper. If it cannot start, ask Project Configurator to configure a working helper.",
         "",
@@ -1246,7 +1246,7 @@ def render(
     agree with project_setup.technology_skill_delivery when setup metadata exists. With no
     setup metadata or explicit request, delivery defaults to by-reference. Inline delivery
     embeds each referenced bundled skill body. agent-claim is referenced and its selected
-    claim helper is embedded only when resource coordination selects agent-claim.
+    claim helper Provider Skill is embedded only when resource coordination selects agent-claim.
 
     The return value is the complete generated Markdown text and ends with a newline.
     Rendering does not write an output file, but inlined rendering reads bundled SKILL.md
@@ -1261,7 +1261,7 @@ def render(
     coordination = resource_coordination_lines(value)
     lines.extend(coordination)
     if coordination:
-        lines.extend(claim_transport_lines(value))
+        lines.extend(claim_helper_lines(value))
     lines.extend(setup_lines(value))
     lines.extend(workflow)
     lines.extend([

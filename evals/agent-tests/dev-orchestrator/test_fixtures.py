@@ -489,7 +489,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                                 "type": "custom_tool_call",
                                 "name": "exec",
                                 "input": (
-                                    "python3 /bundle/agent-claim-command/scripts/claim.py "
+                                    "python3 /bundle/agent-claim-helper-command/scripts/claim.py "
                                     "--repo . status"
                                 ),
                             },

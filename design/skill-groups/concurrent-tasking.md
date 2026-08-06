@@ -340,7 +340,7 @@ across queue dispatch, active-execution reconciliation, delivery, closure, and p
 
 ### Scenario: A Project Enables Resource Coordination
 
-This scenario applies when project configuration selects agent-claim for resource coordination. AGENTS.md loads the policy skill and one verified helper skill. The agent-claim-* interface organizes the available helper implementations because they expose the same claim operations. agent-claim-command invokes a local command-line helper, while agent-claim-mcp calls tools through the MCP protocol.
+This scenario applies when project configuration selects agent-claim for resource coordination. AGENTS.md loads the policy skill and one verified helper provider. agent-claim-helper defines the common operation, input, result, and uncertain-outcome interface. agent-claim-helper-command invokes a local command-line helper, while agent-claim-helper-mcp calls tools through the MCP protocol.
 
 ```mermaid
 classDiagram
@@ -373,7 +373,7 @@ classDiagram
         <<AGENTS.md>>
         <<routing>>
         +route resource coordination => agent-claim
-        +route claim operations => agent-claim-*
+        +route claim operations => agent-claim-helper
     }
 
     class agent-claim {
@@ -383,48 +383,60 @@ classDiagram
         +release-claim(claimId)
     }
 
-    class ClaimHelper["agent-claim-*"] {
+    class ClaimHelper["agent-claim-helper"] {
         <<Skill interface>>
         +read-claim-status()
         +acquire-claim(scope)
+        +extend-claim(scope)
+        +extend-claim-deadline(claimId)
+        +heartbeat-claim(claimId)
         +release-claim(claimId)
+        +reset-claim-registry()
         +maintain-claim-journal()
         +report-claim-contention()
     }
 
-    class agent-claim-command {
+    class agent-claim-helper-command {
         <<Provider Skill>>
         +read-claim-status()
         +acquire-claim(scope)
+        +extend-claim(scope)
+        +extend-claim-deadline(claimId)
+        +heartbeat-claim(claimId)
         +release-claim(claimId)
+        +reset-claim-registry()
         +maintain-claim-journal()
         +report-claim-contention()
     }
 
-    class agent-claim-mcp {
+    class agent-claim-helper-mcp {
         <<Provider Skill>>
         +read-claim-status()
         +acquire-claim(scope)
+        +extend-claim(scope)
+        +extend-claim-deadline(claimId)
+        +heartbeat-claim(claimId)
         +release-claim(claimId)
+        +reset-claim-registry()
         +maintain-claim-journal()
         +report-claim-contention()
     }
 
     project-specific-directives o..> agent-claim : when resource_coordination is agent-claim
-    project-specific-directives o..> agent-claim-command : when the command-line helper is selected
-    project-specific-directives o..> agent-claim-mcp : when the verified MCP helper is selected
+    project-specific-directives o..> agent-claim-helper-command : when the command-line helper is selected
+    project-specific-directives o..> agent-claim-helper-mcp : when the verified MCP helper is selected
     coordinate-codex-work-items ..> agent-claim : when resource coordination is selected
     integrate-agent-work ..> agent-claim : when resource coordination is selected
     deliver-work-item-feature-branch ..> agent-claim : when resource coordination is selected
     deliver-work-item-direct-main ..> agent-claim : when resource coordination is selected
     agent-claim --> ClaimHelper
-    agent-claim-command ..|> ClaimHelper
-    agent-claim-mcp ..|> ClaimHelper
+    agent-claim-helper-command ..|> ClaimHelper
+    agent-claim-helper-mcp ..|> ClaimHelper
 ```
 
 The open-diamond arrows from AGENTS.md are the conditional exact-name loads. The regular dotted arrows show the skills that use resource coordination under that project selection. agent-claim depends on the common claim operations, and the selected helper skill provides them. set-solo-mode and set-multitask-mode change secondary-thread dispatch without changing this project selection.
 
-The MCP helper route becomes selectable only after an MCP implementation satisfies the contract and verification boundary in agent-claim-mcp. The current repository selects the command-line helper.
+The MCP helper route becomes selectable only after an MCP implementation satisfies agent-claim-helper and the verification boundary in agent-claim-helper-mcp. The current repository selects the command-line helper.
 
 ### Scenario: Delivering Accepted Work
 
@@ -503,8 +515,9 @@ The direct skills control coordinated execution and dispatch mode. The nested gr
 | Concurrent Tasking | set-solo-mode | Set Solo Mode | Disables dispatch to secondary threads while the current Agent continues sequential work. |
 | Concurrent Tasking | set-multitask-mode | Set Multitask Mode | Enables dispatch to secondary threads after the sequential condition ends. |
 | Resource Coordination | agent-claim | Coordinate Shared Resource; Acquire Claim; Extend Claim; Extend Claim Deadline; Heartbeat Claim; Read Claim Status; Release Claim | Defines claim events, scope, conflicts, deadlines, and cleanup policy. |
-| Resource Coordination | agent-claim-command | Read Claim Status; Acquire Claim; Extend Claim; Extend Claim Deadline; Heartbeat Claim; Release Claim; Reset Claim Registry; Maintain Claim Journal; Report Claim Contention | Invokes the configured command claim helper without redefining claim policy. |
-| Resource Coordination | agent-claim-mcp | Read Claim Status; Acquire Claim; Extend Claim; Extend Claim Deadline; Heartbeat Claim; Release Claim; Maintain Claim Journal; Report Claim Contention | Describes the matching MCP helper contract and the verification required before an MCP provider can be selected. |
+| Resource Coordination | agent-claim-helper | Operation Contract; Read Claim Status; Acquire Claim; Extend Claim; Extend Claim Deadline; Heartbeat Claim; Release Claim; Reset Claim Registry; Maintain Claim Journal; Report Claim Contention; Structured Outcomes; Reconcile an Uncertain Outcome; Provider Realization Contract | Defines one provider-neutral helper interface without selecting a provider or redefining claim policy. |
+| Resource Coordination | agent-claim-helper-command | Read Claim Status; Acquire Claim; Extend Claim; Extend Claim Deadline; Heartbeat Claim; Release Claim; Reset Claim Registry; Maintain Claim Journal; Report Claim Contention | Invokes the configured command-line helper without redefining the interface or claim policy. |
+| Resource Coordination | agent-claim-helper-mcp | Current Availability; Read Claim Status; Acquire Claim; Extend Claim; Extend Claim Deadline; Heartbeat Claim; Release Claim; Reset Claim Registry; Maintain Claim Journal; Report Claim Contention | Maps the interface to MCP tools and preserves the unavailable-until-parity boundary. |
 | Feature Branch And Worktrees | integrate-agent-work | Merge Workflow; Verification | Integrates accepted work from branches, worktrees, or agents and reconciles it with current main. |
 | Feature Branch And Worktrees | deliver-work-item-feature-branch | Deliver Work Item; Candidate Publication; Review And Check Loop; Merge And Completion Gate | Publishes, reviews, corrects, and observes feature-branch delivery before lifecycle closure. |
 | Feature Branch And Worktrees | create-pull-request | Create Or Update Pull Request; Review Order | Creates or updates a provider-accurate pull request and preserves its review order. |
@@ -551,8 +564,9 @@ The Core and Optional inventory uses the role schema and the complete skill list
 The scenario diagrams use these project-routed policy, helper, creation, management, and delivery skill definitions.
 
 - [Agent Claim](../../skills/agent-claim/SKILL.md)
-- [Agent Claim Command](../../skills/agent-claim-command/SKILL.md)
-- [Agent Claim MCP](../../skills/agent-claim-mcp/SKILL.md)
+- [Agent Claim Helper](../../skills/agent-claim-helper/SKILL.md)
+- [Agent Claim Helper Command](../../skills/agent-claim-helper-command/SKILL.md)
+- [Agent Claim Helper MCP](../../skills/agent-claim-helper-mcp/SKILL.md)
 - [Deliver Work Item Feature Branch](../../skills/deliver-work-item-feature-branch/SKILL.md)
 - [Deliver Work Item Direct Main](../../skills/deliver-work-item-direct-main/SKILL.md)
 - [Deliver Work Item](../../skills/deliver-work-item/SKILL.md)

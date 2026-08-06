@@ -61,10 +61,10 @@ def write_source_detection_registry(path: Path) -> None:
 
 
 def with_unset_workflows(value: dict[str, object]) -> dict[str, object]:
-    """Add one verified claim-helper interface and deferred workflow selectors."""
+    """Add one verified claim-helper provider and deferred workflow selectors."""
 
     return {
-        **with_claim_transport({}),
+        **with_claim_helper({}),
         "workflow_selection": {
             "persistence": {"default": "UNSET"},
             "commit": {"default": "UNSET"},
@@ -73,8 +73,8 @@ def with_unset_workflows(value: dict[str, object]) -> dict[str, object]:
     }
 
 
-def with_claim_transport(value: dict[str, object]) -> dict[str, object]:
-    """Add one available command adapter selection to a renderer fixture."""
+def with_claim_helper(value: dict[str, object]) -> dict[str, object]:
+    """Add one available command-line provider selection to a renderer fixture."""
 
     return {
         "resource_coordination": {
@@ -217,7 +217,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         """Keep Basic setup inspectable while hiding fixed decisions."""
 
         renderer = load_renderer_module()
-        project = with_claim_transport({
+        project = with_claim_helper({
             "project_setup": {
                 "mode": "basic",
                 "concurrent_tasking": False,
@@ -273,7 +273,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         """Expose Advanced concurrent capacity only after tasking is enabled."""
 
         renderer = load_renderer_module()
-        project = with_claim_transport({
+        project = with_claim_helper({
             "project_setup": {
                 "mode": "advanced",
                 "concurrent_tasking": True,
@@ -335,7 +335,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         """Reject selector divergence before setup text and canonical routing can disagree."""
 
         renderer = load_renderer_module()
-        project = with_claim_transport({
+        project = with_claim_helper({
             "project_setup": {
                 "mode": "basic",
                 "concurrent_tasking": False,
@@ -389,7 +389,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         """Preserve compatibility values while rendering canonical labels and routes only."""
 
         renderer = load_renderer_module()
-        rendered = renderer.render(with_claim_transport({
+        rendered = renderer.render(with_claim_helper({
             "workflow_selection": {
                 "backlog": {
                     "default": "file-based-backlog",
@@ -428,7 +428,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             "^workflow_selection.provider collides with workflow_selection.persistence; "
             "replace workflow_selection.provider with workflow_selection.persistence and keep exactly one selector family$",
         ):
-            renderer.render(with_claim_transport({
+            renderer.render(with_claim_helper({
                 "workflow_selection": {
                     "persistence": {"default": "file"},
                     "provider": {"default": "file"},
@@ -440,7 +440,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         """Reject missing, boolean-only, empty, or internally inconsistent confirmations."""
 
         renderer = load_renderer_module()
-        project = with_claim_transport({
+        project = with_claim_helper({
             "project_setup": {
                 "mode": "basic",
                 "concurrent_tasking": False,
@@ -510,7 +510,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         """Reject scope-swapped routing and allow the same skill on distinct confirmed scopes."""
 
         renderer = load_renderer_module()
-        project = with_claim_transport({
+        project = with_claim_helper({
             "project_setup": {
                 "mode": "basic",
                 "concurrent_tasking": False,
@@ -575,7 +575,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         """Reject instruction-shaped skill identifiers on every persisted routing surface."""
 
         renderer = load_renderer_module()
-        project = with_claim_transport({
+        project = with_claim_helper({
             "project_setup": {
                 "mode": "basic",
                 "concurrent_tasking": False,
@@ -640,7 +640,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         """Reject multiline or control-bearing text before rendering AGENTS.md."""
 
         renderer = load_renderer_module()
-        project = with_claim_transport({
+        project = with_claim_helper({
             "project_setup": {
                 "mode": "basic",
                 "concurrent_tasking": False,
@@ -2386,11 +2386,11 @@ class TechnologyDetectionTests(unittest.TestCase):
             self.assertIn("most-specific matching pattern wins", completed.stdout)
             self.assertNotIn("Agent Claims And Worktrees", completed.stdout)
             self.assertIn(
-                "BEGIN INLINED CLAIM HELPER SKILL: agent-claim-command",
+                "BEGIN INLINED CLAIM HELPER SKILL: agent-claim-helper-command",
                 completed.stdout,
             )
             self.assertNotIn(
-                "BEGIN INLINED CLAIM HELPER SKILL: agent-claim-mcp",
+                "BEGIN INLINED CLAIM HELPER SKILL: agent-claim-helper-mcp",
                 completed.stdout,
             )
 
@@ -2666,7 +2666,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_agents_section_accepts_boundary_persistence_overrides_without_inference(self) -> None:
         renderer = load_renderer_module()
-        rendered = renderer.render(with_claim_transport({
+        rendered = renderer.render(with_claim_helper({
             "workflow_selection": {
                 "persistence": {
                     "default": "file",
@@ -2711,7 +2711,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         for persistence, expected_persistence in persistence_guidance.items():
             for commit, expected_commit in commit_guidance.items():
                 with self.subTest(persistence=persistence, commit=commit):
-                    rendered = renderer.render(with_claim_transport({
+                    rendered = renderer.render(with_claim_helper({
                         "workflow_selection": {
                             "persistence": {"default": persistence},
                             "commit": {"default": commit},
@@ -2729,7 +2729,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_agents_section_resolves_persistence_and_commit_overrides_independently(self) -> None:
         renderer = load_renderer_module()
-        rendered = renderer.render(with_claim_transport({
+        rendered = renderer.render(with_claim_helper({
             "workflow_selection": {
                 "persistence": {
                     "default": "file",
@@ -2769,19 +2769,19 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_agents_section_preserves_none_unset_and_unsupported_boundaries(self) -> None:
         renderer = load_renderer_module()
-        none_rendered = renderer.render(with_claim_transport({
+        none_rendered = renderer.render(with_claim_helper({
             "workflow_selection": {
                 "persistence": {"default": "none"},
                 "commit": {"default": "feature-branch"},
             },
         }))
-        unset_rendered = renderer.render(with_claim_transport({
+        unset_rendered = renderer.render(with_claim_helper({
             "workflow_selection": {
                 "persistence": {"default": "UNSET"},
                 "commit": {"default": "UNSET"},
             },
         }))
-        placeholder_rendered = renderer.render(with_claim_transport({
+        placeholder_rendered = renderer.render(with_claim_helper({
             "workflow_selection": {
                 "persistence": {"default": "azure-devops"},
                 "commit": {"default": "direct-main"},
@@ -2801,7 +2801,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_agents_section_keeps_workflow_references_distinct_from_inlined_technology(self) -> None:
         renderer = load_renderer_module()
-        rendered = renderer.render(with_claim_transport({
+        rendered = renderer.render(with_claim_helper({
             "workflow_selection": {
                 "persistence": {"default": "github"},
                 "commit": {"default": "feature-branch"},
@@ -3181,7 +3181,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                     if selector == "workitem"
                     else {"commit": {"default": "direct-main"}}
                 )
-                rendered = renderer.render(with_claim_transport({
+                rendered = renderer.render(with_claim_helper({
                     "workflow_selection": {
                         selector: {"default": legacy_value},
                         **other,
@@ -3362,7 +3362,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             "selection_policy": "Maintainer-selected values are authoritative.",
         }
 
-        rendered = renderer.render(with_claim_transport({"workflow_selection": workflow_selection}))
+        rendered = renderer.render(with_claim_helper({"workflow_selection": workflow_selection}))
 
         self.assertEqual("gitlab", workflow_selection["provider"]["default"])
         self.assertEqual("direct-main", workflow_selection["completion"]["default"])
