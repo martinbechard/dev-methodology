@@ -136,21 +136,21 @@ Required Next Lifecycle Transition: The canonical root Dev Orchestrator must sep
 
 ## Active Execution Evidence
 
-Condition Type: root-execution.
+Condition Type: owned-wait.
 
 Owner: Dev Orchestrator.
 
-Evidence: Status remains Running for canonical task 019fd464-3875-75e2-aaa0-39a8e357d764 on branch codex/store-agent-claim-state in worktree /Users/martinbechard/.codex/worktrees/b146/dev-methodology. Direct user approval is durably recorded for the verified-empty, exclusively locked Windows legacy-registry tombstone with fail-closed nonmutation for any live or contradictory state. Preserved dev-methodology candidate d2744c62281b5fc2bfdabd0d95a72642aab2924e, external candidate 660aef8be2cfc12926aef15c90250556760961a7, and native Windows run 31068038651 remain authoritative. The exact work claim was acquired in the canonical gitignored registry at event ec8c0c00-bd2a-4cf5-af1a-30ae6e36e6e6, proving the new state root is active. Urgent current-main helper compatibility was independently reviewed, verified, committed at 46b92c842693bb96b5e756632a8df35b241511bc, and its event-scoped file and integration claims were released at events 131abe5b-c691-4372-a425-2d9ed44a94c2 and 1cd43c43-822c-4e8e-8ce9-eabdd0b35198. Both delegated correction agents stopped because their isolated safety contexts could not consume cross-task approval; no agent retried or bypassed that boundary. The root task contains the direct approval, owns the existing red tombstone regressions, and is completing the same narrow correction without expanding scope.
+Evidence: Status remains Running for canonical task 019fd464-3875-75e2-aaa0-39a8e357d764 on branch codex/store-agent-claim-state in worktree /Users/martinbechard/.codex/worktrees/b146/dev-methodology. Direct user approval remains bounded to the verified-empty, exclusively locked Windows legacy-registry tombstone with fail-closed nonmutation for any live, extra-metadata, identity-mismatched, or contradictory state. Dev-methodology candidate ee60082c14c4814bd1f734f5c6760c32f4b75309 and external mcp-agent-ops candidate 88541746588bf91b51e0f953bc3b2e16881940c2 preserve candidates d2744c62281b5fc2bfdabd0d95a72642aab2924e and 660aef8be2cfc12926aef15c90250556760961a7 and supersede the earlier Windows failure in run 31068038651. Fresh independent release review approved both immutable commits with no findings; fresh verification passed eight dev tests, twelve external tests, exact command/MCP marker-byte parity, configured Windows mypy, compilation, package-version, and diff checks. External commit 88541746588bf91b51e0f953bc3b2e16881940c2 is pushed on codex/store-agent-claim-state and native CI run 31102737360 is in progress. Current-main helper compatibility remains durably restored at reviewed commit 46b92c842693bb96b5e756632a8df35b241511bc. No publication, tag, external main integration, dev main integration, or provider closure has occurred.
 
-Observed At: 2026-08-06T12:32:01Z.
+Observed At: 2026-08-06T12:45:38Z.
 
 Started At: 2026-08-06T12:15:15.607475Z.
 
 Deadline: 2026-08-06T15:30:00Z.
 
-Next Action: Root Dev Orchestrator will reconcile the preserved dev and external red tombstone regressions, implement only the verified-empty and exclusively locked same-inode retirement, obtain fresh independent review and verification, rerun native Windows CI, release mcp-agent-ops 0.6.0, and complete direct-main delivery.
+Next Action: Await native CI run 31102737360 for external commit 88541746588bf91b51e0f953bc3b2e16881940c2; if it passes, integrate and release mcp-agent-ops 0.6.0, then reconcile the dev candidate with current main, rerun focused delivery gates, integrate direct-main, and close the provider separately.
 
-Next Reconciliation At: 2026-08-06T12:47:00Z.
+Next Reconciliation At: 2026-08-06T13:00:00Z.
 
 ## Summary
 
