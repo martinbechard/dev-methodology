@@ -1,10 +1,12 @@
 # Log Every Confirmed Incorrect State Before Closeout
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
+
+Provider Reference: backlog/completed-backlog/defects/log-every-confirmed-incorrect-state-before-closeout.md
 
 Work Item ID: log-every-confirmed-incorrect-state-before-closeout
 
@@ -101,3 +103,23 @@ None.
 - This item records a regression and coverage gap in the completed durable-defect policy; it does not reopen or duplicate backlog/completed-backlog/features/require-durable-defect-logging-and-direct-main-creation.md.
 - The stale series index is the accepted reproduction for this defect and is not a separate dependency.
 - Creation of this item does not authorize mutation of a newly discovered governed skill or agent-definition path. Record the smallest exact manifest and obtain any scope-specific approval required by the governing workflow before such mutation.
+
+## Completion Evidence
+
+Completion Selector: direct-main.
+Provider: file.
+Accepted Candidate: a9f3095164a0c7ae7492b8c758a30328270a432f.
+Candidate Source Parent: 33c2d6c918193129de9fc1c137bfd9fbaa18c556.
+Current-Main Integration Mapping: 33c2d6c9 -> 0b91b836 with patch id cc3e580a023539b2a12869581ba41648bcb18a8d; a9f30951 -> 203f800cefd730ee7e291c06d8b23fe83e68ef8f with patch id d896d3724e99a71c5a17481ee1d7dc0fac31b32b.
+Source Integration Commit: 203f800cefd730ee7e291c06d8b23fe83e68ef8f.
+Terminal-Series Correction: bdaec19b3f83dd00c3b582283b4b6464357bf90c.
+Main Observation: main was clean at bdaec19b3f83dd00c3b582283b4b6464357bf90c, with both the source integration and terminal-series correction reachable.
+Independent Review: Fresh replacement review ACCEPTED with no material findings after correction of the first rejected scenario fixture attempt.
+Independent Candidate Verification: PASS — BundleContent 1, Orchestrator fixtures 28, build freshness, and diff check.
+Final-Main Verification: PASS — BundleContent 1, Orchestrator fixtures 28, terminal series 4, build freshness, and diff check; archived index has 10 links and 10 reciprocal backlinks; exactly three Provider Reference corrections; child Status and terminal evidence preserved; no confirmed defect.
+Intentional Verification Omissions: Broad/full catalog and live-model tests were omitted under the focused-test instruction. Python 3.9 tomllib import mismatch was rerun successfully with Python 3.11 and is not a defect.
+Integration Claim Evidence: Project-files claim acquired with event 6bcaeb96-cc0a-415b-8522-5c482a697aa0 and released with event 6e16c85d-c7e2-4ca2-bb68-e1bede8cda22.
+Terminal-Series Claim Evidence: Exact-path claim acquired with event 3e1a9f15-6687-4905-a70a-48b855ef6179 and released with event ee2e9f56-efcb-41dc-915d-01d20044bc9b.
+Canonical Thread: 019fd414-a82c-75e3-b8e3-98af21bb06bd.
+Root Agent Task: /root.
+Completed At: 2026-08-06T01:42:38Z.
