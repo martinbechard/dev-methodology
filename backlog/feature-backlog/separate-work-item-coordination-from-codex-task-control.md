@@ -117,3 +117,23 @@ This is a static responsibility split, not a diagram of one runtime scenario. Th
 - Root Agent Task: Not assigned; no child task was created by this reservation transaction.
 - Launch result: Pending; this provider transaction does not start a task or create execution ownership.
 - Next action: Launch one root Dev Orchestrator and record Starting -> Running only after accepted execution evidence.
+
+## Running Transition — 2026-08-06T08:49:20Z
+
+- Transition: Starting -> Running.
+- Provider operation evidence: File provider record updated in place on main at commit d5b1a8a9b4d661a05251ea6b1e038f3959d9908d; this transaction preserves the Starting reservation and adds the canonical execution identity and active evidence below.
+- Canonical Conversation: 019fd63f-dc50-7252-b287-8489ad1c1a8f
+- Canonical Root Agent Task: /root
+- Branch: codex/separate-work-item-coordination-from-codex-task-control
+- Isolated Worktree: /Users/martinbechard/.codex/worktrees/a3a9/dev-methodology
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+Owner: Root Dev Orchestrator /root
+Evidence: Root task /root is executing this work item in canonical conversation 019fd63f-dc50-7252-b287-8489ad1c1a8f; the exact Work Item ID update claim and provider-path claim are held for this transition.
+Observed At: 2026-08-06T08:49:20Z
+Started At: 2026-08-06T08:48:08Z
+Deadline or Expires At: 2026-08-06T10:00:00Z
+Next Action: Begin the governed-definition pre-mutation checks and implementation work in the isolated worktree.
+Next Reconciliation At: 2026-08-06T09:00:00Z
