@@ -1,6 +1,6 @@
 # Separate Claim Policy From Claim Helper Family
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -232,6 +232,8 @@ Canonical Task and Conversation: 019fd5b5-aca7-7cb1-9ae0-012fb84e13db; the exist
 
 Owner: Dev Backlog Coordinator retains reservation ownership pending launch acceptance.
 
+Owner: Root Dev Orchestrator.
+
 Objective: One fresh bounded recovery limited to the three preserved findings on candidate 5fa7620a6471574d2bf84a12e541805780d4bac6, using the same original coder.
 
 Launch Result: Started.
@@ -239,3 +241,31 @@ Launch Result: Started.
 Next Reconciliation At: 2026-08-06T08:11:52Z.
 
 Required Next Acceptance: The existing canonical Root Dev Orchestrator must accept Starting -> Running before mutation.
+
+## Active Execution Evidence (Fresh Recovery)
+
+Condition Type: root-execution.
+
+Owner: Root Dev Orchestrator.
+
+Canonical Task and Conversation: 019fd5b5-aca7-7cb1-9ae0-012fb84e13db.
+
+Branch: codex/separate-claim-policy-from-claim-helper-family.
+
+Worktree: /Users/martinbechard/.codex/worktrees/1bee/dev-methodology.
+
+Candidate Chain: ac8270d2570436738fd1b0b6bb2dbbedb690049a -> 9501f48c6b0f6f52c8fad8eab3df92d524e26a38 -> 5fa7620a6471574d2bf84a12e541805780d4bac6.
+
+Phase: Implementing — Fresh Bounded Recovery.
+
+Observed At: 2026-08-06T08:02:56Z.
+
+Started At: 2026-08-06T08:02:56Z.
+
+Deadline or Expires At: 2026-08-06T09:02:56Z.
+
+Evidence: The same canonical Root Dev Orchestrator is active with the original coder implement_claim_helper_family. It will acquire the exact activity=work claim, then dispatch only the three authorized findings preserved by Coordinator recovery. No other source, candidate, provider, broad suite, or framework mutation is authorized.
+
+Next Action: Acquire the exact activity=work claim and dispatch only the three authorized findings to the same original coder.
+
+Next Reconciliation At: 2026-08-06T08:14:56Z.
