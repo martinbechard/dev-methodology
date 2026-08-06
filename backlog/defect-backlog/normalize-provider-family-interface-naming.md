@@ -1,6 +1,6 @@
 # Normalize Provider-Family Interface Naming
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -89,3 +89,25 @@ Last Contact: 2026-08-06T04:00:57Z; parent Coordinator recorded the reservation.
 Next Reconciliation: No later than 2026-08-06T04:15:57Z.
 
 Required Next Lifecycle Transition: The new task must directly record Starting -> Running, establish its exact Work Item ID activity=work claim, and then begin scoped implementation. Final reconciliation follows the provider-name deliveries if their shared diagrams or validation files reach main first.
+
+## Current Running Evidence
+
+Transition: Starting -> Running.
+
+Canonical Conversation: 019fd53c-ef9a-7ab3-81aa-d56dce042146.
+
+Root Agent Task: 019fd53c-ef9a-7ab3-81aa-d56dce042146.
+
+Owner: Root Dev Orchestrator.
+
+Branch: Detached candidate checkout at cef8dcb8195197122b97492ef8060fd9ce822363.
+
+Worktree: /Users/martinbechard/.codex/worktrees/82af/dev-methodology.
+
+Phase: Scoped implementation.
+
+Started At: 2026-08-06T04:04:36Z.
+
+Accepted Execution Evidence: The delegated Root Dev Orchestrator task accepted the exact normalized objective, inspected the authoritative Starting record at main commit cef8dcb8195197122b97492ef8060fd9ce822363, acquired separate Work Item ID activity=update and exact provider-path claims, and accepted ownership in the assigned isolated worktree.
+
+Next Action: Establish the exact Work Item ID activity=work claim, then implement the governed naming normalization and focused validation while preserving final reconciliation with provider-name deliveries that reach main first.
