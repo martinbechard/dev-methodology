@@ -140,7 +140,7 @@ Baseline/Main Coordinator Commit: cc5574b798c0fab87fb5c9c6b3c6acd935030feb.
 
 Delegated Source Task: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
 
-Phase: Reviewing.
+Phase: Implementation Correction Attempt 1.
 
 Started At: 2026-08-06T06:19:50Z.
 
@@ -148,7 +148,7 @@ Accepted Execution Evidence: Root Dev Orchestrator accepted this exact Work Item
 
 Provider Operation Evidence: Work Item ID update claim separate-claim-policy-from-claim-helper-family-update-correction and exact provider path claim separate-claim-policy-from-claim-helper-family-path-correction both returned SHARED_CHECKOUT_ACQUIRED before this mutation.
 
-Verified Title Handoff: Reviewing — Separate Claim Policy From Claim Helper Family.
+Verified Title Handoff: Implementing — Separate Claim Policy From Claim Helper Family.
 
 Next Action: Reacquire the exact activity=work claim and resume the bounded Dev Coder lane from its preserved isolated diff.
 
@@ -162,16 +162,16 @@ Owner: Root Dev Orchestrator.
 
 Accepted Candidate Commit: ac8270d2570436738fd1b0b6bb2dbbedb690049a.
 
-Evidence: Root released work claim separate-claim-policy-work-019fd5b5-6 with disposition handoff; both read-only reviewers paused naturally with no commands. The code reviewer returned focused helper25 and targeted bundle/role5 PASS, build-skill-docs current, and diff-check clean. Methodology generator/catalog checks PASS. Candidate and worktree are clean, and reviewers made no writes. Provisional or confirmed issues are: the interface falsely says every mutating operation has claim_id although reset/journal do not; the interface promises result.outcome for report although command report returns raw JSON/text; the MCP validator/evaluation selects an incomplete tool surface omitting extend-deadline/reset and tests that incompleteness; possible RELEASED versus CLAIM_RELEASED parity mismatch; and low stale skill-group prose says 44 while its table sums 47. The canonical Root Dev Orchestrator remains on branch codex/separate-claim-policy-from-claim-helper-family in worktree /Users/martinbechard/.codex/worktrees/1bee/dev-methodology. Intended title: Reviewing — Separate Claim Policy From Claim Helper Family.
+Evidence: Root released work claim separate-claim-policy-work-019fd5b5-7 with disposition handoff. Both terminal independent verdicts are NEEDS_CORRECTION: code review NEEDS_CORRECTION and methodology review NEEDS_CORRECTION. Candidate ac8270d2570436738fd1b0b6bb2dbbedb690049a remains preserved and clean. Accepted findings, all routed to the original coder with none excluded, are: HIGH complete realizable per-operation input/outcome/result contract including report shape and no blanket claim_id; HIGH MCP availability validator/fixture must include extend-deadline/reset or truthfully remain unavailable; MEDIUM unify MCP release outcome RELEASED; MEDIUM exact parity matrix and tests; LOW skill-group prose totals 44 while its table sums 47. The canonical Root Dev Orchestrator remains on branch codex/separate-claim-policy-from-claim-helper-family in worktree /Users/martinbechard/.codex/worktrees/1bee/dev-methodology. Intended title: Implementing — Separate Claim Policy From Claim Helper Family.
 
 Coordinator Scope Disposition: The seven paths scripts/agent_skill_evals/validation.py, scripts/test_role_mutation_policy.py, scripts/test_technology_detection.py, evals/agent-tests/dev-orchestrator/test_fixtures.py, evals/agent-tests/wiki-ingester/executable_harness.py, evals/projects/project-configuration-routing/TASK.md, and evals/projects/project-configuration-routing/available-skills.txt are ordinary non-governed support consumers already authorized by requirements and acceptance. Only minimal identity/path replacements are permitted. No User Action Required or lifecycle change, new approval, or broad suite is authorized.
 
-Observed At: 2026-08-06T07:04:13Z.
+Observed At: 2026-08-06T07:07:15Z.
 
 Started At: 2026-08-06T06:17:04Z.
 
-Deadline or Expires At: 2026-08-06T09:04:13Z.
+Deadline or Expires At: 2026-08-06T09:07:15Z.
 
-Next Action: Reacquire exact activity=work, obtain terminal review verdicts, and return every confirmed candidate issue to the original Dev Coder for one bounded correction before fresh re-review and verification.
+Next Action: Reacquire exact activity=work and return all confirmed review findings to the original Dev Coder for one bounded correction commit, then fresh code/methodology re-review and verification.
 
-Next Reconciliation At: 2026-08-06T07:16:13Z.
+Next Reconciliation At: 2026-08-06T07:19:15Z.
