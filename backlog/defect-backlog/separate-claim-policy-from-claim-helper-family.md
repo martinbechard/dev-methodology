@@ -140,7 +140,7 @@ Baseline/Main Coordinator Commit: cc5574b798c0fab87fb5c9c6b3c6acd935030feb.
 
 Delegated Source Task: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
 
-Phase: Implementation.
+Phase: Reviewing.
 
 Started At: 2026-08-06T06:19:50Z.
 
@@ -148,7 +148,7 @@ Accepted Execution Evidence: Root Dev Orchestrator accepted this exact Work Item
 
 Provider Operation Evidence: Work Item ID update claim separate-claim-policy-from-claim-helper-family-update-correction and exact provider path claim separate-claim-policy-from-claim-helper-family-path-correction both returned SHARED_CHECKOUT_ACQUIRED before this mutation.
 
-Verified Title Handoff: Implementing — Separate Claim Policy From Claim Helper Family.
+Verified Title Handoff: Reviewing — Separate Claim Policy From Claim Helper Family.
 
 Next Action: Reacquire the exact activity=work claim and resume the bounded Dev Coder lane from its preserved isolated diff.
 
@@ -160,16 +160,18 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator.
 
-Evidence: Root paused the coder naturally at a safe boundary and released work claim separate-claim-policy-work-019fd5b5-4 with disposition handoff; no command is running. Helper 25, claim engine 117, six exact claim/resource bundle checks, three exact Project Configurator/bundle checks, exact mutation-policy, three renderer/setup, and claim bundle slice 4 are GREEN. All selected metadata, skill docs, hierarchy, checklist, and evaluation freshness checks are GREEN. Two full role-policy failures and three evaluation catalog mismatches are unrelated baseline issues on untouched surfaces. skill_validate structurally rejected a private path outside configured roots; no fallback was used. The maintained retired provider ID scan is zero, with three historical review/lint artifacts retained. The remaining estimate is 15-25 minutes. The exact current candidate diff footprint remains 17 paths (11 current/added, 6 retired). The canonical Root Dev Orchestrator remains on branch codex/separate-claim-policy-from-claim-helper-family in worktree /Users/martinbechard/.codex/worktrees/1bee/dev-methodology, with baseline/main coordinator commit cc5574b798c0fab87fb5c9c6b3c6acd935030feb and parent/delegated source task 019fb057-1767-7ef2-b5fa-41f4417b20b3. Title remains verified: Implementing — Separate Claim Policy From Claim Helper Family.
+Accepted Candidate Commit: ac8270d2570436738fd1b0b6bb2dbbedb690049a.
+
+Evidence: Root released work claim separate-claim-policy-work-019fd5b5-5 with disposition handoff after a clean candidate commit. Helper25, claim117, focused bundle/setup/renderer tests, and selected freshness/diff checks are GREEN. skill_validate structurally rejected a private-root path outside configured roots, with no fallback. Unrelated baseline mismatches remain explicit. The canonical Root Dev Orchestrator remains on branch codex/separate-claim-policy-from-claim-helper-family in worktree /Users/martinbechard/.codex/worktrees/1bee/dev-methodology, with baseline/main coordinator commit cc5574b798c0fab87fb5c9c6b3c6acd935030feb and parent/delegated source task 019fb057-1767-7ef2-b5fa-41f4417b20b3. Intended title: Reviewing — Separate Claim Policy From Claim Helper Family.
 
 Coordinator Scope Disposition: The seven paths scripts/agent_skill_evals/validation.py, scripts/test_role_mutation_policy.py, scripts/test_technology_detection.py, evals/agent-tests/dev-orchestrator/test_fixtures.py, evals/agent-tests/wiki-ingester/executable_harness.py, evals/projects/project-configuration-routing/TASK.md, and evals/projects/project-configuration-routing/available-skills.txt are ordinary non-governed support consumers already authorized by requirements and acceptance. Only minimal identity/path replacements are permitted. No User Action Required or lifecycle change, new approval, or broad suite is authorized.
 
-Observed At: 2026-08-06T06:53:23Z.
+Observed At: 2026-08-06T06:57:22Z.
 
 Started At: 2026-08-06T06:17:04Z.
 
-Deadline or Expires At: 2026-08-06T08:53:23Z.
+Deadline or Expires At: 2026-08-06T08:57:22Z.
 
-Next Action: Reacquire exact activity=work and resume the same Dev Coder for final terminology/diff audit, one helper rerun after tiny required-tool correction, final freshness/diff checks, and clean candidate commit.
+Next Action: Reacquire exact activity=work and dispatch fresh Dev Code Reviewer and Methodology Artifact Reviewer against candidate ac8270d2; verification waits for both review gates.
 
-Next Reconciliation At: 2026-08-06T07:05:23Z.
+Next Reconciliation At: 2026-08-06T07:09:22Z.
