@@ -1,6 +1,6 @@
 # Extract Future Idea Management
 
-Status: Ready
+Status: Starting
 
 Owner: Unowned
 
@@ -165,6 +165,26 @@ Next Reconciliation At: 2026-08-06T07:33:31Z.
 - Exclusions: No other skill, role, governed definition, broad suite, or framework is approved.
 - Preserved candidates: `20129c822f0ce78fe46a0aeaaa6e7b719d841dc6` and `c94dc4fd674405f9c96c10c51c99ed24fcd767f3`.
 - Next action: The parent Dev Backlog Coordinator may record Ready -> Starting for the same canonical task; implementation remains stopped until that task separately records Starting -> Running and reacquires the exact activity=work claim.
+
+## Starting Handoff Evidence — 2026-08-06T12:17:44Z
+
+Starting Recorded At: 2026-08-06T12:17:44Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Normalized Objective: Resume the preserved Future Idea management candidate with exactly the newly approved Dev Backlog Steward suite-contract skill and the four already-authorized ordinary support paths, then complete focused rereview, verification, and direct-main delivery.
+
+Launch Result: Started
+
+Canonical Conversation: `019fd5b5-aca7-7cb1-9ae0-010ac945c985`
+
+Last Contact At: 2026-08-06T12:14:03Z
+
+Next Reconciliation At: 2026-08-06T12:32:44Z
+
+Preserved Candidate Evidence: `20129c822f0ce78fe46a0aeaaa6e7b719d841dc6` and `c94dc4fd674405f9c96c10c51c99ed24fcd767f3` remain the canonical source and corrected candidates.
+
+Next Action: The existing canonical root Dev Orchestrator records Starting -> Running, reacquires the exact Work Item ID activity=work claim, and resumes the preserved correction; no replacement task is created.
 
 ## Verification
 
