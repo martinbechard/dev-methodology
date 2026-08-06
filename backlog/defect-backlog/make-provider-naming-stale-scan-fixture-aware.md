@@ -1,6 +1,6 @@
 # Make Provider Naming Stale Scan Fixture-Aware
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -65,3 +65,21 @@ None.
 ## Notes
 
 The acknowledged unstaged wording change in design/skill-groups/concurrent-tasking.md is unrelated user-owned state and must remain untouched.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-06T22:37:10Z
+
+Coordinator: Dev Backlog Coordinator task 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Normalized Objective: Make the provider-name stale-reference scan recognize only exact deliberate negative-test fixtures while continuing to reject real retired identities and broad test-module exclusions.
+
+Launch Result: Not attempted.
+
+Canonical Conversation: None.
+
+Last Contact At: None.
+
+Next Reconciliation At: 2026-08-06T22:52:10Z.
+
+Intended Root Role: Dev Orchestrator.
