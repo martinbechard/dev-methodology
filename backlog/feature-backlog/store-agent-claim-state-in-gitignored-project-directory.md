@@ -1,6 +1,6 @@
 # Store Agent Claim State In Gitignored Project Directory
 
-Status: Ready
+Status: Starting
 
 Owner: Unowned
 
@@ -109,6 +109,28 @@ Canonical Thread And Root Task: 019fd464-3875-75e2-aaa0-39a8e357d764; /root.
 Decision Provenance: Direct user approval recorded in the canonical task conversation on 2026-08-06.
 
 Next Action: Parent Coordinator may perform Ready -> Starting for the same canonical task after this provider commit is verified.
+
+## Ready -> Starting Transition Evidence
+
+Transition: Ready -> Starting.
+
+Transitioned At: 2026-08-06T12:12:45Z.
+
+Parent Coordination Thread: /root (thread 019fb057-1767-7ef2-b5fa-41f4417b20b3).
+
+Launch Reservation: One distinct parent-owned launch reservation for this provider record.
+
+Normalized Objective: Move agent claim state into the primary worktree's gitignored .codex/agent-claim directory.
+
+Dispatch Time: 2026-08-06T12:12:45Z.
+
+Intended Root Dev Orchestrator Role: Dev Orchestrator.
+
+Canonical Runtime Evidence: None at reservation time. No runtime task has been created.
+
+Current Launch Evidence: Parent Coordinator authorized this exact reservation; fresh exact provider path claim resume-starting-path-store-agent-claim-state-019fd464 acquired with outcome SHARED_CHECKOUT_ACQUIRED.
+
+Required Next Lifecycle Transition: The canonical root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
 
 ## Summary
 
