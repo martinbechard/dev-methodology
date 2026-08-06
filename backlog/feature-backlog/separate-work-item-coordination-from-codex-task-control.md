@@ -131,17 +131,17 @@ This is a static responsibility split, not a diagram of one runtime scenario. Th
 
 Condition Type: root-execution
 Owner: Root Dev Orchestrator /root
-Evidence: Acceptance reviewer confirms core and freshness for candidate 2121e5a1, but found remaining unconditional Codex mechanics in evals/agent-scenarios, a stale Steward lifecycle assertion in evals/agent-tests/AGENTS plus the bundle test, and an old outline heading. Work remains in isolated worktree /Users/martinbechard/.codex/worktrees/a3a9/dev-methodology under root task /root and canonical conversation 019fd63f-dc50-7252-b287-8489ad1c1a8f.
-Observed At: 2026-08-06T10:38:59Z
+Evidence: Core checks pass for candidate 73c139cd. Reviewer found one remaining focused bundle assertion that requires an unconditional canonical task ID instead of portable execution identity plus conditional Codex identity. Work remains in isolated worktree /Users/martinbechard/.codex/worktrees/a3a9/dev-methodology under root task /root and canonical conversation 019fd63f-dc50-7252-b287-8489ad1c1a8f.
+Observed At: 2026-08-06T10:48:03Z
 Started At: 2026-08-06T08:48:08Z
 Deadline or Expires At: 2026-08-06T11:00:00Z
-Next Action: Reacquire activity=work and resume the same reviewer to deliver the final exact verdict.
-Next Reconciliation At: 2026-08-06T10:50:00Z
+Next Action: Reacquire activity=work and resume the same reviewer for the final verdict, then apply the exact assertion correction.
+Next Reconciliation At: 2026-08-06T11:00:00Z
 
 ## Running Evidence Refresh — 2026-08-06T08:57:18Z
 
 - Provider operation evidence: File provider Active Execution Evidence refreshed in place on main; Status, canonical identities, Started At, and Deadline or Expires At are unchanged.
-- Refresh claims: Work Item ID update claim separate-work-item-coordination-from-codex-task-control-update-refresh-1038 and provider-path claim separate-work-item-coordination-from-codex-task-control-path-refresh-1038 were acquired for this operation.
+- Refresh claims: Work Item ID update claim separate-work-item-coordination-from-codex-task-control-update-refresh-1048 and provider-path claim separate-work-item-coordination-from-codex-task-control-path-refresh-1048 were acquired for this operation.
 
 ## Deadline Extension Evidence — 2026-08-06T10:05:07Z
 
