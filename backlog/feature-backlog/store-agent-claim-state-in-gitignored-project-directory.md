@@ -1,6 +1,6 @@
 # Store Agent Claim State In Gitignored Project Directory
 
-Status: Ready
+Status: Starting
 
 Owner: Unowned
 
@@ -11,6 +11,26 @@ Provider: file
 Work Item ID: store-agent-claim-state-in-gitignored-project-directory
 
 Completion: direct-main
+
+## Current Dispatch Reservation
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: /root (thread 019fb057-1767-7ef2-b5fa-41f4417b20b3).
+
+Launch Reservation: One distinct parent-owned launch reservation for this provider record.
+
+Normalized Objective: Move agent claim state into the primary worktree's gitignored .codex/agent-claim directory.
+
+Dispatch Time: 2026-08-06T00:04:47Z.
+
+Intended Root Dev Orchestrator Role: Dev Orchestrator.
+
+Canonical Runtime Evidence: None at reservation time. No runtime task has been created.
+
+Current Launch Evidence: Parent Coordinator authorized this exact reservation; exact-file backlog claim starting-store-agent-claim-state-in-gitignored-project-directory-019fb057 acquired with outcome SHARED_CHECKOUT_ACQUIRED and event 4bb2b1f7-39a8-4f95-9176-fa7e8946f779.
+
+Required Next Lifecycle Transition: The canonical root Dev Orchestrator must separately accept Starting -> Running before repository mutation.
 
 ## Summary
 
