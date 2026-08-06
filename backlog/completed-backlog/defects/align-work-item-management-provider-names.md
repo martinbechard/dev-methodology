@@ -1,6 +1,6 @@
 # Align Work-Item Management Provider Names
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -189,3 +189,23 @@ Next Action: Commit this path-limited generation-phase evidence, reacquire the e
 Next Reconciliation At: 2026-08-06T05:44:17Z.
 
 Conversation Title Evidence: The canonical conversation is Integrating — Align Work-Item Management Provider Names for the released integration phase.
+
+## Completion Evidence
+
+Transition: Running -> Completed.
+
+Completed At: 2026-08-06T05:45:30Z.
+
+Accepted Candidate: 2925eca30eb0310d7b2c85299167ff4abdf1b070, consisting of reviewed source commit 4bbe64e48ffdd800b3eac03e47cfe31c9015ed69 and the bounded evaluation-fixture correction.
+
+Integration Mapping: The predecessor-aware integration commit 84dc4252b29c8dbe51ed1bc8f919c3f4c83c1aac has parent 793d4303a7440803ad79f5440a77ffee7882081d and preserves create-work-item and deliver-work-item naming while applying manage-work-items naming. The bounded generated-output correction 2a28dd371d3efb1611023a4da0605a94af8c3f56 has exact parent 84dc4252 and changes only AGENTS.md.
+
+Direct-Main Delivery: Current main contains project delivery commit 217aee0277f4cbe5179a2b6993468f94281eafe7 and generated-output correction e365f9ecb679a1ccdedec763eec3f576f7bc7bf9. Both were applied without conflict after backlog-only main commit a92bf49d05fbf77041195c97855919ce6fde3b58.
+
+Review: The accepted source candidate received same-reviewer APPROVED. Fresh combined review identified one AGENTS.md default-renderer defect; the same Merge Coordinator supplied one-file correction 2a28dd37, and the same combined reviewer returned GOOD with no remaining material findings.
+
+Verification: The source verifier returned VERIFIED PASS. The single integration-sensitive verifier returned PASS for coexistence and exact routing across create-work-item, manage-work-items, and deliver-work-item; provider simulation; metadata and generated freshness; mapped GitHub creation reference; corrected evaluation fixture; maintained-tree stale-name scan; diff check; and immutable clean state. After the bounded correction, that same verifier returned PASS for default-renderer byte equality, routing preservation, one-file scope, diff check, and clean state.
+
+Final Main Observation: Branch main is clean at e365f9ecb679a1ccdedec763eec3f576f7bc7bf9. The two delivery commits are reachable, and the delivered 61-path project diff exactly matches the reviewed integration path set. The focused default-renderer assertion passed under Python 3.11, the maintained-tree retired-management-name scan returned zero matches after excluding backlog, evaluation results, and immutable structured-review audit artifacts, and git diff --check passed.
+
+Scope Discipline: No broad suite, live-model evaluation, or unchanged source-only suite was run. The exact 61 project-path claim, main-integration resource, and activity=work claim were released after verified delivery. Only this source path and its completed destination remained claimed for the terminal file-provider transaction.
