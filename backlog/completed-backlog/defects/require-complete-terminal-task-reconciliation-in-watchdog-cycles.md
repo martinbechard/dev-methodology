@@ -1,6 +1,6 @@
 # Require Complete Terminal Task Reconciliation in Watchdog Cycles
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -124,7 +124,7 @@ Branch: codex/require-complete-terminal-reconciliation-019fd80b.
 
 Worktree: /Users/martinbechard/.codex/worktrees/6db0/dev-methodology.
 
-Phase: Current-main direct-main integration.
+Phase: Completed direct-main delivery.
 
 Started At: 2026-08-06T17:10:29Z.
 
@@ -134,7 +134,7 @@ Accepted Candidate Commit: 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391.
 
 Candidate Checks: Independent verification PASS/READY. Watchdog simulator 31 tests passed; five exact bundle, design, and generated assertions passed; changed skills validated; Python compilation and generator freshness passed; exact 17-path scope and diff checks passed. One unrelated broad catalog expected-count mismatch remains outside this item.
 
-Next Action: Replay accepted candidate commits 1b07440ec4b875e6586c1da3921038ebc9d6c0c9, 9cde838a3099dbbcfef235bd9f5bc86601d0cbe9, and 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391 from current main, prove exact content mapping, and run the smallest integration-sensitive checks before direct-main delivery.
+Next Action: None. Delivery, provider closeout, claim reconciliation, and temporary integration cleanup are complete. The parent Coordinator may later reconcile the canonical source worktree independently of the explicit task-archival pause.
 
 ## Active Execution Evidence
 
@@ -142,19 +142,19 @@ Condition Type: delegated-work.
 
 Owner: Root Dev Orchestrator in task 019fd80b-9089-78c0-9272-26ac6b7d47ff.
 
-Evidence: Independent Dev Verifier child /root/verify_terminal_reconciliation returned PASS/READY for clean review-approved candidate 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391. The Root Dev Orchestrator holds the exact current-main project-files integration claim and is replaying the immutable candidate without expanding the approved 17-path scope.
+Evidence: Independent Dev Verifier child /root/verify_terminal_reconciliation returned PASS/READY for clean review-approved candidate 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391. The Root Dev Orchestrator replayed the three accepted commits from current main with traceable source mapping, proved byte-equivalent content across the exact 17 approved paths, fast-forwarded authoritative main to 398b0893618ef61be5ab977712af17a12e5618c9, reran the bounded post-integration gates, and cleaned the temporary integration worktree and branch.
 
-Observed At: 2026-08-06T17:59:29Z.
+Observed At: 2026-08-06T18:03:38Z.
 
 Started At: 2026-08-06T17:10:29Z.
 
-Deadline or Expires At: 2026-08-06T18:59:29Z.
+Deadline or Expires At: Completed at 2026-08-06T18:03:38Z.
 
-Next Action: Create a fresh integration branch from current authoritative main, replay the three accepted candidate commits with traceable source mapping, then run only focused Watchdog and affected freshness checks.
+Next Action: None for delivery or provider closeout. Leave Codex task 019fd80b-9089-78c0-9272-26ac6b7d47ff unarchived under the explicit current scoped instruction recorded below; that pause affects no other terminal reconciliation.
 
-Next Reconciliation At: 2026-08-06T18:13:29Z.
+Next Reconciliation At: Not applicable; provider item completed.
 
-Conversation Title Evidence: The canonical conversation is Integrating — Require Complete Terminal Reconciliation.
+Conversation Title Evidence: The canonical conversation entered Closing — Require Complete Terminal Reconciliation after direct-main delivery passed.
 
 ## Correction History
 
@@ -191,6 +191,34 @@ Correction Attempt 2 Commit: 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391.
 Correction Attempt 2 Result: Canonical and generated status-aware wording now matches the simulator; claim applicability is explicit tri-state; recurring preservation alerts retain acknowledged prior and current evidence; all focused candidate checks pass.
 
 Final Independent Review: APPROVED candidate 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391 with no material findings, no open questions, exact approved scope, clean worktree, and deterministic simulator/source/generated coverage. No live Codex runtime cycle was run because the bounded read-only review scope prohibits it.
+
+## Completion Evidence
+
+Completed At: 2026-08-06T18:03:38Z.
+
+Accepted Candidate: 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391, comprising source commits 1b07440ec4b875e6586c1da3921038ebc9d6c0c9, 9cde838a3099dbbcfef235bd9f5bc86601d0cbe9, and 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391.
+
+Direct-Main Delivery: The accepted commits were replayed from authoritative main 9623f5ac5e0a5d3704245320ccf97a8723d3aaaf as integration commits 4544d006, 9e9293b6, and 398b0893. Main fast-forwarded to 398b0893618ef61be5ab977712af17a12e5618c9, which contains the accepted candidate with byte-equivalent content across all 17 approved paths.
+
+Independent Review: APPROVED with no material findings or open questions.
+
+Independent Verification: PASS/READY. The focused Watchdog simulator passed 31 of 31 tests; the five exact bundle, design, and generated assertions passed; both changed skills validated; Python compilation, Watchdog suite validate-only, generated methodology freshness, exact path scope, source-to-main content mapping, ancestry, and diff hygiene passed.
+
+Post-Integration Verification: From authoritative main, the focused Watchdog simulator passed 31 of 31 tests, the five exact bundle assertions passed, generated methodology data was current, source-to-main content mapping was exact, commit 398b0893 was reachable, and the worktree was clean.
+
+Cleanup: The clean temporary integration worktree and fully merged integration branch were removed. Only current-run validation evidence and Python caches inside that temporary worktree were discarded. The canonical source branch and worktree remain available as task evidence and are not retained because of the archive pause; their later cleanup is independently parent-managed.
+
+Integration Claim Reconciliation: Project-files claim require-complete-terminal-reconciliation-main-integration-019fd80b was released with event 53baae92-66dc-4383-898e-33772a1eef57 after main delivery and cleanup.
+
+Provider Closeout: This item moved from the active defect queue to the completed defect queue after direct-main delivery returned READY.
+
+## Explicit Current Task-Archival Pause
+
+Scope: Codex task 019fd80b-9089-78c0-9272-26ac6b7d47ff only.
+
+Evidence: In the current canonical task, the user explicitly directed, “Do not archive this Codex task.”
+
+Acknowledgement: This current named-task instruction suppresses only archival of Codex task 019fd80b-9089-78c0-9272-26ac6b7d47ff. It does not suppress provider closeout, claim release, notification, temporary integration worktree cleanup, integration branch cleanup, or any later independently authorized source-worktree or source-branch reconciliation. No campaign-wide pause is inferred or persisted.
 
 ## Governed Definition Approval
 
