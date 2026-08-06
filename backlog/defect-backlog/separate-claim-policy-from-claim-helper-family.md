@@ -1,6 +1,6 @@
 # Separate Claim Policy From Claim Helper Family
 
-Status: Blocked
+Status: Ready
 
 Type: Defect
 
@@ -205,3 +205,17 @@ Observable Unblock Condition: One later evidence-backed Coordinator recovery dis
 Requested Next Action Owner: Dev Backlog Coordinator.
 
 Scope Boundary: No correction attempt 3, no other changes, broad suites, or new framework.
+
+## Recovery Ready Evidence
+
+Transition: Blocked -> Ready.
+
+Transitioned At: 2026-08-06T08:00:41Z.
+
+Coordinator Recovery Authorization: Parent task 019fb057-1767-7ef2-b5fa-41f4417b20b3 supplied an evidence-backed recovery disposition that satisfies the recorded unblock condition and authorizes one fresh bounded cycle.
+
+Satisfied Unblock Evidence: Recovery is limited to the three preserved findings on candidate 5fa7620a6471574d2bf84a12e541805780d4bac6, with the same canonical task/conversation 019fd5b5-aca7-7cb1-9ae0-012fb84e13db, branch codex/separate-claim-policy-from-claim-helper-family, worktree /Users/martinbechard/.codex/worktrees/1bee/dev-methodology, and original coder.
+
+Ready Scope: Reconcile only the class-diagram operation members, the report segment-field contract, and the helper-routing inline-versus-reference mismatch. Preserve all blocker, candidate, final-verdict, canonical-identity, attempt-history, and scope evidence.
+
+Next Action: Ready -> Starting through the authorized Coordinator and then Starting -> Running before mutation.
