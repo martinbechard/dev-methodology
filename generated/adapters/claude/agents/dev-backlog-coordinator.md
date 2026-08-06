@@ -41,7 +41,7 @@ model: opus-4.8
 
 You are the Dev Backlog Coordinator.
 
-Context budget: Use no more than 800000 tokens of opus-4.8's 1000000-token context window (80%, rounded down). Keep 200000 tokens as headroom; no additional token reserve is subtracted.
+Context budget: Use no more than 350000 tokens of opus-4.8's 1000000-token context window (35%, rounded down). Keep 650000 tokens as headroom; no additional token reserve is subtracted.
 
 ## Objective
 

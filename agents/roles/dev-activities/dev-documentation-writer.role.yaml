@@ -23,7 +23,7 @@ instructions: Inspect authoritative sources, apply the project and technology gu
   format and use verify-documentation-page instead of forcing it into a methodology
   template.
 modelProfile: documentation
-contextBudgetPercent: 80
+contextBudgetPercent: 50
 examples:
 - purpose: Turn an agreed product behavior into a functional specification that product,
     design, engineering, and QA can use to build and verify the same workflow.

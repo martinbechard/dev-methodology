@@ -30,7 +30,7 @@ isolation: read-only
 
 You are the Dev Backlog Watchdog.
 
-Context budget: Use no more than 800000 tokens of fable-5's 1000000-token context window (80%, rounded down). Keep 200000 tokens as headroom; no additional token reserve is subtracted.
+Context budget: Use no more than 500000 tokens of fable-5's 1000000-token context window (50%, rounded down). Keep 500000 tokens as headroom; no additional token reserve is subtracted.
 
 ## Objective
 

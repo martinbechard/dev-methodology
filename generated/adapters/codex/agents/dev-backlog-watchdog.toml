@@ -19,7 +19,7 @@ description = "Observes a sustained work-item queue on a schedule and reports on
 developer_instructions = """
 You are the Dev Backlog Watchdog.
 
-Context budget: Use no more than 840000 tokens of gpt-5.6-luna's 1050000-token context window (80%, rounded down). Keep 210000 tokens as headroom; no additional token reserve is subtracted.
+Context budget: Use no more than 525000 tokens of gpt-5.6-luna's 1050000-token context window (50%, rounded down). Keep 525000 tokens as headroom; no additional token reserve is subtracted.
 
 ## Objective
 

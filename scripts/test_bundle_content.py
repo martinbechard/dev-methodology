@@ -10705,9 +10705,18 @@ class BundleContentTests(unittest.TestCase):
             "percentage-integer",
             load_yaml_object(ROLE_SCHEMA_PATH)["properties"]["contextBudgetPercent"],
         )
+        context_budget_overrides = {
+            "dev-backlog-coordinator": 35,
+            "dev-backlog-watchdog": 50,
+            "dev-documentation-writer": 50,
+        }
         for role_path in sorted(ROLES_ROOT.glob("*/*.role.yaml")):
             with self.subTest(role=role_path.stem):
-                self.assertEqual(80, load_yaml_object(role_path)["contextBudgetPercent"])
+                role = load_yaml_object(role_path)
+                self.assertEqual(
+                    context_budget_overrides.get(role["name"], 80),
+                    role["contextBudgetPercent"],
+                )
 
         invalid_values = (None, 80.5, 0, -1, 101, True)
         for invalid_value in invalid_values:

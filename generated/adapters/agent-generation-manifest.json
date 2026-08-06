@@ -37,18 +37,18 @@
         {
           "contextAllocation": {
             "additionalReserveTokens": 0,
-            "contextBudgetPercent": 80,
-            "headroomPercent": 20,
+            "contextBudgetPercent": 35,
+            "headroomPercent": 65,
             "modelStages": {},
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://code.claude.com/docs/en/sub-agents",
-              "contextBudgetTokens": 800000,
+              "contextBudgetTokens": 350000,
               "contextCapacityEvidence": [
                 "https://platform.claude.com/docs/en/release-notes/overview"
               ],
               "contextCapacityTokens": 1000000,
-              "headroomTokens": 200000,
+              "headroomTokens": 650000,
               "model": "opus-4.8",
               "modelProfile": "advanced-long"
             },
@@ -62,7 +62,7 @@
             "manage-work-items",
             "structured-explanation"
           ],
-          "sha256": "8365626416771f765275a2cc59292a725f715dbc9163633045a7c81dca685ff4",
+          "sha256": "4e5be6a69210f919bbea464eaee1e23d0728d5f9b6f7bd93206d07662e5e2dee",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -99,18 +99,18 @@
         {
           "contextAllocation": {
             "additionalReserveTokens": 0,
-            "contextBudgetPercent": 80,
-            "headroomPercent": 20,
+            "contextBudgetPercent": 50,
+            "headroomPercent": 50,
             "modelStages": {},
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://code.claude.com/docs/en/sub-agents",
-              "contextBudgetTokens": 800000,
+              "contextBudgetTokens": 500000,
               "contextCapacityEvidence": [
                 "https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5"
               ],
               "contextCapacityTokens": 1000000,
-              "headroomTokens": 200000,
+              "headroomTokens": 500000,
               "model": "fable-5",
               "modelProfile": "simple"
             },
@@ -124,7 +124,7 @@
             "manage-work-items",
             "coordinate-work-items"
           ],
-          "sha256": "296d36a4c9e41da9dc9f6bf3dc97710ce1424e268b28378113dd6461f52ee06b",
+          "sha256": "eb09367ebf726d78fddfb0853488b790a723b3efa7b45538d1bec7373ddba98f",
           "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
@@ -295,18 +295,18 @@
         {
           "contextAllocation": {
             "additionalReserveTokens": 0,
-            "contextBudgetPercent": 80,
-            "headroomPercent": 20,
+            "contextBudgetPercent": 50,
+            "headroomPercent": 50,
             "modelStages": {},
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://code.claude.com/docs/en/sub-agents",
-              "contextBudgetTokens": 800000,
+              "contextBudgetTokens": 500000,
               "contextCapacityEvidence": [
                 "https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5"
               ],
               "contextCapacityTokens": 1000000,
-              "headroomTokens": 200000,
+              "headroomTokens": 500000,
               "model": "fable-5",
               "modelProfile": "documentation"
             },
@@ -319,7 +319,7 @@
             "ste-technical-writing",
             "route-documentation-work"
           ],
-          "sha256": "9d97bda172409536eda6223565588e8b947de96c599431dc61cb778ab004a5da",
+          "sha256": "fab4e61f8a67fb9ddbfd3835257456d2b2879fe27a05f73adc3a94081103b146",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -1134,18 +1134,18 @@
         {
           "contextAllocation": {
             "additionalReserveTokens": 0,
-            "contextBudgetPercent": 80,
-            "headroomPercent": 20,
+            "contextBudgetPercent": 35,
+            "headroomPercent": 65,
             "modelStages": {},
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://developers.openai.com/codex/subagents",
-              "contextBudgetTokens": 840000,
+              "contextBudgetTokens": 367500,
               "contextCapacityEvidence": [
                 "https://developers.openai.com/api/docs/models"
               ],
               "contextCapacityTokens": 1050000,
-              "headroomTokens": 210000,
+              "headroomTokens": 682500,
               "model": "gpt-5.6-sol",
               "modelProfile": "advanced-long"
             },
@@ -1160,7 +1160,7 @@
             "structured-explanation",
             "codex-harness-directives"
           ],
-          "sha256": "b32ba96500fdbef7bd7f81d082a9e1fd713faf742852097949143953b73a9c4f",
+          "sha256": "3479436e848d7f8552895470cd49983bba3bd7a0a964839c4b1a6373b9f8723a",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -1198,18 +1198,18 @@
         {
           "contextAllocation": {
             "additionalReserveTokens": 0,
-            "contextBudgetPercent": 80,
-            "headroomPercent": 20,
+            "contextBudgetPercent": 50,
+            "headroomPercent": 50,
             "modelStages": {},
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://developers.openai.com/codex/subagents",
-              "contextBudgetTokens": 840000,
+              "contextBudgetTokens": 525000,
               "contextCapacityEvidence": [
                 "https://developers.openai.com/api/docs/models"
               ],
               "contextCapacityTokens": 1050000,
-              "headroomTokens": 210000,
+              "headroomTokens": 525000,
               "model": "gpt-5.6-luna",
               "modelProfile": "simple"
             },
@@ -1223,7 +1223,7 @@
             "manage-work-items",
             "coordinate-work-items"
           ],
-          "sha256": "0c9f8db67f21b553bcafac9d5a4a2b90dff89da1588943b8813c8f9aad301b21",
+          "sha256": "d3f5fb4a3109617010da20ddb0cf0f658e864f1d5784553b80ba0504c843efc1",
           "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
@@ -1398,18 +1398,18 @@
         {
           "contextAllocation": {
             "additionalReserveTokens": 0,
-            "contextBudgetPercent": 80,
-            "headroomPercent": 20,
+            "contextBudgetPercent": 50,
+            "headroomPercent": 50,
             "modelStages": {},
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://developers.openai.com/codex/subagents",
-              "contextBudgetTokens": 840000,
+              "contextBudgetTokens": 525000,
               "contextCapacityEvidence": [
                 "https://developers.openai.com/api/docs/models/gpt-5.5"
               ],
               "contextCapacityTokens": 1050000,
-              "headroomTokens": 210000,
+              "headroomTokens": 525000,
               "model": "gpt-5.5",
               "modelProfile": "documentation"
             },
@@ -1423,7 +1423,7 @@
             "route-documentation-work",
             "codex-harness-directives"
           ],
-          "sha256": "19926b41aee2a032380c4ad7f6553c0d087ea06f117b3263a8ab0a1f9b5689bd",
+          "sha256": "4fc291a568861eb7e55385c5e7b21d7a496d8733b8cc383babc5fac7055a1fb3",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -2263,19 +2263,19 @@
         {
           "contextAllocation": {
             "additionalReserveTokens": 0,
-            "contextBudgetPercent": 80,
-            "headroomPercent": 20,
+            "contextBudgetPercent": 35,
+            "headroomPercent": 65,
             "modelStages": {},
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://geminicli.com/docs/core/subagents/",
-              "contextBudgetTokens": 838860,
+              "contextBudgetTokens": 367001,
               "contextCapacityEvidence": [
                 "https://geminicli.com/docs/cli/model/",
                 "https://ai.google.dev/gemini-api/docs/models"
               ],
               "contextCapacityTokens": 1048576,
-              "headroomTokens": 209716,
+              "headroomTokens": 681575,
               "model": "pro",
               "modelProfile": "advanced-long"
             },
@@ -2289,7 +2289,7 @@
             "manage-work-items",
             "structured-explanation"
           ],
-          "sha256": "4c087c500867b6c10311d31885cb5e6ee19ac161eb9ee113ef8102edef94d617",
+          "sha256": "96fb039077b0a1eb58c09be007cc9af9b2bd65d82a33fb76746606c3894d79f0",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -2327,19 +2327,19 @@
         {
           "contextAllocation": {
             "additionalReserveTokens": 0,
-            "contextBudgetPercent": 80,
-            "headroomPercent": 20,
+            "contextBudgetPercent": 50,
+            "headroomPercent": 50,
             "modelStages": {},
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://geminicli.com/docs/core/subagents/",
-              "contextBudgetTokens": 838860,
+              "contextBudgetTokens": 524288,
               "contextCapacityEvidence": [
                 "https://geminicli.com/docs/cli/model/",
                 "https://ai.google.dev/gemini-api/docs/models"
               ],
               "contextCapacityTokens": 1048576,
-              "headroomTokens": 209716,
+              "headroomTokens": 524288,
               "model": "flash",
               "modelProfile": "simple"
             },
@@ -2353,7 +2353,7 @@
             "manage-work-items",
             "coordinate-work-items"
           ],
-          "sha256": "a3d5930be26aa8b5f549a46c1b39452f91a9e9da0040c0499368df96caf29cd6",
+          "sha256": "67f015c311ddba91ff2fa782dbd0fac41d73e2442f202260a209c0ee3841cd2e",
           "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
@@ -2531,19 +2531,19 @@
         {
           "contextAllocation": {
             "additionalReserveTokens": 0,
-            "contextBudgetPercent": 80,
-            "headroomPercent": 20,
+            "contextBudgetPercent": 50,
+            "headroomPercent": 50,
             "modelStages": {},
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://geminicli.com/docs/core/subagents/",
-              "contextBudgetTokens": 838860,
+              "contextBudgetTokens": 524288,
               "contextCapacityEvidence": [
                 "https://geminicli.com/docs/cli/model/",
                 "https://ai.google.dev/gemini-api/docs/models"
               ],
               "contextCapacityTokens": 1048576,
-              "headroomTokens": 209716,
+              "headroomTokens": 524288,
               "model": "auto",
               "modelProfile": "documentation"
             },
@@ -2556,7 +2556,7 @@
             "ste-technical-writing",
             "route-documentation-work"
           ],
-          "sha256": "4da92ffeff07fddf143a34d526efaa7a131b3f89222345922397cce45372a736",
+          "sha256": "ea16aa8240e8228bc2d6d9478ced81a8f8d32bf79fff377e2fe774d2f94997b4",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -3400,19 +3400,19 @@
         {
           "contextAllocation": {
             "additionalReserveTokens": 0,
-            "contextBudgetPercent": 80,
-            "headroomPercent": 20,
+            "contextBudgetPercent": 35,
+            "headroomPercent": 65,
             "modelStages": {},
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://junie.jetbrains.com/docs/junie-cli-subagents.html",
-              "contextBudgetTokens": 800000,
+              "contextBudgetTokens": 350000,
               "contextCapacityEvidence": [
                 "https://junie.jetbrains.com/docs/junie-cli-model-selection.html",
                 "https://platform.claude.com/docs/en/release-notes/overview"
               ],
               "contextCapacityTokens": 1000000,
-              "headroomTokens": 200000,
+              "headroomTokens": 650000,
               "model": "opus",
               "modelProfile": "advanced-long"
             },
@@ -3426,7 +3426,7 @@
             "manage-work-items",
             "structured-explanation"
           ],
-          "sha256": "c98b5861bef39cd0d0310cc1a360b8b074cbe84076621a8292949ab52d594f2d",
+          "sha256": "929fe0f39fe0dd474170724bcc07e182c1c6d522766dd0db6bc0b57c64df805b",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
@@ -3464,19 +3464,19 @@
         {
           "contextAllocation": {
             "additionalReserveTokens": 0,
-            "contextBudgetPercent": 80,
-            "headroomPercent": 20,
+            "contextBudgetPercent": 50,
+            "headroomPercent": 50,
             "modelStages": {},
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://junie.jetbrains.com/docs/junie-cli-subagents.html",
-              "contextBudgetTokens": 838860,
+              "contextBudgetTokens": 524288,
               "contextCapacityEvidence": [
                 "https://junie.jetbrains.com/docs/junie-cli-model-selection.html",
                 "https://ai.google.dev/gemini-api/docs/models"
               ],
               "contextCapacityTokens": 1048576,
-              "headroomTokens": 209716,
+              "headroomTokens": 524288,
               "model": "gemini-flash",
               "modelProfile": "simple"
             },
@@ -3490,7 +3490,7 @@
             "manage-work-items",
             "coordinate-work-items"
           ],
-          "sha256": "138573c62b7a5e58a88732747e277e6b4cbcb149012f9acdea9d85f996e5feab",
+          "sha256": "25d997db7306a2c89c305cead4c082cd0d2389899c4d9cb6f7f5e042b7fc9d0b",
           "source": "agents/roles/dev-activities/dev-backlog-watchdog.role.yaml"
         },
         {
@@ -3668,19 +3668,19 @@
         {
           "contextAllocation": {
             "additionalReserveTokens": 0,
-            "contextBudgetPercent": 80,
-            "headroomPercent": 20,
+            "contextBudgetPercent": 50,
+            "headroomPercent": 50,
             "modelStages": {},
             "primary": {
               "contextBudgetMechanism": "instruction",
               "contextBudgetMechanismEvidence": "https://junie.jetbrains.com/docs/junie-cli-subagents.html",
-              "contextBudgetTokens": 840000,
+              "contextBudgetTokens": 525000,
               "contextCapacityEvidence": [
                 "https://junie.jetbrains.com/docs/junie-cli-model-selection.html",
                 "https://developers.openai.com/api/docs/models"
               ],
               "contextCapacityTokens": 1050000,
-              "headroomTokens": 210000,
+              "headroomTokens": 525000,
               "model": "gpt-5.6-sol",
               "modelProfile": "documentation"
             },
@@ -3693,7 +3693,7 @@
             "ste-technical-writing",
             "route-documentation-work"
           ],
-          "sha256": "8aa0e5d42ea57601304d1921d972f237e50c8ecf5103d900d2496b1bc9bf243b",
+          "sha256": "c1270d73674efe16b3ba1f8ab3d937b890ecc89c851f999fa96aa0efe837893b",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
