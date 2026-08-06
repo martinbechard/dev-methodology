@@ -1,6 +1,6 @@
 # Extract Future Idea Management
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -77,6 +77,15 @@ Permitted Resumption Transition: Blocked -> Ready after the Coordinator verifies
 - Exact unblock condition: Satisfied. Both dependency Work Item IDs have terminal successful dispositions on current main, both canonical provider definitions exist, and their source and integration claims are released.
 - Owner: Unowned.
 - Next action: Parent Dev Backlog Coordinator may reserve Ready -> Starting; this recovery does not create execution ownership.
+
+## Starting Reservation — 2026-08-06T06:12:33Z
+
+- Transition: Ready -> Starting.
+- Coordinator reservation: Dev Backlog Coordinator reserved this Work Item ID on current main at 2026-08-06T06:12:33Z.
+- Owner handoff: Dev Backlog Coordinator retains reservation ownership and will hand off to one root Dev Orchestrator after launch acceptance.
+- Root Agent Task: Not assigned; no child task was created by this reservation transaction.
+- Launch result: Pending; this provider transaction does not start a task or create execution ownership.
+- Next action: Launch one root Dev Orchestrator and record Starting -> Running only after accepted execution evidence.
 
 ## Verification
 
