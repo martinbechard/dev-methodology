@@ -124,7 +124,7 @@ Branch: codex/require-complete-terminal-reconciliation-019fd80b.
 
 Worktree: /Users/martinbechard/.codex/worktrees/6db0/dev-methodology.
 
-Phase: Final fresh independent review.
+Phase: Independent focused verification.
 
 Started At: 2026-08-06T17:10:29Z.
 
@@ -134,7 +134,7 @@ Accepted Candidate Commit: 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391.
 
 Candidate Checks: Watchdog simulator 31 tests passed; five exact bundle, design, and generated assertions passed; changed skills validated; Python compilation and generator freshness passed; diff checks passed. One unrelated broad catalog expected-count mismatch remains outside this item.
 
-Next Action: Obtain the final fresh-context independent review verdict for candidate 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391. If accepted, dispatch independent focused verification; a material remaining finding blocks delivery rather than starting a third correction.
+Next Action: Obtain the independent focused verifier verdict for candidate 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391, then prepare current-main direct-main integration only if verification passes.
 
 ## Active Execution Evidence
 
@@ -142,19 +142,19 @@ Condition Type: delegated-work.
 
 Owner: Root Dev Orchestrator in task 019fd80b-9089-78c0-9272-26ac6b7d47ff.
 
-Evidence: Fresh Dev Code Reviewer child /root/final_review_terminal_reconciliation is reviewing clean final candidate 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391 across the complete approved scope after correction attempt 2. Review owns no mutation.
+Evidence: Independent Dev Verifier child /root/verify_terminal_reconciliation is verifying clean review-approved candidate 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391 through the bounded Watchdog simulator, exact bundle/design/generated assertions, supported validators and freshness checks, scope proof, and diff hygiene. Verification owns no mutation.
 
-Observed At: 2026-08-06T17:47:59Z.
+Observed At: 2026-08-06T17:51:56Z.
 
 Started At: 2026-08-06T17:10:29Z.
 
-Deadline or Expires At: 2026-08-06T18:47:59Z.
+Deadline or Expires At: 2026-08-06T18:51:56Z.
 
-Next Action: Fresh-context reviewer confirms canonical and simulator status-aware merge handling, explicit tri-state claim evidence, prior/current preservation comparison, aggregate alerts, default archival, strict NO_ACTION, and read-only authority.
+Next Action: Independent verifier returns PASS/READY or FAIL/BLOCKED with exact focused commands and evidence; no broad suite or live Codex cycle is permitted.
 
-Next Reconciliation At: 2026-08-06T18:01:59Z.
+Next Reconciliation At: 2026-08-06T18:05:56Z.
 
-Conversation Title Evidence: The canonical conversation is Reviewing — Require Complete Terminal Reconciliation.
+Conversation Title Evidence: The canonical conversation is Verifying — Require Complete Terminal Reconciliation.
 
 ## Correction History
 
@@ -189,6 +189,8 @@ Disposition: Both confirmed findings and the bounded residual risk are returned 
 Correction Attempt 2 Commit: 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391.
 
 Correction Attempt 2 Result: Canonical and generated status-aware wording now matches the simulator; claim applicability is explicit tri-state; recurring preservation alerts retain acknowledged prior and current evidence; all focused candidate checks pass.
+
+Final Independent Review: APPROVED candidate 1f2ab0a3d71fe2a2c8a14c6ccdcd9035ff0cf391 with no material findings, no open questions, exact approved scope, clean worktree, and deterministic simulator/source/generated coverage. No live Codex runtime cycle was run because the bounded read-only review scope prohibits it.
 
 ## Governed Definition Approval
 
