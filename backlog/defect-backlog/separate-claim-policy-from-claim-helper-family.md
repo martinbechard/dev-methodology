@@ -1,6 +1,6 @@
 # Separate Claim Policy From Claim Helper Family
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -219,3 +219,23 @@ Satisfied Unblock Evidence: Recovery is limited to the three preserved findings 
 Ready Scope: Reconcile only the class-diagram operation members, the report segment-field contract, and the helper-routing inline-versus-reference mismatch. Preserve all blocker, candidate, final-verdict, canonical-identity, attempt-history, and scope evidence.
 
 Next Action: Ready -> Starting through the authorized Coordinator and then Starting -> Running before mutation.
+
+## Starting Handoff Evidence
+
+Transition: Ready -> Starting.
+
+Reservation At: 2026-08-06T08:01:52Z.
+
+Coordinator Reservation and Dispatch Authority: Parent task 019fb057-1767-7ef2-b5fa-41f4417b20b3 authorized this reservation and dispatch.
+
+Canonical Task and Conversation: 019fd5b5-aca7-7cb1-9ae0-012fb84e13db; the existing canonical work-item task is adopted without replacement.
+
+Owner: Dev Backlog Coordinator retains reservation ownership pending launch acceptance.
+
+Objective: One fresh bounded recovery limited to the three preserved findings on candidate 5fa7620a6471574d2bf84a12e541805780d4bac6, using the same original coder.
+
+Launch Result: Started.
+
+Next Reconciliation At: 2026-08-06T08:11:52Z.
+
+Required Next Acceptance: The existing canonical Root Dev Orchestrator must accept Starting -> Running before mutation.
