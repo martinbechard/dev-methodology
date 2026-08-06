@@ -418,19 +418,19 @@
 
     <section class="section" aria-labelledby="generation-title">
       <h2 id="generation-title">From Conceptual Agent Definitions To Native Agent Definitions</h2>
-      <p class="lede"><code>agents/roles/&lt;role-category&gt;/&lt;role-name&gt;.role.yaml</code> is a conceptual agent definition source, not a file that an agent harness loads directly. It owns the agent's conceptual values, including its selected profile ID, in the repository's shared vocabulary. <code>agents/role-schema.yaml</code> constrains those values, the conceptual profile catalog owns profile purposes, and adapter model-profile YAML owns concrete model and any effort or context values present. <code>scripts/build-skill-docs.py</code> owns the transformation that emits one native agent definition per supported harness.</p>
+      <p class="lede"><code>agents/roles/&lt;role-category&gt;/&lt;role-name&gt;.role.yaml</code> is a conceptual agent definition source, not a file that an agent harness loads directly. It owns the selected profile ID and the provider-neutral <code>contextBudgetPercent</code>. <code>agents/role-schema.yaml</code> constrains those values. The conceptual profile catalog owns profile purposes. Adapter model-profile YAML owns the concrete model, effort, <code>contextCapacityTokens</code>, <code>contextBudgetMechanism</code>, and evidence. <code>scripts/build-skill-docs.py</code> owns the transformation that emits one native agent definition per supported harness.</p>
       <div class="flow" aria-label="Conceptual agent definition generation flow">
         <div class="flow-row">
           <div><span class="name">1. Author The Conceptual Agent Definition</span></div>
-          <p>Define intent with conceptual properties such as <code>instructions</code>, <code>skills</code>, <code>modelProfile</code>, <code>tools</code>, and <code>outputContract</code>. These properties describe the agent without making a harness file authoritative.</p>
+          <p>Define intent with conceptual properties such as <code>instructions</code>, <code>skills</code>, <code>modelProfile</code>, <code>contextBudgetPercent</code>, <code>tools</code>, and <code>outputContract</code>. The percentage is a required whole integer from 1 through 100. It does not identify a provider model or token capacity.</p>
         </div>
         <div class="flow-row">
           <div><span class="name">2. Validate And Resolve</span></div>
-          <p><code>agents/role-schema.yaml</code> defines the allowed conceptual agent definition properties. Skill IDs resolve against portable skill sources, semantic model profiles resolve through adapter model mappings, adapter-owned skills resolve only within their harness, and unsupported or defaulted behavior follows the documented adapter rules.</p>
+          <p><code>agents/role-schema.yaml</code> defines the allowed conceptual agent definition properties. Skill IDs resolve against portable skill sources. Semantic profiles resolve through adapter model mappings. Each selected adapter profile must provide a positive capacity, an instruction mechanism, and HTTPS evidence. Missing capacity, unsupported mechanisms, invalid percentages, and derived values above capacity stop generation.</p>
         </div>
         <div class="flow-row">
           <div><span class="name">3. Render Each Harness Format</span></div>
-          <p><code>scripts/build-skill-docs.py</code> owns conversion to native property names, Codex runtime-name normalization and output-filename derivation, instruction placement, explicit omissions, skill-reference and inline-skill handling, and runtime file structures. For example, conceptual <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude Code, Gemini CLI, or Junie CLI agent. Conceptual roles and skills still own their source values, and adapter model-profile YAML owns only the concrete model and any effort or context values present for its harness.</p>
+          <p><code>scripts/build-skill-docs.py</code> owns conversion to native property names, context-budget calculation, instruction placement, output filenames, skill delivery, and runtime file structures. The calculation is <code>floor(contextCapacityTokens * contextBudgetPercent / 100)</code>. The generator subtracts zero additional token reserve. The unallocated percentage remains headroom. The same percentage applies to each <code>modelStages</code> profile.</p>
           <p>The Codex adapter includes <code>codex-harness-directives</code> in that required core set when <code>repositoryMutation</code> is required or conditional. Passing <code>--inline-core-skills true</code> explicitly embeds required core skill bodies. The <a href="skills-modularization.html#skill-lifecycle-title">cross-harness skill lifecycle</a> owns the preload, dynamic invocation, content-read, application, and proof distinctions.</p>
         </div>
         <div class="flow-row">
@@ -606,6 +606,11 @@
             <td>Selects simple, default, documentation, advanced, or advanced-long capability without naming a provider model. Adapter mappings resolve the native model and reasoning settings.</td>
           </tr>
           <tr>
+            <td><span class="name">Context budget percentage</span></td>
+            <td><code>contextBudgetPercent</code></td>
+            <td>Allocates a required whole-number percentage of each adapter-resolved model capacity. Provider model identifiers and token capacities remain outside the conceptual role.</td>
+          </tr>
+          <tr>
             <td><span class="name">Stage model profiles</span></td>
             <td><code>modelStages</code></td>
             <td>Declares intended semantic profiles for bounded stages. Separate stage invocations must be implemented and captured before staged execution is considered verified.</td>
@@ -697,7 +702,7 @@
         </div>
         <div class="flow-row">
           <div><span class="name">Harness adapter mappings</span></div>
-          <p><code>adapters/&lt;harness-name&gt;/model-profiles.yaml</code> owns the accepted concrete <code>model</code>, optional <code>effort</code>, and optional <code>context</code> values for its harness. <code>scripts/build-skill-docs.py</code> requires each adapter to map the complete conceptual profile set, then owns which accepted values are rendered and their native property names: all four adapters receive <code>model</code>, Codex and Junie CLI also receive effort, and no adapter currently receives context.</p>
+          <p><code>adapters/&lt;harness-name&gt;/model-profiles.yaml</code> owns the accepted concrete <code>model</code>, optional <code>effort</code>, optional <code>context</code>, <code>contextCapacityTokens</code>, <code>contextBudgetMechanism</code>, and evidence. <code>scripts/build-skill-docs.py</code> requires each adapter to map the complete conceptual profile set. All four adapters receive <code>model</code>. Codex and Junie CLI also receive effort. All four receive the capacity-derived instruction because no supported native custom-agent schema has a per-agent context-limit field.</p>
         </div>
       </div>
     </section>
@@ -718,22 +723,22 @@
             <tr>
               <td><span class="name">Codex</span></td>
               <td>One standalone TOML file per custom agent.</td>
-              <td>Codex discovers project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code>. The Codex model-profile source contains model, effort, and context values; <code>scripts/build-skill-docs.py</code> renders model and effort as <code>model</code> and <code>model_reasoning_effort</code>, but does not render context. Roles supply the other conceptual values. The generator also owns the TOML structure, Codex runtime-name normalization, and output-filename derivation from <code>role.filename</code> under <code>generated/adapters/codex/agents/*.toml</code>. Mutation-capable definitions enable <code>codex-harness-directives</code> through <code>[[skills.config]]</code> and add a developer instruction to read it by default; explicit inline core delivery embeds it. Read-only definitions omit it. Enablement is not preloading or behavioral evidence.</td>
+              <td>Codex discovers project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code>. The adapter renders <code>model</code>, optional <code>model_reasoning_effort</code>, and the context-budget instruction in <code>developer_instructions</code>. Codex CLI 0.144.1 and the official custom-agent schema expose no native per-agent context-limit field. The generator owns the TOML structure, runtime-name normalization, and output filename under <code>generated/adapters/codex/agents/*.toml</code>. Mutation-capable definitions enable <code>codex-harness-directives</code> through <code>[[skills.config]]</code>. Explicit inline core delivery embeds it. Read-only definitions omit it.</td>
             </tr>
             <tr>
               <td><span class="name">Claude Code</span></td>
               <td>Markdown with YAML frontmatter and a Markdown instruction body.</td>
-              <td>Claude discovers project <code>.claude/agents/</code> and user <code>~/.claude/agents/</code>. The Claude model-profile source contains model and context values, with no effort values; <code>scripts/build-skill-docs.py</code> renders only <code>model</code> and does not render context. Roles supply the other conceptual values, and the generator owns output-filename derivation plus the YAML-frontmatter and Markdown-body transformation under <code>generated/adapters/claude/agents/*.md</code>.</td>
+              <td>Claude discovers project <code>.claude/agents/</code> and user <code>~/.claude/agents/</code>. The adapter renders <code>model</code> and the context-budget instruction in the Markdown body. Claude Code 2.1.104 and the official subagent schema expose no native per-agent context-limit field. The generator owns the YAML frontmatter, Markdown body, and output filename under <code>generated/adapters/claude/agents/*.md</code>.</td>
             </tr>
             <tr>
               <td><span class="name">Gemini CLI</span></td>
               <td>Markdown with YAML frontmatter and a Markdown instruction body.</td>
-              <td>Gemini CLI discovers workspace <code>.gemini/agents/</code> and user <code>~/.gemini/agents/</code>. The Gemini model-profile source contains model and context values; <code>scripts/build-skill-docs.py</code> renders only <code>model</code> and does not render context. Roles supply the other conceptual values, and the generator owns output-filename derivation plus the YAML-frontmatter and Markdown-body transformation under <code>generated/adapters/gemini/agents/&lt;agent-name&gt;.md</code>.</td>
+              <td>Gemini CLI discovers workspace <code>.gemini/agents/</code> and user <code>~/.gemini/agents/</code>. The adapter renders <code>model</code> and the context-budget instruction in the Markdown body. Gemini CLI 0.39.1 and the official subagent schema expose no native per-agent context-limit field. The generator owns the YAML frontmatter, Markdown body, and output filename under <code>generated/adapters/gemini/agents/&lt;agent-name&gt;.md</code>.</td>
             </tr>
             <tr>
               <td><span class="name">Junie CLI</span></td>
               <td>Markdown with YAML metadata and a Markdown instruction body.</td>
-              <td>Junie CLI discovers project <code>.junie/agents/</code> or <code>.agents/</code>, user <code>~/.junie/agents/</code> or <code>~/.agents/</code>, and explicit agent locations. The Junie model-profile source contains model, effort, and context values; <code>scripts/build-skill-docs.py</code> renders model and effort as <code>model</code> and <code>reasoningLevel</code>, but does not render context. Roles supply the other conceptual values, and the generator owns output-filename derivation plus the YAML-metadata and Markdown-body transformation under <code>generated/adapters/junie/agents/&lt;agent-name&gt;.md</code>.</td>
+              <td>Junie CLI discovers project <code>.junie/agents/</code> or <code>.agents/</code>, user <code>~/.junie/agents/</code> or <code>~/.agents/</code>, and explicit agent locations. The adapter renders <code>model</code>, optional <code>reasoningLevel</code>, and the context-budget instruction in the Markdown body. The official model-selection page is dated 05 August 2026. The separately dated July 2026 subagent page exposes no native per-agent context-limit field. The generator owns the YAML metadata, Markdown body, and output filename under <code>generated/adapters/junie/agents/&lt;agent-name&gt;.md</code>.</td>
             </tr>
             <tr>
               <td><span class="name">GitHub Copilot Agent Mode</span></td>
@@ -830,6 +835,14 @@
             <td><code>model</code></td>
             <td><code>model</code></td>
             <td><code>model</code></td>
+          </tr>
+          <tr>
+            <td><span class="name">contextBudgetPercent</span></td>
+            <td>Generate an explicit capacity-derived instruction in <code>developer_instructions</code>.</td>
+            <td>Generate an explicit capacity-derived instruction in the Markdown body.</td>
+            <td>Generate an explicit capacity-derived instruction in the Markdown body.</td>
+            <td>Generate an explicit capacity-derived instruction in the Markdown body.</td>
+            <td>Native generation is not part of the current adapter milestone.</td>
           </tr>
           <tr>
             <td><span class="name">dynamicFolderSkills</span></td>
@@ -933,24 +946,36 @@
                 <a href="https://learn.chatgpt.com/docs/agent-configuration/subagents?surface=app">OpenAI Codex Subagents</a>,
                 <a href="https://learn.chatgpt.com/docs/config-file/config-basic">OpenAI Codex Config Basics</a>,
                 <a href="https://learn.chatgpt.com/docs/config-file/config-advanced">OpenAI Codex Advanced Config</a>,
-                <a href="https://learn.chatgpt.com/docs/agent-configuration/rules">OpenAI Codex Rules</a>, and
-                <a href="https://developers.openai.com/codex/skills">OpenAI Codex Skills</a>.
+                <a href="https://learn.chatgpt.com/docs/agent-configuration/rules">OpenAI Codex Rules</a>,
+                <a href="https://developers.openai.com/codex/skills">OpenAI Codex Skills</a>,
+                <a href="https://developers.openai.com/api/docs/models">OpenAI model catalog</a>,
+                <a href="https://developers.openai.com/api/docs/models/gpt-5.5">OpenAI GPT-5.5 model</a>, and
+                <a href="https://developers.openai.com/codex/subagents">OpenAI Codex Subagents</a>.
               </td>
             </tr>
             <tr>
               <td><span class="name">Claude Code</span></td>
-              <td><a href="https://code.claude.com/docs/en/sub-agents">Claude Code Subagents</a>.</td>
+              <td>
+                <a href="https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5">Claude Fable 5</a>,
+                <a href="https://platform.claude.com/docs/en/about-claude/models/whats-new-sonnet-5">Claude Sonnet 5</a>,
+                <a href="https://platform.claude.com/docs/en/release-notes/overview">Claude release notes</a>, and
+                <a href="https://code.claude.com/docs/en/sub-agents">Claude Code Subagents</a>.
+              </td>
             </tr>
             <tr>
               <td><span class="name">Gemini CLI</span></td>
               <td>
-                <a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/core/subagents.md">Gemini CLI Subagents</a> and
-                <a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/using-agent-skills.md">Gemini CLI Agent Skills</a>.
+                <a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/core/subagents.md">Gemini CLI Subagents</a>,
+                <a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/using-agent-skills.md">Gemini CLI Agent Skills</a>,
+                <a href="https://geminicli.com/docs/cli/model/">Gemini CLI model selection</a>,
+                <a href="https://ai.google.dev/gemini-api/docs/models">Gemini model catalog</a>, and
+                <a href="https://geminicli.com/docs/core/subagents/">Gemini CLI Subagents</a>.
               </td>
             </tr>
             <tr>
               <td><span class="name">Junie CLI</span></td>
               <td>
+                <a href="https://junie.jetbrains.com/docs/junie-cli-model-selection.html">Junie CLI model selection</a>,
                 <a href="https://junie.jetbrains.com/docs/junie-cli-subagents.html">Junie CLI Custom Subagents</a>,
                 <a href="https://junie.jetbrains.com/docs/agent-skills.html">Junie Agent Skills</a>, and
                 <a href="https://junie.jetbrains.com/docs/guidelines-and-memory.html">Junie Guidelines And Memory</a>.

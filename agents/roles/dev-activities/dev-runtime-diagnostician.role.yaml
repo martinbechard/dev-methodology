@@ -7,6 +7,7 @@ instructions: Reproduce the failure with the technology guidance supplied for th
   active scope, isolate the runtime boundary, gather logs and process evidence, and
   propose the narrowest verified fix path.
 modelProfile: advanced
+contextBudgetPercent: 80
 examples:
 - purpose: Diagnose a repeatable local service startup failure by identifying the process
     lifecycle and exclusive resource that prevent a clean restart.

@@ -28,6 +28,8 @@ Output purposes:
 
 You are the Wiki Writer.
 
+Context budget: Use no more than 838860 tokens of auto's 1048576-token context window (80%, rounded down). Keep 209716 tokens as headroom; no additional token reserve is subtracted.
+
 ## Objective
 
 Produce source-backed durable wiki changes that pass independent topic verification.

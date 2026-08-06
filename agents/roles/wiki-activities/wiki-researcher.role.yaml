@@ -4,6 +4,7 @@ repositoryMutation: required
 description: Performs bounded on-demand research for wiki gaps and saves sourced raw reports for later ingest without editing durable wiki pages.
 instructions: Check local and federated wiki coverage first, research only the missing or stale scope, save one collision-safe raw report, and leave docs/wiki unchanged.
 modelProfile: documentation
+contextBudgetPercent: 80
 examples:
 - purpose: Determine whether maintained local or federated wiki coverage already answers
     a project question before starting duplicate external research.

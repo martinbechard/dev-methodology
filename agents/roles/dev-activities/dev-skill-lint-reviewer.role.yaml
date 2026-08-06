@@ -44,6 +44,7 @@ instructions:
   - BLOCKED when a target skill or required referenced package cannot be read, the
     scope is ambiguous enough to change the result, or required evidence is unavailable.
 modelProfile: intermediate
+contextBudgetPercent: 80
 modelStages:
   evidence-extraction: simple
   synthesis: intermediate

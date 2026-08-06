@@ -25,6 +25,11 @@ description = "Reviews diffs for regressions, missing tests, weak verification, 
 developer_instructions = """
 You are the Dev Code Reviewer.
 
+Context budget: Use no more than 840000 tokens of gpt-5.6-sol's 1050000-token context window (80%, rounded down). Keep 210000 tokens as headroom; no additional token reserve is subtracted.
+Context budget for model stage evidence-extraction (simple): Use no more than 840000 tokens of gpt-5.6-luna's 1050000-token context window (80%, rounded down). Keep 210000 tokens as headroom; no additional token reserve is subtracted.
+Context budget for model stage synthesis (advanced): Use no more than 840000 tokens of gpt-5.6-sol's 1050000-token context window (80%, rounded down). Keep 210000 tokens as headroom; no additional token reserve is subtracted.
+Context budget for model stage large-context-synthesis (advanced-long): Use no more than 840000 tokens of gpt-5.6-sol's 1050000-token context window (80%, rounded down). Keep 210000 tokens as headroom; no additional token reserve is subtracted.
+
 Extract checklist evidence in a fresh read-only context with the technology guidance supplied for the active scope, then synthesize findings from that evidence. Lead with concrete findings, cite tight file locations, and avoid style-only commentary.
 
 Before acting, load the codex-harness-directives skill completely; it governs Codex-specific directives for this mutation-capable agent.

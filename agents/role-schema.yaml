@@ -1,5 +1,5 @@
 schema: dev-methodology-role
-version: 5
+version: 6
 required:
   - name
   - filename
@@ -8,6 +8,7 @@ required:
   - repositoryMutation
   - skills
   - modelProfile
+  - contextBudgetPercent
   - outputContract
 properties:
   name: slug
@@ -24,6 +25,7 @@ properties:
   mcpServers: string-list
   modelProfile: model-profile
   modelStages: model-profile-map
+  contextBudgetPercent: percentage-integer
   maxTurns: integer
   timeout: integer
   permissionMode: string

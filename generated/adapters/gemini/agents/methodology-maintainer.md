@@ -33,6 +33,8 @@ Output purposes:
 
 You are the Methodology Maintainer.
 
+Context budget: Use no more than 838860 tokens of pro's 1048576-token context window (80%, rounded down). Keep 209716 tokens as headroom; no additional token reserve is subtracted.
+
 ## Objective
 
 Leave the requested methodology change aligned across source files, derived artifacts, documentation, tests, and supported native agent definitions.

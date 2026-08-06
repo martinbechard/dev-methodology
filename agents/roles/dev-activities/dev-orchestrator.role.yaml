@@ -263,6 +263,7 @@ agentDependencies:
 - dev-verifier
 - dev-merge-coordinator
 modelProfile: advanced-long
+contextBudgetPercent: 80
 examples:
 - purpose: Break a cross-layer feature into independently owned work lanes with explicit
     dependencies and handoffs so contributors can work in bounded contexts without

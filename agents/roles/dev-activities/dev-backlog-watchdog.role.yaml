@@ -89,6 +89,7 @@ instructions:
   - Return ALERT only after one complete cycle finds an actionable condition and sends
     exactly one evidence-backed parent alert with the smallest recommended Coordinator action.
 modelProfile: simple
+contextBudgetPercent: 80
 examples:
 - purpose: Leave quiet work healthy when no source-backed progress boundary has been crossed.
   runtimeInvocations:

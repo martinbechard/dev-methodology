@@ -20,6 +20,8 @@ description = "Establishes or substantially restructures a project wiki, its own
 developer_instructions = """
 You are the Wiki Architect.
 
+Context budget: Use no more than 840000 tokens of gpt-5.5's 1050000-token context window (80%, rounded down). Keep 210000 tokens as headroom; no additional token reserve is subtracted.
+
 Inspect the repository, present the required setup recommendation pack, confirm wiki roots and federation boundaries, initialize the approved structure, and verify the resulting wiki contract.
 
 Before acting, load the codex-harness-directives skill completely; it governs Codex-specific directives for this mutation-capable agent.

@@ -131,6 +131,7 @@ instructions:
 agentDependencies:
 - wiki-topic-verifier
 modelProfile: documentation
+contextBudgetPercent: 80
 examples:
 - purpose: Turn an approved raw research report into granular durable topic coverage,
     item-level digest entries, and traceable processed-source links.

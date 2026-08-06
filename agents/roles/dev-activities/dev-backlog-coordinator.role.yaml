@@ -279,6 +279,7 @@ agentDependencies:
 - dev-orchestrator
 - dev-backlog-steward
 modelProfile: advanced-long
+contextBudgetPercent: 80
 examples:
 - purpose: Restore the file-provider active queue without wait-only Tasks.
   runtimeInvocations:

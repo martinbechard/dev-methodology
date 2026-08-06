@@ -1,17 +1,53 @@
 schema: dev-methodology-adapter-model-profiles
-version: 1
+version: 2
 adapter: gemini
 profiles:
   simple:
     model: flash
+    contextCapacityTokens: 1048576
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://geminicli.com/docs/cli/model/
+    - https://ai.google.dev/gemini-api/docs/models
+    contextBudgetMechanismEvidence: https://geminicli.com/docs/core/subagents/
   default:
     model: auto
+    contextCapacityTokens: 1048576
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://geminicli.com/docs/cli/model/
+    - https://ai.google.dev/gemini-api/docs/models
+    contextBudgetMechanismEvidence: https://geminicli.com/docs/core/subagents/
   documentation:
     model: auto
+    contextCapacityTokens: 1048576
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://geminicli.com/docs/cli/model/
+    - https://ai.google.dev/gemini-api/docs/models
+    contextBudgetMechanismEvidence: https://geminicli.com/docs/core/subagents/
   advanced:
     model: pro
+    contextCapacityTokens: 1048576
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://geminicli.com/docs/cli/model/
+    - https://ai.google.dev/gemini-api/docs/models
+    contextBudgetMechanismEvidence: https://geminicli.com/docs/core/subagents/
   advanced-long:
     model: pro
     context: extra-long
+    contextCapacityTokens: 1048576
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://geminicli.com/docs/cli/model/
+    - https://ai.google.dev/gemini-api/docs/models
+    contextBudgetMechanismEvidence: https://geminicli.com/docs/core/subagents/
   intermediate:
     model: pro
+    contextCapacityTokens: 1048576
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://geminicli.com/docs/cli/model/
+    - https://ai.google.dev/gemini-api/docs/models
+    contextBudgetMechanismEvidence: https://geminicli.com/docs/core/subagents/

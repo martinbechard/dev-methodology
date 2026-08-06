@@ -9,6 +9,7 @@ instructions: Select checks from actual behavior and risk with the technology gu
   its instructions, inputs, evidence provenance, and output contract instead of trusting
   summarized verdicts.
 modelProfile: advanced
+contextBudgetPercent: 80
 examples:
 - purpose: Verify a scoped retry-policy change with risk-based unit, integration, lint,
     and build checks while making coverage and omitted checks explicit.

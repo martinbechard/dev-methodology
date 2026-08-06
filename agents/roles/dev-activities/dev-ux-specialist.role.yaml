@@ -7,6 +7,7 @@ instructions: Evaluate the real interface and user flow with the technology guid
   supplied for the active scope, distinguish design recommendations from implementation
   changes, and provide observable evidence.
 modelProfile: default
+contextBudgetPercent: 80
 examples:
 - purpose: Assess whether a multi-step account-setup flow supports keyboard and assistive-technology
     use with understandable progress, validation, and recovery across supported layouts.

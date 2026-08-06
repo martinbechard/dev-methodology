@@ -1,23 +1,53 @@
 schema: dev-methodology-adapter-model-profiles
-version: 1
+version: 2
 adapter: codex
 profiles:
   simple:
     model: gpt-5.6-luna
     effort: medium
+    contextCapacityTokens: 1050000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://developers.openai.com/api/docs/models
+    contextBudgetMechanismEvidence: https://developers.openai.com/codex/subagents
   default:
     model: gpt-5.6-terra
     effort: medium
+    contextCapacityTokens: 1050000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://developers.openai.com/api/docs/models
+    contextBudgetMechanismEvidence: https://developers.openai.com/codex/subagents
   documentation:
     model: gpt-5.5
     effort: high
+    contextCapacityTokens: 1050000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://developers.openai.com/api/docs/models/gpt-5.5
+    contextBudgetMechanismEvidence: https://developers.openai.com/codex/subagents
   advanced:
     model: gpt-5.6-sol
     effort: high
+    contextCapacityTokens: 1050000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://developers.openai.com/api/docs/models
+    contextBudgetMechanismEvidence: https://developers.openai.com/codex/subagents
   advanced-long:
     model: gpt-5.6-sol
     effort: high
     context: extra-long
+    contextCapacityTokens: 1050000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://developers.openai.com/api/docs/models
+    contextBudgetMechanismEvidence: https://developers.openai.com/codex/subagents
   intermediate:
     model: gpt-5.6-luna
     effort: high
+    contextCapacityTokens: 1050000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://developers.openai.com/api/docs/models
+    contextBudgetMechanismEvidence: https://developers.openai.com/codex/subagents

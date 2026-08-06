@@ -57,9 +57,9 @@ Project-specific evaluation skills may freeze inputs and compare completed candi
 - skills/route-documentation-work/assets/templates contains the reusable TODO-driven template assets.
 - Keep Codex openai.yaml metadata beside each source SKILL.md when a skill needs Codex app metadata, invocation policy, or tool dependencies.
 - scripts/install-skills.py installs the bundled skills through adapter profiles for generic Agent Skills, Codex, Gemini CLI, Claude Code, and JetBrains Junie CLI.
-- agents/role-schema.yaml defines the customer-independent conceptual agent definition schema.
+- agents/role-schema.yaml defines the customer-independent conceptual agent definition schema, including the required contextBudgetPercent allocation.
 - agents/model-profiles.yaml defines semantic simple, default, documentation, advanced, and advanced-long model profiles without provider identifiers.
-- adapters/[runtime]/model-profiles.yaml maps semantic profiles to concrete models, reasoning effort, and context settings for each harness.
+- adapters/[runtime]/model-profiles.yaml maps semantic profiles to concrete models, reasoning effort, verified contextCapacityTokens, contextBudgetMechanism, and evidence for each harness.
 - adapters/[runtime]/skills/[skill-name]/SKILL.md contains directives that belong only to that runtime. The installer includes these skills only with the matching adapter.
 - agents/roles contains conceptual agent definition sources grouped by Dev Activities, Wiki Activities, Project Setup, and Methodology Maintenance.
 - generated/adapters contains ready-to-copy native agent definitions and agent-generation-manifest.json. Codex, Claude Code, Gemini CLI, and Junie CLI definitions are generated from the same conceptual sources.
@@ -81,13 +81,15 @@ python3 scripts/build-skill-docs.py
 
 The script reads each bundled SKILL.md file, the distributed methodology templates, adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, the presentation-only design/role-catalog-groups.yaml catalog, agents/role-schema.yaml, agents/model-profiles.yaml, adapter model mappings, adapter-owned skill sources, and conceptual agent definition sources. It writes design/generated/skill-definitions.js, design/generated/template-definitions.js, design/generated/role-definitions.js, native definitions under generated/adapters, and agent-generation-manifest.json. By default, generated agents reference unconditional core skills. Conditional request-specific skills retain their conditions. Pass the inline-core-skills option as true only when self-contained generated instructions are explicitly required.
 
+Each conceptual role owns contextBudgetPercent. Each adapter profile owns the selected model's contextCapacityTokens, the contextBudgetMechanism, and authoritative evidence. The generator calculates floor(contextCapacityTokens * contextBudgetPercent / 100). It subtracts zero additional token reserve. The unallocated percentage remains headroom. Codex, Claude Code, Gemini CLI, and Junie CLI currently use one explicit generated instruction because their documented custom-agent schemas do not have a native per-agent context-limit field. The same percentage applies to every modelStages resolution.
+
 ```bash
 python3 scripts/build-skill-docs.py --inline-core-skills true
 ```
 
 The [Generic Agent Definitions Source page](design/generic-agent-definitions-source.html) owns portable skill sources, conceptual agent definition properties, native packaging, and adapter mappings. The [Agentic Configuration page](design/agentic-configuration.html) explains how the resulting runtime files provide relevant context while an agentic coding tool generates code.
 
-The generation manifest is the deterministic build inventory: it records the core-skill inlining mode, each conceptual agent definition source, every generated Codex, Claude Code, Gemini CLI, and Junie CLI path, each adapter-owned skill source and digest, and aggregate counts without timestamps. With core-skill inlining enabled, mutation-capable Codex agents receive codex-harness-directives as inlined adapter-owned instructions. With inlining disabled, Codex enables and instructs those agents to load the adapter skill dynamically. Read-only Codex agents and every non-Codex adapter remain free of Codex-only directives.
+The generation manifest is the deterministic build inventory. It records the core-skill inlining mode, each conceptual agent definition source, every generated adapter path, each adapter-owned skill source and digest, and aggregate counts without timestamps. Each agent entry also records its canonical percentage, rounding rule, zero additional reserve, resolved capacity, budget, headroom, mechanism, evidence, and modelStages results. With core-skill inlining enabled, mutation-capable Codex agents receive codex-harness-directives as inlined adapter-owned instructions. With inlining disabled, Codex enables and instructs those agents to load the adapter skill dynamically. Read-only Codex agents and every non-Codex adapter remain free of Codex-only directives.
 
 Build the portable technology detection registry and installed detector mirror before generating conceptual agent definition and documentation views:
 

@@ -1,23 +1,59 @@
 schema: dev-methodology-adapter-model-profiles
-version: 1
+version: 2
 adapter: junie
 profiles:
   simple:
     model: gemini-flash
     effort: low
+    contextCapacityTokens: 1048576
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://junie.jetbrains.com/docs/junie-cli-model-selection.html
+    - https://ai.google.dev/gemini-api/docs/models
+    contextBudgetMechanismEvidence: https://junie.jetbrains.com/docs/junie-cli-subagents.html
   default:
     model: sonnet
     effort: medium
+    contextCapacityTokens: 1000000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://junie.jetbrains.com/docs/junie-cli-model-selection.html
+    - https://platform.claude.com/docs/en/release-notes/overview
+    contextBudgetMechanismEvidence: https://junie.jetbrains.com/docs/junie-cli-subagents.html
   documentation:
     model: gpt-5.6-sol
     effort: high
+    contextCapacityTokens: 1050000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://junie.jetbrains.com/docs/junie-cli-model-selection.html
+    - https://developers.openai.com/api/docs/models
+    contextBudgetMechanismEvidence: https://junie.jetbrains.com/docs/junie-cli-subagents.html
   advanced:
     model: opus
     effort: high
+    contextCapacityTokens: 1000000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://junie.jetbrains.com/docs/junie-cli-model-selection.html
+    - https://platform.claude.com/docs/en/release-notes/overview
+    contextBudgetMechanismEvidence: https://junie.jetbrains.com/docs/junie-cli-subagents.html
   advanced-long:
     model: opus
     effort: high
     context: extra-long
+    contextCapacityTokens: 1000000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://junie.jetbrains.com/docs/junie-cli-model-selection.html
+    - https://platform.claude.com/docs/en/release-notes/overview
+    contextBudgetMechanismEvidence: https://junie.jetbrains.com/docs/junie-cli-subagents.html
   intermediate:
     model: opus
     effort: high
+    contextCapacityTokens: 1000000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://junie.jetbrains.com/docs/junie-cli-model-selection.html
+    - https://platform.claude.com/docs/en/release-notes/overview
+    contextBudgetMechanismEvidence: https://junie.jetbrains.com/docs/junie-cli-subagents.html

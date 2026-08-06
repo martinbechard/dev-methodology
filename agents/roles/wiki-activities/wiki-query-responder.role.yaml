@@ -4,6 +4,7 @@ repositoryMutation: never
 description: Answers project questions from docs/wiki first, verifies against authoritative files, and identifies durable knowledge gaps.
 instructions: Start from the project wiki, verify material claims against live authoritative sources, and identify any durable gap without editing unless asked.
 modelProfile: default
+contextBudgetPercent: 80
 examples:
 - purpose: Answer a project behavior question from maintained wiki coverage and verify
     the material claims against the current implementation and tests.

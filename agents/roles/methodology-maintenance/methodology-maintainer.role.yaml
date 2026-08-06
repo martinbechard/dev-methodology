@@ -71,6 +71,7 @@ agentDependencies:
 - methodology-artifact-reviewer
 - dev-verifier
 modelProfile: advanced
+contextBudgetPercent: 80
 examples:
 - purpose: Keep a distributed skill workflow, its catalog surfaces, and regression
     expectations aligned when the methodology gains an artifact-specific review route.

@@ -2,6 +2,7 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
 # Summary: Generates skill and template documentation data, conceptual agent definition views, runtime agent adapters, and their deterministic inventory.
+# Design: design/generic-agent-definitions-source.html
 
 from __future__ import annotations
 
@@ -84,6 +85,7 @@ ROLE_OUTPUT_PURPOSE_FIELD_NAME = "purpose"
 ROLE_EXAMPLES_FIELD_NAME = "examples"
 ROLE_MODEL_PROFILE_FIELD_NAME = "modelProfile"
 ROLE_MODEL_STAGES_FIELD_NAME = "modelStages"
+ROLE_CONTEXT_BUDGET_PERCENT_FIELD_NAME = "contextBudgetPercent"
 ROLE_DYNAMIC_FOLDER_SKILLS_FIELD_NAME = "dynamicFolderSkills"
 ROLE_SKILL_AVAILABILITY_FIELD_NAME = "skillAvailability"
 ROLE_EXAMPLE_RUNTIME_INVOCATIONS_FIELD_NAME = "runtimeInvocations"
@@ -190,6 +192,10 @@ ROLE_SKILL_INSTRUCTION_PREFIX = "Before acting, load these definition-owned skil
 ROLE_OUTPUT_INSTRUCTION_PREFIX = "Return:"
 ROLE_DISPLAY_ACRONYMS = {"e2e": "E2E", "qa": "QA", "ux": "UX"}
 MINIMUM_POSITIVE_INTEGER = 1
+MAXIMUM_PERCENTAGE_INTEGER = 100
+SUPPORTED_CONTEXT_BUDGET_MECHANISMS = {"instruction"}
+ADAPTER_MODEL_PROFILE_SCHEMA = "dev-methodology-adapter-model-profiles"
+ADAPTER_MODEL_PROFILE_VERSION = 2
 CATEGORY_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 MODEL_PROFILE_PATTERN = CATEGORY_PATTERN
 HEADING_PATTERN = re.compile(r"^(#{1,6})\s+(.*)$")
@@ -244,6 +250,7 @@ class RoleDefinition:
     source_path: str
     yaml: str
     model_profile: str
+    context_budget_percent: int
     model_stages: dict[str, str]
     optional_fields: dict[str, object]
 
@@ -253,6 +260,10 @@ class AdapterModelProfile:
     model: str
     effort: str | None
     context: str | None
+    context_capacity_tokens: int
+    context_budget_mechanism: str
+    context_capacity_evidence: tuple[str, ...]
+    context_budget_mechanism_evidence: str
 
 
 def split_frontmatter(text: str, source_path: Path) -> tuple[dict[str, object], str]:
@@ -312,6 +323,15 @@ def load_adapter_model_profiles(
 ) -> dict[str, AdapterModelProfile]:
     path = ADAPTERS_ROOT / adapter_name / "model-profiles.yaml"
     parsed = read_yaml_object(path)
+    if (
+        parsed.get("schema") != ADAPTER_MODEL_PROFILE_SCHEMA
+        or parsed.get("version") != ADAPTER_MODEL_PROFILE_VERSION
+    ):
+        raise ValueError(
+            "Adapter model profiles must use "
+            f"{ADAPTER_MODEL_PROFILE_SCHEMA} schema version "
+            f"{ADAPTER_MODEL_PROFILE_VERSION}: {path}"
+        )
     if parsed.get("adapter") != adapter_name:
         raise ValueError(f"Adapter model profile name must be {adapter_name}: {path}")
     profiles = parsed.get("profiles")
@@ -325,7 +345,18 @@ def load_adapter_model_profiles(
     for profile_id, profile in profiles.items():
         if not isinstance(profile, dict):
             raise ValueError(f"Adapter model profile {profile_id} must be an object: {path}")
-        unknown_fields = sorted(set(profile) - {"model", "effort", "context"})
+        unknown_fields = sorted(
+            set(profile)
+            - {
+                "model",
+                "effort",
+                "context",
+                "contextCapacityTokens",
+                "contextBudgetMechanism",
+                "contextCapacityEvidence",
+                "contextBudgetMechanismEvidence",
+            }
+        )
         if unknown_fields:
             raise ValueError(
                 f"Adapter model profile {profile_id} has unknown fields {unknown_fields}: {path}"
@@ -333,6 +364,12 @@ def load_adapter_model_profiles(
         model = profile.get("model")
         effort = profile.get("effort")
         context = profile.get("context")
+        context_capacity_tokens = profile.get("contextCapacityTokens")
+        context_budget_mechanism = profile.get("contextBudgetMechanism")
+        context_capacity_evidence = profile.get("contextCapacityEvidence")
+        context_budget_mechanism_evidence = profile.get(
+            "contextBudgetMechanismEvidence"
+        )
         if not isinstance(model, str) or not model.strip():
             raise ValueError(f"Adapter model profile {profile_id} must define model: {path}")
         for field_name, value in (("effort", effort), ("context", context)):
@@ -340,10 +377,49 @@ def load_adapter_model_profiles(
                 raise ValueError(
                     f"Adapter model profile {profile_id} {field_name} must be a string: {path}"
                 )
+        if (
+            not isinstance(context_capacity_tokens, int)
+            or isinstance(context_capacity_tokens, bool)
+            or context_capacity_tokens < MINIMUM_POSITIVE_INTEGER
+        ):
+            raise ValueError(
+                f"Adapter model profile {profile_id} contextCapacityTokens must be a positive integer: {path}"
+            )
+        if not isinstance(context_budget_mechanism, str) or not context_budget_mechanism.strip():
+            raise ValueError(
+                f"Adapter model profile {profile_id} must define contextBudgetMechanism: {path}"
+            )
+        context_budget_mechanism = context_budget_mechanism.strip()
+        if context_budget_mechanism not in SUPPORTED_CONTEXT_BUDGET_MECHANISMS:
+            raise ValueError(
+                f"Adapter model profile {profile_id} has unsupported context budget mechanism {context_budget_mechanism}: {path}"
+            )
+        if (
+            not isinstance(context_capacity_evidence, list)
+            or not context_capacity_evidence
+            or any(
+                not isinstance(item, str) or not item.startswith("https://")
+                for item in context_capacity_evidence
+            )
+        ):
+            raise ValueError(
+                f"Adapter model profile {profile_id} contextCapacityEvidence must be a non-empty list of HTTPS URLs: {path}"
+            )
+        if (
+            not isinstance(context_budget_mechanism_evidence, str)
+            or not context_budget_mechanism_evidence.startswith("https://")
+        ):
+            raise ValueError(
+                f"Adapter model profile {profile_id} contextBudgetMechanismEvidence must be an HTTPS URL: {path}"
+            )
         normalized[profile_id] = AdapterModelProfile(
             model.strip(),
             effort.strip() if isinstance(effort, str) else None,
             context.strip() if isinstance(context, str) else None,
+            context_capacity_tokens,
+            context_budget_mechanism,
+            tuple(context_capacity_evidence),
+            context_budget_mechanism_evidence,
         )
     return normalized
 
@@ -917,6 +993,18 @@ def load_role_definition(
     model_profile = parsed.get(ROLE_MODEL_PROFILE_FIELD_NAME)
     if model_profile not in model_profile_ids:
         raise ValueError(f"Conceptual agent definition has unknown model profile {model_profile}: {source_path}")
+    context_budget_percent = parsed.get(ROLE_CONTEXT_BUDGET_PERCENT_FIELD_NAME)
+    if (
+        not isinstance(context_budget_percent, int)
+        or isinstance(context_budget_percent, bool)
+        or not MINIMUM_POSITIVE_INTEGER
+        <= context_budget_percent
+        <= MAXIMUM_PERCENTAGE_INTEGER
+    ):
+        raise ValueError(
+            "Conceptual agent definition contextBudgetPercent must be a whole integer "
+            f"from 1 through 100: {source_path}"
+        )
     model_stages = parsed.get(ROLE_MODEL_STAGES_FIELD_NAME)
     if model_stages is not None:
         if not isinstance(model_stages, dict) or not model_stages:
@@ -1046,6 +1134,7 @@ def load_role_definition(
         source_path=str(source_path.relative_to(REPOSITORY_ROOT)),
         yaml=source_path.read_text(encoding="utf-8"),
         model_profile=model_profile,
+        context_budget_percent=context_budget_percent,
         model_stages=dict(model_stages) if isinstance(model_stages, dict) else {},
         optional_fields=optional_fields,
     )
@@ -1191,6 +1280,7 @@ def build_role_payload(roles: Sequence[RoleDefinition]) -> dict[str, object]:
                 "sourcePath": role.source_path,
                 "yaml": role.yaml,
                 ROLE_MODEL_PROFILE_FIELD_NAME: role.model_profile,
+                ROLE_CONTEXT_BUDGET_PERCENT_FIELD_NAME: role.context_budget_percent,
                 ROLE_MODEL_STAGES_FIELD_NAME: role.model_stages,
                 **role.optional_fields,
             }
@@ -1383,6 +1473,138 @@ def role_identity_instruction(role: RoleDefinition) -> str:
     return f"You are the {role.display_name}."
 
 
+def derive_context_budget(context_capacity_tokens: int, context_budget_percent: int) -> int:
+    """Derive a whole-token budget by flooring one percentage of a model capacity."""
+
+    if (
+        not isinstance(context_capacity_tokens, int)
+        or isinstance(context_capacity_tokens, bool)
+        or context_capacity_tokens < MINIMUM_POSITIVE_INTEGER
+    ):
+        raise ValueError("Model context capacity must be a positive integer.")
+    if (
+        not isinstance(context_budget_percent, int)
+        or isinstance(context_budget_percent, bool)
+        or context_budget_percent < MINIMUM_POSITIVE_INTEGER
+    ):
+        raise ValueError("Context budget percentage must be a positive whole integer.")
+    context_budget_tokens = context_capacity_tokens * context_budget_percent // 100
+    if context_budget_tokens > context_capacity_tokens:
+        raise ValueError(
+            "Derived context budget exceeds model context capacity; reduce contextBudgetPercent."
+        )
+    return context_budget_tokens
+
+
+def resolve_context_budget(
+    profile_id: str,
+    context_budget_percent: int,
+    model_profiles: dict[str, AdapterModelProfile],
+) -> dict[str, object]:
+    """Resolve one semantic model profile to its deterministic context allocation."""
+
+    adapter_profile = model_profiles[profile_id]
+    if adapter_profile.context_budget_mechanism not in SUPPORTED_CONTEXT_BUDGET_MECHANISMS:
+        raise ValueError(
+            "Adapter model profile "
+            f"{profile_id} has unsupported context budget mechanism "
+            f"{adapter_profile.context_budget_mechanism}."
+        )
+    budget_tokens = derive_context_budget(
+        adapter_profile.context_capacity_tokens,
+        context_budget_percent,
+    )
+    return {
+        "modelProfile": profile_id,
+        "model": adapter_profile.model,
+        "contextCapacityTokens": adapter_profile.context_capacity_tokens,
+        "contextBudgetTokens": budget_tokens,
+        "headroomTokens": adapter_profile.context_capacity_tokens - budget_tokens,
+        "contextBudgetMechanism": adapter_profile.context_budget_mechanism,
+        "contextCapacityEvidence": list(adapter_profile.context_capacity_evidence),
+        "contextBudgetMechanismEvidence": (
+            adapter_profile.context_budget_mechanism_evidence
+        ),
+    }
+
+
+def _context_budget_sentence(
+    label: str,
+    allocation: dict[str, object],
+    context_budget_percent: int,
+) -> str:
+    """Render one stable instruction sentence from a resolved context allocation."""
+
+    return (
+        f"{label} Use no more than {allocation['contextBudgetTokens']} tokens of "
+        f"{allocation['model']}'s {allocation['contextCapacityTokens']}-token context "
+        f"window ({context_budget_percent}%, rounded down). Keep "
+        f"{allocation['headroomTokens']} tokens as headroom; no additional token reserve "
+        "is subtracted."
+    )
+
+
+def context_budget_instruction(
+    role: RoleDefinition,
+    model_profiles: dict[str, AdapterModelProfile],
+) -> str:
+    """Render the primary and model-stage allocations as stable runtime instructions."""
+
+    primary = resolve_context_budget(
+        role.model_profile,
+        role.context_budget_percent,
+        model_profiles,
+    )
+    lines = [
+        _context_budget_sentence(
+            "Context budget:",
+            primary,
+            role.context_budget_percent,
+        )
+    ]
+    for stage, profile_id in role.model_stages.items():
+        allocation = resolve_context_budget(
+            profile_id,
+            role.context_budget_percent,
+            model_profiles,
+        )
+        lines.append(
+            _context_budget_sentence(
+                f"Context budget for model stage {stage} ({profile_id}):",
+                allocation,
+                role.context_budget_percent,
+            )
+        )
+    return "\n".join(lines)
+
+
+def context_allocation_manifest(
+    role: RoleDefinition,
+    model_profiles: dict[str, AdapterModelProfile],
+) -> dict[str, object]:
+    """Return reviewable primary and stage context allocations for one adapter agent."""
+
+    return {
+        "contextBudgetPercent": role.context_budget_percent,
+        "headroomPercent": MAXIMUM_PERCENTAGE_INTEGER - role.context_budget_percent,
+        "rounding": "floor",
+        "additionalReserveTokens": 0,
+        "primary": resolve_context_budget(
+            role.model_profile,
+            role.context_budget_percent,
+            model_profiles,
+        ),
+        "modelStages": {
+            stage: resolve_context_budget(
+                profile_id,
+                role.context_budget_percent,
+                model_profiles,
+            )
+            for stage, profile_id in role.model_stages.items()
+        },
+    }
+
+
 def role_instruction_text(
     role: RoleDefinition,
     *,
@@ -1409,10 +1631,15 @@ def markdown_role_instruction_text(
     role: RoleDefinition,
     adapter_name: str,
     inline_core_skills: bool,
+    model_profiles: dict[str, AdapterModelProfile],
 ) -> str:
     """Render one Markdown adapter instruction body without empty sections."""
 
-    sections = [role_identity_instruction(role), role.instructions]
+    sections = [
+        role_identity_instruction(role),
+        context_budget_instruction(role, model_profiles),
+        role.instructions,
+    ]
     loading_instructions = role_loading_instruction_text(
         role,
         fixed_skills_preloaded=adapter_name in {
@@ -1436,19 +1663,28 @@ def codex_role_instruction_text(
     role: RoleDefinition,
     inline_core_skills: bool = False,
     known_role_names: Sequence[str] = (),
+    model_profiles: dict[str, AdapterModelProfile] | None = None,
 ) -> str:
     """Adapt role-owned instructions to Codex without changing portable sources."""
 
     role_names = known_role_names or (role.name, *role.agent_dependencies)
     identity_instruction = role_identity_instruction(role)
     role_instructions = codex_role_reference_text(role.instructions, role_names)
+    context_instruction = (
+        context_budget_instruction(role, model_profiles)
+        if model_profiles is not None
+        else ""
+    )
     output_text = codex_role_reference_text(
         "; ".join(role.output_contract),
         role_names,
     )
 
     if inline_core_skills:
-        sections = [identity_instruction, role_instructions]
+        sections = [identity_instruction]
+        if context_instruction:
+            sections.append(context_instruction)
+        sections.append(role_instructions)
         loading_instructions = role_loading_instruction_text(
             role,
             include_fixed_skills=False,
@@ -1465,7 +1701,10 @@ def codex_role_instruction_text(
             role,
             include_fixed_skills=True,
         )
-        sections = [identity_instruction, role_instructions]
+        sections = [identity_instruction]
+        if context_instruction:
+            sections.append(context_instruction)
+        sections.append(role_instructions)
         if loading_instructions:
             sections.append(loading_instructions)
         sections.append(f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}.")
@@ -1474,13 +1713,18 @@ def codex_role_instruction_text(
         f"Before acting, load the {CODEX_HARNESS_DIRECTIVES_SKILL_NAME} skill completely; "
         "it governs Codex-specific directives for this mutation-capable agent."
     )
-    return (
-        f"{identity_instruction}\n\n"
-        f"{role_instructions}\n\n"
-        f"{harness_instruction}\n\n"
-        f"{role_loading_instruction_text(role)}\n\n"
-        f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}."
+    sections = [identity_instruction]
+    if context_instruction:
+        sections.append(context_instruction)
+    sections.extend(
+        [
+            role_instructions,
+            harness_instruction,
+            role_loading_instruction_text(role),
+            f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}.",
+        ]
     )
+    return "\n\n".join(sections)
 
 
 def codex_skill_availability(
@@ -1578,6 +1822,7 @@ def render_codex_agent(
                 role,
                 inline_core_skills,
                 known_role_names,
+                model_profiles,
             )
         ),
     ]
@@ -1630,6 +1875,7 @@ def render_claude_agent(
             role,
             CLAUDE_ADAPTER_NAME,
             inline_core_skills,
+            model_profiles,
         )
     )
 
@@ -1662,6 +1908,7 @@ def render_gemini_agent(
             role,
             GEMINI_ADAPTER_NAME,
             inline_core_skills,
+            model_profiles,
         )
     )
 
@@ -1698,6 +1945,7 @@ def render_junie_agent(
             role,
             JUNIE_ADAPTER_NAME,
             inline_core_skills,
+            model_profiles,
         )
     )
 
@@ -1708,6 +1956,16 @@ def render_agent_generation_manifest(
     inline_core_skills: bool,
 ) -> str:
     """Return a deterministic conceptual-definition-to-adapter inventory with expected digests."""
+    source_profile_ids = set(load_model_profiles())
+    model_profiles_by_adapter = {
+        adapter_name: load_adapter_model_profiles(adapter_name, source_profile_ids)
+        for adapter_name in (
+            CODEX_ADAPTER_NAME,
+            CLAUDE_ADAPTER_NAME,
+            GEMINI_ADAPTER_NAME,
+            JUNIE_ADAPTER_NAME,
+        )
+    }
     adapter_specs = {
         CODEX_ADAPTER_NAME: (CODEX_AGENT_OUTPUT_ROOT, CODEX_AGENT_EXTENSION, "toml"),
         CLAUDE_ADAPTER_NAME: (CLAUDE_AGENT_OUTPUT_ROOT, CLAUDE_AGENT_EXTENSION, "markdown"),
@@ -1742,6 +2000,10 @@ def render_agent_generation_manifest(
             agents.append(
                 {
                     "name": role.name,
+                    "contextAllocation": context_allocation_manifest(
+                        role,
+                        model_profiles_by_adapter[adapter_name],
+                    ),
                     "output": str(output_path.relative_to(REPOSITORY_ROOT)),
                     "referencedFixedSkills": list(
                         _referenced_fixed_role_skills(
@@ -1764,7 +2026,7 @@ def render_agent_generation_manifest(
 
     manifest = {
         "schema": "dev-methodology-agent-generation-manifest",
-        "version": 4,
+        "version": 5,
         "generator": GENERATOR_RELATIVE_PATH,
         "generationOptions": {
             "coreSkillDelivery": "inline" if inline_core_skills else "by-reference",

@@ -21,6 +21,8 @@ description = "Creates and maintains durable wiki topic pages, hubs, links, dige
 developer_instructions = """
 You are the Wiki Writer.
 
+Context budget: Use no more than 840000 tokens of gpt-5.5's 1050000-token context window (80%, rounded down). Keep 210000 tokens as headroom; no additional token reserve is subtracted.
+
 ## Objective
 
 Produce source-backed durable wiki changes that pass independent topic verification.

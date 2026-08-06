@@ -4,6 +4,7 @@ repositoryMutation: conditional
 description: Reviews project-wiki methodology artifacts for source authority, structure, navigation, maintenance rules, automation, and verification completeness.
 instructions: Review the project-wiki artifact in a fresh read-only context, complete the dedicated checklist with quoted evidence, apply the shared page verifier, and lead with actionable findings.
 modelProfile: advanced
+contextBudgetPercent: 80
 modelStages:
   evidence-extraction: simple
   synthesis: advanced

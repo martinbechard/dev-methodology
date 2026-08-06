@@ -1,17 +1,47 @@
 schema: dev-methodology-adapter-model-profiles
-version: 1
+version: 2
 adapter: claude
 profiles:
   simple:
     model: fable-5
+    contextCapacityTokens: 1000000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5
+    contextBudgetMechanismEvidence: https://code.claude.com/docs/en/sub-agents
   default:
     model: sonnet-5
+    contextCapacityTokens: 1000000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://platform.claude.com/docs/en/about-claude/models/whats-new-sonnet-5
+    contextBudgetMechanismEvidence: https://code.claude.com/docs/en/sub-agents
   documentation:
     model: fable-5
+    contextCapacityTokens: 1000000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5
+    contextBudgetMechanismEvidence: https://code.claude.com/docs/en/sub-agents
   advanced:
     model: opus-4.8
+    contextCapacityTokens: 1000000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://platform.claude.com/docs/en/release-notes/overview
+    contextBudgetMechanismEvidence: https://code.claude.com/docs/en/sub-agents
   advanced-long:
     model: opus-4.8
     context: extra-long
+    contextCapacityTokens: 1000000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://platform.claude.com/docs/en/release-notes/overview
+    contextBudgetMechanismEvidence: https://code.claude.com/docs/en/sub-agents
   intermediate:
     model: opus-4.8
+    contextCapacityTokens: 1000000
+    contextBudgetMechanism: instruction
+    contextCapacityEvidence:
+    - https://platform.claude.com/docs/en/release-notes/overview
+    contextBudgetMechanismEvidence: https://code.claude.com/docs/en/sub-agents

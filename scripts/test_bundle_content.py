@@ -1,7 +1,7 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
 # Summary: Verifies the distributable methodology bundle, generated artifacts, roles, and documentation contracts.
-# Design: design/work-item-provider-and-completion-contracts.md
+# Design: design/generic-agent-definitions-source.html and design/work-item-provider-and-completion-contracts.md
 
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ from dataclasses import replace
 from html.parser import HTMLParser
 from pathlib import Path
 from types import ModuleType
+from unittest.mock import patch
 from urllib.parse import urlsplit
 
 import yaml
@@ -7227,7 +7228,7 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertTrue(ROLE_SCHEMA_PATH.is_file())
         role_schema = load_yaml_object(ROLE_SCHEMA_PATH)
-        self.assertEqual(5, role_schema["version"])
+        self.assertEqual(6, role_schema["version"])
         self.assertEqual(
             "instruction-content",
             role_schema["properties"]["instructions"],
@@ -7267,7 +7268,7 @@ class BundleContentTests(unittest.TestCase):
         generation_manifest = json.loads(
             AGENT_GENERATION_MANIFEST_PATH.read_text(encoding="utf-8")
         )
-        self.assertEqual(4, generation_manifest["version"])
+        self.assertEqual(5, generation_manifest["version"])
         self.assertEqual(
             {"coreSkillDelivery": "by-reference", "inlineCoreSkills": False},
             generation_manifest["generationOptions"],
@@ -7431,6 +7432,10 @@ class BundleContentTests(unittest.TestCase):
                         role,
                         known_role_names=tuple(sorted(source_role_names)),
                         inline_core_skills=False,
+                        model_profiles=build_skill_docs.load_adapter_model_profiles(
+                            "codex",
+                            set(build_skill_docs.load_model_profiles()),
+                        ),
                     ),
                     tomllib.loads(codex_agent_text)["developer_instructions"],
                 )
@@ -10686,6 +10691,301 @@ class BundleContentTests(unittest.TestCase):
                 self.assertNotIn("effort", role)
                 for profile in role.get("modelStages", {}).values():
                     self.assertIn(profile, source_profiles)
+
+    def test_context_budget_percent_is_required_whole_and_bounded(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_names = set(build_skill_docs.build_payload()["skills"])
+        required, allowed, groups = build_skill_docs.load_role_schema()
+        model_profiles = set(build_skill_docs.load_model_profiles())
+        source_path = ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml"
+        source_role = load_yaml_object(source_path)
+
+        self.assertIn("contextBudgetPercent", required)
+        self.assertEqual(
+            "percentage-integer",
+            load_yaml_object(ROLE_SCHEMA_PATH)["properties"]["contextBudgetPercent"],
+        )
+        for role_path in sorted(ROLES_ROOT.glob("*/*.role.yaml")):
+            with self.subTest(role=role_path.stem):
+                self.assertEqual(80, load_yaml_object(role_path)["contextBudgetPercent"])
+
+        invalid_values = (None, 80.5, 0, -1, 101, True)
+        for invalid_value in invalid_values:
+            with self.subTest(invalid_value=invalid_value), tempfile.TemporaryDirectory() as directory:
+                invalid_role = dict(source_role)
+                if invalid_value is None:
+                    invalid_role.pop("contextBudgetPercent", None)
+                else:
+                    invalid_role["contextBudgetPercent"] = invalid_value
+                path = Path(directory) / "dev-activities" / source_path.name
+                path.parent.mkdir()
+                path.write_text(yaml.safe_dump(invalid_role, sort_keys=False), encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "contextBudgetPercent"):
+                    build_skill_docs.load_role_definition(
+                        path,
+                        required,
+                        allowed,
+                        groups,
+                        skill_names,
+                        model_profiles,
+                    )
+
+    def test_adapter_context_budget_metadata_is_complete_and_validated(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        profile_ids = set(build_skill_docs.load_model_profiles())
+        expected_capacities = {
+            "codex": {1_050_000},
+            "claude": {1_000_000},
+            "gemini": {1_048_576},
+            "junie": {1_000_000, 1_048_576, 1_050_000},
+        }
+
+        for adapter, capacities in expected_capacities.items():
+            with self.subTest(adapter=adapter):
+                source = load_yaml_object(ADAPTER_MODEL_PROFILE_PATHS[adapter])
+                self.assertEqual(2, source["version"])
+                profiles = build_skill_docs.load_adapter_model_profiles(adapter, profile_ids)
+                self.assertEqual(capacities, {profile.context_capacity_tokens for profile in profiles.values()})
+                for profile in profiles.values():
+                    self.assertEqual("instruction", profile.context_budget_mechanism)
+                    self.assertTrue(profile.context_capacity_evidence)
+                    self.assertTrue(
+                        all(
+                            evidence.startswith("https://")
+                            for evidence in profile.context_capacity_evidence
+                        )
+                    )
+                    self.assertTrue(profile.context_budget_mechanism_evidence.startswith("https://"))
+
+        valid_payload = load_yaml_object(ADAPTER_MODEL_PROFILE_PATHS["codex"])
+        invalid_payloads = []
+        for field_name in ("contextCapacityTokens", "contextBudgetMechanism"):
+            payload = json.loads(json.dumps(valid_payload))
+            payload["profiles"]["simple"].pop(field_name)
+            invalid_payloads.append((payload, field_name))
+        payload = json.loads(json.dumps(valid_payload))
+        payload["profiles"]["simple"]["contextBudgetMechanism"] = "unsupported"
+        invalid_payloads.append((payload, "unsupported context budget mechanism"))
+        for field_name, expected_error in (
+            (
+                "contextCapacityEvidence",
+                "contextCapacityEvidence must be a non-empty list of HTTPS URLs",
+            ),
+            (
+                "contextBudgetMechanismEvidence",
+                "contextBudgetMechanismEvidence must be an HTTPS URL",
+            ),
+        ):
+            payload = json.loads(json.dumps(valid_payload))
+            payload["profiles"]["simple"].pop(field_name)
+            invalid_payloads.append((payload, expected_error))
+        for invalid_evidence in ([], ["http://example.com/model"]):
+            payload = json.loads(json.dumps(valid_payload))
+            payload["profiles"]["simple"]["contextCapacityEvidence"] = invalid_evidence
+            invalid_payloads.append(
+                (
+                    payload,
+                    "contextCapacityEvidence must be a non-empty list of HTTPS URLs",
+                )
+            )
+        for invalid_evidence in ("", "http://example.com/subagents"):
+            payload = json.loads(json.dumps(valid_payload))
+            payload["profiles"]["simple"][
+                "contextBudgetMechanismEvidence"
+            ] = invalid_evidence
+            invalid_payloads.append(
+                (payload, "contextBudgetMechanismEvidence must be an HTTPS URL")
+            )
+
+        for payload, expected_error in invalid_payloads:
+            with self.subTest(expected_error=expected_error), patch.object(
+                build_skill_docs,
+                "read_yaml_object",
+                return_value=payload,
+            ):
+                with self.assertRaisesRegex(ValueError, expected_error):
+                    build_skill_docs.load_adapter_model_profiles("codex", profile_ids)
+
+    def test_context_budget_derivation_rounds_down_and_rejects_overflow(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+
+        self.assertEqual(838_860, build_skill_docs.derive_context_budget(1_048_576, 80))
+        self.assertEqual(1, build_skill_docs.derive_context_budget(101, 1))
+        with self.assertRaisesRegex(ValueError, "exceeds model context capacity"):
+            build_skill_docs.derive_context_budget(1_000_000, 101)
+
+    def test_all_adapters_generate_context_instructions_and_stage_results(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_names = set(build_skill_docs.build_payload()["skills"])
+        roles = build_skill_docs.load_role_definitions(skill_names)
+        role = next(role for role in roles if role.name == "dev-code-reviewer")
+        profile_ids = set(build_skill_docs.load_model_profiles())
+        outputs = build_skill_docs.expected_role_outputs(roles)
+        manifest = json.loads(
+            build_skill_docs.render_agent_generation_manifest(roles, outputs, False)
+        )
+        expected_profile_budgets = {
+            "codex": {
+                profile_id: 840_000
+                for profile_id in profile_ids
+            },
+            "claude": {
+                profile_id: 800_000
+                for profile_id in profile_ids
+            },
+            "gemini": {
+                profile_id: 838_860
+                for profile_id in profile_ids
+            },
+            "junie": {
+                "simple": 838_860,
+                "default": 800_000,
+                "documentation": 840_000,
+                "advanced": 800_000,
+                "advanced-long": 800_000,
+                "intermediate": 800_000,
+            },
+        }
+
+        for adapter in ("codex", "claude", "gemini", "junie"):
+            profiles = build_skill_docs.load_adapter_model_profiles(adapter, profile_ids)
+            self.assertEqual(
+                expected_profile_budgets[adapter],
+                {
+                    profile_id: build_skill_docs.resolve_context_budget(
+                        profile_id,
+                        80,
+                        profiles,
+                    )["contextBudgetTokens"]
+                    for profile_id in profile_ids
+                },
+            )
+            expected_primary = build_skill_docs.resolve_context_budget(
+                role.model_profile,
+                role.context_budget_percent,
+                profiles,
+            )
+            expected_instruction = build_skill_docs.context_budget_instruction(
+                role,
+                profiles,
+            )
+            renderer = getattr(build_skill_docs, f"render_{adapter}_agent")
+            rendered = renderer(role, profiles)
+            with self.subTest(adapter=adapter):
+                self.assertIn(expected_instruction, rendered)
+                agent_manifest = next(
+                    agent
+                    for agent in manifest["adapters"][adapter]["agents"]
+                    if agent["name"] == role.name
+                )
+                allocation = agent_manifest["contextAllocation"]
+                self.assertEqual(80, allocation["contextBudgetPercent"])
+                self.assertEqual(expected_primary, allocation["primary"])
+                self.assertEqual(
+                    set(role.model_stages),
+                    set(allocation["modelStages"]),
+                )
+                for stage, profile_id in role.model_stages.items():
+                    self.assertEqual(
+                        build_skill_docs.resolve_context_budget(
+                            profile_id,
+                            role.context_budget_percent,
+                            profiles,
+                        ),
+                        allocation["modelStages"][stage],
+                    )
+
+    def test_context_budget_changes_preserve_unrelated_generated_fields(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_names = set(build_skill_docs.build_payload()["skills"])
+        role = next(
+            role
+            for role in build_skill_docs.load_role_definitions(skill_names)
+            if role.name == "dev-coder"
+        )
+        profile_ids = set(build_skill_docs.load_model_profiles())
+
+        def without_context_instruction(
+            rendered: str,
+            context_instruction: str,
+        ) -> str:
+            return rendered.replace(context_instruction + "\n\n", "", 1)
+
+        for adapter in ("codex", "claude", "gemini", "junie"):
+            profiles = build_skill_docs.load_adapter_model_profiles(adapter, profile_ids)
+            renderer = getattr(build_skill_docs, f"render_{adapter}_agent")
+            changed_role = replace(role, context_budget_percent=79)
+            original = renderer(role, profiles)
+            changed = renderer(changed_role, profiles)
+            with self.subTest(adapter=adapter, change="percentage"):
+                self.assertNotEqual(original, changed)
+                self.assertEqual(
+                    without_context_instruction(
+                        original,
+                        build_skill_docs.context_budget_instruction(role, profiles),
+                    ),
+                    without_context_instruction(
+                        changed,
+                        build_skill_docs.context_budget_instruction(changed_role, profiles),
+                    ),
+                )
+
+            changed_profiles = dict(profiles)
+            original_profile = changed_profiles[role.model_profile]
+            changed_profiles[role.model_profile] = replace(
+                original_profile,
+                context_capacity_tokens=original_profile.context_capacity_tokens - 1,
+            )
+            capacity_changed = renderer(role, changed_profiles)
+            with self.subTest(adapter=adapter, change="capacity"):
+                self.assertNotEqual(original, capacity_changed)
+                self.assertEqual(80, role.context_budget_percent)
+                self.assertEqual(
+                    without_context_instruction(
+                        original,
+                        build_skill_docs.context_budget_instruction(role, profiles),
+                    ),
+                    without_context_instruction(
+                        capacity_changed,
+                        build_skill_docs.context_budget_instruction(role, changed_profiles),
+                    ),
+                )
+
+    def test_context_budget_ownership_and_runtime_evidence_are_documented(self) -> None:
+        readme = README_PATH.read_text(encoding="utf-8")
+        source_design = (
+            REPOSITORY_ROOT / "design" / "generic-agent-definitions-source.html"
+        ).read_text(encoding="utf-8")
+        catalog_design = (
+            REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.html"
+        ).read_text(encoding="utf-8")
+
+        for expected in (
+            "contextBudgetPercent",
+            "floor(contextCapacityTokens * contextBudgetPercent / 100)",
+            "zero additional token reserve",
+            "agent-generation-manifest.json",
+        ):
+            with self.subTest(readme_contract=expected):
+                self.assertIn(expected, readme)
+        for expected in (
+            "contextCapacityTokens",
+            "contextBudgetMechanism",
+            "Codex CLI 0.144.1",
+            "Claude Code 2.1.104",
+            "Gemini CLI 0.39.1",
+            "dated 05 August 2026",
+            "separately dated July 2026 subagent page",
+            "https://developers.openai.com/codex/subagents",
+            "https://code.claude.com/docs/en/sub-agents",
+            "https://geminicli.com/docs/core/subagents/",
+            "https://junie.jetbrains.com/docs/junie-cli-subagents.html",
+        ):
+            with self.subTest(design_contract=expected):
+                self.assertIn(expected, source_design)
+        self.assertNotIn("installed wrapper", source_design)
+        self.assertIn("Context budget", catalog_design)
+        self.assertIn("role.contextBudgetPercent", catalog_design)
 
     def test_dev_documentation_writer_uses_dedicated_model_profile(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
