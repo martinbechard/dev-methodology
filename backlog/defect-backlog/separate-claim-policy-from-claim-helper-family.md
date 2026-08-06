@@ -121,3 +121,43 @@ The Running `store-agent-claim-state-in-gitignored-project-directory` item chang
 - Claim-state dependency note: store-agent-claim-state-in-gitignored-project-directory remains paused in User Action Required with no live work claim in the current registry; this reservation does not mutate that provider record.
 - Launch result: Pending; this provider transaction does not start a task or create execution ownership.
 - Next action: Launch one root Dev Orchestrator and record Starting -> Running only after accepted execution evidence.
+
+## Current Execution
+
+Transition: Starting -> Running.
+
+Owner: Root Dev Orchestrator.
+
+Root Agent Task: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Canonical Conversation: Not supplied; no baton or handshake is recorded.
+
+Branch: codex/separate-claim-policy-from-claim-helper-family.
+
+Worktree: /Users/martinbechard/.codex/worktrees/1bee/dev-methodology.
+
+Baseline/Main Coordinator Commit: cc5574b798c0fab87fb5c9c6b3c6acd935030feb.
+
+Delegated Source Task: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Phase: Discovery.
+
+Started At: 2026-08-06T06:17:04Z.
+
+Accepted Execution Evidence: Root Dev Orchestrator accepted this exact Work Item ID for the Starting -> Running transition in the delegated source task and supplied the canonical branch, isolated worktree, and baseline commit.
+
+Provider Operation Evidence: Work Item ID update claim separate-claim-policy-from-claim-helper-family-update and exact provider path claim separate-claim-policy-from-claim-helper-family-path both returned SHARED_CHECKOUT_ACQUIRED before this mutation.
+
+## Active Execution Evidence
+
+Condition Type: root-execution.
+
+Owner: Root Dev Orchestrator.
+
+Evidence: The delegated Root Dev Orchestrator is executing this Work Item ID from branch codex/separate-claim-policy-from-claim-helper-family in worktree /Users/martinbechard/.codex/worktrees/1bee/dev-methodology, using baseline/main coordinator commit cc5574b798c0fab87fb5c9c6b3c6acd935030feb and delegated source task 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Observed At: 2026-08-06T06:17:04Z.
+
+Started At: 2026-08-06T06:17:04Z.
+
+Deadline or Expires At: 2026-08-06T06:27:04Z.
