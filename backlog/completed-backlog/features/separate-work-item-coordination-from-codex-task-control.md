@@ -1,6 +1,6 @@
 # Separate Work-Item Coordination From Codex Task Control
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -146,3 +146,17 @@ Next Reconciliation At: 2026-08-06T11:20:00Z
 ## Deadline Extension Evidence — 2026-08-06T10:05:07Z
 
 - Provider operation evidence: Explicit evidence-backed extension from 2026-08-06T10:00:00Z to 2026-08-06T11:00:00Z after two fresh independent review cycles and bounded correction attempt 2 remained actively progressing; this is not an automatic evidence refresh.
+
+## Completion Evidence — 2026-08-06T11:19:12Z
+
+- Transition: Running -> Completed.
+- Completion disposition: READY from deliver-work-item-direct-main.
+- Accepted candidate commit: 53f810697aa2f563eede6bd27e3ce628ac7e31c8.
+- Independent methodology review: GOOD on the accepted cumulative candidate.
+- Independent source verification: PASS for the portable and Codex routing tests, focused bundle assertion, affected generators, four roles, sixteen adapters, metadata, headers, retired-name search, and diff checks.
+- Integration mapping: The exact 60-path accepted candidate content was replayed without branch ancestry onto current main as 3dfad5801ff8f2d0241ef3149982c7c71f1a262a; every candidate tree entry matched the integration index before commit.
+- Main observation: 3dfad5801ff8f2d0241ef3149982c7c71f1a262a is reachable from main. Post-integration verification observed clean main at d4542e095eb0bb487b6fafe65b5f67eb5f71166c, whose only later change was this provider record.
+- Post-integration verification: READY / PASS. All 60 candidate paths matched current main with zero mismatches; focused routing, exact bundle, role/schema/adapter, freshness, YAML, Python, vocabulary, and diff checks passed. Simulator and framework paths were unchanged and were not run.
+- Accepted verification limitations: The preferred skill validator rejected even the configured primary skill paths as outside its configured roots, so no fallback or copied-root validation was used. Markdown validation reported one pre-existing false positive for an unchanged README link whose literal HTML anchor exists at baseline and current main.
+- Provider closure: This transaction changes only this Work Item ID from Running to Completed and archives it under backlog/completed-backlog/features.
+- Runtime cleanup: The Codex task is deliberately not archived, per user instruction.
