@@ -1,6 +1,6 @@
 # Separate Claim Policy From Claim Helper Family
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -9,6 +9,8 @@ Provider: file
 Work Item ID: separate-claim-policy-from-claim-helper-family
 
 Completion: direct-main
+
+Owner: Unowned
 
 ## Summary
 
@@ -339,3 +341,39 @@ Verification Evidence: Fresh code and methodology reviews ACCEPTED. Fresh focuse
 Next Action: Reacquire exact activity=work, obtain the final project-files integration claim, create a fresh integration branch from current main, apply only accepted candidate content/commits, run smallest integration-sensitive checks, and integrate to main.
 
 Next Reconciliation At: 2026-08-06T08:33:30Z.
+
+## Terminal Delivery Evidence
+
+Transition: Running -> Completed.
+
+Completed At: 2026-08-06T08:28:30Z.
+
+Canonical Task and Conversation: 019fd5b5-aca7-7cb1-9ae0-012fb84e13db.
+
+Accepted Source Candidate: b953b9fe31fe3cb256a68defcc634f66b3233532, preserving candidate chain ac8270d2570436738fd1b0b6bb2dbbedb690049a -> 9501f48c6b0f6f52c8fad8eab3df92d524e26a38 -> 5fa7620a6471574d2bf84a12e541805780d4bac6 -> b953b9fe31fe3cb256a68defcc634f66b3233532.
+
+Independent Review: Fresh Dev Code Reviewer recovery_code_review returned ACCEPTED with no findings. Fresh Methodology Artifact Reviewer recovery_methodology_review returned ACCEPTED with no findings.
+
+Source Verification: Fresh focused verifier recovery_focused_verifier returned PASS for the four exact regression methods, five changed-surface freshness checks, range diff hygiene, clean worktree state, and all three recovery criteria. Broad, browser, live MCP, simulator, and framework suites were excluded as directed.
+
+Integration Branch: codex/separate-claim-policy-from-claim-helper-family-integration.
+
+Integration Mapping: Fresh integration branch started from current main 0b9e26d5d0f032f46e5bbab5f3320eefb359d79b. The four accepted candidate commits were replayed without importing candidate ancestry and committed as 3273f153c171e3959838e476c4ab98752344cc14. Candidate b953b9fe31fe3cb256a68defcc634f66b3233532 and integration commit 3273f153c171e3959838e476c4ab98752344cc14 are byte-equivalent for every non-backlog path.
+
+Main Delivery: Configured main fast-forwarded from 0b9e26d5d0f032f46e5bbab5f3320eefb359d79b to 3273f153c171e3959838e476c4ab98752344cc14. Integration commit 3273f153c171e3959838e476c4ab98752344cc14 is reachable from main, and main was clean after delivery.
+
+Post-Integration Verification: On authoritative main, the four exact claim-helper recovery tests passed. OpenAI metadata, skill documentation, evaluation documentation, support checklist, and agent-skill hierarchy freshness checks passed. Git diff hygiene and clean-state checks passed.
+
+Remote Observation: Remote publication was not requested or configured as part of this local direct-main completion.
+
+Integration Claim Closeout: Project-files integration claim separate-claim-policy-main-integration-files released with outcome RELEASED at event 1e98af2f-436a-4bff-ae9f-2a01e07a160c. Work claim separate-claim-policy-integration-work-019fd5b5 released with outcome RELEASED and disposition handoff at event b17125e6-5b18-4163-91c0-1ecf41fcdc53.
+
+Terminal Provider Claims: Update claim separate-claim-policy-terminal-update-root acquired with outcome SHARED_CHECKOUT_ACQUIRED, incarnation 4740f4e7-4feb-47a6-9e45-514c250b4286. Exact source-and-destination path claim separate-claim-policy-terminal-provider-paths acquired with outcome SHARED_CHECKOUT_ACQUIRED, incarnation 0a7ac21e-ded2-4ed6-89ca-57b98871d114.
+
+Archive Path: backlog/completed-backlog/defects/separate-claim-policy-from-claim-helper-family.md.
+
+Integration Residue: None.
+
+Remaining Blockers: None.
+
+Cleanup Eligibility: The delivered integration branch and preserved source branch are clean and eligible for later Coordinator cleanup. The canonical Codex task remains unarchived as directed.
