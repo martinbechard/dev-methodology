@@ -31,6 +31,7 @@ _CLASS_PATTERN = re.compile(
     r'(?:\["(?P<label>[^"]+)"\])?\s*\{(?P<body>.*?)\}',
     re.DOTALL,
 )
+_MERMAID_BLOCK_PATTERN = re.compile(r"```mermaid\s*(?P<body>.*?)```", re.DOTALL)
 _REALIZATION_PATTERN = re.compile(
     r"^\s*(?P<provider>[A-Za-z0-9_-]+)\s+\.\.\|>\s+"
     r"(?P<interface>[A-Za-z0-9_-]+)\s*$",
@@ -52,20 +53,24 @@ class _DiagramClass:
     stereotypes: frozenset[str]
 
 
-def _diagram_classes(text: str) -> dict[str, _DiagramClass]:
-    """Return Mermaid class declarations keyed by their diagram identities."""
+def _diagram_classes(text: str) -> tuple[dict[str, _DiagramClass], list[str]]:
+    """Return one Mermaid block's classes and repeated-identity defects."""
 
     classes: dict[str, _DiagramClass] = {}
+    errors: list[str] = []
     for match in _CLASS_PATTERN.finditer(text):
         body = match.group("body")
         stereotypes = frozenset(re.findall(r"<<([^>]+)>>", body))
         identity = match.group("identity")
+        if identity in classes:
+            errors.append(f"repeated Mermaid class identity {identity!r}")
+            continue
         classes[identity] = _DiagramClass(
             identity=identity,
             label=match.group("label") or identity,
             stereotypes=stereotypes,
         )
-    return classes
+    return classes, errors
 
 
 def _interface_package_exists(repository_root: Path, interface_identity: str) -> bool:
@@ -84,47 +89,50 @@ def _interface_package_exists(repository_root: Path, interface_identity: str) ->
     )
 
 
-def _validate_document(
+def _validate_diagram(
     repository_root: Path,
     path: Path,
     text: str,
+    block_number: int,
 ) -> list[str]:
-    """Return deterministic provider-family naming defects for one design document."""
+    """Return provider-family naming defects from one Mermaid block."""
 
-    errors: list[str] = []
-    for match in _WILDCARD_TOKEN_PATTERN.finditer(text):
-        token = match.group("token")
-        if "*" in token and not _FAMILY_PATTERN.fullmatch(token):
-            errors.append(
-                f"{path}: provider-family label {token!r} must contain one terminal '-*'"
-            )
-
-    classes = _diagram_classes(text)
+    classes, class_errors = _diagram_classes(text)
+    errors = [f"{path}: Mermaid block {block_number}: {error}" for error in class_errors]
     interface_classes: dict[str, tuple[_DiagramClass, str]] = {}
     for diagram_class in classes.values():
         interface_stereotypes = diagram_class.stereotypes.intersection(
             {"Skill interface", "Interface Skill"}
         )
-        if not interface_stereotypes or "*" not in diagram_class.label:
+        if not interface_stereotypes:
             continue
-        if not _FAMILY_PATTERN.fullmatch(diagram_class.label):
-            errors.append(
-                f"{path}: interface {diagram_class.label!r} must display its exact "
-                "identity followed by '-*'"
-            )
+        if "Interface Skill" in interface_stereotypes:
+            interface_identity = diagram_class.label
+            if "*" in interface_identity:
+                errors.append(
+                    f"{path}: concrete Interface Skill {interface_identity!r} must "
+                    "use its exact identity without a wildcard"
+                )
+                continue
+        elif "*" in diagram_class.label:
+            if not _FAMILY_PATTERN.fullmatch(diagram_class.label):
+                errors.append(
+                    f"{path}: interface {diagram_class.label!r} must display its exact "
+                    "identity followed by '-*'"
+                )
+                continue
+            interface_identity = diagram_class.label.removesuffix("-*")
+        else:
             continue
-
-        interface_identity = diagram_class.label.removesuffix("-*")
         if not _SKILL_IDENTITY_PATTERN.fullmatch(interface_identity):
             errors.append(
                 f"{path}: interface identity {interface_identity!r} is not kebab-case"
             )
             continue
 
-        package_exists = _interface_package_exists(
+        if "Interface Skill" in interface_stereotypes and not _interface_package_exists(
             repository_root, interface_identity
-        )
-        if "Interface Skill" in interface_stereotypes and not package_exists:
+        ):
             errors.append(
                 f"{path}: {diagram_class.label!r} uses Interface Skill without "
                 f"skills/{interface_identity}/SKILL.md"
@@ -158,6 +166,35 @@ def _validate_document(
                 f"interface stem {expected_prefix!r}"
             )
 
+    return errors
+
+
+def _validate_document(
+    repository_root: Path,
+    path: Path,
+    text: str,
+) -> list[str]:
+    """Return deterministic provider-family naming defects for one design document."""
+
+    errors: list[str] = []
+    for match in _WILDCARD_TOKEN_PATTERN.finditer(text):
+        token = match.group("token")
+        if "*" in token and not _FAMILY_PATTERN.fullmatch(token):
+            errors.append(
+                f"{path}: provider-family label {token!r} must contain one terminal '-*'"
+            )
+
+    for block_number, match in enumerate(
+        _MERMAID_BLOCK_PATTERN.finditer(text), start=1
+    ):
+        errors.extend(
+            _validate_diagram(
+                repository_root,
+                path,
+                match.group("body"),
+                block_number,
+            )
+        )
     return errors
 
 
@@ -208,7 +245,7 @@ create-file-work-item ..|> CreateWorkItem
         """Reject the concrete stereotype when the exact interface package is absent."""
 
         text = """```mermaid
-class CreateWorkItem[\"create-work-item-*\"] {
+class CreateWorkItem[\"create-work-item\"] {
     <<Interface Skill>>
 }
 ```"""
@@ -222,6 +259,60 @@ class CreateWorkItem[\"create-work-item-*\"] {
                 for error in errors
             ),
             errors,
+        )
+
+    def test_concrete_interface_provider_stem_is_validated(self) -> None:
+        """Validate realizing providers for an exact loadable Interface Skill."""
+
+        text = """```mermaid
+class CreateWorkItem[\"create-work-item\"] {
+    <<Interface Skill>>
+}
+class create-file-work-item {
+    <<Provider Skill>>
+}
+create-file-work-item ..|> CreateWorkItem
+```"""
+        with tempfile.TemporaryDirectory() as directory:
+            repository_root = Path(directory)
+            skill_directory = repository_root / "skills" / "create-work-item"
+            skill_directory.mkdir(parents=True)
+            (skill_directory / "SKILL.md").write_text(
+                "---\nname: create-work-item\n---\n",
+                encoding="utf-8",
+            )
+            errors = _validate_document(
+                repository_root, Path("example.md"), text
+            )
+        self.assertTrue(
+            any("complete interface stem" in error for error in errors), errors
+        )
+
+    def test_repeated_identity_in_later_block_cannot_hide_invalid_provider(self) -> None:
+        """Keep each Mermaid block's declarations local to its realization edges."""
+
+        text = """```mermaid
+class CreateWorkItem[\"create-work-item-*\"] {
+    <<Skill interface>>
+}
+class create-file-work-item {
+    <<Provider Skill>>
+}
+create-file-work-item ..|> CreateWorkItem
+```
+
+```mermaid
+class CreateWorkItem[\"create-work-item-*\"] {
+    <<Skill interface>>
+}
+class create-work-item-file {
+    <<Provider Skill>>
+}
+create-work-item-file ..|> CreateWorkItem
+```"""
+        errors = _validate_document(Path("/nonexistent"), Path("example.md"), text)
+        self.assertTrue(
+            any("complete interface stem" in error for error in errors), errors
         )
 
 

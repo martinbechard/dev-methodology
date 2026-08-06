@@ -257,7 +257,7 @@ classDiagram
     }
 
     class manage-work-items-gitlab {
-        <<SKILL.md>>
+        <<Provider Skill>>
         +work-item-definition
         +inventory-work-items()
         +transition-work-item()
@@ -277,9 +277,9 @@ Realization describes conformance, not loading. The arrow does not mean that one
 
 A Provider Skill is a SKILL.md that supplies one implementation of an Interface Skill. When a project must choose one provider without putting that provider’s name into the Agent definition, AGENTS.md can act as a factory. The Agent consumes the Interface Skill directly, while the AGENTS.md factory selects and loads one Provider Skill by exact name.
 
-- **RULE: RULE-62** A factory-pattern Agent depends on the Interface Skill
-  - **SYNOPSIS:** The Agent names and loads the Interface Skill, then uses only its public data and procedures without naming a provider.
-  - **EXAMPLE:** Work Item Manager loads manage-work-items and requests transition-work-item() without knowing whether files or GitLab store the work item.
+- **RULE: RULE-62** A factory-pattern consumer depends on the shared interface contract
+  - **SYNOPSIS:** The consumer loads the exact Interface Skill when that package exists. For an analysis-only Skill interface, the consumer depends on its public procedures without claiming an exact skill load. Neither case names a provider.
+  - **EXAMPLE:** Work Item Manager loads the exact manage-work-items Interface Skill and requests transition-work-item() without knowing whether files or GitLab store the work item.
 
 - **RULE: RULE-63** AGENTS.md acts as the provider factory
   - **SYNOPSIS:** Project guidance selects one Provider Skill by exact name, and that provider realizes the Interface Skill consumed by the Agent.
@@ -323,7 +323,7 @@ Read the diagram as three related instructions:
 - The project AGENTS.md keeps the same routing annotation used for indirect loading and directly names manage-work-items-gitlab as the selected Provider Skill.
 - The selected Provider Skill realizes the manage-work-items interface.
 
-The harness loads AGENTS.md automatically, so no Agent-to-AGENTS.md relationship is drawn. The factory analogy describes instruction selection rather than runtime object construction. AGENTS.md does not instantiate a provider object; it tells the Agent which provider SKILL.md to load. A different project can select another provider that realizes the same Interface Skill without changing the Agent’s direct dependency.
+The harness loads AGENTS.md automatically, so no Agent-to-AGENTS.md relationship is drawn. The factory analogy describes instruction selection rather than runtime object construction. AGENTS.md does not instantiate a provider object; it tells the Agent which provider SKILL.md to load. A different project can select another provider that realizes the same shared interface contract without changing the consumer’s dependency.
 
 #### Simplified View
 
