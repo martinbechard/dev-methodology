@@ -1,6 +1,20 @@
 # Synchronize Installed Skill Catalog After Provider Renames
 
-Status: Starting
+Status: Running
+
+Owner: Dev Orchestrator task 019fd919-a1d4-7471-b158-5068c1d7622d
+
+Canonical Conversation: 019fd919-a1d4-7471-b158-5068c1d7622d
+
+Root Agent Task: 019fd919-a1d4-7471-b158-5068c1d7622d
+
+Parent Task ID: 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Branch: codex/synchronize-installed-skill-catalog-after-provider-renames
+
+Worktree: /Users/martinbechard/.codex/worktrees/75c3/dev-methodology
+
+Phase: Installing and verifying the configured user-level methodology bundle
 
 Type: Defect
 
@@ -82,3 +96,21 @@ Last Contact At: None.
 Next Reconciliation At: 2026-08-06T22:16:45Z.
 
 Intended Root Role: Dev Orchestrator.
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator task 019fd919-a1d4-7471-b158-5068c1d7622d
+
+Evidence: The canonical root task is active on the fresh work-item branch and owns the bounded installation, catalog refresh, independent review, verification, direct-main delivery, and provider closure sequence.
+
+Observed At: 2026-08-06T22:04:27Z
+
+Started At: 2026-08-06T22:04:20Z
+
+Deadline or Expires At: 2026-08-06T23:04:20Z
+
+Next Action: Commit this Starting-to-Running provider transaction, hand off the update claims, acquire outcome ownership, and run the focused installer dry run from authoritative current-main sources.
+
+Next Reconciliation At: 2026-08-06T22:19:20Z
