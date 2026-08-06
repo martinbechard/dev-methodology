@@ -124,7 +124,7 @@ Branch: codex/require-complete-terminal-reconciliation-019fd80b.
 
 Worktree: /Users/martinbechard/.codex/worktrees/6db0/dev-methodology.
 
-Phase: Independent source review.
+Phase: Bounded correction attempt 1.
 
 Started At: 2026-08-06T17:10:29Z.
 
@@ -134,7 +134,7 @@ Accepted Candidate Commit: 1b07440ec4b875e6586c1da3921038ebc9d6c0c9.
 
 Candidate Checks: Watchdog simulator 29 tests passed; five exact bundle, design, and generated assertions passed; changed skills validated; Python compilation and generator freshness passed; diff checks passed. One unrelated broad catalog expected-count mismatch remains outside this item.
 
-Next Action: Obtain the fresh independent review verdict, correct any confirmed finding through the original Dev Coder, then dispatch independent focused verification.
+Next Action: The original Dev Coder produces a clean replacement candidate that resolves both confirmed reviewer findings, then the same fresh reviewer re-reviews the replacement before independent verification.
 
 ## Active Execution Evidence
 
@@ -142,19 +142,33 @@ Condition Type: delegated-work.
 
 Owner: Root Dev Orchestrator in task 019fd80b-9089-78c0-9272-26ac6b7d47ff.
 
-Evidence: Fresh Dev Code Reviewer child /root/review_terminal_reconciliation is reviewing immutable clean candidate 1b07440ec4b875e6586c1da3921038ebc9d6c0c9 against the corrected authoritative provider contract and exact approved scope. Review owns no mutation.
+Evidence: Original Dev Coder child /root/implement_terminal_reconciliation is correcting immutable candidate 1b07440ec4b875e6586c1da3921038ebc9d6c0c9 after fresh review confirmed two high-impact focused simulator defects. The correction remains inside the existing Watchdog simulator/tests and directly dependent bounded artifacts.
 
-Observed At: 2026-08-06T17:27:03Z.
+Observed At: 2026-08-06T17:33:36Z.
 
 Started At: 2026-08-06T17:10:29Z.
 
-Deadline or Expires At: 2026-08-06T18:27:03Z.
+Deadline or Expires At: 2026-08-06T18:33:36Z.
 
-Next Action: Dev Code Reviewer returns APPROVED or evidence-backed NEEDS_CORRECTION; the Root Dev Orchestrator dispositions every confirmed finding before verification.
+Next Action: Dev Coder makes terminal merge gates status-aware, makes missing canonical task identity actionable, resolves or records the released-claim evidence distinction, and returns a focused clean replacement candidate.
 
-Next Reconciliation At: 2026-08-06T17:41:03Z.
+Next Reconciliation At: 2026-08-06T17:47:36Z.
 
-Conversation Title Evidence: The canonical conversation is Reviewing — Require Complete Terminal Reconciliation.
+Conversation Title Evidence: The canonical conversation is Implementing — Require Complete Terminal Reconciliation.
+
+## Correction History
+
+Attempt 1 Started At: 2026-08-06T17:33:36Z.
+
+Reviewer Verdict: NEEDS_CORRECTION on candidate 1b07440ec4b875e6586c1da3921038ebc9d6c0c9.
+
+Confirmed Finding 1: Failed and Abandoned tasks incorrectly required merged delivery, preventing truthful terminal reconciliation and NO_ACTION.
+
+Confirmed Finding 2: A terminal Codex record without canonical task identity could incorrectly return NO_ACTION.
+
+Residual Review Question: Reconcile whether the existing evidence model distinguishes no applicable claim from missing required released-claim evidence; add the smallest focused boundary when supported or preserve the exact residual risk.
+
+Disposition: Both confirmed findings are returned to the original Dev Coder for correction in this delivery. No finding is excluded or deferred.
 
 ## Governed Definition Approval
 
