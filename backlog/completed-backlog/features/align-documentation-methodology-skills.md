@@ -10,7 +10,7 @@ Provider Reference: backlog/completed-backlog/features/align-documentation-metho
 
 Completion: direct-main
 
-Series: backlog/feature-backlog/apply-object-oriented-skill-group-design/index.md
+Series: backlog/completed-backlog/features/apply-object-oriented-skill-group-design/index.md
 
 Owner: Unowned
 

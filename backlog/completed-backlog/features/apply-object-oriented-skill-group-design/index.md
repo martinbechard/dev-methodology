@@ -22,16 +22,16 @@ Apply the approved skill names and public procedure headings from the object-ori
 
 ## Work Items
 
-1. [Align Baseline Development Skills](align-baseline-development-skills.md)
-2. [Align Project Setup Skills](align-project-setup-skills.md) — Blocked: evaluator catalog-validation recovery required.
-3. [Align Documentation Methodology Skills](align-documentation-methodology-skills.md)
-4. [Align Work-Item Creation Provider Skills](align-work-item-creation-provider-skills.md)
-5. [Align Work-Item Management Provider Skills](../../completed-backlog/features/align-work-item-management-provider-skills.md) — Completed; archived on main at e0446bb50991a861dd6de0975267db7e7cae3e87.
-6. [Split Backlog Blockage And Dispatch-Mode Skills](split-backlog-blockage-and-dispatch-mode-skills.md)
-7. [Align Resource Coordination Skills](align-resource-coordination-skills.md) — Starting; reserved for its preserved canonical Thread.
-8. [Align Codex Work-Item Coordination Skill](align-codex-work-item-coordination-skill.md)
-9. [Align Integration And Delivery Skills](align-integration-and-delivery-skills.md)
-10. [Align Review And Verification Skills](align-review-and-verification-skills.md)
+1. [Align Baseline Development Skills](../align-baseline-development-skills.md)
+2. [Align Project Setup Skills](../align-project-setup-skills.md)
+3. [Align Documentation Methodology Skills](../align-documentation-methodology-skills.md)
+4. [Align Work-Item Creation Provider Skills](../align-work-item-creation-provider-skills.md)
+5. [Align Work-Item Management Provider Skills](../align-work-item-management-provider-skills.md)
+6. [Split Backlog Blockage And Dispatch-Mode Skills](../split-backlog-blockage-and-dispatch-mode-skills.md)
+7. [Align Resource Coordination Skills](../align-resource-coordination-skills.md)
+8. [Align Codex Work-Item Coordination Skill](../align-codex-work-item-coordination-skill.md)
+9. [Align Integration And Delivery Skills](../align-integration-and-delivery-skills.md)
+10. [Align Review And Verification Skills](../align-review-and-verification-skills.md)
 
 ## Dependency Order
 

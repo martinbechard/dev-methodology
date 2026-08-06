@@ -12,7 +12,7 @@ Owner: Dev Orchestrator
 
 Completion: direct-main
 
-Series: backlog/feature-backlog/apply-object-oriented-skill-group-design/index.md
+Series: backlog/completed-backlog/features/apply-object-oriented-skill-group-design/index.md
 
 ## Current Dispatch Reservation
 

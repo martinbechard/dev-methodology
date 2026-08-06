@@ -6,11 +6,11 @@ Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/apply-object-oriented-skill-group-design/align-codex-work-item-coordination-skill.md
+Provider Reference: backlog/completed-backlog/features/align-codex-work-item-coordination-skill.md
 
 Completion: direct-main
 
-Series: backlog/feature-backlog/apply-object-oriented-skill-group-design/index.md
+Series: backlog/completed-backlog/features/apply-object-oriented-skill-group-design/index.md
 
 ## Summary
 

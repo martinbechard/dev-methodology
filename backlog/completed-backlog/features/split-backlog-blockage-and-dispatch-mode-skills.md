@@ -6,11 +6,11 @@ Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/apply-object-oriented-skill-group-design/split-backlog-blockage-and-dispatch-mode-skills.md
+Provider Reference: backlog/completed-backlog/features/split-backlog-blockage-and-dispatch-mode-skills.md
 
 Completion: direct-main
 
-Series: backlog/feature-backlog/apply-object-oriented-skill-group-design/index.md
+Series: backlog/completed-backlog/features/apply-object-oriented-skill-group-design/index.md
 
 ## Current Dispatch Reservation
 
