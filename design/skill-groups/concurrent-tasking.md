@@ -528,9 +528,9 @@ manage-work-items names the shared management contract, and manage-work-items-* 
 provider family. Persistence selects one provider. coordinate-work-items uses the contract
 across queue dispatch, active-execution reconciliation, delivery, closure, and periodic review.
 
-### Scenario: A Project Enables Resource Coordination
+### Scenario: A Project Enables Concurrent Agents
 
-This scenario applies when project configuration selects agent-claim for resource coordination. AGENTS.md loads the policy skill and one verified helper provider. agent-claim-helper defines the common operation, input, result, and uncertain-outcome interface. agent-claim-helper-command invokes a local command-line helper, while agent-claim-helper-mcp calls tools through the MCP protocol.
+This scenario starts with the project goal: enable multiple agents to work concurrently. Concurrent work requires resource coordination, so project-specific directives make agent-claim and one verified helper provider available. These skills remain outside the default Agent context until a claim event requires resource ownership. agent-claim-helper defines the common operation, input, result, and uncertain-outcome interface. agent-claim-helper-command invokes a local command-line helper, while agent-claim-helper-mcp calls tools through the MCP protocol.
 
 ```mermaid
 classDiagram
@@ -547,16 +547,6 @@ classDiagram
         <<Agent Skill>>
         +merge-workflow()
         +verification()
-    }
-
-    class deliver-work-item-feature-branch {
-        <<SKILL.md>>
-        +deliver-work-item(acceptedCommit)
-    }
-
-    class deliver-work-item-direct-main {
-        <<SKILL.md>>
-        +deliver-work-item(acceptedCommit)
     }
 
     class project-specific-directives["Project-specific directives"] {
@@ -612,19 +602,17 @@ classDiagram
         +report-claim-contention()
     }
 
-    project-specific-directives o..> agent-claim : when resource_coordination is agent-claim
-    project-specific-directives o..> agent-claim-helper-command : when the command-line helper is selected
-    project-specific-directives o..> agent-claim-helper-mcp : when the verified MCP helper is selected
-    coordinate-work-items ..> agent-claim : when resource coordination is selected
-    integrate-agent-work ..> agent-claim : when resource coordination is selected
-    deliver-work-item-feature-branch ..> agent-claim : when resource coordination is selected
-    deliver-work-item-direct-main ..> agent-claim : when resource coordination is selected
+    project-specific-directives o..> agent-claim : when concurrent work reaches a claim event
+    project-specific-directives o..> agent-claim-helper-command : when claim operations use the command-line helper
+    project-specific-directives o..> agent-claim-helper-mcp : when claim operations use the verified MCP helper
+    coordinate-work-items ..> agent-claim : when a claim event requires resource ownership
+    integrate-agent-work ..> agent-claim : when a claim event requires resource ownership
     agent-claim --> ClaimHelper
     agent-claim-helper-command ..|> ClaimHelper
     agent-claim-helper-mcp ..|> ClaimHelper
 ```
 
-The open-diamond arrows from AGENTS.md are the conditional exact-name loads. The regular dotted arrows show the skills that use resource coordination under that project selection. agent-claim depends on the common claim operations, and the selected helper skill provides them. set-solo-mode and set-multitask-mode change secondary-thread dispatch without changing this project selection.
+Enabling concurrent agents makes resource coordination required and available, but it does not preload every coordination instruction into every Agent context. The dotted relationships show the additional loads performed only when a claim event occurs. coordinate-work-items uses the policy while coordinating concurrent work, and integrate-agent-work uses it when concurrent contributions reach a shared integration event. agent-claim depends on the common claim operations, and the selected helper skill provides them. Solo workflows omit this resource-coordination route entirely.
 
 The MCP helper route becomes selectable only after an MCP implementation satisfies agent-claim-helper and the verification boundary in agent-claim-helper-mcp. The current repository selects the command-line helper.
 

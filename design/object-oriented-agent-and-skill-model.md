@@ -157,6 +157,10 @@ A conditional Agent Skill is still named directly by the Agent definition, but t
   - **SYNOPSIS:** The Agent definition knows the exact skill name but uses that skill only when the declared condition matches the request and available evidence.
   - **EXAMPLE:** “If the user requests TDD, use the test-driven-development skill.”
 
+- **RULE: RULE-72** A conditional relationship keeps the referenced skill out of the default context
+  - **SYNOPSIS:** Use a dotted relationship when the referenced skill is not loaded by default and satisfying the stated condition causes a separate load, which can require another tool call. Structural availability does not require eager loading.
+  - **EXAMPLE:** A project that enables concurrent agents makes agent-claim available, while coordinate-work-items loads it only when a claim event requires resource ownership.
+
 ```mermaid
 classDiagram
     direction LR
@@ -174,7 +178,7 @@ classDiagram
     DevCoder o..> test-driven-development : when the user requests TDD
 ```
 
-The open diamond still means exact-name knowledge. The dotted line means conditional loading, and the arrow label states the condition. Solid and dotted class references differ only in conditionality; both point from the referencing Agent to the named skill.
+The open diamond still means exact-name knowledge. The dotted line means conditional loading, and the arrow label states the condition. A solid relationship means that the target is loaded by default with the source. A dotted relationship keeps the target out of the default context until the condition triggers its separate load.
 
 The test-driven-development member area is empty because the skill describes one overall TDD procedure. The dotted relationship still shows when that complete skill is loaded.
 
