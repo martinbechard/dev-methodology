@@ -92,14 +92,7 @@ class AgentClaimTests(unittest.TestCase):
         *arguments: str,
     ) -> tuple[int, dict[str, object]]:
         """Run the command while a Windows-style second registry open is denied."""
-        module_name = f"agent_claim_path_denial_{id(self)}"
-        spec = importlib.util.spec_from_file_location(module_name, CLAIM_SCRIPT)
-        if spec is None or spec.loader is None:
-            raise RuntimeError("Unable to load the claim helper for path-denial testing.")
-        module = importlib.util.module_from_spec(spec)
-        sys.modules[module_name] = module
-        self.addCleanup(sys.modules.pop, module_name, None)
-        spec.loader.exec_module(module)
+        module = self.load_claim_module("path_denial")
         denied_registry = denied_registry.resolve()
         original_read_text = Path.read_text
 
@@ -108,12 +101,30 @@ class AgentClaimTests(unittest.TestCase):
                 raise PermissionError("simulated Windows denial for a locked registry")
             return original_read_text(path, *args, **kwargs)
 
-        output = io.StringIO()
         with mock.patch.object(Path, "read_text", deny_registry_read):
-            with redirect_stdout(output):
-                exit_code = module.main(
-                    ["--repo", str(self.repository), *arguments]
-                )
+            return self.claim_in_process(module, *arguments)
+
+    def load_claim_module(self, label: str) -> object:
+        """Load an isolated claim-helper module for one deterministic fault test."""
+        module_name = f"agent_claim_{label}_{id(self)}"
+        spec = importlib.util.spec_from_file_location(module_name, CLAIM_SCRIPT)
+        if spec is None or spec.loader is None:
+            raise RuntimeError("Unable to load the claim helper for fault testing.")
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[module_name] = module
+        self.addCleanup(sys.modules.pop, module_name, None)
+        spec.loader.exec_module(module)
+        return module
+
+    def claim_in_process(
+        self,
+        module: object,
+        *arguments: str,
+    ) -> tuple[int, dict[str, object]]:
+        """Invoke one isolated helper module and decode its structured result."""
+        output = io.StringIO()
+        with redirect_stdout(output):
+            exit_code = module.main(["--repo", str(self.repository), *arguments])
         return exit_code, json.loads(output.getvalue())
 
     def claim_with_denied_canonical_path_read(
@@ -482,6 +493,277 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("complete", marker["migration_status"])
         self.assertEqual("legacy", marker["origin"])
         self.assertTrue(legacy_registry.is_dir())
+
+    def test_windows_migration_tombstones_same_inode_before_moving_events(self) -> None:
+        """Windows retires empty legacy state in place before event migration."""
+        module = self.load_claim_module("windows_tombstone")
+        legacy_registry = self.legacy_registry_path()
+        legacy_events = self.common_directory() / "agent-claim-events"
+        legacy_registry.write_text('{"claims":[]}\n', encoding="utf-8")
+        (legacy_events / "hot").mkdir(parents=True)
+        original_inode = legacy_registry.stat().st_ino
+        operations: list[str] = []
+        original_tombstone = module._write_locked_legacy_registry_tombstone
+        original_move_events = module._move_legacy_events
+        original_rename = os.rename
+        original_unlink = Path.unlink
+        original_read_bytes = Path.read_bytes
+        original_write = os.write
+        raw_writes: list[bytes] = []
+
+        def track_tombstone(legacy_file: object, path: Path) -> None:
+            original_tombstone(legacy_file, path)
+            operations.append("tombstone")
+
+        def track_events(repository: Path) -> None:
+            operations.append("move-events")
+            original_move_events(repository)
+
+        def reject_legacy_rename(source: object, destination: object) -> None:
+            if Path(source) == legacy_registry:
+                raise AssertionError("Windows migration must not rename the legacy registry")
+            original_rename(source, destination)
+
+        def reject_legacy_unlink(path: Path, *args: object, **kwargs: object) -> None:
+            if path == legacy_registry:
+                raise AssertionError("Windows migration must not unlink the legacy registry")
+            original_unlink(path, *args, **kwargs)
+
+        def reject_locked_legacy_read(path: Path) -> bytes:
+            if path == legacy_registry:
+                raise PermissionError("simulated Windows locked-file reopen rejection")
+            return original_read_bytes(path)
+
+        def record_raw_write(descriptor: int, payload: bytes) -> int:
+            raw_writes.append(bytes(payload))
+            return original_write(descriptor, payload)
+
+        with (
+            mock.patch.object(module, "WINDOWS_LEGACY_REGISTRY_TOMBSTONE", True),
+            mock.patch.object(
+                module,
+                "_write_locked_legacy_registry_tombstone",
+                track_tombstone,
+            ),
+            mock.patch.object(module, "_move_legacy_events", track_events),
+            mock.patch.object(module.os, "rename", reject_legacy_rename),
+            mock.patch.object(Path, "unlink", reject_legacy_unlink),
+            mock.patch.object(Path, "read_bytes", reject_locked_legacy_read),
+            mock.patch.object(module.os, "write", record_raw_write),
+        ):
+            exit_code, result = self.claim_in_process(module, "reset")
+
+        self.assertEqual(0, exit_code)
+        self.assertEqual("RESET", result["outcome"])
+        self.assertEqual(["tombstone", "move-events"], operations)
+        self.assertEqual(original_inode, legacy_registry.stat().st_ino)
+        self.assertEqual(
+            module._legacy_marker_payload("registry"),
+            legacy_registry.read_bytes(),
+        )
+        self.assertIn(module._legacy_marker_payload("registry"), raw_writes)
+        self.assertTrue(legacy_events.is_file())
+        marker = json.loads((self.state_root() / "state.json").read_text())
+        self.assertEqual("complete", marker["migration_status"])
+
+    def test_windows_tombstone_makes_old_registry_decoder_fail_closed(self) -> None:
+        """The exact regular marker omits claims so an old helper rejects it."""
+        module = self.load_claim_module("windows_old_helper_stop")
+        legacy_registry = self.legacy_registry_path()
+        legacy_registry.write_bytes(module._legacy_marker_payload("registry"))
+
+        self.assertTrue(module._legacy_registry_is_marker(legacy_registry))
+        with self.assertRaises(module._ClaimStateError) as raised:
+            module._registry_payload(legacy_registry)
+
+        self.assertEqual("invalid_registry", raised.exception.reason)
+        self.assertNotIn("claims", json.loads(legacy_registry.read_text()))
+
+    def test_windows_tombstone_migration_recovers_before_moving_events(self) -> None:
+        """An interruption after tombstoning resumes without changing the retired inode."""
+        module = self.load_claim_module("windows_tombstone_recovery")
+        legacy_registry = self.legacy_registry_path()
+        legacy_events = self.common_directory() / "agent-claim-events"
+        legacy_registry.write_text('{"claims":[]}\n', encoding="utf-8")
+        (legacy_events / "hot").mkdir(parents=True)
+        original_inode = legacy_registry.stat().st_ino
+        original_move_events = module._move_legacy_events
+        move_attempts = 0
+
+        def interrupt_first_event_move(repository: Path) -> None:
+            nonlocal move_attempts
+            move_attempts += 1
+            if move_attempts == 1:
+                raise OSError("simulated interruption after registry tombstone")
+            original_move_events(repository)
+
+        with (
+            mock.patch.object(module, "WINDOWS_LEGACY_REGISTRY_TOMBSTONE", True),
+            mock.patch.object(module, "_move_legacy_events", interrupt_first_event_move),
+        ):
+            blocked_code, blocked = self.claim_in_process(module, "reset")
+            blocked_marker = json.loads((self.state_root() / "state.json").read_text())
+            recovered_code, recovered = self.claim_in_process(module, "reset")
+
+        self.assertEqual(3, blocked_code)
+        self.assertEqual("migration_interrupted", blocked["reason"])
+        self.assertEqual("in_progress", blocked_marker["migration_status"])
+        self.assertEqual(0, recovered_code)
+        self.assertEqual("RESET", recovered["outcome"])
+        self.assertEqual(2, move_attempts)
+        self.assertEqual(original_inode, legacy_registry.stat().st_ino)
+        self.assertEqual(
+            module._legacy_marker_payload("registry"),
+            legacy_registry.read_bytes(),
+        )
+        self.assertTrue(legacy_events.is_file())
+
+    def test_windows_tombstone_migration_preserves_live_legacy_state(self) -> None:
+        """A live legacy registry remains byte-for-byte drain-only state."""
+        module = self.load_claim_module("windows_live_registry")
+        legacy_registry = self.legacy_registry_path()
+        live_payload = b'{"claims":[{"claim_id":"live-owner"}]}\n'
+        legacy_registry.write_bytes(live_payload)
+        original_inode = legacy_registry.stat().st_ino
+
+        with mock.patch.object(module, "WINDOWS_LEGACY_REGISTRY_TOMBSTONE", True):
+            exit_code, result = self.claim_in_process(module, "reset")
+
+        self.assertEqual(3, exit_code)
+        self.assertEqual("live_legacy_claims_require_drain", result["reason"])
+        self.assertEqual(original_inode, legacy_registry.stat().st_ino)
+        self.assertEqual(live_payload, legacy_registry.read_bytes())
+        self.assertFalse(self.state_root().exists())
+
+    def test_windows_tombstone_rejects_nonempty_legacy_metadata(self) -> None:
+        """Only the exact empty registry payload is eligible for retirement."""
+        module = self.load_claim_module("windows_nonempty_metadata")
+        legacy_registry = self.legacy_registry_path()
+        legacy_payload = b'{"claims":[],"unexpected":"state"}\n'
+        legacy_registry.write_bytes(legacy_payload)
+        original_inode = legacy_registry.stat().st_ino
+
+        with mock.patch.object(module, "WINDOWS_LEGACY_REGISTRY_TOMBSTONE", True):
+            exit_code, result = self.claim_in_process(module, "reset")
+
+        self.assertEqual(3, exit_code)
+        self.assertEqual("contradictory_dual_state", result["reason"])
+        self.assertEqual(original_inode, legacy_registry.stat().st_ino)
+        self.assertEqual(legacy_payload, legacy_registry.read_bytes())
+        self.assertFalse(self.state_root().exists())
+
+    def test_windows_tombstone_rejects_legacy_identity_mismatch(self) -> None:
+        """A descriptor that lost the legacy path never overwrites either inode."""
+        module = self.load_claim_module("windows_identity_mismatch")
+        legacy_registry = self.legacy_registry_path()
+        legacy_payload = b'{"claims":[]}\n'
+        legacy_registry.write_bytes(legacy_payload)
+        original_inode = legacy_registry.stat().st_ino
+
+        with (
+            mock.patch.object(module, "WINDOWS_LEGACY_REGISTRY_TOMBSTONE", True),
+            mock.patch.object(module, "_legacy_descriptor_matches_path", return_value=False),
+        ):
+            exit_code, result = self.claim_in_process(module, "reset")
+
+        self.assertEqual(3, exit_code)
+        self.assertEqual("contradictory_dual_state", result["reason"])
+        self.assertEqual(original_inode, legacy_registry.stat().st_ino)
+        self.assertEqual(legacy_payload, legacy_registry.read_bytes())
+
+    def test_windows_in_progress_live_state_remains_release_only(self) -> None:
+        """A legacy writer racing an interrupted migration can still be drained."""
+        module = self.load_claim_module("windows_in_progress_live")
+        self.state_root().mkdir(parents=True)
+        self.registry_path().write_text('{"claims":[]}\n', encoding="utf-8")
+        (self.state_root() / "state.json").write_text(
+            json.dumps(
+                {
+                    "migration_status": "in_progress",
+                    "origin": "legacy",
+                    "schema_version": 1,
+                    "state_layout_version": 2,
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        legacy_claim = {
+            "claim_id": "late-writer",
+            "agent": "late-writer",
+            "task": "late writer",
+            "root_task_id": "late-writer",
+            "files": ["README.md"],
+            "trees": [],
+            "resources": [],
+            "project_files": False,
+            "backlog": False,
+            "all_files": False,
+            "mode": "primary",
+            "checkout_topology": "primary",
+            "worktree": str(self.repository),
+            "branch": "main",
+        }
+        self.legacy_registry_path().write_text(
+            json.dumps({"claims": [legacy_claim]}, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        legacy_before = self.legacy_registry_path().read_bytes()
+
+        with mock.patch.object(module, "WINDOWS_LEGACY_REGISTRY_TOMBSTONE", True):
+            blocked_code, blocked = self.claim_in_process(module, "reset")
+            preserved_after_block = self.legacy_registry_path().read_bytes()
+            release_code, released = self.claim_in_process(
+                module,
+                "release",
+                "--claim-id",
+                "late-writer",
+            )
+            recovered_code, recovered = self.claim_in_process(module, "reset")
+
+        self.assertEqual(3, blocked_code)
+        self.assertEqual("live_legacy_claims_require_drain", blocked["reason"])
+        self.assertEqual(legacy_before, preserved_after_block)
+        self.assertEqual(0, release_code)
+        self.assertEqual("RELEASED", released["outcome"])
+        self.assertEqual(0, recovered_code)
+        self.assertEqual("RESET", recovered["outcome"])
+        self.assertEqual(
+            module._legacy_marker_payload("registry"),
+            self.legacy_registry_path().read_bytes(),
+        )
+        marker = json.loads((self.state_root() / "state.json").read_text())
+        self.assertEqual("complete", marker["migration_status"])
+
+    def test_regular_tombstone_is_recognized_on_posix_recovery(self) -> None:
+        """Every platform accepts the exact Windows tombstone after migration."""
+        module = self.load_claim_module("cross_platform_tombstone")
+        self.state_root().mkdir(parents=True)
+        self.registry_path().write_text('{"claims":[]}\n', encoding="utf-8")
+        (self.state_root() / "state.json").write_text(
+            json.dumps(
+                {
+                    "migration_status": "complete",
+                    "origin": "legacy",
+                    "schema_version": 1,
+                    "state_layout_version": 2,
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        self.legacy_registry_path().write_bytes(
+            module._legacy_marker_payload("registry")
+        )
+        (self.common_directory() / "agent-claim-events").write_bytes(
+            module._legacy_marker_payload("events")
+        )
+
+        exit_code, result = self.claim_in_process(module, "status")
+
+        self.assertEqual(0, exit_code)
+        self.assertEqual("STATUS", result["outcome"])
+        self.assertEqual([], result["claims"])
 
     def test_live_legacy_registry_is_drain_only_before_migration(self) -> None:
         """The upgraded helper can release, but cannot otherwise mutate, a live legacy claim."""

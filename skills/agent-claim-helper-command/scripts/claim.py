@@ -50,6 +50,7 @@ REPORT_SCHEMA_VERSION = 2
 WORK_ITEM_REPORT_SCHEMA_VERSION = 1
 DEFAULT_HOT_DAYS = 2
 REGISTRY_LOCK_RETRY_LIMIT = 16
+WINDOWS_LEGACY_REGISTRY_TOMBSTONE = os.name == "nt"
 MAX_SCOPE_REASON_LENGTH = 200
 MAX_IDENTIFIER_LENGTH = 200
 MAX_EXTENSION_EVIDENCE_LENGTH = 1000
@@ -307,7 +308,13 @@ def _legacy_marker_payload(kind: str) -> bytes:
 def _legacy_registry_is_marker(path: Path) -> bool:
     marker = path / STATE_MARKER_FILE_NAME
     try:
-        return path.is_dir() and marker.is_file() and marker.read_bytes() == _legacy_marker_payload("registry")
+        if path.is_file():
+            return path.read_bytes() == _legacy_marker_payload("registry")
+        return (
+            path.is_dir()
+            and marker.is_file()
+            and marker.read_bytes() == _legacy_marker_payload("registry")
+        )
     except OSError:
         return False
 
@@ -342,6 +349,185 @@ def _install_legacy_events_marker(path: Path) -> None:
             legacy_events=str(path),
         )
     path.write_bytes(_legacy_marker_payload("events"))
+
+
+def _write_locked_legacy_registry_tombstone(
+    legacy_file: TextIO,
+    legacy_registry: Path,
+) -> None:
+    """Replace validated empty legacy state through its already locked descriptor."""
+    legacy_file.flush()
+    descriptor = legacy_file.fileno()
+    if os.name == "nt":
+        import msvcrt
+
+        msvcrt.setmode(descriptor, os.O_BINARY)
+    payload = _legacy_marker_payload("registry")
+    os.lseek(descriptor, 0, os.SEEK_SET)
+    remaining = memoryview(payload)
+    while remaining:
+        written = os.write(descriptor, remaining)
+        if written <= 0:
+            raise OSError(f"legacy registry tombstone write failed: {legacy_registry}")
+        remaining = remaining[written:]
+    os.ftruncate(descriptor, len(payload))
+    os.fsync(descriptor)
+    os.lseek(descriptor, 0, os.SEEK_SET)
+    if os.read(descriptor, len(payload) + 1) != payload:
+        raise OSError(f"legacy registry tombstone verification failed: {legacy_registry}")
+    legacy_file.seek(0)
+
+
+def _require_exact_empty_legacy_payload(
+    legacy_data: dict[str, Any],
+    legacy_registry: Path,
+) -> None:
+    if legacy_data["claims"]:
+        raise _ClaimStateError(
+            "live_legacy_claims_require_drain",
+            "Release every live legacy claim before migrating claim state.",
+            legacy_registry=str(legacy_registry),
+            live_claim_ids=[
+                str(claim.get("claim_id")) for claim in legacy_data["claims"]
+            ],
+            allowed_operation="release",
+        )
+    if legacy_data != {"claims": []}:
+        raise _ClaimStateError(
+            "contradictory_dual_state",
+            "The legacy registry is not the exact empty state required for retirement.",
+            legacy_registry=str(legacy_registry),
+        )
+
+
+def _legacy_descriptor_matches_path(
+    legacy_file: TextIO,
+    legacy_registry: Path,
+) -> bool:
+    locked = os.fstat(legacy_file.fileno())
+    try:
+        current = os.lstat(legacy_registry)
+    except (FileNotFoundError, NotADirectoryError):
+        return False
+    return (
+        stat.S_ISREG(locked.st_mode)
+        and stat.S_ISREG(current.st_mode)
+        and locked.st_nlink != 0
+        and (locked.st_dev, locked.st_ino) == (current.st_dev, current.st_ino)
+    )
+
+
+def _tombstone_windows_legacy_registry(
+    repository: Path,
+    locked_legacy_file: TextIO | None,
+    captured_payload: dict[str, Any] | None,
+) -> None:
+    """Install the Windows tombstone without changing the legacy registry inode."""
+    legacy_registry = _legacy_registry_path(repository)
+    if _legacy_registry_is_marker(legacy_registry):
+        return
+
+    if locked_legacy_file is not None:
+        if not _legacy_descriptor_matches_path(locked_legacy_file, legacy_registry):
+            raise _ClaimStateError(
+                "contradictory_dual_state",
+                "The locked legacy registry no longer owns its migration path.",
+                legacy_registry=str(legacy_registry),
+            )
+        legacy_data = _registry_payload_from_file(locked_legacy_file, legacy_registry)
+        if captured_payload is not None and legacy_data != captured_payload:
+            raise _ClaimStateError(
+                "contradictory_dual_state",
+                "The locked legacy registry changed after its migration payload was captured.",
+                legacy_registry=str(legacy_registry),
+            )
+        _require_exact_empty_legacy_payload(legacy_data, legacy_registry)
+        _write_locked_legacy_registry_tombstone(
+            locked_legacy_file,
+            legacy_registry,
+        )
+        return
+
+    try:
+        descriptor = os.open(legacy_registry, os.O_RDWR)
+    except (FileNotFoundError, IsADirectoryError, NotADirectoryError) as error:
+        raise _ClaimStateError(
+            "contradictory_dual_state",
+            "Interrupted migration is missing its exact legacy registry marker.",
+            legacy_registry=str(legacy_registry),
+        ) from error
+    with os.fdopen(descriptor, "r+", encoding="utf-8") as legacy_file:
+        fcntl.flock(legacy_file.fileno(), fcntl.LOCK_EX)
+        try:
+            if not _legacy_descriptor_matches_path(legacy_file, legacy_registry):
+                raise _ClaimStateError(
+                    "contradictory_dual_state",
+                    "Interrupted migration found an unstable legacy registry path.",
+                    legacy_registry=str(legacy_registry),
+                )
+            legacy_data = _registry_payload_from_file(legacy_file, legacy_registry)
+            _require_exact_empty_legacy_payload(legacy_data, legacy_registry)
+            _write_locked_legacy_registry_tombstone(legacy_file, legacy_registry)
+        finally:
+            fcntl.flock(legacy_file.fileno(), fcntl.LOCK_UN)
+
+
+def _windows_in_progress_live_legacy_registry(
+    repository: Path,
+    operation: str,
+    claim_id: str | None,
+) -> Path | None:
+    """Route restored live state to the legacy drain-only release boundary."""
+    legacy_registry = _legacy_registry_path(repository)
+    if _legacy_registry_is_marker(legacy_registry) or not legacy_registry.is_file():
+        return None
+    try:
+        descriptor = os.open(legacy_registry, os.O_RDWR)
+    except (FileNotFoundError, IsADirectoryError, NotADirectoryError):
+        return None
+    with os.fdopen(descriptor, "r+", encoding="utf-8") as legacy_file:
+        fcntl.flock(legacy_file.fileno(), fcntl.LOCK_EX)
+        try:
+            if not _legacy_descriptor_matches_path(legacy_file, legacy_registry):
+                return None
+            data = _registry_payload_from_file(legacy_file, legacy_registry)
+            if not data["claims"]:
+                return None
+            live_ids = [str(claim.get("claim_id")) for claim in data["claims"]]
+            if operation == "release" and claim_id in live_ids:
+                return legacy_registry
+            raise _ClaimStateError(
+                "live_legacy_claims_require_drain",
+                "The legacy registry is drain-only until every live claim is released.",
+                legacy_registry=str(legacy_registry),
+                live_claim_ids=live_ids,
+                allowed_operation="release",
+            )
+        finally:
+            fcntl.flock(legacy_file.fileno(), fcntl.LOCK_UN)
+
+
+def _move_legacy_events(repository: Path) -> None:
+    state_root = _state_root(repository)
+    events_path = state_root / EVENT_DIRECTORY_NAME
+    legacy_events = _git_common_directory(repository) / EVENT_DIRECTORY_NAME
+
+    if _legacy_events_is_marker(legacy_events):
+        events_path.mkdir(parents=True, exist_ok=True)
+    elif legacy_events.exists():
+        if not legacy_events.is_dir() or events_path.exists():
+            raise _ClaimStateError(
+                "contradictory_dual_state",
+                "Both legacy and canonical event-history locations contain state.",
+                legacy_events=str(legacy_events),
+                canonical_events=str(events_path),
+            )
+        os.rename(legacy_events, events_path)
+    else:
+        events_path.mkdir(parents=True, exist_ok=True)
+
+    if os.environ.get("AGENT_CLAIM_TEST_FAIL_MIGRATION_AFTER_EVENTS") == "1":
+        raise OSError("simulated interruption after moving legacy event history")
 
 
 @contextmanager
@@ -393,10 +579,9 @@ def _finish_legacy_migration(
     repository: Path,
     canonical_registry_file: TextIO,
     locked_legacy_payload: dict[str, Any] | None = None,
+    locked_legacy_file: TextIO | None = None,
 ) -> None:
-    state_root = _state_root(repository)
-    registry_path = state_root / REGISTRY_FILE_NAME
-    events_path = state_root / EVENT_DIRECTORY_NAME
+    registry_path = _state_root(repository) / REGISTRY_FILE_NAME
     legacy_root = _git_common_directory(repository)
     legacy_registry = legacy_root / REGISTRY_FILE_NAME
     legacy_events = legacy_root / EVENT_DIRECTORY_NAME
@@ -409,22 +594,18 @@ def _finish_legacy_migration(
             legacy_registry=str(legacy_registry),
         )
 
-    if _legacy_events_is_marker(legacy_events):
-        events_path.mkdir(parents=True, exist_ok=True)
-    elif legacy_events.exists():
-        if not legacy_events.is_dir() or events_path.exists():
-            raise _ClaimStateError(
-                "contradictory_dual_state",
-                "Both legacy and canonical event-history locations contain state.",
-                legacy_events=str(legacy_events),
-                canonical_events=str(events_path),
-            )
-        os.rename(legacy_events, events_path)
-    else:
-        events_path.mkdir(parents=True, exist_ok=True)
+    if WINDOWS_LEGACY_REGISTRY_TOMBSTONE:
+        _tombstone_windows_legacy_registry(
+            repository,
+            locked_legacy_file,
+            locked_legacy_payload,
+        )
+        _move_legacy_events(repository)
+        _install_legacy_events_marker(legacy_events)
+        _write_state_marker(repository, "complete", "legacy")
+        return
 
-    if os.environ.get("AGENT_CLAIM_TEST_FAIL_MIGRATION_AFTER_EVENTS") == "1":
-        raise OSError("simulated interruption after moving legacy event history")
+    _move_legacy_events(repository)
 
     if _legacy_registry_is_marker(legacy_registry):
         pass
@@ -487,6 +668,14 @@ def _resolve_registry_path_once(
         return registry_path
 
     if marker and marker["migration_status"] == "in_progress":
+        if WINDOWS_LEGACY_REGISTRY_TOMBSTONE:
+            live_legacy_registry = _windows_in_progress_live_legacy_registry(
+                repository,
+                operation,
+                claim_id,
+            )
+            if live_legacy_registry is not None:
+                return live_legacy_registry
         try:
             with _migration_lock(repository) as (_locked_registry_path, registry_file):
                 _finish_legacy_migration(repository, registry_file)
@@ -569,11 +758,18 @@ def _resolve_registry_path_once(
                         live_claim_ids=live_ids,
                         allowed_operation="release",
                     )
+                if WINDOWS_LEGACY_REGISTRY_TOMBSTONE:
+                    _require_exact_empty_legacy_payload(data, legacy_registry)
                 _state_root(repository).mkdir(parents=True, exist_ok=True)
                 _write_state_marker(repository, "in_progress", "legacy")
                 try:
                     with _migration_lock(repository) as (_locked_registry_path, registry_file):
-                        _finish_legacy_migration(repository, registry_file, data)
+                        _finish_legacy_migration(
+                            repository,
+                            registry_file,
+                            data,
+                            legacy_file,
+                        )
                 except _ClaimStateError:
                     raise
                 except OSError as error:
