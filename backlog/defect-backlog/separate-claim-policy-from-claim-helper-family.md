@@ -1,6 +1,6 @@
 # Separate Claim Policy From Claim Helper Family
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -111,3 +111,13 @@ Approved at creation on 2026-08-05 by the user's request to identify naming and 
 ## Notes
 
 The Running `store-agent-claim-state-in-gitignored-project-directory` item changes the same policy and helper sources. That is a current exact-path and integration overlap to coordinate; it is not a hard prerequisite because this item can complete independent discovery and reconcile from whichever accepted claim-state version reaches main first.
+
+## Starting Reservation — 2026-08-06T06:13:26Z
+
+- Transition: Ready -> Starting.
+- Coordinator reservation: Dev Backlog Coordinator reserved this Work Item ID on current main at 2026-08-06T06:13:26Z.
+- Owner handoff: Dev Backlog Coordinator retains reservation ownership and will hand off to one root Dev Orchestrator after launch acceptance.
+- Root Agent Task: Not assigned; no child task was created by this reservation transaction.
+- Claim-state dependency note: store-agent-claim-state-in-gitignored-project-directory remains paused in User Action Required with no live work claim in the current registry; this reservation does not mutate that provider record.
+- Launch result: Pending; this provider transaction does not start a task or create execution ownership.
+- Next action: Launch one root Dev Orchestrator and record Starting -> Running only after accepted execution evidence.
