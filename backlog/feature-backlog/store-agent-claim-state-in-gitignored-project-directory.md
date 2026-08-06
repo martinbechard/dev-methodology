@@ -52,6 +52,24 @@ Started At: 2026-08-06T00:08:47.470415Z.
 
 Claim Evidence: Exact-file claim record-running-store-agent-claim-state-019fd464 acquired with outcome SHARED_CHECKOUT_ACQUIRED and event 77d97076-c07f-46f8-9630-0471d0983784.
 
+## Active Execution Evidence
+
+Condition Type: Active correction and release work.
+
+Owner: Dev Orchestrator.
+
+Evidence: Status remains Running for canonical task 019fd464-3875-75e2-aaa0-39a8e357d764 on branch codex/store-agent-claim-state in worktree /Users/martinbechard/.codex/worktrees/b146/dev-methodology. Preserved dev-methodology candidate d2744c62281b5fc2bfdabd0d95a72642aab2924e and external parity candidate 660aef8be2cfc12926aef15c90250556760961a7 have fresh independent review approval and verification PASS. Native Windows CI run 31068038651 isolated the remaining correction to Windows-safe retirement of the locked legacy registry; aligned same-directory staging and recovery design evidence is preserved, and delegated implementation was paused for this provider reconciliation.
+
+Observed At: 2026-08-06T03:30:05Z.
+
+Started At: 2026-08-06T00:08:47.470415Z.
+
+Deadline: 2026-08-06T07:30:00Z.
+
+Next Action: Release update/path claims, reacquire activity=work, resume preserved correction at dev d2744c62 and external 660aef8.
+
+Next Reconciliation At: 2026-08-06T03:44:00Z.
+
 ## Summary
 
 Move the disposable agent-claim registry and event history out of the Git common directory into one shared, project-owned, gitignored runtime-state directory that ordinary Codex tasks can access without special `.git` permissions.
