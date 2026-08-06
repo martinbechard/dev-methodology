@@ -229,7 +229,11 @@ classDiagram
     create-work-item-jira ..|> CreateWorkItem
 ```
 
-AGENTS.md selects exactly one creation provider from the project Persistence setting. Azure DevOps and Jira use placeholder provider skills that return their documented unsupported result.
+AGENTS.md selects exactly one creation provider from the project Persistence setting. Azure
+DevOps and Jira use placeholder provider skills that return their documented unsupported result.
+An explicit Future Ideas request conditionally selects manage-future-ideas instead of adding an
+operation to the creation or lifecycle interfaces. create-work-item-file and manage-future-ideas
+use commit-file-provider-transaction only when their file creation reaches the commit boundary.
 
 ### Scenario: Managing Provider Lifecycle
 
@@ -574,6 +578,8 @@ The scenario diagrams use these project-routed policy, helper, creation, managem
 - [Create Pull Request](../../skills/create-pull-request/SKILL.md)
 - [Create Work Item](../../skills/create-work-item/SKILL.md)
 - [Create File Work Item](../../skills/create-work-item-file/SKILL.md)
+- [Manage Future Ideas](../../skills/manage-future-ideas/SKILL.md)
+- [Commit File Provider Transaction](../../skills/commit-file-provider-transaction/SKILL.md)
 - [Create GitHub Work Item](../../skills/create-work-item-github/SKILL.md)
 - [Create GitLab Work Item](../../skills/create-work-item-gitlab/SKILL.md)
 - [Create Azure DevOps Work Item](../../skills/create-work-item-azure-devops/SKILL.md)

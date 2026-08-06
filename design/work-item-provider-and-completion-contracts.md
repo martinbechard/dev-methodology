@@ -154,9 +154,16 @@ Claim reports retain their existing top-level version and add a separately versi
 
 ## Exact File-Provider Transactions
 
-Every file-provider creation, lifecycle update, move, archive, or justified atomic multi-record operation starts from a complete exact canonical repository-relative provider-path manifest. The manifest identifies every current source and created destination. Ordinary creation and update each use exactly one path. A move or archive uses exactly one current source and one created destination. A generic atomic operation uses at least two paths and a nonempty rationale, including when exactly two records participate. An unknown operation, invalid role shape, or missing, title-derived, inferred, wildcard, directory, partial, or mismatched manifest is invalid. Conversation titles remain display text and never provider identity or mutation scope.
+Every file-provider mutation starts from a complete exact canonical repository-relative
+provider-path manifest. commit-file-provider-transaction owns two creation shapes:
+ordinary-creation has one absent destination, and future-idea-promotion has one retained source,
+one absent destination, and one atomic rationale. manage-work-items-file retains lifecycle update,
+move, and archive transactions. An unknown operation, invalid role shape, or missing, inferred,
+wildcard, directory, partial, or mismatched manifest is invalid.
 
-The transaction applies only to canonical provider records under backlog, plus the retained Future Idea source in create-work-item-file's promotion operation. The file provider resolves the opaque Work Item ID before constructing its internal exact-path manifest. Current sources must exist with matching Work Item IDs and saved bytes. Created destinations must be absent, use exclusive-create, and preserve the same Work Item ID for a move or archive. Immutable proof covers the full provider-owned manifest even when pre-mutation roles differ.
+The shared creation transaction applies only to canonical provider records under backlog. Its
+promotion source must be a retained canonical Future Idea. Created destinations must be absent
+and use exclusive-create. Immutable proof covers the complete operation manifest.
 
 The loaded resource-coordination procedure remains independent from file-provider behavior. Apply it before mutation and require its coordination evidence to agree with the exact manifest without copying its policy into the provider manager.
 
@@ -174,7 +181,11 @@ Only an explicit ideation or promotion operation reads or validates this folder.
 
 Deliberate promotion retains the idea, adds Promoted To with the new Work Item ID, and creates one complete work item in an active, Holding, or User Action Required destination. The promoted item records file as Provider, its immutable filename-stem Work Item ID, exactly direct-main, feature-branch, or UNSET as Completion, and the retained idea path as an exact Source Evidence entry. Holding accepts the underlying dispatchable Type or the Holding Type. User Action Required retains its underlying dispatchable Type.
 
-create-work-item-file owns one exact-path promotion transaction under the file-provider contract above. Its durable two-path manifest identifies the retained Future Idea as the current source, the promoted item as the exclusive destination, and the reciprocal-record atomic rationale. The loaded resource coordination applies to both exact promotion paths. The immutable commit object must contain exactly the retained source with Promoted To, the destination with reciprocal Source Evidence, and the destination's immutable Work Item ID. manage-work-items-file routes promotion to this owner and does not define a second procedure.
+manage-future-ideas owns capture, explicit inventory, validation, and promotion. It constructs the
+retained source, exclusive destination, reciprocal records, and atomic rationale. It then applies
+commit-file-provider-transaction for the exact two-path mutation. create-work-item-file supplies
+ordinary destination content and uses the same transaction skill for one-path creation.
+manage-work-items-file excludes Future Ideas from ordinary lifecycle operations.
 
 ## Provider-Owned Work Item IDs
 

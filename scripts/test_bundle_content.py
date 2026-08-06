@@ -112,12 +112,14 @@ NEW_DEVELOPMENT_SKILLS = (
     "deliver-work-item-direct-main",
     "create-work-item",
     "create-work-item-file",
+    "commit-file-provider-transaction",
     "create-work-item-github",
     "create-work-item-gitlab",
     "create-work-item-azure-devops",
     "create-work-item-jira",
     "manage-work-items",
     "manage-work-items-file",
+    "manage-future-ideas",
     "manage-work-items-github",
     "manage-work-items-gitlab",
     "manage-work-items-azure-devops",
@@ -2498,7 +2500,7 @@ class BundleContentTests(unittest.TestCase):
 
     def test_work_item_creation_providers_expose_shared_public_procedure(self) -> None:
         expected_boundaries = {
-            "create-work-item-file": "exclusive-create",
+            "create-work-item-file": "commit-file-provider-transaction",
             "create-work-item-github": "ambiguous create response",
             "create-work-item-gitlab": "Never retry by creating a second issue",
             "create-work-item-azure-devops": "Status: BLOCKED.",
@@ -5773,11 +5775,8 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
 
     def test_dev_backlog_steward_requires_starting_blocked_work_resumption(self) -> None:
-        """The suite covers staged resumption and lightweight Future Ideas."""
+        """The suite preserves the staged Blocked resumption contract."""
         suite_root = AGENT_TEST_SUITES_ROOT / "dev-backlog-steward"
-        create_file_text = (
-            SKILLS_ROOT / "create-work-item-file" / "SKILL.md"
-        ).read_text(encoding="utf-8")
         manage_file_text = (
             SKILLS_ROOT / "manage-work-items-file" / "SKILL.md"
         ).read_text(encoding="utf-8")
@@ -5790,21 +5789,23 @@ class BundleContentTests(unittest.TestCase):
         role_text = (
             ROLES_ROOT / "dev-activities" / "dev-backlog-steward.role.yaml"
         ).read_text(encoding="utf-8")
+        self.assertIn("provider-wide backlog inventory", role_text)
         self.assertIn(
-            "After any successful transition into User Action Required, send the canonical work-item",
+            "ordinary lifecycle\n  operations remain with the authorized Coordinator or Orchestrator",
             role_text,
         )
         workflow_text = "\n".join(role["instructions"]["workflow"])
         self.assertIn(
-            "Please create and present the user action brief next.",
-            workflow_text,
+            "return its separate result without entering ordinary lifecycle management",
+            workflow_text.lower(),
         )
-        readme_text = (REPOSITORY_ROOT / "README.md").read_text(encoding="utf-8")
-        provider_contract_text = (
-            REPOSITORY_ROOT
-            / "design"
-            / "work-item-provider-and-completion-contracts.md"
-        ).read_text(encoding="utf-8")
+        boundaries_text = "\n".join(role["instructions"]["boundaries"])
+        self.assertIn(
+            "The authorized Dev Backlog Coordinator or Dev Orchestrator applies",
+            boundaries_text,
+        )
+        self.assertNotIn("user action brief", role_text.lower())
+
         for required_phrase in (
             "## Blocked Handoff And Resumption",
             "Set Status to Blocked and Owner to Unowned",
@@ -5845,7 +5846,6 @@ class BundleContentTests(unittest.TestCase):
         ]
         self.assertIn("queue-state-transition", blocked_handoff_checks)
         self.assertNotIn("test-state-transition", blocked_handoff_checks)
-
         self.assertEqual(
             "BLOCKED",
             by_id["blocked-unowned-running-shortcut"]["expectedTerminalStatus"],
@@ -5857,109 +5857,156 @@ class BundleContentTests(unittest.TestCase):
             "BLOCKED",
             by_id["blocked-failed-claim-resumption"]["expectedTerminalStatus"],
         )
-        future_scenario = by_id["future-ideas-capture-and-promotion"]
-        self.assertEqual("PASS", future_scenario["expectedTerminalStatus"])
-        self.assertIn(
-            "Block non-file capture without creating an issue or shadow file",
-            future_scenario["requiredBehaviors"],
-        )
-        self.assertIn(
-            "Keep Holding as recognized deferred work",
-            future_scenario["requiredBehaviors"],
-        )
-        self.assertIn(
-            "Add Promoted To on the idea and reciprocal Source Evidence on the complete typed work item",
-            future_scenario["requiredBehaviors"],
-        )
-        expected_output = "backlog item, Future Idea, or status update"
-        self.assertIn(expected_output, future_scenario["expectedOutputs"])
-        self.assertIn(
-            expected_output,
-            [next(iter(entry)) for entry in role["outputContract"]],
-        )
-        for required_phrase in (
-            "## Future Ideas Capture",
-            "## Future Idea Promotion",
-            "Durable Future Ideas are available only through the file provider",
-            "Do not require Status, Type, Owner",
-            "Keep revisit triggers as free text",
-            "Retain the original idea in backlog/future-ideas",
-            "preflight target collisions before any promotion write",
-            "save the source idea, target, and Git index state needed to restore the attempt",
-            "including Open Questions",
-            "The promotion must either succeed completely or restore the previous state.",
-            "Remove only the new target created by this attempt.",
-            "Stage exactly the idea and target paths",
-            "path-limited commit",
-            "Capture the new commit OID immediately after commit creation",
-            "require its changed-path set and reciprocal record bytes to contain exactly the intended pair",
-            "Follow the Claim Events table in agent-claim for the retained Future Idea update",
-        ):
-            with self.subTest(create_future_ideas_contract=required_phrase):
-                self.assertIn(required_phrase, create_file_text)
-        for required_phrase in (
-            "## Future Ideas Workflow",
-            "Durable Future Ideas are file-provider-only",
-            "Do not scan, validate, count, or report backlog/future-ideas unless",
-            "Report ideas separately from Ready, Starting, Running, Blocked",
-            "Preserve the original idea in place after promotion",
-        ):
-            with self.subTest(manage_future_ideas_contract=required_phrase):
-                self.assertIn(required_phrase, manage_file_text)
-        self.assertIn("Do not scan or count backlog/future-ideas", coordination_text)
-        for required_phrase in (
-            "Routes ordinary durable work through the effective Persistence-selected skills",
-            "Durable Future Ideas are file-provider-only",
-            "For lightweight capture, collect only the minimal Future Idea inputs",
-            "Do not enter ordinary lifecycle processing",
-            "include lifecycle state, ownership, and dependencies only for ordinary work",
-            "preflight target collisions",
-            "Restore the exact pre-attempt idea and target state",
-            "exact full Git index file",
-            "bytes and existence",
-            "preserving unrelated staged state",
-            "Capture the new commit OID",
-            "follow applicable project guidance for repository mutation",
-            "caller's accepted execution evidence",
-            "operation-specific evidence is recorded",
-            "provider lifecycle",
-        ):
-            with self.subTest(steward_future_ideas_branch=required_phrase):
-                self.assertIn(required_phrase, role_text)
-        for retired_coordination_phrase in (
-            "resource_coordination",
-            "agent-claim",
-            "claim-free",
-            "enabled claim",
-            "claim evidence",
-        ):
-            with self.subTest(steward_coordination_phrase=retired_coordination_phrase):
-                self.assertNotIn(retired_coordination_phrase, role_text)
-        for required_phrase in (
-            "exact full Git index file bytes and existence",
-            "path-limited commit",
-            "unrelated staged state",
-            "captures the new commit OID",
-            "The steward follows [Agent Claim](skills/agent-claim/SKILL.md) when that skill is loaded.",
-        ):
-            with self.subTest(future_ideas_readme=required_phrase):
-                self.assertIn(required_phrase, readme_text)
-        for required_phrase in (
-            "exact full Git index file bytes and existence",
-            "path-limited commit",
-            "unrelated staged state",
-            "captures the new commit OID",
-            "Event 1 protects the retained Future Idea update through a claim on only its exact current path",
-            "uniquely named promoted target uses atomic no-overwrite creation without a target claim",
-        ):
-            with self.subTest(future_ideas_provider_contract=required_phrase):
-                self.assertIn(required_phrase, provider_contract_text)
-        self.assertTrue((suite_root / "contract_harness.py").is_file())
         judge_text = (suite_root / "agents" / "judge.toml").read_text(
             encoding="utf-8"
         )
         self.assertIn("reject direct unowned Blocked to Running", judge_text)
         self.assertIn("byte-for-byte pre-attempt Blocked item", judge_text)
+
+    def test_file_future_idea_skills_have_non_overlapping_ownership(self) -> None:
+        """Future Ideas and file transactions have dedicated peer contracts."""
+        suite_root = AGENT_TEST_SUITES_ROOT / "dev-backlog-steward"
+        create_file_text = (
+            SKILLS_ROOT / "create-work-item-file" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        manage_file_text = (
+            SKILLS_ROOT / "manage-work-items-file" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        future_ideas_text = (
+            SKILLS_ROOT / "manage-future-ideas" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        transaction_text = (
+            SKILLS_ROOT / "commit-file-provider-transaction" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        role = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-backlog-steward.role.yaml"
+        )
+        role_text = (
+            ROLES_ROOT / "dev-activities" / "dev-backlog-steward.role.yaml"
+        ).read_text(encoding="utf-8")
+        suite = load_yaml_object(suite_root / "suite.yaml")
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        cases = load_yaml_object(REPOSITORY_ROOT / "evals" / "cases.yaml")
+
+        self.assertIn("## Future Ideas Boundary", create_file_text)
+        self.assertIn("manage-future-ideas", create_file_text)
+        self.assertIn("commit-file-provider-transaction", create_file_text)
+        self.assertNotIn("## Future Ideas Capture", create_file_text)
+        self.assertNotIn("## Future Idea Promotion", create_file_text)
+        self.assertNotIn("## Exact Backlog Creation Transaction", create_file_text)
+
+        self.assertIn("## Future Ideas Exclusion", manage_file_text)
+        self.assertIn("manage-future-ideas", manage_file_text)
+        self.assertNotIn("## Future Ideas Workflow", manage_file_text)
+        self.assertNotIn("Validate only a title, Synopsis", manage_file_text)
+
+        for required_phrase in (
+            "## Future Ideas Definition",
+            "## Capture Future Idea",
+            "## Inventory And Validate Future Ideas",
+            "## Promote Future Idea",
+            "## Result",
+            "file-provider-only",
+            "not work items or lifecycle",
+            "selects Future Ideas",
+            "resolved regular files",
+            "free text",
+            "Promoted To",
+            "reciprocal Source Evidence",
+            "commit-file-provider-transaction",
+            "For capture and promotion, also return the transaction commit",
+        ):
+            with self.subTest(future_ideas_contract=required_phrase):
+                self.assertIn(required_phrase, future_ideas_text)
+
+        for required_phrase in (
+            "## Commit File Provider Transaction",
+            "ordinary-creation",
+            "future-idea-promotion",
+            "exact full Git index file bytes and existence",
+            "exclusive-create",
+            "git commit --only",
+            "immutable commit object",
+            "unrelated staged",
+            "Rollback",
+            "After every applicable source and destination path claim",
+            "Re-read and re-resolve every manifest path",
+            "Current source bytes, file type, canonical containment, and authority.",
+            "Continued destination absence and canonical destination containment and authority.",
+            "captured HEAD, exact Git index bytes and existence",
+            "Return zero-mutation BLOCKED",
+            "Do not create a destination, write a source, stage, or commit",
+        ):
+            with self.subTest(transaction_contract=required_phrase):
+                self.assertIn(required_phrase, " ".join(transaction_text.split()))
+
+        role_skills = {
+            skill_name: metadata
+            for entry in role["skills"]
+            for skill_name, metadata in entry.items()
+        }
+        self.assertIn("manage-future-ideas", role_skills)
+        self.assertIn("condition", role_skills["manage-future-ideas"])
+        self.assertIn(
+            "bounded exception for explicitly requested Future Ideas",
+            " ".join(role_text.split()),
+        )
+        self.assertNotIn("commit-file-provider-transaction", role_text)
+        self.assertIn(
+            "preserve and report the recovery result from manage-future-ideas",
+            " ".join(role_text.split()).lower(),
+        )
+        self.assertIn("backlog item, Future Idea, or status update", {
+            next(iter(entry)) for entry in role["outputContract"]
+        })
+
+        scenarios = load_yaml_object(suite_root / "scenarios.yaml")["scenarios"]
+        by_id = {scenario["id"]: scenario for scenario in scenarios}
+        future_scenario = by_id["future-ideas-capture-and-promotion"]
+        self.assertEqual("PASS", future_scenario["expectedTerminalStatus"])
+        self.assertIn("manage-future-ideas", future_scenario["targetSkills"])
+        self.assertIn(
+            "commit-file-provider-transaction", future_scenario["targetSkills"]
+        )
+        self.assertNotIn("manage-work-items-file", future_scenario["targetSkills"])
+        inventory_scenario = by_id["future-ideas-inventory-and-validation"]
+        self.assertEqual("executable", inventory_scenario["status"])
+        self.assertEqual(
+            "fixtures/cases.yaml", inventory_scenario["executableCase"]
+        )
+        self.assertIn("manage-future-ideas", inventory_scenario["targetSkills"])
+        self.assertNotIn(
+            "commit-file-provider-transaction", inventory_scenario["targetSkills"]
+        )
+        self.assertNotIn("create-work-item-file", inventory_scenario["targetSkills"])
+        self.assertEqual(
+            ["skills/dev-backlog-steward-suite-contract/SKILL.md"],
+            suite["projectSkills"]["suite"],
+        )
+        self.assertEqual(
+            "contract_harness.py",
+            suite["execution"]["deterministicSimulator"],
+        )
+        self.assertEqual(
+            "test_contract.py",
+            suite["execution"]["deterministicTests"],
+        )
+
+        probes_by_id = {probe["id"]: probe for probe in probes["probes"]}
+        cases_by_id = {case["id"]: case for case in cases["cases"]}
+        case_id = "file-work-item-template-contract"
+        for probe_id in (
+            "probe-manage-future-ideas",
+            "probe-commit-file-provider-transaction",
+        ):
+            with self.subTest(declared_probe=probe_id):
+                self.assertEqual([], probes_by_id[probe_id]["executableCases"])
+                self.assertEqual("declared", probes_by_id[probe_id]["coverageStatus"])
+                self.assertNotIn(probe_id, cases_by_id[case_id]["skillProbes"])
+                self.assertNotIn(
+                    probe_id, cases_by_id[case_id]["fixtureBackedProbeClaims"]
+                )
+        self.assertTrue((suite_root / "contract_harness.py").is_file())
 
     def test_skill_frontmatter_uses_agent_skill_schema(self) -> None:
         for skill_path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):
@@ -6708,7 +6755,7 @@ class BundleContentTests(unittest.TestCase):
             "Status: Ready only when dependency resolution proves",
             "without manufacturing a",
             "an agent independently identifies definite work",
-            "Preserve an uncertain possibility as a Future Idea",
+            "Route an explicit Future Ideas, ideation, or promotion request",
             "the user has not requested or authorized that new work",
             "After creation, route a user-requested item",
             "the original request did not resolve",
@@ -6724,7 +6771,7 @@ class BundleContentTests(unittest.TestCase):
             "State the unattended-work boundary",
             "Move an approved or answered item into its typed active backlog folder",
             "set Status: Ready before any Running transition",
-            "backlog/holding is for intentionally deferred work",
+            "intentionally deferred recognized work",
         ):
             with self.subTest(manage_guidance=required_guidance):
                 self.assertIn(required_guidance, manage_text)
@@ -6748,7 +6795,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("hard dependency", create_text)
 
         self.assertIn(
-            "Before any creation, promotion, or transition that would write Status: Ready",
+            "Before any transition that would write Status: Ready",
             manage_text,
         )
         self.assertIn("Status: Blocked", manage_text)
@@ -6861,7 +6908,7 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertEqual("fixture-backed", probe["coverageStatus"])
         self.assertEqual([case_id], probe["executableCases"])
-        self.assertEqual([probe_id], case["fixtureBackedProbeClaims"])
+        self.assertEqual({probe_id}, set(case["fixtureBackedProbeClaims"]))
         self.assertIn(probe_id, case["skillProbes"])
         self.assertIn(case_id, happy_scenario["executableCases"])
         self.assertIn(case_id, backlog_workflow["executableCases"])
@@ -6915,7 +6962,6 @@ class BundleContentTests(unittest.TestCase):
                 "Only the primary worktree on main may change canonical files under backlog.",
                 "must not create, transition, or archive an item",
                 "Each startup or terminal transition remains its own short primary-main provider transaction.",
-                "Create the destination with an exclusive create operation",
                 "AWAITING_REVIEW",
                 "same delivery identity remains lifecycle AWAITING_REVIEW",
                 "Do not change lifecycle back to RUNNING for same-delivery corrections.",
@@ -6941,7 +6987,7 @@ class BundleContentTests(unittest.TestCase):
 
         readme_text = README_PATH.read_text(encoding="utf-8")
         self.assertIn(
-            "Resource coordination is loaded and applied independently from manage-work-items-file",
+            "creation provider delegates its exact commit to commit-file-provider-transaction",
             readme_text,
         )
         self.assertNotIn("needs no claim", readme_text)
@@ -10976,7 +11022,7 @@ class BundleContentTests(unittest.TestCase):
                         },
                     )
                 elif entry["id"] == "dev-backlog-steward":
-                    self.assertEqual(7, len(scenarios["scenarios"]))
+                    self.assertEqual(8, len(scenarios["scenarios"]))
                 elif entry["id"] == "project-bootstrapper":
                     self.assertEqual(4, len(scenarios["scenarios"]))
                     self.assertEqual(

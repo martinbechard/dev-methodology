@@ -881,6 +881,10 @@ A good model makes skill dependencies, dispatch, and organization understandable
   - **SYNOPSIS:** A family label is the exact Interface Skill identity followed by -*, and every Provider Skill begins with that complete identity followed by one provider suffix. Deterministic naming checks locate spelling and stereotype defects; semantic review remains responsible for interface members, provider behavior, and consumer expectations.
   - **EXAMPLE:** create-work-item maps to create-work-item-* and create-work-item-file. Placing the wildcard or provider suffix between create and work-item is invalid because it breaks the complete interface stem.
 
+- **RULE: RULE-70** Peer skills keep non-provider behavior outside provider interfaces
+  - **SYNOPSIS:** A request-specific operation remains a peer when it is not part of ordinary provider creation or lifecycle management.
+  - **EXAMPLE:** manage-future-ideas owns explicit Future Ideas behavior, while commit-file-provider-transaction owns the shared creation transaction. Neither operation becomes a manage-work-items procedure.
+
 ## 13. Glossary
 
 The glossary defines the relationship and diagram terms used by the analysis after the examples have established their context.

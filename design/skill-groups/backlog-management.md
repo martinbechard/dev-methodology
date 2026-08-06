@@ -8,7 +8,10 @@ The applied-model conventions are defined in [Object-Oriented Skill Group Models
 
 ## Design
 
-Backlog Management owns work-item creation, provider lifecycle management, and blockage recovery. The overall view shows the participating Agents and related Skill Groups; the scenario views expand the two provider families, sequential blockage recovery, and optional resource coordination.
+Backlog Management owns work-item creation, provider lifecycle management, explicit file-backed
+Future Ideas, shared file creation transactions, and blockage recovery. The peer skills keep
+these responsibilities separate. The scenario views expand provider families, sequential
+blockage recovery, and optional resource coordination.
 
 ### Overall Agent And Skill Group Dependencies
 
@@ -79,9 +82,16 @@ classDiagram
         <<Provider Skill>>
         +work-item-id
         +create-work-item(workItemDescription)
-        +future-ideas-capture()
-        +future-idea-promotion()
-        +exact-backlog-creation-transaction()
+    }
+    class manage-future-ideas {
+        <<Request-specific Skill>>
+        +capture-future-idea(idea)
+        +inventory-and-validate-future-ideas(selection)
+        +promote-future-idea(idea, workItem)
+    }
+    class commit-file-provider-transaction {
+        <<Transaction Skill>>
+        +commit-file-provider-transaction(operation)
     }
     class create-work-item-github {
         <<Provider Skill>>
@@ -111,13 +121,19 @@ classDiagram
     ProjectSpecificDirectives o..> create-work-item-azure-devops : when Persistence is azure-devops
     ProjectSpecificDirectives o..> create-work-item-jira : when Persistence is jira
     create-work-item-file ..|> CreateWorkItem
+    create-work-item-file ..> commit-file-provider-transaction : ordinary creation
+    manage-future-ideas ..> commit-file-provider-transaction : capture or promotion
     create-work-item-github ..|> CreateWorkItem
     create-work-item-gitlab ..|> CreateWorkItem
     create-work-item-azure-devops ..|> CreateWorkItem
     create-work-item-jira ..|> CreateWorkItem
 ```
 
-One effective project selects one creation provider. The Azure DevOps and Jira creation providers preserve the shared interface while returning their documented unsupported result.
+One effective project selects one creation provider. An explicit Future Ideas workflow selects
+manage-future-ideas separately. Both file creation paths use commit-file-provider-transaction;
+neither peer adds Future Ideas to the work-item lifecycle interface. The Azure DevOps and Jira
+creation providers preserve the shared interface while returning their documented unsupported
+result.
 
 ### Scenario: Managing Work-Item Lifecycle
 
@@ -260,6 +276,9 @@ classDiagram
     class manage-work-items-file {
         <<Provider Skill>>
     }
+    class commit-file-provider-transaction {
+        <<SKILL.md>>
+    }
     class ProjectSpecificDirectives["Project-specific directives"] {
         <<AGENTS.md>>
         <<routing>>
@@ -274,7 +293,8 @@ classDiagram
     }
 
     ProjectSpecificDirectives o..> agent-claim : when resource_coordination is agent-claim
-    create-work-item-file ..> agent-claim : when resource coordination is selected
+    create-work-item-file ..> commit-file-provider-transaction : ordinary creation
+    commit-file-provider-transaction ..> agent-claim : when resource coordination is selected
     manage-work-items-file ..> agent-claim : when resource coordination is selected
 ```
 
@@ -286,7 +306,9 @@ Creation and management providers share public procedure names while retaining p
 | --- | --- | --- |
 | resolve-backlog-blockage | Resolve Backlog Blockage | Resolves a declared blockage sequentially without owning dispatch-mode changes. |
 | create-work-item | Work Item Identity; Inputs; Create Work Item; Result | Defines the provider-neutral creation contract consumed by Agents. |
-| create-work-item-file | Create Work Item; Future Ideas Capture; Future Idea Promotion; Exact Backlog Creation Transaction | Creates file-backed work items and owns the file provider’s lightweight idea workflows. |
+| create-work-item-file | Create Work Item | Creates complete ordinary file-backed work items and delegates their exact commit. |
+| manage-future-ideas | Capture Future Idea; Inventory And Validate Future Ideas; Promote Future Idea; Result | Owns explicit file-backed Future Ideas operations outside ordinary lifecycle management. |
+| commit-file-provider-transaction | Commit File Provider Transaction | Owns the ordinary one-path and promotion two-path no-overwrite transaction. |
 | create-work-item-github | Create Work Item | Creates and verifies one authoritative GitHub issue. |
 | create-work-item-gitlab | Create Work Item | Creates and verifies one authoritative GitLab issue. |
 | create-work-item-azure-devops | Create Work Item | Returns a truthful blocked result because Azure DevOps creation is not implemented. |
@@ -311,6 +333,8 @@ The provider relationships and procedure boundaries are grounded in these Agent 
 - [Set Multitask Mode](../../skills/set-multitask-mode/SKILL.md)
 - [Create Work Item](../../skills/create-work-item/SKILL.md)
 - [Create File Work Item](../../skills/create-work-item-file/SKILL.md)
+- [Manage Future Ideas](../../skills/manage-future-ideas/SKILL.md)
+- [Commit File Provider Transaction](../../skills/commit-file-provider-transaction/SKILL.md)
 - [Create GitHub Work Item](../../skills/create-work-item-github/SKILL.md)
 - [Create GitLab Work Item](../../skills/create-work-item-gitlab/SKILL.md)
 - [Create Azure DevOps Work Item](../../skills/create-work-item-azure-devops/SKILL.md)

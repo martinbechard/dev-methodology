@@ -9,7 +9,10 @@ metadata:
 
 ## Create Work Item
 
-Create one durable file-provider work item that is clear, typed, and safe to manage later, or deliberately capture one lightweight Future Idea without misrepresenting it as work. Ordinary active items must be dispatchable without the original conversation. User-action-required items must preserve the exact decision or information only the user can provide and must remain separate from unattended work.
+Create one durable file-provider work item that is clear, typed, and safe to manage later.
+Ordinary active items must be dispatchable without the original conversation. User-action-required
+items must preserve the exact decision or information only the user can provide and must remain
+separate from unattended work.
 
 ## Provider Selection
 
@@ -17,7 +20,6 @@ Create one durable file-provider work item that is clear, typed, and safe to man
 - When durable provider work is required and the provider is UNSET, ask the user to select a provider before mutation.
 - When the effective provider is none or another provider, return the provider mismatch without creating a file or falling back to file storage.
 - Do not create or update GitHub, GitLab, Azure DevOps, or Jira records and do not mirror their items under backlog.
-- Durable Future Ideas are available only through the file provider. When another provider is selected, return BLOCKED without capturing, listing, or promoting the idea unless the user explicitly selects file as the one-item provider override for that idea. Never turn a Future Idea into a provider issue or create a shadow file beside another provider.
 
 ## File Authority
 
@@ -25,47 +27,25 @@ Only the primary worktree on main may create canonical files under backlog. The 
 
 Another worktree may inspect backlog but must not create the item. If the primary worktree is not on main, it must not create the item. Return BLOCKED with the observed worktree, branch, and required handoff. Do not create another queue elsewhere.
 
-Resolve the final canonical path first, then create it with the platform's exclusive-create operation so the write fails when the path already exists. Never preflight with an existence check followed by an ordinary overwrite-capable write. Write the complete intended bytes through that exclusive descriptor, synchronize and close it, validate the created item, and remove only that newly created path if validation or commit fails. An existing target means duplicate reconciliation is required; do not overwrite or retry with a different name.
-
 Keep backlog creation separate from implementation ownership. Record and commit the complete
 canonical lifecycle first: Ready when no hard prerequisite remains, or Blocked when the
 authorized item is waiting for one.
 
-## Exact Backlog Creation Transaction
+## File Provider Transaction
 
-This section owns exact-path Git behavior for ordinary work-item creation and Future Idea promotion. Do not define a second Git or immutable-proof procedure for promotion.
+After validating the complete ordinary work item, use commit-file-provider-transaction with
+operation ordinary-creation, the one exact absent destination path, the validated bytes, and
+the Work Item ID. That skill is the sole source for no-overwrite creation, resource coordination,
+exact Git scope, rollback, immutable proof, and unrelated-state preservation.
 
-Resolve and preserve one complete exact canonical repository-relative provider-path manifest before assignment or mutation. Accept only these operation shapes:
+Return BLOCKED when the shared transaction reports a collision, unsafe rollback, proof mismatch,
+or incomplete recovery. Do not duplicate or weaken its transaction rules in this skill.
 
-- Ordinary creation has exactly one created destination path and no current path.
-- Future Idea promotion has exactly one retained current source path, exactly one exclusively created destination path, and a nonempty atomic rationale explaining why the reciprocal records must commit together.
+## Future Ideas Boundary
 
-Refuse an unknown operation, a multi-path ordinary creation, a promotion with either endpoint or its rationale missing, or a missing, title-derived, inferred, wildcard, directory, partial, or mismatched manifest. A conversation title is display text and never supplies the provider path.
-
-Apply ordinary creation only to canonical file-provider records under backlog. Apply promotion only to one retained Future Idea source and one canonical file-provider destination under backlog. Do not apply either transaction to arbitrary repository files. Resolve path roles before mutation:
-
-- A current source must exist with the exact saved bytes and current identity required by its record type.
-- A created destination must be absent and must declare the Work Item ID that matches its filename stem.
-
-The exclusive-create remains authoritative for every created destination. Never substitute an overwrite-capable write merely because Git path limits are available. For promotion, update the retained idea with Promoted To and create the complete reciprocal work item exclusively in the same transaction.
-
-Apply the loaded resource-coordination procedure when it requires protection for a manifest path. Apply the loaded resource-coordination procedure to both exact promotion paths before changing the retained source or creating the destination. Preserve the resulting coordination evidence with the transaction evidence without defining that procedure here.
-
-Every mutating Git argument vector must name all and only the manifest paths after --. Use the equivalent of:
-
-```bash
-git add -- backlog/type-backlog/item.md
-git commit --only -m "Create file work item" -- backlog/type-backlog/item.md
-
-git add -- backlog/future-ideas/idea.md backlog/type-backlog/item.md
-git commit --only -m "Promote Future Idea" -- backlog/future-ideas/idea.md backlog/type-backlog/item.md
-```
-
-Do not use git add ., git add -A, a directory or wildcard pathspec, or an implicit index-wide git commit. Do not clear, replace, or commit unrelated staged entries. Preserve every unrelated staged blob, tracked dirty byte sequence, and untracked dirty byte sequence exactly.
-
-Verify the resulting immutable commit object before reporting success. For ordinary creation, require its changed-path set to equal the one-path manifest and the committed record's Work Item ID and bytes to equal the filename stem and validated bytes. For promotion, require its changed-path set to equal the source-and-destination manifest, the retained source bytes to contain the promoted Work Item ID, the destination bytes to contain the exact reciprocal Source Evidence path, and the destination Work Item ID to equal its filename stem.
-
-A manifest-role, coordination-evidence, Git-argument, changed-path, committed-byte, reciprocal-link, Work Item ID, or unrelated-state mismatch makes the attempt failed or BLOCKED, never successful.
+Future Ideas are not work items. This skill does not capture, inventory, validate, or promote
+them. Route an explicit Future Ideas, ideation, or promotion request to manage-future-ideas.
+Ordinary creation excludes backlog/future-ideas from lifecycle processing and duplicate scans.
 
 ## Template Workflow
 
@@ -93,51 +73,15 @@ Place new work items by work type:
 - Investigations go in backlog/investigation-backlog.
 - Items whose next safe step requires a user decision, approval, authority grant, value judgment, or user-held information go in backlog/user-action-required.
 - Items that should remain visible but not automatically worked go in backlog/holding.
-- Potentially useful thoughts that are not yet actionable, approved, scheduled, or recognized as work go in backlog/future-ideas.
 - Do not create items directly in completed or failed archive folders.
 
 If a repository has a documented taxonomy or placement rule, follow it before creating files within the authoritative backlog root. If the expected backlog folder does not exist, create the most specific standard folder that matches the item type unless project guidance says otherwise.
 
 User Action Required is a queue state, not a work type. Preserve the underlying Type as Defect, Feature, Analysis, or Investigation so an answered item has a deterministic active destination. Use Status: User Action Required while the item remains in backlog/user-action-required.
 
-backlog/future-ideas, backlog/holding, and backlog/user-action-required are different. Future Ideas contains thoughts that have not become recognized work. Holding contains already-recognized work intentionally deferred without an immediate question. User Action Required contains recognized work that cannot safely advance until the user answers a concrete question.
-
-## Future Ideas Capture
-
-Capture an idea only when the user explicitly asks to remember it or the active workflow explicitly includes an ideation capture step. Use one Markdown file under backlog/future-ideas with this minimal shape:
-
-- One title heading.
-- A Synopsis section with a short description of the possibility.
-- An Origin or Rationale section explaining where the thought came from or why it may matter.
-- Optional Notes and Revisit Trigger sections.
-- An optional Promoted To field after deliberate promotion.
-
-Do not require Status, Type, Owner, Provider, Work Item ID, Completion, Context, Source Evidence, Requirements, Acceptance Criteria, Dependencies, Verification, or a user decision merely to preserve an idea. Keep revisit triggers as free text; they are reminders for deliberate ideation, not machine schedules or dispatch conditions.
-
-Future Ideas are not work items or lifecycle states. Do not include them in ordinary duplicate scans, inventory, runnable counts, unattended selection, dispatch, ownership, lifecycle transitions, dependency reconciliation, or archive movement. List or validate them only when the user explicitly requests Future Ideas, ideation, or promotion work.
-
-A request to capture an idea authorizes only the lightweight record. It does not authorize implementation or promotion.
-
-## Future Idea Promotion
-
-Promote an idea only through a deliberate user-authorized operation:
-
-1. Read the retained source idea, resolve its canonical regular-file authority, and search ordinary queues for an existing matching work item.
-2. Resolve the intended canonical target path and preflight target collisions before any promotion write. An existing target or matching ordinary work item blocks promotion without changing either record.
-3. Create one complete typed work item in its applicable active, Holding, or User Action Required destination with every field and section required by Required Item Shape, including Open Questions, and any destination-specific sections. Holding may retain its underlying dispatchable Type or declare Type: Holding; User Action Required must retain its underlying dispatchable Type.
-4. Set Completion to exactly direct-main, feature-branch, or UNSET.
-5. Include the exact canonical source idea path in the promoted work item's Source Evidence section.
-6. Retain the original idea in backlog/future-ideas and add Promoted To with the promoted item's Work Item ID.
-7. Validate both complete files, destination rules, and links in both directions.
-8. Construct the exact two-path manifest with the retained source role, exclusive destination role, and atomic rationale. Execute only the Future Idea promotion shape in Exact Backlog Creation Transaction, including resource coordination for both exact paths, exact Git argument vectors, the path-limited commit, immutable proof, and unrelated-state preservation.
-
-Promotion does not copy the idea's optional revisit trigger into lifecycle scheduling. Resolve
-every declared hard dependency before selecting the promoted lifecycle. The promoted work
-item receives Status: Ready in its typed active folder only when promotion authorizes active
-work and no hard prerequisite remains, Status: Blocked in that typed folder when an authorized
-item is waiting for a hard dependency, Status: Holding when the user deliberately defers the
-recognized work, or Status: User Action Required when a separate genuine user-owned question
-prevents safe work.
+backlog/holding and backlog/user-action-required are different. Holding contains recognized work
+that is intentionally deferred without an immediate question. User Action Required contains
+recognized work that cannot safely advance until the user answers one concrete question.
 
 ## Related Item Series
 
@@ -172,7 +116,9 @@ When a request mixes types, split it only when the parts can be completed indepe
 
 Before creating a User Action Required item, when agent-claim is loaded, apply agent-claim to the blocking condition and confirm that a separate genuine user-owned decision remains. Structured claim outcomes and technical claim cleanup or recovery remain agent-owned and do not justify User Action Required.
 
-Do not use User Action Required merely to preserve an independently identified possibility. If the active workflow explicitly authorizes idea capture, place that possibility in backlog/future-ideas without asking for approval to perform work. Otherwise report it ephemerally rather than creating an unauthorized durable record.
+Do not use User Action Required merely to preserve an independently identified possibility.
+Report that possibility ephemerally unless an explicit Future Ideas request routes it to
+manage-future-ideas.
 
 Also use User Action Required when all of these are true:
 
@@ -192,7 +138,7 @@ governed-definition boundary or other possible future user-owned decision is not
 hard dependency: record it as an implementation constraint or Note without manufacturing a
 creation-time approval question for work the user already requested.
 
-Use User Action Required at creation when an agent independently identifies definite work, such as a confirmed defect or necessary enhancement, while performing other work and the user has not requested or authorized that new work. Ask whether the newly identified work should proceed before moving it into a typed active backlog. Preserve an uncertain possibility as a Future Idea only when the active workflow explicitly authorizes lightweight capture.
+Use User Action Required at creation when an agent independently identifies definite work, such as a confirmed defect or necessary enhancement, while performing other work and the user has not requested or authorized that new work. Ask whether the newly identified work should proceed before moving it into a typed active backlog.
 
 After creation, route a user-requested item to backlog/user-action-required only when execution
 reaches a distinct concrete user-owned decision, authority grant, action, risk acceptance, or
@@ -225,7 +171,7 @@ Keep change-control manifests out of Design Principles. They are approval eviden
 
 Use a stable, lowercase, hyphen-separated filename ending in .md. Derive the slug from the filename stem. Prefer names that describe the durable work, not a temporary symptom, date, owner, status, or vague cleanup label.
 
-Before writing, search every active typed folder, backlog/user-action-required, backlog/holding, and every completed or failed archive for the same Work Item ID. Also search active and non-dispatchable work for the same source evidence or overlapping outcome. Search backlog/future-ideas only during explicit idea capture or promotion. Update an existing active item only when the new request is clearly the same work. Create a new item only when it has a distinct outcome or can be completed independently. Never use a second provider or a different repository path to bypass a duplicate.
+Before writing, search every active typed folder, backlog/user-action-required, backlog/holding, and every completed or failed archive for the same Work Item ID. Also search active and non-dispatchable work for the same source evidence or overlapping outcome. Do not search backlog/future-ideas. Update an existing active item only when the new request is clearly the same work. Create a new item only when it has a distinct outcome or can be completed independently. Never use a second provider or a different repository path to bypass a duplicate.
 
 ## Required Item Shape
 
@@ -285,9 +231,8 @@ Send no message when creation fails or when duplicate reconciliation creates no 
 Before reporting completion:
 
 - Confirm the effective provider is file and the mutation occurred only under backlog in the primary main worktree.
-- Confirm the ordinary creation assignment carried the complete exact canonical repository-relative provider-path manifest and every mutating Git argument vector used exactly that path after --.
-- Confirm uniquely named atomic no-overwrite creation succeeded.
-- Confirm the captured immutable commit object contains exactly the authorized path and validated bytes while unrelated staged and dirty state remains unchanged.
+- Confirm commit-file-provider-transaction returned successful immutable proof for the exact
+  ordinary-creation destination and preserved unrelated state.
 - Confirm the item is in the right typed folder and has a stable globally unique Work Item ID.
 - Confirm related multi-item goals have an index.md and linked independently runnable children.
 - Confirm the complete required item shape, source evidence, dependencies, and verification expectations are present.
@@ -296,10 +241,11 @@ Before reporting completion:
 - Confirm Open Questions contain only agent-resolvable uncertainty and do not create a false user-action gate.
 - Confirm governed-definition approval evidence names exact canonical paths and user-message provenance before mutation.
 - Confirm user-action-required content has the complete question and unattended boundary.
-- For Future Ideas, confirm the minimal idea shape, exclusion from ordinary work-item scans, resolved regular-file authority within backlog/future-ideas, and any reciprocal Promoted To and exact Source Evidence link.
 - Confirm no provider issue, mirror, shadow queue, or duplicate file was created.
 
-For an ordinary work item, return provider file, opaque Work Item ID, current diagnostic location, item type, lifecycle status, source evidence, dependency Work Item IDs, completion selection, creation commit, and next runnable action. For a Future Idea, return its path, synopsis, origin or rationale, optional revisit trigger, capture commit, and the fact that it is not runnable or approved work.
+Return provider file, opaque Work Item ID, current diagnostic location, item type, lifecycle
+status, source evidence, dependency Work Item IDs, completion selection, creation commit,
+immutable proof, and next runnable action.
 
 ## Migration
 

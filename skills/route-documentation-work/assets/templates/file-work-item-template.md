@@ -3,6 +3,11 @@ File path: skills/route-documentation-work/assets/templates/file-work-item-templ
 1-line summary: Template for one self-contained file-backed work item.
 -->
 
+<!--
+This template is only for ordinary file-backed work items. Future Ideas use the lightweight
+record shape in manage-future-ideas and do not carry work-item lifecycle fields.
+-->
+
 # TODO Work Item Title
 
 Status: TODO Ready, Blocked, User Action Required, or Holding

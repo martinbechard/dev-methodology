@@ -386,7 +386,9 @@ packs:
       - probe-create-work-item-gitlab
       - probe-create-work-item-azure-devops
       - probe-create-work-item-jira
+      - probe-commit-file-provider-transaction
       - probe-manage-work-items
+      - probe-manage-future-ideas
       - probe-manage-work-items-file
       - probe-manage-work-items-github
       - probe-manage-work-items-gitlab

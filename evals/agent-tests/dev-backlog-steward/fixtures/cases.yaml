@@ -78,7 +78,7 @@ cases:
       Revisit when retry observability becomes planned work.
     ideaAfter: |
       # Retry Dashboard
-      Promoted To: backlog/feature-backlog/retry-dashboard.md
+      Promoted To: retry-dashboard
       ## Synopsis
       Consider a dashboard for retry visibility.
       ## Origin or Rationale
@@ -91,6 +91,7 @@ cases:
       Type: Feature
       Provider: file
       Provider Reference: backlog/feature-backlog/retry-dashboard.md
+      Work Item ID: retry-dashboard
       Completion: direct-main
       ## Summary
       Deliver retry visibility.
@@ -127,13 +128,31 @@ cases:
           preservedEvidence: worktree and Git index snapshots
       resourceCoordination:
         agent-claim:
+          claimPaths:
+            - backlog/future-ideas/retry-dashboard.md
+            - backlog/feature-backlog/retry-dashboard.md
           claimLifecycle:
-            - acquire before mutation
+            - acquire both exact paths together in one operation before mutation
+            - revalidate transaction snapshots after claims
             - release after success or safe verified rollback
             - retain after unsafe rollback or postcommit verification failure
         none:
           claimCalls: []
           claimEvidence: absent
+      postClaimDrift:
+        snapshotTiming: before exact-path claims
+        requiredResult: zero-mutation BLOCKED
+        injectedKinds:
+          - source-bytes
+          - source-type-and-authority
+          - destination-appears
+          - head
+          - index
+          - unrelated-worktree
+      destinationClaimConflict:
+        outcome: CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED
+        conflictingPath: backlog/feature-backlog/retry-dashboard.md
+        expectedResult: zero-mutation BLOCKED with no retained new ownership
       collision:
         result: BLOCKED
         writesAttempted: false
@@ -185,3 +204,39 @@ cases:
           targetBefore: absent
           targetAfter: absent
           cleanupScope: remove only a target created by this attempt
+  future-ideas-inventory-and-validation:
+    provider: file
+    explicitlyRequested: true
+    ordinaryLifecycleCount: 0
+    expectedOutput: backlog item, Future Idea, or status update
+    records:
+      valid-retry-dashboard.md: |
+        # Retry Dashboard
+        ## Synopsis
+        Consider a dashboard for retry visibility.
+        ## Origin or Rationale
+        Operators currently inspect several separate logs.
+        ## Notes
+        Keep the first iteration read-only.
+        ## Revisit Trigger
+        Revisit when retry observability becomes planned work.
+        Promoted To: retry-dashboard
+      z-duplicate-retry-dashboard.md: |
+        # Retry Dashboard
+        ## Synopsis
+        Consider a dashboard for retry visibility.
+        ## Origin or Rationale
+        Operators currently inspect several separate logs.
+      missing-origin.md: |
+        # Missing Origin
+        ## Synopsis
+        This record is deliberately incomplete.
+    authorityEscape:
+      path: escaping-link.md
+      externalBytes: EXTERNAL-BYTES-MUST-NOT-BE-READ
+    expectedValidPaths:
+      - backlog/future-ideas/valid-retry-dashboard.md
+    expectedInvalidPaths:
+      - backlog/future-ideas/escaping-link.md
+      - backlog/future-ideas/missing-origin.md
+      - backlog/future-ideas/z-duplicate-retry-dashboard.md

@@ -191,7 +191,11 @@ historical observation and start times do not control expiry; both its finite co
 deadline and next-reconciliation boundary must remain in the future. An ineligible Running
 record moves to a truthful non-active state before replacement capacity is dispatched.
 
-Future Ideas are file-provider-only and intentionally absent from the ordinary report, runnable counts, and lifecycle totals. With another Persistence provider selected, durable capture is blocked unless the user explicitly selects file as the one-item override; no provider issue or shadow file is created. Include and validate file-provider Future Ideas only through an explicit ideation operation:
+manage-future-ideas owns file-provider Future Ideas. These lightweight records are intentionally
+absent from the ordinary report, runnable counts, and lifecycle totals. With another Persistence
+provider selected, durable capture is blocked unless the user explicitly selects file as the
+one-item override. No provider issue or shadow file is created. Include and validate Future Ideas
+only through an explicit ideation operation:
 
 ```bash
 python3 scripts/generate-backlog-report.py --output /path/to/backlog-report.html --include-future-ideas
@@ -199,7 +203,10 @@ python3 scripts/generate-backlog-report.py --output /path/to/backlog-report.html
 
 The explicit view lists Future Ideas separately. Each idea needs only a title, Synopsis, and Origin or Rationale; Notes and a free-text Revisit Trigger are optional. A promoted idea remains in place with Promoted To and the complete promoted work item carries the exact source idea path in its Source Evidence. Promotion Completion is direct-main, feature-branch, or UNSET. Holding accepts an underlying dispatchable Type or the Holding Type; User Action Required retains its underlying dispatchable Type.
 
-Promotion always runs as one primary-main transaction. Before mutation, the authorized owner snapshots exact idea and target bytes and existence plus the exact full Git index file bytes and existence. It stages the reciprocal pair only, uses a path-limited commit, captures the new commit OID, verifies that exact immutable object contains exactly both records and bytes, and leaves unrelated staged state intact. A failed operation restores and verifies both worktree paths and the Git index. The owner follows [Agent Claim](skills/agent-claim/SKILL.md) when that skill is loaded. Unsafe recovery reports BLOCKED with preserved evidence and an explicit recovery owner.
+commit-file-provider-transaction owns the ordinary one-path creation and atomic two-path promotion
+mechanics. It supplies no-overwrite writes, exact-path commits, rollback, immutable proof, and
+unrelated-state preservation. manage-future-ideas supplies the reciprocal promotion records and
+explicit authorization boundary without duplicating that transaction contract.
 
 The report is read-only. It does not approve user-action items, mutate backlog files, acquire work, or dispatch agents.
 
@@ -516,12 +523,14 @@ The development practice skills are:
 - organise-project-files
 - create-work-item
 - create-work-item-file
+- commit-file-provider-transaction
 - create-work-item-github
 - create-work-item-gitlab
 - create-work-item-azure-devops
 - create-work-item-jira
 - manage-work-items
 - manage-work-items-file
+- manage-future-ideas
 - manage-work-items-github
 - manage-work-items-gitlab
 - manage-work-items-azure-devops
@@ -566,7 +575,12 @@ manage-work-items is the provider-neutral management Interface Skill. The manage
 
 create-work-item-github and manage-work-items-github are the canonical split GitHub Persistence skills. They keep GitHub Issues authoritative and never create a shadow repository queue.
 
-create-work-item-file and manage-work-items-file are the canonical file Persistence pair. They keep authoritative records only under backlog in the primary worktree on main and never mirror provider issues into repository files. Resource coordination is loaded and applied independently from manage-work-items-file; the manager does not define or condition provider lifecycle procedures on claims. PROJECT.yaml selects Persistence and Commit independently, while AGENTS.md supplies only the corresponding skill references. Conceptual agent definitions remain neutral to both selectors.
+create-work-item-file and manage-work-items-file are the canonical file Persistence pair. The
+creation provider delegates its exact commit to commit-file-provider-transaction. The lifecycle
+provider excludes Future Ideas and routes an explicit ideation operation to manage-future-ideas.
+The four skills have non-overlapping responsibilities and keep authoritative records only under
+backlog in the primary worktree on main. PROJECT.yaml selects Persistence and Commit independently,
+while AGENTS.md supplies only the corresponding provider references.
 
 deliver-work-item is the provider-neutral Commit interface consumed by Dev Orchestrator. It defines the accepted commit input, READY, AWAITING_REVIEW, and BLOCKED results, state-keyed evidence, and prepared Persistence handoff. AGENTS.md still selects deliver-work-item-direct-main or deliver-work-item-feature-branch from the effective Commit value.
 

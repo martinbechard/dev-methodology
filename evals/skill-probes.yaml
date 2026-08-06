@@ -107,6 +107,20 @@ probes:
     executableCases: [typescript-order-pricing, spring-boot-order-cancellation, documentation-functional-spec, wiki-raw-ingest, backlog-lifecycle]
     coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-commit-file-provider-transaction
+    skill: commit-file-provider-transaction
+    source: skills/commit-file-provider-transaction/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: Ordinary file-provider creation or explicitly authorized Future Idea promotion reaches its exact-path commit boundary.
+    negativeCondition: Provider content is incomplete, the effective provider is not file, mutation authority is absent, or no supported creation operation is requested.
+    expectedBehavior: Accept only ordinary-creation or future-idea-promotion; preserve the exact manifest, path roles, full Git index, and unrelated state; after required claims re-read source and destination authority bytes types and absence plus repository and index state and stop without writes on drift; create destinations without overwrite; stage and commit only exact paths; verify the captured immutable object; and restore the exact pre-attempt worktree and index state after a precommit failure.
+    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, claim-lifecycle, tool-authority, no-forbidden-mutation], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-backlog-steward-happy]
+    workflowAssociations: [backlog]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: manage-work-items-github}
   - id: probe-coordinate-work-items
     skill: coordinate-work-items
     source: skills/coordinate-work-items/SKILL.md
@@ -1185,6 +1199,20 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-manage-future-ideas
+    skill: manage-future-ideas
+    source: skills/manage-future-ideas/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: A request or explicitly authorized workflow selects file-backed Future Ideas capture, inventory, validation, ideation, or promotion.
+    negativeCondition: Ordinary work-item creation or lifecycle management does not explicitly opt into Future Ideas.
+    expectedBehavior: Keep Future Ideas file-provider-only, lightweight, non-dispatchable, and outside ordinary lifecycle counts; capture only the minimal record; inventory and validate only on explicit request; and require explicit authorization, duplicate checks, complete reciprocal records, and the shared atomic transaction for promotion.
+    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, queue-state-transition, tool-authority, output-contract-presence], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-backlog-steward-happy]
+    workflowAssociations: [backlog]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: manage-work-items-github}
   - id: probe-nextjs-app-router
     skill: nextjs-app-router
     source: skills/nextjs-app-router/SKILL.md

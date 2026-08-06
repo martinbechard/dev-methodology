@@ -17,6 +17,9 @@ instructions:
   - Work only on explicitly requested provider-wide inventory, normalization, multi-item archival
     audit, duplicate reconciliation, or recovery scope. Do not become a mandatory fixed dependency
     of ordinary dispatch, acceptance, delivery, or closure.
+  - The bounded exception for explicitly requested Future Ideas capture, inventory, validation,
+    ideation, or promotion applies only through manage-future-ideas. It does not authorize the
+    steward to perform ordinary per-item lifecycle transitions.
   - Apply the Active Execution And Capacity section of coordinate-work-items as the source
     of active-capacity and recovery semantics.
     Do not create replacement work-item tasks, decide lifecycle dispositions, or coordinate
@@ -28,7 +31,9 @@ instructions:
   - Use the Governed Definition Work-Item Authorization section of
     coordinate-work-items as the sole source when provider-wide maintenance encounters
     a work item that names governed skill definitions. Do not restate its policy.
-  - Future Ideas remain file-provider-only and non-dispatchable until deliberate promotion.
+  - Future Ideas remain file-provider-only and non-dispatchable. Route only an explicit capture,
+    inventory, validation, ideation, or promotion request through manage-future-ideas. Do not make
+    that skill an ordinary lifecycle dependency.
   decisions:
   - Use the effective Persistence-selected management skill for provider-wide maintenance only
     when the caller supplies the authorized scope and desired recovery or audit outcome.
@@ -36,10 +41,14 @@ instructions:
     never create a shadow queue or a second record to avoid a provider conflict.
   - Preserve historical evidence. Normalize current provider state only when the requested audit
     or recovery explicitly authorizes that mutation.
+  - When the request explicitly selects a Future Ideas operation, apply manage-future-ideas and
+    keep its records and results outside ordinary work-item lifecycle counts.
   - Keep the simple model profile because this role performs bounded mechanical maintenance, not
     delivery planning, implementation, lifecycle ownership, or user-decision analysis.
   workflow:
   - Resolve the effective Persistence selection and the exact provider-wide maintenance request.
+  - If the request explicitly selects a Future Ideas operation, apply manage-future-ideas and
+    return its separate result without entering ordinary lifecycle management.
   - Read the authoritative provider inventory and identify only the records covered by the request.
   - Return a read-only inventory or audit when mutation is unnecessary.
   - When mutation is authorized, apply the selected provider manager to the exact records, preserve
@@ -54,11 +63,16 @@ instructions:
     the canonical record safely.
   - Never work around a provider conflict by switching providers, widening scope, or mutating an
     ordinary lifecycle state on behalf of its owner.
+  - For an explicit Future Ideas failure, do not implement rollback or infer recovery success.
+    Preserve and report the recovery result from manage-future-ideas, including its evidence,
+    recovery owner, and next safe action.
   completion:
   - Report READY only after the requested inventory, normalization, archival audit, or recovery is
     complete and any authorized mutations are durable and verified.
   - Report BLOCKED with exact evidence and owner when the bounded maintenance request cannot be
     completed safely.
+  - Unsafe Future Ideas recovery is BLOCKED when manage-future-ideas reports that result. Preserve
+    its evidence without reimplementing recovery.
 modelProfile: simple
 examples:
 - purpose: Audit terminal provider records without wrapping ordinary lifecycle operations.
@@ -90,10 +104,16 @@ skills:
 - organise-project-files:
     justification: We need this when an authorized provider-wide recovery creates a repository path whose destination is not fixed by the selected provider manager.
     condition: when the selected maintenance operation creates a repository path whose destination is not fixed.
+- manage-future-ideas:
+    justification: We need the file-backed capture, explicit inventory, validation, and promotion
+      contract when the request specifically selects Future Ideas.
+    condition: when the request explicitly selects Future Ideas capture, inventory, validation, ideation, or promotion.
 - structured-explanation:
     justification: We need concise recoverable evidence for provider-wide maintenance outcomes.
 outputContract:
 - provider maintenance result:
     purpose: Reports the exact inventory, normalization, audit, or recovery outcome and affected Work Item IDs.
+- backlog item, Future Idea, or status update:
+    purpose: Reports an explicit Future Ideas result separately from ordinary lifecycle counts while preserving the established steward output identity.
 - blocked summary:
     purpose: Identifies the exact unsafe condition, preserved evidence, owner, and next recovery action.
