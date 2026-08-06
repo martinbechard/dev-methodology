@@ -160,14 +160,16 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator.
 
-Evidence: Root paused the Dev Coder at a safe point and released work claim separate-claim-policy-work-019fd5b5 with disposition handoff. The renamed focused test path is an uncommitted preserved diff only; no source commit exists yet, and no project-file claim is held. The canonical Root Dev Orchestrator remains on branch codex/separate-claim-policy-from-claim-helper-family in worktree /Users/martinbechard/.codex/worktrees/1bee/dev-methodology, with baseline/main coordinator commit cc5574b798c0fab87fb5c9c6b3c6acd935030feb and parent/delegated source task 019fb057-1767-7ef2-b5fa-41f4417b20b3. Title remains verified: Implementing — Separate Claim Policy From Claim Helper Family.
+Evidence: Root paused the Dev Coder at a safe unit boundary and released work claim separate-claim-policy-work-019fd5b5-2 with disposition handoff. The focused missing-interface boundary was RED, then the three-test policy/interface/provider plus renderer slice was GREEN. The exact current candidate diff footprint is 17 paths (11 current/added, 6 retired); no command or child claim is active. The canonical Root Dev Orchestrator remains on branch codex/separate-claim-policy-from-claim-helper-family in worktree /Users/martinbechard/.codex/worktrees/1bee/dev-methodology, with baseline/main coordinator commit cc5574b798c0fab87fb5c9c6b3c6acd935030feb and parent/delegated source task 019fb057-1767-7ef2-b5fa-41f4417b20b3. Title remains verified: Implementing — Separate Claim Policy From Claim Helper Family.
 
-Observed At: 2026-08-06T06:27:19Z.
+Coordinator Scope Disposition: The seven paths scripts/agent_skill_evals/validation.py, scripts/test_role_mutation_policy.py, scripts/test_technology_detection.py, evals/agent-tests/dev-orchestrator/test_fixtures.py, evals/agent-tests/wiki-ingester/executable_harness.py, evals/projects/project-configuration-routing/TASK.md, and evals/projects/project-configuration-routing/available-skills.txt are ordinary non-governed support consumers already authorized by requirements and acceptance. Only minimal identity/path replacements are permitted. No User Action Required or lifecycle change, new approval, or broad suite is authorized.
+
+Observed At: 2026-08-06T06:35:34Z.
 
 Started At: 2026-08-06T06:17:04Z.
 
-Deadline or Expires At: 2026-08-06T08:27:19Z.
+Deadline or Expires At: 2026-08-06T08:35:34Z.
 
-Next Action: Reacquire the exact activity=work claim and resume the bounded Dev Coder lane from its preserved isolated diff.
+Next Action: Reacquire exact activity=work and resume the same Dev Coder on authorized docs, evaluations, focused tests, and generated outputs before candidate commit.
 
-Next Reconciliation At: 2026-08-06T06:37:19Z.
+Next Reconciliation At: 2026-08-06T06:47:34Z.
