@@ -131,14 +131,14 @@ This is a static responsibility split, not a diagram of one runtime scenario. Th
 
 Condition Type: root-execution
 Owner: Root Dev Orchestrator /root
-Evidence: Two focused peer suites are green (28 tests), and the same coder is updating bundle boundary assertions in isolated worktree /Users/martinbechard/.codex/worktrees/a3a9/dev-methodology under root task /root and canonical conversation 019fd63f-dc50-7252-b287-8489ad1c1a8f.
-Observed At: 2026-08-06T09:18:12Z
+Evidence: Clean candidate 0e65d324 has 43 focused tests and freshness ready for independent methodology review in isolated worktree /Users/martinbechard/.codex/worktrees/a3a9/dev-methodology under root task /root and canonical conversation 019fd63f-dc50-7252-b287-8489ad1c1a8f.
+Observed At: 2026-08-06T09:27:41Z
 Started At: 2026-08-06T08:48:08Z
 Deadline or Expires At: 2026-08-06T10:00:00Z
-Next Action: Reacquire activity=work and resume the same coder through freshness, validation, and commit.
-Next Reconciliation At: 2026-08-06T09:30:00Z
+Next Action: Root reacquires activity=work and launches a fresh methodology reviewer.
+Next Reconciliation At: 2026-08-06T09:40:00Z
 
 ## Running Evidence Refresh — 2026-08-06T08:57:18Z
 
 - Provider operation evidence: File provider Active Execution Evidence refreshed in place on main; Status, canonical identities, Started At, and Deadline or Expires At are unchanged.
-- Refresh claims: Work Item ID update claim separate-work-item-coordination-from-codex-task-control-update-refresh-0918 and provider-path claim separate-work-item-coordination-from-codex-task-control-path-refresh-0918 were acquired for this operation.
+- Refresh claims: Work Item ID update claim separate-work-item-coordination-from-codex-task-control-update-refresh-0927 and provider-path claim separate-work-item-coordination-from-codex-task-control-path-refresh-0927 were acquired for this operation.
