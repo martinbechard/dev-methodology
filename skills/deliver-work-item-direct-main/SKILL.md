@@ -65,7 +65,7 @@ From the intended integration checkout:
 4. Preserve unrelated main advances. Never reset, force-update, overwrite, or discard them to make the candidate appear current.
 5. Return BLOCKED with the observed commits when local and required remote state cannot be reconciled safely.
 
-If the accepted source commit is already represented by current main, do not manufacture a topology-only merge. Continue to integrated verification and observation using the existing main commit.
+If the accepted change is already present on current main, do not manufacture a topology-only merge. Continue to integrated verification and observation using the existing main commit.
 
 ## Unrelated Dirty Main Route
 
@@ -85,7 +85,7 @@ After integration mutation, recapture the same evidence. Prove the unrelated sta
 
 ## Deliberate Integration
 
-When the accepted commit is not yet represented on main, load and apply integrate-agent-work or hand the commit to the repository's accepted integration owner while retaining the same evidence requirements.
+When the accepted change is not yet present on main, load and apply integrate-agent-work or hand the commit to the repository's accepted integration owner while retaining the same evidence requirements.
 
 - Use the repository-approved merge, cherry-pick, rebase-and-fast-forward, squash, or equivalent integration strategy.
 - Record the source-to-integration commit mapping when the strategy changes commit identity.

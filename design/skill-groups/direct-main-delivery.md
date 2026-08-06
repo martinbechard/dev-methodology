@@ -33,7 +33,7 @@ classDiagram
 
     DevOrchestrator ..> DirectMainDelivery : when Commit is direct-main
     DirectMainDelivery ..> ResourceCoordination : when resource coordination is selected
-    DirectMainDelivery ..> FeatureBranchAndWorktrees : when the accepted commit is not represented on main
+    DirectMainDelivery ..> FeatureBranchAndWorktrees : when the accepted change is not present on main
 ```
 
 ### Scenario: Selecting A Delivery Provider
@@ -77,7 +77,7 @@ The harness loads AGENTS.md without an Agent-to-AGENTS.md dependency. The diagra
 
 ### Scenario: Delivering Directly To Main
 
-This scenario expands the direct-main provider after AGENTS.md selects it. The provider uses resource coordination when configured and invokes integrate-agent-work only when the accepted commit still needs to be represented on main.
+This scenario expands the direct-main provider after AGENTS.md selects it. The provider uses resource coordination when configured and invokes integrate-agent-work only when the accepted change still needs to be integrated into main.
 
 ```mermaid
 classDiagram
@@ -106,7 +106,7 @@ classDiagram
     }
 
     deliver-work-item-direct-main ..> agent-claim : when resource coordination is selected
-    deliver-work-item-direct-main o..> integrate-agent-work : when the accepted commit is not represented on main
+    deliver-work-item-direct-main o..> integrate-agent-work : when the accepted change is not present on main
 ```
 
 ## Skill Responsibility

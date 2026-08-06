@@ -504,10 +504,10 @@ classDiagram
     deliver-work-item-feature-branch ..|> DeliverWorkItem
     deliver-work-item-direct-main ..|> DeliverWorkItem
     deliver-work-item-feature-branch o..> create-pull-request : when GitHub pull-request publication is required
-    deliver-work-item-direct-main o..> integrate-agent-work : when the accepted commit is not represented on main
+    deliver-work-item-direct-main o..> integrate-agent-work : when the accepted change is not present on main
 ```
 
-The provider realization arrows show conformance with the exact deliver-work-item contract. Feature-branch delivery loads create-pull-request only for a host that uses pull-request terminology. Direct-main delivery loads integrate-agent-work only when the accepted commit is not already represented on main.
+The provider realization arrows show conformance with the exact deliver-work-item contract. Feature-branch delivery loads create-pull-request only for a host that uses pull-request terminology. Direct-main delivery loads integrate-agent-work only when the accepted change is not already present on main.
 
 ## Skill Responsibilities
 
