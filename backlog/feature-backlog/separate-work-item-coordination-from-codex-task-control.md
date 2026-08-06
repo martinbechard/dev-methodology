@@ -131,14 +131,14 @@ This is a static responsibility split, not a diagram of one runtime scenario. Th
 
 Condition Type: root-execution
 Owner: Root Dev Orchestrator /root
-Evidence: Prior two findings are corrected. Fresh reviewer confirms the split, guards, templates, and freshness for final candidate 4ca7f7d3, and is finishing one likely stale Steward lifecycle/title flow in the Watchdog evaluation and design in isolated worktree /Users/martinbechard/.codex/worktrees/a3a9/dev-methodology under root task /root and canonical conversation 019fd63f-dc50-7252-b287-8489ad1c1a8f.
-Observed At: 2026-08-06T09:53:42Z
+Evidence: The core split is accepted. Final bounded support alignment is underway in the evaluation simulator and bundle assertion, then README and lifecycle documentation, in isolated worktree /Users/martinbechard/.codex/worktrees/a3a9/dev-methodology under root task /root and canonical conversation 019fd63f-dc50-7252-b287-8489ad1c1a8f.
+Observed At: 2026-08-06T10:03:40Z
 Started At: 2026-08-06T08:48:08Z
 Deadline or Expires At: 2026-08-06T10:00:00Z
-Next Action: Reacquire activity=work and resume the same reviewer to deliver the final verdict.
-Next Reconciliation At: 2026-08-06T10:05:00Z
+Next Action: Reacquire activity=work and resume the same coder through focused gates and final commit.
+Next Reconciliation At: 2026-08-06T10:15:00Z
 
 ## Running Evidence Refresh — 2026-08-06T08:57:18Z
 
 - Provider operation evidence: File provider Active Execution Evidence refreshed in place on main; Status, canonical identities, Started At, and Deadline or Expires At are unchanged.
-- Refresh claims: Work Item ID update claim separate-work-item-coordination-from-codex-task-control-update-refresh-0953 and provider-path claim separate-work-item-coordination-from-codex-task-control-path-refresh-0953 were acquired for this operation.
+- Refresh claims: Work Item ID update claim separate-work-item-coordination-from-codex-task-control-update-refresh-1003 and provider-path claim separate-work-item-coordination-from-codex-task-control-path-refresh-1003 were acquired for this operation.
