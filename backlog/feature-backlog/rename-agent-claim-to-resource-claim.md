@@ -160,14 +160,14 @@ Condition Type: root-execution
 
 Owner: Root Dev Orchestrator task `019fd993-01d4-7380-b722-b7c328bdb637`
 
-Evidence: The canonical task has frozen reviewed-source candidate commit `55b9cbee4a9e80a8d56612ced67c3fbfeb06661e` on branch `codex/rename-agent-claim-to-resource-claim` in `/Users/martinbechard/.codex/worktrees/e800/dev-methodology`; the candidate worktree is clean and one independent reviewer plus one verifier are actively evaluating that exact commit. The exact activity `work` claim was released with handoff only for this scheduled provider evidence refresh. Authoritative main remains on provider-only commit `1d384ef8cd72e1b41c32ee85bffd8253ee50d34b`, and the unrelated user-owned `design/skill-groups/concurrent-tasking.md` bytes remain separately preserved with SHA-256 `1d6e7b6e6157e4e8cd53d32e5f26b77a199a309a5c9ee1a9f598ffa894a76ad6`.
+Evidence: The canonical task corrected the independent review findings and froze amended candidate commit `86e4d8903c3a6206322fb9073b4674ad5498a0b6` on branch `codex/rename-agent-claim-to-resource-claim` in `/Users/martinbechard/.codex/worktrees/e800/dev-methodology`; the candidate worktree is clean. The verifier has accepted that exact commit, and the original independent reviewer is performing the final narrow finding-resolution check. The exact activity `work` claim was released with handoff only for this scheduled provider evidence refresh. Authoritative main remains on provider-only commit `6968f2fcffa6e19b4ec4dd79cf4d2d1a867d1c01`, and the unrelated user-owned `design/skill-groups/concurrent-tasking.md` bytes remain separately preserved with SHA-256 `1d6e7b6e6157e4e8cd53d32e5f26b77a199a309a5c9ee1a9f598ffa894a76ad6`.
 
-Observed At: 2026-08-07T00:43:30Z
+Observed At: 2026-08-07T00:58:10Z
 
 Started At: 2026-08-07T00:17:25Z
 
-Deadline or Expires At: 2026-08-07T02:43:30Z
+Deadline or Expires At: 2026-08-07T02:58:10Z
 
-Next Action: Commit only this provider evidence refresh, release the exact provider path and activity `update` claims, reacquire exact Work Item ID activity `work`, then reconcile the independent review and verification results and proceed to the direct-main delivery boundary without altering the frozen candidate.
+Next Action: Commit only this provider evidence refresh, release the exact provider path and activity `update` claims, reacquire exact Work Item ID activity `work`, then finish the independent finding-resolution check and apply the direct-main delivery contract to the accepted candidate.
 
-Next Reconciliation At: 2026-08-07T00:58:30Z
+Next Reconciliation At: 2026-08-07T01:13:10Z
