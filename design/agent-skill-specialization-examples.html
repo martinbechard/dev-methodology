@@ -523,7 +523,7 @@ project_setup:
   mode: basic
   concurrent_tasking: false
   persistence: none
-  commit: direct-main
+  commit: main-branch
   documentation: wiki
   core_skill_delivery:
     mode: by-reference
@@ -547,7 +547,7 @@ workflow_selection:
   persistence:
     default: none
   commit:
-    default: direct-main
+    default: main-branch
 validation_plan:
   commands:
     - command: pnpm test

@@ -97,7 +97,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                         "",
                         f"Provider Reference: {expected['providerPath']}/{expected['providerItem']}",
                         "",
-                        "Completion: direct-main",
+                        "Completion: main-branch",
                         "",
                         "Owner: Unowned",
                         "",

@@ -825,7 +825,7 @@ agents:
             - output-contract-presence
           modelRubric: workflow-quality
         executableCases:
-          - direct-main-unrelated-dirty-contract
+          - main-branch-unrelated-dirty-contract
         coverageStatus: fixture-backed
       - id: dev-orchestrator-boundary
         kind: boundary-failure
@@ -845,7 +845,7 @@ agents:
             - readiness-consistency
           modelRubric: workflow-quality
         executableCases:
-          - direct-main-unrelated-dirty-contract
+          - main-branch-unrelated-dirty-contract
         coverageStatus: fixture-backed
   - id: dev-prompt-reviewer
     source: agents/roles/dev-activities/dev-prompt-reviewer.role.yaml

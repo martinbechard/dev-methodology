@@ -50,7 +50,7 @@ Report ambiguous matches and their observed identities instead of guessing which
 
 ## Recover Work Item
 
-- When a mutation partially succeeds or observed state contradicts the requested transition, preserve the observed issue and delivery evidence and choose the recovery lifecycle from the effective completion mode. For feature-branch delivery, preserve lifecycle AWAITING_REVIEW for the same delivery identity. For direct-main delivery, preserve lifecycle RUNNING. Record lifecycle BLOCKED when safe reconciliation cannot continue. Never unconditionally reset lifecycle to RUNNING. Return the exact reconciliation action. Do not repeat an ambiguous mutation or create a fallback record.
+- When a mutation partially succeeds or observed state contradicts the requested transition, preserve the observed issue and delivery evidence and choose the recovery lifecycle from the effective completion mode. For feature-branch delivery, preserve lifecycle AWAITING_REVIEW for the same delivery identity. For main-branch delivery, preserve lifecycle RUNNING. Record lifecycle BLOCKED when safe reconciliation cannot continue. Never unconditionally reset lifecycle to RUNNING. Return the exact reconciliation action. Do not repeat an ambiguous mutation or create a fallback record.
 - Reopen only when authorized recovery or correction requires a nonterminal lifecycle state. Preserve prior terminal and delivery evidence in GitLab history.
 - Reopen, unblock, or resume from the provider record and accepted delivery evidence rather than inferring success from a task title, stopped task, branch, or merge-request state alone.
 

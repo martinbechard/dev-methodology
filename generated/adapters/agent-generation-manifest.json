@@ -760,7 +760,7 @@
             "route-documentation-work",
             "verify-documentation-page"
           ],
-          "sha256": "2aa40c4bc3bce873aaf491df92523ba5463ae2ee02a4daaa7d172a59778b70f4",
+          "sha256": "430a2a6e9bc1f98c8f4985d83bdde6b16d4421b66284f58d7cca04a407c9e472",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -1876,7 +1876,7 @@
             "verify-documentation-page",
             "codex-harness-directives"
           ],
-          "sha256": "d2af8df921128efd0abb87ab29bf15b1958691b955c4d1ca31e28d12790cc734",
+          "sha256": "45aad93fd8f99a34929fdc2165555ae3cd2df79c61a9da3b881bde0e7dea394b",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -3013,7 +3013,7 @@
             "route-documentation-work",
             "verify-documentation-page"
           ],
-          "sha256": "b71e28437c75fe7dec30eeecc54a829383160e4d580061b78cd0368a5b24f875",
+          "sha256": "8c6add379970d4212945517210366b474ea14185bbe30a7fdef02b78dd426262",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -4150,7 +4150,7 @@
             "route-documentation-work",
             "verify-documentation-page"
           ],
-          "sha256": "b85c8ba6c33055525f5e56630939ef415a7a539b5811479ac0c9bd6385dd45cd",
+          "sha256": "1b5fee18de547fbfb753c7079ffdc227125795507cfcc76a41901953b7a29500",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {

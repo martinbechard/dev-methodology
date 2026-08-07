@@ -646,15 +646,15 @@ The interface and implementation names resolve to the maintained manage-work-ite
 
 ## 8. A Second Injected Example: Deliver Workitem
 
-Delivery is another injectable procedure. The exact deliver-work-item Interface Skill publishes the stable contract, while AGENTS.md selects the project’s delivery provider. This keeps the workflow independent of direct-main and feature-branch delivery details.
+Delivery is another injectable procedure. The exact deliver-work-item Interface Skill publishes the stable contract, while AGENTS.md selects the project’s delivery provider. This keeps the workflow independent of main-branch and feature-branch delivery details.
 
 - **PROCESS: PROCESS-7** Request delivery after review and testing
   - **SYNOPSIS:** A development workflow invokes Deliver Workitem with the accepted change after its required gates pass.
   - **EXAMPLE:** The caller concludes, “Review and testing passed. I must Deliver Workitem with accepted commit abc123.”
 
 - **RULE: RULE-13** AGENTS.md selects the delivery SKILL.md
-  - **SYNOPSIS:** The calling workflow uses the same procedure name while project guidance selects direct-main or feature-branch delivery.
-  - **EXAMPLE:** AGENTS.md can link Deliver Workitem to deliver-work-item-direct-main or deliver-work-item-feature-branch.
+  - **SYNOPSIS:** The calling workflow uses the same procedure name while project guidance selects main-branch or feature-branch delivery.
+  - **EXAMPLE:** AGENTS.md can link Deliver Workitem to deliver-work-item-main-branch or deliver-work-item-feature-branch.
 
 ```mermaid
 classDiagram
@@ -676,7 +676,7 @@ classDiagram
         +route deliverWorkitem => deliver-work-item-*
     }
 
-    class deliver-work-item-direct-main {
+    class deliver-work-item-main-branch {
         <<Provider Skill>>
         +deliverWorkitem(acceptedCommit)
         +reconcileMain(acceptedCommit)
@@ -694,15 +694,15 @@ classDiagram
     }
 
     DevelopmentWorkflow --> DeliverWorkitem
-    project-specific-directives o--> deliver-work-item-direct-main
+    project-specific-directives o--> deliver-work-item-main-branch
     project-specific-directives o--> deliver-work-item-feature-branch
-    deliver-work-item-direct-main ..|> DeliverWorkitem
+    deliver-work-item-main-branch ..|> DeliverWorkitem
     deliver-work-item-feature-branch ..|> DeliverWorkitem
 
     note for project-specific-directives "AGENTS.md selects one implementation"
 ```
 
-The regular arrow shows that the development workflow consumes the exact deliver-work-item Interface Skill. The open-diamond arrows show the two exact Provider Skill names that AGENTS.md can select from the deliver-work-item-* family. The realization arrows show that both providers supply the delivery interface. No arrow joins the development workflow to AGENTS.md because the harness loads project guidance automatically. The direct-main and feature-branch procedures remain different internally even though callers reach either one through the same procedure name.
+The regular arrow shows that the development workflow consumes the exact deliver-work-item Interface Skill. The open-diamond arrows show the two exact Provider Skill names that AGENTS.md can select from the deliver-work-item-* family. The realization arrows show that both providers supply the delivery interface. No arrow joins the development workflow to AGENTS.md because the harness loads project guidance automatically. The main-branch and feature-branch procedures remain different internally even though callers reach either one through the same procedure name.
 
 ## 9. Agent Dependency Views
 
@@ -881,7 +881,7 @@ A good model makes skill dependencies, dispatch, and organization understandable
 
 - **RULE: RULE-71** Class-diagram conditions explain stable dependency reasons
   - **SYNOPSIS:** A conditional class relationship names the configuration, responsibility, or workflow choice that makes the dependency relevant. Prefer the condition that helps a reader understand why the dependency exists over a lower-level execution-state test.
-  - **EXAMPLE:** “When implementation uses a separate branch or worktree” explains why Direct Main Delivery uses Feature Branch And Worktrees more clearly than “when the accepted commit is not on main.” A sequence diagram can separately show the current-main comparison and resulting integration call.
+  - **EXAMPLE:** “When implementation uses a separate branch or worktree” explains why Main Branch Delivery uses Feature Branch And Worktrees more clearly than “when the accepted commit is not on main.” A sequence diagram can separately show the current-main comparison and resulting integration call.
 
 - **RULE: RULE-61** Interface users and implementations remain semantically coherent
   - **SYNOPSIS:** Skill maintenance compares each Interface Skill with every known user and implementation, checking data-member names and meanings, provider refinements, function implementations, and invocation meanings. No specialized validator is required: simple deterministic inventories can locate files and matching names, but semantic acceptance requires an LLM judge to read the complete referenced skills.
@@ -948,7 +948,7 @@ The analysis is grounded in the user-directed conventions and repository sources
 - [Agent Skill Architecture](skills-modularization.html)
 - [Work-Item Provider And Completion Contracts](work-item-provider-and-completion-contracts.md)
 - [Deliver Work Item](../skills/deliver-work-item/SKILL.md)
-- [Deliver Work Item Direct Main](../skills/deliver-work-item-direct-main/SKILL.md)
+- [Deliver Work Item Main Branch](../skills/deliver-work-item-main-branch/SKILL.md)
 - [Deliver Work Item Feature Branch](../skills/deliver-work-item-feature-branch/SKILL.md)
 - [Create Pull Request](../skills/create-pull-request/SKILL.md)
 - [Explain Code Fix](../skills/explain-code-fix/SKILL.md)

@@ -18,7 +18,7 @@ Provider: file
 
 Work Item ID: TODO immutable filename stem without .md
 
-Completion: TODO direct-main, feature-branch, or UNSET
+Completion: TODO main-branch, feature-branch, or UNSET
 
 <!-- OPTIONAL: Series child metadata. Remove this comment and the Series line for a standalone item. -->
 

@@ -24,7 +24,7 @@ project_setup:
   concurrent_tasking: false
   concurrent_capacity: null
   persistence: "none"
-  commit: "direct-main"
+  commit: "main-branch"
   documentation: "wiki" # Basic Yes. Use none for Basic No; Advanced supports wiki, specifications, or both.
   core_skill_delivery:
     mode: "by-reference"
@@ -213,10 +213,10 @@ workflow_selection:
       - pattern: "TODO: Real repository-relative folder path or valid glob, or Not applicable."
         persistence: "TODO: file, github, gitlab, azure-devops, jira, none, or UNSET."
   commit:
-    default: "TODO: direct-main, feature-branch, or UNSET when the user has not selected a completion process."
+    default: "TODO: main-branch, feature-branch, or UNSET when the user has not selected a completion process."
     folder_overrides:
       - pattern: "TODO: Real repository-relative folder path or valid glob, or Not applicable."
-        commit: "TODO: direct-main, feature-branch, or UNSET."
+        commit: "TODO: main-branch, feature-branch, or UNSET."
   selection_policy: "Always record Persistence and Commit independently, using explicit UNSET when a decision is deferred. Within either selector, one exact folder pattern may appear only once. Do not infer either selector from repository files, remotes, hosting metadata, templates, installed plugins, or available tools. Azure DevOps and Jira remain selected as unsupported BLOCKED placeholders instead of falling back."
 
 folder_routing:

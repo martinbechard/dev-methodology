@@ -3153,7 +3153,7 @@
           <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-deliver-work-item</a></dd></div>
           <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
           <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
-          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">direct-main-unrelated-dirty-contract</a></dd></div>
+          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">main-branch-unrelated-dirty-contract</a></dd></div>
           <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-orchestrator-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-orchestrator-boundary</a></dd></div>
           <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
           <div><dt>Deterministic checks</dt><dd>skill-read-trace, operation-coverage, tool-authority, readiness-consistency</dd></div>
@@ -3169,21 +3169,21 @@
       </dl>
     </article>
 
-    <article class="evaluation-card skill-card" id="skill-deliver-work-item-direct-main"
-      data-kind="skill" data-status="direct-probe" data-search="deliver-work-item-direct-main complete a verified work item by deliberately integrating its accepted commit into the configured main branch, verifying the integrated state, and observing exact main reachability before any provider lifecycle closure. use when the effective completion selector is direct-main. development-practice probe-deliver-work-item-direct-main no governed campaign link">
+    <article class="evaluation-card skill-card" id="skill-deliver-work-item-main-branch"
+      data-kind="skill" data-status="direct-probe" data-search="deliver-work-item-main-branch complete a verified work item by deliberately integrating its accepted commit into the configured main branch, verifying the integrated state, and observing exact main reachability before any provider lifecycle closure. use when the effective completion selector is main-branch. development-practice probe-deliver-work-item-main-branch no governed campaign link">
       <div class="card-heading">
-        <div><span class="card-kicker">Skill</span><h3>deliver-work-item-direct-main</h3></div>
+        <div><span class="card-kicker">Skill</span><h3>deliver-work-item-main-branch</h3></div>
         <span class="status status--direct-probe">Direct diagnostic probe</span>
       </div>
-      <p>Complete a verified work item by deliberately integrating its accepted commit into the configured main branch, verifying the integrated state, and observing exact main reachability before any provider lifecycle closure. Use when the effective completion selector is direct-main.</p>
-      <p class="source-row"><a href="../skills/deliver-work-item-direct-main/SKILL.md">Skill source</a></p>
+      <p>Complete a verified work item by deliberately integrating its accepted commit into the configured main branch, verifying the integrated state, and observing exact main reachability before any provider lifecycle closure. Use when the effective completion selector is main-branch.</p>
+      <p class="source-row"><a href="../skills/deliver-work-item-main-branch/SKILL.md">Skill source</a></p>
       <h4>Direct diagnostic probe</h4>
 
         <dl class="compact-list">
-          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-deliver-work-item-direct-main</a></dd></div>
+          <div><dt>Probe</dt><dd><a href="../evals/skill-probes.yaml">probe-deliver-work-item-main-branch</a></dd></div>
           <div><dt>Coverage state</dt><dd>fixture-backed: catalog declaration, not a verified run</dd></div>
           <div><dt>Kind</dt><dd>workflow-invariant</dd></div>
-          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">direct-main-unrelated-dirty-contract</a></dd></div>
+          <div><dt>Executable cases</dt><dd><a href="../evals/cases.yaml">main-branch-unrelated-dirty-contract</a></dd></div>
           <div><dt>Scenario associations</dt><dd><a href="../evals/agent-scenarios.yaml">dev-orchestrator-happy</a>, <a href="../evals/agent-scenarios.yaml">dev-orchestrator-boundary</a>, <a href="../evals/agent-scenarios.yaml">dev-merge-coordinator-happy</a></dd></div>
           <div><dt>Workflow associations</dt><dd><a href="../evals/workflow-packs.yaml">code-delivery</a></dd></div>
           <div><dt>Deterministic checks</dt><dd>skill-read-trace, claim-lifecycle, required-command-outcome, operation-coverage, tool-authority, readiness-consistency</dd></div>

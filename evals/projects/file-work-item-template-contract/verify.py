@@ -321,7 +321,7 @@ def _require_item_shape(
         "Type": expected_type,
         "Provider": "file",
         "Provider Reference": expected_reference,
-        "Completion": "direct-main",
+        "Completion": "main-branch",
     }
     for name, expected in expected_fields.items():
         actual = document.fields.get(name)
@@ -637,7 +637,7 @@ Provider: file
 
 Provider Reference: {provider_reference}
 
-Completion: direct-main
+Completion: main-branch
 
 {series_field}## Summary
 

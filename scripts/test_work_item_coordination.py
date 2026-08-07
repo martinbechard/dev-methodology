@@ -223,7 +223,7 @@ class WorkItemCoordinationRoleRoutingTests(unittest.TestCase):
         for path in (
             ROOT / "skills" / "create-work-item-file" / "SKILL.md",
             ROOT / "skills" / "manage-work-items-file" / "SKILL.md",
-            ROOT / "skills" / "deliver-work-item-direct-main" / "SKILL.md",
+            ROOT / "skills" / "deliver-work-item-main-branch" / "SKILL.md",
             ROOT / "skills" / "resource-claim" / "SKILL.md",
             ROOT / "skills" / "resource-claim-helper-command" / "SKILL.md",
         ):

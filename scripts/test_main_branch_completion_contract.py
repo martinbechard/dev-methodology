@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Exercises direct-main completion evidence against disposable Git repositories.
+# Summary: Exercises main-branch completion evidence against disposable Git repositories.
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from pathlib import Path
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SKILL_PATH = (
-    REPOSITORY_ROOT / "skills" / "deliver-work-item-direct-main" / "SKILL.md"
+    REPOSITORY_ROOT / "skills" / "deliver-work-item-main-branch" / "SKILL.md"
 )
 
 
@@ -30,8 +30,8 @@ class DisposableRepository:
         self._temporary_directory = tempfile.TemporaryDirectory()
         self.path = Path(self._temporary_directory.name)
         self.git("init", "--initial-branch=main")
-        self.git("config", "user.name", "Direct Main Contract Test")
-        self.git("config", "user.email", "direct-main-contract@example.invalid")
+        self.git("config", "user.name", "Main Branch Contract Test")
+        self.git("config", "user.email", "main-branch-contract@example.invalid")
 
     def close(self) -> None:
         self._temporary_directory.cleanup()
@@ -73,7 +73,7 @@ class DisposableRepository:
         return result.stdout.split()[0]
 
 
-def observe_direct_main_completion(
+def observe_main_branch_completion(
     repository: DisposableRepository,
     *,
     configured_main: str,
@@ -145,7 +145,7 @@ def observe_direct_main_completion(
     return CompletionEvidence("READY", observed_main, provider_update, None)
 
 
-class DirectMainCompletionContractTests(unittest.TestCase):
+class MainBranchCompletionContractTests(unittest.TestCase):
     def setUp(self) -> None:
         self.repository = DisposableRepository()
         self.addCleanup(self.repository.close)
@@ -155,10 +155,10 @@ class DirectMainCompletionContractTests(unittest.TestCase):
         source_commit = self.repository.commit_file(
             "feature.txt",
             "delivered\n",
-            "Direct main delivery",
+            "Main branch delivery",
         )
 
-        result = observe_direct_main_completion(
+        result = observe_main_branch_completion(
             self.repository,
             configured_main="main",
             source_commit=source_commit,
@@ -177,7 +177,7 @@ class DirectMainCompletionContractTests(unittest.TestCase):
         )
         self.repository.git("switch", "main")
 
-        before_merge = observe_direct_main_completion(
+        before_merge = observe_main_branch_completion(
             self.repository,
             configured_main="main",
             source_commit=source_commit,
@@ -188,7 +188,7 @@ class DirectMainCompletionContractTests(unittest.TestCase):
 
         self.repository.git("merge", "--no-ff", "temporary-delivery", "-m", "Integrate")
         integration_commit = self.repository.rev_parse("HEAD")
-        after_merge = observe_direct_main_completion(
+        after_merge = observe_main_branch_completion(
             self.repository,
             configured_main="main",
             source_commit=source_commit,
@@ -212,7 +212,7 @@ class DirectMainCompletionContractTests(unittest.TestCase):
         self.repository.git("merge", "--no-ff", "temporary-delivery", "-m", "Integrate")
         integration_commit = self.repository.rev_parse("HEAD")
 
-        result = observe_direct_main_completion(
+        result = observe_main_branch_completion(
             self.repository,
             configured_main="main",
             source_commit=source_commit,
@@ -252,7 +252,7 @@ class DirectMainCompletionContractTests(unittest.TestCase):
         )
         self.assertNotEqual(0, merge.returncode)
 
-        unresolved = observe_direct_main_completion(
+        unresolved = observe_main_branch_completion(
             self.repository,
             configured_main="main",
             source_commit=source_commit,
@@ -268,7 +268,7 @@ class DirectMainCompletionContractTests(unittest.TestCase):
         self.repository.git("add", "shared.txt")
         self.repository.git("commit", "-m", "Resolve from both sources")
         integration_commit = self.repository.rev_parse("HEAD")
-        resolved = observe_direct_main_completion(
+        resolved = observe_main_branch_completion(
             self.repository,
             configured_main="main",
             source_commit=source_commit,
@@ -293,7 +293,7 @@ class DirectMainCompletionContractTests(unittest.TestCase):
         )
         for overrides, expected_blocker in scenarios:
             with self.subTest(expected_blocker=expected_blocker):
-                result = observe_direct_main_completion(
+                result = observe_main_branch_completion(
                     self.repository,
                     configured_main="main",
                     source_commit=source_commit,
@@ -331,13 +331,13 @@ class DirectMainCompletionContractTests(unittest.TestCase):
             ).returncode,
         )
 
-        without_mapping = observe_direct_main_completion(
+        without_mapping = observe_main_branch_completion(
             self.repository,
             configured_main="main",
             source_commit=source_commit,
             integration_commit=integration_commit,
         )
-        with_mapping = observe_direct_main_completion(
+        with_mapping = observe_main_branch_completion(
             self.repository,
             configured_main="main",
             source_commit=source_commit,
@@ -570,7 +570,7 @@ class DirectMainCompletionContractTests(unittest.TestCase):
             "Candidate",
         )
 
-        result = observe_direct_main_completion(
+        result = observe_main_branch_completion(
             self.repository,
             configured_main="main",
             source_commit=source_commit,

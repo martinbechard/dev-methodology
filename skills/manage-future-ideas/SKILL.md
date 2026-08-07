@@ -87,7 +87,7 @@ source idea and creates one complete reciprocal work item in one atomic transact
 4. Prepare, but do not commit, a complete typed item that conforms to create-work-item-file.
    Use the file work-item template. Include Open Questions and every destination-specific
    section.
-5. Set Completion to exactly direct-main, feature-branch, or UNSET. Resolve every hard
+5. Set Completion to exactly main-branch, feature-branch, or UNSET. Resolve every hard
    dependency before selecting Ready or Blocked.
 6. Put the exact retained idea path in the destination Source Evidence. Add Promoted To with
    the destination Work Item ID to the retained idea.

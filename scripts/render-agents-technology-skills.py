@@ -47,10 +47,11 @@ PROVIDER_SKILLS = {
 }
 PROVIDER_VALUES = (*PROVIDER_SKILLS, "none", "UNSET")
 COMPLETION_SKILLS = {
-    "direct-main": "deliver-work-item-direct-main",
+    "main-branch": "deliver-work-item-main-branch",
     "feature-branch": "deliver-work-item-feature-branch",
 }
 COMPLETION_VALUES = (*COMPLETION_SKILLS, "UNSET")
+LEGACY_MAIN_BRANCH_COMMIT = "direct-main"
 SETUP_MODES = ("basic", "advanced")
 DOCUMENTATION_CHOICES = ("none", "wiki", "specifications", "both")
 SKILL_DELIVERY_MODES = ("by-reference", "inline")
@@ -61,10 +62,51 @@ LEGACY_PROVIDER_VALUES = {
     "UNSET": "UNSET",
 }
 LEGACY_COMPLETION_VALUES = {
-    "simple-workitem": "direct-main",
+    "simple-workitem": "main-branch",
     "feature-branch-workitem": "feature-branch",
     "UNSET": "UNSET",
 }
+
+
+def _normalized_main_branch_commit(value: object) -> tuple[object, bool]:
+    """Normalize only the exact supported legacy main-branch Commit alias."""
+
+    if value == LEGACY_MAIN_BRANCH_COMMIT:
+        return "main-branch", True
+    return value, False
+
+
+def _normalized_commit_configuration(
+    configuration: object,
+    key: str,
+) -> tuple[object, bool]:
+    """Normalize the legacy Commit alias without repairing malformed structures."""
+
+    if not isinstance(configuration, dict):
+        return configuration, False
+    normalized = dict(configuration)
+    changed = False
+    if "default" in normalized:
+        normalized["default"], default_changed = _normalized_main_branch_commit(
+            normalized["default"]
+        )
+        changed = changed or default_changed
+    overrides = normalized.get("folder_overrides")
+    if isinstance(overrides, list):
+        normalized_overrides: list[object] = []
+        for override in overrides:
+            if not isinstance(override, dict):
+                normalized_overrides.append(override)
+                continue
+            normalized_override = dict(override)
+            if key in normalized_override:
+                normalized_override[key], override_changed = _normalized_main_branch_commit(
+                    normalized_override[key]
+                )
+                changed = changed or override_changed
+            normalized_overrides.append(normalized_override)
+        normalized["folder_overrides"] = normalized_overrides
+    return normalized, changed
 
 
 def parse_boolean(value: str) -> bool:
@@ -388,11 +430,28 @@ def _canonical_workflow_selection(
         if not present:
             continue
         source_key = present[0]
+        source_configuration = selection[source_key]
+        if target_key == "commit" and source_key in {"commit", "completion"}:
+            source_configuration, alias_normalized = _normalized_commit_configuration(
+                source_configuration,
+                source_key,
+            )
+            if alias_normalized:
+                notices.append(
+                    f"Normalized the legacy direct-main value in workflow_selection.{source_key} "
+                    "to main-branch."
+                )
         if source_key == target_key:
-            normalized[target_key] = selection[source_key]
+            normalized[target_key] = source_configuration
         elif source_key in {"provider", "completion"}:
             supported_values = PROVIDER_VALUES if target_key == "persistence" else COMPLETION_VALUES
-            default, overrides = _workflow_configuration(selection, source_key, supported_values)
+            source_selection = dict(selection)
+            source_selection[source_key] = source_configuration
+            default, overrides = _workflow_configuration(
+                source_selection,
+                source_key,
+                supported_values,
+            )
             normalized[target_key] = {
                 "default": default,
                 "folder_overrides": [
@@ -924,6 +983,8 @@ def _reconcile_setup_workflow(value: dict[str, object]) -> None:
         ("commit", commit),
     ):
         setup_value = setup.get(setup_key)
+        if setup_key == "commit":
+            setup_value, _ = _normalized_main_branch_commit(setup_value)
         if setup_value != workflow_value:
             raise ValueError(
                 f"project_setup.{setup_key} {setup_value!r} conflicts with "
@@ -1118,7 +1179,7 @@ def setup_lines(value: dict[str, object]) -> list[str]:
             "project_setup.concurrent_capacity must be a positive integer when concurrent_tasking is true"
         )
     persistence = setup.get("persistence")
-    commit = setup.get("commit")
+    commit, legacy_commit_normalized = _normalized_main_branch_commit(setup.get("commit"))
     documentation = setup.get("documentation")
     technology_delivery = setup.get("technology_skill_delivery")
     if persistence not in PROVIDER_VALUES:
@@ -1146,11 +1207,12 @@ def setup_lines(value: dict[str, object]) -> list[str]:
         expected_basic = {
             "concurrent_tasking": False,
             "persistence": "none",
-            "commit": "direct-main",
+            "commit": "main-branch",
             "technology_skill_delivery": "by-reference",
         }
         for key, expected in expected_basic.items():
-            if setup.get(key) != expected:
+            actual = commit if key == "commit" else setup.get(key)
+            if actual != expected:
                 raise ValueError(f"project_setup.{key} must be {expected!r} in Basic mode")
         if documentation not in {"none", "wiki"}:
             raise ValueError("project_setup.documentation must be none or wiki in Basic mode")
@@ -1159,7 +1221,7 @@ def setup_lines(value: dict[str, object]) -> list[str]:
             "- Setup mode: Basic",
             "- Set: Concurrent tasking No",
             "- Set: Persistence none",
-            "- Set: Commit direct-main",
+            "- Set: Commit main-branch",
             f"- Documentation question: Create the Wiki? {wiki_answer} (default Yes)",
             f"- Set: Core skill delivery {core_delivery['mode']}",
             "- Set: Technology skill delivery by-reference",
@@ -1183,6 +1245,10 @@ def setup_lines(value: dict[str, object]) -> list[str]:
     selections.append(
         "- Technology confirmation: required; show detected candidates, evidence, conflicts, and the user-confirmed selection."
     )
+    if legacy_commit_normalized:
+        selections.append(
+            "- Compatibility migration: project_setup.commit direct-main is normalized to main-branch; new configuration writes main-branch."
+        )
     selections.extend(technology_confirmation_lines(value))
     selections.append("")
     return ["## Project Setup Selections", "", *selections]

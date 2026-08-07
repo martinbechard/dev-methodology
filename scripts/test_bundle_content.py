@@ -110,7 +110,7 @@ NEW_DEVELOPMENT_SKILLS = (
     "collect-runtime-evidence",
     "organise-project-files",
     "deliver-work-item",
-    "deliver-work-item-direct-main",
+    "deliver-work-item-main-branch",
     "create-work-item",
     "create-work-item-file",
     "commit-file-provider-transaction",
@@ -836,7 +836,7 @@ DOCUMENT_REQUIRED_CONTENT_LINKS = {
         "../skills/manage-work-items-file/SKILL.md",
         "../skills/resource-claim/SKILL.md",
         "../skills/resource-claim-helper/SKILL.md",
-        "../skills/deliver-work-item-direct-main/SKILL.md",
+        "../skills/deliver-work-item-main-branch/SKILL.md",
         "../skills/deliver-work-item-feature-branch/SKILL.md",
         "../skills/create-pull-request/SKILL.md",
         "../skills/resource-claim-helper-command/SKILL.md",
@@ -2199,7 +2199,7 @@ class BundleContentTests(unittest.TestCase):
 
         for phrase in (
             "Only the delivery owner applies the effective Commit-selected skill.",
-            "For direct-main, the delivery owner applies deliver-work-item-direct-main.",
+            "For main-branch, the delivery owner applies deliver-work-item-main-branch.",
             "For feature-branch, the delivery owner applies deliver-work-item-feature-branch.",
             "Evidence-only or no mutation authority is terminal: return the evidence handoff without applying a Commit skill or creating a commit.",
             "When repository delivery is required and Commit is UNSET, ask for the Commit selection and stop before delivery.",
@@ -3053,7 +3053,7 @@ class BundleContentTests(unittest.TestCase):
 
         for phrase in (
             "For feature-branch delivery, preserve lifecycle AWAITING_REVIEW for the same delivery identity.",
-            "For direct-main delivery, preserve lifecycle RUNNING.",
+            "For main-branch delivery, preserve lifecycle RUNNING.",
             "Record lifecycle BLOCKED when safe reconciliation cannot continue.",
             "Never unconditionally reset lifecycle to RUNNING.",
         ):
@@ -3201,14 +3201,14 @@ class BundleContentTests(unittest.TestCase):
         self.assertTrue(
             orchestrator_skills.isdisjoint(
                 {
-                    "deliver-work-item-direct-main",
+                    "deliver-work-item-main-branch",
                     "deliver-work-item-feature-branch",
                 }
             )
         )
 
         provider_results = {
-            "deliver-work-item-direct-main": ("READY", "BLOCKED"),
+            "deliver-work-item-main-branch": ("READY", "BLOCKED"),
             "deliver-work-item-feature-branch": (
                 "READY",
                 "AWAITING_REVIEW",
@@ -3229,12 +3229,12 @@ class BundleContentTests(unittest.TestCase):
 
         project = load_yaml_object(REPOSITORY_ROOT / "PROJECT.yaml")
         self.assertEqual(
-            "direct-main",
+            "main-branch",
             project["workflow_selection"]["commit"]["default"],
         )
         agents_text = AGENTS_PATH.read_text(encoding="utf-8")
-        self.assertIn("Default commit direct-main: use deliver-work-item-direct-main", agents_text)
-        self.assertNotIn("Default commit direct-main: use deliver-work-item.", agents_text)
+        self.assertIn("Default commit main-branch: use deliver-work-item-main-branch", agents_text)
+        self.assertNotIn("Default commit main-branch: use deliver-work-item.", agents_text)
 
         probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
         probe = next(
@@ -3334,7 +3334,7 @@ class BundleContentTests(unittest.TestCase):
             probe["expectedBehavior"],
         )
         self.assertEqual(
-            "Explicitly selected direct-main completion, or a request only to draft publication content without feature-branch delivery, does not activate this skill.",
+            "Explicitly selected main-branch completion, or a request only to draft publication content without feature-branch delivery, does not activate this skill.",
             probe["negativeCondition"],
         )
         self.assertIn(
@@ -3416,7 +3416,7 @@ class BundleContentTests(unittest.TestCase):
                     "create-work-item-github",
                     "manage-work-items-file",
                     "manage-work-items-github",
-                    "deliver-work-item-direct-main",
+                    "deliver-work-item-main-branch",
                     "deliver-work-item-feature-branch",
                 }
             )
@@ -3461,9 +3461,9 @@ class BundleContentTests(unittest.TestCase):
             project_template,
         )
         self.assertIn("commit:", project_template)
-        self.assertIn("direct-main, feature-branch, or UNSET", project_template)
+        self.assertIn("main-branch, feature-branch, or UNSET", project_template)
         self.assertIn(
-            'commit: "TODO: direct-main, feature-branch, or UNSET."',
+            'commit: "TODO: main-branch, feature-branch, or UNSET."',
             project_template,
         )
         self.assertNotIn("  provider:", project_template)
@@ -3477,14 +3477,14 @@ class BundleContentTests(unittest.TestCase):
             project_configuration["workflow_selection"]["persistence"]["default"],
         )
         self.assertEqual(
-            "direct-main",
+            "main-branch",
             project_configuration["workflow_selection"]["commit"]["default"],
         )
         agents_text = (REPOSITORY_ROOT / "AGENTS.md").read_text(encoding="utf-8")
         self.assertIn("## Work-Item Workflow Skill References", agents_text)
         self.assertIn("create-work-item-file", agents_text)
         self.assertIn("manage-work-items-file", agents_text)
-        self.assertIn("deliver-work-item-direct-main", agents_text)
+        self.assertIn("deliver-work-item-main-branch", agents_text)
         self.assertIn("technology skill routing remains separate", agents_text)
 
         probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
@@ -3495,7 +3495,7 @@ class BundleContentTests(unittest.TestCase):
             "probe-manage-work-items-github",
             "probe-manage-work-items-file",
             "probe-deliver-work-item",
-            "probe-deliver-work-item-direct-main",
+            "probe-deliver-work-item-main-branch",
             "probe-deliver-work-item-feature-branch",
         ):
             self.assertIn(probe_id, probe_ids)
@@ -3515,7 +3515,7 @@ class BundleContentTests(unittest.TestCase):
             "manage-work-items-github",
             "manage-work-items-file",
             "deliver-work-item",
-            "deliver-work-item-direct-main",
+            "deliver-work-item-main-branch",
             "deliver-work-item-feature-branch",
         ):
             self.assertIn(f"- {skill_name}", readme_text)
@@ -3646,11 +3646,11 @@ class BundleContentTests(unittest.TestCase):
                 continue
             with self.subTest(dev_coder_case=case["id"]):
                 self.assertNotIn(
-                    "deliver-work-item-direct-main",
+                    "deliver-work-item-main-branch",
                     case.get("requiredSkills", []),
                 )
                 self.assertNotIn(
-                    "deliver-work-item-direct-main",
+                    "deliver-work-item-main-branch",
                     case.get("contextPack", {}).get("stagedSkillPackages", []),
                 )
 
@@ -3664,12 +3664,12 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("Historical mapping:", migration)
                 self.assertNotIn("until their separately governed callers move", migration)
 
-    def test_direct_main_completion_requires_integrated_main_evidence(self) -> None:
-        skill_name = "deliver-work-item-direct-main"
+    def test_main_branch_completion_requires_integrated_main_evidence(self) -> None:
+        skill_name = "deliver-work-item-main-branch"
         skill_path = SKILLS_ROOT / skill_name / "SKILL.md"
         skill_text = skill_path.read_text(encoding="utf-8")
 
-        self.assertIn("# Deliver Work Item Direct Main", skill_text)
+        self.assertIn("# Deliver Work Item Main Branch", skill_text)
         self.assertIn("## Deliver Work Item", skill_text)
 
         required_phrases = (
@@ -3699,7 +3699,7 @@ class BundleContentTests(unittest.TestCase):
         probe = next(
             entry
             for entry in probes["probes"]
-            if entry["id"] == "probe-deliver-work-item-direct-main"
+            if entry["id"] == "probe-deliver-work-item-main-branch"
         )
         self.assertEqual(skill_name, probe["skill"])
         self.assertIn("unmerged temporary branch", probe["negativeCondition"])
@@ -3711,11 +3711,11 @@ class BundleContentTests(unittest.TestCase):
             entry for entry in workflow_packs["packs"] if entry["id"] == "code-delivery"
         )
         self.assertIn(
-            "probe-deliver-work-item-direct-main",
+            "probe-deliver-work-item-main-branch",
             code_delivery["skillProbes"],
         )
         self.assertTrue(
-            (REPOSITORY_ROOT / "scripts" / "test_direct_main_completion_contract.py").is_file()
+            (REPOSITORY_ROOT / "scripts" / "test_main_branch_completion_contract.py").is_file()
         )
 
     def test_review_and_verification_skills_use_operation_shaped_interfaces(self) -> None:
@@ -5541,8 +5541,8 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("workflow_selection:", template_text)
         self.assertIn("project_skill_extensions: []", template_text)
         self.assertIn("file, github, gitlab, azure-devops, jira, none, or UNSET", template_text)
-        self.assertIn("direct-main, feature-branch, or UNSET", template_text)
-        self.assertIn("simple-workitem to direct-main", skill_text)
+        self.assertIn("main-branch, feature-branch, or UNSET", template_text)
+        self.assertIn("simple-workitem to main-branch", skill_text)
         self.assertIn("file-based-backlog to file", skill_text)
         self.assertIn("selected create, manage, and completion skills as references only", skill_text)
         for phrase in (
@@ -7022,7 +7022,7 @@ class BundleContentTests(unittest.TestCase):
             "Type: TODO Defect, Feature, Analysis, Investigation, or Holding",
             "Provider: file",
             "Work Item ID: TODO immutable filename stem without .md",
-            "Completion: TODO direct-main, feature-branch, or UNSET",
+            "Completion: TODO main-branch, feature-branch, or UNSET",
             "## Summary",
             "## Context",
             "## Source Evidence",
@@ -9093,7 +9093,7 @@ class BundleContentTests(unittest.TestCase):
             "resource-claim-helper-mcp",
             "integrate-agent-work",
             "coordinate-work-items",
-            "deliver-work-item-direct-main",
+            "deliver-work-item-main-branch",
             "deliver-work-item-feature-branch",
             "create-work-item-file",
             "create-project-configuration",
@@ -9901,7 +9901,7 @@ class BundleContentTests(unittest.TestCase):
             "Verifier",
             "Merge Coordinator",
             "Starting and Running Work items use separate worktrees",
-            "Direct-main delivery",
+            "Main-branch delivery",
             "Feature-branch delivery",
             "temporary shared-mutation protection",
             "it does not prove review, delivery, or completion",
@@ -9974,15 +9974,15 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(readme_phrase=phrase):
                 self.assertIn(phrase, readme_text)
 
-    def test_lifecycle_routes_direct_main_and_pull_request_completion_paths(self) -> None:
-        """The lifecycle should distinguish direct-main and feature-branch delivery."""
+    def test_lifecycle_routes_main_branch_and_pull_request_completion_paths(self) -> None:
+        """The lifecycle should distinguish main-branch and feature-branch delivery."""
         lifecycle_path = (
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
         )
         lifecycle_text = lifecycle_path.read_text(encoding="utf-8")
 
         for phrase in (
-            "Direct-main delivery",
+            "Main-branch delivery",
             "fresh reconciliation branch from that exact commit",
             "Apply only the accepted paths",
             "Follow <a href=\"../skills/resource-claim/SKILL.md\">Resource Claim</a>",
@@ -10002,20 +10002,20 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(delivery_phrase=phrase):
                 self.assertIn(phrase, lifecycle_text)
 
-        direct_main = lifecycle_text[
-            lifecycle_text.index(">Direct-main delivery<") :
+        main_branch = lifecycle_text[
+            lifecycle_text.index(">Main-branch delivery<") :
             lifecycle_text.index(">Feature-branch delivery<")
         ]
-        direct_main_steps = (
+        main_branch_steps = (
             "Review and verify the private candidate",
             "Follow <a href=\"../skills/resource-claim/SKILL.md\">Resource Claim</a>",
             "Refresh current main",
             "Apply only the accepted paths",
         )
-        direct_main_positions = tuple(
-            direct_main.index(step) for step in direct_main_steps
+        main_branch_positions = tuple(
+            main_branch.index(step) for step in main_branch_steps
         )
-        self.assertEqual(tuple(sorted(direct_main_positions)), direct_main_positions)
+        self.assertEqual(tuple(sorted(main_branch_positions)), main_branch_positions)
 
         self.assertIn('table class="evidence-table" aria-labelledby=', lifecycle_text)
         self.assertIn("<caption id=", lifecycle_text)

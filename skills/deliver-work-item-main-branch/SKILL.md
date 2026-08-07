@@ -1,13 +1,13 @@
 ---
-name: deliver-work-item-direct-main
-description: Complete a verified work item by deliberately integrating its accepted commit into the configured main branch, verifying the integrated state, and observing exact main reachability before any provider lifecycle closure. Use when the effective completion selector is direct-main.
+name: deliver-work-item-main-branch
+description: Complete a verified work item by deliberately integrating its accepted commit into the configured main branch, verifying the integrated state, and observing exact main reachability before any provider lifecycle closure. Use when the effective completion selector is main-branch.
 metadata:
   category: development-practice
 ---
 
-# Deliver Work Item Direct Main
+# Deliver Work Item Main Branch
 
-Complete delivery only after the accepted behavior is verified on the configured main branch. Direct main describes the observed final state; implementation may occur in the primary worktree or a private worktree.
+Complete delivery only after the accepted behavior is verified on the configured main branch. Main branch describes the observed final state; implementation may occur in the primary worktree or a private worktree.
 
 ## Deliver Work Item
 
@@ -29,7 +29,7 @@ Resolve these inputs before integration:
 - Required local main and, when configured, remote publication state.
 - Terminal lifecycle evidence required by the selected provider, or explicit provider none.
 
-Return BLOCKED when the completion selector is not direct-main, required evidence is missing, main is ambiguous, or the requested integration or publication lacks authority. Do not infer main from the current branch name, a remote default, a temporary branch, or provider metadata.
+Return BLOCKED when the completion selector is not main-branch, required evidence is missing, main is ambiguous, or the requested integration or publication lacks authority. Do not infer main from the current branch name, a remote default, a temporary branch, or provider metadata.
 
 ## Provider Independence
 
@@ -92,7 +92,7 @@ When the accepted change is not yet present on main, load and apply integrate-ag
 - Resolve conflicts from source evidence and current-main intent, not by automatically choosing one side.
 - Recheck every affected path after conflict resolution.
 - If a conflict cannot be resolved safely, abort or preserve the repository's documented recoverable state, keep the accepted source commit, and return BLOCKED.
-- Do not create a feature-branch pull request or merge request as a substitute for direct-main integration.
+- Do not create a feature-branch pull request or merge request as a substitute for main-branch integration.
 
 A successful Git command is intermediate evidence. It does not establish completion by itself.
 
@@ -120,7 +120,7 @@ Use graph reachability for ancestral delivery, such as Git's merge-base ancestor
 When a provider is selected, prepare one terminal update containing:
 
 - Work Item ID and provider selector;
-- completion selector direct-main;
+- completion selector main-branch;
 - accepted source commit and integration commit;
 - observed main branch and tip;
 - graph or non-ancestral integration evidence;
@@ -134,7 +134,7 @@ Return the prepared terminal handoff to the caller after integration is complete
 
 ## Result
 
-Return READY only when the complete direct-main delivery proof exists. Return:
+Return READY only when the complete main-branch delivery proof exists. Return:
 
 - Work Item ID and provider selector;
 - source and integration commits;

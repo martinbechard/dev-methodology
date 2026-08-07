@@ -39,7 +39,7 @@ PROJECT_SETUP_PARAGRAPH = (
     "Project agent and skill setup asks Setup mode first, defaulting to Basic, and "
     "records the result in one root PROJECT.yaml as an intermediate, reviewable intent "
     "log. Basic asks whether to create the Wiki and asks the user to confirm detected "
-    "technologies; it shows Concurrent tasking No, Persistence none, Commit direct-main, "
+    "technologies; it shows Concurrent tasking No, Persistence none, Commit main-branch, "
     "installed core skill delivery, and technology skill delivery by-reference as Set "
     "values. Advanced exposes Concurrent tasking, conditional capacity, Persistence, "
     "Commit, wiki/specifications/both documentation structure, technology confirmation, "
@@ -364,7 +364,7 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
                 "Concurrent tasking",
                 "Persistence",
                 "Commit",
-                "direct-main",
+                "main-branch",
                 "by-reference",
                 "Set",
             ),
@@ -430,15 +430,15 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
         )
 
     def test_fixture_rejects_changed_configuration_value(self) -> None:
-        source = "Set Commit to `direct-main`."
+        source = "Set Commit to `main-branch`."
         candidate = "Set Commit to `feature-branch`."
 
         self.assertEqual(
-            ["changed or removed: `direct-main`"],
+            ["changed or removed: `main-branch`"],
             _semantic_violations(
                 source,
                 candidate,
-                protected=("`direct-main`",),
+                protected=("`main-branch`",),
             ),
         )
 

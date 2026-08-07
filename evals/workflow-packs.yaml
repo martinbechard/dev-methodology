@@ -52,7 +52,7 @@ packs:
       - probe-trace-code-execution
       - probe-review-code-with-evidence
       - probe-deliver-work-item
-      - probe-deliver-work-item-direct-main
+      - probe-deliver-work-item-main-branch
       - probe-deliver-work-item-feature-branch
       - probe-create-pull-request
       - probe-electron-main
@@ -155,7 +155,7 @@ packs:
       - typescript-order-pricing
       - spring-boot-order-cancellation
       - typescript-code-review
-      - direct-main-unrelated-dirty-contract
+      - main-branch-unrelated-dirty-contract
     caseCoverageStatus: partial
     coverageStatus: declared
   - id: documentation-methodology

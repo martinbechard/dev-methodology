@@ -67,7 +67,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | dev-document-topic-editor | documentation | [x] | [x] dev-document-topic-editor-authorized-revision, dev-document-topic-editor-read-only | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-documentation-writer | documentation | [x] | [x] dev-documentation-writer-boundary, dev-documentation-writer-happy | [x] dev-documentation-writer-happy | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-merge-coordinator | advanced | [x] | [x] dev-merge-coordinator-boundary, dev-merge-coordinator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
-| dev-orchestrator | advanced-long | [x] | [x] dev-orchestrator-boundary, dev-orchestrator-happy | [x] dev-orchestrator-boundary, dev-orchestrator-happy | [x] direct-main-unrelated-dirty-contract | [x] direct-main-unrelated-dirty-contract | pending | none | none | none | none |
+| dev-orchestrator | advanced-long | [x] | [x] dev-orchestrator-boundary, dev-orchestrator-happy | [x] dev-orchestrator-boundary, dev-orchestrator-happy | [x] main-branch-unrelated-dirty-contract | [x] main-branch-unrelated-dirty-contract | pending | none | none | none | none |
 | dev-prompt-reviewer | advanced | [x] | [x] dev-prompt-reviewer-boundary, dev-prompt-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-runtime-diagnostician | advanced | [x] | [x] dev-runtime-diagnostician-boundary, dev-runtime-diagnostician-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
 | dev-security-reviewer | advanced | [x] | [x] dev-security-reviewer-boundary, dev-security-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none | none |
@@ -162,8 +162,8 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | create-work-item-github | [x] | [x] probe-create-work-item-github | [x] github-work-item-provider | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-work-item-gitlab | [x] | [x] probe-create-work-item-gitlab | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-work-item-jira | [x] | [x] probe-create-work-item-jira | [x] provider-placeholder-matrix | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| deliver-work-item | [x] | [x] probe-deliver-work-item | [x] direct-main-unrelated-dirty-contract | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| deliver-work-item-direct-main | [x] | [x] probe-deliver-work-item-direct-main | [x] direct-main-unrelated-dirty-contract | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| deliver-work-item | [x] | [x] probe-deliver-work-item | [x] main-branch-unrelated-dirty-contract | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| deliver-work-item-main-branch | [x] | [x] probe-deliver-work-item-main-branch | [x] main-branch-unrelated-dirty-contract | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | deliver-work-item-feature-branch | [x] | [x] probe-deliver-work-item-feature-branch | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | detect-technology-skills | [x] | [x] probe-detect-technology-skills | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | effective-communication | [x] | [x] probe-effective-communication | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
