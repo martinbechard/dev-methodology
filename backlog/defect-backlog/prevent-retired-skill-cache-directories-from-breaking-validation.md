@@ -12,7 +12,7 @@ Work Item ID: prevent-retired-skill-cache-directories-from-breaking-validation
 
 Completion: main-branch
 
-Phase: Reviewing
+Phase: Verifying
 
 Branch: codex/prevent-retired-skill-cache-validation-019fda3b
 
@@ -27,6 +27,8 @@ Root Role: Dev Orchestrator
 Parent Task ID: 019fb057-1767-7ef2-b5fa-41f4417b20b3
 
 Accepted Candidate Commit: afdfcfbf80583e788f11eec79cf868bfcf552025
+
+Independent Review: GOOD; no material findings on immutable candidate afdfcfbf80583e788f11eec79cf868bfcf552025; exact six-path scope, shared classifier, fail-closed incomplete-package behavior, retired-identity scan, headers, and focused tests accepted.
 
 ## Summary
 
@@ -125,16 +127,16 @@ Next Action: Release this atomic provider transaction, acquire the exact Work It
 
 Condition Type: delegated-work
 
-Owner: Dev Code Reviewer task /root/review_retired_skill_cache_candidate under Dev Orchestrator task 019fda3b-119f-7412-a045-29d5f8998d79
+Owner: Dev Verifier task /root/verify_retired_skill_cache_candidate under Dev Orchestrator task 019fda3b-119f-7412-a045-29d5f8998d79
 
-Evidence: Dev Coder task /root/implement_retired_skill_cache_fix returned clean immutable candidate afdfcfbf80583e788f11eec79cf868bfcf552025 with focused red-green, installer dry-run, validator, exact retired-provider, and diff checks passing. One fresh read-only Dev Code Reviewer now owns the bounded six-path independent review; candidate bytes and branch remain unchanged.
+Evidence: One fresh independent Dev Code Reviewer returned GOOD with no material findings on immutable candidate afdfcfbf80583e788f11eec79cf868bfcf552025. One independent Dev Verifier now owns the focused acceptance checks for cache-only discovery, genuinely incomplete packages, installer dry-run, validator CLI, retired-provider bounded scan, candidate scope, and clean-state evidence; candidate bytes remain unchanged.
 
-Observed At: 2026-08-07T03:36:43Z
+Observed At: 2026-08-07T03:44:58Z
 
-Started At: 2026-08-07T03:36:24Z
+Started At: 2026-08-07T03:44:38Z
 
-Deadline or Expires At: 2026-08-07T04:36:43Z
+Deadline or Expires At: 2026-08-07T04:44:58Z
 
-Next Action: Reacquire the exact activity=work claim after this atomic provider update, accept or route any material review finding once, and dispatch one independent focused verifier only after the immutable candidate receives a GOOD review.
+Next Action: Reacquire the exact activity=work claim after this atomic provider update, accept or route any verifier failure once, and begin current-main reconciliation for main-branch delivery only if the verifier returns PASS.
 
-Next Reconciliation At: 2026-08-07T03:50:43Z
+Next Reconciliation At: 2026-08-07T03:58:58Z
