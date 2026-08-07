@@ -1,18 +1,18 @@
 # Prevent Retired Skill Cache Directories From Breaking Validation
 
-Status: Running
+Status: Holding
 
 Type: Defect
 
 Provider: file
 
-Owner: Dev Orchestrator task 019fda3b-119f-7412-a045-29d5f8998d79
+Owner: Unowned
 
 Work Item ID: prevent-retired-skill-cache-directories-from-breaking-validation
 
 Completion: main-branch
 
-Phase: Verifying
+Phase: Holding
 
 Branch: codex/prevent-retired-skill-cache-validation-019fda3b
 
@@ -122,6 +122,34 @@ Started At: 2026-08-07T03:21:35Z
 Accepted Execution Evidence: The canonical root Dev Orchestrator established a clean isolated candidate branch at main commit 2e415bdd3effe0074539dcf78302fab6c90f3b1d, accepted the bounded defect scope, and is ready to acquire the exact Work Item ID activity=work claim before delegating one source implementation lane.
 
 Next Action: Release this atomic provider transaction, acquire the exact Work Item ID activity=work claim, and dispatch one Dev Coder to produce a focused immutable candidate.
+
+## Holding Evidence
+
+Deferral Authority: User-directed token-conservation pause for the low-token campaign.
+
+Resumption Condition: Holding -> Ready -> Starting -> Running in this same canonical task before review or verification resumes.
+
+Canonical Task: 019fda3b-119f-7412-a045-29d5f8998d79
+
+Parent Task: 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Branch: codex/prevent-retired-skill-cache-validation-019fda3b
+
+Worktree: /Users/martinbechard/.codex/worktrees/f905/dev-methodology
+
+Immutable Candidate: afdfcfbf80583e788f11eec79cf868bfcf552025
+
+Completed Focused Coder Evidence: Candidate completed.
+
+Independent Review: GOOD; no material findings.
+
+Verifier State: Interrupted before terminal verdict; no verifier result accepted.
+
+Stopped-Child Inventory: Coder completed candidate; reviewer completed GOOD; verifier interrupted.
+
+Current Claim Handoff Release Event: 74d224b4-0a09-49eb-931a-07c1d09b2ad6
+
+Task-Owned Claim After This Transaction: None.
 
 ## Active Execution Evidence
 
