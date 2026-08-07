@@ -19,6 +19,17 @@ from pathlib import Path
 from typing import NamedTuple, Optional
 
 try:
+    from scripts.skill_sources import (
+        is_cache_only_source_directory,
+        is_disposable_source_entry,
+    )
+except ModuleNotFoundError:
+    from skill_sources import (
+        is_cache_only_source_directory,
+        is_disposable_source_entry,
+    )
+
+try:
     import tomllib
 except ModuleNotFoundError:
     tomllib = None
@@ -1181,13 +1192,12 @@ def is_skill_directory(path: Path) -> bool:
 
 
 def _is_ignored_source_entry(path: Path) -> bool:
-    return (
-        path.name in {GENERATED_CACHE_FOLDER_NAME, MACOS_METADATA_FILE_NAME}
-        or path.match(PYTHON_BYTECODE_PATTERN)
-    )
+    return is_disposable_source_entry(path)
 
 
 def iter_skill_directories(source: Path) -> list[Path]:
+    """Return complete maintained skills and reject unsafe or incomplete sources."""
+
     if not source.is_dir():
         raise FileNotFoundError(f"Skill source directory does not exist: {source}")
 
@@ -1202,10 +1212,10 @@ def iter_skill_directories(source: Path) -> list[Path]:
             "skill source contains unexpected top-level entries: "
             + ", ".join(unexpected_entries)
         )
-    source_directories = [path for path in source_entries if path.is_dir()]
+    all_source_directories = [path for path in source_entries if path.is_dir()]
     reserved_names = [
         path.name
-        for path in source_directories
+        for path in all_source_directories
         if path.name == INSTALL_MANIFEST_FILE_NAME
     ]
     if reserved_names:
@@ -1213,6 +1223,11 @@ def iter_skill_directories(source: Path) -> list[Path]:
             "skill source contains reserved destination names: "
             + ", ".join(reserved_names)
         )
+    source_directories = [
+        path
+        for path in all_source_directories
+        if not is_cache_only_source_directory(path)
+    ]
     nested_symlinks = [
         item.relative_to(source).as_posix()
         for source_directory in source_directories

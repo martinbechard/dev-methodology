@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Validates maintained Agent Skill sources and their Codex metadata.
+
 from __future__ import annotations
 
 import argparse
@@ -8,6 +12,11 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import yaml
+
+try:
+    from scripts.skill_sources import is_cache_only_source_directory
+except ModuleNotFoundError:
+    from skill_sources import is_cache_only_source_directory
 
 
 MAX_SKILL_NAME_LENGTH = 64
@@ -62,12 +71,18 @@ def split_frontmatter(text: str) -> tuple[dict[str, object], bool]:
 
 
 def skill_files_from_path(path: Path) -> list[Path]:
+    """Resolve maintained skill files and incomplete intended package candidates."""
+
     if path.name == SKILL_FILE_NAME:
         return [path]
     if (path / SKILL_FILE_NAME).is_file():
         return [path / SKILL_FILE_NAME]
     if path.is_dir():
-        return sorted(child / SKILL_FILE_NAME for child in path.iterdir() if (child / SKILL_FILE_NAME).is_file())
+        return sorted(
+            child / SKILL_FILE_NAME
+            for child in path.iterdir()
+            if child.is_dir() and not is_cache_only_source_directory(child)
+        )
     return [path / SKILL_FILE_NAME]
 
 

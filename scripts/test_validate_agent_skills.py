@@ -1,3 +1,7 @@
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Verifies Agent Skill source and metadata validation boundaries.
+
 from __future__ import annotations
 
 import importlib.util
@@ -129,6 +133,49 @@ class ValidateAgentSkillsTests(unittest.TestCase):
             exit_code = validator.main([str(root)])
 
         self.assertEqual(validator.SUCCESS_EXIT_CODE, exit_code)
+
+    def test_root_ignores_cache_only_retired_skill_directories(self) -> None:
+        """Exclude cache-only retired directory shells from root validation."""
+
+        validator = load_validator()
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.create_skill(
+                root,
+                "careful-coding",
+                "---\nname: careful-coding\ndescription: Use when coding carefully.\n---",
+            )
+            for retired_name in ("agent-claim", "agent-claim-command"):
+                cache = root / retired_name / "scripts" / "__pycache__"
+                cache.mkdir(parents=True)
+                (cache / "claim.cpython-311.pyc").write_bytes(b"compiled")
+
+            findings = validator.validate_skill_paths([root])
+
+        self.assertEqual([], findings)
+
+    def test_root_rejects_incomplete_intended_skill_directory(self) -> None:
+        """Report intended source content without a required SKILL.md file."""
+
+        validator = load_validator()
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.create_skill(
+                root,
+                "careful-coding",
+                "---\nname: careful-coding\ndescription: Use when coding carefully.\n---",
+            )
+            incomplete_source = root / "intended-skill" / "scripts"
+            incomplete_source.mkdir(parents=True)
+            (incomplete_source / "helper.py").write_text("VALUE = 1\n", encoding="utf-8")
+
+            findings = validator.validate_skill_paths([root])
+
+        self.assertEqual(1, len(findings))
+        self.assertEqual(root / "intended-skill" / "SKILL.md", findings[0].path)
+        self.assertEqual("SKILL.md is missing", findings[0].message)
 
 
 if __name__ == "__main__":

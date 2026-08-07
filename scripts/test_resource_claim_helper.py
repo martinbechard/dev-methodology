@@ -13,11 +13,16 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from collections.abc import Iterator
 from pathlib import Path
 
 import yaml
 
 from scripts.agent_skill_evals import validation as eval_validation
+from scripts.skill_sources import (
+    directory_has_maintained_source,
+    iter_maintained_source_files,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -134,6 +139,36 @@ MAINTAINED_TEXT_SUFFIXES = frozenset({
     ".yaml",
     ".yml",
 })
+_MAINTAINED_SURFACE_RELATIVE_PATHS = (
+    Path(".agents"),
+    Path(".codex/config.toml"),
+    Path("adapters"),
+    Path("agents"),
+    Path("design"),
+    Path("evals"),
+    Path("generated"),
+    Path("legacy_procedures"),
+    Path("scripts"),
+    Path("skills"),
+    Path("AGENTS.md"),
+    Path("PROJECT.yaml"),
+    Path("README.md"),
+    Path("index.html"),
+)
+
+
+def _maintained_text_files(repository_root: Path) -> Iterator[Path]:
+    """Yield maintained text artifacts without entering operational repository state."""
+
+    for relative_root in _MAINTAINED_SURFACE_RELATIVE_PATHS:
+        for path in iter_maintained_source_files(repository_root / relative_root):
+            if path.suffix not in MAINTAINED_TEXT_SUFFIXES:
+                continue
+            relative = path.relative_to(repository_root)
+            relative_text = relative.as_posix()
+            if relative_text.startswith("evals/results/") or ".review-" in path.name:
+                continue
+            yield path
 
 
 def _markdown_section(document: str, heading: str) -> str:
@@ -1104,26 +1139,74 @@ class ResourceClaimHelperTests(unittest.TestCase):
         """Keep old provider package names only in historical review and result records."""
 
         for retired_identity in RETIRED_PROVIDER_IDENTITIES:
-            self.assertFalse((ROOT / "skills" / retired_identity).exists())
+            self.assertFalse(
+                directory_has_maintained_source(ROOT / "skills" / retired_identity)
+            )
 
         stale_references: list[str] = []
-        for path in ROOT.rglob("*"):
-            if not path.is_file() or path.suffix not in MAINTAINED_TEXT_SUFFIXES:
-                continue
+        for path in _maintained_text_files(ROOT):
             if path == Path(__file__).resolve():
                 continue
             relative = path.relative_to(ROOT)
             relative_text = relative.as_posix()
-            if relative.parts[0] == "backlog":
-                continue
-            if relative_text.startswith("evals/results/") or ".review-" in path.name:
-                continue
             text = path.read_text(encoding="utf-8")
             for retired_identity in RETIRED_PROVIDER_IDENTITIES:
                 if retired_identity in text:
                     stale_references.append(f"{relative_text}: {retired_identity}")
 
         self.assertEqual([], stale_references)
+
+    def test_maintained_source_discovery_ignores_cache_only_retired_paths(
+        self,
+    ) -> None:
+        """Exclude retired directory shells that contain only ignored Python caches."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            stale_identity = "resource-claim-" + "command"
+            for retired_directory_name in ("agent-claim", "agent-claim-command"):
+                cache = (
+                    root
+                    / "skills"
+                    / retired_directory_name
+                    / "scripts"
+                    / "__pycache__"
+                )
+                cache.mkdir(parents=True)
+                (cache / "claim.cpython-311.pyc").write_bytes(
+                    stale_identity.encode("utf-8")
+                )
+            maintained_file = root / "skills" / "intended-skill" / "scripts" / "helper.py"
+            maintained_file.parent.mkdir(parents=True)
+            maintained_file.write_text(
+                f'PROVIDER = "{stale_identity}"\n',
+                encoding="utf-8",
+            )
+            operational_file = root / ".worktrees" / "other" / "stale.py"
+            operational_file.parent.mkdir(parents=True)
+            operational_file.write_text(
+                f'PROVIDER = "{stale_identity}"\n',
+                encoding="utf-8",
+            )
+
+            maintained_files = list(_maintained_text_files(root))
+            stale_references = [
+                path
+                for path in maintained_files
+                if stale_identity in path.read_text(encoding="utf-8")
+            ]
+
+            self.assertEqual([maintained_file], maintained_files)
+            self.assertEqual([maintained_file], stale_references)
+            self.assertTrue(
+                directory_has_maintained_source(root / "skills" / "intended-skill")
+            )
+            for retired_identity in ("agent-claim", "agent-claim-command"):
+                self.assertFalse(
+                    directory_has_maintained_source(
+                        root / "skills" / retired_identity
+                    )
+                )
 
     def test_skill_group_inventory_prose_matches_the_registry_total(self) -> None:
         """Keep the maintained inventory total aligned with its registry rows."""

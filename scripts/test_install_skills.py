@@ -263,6 +263,68 @@ class InstallSkillsTests(unittest.TestCase):
             self.assertEqual((destination / "beta" / "SKILL.md").read_text(encoding="utf-8"), SECOND_SKILL_FILE_CONTENT)
             self.assertFalse((destination / "alpha" / "__pycache__").exists())
 
+    def test_dry_run_ignores_cache_only_retired_skill_directories(self) -> None:
+        """Ignore retired skill shells whose only files are Python bytecode caches."""
+
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "source"
+            destination = root / "dest"
+            self.create_skill(source, "alpha")
+            for retired_name in ("agent-claim", "agent-claim-command"):
+                cache = source / retired_name / "scripts" / "__pycache__"
+                cache.mkdir(parents=True)
+                (cache / "claim.cpython-311.pyc").write_bytes(b"compiled")
+
+            output = io.StringIO()
+            with redirect_stdout(output):
+                exit_code = installer.main(
+                    [
+                        "--source",
+                        str(source),
+                        "--dest",
+                        str(destination),
+                        "--dry-run",
+                    ]
+                )
+
+        self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+        self.assertNotIn("agent-claim", output.getvalue())
+
+    def test_dry_run_rejects_incomplete_intended_skill_directory(self) -> None:
+        """Reject maintained source content when its package lacks SKILL.md."""
+
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "source"
+            destination = root / "dest"
+            self.create_skill(source, "alpha")
+            incomplete_source = source / "intended-skill" / "scripts"
+            incomplete_source.mkdir(parents=True)
+            (incomplete_source / "helper.py").write_text("VALUE = 1\n", encoding="utf-8")
+
+            error_output = io.StringIO()
+            with redirect_stderr(error_output):
+                exit_code = installer.main(
+                    [
+                        "--source",
+                        str(source),
+                        "--dest",
+                        str(destination),
+                        "--dry-run",
+                    ]
+                )
+
+        self.assertEqual(installer.ERROR_EXIT_CODE, exit_code)
+        self.assertIn(
+            "skill source contains incomplete skill directories: intended-skill",
+            error_output.getvalue(),
+        )
+
     def test_project_wiki_template_resolves_from_source_and_installed_catalogs(
         self,
     ) -> None:
