@@ -1,6 +1,8 @@
 # Rename Agent Claim To Resource Claim
 
-Status: Running
+Status: Blocked
+
+Owner: Unowned
 
 Type: Feature
 
@@ -171,3 +173,27 @@ Deadline or Expires At: 2026-08-07T02:58:10Z
 Next Action: Commit only this provider evidence refresh, release the exact provider path and activity `update` claims, reacquire exact Work Item ID activity `work`, then finish the independent finding-resolution check and apply the direct-main delivery contract to the accepted candidate.
 
 Next Reconciliation At: 2026-08-07T01:13:10Z
+
+## Blocked Evidence
+
+Blocked At: 2026-08-07T01:04:06Z
+
+Exact Blocker: Direct-main delivery cannot reconcile accepted candidate path `design/skill-groups/concurrent-tasking.md` while authoritative main contains a pre-existing user-owned unstaged edit to that same path.
+
+Blocker Owner: Dev Backlog Coordinator must coordinate the existing documentation owner without staging, absorbing, reverting, or overwriting the user-owned edit in this work item.
+
+Coordinator Next Action: Ask canonical documentation task `019faeed-f816-7d43-819d-814bad4e309c` to commit or explicitly disposition its already-authorized one-line `pull request workflow` edit as a distinct scoped transaction, then reconcile the clean-main boundary.
+
+Unblock Condition: The user-owned `design/skill-groups/concurrent-tasking.md` edit reaches a committed or explicitly restored clean-main disposition outside this work item, with exact release notification and no loss of its bytes.
+
+Permitted Resumption: Preserve canonical task `019fd993-01d4-7380-b722-b7c328bdb637` and resume through Blocked -> Ready -> Starting -> Running before delivery. Reconcile accepted candidate `140f0bbdbfe43925e54e89c1efd49facb30a3b81` against then-current main once and rerun only integration-sensitive checks.
+
+Accepted Candidate: `140f0bbdbfe43925e54e89c1efd49facb30a3b81` on `codex/rename-agent-claim-to-resource-claim`; private worktree clean.
+
+Accepted Path Manifest: 137 exact paths; SHA-256 `b53b772d43fcaca86a169911a95107d15eabe6955b2e2039f8e6394e3663927d`.
+
+Review And Verification: Independent review PASS with no findings after correction; verifier VERIFIED. Focused skill, metadata, generation, bundle, coordination, fixture, and diff checks passed. Two broader-suite failures are recorded unrelated baselines: policy `KeyError: outcome` and helper count `47 != 50`.
+
+Preserved User Edit Evidence: Worktree SHA-256 `1d6e7b6e6157e4e8cd53d32e5f26b77a199a309a5c9ee1a9f598ffa894a76ad6`; binary diff SHA-256 `25c3b9e05c8b390e4af39f2b92bbf02eee76161a5615389901cf08f321d93ff5`; index blob `ecdd6f2a3eed360f2f3aec1085ad8cbac37105e5`.
+
+Claim Disposition: The canonical task released exact work claim disposition `blocked` with blocker reference `direct-main-overlap:design/skill-groups/concurrent-tasking.md`; registry was empty before this provider transition.
