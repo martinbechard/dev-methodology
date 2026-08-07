@@ -1,6 +1,6 @@
 # Rename Direct Main To Main Branch
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -132,3 +132,23 @@ None.
 ### Approval Resolution
 
 Approved at creation. On 2026-08-06, in Codex task 019faeef-e932-7352-a53d-fdb1535f5994, the user requested that direct-main be changed to main-branch and explicitly requested a work item for that rename. This approval covers the exact governed canonical sources listed above only. Any additional governed skill-definition path discovered during implementation requires separate scope-specific approval; existing approval for the listed paths remains valid.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-07T01:14:14Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Normalized Objective: Rename the direct-main delivery provider and Commit selection to main-branch across approved operational sources, generated artifacts, focused tests, evaluations, and compatibility handling while preserving the established main-branch delivery safeguards and historical evidence.
+
+Launch Result: Not attempted
+
+Canonical Execution: None
+
+Last Contact At: None
+
+Next Reconciliation At: 2026-08-07T01:29:14Z
+
+Intended Root Role: Dev Orchestrator
+
+Scheduling Evidence: The overlapping resource-claim rename is Completed and archived at main commit `102c5fe6ae5b560befd6e9aac3485a51804508ca`; its shared source, generator, installation, and integration lanes are released.
