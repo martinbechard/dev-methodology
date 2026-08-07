@@ -1,12 +1,12 @@
-# Centralize General Agent Skill Routing
+# Holding — Centralize General Agent Skill Routing
 
-Status: Running
+Status: Holding
 
 Type: Defect
 
 Provider: file
 
-Owner: Dev Orchestrator task 019faeed-f816-7d43-819d-814bad4e309c
+Owner: Unowned
 
 Work Item ID: centralize-general-agent-skill-routing
 
@@ -107,3 +107,25 @@ Deadline or Expires At: 2026-08-07T07:29:07Z
 Next Action: Centralize project-wide conditional skill routing, create the General Agent Skills design, remove duplicated role and Agent-group declarations, regenerate derived artifacts, and verify the synchronized result.
 
 Next Reconciliation At: 2026-08-07T03:43:19Z
+
+## Holding Pause Evidence
+
+Pause Authority: User-directed immediate stop for low-token conservation
+
+Preserved Candidate: 555764d4
+
+Preserved Evidence: 29 focused tests plus freshness, YAML, and diff checks
+
+Canonical Task: 019faeef-f816-7d43-819d-814bad4e309c
+
+Branch: main
+
+Worktree: /Users/martinbechard/dev/dev-methodology
+
+Stopped Child Inventory: None
+
+Implementation Path Release Event: d61a5c54-2cc7-488d-8901-543a63933489
+
+Work Handoff Release Event: 2b56c35b-08a6-44e1-a993-8a39ed7139bd
+
+Resumption Condition: The parent Coordinator must move this item from Holding to Ready, then from Ready to Starting for this same canonical task. The root task must then move it from Starting to Running before any review or further work.
