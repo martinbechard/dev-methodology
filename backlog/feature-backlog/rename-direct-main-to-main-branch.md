@@ -155,41 +155,23 @@ Scheduling Evidence: The overlapping resource-claim rename is Completed and arch
 
 ## Active Execution Evidence
 
-Transition: Starting -> Running.
-
 Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator task 019fd9c9-853a-7723-8990-3efe59cee655.
 
-Canonical Conversation: 019fd9c9-853a-7723-8990-3efe59cee655.
+Evidence: Immutable candidate `faf4a729ef46b8ed1d531f0a36f730467074b3a3` is integrated on authoritative `main` as `0480f272547c2616daaab0cb37dd5c44c7b538b6`, and the canonical task title is `Integrating — Rename Direct Main To Main Branch`. Integration-sensitive checks are active: exact candidate-to-main mapping, reachability, renamed-contract and legacy-alias focused tests, generated-artifact freshness, and diff hygiene have passed; terminal provider and cleanup reconciliation remains. Exact Work Item ID activity `work` claim `rename-direct-main-to-main-branch-work` was live for this execution and is in the required one-transaction handoff while exact activity `update` claim `rename-direct-main-to-main-branch-integrating-update` and exact provider-path claim `rename-direct-main-to-main-branch-integrating-provider-path` protect this refresh; it will be reacquired immediately afterward. Exact 59-endpoint integration-path claim `rename-direct-main-to-main-branch-integration-paths` remains live on authoritative `main` throughout this transaction.
 
-Root Agent Task: 019fd9c9-853a-7723-8990-3efe59cee655.
-
-Parent Coordinator: Dev Backlog Coordinator task 019fb057-1767-7ef2-b5fa-41f4417b20b3.
-
-Root Role: Dev Orchestrator.
-
-Branch: codex/rename-direct-main-to-main-branch.
-
-Worktree: /Users/martinbechard/.codex/worktrees/98eb/dev-methodology.
-
-Phase: Independent review and focused verification of immutable candidate 0b467696c01f38dd9f2e2861ff14db4f35b88732.
+Observed At: 2026-08-07T01:47:14Z.
 
 Started At: 2026-08-07T01:17:12Z.
 
-Accepted Execution Evidence: The delegated canonical Root Dev Orchestrator accepted this exact file-provider Work Item ID after Ready -> Starting was already durable at eb08e2d268e8dafeca967b8aea0fe54ed1a2975d. The task title is Starting — Rename Direct Main To Main Branch. Current main includes the completed resource-claim rename at 102c5fe6ae5b560befd6e9aac3485a51804508ca with an empty claim registry before acquisition. The exact Work Item ID activity update claim rename-direct-main-to-main-branch-running-update and exact provider-path claim rename-direct-main-to-main-branch-running-path both returned SHARED_CHECKOUT_ACQUIRED. The approved governed canonical sources and allowed dependent artifacts are accepted without expansion; historical provider records remain immutable evidence.
-
-Observed At: 2026-08-07T01:17:12Z.
-
 Deadline or Expires At: 2026-08-07T03:17:12Z.
 
-Next Action: Commit only this Starting -> Running provider transaction, release the exact provider-path and activity update claims with handoff, acquire the exact Work Item ID with activity work, then implement one immutable candidate with focused consumer tests, one fresh independent review, and one verifier before selected-provider delivery.
+Next Action: Commit only this provider evidence replacement, release the exact provider-path and activity update claims with handoff, reacquire the same exact Work Item ID activity `work` claim, then finish integration-sensitive terminal closeout without altering candidate or integration bytes or repeating green source gates.
 
-Next Reconciliation At: 2026-08-07T01:47:44Z.
+Next Reconciliation At: 2026-08-07T02:02:14Z.
 
-Conversation Title Evidence: Reviewing — Rename Direct Main To Main Branch.
-
-## Running Evidence Refresh — 2026-08-07T01:32:44Z
+## Historical Running Evidence Refresh — 2026-08-07T01:32:44Z
 
 Canonical Title: Reviewing — Rename Direct Main To Main Branch.
 
