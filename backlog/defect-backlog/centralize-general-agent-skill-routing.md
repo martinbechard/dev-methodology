@@ -96,14 +96,14 @@ Condition Type: root-execution
 
 Owner: Dev Orchestrator task 019faeed-f816-7d43-819d-814bad4e309c
 
-Evidence: The canonical task accepted the existing implementation, loaded the applicable methodology, file-placement, explanation, and work-item lifecycle skills, logged the defect, and acquired the exact Work Item ID activity=work claim before repository implementation.
+Evidence: The canonical task has centralized `structured-explanation` in project-wide conditional routing, removed duplicate role-source declarations, added focused shared-routing coverage, and started the General Agent Skills design while preserving the exact implementation path and generated-adapter tree claims.
 
-Observed At: 2026-08-07T03:29:07Z
+Observed At: 2026-08-07T03:33:19Z
 
 Started At: 2026-08-07T03:29:07Z
 
-Deadline or Expires At: Governed by the active work-item claim and parent coordination policy.
+Deadline or Expires At: 2026-08-07T07:29:07Z
 
 Next Action: Centralize project-wide conditional skill routing, create the General Agent Skills design, remove duplicated role and Agent-group declarations, regenerate derived artifacts, and verify the synchronized result.
 
-Next Reconciliation At: 2026-08-07T03:44:07Z
+Next Reconciliation At: 2026-08-07T03:43:19Z
