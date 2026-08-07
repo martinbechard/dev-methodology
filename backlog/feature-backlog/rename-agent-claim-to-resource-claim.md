@@ -1,6 +1,6 @@
 # Rename Agent Claim To Resource Claim
 
-Status: Blocked
+Status: Ready
 
 Owner: Unowned
 
@@ -197,3 +197,13 @@ Review And Verification: Independent review PASS with no findings after correcti
 Preserved User Edit Evidence: Worktree SHA-256 `1d6e7b6e6157e4e8cd53d32e5f26b77a199a309a5c9ee1a9f598ffa894a76ad6`; binary diff SHA-256 `25c3b9e05c8b390e4af39f2b92bbf02eee76161a5615389901cf08f321d93ff5`; index blob `ecdd6f2a3eed360f2f3aec1085ad8cbac37105e5`.
 
 Claim Disposition: The canonical task released exact work claim disposition `blocked` with blocker reference `direct-main-overlap:design/skill-groups/concurrent-tasking.md`; registry was empty before this provider transition.
+
+## Unblock Reconciliation
+
+Resolved At: 2026-08-07T01:08:04Z
+
+Resolution Evidence: Canonical documentation task `019faeed-f816-7d43-819d-814bad4e309c` committed only `design/skill-groups/concurrent-tasking.md` as `731baf40ce11de4c279f3f4bd37c3c4e58d7e899`. The commit's parent is `eaecb61ab673ec2724daaaefd836a8abe9a53596`, its changed-path set is exactly that documentation path, and its blob equals the preserved user bytes with SHA-256 `1d6e7b6e6157e4e8cd53d32e5f26b77a199a309a5c9ee1a9f598ffa894a76ad6`.
+
+Claim And Checkout Evidence: Documentation claim release event `05be4286-41e2-453e-83b4-701c0af80c19`; primary main clean at `731baf40ce11de4c279f3f4bd37c3c4e58d7e899`; registry empty before this transition.
+
+Next Action: Dev Backlog Coordinator records Ready -> Starting for the same canonical task `019fd993-01d4-7380-b722-b7c328bdb637`; that task then records Starting -> Running and reconciles accepted candidate `140f0bbdbfe43925e54e89c1efd49facb30a3b81` against current main once.
