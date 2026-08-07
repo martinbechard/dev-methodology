@@ -679,7 +679,7 @@ classDiagram
     deliver-work-item-direct-main o..> integrate-agent-work : when implementation uses a separate branch or worktree
 ```
 
-The provider realization arrows show conformance with the exact deliver-work-item contract. Feature-branch delivery loads create-pull-request only for a host that uses pull-request terminology. Direct main describes the final destination, not where implementation occurs. When implementation is isolated on a separate branch or worktree, especially for concurrent or independently delegated work, direct-main delivery uses integrate-agent-work to reconcile the accepted contribution with current main.
+The provider realization arrows show conformance with the exact deliver-work-item contract. Feature-branch delivery loads create-pull-request only for a host that uses a pull request workflow. Direct main describes the final destination, not where implementation occurs. When implementation is isolated on a separate branch or worktree, especially for concurrent or independently delegated work, direct-main delivery uses integrate-agent-work to reconcile the accepted contribution with current main.
 
 ## Skill Responsibilities
 
