@@ -1,16 +1,30 @@
 # Prevent Retired Skill Cache Directories From Breaking Validation
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
 Provider: file
 
-Owner: Unowned
+Owner: Dev Orchestrator task 019fda3b-119f-7412-a045-29d5f8998d79
 
 Work Item ID: prevent-retired-skill-cache-directories-from-breaking-validation
 
 Completion: main-branch
+
+Phase: Implementing
+
+Branch: codex/prevent-retired-skill-cache-validation-019fda3b
+
+Worktree: /Users/martinbechard/.codex/worktrees/f905/dev-methodology
+
+Canonical Conversation: Retained conversation for Codex task 019fda3b-119f-7412-a045-29d5f8998d79; the runtime exposes no separate conversation identifier.
+
+Codex Task ID: 019fda3b-119f-7412-a045-29d5f8998d79
+
+Root Role: Dev Orchestrator
+
+Parent Task ID: 019fb057-1767-7ef2-b5fa-41f4417b20b3
 
 ## Summary
 
@@ -73,10 +87,52 @@ Dispatch Time: 2026-08-07T03:17:37Z
 
 Intended Root Role: Dev Orchestrator
 
-Launch Result: Not attempted
+Launch Result: Started
 
-Canonical Execution: None
+Canonical Execution: Codex task 019fda3b-119f-7412-a045-29d5f8998d79
 
-Last Contact: None
+Last Contact: 2026-08-07T03:21:35Z
 
-Next Reconciliation At: 2026-08-07T03:32:37Z
+Next Reconciliation At: 2026-08-07T03:36:35Z
+
+## Running Transition Evidence
+
+Transition: Starting -> Running
+
+Running Recorded At: 2026-08-07T03:21:35Z
+
+Owner: Dev Orchestrator task 019fda3b-119f-7412-a045-29d5f8998d79
+
+Canonical Conversation: Retained conversation for Codex task 019fda3b-119f-7412-a045-29d5f8998d79; the runtime exposes no separate conversation identifier.
+
+Root Agent Task: /root
+
+Branch: codex/prevent-retired-skill-cache-validation-019fda3b
+
+Worktree: /Users/martinbechard/.codex/worktrees/f905/dev-methodology
+
+Phase: Implementing maintained-skill discovery and its directly implicated installer, validator, and focused regression support.
+
+Started At: 2026-08-07T03:21:35Z
+
+Accepted Execution Evidence: The canonical root Dev Orchestrator established a clean isolated candidate branch at main commit 2e415bdd3effe0074539dcf78302fab6c90f3b1d, accepted the bounded defect scope, and is ready to acquire the exact Work Item ID activity=work claim before delegating one source implementation lane.
+
+Next Action: Release this atomic provider transaction, acquire the exact Work Item ID activity=work claim, and dispatch one Dev Coder to produce a focused immutable candidate.
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator task 019fda3b-119f-7412-a045-29d5f8998d79
+
+Evidence: The canonical root task is actively recording Running ownership and preparing the exact activity=work claim before one bounded source implementation lane begins.
+
+Observed At: 2026-08-07T03:21:35Z
+
+Started At: 2026-08-07T03:21:35Z
+
+Deadline or Expires At: 2026-08-07T05:21:35Z
+
+Next Action: Acquire the exact activity=work claim, dispatch one Dev Coder, then obtain one fresh independent source review and one focused verifier result before main-branch delivery.
+
+Next Reconciliation At: 2026-08-07T03:36:35Z
