@@ -160,14 +160,14 @@ Condition Type: root-execution
 
 Owner: Root Dev Orchestrator task `019fd993-01d4-7380-b722-b7c328bdb637`
 
-Evidence: The canonical task is actively implementing the approved `resource-claim` policy and helper-family rename on branch `codex/rename-agent-claim-to-resource-claim` in `/Users/martinbechard/.codex/worktrees/e800/dev-methodology`. Current private-worktree implementation bytes are preserved with binary diff SHA-256 `fefdfa318a443a36764e2b96635385fd84be46da2826a61213448cc0c3dcef5b`; the exact activity `work` claim was released with handoff only for this provider evidence refresh. Authoritative main remains on the provider-only Running commit with the unrelated user-owned `design/skill-groups/concurrent-tasking.md` edit preserved separately.
+Evidence: The canonical task has frozen reviewed-source candidate commit `55b9cbee4a9e80a8d56612ced67c3fbfeb06661e` on branch `codex/rename-agent-claim-to-resource-claim` in `/Users/martinbechard/.codex/worktrees/e800/dev-methodology`; the candidate worktree is clean and one independent reviewer plus one verifier are actively evaluating that exact commit. The exact activity `work` claim was released with handoff only for this scheduled provider evidence refresh. Authoritative main remains on provider-only commit `1d384ef8cd72e1b41c32ee85bffd8253ee50d34b`, and the unrelated user-owned `design/skill-groups/concurrent-tasking.md` bytes remain separately preserved with SHA-256 `1d6e7b6e6157e4e8cd53d32e5f26b77a199a309a5c9ee1a9f598ffa894a76ad6`.
 
-Observed At: 2026-08-07T00:29:50Z
+Observed At: 2026-08-07T00:43:30Z
 
 Started At: 2026-08-07T00:17:25Z
 
-Deadline or Expires At: 2026-08-07T02:29:50Z
+Deadline or Expires At: 2026-08-07T02:43:30Z
 
-Next Action: Commit only this provider evidence refresh, release the exact provider path and activity `update` claims, reacquire exact Work Item ID activity `work`, then finish the preserved candidate's focused corrections, generation, tests, independent review, verification, direct-main integration, and provider closure.
+Next Action: Commit only this provider evidence refresh, release the exact provider path and activity `update` claims, reacquire exact Work Item ID activity `work`, then reconcile the independent review and verification results and proceed to the direct-main delivery boundary without altering the frozen candidate.
 
-Next Reconciliation At: 2026-08-07T00:44:50Z
+Next Reconciliation At: 2026-08-07T00:58:30Z
