@@ -1,6 +1,6 @@
 # Prevent Retired Skill Cache Directories From Breaking Validation
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -58,3 +58,25 @@ None.
 ## Open Questions
 
 - Determine whether one shared maintained-skill discovery helper should own this boundary for the installer, validators, generators, and tests.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-07T03:17:37Z
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Launch Reservation: One Root Dev Orchestrator task for this exact work item.
+
+Normalized Objective: Ensure maintained-skill discovery and retired-provider validation ignore cache-only retired skill paths while retaining incomplete intended skill detection and adding focused regression coverage.
+
+Dispatch Time: 2026-08-07T03:17:37Z
+
+Intended Root Role: Dev Orchestrator
+
+Launch Result: Not attempted
+
+Canonical Execution: None
+
+Last Contact: None
+
+Next Reconciliation At: 2026-08-07T03:32:37Z
