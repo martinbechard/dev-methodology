@@ -1,6 +1,6 @@
 # Rename Agent Claim To Resource Claim
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -153,3 +153,31 @@ Next Reconciliation At: 2026-08-07T00:29:24Z
 Intended Root Role: Dev Orchestrator
 
 Scheduling Evidence: Selected as the older of two overlapping Ready rename features. `rename-direct-main-to-main-branch` remains Ready until this item's shared source, generator, and integration lanes clear.
+
+## Active Execution Evidence
+
+Owner: Root Dev Orchestrator
+
+Canonical Conversation: `019fd993-01d4-7380-b722-b7c328bdb637`
+
+Canonical Task: `019fd993-01d4-7380-b722-b7c328bdb637`
+
+Parent Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Branch: `codex/rename-agent-claim-to-resource-claim`
+
+Worktree: `/Users/martinbechard/.codex/worktrees/e800/dev-methodology`
+
+Baseline Main Commit: `bef9584b8c9171085010de9d7986e4d30d0f5be4`
+
+Phase: Implementation
+
+Started At: 2026-08-07T00:17:25Z
+
+Accepted Execution Evidence: This canonical Root Dev Orchestrator task accepted the Coordinator handoff for exact Work Item ID `rename-agent-claim-to-resource-claim`, established the named private branch at authoritative main commit `bef9584b8c9171085010de9d7986e4d30d0f5be4`, preserved the unrelated primary-main edit to `design/skill-groups/concurrent-tasking.md`, and accepted responsibility for the approved rename, focused verification, one fresh independent review, one verifier, direct-main delivery, and file-provider closure.
+
+Provider Transition Claims: Exact Work Item ID activity `update` claim `rename-agent-claim-provider-update-019fd993` and exact provider path claim `rename-agent-claim-provider-path-019fd993` both returned `SHARED_CHECKOUT_ACQUIRED` before this mutation.
+
+Next Action: Release both provider-transition claims with handoff, acquire the exact Work Item ID activity `work` claim, and implement one clean immutable candidate within the approved governed canonical sources and allowed dependent artifacts.
+
+Next Reconciliation At: 2026-08-07T00:32:25Z
