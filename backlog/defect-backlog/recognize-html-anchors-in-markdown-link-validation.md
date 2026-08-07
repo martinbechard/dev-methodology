@@ -1,0 +1,59 @@
+# Recognize HTML Anchors In Markdown Link Validation
+
+Status: Ready
+
+Type: Defect
+
+Provider: file
+
+Owner: Unowned
+
+Work Item ID: recognize-html-anchors-in-markdown-link-validation
+
+Completion: main-branch
+
+## Summary
+
+Make local Markdown link validation recognize explicit `id` anchors in linked HTML documents so valid Markdown-to-HTML fragment links do not fail verification.
+
+## Context
+
+README.md links to `design/agent-and-skill-definitions.html#hierarchy-title`. The target HTML contains an element whose explicit id is `hierarchy-title`, so browsers can resolve the link. The structured Markdown link verifier nevertheless returns `missing_anchor` for that target.
+
+The false failure obscures real broken-link findings, prevents a clean documentation verification result, and has been repeated as a baseline warning in completed work without an active correction owner.
+
+## Source Evidence
+
+On 2026-08-06, while verifying the shared conditional Agent skill documentation, the structured Markdown link check inspected README.md and returned `missing_anchor` for `design/agent-and-skill-definitions.html#hierarchy-title`. Repository history in completed work items records the same result while confirming that the target HTML contains `id="hierarchy-title"`. The user instructed: "don't forget to log defects for corrections."
+
+## Requirements
+
+- Resolve fragment targets according to the linked file type.
+- For HTML targets, recognize explicit `id` attributes as valid fragment destinations.
+- Preserve existing Markdown heading-anchor validation for Markdown targets.
+- Continue reporting a missing fragment when no matching HTML id or supported named anchor exists.
+- Keep path traversal, missing-file, malformed-target, and unsupported-scheme checks unchanged.
+- Add focused fixtures for valid and invalid Markdown-to-HTML fragment links.
+
+## Acceptance Criteria
+
+- The README link to `design/agent-and-skill-definitions.html#hierarchy-title` passes structured link validation without changing the valid target.
+- A Markdown link to a nonexistent HTML fragment still reports `missing_anchor` with the source path and target.
+- Markdown-to-Markdown fragment behavior remains unchanged.
+- Focused validator tests cover explicit HTML ids, absent ids, duplicate ids if relevant, and encoded fragments if supported.
+- Repository documentation link validation reports only genuine unresolved findings.
+
+## Dependencies
+
+None.
+
+## Verification
+
+- Run the focused Markdown-link validator tests for HTML fragment targets.
+- Run structured Markdown link validation for README.md.
+- Run structured Markdown link validation for the maintained documentation set.
+- Run `git diff --check` in the repository that owns the validator correction.
+
+## Open Questions
+
+- Confirm whether the validator implementation is maintained in this repository or in the configured external tool package before assigning the implementation path.
