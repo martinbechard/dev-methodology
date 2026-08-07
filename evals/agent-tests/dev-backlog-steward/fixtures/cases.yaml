@@ -92,7 +92,7 @@ cases:
       Provider: file
       Provider Reference: backlog/feature-backlog/retry-dashboard.md
       Work Item ID: retry-dashboard
-      Completion: direct-main
+      Completion: main-branch
       ## Summary
       Deliver retry visibility.
       ## Context

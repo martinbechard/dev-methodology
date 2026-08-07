@@ -274,10 +274,10 @@ cases:
       - JAVA-COMMENT-DUPLICATE-REJECTED
       - JAVA-COMMENT-MISSING-REJECTED
       - REVIEW-SYNTHESIS
-  - id: direct-main-unrelated-dirty-contract
+  - id: main-branch-unrelated-dirty-contract
     coverageStatus: fixture-backed
     executionStatus: runnable
-    project: evals/projects/direct-main-unrelated-dirty-contract
+    project: evals/projects/main-branch-unrelated-dirty-contract
     task: TASK.md
     readOnly: true
     resultDestination: external-evidence
@@ -294,18 +294,18 @@ cases:
     harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents: [dev-orchestrator]
     agentScenarios: [dev-orchestrator-happy, dev-orchestrator-boundary]
-    requiredSkills: [manage-work-items, structured-design, structured-explanation, deliver-work-item, deliver-work-item-direct-main, resource-claim]
-    skillProbes: [probe-deliver-work-item, probe-deliver-work-item-direct-main]
-    fixtureBackedProbeClaims: [probe-deliver-work-item, probe-deliver-work-item-direct-main]
+    requiredSkills: [manage-work-items, structured-design, structured-explanation, deliver-work-item, deliver-work-item-main-branch, resource-claim]
+    skillProbes: [probe-deliver-work-item, probe-deliver-work-item-main-branch]
+    fixtureBackedProbeClaims: [probe-deliver-work-item, probe-deliver-work-item-main-branch]
     workflowPack: code-delivery
     sandboxProfiles: {codex: codex-read-only, junie: junie-read-only}
     judgePlan:
       deterministicChecks: [model-input-safety, skill-read-trace, forbidden-skill-absence, harness-agent-identity, no-forbidden-mutation, operation-coverage, tool-authority, readiness-consistency, snapshot-reset, local-execution-boundary]
       modelRubric: workflow-quality
     contextPack:
-      fixtureRoot: evals/projects/direct-main-unrelated-dirty-contract
+      fixtureRoot: evals/projects/main-branch-unrelated-dirty-contract
       include: [TASK.md]
-      stagedSkillPackages: [manage-work-items, structured-design, structured-explanation, deliver-work-item, deliver-work-item-direct-main, resource-claim]
+      stagedSkillPackages: [manage-work-items, structured-design, structured-explanation, deliver-work-item, deliver-work-item-main-branch, resource-claim]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md]
@@ -314,7 +314,7 @@ cases:
       structured-design: [SKILL.md]
       structured-explanation: [SKILL.md]
       deliver-work-item: [SKILL.md]
-      deliver-work-item-direct-main: [SKILL.md]
+      deliver-work-item-main-branch: [SKILL.md]
       resource-claim: [SKILL.md]
     requiredEvidence: [UNRELATED-DIRTY-READY, OVERLAP-BLOCKED, STAGED-BLOCKED, AMBIGUOUS-BLOCKED, UNBOUNDED-BLOCKED, SOURCE-INTEGRATION-MAPPING, CLEAN-VERIFICATION-CHECKOUT, NO-PROVIDER-MUTATION]
   - id: typescript-code-review

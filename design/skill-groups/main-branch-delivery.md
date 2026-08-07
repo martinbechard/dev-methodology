@@ -1,18 +1,18 @@
-# Direct Main Delivery Skill Group
+# Main Branch Delivery Skill Group
 
 ## Scope
 
-Direct Main Delivery contains the provider-neutral delivery interface and the Commit provider that delivers accepted work directly to main. The provider is selected as an alternative to the feature-branch provider.
+Main Branch Delivery contains the provider-neutral delivery interface and the Commit provider that delivers accepted work directly to main. The provider is selected as an alternative to the feature-branch provider.
 
 The applied-model conventions are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md#2-applied-model-legend).
 
 ## Design
 
-Direct Main Delivery participates in the project-selected delivery family. The overall view identifies its Agent and cross-group dependencies; the scenario views expand provider selection and the direct-main implementation separately.
+Main Branch Delivery participates in the project-selected delivery family. The overall view identifies its Agent and cross-group dependencies; the scenario views expand provider selection and the main-branch implementation separately.
 
 ### Overall Agent And Skill Group Dependencies
 
-The overall view shows when Dev Orchestrator uses Direct Main Delivery and which other Skill Groups supply its optional coordination and integration dependencies. An arrow between Skill Groups means that at least one skill in the source group depends on a skill in the target group under the stated condition.
+The overall view shows when Dev Orchestrator uses Main Branch Delivery and which other Skill Groups supply its optional coordination and integration dependencies. An arrow between Skill Groups means that at least one skill in the source group depends on a skill in the target group under the stated condition.
 
 ```mermaid
 classDiagram
@@ -21,7 +21,7 @@ classDiagram
     class DevOrchestrator {
         <<Agent>>
     }
-    class DirectMainDelivery["Direct Main Delivery"] {
+    class MainBranchDelivery["Main Branch Delivery"] {
         <<Skill Group>>
     }
     class ResourceCoordination["Resource Coordination"] {
@@ -31,9 +31,9 @@ classDiagram
         <<Skill Group>>
     }
 
-    DevOrchestrator ..> DirectMainDelivery : when Commit is direct-main
-    DirectMainDelivery ..> ResourceCoordination : when resource coordination is selected
-    DirectMainDelivery ..> FeatureBranchAndWorktrees : when the accepted change is not present on main
+    DevOrchestrator ..> MainBranchDelivery : when Commit is main-branch
+    MainBranchDelivery ..> ResourceCoordination : when resource coordination is selected
+    MainBranchDelivery ..> FeatureBranchAndWorktrees : when the accepted change is not present on main
 ```
 
 ### Scenario: Selecting A Delivery Provider
@@ -56,7 +56,7 @@ classDiagram
         <<routing>>
         +route deliver-work-item => deliver-work-item-*
     }
-    class deliver-work-item-direct-main {
+    class deliver-work-item-main-branch {
         <<Provider Skill>>
         +deliver-work-item(acceptedCommit)
     }
@@ -67,9 +67,9 @@ classDiagram
     }
 
     DevOrchestrator o--> DeliverWorkItem
-    ProjectSpecificDirectives o..> deliver-work-item-direct-main : when Commit is direct-main
+    ProjectSpecificDirectives o..> deliver-work-item-main-branch : when Commit is main-branch
     ProjectSpecificDirectives o..> deliver-work-item-feature-branch : when Commit is feature-branch
-    deliver-work-item-direct-main ..|> DeliverWorkItem
+    deliver-work-item-main-branch ..|> DeliverWorkItem
     deliver-work-item-feature-branch ..|> DeliverWorkItem
 ```
 
@@ -77,13 +77,13 @@ The harness loads AGENTS.md without an Agent-to-AGENTS.md dependency. The diagra
 
 ### Scenario: Delivering Directly To Main
 
-This scenario expands the direct-main provider after AGENTS.md selects it. The provider uses resource coordination when configured and invokes integrate-agent-work only when the accepted change still needs to be integrated into main.
+This scenario expands the main-branch provider after AGENTS.md selects it. The provider uses resource coordination when configured and invokes integrate-agent-work only when the accepted change still needs to be integrated into main.
 
 ```mermaid
 classDiagram
     direction LR
 
-    class deliver-work-item-direct-main {
+    class deliver-work-item-main-branch {
         <<Provider Skill>>
         +deliver-work-item(acceptedCommit)
         +evidence-gate()
@@ -105,8 +105,8 @@ classDiagram
         +verification()
     }
 
-    deliver-work-item-direct-main ..> resource-claim : when resource coordination is selected
-    deliver-work-item-direct-main o..> integrate-agent-work : when the accepted change is not present on main
+    deliver-work-item-main-branch ..> resource-claim : when resource coordination is selected
+    deliver-work-item-main-branch o..> integrate-agent-work : when the accepted change is not present on main
 ```
 
 ## Skill Responsibility
@@ -116,7 +116,7 @@ The group contains one provider-neutral Interface Skill and one selected Commit 
 | Skill | Public procedures | Responsibility |
 | --- | --- | --- |
 | deliver-work-item | Accepted Commit Input; Deliver Work Item; Delivery Results; Delivery Evidence; Provider Contract | Defines the provider-neutral delivery contract consumed by Dev Orchestrator. |
-| deliver-work-item-direct-main | Deliver Work Item; Evidence Gate; Main Reconciliation; Deliberate Integration; Integrated Verification And Main Observation | Integrates an accepted candidate into main, verifies the integrated state, and returns evidence for separate provider lifecycle closure. |
+| deliver-work-item-main-branch | Deliver Work Item; Evidence Gate; Main Reconciliation; Deliberate Integration; Integrated Verification And Main Observation | Integrates an accepted candidate into main, verifies the integrated state, and returns evidence for separate provider lifecycle closure. |
 
 ## Authoritative Inputs
 
@@ -124,7 +124,7 @@ The delivery relationship and procedure boundary are grounded in these Agent and
 
 - [Dev Orchestrator](../../agents/roles/dev-activities/dev-orchestrator.role.yaml)
 - [Deliver Work Item](../../skills/deliver-work-item/SKILL.md)
-- [Deliver Work Item Direct Main](../../skills/deliver-work-item-direct-main/SKILL.md)
+- [Deliver Work Item Main Branch](../../skills/deliver-work-item-main-branch/SKILL.md)
 - [Deliver Work Item Feature Branch](../../skills/deliver-work-item-feature-branch/SKILL.md)
 - [Integrate Agent Work](../../skills/integrate-agent-work/SKILL.md)
 - [Resource Claim](../../skills/resource-claim/SKILL.md)

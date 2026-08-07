@@ -131,7 +131,7 @@ def _validate_promoted_records(
         "Provider": "file",
         "Provider Reference": target_relative,
         "Work Item ID": work_item_id,
-        "Completion": "direct-main",
+        "Completion": "main-branch",
     }
     lines = target_text.splitlines()
     for field, expected in required_fields.items():
@@ -1020,7 +1020,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             _PROMOTED_WORK_ITEM_ID,
             Path(fixture["promotedWorkItemPath"]).stem,
         )
-        self.assertIn("Completion: direct-main", fixture["promotedWorkItem"])
+        self.assertIn("Completion: main-branch", fixture["promotedWorkItem"])
         for required_section in (
             "## Summary",
             "## Context",

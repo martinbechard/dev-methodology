@@ -39,7 +39,7 @@ SCAN_FOLDERS = (
 FUTURE_IDEAS_FOLDER = "future-ideas"
 FUTURE_IDEA_REQUIRED_SECTIONS = ("Synopsis", "Origin or Rationale")
 FUTURE_IDEA_PROMOTION_QUEUES = {"active", "holding", "user-action-required"}
-ALLOWED_COMPLETIONS = {"direct-main", "feature-branch", "UNSET"}
+ALLOWED_COMPLETIONS = {"main-branch", "feature-branch", "UNSET"}
 REQUIRED_SECTIONS = (
     "Summary",
     "Context",

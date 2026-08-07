@@ -23,7 +23,7 @@ _DESIGN_PATHS = (
     Path("design/skill-groups/documentation-methodology.md"),
     Path("design/skill-groups/backlog-management.md"),
     Path("design/skill-groups/concurrent-tasking.md"),
-    Path("design/skill-groups/direct-main-delivery.md"),
+    Path("design/skill-groups/main-branch-delivery.md"),
     Path("design/skill-groups/review-and-verification.md"),
 )
 _CLASS_PATTERN = re.compile(

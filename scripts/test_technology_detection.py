@@ -222,7 +222,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "mode": "basic",
                 "concurrent_tasking": False,
                 "persistence": "none",
-                "commit": "direct-main",
+                "commit": "main-branch",
                 "documentation": "wiki",
                 "core_skill_delivery": {
                     "mode": "by-reference",
@@ -233,7 +233,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             },
             "workflow_selection": {
                 "persistence": {"default": "none"},
-                "commit": {"default": "direct-main"},
+                "commit": {"default": "main-branch"},
             },
             "technology_confirmation": confirmed_technology_selection(),
             "technology_skill_loadouts": [{
@@ -247,7 +247,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             "Setup mode: Basic",
             "Set: Concurrent tasking No",
             "Set: Persistence none",
-            "Set: Commit direct-main",
+            "Set: Commit main-branch",
             "Documentation question: Create the Wiki? Yes (default Yes)",
             "Set: Core skill delivery by-reference",
             "Set: Technology skill delivery by-reference",
@@ -279,7 +279,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "concurrent_tasking": True,
                 "concurrent_capacity": 3,
                 "persistence": "file",
-                "commit": "direct-main",
+                "commit": "main-branch",
                 "documentation": "both",
                 "core_skill_delivery": {
                     "mode": "by-reference",
@@ -290,7 +290,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             },
             "workflow_selection": {
                 "persistence": {"default": "file"},
-                "commit": {"default": "direct-main"},
+                "commit": {"default": "main-branch"},
             },
             "technology_confirmation": confirmed_technology_selection(),
             "technology_skill_loadouts": [{
@@ -340,7 +340,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "mode": "basic",
                 "concurrent_tasking": False,
                 "persistence": "none",
-                "commit": "direct-main",
+                "commit": "main-branch",
                 "documentation": "wiki",
                 "core_skill_delivery": {
                     "mode": "by-reference",
@@ -368,7 +368,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
         project["workflow_selection"] = {
             "provider": {"default": "none"},
-            "completion": {"default": "direct-main"},
+            "completion": {"default": "main-branch"},
         }
         rendered = renderer.render(project)
         self.assertIn("Set: Persistence none", rendered)
@@ -384,6 +384,84 @@ class TechnologyDetectionTests(unittest.TestCase):
         self.assertNotIn("Default provider", rendered)
         self.assertNotIn("Default completion", rendered)
         self.assertNotIn("feature-branch", rendered)
+
+    def test_direct_main_commit_alias_normalizes_only_at_supported_configuration_paths(self) -> None:
+        """Keep legacy projects readable while emitting only the main-branch route."""
+
+        renderer = load_renderer_module()
+        for selector in ("commit", "completion"):
+            with self.subTest(selector=selector):
+                rendered = renderer.render(with_claim_helper({
+                    "workflow_selection": {
+                        "persistence": {"default": "none"},
+                        selector: {
+                            "default": "direct-main",
+                            "folder_overrides": [{
+                                "pattern": "release/**",
+                                selector: "direct-main",
+                            }],
+                        },
+                    },
+                }))
+
+                self.assertIn(
+                    "Default commit main-branch: use deliver-work-item-main-branch",
+                    rendered,
+                )
+                self.assertIn(
+                    "release/** commit main-branch: use deliver-work-item-main-branch",
+                    rendered,
+                )
+                self.assertIn(
+                    f"Normalized the legacy direct-main value in workflow_selection.{selector} to main-branch.",
+                    rendered,
+                )
+                self.assertNotIn("deliver-work-item-direct-main", rendered)
+
+        legacy_setup = with_claim_helper({
+            "project_setup": {
+                "mode": "basic",
+                "concurrent_tasking": False,
+                "persistence": "none",
+                "commit": "direct-main",
+                "documentation": "wiki",
+                "core_skill_delivery": {
+                    "mode": "by-reference",
+                    "source": "installed-agent-metadata",
+                },
+                "technology_skill_delivery": "by-reference",
+                "technology_confirmation_required": True,
+            },
+            "workflow_selection": {
+                "persistence": {"default": "none"},
+                "commit": {"default": "direct-main"},
+            },
+            "technology_confirmation": confirmed_technology_selection(),
+            "technology_skill_loadouts": [{
+                "pathPattern": "src/**",
+                "skills": ["python"],
+            }],
+        })
+        rendered_setup = renderer.render(legacy_setup)
+        self.assertIn("Set: Commit main-branch", rendered_setup)
+        self.assertIn(
+            "Compatibility migration: project_setup.commit direct-main is normalized to main-branch",
+            rendered_setup,
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "workflow_selection.commit keys must be exactly: default, folder_overrides",
+        ):
+            renderer.workflow_lines({
+                "workflow_selection": {
+                    "persistence": {"default": "none"},
+                    "commit": {
+                        "default": "main-branch",
+                        "unrelated": "direct-main",
+                    },
+                },
+            })
 
     def test_legacy_selector_families_normalize_directly_to_persistence_and_commit(self) -> None:
         """Preserve compatibility values while rendering canonical labels and routes only."""
@@ -410,7 +488,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
         self.assertIn("Default persistence file: create with create-work-item-file", rendered)
         self.assertIn("services/** persistence github: create with create-work-item-github", rendered)
-        self.assertIn("Default commit direct-main: use deliver-work-item-direct-main", rendered)
+        self.assertIn("Default commit main-branch: use deliver-work-item-main-branch", rendered)
         self.assertIn("release/** commit feature-branch: use deliver-work-item-feature-branch", rendered)
         self.assertIn(
             "Normalized workflow_selection.backlog to workflow_selection.persistence",
@@ -432,7 +510,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "workflow_selection": {
                     "persistence": {"default": "file"},
                     "provider": {"default": "file"},
-                    "commit": {"default": "direct-main"},
+                    "commit": {"default": "main-branch"},
                 },
             }))
 
@@ -445,7 +523,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "mode": "basic",
                 "concurrent_tasking": False,
                 "persistence": "none",
-                "commit": "direct-main",
+                "commit": "main-branch",
                 "documentation": "wiki",
                 "core_skill_delivery": {
                     "mode": "by-reference",
@@ -456,7 +534,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             },
             "workflow_selection": {
                 "persistence": {"default": "none"},
-                "commit": {"default": "direct-main"},
+                "commit": {"default": "main-branch"},
             },
             "technology_skill_loadouts": [{
                 "pathPattern": "src/**",
@@ -515,7 +593,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "mode": "basic",
                 "concurrent_tasking": False,
                 "persistence": "none",
-                "commit": "direct-main",
+                "commit": "main-branch",
                 "documentation": "wiki",
                 "core_skill_delivery": {
                     "mode": "by-reference",
@@ -526,7 +604,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             },
             "workflow_selection": {
                 "persistence": {"default": "none"},
-                "commit": {"default": "direct-main"},
+                "commit": {"default": "main-branch"},
             },
             "technology_confirmation": confirmed_technology_selection(),
             "technology_skill_loadouts": [{
@@ -580,7 +658,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "mode": "basic",
                 "concurrent_tasking": False,
                 "persistence": "none",
-                "commit": "direct-main",
+                "commit": "main-branch",
                 "documentation": "wiki",
                 "core_skill_delivery": {
                     "mode": "by-reference",
@@ -591,7 +669,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             },
             "workflow_selection": {
                 "persistence": {"default": "none"},
-                "commit": {"default": "direct-main"},
+                "commit": {"default": "main-branch"},
             },
             "technology_confirmation": confirmed_technology_selection(),
             "technology_skill_loadouts": [{
@@ -645,7 +723,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "mode": "basic",
                 "concurrent_tasking": False,
                 "persistence": "none",
-                "commit": "direct-main",
+                "commit": "main-branch",
                 "documentation": "wiki",
                 "core_skill_delivery": {
                     "mode": "by-reference",
@@ -656,7 +734,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             },
             "workflow_selection": {
                 "persistence": {"default": "none"},
-                "commit": {"default": "direct-main"},
+                "commit": {"default": "main-branch"},
             },
             "technology_confirmation": confirmed_technology_selection(),
             "technology_skill_loadouts": [{
@@ -2607,7 +2685,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                                 {"pattern": "services/**", "provider": "github"},
                             ],
                         },
-                        "completion": {"default": "direct-main"},
+                        "completion": {"default": "main-branch"},
                     },
                 },
                 "workflow_selection.provider.folder_overrides[1].pattern 'services/**' conflicts with workflow_selection.provider.folder_overrides[0].pattern using values 'file' and 'github'",
@@ -2622,7 +2700,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                                 {"pattern": "services/**", "provider": "github"},
                             ],
                         },
-                        "completion": {"default": "direct-main"},
+                        "completion": {"default": "main-branch"},
                     },
                 },
                 "workflow_selection.provider.folder_overrides[1].pattern 'services/**' duplicates workflow_selection.provider.folder_overrides[0].pattern with value 'github'; duplicate patterns are not allowed",
@@ -2632,22 +2710,22 @@ class TechnologyDetectionTests(unittest.TestCase):
                     "workflow_selection": {
                         "provider": {"default": "file"},
                         "completion": {
-                            "default": "direct-main",
+                            "default": "main-branch",
                             "folder_overrides": [
-                                {"pattern": "services/**", "completion": "direct-main"},
+                                {"pattern": "services/**", "completion": "main-branch"},
                                 {"pattern": "services/**", "completion": "feature-branch"},
                             ],
                         },
                     },
                 },
-                "workflow_selection.completion.folder_overrides[1].pattern 'services/**' conflicts with workflow_selection.completion.folder_overrides[0].pattern using values 'direct-main' and 'feature-branch'",
+                "workflow_selection.completion.folder_overrides[1].pattern 'services/**' conflicts with workflow_selection.completion.folder_overrides[0].pattern using values 'main-branch' and 'feature-branch'",
             ),
             (
                 {
                     "workflow_selection": {
                         "provider": {"default": "file"},
                         "completion": {
-                            "default": "direct-main",
+                            "default": "main-branch",
                             "folder_overrides": [
                                 {"pattern": "services/**", "completion": "feature-branch"},
                                 {"pattern": "services/**", "completion": "feature-branch"},
@@ -2677,7 +2755,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                         {"pattern": "ado/**", "persistence": "azure-devops"},
                     ],
                 },
-                "commit": {"default": "direct-main"},
+                "commit": {"default": "main-branch"},
             },
         }))
 
@@ -2703,7 +2781,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             "UNSET": "Default persistence UNSET: when durable work-item management is first requested, ask whether to select the available file provider.",
         }
         commit_guidance = {
-            "direct-main": "Default commit direct-main: use deliver-work-item-direct-main.",
+            "main-branch": "Default commit main-branch: use deliver-work-item-main-branch.",
             "feature-branch": "Default commit feature-branch: use deliver-work-item-feature-branch.",
             "UNSET": "Default commit UNSET: the pertinent agent asks for the Commit decision before implementation or publication.",
         }
@@ -2725,7 +2803,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                     self.assertNotIn("Default provider", rendered)
                     self.assertNotIn("Default completion", rendered)
                     self.assertNotIn("# Create File Work Item", rendered)
-                    self.assertNotIn("# Complete Work Item Direct Main", rendered)
+                    self.assertNotIn("# Complete Work Item Main Branch", rendered)
 
     def test_agents_section_resolves_persistence_and_commit_overrides_independently(self) -> None:
         renderer = load_renderer_module()
@@ -2742,7 +2820,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                     "default": "feature-branch",
                     "folder_overrides": [{
                         "pattern": "services/**",
-                        "commit": "direct-main",
+                        "commit": "main-branch",
                     }],
                 },
             },
@@ -2762,7 +2840,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             rendered,
         )
         self.assertIn(
-            "services/** commit direct-main: use deliver-work-item-direct-main.",
+            "services/** commit main-branch: use deliver-work-item-main-branch.",
             rendered,
         )
         self.assertIn("Most-specific matching folder pattern wins independently", rendered)
@@ -2784,7 +2862,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         placeholder_rendered = renderer.render(with_claim_helper({
             "workflow_selection": {
                 "persistence": {"default": "azure-devops"},
-                "commit": {"default": "direct-main"},
+                "commit": {"default": "main-branch"},
             },
         }))
 
@@ -2979,7 +3057,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 {
                     "workflow_selection": {
                         "provider": {"default": "bitbucket"},
-                        "completion": {"default": "direct-main"},
+                        "completion": {"default": "main-branch"},
                     },
                 },
                 "workflow_selection.provider.default rejects 'bitbucket'; supported values: file, github, gitlab, azure-devops, jira, none, UNSET",
@@ -2991,7 +3069,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                         "completion": {"default": "merge-when-green"},
                     },
                 },
-                "workflow_selection.completion.default rejects 'merge-when-green'; supported values: direct-main, feature-branch, UNSET",
+                "workflow_selection.completion.default rejects 'merge-when-green'; supported values: main-branch, feature-branch, UNSET",
             ),
             (
                 {
@@ -3003,7 +3081,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                                 "process": "github+feature-branch",
                             }],
                         },
-                        "completion": {"default": "direct-main"},
+                        "completion": {"default": "main-branch"},
                     },
                 },
                 "workflow_selection.provider.folder_overrides[0].process rejects combined value 'github+feature-branch'; supported provider values: file, github, gitlab, azure-devops, jira, none, UNSET; split it into workflow_selection.provider.folder_overrides[0].provider and a workflow_selection.completion.folder_overrides entry with the same pattern",
@@ -3013,7 +3091,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                     "workflow_selection": {
                         "provider": {"default": "file"},
                         "completion": {
-                            "default": "direct-main",
+                            "default": "main-branch",
                             "folder_overrides": [{
                                 "pattern": "services/**",
                                 "process": "github+feature-branch",
@@ -3021,7 +3099,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                         },
                     },
                 },
-                "workflow_selection.completion.folder_overrides[0].process rejects combined value 'github+feature-branch'; supported completion values: direct-main, feature-branch, UNSET; split it into workflow_selection.completion.folder_overrides[0].completion and a workflow_selection.provider.folder_overrides entry with the same pattern",
+                "workflow_selection.completion.folder_overrides[0].process rejects combined value 'github+feature-branch'; supported completion values: main-branch, feature-branch, UNSET; split it into workflow_selection.completion.folder_overrides[0].completion and a workflow_selection.provider.folder_overrides entry with the same pattern",
             ),
             (
                 {
@@ -3030,7 +3108,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                             "default": "file",
                             "folder_overrides": [{"pattern": "", "provider": "github"}],
                         },
-                        "completion": {"default": "direct-main"},
+                        "completion": {"default": "main-branch"},
                     },
                 },
                 "workflow_selection.provider.folder_overrides[0].pattern must be a non-empty project-relative path pattern",
@@ -3040,7 +3118,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                     "workflow_selection": {
                         "provider": {"default": "file"},
                         "completion": {
-                            "default": "direct-main",
+                            "default": "main-branch",
                             "folder_overrides": [{
                                 "pattern": "services/**",
                                 "completion": "merge-when-green",
@@ -3048,7 +3126,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                         },
                     },
                 },
-                "workflow_selection.completion.folder_overrides[0].completion rejects 'merge-when-green'; supported values: direct-main, feature-branch, UNSET",
+                "workflow_selection.completion.folder_overrides[0].completion rejects 'merge-when-green'; supported values: main-branch, feature-branch, UNSET",
             ),
         )
 
@@ -3087,10 +3165,10 @@ class TechnologyDetectionTests(unittest.TestCase):
                 legacy_default = (
                     "simple-workitem" if legacy_key == "workitem"
                     else "file-based-backlog" if legacy_key == "backlog"
-                    else "direct-main" if legacy_key == "completion"
+                    else "main-branch" if legacy_key == "completion"
                     else "file"
                 )
-                canonical_default = "direct-main" if canonical_key == "commit" else "file"
+                canonical_default = "main-branch" if canonical_key == "commit" else "file"
                 project = {
                     "workflow_selection": {
                         legacy_key: {"default": legacy_default},
@@ -3126,7 +3204,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         for legacy_key, legacy_value, canonical_key, canonical_value, expected in cases:
             with self.subTest(legacy_key=legacy_key, expected=expected):
                 legacy_default = "simple-workitem" if legacy_key == "workitem" else "file-based-backlog"
-                canonical_default = "direct-main" if canonical_key == "commit" else "file"
+                canonical_default = "main-branch" if canonical_key == "commit" else "file"
                 project = {
                     "workflow_selection": {
                         legacy_key: {
@@ -3166,7 +3244,7 @@ class TechnologyDetectionTests(unittest.TestCase):
     def test_agents_section_reports_deterministic_legacy_selector_migrations(self) -> None:
         renderer = load_renderer_module()
         legacy_values = (
-            ("workitem", "simple-workitem", "Default commit direct-main"),
+            ("workitem", "simple-workitem", "Default commit main-branch"),
             ("workitem", "feature-branch-workitem", "Default commit feature-branch"),
             ("backlog", "file-based-backlog", "Default persistence file"),
             ("backlog", "github-issues-backlog", "Default persistence github"),
@@ -3179,7 +3257,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 other = (
                     {"persistence": {"default": "file"}}
                     if selector == "workitem"
-                    else {"commit": {"default": "direct-main"}}
+                    else {"commit": {"default": "main-branch"}}
                 )
                 rendered = renderer.render(with_claim_helper({
                     "workflow_selection": {
@@ -3197,7 +3275,7 @@ class TechnologyDetectionTests(unittest.TestCase):
     def test_agents_section_validates_every_legacy_selector_field_before_migration(self) -> None:
         renderer = load_renderer_module()
         completion_guidance = (
-            "; supported legacy values and canonical replacements: simple-workitem -> direct-main, "
+            "; supported legacy values and canonical replacements: simple-workitem -> main-branch, "
             "feature-branch-workitem -> feature-branch, UNSET -> UNSET"
         )
         provider_guidance = (
@@ -3212,7 +3290,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             ),
             (
                 {"workflow_selection": {"workitem": {"default": "invented"}}},
-                "workflow_selection.workitem.default rejects 'invented'; supported legacy values and canonical replacements: simple-workitem -> direct-main, feature-branch-workitem -> feature-branch, UNSET -> UNSET",
+                "workflow_selection.workitem.default rejects 'invented'; supported legacy values and canonical replacements: simple-workitem -> main-branch, feature-branch-workitem -> feature-branch, UNSET -> UNSET",
             ),
             (
                 {"workflow_selection": {"backlog": {}}},
@@ -3333,7 +3411,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 {
                     "workflow_selection": {
                         "provider": {"default": "file-based-backlog"},
-                        "completion": {"default": "direct-main"},
+                        "completion": {"default": "main-branch"},
                     },
                 },
                 "workflow_selection.provider.default uses legacy value 'file-based-backlog'; migrate to 'file'",
@@ -3345,7 +3423,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                         "completion": {"default": "simple-workitem"},
                     },
                 },
-                "workflow_selection.completion.default uses legacy value 'simple-workitem'; migrate to 'direct-main'",
+                "workflow_selection.completion.default uses legacy value 'simple-workitem'; migrate to 'main-branch'",
             ),
         )
 
@@ -3358,16 +3436,16 @@ class TechnologyDetectionTests(unittest.TestCase):
         renderer = load_renderer_module()
         workflow_selection = {
             "provider": {"default": "gitlab"},
-            "completion": {"default": "direct-main"},
+            "completion": {"default": "main-branch"},
             "selection_policy": "Maintainer-selected values are authoritative.",
         }
 
         rendered = renderer.render(with_claim_helper({"workflow_selection": workflow_selection}))
 
         self.assertEqual("gitlab", workflow_selection["provider"]["default"])
-        self.assertEqual("direct-main", workflow_selection["completion"]["default"])
+        self.assertEqual("main-branch", workflow_selection["completion"]["default"])
         self.assertIn("create-work-item-gitlab", rendered)
-        self.assertIn("deliver-work-item-direct-main", rendered)
+        self.assertIn("deliver-work-item-main-branch", rendered)
 
     def test_agents_section_references_technology_skills_by_default_with_inline_override(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

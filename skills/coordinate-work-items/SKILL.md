@@ -167,7 +167,7 @@ Repeated messages are harmless because each triggers fresh inventory reconciliat
 
 Dev Orchestrator owns temporal delivery order. The selected Commit and Persistence skills own their respective procedures.
 
-For direct-main integration, start from current main and designate this fresh branch as the Work-item integration and cleanup branch. Integrate only accepted commits or their exact accepted paths. Do not import cumulative branch ancestry merely to preserve provenance; record the source-to-integration mapping instead. Keep Git integration and terminal provider completion distinct. Cleanup is eligible only after the fresh Work-item integration branch is fully merged. A prior candidate branch used only as a non-ancestral content source is not the Work-item cleanup branch.
+For main-branch integration, start from current main and designate this fresh branch as the Work-item integration and cleanup branch. Integrate only accepted commits or their exact accepted paths. Do not import cumulative branch ancestry merely to preserve provenance; record the source-to-integration mapping instead. Keep Git integration and terminal provider completion distinct. Cleanup is eligible only after the fresh Work-item integration branch is fully merged. A prior candidate branch used only as a non-ancestral content source is not the Work-item cleanup branch.
 
 1. Require Dev Coder to return a clean verified candidate commit without applying terminal Commit delivery or provider mutation.
 2. Obtain fresh independent source review and source verification for every candidate. Return correctable findings to the original Dev Coder and repeat those gates on the replacement.

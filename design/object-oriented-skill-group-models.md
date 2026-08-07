@@ -124,7 +124,7 @@ The registry assigns every current skill one primary direct group and records ne
 | Documentation Methodology | route-documentation-work; bootstrap-project-documentation; reverse-engineer-project-documentation; verify-documentation-page | None | 4 |
 | Backlog Management | resolve-backlog-blockage; create-work-item; create-work-item-file; create-work-item-github; create-work-item-gitlab; create-work-item-azure-devops; create-work-item-jira; commit-file-provider-transaction; manage-future-ideas; manage-work-items; manage-work-items-file; manage-work-items-github; manage-work-items-gitlab; manage-work-items-azure-devops; manage-work-items-jira | None | 15 |
 | Concurrent Tasking | coordinate-work-items; coordinate-codex-tasks; set-solo-mode; set-multitask-mode | Resource Coordination: resource-claim, resource-claim-helper, resource-claim-helper-command, resource-claim-helper-mcp. Feature Branch And Worktrees: integrate-agent-work, deliver-work-item-feature-branch, create-pull-request. | 11 |
-| Direct Main Delivery | deliver-work-item; deliver-work-item-direct-main | None | 2 |
+| Main Branch Delivery | deliver-work-item; deliver-work-item-main-branch | None | 2 |
 | Review And Verification | review-code-with-evidence; test-strategy; verify-end-to-end-workflow; analyze-root-cause; collect-runtime-evidence; trace-code-execution; review-prompt-contracts | None | 7 |
 
 The totals count primary membership once. Cross-group repetitions in detailed diagrams do not increase the forty-nine-skill inventory.
@@ -138,7 +138,7 @@ The group documents provide independent views of the seven methodology capabilit
 - [Documentation Methodology](skill-groups/documentation-methodology.md)
 - [Backlog Management](skill-groups/backlog-management.md)
 - [Concurrent Tasking](skill-groups/concurrent-tasking.md)
-- [Direct Main Delivery](skill-groups/direct-main-delivery.md)
+- [Main Branch Delivery](skill-groups/main-branch-delivery.md)
 - [Review And Verification](skill-groups/review-and-verification.md)
 
 ## 5. Definition Of Good

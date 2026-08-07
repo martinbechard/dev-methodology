@@ -94,7 +94,7 @@ classDiagram
     class FeatureBranchAndWorktrees["Feature Branch And Worktrees"] {
         <<Skill Group>>
     }
-    class DirectMainDelivery["Direct Main Delivery"] {
+    class MainBranchDelivery["Main Branch Delivery"] {
         <<Skill Group>>
     }
     class ReviewAndVerification["Review And Verification"] {
@@ -107,13 +107,13 @@ classDiagram
     DevDeliveryAgents --> BaselineDevelopment
     DevDeliveryAgents --> BacklogManagement
     DevDeliveryAgents ..> ConcurrentTasking : when multiple agents work concurrently
-    DevDeliveryAgents --> DirectMainDelivery
+    DevDeliveryAgents --> MainBranchDelivery
     DevDeliveryAgents --> FeatureBranchAndWorktrees
     DevDeliveryAgents --> ReviewAndVerification
 
     ConcurrentTasking *-- ResourceCoordination
     ConcurrentTasking *-- FeatureBranchAndWorktrees
-    DirectMainDelivery ..> FeatureBranchAndWorktrees : when implementation uses a separate branch or worktree
+    MainBranchDelivery ..> FeatureBranchAndWorktrees : when implementation uses a separate branch or worktree
 ```
 
 ### Backlog Management Agents And Skills
@@ -237,7 +237,7 @@ classDiagram
         }
     }
 
-    namespace DirectMainDeliverySkills["Direct Main Delivery skills"] {
+    namespace MainBranchDeliverySkills["Main Branch Delivery skills"] {
         class DeliverWorkItem["deliver-work-item"] {
             <<Interface Skill>>
         }
@@ -616,7 +616,7 @@ The MCP helper route becomes selectable only after an MCP implementation satisfi
 
 ### Scenario: Delivering Accepted Work
 
-This scenario applies after review and verification accept a commit for delivery. The exact deliver-work-item Interface Skill organizes the direct-main and feature-branch providers. The deliver-work-item-* family label remains in routing because AGENTS.md selects the provider named by the project Commit setting.
+This scenario applies after review and verification accept a commit for delivery. The exact deliver-work-item Interface Skill organizes the main-branch and feature-branch providers. The deliver-work-item-* family label remains in routing because AGENTS.md selects the provider named by the project Commit setting.
 
 ```mermaid
 classDiagram
@@ -651,7 +651,7 @@ classDiagram
         +merge-and-completion-gate()
     }
 
-    class deliver-work-item-direct-main {
+    class deliver-work-item-main-branch {
         <<Provider Skill>>
         <<Cross-group>>
         +deliver-work-item(acceptedCommit)
@@ -672,14 +672,14 @@ classDiagram
     DevOrchestrator o--> DeliverWorkItem
     coordinate-work-items ..> DeliverWorkItem : when a coordinated item reaches delivery
     project-specific-directives o..> deliver-work-item-feature-branch : when Commit is feature-branch
-    project-specific-directives o..> deliver-work-item-direct-main : when Commit is direct-main
+    project-specific-directives o..> deliver-work-item-main-branch : when Commit is main-branch
     deliver-work-item-feature-branch ..|> DeliverWorkItem
-    deliver-work-item-direct-main ..|> DeliverWorkItem
+    deliver-work-item-main-branch ..|> DeliverWorkItem
     deliver-work-item-feature-branch o..> create-pull-request : when GitHub pull-request publication is required
-    deliver-work-item-direct-main o..> integrate-agent-work : when implementation uses a separate branch or worktree
+    deliver-work-item-main-branch o..> integrate-agent-work : when implementation uses a separate branch or worktree
 ```
 
-The provider realization arrows show conformance with the exact deliver-work-item contract. Feature-branch delivery loads create-pull-request only for a host that uses a pull request workflow. Direct main describes the final destination, not where implementation occurs. When implementation is isolated on a separate branch or worktree, especially for concurrent or independently delegated work, direct-main delivery uses integrate-agent-work to reconcile the accepted contribution with current main.
+The provider realization arrows show conformance with the exact deliver-work-item contract. Feature-branch delivery loads create-pull-request only for a host that uses a pull request workflow. Main branch describes the final destination, not where implementation occurs. When implementation is isolated on a separate branch or worktree, especially for concurrent or independently delegated work, main-branch delivery uses integrate-agent-work to reconcile the accepted contribution with current main.
 
 ## Skill Responsibilities
 
@@ -744,7 +744,7 @@ The scenario diagrams use these project-routed policy, helper, creation, managem
 - [Resource Claim Helper Command](../../skills/resource-claim-helper-command/SKILL.md)
 - [Resource Claim Helper MCP](../../skills/resource-claim-helper-mcp/SKILL.md)
 - [Deliver Work Item Feature Branch](../../skills/deliver-work-item-feature-branch/SKILL.md)
-- [Deliver Work Item Direct Main](../../skills/deliver-work-item-direct-main/SKILL.md)
+- [Deliver Work Item Main Branch](../../skills/deliver-work-item-main-branch/SKILL.md)
 - [Deliver Work Item](../../skills/deliver-work-item/SKILL.md)
 - [Create Pull Request](../../skills/create-pull-request/SKILL.md)
 - [Create Work Item](../../skills/create-work-item/SKILL.md)

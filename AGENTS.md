@@ -186,7 +186,7 @@ If the script cannot return status, ask Project Configurator for help. Do not us
 Project Configurator owns the independent Persistence and Commit selectors. Persistence routes durable work-item storage; Commit routes delivery. Workflow skills are referenced by name only and technology skill routing remains separate.
 
 - Default persistence file: create with create-work-item-file; manage with manage-work-items-file.
-- Default commit direct-main: use deliver-work-item-direct-main.
+- Default commit main-branch: use deliver-work-item-main-branch.
 
 Most-specific matching folder pattern wins independently for Persistence and Commit overrides. A folder override changes only its own selector.
 

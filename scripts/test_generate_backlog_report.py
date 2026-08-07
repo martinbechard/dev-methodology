@@ -61,7 +61,7 @@ class BacklogReportTest(unittest.TestCase):
         item_type: str,
         dependencies: str = "None",
         context: str = "Fixture context.",
-        completion: str = "direct-main",
+        completion: str = "main-branch",
         include_open_questions: bool = True,
         owner: str = "",
         diagnostic_owner: str = "",
@@ -315,7 +315,7 @@ Summary for {title}.
                 "backlog/feature-backlog/active.md",
                 "Ready",
                 "Feature",
-                "direct-main",
+                "main-branch",
                 "",
             ),
             (

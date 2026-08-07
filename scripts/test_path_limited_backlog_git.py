@@ -349,7 +349,7 @@ class PathLimitedBacklogGitTests(unittest.TestCase):
             "Type: Feature\n\n"
             "Provider: file\n\n"
             f"Work Item ID: {Path(reference).stem}\n\n"
-            "Completion: direct-main\n\n"
+            "Completion: main-branch\n\n"
             "## Summary\n\nFixture.\n\n"
             "## Context\n\nFixture.\n\n"
             "## Source Evidence\n\nFixture.\n\n"

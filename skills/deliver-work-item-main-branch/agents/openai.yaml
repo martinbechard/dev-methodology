@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Deliver Work Item Direct Main
+  display_name: Deliver Work Item Main Branch
   # User-facing summary shown in Codex skill surfaces.
   short_description: Complete a verified work item by deliberately integrating its accepted commit into the...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $deliver-work-item-direct-main to integrate this verified work item into configured main and prove terminal reachability.
+  default_prompt: Use $deliver-work-item-main-branch to integrate this verified work item into configured main and prove terminal reachability.
 
 # Optional invocation policy placeholder.
 # policy:

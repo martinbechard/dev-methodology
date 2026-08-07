@@ -24,7 +24,7 @@ Prove the complete workflow with explicit environment ownership and observable a
 Verify End To End Workflow owns evidence capture and the verifier handoff. It does not own delivery integration, publication, or provider lifecycle mutation.
 
 - Only the delivery owner applies the effective Commit-selected skill.
-- For direct-main, the delivery owner applies deliver-work-item-direct-main.
+- For main-branch, the delivery owner applies deliver-work-item-main-branch.
 - For feature-branch, the delivery owner applies deliver-work-item-feature-branch.
 - Evidence-only or no mutation authority is terminal: return the evidence handoff without applying a Commit skill or creating a commit.
 - When repository delivery is required and Commit is UNSET, ask for the Commit selection and stop before delivery.
@@ -37,9 +37,9 @@ Apply the evidence-only or no-mutation row before evaluating Commit. A terminal 
 | Request authority | Commit selection | Result |
 | --- | --- | --- |
 | Evidence-only or no mutation authority | UNSET | Return the terminal evidence handoff; apply no Commit workflow and create no commit. |
-| Evidence-only or no mutation authority | direct-main or feature-branch | Return the terminal evidence handoff; apply no Commit workflow and create no commit. |
+| Evidence-only or no mutation authority | main-branch or feature-branch | Return the terminal evidence handoff; apply no Commit workflow and create no commit. |
 | Repository delivery required | UNSET | Ask for Commit selection and stop before delivery; create no commit. |
-| Repository delivery required | direct-main | Return evidence to the delivery owner for deliver-work-item-direct-main. |
+| Repository delivery required | main-branch | Return evidence to the delivery owner for deliver-work-item-main-branch. |
 | Repository delivery required | feature-branch | Return evidence to the delivery owner for deliver-work-item-feature-branch. |
 
 Return the commands, results, diagnostic artifacts, blockers, cleanup state, and applicable worktree status as reproducible evidence.

@@ -21,7 +21,7 @@ ROLE_SCHEMA = ROOT / "agents" / "role-schema.yaml"
 PROJECT_TEMPLATE = ROOT / "skills" / "route-documentation-work" / "assets" / "templates" / "project-template.yaml"
 PROJECT_CONFIGURATION_SKILL = ROOT / "skills" / "create-project-configuration" / "SKILL.md"
 FEATURE_BRANCH_SKILL = ROOT / "skills" / "deliver-work-item-feature-branch" / "SKILL.md"
-DIRECT_MAIN_SKILL = ROOT / "skills" / "deliver-work-item-direct-main" / "SKILL.md"
+MAIN_BRANCH_SKILL = ROOT / "skills" / "deliver-work-item-main-branch" / "SKILL.md"
 WORK_MERGE_SKILL = ROOT / "skills" / "integrate-agent-work" / "SKILL.md"
 EXECUTE_WORKITEM_PACKAGE = ROOT / "skills" / "execute-workitem"
 README = ROOT / "README.md"
@@ -132,7 +132,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
         """Keep claim triggers, scope, and release timing in the owning skill."""
 
         feature_branch = FEATURE_BRANCH_SKILL.read_text(encoding="utf-8")
-        direct_main = DIRECT_MAIN_SKILL.read_text(encoding="utf-8")
+        main_branch = MAIN_BRANCH_SKILL.read_text(encoding="utf-8")
         work_merge = WORK_MERGE_SKILL.read_text(encoding="utf-8")
 
         self.assertNotIn(
@@ -143,7 +143,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
             "Release ownership only after the phase is committed, verified, clean, and safely published or preserved.",
             feature_branch,
         )
-        for skill_text in (feature_branch, direct_main, work_merge):
+        for skill_text in (feature_branch, main_branch, work_merge):
             self.assertIn("Claim Events table in resource-claim", skill_text)
             self.assertNotIn("Event Contract", skill_text)
             self.assertNotIn("claim-free", skill_text)
@@ -154,10 +154,10 @@ class RoleMutationPolicyTests(unittest.TestCase):
 
         self.assertFalse(EXECUTE_WORKITEM_PACKAGE.exists())
         feature_branch = FEATURE_BRANCH_SKILL.read_text(encoding="utf-8")
-        direct_main = DIRECT_MAIN_SKILL.read_text(encoding="utf-8")
+        main_branch = MAIN_BRANCH_SKILL.read_text(encoding="utf-8")
         self.assertIn("Claim Events table in resource-claim", feature_branch)
-        self.assertIn("Claim Events table in resource-claim", direct_main)
-        for text in (feature_branch, direct_main):
+        self.assertIn("Claim Events table in resource-claim", main_branch)
+        for text in (feature_branch, main_branch):
             self.assertIn("clean", text.lower())
             self.assertIn("commit", text.lower())
 

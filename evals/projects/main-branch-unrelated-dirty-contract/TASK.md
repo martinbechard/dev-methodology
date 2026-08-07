@@ -1,6 +1,6 @@
-# Direct-Main Unrelated-Dirty Contract Evaluation
+# Main-Branch Unrelated-Dirty Contract Evaluation
 
-Evaluate five independent direct-main delivery evidence packets. Work read-only. Do not run Git commands, mutate a provider, change a worktree, or invent missing evidence.
+Evaluate five independent main-branch delivery evidence packets. Work read-only. Do not run Git commands, mutate a provider, change a worktree, or invent missing evidence.
 
 All packets use configured main branch main, a reviewed and verified accepted contribution, authorized local integration, no remote publication requirement, and a file-backed provider whose lifecycle remains Running. Return one labeled decision for each packet. Each decision must state READY or BLOCKED, the exact accepted paths, the pre-existing worktree and index inventories, the source-to-integration mapping or its absence, the preservation result, the verification checkout result, the observed main tip, integration residue, and whether provider mutation occurred.
 
