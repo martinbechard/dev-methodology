@@ -2745,6 +2745,18 @@ class HarnessAndJudgeTests(unittest.TestCase):
             self.module.validate_framework_catalogs.__module__
         ]
         catalogs = self.module.load_framework_catalogs()
+        baseline_errors: list[str] = []
+        validation_module._validate_catalog_cross_references(
+            catalogs,
+            self.module.load_cases(),
+            ROOT / "evals",
+            baseline_errors,
+        )
+        self.assertEqual(
+            [],
+            [error for error in baseline_errors if "conceptual source" in error],
+        )
+
         mutated = json.loads(json.dumps(catalogs))
         project_configurator = next(
             agent
@@ -2760,8 +2772,14 @@ class HarnessAndJudgeTests(unittest.TestCase):
             ROOT / "evals",
             errors,
         )
-        self.assertTrue(any("outputContractFields" in error for error in errors))
-        self.assertTrue(any("repositoryMutation" in error for error in errors))
+        self.assertIn(
+            "agent-scenarios.yaml:project-configurator outputContractFields must exactly match its conceptual source",
+            errors,
+        )
+        self.assertIn(
+            "agent-scenarios.yaml:project-configurator repositoryMutation must match its conceptual source",
+            errors,
+        )
 
     def test_skill_resource_receipt_records_source_effective_and_sanitization_identity(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
