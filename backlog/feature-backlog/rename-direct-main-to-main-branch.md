@@ -1,6 +1,6 @@
 # Rename Direct Main To Main Branch
 
-Status: Starting
+Status: Running
 
 Type: Feature
 
@@ -152,3 +152,39 @@ Next Reconciliation At: 2026-08-07T01:29:14Z
 Intended Root Role: Dev Orchestrator
 
 Scheduling Evidence: The overlapping resource-claim rename is Completed and archived at main commit `102c5fe6ae5b560befd6e9aac3485a51804508ca`; its shared source, generator, installation, and integration lanes are released.
+
+## Active Execution Evidence
+
+Transition: Starting -> Running.
+
+Condition Type: root-execution.
+
+Owner: Root Dev Orchestrator task 019fd9c9-853a-7723-8990-3efe59cee655.
+
+Canonical Conversation: 019fd9c9-853a-7723-8990-3efe59cee655.
+
+Root Agent Task: 019fd9c9-853a-7723-8990-3efe59cee655.
+
+Parent Coordinator: Dev Backlog Coordinator task 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Root Role: Dev Orchestrator.
+
+Branch: codex/rename-direct-main-to-main-branch.
+
+Worktree: /Users/martinbechard/.codex/worktrees/98eb/dev-methodology.
+
+Phase: Implementation starting from authoritative main commit eb08e2d268e8dafeca967b8aea0fe54ed1a2975d.
+
+Started At: 2026-08-07T01:17:12Z.
+
+Accepted Execution Evidence: The delegated canonical Root Dev Orchestrator accepted this exact file-provider Work Item ID after Ready -> Starting was already durable at eb08e2d268e8dafeca967b8aea0fe54ed1a2975d. The task title is Starting — Rename Direct Main To Main Branch. Current main includes the completed resource-claim rename at 102c5fe6ae5b560befd6e9aac3485a51804508ca with an empty claim registry before acquisition. The exact Work Item ID activity update claim rename-direct-main-to-main-branch-running-update and exact provider-path claim rename-direct-main-to-main-branch-running-path both returned SHARED_CHECKOUT_ACQUIRED. The approved governed canonical sources and allowed dependent artifacts are accepted without expansion; historical provider records remain immutable evidence.
+
+Observed At: 2026-08-07T01:17:12Z.
+
+Deadline or Expires At: 2026-08-07T03:17:12Z.
+
+Next Action: Commit only this Starting -> Running provider transaction, release the exact provider-path and activity update claims with handoff, acquire the exact Work Item ID with activity work, then implement one immutable candidate with focused consumer tests, one fresh independent review, and one verifier before selected-provider delivery.
+
+Next Reconciliation At: 2026-08-07T01:32:12Z.
+
+Conversation Title Evidence: Starting — Rename Direct Main To Main Branch.
