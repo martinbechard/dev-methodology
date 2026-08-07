@@ -1,16 +1,33 @@
 # Rename Agent Claim To Resource Claim
 
-Status: Running
+Status: Completed
 
-Owner: Root Dev Orchestrator task `019fd993-01d4-7380-b722-b7c328bdb637`
+Owner: Unowned
 
 Type: Feature
 
 Provider: file
 
+Provider Reference: backlog/completed-backlog/features/rename-agent-claim-to-resource-claim.md
+
 Work Item ID: rename-agent-claim-to-resource-claim
 
 Completion: direct-main
+
+## Completion Evidence
+
+- Provider: file. Completion selector: direct-main. Completion disposition: READY. Lifecycle disposition: Completed.
+- Completed at: 2026-08-07T01:12:20Z.
+- Completed provider reference: backlog/completed-backlog/features/rename-agent-claim-to-resource-claim.md.
+- Accepted source commit: `140f0bbdbfe43925e54e89c1efd49facb30a3b81` on `codex/rename-agent-claim-to-resource-claim`; its private worktree was clean and its accepted manifest contains 137 exact paths with SHA-256 `b53b772d43fcaca86a169911a95107d15eabe6955b2e2039f8e6394e3663927d`.
+- Independent acceptance: the fresh independent reviewer returned PASS with no remaining findings after the canonical and legacy claim-state corrections; the verifier returned VERIFIED for the exact accepted commit.
+- Current-main reconciliation: the separately owned documentation line was committed as `731baf40ce11de4c279f3f4bd37c3c4e58d7e899`; Starting to Running was recorded at `375c0b15fe4879e87bac833e58e9fba68b11b2c1`; accepted candidate `140f0bbd` was replayed exactly once by cherry-pick onto that clean main and produced integration commit `0a78e0879f70c1b39e2b0fa1e13559013ffbfa9c`.
+- Integration mapping: the accepted and integration commits have identical stable patch ID `0bab1ebb35a9fa2f4b69c209f238e378ef230da9`; `0a78e087` is the observed clean main tip before this provider-only archive transaction, and `design/skill-groups/concurrent-tasking.md` contains both the accepted resource-claim rename and the separately committed wording `a pull request workflow`.
+- Integration-sensitive verification: Python 3.11 passed validation for all four renamed skill packages, `build-skill-docs.py --check`, five claim-snapshot tests, seven canonical/legacy claim-state evaluation fixtures, and Git diff validation. The integrated main checkout was clean after checks.
+- Preserved baseline evidence: the source policy suite ran 140 tests with only the pre-existing report `KeyError: outcome`; the helper suite ran 26 tests with only the pre-existing inventory count `47 != 50`. No broad suite or live-model evaluation was rerun.
+- Publication observation: the configured direct-main completion requires local main delivery; no remote publication operation was requested for this work item. Integration commit `0a78e087` is reachable from local main.
+- Claim evidence: exact 137-path integration claim `rename-agent-claim-main-integration-019fd993` released normally at event `64858eb7-0f37-456a-9cb2-8a91fa50b756`. Terminal exact Work Item ID update claim `rename-agent-claim-complete-update-019fd993` and exact source/destination path claim `rename-agent-claim-complete-paths-019fd993` protect this provider-only archive commit and release immediately afterward.
+- Cleanup eligibility: the source worktree is clean and its non-ancestral candidate content is durably mapped to main by identical patch ID, so its worktree and branch are eligible for cleanup after this archive commit and claim releases.
 
 ## Summary
 
