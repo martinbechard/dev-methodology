@@ -1,12 +1,12 @@
 # Recognize HTML Anchors In Markdown Link Validation
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
 
-Owner: Dev Orchestrator
+Owner: Unowned
 
 Work Item ID: recognize-html-anchors-in-markdown-link-validation
 
@@ -109,3 +109,39 @@ Deadline or Expires At: 2026-08-07T07:21:54Z
 Next Action: Locate the structured Markdown-link validator owner, then assign exactly the owning implementation and focused tests.
 
 Next Reconciliation At: 2026-08-07T03:36:54Z
+
+## User Action Required
+
+Recorded At: 2026-08-07T03:29:36Z
+
+### Question for the User
+
+Do you approve re-homing implementation of recognize-html-anchors-in-markdown-link-validation to /Users/martinbechard/dev/mcp-agent-ops, with source mutation and direct-main delivery authority limited to src/mcp_agent_ops/verification/markdown_links.py and tests/unit/verification/test_markdown_links.py, followed by verification against dev-methodology README.md and terminal closure of the original dev-methodology file-provider work item?
+
+### Why User Input Is Required
+
+The owning validator is outside dev-methodology. Source mutation and direct-main delivery in the external repository require the user's authority.
+
+### Explicit Exclusions
+
+No other mcp-agent-ops files, package release/version/tag/publication, broad suite, framework, dev-methodology source mutation, or unrelated cleanup is authorized.
+
+### Reproduced Evidence
+
+The structured verify_markdown_links check against dev-methodology README.md returns missing_anchor for design/agent-and-skill-definitions.html#hierarchy-title. The target HTML contains the explicit id hierarchy-title.
+
+### External Repository Evidence
+
+The external primary /Users/martinbechard/dev/mcp-agent-ops was clean at 89f2df0d80fc91f3944849b5387e4ac82ba79e40. Zero external source or test mutation occurred. The temporary external branch and worktree were removed.
+
+### Work Claim and Blocker Evidence
+
+Work claim recognize-html-anchors-work-019fda3c was released with disposition blocked, blocker reference external-repository-authority-required:mcp-agent-ops, and release event 7fff15f1-f0aa-423e-bd63-a87eb1f99586. The original zero-mutation discovery history remains preserved above.
+
+### Resolution
+
+Pending. Unanswered.
+
+### Unattended Work Boundary
+
+No source mutation, tests, integration, delivery, release, publication, dev-methodology source change, or terminal provider closure may proceed until the user answers. Only provider/status inspection may continue.
