@@ -1,6 +1,6 @@
 # Align Agent Scenario Output Contract Fields
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -59,3 +59,25 @@ None.
 ## Open Questions
 
 None.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-07T03:17:03Z
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Launch Reservation: One Root Dev Orchestrator task for this exact work item.
+
+Normalized Objective: Align the Dev Backlog Watchdog, Dev Backlog Steward, and Dev Orchestrator scenario output-contract field lists with their canonical conceptual Agent definitions, adding focused drift protection without changing those canonical contracts.
+
+Dispatch Time: 2026-08-07T03:17:03Z
+
+Intended Root Role: Dev Orchestrator
+
+Launch Result: Not attempted
+
+Canonical Execution: None
+
+Last Contact: None
+
+Next Reconciliation At: 2026-08-07T03:32:03Z
