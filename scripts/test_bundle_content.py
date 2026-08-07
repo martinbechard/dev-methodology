@@ -7997,8 +7997,11 @@ class BundleContentTests(unittest.TestCase):
                     self.assertIn(f"## {operation}", text)
                     self.assertIn(operation, interface_text)
 
-        concurrent_tasking = (
-            REPOSITORY_ROOT / "design" / "skill-groups" / "concurrent-tasking.md"
+        dispatching_and_delivery = (
+            REPOSITORY_ROOT
+            / "design"
+            / "agents"
+            / "work-item-dispatching-and-delivery.md"
         ).read_text(encoding="utf-8")
         expected_members = {
             "resource-claim-helper": (
@@ -8015,7 +8018,7 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(skill_group_member=skill):
                 row = next(
                     line
-                    for line in concurrent_tasking.splitlines()
+                    for line in dispatching_and_delivery.splitlines()
                     if line.startswith(f"| Resource Coordination | {skill} |")
                 )
                 actual = tuple(
@@ -8042,9 +8045,9 @@ class BundleContentTests(unittest.TestCase):
         }
         for skill, marker in class_markers.items():
             with self.subTest(skill_group_class=skill):
-                start = concurrent_tasking.index(marker)
-                end = concurrent_tasking.index("\n    }", start)
-                class_body = concurrent_tasking[start:end]
+                start = dispatching_and_delivery.index(marker)
+                end = dispatching_and_delivery.index("\n    }", start)
+                class_body = dispatching_and_delivery[start:end]
                 actual = tuple(
                     line.strip()
                     for line in class_body.splitlines()

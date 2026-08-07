@@ -1,12 +1,12 @@
 # Object-Oriented Skill Group Models
 
-This document applies the reusable [Skill Organization](object-oriented-agent-and-skill-model.md#3-skill-organization) method to the development-methodology skill groups. It owns the applied legend, group registry, navigation, and steady-state completeness checks. Each detailed group keeps its current relationship diagram in a separate document.
+This document applies the reusable [Skill Organization](object-oriented-agent-and-skill-model.md#3-skill-organization) method to the development-methodology skill groups. It owns the applied legend, group registry, navigation, and steady-state completeness checks. Agent-oriented design documents under design/agents show how the groups are used together.
 
 ## 1. Application Scope
 
-The application covers seven top-level comprehension groups and forty-nine current skill packages.
+The application covers nine top-level comprehension groups and fifty current skill packages.
 
-Every detailed group document contains:
+Every agent-oriented design document contains:
 
 - an overall view when Agent groups, Skill Groups, or major cross-group dependencies are needed to establish the landscape;
 - scenario views that keep each detailed consumer, loading condition, interface, AGENTS.md route, and Provider Skill family together;
@@ -18,7 +18,7 @@ The applied documents organize their diagrams around the capability and its use 
 
 Provider-family labels use one uniform mapping. An exact Interface Skill is a loadable kebab-case identity without a wildcard. Its family label appends a terminal wildcard to that complete identity, and each Provider Skill appends one provider suffix to the same complete stem. An applied node uses Interface Skill only when the exact package publishes the contract; an analysis-only contract uses Skill interface. The adjacent AGENTS.md factory names one exact Provider Skill, while realization arrows show which providers satisfy the shared interface.
 
-Concurrent Tasking contains three direct skills and two nested groups. Resource Coordination and Feature Branch And Worktrees each contain three direct skills. Membership inherited from a nested group does not assign a skill a second primary group.
+Work Item Dispatching, Resource Coordination, and Feature Branch And Worktrees are independent Skill Groups shown together in the Work Item Dispatching And Delivery design because the same Agents use them during dispatch and delivery. Their shared page does not create a containing Skill Group or assign one group ownership of another.
 
 Each skill has one primary direct group. A skill repeated outside that group and outside a containing ancestor is marked Cross-group. The repeated node exposes a dependency or loading relationship without changing ownership.
 
@@ -123,31 +123,33 @@ The registry assigns every current skill one primary direct group and records ne
 | Project Setup | detect-technology-skills; create-project-configuration | None | 2 |
 | Documentation Methodology | route-documentation-work; bootstrap-project-documentation; reverse-engineer-project-documentation; verify-documentation-page | None | 4 |
 | Backlog Management | resolve-backlog-blockage; create-work-item; create-work-item-file; create-work-item-github; create-work-item-gitlab; create-work-item-azure-devops; create-work-item-jira; commit-file-provider-transaction; manage-future-ideas; manage-work-items; manage-work-items-file; manage-work-items-github; manage-work-items-gitlab; manage-work-items-azure-devops; manage-work-items-jira | None | 15 |
-| Concurrent Tasking | coordinate-work-items; coordinate-codex-tasks; set-solo-mode; set-multitask-mode | Resource Coordination: resource-claim, resource-claim-helper, resource-claim-helper-command, resource-claim-helper-mcp. Feature Branch And Worktrees: integrate-agent-work, deliver-work-item-feature-branch, create-pull-request. | 11 |
+| Work Item Dispatching | coordinate-work-items; coordinate-codex-tasks; set-solo-mode; set-multitask-mode | None | 4 |
+| Resource Coordination | resource-claim; resource-claim-helper; resource-claim-helper-command; resource-claim-helper-mcp | None | 4 |
+| Feature Branch And Worktrees | integrate-agent-work; deliver-work-item-feature-branch; create-pull-request | None | 3 |
 | Main Branch Delivery | deliver-work-item; deliver-work-item-main-branch | None | 2 |
 | Review And Verification | review-code-with-evidence; test-strategy; verify-end-to-end-workflow; analyze-root-cause; collect-runtime-evidence; trace-code-execution; review-prompt-contracts | None | 7 |
 
-The totals count primary membership once. Cross-group repetitions in detailed diagrams do not increase the forty-nine-skill inventory.
+The totals count primary membership once. Cross-group repetitions in detailed diagrams do not increase the fifty-skill inventory.
 
-## 4. Group Designs
+## 4. Agent-Oriented Designs
 
-The group documents provide independent views of the seven methodology capabilities.
+The design documents show the Agent groups, Skill Groups, and detailed dependencies used in seven methodology topics.
 
-- [Baseline Development](skill-groups/baseline-development.md)
-- [Project Setup](skill-groups/project-setup.md)
-- [Documentation Methodology](skill-groups/documentation-methodology.md)
-- [Backlog Management](skill-groups/backlog-management.md)
-- [Concurrent Tasking](skill-groups/concurrent-tasking.md)
-- [Main Branch Delivery](skill-groups/main-branch-delivery.md)
-- [Review And Verification](skill-groups/review-and-verification.md)
+- [Baseline Development](agents/baseline-development.md)
+- [Project Setup](agents/project-setup.md)
+- [Documentation Methodology](agents/documentation-methodology.md)
+- [Backlog Management](agents/backlog-management.md)
+- [Work Item Dispatching And Delivery](agents/work-item-dispatching-and-delivery.md)
+- [Main Branch Delivery](agents/main-branch-delivery.md)
+- [Review And Verification](agents/review-and-verification.md)
 
 ## 5. Definition Of Good
 
 The applied model is complete when it describes the maintained skill inventory and its current relationships without relying on migration history.
 
-- **RULE: RULE-56** Each established skill group has an independent steady-state design
-  - **SYNOPSIS:** A reader can inspect one responsibility boundary without loading the other six group documents. The document establishes the overall landscape when needed and expands detailed relationships through concrete scenarios.
-  - **EXAMPLE:** Backlog Management shows its participating Agent groups, then expands work-item creation, work-item management, and blockage recovery without reproducing the Resource Coordination group inventory.
+- **RULE: RULE-56** Each established skill group appears in a steady-state Agent design
+  - **SYNOPSIS:** A reader can inspect the Agents that use a responsibility boundary and follow its detailed relationships through concrete scenarios. One design can show several independent Skill Groups when the same Agent workflow uses them together.
+  - **EXAMPLE:** Work Item Dispatching And Delivery shows Work Item Dispatching, Resource Coordination, Feature Branch And Worktrees, and Main Branch Delivery as independent groups used by Backlog Management Agents and Dev Delivery Agents.
 
 - **RULE: RULE-57** Every skill has one primary direct group
   - **SYNOPSIS:** The registry and detailed documents assign each current skill package to one direct comprehension boundary.
@@ -173,15 +175,15 @@ The applied model is complete when it describes the maintained skill inventory a
   - **SYNOPSIS:** A realization arrow records that a provider supplies or respects the interface members. It does not assert that either node loads the other.
   - **EXAMPLE:** manage-work-items-github realizes manage-work-items, while Dev Backlog Steward separately consumes the Interface Skill and the Persistence factory separately selects the GitHub provider.
 
-- **RULE: RULE-64** Containment remains distinct from dependency
-  - **SYNOPSIS:** Nested groups organize a larger comprehension set; loading arrows separately identify which Agents or skills actually reference another skill.
-  - **EXAMPLE:** Concurrent Tasking contains the complementary coordination peers and Resource Coordination. coordinate-work-items references only the selected resource-coordination procedure and loaded resource-claim policy; coordinate-codex-tasks adds no resource ownership.
+- **RULE: RULE-64** Shared use remains distinct from containment
+  - **SYNOPSIS:** Placing several Skill Groups in one Agent-oriented design does not create a containing group. Dependency arrows identify which Agents or skills actually reference another group.
+  - **EXAMPLE:** Work Item Dispatching depends on Resource Coordination because coordinate-work-items loads resource-claim; the shared Work Item Dispatching And Delivery page does not make Resource Coordination a nested member of Work Item Dispatching.
 
 ## Authoritative Inputs
 
 The applied model is grounded in the repository sources below.
 
-- The forty-nine SKILL.md files and conceptual Agent definitions linked from the seven group documents.
+- The fifty SKILL.md files and conceptual Agent definitions linked from the seven agent-oriented design documents.
 - [Object-Oriented Analysis Of Agents And Skills](object-oriented-agent-and-skill-model.md)
 - [Bundled Skill Inventory](../README.md)
 - [Agentic Configuration](agentic-configuration.html)

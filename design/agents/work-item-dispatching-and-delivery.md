@@ -1,16 +1,16 @@
-# Concurrent Tasking Skill Group
+# Work Item Dispatching And Delivery
 
 ## Scope
 
-Concurrent Tasking directly contains the two work-item coordination skills and the two dispatch-mode skills. It also nests the Resource Coordination and Feature Branch And Worktrees skill groups. Its complete set therefore includes those four direct skills plus every skill in the two nested groups. Containment is for comprehension and does not mean that a direct skill uses every nested skill. Persistence remains an independent injected provider.
+Work Item Dispatching And Delivery is an agent-oriented design topic. It explains how Backlog Management Agents manage a sustained stream of work items and how Dev Delivery Agents deliver one accepted work item. The view brings together the Work Item Dispatching, Resource Coordination, Feature Branch And Worktrees, Main Branch Delivery, Backlog Management, Baseline Development, and Review And Verification Skill Groups without inventing one larger Skill Group around them.
 
-Concurrent Tasking names a Skill Group, not an Agent Group. Its consumers belong to the Task Management Agent hierarchy: Backlog Management Agents manage a sustained stream of work items, while Dev Delivery Agents deliver one accepted work item. Both Agent Groups use Concurrent Tasking skills where their responsibilities require coordination.
+Work Item Dispatching contains coordinate-work-items, coordinate-codex-tasks, set-solo-mode, and set-multitask-mode. Resource Coordination and Feature Branch And Worktrees remain independent Skill Groups rather than nested members of Work Item Dispatching. Persistence remains an independently injected provider.
 
 The applied-model conventions are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md#2-applied-model-legend).
 
 ## Design
 
-The design starts with the Task Management Agent hierarchy and then shows the relationships between whole Agent Groups and Skill Groups. Two expanded diagrams identify the exact Agents and skills inside those Agent Group views. Four scenario diagrams then explain provider routing and other relationships that need more detail.
+The design starts with the Task Management Agent hierarchy and then shows the relationships between whole Agent Groups and the independent Skill Groups they use. Two expanded diagrams identify the exact Agents and skills inside those Agent Group views. Four scenario diagrams then explain provider routing and other relationships that need more detail.
 
 A solid dependency is fixed by the referencing definition. A dotted dependency applies only under the condition written on the arrow. Project-selected skill loading originates at AGENTS.md. Agent- or skill-owned loading originates at the Agent or skill that makes that decision. Realization arrows show that a provider implements an interface; they do not load a file.
 
@@ -65,7 +65,7 @@ classDiagram
 
 ### Agent Group And Skill Group Dependencies
 
-The high-level dependency view contains only Agent Groups and Skill Groups. An Agent Group arrow summarizes one or more dependencies owned by Agents in that group; it does not mean that every Agent loads every skill in the target group. A solid arrow means at least one member has a fixed dependency. A dotted arrow summarizes a conditional dependency. A solid-diamond arrow means that the parent Skill Group contains the nested group for comprehension.
+The high-level dependency view contains only Agent Groups and independent Skill Groups. An Agent Group arrow summarizes one or more dependencies owned by Agents in that group; it does not mean that every Agent loads every skill in the target group. A solid arrow means at least one member has a fixed dependency. A dotted arrow summarizes a conditional dependency. A Skill Group arrow means that at least one skill in the source group depends on a skill in the target group.
 
 ```mermaid
 classDiagram
@@ -85,7 +85,7 @@ classDiagram
     class BacklogManagement["Backlog Management"] {
         <<Skill Group>>
     }
-    class ConcurrentTasking["Concurrent Tasking"] {
+    class WorkItemDispatching["Work Item Dispatching"] {
         <<Skill Group>>
     }
     class ResourceCoordination["Resource Coordination"] {
@@ -103,16 +103,15 @@ classDiagram
 
     BacklogManagementAgents --> BaselineDevelopment
     BacklogManagementAgents --> BacklogManagement
-    BacklogManagementAgents --> ConcurrentTasking
+    BacklogManagementAgents --> WorkItemDispatching
     DevDeliveryAgents --> BaselineDevelopment
     DevDeliveryAgents --> BacklogManagement
-    DevDeliveryAgents ..> ConcurrentTasking : when multiple agents work concurrently
+    DevDeliveryAgents ..> WorkItemDispatching : when multiple agents work concurrently
     DevDeliveryAgents --> MainBranchDelivery
     DevDeliveryAgents --> FeatureBranchAndWorktrees
     DevDeliveryAgents --> ReviewAndVerification
 
-    ConcurrentTasking *-- ResourceCoordination
-    ConcurrentTasking *-- FeatureBranchAndWorktrees
+    WorkItemDispatching --> ResourceCoordination
     MainBranchDelivery ..> FeatureBranchAndWorktrees : when implementation uses a separate branch or worktree
 ```
 
@@ -148,7 +147,7 @@ classDiagram
         }
     }
 
-    namespace ConcurrentTaskingSkills["Concurrent Tasking skills"] {
+    namespace WorkItemDispatchingSkills["Work Item Dispatching skills"] {
         class coordinate-work-items {
             <<SKILL.md>>
         }
@@ -228,7 +227,7 @@ classDiagram
         }
     }
 
-    namespace ConcurrentTaskingSkills["Concurrent Tasking skills"] {
+    namespace WorkItemDispatchingSkills["Work Item Dispatching skills"] {
         class coordinate-work-items {
             <<SKILL.md>>
         }
@@ -552,7 +551,7 @@ classDiagram
     class project-specific-directives["Project-specific directives"] {
         <<AGENTS.md>>
         <<routing>>
-        +route claim operations => resource-claim-helper
+        +route resource-claim-helper => resource-claim-helper-*
     }
 
     class resource-claim {
@@ -563,7 +562,7 @@ classDiagram
     }
 
     class ClaimHelper["resource-claim-helper"] {
-        <<Skill interface>>
+        <<Interface Skill>>
         +read-claim-status()
         +acquire-claim(scope)
         +extend-claim(scope)
@@ -681,15 +680,15 @@ classDiagram
 
 The provider realization arrows show conformance with the exact deliver-work-item contract. Feature-branch delivery loads create-pull-request only for a host that uses a pull request workflow. Main branch describes the final destination, not where implementation occurs. When implementation is isolated on a separate branch or worktree, especially for concurrent or independently delegated work, main-branch delivery uses integrate-agent-work to reconcile the accepted contribution with current main.
 
-## Skill Responsibilities
+## Skill Responsibilities Used By These Agents
 
-The direct skills control coordinated execution and dispatch mode. The nested groups provide resource ownership and isolated feature-branch delivery.
+The responsibility inventory distinguishes the Work Item Dispatching skills from the independent Resource Coordination and Feature Branch And Worktrees groups used in the same agent workflow.
 
 | Direct group | Skill | Public procedures or identity | Responsibility |
 | --- | --- | --- | --- |
-| Concurrent Tasking | coordinate-work-items; coordinate-codex-tasks | Resource Coordination; Queue Target And Scheduling; Effective Commit Delivery And Persistence Closure | Separates portable work-item policy from conditional Codex task mapping. |
-| Concurrent Tasking | set-solo-mode | Set Solo Mode | Disables dispatch to secondary threads while the current Agent continues sequential work. |
-| Concurrent Tasking | set-multitask-mode | Set Multitask Mode | Enables dispatch to secondary threads after the sequential condition ends. |
+| Work Item Dispatching | coordinate-work-items; coordinate-codex-tasks | Resource Coordination; Queue Target And Scheduling; Effective Commit Delivery And Persistence Closure | Separates portable work-item policy from conditional Codex task mapping. |
+| Work Item Dispatching | set-solo-mode | Set Solo Mode | Disables dispatch to secondary threads while the current Agent continues sequential work. |
+| Work Item Dispatching | set-multitask-mode | Set Multitask Mode | Enables dispatch to secondary threads after the sequential condition ends. |
 | Resource Coordination | resource-claim | Coordinate Shared Resource; Acquire Claim; Extend Claim; Extend Claim Deadline; Heartbeat Claim; Read Claim Status; Release Claim | Defines claim events, scope, conflicts, deadlines, and cleanup policy. |
 | Resource Coordination | resource-claim-helper | Operation Contract; Read Claim Status; Acquire Claim; Extend Claim; Extend Claim Deadline; Heartbeat Claim; Release Claim; Reset Claim Registry; Maintain Claim Journal; Report Claim Contention; Structured Outcomes; Reconcile an Uncertain Outcome; Provider Realization Contract | Defines one provider-neutral helper interface without selecting a provider or redefining claim policy. |
 | Resource Coordination | resource-claim-helper-command | Read Claim Status; Acquire Claim; Extend Claim; Extend Claim Deadline; Heartbeat Claim; Release Claim; Reset Claim Registry; Maintain Claim Journal; Report Claim Contention | Invokes the configured command-line helper without redefining the interface or claim policy. |

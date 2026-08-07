@@ -20,7 +20,7 @@ Object-oriented concepts are used as an analogy for understanding coupling. They
 
 The document explains relationships through examples while defining no schema, migration, or repository change sequence.
 
-The method concludes with an applied overview of the methodology skill groups. The detailed steady-state diagrams remain in separate group documents so a reader can use the method without loading the complete applied inventory.
+The method concludes with an applied overview of the methodology skill groups. Detailed steady-state diagrams remain in separate agent-oriented design documents so a reader can use the method without loading the complete applied inventory.
 
 ## 1. Finality
 
@@ -466,43 +466,38 @@ A nested Skill Group is the same kind of set as its parent. The word subgroup de
 
 - **RULE: RULE-55** A nested Skill Group contributes its complete skill set
   - **SYNOPSIS:** The parent Skill Group contains its direct skills plus every skill reached through its nested groups.
-  - **EXAMPLE:** Concurrent Tasking contains resource-claim through its nested Resource Coordination group even though resource-claim is not a direct member of Concurrent Tasking.
+  - **EXAMPLE:** The hypothetical Release Management Skill Group contains publish-release through its nested Release Publication group even though publish-release is not a direct member of Release Management.
 
 - **RULE: RULE-54** A solid diamond represents containment in a collapsed diagram
   - **SYNOPSIS:** A solid diamond from a Skill Group node to a SKILL.md node records direct membership. A solid diamond from one Skill Group node to another records nested-group inclusion.
-  - **EXAMPLE:** Concurrent Tasking directly contains the coordinate-work-items and coordinate-codex-tasks peers and includes the Resource Coordination skill group, whose direct skills include resource-claim.
+  - **EXAMPLE:** The hypothetical Release Management group directly contains verify-release and includes the Release Publication group, whose direct skills include publish-release.
 
 ```mermaid
 classDiagram
     direction LR
 
-    class ConcurrentTasking {
+    class ReleaseManagement {
         <<Skill Group>>
     }
 
-    class ResourceCoordination {
+    class ReleasePublication {
         <<Skill Group>>
     }
 
-    class coordinate-work-items {
+    class verify-release {
         <<SKILL.md>>
     }
 
-    class coordinate-codex-tasks {
+    class publish-release {
         <<SKILL.md>>
     }
 
-    class resource-claim {
-        <<SKILL.md>>
-    }
-
-    ConcurrentTasking *-- coordinate-work-items
-    ConcurrentTasking *-- coordinate-codex-tasks
-    ConcurrentTasking *-- ResourceCoordination
-    ResourceCoordination *-- resource-claim
+    ReleaseManagement *-- verify-release
+    ReleaseManagement *-- ReleasePublication
+    ReleasePublication *-- publish-release
 ```
 
-The collapsed diagram shows Concurrent Tasking as one node. Its actual Skill Group contains the complementary coordinate-work-items and coordinate-codex-tasks peers directly and contains resource-claim through the nested Resource Coordination Skill Group. An expanded diagram could draw boxes around the same sets and display their member details.
+The collapsed diagram shows Release Management as one node. It directly contains verify-release and contains publish-release through the nested Release Publication Skill Group. An expanded diagram could draw boxes around the same sets and display their member details. These names are analysis vocabulary and do not assert that the corresponding skills or groups exist in the repository.
 
 The repository-specific group models are maintained separately in [Object-Oriented Skill Group Models](object-oriented-skill-group-models.md).
 
@@ -833,7 +828,7 @@ A good model makes skill dependencies, dispatch, and organization understandable
 
 - **RULE: RULE-66** Applied views progress from the system landscape to concrete scenarios
   - **SYNOPSIS:** Overall diagrams establish the relevant Agent groups, Skill Groups, and major dependencies. Scenario sections then expand the relationships that need their consumers, routing, interfaces, providers, and loading conditions shown together.
-  - **EXAMPLE:** A Concurrent Tasking overview shows Dev Activities Agents, Backlog Management Agents, and the major Skill Groups before a resource-coordination scenario expands resource-claim, its consumers, AGENTS.md routing, and the available claim-helper providers.
+  - **EXAMPLE:** A Work Item Dispatching And Delivery overview shows Backlog Management Agents, Dev Delivery Agents, and the independent Skill Groups they use before a resource-coordination scenario expands resource-claim, its consumers, AGENTS.md routing, and the available claim-helper providers.
 
 - **RULE: RULE-67** A scenario section explains its situation before its notation
   - **SYNOPSIS:** The opening states what the scenario represents and why its relationships matter before discussing arrow forms or exceptions. An absent alternative or unsupported path is mentioned only when it changes how the shown scenario must be understood.
@@ -849,7 +844,7 @@ A good model makes skill dependencies, dispatch, and organization understandable
 
 - **RULE: RULE-53** Class views make skill organization reviewable
   - **SYNOPSIS:** A reader can distinguish the actual Skill Group from its expanded and collapsed diagram forms, see which skills are direct members, and see which complete skill sets are included through nesting.
-  - **EXAMPLE:** The Work Item Skill Group is an actual set of three skills shown in an expanded diagram, while the Concurrent Tasking Skill Group is shown in a collapsed diagram that includes Resource Coordination.
+  - **EXAMPLE:** The hypothetical Work Item Skill Group is the same three-skill set whether its members are shown inside an expanded namespace box or connected to one collapsed Skill Group node.
 
 - **RULE: RULE-24** The diagrams distinguish AGENTS.md from SKILL.md
   - **SYNOPSIS:** Diagrams label project routing with the AGENTS.md stereotype, the shared family contract with the Interface Skill stereotype, and the selected implementation with a concrete skill stereotype.
@@ -929,10 +924,10 @@ The glossary defines the relationship and diagram terms used by the analysis aft
 | Agent class view | A diagram node that represents the Agent behavior, expectations, and dependencies relevant to the analysis without asserting a runtime class. | Coding Agent names careful-coding and refers to Deliver Workitem. |
 | Skill Group | The actual named set of cohesive skills used to organize one capability. Its complete skill set contains its direct skills plus every skill in its nested Skill Groups. The set exists independently of how a diagram displays it. | The Work Item Skill Group contains work-item-base, work-item-dispatch, and work-item-monitor. |
 | Expanded Skill Group Diagram | A diagram that draws a box around the SKILL.md nodes belonging to one Skill Group so their responsibilities and separate loading references can be viewed together. The diagram displays the set; it does not create it. | The expanded Work Item Skill Group Diagram displays work-item-base, work-item-dispatch, and work-item-monitor inside one box. |
-| Collapsed Skill Group Diagram | A diagram that represents a Skill Group as one node and uses solid-diamond lines to show direct skill membership or nested-group inclusion. | The collapsed Concurrent Tasking diagram links the Concurrent Tasking node to both coordination peers and Resource Coordination. |
-| Nested skill group | A skill group included inside another skill group. It is the same kind of object as its parent; subgroup is only a relative description of its position. | Resource Coordination is a skill group nested inside Concurrent Tasking. |
+| Collapsed Skill Group Diagram | A diagram that represents a Skill Group as one node and uses solid-diamond lines to show direct skill membership or nested-group inclusion. | The hypothetical collapsed Release Management diagram links the parent to verify-release and Release Publication. |
+| Nested skill group | A skill group included inside another skill group. It is the same kind of object as its parent; subgroup is only a relative description of its position. | The hypothetical Release Publication group is nested inside Release Management. |
 | Direct group membership | A solid-diamond line in a collapsed diagram that displays a skill’s direct membership in a Skill Group. The line represents membership in the existing set; it does not create that membership. | Resource Coordination *-- resource-claim displays resource-claim as a direct member of Resource Coordination. |
-| Nested set containment | A solid-diamond line in a collapsed diagram that displays one Skill Group nested in another. The parent’s complete skill set includes the child’s complete skill set independently of the chosen diagram form. | Concurrent Tasking *-- Resource Coordination displays Resource Coordination as a nested group whose skills belong to the complete Concurrent Tasking set. |
+| Nested set containment | A solid-diamond line in a collapsed diagram that displays one Skill Group nested in another. The parent’s complete skill set includes the child’s complete skill set independently of the chosen diagram form. | Release Management *-- Release Publication displays the hypothetical child group whose skills belong to the complete Release Management set. |
 | Mermaid display label | The visible analysis identity used when Mermaid requires a different internal class identifier. | An internal ProcedureInterface identifier can display the procedure-family-* family label. |
 | Skill hierarchy | An organizational view of Skill Groups, families, responsibilities, procedures, loading references, and dependencies. It does not by itself assert software inheritance. | work-item-base, work-item-dispatch, and work-item-monitor form one Skill Group whose members are loaded in different combinations by two Agents. |
 | Agent Group | A named comprehension set displayed as a rectangle containing actual Agent nodes. Membership does not create a superclass or assign one member’s dependencies to another. | Structured Artifact Review Agents contains Dev Code Reviewer and Dev Verifier while each retains its own skill references. |

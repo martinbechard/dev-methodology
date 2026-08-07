@@ -18,13 +18,13 @@ _REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 _DESIGN_PATHS = (
     Path("design/object-oriented-agent-and-skill-model.md"),
     Path("design/object-oriented-skill-group-models.md"),
-    Path("design/skill-groups/baseline-development.md"),
-    Path("design/skill-groups/project-setup.md"),
-    Path("design/skill-groups/documentation-methodology.md"),
-    Path("design/skill-groups/backlog-management.md"),
-    Path("design/skill-groups/concurrent-tasking.md"),
-    Path("design/skill-groups/main-branch-delivery.md"),
-    Path("design/skill-groups/review-and-verification.md"),
+    Path("design/agents/baseline-development.md"),
+    Path("design/agents/project-setup.md"),
+    Path("design/agents/documentation-methodology.md"),
+    Path("design/agents/backlog-management.md"),
+    Path("design/agents/work-item-dispatching-and-delivery.md"),
+    Path("design/agents/main-branch-delivery.md"),
+    Path("design/agents/review-and-verification.md"),
 )
 _CLASS_PATTERN = re.compile(
     r'class\s+(?P<identity>[A-Za-z0-9_-]+)'

@@ -15,7 +15,7 @@ blockage recovery, and optional resource coordination.
 
 ### Overall Agent And Skill Group Dependencies
 
-The overall view shows which Agents use Backlog Management and where backlog procedures conditionally use Concurrent Tasking or Resource Coordination. An arrow between Skill Groups means that at least one skill in the source group depends on a skill in the target group under the stated condition.
+The overall view shows which Agents use Backlog Management and where backlog procedures conditionally use Work Item Dispatching or Resource Coordination. An arrow between Skill Groups means that at least one skill in the source group depends on a skill in the target group under the stated condition.
 
 ```mermaid
 classDiagram
@@ -42,7 +42,7 @@ classDiagram
     class BacklogManagement["Backlog Management"] {
         <<Skill Group>>
     }
-    class ConcurrentTasking["Concurrent Tasking"] {
+    class WorkItemDispatching["Work Item Dispatching"] {
         <<Skill Group>>
     }
     class ResourceCoordination["Resource Coordination"] {
@@ -53,7 +53,7 @@ classDiagram
     DevBacklogSteward --> BacklogManagement
     DevBacklogWatchdog ..> BacklogManagement : when a blockage criterion or active recovery applies
     DevOrchestrator --> BacklogManagement
-    BacklogManagement ..> ConcurrentTasking : when sequential recovery changes secondary-thread dispatch mode
+    BacklogManagement ..> WorkItemDispatching : when sequential recovery changes secondary-thread dispatch mode
     BacklogManagement ..> ResourceCoordination : when the selected file provider mutates shared state
 ```
 

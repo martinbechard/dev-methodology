@@ -29,7 +29,7 @@ Those exact-name instructions can require an unloaded skill when resource_coordi
 
 ## Source Evidence
 
-During review of design/skill-groups/concurrent-tasking.md on 2026-08-05, the user directed: "Make the links optional if the skill IS NOT ALWAYS loaded. Add the condition when it is loaded. link it to the shape that loads it. If it's a project-specific decision then show it loaded via AGENTS.md." Source comparison against PROJECT.yaml, skills/create-project-configuration/SKILL.md, and the four workflow skills above confirmed the contract mismatch. The user authorized correction of the documentation model but did not authorize mutation of the four governed skill definitions.
+During review of design/agents/work-item-dispatching-and-delivery.md on 2026-08-05, the user directed: "Make the links optional if the skill IS NOT ALWAYS loaded. Add the condition when it is loaded. link it to the shape that loads it. If it's a project-specific decision then show it loaded via AGENTS.md." Source comparison against PROJECT.yaml, skills/create-project-configuration/SKILL.md, and the four workflow skills above confirmed the contract mismatch. The user authorized correction of the documentation model but did not authorize mutation of the four governed skill definitions.
 
 ## Requirements
 
@@ -77,7 +77,7 @@ Determine the precise shared phrase that tells a workflow skill to apply the sel
 
 - evals/skill-probes.yaml
 - directly affected focused evaluation fixtures and tests identified through source discovery
-- design/skill-groups/concurrent-tasking.md
+- design/agents/work-item-dispatching-and-delivery.md
 - design/generated/skill-definitions.js
 - supported generated adapter files regenerated from only the approved canonical sources
 
@@ -107,4 +107,4 @@ Pending.
 
 ### Unattended Work Boundary
 
-Do not mutate the four governed SKILL.md files or their generated mirrors before approval. Read-only source discovery and analysis may continue. The already-authorized correction to design/skill-groups/concurrent-tasking.md remains independent and complete.
+Do not mutate the four governed SKILL.md files or their generated mirrors before approval. Read-only source discovery and analysis may continue. The already-authorized correction to design/agents/work-item-dispatching-and-delivery.md remains independent and complete.
