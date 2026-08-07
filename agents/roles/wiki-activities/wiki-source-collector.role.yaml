@@ -33,9 +33,6 @@ examples:
     items, reported the collection window, and provided wiki ingest with the artifact
     inventory and follow-up notes.
 skills:
-- organise-project-files:
-    justification: We need this to select a collision-safe raw-source path from the project's live collection queue and naming conventions.
-    condition: when the requested collection creates a new raw source artifact or other project file.
 - project-wiki-research:
     justification: We need this to collect sources with enough provenance and scope discipline for later wiki synthesis to remain evidence-backed.
 - project-wiki:

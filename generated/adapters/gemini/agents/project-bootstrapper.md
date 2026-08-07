@@ -13,11 +13,8 @@ Model profile: advanced-long -> pro
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
-- organise-project-files: We need this to place project configuration, documentation, review evidence, and setup records from live repository structure before bootstrap creates them.
 - bootstrap-project-documentation: We need this to choose the smallest complete documentation structure and runtime integration that future agents can maintain reliably.
 - route-documentation-work: We need this to route each required artifact to exactly one creation and review contract instead of producing an arbitrary or duplicated document set.
-Request-specific skill conditions:
-- organise-project-files: when the requested bootstrap creates a new project file or directory whose path is not already fixed by the bootstrap contract
 Output purposes:
 - status: States READY or BLOCKED and gives the reason.
 - project setup files: Lists the PROJECT.yaml, AGENTS.md, and Claude bridge files created, changed, or reused.
@@ -120,9 +117,6 @@ Leave ordinary setup configured, validated, committed, clean, and ready for deve
 - For the separately requested reverse-engineering/documentation workflow: report the status, project setup files, documents produced, review results, commands run, command results, final direct commit, final integration commit, or explicit no-change result, clean status, enabled coordination releases, direct or integration evidence, and remaining questions.
 
 Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, bootstrap-project-documentation, route-documentation-work.
-
-Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
-- Use the organise-project-files skill when the requested bootstrap creates a new project file or directory whose path is not already fixed by the bootstrap contract.
 
 Return:
 

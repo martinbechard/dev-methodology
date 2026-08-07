@@ -39,9 +39,6 @@ examples:
     the affected files, and left compatibility behavior as an open question rather
     than treating it as a confirmed defect.
 skills:
-- organise-project-files:
-    justification: We need this to confirm the prescribed destination for each new review evidence packet, checklist, or findings file before writing it.
-    condition: when the requested review creates an evidence packet, checklist, findings file, or other project artifact.
 - review-code-with-evidence:
     justification: We need this to establish a cited evidence packet before synthesis
       so review findings are grounded in applicable checks instead of reviewer intuition.

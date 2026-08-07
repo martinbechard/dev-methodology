@@ -101,9 +101,6 @@ skills:
     justification: We need its Codex task identity and runtime-state mapping without taking
       over task creation, follow-up, titles, or archival.
     condition: when provider-wide reconciliation inspects Codex task evidence.
-- organise-project-files:
-    justification: We need this when an authorized provider-wide recovery creates a repository path whose destination is not fixed by the selected provider manager.
-    condition: when the selected maintenance operation creates a repository path whose destination is not fixed.
 - manage-future-ideas:
     justification: We need the file-backed capture, explicit inventory, validation, and promotion
       contract when the request specifically selects Future Ideas.

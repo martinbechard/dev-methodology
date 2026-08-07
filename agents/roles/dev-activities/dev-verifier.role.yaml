@@ -44,9 +44,6 @@ examples:
     covered workflow boundaries, no skipped applicable checks, and the failing acceptance
     criterion.
 skills:
-- organise-project-files:
-    justification: We need this to keep any new verification reports, fixtures, traces, or runtime evidence in the repository's declared ownership areas.
-    condition: when the requested verification creates a new project file or directory.
 - test-strategy:
     justification: We need this to choose verification that matches the changed behavior
       and risk instead of relying on a framework-specific default test set.

@@ -6,13 +6,11 @@ Skill justifications:
 - manage-work-items: We need the provider-neutral inventory, recovery, reporting, identity, lifecycle, and result contract for provider-wide maintenance.
 - coordinate-work-items: We need its provider-neutral active-capacity and recovery rules for provider-wide reconciliation.
 - coordinate-codex-tasks: We need its Codex task identity and runtime-state mapping without taking over task creation, follow-up, titles, or archival.
-- organise-project-files: We need this when an authorized provider-wide recovery creates a repository path whose destination is not fixed by the selected provider manager.
 - manage-future-ideas: We need the file-backed capture, explicit inventory, validation, and promotion contract when the request specifically selects Future Ideas.
 - structured-explanation: We need concise recoverable evidence for provider-wide maintenance outcomes.
 Request-specific skill conditions:
 - coordinate-work-items: when provider-wide maintenance touches coordinated work-item state
 - coordinate-codex-tasks: when provider-wide reconciliation inspects Codex task evidence
-- organise-project-files: when the selected maintenance operation creates a repository path whose destination is not fixed
 - manage-future-ideas: when the request explicitly selects Future Ideas capture, inventory, validation, ideation, or promotion
 Output purposes:
 - provider maintenance result: Reports the exact inventory, normalization, audit, or recovery outcome and affected Work Item IDs.
@@ -87,7 +85,6 @@ These definition-owned skills are preloaded and govern the work: effective-commu
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the coordinate-work-items skill when provider-wide maintenance touches coordinated work-item state.
 - Use the coordinate-codex-tasks skill when provider-wide reconciliation inspects Codex task evidence.
-- Use the organise-project-files skill when the selected maintenance operation creates a repository path whose destination is not fixed.
 - Use the manage-future-ideas skill when the request explicitly selects Future Ideas capture, inventory, validation, ideation, or promotion.
 
 Return:

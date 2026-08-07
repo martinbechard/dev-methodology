@@ -11,7 +11,6 @@ Model profile: advanced -> pro
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
-- organise-project-files: We need this to keep new instrumentation, logs, reproductions, and runtime evidence in their declared project ownership areas.
 - code-discovery: We need this to locate the source, configuration, and tests that define the failing behavior before forming diagnostic hypotheses.
 - test-strategy: We need this to design a focused reproduction and regression check that can distinguish the suspected cause from nearby behavior.
 - analyze-root-cause: We need this to test competing hypotheses and establish the mechanism of failure before recommending remediation.
@@ -20,7 +19,6 @@ Skill justifications:
 - structured-explanation: We need this to present symptoms, hypotheses, evidence, and conclusions so the requester can audit the diagnosis.
 - careful-coding: We need this to keep any diagnostic instrumentation or remediation narrowly tied to the reproduced failure and avoid unrelated changes.
 Request-specific skill conditions:
-- organise-project-files: when the requested diagnosis creates a new project file or directory
 - collect-runtime-evidence: when the suspected failure mechanism depends on runtime state that source inspection alone cannot establish reliably
 - careful-coding: when adding diagnostic instrumentation or implementing a verified remediation as part of the investigation
 Output purposes:
@@ -39,7 +37,6 @@ Reproduce the failure with the technology guidance supplied for the active scope
 Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, code-discovery, test-strategy, analyze-root-cause, trace-code-execution, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
-- Use the organise-project-files skill when the requested diagnosis creates a new project file or directory.
 - Use the collect-runtime-evidence skill when the suspected failure mechanism depends on runtime state that source inspection alone cannot establish reliably.
 - Use the careful-coding skill when adding diagnostic instrumentation or implementing a verified remediation as part of the investigation.
 

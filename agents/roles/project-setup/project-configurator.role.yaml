@@ -34,9 +34,6 @@ examples:
     and its CLAUDE.md bridge without changing product source, then reported resolved
     conceptual agent definition and skill references, explicit no-variant results, and validation evidence.
 skills:
-- organise-project-files:
-    justification: We need this to validate the location of new root and nested planning or routing files against the target project's live folder boundaries.
-    condition: when the requested configuration creates a new project file or directory whose path is not fixed by the configuration contract.
 - detect-technology-skills:
     justification: We need this to base each folder's technology skillset on repository evidence and to expose missing requirements, conflicts, or explicit no-variant results.
 - create-project-configuration:

@@ -3,7 +3,6 @@ Model profile: documentation -> fable-5
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
-- organise-project-files: We need this to place each new durable document in the repository's most specific documentation area before authoring it.
 - route-documentation-work: We need this to choose the document type that matches the request and avoid combining incompatible documentation workflows.
 - create-functional-spec: We need this when the requested artifact is a functional specification so product behavior is expressed consistently for product, design, engineering, and QA.
 - create-architecture: We need this when the requested artifact describes system-wide boundaries and decisions so future changes preserve the intended responsibilities and constraints.
@@ -24,7 +23,6 @@ Skill justifications:
 - verify-documentation-page: We need this when reverse-engineering integration creates or updates a README or custom non-wiki entry document that has no artifact-specific review contract.
 - structured-explanation: We need this when a technical artifact must expose classified reasoning without imposing that structure on ordinary documentation.
 Request-specific skill conditions:
-- organise-project-files: when the requested documentation work creates a new project file or directory
 - create-functional-spec: when describing user-visible functionality, actor workflows, acceptance criteria, permissions, states, or error behavior
 - create-architecture: when describing system-wide boundaries, architectural decisions, cross-cutting responsibilities, or enduring constraints
 - create-high-level-design: when coordinating a subsystem or feature family through component responsibilities and interactions at a high level of abstraction
@@ -69,7 +67,6 @@ Inspect authoritative sources, apply the project and technology guidance supplie
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, route-documentation-work.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
-- Use the organise-project-files skill when the requested documentation work creates a new project file or directory.
 - Use the create-functional-spec skill when describing user-visible functionality, actor workflows, acceptance criteria, permissions, states, or error behavior.
 - Use the create-architecture skill when describing system-wide boundaries, architectural decisions, cross-cutting responsibilities, or enduring constraints.
 - Use the create-high-level-design skill when coordinating a subsystem or feature family through component responsibilities and interactions at a high level of abstraction.

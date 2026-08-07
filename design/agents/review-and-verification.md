@@ -87,21 +87,16 @@ classDiagram
         <<SKILL.md>>
         <<Cross-group>>
     }
-    class organise-project-files {
-        <<SKILL.md>>
-        <<Cross-group>>
-    }
 
     DevCodeReviewer o--> review-code-with-evidence
     DevCodeReviewer o--> careful-coding
     DevCodeReviewer o--> code-comments
     DevCodeReviewer o--> review-structured-artifact
-    DevCodeReviewer o..> organise-project-files : when review creates a project artifact
 ```
 
 ### Scenario: Verifying A Change
 
-This scenario shows the test, review, and explanation skills Dev Verifier always loads and the focused skills it adds when the evidence requires a complete workflow, diagnosis, runtime observation, source tracing, prompt-contract review, or a new project artifact.
+This scenario shows the test, review, and explanation skills Dev Verifier always loads and the focused skills it adds when the evidence requires a complete workflow, diagnosis, runtime observation, source tracing, or prompt-contract review.
 
 ```mermaid
 classDiagram
@@ -145,10 +140,6 @@ classDiagram
         <<SKILL.md>>
         <<Agent Skill>>
     }
-    class organise-project-files {
-        <<SKILL.md>>
-        <<Cross-group>>
-    }
 
     DevVerifier o--> test-strategy
     DevVerifier o--> review-structured-artifact
@@ -158,7 +149,6 @@ classDiagram
     DevVerifier o..> collect-runtime-evidence : when static checks cannot establish behavior
     DevVerifier o..> trace-code-execution : when an outcome must be connected to source control flow
     DevVerifier o..> review-prompt-contracts : when verification depends on a model-facing evaluator
-    DevVerifier o..> organise-project-files : when verification creates a project file or directory
 ```
 
 ### Scenario: Diagnosing Runtime Behavior
@@ -209,10 +199,6 @@ classDiagram
         +validate-authorized-contract()
         +execute-goal-driven-loop()
     }
-    class organise-project-files {
-        <<SKILL.md>>
-        <<Cross-group>>
-    }
 
     DevRuntimeDiagnostician o--> code-discovery
     DevRuntimeDiagnostician o--> test-strategy
@@ -221,12 +207,11 @@ classDiagram
     DevRuntimeDiagnostician o--> structured-explanation
     DevRuntimeDiagnostician o..> collect-runtime-evidence : when source cannot establish runtime state
     DevRuntimeDiagnostician o..> careful-coding : when diagnosis changes instrumentation or code
-    DevRuntimeDiagnostician o..> organise-project-files : when diagnosis creates a project file or directory
 ```
 
 ### Scenario: Reviewing A Prompt Contract
 
-This scenario shows the prompt-specific and structured-review skills Dev Prompt Reviewer always loads, plus placement guidance when the review creates an artifact.
+This scenario shows the prompt-specific and structured-review skills Dev Prompt Reviewer always loads.
 
 ```mermaid
 classDiagram
@@ -243,15 +228,12 @@ classDiagram
         <<SKILL.md>>
         <<Cross-group>>
     }
-    class organise-project-files {
-        <<SKILL.md>>
-        <<Cross-group>>
-    }
 
     DevPromptReviewer o--> review-prompt-contracts
     DevPromptReviewer o--> review-structured-artifact
-    DevPromptReviewer o..> organise-project-files : when review creates a project file or directory
 ```
+
+PROJECT.yaml records organise-project-files once in shared_agent_skills, and generated AGENTS.md tells every Agent to load it when the Agent must choose or audit the location of a project file or directory. The scenarios therefore do not repeat that project-wide route as role-specific arrows.
 
 ### Scenario: An Investigation Needs More Evidence
 

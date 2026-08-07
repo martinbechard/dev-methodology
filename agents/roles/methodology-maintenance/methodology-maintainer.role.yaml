@@ -119,9 +119,6 @@ examples:
     and reported the repeated finding, commits, clean worktree, enabled resource-coordination closeout, and required
     scope decision."
 skills:
-- organise-project-files:
-    justification: We need this to preserve source, generated, adapter, design, and test ownership boundaries whenever methodology maintenance adds files.
-    condition: when the requested maintenance creates a new project file or directory.
 - maintain-methodology-documentation:
     justification: We need this to keep source files, generated artifacts, adapters, and validation synchronized across a maintenance change without creating user-home copies.
 - skill-authoring:

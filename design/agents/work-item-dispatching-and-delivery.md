@@ -166,9 +166,6 @@ classDiagram
         class structured-explanation {
             <<SKILL.md>>
         }
-        class organise-project-files {
-            <<SKILL.md>>
-        }
     }
 
     DevBacklogCoordinator o--> ManageWorkItems
@@ -183,7 +180,6 @@ classDiagram
     DevBacklogSteward o--> structured-explanation
     DevBacklogSteward o..> coordinate-work-items : when maintenance touches coordinated state
     DevBacklogSteward o..> coordinate-codex-tasks : when inspecting Codex task evidence
-    DevBacklogSteward o..> organise-project-files : when recovery creates a project path
     DevBacklogSteward o..> manage-future-ideas : when Future Ideas work is requested
 
     DevBacklogWatchdog o--> ManageWorkItems
@@ -243,9 +239,6 @@ classDiagram
     }
 
     namespace BaselineDevelopmentSkills["Baseline Development skills"] {
-        class organise-project-files {
-            <<SKILL.md>>
-        }
         class careful-coding {
             <<SKILL.md>>
         }
@@ -309,25 +302,21 @@ classDiagram
     DevOrchestrator o..> CreateWorkItem : when an excluded issue needs a work item
     DevOrchestrator o..> coordinate-work-items : when multiple agents work concurrently
     DevOrchestrator o..> coordinate-codex-tasks : when the execution uses a Codex task
-    DevOrchestrator o..> organise-project-files : when orchestration creates a project path
 
     DevCoder o--> careful-coding
     DevCoder o--> code-comments
     DevCoder o--> code-discovery
     DevCoder o--> explain-code-fix
-    DevCoder o..> organise-project-files : when implementation creates a project path
     DevCoder o..> test-driven-development : when executable tests guide implementation
 
     DevCodeReviewer o--> review-code-with-evidence
     DevCodeReviewer o--> review-structured-artifact
     DevCodeReviewer o--> careful-coding
     DevCodeReviewer o--> code-comments
-    DevCodeReviewer o..> organise-project-files : when review creates an evidence file
 
     DevVerifier o--> test-strategy
     DevVerifier o--> review-structured-artifact
     DevVerifier o--> structured-explanation
-    DevVerifier o..> organise-project-files : when verification creates a project path
     DevVerifier o..> verify-end-to-end-workflow : when an end-to-end workflow must be proven
     DevVerifier o..> analyze-root-cause : when a check fails
     DevVerifier o..> collect-runtime-evidence : when static evidence is insufficient
@@ -337,10 +326,9 @@ classDiagram
     DevMergeCoordinator o--> integrate-agent-work
     DevMergeCoordinator o--> review-structured-artifact
     DevMergeCoordinator o--> explain-code-fix
-    DevMergeCoordinator o..> organise-project-files : when integration creates a project path
 ```
 
-The role schema also loads effective-communication and ste-technical-writing for every conceptual Agent. Those two shared dependencies are stated once here instead of adding the same two arrows to every Agent in both diagrams.
+The role schema supplies effective-communication and ste-technical-writing to every conceptual Agent. PROJECT.yaml records organise-project-files once in shared_agent_skills, and generated AGENTS.md tells every Agent to load it when the Agent must choose or audit the location of a project file or directory. The diagrams omit that project-wide route instead of repeating it as role-specific arrows.
 
 ### Scenario: Creating A Work Item For An Excluded Issue
 

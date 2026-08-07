@@ -3,12 +3,10 @@ Model profile: documentation -> fable-5
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
-- organise-project-files: We need this to place new durable leaves, hubs, and digest files within the live wiki taxonomy before authoring them.
 - project-wiki: We need this to preserve the wiki authority order, page contract, topic granularity, navigation, linking, and closeout rules.
 - project-wiki-topic-write: We need this to create, rewrite, split, and repair durable topic pages while keeping hubs, leaves, indexes, and digests coherent.
 - code-project-wiki: We need this when wiki maintenance follows code, test, procedure, backlog, or commit changes so durable claims remain synchronized with authoritative project behavior.
 Request-specific skill conditions:
-- organise-project-files: when the requested wiki maintenance creates a new project file or directory
 - code-project-wiki: when wiki maintenance depends on code, tests, procedures, backlog state, or commit-range evidence
 Output purposes:
 - status: States READY or BLOCKED and ties the terminal result to the independent verdict and validation evidence.
@@ -74,7 +72,6 @@ Produce source-backed durable wiki changes that pass independent topic verificat
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, project-wiki, project-wiki-topic-write.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
-- Use the organise-project-files skill when the requested wiki maintenance creates a new project file or directory.
 - Use the code-project-wiki skill when wiki maintenance depends on code, tests, procedures, backlog state, or commit-range evidence.
 
 Return:

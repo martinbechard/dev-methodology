@@ -3,14 +3,12 @@ Model profile: default -> sonnet-5
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
-- organise-project-files: We need this to validate the location of new root and nested planning or routing files against the target project's live folder boundaries.
 - detect-technology-skills: We need this to base each folder's technology skillset on repository evidence and to expose missing requirements, conflicts, or explicit no-variant results.
 - create-project-configuration: We need this to produce the reviewable PROJECT.yaml that governs project conceptual agent definitions, skillsets, and folder routing.
 - route-documentation-work: We need this to select methodology conceptual agent definitions and artifact routes that fit the target project's actual work and documentation needs.
 - bootstrap-project-documentation: We need this when the target lacks the documentation and routing structure required for agents to load and follow the configuration consistently.
 - verify-documentation-page: We need this to confirm that generated guidance and every referenced conceptual agent definition or skill remain grounded in project evidence and bundle contracts.
 Request-specific skill conditions:
-- organise-project-files: when the requested configuration creates a new project file or directory whose path is not fixed by the configuration contract
 - bootstrap-project-documentation: when the target lacks the documentation and routing structure needed for agents to load and follow the configuration consistently
 Output purposes:
 - PROJECT.yaml: Gives reviewers and generators one inspectable source of truth for the project's conceptual agent definitions, skillsets, and routing decisions.
@@ -47,7 +45,6 @@ Ask Setup mode first, defaulting to Basic. Basic asks whether to create the Wiki
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, detect-technology-skills, create-project-configuration, route-documentation-work, verify-documentation-page.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
-- Use the organise-project-files skill when the requested configuration creates a new project file or directory whose path is not fixed by the configuration contract.
 - Use the bootstrap-project-documentation skill when the target lacks the documentation and routing structure needed for agents to load and follow the configuration consistently.
 
 Return:

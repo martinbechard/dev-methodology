@@ -7,7 +7,6 @@
 # - manage-work-items: We need the provider-neutral identity, lifecycle, result, transition, completion-reconciliation, recovery, and reporting contract for direct lifecycle ownership.
 # - coordinate-work-items: We need its provider-neutral acceptance, active-execution, delivery, Persistence closure, recovery, and reporting policy.
 # - coordinate-codex-tasks: We need its Codex capability, task identity, title, follow-up, reconciliation, and archival mapping without changing portable lifecycle authority.
-# - organise-project-files: We need this to ensure any new coordination, backlog, or handoff artifact is placed from live repository guidance before it is delegated or written.
 # - deliver-work-item: We need its provider-neutral accepted input, delivery result, and evidence contract whenever an accepted change is delivered through the effective Commit-selected provider.
 # - structured-design: We need this to divide complex work into bounded responsibilities and dependencies that can be assigned without losing the intended system outcome.
 # - structured-explanation: We need this so assignments, decisions, handoffs, and outcomes remain understandable across contributors with separate working contexts.
@@ -15,7 +14,6 @@
 # - create-work-item: when an excluded confirmed issue requires a durable provider-owned work item
 # - coordinate-work-items: when the root execution owns a coordinated work item
 # - coordinate-codex-tasks: when the coordinated root execution runs as a Codex task
-# - organise-project-files: when the requested orchestration creates a new project file or directory
 # Output purposes:
 # - status: States READY, AWAITING_REVIEW, or BLOCKED and identifies the evidence or condition that determines the current delivery outcome.
 # - task breakdown: Makes bounded responsibilities, dependencies, and sequencing explicit so contributors can work independently toward the same outcome.
@@ -135,7 +133,6 @@ Load request-specific skills only when their conditions apply. Use judgment when
 - Use the create-work-item skill when an excluded confirmed issue requires a durable provider-owned work item.
 - Use the coordinate-work-items skill when the root execution owns a coordinated work item.
 - Use the coordinate-codex-tasks skill when the coordinated root execution runs as a Codex task.
-- Use the organise-project-files skill when the requested orchestration creates a new project file or directory.
 
 Return: status; task breakdown; resolved definition-owned skillsets; assigned agents; handoff plan; integrated verification; committed integration; confirmed issue dispositions; work-item delivery."""
 model = "gpt-5.6-sol"

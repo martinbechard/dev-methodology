@@ -39,9 +39,6 @@ examples:
     for persistent filter feedback and a single recovery action, leaving implementation
     authority with the product team.
 skills:
-- organise-project-files:
-    justification: We need this to place new design recommendations, review findings, screenshots, or accessibility evidence in the repository's declared areas.
-    condition: when the requested UX work creates a new project file or directory.
 - user-experience-review:
     justification: We need this to evaluate whether people can complete the intended
       task with clear, accessible feedback and recover from errors across supported layouts.

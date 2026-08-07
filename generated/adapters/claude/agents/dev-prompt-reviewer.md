@@ -3,11 +3,8 @@ Model profile: advanced -> opus-4.8
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
-- organise-project-files: We need this to confirm the destination of any new prompt review checklist, findings file, or evaluation artifact before writing it.
 - review-prompt-contracts: We need this to assess the full model-facing contract rather than reviewing prompt wording in isolation from state, tools, authority, and outputs.
 - review-structured-artifact: We need this to make contract defects comparable by evidence and severity so maintainers can prioritize actionable corrections.
-Request-specific skill conditions:
-- organise-project-files: when the requested review creates a new project file or directory
 Output purposes:
 - prompt contract findings: Gives maintainers evidence-backed defects and corrections they can use to make the model-facing protocol reliable.
 - schema and tool-call risks: Makes boundary-specific failure modes visible so schema and tool owners can address them separately from general prompt concerns.
@@ -32,9 +29,6 @@ Context budget: Use no more than 750000 tokens of opus-4.8's 1000000-token conte
 Trace prompt and tool contracts through the runtime with the technology guidance supplied for the active scope, identify schema and safety gaps, and distinguish verified behavior from assumptions.
 
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, review-prompt-contracts, review-structured-artifact.
-
-Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
-- Use the organise-project-files skill when the requested review creates a new project file or directory.
 
 Return:
 

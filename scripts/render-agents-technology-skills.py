@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Renders project setup, deadline-aware coordination, workflows, folder technology, and project skill guidance.
+# Summary: Renders project setup, coordination, workflows, shared Agent skills, folder technology, and project skill guidance.
 
 from __future__ import annotations
 
@@ -30,6 +30,7 @@ _RESOURCE_DEADLINE_CLASS_IDS = (
     "live-model-evaluation",
 )
 PROJECT_SKILL_EXTENSIONS_HEADING = "## Project Skill Extensions"
+SHARED_AGENT_SKILLS_HEADING = "## Shared Agent Skills"
 CLAIM_HELPER_PROVIDERS = {
     "mcp": "resource-claim-helper-mcp",
     "command": "resource-claim-helper-command",
@@ -285,13 +286,79 @@ def _project_skill_extensions(value: dict[str, object]) -> list[str]:
         normalized_entries.append(skill)
 
     definition_owned = _definition_owned_skill_paths(value)
+    shared_agent_skill_paths = {
+        skill: f"shared_agent_skills[{index}].skill"
+        for index, (skill, _condition) in enumerate(_shared_agent_skills(value))
+    }
     for index, skill in enumerate(normalized_entries):
         if skill in definition_owned:
             raise ValueError(
                 f"project_skill_extensions[{index}] skill id {skill!r} duplicates definition-owned skill "
                 f"{definition_owned[skill]}; remove it from project_skill_extensions"
             )
+        if skill in shared_agent_skill_paths:
+            raise ValueError(
+                f"project_skill_extensions[{index}] skill id {skill!r} duplicates shared Agent skill "
+                f"{shared_agent_skill_paths[skill]}; remove it from project_skill_extensions"
+            )
     return normalized_entries
+
+
+def _shared_agent_skills(value: dict[str, object]) -> list[tuple[str, str]]:
+    """Validate project-wide conditional skill references shared by every Agent."""
+
+    if "shared_agent_skills" not in value:
+        return []
+    entries = value["shared_agent_skills"]
+    if not isinstance(entries, list):
+        raise ValueError(
+            "shared_agent_skills must be a list; use [] when no project-wide conditional skill is selected"
+        )
+
+    normalized_entries: list[tuple[str, str]] = []
+    first_paths: dict[str, str] = {}
+    definition_owned = _definition_owned_skill_paths(value)
+    for index, entry in enumerate(entries):
+        prefix = f"shared_agent_skills[{index}]"
+        if not isinstance(entry, Mapping) or set(entry) != {"skill", "condition"}:
+            raise ValueError(f"{prefix} keys must be exactly: skill, condition")
+        skill = _normalized_skill_id(entry.get("skill"), f"{prefix}.skill")
+        if skill in RESOURCE_COORDINATION_RESERVED_SKILLS:
+            raise ValueError(
+                f"{prefix}.skill id {skill!r} is reserved for resource_coordination; "
+                "remove it from shared_agent_skills"
+            )
+        if skill in first_paths:
+            raise ValueError(
+                f"{prefix}.skill id {skill!r} duplicates {first_paths[skill]}; remove the duplicate entry"
+            )
+        first_paths[skill] = f"{prefix}.skill"
+        if not (SKILLS_ROOT / skill / SKILL_FILE_NAME).is_file():
+            raise ValueError(f"{prefix}.skill unknown bundled skill id {skill!r}")
+        if skill in definition_owned:
+            raise ValueError(
+                f"{prefix}.skill id {skill!r} duplicates definition-owned skill "
+                f"{definition_owned[skill]}; remove it from that role or shared_agent_skills"
+            )
+        condition = _single_line_rendered_text(entry.get("condition"), f"{prefix}.condition")
+        normalized_entries.append((skill, condition))
+    return normalized_entries
+
+
+def _shared_agent_skill_lines(value: dict[str, object]) -> list[str]:
+    """Render root project guidance for shared conditional Agent skills."""
+
+    shared_skills = _shared_agent_skills(value)
+    if not shared_skills:
+        return []
+    return [
+        SHARED_AGENT_SKILLS_HEADING,
+        "",
+        "These project-wide references apply to every Agent. Load a listed skill only when its condition applies; the skill definitions remain in the bundled catalog and are not copied here.",
+        "",
+        *(f"- {skill}: load {condition}." for skill, condition in shared_skills),
+        "",
+    ]
 
 
 def _project_skill_extension_lines(value: dict[str, object]) -> list[str]:
@@ -1306,8 +1373,8 @@ def render(
     resource_coordination are required.
     agent_claim_transport is required only when resource_coordination selects resource-claim
     and must be absent when resource_coordination selects none.
-    Technology guidance is always produced from the configured loadouts, and an optional
-    project_skill_extensions list produces the final root-only reference section when
+    Technology guidance is always produced from the configured loadouts. Optional
+    shared_agent_skills and project_skill_extensions lists produce root-only reference sections when
     include_project_skill_extensions is true. The optional inline_tech_skills request must
     agree with project_setup.technology_skill_delivery when setup metadata exists. With no
     setup metadata or explicit request, delivery defaults to by-reference. Inline delivery
@@ -1316,7 +1383,7 @@ def render(
 
     The return value is the complete generated Markdown text and ends with a newline.
     Rendering does not write an output file, but inlined rendering reads bundled SKILL.md
-    files. Invalid workflow, project extension, or source-evidence configuration,
+    files. Invalid workflow, shared Agent skill, project extension, or source-evidence configuration,
     unsafe skill names, and invalid skill frontmatter raise ValueError. Missing or unreadable
     skill files raise OSError, and malformed YAML may raise yaml.YAMLError.
     """
@@ -1445,8 +1512,10 @@ def render(
                     f"----- END INLINED TECHNOLOGY SKILL: {skill_name} -----",
                 ])
     lines.append("")
+    shared_agent_skill_lines = _shared_agent_skill_lines(value)
     project_skill_extension_lines = _project_skill_extension_lines(value)
     if include_project_skill_extensions:
+        lines.extend(shared_agent_skill_lines)
         lines.extend(project_skill_extension_lines)
     return "\n".join(lines)
 
@@ -1465,7 +1534,7 @@ def main(arguments: Sequence[str] | None = None) -> int:
     Argument-parser usage failures raise SystemExit with argparse's exit code, normally 2.
     """
     parser = argparse.ArgumentParser(
-        description="Render resource coordination, workflow selectors, technology guidance, and root project skill references."
+        description="Render resource coordination, workflow selectors, technology guidance, shared Agent skills, and root project skill references."
     )
     parser.add_argument("--project", type=Path, required=True)
     parser.add_argument("--output", type=Path)

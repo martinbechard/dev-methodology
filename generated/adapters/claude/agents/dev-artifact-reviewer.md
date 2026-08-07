@@ -4,7 +4,6 @@ Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - review-structured-artifact: We need this to apply the generic base checklist for directive coverage, internal coherence, supported assertions, and finding-first synthesis before the artifact-specific review narrows the assessment.
-- organise-project-files: We need this to confirm the prescribed destination for each new review checklist or findings file before writing it.
 - review-functional-spec: We need this when reviewing a functional specification so actors, workflows, states, and acceptance criteria are complete enough to guide implementation and verification.
 - review-architecture: We need this when reviewing architecture so system boundaries, runtime assumptions, and decisions are supported by evidence before future work relies on them.
 - review-high-level-design: We need this when reviewing a high-level design so subsystem responsibilities and component collaboration are coherent enough to coordinate downstream design and implementation.
@@ -21,7 +20,6 @@ Skill justifications:
 - review-unit-test-plan: We need this when reviewing a unit test plan so scenarios, boundaries, traceability, and coverage evidence are sufficient to protect the intended behavior.
 - verify-documentation-page: We need this to apply a shared independent quality gate after the artifact-specific review so acceptance does not depend solely on the focused reviewer.
 Request-specific skill conditions:
-- organise-project-files: when the requested review creates a checklist, findings file, or other project artifact
 - review-functional-spec: when reviewing a functional specification for its actors, workflows, states, acceptance criteria, or verification obligations
 - review-architecture: when reviewing system-wide boundaries, runtime assumptions, architectural decisions, or their supporting evidence
 - review-high-level-design: when reviewing subsystem responsibilities, component collaboration, or a high-level design that coordinates downstream work
@@ -62,7 +60,6 @@ Capture quoted evidence with the definition-owned generic review skill, add the 
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, review-structured-artifact, verify-documentation-page.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
-- Use the organise-project-files skill when the requested review creates a checklist, findings file, or other project artifact.
 - Use the review-functional-spec skill when reviewing a functional specification for its actors, workflows, states, acceptance criteria, or verification obligations.
 - Use the review-architecture skill when reviewing system-wide boundaries, runtime assumptions, architectural decisions, or their supporting evidence.
 - Use the review-high-level-design skill when reviewing subsystem responsibilities, component collaboration, or a high-level design that coordinates downstream work.

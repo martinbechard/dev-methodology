@@ -101,12 +101,6 @@ classDiagram
         <<Agent Skill>>
     }
 
-    class organise-project-files {
-        <<SKILL.md>>
-        <<Agent Skill>>
-        +choose-project-file-placement()
-    }
-
     class test-driven-development {
         <<SKILL.md>>
         <<Agent Skill>>
@@ -117,20 +111,21 @@ classDiagram
     DevCoder o--> code-comments
     DevCoder o--> code-discovery
     DevCoder o--> explain-code-fix
-    DevCoder o..> organise-project-files : when implementation creates a project file or directory
     DevCoder o..> test-driven-development : when the user requests TDD
 ```
 
 ### Scenario: Organizing Project Artifacts
 
-This scenario shows how Project Organiser combines placement, design, and explanation skills when it classifies or audits project artifacts.
+This scenario shows how Project Organiser combines the shared placement procedure with design and explanation skills when it classifies or audits project artifacts.
 
 ```mermaid
 classDiagram
     direction LR
 
-    class ProjectOrganiser {
-        <<Agent>>
+    class project-specific-directives["Project-specific directives"] {
+        <<AGENTS.md>>
+        <<routing>>
+        +route organise-project-files when placement must be chosen or audited
     }
 
     class organise-project-files {
@@ -152,10 +147,16 @@ classDiagram
         +create-structured-explanation()
     }
 
-    ProjectOrganiser o--> organise-project-files
+    class ProjectOrganiser {
+        <<Agent>>
+    }
+
+    project-specific-directives o..> organise-project-files : when an Agent must choose or audit an artifact location
     ProjectOrganiser o--> structured-design
     ProjectOrganiser o--> structured-explanation
 ```
+
+PROJECT.yaml records organise-project-files once in shared_agent_skills. Generated AGENTS.md exposes the condition to every Agent, so the Project-specific directives node avoids repeating the same dependency for each Agent. Project Organiser loads it when its placement responsibility applies, while other Agents load it before choosing or auditing an artifact location.
 
 ### Scenario: Reviewing A Structured Artifact
 

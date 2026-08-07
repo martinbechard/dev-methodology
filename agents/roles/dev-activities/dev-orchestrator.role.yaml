@@ -404,9 +404,6 @@ skills:
     justification: We need its Codex capability, task identity, title, follow-up,
       reconciliation, and archival mapping without changing portable lifecycle authority.
     condition: when the coordinated root execution runs as a Codex task
-- organise-project-files:
-    justification: We need this to ensure any new coordination, backlog, or handoff artifact is placed from live repository guidance before it is delegated or written.
-    condition: when the requested orchestration creates a new project file or directory.
 - deliver-work-item:
     justification: We need its provider-neutral accepted input, delivery result, and evidence contract whenever an accepted change is delivered through the effective Commit-selected provider.
 - structured-design:

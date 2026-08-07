@@ -39,9 +39,6 @@ examples:
     reported the relevant runtime state, observable evidence, and minimal reproduction
     steps for follow-up investigation.
 skills:
-- organise-project-files:
-    justification: We need this to keep any new screenshots, traces, or browser-run evidence in the repository's declared evidence area.
-    condition: when the requested browser workflow creates a new project file or directory.
 - verify-end-to-end-workflow:
     justification: We need this to evaluate the complete user workflow across real runtime
       boundaries so passing component checks do not conceal integration failures.

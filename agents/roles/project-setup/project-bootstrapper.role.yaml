@@ -359,9 +359,6 @@ examples:
     verification. The report records the final integration commit, audit evidence, review
     results, clean status, and enabled resource-coordination closeout."
 skills:
-- organise-project-files:
-    justification: We need this to place project configuration, documentation, review evidence, and setup records from live repository structure before bootstrap creates them.
-    condition: when the requested bootstrap creates a new project file or directory whose path is not already fixed by the bootstrap contract.
 - bootstrap-project-documentation:
     justification: We need this to choose the smallest complete documentation structure and runtime integration that future agents can maintain reliably.
 - route-documentation-work:

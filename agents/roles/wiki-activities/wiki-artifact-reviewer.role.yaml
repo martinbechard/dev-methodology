@@ -41,9 +41,6 @@ examples:
     Current Understanding has no linked automated test, and preserved that gap in the
     findings and corrections handoff.
 skills:
-- organise-project-files:
-    justification: We need this to confirm the prescribed destination for each new project-wiki review checklist or findings file before writing it.
-    condition: when the requested review creates a new project file or directory.
 - project-wiki-review:
     justification: We need this to apply the project-wiki artifact checklist for authority order, page subclasses, navigation, source links, update workflow, automation, and verification.
 - verify-documentation-page:

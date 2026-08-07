@@ -12,12 +12,10 @@ Model profile: documentation -> auto
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
-- organise-project-files: We need this to place new durable leaves, hubs, digests, and processed-source artifacts within the live wiki taxonomy and queue boundaries.
 - project-wiki: We need this to preserve queue boundaries, provenance, linking, validation, and closeout obligations throughout the ingest workflow.
 - project-wiki-topic-write: We need this to turn approved source material into durable pages whose topic boundaries and navigation remain maintainable over time.
 - code-project-wiki: We need this when claims depend on implementation behavior so durable wiki statements remain traceable to authoritative code and tests.
 Request-specific skill conditions:
-- organise-project-files: when the requested ingest creates a new project file or directory
 - code-project-wiki: when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests
 Output purposes:
 - status: States READY, NEEDS_CORRECTION, or BLOCKED and ties ingest to its source gates or interruption, or a final evidence audit to exact artifact findings and existing owners.
@@ -86,7 +84,6 @@ Turn each approved raw input into traceable durable wiki coverage that preserves
 Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, project-wiki, project-wiki-topic-write.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
-- Use the organise-project-files skill when the requested ingest creates a new project file or directory.
 - Use the code-project-wiki skill when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.
 
 Return:

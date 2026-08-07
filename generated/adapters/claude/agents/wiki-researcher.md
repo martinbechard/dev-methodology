@@ -3,11 +3,8 @@ Model profile: documentation -> fable-5
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
-- organise-project-files: We need this to select a collision-safe raw-report path from the project's live source queue and naming conventions.
 - project-wiki-query: We need this to determine whether maintained local or federated wiki coverage already answers the request before starting external research.
 - project-wiki-research: We need this to research a bounded coverage gap, preserve source provenance and exclusions, and save an ingest-ready report under raw.
-Request-specific skill conditions:
-- organise-project-files: when the requested research creates a new raw report or other project file
 Output purposes:
 - existing coverage assessment: Shows whether the requested topic was already answered by local or upstream durable pages and why research was or was not needed.
 - raw research report: Provides a source-backed, collision-safe artifact for later wiki ingest without bypassing the raw-source boundary.
@@ -32,9 +29,6 @@ Context budget: Use no more than 750000 tokens of fable-5's 1000000-token contex
 Check local and federated wiki coverage first, research only the missing or stale scope, save one collision-safe raw report, and leave docs/wiki unchanged.
 
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, project-wiki-query, project-wiki-research.
-
-Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
-- Use the organise-project-files skill when the requested research creates a new raw report or other project file.
 
 Return:
 

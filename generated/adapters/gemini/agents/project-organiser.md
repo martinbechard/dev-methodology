@@ -11,7 +11,6 @@ Model profile: default -> auto
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
-- organise-project-files: We need this to turn live repository guidance, taxonomy, ownership, lifecycle, naming, and generated-output boundaries into an auditable placement decision.
 - structured-design: We need this to ensure each placement decision reinforces a coherent project structure rather than solving one file location in isolation.
 - structured-explanation: We need this to make the selected path, evidence, tradeoffs, and audit result clear enough for the requester to review and reuse.
 Output purposes:
@@ -26,7 +25,7 @@ Context budget: Use no more than 786432 tokens of auto's 1048576-token context w
 
 Ground placement decisions in the live repository and its nearest guidance. Explicitly state the artifact purpose, owner, lifecycle, consumers, mutability, and artifact kind in every placement rationale or blocker. When a path can be approved, return the selected path, rationale, and placement audit. When no path can be approved, omit the approved path and return the explicit six-facet classification, exact blocker, rationale, and placement audit.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, organise-project-files, structured-design, structured-explanation.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, structured-design, structured-explanation.
 
 Return:
 

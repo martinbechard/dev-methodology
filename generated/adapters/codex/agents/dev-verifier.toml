@@ -3,7 +3,6 @@
 # Skill justifications:
 # - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 # - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
-# - organise-project-files: We need this to keep any new verification reports, fixtures, traces, or runtime evidence in the repository's declared ownership areas.
 # - test-strategy: We need this to choose verification that matches the changed behavior and risk instead of relying on a framework-specific default test set.
 # - verify-end-to-end-workflow: We need this when confidence depends on proving that the complete user or system workflow works across its real boundaries.
 # - analyze-root-cause: We need this when checks fail so the report distinguishes an actual product defect from test, environment, or evidence problems.
@@ -13,7 +12,6 @@
 # - review-structured-artifact: We need this to assess changed scope and acceptance criteria systematically so important verification gaps are not hidden by passing checks.
 # - structured-explanation: We need this to communicate commands, outcomes, omissions, and residual risk in a form the requester can audit and act on.
 # Request-specific skill conditions:
-# - organise-project-files: when the requested verification creates a new project file or directory
 # - verify-end-to-end-workflow: when confidence depends on proving a complete user or system workflow across its real boundaries
 # - analyze-root-cause: when a verification check fails and its cause must be distinguished from test, environment, or evidence problems
 # - collect-runtime-evidence: when static checks alone cannot establish the behavior needed for a verification conclusion
@@ -38,7 +36,6 @@ Before acting, load the codex-harness-directives skill completely; it governs Co
 Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, test-strategy, review-structured-artifact, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
-- Use the organise-project-files skill when the requested verification creates a new project file or directory.
 - Use the verify-end-to-end-workflow skill when confidence depends on proving a complete user or system workflow across its real boundaries.
 - Use the analyze-root-cause skill when a verification check fails and its cause must be distinguished from test, environment, or evidence problems.
 - Use the collect-runtime-evidence skill when static checks alone cannot establish the behavior needed for a verification conclusion.

@@ -148,9 +148,10 @@ project_taxonomy:
 
 root_agents_reference:
   file: AGENTS.md
-  purpose: "Reference project-specific maintenance, workflow, resource coordination, and folder technology skills generated from PROJECT.yaml."
+  purpose: "Reference project-specific maintenance, shared conditional Agent skills, workflow, resource coordination, and folder technology skills generated from PROJECT.yaml."
   required_content:
     - "Reference the repository-specific dev-methodology-repository-maintenance skill without copying its body."
+    - "Project-wide conditional Agent skill references generated from shared_agent_skills without copying skill bodies."
     - "Unconditional folder technology skillsets generated from this plan and their required-load failure policy."
 
 technology_skill_detection:
@@ -244,6 +245,10 @@ role_agent_set:
       - structured-explanation
     completion_checks:
       - "Run applicable commands from AGENTS.md without weakening gates."
+
+shared_agent_skills:
+  - skill: organise-project-files
+    condition: "when an Agent must choose or audit the location of a project file or directory"
 
 project_skill_extensions:
   - skill: dev-methodology-repository-maintenance
@@ -414,7 +419,7 @@ documentation_and_file_contracts:
   - path: .agents/skills/dev-methodology-repository-maintenance/SKILL.md
     purpose: "Project-specific repository maintenance contract referenced from generated AGENTS.md."
   - path: PROJECT.yaml
-    purpose: "Single project-wide setup and validation artifact for conceptual agent definitions, skillsets, folder routing, nested AGENTS.md placement, and evidence."
+    purpose: "Single project-wide setup and validation artifact for conceptual agent definitions, shared conditional Agent skills, project-level skill extensions, folder skillsets, folder routing, nested AGENTS.md placement, and evidence."
   - path: "Not applicable"
     purpose: "No project-local CLAUDE.md bridge is currently required."
   - path: README.md

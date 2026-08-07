@@ -79,9 +79,6 @@ examples:
     validation correction without expanding scope, reran affected checks, committed a
     replacement candidate, and returned clean handoff evidence for a new independent review.'
 skills:
-- organise-project-files:
-    justification: We need this to choose and audit destinations from live project guidance before adding source, test, fixture, configuration, or generated files.
-    condition: when the requested implementation creates a new project file or directory.
 - careful-coding:
     justification: We need this to keep implementation scoped to the request, make assumptions
       explicit, and avoid complexity that is not required for a complete fix.

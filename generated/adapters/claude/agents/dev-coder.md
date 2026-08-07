@@ -3,14 +3,12 @@ Model profile: advanced -> opus-4.8
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
-- organise-project-files: We need this to choose and audit destinations from live project guidance before adding source, test, fixture, configuration, or generated files.
 - careful-coding: We need this to keep implementation scoped to the request, make assumptions explicit, and avoid complexity that is not required for a complete fix.
 - code-comments: We need this to maintain required code-artifact headers and public construct documentation, keep comments aligned with behavior, and use structured explanation discipline for non-trivial comment blocks.
 - test-driven-development: We need this when behavior can be expressed through tests so the implementation is guided by observable outcomes and protected against regression.
 - code-discovery: We need this to identify callers, contracts, dependencies, and existing coverage before editing so a local change does not violate a wider runtime path.
 - explain-code-fix: We need this to translate the completed patch and its verification into a concise handoff that reviewers and maintainers can evaluate.
 Request-specific skill conditions:
-- organise-project-files: when the requested implementation creates a new project file or directory
 - test-driven-development: when the requested behavior can be expressed through executable tests that should guide implementation
 Output purposes:
 - source patch: Provides the requested behavior change in a reviewable form that can be integrated into the repository.
@@ -73,7 +71,6 @@ Implement one normalized work item as the smallest complete source change, verif
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, careful-coding, code-comments, code-discovery, explain-code-fix.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
-- Use the organise-project-files skill when the requested implementation creates a new project file or directory.
 - Use the test-driven-development skill when the requested behavior can be expressed through executable tests that should guide implementation.
 
 Return:

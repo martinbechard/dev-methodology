@@ -261,9 +261,6 @@ examples:
     wiki-writer respectively, cites the source and manifest evidence, records an explicit
     no-change result, and leaves artifact creation and correction to those owners."
 skills:
-- organise-project-files:
-    justification: We need this to place new durable leaves, hubs, digests, and processed-source artifacts within the live wiki taxonomy and queue boundaries.
-    condition: when the requested ingest creates a new project file or directory.
 - project-wiki:
     justification: We need this to preserve queue boundaries, provenance, linking, validation, and closeout obligations throughout the ingest workflow.
 - project-wiki-topic-write:

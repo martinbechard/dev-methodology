@@ -12,7 +12,6 @@ Model profile: advanced -> pro
 Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
-- organise-project-files: We need this to preserve source, generated, adapter, design, and test ownership boundaries whenever methodology maintenance adds files.
 - maintain-methodology-documentation: We need this to keep source files, generated artifacts, adapters, and validation synchronized across a maintenance change without creating user-home copies.
 - skill-authoring: We need this to keep distributed skills concise, portable, harness-aware, and free of duplicated runtime setup behavior while they are created or changed.
 - agent-role-authoring: We need this to create and revise conceptual agent definitions with explicit authority, structured instructions, bounded state transitions, distinct examples, and aligned runtime outputs.
@@ -21,7 +20,6 @@ Skill justifications:
 - structured-design: We need this when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation.
 - structured-explanation: We need this to hand off the changed scope, decisions, verification evidence, and remaining risk without ambiguity.
 Request-specific skill conditions:
-- organise-project-files: when the requested maintenance creates a new project file or directory
 - structured-design: when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation
 Output purposes:
 - status: States READY or BLOCKED and ties the terminal result to review, validation, commit, clean-worktree, and enabled resource-coordination release evidence.
@@ -84,7 +82,6 @@ Leave the requested methodology change aligned across source files, derived arti
 Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, maintain-methodology-documentation, skill-authoring, agent-role-authoring, name-methodology-artifacts, route-documentation-work, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
-- Use the organise-project-files skill when the requested maintenance creates a new project file or directory.
 - Use the structured-design skill when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation.
 
 Return:

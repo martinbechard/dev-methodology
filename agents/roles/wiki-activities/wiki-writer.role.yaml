@@ -123,9 +123,6 @@ examples:
     preserved writer diff recorded; no clean-worktree claim or verifier-authored mutation
     was accepted, and enabled resource-coordination evidence was handed off."
 skills:
-- organise-project-files:
-    justification: We need this to place new durable leaves, hubs, and digest files within the live wiki taxonomy before authoring them.
-    condition: when the requested wiki maintenance creates a new project file or directory.
 - project-wiki:
     justification: We need this to preserve the wiki authority order, page contract, topic granularity, navigation, linking, and closeout rules.
 - project-wiki-topic-write:

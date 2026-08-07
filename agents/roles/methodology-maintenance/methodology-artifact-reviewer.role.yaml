@@ -32,9 +32,6 @@ examples:
     of the stale invocation and clarification of the verification owner, then recorded
     uncertainty about an undocumented migration case as residual risk.
 skills:
-- organise-project-files:
-    justification: We need this to confirm the destination of any new methodology review checklist or findings file before writing it.
-    condition: when the requested review creates a new project file or directory.
 - review-structured-artifact:
     justification: We need this to present actionable defects before general observations so artifact owners can prioritize remediation.
 - skill-authoring:

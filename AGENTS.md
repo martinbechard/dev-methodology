@@ -214,6 +214,12 @@ When configured folder patterns overlap, the most-specific matching pattern wins
   - fastapi evidence: Owning manifest dependency: evals/projects/fastapi-orders/pyproject.toml declares fastapi; Framework source evidence: evals/projects/fastapi-orders/app/main.py imports FastAPI and declares an application route
   - python evidence: Python source evidence: evals/projects/fastapi-orders/app/main.py
 
+## Shared Agent Skills
+
+These project-wide references apply to every Agent. Load a listed skill only when its condition applies; the skill definitions remain in the bundled catalog and are not copied here.
+
+- organise-project-files: load when an Agent must choose or audit the location of a project file or directory.
+
 ## Project Skill Extensions
 
 These references apply through the root AGENTS.md only. Load each selected skill completely in the declared order when starting project work. Skill definitions remain in their bundled or registered catalogs and are not copied here.

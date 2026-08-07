@@ -40,9 +40,6 @@ skills:
     justification: We need this to apply the generic base checklist for directive coverage,
       internal coherence, supported assertions, and finding-first synthesis before the
       artifact-specific review narrows the assessment.
-- organise-project-files:
-    justification: We need this to confirm the prescribed destination for each new review checklist or findings file before writing it.
-    condition: when the requested review creates a checklist, findings file, or other project artifact.
 - review-functional-spec:
     justification: We need this when reviewing a functional specification so actors,
       workflows, states, and acceptance criteria are complete enough to guide implementation

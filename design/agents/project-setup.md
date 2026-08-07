@@ -85,25 +85,19 @@ classDiagram
         <<Cross-group>>
     }
 
-    class organise-project-files {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +choose-project-file-placement()
-    }
 
     ProjectConfigurator o--> detect-technology-skills
     ProjectConfigurator o--> create-project-configuration
     ProjectConfigurator o--> route-documentation-work
     ProjectConfigurator o--> verify-documentation-page
     ProjectConfigurator o..> bootstrap-project-documentation : when documentation or routing structure is missing
-    ProjectConfigurator o..> organise-project-files : when an unfixed project path must be chosen
 ```
 
 create-project-configuration writes the resulting AGENTS.md guidance. That output is not drawn as a loading dependency because the Project Configurator produces the file rather than consuming it through the relationship.
 
 ### Scenario: Bootstrapping A Project
 
-This scenario shows how Project Bootstrapper combines documentation routing and bootstrap skills, adding file-placement guidance only when the destination is not already fixed.
+This scenario shows how Project Bootstrapper combines documentation routing and bootstrap skills.
 
 ```mermaid
 classDiagram
@@ -123,16 +117,11 @@ classDiagram
         <<Cross-group>>
     }
 
-    class organise-project-files {
-        <<SKILL.md>>
-        <<Cross-group>>
-        +choose-project-file-placement()
-    }
-
     ProjectBootstrapper o--> route-documentation-work
     ProjectBootstrapper o--> bootstrap-project-documentation
-    ProjectBootstrapper o..> organise-project-files : when an unfixed project path must be chosen
 ```
+
+PROJECT.yaml records organise-project-files once in shared_agent_skills, and generated AGENTS.md tells every Agent to load it when the Agent must choose or audit the location of a project file or directory. Project setup uses that project-wide route instead of assigning file placement separately to Project Configurator and Project Bootstrapper.
 
 ## Skill Responsibilities
 

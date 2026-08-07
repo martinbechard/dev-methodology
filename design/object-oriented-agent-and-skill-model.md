@@ -236,6 +236,38 @@ classDiagram
 
 No arrow joins Backlog Manager to AGENTS.md because the harness loads project guidance automatically. The matching transition-work-item wording connects the Agent instruction to the AGENTS.md route without making the Agent reference that file. The open-diamond arrow shows that AGENTS.md names the skill selected for the project. If a project stores work items in files, AGENTS.md can name manage-work-items-file instead. The Backlog Manager instruction remains unchanged.
 
+#### Project-Wide Conditional Skill Routing
+
+A condition that applies uniformly to every Agent belongs in project guidance instead of being repeated in individual Agent definitions. PROJECT.yaml records the shared skill and its condition once. Generated AGENTS.md exposes that route to every Agent, and the harness supplies the guidance automatically.
+
+- **RULE: RULE-73** Project-wide conditional skills are routed once
+  - **SYNOPSIS:** Record a bundled skill and its common loading condition in PROJECT.yaml shared_agent_skills when the same rule applies to every conceptual Agent in the project.
+  - **EXAMPLE:** PROJECT.yaml names organise-project-files with the condition “when an Agent must choose or audit the location of a project file or directory.” Individual Agent definitions do not repeat that dependency.
+
+- **RULE: RULE-74** The conditional arrow starts at AGENTS.md
+  - **SYNOPSIS:** Draw a dotted open-diamond arrow from the project-specific AGENTS.md node to the exact skill, labeled with the loading condition. Do not draw one arrow from every Agent or an Agent-to-AGENTS.md relationship.
+  - **EXAMPLE:** Project-specific directives conditionally name organise-project-files whenever an Agent must choose or audit an artifact location.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class project-specific-directives["Project-specific directives"] {
+        <<AGENTS.md>>
+        <<routing>>
+        +route organise-project-files when placement must be chosen or audited
+    }
+
+    class organise-project-files {
+        <<SKILL.md>>
+        +choose-project-file-placement()
+    }
+
+    project-specific-directives o..> organise-project-files : when an Agent must choose or audit an artifact location
+```
+
+This relationship is project-wide conditional loading, not provider selection. The AGENTS.md route names one exact skill and does not choose among interchangeable implementations. The single route keeps the shared condition visible without making one Agent appear to own file placement or cluttering every Agent diagram with the same arrow.
+
 ### 2.6 Showing A Skill Interface In A Diagram
 
 The procedures a skill implements and the definitions it exposes can be considered a Skill interface when a calling Agent refers only to that public information. The Agent depends on those public members without needing to know the skill’s internal workflow, decision steps, or provider-specific details.
@@ -921,6 +953,7 @@ The glossary defines the relationship and diagram terms used by the analysis aft
 | Exact-name reference | An open-diamond arrow from a node that knows a skill’s exact name to that SKILL.md. | DevCoder o--> careful-coding. |
 | Procedure-name reference | A regular arrow from an invoker to the procedure it knows without naming the implementing SKILL.md. | BacklogManager --> manage-work-items. |
 | Conditional reference | A dotted regular or open-diamond arrow whose label states the loading condition. | DevCoder o..> test-driven-development, labeled “when the user requests TDD.” |
+| Project-wide conditional skill routing | One PROJECT.yaml shared_agent_skills entry whose condition applies uniformly to every Agent and is rendered once in root AGENTS.md. It avoids repeating the same conditional dependency in every Agent definition. | organise-project-files is routed when any Agent must choose or audit a project file or directory location. |
 | Agent class view | A diagram node that represents the Agent behavior, expectations, and dependencies relevant to the analysis without asserting a runtime class. | Coding Agent names careful-coding and refers to Deliver Workitem. |
 | Skill Group | The actual named set of cohesive skills used to organize one capability. Its complete skill set contains its direct skills plus every skill in its nested Skill Groups. The set exists independently of how a diagram displays it. | The Work Item Skill Group contains work-item-base, work-item-dispatch, and work-item-monitor. |
 | Expanded Skill Group Diagram | A diagram that draws a box around the SKILL.md nodes belonging to one Skill Group so their responsibilities and separate loading references can be viewed together. The diagram displays the set; it does not create it. | The expanded Work Item Skill Group Diagram displays work-item-base, work-item-dispatch, and work-item-monitor inside one box. |

@@ -33,9 +33,6 @@ examples:
     claims, and unresolved conflicts. Left docs/wiki unchanged and recommended the target
     leaf, related hub links, and follow-up questions for the Wiki Ingester.
 skills:
-- organise-project-files:
-    justification: We need this to select a collision-safe raw-report path from the project's live source queue and naming conventions.
-    condition: when the requested research creates a new raw report or other project file.
 - project-wiki-query:
     justification: We need this to determine whether maintained local or federated wiki coverage already answers the request before starting external research.
 - project-wiki-research:
