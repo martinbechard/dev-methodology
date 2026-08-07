@@ -1,10 +1,12 @@
 # Reconcile Bundle Content Suite Drift
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
 Provider: file
+
+Owner: Unowned
 
 Work Item ID: reconcile-bundle-content-suite-drift
 
@@ -119,3 +121,39 @@ Phase: Delegated test and exact ordinary eval-fixture correction before candidat
 Conversation Title Evidence: Implementing — Reconcile Bundle Content Suite Drift synchronized at 2026-08-07T02:41:09Z.
 
 Provider Evidence Refresh Claim: reconcile-bundle-content-delegated-update-019fda10; activity update; acquire outcome SHARED_CHECKOUT_ACQUIRED; acquisition event 1b9a6dc0-7e3f-43ea-aba7-90db4d21ea4c. Exact provider path claim reconcile-bundle-content-delegated-path-019fda10 acquired with event 13046410-8040-4a91-8776-6002125d630c.
+
+## User Action Required
+
+Recorded At: 2026-08-07T03:08:00Z
+
+### Question for the User
+
+Do you approve expanding reconcile-bundle-content-suite-drift to modify exactly these three governed Dev Orchestrator evaluation definitions: evals/agent-tests/dev-orchestrator/skills/dev-orchestrator-suite-contract/SKILL.md, evals/agent-tests/dev-orchestrator/agents/supervisor.toml, and evals/agent-tests/dev-orchestrator/agents/judge.toml; and the five directly implicated ordinary fixture/test paths already identified, solely to remove the retired dev-backlog-steward fixed-dependency contract and align the suite with the canonical Dev Orchestrator role?
+
+### Why User Input Is Required
+
+The three skill/Agent eval definitions are governed and the current item explicitly forbids changing them without new exact authority.
+
+### Approved Ordinary Fixture/Test Paths
+
+- evals/agent-tests/dev-orchestrator/scenarios.yaml
+- evals/agent-tests/dev-orchestrator/fixtures/dependency-routing/fixture-contract.yaml
+- evals/agent-tests/dev-orchestrator/test_fixtures.py
+- evals/agent-tests/dev-orchestrator/fixtures/skill-under-test-defect-routing/README.md
+- evals/agent-tests/dev-orchestrator/fixtures/skill-under-test-defect-routing/expected-finding.yaml
+
+### Explicit Exclusions
+
+No other governed skill, Agent definition, broad suite, simulator, framework, production methodology, design source, generated artifact, or repository path is approved.
+
+### Current Recovery Evidence
+
+Six modified unstaged paths remain in isolated worktree /Users/martinbechard/.codex/worktrees/6e5c/dev-methodology at detached baseline 9bbbb27692d4e1f73b8434fc85cfcd1bb0cd64cc. The diff has 94 insertions and 42 deletions. Binary diff SHA-256: 670604590700aa464d669cc8af4d176c299f78369085adaf043132ecb4478000. All ten focused methods are green. py_compile, YAML parse, and diff check are green. The aggregate suite was deliberately not run. Producer exact path release event: 6dcce931-d738-4009-a9e7-8a8be3892c91. Root outcome blocked release event: 928e0573-e7e9-4d04-89bc-83392843424e.
+
+### Unattended Work Boundary
+
+No further source edit, candidate commit, aggregate bundle-content run, review, verification, integration, or provider completion may proceed. Preserved six-path isolated-worktree bytes remain untouched.
+
+### Resolution
+
+Pending.
