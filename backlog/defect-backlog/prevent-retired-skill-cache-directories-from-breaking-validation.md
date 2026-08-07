@@ -121,18 +121,18 @@ Next Action: Release this atomic provider transaction, acquire the exact Work It
 
 ## Active Execution Evidence
 
-Condition Type: root-execution
+Condition Type: delegated-work
 
-Owner: Dev Orchestrator task 019fda3b-119f-7412-a045-29d5f8998d79
+Owner: Dev Coder task /root/implement_retired_skill_cache_fix under Dev Orchestrator task 019fda3b-119f-7412-a045-29d5f8998d79
 
-Evidence: The canonical root task is actively recording Running ownership and preparing the exact activity=work claim before one bounded source implementation lane begins.
+Evidence: The active Dev Coder owns one focused candidate assignment in /Users/martinbechard/.codex/worktrees/f905/dev-methodology. Current candidate bytes add cache-only and genuinely incomplete skill-source fixtures and implement the shared maintained-source boundary across scripts/skill_sources.py, scripts/install-skills.py, scripts/validate-agent-skills.py, and the directly implicated focused tests. The same canonical task, candidate branch, and exact activity=work claim identity are preserved through this strict provider-evidence handoff.
 
-Observed At: 2026-08-07T03:21:35Z
+Observed At: 2026-08-07T03:33:22Z
 
-Started At: 2026-08-07T03:21:35Z
+Started At: 2026-08-07T03:22:31Z
 
-Deadline or Expires At: 2026-08-07T05:21:35Z
+Deadline or Expires At: 2026-08-07T05:33:22Z
 
-Next Action: Acquire the exact activity=work claim, dispatch one Dev Coder, then obtain one fresh independent source review and one focused verifier result before main-branch delivery.
+Next Action: Reacquire the exact activity=work claim after this atomic provider update, let the active Dev Coder finish the focused red-green checks and immutable candidate commit without redispatch, then send that commit to one fresh independent reviewer.
 
-Next Reconciliation At: 2026-08-07T03:36:35Z
+Next Reconciliation At: 2026-08-07T03:47:22Z
