@@ -156,28 +156,18 @@ Scheduling Evidence: Selected as the older of two overlapping Ready rename featu
 
 ## Active Execution Evidence
 
-Owner: Root Dev Orchestrator
+Condition Type: root-execution
 
-Canonical Conversation: `019fd993-01d4-7380-b722-b7c328bdb637`
+Owner: Root Dev Orchestrator task `019fd993-01d4-7380-b722-b7c328bdb637`
 
-Canonical Task: `019fd993-01d4-7380-b722-b7c328bdb637`
+Evidence: The canonical task is actively implementing the approved `resource-claim` policy and helper-family rename on branch `codex/rename-agent-claim-to-resource-claim` in `/Users/martinbechard/.codex/worktrees/e800/dev-methodology`. Current private-worktree implementation bytes are preserved with binary diff SHA-256 `fefdfa318a443a36764e2b96635385fd84be46da2826a61213448cc0c3dcef5b`; the exact activity `work` claim was released with handoff only for this provider evidence refresh. Authoritative main remains on the provider-only Running commit with the unrelated user-owned `design/skill-groups/concurrent-tasking.md` edit preserved separately.
 
-Parent Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
-
-Branch: `codex/rename-agent-claim-to-resource-claim`
-
-Worktree: `/Users/martinbechard/.codex/worktrees/e800/dev-methodology`
-
-Baseline Main Commit: `bef9584b8c9171085010de9d7986e4d30d0f5be4`
-
-Phase: Implementation
+Observed At: 2026-08-07T00:29:50Z
 
 Started At: 2026-08-07T00:17:25Z
 
-Accepted Execution Evidence: This canonical Root Dev Orchestrator task accepted the Coordinator handoff for exact Work Item ID `rename-agent-claim-to-resource-claim`, established the named private branch at authoritative main commit `bef9584b8c9171085010de9d7986e4d30d0f5be4`, preserved the unrelated primary-main edit to `design/skill-groups/concurrent-tasking.md`, and accepted responsibility for the approved rename, focused verification, one fresh independent review, one verifier, direct-main delivery, and file-provider closure.
+Deadline or Expires At: 2026-08-07T02:29:50Z
 
-Provider Transition Claims: Exact Work Item ID activity `update` claim `rename-agent-claim-provider-update-019fd993` and exact provider path claim `rename-agent-claim-provider-path-019fd993` both returned `SHARED_CHECKOUT_ACQUIRED` before this mutation.
+Next Action: Commit only this provider evidence refresh, release the exact provider path and activity `update` claims, reacquire exact Work Item ID activity `work`, then finish the preserved candidate's focused corrections, generation, tests, independent review, verification, direct-main integration, and provider closure.
 
-Next Action: Release both provider-transition claims with handoff, acquire the exact Work Item ID activity `work` claim, and implement one clean immutable candidate within the approved governed canonical sources and allowed dependent artifacts.
-
-Next Reconciliation At: 2026-08-07T00:32:25Z
+Next Reconciliation At: 2026-08-07T00:44:50Z
