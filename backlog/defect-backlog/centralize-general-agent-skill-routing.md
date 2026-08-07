@@ -1,6 +1,6 @@
 # Centralize General Agent Skill Routing
 
-Status: Starting
+Status: Running
 
 Type: Defect
 
@@ -11,6 +11,16 @@ Owner: Dev Orchestrator task 019faeed-f816-7d43-819d-814bad4e309c
 Work Item ID: centralize-general-agent-skill-routing
 
 Completion: main-branch
+
+Canonical Conversation: 019faeed-f816-7d43-819d-814bad4e309c
+
+Root Agent Task: 019faeed-f816-7d43-819d-814bad4e309c
+
+Branch: main
+
+Worktree: /Users/martinbechard/dev/dev-methodology
+
+Phase: General Agent Skills routing and design alignment
 
 ## Summary
 
@@ -79,3 +89,21 @@ Canonical Execution: 019faeed-f816-7d43-819d-814bad4e309c
 Last Contact: 2026-08-07T03:27:50Z; existing canonical task confirmed by parent Coordinator.
 
 Next Reconciliation At: 2026-08-07T03:42:50Z
+
+## Active Execution Evidence
+
+Condition Type: root-execution
+
+Owner: Dev Orchestrator task 019faeed-f816-7d43-819d-814bad4e309c
+
+Evidence: The canonical task accepted the existing implementation, loaded the applicable methodology, file-placement, explanation, and work-item lifecycle skills, logged the defect, and acquired the exact Work Item ID activity=work claim before repository implementation.
+
+Observed At: 2026-08-07T03:29:07Z
+
+Started At: 2026-08-07T03:29:07Z
+
+Deadline or Expires At: Governed by the active work-item claim and parent coordination policy.
+
+Next Action: Centralize project-wide conditional skill routing, create the General Agent Skills design, remove duplicated role and Agent-group declarations, regenerate derived artifacts, and verify the synchronized result.
+
+Next Reconciliation At: 2026-08-07T03:44:07Z
