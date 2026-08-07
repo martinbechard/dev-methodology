@@ -422,14 +422,14 @@ def _execute_promotion_transaction(
 
     The transaction snapshots exact worktree and index bytes, stages only the
     reciprocal records, commits only those paths, and verifies the captured
-    commit object. Agent-claim coordination records acquire, retain, and release
+    commit object. Resource-claim coordination records acquire, retain, and release
     calls; none performs the same Git transaction without claim operations or
     claim evidence.
     """
-    if resource_coordination not in {"agent-claim", "none"}:
+    if resource_coordination not in {"resource-claim", "none"}:
         raise ValueError("unsupported resource coordination selection")
-    if resource_coordination == "agent-claim" and claim_registry is None:
-        raise ValueError("agent-claim requires a claim registry")
+    if resource_coordination == "resource-claim" and claim_registry is None:
+        raise ValueError("resource-claim requires a claim registry")
     if fail_rollback_verification:
         if fail_staging or fail_postcommit_verification:
             raise ValueError("rollback verification requires a commit failure")
@@ -469,7 +469,7 @@ def _execute_promotion_transaction(
         release: bool = False,
     ) -> dict[str, object]:
         """Apply the selected coordination lifecycle to one transaction result."""
-        if resource_coordination == "agent-claim":
+        if resource_coordination == "resource-claim":
             assert claim_registry is not None
             if retain:
                 claim_registry.retain_all()
@@ -551,7 +551,7 @@ def _execute_promotion_transaction(
     index_entries_before = _index_entries(repository)
     unrelated_worktree_before = _unrelated_worktree_state(repository, manifest)
 
-    if resource_coordination == "agent-claim":
+    if resource_coordination == "resource-claim":
         assert claim_registry is not None
         if not claim_registry.acquire((idea_relative, target_relative)):
             return result_with_claim_evidence(
@@ -1254,7 +1254,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         expected_paths = [fixture["ideaPath"], fixture["promotedWorkItemPath"]]
         self.assertEqual(
             expected_paths,
-            coordination["agent-claim"]["claimPaths"],
+            coordination["resource-claim"]["claimPaths"],
         )
         self.assertEqual(
             [
@@ -1263,7 +1263,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
                 "release after success or safe verified rollback",
                 "retain after unsafe rollback or postcommit verification failure",
             ],
-            coordination["agent-claim"]["claimLifecycle"],
+            coordination["resource-claim"]["claimLifecycle"],
         )
         self.assertEqual([], coordination["none"]["claimCalls"])
         self.assertEqual("absent", coordination["none"]["claimEvidence"])
@@ -1285,27 +1285,27 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             with self.subTest(required_behavior=behavior):
                 self.assertIn(behavior, scenario["requiredBehaviors"])
         scenario_coordination = scenario["resourceCoordinationCases"]
-        agent_claim = scenario_coordination["agent-claim"]
+        resource_claim = scenario_coordination["resource-claim"]
         none = scenario_coordination["none"]
-        self.assertEqual(["agent-claim"], agent_claim["targetSkills"])
-        self.assertEqual(["claim-lifecycle"], agent_claim["deterministicChecks"])
-        self.assertTrue(agent_claim["claimCalls"])
-        self.assertEqual("required", agent_claim["claimEvidence"])
+        self.assertEqual(["resource-claim"], resource_claim["targetSkills"])
+        self.assertEqual(["claim-lifecycle"], resource_claim["deterministicChecks"])
+        self.assertTrue(resource_claim["claimCalls"])
+        self.assertEqual("required", resource_claim["claimEvidence"])
         self.assertIn(
             "Retain ownership after unsafe rollback or postcommit verification failure",
-            agent_claim["claimLifecycle"],
+            resource_claim["claimLifecycle"],
         )
         self.assertIn(
             "Release after success or safe verified rollback",
-            agent_claim["claimLifecycle"],
+            resource_claim["claimLifecycle"],
         )
         self.assertIn(
             "Acquire both exact paths together in one operation before promotion mutation",
-            agent_claim["claimLifecycle"],
+            resource_claim["claimLifecycle"],
         )
         self.assertIn(
             "Stop with no retained new ownership on any path conflict",
-            agent_claim["claimLifecycle"],
+            resource_claim["claimLifecycle"],
         )
         self.assertEqual([], none["targetSkills"])
         self.assertEqual([], none["deterministicChecks"])
@@ -1314,7 +1314,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         self.assertEqual([], none["journalWrites"])
         self.assertEqual([], none["claimReleases"])
         self.assertEqual("absent", none["claimEvidence"])
-        self.assertEqual(agent_claim["providerLifecycle"], none["providerLifecycle"])
+        self.assertEqual(resource_claim["providerLifecycle"], none["providerLifecycle"])
         self.assertIn("transaction as failure-atomic", contract_text)
         self.assertIn(
             "target-write, idea-write, validation, staging, or commit",
@@ -1330,7 +1330,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         self.assertIn("return zero-mutation BLOCKED on drift", contract_text)
         self.assertIn("peer commit-file-provider-transaction skill", contract_text)
         self.assertIn(
-            "When resource_coordination selects agent-claim", contract_text
+            "When resource_coordination selects resource-claim", contract_text
         )
         self.assertIn(
             "When resource_coordination selects none", contract_text
@@ -1400,7 +1400,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
                     target,
                     _PROMOTED_IDEA_BYTES,
                     _PROMOTED_ITEM_BYTES,
-                    resource_coordination="agent-claim",
+                    resource_coordination="resource-claim",
                     claim_registry=registry,
                     fail_boundary=boundary,
                 )
@@ -1441,7 +1441,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
-            resource_coordination="agent-claim",
+            resource_coordination="resource-claim",
             claim_registry=registry,
             fail_commit=True,
         )
@@ -1479,7 +1479,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
-            resource_coordination="agent-claim",
+            resource_coordination="resource-claim",
             claim_registry=registry,
         )
 
@@ -1567,7 +1567,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
                     target,
                     _PROMOTED_IDEA_BYTES,
                     _PROMOTED_ITEM_BYTES,
-                    resource_coordination="agent-claim",
+                    resource_coordination="resource-claim",
                     claim_registry=registry,
                     fail_boundary=failure_boundary,
                 )
@@ -1658,7 +1658,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
                     target,
                     _PROMOTED_IDEA_BYTES,
                     _PROMOTED_ITEM_BYTES,
-                    resource_coordination="agent-claim",
+                    resource_coordination="resource-claim",
                     claim_registry=registry,
                     after_claims=inject_drift,
                 )
@@ -1712,7 +1712,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
-            resource_coordination="agent-claim",
+            resource_coordination="resource-claim",
             claim_registry=registry,
         )
 
@@ -1762,7 +1762,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
-            resource_coordination="agent-claim",
+            resource_coordination="resource-claim",
             claim_registry=registry,
         )
 
@@ -1808,7 +1808,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
-            resource_coordination="agent-claim",
+            resource_coordination="resource-claim",
             claim_registry=registry,
             after_claims=escape_destination_authority,
         )
@@ -1852,7 +1852,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
-            resource_coordination="agent-claim",
+            resource_coordination="resource-claim",
             claim_registry=registry,
             fail_boundary="rollback-verification",
         )
@@ -1894,7 +1894,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
-            resource_coordination="agent-claim",
+            resource_coordination="resource-claim",
             claim_registry=registry,
             fail_staging=True,
         )
@@ -1928,7 +1928,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
-            resource_coordination="agent-claim",
+            resource_coordination="resource-claim",
             claim_registry=registry,
             fail_boundary="post-commit-verification",
         )
@@ -1979,7 +1979,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             target,
             _PROMOTED_IDEA_BYTES,
             _PROMOTED_ITEM_BYTES,
-            resource_coordination="agent-claim",
+            resource_coordination="resource-claim",
             claim_registry=registry,
             after_commit=move_head,
         )
@@ -2059,7 +2059,7 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             shortcut["requiredBehaviors"],
         )
         self.assertTrue(
-            shortcut["resourceCoordinationCases"]["agent-claim"]["claimCalls"]
+            shortcut["resourceCoordinationCases"]["resource-claim"]["claimCalls"]
         )
         self.assertEqual(
             [],
@@ -2073,14 +2073,14 @@ class DevBacklogStewardContractTests(unittest.TestCase):
             resumption["requiredBehaviors"],
         )
         self.assertTrue(
-            resumption["resourceCoordinationCases"]["agent-claim"]["claimCalls"]
+            resumption["resourceCoordinationCases"]["resource-claim"]["claimCalls"]
         )
 
         failed_claim = by_id["blocked-failed-claim-resumption"]
         self.assertEqual("BLOCKED", failed_claim["expectedTerminalStatus"])
         self.assertIn(
             "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
-            failed_claim["resourceCoordinationCases"]["agent-claim"][
+            failed_claim["resourceCoordinationCases"]["resource-claim"][
                 "claimLifecycle"
             ][1],
         )

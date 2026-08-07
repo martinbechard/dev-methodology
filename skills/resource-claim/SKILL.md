@@ -1,11 +1,11 @@
 ---
-name: agent-claim
+name: resource-claim
 description: Use when an event in this skill requires temporary protection for a shared file or resource.
 metadata:
   category: development-practice
 ---
 
-# Agent Claim
+# Resource Claim
 
 Claims prevent two agents from changing the same shared file or resource at the same time. Exact work-item claims also prevent concurrent activity on one opaque Work Item ID. A claim and its release do not prove that work is complete.
 
@@ -18,9 +18,9 @@ Git provides one primary worktree for a repository. The primary worktree owns th
 
 ## Coordinate Shared Resource
 
-Use the Claim Events table to decide whether work requires temporary ownership. If a row matches, use its scope and release boundary, then apply the agent-claim-helper operation contract through the configured Provider Skill. If no row matches, continue without acquiring a claim.
+Use the Claim Events table to decide whether work requires temporary ownership. If a row matches, use its scope and release boundary, then apply the resource-claim-helper operation contract through the configured Provider Skill. If no row matches, continue without acquiring a claim.
 
-This skill owns claim policy. agent-claim-helper owns the common operation, input, result, and uncertain-outcome contract. The selected agent-claim-helper-* Provider Skill explains only how to invoke that contract.
+This skill owns claim policy. resource-claim-helper owns the common operation, input, result, and uncertain-outcome contract. The selected resource-claim-helper-* Provider Skill explains only how to invoke that contract.
 
 ## Claim Events
 
@@ -40,21 +40,19 @@ Acquire a claim only for an event in this table. Acquire it immediately before s
 
 ## Shared Claim Records
 
-In each example, &lt;project-root&gt; represents an absolute project-root path.
+In each example, &lt;project-root&gt; represents the primary worktree's absolute project-root path.
 
-Git stores repository-wide metadata in a directory called the Git common directory.
+Store shared claim state under &lt;project-root&gt;/.codex/agent-claim. The directory name, registry name agent-claims.json, and history name agent-claim-events are stable compatibility identifiers retained from the former public skill name. Renaming the Resource Claim skill never renames, resets, replaces, or discards those persisted records.
 
-For example, &lt;project-root&gt; and &lt;project-root&gt;/.worktrees/task-123 both use &lt;project-root&gt;/.git.
-
-Store a claim registry named agent-claims.json in the Git common directory. Every worktree connected to that Git common directory uses this registry.
+Resolve this directory from the primary worktree so every linked worktree uses the same registry and history.
 
 Apply the exclusive OS lock directly to agent-claims.json. Read and update the registry through that locked file without replacing its inode. Do not create a separate claim lock file.
 
-Store claim history in an agent-claim-events directory next to the registry. For example:
+Store claim history in an agent-claim-events directory beside the registry. For example:
 
-- &lt;project-root&gt;/.git/agent-claim-events/hot/2026-07-26.jsonl stores events from July 26 UTC.
-- &lt;project-root&gt;/.git/agent-claim-events/archive/2026/07/2026-07-24.jsonl.gz stores compressed events from July 24 UTC.
-- &lt;project-root&gt;/.git/agent-claim-events/journal/2026/07/2026-07-24.json stores a summary for July 24 UTC.
+- &lt;project-root&gt;/.codex/agent-claim/agent-claim-events/hot/2026-07-26.jsonl stores events from July 26 UTC.
+- &lt;project-root&gt;/.codex/agent-claim/agent-claim-events/archive/2026/07/2026-07-24.jsonl.gz stores compressed events from July 24 UTC.
+- &lt;project-root&gt;/.codex/agent-claim/agent-claim-events/journal/2026/07/2026-07-24.json stores a summary for July 24 UTC.
 
 Store claim identifiers, scopes, outcomes, conflicts, and related commit identifiers in claim history.
 

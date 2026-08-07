@@ -106,7 +106,7 @@ class WorkItemCoordinationPackageTests(unittest.TestCase):
         for clause in (
             "effective Persistence-selected provider record is the durable work-item authority",
             "Git records branches, commits, delivery, and cleanup eligibility; it is not a work-item provider",
-            "When agent-claim is loaded, use its Claim Events table and supporting rules",
+            "When resource-claim is loaded, use its Claim Events table and supporting rules",
             "effective Commit-selected skill",
             "effective Persistence-selected management skill",
             "Do not create a separate parent ledger",
@@ -224,8 +224,8 @@ class WorkItemCoordinationRoleRoutingTests(unittest.TestCase):
             ROOT / "skills" / "create-work-item-file" / "SKILL.md",
             ROOT / "skills" / "manage-work-items-file" / "SKILL.md",
             ROOT / "skills" / "deliver-work-item-direct-main" / "SKILL.md",
-            ROOT / "skills" / "agent-claim" / "SKILL.md",
-            ROOT / "skills" / "agent-claim-helper-command" / "SKILL.md",
+            ROOT / "skills" / "resource-claim" / "SKILL.md",
+            ROOT / "skills" / "resource-claim-helper-command" / "SKILL.md",
         ):
             with self.subTest(path=path):
                 self.assertTrue(path.is_file())

@@ -760,7 +760,7 @@
         <div><dt>Agent</dt><dd>A running actor inside a Thread.</dd></div>
         <div><dt>Role</dt><dd>The reusable responsibility and authority contract.</dd></div>
         <div><dt>Assignment</dt><dd>Bounded work sent to an Agent.</dd></div>
-        <div><dt>Claim</dt><dd>Conditional temporary protection when agent-claim is selected.</dd></div>
+        <div><dt>Claim</dt><dd>Conditional temporary protection when resource-claim is selected.</dd></div>
       </dl>
     </figure>
     <aside class="thread-context"><h3>Execution Contexts</h3><p>The Dev Backlog Watchdog is a standing read-only child Agent outside delivery capacity. Dev Backlog Steward is optional and limited to provider-wide inventory, normalization, archival audits, and recovery. The authorized Coordinator or Orchestrator directly applies ordinary lifecycle operations through the selected manager.</p><p>An Assignment is bounded work sent to an Agent; it does not create another work-item Thread. A runtime may retain a child execution context for that Agent, but the methodology still treats it as part of the owning parent or work-item Thread.</p></aside>
@@ -819,10 +819,10 @@
   <section class="section" id="coordination" aria-labelledby="coordination-title">
     <div class="section-heading">
       <span class="chapter-number">Chapter 06</span>
-      <div><h2 id="coordination-title">Shared-Resource Coordination</h2><p>PROJECT.yaml may load Agent Claim when the project needs temporary protection for shared files or resources. The claim registry records temporary ownership; it does not prove review, delivery, or completion.</p></div>
+      <div><h2 id="coordination-title">Shared-Resource Coordination</h2><p>PROJECT.yaml may load Resource Claim when the project needs temporary protection for shared files or resources. The claim registry records temporary ownership; it does not prove review, delivery, or completion.</p></div>
     </div>
     <figure class="resource-figure" aria-labelledby="resource-title">
-      <figcaption id="resource-title">Shared Resource Gate<span>The Agent Claim skill defines every event that requires a claim, the scope to request, and when to release it.</span></figcaption>
+      <figcaption id="resource-title">Shared Resource Gate<span>The Resource Claim skill defines every event that requires a claim, the scope to request, and when to release it.</span></figcaption>
       <div class="resource-lanes">
         <div class="private-lanes"><div class="private-lane">Worktree A remains private</div><div class="private-lane">Worktree B remains private</div><div class="private-lane">Worktree C remains private</div></div>
         <div class="gate">exact shared gate</div>
@@ -834,7 +834,7 @@
       <div><h3>Claim Cleanup</h3><p>Release removes the named live claim while the registry is locked and records a RELEASED event. It does not inspect Git state or decide whether delivery completed. After a Coordinator restart with all prior agents stopped, reset creates an empty claim registry before new work is dispatched.</p></div>
       <div><h3>Claim Limits</h3><p>A claim records temporary ownership. Request the smallest known exact path or resource manifest; do not request the whole project for a fixed subset. Review, verification, Git delivery, and work-item completion require separate evidence.</p></div>
     </div>
-    <p class="source-note"><a href="../skills/agent-claim/SKILL.md">Agent Claim</a> is the only source for claim events, scopes, conflicts, deadlines, recovery, and release timing. <a href="../skills/agent-claim-helper/SKILL.md">Agent Claim Helper</a> owns the common helper contract. The <a href="../skills/agent-claim-helper-command/SKILL.md">command-line provider</a> and <a href="../skills/agent-claim-helper-mcp/SKILL.md">MCP provider</a> describe only how to invoke that contract.</p>
+    <p class="source-note"><a href="../skills/resource-claim/SKILL.md">Resource Claim</a> is the only source for claim events, scopes, conflicts, deadlines, recovery, and release timing. <a href="../skills/resource-claim-helper/SKILL.md">Resource Claim Helper</a> owns the common helper contract. The <a href="../skills/resource-claim-helper-command/SKILL.md">command-line provider</a> and <a href="../skills/resource-claim-helper-mcp/SKILL.md">MCP provider</a> describe only how to invoke that contract.</p>
   </section>
 
   <section class="section" id="delivery" aria-labelledby="delivery-title">
@@ -857,7 +857,7 @@
       </ol>
     </figure>
     <div class="delivery-paths">
-      <article class="delivery-path"><h3>Direct-main delivery</h3><ol><li>Review and verify the private candidate.</li><li>Follow <a href="../skills/agent-claim/SKILL.md">Agent Claim</a> when it is loaded.</li><li>Refresh current main and create a fresh reconciliation branch from that exact commit.</li><li>Apply only the accepted paths; do not import unrelated ancestry merely to preserve history. Verify the integrated result, update main, and complete delivery closeout.</li></ol></article>
+      <article class="delivery-path"><h3>Direct-main delivery</h3><ol><li>Review and verify the private candidate.</li><li>Follow <a href="../skills/resource-claim/SKILL.md">Resource Claim</a> when it is loaded.</li><li>Refresh current main and create a fresh reconciliation branch from that exact commit.</li><li>Apply only the accepted paths; do not import unrelated ancestry merely to preserve history. Verify the integrated result, update main, and complete delivery closeout.</li></ol></article>
       <article class="delivery-path"><h3>Feature-branch delivery</h3><ol><li>Review and verify the feature branch.</li><li>The Commit skill publishes a GitHub pull request or GitLab merge request and returns Commit AWAITING_REVIEW without Persistence mutation.</li><li>Dev Orchestrator directly applies the effective Persistence manager exactly once for the nonterminal AWAITING_REVIEW update; repeated observation reconciles that update.</li><li>Resume the same delivery identity through provider-accurate review, checks, merge, and main observation until Commit READY, then directly apply the manager exactly once for the distinct terminal Persistence closure. Provider none keeps both states task-local.</li></ol></article>
     </div>
     <details><summary>Integration Cleanup</summary><div><p>Create a fresh reconciliation branch from current main for integration; this becomes the work-item Thread's integration and cleanup branch. An older candidate branch retained only as a non-ancestral content source is handled separately.</p><p>Before handoff, commit completed work and prove the applicable worktree clean.</p></div></details>
@@ -919,7 +919,7 @@
         <tr><td><strong>Work item</strong></td><td>Status, authority, decisions, current owner, phase, accepted candidate, delivery evidence, and terminal outcome.</td><td>Git reachability or current shared-resource availability.</td></tr>
         <tr><td><strong>Git</strong></td><td>File content, commits, ancestry, integration, clean state, and branch-cleanup eligibility.</td><td>Review quality, test meaning, or lifecycle status.</td></tr>
         <tr><td><strong>Review and verification outputs</strong></td><td>The exact candidate assessed, findings or acceptance, checks run, retained evidence, and residual risk.</td><td>Shared mutation authority or backlog completion.</td></tr>
-        <tr><td><strong>Coordination registry when enabled</strong></td><td>When agent-claim is selected, the coordination registry records temporary shared-mutation protection, conflict, heartbeat, release, and recovery state. With none, registry evidence is absent.</td><td>Accepted content, successful integration, or completed work.</td></tr>
+        <tr><td><strong>Coordination registry when enabled</strong></td><td>When resource-claim is selected, the coordination registry records temporary shared-mutation protection, conflict, heartbeat, release, and recovery state. With none, registry evidence is absent.</td><td>Accepted content, successful integration, or completed work.</td></tr>
       </tbody>
     </table>
     <aside class="not-a-record"><strong>Thread Evidence Boundary:</strong> Its Agent messages, title, and live state help people observe execution. Durable facts still belong in the Work item, Git, review outputs, and the coordination registry when enabled. With none, registry evidence is absent.</aside>

@@ -10,7 +10,7 @@ target:
     - verify-end-to-end-workflow
     - structured-explanation
   conditionalSkills:
-    agent-claim: The workflow mutates repository evidence or uses exclusive runtime resources.
+    resource-claim: The workflow mutates repository evidence or uses exclusive runtime resources.
     organise-project-files: The workflow creates a new project file or directory.
   allowedAgentDependencies: []
   requiredOutputs:

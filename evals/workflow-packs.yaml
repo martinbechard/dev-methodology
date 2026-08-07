@@ -39,7 +39,7 @@ packs:
       - dev-merge-coordinator
       - dev-orchestrator
     skillProbes:
-      - probe-agent-claim
+      - probe-resource-claim
       - probe-agent-harness
       - probe-integrate-agent-work
       - probe-api-routes
@@ -166,7 +166,7 @@ packs:
       - methodology-maintainer
       - methodology-artifact-reviewer
     skillProbes:
-      - probe-agent-claim
+      - probe-resource-claim
       - probe-agent-role-authoring
       - probe-create-architecture
       - probe-create-functional-spec
@@ -243,7 +243,7 @@ packs:
       - dev-merge-coordinator
       - dev-verifier
     skillProbes:
-      - probe-agent-claim
+      - probe-resource-claim
       - probe-create-project-configuration
       - probe-detect-technology-skills
       - probe-route-documentation-work
@@ -308,7 +308,7 @@ packs:
       - wiki-topic-verifier
       - wiki-writer
     skillProbes:
-      - probe-agent-claim
+      - probe-resource-claim
       - probe-code-project-wiki
       - probe-bootstrap-project-documentation
       - probe-verify-documentation-page
@@ -374,7 +374,7 @@ packs:
       - dev-backlog-steward
       - dev-backlog-watchdog
     skillProbes:
-      - probe-agent-claim
+      - probe-resource-claim
       - probe-coordinate-work-items
       - probe-coordinate-codex-tasks
       - probe-resolve-backlog-blockage

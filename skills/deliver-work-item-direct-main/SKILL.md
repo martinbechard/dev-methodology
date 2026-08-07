@@ -53,7 +53,7 @@ A branch name, pushed branch, patch file, detached checkout, pull request, merge
 
 ## Claims
 
-Follow the Claim Events table in agent-claim during integration. Provider closure remains a separate Persistence transaction.
+Follow the Claim Events table in resource-claim during integration. Provider closure remains a separate Persistence transaction.
 
 ## Main Reconciliation
 

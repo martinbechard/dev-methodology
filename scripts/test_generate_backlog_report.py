@@ -2172,7 +2172,9 @@ Do not proceed.
             capture_output=True,
             text=True,
         ).stdout.strip()
-        (self.root / ".git/agent-claims.json").write_text(
+        registry = self.root / ".codex/agent-claim/agent-claims.json"
+        registry.parent.mkdir(parents=True)
+        registry.write_text(
             '{"claims":[{"claim_id":"fixture-claim","agent":"Fixture Agent","branch":"codex/fixture","worktree":"/fixture/worktree","heartbeat":"2026-07-19T05:59:00Z"}]}',
             encoding="utf-8",
         )
@@ -2196,7 +2198,8 @@ Do not proceed.
             item_type="Feature",
         )
         subprocess.run(["git", "init", "-q", str(self.root)], check=True)
-        registry = self.root / ".git/agent-claims.json"
+        registry = self.root / ".codex/agent-claim/agent-claims.json"
+        registry.parent.mkdir(parents=True)
 
         missing = self.generate()
         self.assertIn("claim registry is missing", missing)
@@ -2221,6 +2224,78 @@ Do not proceed.
         empty = self.generate()
         self.assertIn("No active claims were present", empty)
         self.assertNotIn("claim registry is missing", empty)
+
+    def test_claim_snapshot_reads_legacy_registry_when_canonical_state_is_absent(self) -> None:
+        """The report retains read-only visibility into repositories not yet migrated."""
+        self.write_item(
+            "backlog/feature-backlog/ready.md",
+            title="Ready",
+            status="Ready",
+            item_type="Feature",
+        )
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        legacy_registry = self.root / ".git/agent-claims.json"
+        legacy_registry.write_text(
+            '{"claims":[{"claim_id":"legacy-fixture","agent":"Fixture Agent"}]}',
+            encoding="utf-8",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("legacy-fixture", rendered)
+        self.assertIn("Fixture Agent", rendered)
+
+    def test_claim_snapshot_rejects_contradictory_dual_registry_state(self) -> None:
+        """Canonical empty state never masks live legacy claims during migration."""
+        self.write_item(
+            "backlog/feature-backlog/ready.md",
+            title="Ready",
+            status="Ready",
+            item_type="Feature",
+        )
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        canonical = self.root / ".codex/agent-claim/agent-claims.json"
+        canonical.parent.mkdir(parents=True)
+        canonical.write_text('{"claims":[]}', encoding="utf-8")
+        (self.root / ".git/agent-claims.json").write_text(
+            '{"claims":[{"claim_id":"still-live"}]}',
+            encoding="utf-8",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("canonical and legacy claim registries contradict", rendered)
+        self.assertNotIn("No active claims were present", rendered)
+
+    def test_claim_snapshot_accepts_completed_legacy_registry_marker(self) -> None:
+        """A verified legacy tombstone does not contradict canonical empty state."""
+        self.write_item(
+            "backlog/feature-backlog/ready.md",
+            title="Ready",
+            status="Ready",
+            item_type="Feature",
+        )
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        canonical = self.root / ".codex/agent-claim/agent-claims.json"
+        canonical.parent.mkdir(parents=True)
+        canonical.write_text('{"claims":[]}', encoding="utf-8")
+        legacy_marker = self.root / ".git/agent-claims.json/state.json"
+        legacy_marker.parent.mkdir()
+        legacy_marker.write_text(
+            REPORT.json.dumps(
+                {
+                    "schema_version": 1,
+                    "state_layout_version": 2,
+                    "migrated": "registry",
+                }
+            ),
+            encoding="utf-8",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("No active claims were present", rendered)
+        self.assertNotIn("claim registries contradict", rendered)
 
     def test_cli_writes_explicit_output_and_missing_backlog_fails(self) -> None:
         """The CLI owns explicit output creation and reports an absent backlog as input failure."""

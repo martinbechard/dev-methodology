@@ -12,7 +12,7 @@ target:
     - careful-coding
     - code-comments
   conditionalSkills:
-    agent-claim: The review saves an evidence packet, checklist, findings file, or other project artifact.
+    resource-claim: The review saves an evidence packet, checklist, findings file, or other project artifact.
     organise-project-files: The review creates a new evidence artifact whose destination is not already fixed.
   allowedAgentDependencies: []
   requiredOutputs:

@@ -67,7 +67,7 @@ STE_ACTIVATION_FIXTURES = (
     (
         "non-document-artifact",
         "machine-readable-data",
-        "resource_coordination: agent-claim",
+        "resource_coordination: resource-claim",
         False,
         False,
         "Do not rewrite code blocks, machine-readable data, syntax examples",
@@ -380,7 +380,7 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
     def test_fixture_rejects_invented_configuration_and_changed_modality(self) -> None:
         invented = (
             PROJECT_SETUP_PARAGRAPH
-            + " Set resourceCoordination to agent-claim."
+            + " Set resourceCoordination to resource-claim."
         )
         self.assertIn(
             "invented configuration: resourceCoordination",
@@ -388,7 +388,7 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
         )
 
         source = (
-            "If PROJECT.yaml selects agent-claim, Project Configurator must preserve "
+            "If PROJECT.yaml selects resource-claim, Project Configurator must preserve "
             "AGENTS.md. The writer must not change `--inline-tech-skills`. "
             "The reviewer may quote \"Set\"."
         )
@@ -405,14 +405,14 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
                 "`--inline-tech-skills`",
                 '"Set"',
             ),
-            conditions=("If PROJECT.yaml selects agent-claim",),
+            conditions=("If PROJECT.yaml selects resource-claim",),
             owners=("Project Configurator", "writer", "reviewer"),
         )
         self.assertIn("changed normative force: must", violations)
         self.assertIn("changed normative force: must not", violations)
         self.assertIn("changed normative force: may", violations)
         self.assertIn(
-            "changed or removed: If PROJECT.yaml selects agent-claim",
+            "changed or removed: If PROJECT.yaml selects resource-claim",
             violations,
         )
 
@@ -460,21 +460,21 @@ class SteTechnicalWritingContractTests(unittest.TestCase):
 # Configuration
 
 **FACT: F-1**
-- **SYNOPSIS:** If `PROJECT.yaml` selects `agent-claim`, run `python3 tool.py --check`.
+- **SYNOPSIS:** If `PROJECT.yaml` selects `resource-claim`, run `python3 tool.py --check`.
 
 | Fixed label | Value |
 | --- | --- |
 | Schema | `dev-methodology-role` |
 
 ```yaml
-resource_coordination: agent-claim
+resource_coordination: resource-claim
 ```
 
 The operator said, "Keep AGENTS.md unchanged."
 """
         candidate = source.replace(
-            "If `PROJECT.yaml` selects `agent-claim`, run",
-            "If `PROJECT.yaml` selects `agent-claim`, run",
+            "If `PROJECT.yaml` selects `resource-claim`, run",
+            "If `PROJECT.yaml` selects `resource-claim`, run",
         )
         self.assertEqual(
             [],
@@ -486,14 +486,14 @@ The operator said, "Keep AGENTS.md unchanged."
                     "**FACT: F-1**",
                     "**SYNOPSIS:**",
                     "`PROJECT.yaml`",
-                    "`agent-claim`",
+                    "`resource-claim`",
                     "`python3 tool.py --check`",
                     "| Fixed label | Value |",
                     "`dev-methodology-role`",
-                    "resource_coordination: agent-claim",
+                    "resource_coordination: resource-claim",
                     '"Keep AGENTS.md unchanged."',
                 ),
-                conditions=("If `PROJECT.yaml` selects `agent-claim`",),
+                conditions=("If `PROJECT.yaml` selects `resource-claim`",),
             ),
         )
 

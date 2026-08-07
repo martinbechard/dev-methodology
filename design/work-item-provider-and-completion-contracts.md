@@ -195,7 +195,7 @@ Generic create, inventory, read, transition, reconcile, complete, fail, and repo
 
 - Authority exists exclusively under backlog in the primary worktree whose branch is main.
 - The Work Item ID is the immutable lowercase filename stem. It is globally unique across active, non-dispatchable, completed, and failed work-item folders. Existing records without an explicit field resolve to their filename stem during migration.
-- Unique atomic creation uses no claim. Existing-item and archive claim behavior remains owned by Agent Claim. Every provider mutation still carries its complete exact path manifest and remains a separate verified commit.
+- Unique atomic creation uses no claim. Existing-item and archive claim behavior remains owned by Resource Claim. Every provider mutation still carries its complete exact path manifest and remains a separate verified commit.
 - Isolated worktrees may read backlog state but do not author or archive the canonical backlog record.
 - A completed item moves to the matching type folder under backlog/completed-backlog. Its Work Item ID remains unchanged; the destination path is diagnostic provider location evidence only.
 
@@ -345,7 +345,7 @@ The migration is atomic at the accepted steady state. Compatibility behavior exi
 | feature-branch-workitem | feature-branch | Replace the prototype process value and reference with the feature-branch completion selector and skill. Extend publication-only AWAITING_REVIEW into observed-merge completion. |
 | create-pull-request | deliver-work-item-feature-branch | Retain as a subordinate GitHub publication capability when used by the completion skill. It does not own terminal completion. GitLab uses a merge-request capability and terminology. |
 | integrate-agent-work | completion skill selected by PROJECT.yaml | Retain as an integration capability for concurrent branches and worktrees. It supplies merge evidence but does not own provider lifecycle. |
-| agent-claim | provider and completion skills | Retain as shared mutation-authority infrastructure. File provider operations and completion operations use separate narrow claim scopes. |
+| resource-claim | provider and completion skills | Retain as shared mutation-authority infrastructure. File provider operations and completion operations use separate narrow claim scopes. |
 
 Creation providers belong to the create-work-item-* family, and create-work-item publishes their shared contract. Management providers belong to the manage-work-items-* family, and manage-work-items publishes their shared contract. The completion interface is deliver-work-item. Its providers are deliver-work-item-direct-main and deliver-work-item-feature-branch.
 
@@ -428,7 +428,7 @@ Each downstream implementation must provide focused evidence for its owned part 
 
 ## Source Reconciliation
 
-The provider-neutral creation contract is owned by [create-work-item](../skills/create-work-item/SKILL.md), and the [manage-work-items Interface Skill](../skills/manage-work-items/SKILL.md) owns the shared management vocabulary. File-provider creation and management are owned by [create-work-item-file](../skills/create-work-item-file/SKILL.md) and [manage-work-items-file](../skills/manage-work-items-file/SKILL.md). The migration table above records how create-backlog, manage-backlog, file-based-backlog, github-issues-backlog, and execute-workitem were replaced before their packages and active callers were removed. [create-pull-request](../skills/create-pull-request/SKILL.md) remains a subordinate GitHub publication capability of feature-branch completion, while [integrate-agent-work](../skills/integrate-agent-work/SKILL.md) and [agent-claim](../skills/agent-claim/SKILL.md) retain their independent integration and ownership responsibilities.
+The provider-neutral creation contract is owned by [create-work-item](../skills/create-work-item/SKILL.md), and the [manage-work-items Interface Skill](../skills/manage-work-items/SKILL.md) owns the shared management vocabulary. File-provider creation and management are owned by [create-work-item-file](../skills/create-work-item-file/SKILL.md) and [manage-work-items-file](../skills/manage-work-items-file/SKILL.md). The migration table above records how create-backlog, manage-backlog, file-based-backlog, github-issues-backlog, and execute-workitem were replaced before their packages and active callers were removed. [create-pull-request](../skills/create-pull-request/SKILL.md) remains a subordinate GitHub publication capability of feature-branch completion, while [integrate-agent-work](../skills/integrate-agent-work/SKILL.md) and [resource-claim](../skills/resource-claim/SKILL.md) retain their independent integration and ownership responsibilities.
 
 The [project configuration template](../skills/route-documentation-work/assets/templates/project-template.yaml), this repository's root PROJECT.yaml, and [render-agents-technology-skills.py](../scripts/render-agents-technology-skills.py) implement workflow_selection.persistence and workflow_selection.commit. Generated workflow guidance references the selected create, manage, and completion skills by name, while the existing folder technology mechanism remains separately inlined.
 

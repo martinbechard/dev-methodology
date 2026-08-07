@@ -12,7 +12,7 @@ scenarios:
     initialState: A buildable order-pricing project has a missing observable behavior and existing public boundaries.
     task: Implement the requested behavior without changing unrelated pricing semantics.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - organise-project-files
       - careful-coding
       - code-comments
@@ -54,7 +54,7 @@ scenarios:
     initialState: A Spring Boot service exposes order state but lacks the requested cancellation behavior.
     task: Add cancellation through the existing service and HTTP boundaries with regression coverage.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - careful-coding
       - code-comments
       - code-discovery
@@ -88,7 +88,7 @@ scenarios:
     initialState: The requested public behavior conflicts with an accepted interface contract and the user has not authorized changing that contract.
     task: Implement the requested behavior and report the result.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - careful-coding
       - code-discovery
     requiredBehaviors:

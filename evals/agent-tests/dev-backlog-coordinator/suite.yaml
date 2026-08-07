@@ -10,7 +10,7 @@ target:
   conditionalSkills:
     coordinate-work-items: Multiple provider-selected work items require portable queue coordination.
     coordinate-codex-tasks: Coordinated executions use Codex tasks.
-    agent-claim: Parent recovery or cleanup mutates a repository-global resource.
+    resource-claim: Parent recovery or cleanup mutates a repository-global resource.
     resolve-backlog-blockage: A user or Watchdog declaration begins or continues backlog-blockage recovery.
     set-solo-mode: A secondary-thread dispatch mechanism exists when sequential blockage recovery begins.
     set-multitask-mode: A secondary-thread dispatch mechanism exists when every blockage-recovery exit condition is satisfied.

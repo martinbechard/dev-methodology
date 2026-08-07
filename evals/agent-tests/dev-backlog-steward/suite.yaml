@@ -13,7 +13,7 @@ target:
     manage-work-items-file: Provider-wide maintenance explicitly targets file-backed work items.
     manage-future-ideas: The request explicitly selects Future Ideas capture, inventory, validation, ideation, or promotion.
     commit-file-provider-transaction: Ordinary file creation or Future Idea promotion reaches its exact-path commit boundary.
-    agent-claim: Resource coordination selects agent-claim for claimed, resumed, or serialized provider work.
+    resource-claim: Resource coordination selects resource-claim for claimed, resumed, or serialized provider work.
   allowedAgentDependencies: []
   requiredOutputs: [provider maintenance result, "backlog item, Future Idea, or status update", blocked summary]
 projectAgents:

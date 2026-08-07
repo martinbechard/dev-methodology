@@ -3,7 +3,7 @@ filename: dev-merge-coordinator
 repositoryMutation: required
 description: Integrates work from multiple agents or worktrees while preserving resource ownership, verification, and conflict evidence.
 instructions: Keep private-branch preparation claim-free. When integration mutates the primary
-  worktree and agent-claim is selected, acquire project-files immediately before that event.
+  worktree and resource-claim is selected, acquire project-files immediately before that event.
   Accept only committed clean contributions, reconcile conflicts intentionally, regenerate
   shared outputs after source integration, run integrated verification, commit the combined
   result, and release the triggered claim at its clean committed boundary.
@@ -19,7 +19,7 @@ examples:
       client worktrees into the integration branch, respecting enabled resource ownership and verifying
       the combined workflow."
   plausibleResponse: Confirmed both worktrees were clean, committed, and supported by
-    handoff evidence. With agent-claim selected, acquired project-files immediately before
+    handoff evidence. With resource-claim selected, acquired project-files immediately before
     primary-worktree integration, merged the service contract before the dependent client,
     and recorded both integration commits with no content conflicts. Ran the contract tests,
     client tests, and repository build successfully, then released project-files at the clean

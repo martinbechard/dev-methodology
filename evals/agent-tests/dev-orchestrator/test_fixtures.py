@@ -38,9 +38,9 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         )
 
         self.assertEqual("none", project["resource_coordination"]["selected"])
-        self.assertNotIn("agent-claim", suite.manifest["target"]["requiredSkills"])
-        self.assertIn("agent-claim", suite.manifest["target"]["conditionalSkills"])
-        self.assertNotIn("agent-claim", scenario["targetSkills"])
+        self.assertNotIn("resource-claim", suite.manifest["target"]["requiredSkills"])
+        self.assertIn("resource-claim", suite.manifest["target"]["conditionalSkills"])
+        self.assertNotIn("resource-claim", scenario["targetSkills"])
         self.assertNotIn("claim-lifecycle", scenario["deterministicChecks"])
         self.assertNotIn("claimRelease", scenario["requiredHandoffReceiptFields"])
 
@@ -190,12 +190,12 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             "claimRelease",
             coordination["cases"]["none"]["requiredHandoffReceiptFields"],
         )
-        agent_claim = coordination["cases"]["agent-claim"]
-        self.assertEqual(["source", "documentation"], agent_claim["claimFreeFileLanes"])
-        self.assertEqual(["integration", "closeout"], agent_claim["claimedLanes"])
-        self.assertEqual("project-files", agent_claim["integrationScope"])
-        self.assertNotIn("integrationResource", agent_claim)
-        self.assertNotIn("claimRelease", agent_claim["requiredHandoffReceiptFields"])
+        resource_claim = coordination["cases"]["resource-claim"]
+        self.assertEqual(["source", "documentation"], resource_claim["claimFreeFileLanes"])
+        self.assertEqual(["integration", "closeout"], resource_claim["claimedLanes"])
+        self.assertEqual("project-files", resource_claim["integrationScope"])
+        self.assertNotIn("integrationResource", resource_claim)
+        self.assertNotIn("claimRelease", resource_claim["requiredHandoffReceiptFields"])
 
     def test_none_coordination_report_omits_claim_release_evidence(self) -> None:
         """Provider-none receipts remain structured without claim release objects."""
@@ -218,10 +218,10 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             '"resourceCoordinationByScenario": {"dependency-routing": "none"}',
             prompt,
         )
-        self.assertIn("must not invoke agent-claim", prompt)
+        self.assertIn("must not invoke resource-claim", prompt)
 
     def test_report_rejects_extra_lane_with_or_without_claims(self) -> None:
-        """None and agent-claim report configurations reject extra receipt lanes."""
+        """None and resource-claim report configurations reject extra receipt lanes."""
         for claim_release in (False, True):
             with (
                 self.subTest(claim_release=claim_release),
@@ -292,7 +292,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                     )
 
     def test_report_rejects_receipt_for_empty_lane_set(self) -> None:
-        """None and agent-claim report configurations reject unconfigured receipts."""
+        """None and resource-claim report configurations reject unconfigured receipts."""
         for claim_release in (False, True):
             with (
                 self.subTest(claim_release=claim_release),
@@ -421,8 +421,9 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 / "dependency-routing"
                 / "candidate"
             )
-            self.assertFalse((candidate / ".git" / "agent-claim-events").exists())
-            self.assertFalse((candidate / ".git" / "agent-claims.json").exists())
+            state_root = candidate / ".codex" / "agent-claim"
+            self.assertFalse((state_root / "agent-claim-events").exists())
+            self.assertFalse((state_root / "agent-claims.json").exists())
 
     def test_none_coordination_ignores_pre_existing_claim_files(self) -> None:
         """Repository-wide claim files do not prove that this scenario used claims."""
@@ -489,7 +490,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                                 "type": "custom_tool_call",
                                 "name": "exec",
                                 "input": (
-                                    "python3 /bundle/agent-claim-helper-command/scripts/claim.py "
+                                    "python3 /bundle/resource-claim-helper-command/scripts/claim.py "
                                     "--repo . status"
                                 ),
                             },
@@ -509,7 +510,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
 
                 with self.assertRaisesRegex(
                     RuntimeError,
-                    "unexpected agent-claim invocation",
+                    "unexpected resource-claim invocation",
                 ):
                     runner._audit_handoff_evidence(
                         (run,),
@@ -518,7 +519,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                         fixture_root,
                     )
 
-    def test_agent_claim_companion_executes_and_audits_complete_lifecycle(self) -> None:
+    def test_resource_claim_companion_executes_and_audits_complete_lifecycle(self) -> None:
         """The selected provider proves configured acquire, commit, release, and cleanup."""
         with tempfile.TemporaryDirectory() as directory:
             run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
@@ -533,7 +534,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             runner._audit_report((run,), report)
             runner._audit_handoff_evidence((run,), report, sessions, fixture_root)
             self.assertIn(
-                '"resourceCoordinationByScenario": {"dependency-routing": "agent-claim"}',
+                '"resourceCoordinationByScenario": {"dependency-routing": "resource-claim"}',
                 prompt,
             )
 
@@ -544,11 +545,141 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 / "candidate"
             )
             registry = json.loads(
-                (candidate / ".git" / "agent-claims.json").read_text(encoding="utf-8")
+                (
+                    candidate
+                    / ".codex"
+                    / "agent-claim"
+                    / "agent-claims.json"
+                ).read_text(encoding="utf-8")
             )
             self.assertEqual([], registry["claims"])
 
-    def test_agent_claim_companion_allows_released_named_resource_event(self) -> None:
+    def test_resource_claim_companion_reads_legacy_state_as_fallback(self) -> None:
+        """Pre-migration fixtures remain auditable when canonical artifacts are absent."""
+        with tempfile.TemporaryDirectory() as directory:
+            run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
+            candidate = (
+                fixture_root
+                / "dev-orchestrator"
+                / "dependency-routing"
+                / "candidate"
+            )
+            state_root = candidate / ".codex" / "agent-claim"
+            (state_root / "agent-claims.json").replace(
+                candidate / ".git" / "agent-claims.json"
+            )
+            (state_root / "agent-claim-events").replace(
+                candidate / ".git" / "agent-claim-events"
+            )
+
+            runner._audit_handoff_evidence(
+                (run,),
+                report,
+                sessions,
+                fixture_root,
+            )
+
+    def test_resource_claim_companion_rejects_contradictory_dual_state(self) -> None:
+        """Legacy live state cannot be masked by a canonical registry."""
+        with tempfile.TemporaryDirectory() as directory:
+            run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
+            candidate = (
+                fixture_root
+                / "dev-orchestrator"
+                / "dependency-routing"
+                / "candidate"
+            )
+            (candidate / ".git" / "agent-claims.json").write_text(
+                '{"claims":[{"claim_id":"still-live"}]}',
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "Contradictory canonical and legacy claim state",
+            ):
+                runner._audit_handoff_evidence(
+                    (run,),
+                    report,
+                    sessions,
+                    fixture_root,
+                )
+
+    def test_resource_claim_companion_rejects_mixed_registry_and_event_layouts(self) -> None:
+        """Canonical registry state cannot combine with live legacy events."""
+        with tempfile.TemporaryDirectory() as directory:
+            run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
+            candidate = (
+                fixture_root
+                / "dev-orchestrator"
+                / "dependency-routing"
+                / "candidate"
+            )
+            legacy_events = candidate / ".git" / "agent-claim-events"
+            legacy_events.mkdir()
+            (legacy_events / "state.json").write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "state_layout_version": 2,
+                        "migrated": "events",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "Contradictory canonical and legacy claim state",
+            ):
+                runner._audit_handoff_evidence(
+                    (run,),
+                    report,
+                    sessions,
+                    fixture_root,
+                )
+
+    def test_resource_claim_companion_accepts_exact_legacy_markers(self) -> None:
+        """Completed registry and file-only event tombstones permit canonical state."""
+        with tempfile.TemporaryDirectory() as directory:
+            run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
+            candidate = (
+                fixture_root
+                / "dev-orchestrator"
+                / "dependency-routing"
+                / "candidate"
+            )
+            registry_marker = candidate / ".git" / "agent-claims.json" / "state.json"
+            registry_marker.parent.mkdir()
+            registry_marker.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "state_layout_version": 2,
+                        "migrated": "registry",
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (candidate / ".git" / "agent-claim-events").write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "state_layout_version": 2,
+                        "migrated": "events",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            runner._audit_handoff_evidence(
+                (run,),
+                report,
+                sessions,
+                fixture_root,
+            )
+
+    def test_resource_claim_companion_allows_released_named_resource_event(self) -> None:
         """A resource-only Event Contract claim remains independent of private file lanes."""
         with tempfile.TemporaryDirectory() as directory:
             run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
@@ -560,7 +691,8 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             )
             journal = (
                 candidate
-                / ".git"
+                / ".codex"
+                / "agent-claim"
                 / "agent-claim-events"
                 / "hot"
                 / "2026-07-19.jsonl"
@@ -616,7 +748,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 fixture_root,
             )
 
-    def test_agent_claim_companion_rejects_lifecycle_breaks(self) -> None:
+    def test_resource_claim_companion_rejects_lifecycle_breaks(self) -> None:
         """The selected provider rejects missing, late, mis-scoped, or dirty claims."""
         cases = {
             "missing-acquire": "has no matching PRIMARY acquisition",
@@ -650,7 +782,8 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 )
                 journal = (
                     candidate
-                    / ".git"
+                    / ".codex"
+                    / "agent-claim"
                     / "agent-claim-events"
                     / "hot"
                     / "2026-07-19.jsonl"
@@ -838,9 +971,9 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                         cwd=second_repository,
                         check=True,
                     )
-                    second_common = second_repository / ".git"
+                    second_state = second_repository / ".codex" / "agent-claim"
                     second_event_root = (
-                        second_common / "agent-claim-events" / "hot"
+                        second_state / "agent-claim-events" / "hot"
                     )
                     second_event_root.mkdir(parents=True)
                     second_claim_id = (
@@ -871,7 +1004,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                         json.dumps(second_event) + "\n",
                         encoding="utf-8",
                     )
-                    (second_common / "agent-claims.json").write_text(
+                    (second_state / "agent-claims.json").write_text(
                         json.dumps({"claims": []}) + "\n",
                         encoding="utf-8",
                     )
@@ -913,7 +1046,12 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 elif case == "malformed-journal-json":
                     pass
                 else:
-                    (candidate / ".git" / "agent-claims.json").write_text(
+                    (
+                        candidate
+                        / ".codex"
+                        / "agent-claim"
+                        / "agent-claims.json"
+                    ).write_text(
                         json.dumps({"claims": [{"claim_id": "retained"}]}) + "\n",
                         encoding="utf-8",
                     )
@@ -1287,18 +1425,18 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         source_root = _SUITE_ROOT / "fixtures" / "dependency-routing"
         if claim_release:
             scenario = dict(run.suite.scenarios[0])
-            scenario["targetSkills"] = [*scenario["targetSkills"], "agent-claim"]
+            scenario["targetSkills"] = [*scenario["targetSkills"], "resource-claim"]
             scenario["deterministicChecks"] = [
                 *scenario["deterministicChecks"],
                 "claim-lifecycle",
             ]
             contract = runner._load_yaml(source_root / "fixture-contract.yaml")
-            contract["resourceCoordination"]["selected"] = "agent-claim"
+            contract["resourceCoordination"]["selected"] = "resource-claim"
             contract["handoffReceipt"]["requiredFields"] = contract[
                 "resourceCoordination"
-            ]["cases"]["agent-claim"]["requiredHandoffReceiptFields"]
+            ]["cases"]["resource-claim"]["requiredHandoffReceiptFields"]
             project = runner._load_yaml(source_root / "PROJECT.yaml")
-            project["resource_coordination"]["selected"] = "agent-claim"
+            project["resource_coordination"]["selected"] = "resource-claim"
             suite_root = temporary_root / "suite-source"
             contract_root = suite_root / "fixtures" / "dependency-routing"
             contract_root.mkdir(parents=True)
@@ -1329,6 +1467,10 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         subprocess.run(["git", "init", "--quiet"], cwd=candidate, check=True)
         subprocess.run(["git", "config", "user.name", "Fixture"], cwd=candidate, check=True)
         subprocess.run(["git", "config", "user.email", "fixture@example.invalid"], cwd=candidate, check=True)
+        (candidate / ".gitignore").write_text(
+            "/.codex/agent-claim/\n",
+            encoding="utf-8",
+        )
         (candidate / "baseline.txt").write_text("baseline\n", encoding="utf-8")
         backlog_relative = "backlog/feature-backlog/update-dependency-health-summary.md"
         backlog_destination = candidate / backlog_relative
@@ -1338,7 +1480,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             encoding="utf-8",
         )
         subprocess.run(
-            ["git", "add", "baseline.txt", backlog_relative],
+            ["git", "add", ".gitignore", "baseline.txt", backlog_relative],
             cwd=candidate,
             check=True,
         )
@@ -1490,13 +1632,14 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 )
             receipt_by_lane[lane].update(receipt)
         if claim_release:
-            event_root = candidate / ".git" / "agent-claim-events" / "hot"
+            state_root = candidate / ".codex" / "agent-claim"
+            event_root = state_root / "agent-claim-events" / "hot"
             event_root.mkdir(parents=True)
             (event_root / "2026-07-19.jsonl").write_text(
                 "".join(json.dumps(event) + "\n" for event in events),
                 encoding="utf-8",
             )
-            (candidate / ".git" / "agent-claims.json").write_text(
+            (state_root / "agent-claims.json").write_text(
                 json.dumps({"claims": []}) + "\n",
                 encoding="utf-8",
             )

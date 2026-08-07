@@ -10,7 +10,7 @@ scenarios:
     initialState: docs/wiki/service-ownership.md directly answers the service-ownership question with current authoritative references.
     task: Determine the service ownership model and research only if durable coverage is missing or stale.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - project-wiki-query
       - project-wiki-research
     requiredBehaviors:
@@ -35,7 +35,7 @@ scenarios:
     initialState: The wiki has no dependency-update-policy leaf, and sources/ contains dated synthetic snapshots from primary public authorities.
     task: Research the missing dependency update policy topic, save one raw report, and recommend durable ingest destinations.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - organise-project-files
       - project-wiki-query
       - project-wiki-research
@@ -64,7 +64,7 @@ scenarios:
     initialState: conflicting-sources.md contains opposing secondary claims, an expired source, and no current primary specification for the requested guarantee.
     task: Establish whether the synthetic dependency service guarantees atomic rollback and prepare the wiki research handoff.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - organise-project-files
       - project-wiki-query
       - project-wiki-research

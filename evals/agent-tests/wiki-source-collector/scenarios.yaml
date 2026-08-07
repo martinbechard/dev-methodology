@@ -10,7 +10,7 @@ scenarios:
     initialState: approved-entities.yaml and candidates.yaml contain two qualifying primary releases in the 2026-07-07 through 2026-07-13 UTC window.
     task: Collect the qualifying weekly release evidence and hand it to wiki ingest.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - organise-project-files
       - project-wiki-research
       - project-wiki
@@ -39,7 +39,7 @@ scenarios:
     initialState: candidates.yaml contains one duplicate, one secondary summary, one off-topic item, one out-of-window item, and one date-only boundary item.
     task: Collect qualifying advisories for the strict timestamp window and record every exclusion.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - organise-project-files
       - project-wiki-research
       - project-wiki
@@ -67,7 +67,7 @@ scenarios:
     initialState: claim-state.json records active recovery ownership of raw, Clippings, and docs/wiki by another task, while the collection queue remains intact.
     task: Collect the approved weekly evidence and save the raw handoff.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - project-wiki-research
       - project-wiki
       - structured-explanation

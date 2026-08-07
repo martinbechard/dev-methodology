@@ -1,13 +1,13 @@
 ---
-name: agent-claim-helper-command
-description: Use the configured local command-line provider for the Agent Claim Helper interface.
+name: resource-claim-helper-command
+description: Use the configured local command-line provider for the Resource Claim Helper interface.
 metadata:
   category: development-practice
 ---
 
-# Agent Claim Helper Command
+# Resource Claim Helper Command
 
-This Provider Skill realizes Agent Claim Helper through one local command-line program. Apply agent-claim for policy and agent-claim-helper for the common operation, input, result, and uncertain-outcome contract.
+This Provider Skill realizes Resource Claim Helper through one local command-line program. Apply resource-claim for policy and resource-claim-helper for the common operation, input, result, and uncertain-outcome contract.
 
 This skill owns command discovery, argument mapping, process results, and command-specific reconciliation. It does not define claim policy or the shared helper contract.
 
@@ -20,13 +20,13 @@ Use the script path in project guidance when it is present. Otherwise, use scrip
 In the dev-methodology source checkout:
 
 ```bash
-CLAIM_SCRIPT=skills/agent-claim-helper-command/scripts/claim.py
+CLAIM_SCRIPT=skills/resource-claim-helper-command/scripts/claim.py
 ```
 
 In a Codex user-level installation:
 
 ```bash
-CLAIM_SCRIPT="${HOME}/.agents/skills/agent-claim-helper-command/scripts/claim.py"
+CLAIM_SCRIPT="${HOME}/.agents/skills/resource-claim-helper-command/scripts/claim.py"
 ```
 
 If the script or Python cannot start, ask Project Configurator to configure a working claim helper.
@@ -43,7 +43,7 @@ Supported operations are status, acquire, extend, extend-deadline, heartbeat, re
 
 Except for a successful `report --format text`, each completed command writes one JSON document to standard output. Read `outcome` from that document. Several results share a process exit code, so do not decide from the exit code alone.
 
-`report --format text` is an explicit human-readable exception. It writes prose without `schema_version` or `outcome` and is not valid for automated result handling or provider-parity verification. Omit `--format` or use `--format json` when the structured Agent Claim Helper contract is required.
+`report --format text` is an explicit human-readable exception. It writes prose without `schema_version` or `outcome` and is not valid for automated result handling or provider-parity verification. Omit `--format` or use `--format json` when the structured Resource Claim Helper contract is required.
 
 ## Read Claim Status
 
@@ -55,7 +55,7 @@ python3 "$CLAIM_SCRIPT" --repo . status
 
 ## Acquire Claim
 
-Map the common acquire inputs to long options. Use one scope shape selected through agent-claim.
+Map the common acquire inputs to long options. Use one scope shape selected through resource-claim.
 
 Work-item acquisition:
 
@@ -118,7 +118,7 @@ python3 "$CLAIM_SCRIPT" --repo . heartbeat --claim-id task-123
 
 ## Release Claim
 
-Map Release Claim to release. Supply disposition and blocker-reference only when the common interface and agent-claim require them.
+Map Release Claim to release. Supply disposition and blocker-reference only when the common interface and resource-claim require them.
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . release \

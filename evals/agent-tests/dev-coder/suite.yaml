@@ -12,7 +12,7 @@ target:
     - code-discovery
     - explain-code-fix
   conditionalSkills:
-    agent-claim: Resource coordination selects agent-claim.
+    resource-claim: Resource coordination selects resource-claim.
     organise-project-files: The implementation creates a new project file or directory.
     test-driven-development: The requested behavior can be expressed through executable tests.
   allowedAgentDependencies: []

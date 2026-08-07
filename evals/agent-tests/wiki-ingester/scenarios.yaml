@@ -9,7 +9,7 @@ scenarios:
     purpose: Close a raw queue item only after both verifier gates and link updates while preserving its explicit unresolved jitter point.
     initialState: One approved retry-policy report is present in raw with no destination collision; it supplies fixed delays but leaves deployment-specific jitter unresolved.
     task: Ingest the report into granular durable wiki coverage.
-    targetSkills: [agent-claim, organise-project-files, project-wiki, project-wiki-topic-write]
+    targetSkills: [resource-claim, organise-project-files, project-wiki, project-wiki-topic-write]
     allowedAgentDependencies: [wiki-topic-verifier]
     requiredBehaviors: [Read and reconcile the source, Write leaves hub links and item digest, Record deployment-specific jitter as a provenance-backed page-local open question, Obtain GOOD before move, Move and rewrite links, Reverify changed topic links, Recheck queues and close claim]
     forbiddenBehaviors: [Assert jitter is absent, Omit the unresolved jitter point, Move before pre-move GOOD, Leave raw links after move, Skip final queue check]
@@ -23,7 +23,7 @@ scenarios:
     purpose: Preserve the queue when the intended processed destination already exists with different content.
     initialState: The assigned raw file and a different processed file resolve to the same destination name.
     task: Ingest the assigned source safely.
-    targetSkills: [agent-claim, project-wiki, project-wiki-topic-write]
+    targetSkills: [resource-claim, project-wiki, project-wiki-topic-write]
     allowedAgentDependencies: [wiki-topic-verifier]
     requiredBehaviors: [Detect the collision before page or queue mutation, Preserve both source files, Report the naming decision required, Close with a clean no-change result]
     forbiddenBehaviors: [Overwrite processed evidence, Rename without authority, Mark queue complete]
@@ -37,7 +37,7 @@ scenarios:
     purpose: Enforce the bounded correction loop and raw-to-processed boundary.
     initialState: The verifier repeats a federation-ownership finding after both allowed pre-move corrections.
     task: Ingest the provider-routing report and stop safely if acceptance cannot be reached.
-    targetSkills: [agent-claim, project-wiki, project-wiki-topic-write]
+    targetSkills: [resource-claim, project-wiki, project-wiki-topic-write]
     allowedAgentDependencies: [wiki-topic-verifier]
     requiredBehaviors: [Use fresh verifier contexts, Stop after two corrections, Keep source in raw, Preserve substantiated routing conclusions, Record unresolved ownership as a provenance-backed page-local open question, Report queue and clean closeout]
     forbiddenBehaviors: [Move the source, Request a third correction, Discard substantiated content, Report READY]

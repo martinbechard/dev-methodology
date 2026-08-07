@@ -41,8 +41,8 @@ current_understanding:
 # that mapping and its authority contract before source-derived documentation work begins.
 
 resource_coordination:
-  selected: "TODO: none or agent-claim. Select exactly one project-wide resource-coordination policy without folder overrides."
-  # Required when selected is agent-claim. These initial defaults are project-owned
+  selected: "TODO: none or resource-claim. Select exactly one project-wide resource-coordination policy without folder overrides."
+  # Required when selected is resource-claim. These initial defaults are project-owned
   # policy and may be tuned later from measured evidence. Omit deadline_policy when
   # selected is none.
   deadline_policy:
@@ -66,7 +66,7 @@ resource_coordination:
     # resource_class, maximum_duration_seconds, and cleanup_grace_seconds.
     resource_overrides: {}
 
-# Required only when resource_coordination.selected is agent-claim. Omit this complete
+# Required only when resource_coordination.selected is resource-claim. Omit this complete
 # mapping when resource coordination is none.
 agent_claim_transport:
   selected: "TODO: mcp or command. Select exactly one claim helper from target-runtime evidence."
@@ -123,7 +123,7 @@ root_agents_reference:
     - "Repository-wide rules, privacy constraints, build and test commands, documentation locations, and taxonomy terms used during project setup."
     - "Ordered project-level skill references appended as the final root-only section without copying skill definitions."
     - "User-confirmed folder technology skill references generated from this plan and their required-load failure policy."
-    - "When resource_coordination selects agent-claim, the .worktrees directory is ignored operational state immediately beneath the primary worktree; agent-claim derives its absolute location and agents never nest it below a linked checkout."
+    - "When resource_coordination selects resource-claim, the .worktrees directory is ignored operational state immediately beneath the primary worktree; resource-claim derives its absolute location and agents never nest it below a linked checkout."
 
 technology_skill_detection:
   owner: "Project Agent Setup."
@@ -243,7 +243,7 @@ documentation_and_file_contracts:
   - path: AGENTS.md
     purpose: "Operational routing artifact supplied by the harness."
   - path: .gitignore
-    purpose: "When agent-claim is selected, contains the anchored /.worktrees/ entry that keeps linked agent checkouts out of project source and normal status; otherwise Not applicable."
+    purpose: "When resource-claim is selected, contains the anchored /.worktrees/ entry that keeps linked agent checkouts out of project source and normal status; otherwise Not applicable."
   - path: PROJECT.yaml
     purpose: "Single project-wide setup and validation artifact for resource coordination, conceptual agent definitions, project-level skill extensions, folder skillsets, folder routing, nested AGENTS.md placement, and evidence."
   - path: "TODO: CLAUDE.md or Not applicable."

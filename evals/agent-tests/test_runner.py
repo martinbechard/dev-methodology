@@ -333,7 +333,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             '"resourceCoordinationByScenario": {"happy": "none"}',
             prompt,
         )
-        self.assertIn("must not invoke agent-claim", prompt)
+        self.assertIn("must not invoke resource-claim", prompt)
 
     def test_claim_checks_require_an_explicit_claim_focused_scenario(self) -> None:
         """Ordinary scenarios default to none even when another check has a claim-like name."""
@@ -352,10 +352,10 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
         coordination_scenario = {
             **ordinary_scenario,
-            "targetSkills": ["agent-claim"],
+            "targetSkills": ["resource-claim"],
         }
         self.assertEqual(
-            ("agent-claim", {}),
+            ("resource-claim", {}),
             runner._scenario_resource_coordination(
                 ordinary_suite,
                 coordination_scenario,

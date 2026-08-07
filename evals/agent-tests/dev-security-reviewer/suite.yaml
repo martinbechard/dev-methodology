@@ -8,7 +8,7 @@ target:
   repositoryMutation: conditional
   requiredSkills: [application-security, review-structured-artifact, structured-explanation]
   conditionalSkills:
-    agent-claim: Review evidence is saved.
+    resource-claim: Review evidence is saved.
     organise-project-files: Review creates a project file or directory.
   allowedAgentDependencies: []
   requiredOutputs: [prioritized security findings, affected files and evidence, residual risk]

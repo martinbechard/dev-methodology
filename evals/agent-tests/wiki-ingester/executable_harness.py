@@ -316,7 +316,7 @@ def stage_runtime(runtime_root: Path, plan: Any) -> RuntimeLayout:
         agent_root,
     )
     for skill_name in (
-        "agent-claim",
+        "resource-claim",
         "code-project-wiki",
         "organise-project-files",
         "project-wiki",
@@ -525,7 +525,7 @@ def _observe_target_result(
         _run(
             [
                 sys.executable,
-                str(REPOSITORY_ROOT / "skills/agent-claim-helper-command/scripts/claim.py"),
+                str(REPOSITORY_ROOT / "skills/resource-claim-helper-command/scripts/claim.py"),
                 "--repo",
                 ".",
                 "status",

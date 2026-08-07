@@ -30,7 +30,7 @@ def run_fixture(fixture_name: str, *arguments: str) -> subprocess.CompletedProce
 
 
 class ProjectBootstrapperFixtureTests(unittest.TestCase):
-    def test_suite_keeps_mutation_required_and_agent_claim_conditional(self) -> None:
+    def test_suite_keeps_mutation_required_and_resource_claim_conditional(self) -> None:
         """Resource coordination selects claim behavior independently of mutation."""
         suite = yaml.safe_load(
             (SUITE_ROOT / "suite.yaml").read_text(encoding="utf-8")
@@ -38,8 +38,8 @@ class ProjectBootstrapperFixtureTests(unittest.TestCase):
         target = suite["target"]
 
         self.assertEqual("required", target["repositoryMutation"])
-        self.assertNotIn("agent-claim", target["requiredSkills"])
-        self.assertIn("agent-claim", target["conditionalSkills"])
+        self.assertNotIn("resource-claim", target["requiredSkills"])
+        self.assertIn("resource-claim", target["conditionalSkills"])
         contract = (
             SUITE_ROOT
             / "skills"
@@ -47,7 +47,7 @@ class ProjectBootstrapperFixtureTests(unittest.TestCase):
             / "SKILL.md"
         ).read_text(encoding="utf-8")
         self.assertIn(
-            "agent-claim applies only when the project-selected resource coordination "
+            "resource-claim applies only when the project-selected resource coordination "
             "policy selects it",
             contract,
         )

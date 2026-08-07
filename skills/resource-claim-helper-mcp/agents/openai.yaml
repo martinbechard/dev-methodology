@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Agent Claim
+  display_name: Resource Claim Helper Mcp
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Use when an event in this skill requires temporary protection for a shared file or resource.
+  short_description: Use a verified MCP provider for the Resource Claim Helper interface when complete parity is...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $agent-claim to follow the Claim Events table for a shared file or resource.
+  default_prompt: Use $resource-claim-helper-mcp with $resource-claim and $resource-claim-helper to call the configured MCP claim helper.
 
 # Optional invocation policy placeholder.
 # policy:

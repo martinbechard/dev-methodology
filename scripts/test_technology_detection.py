@@ -78,7 +78,7 @@ def with_claim_helper(value: dict[str, object]) -> dict[str, object]:
 
     return {
         "resource_coordination": {
-            "selected": "agent-claim",
+            "selected": "resource-claim",
             "deadline_policy": {
                 "resource_classes": {
                     "backlog-mutation": {
@@ -2384,13 +2384,13 @@ class TechnologyDetectionTests(unittest.TestCase):
             self.assertIn("BEGIN INLINED TECHNOLOGY SKILL: python", completed.stdout)
             self.assertIn("Do not rerun detection during ordinary work", completed.stdout)
             self.assertIn("most-specific matching pattern wins", completed.stdout)
-            self.assertNotIn("Agent Claims And Worktrees", completed.stdout)
+            self.assertNotIn("Resource Claims And Worktrees", completed.stdout)
             self.assertIn(
-                "BEGIN INLINED CLAIM HELPER SKILL: agent-claim-helper-command",
+                "BEGIN INLINED CLAIM HELPER SKILL: resource-claim-helper-command",
                 completed.stdout,
             )
             self.assertNotIn(
-                "BEGIN INLINED CLAIM HELPER SKILL: agent-claim-helper-mcp",
+                "BEGIN INLINED CLAIM HELPER SKILL: resource-claim-helper-mcp",
                 completed.stdout,
             )
 
@@ -3158,7 +3158,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         self.assertIn("Optional definition authority", renderer.render.__doc__)
         self.assertIn("workflow_selection and resource_coordination are required", renderer.render.__doc__)
         self.assertIn(
-            "agent_claim_transport is required only when resource_coordination selects agent-claim",
+            "agent_claim_transport is required only when resource_coordination selects resource-claim",
             renderer.render.__doc__,
         )
         self.assertNotIn("Optional authority and workflow", renderer.render.__doc__)

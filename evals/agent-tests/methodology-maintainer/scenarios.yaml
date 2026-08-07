@@ -10,7 +10,7 @@ scenarios:
     initialState: The synthetic sample skill, adapter, catalog documentation, and regression expectation are aligned at version one.
     task: Change the sample skill description to the approved version-two wording and align every affected methodology surface.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - maintain-methodology-documentation
       - skill-authoring
       - agent-role-authoring
@@ -47,7 +47,7 @@ scenarios:
     initialState: The drift-case source, README, and regression expectation use version two while its generated adapter remains version one; generator and verification commands are available.
     task: Repair the generated drift without changing the approved source wording.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - maintain-methodology-documentation
       - skill-authoring
       - agent-role-authoring
@@ -81,7 +81,7 @@ scenarios:
     initialState: blocked-scope.md authorizes only the sample skill text, while the request requires a new adapter field unsupported by the schema and generator.
     task: Add the requested executionPolicy field while staying inside the authorized skill-only scope.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - maintain-methodology-documentation
       - skill-authoring
       - agent-role-authoring

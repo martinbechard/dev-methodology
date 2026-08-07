@@ -351,7 +351,7 @@
             "review-structured-artifact",
             "explain-code-fix"
           ],
-          "sha256": "ce3632b9d5d67458988f7a384d31cff58bd157f66a5687484c63c136ff6b3e01",
+          "sha256": "c2dd596f5513d4f6dab9146512f9b0c548755e8e03eec13e0d0ff43c73239364",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -760,7 +760,7 @@
             "route-documentation-work",
             "verify-documentation-page"
           ],
-          "sha256": "b448dbe3240c344287bd673ff955c282527284d4014740db080e1d10e23256d2",
+          "sha256": "2aa40c4bc3bce873aaf491df92523ba5463ae2ee02a4daaa7d172a59778b70f4",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -1456,7 +1456,7 @@
             "explain-code-fix",
             "codex-harness-directives"
           ],
-          "sha256": "d2b1e8f08bdc066d6b53d7907e13a5b3cdb04fbbb194c537f55c7c5d6dab50fc",
+          "sha256": "dd9ccfc573e6dd83660dda62f93970f6df7769ed2ec82f8f9a1956f47994104d",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -1876,7 +1876,7 @@
             "verify-documentation-page",
             "codex-harness-directives"
           ],
-          "sha256": "500136446281852c30c27f53106090fcb80249d714485ecbfcd737ad3e54610e",
+          "sha256": "d2af8df921128efd0abb87ab29bf15b1958691b955c4d1ca31e28d12790cc734",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -2589,7 +2589,7 @@
             "review-structured-artifact",
             "explain-code-fix"
           ],
-          "sha256": "adfcc9c029216c22690ce6e46ab2ca7a5b58cca78f64e426f1b22cbb2315a4c6",
+          "sha256": "9ae7762bd3867e720944d91c86ba36765a70d6992aedaaf3526acb65b8a38af6",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -3013,7 +3013,7 @@
             "route-documentation-work",
             "verify-documentation-page"
           ],
-          "sha256": "674d3b8c9ea313fcfa09b0336b22a32aed7cd95e929564645758f866cbab0427",
+          "sha256": "b71e28437c75fe7dec30eeecc54a829383160e4d580061b78cd0368a5b24f875",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -3726,7 +3726,7 @@
             "review-structured-artifact",
             "explain-code-fix"
           ],
-          "sha256": "05e46ad5a48745d380bdacdd2f65d39683c79ebd65938f711643680607cfa7b0",
+          "sha256": "8991d853658d7694ca243fa78fb7224f2c5a6f08ec3de072bdb022555768bf5a",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -4150,7 +4150,7 @@
             "route-documentation-work",
             "verify-documentation-page"
           ],
-          "sha256": "8221a3875ba5faa28738f479b2f7d72433ae58693b94e118c4b52da6595e4ce3",
+          "sha256": "b85c8ba6c33055525f5e56630939ef415a7a539b5811479ac0c9bd6385dd45cd",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {

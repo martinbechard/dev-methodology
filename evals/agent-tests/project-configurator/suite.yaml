@@ -6,7 +6,7 @@ target:
   conceptualRole: agents/roles/project-setup/project-configurator.role.yaml
   nativeAgent: generated/adapters/codex/agents/project-configurator.toml
   repositoryMutation: required
-  requiredSkills: [agent-claim, detect-technology-skills, create-project-configuration, route-documentation-work, verify-documentation-page]
+  requiredSkills: [resource-claim, detect-technology-skills, create-project-configuration, route-documentation-work, verify-documentation-page]
   conditionalSkills:
     organise-project-files: Configuration creates a file whose path is not fixed by contract.
     bootstrap-project-documentation: The target lacks required documentation routing structure.

@@ -11,7 +11,7 @@ authoritative_sources:
   agents_files: []
   package_and_build_files:
     - path: proposed-role.yaml
-      evidence: The mutating role lacks agent-claim.
+      evidence: The mutating role lacks resource-claim.
   source_roots: []
   test_roots: []
   documentation:

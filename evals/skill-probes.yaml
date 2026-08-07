@@ -51,12 +51,12 @@ defaults:
   modelJudgeRule: A Model Judge rubric may contribute only while a matching calibration record satisfies evals/judges.yaml.
   junieIdentityRule: A Junie result remains unverified unless captured subagent-start evidence identifies the intended custom agent.
 probes:
-  - id: probe-agent-claim
-    skill: agent-claim
-    source: skills/agent-claim/SKILL.md
+  - id: probe-resource-claim
+    skill: resource-claim
+    source: skills/resource-claim/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
-    activationCondition: The loaded agent-claim skill identifies a matching row in its Claim Events table.
+    activationCondition: The loaded resource-claim skill identifies a matching row in its Claim Events table.
     negativeCondition: No row in the Claim Events table matches the work.
     expectedBehavior: Coordinate the shared resource from the matching Claim Events row; use read-only status, acquire, scope extension, deadline extension, heartbeat, and release under the policy boundaries; reconcile an uncertain mutating outcome through status on the same configured helper; preserve non-overlapping owners; wait for a direct release or recovery notification after a conflict; and retain claim history.
     judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, allowed-paths-only], modelRubric: null}
@@ -65,12 +65,12 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-agent-claim-helper
-    skill: agent-claim-helper
-    source: skills/agent-claim-helper/SKILL.md
+  - id: probe-resource-claim-helper
+    skill: resource-claim-helper
+    source: skills/resource-claim-helper/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
-    activationCondition: A configured agent-claim-helper Provider Skill realizes claim operations selected by agent-claim.
+    activationCondition: A configured resource-claim-helper Provider Skill realizes claim operations selected by resource-claim.
     negativeCondition: Resource coordination is none, or no claim operation is required.
     expectedBehavior: Preserve the common repository, identity, scope, deadline, release, journal, and report inputs; expose the complete operation set and structured outcomes; and reconcile an uncertain mutation through status on the same configured provider without repeating it.
     judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, allowed-paths-only], modelRubric: null}
@@ -79,9 +79,9 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-agent-claim-helper-mcp
-    skill: agent-claim-helper-mcp
-    source: skills/agent-claim-helper-mcp/SKILL.md
+  - id: probe-resource-claim-helper-mcp
+    skill: resource-claim-helper-mcp
+    source: skills/resource-claim-helper-mcp/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
     activationCondition: PROJECT.yaml selects an MCP claim helper only after deadline extension, registry reset, journal maintenance, contention reporting, and structured-result parity are verified.
@@ -93,9 +93,9 @@ probes:
     executableCases: [project-configuration-routing]
     coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-agent-claim-helper-command
-    skill: agent-claim-helper-command
-    source: skills/agent-claim-helper-command/SKILL.md
+  - id: probe-resource-claim-helper-command
+    skill: resource-claim-helper-command
+    source: skills/resource-claim-helper-command/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
     activationCondition: PROJECT.yaml selects and verifies the command-line claim helper.
@@ -128,7 +128,7 @@ probes:
     evaluationKind: workflow-invariant
     activationCondition: A parent coordinator is asked to sustain multiple provider-selected work items through lifecycle handoffs, scheduling, recovery, delivery, and terminal housekeeping.
     negativeCondition: One self-contained task or a parked preflight that cannot enter its current lifecycle or artifact window does not start a coordination campaign.
-    expectedBehavior: Trust canonical Ready only after the provider resolved hard dependencies, reject malformed Ready records for provider reconciliation instead of inventing effective eligibility, reconcile active capacity from portable execution evidence, follow agent-claim when it is loaded, leave stale-claim investigation to the watchdog, and close only from durable review, verification, integration, lifecycle, and cleanup evidence.
+    expectedBehavior: Trust canonical Ready only after the provider resolved hard dependencies, reject malformed Ready records for provider reconciliation instead of inventing effective eligibility, reconcile active capacity from portable execution evidence, follow resource-claim when it is loaded, leave stale-claim investigation to the watchdog, and close only from durable review, verification, integration, lifecycle, and cleanup evidence.
     judgePlan: {deterministicChecks: [skill-read-trace, suite-simulator-tests, phase-order, lifecycle-baton-evidence, just-in-time-dispatch, fifteen-minute-wake-audit, concrete-successor-chain, completion-evidence-gate], modelRubric: workflow-quality}
     scenarioAssociations: [dev-backlog-coordinator-happy, dev-backlog-coordinator-boundary, dev-backlog-watchdog-happy, dev-backlog-watchdog-boundary, dev-backlog-watchdog-exit-condition]
     workflowAssociations: [backlog]

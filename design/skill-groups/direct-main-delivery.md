@@ -91,7 +91,7 @@ classDiagram
         +deliberate-integration()
         +integrated-verification-and-main-observation()
     }
-    class agent-claim {
+    class resource-claim {
         <<SKILL.md>>
         <<Cross-group>>
         +coordinate-shared-resource(resourceManifest)
@@ -105,7 +105,7 @@ classDiagram
         +verification()
     }
 
-    deliver-work-item-direct-main ..> agent-claim : when resource coordination is selected
+    deliver-work-item-direct-main ..> resource-claim : when resource coordination is selected
     deliver-work-item-direct-main o..> integrate-agent-work : when the accepted change is not present on main
 ```
 
@@ -127,4 +127,4 @@ The delivery relationship and procedure boundary are grounded in these Agent and
 - [Deliver Work Item Direct Main](../../skills/deliver-work-item-direct-main/SKILL.md)
 - [Deliver Work Item Feature Branch](../../skills/deliver-work-item-feature-branch/SKILL.md)
 - [Integrate Agent Work](../../skills/integrate-agent-work/SKILL.md)
-- [Agent Claim](../../skills/agent-claim/SKILL.md)
+- [Resource Claim](../../skills/resource-claim/SKILL.md)

@@ -7,7 +7,7 @@ target:
   nativeAgent: generated/adapters/codex/agents/wiki-researcher.toml
   repositoryMutation: required
   requiredSkills:
-    - agent-claim
+    - resource-claim
     - project-wiki-query
     - project-wiki-research
   conditionalSkills:

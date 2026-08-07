@@ -127,11 +127,11 @@ Use the check mode before publishing documentation changes.
 python3 scripts/build-skill-docs.py --check
 ```
 
-## Agent Claims And Worktrees
+## Resource Claims And Worktrees
 
-PROJECT.yaml selects agent-claim or none. When agent-claim is selected, Project Configurator records resource deadlines and configures one claim helper provider. The field agent_claim_transport keeps its historical name but selects that provider. This repository uses the command-line provider because the current MCP provider omits claim deadline extension and registry reset operations.
+PROJECT.yaml selects resource-claim or none. When resource-claim is selected, Project Configurator records resource deadlines and configures one claim helper provider. The field agent_claim_transport keeps its historical name but selects that provider. This repository uses the command-line provider because the current MCP provider omits claim deadline extension and registry reset operations.
 
-[Agent Claim](skills/agent-claim/SKILL.md) is the only source for events that require claims, the scope for each event, conflict handling, deadline policy, and release timing. [Agent Claim Helper](skills/agent-claim-helper/SKILL.md) defines the common operations, inputs, structured outcomes, and uncertain-outcome reconciliation. The command-line and MCP Provider Skills realize that interface without redefining policy.
+[Resource Claim](skills/resource-claim/SKILL.md) is the only source for events that require claims, the scope for each event, conflict handling, deadline policy, and release timing. [Resource Claim Helper](skills/resource-claim-helper/SKILL.md) defines the common operations, inputs, structured outcomes, and uncertain-outcome reconciliation. The command-line and MCP Provider Skills realize that interface without redefining policy.
 
 Skills that apply claims refer to that table instead of copying its rules.
 
@@ -145,21 +145,21 @@ Project setup keeps the canonical checkout root out of repository status with th
 
 After a private contribution is preserved on its branch or integrated into its target, the orchestration owner removes the clean worktree and prunes stale Git worktree metadata.
 
-Every worktree uses the claim registry and claim history stored in the Git common directory. Agent transcripts are not claim history.
+Every worktree uses the claim registry and claim history resolved from the primary worktree under .codex/agent-claim. The directory name, agent-claims.json registry, agent-claim-events history, and agent_claim_transport project field retain their historical names as explicit compatibility identifiers; the public Resource Claim rename does not migrate or discard persisted claim state. Agent transcripts are not claim history.
 
-The command helper is implemented by skills/agent-claim-helper-command/scripts/claim.py:
+The command helper is implemented by skills/resource-claim-helper-command/scripts/claim.py:
 
 ```bash
-python3 skills/agent-claim-helper-command/scripts/claim.py --help
+python3 skills/resource-claim-helper-command/scripts/claim.py --help
 ```
 
 A Codex user-level installation uses the installed copy:
 
 ```bash
-python3 "${HOME}/.agents/skills/agent-claim-helper-command/scripts/claim.py" --help
+python3 "${HOME}/.agents/skills/resource-claim-helper-command/scripts/claim.py" --help
 ```
 
-For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, directly applies the selected provider manager for Ready -> Starting reservations and Coordinator-owned dispositions, launches the root Dev Orchestrator execution, and finishes its handoff. When coordinate-codex-tasks is active, that execution maps to one root Codex task. The root Dev Orchestrator independently applies the selected provider manager for Starting -> Running acceptance and its later lifecycle operations. Dev Backlog Steward is optional and limited to provider-wide inventory, normalization, archival audit, and recovery. Dev Backlog Watchdog detects overly old Starting items and reports recovery evidence to the Coordinator. Each agent follows Agent Claim when its work reaches an event in the Claim Events table.
+For coordinated multi-item work, Dev Backlog Coordinator owns queue decisions, directly applies the selected provider manager for Ready -> Starting reservations and Coordinator-owned dispositions, launches the root Dev Orchestrator execution, and finishes its handoff. When coordinate-codex-tasks is active, that execution maps to one root Codex task. The root Dev Orchestrator independently applies the selected provider manager for Starting -> Running acceptance and its later lifecycle operations. Dev Backlog Steward is optional and limited to provider-wide inventory, normalization, archival audit, and recovery. Dev Backlog Watchdog detects overly old Starting items and reports recovery evidence to the Coordinator. Each agent follows Resource Claim when its work reaches an event in the Claim Events table.
 
 An explicit user-authorized work item that names exact skill definition paths supplies the required user direction for those named skills; only additional skill-definition paths require additional approval.
 
@@ -289,7 +289,7 @@ python3 scripts/install-skills.py \
 
 ### Preferred MCP Operations Layer
 
-Codex and Junie can use mcp-agent-ops for skill catalog reads, technology detection, skill validation, YAML verification, and Markdown link checks. Project Configurator may select it as the claim helper only after verifying every operation and result field required by [Agent Claim Helper MCP](skills/agent-claim-helper-mcp/SKILL.md) and [Agent Claim Helper](skills/agent-claim-helper/SKILL.md). The current provider omits `claim_extend_deadline` and `claim_reset`, so this repository uses the command-line claim helper.
+Codex and Junie can use mcp-agent-ops for skill catalog reads, technology detection, skill validation, YAML verification, and Markdown link checks. Project Configurator may select it as the claim helper only after verifying every operation and result field required by [Resource Claim Helper MCP](skills/resource-claim-helper-mcp/SKILL.md) and [Resource Claim Helper](skills/resource-claim-helper/SKILL.md). The current provider omits `claim_extend_deadline` and `claim_reset`, so this repository uses the command-line claim helper.
 
 Install and verify mcp-agent-ops before selecting it as the claim helper. Published release 0.4.0 does not support the required claim results and must not be selected for claims. Follow the companion project's [verified release installation procedure](https://github.com/martinbechard/mcp-agent-ops#install-the-latest-release), including checksum and installed-file verification. The bundle installer configures an existing server; it does not install the executable.
 
@@ -387,7 +387,7 @@ After that analysis and explicit user approval, --replace-customized may be comb
 
 ## Agent Responsibility Boundaries
 
-Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The [Wiki Skills And Project Context page](design/wiki-skills-and-project-context.html) owns the conceptual relationship among the LLM-wiki pattern, OKF-compatible files, project-wiki operations, and code-project-wiki synchronization. The generated [Core Agent and Skills](design/agent-and-skill-definitions.html) page owns catalog views of current conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. [Agent Skill Architecture](design/skills-modularization.html) explains technology-agnostic agent skills and setup-bound technology extensions. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns bootstrap, planned design progression, source-backed documentation, execution, review, verification, integration, configured delivery closeout, and execution evidence. [Agent Claim](skills/agent-claim/SKILL.md) owns all claim rules.
+Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The [Wiki Skills And Project Context page](design/wiki-skills-and-project-context.html) owns the conceptual relationship among the LLM-wiki pattern, OKF-compatible files, project-wiki operations, and code-project-wiki synchronization. The generated [Core Agent and Skills](design/agent-and-skill-definitions.html) page owns catalog views of current conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. [Agent Skill Architecture](design/skills-modularization.html) explains technology-agnostic agent skills and setup-bound technology extensions. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns bootstrap, planned design progression, source-backed documentation, execution, review, verification, integration, configured delivery closeout, and execution evidence. [Resource Claim](skills/resource-claim/SKILL.md) owns all claim rules.
 
 Dev Backlog Coordinator owns parent-level, just-in-time coordination when a user requests
 several provider-selected work items. It obtains provider inventory through the effective
@@ -544,10 +544,10 @@ The development practice skills are:
 - structured-explanation
 - structured-design
 - review-structured-artifact
-- agent-claim
-- agent-claim-helper
-- agent-claim-helper-command
-- agent-claim-helper-mcp
+- resource-claim
+- resource-claim-helper
+- resource-claim-helper-command
+- resource-claim-helper-mcp
 - integrate-agent-work
 - coordinate-work-items
 - coordinate-codex-tasks
@@ -666,14 +666,14 @@ Artifact-specific review skills pass the artifact, source evidence, and complete
 Invoke Project Bootstrapper once and describe the desired steady state:
 
 1. Use the repository bundle sources and matching generated runtime adapter.
-2. Review the resulting PROJECT.yaml, its resource_coordination selection, resource deadlines when agent-claim is selected, ordered project_skill_extensions list, reference-only Persistence and Commit workflow guidance, root or nested AGENTS.md guidance, and verification commands. When agent-claim is selected, one verified claim helper is recorded in the historical agent_claim_transport field. Project-level extensions are referenced without copying their definitions in one final root-only section. Confirmed technology skills are referenced from applicable AGENTS.md guidance by default; pass inline-tech-skills as true only when Advanced setup explicitly selects inline technology delivery. [Agent Skill Architecture](design/skills-modularization.html) explains the independent definition-owned, project-level extension, and folder technology selection mechanisms.
+2. Review the resulting PROJECT.yaml, its resource_coordination selection, resource deadlines when resource-claim is selected, ordered project_skill_extensions list, reference-only Persistence and Commit workflow guidance, root or nested AGENTS.md guidance, and verification commands. When resource-claim is selected, one verified claim helper is recorded in the historical agent_claim_transport field. Project-level extensions are referenced without copying their definitions in one final root-only section. Confirmed technology skills are referenced from applicable AGENTS.md guidance by default; pass inline-tech-skills as true only when Advanced setup explicitly selects inline technology delivery. [Agent Skill Architecture](design/skills-modularization.html) explains the independent definition-owned, project-level extension, and folder technology selection mechanisms.
 3. Use bootstrap-project-documentation and reverse-engineer-project-documentation when the project needs a source-backed documentation baseline. Whole-project reverse engineering covers every meaningful module by default: inventory and review module designs first, group the complete set into high-level designs, derive architecture from those groups, cover all observable workflows, complete README and wiki integration, then run the final supplemental top-down semantic reconciliation from wiki and functional specifications through architecture, high-level designs, module designs, and source. Narrower coverage is valid only when the user explicitly names the boundary.
 4. For normal planned development, treat accepted functional specifications and architecture as the upstream authority. Create and review the HLD, create and review its module designs, then implement with the ordinary coding agent and project-routed technology skills. A missing high-impact contract blocks dependent work instead of being filled with an unsupported assumption.
 5. Follow the [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) for execution, independent review, integrated verification, commit, and configured delivery.
 
 Separately requested deployment uses the user or project defaults, or caller-supplied destination overrides, under Scoped Target Deployment.
 
-The guidance renderer writes the selected coordination skill and claim helper, workflow selectors, technology-skill sections, and root project-skill references to standard output. Missing or unsupported resource_coordination is a configuration error. Missing or unavailable agent_claim_transport is an error when agent-claim is selected. Unknown, unavailable, duplicate, or definition-owned project extensions stop rendering and identify the PROJECT.yaml field that needs correction. The --output option creates a file only when the target does not exist. If the target already exists, use --replace only when complete replacement is intentional.
+The guidance renderer writes the selected coordination skill and claim helper, workflow selectors, technology-skill sections, and root project-skill references to standard output. Missing or unsupported resource_coordination is a configuration error. Missing or unavailable agent_claim_transport is an error when resource-claim is selected. Unknown, unavailable, duplicate, or definition-owned project extensions stop rendering and identify the PROJECT.yaml field that needs correction. The --output option creates a file only when the target does not exist. If the target already exists, use --replace only when complete replacement is intentional.
 
 ```bash
 python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --inline-tech-skills true

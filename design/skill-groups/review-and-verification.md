@@ -276,9 +276,9 @@ classDiagram
     class ProjectSpecificDirectives["Project-specific directives"] {
         <<AGENTS.md>>
         <<routing>>
-        +route resource coordination => agent-claim
+        +route resource coordination => resource-claim
     }
-    class agent-claim {
+    class resource-claim {
         <<SKILL.md>>
         <<Cross-group>>
         +coordinate-shared-resource(resourceManifest)
@@ -289,8 +289,8 @@ classDiagram
     analyze-root-cause o..> trace-code-execution : when the cause depends on a source path
     analyze-root-cause o..> collect-runtime-evidence : when runtime facts are missing
     trace-code-execution o..> collect-runtime-evidence : when source cannot identify the actual path
-    ProjectSpecificDirectives o..> agent-claim : when resource_coordination is agent-claim
-    verify-end-to-end-workflow ..> agent-claim : when verification triggers a claim event
+    ProjectSpecificDirectives o..> resource-claim : when resource_coordination is resource-claim
+    verify-end-to-end-workflow ..> resource-claim : when verification triggers a claim event
 ```
 
 Verification returns evidence to the delivery owner. None of these scenarios assigns Commit-provider selection or provider-lifecycle authority to Dev Verifier.
@@ -330,4 +330,4 @@ The relationships and procedure boundaries are grounded in these Agent and skill
 - [Organise Project Files](../../skills/organise-project-files/SKILL.md)
 - [Review Structured Artifact](../../skills/review-structured-artifact/SKILL.md)
 - [Structured Explanation](../../skills/structured-explanation/SKILL.md)
-- [Agent Claim](../../skills/agent-claim/SKILL.md)
+- [Resource Claim](../../skills/resource-claim/SKILL.md)

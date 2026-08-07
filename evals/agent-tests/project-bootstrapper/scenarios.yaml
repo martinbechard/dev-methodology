@@ -10,7 +10,7 @@ scenarios:
     initialState: PROJECT.yaml and applicable AGENTS.md files are valid and current, while one bounded documentation contribution remains.
     task: Complete project bootstrap without unnecessary reconfiguration or technology detection.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - bootstrap-project-documentation
       - route-documentation-work
     allowedAgentDependencies:
@@ -49,7 +49,7 @@ scenarios:
     initialState: The synthetic repository has no PROJECT.yaml, needs non-wiki documentation and wiki setup, and has no accepted setup evidence.
     task: Configure, document, review, integrate, and verify the complete project setup.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - organise-project-files
       - bootstrap-project-documentation
       - route-documentation-work
@@ -99,7 +99,7 @@ scenarios:
     initialState: Accepted contributions are assembled into an integrated tree that retains stale phase wording and lacks the catalog module design required by source evidence.
     task: Audit the final reverse-engineered tree, route exact corrections and missing artifacts, review them independently, and verify the reconciled steady state.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - organise-project-files
       - bootstrap-project-documentation
       - route-documentation-work
@@ -143,7 +143,7 @@ scenarios:
     initialState: PROJECT.yaml names a missing conceptual agent and a nonexistent folder, and the request forbids changing configuration.
     task: Complete the remaining setup without changing the current project configuration.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - bootstrap-project-documentation
       - route-documentation-work
     allowedAgentDependencies: []

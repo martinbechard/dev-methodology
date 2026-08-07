@@ -22,12 +22,12 @@ from scripts.agent_skill_evals import validation as eval_validation
 
 ROOT = Path(__file__).resolve().parents[1]
 RENDER_SCRIPT = ROOT / "scripts" / "render-agents-technology-skills.py"
-POLICY_SKILL = ROOT / "skills" / "agent-claim" / "SKILL.md"
-INTERFACE_SKILL = ROOT / "skills" / "agent-claim-helper" / "SKILL.md"
-MCP_SKILL = ROOT / "skills" / "agent-claim-helper-mcp" / "SKILL.md"
-COMMAND_SKILL = ROOT / "skills" / "agent-claim-helper-command" / "SKILL.md"
-COMMAND_SCRIPT = ROOT / "skills" / "agent-claim-helper-command" / "scripts" / "claim.py"
-LEGACY_COMMAND_SCRIPT = ROOT / "skills" / "agent-claim" / "scripts" / "claim.py"
+POLICY_SKILL = ROOT / "skills" / "resource-claim" / "SKILL.md"
+INTERFACE_SKILL = ROOT / "skills" / "resource-claim-helper" / "SKILL.md"
+MCP_SKILL = ROOT / "skills" / "resource-claim-helper-mcp" / "SKILL.md"
+COMMAND_SKILL = ROOT / "skills" / "resource-claim-helper-command" / "SKILL.md"
+COMMAND_SCRIPT = ROOT / "skills" / "resource-claim-helper-command" / "scripts" / "claim.py"
+LEGACY_COMMAND_SCRIPT = ROOT / "skills" / "resource-claim" / "scripts" / "claim.py"
 CASES_PATH = ROOT / "evals" / "cases.yaml"
 PROJECT_CONFIGURATION_FIXTURE = ROOT / "evals" / "projects" / "project-configuration-routing"
 SKILL_GROUP_MODEL = ROOT / "design" / "object-oriented-skill-group-models.md"
@@ -120,8 +120,8 @@ WORK_ITEM_REPORT_SEGMENT_FIELDS = (
     "release_event_id",
 )
 RETIRED_PROVIDER_IDENTITIES = (
-    "agent-claim-" + "command",
-    "agent-claim-" + "mcp",
+    "resource-claim-" + "command",
+    "resource-claim-" + "mcp",
 )
 MAINTAINED_TEXT_SUFFIXES = frozenset({
     ".html",
@@ -323,8 +323,8 @@ def _run_selected_mcp_lifecycle(
     if not isinstance(coordination, dict):
         raise ValueError("resource_coordination is required")
     selected = coordination.get("selected")
-    if selected != "agent-claim":
-        raise ValueError("resource_coordination.selected must be agent-claim")
+    if selected != "resource-claim":
+        raise ValueError("resource_coordination.selected must be resource-claim")
 
     helper_configuration = project.get("agent_claim_transport")
     if not isinstance(helper_configuration, dict):
@@ -355,7 +355,7 @@ def _run_selected_mcp_lifecycle(
         helper.call("claim_release", claim_id=claim_id)
     )
     return {
-        "resource_coordination": "agent-claim",
+        "resource_coordination": "resource-claim",
         "helper": "mcp",
         "claim_id": claim_id,
         "resources": list(resources),
@@ -448,7 +448,7 @@ def _run_command_resource_lifecycle(
     )
     release_result = _command_result(release_process)
     return {
-        "resource_coordination": "agent-claim",
+        "resource_coordination": "resource-claim",
         "helper": "command",
         "claim_id": claim_id,
         "resources": list(resources),
@@ -479,7 +479,7 @@ def load_command_module():
     """Load the command provider so its legacy normalization table stays documented."""
 
     specification = importlib.util.spec_from_file_location(
-        "agent_claim_helper_command_contract",
+        "resource_claim_helper_command_contract",
         COMMAND_SCRIPT,
     )
     if specification is None or specification.loader is None:
@@ -494,7 +494,7 @@ def project_with_helper(selected: str, availability: str = "AVAILABLE") -> dict[
 
     return {
         "resource_coordination": {
-            "selected": "agent-claim",
+            "selected": "resource-claim",
             "deadline_policy": {
                 "resource_classes": {
                     "backlog-mutation": {
@@ -534,7 +534,7 @@ def project_with_helper(selected: str, availability: str = "AVAILABLE") -> dict[
     }
 
 
-class AgentClaimHelperTests(unittest.TestCase):
+class ResourceClaimHelperTests(unittest.TestCase):
     """Protect standalone claim-helper composition and failure behavior."""
 
     def test_renderer_inlines_only_selected_claim_helper_provider(self) -> None:
@@ -542,15 +542,15 @@ class AgentClaimHelperTests(unittest.TestCase):
 
         renderer = load_renderer_module()
         for selected, included, excluded in (
-            ("mcp", "agent-claim-helper-mcp", "agent-claim-helper-command"),
-            ("command", "agent-claim-helper-command", "agent-claim-helper-mcp"),
+            ("mcp", "resource-claim-helper-mcp", "resource-claim-helper-command"),
+            ("command", "resource-claim-helper-command", "resource-claim-helper-mcp"),
         ):
             with self.subTest(selected=selected):
                 rendered = renderer.render(project_with_helper(selected))
 
                 self.assertIn("## Resource Coordination Skill Reference", rendered)
-                self.assertIn("selected resource-coordination skill agent-claim", rendered)
-                self.assertIn("## Agent Claim Helper", rendered)
+                self.assertIn("selected resource-coordination skill resource-claim", rendered)
+                self.assertIn("## Resource Claim Helper", rendered)
                 self.assertIn(
                     f"BEGIN INLINED CLAIM HELPER SKILL: {included}",
                     rendered,
@@ -660,7 +660,7 @@ class AgentClaimHelperTests(unittest.TestCase):
             renderer.render(missing)
         with self.assertRaisesRegex(
             ValueError,
-            "resource_coordination.selected must be none or agent-claim",
+            "resource_coordination.selected must be none or resource-claim",
         ):
             renderer.render(unsupported)
 
@@ -675,8 +675,8 @@ class AgentClaimHelperTests(unittest.TestCase):
         rendered = renderer.render(project)
 
         self.assertNotIn("## Resource Coordination Skill Reference", rendered)
-        self.assertNotIn("## Agent Claim Helper", rendered)
-        self.assertNotIn("agent-claim", rendered)
+        self.assertNotIn("## Resource Claim Helper", rendered)
+        self.assertNotIn("resource-claim", rendered)
         self.assertNotIn("claim-helper fixture evidence", rendered)
 
     def test_none_rejects_every_present_claim_interface_value(self) -> None:
@@ -701,7 +701,7 @@ class AgentClaimHelperTests(unittest.TestCase):
                 ):
                     renderer.render(project)
 
-    def test_selected_resource_lifecycle_pairs_none_with_agent_claim(self) -> None:
+    def test_selected_resource_lifecycle_pairs_none_with_resource_claim(self) -> None:
         """Validate none without calls and keep MCP operations on the MCP boundary."""
 
         none_project = project_with_helper("mcp")
@@ -719,7 +719,7 @@ class AgentClaimHelperTests(unittest.TestCase):
         claim_evidence = _run_selected_mcp_lifecycle(
             project_with_helper("mcp"),
             selected_helper,
-            "resource-lifecycle-agent-claim",
+            "resource-lifecycle-resource-claim",
             ("database:integration",),
         )
 
@@ -731,11 +731,11 @@ class AgentClaimHelperTests(unittest.TestCase):
             [
                 (
                     "claim_acquire",
-                    "resource-lifecycle-agent-claim",
+                    "resource-lifecycle-resource-claim",
                     ("database:integration",),
                 ),
-                ("claim_extend_deadline", "resource-lifecycle-agent-claim", ()),
-                ("claim_release", "resource-lifecycle-agent-claim", ()),
+                ("claim_extend_deadline", "resource-lifecycle-resource-claim", ()),
+                ("claim_release", "resource-lifecycle-resource-claim", ()),
             ],
             selected_helper.claim_calls,
         )
@@ -748,7 +748,7 @@ class AgentClaimHelperTests(unittest.TestCase):
             selected_helper.deadline_calls[1]["extension_evidence"],
         )
         self.assertEqual("mcp", claim_evidence["helper"])
-        self.assertEqual("resource-lifecycle-agent-claim", claim_evidence["claim_id"])
+        self.assertEqual("resource-lifecycle-resource-claim", claim_evidence["claim_id"])
         self.assertEqual("SHARED_CHECKOUT_ACQUIRED", claim_evidence["acquire_outcome"])
         self.assertEqual("DEADLINE_EXTENDED", claim_evidence["extend_deadline_outcome"])
         self.assertEqual("RELEASED", claim_evidence["release_outcome"])
@@ -873,6 +873,10 @@ class AgentClaimHelperTests(unittest.TestCase):
                 yaml.safe_dump(project_with_helper("command"), sort_keys=False),
                 encoding="utf-8",
             )
+            (repository / ".gitignore").write_text(
+                "/.worktrees/\n/.codex/agent-claim/\n",
+                encoding="utf-8",
+            )
             (repository / "README.md").write_text("baseline\n", encoding="utf-8")
             subprocess.run(
                 ["git", "-C", str(repository), "add", "."],
@@ -964,7 +968,13 @@ class AgentClaimHelperTests(unittest.TestCase):
                 ).stdout,
             )
             event_path = next(
-                (repository / ".git" / "agent-claim-events" / "hot").glob("*.jsonl")
+                (
+                    repository
+                    / ".codex"
+                    / "agent-claim"
+                    / "agent-claim-events"
+                    / "hot"
+                ).glob("*.jsonl")
             )
             event = json.loads(event_path.read_text(encoding="utf-8").splitlines()[-1])
             self.assertEqual("linked", event["checkout_topology"])
@@ -976,12 +986,12 @@ class AgentClaimHelperTests(unittest.TestCase):
 
         renderer = load_renderer_module()
         reserved = (
-            "agent-claim",
-            "agent-claim-helper",
-            "agent-claim-helper-mcp",
-            "agent-claim-helper-command",
+            "resource-claim",
+            "resource-claim-helper",
+            "resource-claim-helper-mcp",
+            "resource-claim-helper-command",
         )
-        for coordination in ("none", "agent-claim"):
+        for coordination in ("none", "resource-claim"):
             for skill in reserved:
                 with self.subTest(
                     coordination=coordination,
@@ -1021,8 +1031,8 @@ class AgentClaimHelperTests(unittest.TestCase):
                     ):
                         renderer.render(project)
 
-    def test_agent_claim_rejects_missing_or_unavailable_helper(self) -> None:
-        """Require a verified claim helper only when agent-claim is selected."""
+    def test_resource_claim_rejects_missing_or_unavailable_helper(self) -> None:
+        """Require a verified claim helper only when resource-claim is selected."""
 
         renderer = load_renderer_module()
         project = project_with_helper("mcp", availability="UNAVAILABLE")
@@ -1225,7 +1235,7 @@ class AgentClaimHelperTests(unittest.TestCase):
         for mcp_field in ("trees", "backlog", "all_files", "branch"):
             self.assertIn(f"`{mcp_field}`", mcp)
         self.assertIn(
-            "No MCP implementation of the complete Agent Claim Helper interface is currently available.",
+            "No MCP implementation of the complete Resource Claim Helper interface is currently available.",
             _markdown_section(mcp, "Current Availability"),
         )
 
@@ -1269,7 +1279,9 @@ class AgentClaimHelperTests(unittest.TestCase):
                 text=True,
                 capture_output=True,
             )
-            registry_path = repository / ".git" / "agent-claims.json"
+            registry_path = (
+                repository / ".codex" / "agent-claim" / "agent-claims.json"
+            )
 
             def run_claim(*arguments: str) -> tuple[int, dict[str, object]]:
                 completed = subprocess.run(
@@ -1434,7 +1446,7 @@ class AgentClaimHelperTests(unittest.TestCase):
 
         command = COMMAND_SKILL.read_text(encoding="utf-8")
         self.assertIn(
-            '${HOME}/.agents/skills/agent-claim-helper-command/scripts/claim.py',
+            '${HOME}/.agents/skills/resource-claim-helper-command/scripts/claim.py',
             command,
         )
         self.assertNotIn('${CODEX_HOME:-$HOME/.codex}/skills', command)
@@ -1446,28 +1458,28 @@ class AgentClaimHelperTests(unittest.TestCase):
         cases = [
             case
             for case in catalog["cases"]
-            if "agent-claim" in case.get("requiredSkills", [])
+            if "resource-claim" in case.get("requiredSkills", [])
             and not case.get("readOnly", False)
         ]
         self.assertEqual(8, len(cases))
         for case in cases:
-            selected = "agent-claim-helper-mcp" if "mcpAgentOps" in case else "agent-claim-helper-command"
-            unused = "agent-claim-helper-command" if selected == "agent-claim-helper-mcp" else "agent-claim-helper-mcp"
+            selected = "resource-claim-helper-mcp" if "mcpAgentOps" in case else "resource-claim-helper-command"
+            unused = "resource-claim-helper-command" if selected == "resource-claim-helper-mcp" else "resource-claim-helper-mcp"
             with self.subTest(case=case["id"], selected=selected):
                 required = case["requiredSkills"]
                 staged = case["contextPack"]["stagedSkillPackages"]
                 resources = case["skillResourceAllowlist"]
                 self.assertIn(selected, required)
                 self.assertIn(selected, staged)
-                self.assertIn("agent-claim-helper", required)
-                self.assertIn("agent-claim-helper", staged)
+                self.assertIn("resource-claim-helper", required)
+                self.assertIn("resource-claim-helper", staged)
                 self.assertNotIn(unused, required)
                 self.assertNotIn(unused, staged)
-                self.assertEqual(["SKILL.md"], resources["agent-claim"])
-                self.assertEqual(["SKILL.md"], resources["agent-claim-helper"])
+                self.assertEqual(["SKILL.md"], resources["resource-claim"])
+                self.assertEqual(["SKILL.md"], resources["resource-claim-helper"])
                 expected = (
                     ["SKILL.md"]
-                    if selected == "agent-claim-helper-mcp"
+                    if selected == "resource-claim-helper-mcp"
                     else ["SKILL.md", "scripts/claim.py"]
                 )
                 self.assertEqual(expected, resources[selected])
@@ -1520,7 +1532,7 @@ class AgentClaimHelperTests(unittest.TestCase):
             PROJECT_CONFIGURATION_FIXTURE / "available-skills.txt"
         ).read_text(encoding="utf-8").splitlines()
         task = (PROJECT_CONFIGURATION_FIXTURE / "TASK.md").read_text(encoding="utf-8")
-        self.assertIn("agent-claim-helper-mcp", available)
+        self.assertIn("resource-claim-helper-mcp", available)
         self.assertIn("MCP claim-helper provider as UNAVAILABLE", task)
         self.assertIn("report BLOCKED", task)
         self.assertNotIn("record it as AVAILABLE", task)

@@ -8,7 +8,7 @@ target:
   repositoryMutation: conditional
   requiredSkills: [review-structured-artifact, verify-documentation-page]
   conditionalSkills:
-    agent-claim: Review evidence is saved.
+    resource-claim: Review evidence is saved.
     organise-project-files: Review creates a checklist or findings artifact.
     review-functional-spec: The target is a functional specification.
     review-architecture: The target is architecture.

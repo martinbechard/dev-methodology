@@ -11,7 +11,7 @@ target:
     - structured-design
     - structured-explanation
   conditionalSkills:
-    agent-claim: Placement work moves, creates, rewrites, stages, or commits project files.
+    resource-claim: Placement work moves, creates, rewrites, stages, or commits project files.
   allowedAgentDependencies: []
   requiredOutputs:
     - approved path

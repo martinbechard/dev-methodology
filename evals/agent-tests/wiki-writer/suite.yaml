@@ -6,7 +6,7 @@ target:
   conceptualRole: agents/roles/wiki-activities/wiki-writer.role.yaml
   nativeAgent: generated/adapters/codex/agents/wiki-writer.toml
   repositoryMutation: required
-  requiredSkills: [agent-claim, project-wiki, project-wiki-topic-write]
+  requiredSkills: [resource-claim, project-wiki, project-wiki-topic-write]
   conditionalSkills:
     organise-project-files: Wiki maintenance creates a project file or directory.
     code-project-wiki: Maintenance depends on code, tests, procedures, backlog, or commit evidence.

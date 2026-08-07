@@ -1107,10 +1107,10 @@ def load_role_definition(
         raise ValueError(
             f"Conceptual agent definition {ROLE_REPOSITORY_MUTATION_FIELD_NAME} must be required, conditional, or never: {source_path}"
         )
-    if "agent-claim" in effective_skills:
+    if "resource-claim" in effective_skills:
         raise ValueError(
             "Conceptual agent definitions must not load the project-selected "
-            f"resource-coordination implementation agent-claim directly: {source_path}"
+            f"resource-coordination implementation resource-claim directly: {source_path}"
         )
     if (
         parsed.get("isolation") == ROLE_READ_ONLY_ISOLATION

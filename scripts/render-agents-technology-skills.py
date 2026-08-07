@@ -20,7 +20,7 @@ SKILLS_ROOT = REPOSITORY_ROOT / "skills"
 SKILL_FILE_NAME = "SKILL.md"
 FRONTMATTER_DELIMITER = "---"
 SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
-CLAIM_HELPER_HEADING = "## Agent Claim Helper"
+CLAIM_HELPER_HEADING = "## Resource Claim Helper"
 RESOURCE_COORDINATION_HEADING = "## Resource Coordination Skill Reference"
 _RESOURCE_DEADLINE_CLASS_IDS = (
     "backlog-mutation",
@@ -31,12 +31,12 @@ _RESOURCE_DEADLINE_CLASS_IDS = (
 )
 PROJECT_SKILL_EXTENSIONS_HEADING = "## Project Skill Extensions"
 CLAIM_HELPER_PROVIDERS = {
-    "mcp": "agent-claim-helper-mcp",
-    "command": "agent-claim-helper-command",
+    "mcp": "resource-claim-helper-mcp",
+    "command": "resource-claim-helper-command",
 }
-RESOURCE_COORDINATION_VALUES = {"none", "agent-claim"}
+RESOURCE_COORDINATION_VALUES = {"none", "resource-claim"}
 RESOURCE_COORDINATION_RESERVED_SKILLS = frozenset(
-    {"agent-claim", "agent-claim-helper", *CLAIM_HELPER_PROVIDERS.values()}
+    {"resource-claim", "resource-claim-helper", *CLAIM_HELPER_PROVIDERS.values()}
 )
 PROVIDER_SKILLS = {
     "file": ("create-work-item-file", "manage-work-items-file"),
@@ -781,7 +781,7 @@ def resource_coordination_lines(value: dict[str, object]) -> list[str]:
     """Render the selected project-wide coordination skill as a reference.
 
     value is one loaded project mapping. resource_coordination is required. none permits only selected, requires
-    agent_claim_transport to be absent, and returns no guidance. agent-claim also requires
+    agent_claim_transport to be absent, and returns no guidance. resource-claim also requires
     deadline_policy with all five resource classes and an exact resource-id override map.
     The returned Markdown lines render every validated integer-second value while leaving
     procedure in the bundled skill; the function does not mutate value or write files.
@@ -791,13 +791,13 @@ def resource_coordination_lines(value: dict[str, object]) -> list[str]:
     configuration = value.get("resource_coordination")
     if configuration is None:
         raise ValueError(
-            "resource_coordination is required; run Project Configurator to select none or agent-claim"
+            "resource_coordination is required; run Project Configurator to select none or resource-claim"
         )
     if not isinstance(configuration, dict):
         raise ValueError("resource_coordination must be a mapping")
     selected = configuration.get("selected")
     if not isinstance(selected, str) or selected not in RESOURCE_COORDINATION_VALUES:
-        raise ValueError("resource_coordination.selected must be none or agent-claim")
+        raise ValueError("resource_coordination.selected must be none or resource-claim")
     if selected == "none":
         if set(configuration) != {"selected"}:
             raise ValueError("resource_coordination keys must be exactly: selected")
@@ -808,13 +808,13 @@ def resource_coordination_lines(value: dict[str, object]) -> list[str]:
         return []
     if set(configuration) != {"selected", "deadline_policy"}:
         raise ValueError(
-            "resource_coordination keys must be exactly: selected, deadline_policy when agent-claim is selected"
+            "resource_coordination keys must be exactly: selected, deadline_policy when resource-claim is selected"
         )
     deadline_policy = _resource_deadline_policy(configuration)
     lines = [
         RESOURCE_COORDINATION_HEADING,
         "",
-        "Project Configurator selected resource-coordination skill agent-claim. Apply that bundled skill by reference before taking ownership of repository paths or exclusive runtime and integration resources.",
+        "Project Configurator selected resource-coordination skill resource-claim. Apply that bundled skill by reference before taking ownership of repository paths or exclusive runtime and integration resources.",
         "",
         "The selected skill owns its coordination procedure and evidence. Work-item providers own durable assignment and lifecycle records; they do not own operational resources.",
         "",
@@ -886,7 +886,7 @@ def claim_helper_lines(value: dict[str, object]) -> list[str]:
     return [
         CLAIM_HELPER_HEADING,
         "",
-        f"Project Configurator selected and verified the {selected} claim helper. Apply agent-claim for policy and use the inlined {skill_name} Provider Skill to realize agent-claim-helper.",
+        f"Project Configurator selected and verified the {selected} claim helper. Apply resource-claim for policy and use the inlined {skill_name} Provider Skill to realize resource-claim-helper.",
         "",
         "Use only this configured claim helper. If it cannot start, ask Project Configurator to configure a working helper.",
         "",
@@ -1238,15 +1238,15 @@ def render(
 
     value is the mapping loaded from PROJECT.yaml. workflow_selection and
     resource_coordination are required.
-    agent_claim_transport is required only when resource_coordination selects agent-claim
+    agent_claim_transport is required only when resource_coordination selects resource-claim
     and must be absent when resource_coordination selects none.
     Technology guidance is always produced from the configured loadouts, and an optional
     project_skill_extensions list produces the final root-only reference section when
     include_project_skill_extensions is true. The optional inline_tech_skills request must
     agree with project_setup.technology_skill_delivery when setup metadata exists. With no
     setup metadata or explicit request, delivery defaults to by-reference. Inline delivery
-    embeds each referenced bundled skill body. agent-claim is referenced and its selected
-    claim helper Provider Skill is embedded only when resource coordination selects agent-claim.
+    embeds each referenced bundled skill body. resource-claim is referenced and its selected
+    claim helper Provider Skill is embedded only when resource coordination selects resource-claim.
 
     The return value is the complete generated Markdown text and ends with a newline.
     Rendering does not write an output file, but inlined rendering reads bundled SKILL.md

@@ -36,7 +36,7 @@ scenarios:
     initialState: The taxonomy has no benchmark-snapshot category, and placement-policy.md explicitly authorizes Project Organiser to add one.
     task: Add the smallest taxonomy category needed for the benchmark snapshot described in artifacts.md, then return its approved path without creating the snapshot.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - organise-project-files
       - structured-design
       - structured-explanation

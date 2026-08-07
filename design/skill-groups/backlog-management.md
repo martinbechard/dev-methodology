@@ -264,7 +264,7 @@ The Agent definition owns this sequence, so the three skills do not need direct 
 
 ### Scenario: A File Provider Mutates Shared State
 
-This scenario applies when the file-backed creation or management provider needs the project-selected resource-coordination policy before mutating shared backlog state. AGENTS.md loads agent-claim when the project selects it, and the provider skills depend on its procedures under that condition.
+This scenario applies when the file-backed creation or management provider needs the project-selected resource-coordination policy before mutating shared backlog state. AGENTS.md loads resource-claim when the project selects it, and the provider skills depend on its procedures under that condition.
 
 ```mermaid
 classDiagram
@@ -282,9 +282,9 @@ classDiagram
     class ProjectSpecificDirectives["Project-specific directives"] {
         <<AGENTS.md>>
         <<routing>>
-        +route resource coordination => agent-claim
+        +route resource coordination => resource-claim
     }
-    class agent-claim {
+    class resource-claim {
         <<SKILL.md>>
         <<Cross-group>>
         +coordinate-shared-resource(resourceManifest)
@@ -292,10 +292,10 @@ classDiagram
         +release-claim(claimId)
     }
 
-    ProjectSpecificDirectives o..> agent-claim : when resource_coordination is agent-claim
+    ProjectSpecificDirectives o..> resource-claim : when resource_coordination is resource-claim
     create-work-item-file ..> commit-file-provider-transaction : ordinary creation
-    commit-file-provider-transaction ..> agent-claim : when resource coordination is selected
-    manage-work-items-file ..> agent-claim : when resource coordination is selected
+    commit-file-provider-transaction ..> resource-claim : when resource coordination is selected
+    manage-work-items-file ..> resource-claim : when resource coordination is selected
 ```
 
 ## Skill Responsibilities
@@ -347,4 +347,4 @@ The provider relationships and procedure boundaries are grounded in these Agent 
 - [Manage Jira Work Items](../../skills/manage-work-items-jira/SKILL.md)
 - [Coordinate Work Items](../../skills/coordinate-work-items/SKILL.md)
 - [Coordinate Codex Tasks](../../skills/coordinate-codex-tasks/SKILL.md)
-- [Agent Claim](../../skills/agent-claim/SKILL.md)
+- [Resource Claim](../../skills/resource-claim/SKILL.md)

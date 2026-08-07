@@ -127,7 +127,7 @@ cases:
           recoveryOwner: Dev Backlog Steward
           preservedEvidence: worktree and Git index snapshots
       resourceCoordination:
-        agent-claim:
+        resource-claim:
           claimPaths:
             - backlog/future-ideas/retry-dashboard.md
             - backlog/feature-backlog/retry-dashboard.md

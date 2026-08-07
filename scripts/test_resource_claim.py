@@ -23,10 +23,10 @@ from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CLAIM_SCRIPT = ROOT / "skills" / "agent-claim-helper-command" / "scripts" / "claim.py"
+CLAIM_SCRIPT = ROOT / "skills" / "resource-claim-helper-command" / "scripts" / "claim.py"
 
 
-class AgentClaimTests(unittest.TestCase):
+class ResourceClaimTests(unittest.TestCase):
     """Exercises the public claim command against temporary linked Git worktrees."""
 
     def setUp(self) -> None:
@@ -106,7 +106,7 @@ class AgentClaimTests(unittest.TestCase):
 
     def load_claim_module(self, label: str) -> object:
         """Load an isolated claim-helper module for one deterministic fault test."""
-        module_name = f"agent_claim_{label}_{id(self)}"
+        module_name = f"resource_claim_{label}_{id(self)}"
         spec = importlib.util.spec_from_file_location(module_name, CLAIM_SCRIPT)
         if spec is None or spec.loader is None:
             raise RuntimeError("Unable to load the claim helper for fault testing.")
@@ -203,7 +203,7 @@ class AgentClaimTests(unittest.TestCase):
         """Return the five configured class defaults used by command tests."""
         return {
             "resource_coordination": {
-                "selected": "agent-claim",
+                "selected": "resource-claim",
                 "deadline_policy": {
                     "resource_classes": {
                         "backlog-mutation": {
@@ -861,7 +861,7 @@ class AgentClaimTests(unittest.TestCase):
         command_environment.update(
             {
                 "PYTHONDONTWRITEBYTECODE": "1",
-                "AGENT_CLAIM_TEST_RELEASE_RESOLVE_BARRIER": str(barrier),
+                "RESOURCE_CLAIM_TEST_RELEASE_RESOLVE_BARRIER": str(barrier),
             }
         )
         first_release = subprocess.Popen(
@@ -921,7 +921,7 @@ class AgentClaimTests(unittest.TestCase):
         command_environment.update(
             {
                 "PYTHONDONTWRITEBYTECODE": "1",
-                "AGENT_CLAIM_TEST_RELEASE_LEGACY_OPEN_BARRIER": str(barrier),
+                "RESOURCE_CLAIM_TEST_RELEASE_LEGACY_OPEN_BARRIER": str(barrier),
             }
         )
         first_release = subprocess.Popen(
@@ -992,7 +992,7 @@ class AgentClaimTests(unittest.TestCase):
         command_environment.update(
             {
                 "PYTHONDONTWRITEBYTECODE": "1",
-                "AGENT_CLAIM_TEST_READ_ONLY_LEGACY_OPEN_BARRIER": str(barrier),
+                "RESOURCE_CLAIM_TEST_READ_ONLY_LEGACY_OPEN_BARRIER": str(barrier),
             }
         )
         stale_status = subprocess.Popen(
@@ -1072,7 +1072,7 @@ class AgentClaimTests(unittest.TestCase):
             "report",
             "--since",
             "1d",
-            environment={"AGENT_CLAIM_TEST_NOW": "2026-08-05T12:00:00Z"},
+            environment={"RESOURCE_CLAIM_TEST_NOW": "2026-08-05T12:00:00Z"},
         )
 
         self.assertEqual(0, completed.returncode, completed.stderr)
@@ -1115,7 +1115,7 @@ class AgentClaimTests(unittest.TestCase):
 
         interrupted = self.claim(
             "reset",
-            environment={"AGENT_CLAIM_TEST_FAIL_MIGRATION_AFTER_EVENTS": "1"},
+            environment={"RESOURCE_CLAIM_TEST_FAIL_MIGRATION_AFTER_EVENTS": "1"},
         )
         recovered = self.claim("reset")
 
@@ -1442,9 +1442,9 @@ class AgentClaimTests(unittest.TestCase):
                 self.assertEqual(registry_before, self.registry_path().read_bytes())
 
     def test_report_groups_versioned_work_item_segments_and_diagnostics(self) -> None:
-        acquire_time = {"AGENT_CLAIM_TEST_NOW": "2026-08-05T10:00:00Z"}
-        release_time = {"AGENT_CLAIM_TEST_NOW": "2026-08-05T10:05:00Z"}
-        open_time = {"AGENT_CLAIM_TEST_NOW": "2026-08-05T10:06:00Z"}
+        acquire_time = {"RESOURCE_CLAIM_TEST_NOW": "2026-08-05T10:00:00Z"}
+        release_time = {"RESOURCE_CLAIM_TEST_NOW": "2026-08-05T10:05:00Z"}
+        open_time = {"RESOURCE_CLAIM_TEST_NOW": "2026-08-05T10:06:00Z"}
         self.claim(
             *self.work_item_arguments("claim-a", "item-a", "work"),
             environment=acquire_time,
@@ -1515,7 +1515,7 @@ class AgentClaimTests(unittest.TestCase):
             "report",
             "--since",
             "1d",
-            environment={"AGENT_CLAIM_TEST_NOW": "2026-08-05T12:00:00Z"},
+            environment={"RESOURCE_CLAIM_TEST_NOW": "2026-08-05T12:00:00Z"},
         )
 
         self.assertEqual(0, completed.returncode, completed.stderr)
@@ -1552,9 +1552,9 @@ class AgentClaimTests(unittest.TestCase):
         )
 
     def test_report_reconstructs_work_item_segments_across_window_boundary(self) -> None:
-        before_window = {"AGENT_CLAIM_TEST_NOW": "2026-08-03T10:00:00Z"}
-        inside_window = {"AGENT_CLAIM_TEST_NOW": "2026-08-05T10:00:00Z"}
-        report_time = {"AGENT_CLAIM_TEST_NOW": "2026-08-05T12:00:00Z"}
+        before_window = {"RESOURCE_CLAIM_TEST_NOW": "2026-08-03T10:00:00Z"}
+        inside_window = {"RESOURCE_CLAIM_TEST_NOW": "2026-08-05T10:00:00Z"}
+        report_time = {"RESOURCE_CLAIM_TEST_NOW": "2026-08-05T12:00:00Z"}
         self.claim(
             *self.work_item_arguments("live-old", "item-live-old"),
             environment=before_window,
@@ -1742,7 +1742,7 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual(0, heartbeat.returncode, heartbeat.stderr)
         self.assertEqual(0, released.returncode, released.stderr)
         self.assertEqual(registry_inode, self.registry_path().stat().st_ino)
-        self.assertFalse((self.common_directory() / "agent-claims.lock").exists())
+        self.assertFalse((self.common_directory() / "resource-claims.lock").exists())
 
     def test_registry_os_lock_is_released_when_holder_process_crashes(self) -> None:
         acquired = self.claim(*self.acquire_arguments("first"), "--file", "README.md")
@@ -1985,7 +1985,7 @@ class AgentClaimTests(unittest.TestCase):
         acquired = self.claim(
             *self.acquire_arguments("timed"),
             *self.timed_resource_arguments(),
-            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-22T10:00:00Z"},
+            environment={"RESOURCE_CLAIM_TEST_NOW": "2026-07-22T10:00:00Z"},
         )
 
         self.assertEqual(0, acquired.returncode, acquired.stderr)
@@ -2049,15 +2049,15 @@ class AgentClaimTests(unittest.TestCase):
     def test_timed_resource_rejects_missing_invalid_or_unselected_project_policy(self) -> None:
         cases: tuple[tuple[dict[str, object] | None, str], ...] = (
             (None, "PROJECT.yaml is required for named resource acquisition"),
-            ({}, "resource_coordination must select agent-claim"),
+            ({}, "resource_coordination must select resource-claim"),
             (
                 {"resource_coordination": {"selected": "none"}},
-                "resource_coordination must select agent-claim",
+                "resource_coordination must select resource-claim",
             ),
             (
                 {
                     "resource_coordination": {
-                        "selected": "agent-claim",
+                        "selected": "resource-claim",
                         "deadline_policy": {"resource_classes": {}, "resource_overrides": {}},
                     }
                 },
@@ -2169,7 +2169,7 @@ class AgentClaimTests(unittest.TestCase):
             "--claim-id",
             "extend-resource",
             *self.timed_resource_arguments(),
-            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-22T11:00:00Z"},
+            environment={"RESOURCE_CLAIM_TEST_NOW": "2026-07-22T11:00:00Z"},
         )
         registry_before_second = self.registry_path().read_bytes()
         second = self.claim(
@@ -2210,7 +2210,7 @@ class AgentClaimTests(unittest.TestCase):
         acquired = self.claim(
             *self.acquire_arguments("timed"),
             *self.timed_resource_arguments(),
-            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-22T10:00:00Z"},
+            environment={"RESOURCE_CLAIM_TEST_NOW": "2026-07-22T10:00:00Z"},
         )
         extended = self.claim(
             "extend-deadline",
@@ -2220,13 +2220,13 @@ class AgentClaimTests(unittest.TestCase):
             "1200",
             "--extension-evidence",
             "browser fixture needs one final deterministic assertion",
-            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-22T10:10:00Z"},
+            environment={"RESOURCE_CLAIM_TEST_NOW": "2026-07-22T10:10:00Z"},
         )
         heartbeat = self.claim(
             "heartbeat",
             "--claim-id",
             "timed",
-            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-22T10:19:00Z"},
+            environment={"RESOURCE_CLAIM_TEST_NOW": "2026-07-22T10:19:00Z"},
         )
 
         self.assertEqual(0, acquired.returncode, acquired.stderr)
@@ -2268,12 +2268,12 @@ class AgentClaimTests(unittest.TestCase):
         acquired = self.claim(
             *self.acquire_arguments("timed"),
             *self.timed_resource_arguments(),
-            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-22T10:00:00Z"},
+            environment={"RESOURCE_CLAIM_TEST_NOW": "2026-07-22T10:00:00Z"},
         )
         registry_before_status = self.registry_path().read_bytes()
         status = self.claim(
             "status",
-            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-22T10:17:00Z"},
+            environment={"RESOURCE_CLAIM_TEST_NOW": "2026-07-22T10:17:00Z"},
         )
 
         self.assertEqual(0, acquired.returncode, acquired.stderr)
@@ -3947,7 +3947,7 @@ class AgentClaimTests(unittest.TestCase):
             *self.acquire_arguments("first"),
             "--file",
             "README.md",
-            environment={"AGENT_CLAIM_TEST_FAIL_JOURNAL_WRITE": "1"},
+            environment={"RESOURCE_CLAIM_TEST_FAIL_JOURNAL_WRITE": "1"},
         )
 
         self.assertEqual(0, completed.returncode, completed.stderr)
@@ -3988,7 +3988,7 @@ class AgentClaimTests(unittest.TestCase):
             "release",
             "--claim-id",
             "first",
-            environment={"AGENT_CLAIM_TEST_FAIL_JOURNAL_WRITE": "1"},
+            environment={"RESOURCE_CLAIM_TEST_FAIL_JOURNAL_WRITE": "1"},
         )
 
         self.assertEqual(0, acquired.returncode, acquired.stderr)
@@ -4075,7 +4075,7 @@ class AgentClaimTests(unittest.TestCase):
                 f"claim-{day}",
             )
             self.write_daily_events(day, [event])
-        environment = {"AGENT_CLAIM_TEST_NOW": "2026-07-13T15:00:00Z"}
+        environment = {"RESOURCE_CLAIM_TEST_NOW": "2026-07-13T15:00:00Z"}
 
         maintained = self.claim("maintain-journal", "--hot-days", "2", environment=environment)
         rerun = self.claim("maintain-journal", "--hot-days", "2", environment=environment)
@@ -4100,8 +4100,8 @@ class AgentClaimTests(unittest.TestCase):
         event = self.synthetic_event("old", "2026-07-10T12:00:00Z", "acquire", "PRIMARY", "old")
         hot = self.write_daily_events("2026-07-10", [event])
         environment = {
-            "AGENT_CLAIM_TEST_NOW": "2026-07-13T15:00:00Z",
-            "AGENT_CLAIM_TEST_FAIL_ARCHIVE_BEFORE_VALIDATE": "1",
+            "RESOURCE_CLAIM_TEST_NOW": "2026-07-13T15:00:00Z",
+            "RESOURCE_CLAIM_TEST_FAIL_ARCHIVE_BEFORE_VALIDATE": "1",
         }
 
         interrupted = self.claim("maintain-journal", environment=environment)
@@ -4112,7 +4112,7 @@ class AgentClaimTests(unittest.TestCase):
         self.assertFalse(archive.exists())
         completed = self.claim(
             "maintain-journal",
-            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-13T15:00:00Z"},
+            environment={"RESOURCE_CLAIM_TEST_NOW": "2026-07-13T15:00:00Z"},
         )
         self.assertEqual(0, completed.returncode, completed.stderr)
         self.assertFalse(hot.exists())
@@ -4126,7 +4126,7 @@ class AgentClaimTests(unittest.TestCase):
 
         completed = self.claim(
             "maintain-journal",
-            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-13T15:00:00Z"},
+            environment={"RESOURCE_CLAIM_TEST_NOW": "2026-07-13T15:00:00Z"},
         )
 
         self.assertEqual(1, completed.returncode)
@@ -4249,7 +4249,7 @@ class AgentClaimTests(unittest.TestCase):
             self.synthetic_event("recover-release", "2026-07-12T10:21:00Z", "release", "RELEASED", "recovery"),
         ]
         self.write_daily_events("2026-07-12", events)
-        environment = {"AGENT_CLAIM_TEST_NOW": "2026-07-13T10:00:00Z"}
+        environment = {"RESOURCE_CLAIM_TEST_NOW": "2026-07-13T10:00:00Z"}
         registry_before = self.registry_path().read_bytes() if self.registry_path().exists() else b""
         journal_before = (self.hot_directory() / "2026-07-12.jsonl").read_bytes()
 
@@ -4288,7 +4288,7 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual(journal_before, (self.hot_directory() / "2026-07-12.jsonl").read_bytes())
 
     def test_report_exposes_successful_exact_file_adoption_in_json_and_text(self) -> None:
-        environment = {"AGENT_CLAIM_TEST_NOW": "2026-07-13T10:00:00Z"}
+        environment = {"RESOURCE_CLAIM_TEST_NOW": "2026-07-13T10:00:00Z"}
         acquired = self.claim(
             *self.acquire_arguments("exact-file"),
             "--file",
@@ -4346,7 +4346,7 @@ class AgentClaimTests(unittest.TestCase):
             "report",
             "--since",
             "2d",
-            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-13T10:00:00Z"},
+            environment={"RESOURCE_CLAIM_TEST_NOW": "2026-07-13T10:00:00Z"},
         )
 
         self.assertEqual(0, completed.returncode, completed.stderr)
@@ -4369,7 +4369,7 @@ class AgentClaimTests(unittest.TestCase):
             "maintain-journal",
             "--hot-days",
             "2",
-            environment={"AGENT_CLAIM_TEST_NOW": "2026-11-03T00:05:00Z", "TZ": "America/Toronto"},
+            environment={"RESOURCE_CLAIM_TEST_NOW": "2026-11-03T00:05:00Z", "TZ": "America/Toronto"},
         )
 
         self.assertEqual(0, completed.returncode, completed.stderr)

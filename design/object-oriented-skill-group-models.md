@@ -123,7 +123,7 @@ The registry assigns every current skill one primary direct group and records ne
 | Project Setup | detect-technology-skills; create-project-configuration | None | 2 |
 | Documentation Methodology | route-documentation-work; bootstrap-project-documentation; reverse-engineer-project-documentation; verify-documentation-page | None | 4 |
 | Backlog Management | resolve-backlog-blockage; create-work-item; create-work-item-file; create-work-item-github; create-work-item-gitlab; create-work-item-azure-devops; create-work-item-jira; commit-file-provider-transaction; manage-future-ideas; manage-work-items; manage-work-items-file; manage-work-items-github; manage-work-items-gitlab; manage-work-items-azure-devops; manage-work-items-jira | None | 15 |
-| Concurrent Tasking | coordinate-work-items; coordinate-codex-tasks; set-solo-mode; set-multitask-mode | Resource Coordination: agent-claim, agent-claim-helper, agent-claim-helper-command, agent-claim-helper-mcp. Feature Branch And Worktrees: integrate-agent-work, deliver-work-item-feature-branch, create-pull-request. | 11 |
+| Concurrent Tasking | coordinate-work-items; coordinate-codex-tasks; set-solo-mode; set-multitask-mode | Resource Coordination: resource-claim, resource-claim-helper, resource-claim-helper-command, resource-claim-helper-mcp. Feature Branch And Worktrees: integrate-agent-work, deliver-work-item-feature-branch, create-pull-request. | 11 |
 | Direct Main Delivery | deliver-work-item; deliver-work-item-direct-main | None | 2 |
 | Review And Verification | review-code-with-evidence; test-strategy; verify-end-to-end-workflow; analyze-root-cause; collect-runtime-evidence; trace-code-execution; review-prompt-contracts | None | 7 |
 
@@ -151,7 +151,7 @@ The applied model is complete when it describes the maintained skill inventory a
 
 - **RULE: RULE-57** Every skill has one primary direct group
   - **SYNOPSIS:** The registry and detailed documents assign each current skill package to one direct comprehension boundary.
-  - **EXAMPLE:** agent-claim belongs directly to Resource Coordination and appears elsewhere only as a Cross-group dependency.
+  - **EXAMPLE:** resource-claim belongs directly to Resource Coordination and appears elsewhere only as a Cross-group dependency.
 
 - **RULE: RULE-58** Diagrams use current skill and procedure vocabulary
   - **SYNOPSIS:** Every skill identity resolves to a maintained SKILL.md, and every displayed procedure traces to a current heading or to a single-operation skill identity.
@@ -175,7 +175,7 @@ The applied model is complete when it describes the maintained skill inventory a
 
 - **RULE: RULE-64** Containment remains distinct from dependency
   - **SYNOPSIS:** Nested groups organize a larger comprehension set; loading arrows separately identify which Agents or skills actually reference another skill.
-  - **EXAMPLE:** Concurrent Tasking contains the complementary coordination peers and Resource Coordination. coordinate-work-items references only the selected resource-coordination procedure and loaded agent-claim policy; coordinate-codex-tasks adds no resource ownership.
+  - **EXAMPLE:** Concurrent Tasking contains the complementary coordination peers and Resource Coordination. coordinate-work-items references only the selected resource-coordination procedure and loaded resource-claim policy; coordinate-codex-tasks adds no resource ownership.
 
 ## Authoritative Inputs
 

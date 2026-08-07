@@ -10,7 +10,7 @@ target:
     - review-prompt-contracts
     - review-structured-artifact
   conditionalSkills:
-    agent-claim: The review saves a checklist, findings file, evaluation artifact, or other project artifact.
+    resource-claim: The review saves a checklist, findings file, evaluation artifact, or other project artifact.
     organise-project-files: The review creates a new project file or directory.
   allowedAgentDependencies: []
   requiredOutputs:

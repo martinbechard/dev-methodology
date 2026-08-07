@@ -325,7 +325,7 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
 
         self.assertEqual(
             {
-                "agent-claim",
+                "resource-claim",
                 "detect-technology-skills",
                 "create-project-configuration",
                 "route-documentation-work",
@@ -392,7 +392,7 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
             self.assertIn("mandatory section", source)
             self.assertIn("conceptual definition", source)
             self.assertIn("mutation", source)
-            self.assertIn("agent-claim", source)
+            self.assertIn("resource-claim", source)
 
     def test_invalid_fixture_contains_both_independent_contract_failures(self) -> None:
         """The invalid scenario proves claim and runtime-capability validation."""
@@ -402,7 +402,7 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
         loadout = project["technology_skill_loadouts"][0]
 
         self.assertEqual("required", role["repositoryMutation"])
-        self.assertNotIn("agent-claim", role["skills"])
+        self.assertNotIn("resource-claim", role["skills"])
         self.assertIn("unavailable-framework", loadout["skills"])
         self.assertEqual("UNAVAILABLE", loadout["sourceEvidence"][0]["runtimeAvailability"])
         self.assertEqual("READY", loadout["status"])

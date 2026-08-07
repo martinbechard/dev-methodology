@@ -13,7 +13,7 @@ target:
     - trace-code-execution
     - structured-explanation
   conditionalSkills:
-    agent-claim: The diagnosis mutates files or owns exclusive runtime resources.
+    resource-claim: The diagnosis mutates files or owns exclusive runtime resources.
     organise-project-files: The diagnosis creates a new project file or directory.
     collect-runtime-evidence: The failure mechanism depends on runtime state that source inspection cannot establish.
     careful-coding: The diagnosis adds instrumentation or implements a verified remediation.

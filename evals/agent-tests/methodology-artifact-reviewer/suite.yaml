@@ -14,7 +14,7 @@ target:
     - verify-documentation-page
     - route-documentation-work
   conditionalSkills:
-    agent-claim: The review creates or updates a methodology checklist, findings file, or other project artifact.
+    resource-claim: The review creates or updates a methodology checklist, findings file, or other project artifact.
     organise-project-files: The review creates a new project file or directory.
   allowedAgentDependencies: []
   requiredOutputs:

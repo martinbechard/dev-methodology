@@ -8,7 +8,7 @@ target:
   repositoryMutation: conditional
   requiredSkills: [test-strategy, review-structured-artifact, structured-explanation]
   conditionalSkills:
-    agent-claim: Verification mutates files or owns exclusive runtime resources.
+    resource-claim: Verification mutates files or owns exclusive runtime resources.
     organise-project-files: Verification creates a project file or directory.
     verify-end-to-end-workflow: Confidence depends on a complete workflow.
     analyze-root-cause: A failed check needs classification.

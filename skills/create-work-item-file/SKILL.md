@@ -114,7 +114,7 @@ When a request mixes types, split it only when the parts can be completed indepe
 
 ## User Action Required Classification
 
-Before creating a User Action Required item, when agent-claim is loaded, apply agent-claim to the blocking condition and confirm that a separate genuine user-owned decision remains. Structured claim outcomes and technical claim cleanup or recovery remain agent-owned and do not justify User Action Required.
+Before creating a User Action Required item, when resource-claim is loaded, apply resource-claim to the blocking condition and confirm that a separate genuine user-owned decision remains. Structured claim outcomes and technical claim cleanup or recovery remain agent-owned and do not justify User Action Required.
 
 Do not use User Action Required merely to preserve an independently identified possibility.
 Report that possibility ephemerally unless an explicit Future Ideas request routes it to

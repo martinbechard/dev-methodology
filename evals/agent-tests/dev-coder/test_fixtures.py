@@ -49,14 +49,14 @@ class DevCoderFixtureTests(unittest.TestCase):
         for skill_id in suite_required_skills:
             with self.subTest(skill=skill_id):
                 self.assertIn(skill_id, native_agent["developer_instructions"])
-        self.assertNotIn("agent-claim", suite_required_skills)
+        self.assertNotIn("resource-claim", suite_required_skills)
         self.assertEqual(
-            "Resource coordination selects agent-claim.",
-            suite["target"]["conditionalSkills"]["agent-claim"],
+            "Resource coordination selects resource-claim.",
+            suite["target"]["conditionalSkills"]["resource-claim"],
         )
 
     def test_suite_contract_branches_on_resource_coordination(self) -> None:
-        """Require claims only for agent-claim projects and forbid them for none."""
+        """Require claims only for resource-claim projects and forbid them for none."""
 
         contract = (
             SUITE_ROOT
@@ -66,7 +66,7 @@ class DevCoderFixtureTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
 
         self.assertIn(
-            "When project resource coordination selects agent-claim, repository mutation "
+            "When project resource coordination selects resource-claim, repository mutation "
             "has an explicit claim lifecycle with claim-call evidence and enabled ownership "
             "release or explicit handoff evidence.",
             contract,

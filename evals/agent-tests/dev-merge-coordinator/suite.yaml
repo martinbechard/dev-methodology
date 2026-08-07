@@ -8,7 +8,7 @@ target:
   repositoryMutation: required
   requiredSkills: [integrate-agent-work, review-structured-artifact, explain-code-fix]
   conditionalSkills:
-    agent-claim: Resource coordination selects agent-claim.
+    resource-claim: Resource coordination selects resource-claim.
     organise-project-files: Integration introduces a project file or directory.
   allowedAgentDependencies: []
   requiredOutputs: [integrated changes, conflict resolution record, verification evidence, commit and claim closeout]

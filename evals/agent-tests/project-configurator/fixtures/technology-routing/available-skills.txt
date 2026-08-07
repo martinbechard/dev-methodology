@@ -1,4 +1,4 @@
-agent-claim
+resource-claim
 create-project-configuration
 detect-technology-skills
 route-documentation-work

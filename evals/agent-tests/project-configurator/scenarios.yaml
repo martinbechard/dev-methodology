@@ -9,7 +9,7 @@ scenarios:
     purpose: Reuse valid project routing while replacing only stale evidence.
     initialState: PROJECT.yaml and nested guidance exist; one worker path moved but runtime capabilities remain available.
     task: Reconcile and validate the existing configuration.
-    targetSkills: [agent-claim, detect-technology-skills, create-project-configuration, route-documentation-work, verify-documentation-page, python]
+    targetSkills: [resource-claim, detect-technology-skills, create-project-configuration, route-documentation-work, verify-documentation-page, python]
     allowedAgentDependencies: []
     requiredBehaviors:
       - Inspect representative scopes
@@ -48,7 +48,7 @@ scenarios:
     purpose: Route distinct folder technologies from source evidence and record no-variant explicitly.
     initialState: The fixture contains Python service, TypeScript UI, an unsupported infrastructure dialect, and the required ignored-worktree prerequisite.
     task: Create folder-specific skillsets and deterministic nested guidance.
-    targetSkills: [agent-claim, detect-technology-skills, create-project-configuration, route-documentation-work, bootstrap-project-documentation, verify-documentation-page, python, typescript]
+    targetSkills: [resource-claim, detect-technology-skills, create-project-configuration, route-documentation-work, bootstrap-project-documentation, verify-documentation-page, python, typescript]
     allowedAgentDependencies: []
     requiredBehaviors:
       - Invoke Detect Technology Skills from representative evidence
@@ -73,7 +73,7 @@ scenarios:
     purpose: Reject a required unavailable skill and mutation/claim mismatch.
     initialState: A proposed role mutates the repository without claim support and references an unavailable required technology skill.
     task: Validate the configuration and report whether it is usable.
-    targetSkills: [agent-claim, detect-technology-skills, create-project-configuration, route-documentation-work, verify-documentation-page]
+    targetSkills: [resource-claim, detect-technology-skills, create-project-configuration, route-documentation-work, verify-documentation-page]
     allowedAgentDependencies: []
     requiredBehaviors:
       - Inspect PROJECT.yaml, proposed-role.yaml, and available-skills.txt directly

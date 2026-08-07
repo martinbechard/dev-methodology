@@ -416,7 +416,7 @@ def _validate_mcp_agent_ops_case(
         errors.append(
             "case.mcpAgentOps.enabledTools must list unique known operations"
         )
-    if "agent-claim-helper-mcp" in _string_items(
+    if "resource-claim-helper-mcp" in _string_items(
         case.get("executionSkills", case.get("requiredSkills"))
     ):
         missing_claim_tools = _MCP_AGENT_OPS_CLAIM_TOOL_NAMES - set(

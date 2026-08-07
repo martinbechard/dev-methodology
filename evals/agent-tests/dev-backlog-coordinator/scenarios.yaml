@@ -37,7 +37,7 @@ scenarios:
     purpose: Recover an unavailable delivery resource and complete through the effective Commit skill.
     initialState: One reviewed candidate is Running and a resource required by its selected completion skill is unavailable.
     task: Record one immediate claim attempt, retry only after a release or recovery notification, and require selected-Commit, provider-completion, test, and cleanup evidence.
-    targetSkills: [structured-explanation, coordinate-work-items, coordinate-codex-tasks, agent-claim]
+    targetSkills: [structured-explanation, coordinate-work-items, coordinate-codex-tasks, resource-claim]
     allowedAgentDependencies: [dev-orchestrator]
     requiredBehaviors: [Attempt immediately, Preserve the structured conflict outcome task-locally, Request a direct release or recovery handoff, Retry only after that notification, Leave stale-ownership investigation to the watchdog, Route delivery through Dev Orchestrator with the effective Commit-selected skill, Run focused tests, Require Persistence completion only after Commit READY, Remove clean worktree, Safely delete merged branch]
     forbiddenBehaviors: [Create a waiting task, Poll the claim registry, Retry because time elapsed, Mutate provider state merely to wait, Steal active unpreserved work, Reproduce the selected completion procedure, Run the complete agent catalog for one item, Report Done before provider completion and cleanup evidence]

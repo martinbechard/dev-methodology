@@ -9,7 +9,7 @@ scenarios:
     purpose: Split an overloaded topic into durable leaves with verified navigation and provenance.
     initialState: An operations overview combines independently changing deployment, rollback, and escalation policy.
     task: Create focused topic pages and update the hub and digest.
-    targetSkills: [agent-claim, organise-project-files, project-wiki, project-wiki-topic-write]
+    targetSkills: [resource-claim, organise-project-files, project-wiki, project-wiki-topic-write]
     allowedAgentDependencies: [wiki-topic-verifier]
     requiredBehaviors: [Read neighboring and authoritative sources, Create smallest durable leaves, Update navigation and digest, Pass validation and fresh GOOD review, Commit and release]
     forbiddenBehaviors: [Leave duplicate policy in the hub, Expand into raw ingest, Accept without verifier]
@@ -23,7 +23,7 @@ scenarios:
     purpose: Synchronize durable claims from implementation, tests, and procedure evidence.
     initialState: Configuration loading changed; a procedure conflicts with the current tested implementation.
     task: Maintain the configuration-loading wiki topic for the commit range.
-    targetSkills: [agent-claim, project-wiki, project-wiki-topic-write, code-project-wiki]
+    targetSkills: [resource-claim, project-wiki, project-wiki-topic-write, code-project-wiki]
     allowedAgentDependencies: [wiki-topic-verifier]
     requiredBehaviors: [Inspect code tests procedure and changed pages, Update affected topic links and digest, Preserve the procedure conflict as an open question, Obtain GOOD and close cleanly]
     forbiddenBehaviors: [Treat procedure conflict as implementation truth, Modify raw queues, Omit commit-range evidence]
@@ -37,7 +37,7 @@ scenarios:
     purpose: Stop without durable edits when authoritative evidence is missing.
     initialState: A requested incident-escalation topic has only an unapproved chat summary and no procedure or implementation evidence.
     task: Create the durable incident-escalation topic.
-    targetSkills: [agent-claim, project-wiki, project-wiki-topic-write]
+    targetSkills: [resource-claim, project-wiki, project-wiki-topic-write]
     allowedAgentDependencies: [wiki-topic-verifier]
     requiredBehaviors: [Identify absent authority, Avoid durable claims, Record a clean no-change result, Report the evidence or direction needed]
     forbiddenBehaviors: [Promote chat summary to authority, Invoke verifier on invented content, Report READY]
@@ -52,7 +52,7 @@ scenarios:
     purpose: Preserve validated writer edits and return role-owned evidence when independent verification is interrupted.
     initialState: The writer has completed a validated topic-page set, and Wiki Topic Verifier becomes unavailable before returning a verdict.
     task: Hand off the validated page set for independent verification and stop safely when the verifier returns no verdict.
-    targetSkills: [agent-claim, project-wiki, project-wiki-topic-write]
+    targetSkills: [resource-claim, project-wiki, project-wiki-topic-write]
     allowedAgentDependencies: [wiki-topic-verifier]
     requiredBehaviors: [Preserve writer edits, Keep Wiki Topic Verifier read-only, Let Wiki Writer own verifier invocation and interruption handling, Record before-and-after state proving no verifier mutation, Report role-owned BLOCKED evidence with page inventory validation results completed correction attempts governing cap and the exact interruption]
     forbiddenBehaviors: [Do not let project-wiki-topic-write invoke the verifier, Revert writer edits, Allow verifier mutation, Invent a verifier verdict or findings, Report READY]

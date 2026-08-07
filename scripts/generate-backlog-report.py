@@ -971,6 +971,20 @@ def _source_commit(repository_root: Path) -> str:
     return result.stdout.strip() if result.returncode == 0 else "unavailable"
 
 
+def _legacy_claim_registry_is_marker(path: Path) -> bool:
+    """Recognize the helper's exact completed-migration registry tombstone."""
+    marker = path / "state.json" if path.is_dir() else path
+    try:
+        payload = json.loads(marker.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, ValueError):
+        return False
+    return payload == {
+        "schema_version": 1,
+        "state_layout_version": 2,
+        "migrated": "registry",
+    }
+
+
 def _claim_snapshot(
     repository_root: Path, generated_at: str
 ) -> tuple[str, tuple[dict[str, object], ...], str]:
@@ -986,7 +1000,23 @@ def _claim_snapshot(
     common = Path(result.stdout.strip())
     if not common.is_absolute():
         common = repository_root / common
-    registry = common.resolve() / "agent-claims.json"
+    common = common.resolve()
+    canonical_registry = common.parent / ".codex" / "agent-claim" / "agent-claims.json"
+    legacy_registry = common / "agent-claims.json"
+    if canonical_registry.exists():
+        if legacy_registry.exists() and not _legacy_claim_registry_is_marker(
+            legacy_registry
+        ):
+            return (
+                generated_at,
+                (),
+                "unavailable: canonical and legacy claim registries contradict",
+            )
+        registry = canonical_registry
+    else:
+        # The Git-common-dir location is a read-only compatibility fallback for repositories
+        # whose Resource Claim state has not crossed the state-layout migration boundary.
+        registry = legacy_registry
     try:
         registry_text = registry.read_text(encoding="utf-8")
     except FileNotFoundError:

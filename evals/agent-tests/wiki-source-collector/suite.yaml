@@ -7,7 +7,7 @@ target:
   nativeAgent: generated/adapters/codex/agents/wiki-source-collector.toml
   repositoryMutation: required
   requiredSkills:
-    - agent-claim
+    - resource-claim
     - project-wiki-research
     - project-wiki
     - structured-explanation

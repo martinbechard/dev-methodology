@@ -174,7 +174,7 @@ def _copy_inputs(workspace: Path) -> list[str]:
         *(
             _REPOSITORY_ROOT / "skills" / skill
             for skill in (
-                "agent-claim",
+                "resource-claim",
                 "bootstrap-project-documentation",
                 "route-documentation-work",
                 "organise-project-files",

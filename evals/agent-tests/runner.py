@@ -126,7 +126,7 @@ _DEPENDENCY_ROUTING_FIXTURE_FIELDS = (
     "repository.project",
     "resourceCoordination.selected",
     "resourceCoordination.cases.none",
-    "resourceCoordination.cases.agent-claim",
+    "resourceCoordination.cases.resource-claim",
     "orchestration.dependencyOrder",
     "orchestration.integration",
     "orchestration.postIntegrationReviews",
@@ -269,7 +269,7 @@ def _validate_fixture_contract(suite: _Suite, scenario: dict[str, Any]) -> None:
     project = _load_yaml(project_path)
     selected_coordination = _dotted_value(project, "resource_coordination.selected")
     coordination = contract["resourceCoordination"]
-    if selected_coordination not in {"agent-claim", "none"}:
+    if selected_coordination not in {"resource-claim", "none"}:
         raise ValueError(f"{identity} has an invalid resource coordination selection")
     if coordination["selected"] != selected_coordination:
         raise ValueError(f"{identity} fixture resource coordination disagrees with project")
@@ -279,15 +279,15 @@ def _validate_fixture_contract(suite: _Suite, scenario: dict[str, Any]) -> None:
     target_skills = set(scenario.get("targetSkills", []))
     deterministic_checks = set(scenario.get("deterministicChecks", []))
     if selected_coordination == "none":
-        if "agent-claim" in target_skills or "claim-lifecycle" in deterministic_checks:
-            raise ValueError(f"{identity} none resource coordination selects agent-claim behavior")
+        if "resource-claim" in target_skills or "claim-lifecycle" in deterministic_checks:
+            raise ValueError(f"{identity} none resource coordination selects resource-claim behavior")
         if "claimRelease" in expected_fields:
             raise ValueError(f"{identity} none resource coordination requires claim release evidence")
         if coordination_case.get("claimCalls") != [] or coordination_case.get("claimEvidence") != "absent":
             raise ValueError(f"{identity} none resource coordination does not prove zero claim evidence")
     else:
-        if "agent-claim" not in target_skills or "claim-lifecycle" not in deterministic_checks:
-            raise ValueError(f"{identity} agent-claim resource coordination omits configured behavior")
+        if "resource-claim" not in target_skills or "claim-lifecycle" not in deterministic_checks:
+            raise ValueError(f"{identity} resource-claim resource coordination omits configured behavior")
         claim_free_lanes = coordination_case.get("claimFreeFileLanes")
         claimed_lanes = coordination_case.get("claimedLanes")
         if (
@@ -297,9 +297,9 @@ def _validate_fixture_contract(suite: _Suite, scenario: dict[str, Any]) -> None:
             or set(claimed_lanes) != {"integration", "closeout"}
             or set(claim_free_lanes) & set(claimed_lanes)
         ):
-            raise ValueError(f"{identity} agent-claim resource coordination has invalid lane ownership")
+            raise ValueError(f"{identity} resource-claim resource coordination has invalid lane ownership")
         if "claimRelease" in expected_fields:
-            raise ValueError(f"{identity} agent-claim uses global rather than event-lane release evidence")
+            raise ValueError(f"{identity} resource-claim uses global rather than event-lane release evidence")
         if coordination_case.get("integrationScope") != "project-files":
             raise ValueError(f"{identity} integration does not use project-files")
         if "integrationResource" in coordination_case:
@@ -326,12 +326,12 @@ def _scenario_resource_coordination(
             if isinstance(coordination, Mapping):
                 selected = coordination.get("selected")
                 cases = coordination.get("cases")
-                if selected in {"agent-claim", "none"} and isinstance(cases, Mapping):
+                if selected in {"resource-claim", "none"} and isinstance(cases, Mapping):
                     selected_case = cases.get(selected)
                     if isinstance(selected_case, Mapping):
                         return str(selected), selected_case
-    if "agent-claim" in scenario.get("targetSkills", []):
-        return "agent-claim", {}
+    if "resource-claim" in scenario.get("targetSkills", []):
+        return "resource-claim", {}
     return "none", {}
 
 
@@ -2319,9 +2319,9 @@ def _coordinator_prompt(
         "role must contain exactly invocation and sessionIds; commit must contain exactly repository and sha; review and "
         "verification must each contain exactly sessionIds. claimRelease is required only when the scenario's "
         "requiredHandoffReceiptFieldsByScenario includes it, must then contain exactly eventIds, and must otherwise be "
-        "omitted. A scenario whose resourceCoordinationByScenario value is none must not invoke agent-claim through a "
+        "omitted. A scenario whose resourceCoordinationByScenario value is none must not invoke resource-claim through a "
         "script or tool and must not report claim evidence on any receipt, including an extra lane. Pre-existing "
-        "repository claim files do not count as scenario activity. A scenario whose value is agent-claim must retain its "
+        "repository claim files do not count as scenario activity. A scenario whose value is resource-claim must retain its "
         "configured acquisition and normal-release evidence. The "
         "repository is relative to the active scenario's scenarioRoots[scenario] directory, every sessionIds and "
         "eventIds value is a "
@@ -2333,7 +2333,7 @@ def _coordinator_prompt(
         "The final coordinator scenario result must repeat the checkpoint's status, "
         "targetInvoked, judgeInvoked, evidenceReceipts, handoffReceipts, and cleanup with structurally identical values. "
         "When required, successful claim-release eventIds must bind a resulting commit and agent matching the receipt. "
-        "For agent-claim scenarios, keep each clean candidate repository, clean claim registry, and Git claim journal "
+        "For resource-claim scenarios, keep each clean candidate repository, clean claim registry, and Git claim journal "
         "available until the outer runner audits them. Prose cannot substitute for those receipts. Nested objects are "
         "forbidden in the diagnostic arrays. "
         "The diagnostic strings never prove a verdict. Beneath checkpointRoot/suite/scenario, retain one artifacts file and "
@@ -3344,7 +3344,7 @@ def _audit_report(
                 )
                 claimed_lanes = (
                     set(coordination_case.get("claimedLanes", []))
-                    if selected_coordination == "agent-claim"
+                    if selected_coordination == "resource-claim"
                     else set()
                 )
                 for lane, receipt in receipts_by_lane.items():
@@ -4016,17 +4016,74 @@ def _git_common_directory(
     return resolved
 
 
+def _claim_state_artifact(
+    repository: Path,
+    fixture_root: Path,
+    artifact: str,
+) -> Path:
+    """Resolve one artifact from the fail-closed claim-state layout."""
+    return _claim_state_root(repository, fixture_root) / artifact
+
+
+def _claim_state_root(repository: Path, fixture_root: Path) -> Path:
+    """Select canonical or legacy claim state once for the complete layout."""
+    common = _git_common_directory(repository, fixture_root, "fixture")
+    canonical_root = (common.parent / ".codex" / "agent-claim").resolve()
+    boundary = fixture_root.resolve()
+    if canonical_root != boundary and boundary not in canonical_root.parents:
+        raise RuntimeError(
+            f"Canonical claim state escapes fixture containment: {canonical_root}"
+        )
+    artifacts = ("agent-claims.json", "agent-claim-events")
+    canonical_present = any((canonical_root / artifact).exists() for artifact in artifacts)
+    legacy_active = any(
+        (common / artifact).exists()
+        and not _legacy_claim_artifact_is_marker(common / artifact, artifact)
+        for artifact in artifacts
+    )
+    if canonical_present and legacy_active:
+        raise RuntimeError(
+            f"Contradictory canonical and legacy claim state: {repository}"
+        )
+    selected = canonical_root if canonical_present else common
+    resolved = selected.resolve()
+    if resolved != boundary and boundary not in resolved.parents:
+        raise RuntimeError(f"Claim state escapes fixture containment: {selected}")
+    return selected
+
+
+def _legacy_claim_artifact_is_marker(path: Path, artifact: str) -> bool:
+    """Recognize the helper's exact completed-migration tombstone."""
+    kind = "registry" if artifact == "agent-claims.json" else "events"
+    if artifact == "agent-claim-events" and path.is_dir():
+        return False
+    marker = path / "state.json" if path.is_dir() else path
+    try:
+        payload = json.loads(marker.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, ValueError):
+        return False
+    return payload == {
+        "schema_version": 1,
+        "state_layout_version": 2,
+        "migrated": kind,
+    }
+
+
 def _claim_events(repository: Path, fixture_root: Path) -> tuple[dict[str, Any], ...]:
     """Load contained claim-journal events retained by one disposable repository."""
-    common = _git_common_directory(repository, fixture_root, "fixture")
-    event_root = common / "agent-claim-events" / "hot"
+    event_root = _claim_state_artifact(
+        repository,
+        fixture_root,
+        "agent-claim-events",
+    ) / "hot"
     resolved_event_root = event_root.resolve()
-    if common not in resolved_event_root.parents:
+    boundary = fixture_root.resolve()
+    if resolved_event_root != boundary and boundary not in resolved_event_root.parents:
         raise RuntimeError(f"Claim release journal escapes fixture containment: {event_root}")
     events: list[dict[str, Any]] = []
     for journal in sorted(event_root.glob("*.jsonl")):
         resolved_journal = journal.resolve()
-        if common not in resolved_journal.parents:
+        if resolved_journal != boundary and boundary not in resolved_journal.parents:
             raise RuntimeError(f"Claim release journal escapes fixture containment: {journal}")
         for line_number, line in enumerate(
             journal.read_text(encoding="utf-8").splitlines(),
@@ -4066,15 +4123,15 @@ def _contained_fixture_repositories(fixture_root: Path) -> tuple[Path, ...]:
     return tuple(sorted(git_entry.parent for git_entry in fixture_root.glob("**/.git")))
 
 
-def _session_agent_claim_invocations(session: _Session) -> tuple[str, ...]:
-    """Return agent-claim tool calls found in one retained rollout trace."""
+def _session_resource_claim_invocations(session: _Session) -> tuple[str, ...]:
+    """Return resource-claim tool calls found in one retained rollout trace."""
     if session.rollout_path is None or not session.rollout_path.is_file():
         return ()
     invocations: list[str] = []
-    claim_script = re.compile(r"agent-claim(?:-command)?/scripts/claim\.py")
+    claim_script = re.compile(r"resource-claim-helper-command/scripts/claim\.py")
     claim_tool = re.compile(
         r"(?:^|__|\.)(?:claim_(?:status|acquire|extend|extend_deadline|heartbeat|release|"
-        r"maintain_journal|report)|agent_claim)"
+        r"maintain_journal|report)|resource_claim)"
     )
     for line in session.rollout_path.read_text(encoding="utf-8", errors="replace").splitlines():
         try:
@@ -4105,15 +4162,15 @@ def _audit_no_claim_session_activity(
     sessions: Sequence[_Session],
     identity: str,
 ) -> None:
-    """Reject retained target or dependency traces that invoked agent-claim."""
+    """Reject retained target or dependency traces that invoked resource-claim."""
     relevant = (
         session
         for session in sessions
         if session.session_id == target.session_id
         or session.parent_thread_id == target.session_id
     )
-    if any(_session_agent_claim_invocations(session) for session in relevant):
-        raise RuntimeError(f"{identity} has unexpected agent-claim invocation")
+    if any(_session_resource_claim_invocations(session) for session in relevant):
+        raise RuntimeError(f"{identity} has unexpected resource-claim invocation")
 
 
 def _audit_clean_claim_registry(
@@ -4122,7 +4179,7 @@ def _audit_clean_claim_registry(
     identity: str,
 ) -> None:
     """Require one retained registry proving the selected provider released every claim."""
-    registry = _git_common_directory(repository, fixture_root, "fixture") / "agent-claims.json"
+    registry = _claim_state_artifact(repository, fixture_root, "agent-claims.json")
     if not registry.is_file():
         raise RuntimeError(f"{identity} has no clean claim registry evidence")
     loaded = json.loads(registry.read_text(encoding="utf-8"))
@@ -4473,7 +4530,7 @@ def _audit_handoff_evidence(
             )
             claimed_lanes = set(
                 coordination_case.get("claimedLanes", [])
-                if selected_coordination == "agent-claim"
+                if selected_coordination == "resource-claim"
                 else []
             )
             bound_file_claim_ids: dict[Path, set[str]] = {}
@@ -4660,7 +4717,7 @@ def _audit_handoff_evidence(
                             f"{identity} reuses one claim lifecycle across handoff receipts"
                         )
                     repository_bound_ids.add(claim_id)
-            if selected_coordination == "agent-claim":
+            if selected_coordination == "resource-claim":
                 audited_common_directories: set[Path] = set()
                 for repository in _contained_fixture_repositories(
                     scenario_fixture_root
@@ -4673,10 +4730,17 @@ def _audit_handoff_evidence(
                     if common in audited_common_directories:
                         continue
                     audited_common_directories.add(common)
-                    if not (
-                        (common / "agent-claims.json").exists()
-                        or (common / "agent-claim-events").exists()
-                    ):
+                    registry = _claim_state_artifact(
+                        repository,
+                        scenario_fixture_root,
+                        "agent-claims.json",
+                    )
+                    events = _claim_state_artifact(
+                        repository,
+                        scenario_fixture_root,
+                        "agent-claim-events",
+                    )
+                    if not (registry.exists() or events.exists()):
                         continue
                     _audit_clean_claim_registry(
                         repository,
@@ -5425,8 +5489,13 @@ def _audit_workspace_cleanup(workspace: Path) -> str:
                 )
         else:
             common = _git_common_directory(repository, containment_root, containment_name)
+        registry = _claim_state_artifact(
+            repository,
+            containment_root,
+            "agent-claims.json",
+        )
         registries.setdefault(
-            common / "agent-claims.json",
+            registry,
             (repository, repository == workspace),
         )
     for registry, (repository, is_workspace) in registries.items():

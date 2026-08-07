@@ -6,7 +6,7 @@ target:
   conceptualRole: agents/roles/dev-activities/dev-documentation-writer.role.yaml
   nativeAgent: generated/adapters/codex/agents/dev-documentation-writer.toml
   repositoryMutation: required
-  requiredSkills: [agent-claim, route-documentation-work]
+  requiredSkills: [resource-claim, route-documentation-work]
   conditionalSkills:
     organise-project-files: Documentation creates a project file or directory.
     create-functional-spec: The artifact specifies user-visible behavior.

@@ -191,16 +191,16 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         for scenario_id, source in source_by_id.items():
             with self.subTest(scenario=scenario_id):
                 coordination_cases = source["resourceCoordinationCases"]
-                self.assertEqual({"agent-claim", "none"}, set(coordination_cases))
-                agent_claim = coordination_cases["agent-claim"]
+                self.assertEqual({"resource-claim", "none"}, set(coordination_cases))
+                resource_claim = coordination_cases["resource-claim"]
                 none = coordination_cases["none"]
-                self.assertEqual(["agent-claim"], agent_claim["targetSkills"])
-                self.assertEqual(["claim-lifecycle"], agent_claim["deterministicChecks"])
-                self.assertTrue(agent_claim["claimCalls"])
-                self.assertTrue(agent_claim["registryMutations"])
-                self.assertTrue(agent_claim["journalWrites"])
-                self.assertTrue(agent_claim["claimLifecycle"])
-                self.assertEqual("required", agent_claim["claimEvidence"])
+                self.assertEqual(["resource-claim"], resource_claim["targetSkills"])
+                self.assertEqual(["claim-lifecycle"], resource_claim["deterministicChecks"])
+                self.assertTrue(resource_claim["claimCalls"])
+                self.assertTrue(resource_claim["registryMutations"])
+                self.assertTrue(resource_claim["journalWrites"])
+                self.assertTrue(resource_claim["claimLifecycle"])
+                self.assertEqual("required", resource_claim["claimEvidence"])
                 self.assertEqual([], none["targetSkills"])
                 self.assertEqual([], none["deterministicChecks"])
                 self.assertEqual([], none["claimCalls"])
@@ -209,7 +209,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
                 self.assertEqual([], none["claimReleases"])
                 self.assertEqual("absent", none["claimEvidence"])
                 self.assertEqual(
-                    agent_claim["providerLifecycle"],
+                    resource_claim["providerLifecycle"],
                     none["providerLifecycle"],
                 )
                 assert_neutral_top_level(source)
@@ -257,15 +257,15 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             with self.subTest(mutation=mutation), self.assertRaises(AssertionError):
                 assert_neutral_top_level(mutated)
 
-        agent_claim = next(
-            skill for skill in self.model["skills"] if skill["id"] == "agent-claim"
+        resource_claim = next(
+            skill for skill in self.model["skills"] if skill["id"] == "resource-claim"
         )
         steward = next(
             agent for agent in self.model["agents"] if agent["id"] == "dev-backlog-steward"
         )
         governed_steward_links = [
             link
-            for link in agent_claim["governedScenarioLinks"]
+            for link in resource_claim["governedScenarioLinks"]
             if link["suite"] == "dev-backlog-steward"
         ]
 
@@ -280,7 +280,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
         self.assertTrue(all(link["conditional"] for link in governed_steward_links))
         self.assertTrue(
             all(
-                "agent-claim" not in scenario["targetSkills"]
+                "resource-claim" not in scenario["targetSkills"]
                 for scenario in steward["scenarios"]
             )
         )
@@ -294,7 +294,7 @@ class AgentSkillEvaluationDocumentationTests(unittest.TestCase):
             },
         }
         self.assertNotIn(
-            "agent-claim",
+            "resource-claim",
             {
                 association["skill"]
                 for association in self.generator.scenario_skill_associations(

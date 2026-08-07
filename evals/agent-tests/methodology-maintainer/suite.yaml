@@ -7,7 +7,7 @@ target:
   nativeAgent: generated/adapters/codex/agents/methodology-maintainer.toml
   repositoryMutation: required
   requiredSkills:
-    - agent-claim
+    - resource-claim
     - maintain-methodology-documentation
     - skill-authoring
     - agent-role-authoring

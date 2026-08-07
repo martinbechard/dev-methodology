@@ -10,7 +10,7 @@ target:
     - bootstrap-project-documentation
     - route-documentation-work
   conditionalSkills:
-    agent-claim: Resource coordination selects agent-claim.
+    resource-claim: Resource coordination selects resource-claim.
     organise-project-files: Bootstrap creates a project file or directory whose path is not fixed by the bootstrap contract.
   allowedAgentDependencies:
     - project-configurator

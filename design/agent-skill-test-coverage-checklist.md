@@ -145,10 +145,6 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 
 | Skill | Structural | Probe-declared | Positive case | Negative case | Paired controls | Full probe | Executable full fixture | Judge calibration | Executed | Judge-passed | Security-contained | Stale-by-digest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| agent-claim | [x] | [x] probe-agent-claim | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
-| agent-claim-helper | [x] | [x] probe-agent-claim-helper | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
-| agent-claim-helper-command | [x] | [x] probe-agent-claim-helper-command | [x] backlog-lifecycle, documentation-functional-spec, spring-boot-order-cancellation, typescript-order-pricing, wiki-raw-ingest | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
-| agent-claim-helper-mcp | [x] | [x] probe-agent-claim-helper-mcp | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | analyze-root-cause | [x] | [x] probe-analyze-root-cause | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | application-security | [x] | [x] probe-application-security | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | ast-grep | [x] | [x] probe-ast-grep | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
@@ -182,6 +178,10 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | manage-work-items-jira | [x] | [x] probe-manage-work-items-jira | [x] provider-placeholder-matrix, work-item-management-provider-operations | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | organise-project-files | [x] | [x] probe-organise-project-files | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | resolve-backlog-blockage | [x] | [x] probe-resolve-backlog-blockage | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| resource-claim | [x] | [x] probe-resource-claim | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| resource-claim-helper | [x] | [x] probe-resource-claim-helper | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| resource-claim-helper-command | [x] | [x] probe-resource-claim-helper-command | [x] backlog-lifecycle, documentation-functional-spec, spring-boot-order-cancellation, typescript-order-pricing, wiki-raw-ingest | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| resource-claim-helper-mcp | [x] | [x] probe-resource-claim-helper-mcp | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | review-code-with-evidence | [x] | [x] probe-review-code-with-evidence | [x] typescript-code-review | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | review-prompt-contracts | [x] | [x] probe-review-prompt-contracts | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | set-multitask-mode | [x] | [x] probe-set-multitask-mode | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |

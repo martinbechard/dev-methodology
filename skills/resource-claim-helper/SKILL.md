@@ -1,19 +1,19 @@
 ---
-name: agent-claim-helper
+name: resource-claim-helper
 description: Use the common claim-helper operation, input, result, and uncertain-outcome contract through one configured provider.
 metadata:
   category: development-practice
 ---
 
-# Agent Claim Helper
+# Resource Claim Helper
 
-Agent Claim Helper is the provider-neutral interface for claim operations. Agent Claim decides when a claim is required, which scope to request, how to handle conflicts and deadlines, and when to release it. One configured agent-claim-helper-* Provider Skill maps this interface to command-line invocation or MCP tool calls.
+Resource Claim Helper is the provider-neutral interface for claim operations. Resource Claim decides when a claim is required, which scope to request, how to handle conflicts and deadlines, and when to release it. One configured resource-claim-helper-* Provider Skill maps this interface to command-line invocation or MCP tool calls.
 
 This interface does not select a provider, define claim policy, or make an unavailable provider selectable.
 
 ## Operation Contract
 
-Provider Skills preserve these semantic input names through the naming convention of their invocation mechanism. `repository` is the absolute project root. A scope is exactly one work-item, path-domain, or resource shape; Agent Claim selects the shape.
+Provider Skills preserve these semantic input names through the naming convention of their invocation mechanism. `repository` is the absolute project root. A scope is exactly one work-item, path-domain, or resource shape; Resource Claim selects the shape.
 
 | Operation | Required inputs | Optional inputs |
 |---|---|---|
@@ -22,7 +22,7 @@ Provider Skills preserve these semantic input names through the naming conventio
 | Extend Claim | repository, claim_id, and net-new path-domain or resource scope | scope_reason when the path-domain requires it; complete resource timing fields for resource scope |
 | Extend Claim Deadline | repository, claim_id, requested_hard_stop_duration_seconds, extension_evidence | none |
 | Heartbeat Claim | repository, claim_id | none |
-| Release Claim | repository, claim_id | disposition and blocker_reference only as required by Agent Claim for a work-item release |
+| Release Claim | repository, claim_id | disposition and blocker_reference only as required by Resource Claim for a work-item release |
 | Reset Claim Registry | repository | none |
 | Maintain Claim Journal | repository | hot_days, default 2 |
 | Report Claim Contention | repository | since, default 2d |
@@ -67,7 +67,7 @@ A historical `PRIMARY_REQUIRED` event with explicit `shared_checkout_claimed: tr
 
 Work-item claim objects preserve `work_item_id`, `activity`, `claim_id`, `incarnation_id`, `agent`, `root_task_id`, `claimed_at`, `heartbeat`, and `acquisition_outcome`. Each `work_items.items` entry preserves `work_item_id` and `segments`. Every report segment contains exactly `claim_id`, `incarnation_id`, `owner`, `root_task_id`, `activity`, `acquired_at`, `released_at`, `disposition`, `blocker_reference`, `duration_seconds`, `open`, `live`, `acquisition_event_id`, and `release_event_id`. Validation failures preserve the live registry.
 
-Read the complete structured result before applying Agent Claim policy. Do not decide from a process exit code, tool-call status, or provider connection state alone.
+Read the complete structured result before applying Resource Claim policy. Do not decide from a process exit code, tool-call status, or provider connection state alone.
 
 ## Reconcile an Uncertain Outcome
 
@@ -77,4 +77,4 @@ If the configured provider cannot return status, ask Project Configurator to res
 
 ## Provider Realization Contract
 
-Every agent-claim-helper-* Provider Skill realizes all operations, preserves every common input and structured result meaning, and states its provider-specific availability boundary. A Provider Skill may define command flags, MCP tool fields, result envelopes, or startup checks. It must not redefine Agent Claim policy or imply that interface conformance proves runtime availability.
+Every resource-claim-helper-* Provider Skill realizes all operations, preserves every common input and structured result meaning, and states its provider-specific availability boundary. A Provider Skill may define command flags, MCP tool fields, result envelopes, or startup checks. It must not redefine Resource Claim policy or imply that interface conformance proves runtime availability.

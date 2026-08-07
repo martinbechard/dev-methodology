@@ -35,6 +35,8 @@ ISOLATION_SETUP_EXIT_CODE = 4
 BACKLOG_ROOT_DIRECTORY = "backlog"
 WORKTREE_ROOT_DIRECTORY = ".worktrees"
 WORKTREE_IGNORE_PATTERN = "/.worktrees/"
+# These persisted names are stable compatibility identifiers from the former public skill name.
+# Resource Claim reuses them so a package rename never rewrites or discards shared live state.
 CLAIM_STATE_DIRECTORY = ".codex/agent-claim"
 CLAIM_STATE_IGNORE_PATTERN = "/.codex/agent-claim/"
 ISOLATED_SPARSE_CHECKOUT_PATTERNS = ("/*", "!/backlog/")
@@ -168,7 +170,7 @@ def _checkout_topology(claim: dict[str, Any]) -> str | None:
 
 def _worktree_root_is_ignored(repository: Path) -> bool:
     primary_worktree = _primary_worktree(repository)
-    probe = f"{WORKTREE_ROOT_DIRECTORY}/.agent-claim-ignore-probe"
+    probe = f"{WORKTREE_ROOT_DIRECTORY}/.resource-claim-ignore-probe"
     ignored = _git(
         primary_worktree,
         "check-ignore",
@@ -526,7 +528,7 @@ def _move_legacy_events(repository: Path) -> None:
     else:
         events_path.mkdir(parents=True, exist_ok=True)
 
-    if os.environ.get("AGENT_CLAIM_TEST_FAIL_MIGRATION_AFTER_EVENTS") == "1":
+    if os.environ.get("RESOURCE_CLAIM_TEST_FAIL_MIGRATION_AFTER_EVENTS") == "1":
         raise OSError("simulated interruption after moving legacy event history")
 
 
@@ -997,7 +999,7 @@ def _pause_release_after_legacy_open_for_test(operation: str) -> None:
     """Expose the interval between opening and locking the legacy registry."""
     _pause_release_for_test(
         operation,
-        "AGENT_CLAIM_TEST_RELEASE_LEGACY_OPEN_BARRIER",
+        "RESOURCE_CLAIM_TEST_RELEASE_LEGACY_OPEN_BARRIER",
         "legacy-open",
     )
 
@@ -1005,7 +1007,7 @@ def _pause_release_after_legacy_open_for_test(operation: str) -> None:
 def _pause_read_only_after_legacy_open_for_test() -> None:
     """Expose a read-only wait between opening and locking the legacy registry."""
     _pause_for_test(
-        "AGENT_CLAIM_TEST_READ_ONLY_LEGACY_OPEN_BARRIER",
+        "RESOURCE_CLAIM_TEST_READ_ONLY_LEGACY_OPEN_BARRIER",
         "read-only legacy-open",
     )
 
@@ -1014,7 +1016,7 @@ def _pause_release_after_resolution_for_test(operation: str) -> None:
     """Expose the interval between resolving and operationally locking claim state."""
     _pause_release_for_test(
         operation,
-        "AGENT_CLAIM_TEST_RELEASE_RESOLVE_BARRIER",
+        "RESOURCE_CLAIM_TEST_RELEASE_RESOLVE_BARRIER",
         "resolution",
     )
 
@@ -1110,7 +1112,7 @@ def _write_registry(registry_file: TextIO, data: dict[str, Any]) -> None:
 
 
 def _now() -> datetime:
-    override = os.environ.get("AGENT_CLAIM_TEST_NOW")
+    override = os.environ.get("RESOURCE_CLAIM_TEST_NOW")
     if override:
         parsed = datetime.fromisoformat(override.replace("Z", "+00:00"))
         if parsed.tzinfo is None:
@@ -1171,9 +1173,9 @@ def _load_deadline_policy(repository: Path) -> dict[str, Any]:
             "project_policy_invalid",
         ) from error
     coordination = project.get("resource_coordination") if isinstance(project, dict) else None
-    if not isinstance(coordination, dict) or coordination.get("selected") != "agent-claim":
+    if not isinstance(coordination, dict) or coordination.get("selected") != "resource-claim":
         raise _DeadlineError(
-            "PROJECT.yaml resource_coordination must select agent-claim for named resource acquisition.",
+            "PROJECT.yaml resource_coordination must select resource-claim for named resource acquisition.",
             "resource_coordination.selected",
             "resource_coordination_not_selected",
         )
@@ -2216,7 +2218,7 @@ def _normalized_event_outcomes(
 
 
 def _append_event(common_directory: Path, event: dict[str, Any]) -> Path:
-    if os.environ.get("AGENT_CLAIM_TEST_FAIL_JOURNAL_WRITE") == "1":
+    if os.environ.get("RESOURCE_CLAIM_TEST_FAIL_JOURNAL_WRITE") == "1":
         raise OSError("simulated journal write failure")
     _root, hot_directory, _archive, _journal = _journal_paths(common_directory)
     hot_directory.mkdir(parents=True, exist_ok=True)
@@ -3328,7 +3330,7 @@ def _write_validated_archive(path: Path, compressed: bytes, expected_raw: bytes)
     temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
     try:
         temporary.write_bytes(compressed)
-        if os.environ.get("AGENT_CLAIM_TEST_FAIL_ARCHIVE_BEFORE_VALIDATE") == "1":
+        if os.environ.get("RESOURCE_CLAIM_TEST_FAIL_ARCHIVE_BEFORE_VALIDATE") == "1":
             raise OSError("simulated interruption before archive validation")
         if gzip.decompress(temporary.read_bytes()) != expected_raw:
             raise ValueError(f"Archive validation failed for {path}")

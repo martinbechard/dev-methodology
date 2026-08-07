@@ -159,7 +159,7 @@ A conditional Agent Skill is still named directly by the Agent definition, but t
 
 - **RULE: RULE-72** A conditional relationship keeps the referenced skill out of the default context
   - **SYNOPSIS:** Use a dotted relationship when the referenced skill is not loaded by default and satisfying the stated condition causes a separate load, which can require another tool call. Structural availability does not require eager loading.
-  - **EXAMPLE:** agent-claim always loads the exact agent-claim-helper Interface Skill. AGENTS.md selects one agent-claim-helper-* Provider Skill, which remains outside the default context until agent-claim performs a claim operation.
+  - **EXAMPLE:** resource-claim always loads the exact resource-claim-helper Interface Skill. AGENTS.md selects one resource-claim-helper-* Provider Skill, which remains outside the default context until resource-claim performs a claim operation.
 
 ```mermaid
 classDiagram
@@ -466,11 +466,11 @@ A nested Skill Group is the same kind of set as its parent. The word subgroup de
 
 - **RULE: RULE-55** A nested Skill Group contributes its complete skill set
   - **SYNOPSIS:** The parent Skill Group contains its direct skills plus every skill reached through its nested groups.
-  - **EXAMPLE:** Concurrent Tasking contains agent-claim through its nested Resource Coordination group even though agent-claim is not a direct member of Concurrent Tasking.
+  - **EXAMPLE:** Concurrent Tasking contains resource-claim through its nested Resource Coordination group even though resource-claim is not a direct member of Concurrent Tasking.
 
 - **RULE: RULE-54** A solid diamond represents containment in a collapsed diagram
   - **SYNOPSIS:** A solid diamond from a Skill Group node to a SKILL.md node records direct membership. A solid diamond from one Skill Group node to another records nested-group inclusion.
-  - **EXAMPLE:** Concurrent Tasking directly contains the coordinate-work-items and coordinate-codex-tasks peers and includes the Resource Coordination skill group, whose direct skills include agent-claim.
+  - **EXAMPLE:** Concurrent Tasking directly contains the coordinate-work-items and coordinate-codex-tasks peers and includes the Resource Coordination skill group, whose direct skills include resource-claim.
 
 ```mermaid
 classDiagram
@@ -492,17 +492,17 @@ classDiagram
         <<SKILL.md>>
     }
 
-    class agent-claim {
+    class resource-claim {
         <<SKILL.md>>
     }
 
     ConcurrentTasking *-- coordinate-work-items
     ConcurrentTasking *-- coordinate-codex-tasks
     ConcurrentTasking *-- ResourceCoordination
-    ResourceCoordination *-- agent-claim
+    ResourceCoordination *-- resource-claim
 ```
 
-The collapsed diagram shows Concurrent Tasking as one node. Its actual Skill Group contains the complementary coordinate-work-items and coordinate-codex-tasks peers directly and contains agent-claim through the nested Resource Coordination Skill Group. An expanded diagram could draw boxes around the same sets and display their member details.
+The collapsed diagram shows Concurrent Tasking as one node. Its actual Skill Group contains the complementary coordinate-work-items and coordinate-codex-tasks peers directly and contains resource-claim through the nested Resource Coordination Skill Group. An expanded diagram could draw boxes around the same sets and display their member details.
 
 The repository-specific group models are maintained separately in [Object-Oriented Skill Group Models](object-oriented-skill-group-models.md).
 
@@ -833,15 +833,15 @@ A good model makes skill dependencies, dispatch, and organization understandable
 
 - **RULE: RULE-66** Applied views progress from the system landscape to concrete scenarios
   - **SYNOPSIS:** Overall diagrams establish the relevant Agent groups, Skill Groups, and major dependencies. Scenario sections then expand the relationships that need their consumers, routing, interfaces, providers, and loading conditions shown together.
-  - **EXAMPLE:** A Concurrent Tasking overview shows Dev Activities Agents, Backlog Management Agents, and the major Skill Groups before a resource-coordination scenario expands agent-claim, its consumers, AGENTS.md routing, and the available claim-helper providers.
+  - **EXAMPLE:** A Concurrent Tasking overview shows Dev Activities Agents, Backlog Management Agents, and the major Skill Groups before a resource-coordination scenario expands resource-claim, its consumers, AGENTS.md routing, and the available claim-helper providers.
 
 - **RULE: RULE-67** A scenario section explains its situation before its notation
   - **SYNOPSIS:** The opening states what the scenario represents and why its relationships matter before discussing arrow forms or exceptions. An absent alternative or unsupported path is mentioned only when it changes how the shown scenario must be understood.
-  - **EXAMPLE:** A resource-coordination section first says that it applies when project configuration selects agent-claim, then explains which skills consume the policy and how AGENTS.md selects the claim helper.
+  - **EXAMPLE:** A resource-coordination section first says that it applies when project configuration selects resource-claim, then explains which skills consume the policy and how AGENTS.md selects the claim helper.
 
 - **RULE: RULE-68** Technical terms name the engineering mechanism shown
   - **SYNOPSIS:** Use transport only for a concrete communication mechanism that carries protocol messages. Name protocols, command invocation, file access, and tool calls according to what they are instead of grouping them under a convenient but inaccurate abstraction.
-  - **EXAMPLE:** “Command transport” and “MCP transport” are bad descriptions: a local command is not a transport, and MCP is a protocol. State instead that agent-claim-helper-command invokes a local command-line helper and agent-claim-helper-mcp calls MCP tools. If the MCP connection uses stdio or WebSockets, those mechanisms can be identified separately as transports.
+  - **EXAMPLE:** “Command transport” and “MCP transport” are bad descriptions: a local command is not a transport, and MCP is a protocol. State instead that resource-claim-helper-command invokes a local command-line helper and resource-claim-helper-mcp calls MCP tools. If the MCP connection uses stdio or WebSockets, those mechanisms can be identified separately as transports.
 
 - **RULE: RULE-52** Class views make dependency and dispatch paths understandable
   - **SYNOPSIS:** A reader can identify which skills an Agent names, which procedures it expects, which conditions affect loading, and where AGENTS.md selects an implementation.
@@ -861,7 +861,7 @@ A good model makes skill dependencies, dispatch, and organization understandable
 
 - **RULE: RULE-26** Declared relationships and request-triggered selection have valid uses
   - **SYNOPSIS:** The model distinguishes exact Agent dependencies, Skill Group sets, expanded and collapsed Skill Group diagrams, AGENTS.md substitution, direct skill-to-skill coupling, and request-scoped selection.
-  - **EXAMPLE:** Dev Coder names careful-coding, the Work Item Skill Group contains three non-overlapping members while Work Item Coordinator loads two of them, Resource Coordination contains agent-claim, Project-specific directives select a Provider Skill for manage-work-items, deliver-work-item-feature-branch names create-pull-request, and a structural-search request selects ast-grep only for that request.
+  - **EXAMPLE:** Dev Coder names careful-coding, the Work Item Skill Group contains three non-overlapping members while Work Item Coordinator loads two of them, Resource Coordination contains resource-claim, Project-specific directives select a Provider Skill for manage-work-items, deliver-work-item-feature-branch names create-pull-request, and a structural-search request selects ast-grep only for that request.
 
 - **RULE: RULE-51** The four skill-loading use cases remain distinct from factory composition
   - **SYNOPSIS:** The method separates unconditional exact-name loading, conditional exact-name loading, procedure mapping through AGENTS.md, request-triggered selection, and the factory pattern that combines an Agent-facing Interface Skill with an AGENTS.md-selected Provider Skill.
@@ -905,10 +905,10 @@ The glossary defines the relationship and diagram terms used by the analysis aft
 | Skill selection | A decision that one available skill applies to an Agent execution or request. Selection does not prove that the full instructions entered context. | A conditional rule selects test-driven-development when the user requests TDD. |
 | Skill loading | The complete selected SKILL.md entering the active context so its instructions can be followed. | After AGENTS.md selects manage-work-items-gitlab, the agent reads that SKILL.md. |
 | Exact skill name | The identity used to resolve one skill package and its SKILL.md. It is not the shared literal filename SKILL.md. | careful-coding resolves the careful-coding package. |
-| Skill interface | A shared contract containing public data members, function members, or both. It can be published as an exact Interface Skill package. | agent-claim-helper publishes the common claim-helper operations, inputs, structured outcomes, and uncertain-outcome reconciliation. |
+| Skill interface | A shared contract containing public data members, function members, or both. It can be published as an exact Interface Skill package. | resource-claim-helper publishes the common claim-helper operations, inputs, structured outcomes, and uncertain-outcome reconciliation. |
 | Interface Skill | An exact loadable kebab-case skill package that publishes a Skill interface. Its provider-family label appends a terminal wildcard, but its directory and frontmatter identity do not contain that wildcard. | manage-work-items is the exact package identity and manage-work-items-* is its family label. |
 | Skill realization | A dashed line with a hollow triangular arrowhead from a Provider Skill to a Skill interface. It means that the provider supplies the interface functions and provides or respects its public data; it does not mean that either skill loads the other. | manage-work-items-gitlab ..\|> manage-work-items. |
-| Provider Skill | A SKILL.md whose exact name extends the complete interface identity with one provider suffix and realizes the shared Skill interface. | manage-work-items-gitlab realizes manage-work-items, while agent-claim-helper-command realizes agent-claim-helper through command-line invocation. |
+| Provider Skill | A SKILL.md whose exact name extends the complete interface identity with one provider suffix and realizes the shared Skill interface. | manage-work-items-gitlab realizes manage-work-items, while resource-claim-helper-command realizes resource-claim-helper through command-line invocation. |
 | AGENTS.md factory | Project guidance that selects one Provider Skill by exact name while the consumer depends on an exact Interface Skill or its public procedures. The factory analogy describes instruction selection, not runtime object construction. | Project-specific directives route transition-work-item to manage-work-items-gitlab for a consumer of manage-work-items. |
 | Polymorphism | The object-oriented analogy in which one interface expectation can be supplied by different skill implementations without changing the invoker. It does not assert runtime language dispatch. | transition-work-item() can be supplied by a file-backed or GitLab-backed work-item skill. |
 | Procedure name | The name that identifies the operation an invoker needs. | transition-work-item. |
@@ -931,7 +931,7 @@ The glossary defines the relationship and diagram terms used by the analysis aft
 | Expanded Skill Group Diagram | A diagram that draws a box around the SKILL.md nodes belonging to one Skill Group so their responsibilities and separate loading references can be viewed together. The diagram displays the set; it does not create it. | The expanded Work Item Skill Group Diagram displays work-item-base, work-item-dispatch, and work-item-monitor inside one box. |
 | Collapsed Skill Group Diagram | A diagram that represents a Skill Group as one node and uses solid-diamond lines to show direct skill membership or nested-group inclusion. | The collapsed Concurrent Tasking diagram links the Concurrent Tasking node to both coordination peers and Resource Coordination. |
 | Nested skill group | A skill group included inside another skill group. It is the same kind of object as its parent; subgroup is only a relative description of its position. | Resource Coordination is a skill group nested inside Concurrent Tasking. |
-| Direct group membership | A solid-diamond line in a collapsed diagram that displays a skill’s direct membership in a Skill Group. The line represents membership in the existing set; it does not create that membership. | Resource Coordination *-- agent-claim displays agent-claim as a direct member of Resource Coordination. |
+| Direct group membership | A solid-diamond line in a collapsed diagram that displays a skill’s direct membership in a Skill Group. The line represents membership in the existing set; it does not create that membership. | Resource Coordination *-- resource-claim displays resource-claim as a direct member of Resource Coordination. |
 | Nested set containment | A solid-diamond line in a collapsed diagram that displays one Skill Group nested in another. The parent’s complete skill set includes the child’s complete skill set independently of the chosen diagram form. | Concurrent Tasking *-- Resource Coordination displays Resource Coordination as a nested group whose skills belong to the complete Concurrent Tasking set. |
 | Mermaid display label | The visible analysis identity used when Mermaid requires a different internal class identifier. | An internal ProcedureInterface identifier can display the procedure-family-* family label. |
 | Skill hierarchy | An organizational view of Skill Groups, families, responsibilities, procedures, loading references, and dependencies. It does not by itself assert software inheritance. | work-item-base, work-item-dispatch, and work-item-monitor form one Skill Group whose members are loaded in different combinations by two Agents. |
@@ -955,7 +955,7 @@ The analysis is grounded in the user-directed conventions and repository sources
 - [Test-Driven Development](../skills/test-driven-development/SKILL.md)
 - [JUnit](../skills/junit/SKILL.md)
 - [Jest](../skills/jest/SKILL.md)
-- [Agent Claim](../skills/agent-claim/SKILL.md)
+- [Resource Claim](../skills/resource-claim/SKILL.md)
 - [Review Structured Artifact](../skills/review-structured-artifact/SKILL.md)
 - [Dev Coder](../agents/roles/dev-activities/dev-coder.role.yaml)
 - [Generated Codex Dev Coder](../generated/adapters/codex/agents/dev-coder.toml)

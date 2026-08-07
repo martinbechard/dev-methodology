@@ -13,7 +13,7 @@ Prove the complete workflow with explicit environment ownership and observable a
 
 1. Identify the authoritative workflow, actors, starting state, dependencies, and expected result.
 2. Route specialized automation guidance when the project provides it.
-3. Make service, process, session, identity, data, and cleanup ownership explicit. Apply agent-claim when verification triggers a claim event.
+3. Make service, process, session, identity, data, and cleanup ownership explicit. Apply resource-claim when verification triggers a claim event.
 4. Exercise success and material failure paths through real public boundaries.
 5. Prefer stable user-visible or contract-level observations over timing assumptions.
 6. Capture reproducible steps, assertions, runtime errors, and diagnostic artifacts.

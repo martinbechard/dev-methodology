@@ -13,7 +13,7 @@ scenarios:
     initialState: A local service stops, but one child process survives and retains the configured port.
     task: Diagnose why a normal restart cannot bind the configured port.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - code-discovery
       - test-strategy
       - analyze-root-cause
@@ -47,7 +47,7 @@ scenarios:
     initialState: A worker remains alive during a sustained test but stops completing jobs after task cancellation.
     task: Diagnose the progress stall and identify the narrowest verified fix or escalation path.
     targetSkills:
-      - agent-claim
+      - resource-claim
       - code-discovery
       - test-strategy
       - analyze-root-cause

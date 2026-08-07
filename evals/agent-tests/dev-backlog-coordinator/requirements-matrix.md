@@ -29,6 +29,6 @@
 | Blocked resumption preserves canonical execution, candidate, review, verification, Git, claim, and attempt evidence plus conditional Codex identity | Blocked resumption contract | exhausted-correction-disposition preserved-evidence assertions |
 | Effective Commit owns delivery after review and verification | Work-item completion contract and parent role delegation | selected-commit-retry-and-closeout and selected-commit-routing |
 | Completion precedes runtime cleanup; Codex title and archival apply only when coordinate-codex-tasks is active | Coordination terminal cleanup and conditional Codex mapping | test_completion_handoff_precedes_parent_cleanup |
-| Private-work claims and tiered verification remain scoped | Agent claim and validation tiers | test_private_work_claims_tiered_tests_and_post_facto_audits_are_executable |
+| Private-work claims and tiered verification remain scoped | Resource claim and validation tiers | test_private_work_claims_tiered_tests_and_post_facto_audits_are_executable |
 | Parent immediately refills durable Running capacity after terminal cleanup | Coordination queue target and delivery handoff | provider-selected-ten-item-dispatch and suite Judge |
 | Fifteen-minute review changes scheduling or recovery when needed | Coordination fifteen-minute parent review | provider lifecycle snapshot and fifteen-minute throughput summary outputs |

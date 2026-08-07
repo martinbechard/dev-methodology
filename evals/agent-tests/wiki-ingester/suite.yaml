@@ -8,7 +8,7 @@ target:
   repositoryMutation: conditional
   requiredSkills: [project-wiki, project-wiki-topic-write]
   conditionalSkills:
-    agent-claim: The requested mode performs mutating ingest rather than a read-only final evidence audit.
+    resource-claim: The requested mode performs mutating ingest rather than a read-only final evidence audit.
     organise-project-files: Ingest creates a project file or directory.
     code-project-wiki: Durable claims depend on implementation behavior.
   allowedAgentDependencies: [wiki-topic-verifier]

@@ -12,8 +12,8 @@ scenarios:
     targetSkills: [organise-project-files, create-work-item-file, commit-file-provider-transaction, structured-explanation]
     allowedAgentDependencies: []
     resourceCoordinationCases:
-      agent-claim:
-        targetSkills: [agent-claim]
+      resource-claim:
+        targetSkills: [resource-claim]
         deterministicChecks: [claim-lifecycle]
         claimCalls: [Acquire exclusive ownership before the provider ownership transition]
         registryMutations: [Record the active ownership]
@@ -46,8 +46,8 @@ scenarios:
     targetSkills: [manage-work-items-file, structured-explanation]
     allowedAgentDependencies: []
     resourceCoordinationCases:
-      agent-claim:
-        targetSkills: [agent-claim]
+      resource-claim:
+        targetSkills: [resource-claim]
         deterministicChecks: [claim-lifecycle]
         claimCalls: [Read and reconcile existing ownership]
         registryMutations: [Clear stale ownership after committed completion]
@@ -80,8 +80,8 @@ scenarios:
     targetSkills: [manage-work-items-file, structured-explanation]
     allowedAgentDependencies: []
     resourceCoordinationCases:
-      agent-claim:
-        targetSkills: [agent-claim]
+      resource-claim:
+        targetSkills: [resource-claim]
         deterministicChecks: [claim-lifecycle]
         claimCalls: [Read the active ownership before the blocked transition]
         registryMutations: [Clear ownership after the Blocked and unowned item state is committed]
@@ -114,8 +114,8 @@ scenarios:
     targetSkills: [manage-work-items-file, structured-explanation]
     allowedAgentDependencies: []
     resourceCoordinationCases:
-      agent-claim:
-        targetSkills: [agent-claim]
+      resource-claim:
+        targetSkills: [resource-claim]
         deterministicChecks: [claim-lifecycle]
         claimCalls: [Confirm that no new ownership was acquired]
         registryMutations: [Leave the registry unchanged]
@@ -148,8 +148,8 @@ scenarios:
     targetSkills: [manage-work-items-file, structured-explanation]
     allowedAgentDependencies: []
     resourceCoordinationCases:
-      agent-claim:
-        targetSkills: [agent-claim]
+      resource-claim:
+        targetSkills: [resource-claim]
         deterministicChecks: [claim-lifecycle]
         claimCalls: [Acquire new exclusive ownership before Running]
         registryMutations: [Record the new ownership before Running]
@@ -182,8 +182,8 @@ scenarios:
     targetSkills: [manage-work-items-file, structured-explanation]
     allowedAgentDependencies: []
     resourceCoordinationCases:
-      agent-claim:
-        targetSkills: [agent-claim]
+      resource-claim:
+        targetSkills: [resource-claim]
         deterministicChecks: [claim-lifecycle]
         claimCalls: [Attempt new exclusive ownership acquisition]
         registryMutations: [Leave the registry unchanged after the rejected acquisition]
@@ -216,8 +216,8 @@ scenarios:
     targetSkills: [organise-project-files, create-work-item-file, manage-future-ideas, commit-file-provider-transaction, structured-explanation]
     allowedAgentDependencies: []
     resourceCoordinationCases:
-      agent-claim:
-        targetSkills: [agent-claim]
+      resource-claim:
+        targetSkills: [resource-claim]
         deterministicChecks: [claim-lifecycle]
         claimCalls: [Acquire exact source and destination paths together in one promotion operation]
         registryMutations: [Record acquisition and a safe terminal release or retained interrupted ownership]

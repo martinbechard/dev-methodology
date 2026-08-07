@@ -13,7 +13,7 @@ Work-item coordination connects a durable provider queue to bounded delivery exe
 
 - The effective Persistence-selected provider record is the durable work-item authority when a provider is selected. Provider none has no durable provider record.
 - Git records branches, commits, delivery, and cleanup eligibility; it is not a work-item provider.
-- Project guidance may load agent-claim. Its registry records active claims but does not prove review, verification, or delivery.
+- Project guidance may load resource-claim. Its registry records active claims but does not prove review, verification, or delivery.
 - Runtime state is execution evidence, not lifecycle authority.
 - Dev Backlog Coordinator owns provider-routed queue inventory, priority, scheduling, Stalled and Blocked lifecycle decisions, stalled-delivery investigation, and terminal cleanup coordination.
 - Dev Orchestrator owns one work item after its root execution accepts Starting -> Running. It retains the item through delivery or a truthful terminal outcome.
@@ -104,13 +104,13 @@ Running must leave active capacity when its evidence is absent, invalid, or expi
 
 ## Resource Coordination
 
-When agent-claim is loaded, use its Claim Events table and supporting rules. Do not define claim behavior in this skill.
+When resource-claim is loaded, use its Claim Events table and supporting rules. Do not define claim behavior in this skill.
 
 Acquire the exact opaque Work Item ID only when an applicable Claim Event requires it. Use activity work for outcome work and activity update for provider mutation. Release the work-item claim with disposition done, blocked, or handoff at the activity boundary. A handoff release must complete before the next owner acquires the same ID. Path and resource claims remain independently applicable. The provider remains the lifecycle authority.
 
 At each mutation or integration event, supply the smallest currently known exact path or resource manifest to the selected coordination skill. Do not request a whole-project claim when a fixed subset is known. A broader request needs an evidence-backed reason and must be narrowed or released at the first safe boundary.
 
-Before creating or transitioning work to User Action Required, apply agent-claim to the blocking condition when it is loaded. Confirm that a separate genuine user-owned decision remains. Structured claim outcomes and technical claim cleanup or recovery remain agent-owned and do not justify User Action Required.
+Before creating or transitioning work to User Action Required, apply resource-claim to the blocking condition when it is loaded. Confirm that a separate genuine user-owned decision remains. Structured claim outcomes and technical claim cleanup or recovery remain agent-owned and do not justify User Action Required.
 
 ## Work-Item Execution Record
 
@@ -215,7 +215,7 @@ Before starting a command or phase expected to take more than five minutes, Dev 
 
 This update is operational telemetry, not a provider transaction or approval gate. Observe long-running work at phase start, first failure, timeout, and completion. Distinguish active serial work from selected or queued work.
 
-After an expensive failure, classify the failure before repeating anything. Reuse retained output, add the smallest offline replay or deterministic regression, and make it pass before another equivalent expensive run. Stop a unit when it reaches its hard stop, repeats the same failure, or stops producing useful evidence. Preserve its work and follow agent-claim for any triggered claim. Two unproductive attempts require parent investigation and a revised plan.
+After an expensive failure, classify the failure before repeating anything. Reuse retained output, add the smallest offline replay or deterministic regression, and make it pass before another equivalent expensive run. Stop a unit when it reaches its hard stop, repeats the same failure, or stops producing useful evidence. Preserve its work and follow resource-claim for any triggered claim. Two unproductive attempts require parent investigation and a revised plan.
 
 ## Blocker Classification
 
@@ -288,7 +288,7 @@ The Watchdog reads provider inventory, Git state, runtime evidence, and applicab
 - READY Commit delivery awaiting provider closeout
 - every terminal task associated with the observed Coordinator campaign
 - terminal provider evidence, live and released claims, worktree disposition, delivery and cleanup branch disposition, source-branch disposition, unresolved notifications, and runtime archival state
-- stale, unsafe, or unnecessarily broad claims when agent-claim is loaded
+- stale, unsafe, or unnecessarily broad claims when resource-claim is loaded
 
 Reconcile each terminal task independently, even after one actionable anomaly is found. Retain its exact provider, task, claim, worktree, branch, notification, preservation, archival, and next-action evidence in the cycle result.
 

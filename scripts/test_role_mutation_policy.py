@@ -68,7 +68,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
         )
 
         self.assertNotIn("resource_coordination", contract)
-        self.assertNotIn("agent-claim", contract)
+        self.assertNotIn("resource-claim", contract)
         self.assertNotIn("claim", contract.lower())
         self.assertIn(
             "follow applicable project guidance for repository mutation",
@@ -91,8 +91,8 @@ class RoleMutationPolicyTests(unittest.TestCase):
         )
         for role in roles:
             with self.subTest(role=role.name, policy=role.repository_mutation):
-                self.assertNotIn("agent-claim", role.skills)
-                self.assertNotIn("agent-claim", role.skill_conditions)
+                self.assertNotIn("resource-claim", role.skills)
+                self.assertNotIn("resource-claim", role.skill_conditions)
 
     def test_core_roles_do_not_require_unconditional_claim_lifecycle_evidence(self) -> None:
         """Keep broad mutation claims absent while allowing Event Contract branches."""
@@ -128,7 +128,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
                 with self.subTest(runtime=runtime_path.name, phrase=phrase):
                     self.assertNotIn(phrase, runtime_contract)
 
-    def test_workflow_skills_delegate_claim_rules_to_agent_claim(self) -> None:
+    def test_workflow_skills_delegate_claim_rules_to_resource_claim(self) -> None:
         """Keep claim triggers, scope, and release timing in the owning skill."""
 
         feature_branch = FEATURE_BRANCH_SKILL.read_text(encoding="utf-8")
@@ -144,7 +144,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
             feature_branch,
         )
         for skill_text in (feature_branch, direct_main, work_merge):
-            self.assertIn("Claim Events table in agent-claim", skill_text)
+            self.assertIn("Claim Events table in resource-claim", skill_text)
             self.assertNotIn("Event Contract", skill_text)
             self.assertNotIn("claim-free", skill_text)
             self.assertNotIn("needs no claim", skill_text)
@@ -155,8 +155,8 @@ class RoleMutationPolicyTests(unittest.TestCase):
         self.assertFalse(EXECUTE_WORKITEM_PACKAGE.exists())
         feature_branch = FEATURE_BRANCH_SKILL.read_text(encoding="utf-8")
         direct_main = DIRECT_MAIN_SKILL.read_text(encoding="utf-8")
-        self.assertIn("Claim Events table in agent-claim", feature_branch)
-        self.assertIn("Claim Events table in agent-claim", direct_main)
+        self.assertIn("Claim Events table in resource-claim", feature_branch)
+        self.assertIn("Claim Events table in resource-claim", direct_main)
         for text in (feature_branch, direct_main):
             self.assertIn("clean", text.lower())
             self.assertIn("commit", text.lower())
@@ -206,19 +206,19 @@ class RoleMutationPolicyTests(unittest.TestCase):
                     self.assertNotIn("- commit and coordination closeout:", runtime_contract)
 
     def test_public_lifecycle_explains_registry_evidence_as_optional(self) -> None:
-        """Describe claim release and registry evidence only for enabled agent-claim projects."""
+        """Describe claim release and registry evidence only for enabled resource-claim projects."""
 
         readme = README.read_text(encoding="utf-8")
         lifecycle = ORCHESTRATED_LIFECYCLE.read_text(encoding="utf-8")
 
         self.assertIn(
-            "Agent Claim](skills/agent-claim/SKILL.md) is the only source for events that require claims",
+            "Resource Claim](skills/resource-claim/SKILL.md) is the only source for events that require claims",
             readme,
         )
         self.assertNotIn("integration, claim release, and execution evidence", readme)
         self.assertNotIn("commit, and claim-release gates", readme)
         self.assertIn(
-            "When agent-claim is selected, the coordination registry",
+            "When resource-claim is selected, the coordination registry",
             lifecycle,
         )
         self.assertIn("With none, registry evidence is absent.", lifecycle)
@@ -245,9 +245,9 @@ class RoleMutationPolicyTests(unittest.TestCase):
             with self.subTest(role=role_name):
                 role = roles[role_name]
                 self.assertEqual("conditional", role.repository_mutation)
-                self.assertNotIn("agent-claim", role.skills)
+                self.assertNotIn("resource-claim", role.skills)
 
-    def test_read_only_roles_cannot_load_agent_claim(self) -> None:
+    def test_read_only_roles_cannot_load_resource_claim(self) -> None:
         """Keep query response and topic verification read-only without unnecessary writer claims."""
         build_skill_docs = _load_build_skill_docs()
         skill_payload = build_skill_docs.build_payload()
@@ -258,8 +258,8 @@ class RoleMutationPolicyTests(unittest.TestCase):
 
         self.assertEqual("never", roles["wiki-query-responder"].repository_mutation)
         self.assertEqual("never", roles["wiki-topic-verifier"].repository_mutation)
-        self.assertNotIn("agent-claim", roles["wiki-query-responder"].skills)
-        self.assertNotIn("agent-claim", roles["wiki-topic-verifier"].skills)
+        self.assertNotIn("resource-claim", roles["wiki-query-responder"].skills)
+        self.assertNotIn("resource-claim", roles["wiki-topic-verifier"].skills)
 
     def test_project_configuration_selects_resource_coordination_independently(self) -> None:
         """Select coordination without copying its procedure or coupling it to mutation."""
@@ -277,9 +277,9 @@ class RoleMutationPolicyTests(unittest.TestCase):
             skill_text,
         )
         self.assertIn("agent_claim_transport:", template_text)
-        self.assertIn("Load agent-claim only through resource_coordination", skill_text)
-        self.assertIn("Verify exactly one agent-claim-helper-command or agent-claim-helper-mcp Provider Skill against agent-claim-helper", skill_text)
-        self.assertIn("Generated AGENTS.md references agent-claim and includes only the selected claim helper's instructions", skill_text)
+        self.assertIn("Load resource-claim only through resource_coordination", skill_text)
+        self.assertIn("Verify exactly one resource-claim-helper-command or resource-claim-helper-mcp Provider Skill against resource-claim-helper", skill_text)
+        self.assertIn("Generated AGENTS.md references resource-claim and includes only the selected claim helper's instructions", skill_text)
 
     def test_role_schema_requires_repository_mutation(self) -> None:
         """Expose repository mutation as a required conceptual definition capability declaration."""
@@ -289,8 +289,8 @@ class RoleMutationPolicyTests(unittest.TestCase):
         self.assertIn("repositoryMutation", schema["required"])
         self.assertEqual("mutation-policy", schema["properties"]["repositoryMutation"])
 
-    def test_generator_accepts_mutation_policy_without_agent_claim(self) -> None:
-        """Load a mutating conceptual definition without coupling it to agent-claim."""
+    def test_generator_accepts_mutation_policy_without_resource_claim(self) -> None:
+        """Load a mutating conceptual definition without coupling it to resource-claim."""
         build_skill_docs = _load_build_skill_docs()
         required, allowed, groups = build_skill_docs.load_role_schema()
         skill_names = set(build_skill_docs.build_payload()["skills"])
@@ -298,7 +298,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
         source = ROOT / "agents" / "roles" / "dev-activities" / "dev-coder.role.yaml"
         role = yaml.safe_load(source.read_text(encoding="utf-8"))
         role["skills"] = [
-            entry for entry in role["skills"] if next(iter(entry)) != "agent-claim"
+            entry for entry in role["skills"] if next(iter(entry)) != "resource-claim"
         ]
 
         with tempfile.TemporaryDirectory() as directory:
@@ -316,7 +316,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
                 )
 
         self.assertEqual("required", loaded.repository_mutation)
-        self.assertNotIn("agent-claim", loaded.skills)
+        self.assertNotIn("resource-claim", loaded.skills)
 
     def test_generator_rejects_read_only_isolation_for_mutating_role(self) -> None:
         """Reserve read-only isolation for conceptual definitions that never mutate repositories."""

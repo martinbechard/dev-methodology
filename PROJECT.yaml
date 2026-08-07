@@ -7,7 +7,7 @@ current_understanding:
   setup_need: "Python maintenance code exists in several ownership scopes, including a FastAPI fixture, so ordinary agents need deterministic folder technology skillsets without rerunning detection."
 
 resource_coordination:
-  selected: agent-claim
+  selected: resource-claim
   deadline_policy:
     resource_classes:
       backlog-mutation:
@@ -31,8 +31,8 @@ agent_claim_transport:
   selected: command
   availability: AVAILABLE
   verification:
-    - "skills/agent-claim-helper-command/SKILL.md defines direct command invocation, structured result handling, and same-helper ambiguous-dispatch reconciliation."
-    - "skills/agent-claim-helper-command/scripts/claim.py is the bundle-owned command implementation distributed with the selected provider."
+    - "skills/resource-claim-helper-command/SKILL.md defines direct command invocation, structured result handling, and same-helper ambiguous-dispatch reconciliation."
+    - "skills/resource-claim-helper-command/scripts/claim.py is the bundle-owned command implementation distributed with the selected provider."
 
 authoritative_sources:
   readme_files:

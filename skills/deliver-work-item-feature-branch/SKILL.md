@@ -19,7 +19,7 @@ This Provider Skill realizes the deliver-work-item interface. It consumes the ac
 
 ## Dependencies
 
-- Follow the Claim Events table in agent-claim during publication.
+- Follow the Claim Events table in resource-claim during publication.
 - Apply [create-pull-request](../create-pull-request/SKILL.md) only for GitHub or another configured host whose contract accurately uses pull-request terminology.
 - Use the configured GitLab merge-request capability and GitLab tools for GitLab publication, review, pipeline, and merge evidence. If no accurate capability exists, return BLOCKED instead of substituting create-pull-request or GitHub-shaped evidence.
 - Prepare the final lifecycle update for the caller. This skill must not dispatch a provider manager, Dev Backlog Steward, or any Persistence mutation.

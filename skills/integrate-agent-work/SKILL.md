@@ -17,7 +17,7 @@ Keep work separate during implementation. Merge only reviewed, verified, and com
 
 Before merging a worktree:
 
-- Follow the Claim Events table in agent-claim during integration.
+- Follow the Claim Events table in resource-claim during integration.
 - Confirm the source worktree has no uncommitted task changes unless the handoff explicitly says how to handle them.
 - Confirm the source branch has a meaningful commit for the completed unit.
 - Read the source agent status, final notes, verification results, and known risks.

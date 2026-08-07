@@ -11,7 +11,7 @@ target:
     - verify-end-to-end-workflow
     - review-structured-artifact
   conditionalSkills:
-    agent-claim: The UX work mutates files or uses exclusive runtime resources.
+    resource-claim: The UX work mutates files or uses exclusive runtime resources.
     organise-project-files: The UX work creates a new project file or directory.
   allowedAgentDependencies: []
   requiredOutputs:

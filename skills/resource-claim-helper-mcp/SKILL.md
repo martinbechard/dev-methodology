@@ -1,13 +1,13 @@
 ---
-name: agent-claim-helper-mcp
-description: Use a verified MCP provider for the Agent Claim Helper interface when complete parity is available.
+name: resource-claim-helper-mcp
+description: Use a verified MCP provider for the Resource Claim Helper interface when complete parity is available.
 metadata:
   category: development-practice
 ---
 
-# Agent Claim Helper MCP
+# Resource Claim Helper MCP
 
-This Provider Skill realizes Agent Claim Helper through MCP tool calls. Apply agent-claim for policy and agent-claim-helper for the common operation, input, result, and uncertain-outcome contract.
+This Provider Skill realizes Resource Claim Helper through MCP tool calls. Apply resource-claim for policy and resource-claim-helper for the common operation, input, result, and uncertain-outcome contract.
 
 This skill owns MCP tool mapping, protocol-specific result envelopes, connection recovery, and the provider availability boundary. It does not define claim policy or the shared helper contract.
 
@@ -15,7 +15,7 @@ This skill owns MCP tool mapping, protocol-specific result envelopes, connection
 
 Do not configure the current mcp-agent-ops provider as the claim helper. Its exposed tool surface omits `claim_extend_deadline` and `claim_reset`, so it cannot realize the complete interface even though it exposes journal maintenance and contention reporting.
 
-No MCP implementation of the complete Agent Claim Helper interface is currently available. The tool mappings below define the required provider contract for future verification. They do not prove that the current provider implements it.
+No MCP implementation of the complete Resource Claim Helper interface is currently available. The tool mappings below define the required provider contract for future verification. They do not prove that the current provider implements it.
 
 ## Helper Setup
 
@@ -110,7 +110,7 @@ Map Heartbeat Claim to claim_heartbeat:
 
 ## Release Claim
 
-Map Release Claim to claim_release. Supply disposition and blocker_reference only when the common interface and agent-claim require them.
+Map Release Claim to claim_release. Supply disposition and blocker_reference only when the common interface and resource-claim require them.
 
 A successful release returns canonical outcome `RELEASED`.
 

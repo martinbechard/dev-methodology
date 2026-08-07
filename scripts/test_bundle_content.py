@@ -834,13 +834,13 @@ DOCUMENT_REQUIRED_CONTENT_LINKS = {
     "orchestrated-development-lifecycle.html": (
         "../skills/create-work-item-file/SKILL.md",
         "../skills/manage-work-items-file/SKILL.md",
-        "../skills/agent-claim/SKILL.md",
-        "../skills/agent-claim-helper/SKILL.md",
+        "../skills/resource-claim/SKILL.md",
+        "../skills/resource-claim-helper/SKILL.md",
         "../skills/deliver-work-item-direct-main/SKILL.md",
         "../skills/deliver-work-item-feature-branch/SKILL.md",
         "../skills/create-pull-request/SKILL.md",
-        "../skills/agent-claim-helper-command/SKILL.md",
-        "../skills/agent-claim-helper-mcp/SKILL.md",
+        "../skills/resource-claim-helper-command/SKILL.md",
+        "../skills/resource-claim-helper-mcp/SKILL.md",
         "agent-and-skill-definitions.html#dev-activities-title",
         "documentation-templates.html",
         "wiki-skills-and-project-context.html",
@@ -2034,7 +2034,7 @@ class BundleContentTests(unittest.TestCase):
             "Distinguish active serial work from selected or queued work.",
             "classify the failure before repeating anything",
             "add the smallest offline replay or deterministic regression",
-            "follow agent-claim for any triggered claim",
+            "follow resource-claim for any triggered claim",
             "Two unproductive attempts require parent investigation and a revised plan.",
         ):
             with self.subTest(phrase=phrase):
@@ -5518,7 +5518,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("proprietary_validation_notes:", template_text)
         self.assertIn("nested_agents_files:", template_text)
         self.assertIn("resource_coordination:", template_text)
-        self.assertIn("selected: \"TODO: none or agent-claim", template_text)
+        self.assertIn("selected: \"TODO: none or resource-claim", template_text)
         self.assertIn("agent_claim_transport:", template_text)
         self.assertIn("selected: \"TODO: mcp or command", template_text)
         self.assertIn("claim helper from target-runtime evidence", template_text)
@@ -5532,8 +5532,8 @@ class BundleContentTests(unittest.TestCase):
             "The PROJECT.yaml field agent_claim_transport selects the claim helper",
             skill_text,
         )
-        self.assertIn("When agent-claim is selected, add resource_coordination.deadline_policy", skill_text)
-        self.assertIn("For agent-claim, include only the selected claim helper", skill_text)
+        self.assertIn("When resource-claim is selected, add resource_coordination.deadline_policy", skill_text)
+        self.assertIn("For resource-claim, include only the selected claim helper", skill_text)
         self.assertIn(
             "For none, include no claim skill, helper, procedure, or evidence",
             skill_text,
@@ -5568,7 +5568,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("treat them as requested configuration intent", skill_text)
         self.assertIn("Project Configurator owns the setup process", modularization_text)
         self.assertIn(
-            "Agent-claim requires one verified claim helper",
+            "Resource-claim requires one verified claim helper",
             modularization_text,
         )
         self.assertIn(
@@ -5591,11 +5591,11 @@ class BundleContentTests(unittest.TestCase):
             skill_text,
         )
         self.assertIn(
-            "Generated AGENTS.md references agent-claim and includes only the selected claim helper's instructions",
+            "Generated AGENTS.md references resource-claim and includes only the selected claim helper's instructions",
             skill_text,
         )
         self.assertIn(
-            "AGENTS.md references agent-claim and includes only the selected helper provider",
+            "AGENTS.md references resource-claim and includes only the selected helper provider",
             skill_text,
         )
         self.assertNotIn("selected helper by reference", skill_text)
@@ -5612,15 +5612,15 @@ class BundleContentTests(unittest.TestCase):
             "Treat a missing definition, skill, helper operation, or helper field as BLOCKED",
             skill_text,
         )
-        self.assertIn("agent-claim", skill_text)
+        self.assertIn("resource-claim", skill_text)
         self.assertIn("exact anchored /.worktrees/ entry", skill_text)
         self.assertIn("Do not store a machine-specific absolute worktree path", skill_text)
         self.assertIn(
-            "When resource_coordination selects agent-claim, the .worktrees directory is ignored operational state immediately beneath the primary worktree",
+            "When resource_coordination selects resource-claim, the .worktrees directory is ignored operational state immediately beneath the primary worktree",
             template_text,
         )
         self.assertIn(
-            "When agent-claim is selected, contains the anchored /.worktrees/ entry",
+            "When resource-claim is selected, contains the anchored /.worktrees/ entry",
             template_text,
         )
         self.assertIn("worktree ignore behavior", modularization_text)
@@ -7878,8 +7878,8 @@ class BundleContentTests(unittest.TestCase):
                 ROLE_SCHEMA_PATH,
             )
 
-    def test_agent_claim_is_the_single_source_for_claim_rules(self) -> None:
-        claim_text = (SKILLS_ROOT / "agent-claim" / "SKILL.md").read_text(
+    def test_resource_claim_is_the_single_source_for_claim_rules(self) -> None:
+        claim_text = (SKILLS_ROOT / "resource-claim" / "SKILL.md").read_text(
             encoding="utf-8"
         )
         readme_text = README_PATH.read_text(encoding="utf-8")
@@ -7926,7 +7926,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertNotIn(duplicated_contract, claim_text)
 
         for required_contract in (
-            "Agent Claim](skills/agent-claim/SKILL.md) is the only source",
+            "Resource Claim](skills/resource-claim/SKILL.md) is the only source",
             "events that require claims",
             "the scope for each event",
             "release timing",
@@ -7936,8 +7936,8 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(required_contract, readme_text)
 
         for required_contract in (
-            "Agent Claim skill defines every event that requires a claim",
-            "Agent Claim</a> is the only source for claim events, scopes, conflicts, deadlines, recovery, and release timing.",
+            "Resource Claim skill defines every event that requires a claim",
+            "Resource Claim</a> is the only source for claim events, scopes, conflicts, deadlines, recovery, and release timing.",
             "command-line provider</a> and",
             "MCP provider</a> describe only how to invoke that contract.",
         ):
@@ -7950,16 +7950,16 @@ class BundleContentTests(unittest.TestCase):
 
     def test_resource_coordination_skills_expose_aligned_operations(self) -> None:
         """Separate policy, interface, and provider operations without overstating MCP support."""
-        claim_text = (SKILLS_ROOT / "agent-claim" / "SKILL.md").read_text(
+        claim_text = (SKILLS_ROOT / "resource-claim" / "SKILL.md").read_text(
             encoding="utf-8"
         )
-        interface_text = (SKILLS_ROOT / "agent-claim-helper" / "SKILL.md").read_text(
+        interface_text = (SKILLS_ROOT / "resource-claim-helper" / "SKILL.md").read_text(
             encoding="utf-8"
         )
         command_text = (
-            SKILLS_ROOT / "agent-claim-helper-command" / "SKILL.md"
+            SKILLS_ROOT / "resource-claim-helper-command" / "SKILL.md"
         ).read_text(encoding="utf-8")
-        mcp_text = (SKILLS_ROOT / "agent-claim-helper-mcp" / "SKILL.md").read_text(
+        mcp_text = (SKILLS_ROOT / "resource-claim-helper-mcp" / "SKILL.md").read_text(
             encoding="utf-8"
         )
         probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
@@ -7986,11 +7986,11 @@ class BundleContentTests(unittest.TestCase):
             "Report Claim Contention",
         )
         for operation in policy_operations:
-            with self.subTest(skill="agent-claim", operation=operation):
+            with self.subTest(skill="resource-claim", operation=operation):
                 self.assertIn(f"## {operation}", claim_text)
         for skill, text in (
-            ("agent-claim-helper-command", command_text),
-            ("agent-claim-helper-mcp", mcp_text),
+            ("resource-claim-helper-command", command_text),
+            ("resource-claim-helper-mcp", mcp_text),
         ):
             for operation in helper_operations:
                 with self.subTest(skill=skill, operation=operation):
@@ -8001,15 +8001,15 @@ class BundleContentTests(unittest.TestCase):
             REPOSITORY_ROOT / "design" / "skill-groups" / "concurrent-tasking.md"
         ).read_text(encoding="utf-8")
         expected_members = {
-            "agent-claim-helper": (
+            "resource-claim-helper": (
                 "Operation Contract",
                 *helper_operations,
                 "Structured Outcomes",
                 "Reconcile an Uncertain Outcome",
                 "Provider Realization Contract",
             ),
-            "agent-claim-helper-command": helper_operations,
-            "agent-claim-helper-mcp": ("Current Availability", *helper_operations),
+            "resource-claim-helper-command": helper_operations,
+            "resource-claim-helper-mcp": ("Current Availability", *helper_operations),
         }
         for skill, expected in expected_members.items():
             with self.subTest(skill_group_member=skill):
@@ -8036,9 +8036,9 @@ class BundleContentTests(unittest.TestCase):
             "+report-claim-contention()",
         )
         class_markers = {
-            "agent-claim-helper": 'class ClaimHelper["agent-claim-helper"] {',
-            "agent-claim-helper-command": "class agent-claim-helper-command {",
-            "agent-claim-helper-mcp": "class agent-claim-helper-mcp {",
+            "resource-claim-helper": 'class ClaimHelper["resource-claim-helper"] {',
+            "resource-claim-helper-command": "class resource-claim-helper-command {",
+            "resource-claim-helper-mcp": "class resource-claim-helper-mcp {",
         }
         for skill, marker in class_markers.items():
             with self.subTest(skill_group_class=skill):
@@ -8053,8 +8053,8 @@ class BundleContentTests(unittest.TestCase):
                 self.assertEqual(expected_class_operations, actual)
 
         self.assertIn("## Claim Events", claim_text)
-        self.assertIn("Apply agent-claim for policy and agent-claim-helper", command_text)
-        self.assertIn("Apply agent-claim for policy and agent-claim-helper", mcp_text)
+        self.assertIn("Apply resource-claim for policy and resource-claim-helper", command_text)
+        self.assertIn("Apply resource-claim for policy and resource-claim-helper", mcp_text)
         self.assertIn("## Operation Contract", interface_text)
         self.assertIn("## Structured Outcomes", interface_text)
         self.assertIn("## Reconcile an Uncertain Outcome", interface_text)
@@ -8066,7 +8066,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Do not configure the current mcp-agent-ops provider", mcp_text)
 
         expected_probe_terms = {
-            "agent-claim": (
+            "resource-claim": (
                 "status",
                 "acquire",
                 "scope extension",
@@ -8075,7 +8075,7 @@ class BundleContentTests(unittest.TestCase):
                 "release",
                 "uncertain",
             ),
-            "agent-claim-helper": (
+            "resource-claim-helper": (
                 "repository",
                 "scope",
                 "deadline",
@@ -8085,7 +8085,7 @@ class BundleContentTests(unittest.TestCase):
                 "structured outcomes",
                 "uncertain",
             ),
-            "agent-claim-helper-command": (
+            "resource-claim-helper-command": (
                 "status",
                 "acquire",
                 "scope extension",
@@ -8096,7 +8096,7 @@ class BundleContentTests(unittest.TestCase):
                 "contention reporting",
                 "uncertain",
             ),
-            "agent-claim-helper-mcp": (
+            "resource-claim-helper-mcp": (
                 "status",
                 "acquire",
                 "scope extension",
@@ -8148,7 +8148,7 @@ class BundleContentTests(unittest.TestCase):
                     self.assertIn(required_contract, text)
 
         for required_contract in (
-            "When agent-claim is loaded, use its Claim Events table and supporting rules.",
+            "When resource-claim is loaded, use its Claim Events table and supporting rules.",
             "Acquire the exact opaque Work Item ID only when an applicable Claim Event requires it.",
             "Use activity work for outcome work and activity update for provider mutation.",
             "Release the work-item claim with disposition done, blocked, or handoff at the activity boundary.",
@@ -8164,17 +8164,17 @@ class BundleContentTests(unittest.TestCase):
         roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
         for role in roles:
             with self.subTest(role=role.name, mutation_policy=role.repository_mutation):
-                self.assertNotIn("agent-claim", build_skill_docs.fixed_role_skills(role))
-                self.assertNotIn("agent-claim", role.skill_conditions)
+                self.assertNotIn("resource-claim", build_skill_docs.fixed_role_skills(role))
+                self.assertNotIn("resource-claim", role.skill_conditions)
 
-        claim_skill = (SKILLS_ROOT / "agent-claim" / "SKILL.md").read_text(encoding="utf-8")
-        helper_skill = (SKILLS_ROOT / "agent-claim-helper" / "SKILL.md").read_text(encoding="utf-8")
-        mcp_skill = (SKILLS_ROOT / "agent-claim-helper-mcp" / "SKILL.md").read_text(encoding="utf-8")
-        command_skill = (SKILLS_ROOT / "agent-claim-helper-command" / "SKILL.md").read_text(encoding="utf-8")
+        claim_skill = (SKILLS_ROOT / "resource-claim" / "SKILL.md").read_text(encoding="utf-8")
+        helper_skill = (SKILLS_ROOT / "resource-claim-helper" / "SKILL.md").read_text(encoding="utf-8")
+        mcp_skill = (SKILLS_ROOT / "resource-claim-helper-mcp" / "SKILL.md").read_text(encoding="utf-8")
+        command_skill = (SKILLS_ROOT / "resource-claim-helper-command" / "SKILL.md").read_text(encoding="utf-8")
         merge_skill = (SKILLS_ROOT / "integrate-agent-work" / "SKILL.md").read_text(encoding="utf-8")
-        claim_script = SKILLS_ROOT / "agent-claim-helper-command" / "scripts" / "claim.py"
+        claim_script = SKILLS_ROOT / "resource-claim-helper-command" / "scripts" / "claim.py"
         self.assertTrue(claim_script.is_file())
-        self.assertFalse((SKILLS_ROOT / "agent-claim" / "scripts" / "claim.py").exists())
+        self.assertFalse((SKILLS_ROOT / "resource-claim" / "scripts" / "claim.py").exists())
         self.assertNotIn("CLAIM_SCRIPT", claim_skill)
         self.assertIn("## Claim Events", claim_skill)
         for tool_name in (
@@ -8190,12 +8190,12 @@ class BundleContentTests(unittest.TestCase):
             self.assertIn(tool_name, mcp_skill)
             self.assertNotIn(tool_name, claim_skill)
         self.assertIn(
-            'CLAIM_SCRIPT="${HOME}/.agents/skills/agent-claim-helper-command/scripts/claim.py"',
+            'CLAIM_SCRIPT="${HOME}/.agents/skills/resource-claim-helper-command/scripts/claim.py"',
             command_skill,
         )
-        self.assertIn("skills/agent-claim-helper-command/scripts/claim.py", command_skill)
-        self.assertNotIn("agent-claim-helper-command", mcp_skill)
-        self.assertNotIn("agent-claim-helper-mcp", command_skill)
+        self.assertIn("skills/resource-claim-helper-command/scripts/claim.py", command_skill)
+        self.assertNotIn("resource-claim-helper-command", mcp_skill)
+        self.assertNotIn("resource-claim-helper-mcp", command_skill)
         self.assertNotIn("ISOLATED_CHECKOUT_SETUP_REQUIRED", command_skill)
         self.assertNotIn("DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED", command_skill)
         self.assertNotIn("--no-change", command_skill)
@@ -8209,20 +8209,20 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("merge:integration:main", claim_skill)
         self.assertNotIn("merge:integration:main", merge_skill)
         readme_text = README_PATH.read_text(encoding="utf-8")
-        self.assertIn("Agent Claims And Worktrees", readme_text)
-        self.assertIn("Agent Claim](skills/agent-claim/SKILL.md) is the only source", readme_text)
+        self.assertIn("Resource Claims And Worktrees", readme_text)
+        self.assertIn("Resource Claim](skills/resource-claim/SKILL.md) is the only source", readme_text)
         self.assertNotIn("needs no claim", readme_text)
         self.assertNotIn("claim-free", readme_text)
-        self.assertNotIn("Agent Claims And Worktrees", AGENTS_PATH.read_text(encoding="utf-8"))
+        self.assertNotIn("Resource Claims And Worktrees", AGENTS_PATH.read_text(encoding="utf-8"))
         self.assertIn("/.worktrees/", GITIGNORE_PATH.read_text(encoding="utf-8").splitlines())
 
     def test_event_driven_claim_and_current_main_reconciliation_contracts(self) -> None:
         """Protect event ownership and ancestry-bounded integration guidance."""
-        claim_text = (SKILLS_ROOT / "agent-claim" / "SKILL.md").read_text(encoding="utf-8")
+        claim_text = (SKILLS_ROOT / "resource-claim" / "SKILL.md").read_text(encoding="utf-8")
         command_text = (
-            SKILLS_ROOT / "agent-claim-helper-command" / "SKILL.md"
+            SKILLS_ROOT / "resource-claim-helper-command" / "SKILL.md"
         ).read_text(encoding="utf-8")
-        mcp_text = (SKILLS_ROOT / "agent-claim-helper-mcp" / "SKILL.md").read_text(
+        mcp_text = (SKILLS_ROOT / "resource-claim-helper-mcp" / "SKILL.md").read_text(
             encoding="utf-8"
         )
         merge_text = (SKILLS_ROOT / "integrate-agent-work" / "SKILL.md").read_text(encoding="utf-8")
@@ -8257,7 +8257,7 @@ class BundleContentTests(unittest.TestCase):
             ["|".join(row.split("|")[:2]) + "|" for row in event_rows],
         )
         for provider_text in (command_text, mcp_text):
-            self.assertIn("Apply agent-claim for policy and agent-claim-helper", provider_text)
+            self.assertIn("Apply resource-claim for policy and resource-claim-helper", provider_text)
             self.assertNotIn("needs no claim", provider_text)
             self.assertNotIn("claim-free", provider_text)
             self.assertNotIn("ISOLATED_CHECKOUT_SETUP_REQUIRED", provider_text)
@@ -8293,7 +8293,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(required_contract, merge_text)
 
         for required_contract in (
-            "When agent-claim is loaded, use its Claim Events table and supporting rules.",
+            "When resource-claim is loaded, use its Claim Events table and supporting rules.",
             "Structured claim outcomes and technical claim cleanup or recovery remain agent-owned",
             "designate this fresh branch as the Work-item integration and cleanup branch",
             "Do not import cumulative branch ancestry merely to preserve provenance",
@@ -8316,12 +8316,12 @@ class BundleContentTests(unittest.TestCase):
             "one initial attempt plus no more than six retries",
             coordination_text,
         )
-        self.assertIn("Agent Claim</a> is the only source for claim events", design_text)
+        self.assertIn("Resource Claim</a> is the only source for claim events", design_text)
         for active_term in (
             "MCP helper",
             "configured script",
             "same script",
-            "probe-agent-claim-helper",
+            "probe-resource-claim-helper",
         ):
             self.assertIn(active_term, probe_text)
         self.assertIn("claim helper Provider Skill is embedded only", renderer_text)
@@ -8408,7 +8408,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("mcp-agent-ops", text)
                 self.assertIn("rejection", text)
 
-        claim_mcp_text = (SKILLS_ROOT / "agent-claim-helper-mcp" / "SKILL.md").read_text(
+        claim_mcp_text = (SKILLS_ROOT / "resource-claim-helper-mcp" / "SKILL.md").read_text(
             encoding="utf-8"
         )
         self.assertIn("mcp-agent-ops", claim_mcp_text)
@@ -8420,7 +8420,7 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(missing_tool=missing_tool):
                 self.assertIn(f"`{missing_tool}`", claim_mcp_text)
 
-        shared_claim_text = (SKILLS_ROOT / "agent-claim" / "SKILL.md").read_text(
+        shared_claim_text = (SKILLS_ROOT / "resource-claim" / "SKILL.md").read_text(
             encoding="utf-8"
         )
         self.assertNotIn("mcp-agent-ops", shared_claim_text)
@@ -9086,11 +9086,11 @@ class BundleContentTests(unittest.TestCase):
     def test_claim_related_skills_do_not_copy_claim_events_or_polling_rules(
         self,
     ) -> None:
-        """Only agent-claim defines claim events, scopes, and release timing."""
+        """Only resource-claim defines claim events, scopes, and release timing."""
         dependent_skills = (
-            "agent-claim-helper",
-            "agent-claim-helper-command",
-            "agent-claim-helper-mcp",
+            "resource-claim-helper",
+            "resource-claim-helper-command",
+            "resource-claim-helper-mcp",
             "integrate-agent-work",
             "coordinate-work-items",
             "deliver-work-item-direct-main",
@@ -9745,7 +9745,7 @@ class BundleContentTests(unittest.TestCase):
             ("Assignment", "Bounded work sent to an Agent."),
             (
                 "Claim",
-                "Conditional temporary protection when agent-claim is selected.",
+                "Conditional temporary protection when resource-claim is selected.",
             ),
         )
         for term, definition in terminology:
@@ -9985,7 +9985,7 @@ class BundleContentTests(unittest.TestCase):
             "Direct-main delivery",
             "fresh reconciliation branch from that exact commit",
             "Apply only the accepted paths",
-            "Follow <a href=\"../skills/agent-claim/SKILL.md\">Agent Claim</a>",
+            "Follow <a href=\"../skills/resource-claim/SKILL.md\">Resource Claim</a>",
             "Feature-branch delivery",
             "GitHub pull request or GitLab merge request",
             "Commit AWAITING_REVIEW without Persistence mutation",
@@ -10008,7 +10008,7 @@ class BundleContentTests(unittest.TestCase):
         ]
         direct_main_steps = (
             "Review and verify the private candidate",
-            "Follow <a href=\"../skills/agent-claim/SKILL.md\">Agent Claim</a>",
+            "Follow <a href=\"../skills/resource-claim/SKILL.md\">Resource Claim</a>",
             "Refresh current main",
             "Apply only the accepted paths",
         )
@@ -10589,7 +10589,7 @@ class BundleContentTests(unittest.TestCase):
             } | set(CORE_PATTERN_SKILLS),
             set(role.skill_conditions),
         )
-        self.assertNotIn("agent-claim", role.skill_conditions)
+        self.assertNotIn("resource-claim", role.skill_conditions)
 
     def test_dev_skill_lint_reviewer_reports_only_critical_skill_issues(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
@@ -10607,7 +10607,7 @@ class BundleContentTests(unittest.TestCase):
             - {"effective-communication", "ste-technical-writing"},
         )
         self.assertEqual({"structured-explanation"}, set(role.skill_conditions))
-        self.assertNotIn("agent-claim", role.skill_conditions)
+        self.assertNotIn("resource-claim", role.skill_conditions)
         self.assertIn("Report only critical skill issues", role.instructions)
         self.assertIn("Do not report minor grammar", role.instructions)
         self.assertIn("material STE clarity failure", role.instructions)
@@ -13027,7 +13027,7 @@ class BundleContentTests(unittest.TestCase):
         )
 
         helper_path = (
-            "${HOME}/.agents/skills/agent-claim-helper-command/scripts/claim.py"
+            "${HOME}/.agents/skills/resource-claim-helper-command/scripts/claim.py"
         )
         root_guidance_end = configuration_text.index(
             "<h4>Nested Project Instruction Files</h4>"

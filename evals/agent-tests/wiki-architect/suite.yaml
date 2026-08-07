@@ -7,7 +7,7 @@ target:
   nativeAgent: generated/adapters/codex/agents/wiki-architect.toml
   repositoryMutation: required
   requiredSkills:
-    - agent-claim
+    - resource-claim
     - project-wiki
   conditionalSkills:
     organise-project-files: The setup creates a new project file or directory.
