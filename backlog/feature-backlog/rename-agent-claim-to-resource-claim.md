@@ -1,8 +1,8 @@
 # Rename Agent Claim To Resource Claim
 
-Status: Starting
+Status: Running
 
-Owner: Unowned
+Owner: Root Dev Orchestrator task `019fd993-01d4-7380-b722-b7c328bdb637`
 
 Type: Feature
 
@@ -162,17 +162,17 @@ Condition Type: root-execution
 
 Owner: Root Dev Orchestrator task `019fd993-01d4-7380-b722-b7c328bdb637`
 
-Evidence: The canonical task corrected the independent review findings and froze amended candidate commit `86e4d8903c3a6206322fb9073b4674ad5498a0b6` on branch `codex/rename-agent-claim-to-resource-claim` in `/Users/martinbechard/.codex/worktrees/e800/dev-methodology`; the candidate worktree is clean. The verifier has accepted that exact commit, and the original independent reviewer is performing the final narrow finding-resolution check. The exact activity `work` claim was released with handoff only for this scheduled provider evidence refresh. Authoritative main remains on provider-only commit `6968f2fcffa6e19b4ec4dd79cf4d2d1a867d1c01`, and the unrelated user-owned `design/skill-groups/concurrent-tasking.md` bytes remain separately preserved with SHA-256 `1d6e7b6e6157e4e8cd53d32e5f26b77a199a309a5c9ee1a9f598ffa894a76ad6`.
+Evidence: The same canonical task resumes accepted candidate commit `140f0bbdbfe43925e54e89c1efd49facb30a3b81` on branch `codex/rename-agent-claim-to-resource-claim` in `/Users/martinbechard/.codex/worktrees/e800/dev-methodology`; the candidate worktree is clean, the independent review is PASS with no remaining findings, and the verifier accepted the exact commit. Authoritative main is clean at `df715f12c9b78c55d8ed29453fef488c9d76a1d4`. The former overlapping documentation bytes were committed separately as `731baf40ce11de4c279f3f4bd37c3c4e58d7e899`, with the sole changed path `design/skill-groups/concurrent-tasking.md` and committed blob SHA-256 `1d6e7b6e6157e4e8cd53d32e5f26b77a199a309a5c9ee1a9f598ffa894a76ad6`. Provider Blocked to Ready is durable at `b8867489`; Ready to Starting is durable at `df715f12`. This transaction accepts Starting to Running before one current-main reconciliation.
 
-Observed At: 2026-08-07T00:58:10Z
+Observed At: 2026-08-07T01:09:35Z
 
-Started At: 2026-08-07T00:17:25Z
+Started At: 2026-08-07T01:09:25Z
 
-Deadline or Expires At: 2026-08-07T02:58:10Z
+Deadline or Expires At: 2026-08-07T03:09:35Z
 
-Next Action: Commit only this provider evidence refresh, release the exact provider path and activity `update` claims, reacquire exact Work Item ID activity `work`, then finish the independent finding-resolution check and apply the direct-main delivery contract to the accepted candidate.
+Next Action: Commit only this Starting to Running provider transaction, release the exact provider path and activity `update` claims, acquire exact Work Item ID activity `work`, then reconcile accepted candidate `140f0bbd` against current main exactly once and run only integration-sensitive focused checks before terminal provider closure.
 
-Next Reconciliation At: 2026-08-07T01:13:10Z
+Next Reconciliation At: 2026-08-07T01:24:35Z
 
 ## Blocked Evidence
 
