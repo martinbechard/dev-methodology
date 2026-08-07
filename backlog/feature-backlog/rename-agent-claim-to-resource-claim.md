@@ -1,6 +1,6 @@
 # Rename Agent Claim To Resource Claim
 
-Status: Ready
+Status: Starting
 
 Owner: Unowned
 
@@ -136,7 +136,7 @@ None.
 
 Approved at creation. On 2026-08-06, in Codex task 019faeef-e932-7352-a53d-fdb1535f5994, the user requested that agent-claim be changed to resource-claim and that the rename include tests. This approval covers the exact governed canonical sources listed above only. Any additional governed skill-definition path discovered during implementation requires separate scope-specific approval; existing approval for the listed paths remains valid.
 
-## Starting Handoff Evidence
+## Prior Starting Handoff Evidence
 
 Starting Recorded At: 2026-08-07T00:14:24Z
 
@@ -207,3 +207,23 @@ Resolution Evidence: Canonical documentation task `019faeed-f816-7d43-819d-814ba
 Claim And Checkout Evidence: Documentation claim release event `05be4286-41e2-453e-83b4-701c0af80c19`; primary main clean at `731baf40ce11de4c279f3f4bd37c3c4e58d7e899`; registry empty before this transition.
 
 Next Action: Dev Backlog Coordinator records Ready -> Starting for the same canonical task `019fd993-01d4-7380-b722-b7c328bdb637`; that task then records Starting -> Running and reconciles accepted candidate `140f0bbdbfe43925e54e89c1efd49facb30a3b81` against current main once.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-07T01:08:36Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Normalized Objective: Resume the accepted resource-claim rename candidate `140f0bbdbfe43925e54e89c1efd49facb30a3b81` after the overlapping user-owned documentation edit was committed separately, reconcile once against current main, and complete focused integration and terminal provider closure.
+
+Launch Result: Requested
+
+Canonical Execution: `019fd993-01d4-7380-b722-b7c328bdb637`
+
+Last Contact At: 2026-08-07T01:08:36Z
+
+Next Reconciliation At: 2026-08-07T01:23:36Z
+
+Intended Root Role: Dev Orchestrator
+
+Scheduling Evidence: Reuse the preserved canonical task and candidate; do not create a replacement. The overlapping `rename-direct-main-to-main-branch` item remains Ready until this delivery and shared generated paths are terminally reconciled.
