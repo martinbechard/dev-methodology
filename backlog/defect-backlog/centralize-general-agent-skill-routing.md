@@ -1,10 +1,12 @@
 # Centralize General Agent Skill Routing
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
 Provider: file
+
+Owner: Dev Orchestrator task 019faeed-f816-7d43-819d-814bad4e309c
 
 Work Item ID: centralize-general-agent-skill-routing
 
@@ -55,3 +57,25 @@ None.
 ## Open Questions
 
 None.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-07T03:27:50Z
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Launch Reservation: Existing Root Dev Orchestrator task 019faeed-f816-7d43-819d-814bad4e309c for this exact work item.
+
+Normalized Objective: Centralize universally and conditionally applicable Agent skill routing in a General Agent Skills design and shared configuration, remove duplicated role and diagram declarations, regenerate derived artifacts, and preserve the narrower universal role-schema skill boundaries.
+
+Dispatch Time: 2026-08-07T03:27:50Z
+
+Intended Root Role: Dev Orchestrator
+
+Launch Result: Started
+
+Canonical Execution: 019faeed-f816-7d43-819d-814bad4e309c
+
+Last Contact: 2026-08-07T03:27:50Z; existing canonical task confirmed by parent Coordinator.
+
+Next Reconciliation At: 2026-08-07T03:42:50Z
