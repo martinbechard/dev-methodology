@@ -1,6 +1,6 @@
 # Recognize HTML Anchors In Markdown Link Validation
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
@@ -57,3 +57,25 @@ None.
 ## Open Questions
 
 - Confirm whether the validator implementation is maintained in this repository or in the configured external tool package before assigning the implementation path.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-07T03:19:18Z
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Launch Reservation: One Root Dev Orchestrator task for this exact work item.
+
+Normalized Objective: Determine the validator ownership and correct Markdown-to-HTML fragment validation to recognize explicit HTML identifiers while preserving existing Markdown fragment and link-safety behavior.
+
+Dispatch Time: 2026-08-07T03:19:18Z
+
+Intended Root Role: Dev Orchestrator
+
+Launch Result: Not attempted
+
+Canonical Execution: None
+
+Last Contact: None
+
+Next Reconciliation At: 2026-08-07T03:34:18Z
