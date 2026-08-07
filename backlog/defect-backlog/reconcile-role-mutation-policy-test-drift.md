@@ -1,10 +1,12 @@
 # Reconcile Role Mutation Policy Test Drift
 
-Status: Ready
+Status: Starting
 
 Type: Defect
 
 Provider: file
+
+Owner: Unowned
 
 Work Item ID: reconcile-role-mutation-policy-test-drift
 
@@ -50,3 +52,25 @@ None.
 ## Open Questions
 
 None.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-07T03:40:09Z
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3
+
+Launch Reservation: One Root Dev Orchestrator task for this exact work item.
+
+Normalized Objective: Reconcile the stale focused role-mutation policy test assertions with the current conceptual Agent definitions and role schema while retaining the tests' intended policy coverage.
+
+Dispatch Time: 2026-08-07T03:40:09Z
+
+Intended Root Role: Dev Orchestrator
+
+Launch Result: Not attempted
+
+Canonical Execution: None
+
+Last Contact: None
+
+Next Reconciliation At: 2026-08-07T03:55:09Z
