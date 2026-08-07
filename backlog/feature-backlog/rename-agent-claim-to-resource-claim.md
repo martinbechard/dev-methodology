@@ -1,6 +1,6 @@
 # Rename Agent Claim To Resource Claim
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -133,3 +133,23 @@ None.
 ### Approval Resolution
 
 Approved at creation. On 2026-08-06, in Codex task 019faeef-e932-7352-a53d-fdb1535f5994, the user requested that agent-claim be changed to resource-claim and that the rename include tests. This approval covers the exact governed canonical sources listed above only. Any additional governed skill-definition path discovered during implementation requires separate scope-specific approval; existing approval for the listed paths remains valid.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-07T00:14:24Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Normalized Objective: Rename the resource-claim policy and helper family throughout current operational sources, generated artifacts, focused tests, evaluations, installation references, and any required state-safe compatibility boundary, while preserving historical evidence and the existing policy/interface/provider separation.
+
+Launch Result: Not attempted
+
+Canonical Execution: None
+
+Last Contact At: None
+
+Next Reconciliation At: 2026-08-07T00:29:24Z
+
+Intended Root Role: Dev Orchestrator
+
+Scheduling Evidence: Selected as the older of two overlapping Ready rename features. `rename-direct-main-to-main-branch` remains Ready until this item's shared source, generator, and integration lanes clear.
