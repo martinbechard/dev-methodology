@@ -1,14 +1,32 @@
 # Rename Direct Main To Main Branch
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
+Provider Reference: backlog/completed-backlog/features/rename-direct-main-to-main-branch.md
+
 Work Item ID: rename-direct-main-to-main-branch
 
 Completion: direct-main
+
+## Completion Evidence
+
+- Provider: file. Historical dispatch selector: `direct-main`. Delivered Commit selector: `main-branch`. Completion disposition: READY. Lifecycle disposition: Completed.
+- Completed at: 2026-08-07T01:49:16Z.
+- Completed provider reference: `backlog/completed-backlog/features/rename-direct-main-to-main-branch.md`.
+- Canonical execution: Root Dev Orchestrator task `019fd9c9-853a-7723-8990-3efe59cee655` under Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`.
+- Accepted source: final immutable candidate `faf4a729ef46b8ed1d531f0a36f730467074b3a3` on `codex/rename-direct-main-to-main-branch`, including the reviewed correction to the initial candidate `0b467696c01f38dd9f2e2861ff14db4f35b88732`.
+- Delivery: candidate `faf4a729ef46b8ed1d531f0a36f730467074b3a3` was integrated on authoritative local `main` by merge commit `0480f272547c2616daaab0cb37dd5c44c7b538b6`. Candidate reachability and the exact accepted-range-to-integration-range byte mapping passed before delivery was declared ready.
+- Contract result: `deliver-work-item-main-branch` and Commit `main-branch` now name the stable destination while preserving primary-worktree delivery, separate-worktree integration, the feature-branch alternative, unrelated-dirty-file preservation, and an exact legacy `direct-main` configuration compatibility boundary. Historical provider records were not rewritten for terminology alone.
+- Independent review: one fresh reviewer APPROVED the corrected final candidate, including the restored `direct-maintenance` term. No second reviewer or repeated review gate was used.
+- Focused verification: one verifier passed 25 focused tests on the candidate, then verified only the changed correction evidence. On integrated `main`, the 14 renamed-contract cases, one legacy-alias case, supported metadata/document/hierarchy freshness checks, exact mapping, reachability, and diff hygiene passed. No broad suite, simulator, or framework was run.
+- Baseline limitations: structured skill validation rejected both candidate and primary repository skill paths as outside its installed roots, so no forbidden fallback validator was used. Installer dry-run separately reported pre-existing incomplete `agent-claim` and `agent-claim-command` skill directories. Markdown validation separately reported three unchanged baseline findings: the README hierarchy anchor, one historical review-checklist target, and a structured-explanation example path. These were recorded without expanding scope.
+- Claims: exact integration-path claim `rename-direct-main-to-main-branch-integration-paths` covered 59 path endpoints and released normally at event `a98636bb-20fc-47d6-9200-293dc212b264`. Exact work claim `rename-direct-main-to-main-branch-work` released with handoff at event `c27feeb4-97a3-4c8b-beed-59ba638819a4`. Terminal update claim `rename-direct-main-to-main-branch-complete-update` and exact active/completed provider-path claim `rename-direct-main-to-main-branch-complete-provider-paths` protect this single archive transaction and will release after its commit.
+- Publication: delivery is complete on authoritative local `main`; no remote publication was requested.
+- Cleanup eligibility: source candidate is fully merged and its linked worktree is clean. The linked worktree and fully merged source branch are eligible for removal after this archive commit and claim release.
 
 ## Summary
 
@@ -153,7 +171,7 @@ Intended Root Role: Dev Orchestrator
 
 Scheduling Evidence: The overlapping resource-claim rename is Completed and archived at main commit `102c5fe6ae5b560befd6e9aac3485a51804508ca`; its shared source, generator, installation, and integration lanes are released.
 
-## Active Execution Evidence
+## Historical Active Execution Evidence
 
 Condition Type: root-execution.
 
