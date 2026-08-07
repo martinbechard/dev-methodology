@@ -185,6 +185,8 @@ role_agent_set:
       - "TODO: Command, review, or evidence required before completion."
 
 shared_agent_skills:
+  - skill: structured-explanation
+    condition: "when an Agent must present technical reasoning as explicit queries, facts, hypotheses, unknowns, and answers"
   - skill: organise-project-files
     condition: "when an Agent must choose or audit the location of a project file or directory"
 

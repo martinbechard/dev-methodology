@@ -1,0 +1,124 @@
+# General Agent Skills
+
+## Scope
+
+General Agent Skills are skills whose applicability rule is shared by every Agent rather than owned by one Agent role or one activity group. Their common scope makes them easier to understand and maintain when one design explains them and the configuration supplies them once.
+
+General does not mean that every skill is active during every task. Some general skills are loaded into every generated Agent definition. Others are available to every Agent through one project-wide conditional rule and are loaded only when that condition applies.
+
+The diagram conventions and the relationship between a named set and its expanded or collapsed views are defined in [Object-Oriented Analysis of Agents and Skills](../object-oriented-agent-and-skill-model.md#31-skill-group). The applied group registry is defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md#3-skill-group-registry).
+
+## Design
+
+The General Agent Skills design separates two loading mechanisms that reach every Agent. The role schema supplies universal Agent skills when generated definitions are built. `PROJECT.yaml` supplies project-wide conditional skills through root `AGENTS.md`, which the harness makes available automatically.
+
+### General Agent Skills Membership
+
+The group contains four independent skills whose common property is Agent-wide applicability. The expanded view itemizes the actual membership without implying that one skill depends on another.
+
+```mermaid
+classDiagram
+    direction LR
+
+    namespace GeneralAgentSkills["General Agent Skills"] {
+        class effective-communication {
+            <<SKILL.md>>
+        }
+        class ste-technical-writing {
+            <<SKILL.md>>
+        }
+        class structured-explanation {
+            <<SKILL.md>>
+        }
+        class organise-project-files {
+            <<SKILL.md>>
+        }
+    }
+```
+
+The expanded box is a comprehension boundary. It says which skills belong to this design; it does not create runtime dependencies among them.
+
+### Universal Skills In Every Generated Agent
+
+Universal Agent skills are added by `agents/role-schema.yaml` to every generated Agent definition. An Agent therefore receives these exact-name dependencies without every role source repeating them.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class RoleSchema["agents/role-schema.yaml"] {
+        <<Agent definition source>>
+        +shared-skills
+    }
+    class effective-communication {
+        <<SKILL.md>>
+    }
+    class ste-technical-writing {
+        <<SKILL.md>>
+    }
+
+    RoleSchema o--> effective-communication
+    RoleSchema o--> ste-technical-writing
+```
+
+`effective-communication` governs the messages, decisions, evidence, blockers, outcomes, and handoffs produced by every Agent. `ste-technical-writing` supplies one semantic-preservation contract whenever an Agent writes, rewrites, or reviews technical-document prose. Its universal presence does not turn every Agent response into a technical document; the skill’s own boundary determines when its writing rules apply.
+
+### Project-Wide Conditional Skills
+
+Project-wide conditional skills can be needed by any Agent, but loading them for every task would add unnecessary context. `PROJECT.yaml` records each condition once, the renderer puts that route in root `AGENTS.md`, and the harness supplies those project directives automatically. The diagram therefore shows the directives referencing the named skills and does not draw an Agent-to-`AGENTS.md` dependency.
+
+```mermaid
+classDiagram
+    direction LR
+
+    class ProjectSpecificDirectives["Project-specific directives"] {
+        <<AGENTS.md>>
+        <<routing>>
+        +route structured-explanation when classified technical reasoning is required
+        +route organise-project-files when placement must be chosen or audited
+    }
+    class structured-explanation {
+        <<SKILL.md>>
+        +create-structured-explanation()
+    }
+    class organise-project-files {
+        <<SKILL.md>>
+        +choose-project-file-placement()
+    }
+
+    ProjectSpecificDirectives o..> structured-explanation : when classified technical reasoning is required
+    ProjectSpecificDirectives o..> organise-project-files : when a file location must be chosen or audited
+```
+
+`structured-explanation` is loaded when the work must expose classified technical reasoning through QUERY, SUB-QUERY, FACT, HYPOTHESIS, UNKNOWN, and ANSWER items. Ordinary communication continues to use `effective-communication`; ordinary technical-document prose continues to use `ste-technical-writing`. The structured form is not required merely because an Agent explains something.
+
+`organise-project-files` is loaded before an Agent chooses or audits a project file or directory location. When an authoritative configuration, generator, template, or explicit user instruction already fixes the exact destination, the Agent confirms that binding without reopening a redundant placement decision.
+
+### How Agent-Group Designs Use This Design
+
+Agent-group designs focus on dependencies that distinguish their Agents and activities. They link to this design instead of repeating the four general skills in every overall or scenario diagram. A scenario may still show one of these skills when that general dependency is the subject of the scenario itself.
+
+This omission is a diagramming simplification, not a loss of dependency information. Universal skills remain present through the role schema, and project-wide conditional skills remain available through the rendered project directives.
+
+## Skill Responsibilities
+
+The four skills have separate responsibilities even though their loading scope is shared.
+
+| Skill | Loading mechanism | Responsibility |
+| --- | --- | --- |
+| effective-communication | Universal role-schema skill | Keeps messages, decisions, evidence, blockers, outcomes, and handoffs clear and appropriately concise. |
+| ste-technical-writing | Universal role-schema skill | Preserves meaning and uses controlled technical prose when an Agent creates, revises, or reviews technical documentation. |
+| structured-explanation | Project-wide conditional skill | Presents explicit technical reasoning using classified reasoning items when that structure is required. |
+| organise-project-files | Project-wide conditional skill | Chooses or audits repository locations using project guidance, taxonomy, ownership, and lifecycle evidence. |
+
+## Authoritative Inputs
+
+The membership, loading mechanisms, and procedure boundaries are grounded in these sources.
+
+- [Agent Role Schema](../../agents/role-schema.yaml)
+- [Project Configuration](../../PROJECT.yaml)
+- [Project Configuration Template](../../skills/route-documentation-work/assets/templates/project-template.yaml)
+- [Effective Communication](../../skills/effective-communication/SKILL.md)
+- [STE Technical Writing](../../skills/ste-technical-writing/SKILL.md)
+- [Structured Explanation](../../skills/structured-explanation/SKILL.md)
+- [Organise Project Files](../../skills/organise-project-files/SKILL.md)

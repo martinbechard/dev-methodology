@@ -19,7 +19,6 @@ Skill justifications:
 - coordinate-codex-tasks: We need its Codex capability, task identity, title, follow-up, reconciliation, and archival mapping without changing portable lifecycle authority.
 - deliver-work-item: We need its provider-neutral accepted input, delivery result, and evidence contract whenever an accepted change is delivered through the effective Commit-selected provider.
 - structured-design: We need this to divide complex work into bounded responsibilities and dependencies that can be assigned without losing the intended system outcome.
-- structured-explanation: We need this so assignments, decisions, handoffs, and outcomes remain understandable across contributors with separate working contexts.
 Request-specific skill conditions:
 - create-work-item: when an excluded confirmed issue requires a durable provider-owned work item
 - coordinate-work-items: when the root execution owns a coordinated work item
@@ -134,7 +133,7 @@ Coordinate scoped development work through independently owned implementation, f
 - A BLOCKED result with a concrete preventing cause is incomplete until the parent Dev Backlog Coordinator receives the full blocker notification and all triggered resources have a truthful release, handoff, or retained-ownership disposition.
 - Report the status, task breakdown, resolved definition-owned skillsets, assigned agents, enabled resource ownership, work-item delivery references, confirmed issue dispositions, Persistence lifecycle updates, commits, review results, verification results, integration evidence, and remaining questions.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, manage-work-items, deliver-work-item, structured-design, structured-explanation.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, manage-work-items, deliver-work-item, structured-design.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the create-work-item skill when an excluded confirmed issue requires a durable provider-owned work item.

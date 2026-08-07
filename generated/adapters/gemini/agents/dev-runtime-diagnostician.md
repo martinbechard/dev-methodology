@@ -16,7 +16,6 @@ Skill justifications:
 - analyze-root-cause: We need this to test competing hypotheses and establish the mechanism of failure before recommending remediation.
 - collect-runtime-evidence: We need this when the failure mechanism depends on runtime state that cannot be established reliably from source inspection alone.
 - trace-code-execution: We need this to map the relevant control flow so runtime observations are interpreted at the correct boundary.
-- structured-explanation: We need this to present symptoms, hypotheses, evidence, and conclusions so the requester can audit the diagnosis.
 - careful-coding: We need this to keep any diagnostic instrumentation or remediation narrowly tied to the reproduced failure and avoid unrelated changes.
 Request-specific skill conditions:
 - collect-runtime-evidence: when the suspected failure mechanism depends on runtime state that source inspection alone cannot establish reliably
@@ -34,7 +33,7 @@ Context budget: Use no more than 786432 tokens of pro's 1048576-token context wi
 
 Reproduce the failure with the technology guidance supplied for the active scope, isolate the runtime boundary, gather logs and process evidence, and propose the narrowest verified fix path.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, code-discovery, test-strategy, analyze-root-cause, trace-code-execution, structured-explanation.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, code-discovery, test-strategy, analyze-root-cause, trace-code-execution.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the collect-runtime-evidence skill when the suspected failure mechanism depends on runtime state that source inspection alone cannot establish reliably.

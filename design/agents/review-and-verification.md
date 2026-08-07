@@ -4,6 +4,8 @@
 
 Review And Verification contains evidence review, test selection, end-to-end verification, diagnosis, runtime observation, source tracing, and prompt-contract review. Agent definitions combine these skills with exact-name Baseline Development skills.
 
+Skills whose applicability rule is shared by every Agent are modeled separately in [General Agent Skills](general-agent-skills.md).
+
 The applied-model conventions are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md#2-applied-model-legend).
 
 ## Design
@@ -96,7 +98,7 @@ classDiagram
 
 ### Scenario: Verifying A Change
 
-This scenario shows the test, review, and explanation skills Dev Verifier always loads and the focused skills it adds when the evidence requires a complete workflow, diagnosis, runtime observation, source tracing, or prompt-contract review.
+This scenario shows the test and review skills Dev Verifier always loads and the focused skills it adds when the evidence requires a complete workflow, diagnosis, runtime observation, source tracing, or prompt-contract review.
 
 ```mermaid
 classDiagram
@@ -112,10 +114,6 @@ classDiagram
         +coverage-principles
     }
     class review-structured-artifact {
-        <<SKILL.md>>
-        <<Cross-group>>
-    }
-    class structured-explanation {
         <<SKILL.md>>
         <<Cross-group>>
     }
@@ -143,7 +141,6 @@ classDiagram
 
     DevVerifier o--> test-strategy
     DevVerifier o--> review-structured-artifact
-    DevVerifier o--> structured-explanation
     DevVerifier o..> verify-end-to-end-workflow : when confidence depends on a complete real workflow
     DevVerifier o..> analyze-root-cause : when a verification check fails
     DevVerifier o..> collect-runtime-evidence : when static checks cannot establish behavior
@@ -153,7 +150,7 @@ classDiagram
 
 ### Scenario: Diagnosing Runtime Behavior
 
-This scenario shows the discovery, testing, diagnosis, tracing, and explanation skills Dev Runtime Diagnostician uses to establish a mechanism-level cause. Runtime collection and careful coding are loaded only when observation or bounded instrumentation is required.
+This scenario shows the discovery, testing, diagnosis, and tracing skills Dev Runtime Diagnostician uses to establish a mechanism-level cause. Runtime collection and careful coding are loaded only when observation or bounded instrumentation is required.
 
 ```mermaid
 classDiagram
@@ -184,10 +181,6 @@ classDiagram
         <<SKILL.md>>
         <<Agent Skill>>
     }
-    class structured-explanation {
-        <<SKILL.md>>
-        <<Cross-group>>
-    }
     class collect-runtime-evidence {
         <<SKILL.md>>
         <<Agent Skill>>
@@ -204,7 +197,6 @@ classDiagram
     DevRuntimeDiagnostician o--> test-strategy
     DevRuntimeDiagnostician o--> analyze-root-cause
     DevRuntimeDiagnostician o--> trace-code-execution
-    DevRuntimeDiagnostician o--> structured-explanation
     DevRuntimeDiagnostician o..> collect-runtime-evidence : when source cannot establish runtime state
     DevRuntimeDiagnostician o..> careful-coding : when diagnosis changes instrumentation or code
 ```
@@ -233,7 +225,7 @@ classDiagram
     DevPromptReviewer o--> review-structured-artifact
 ```
 
-PROJECT.yaml records organise-project-files once in shared_agent_skills, and generated AGENTS.md tells every Agent to load it when the Agent must choose or audit the location of a project file or directory. The scenarios therefore do not repeat that project-wide route as role-specific arrows.
+[General Agent Skills](general-agent-skills.md) defines the universal and project-wide conditional dependencies shared by these Agents. The scenarios omit those general dependencies so the diagrams can focus on what distinguishes review and verification work.
 
 ### Scenario: An Investigation Needs More Evidence
 
@@ -309,7 +301,6 @@ The relationships and procedure boundaries are grounded in these Agent and skill
 - [Careful Coding](../../skills/careful-coding/SKILL.md)
 - [Code Comments](../../skills/code-comments/SKILL.md)
 - [Code Discovery](../../skills/code-discovery/SKILL.md)
-- [Organise Project Files](../../skills/organise-project-files/SKILL.md)
 - [Review Structured Artifact](../../skills/review-structured-artifact/SKILL.md)
-- [Structured Explanation](../../skills/structured-explanation/SKILL.md)
+- [General Agent Skills](general-agent-skills.md)
 - [Resource Claim](../../skills/resource-claim/SKILL.md)

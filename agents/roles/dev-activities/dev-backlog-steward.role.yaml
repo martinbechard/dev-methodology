@@ -105,8 +105,6 @@ skills:
     justification: We need the file-backed capture, explicit inventory, validation, and promotion
       contract when the request specifically selects Future Ideas.
     condition: when the request explicitly selects Future Ideas capture, inventory, validation, ideation, or promotion.
-- structured-explanation:
-    justification: We need concise recoverable evidence for provider-wide maintenance outcomes.
 outputContract:
 - provider maintenance result:
     purpose: Reports the exact inventory, normalization, audit, or recovery outcome and affected Work Item IDs.

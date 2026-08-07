@@ -5,7 +5,6 @@ Skill justifications:
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - application-security: We need this to examine trust, authority, validation, data, and secret boundaries consistently when determining whether a change is exploitable.
 - review-structured-artifact: We need this to separate confirmed exploitable findings from lower-confidence concerns and prioritize remediation by evidence and impact.
-- structured-explanation: We need this to communicate attack paths, mitigations, uncertainty, and residual exposure clearly enough for owners to act safely.
 Output purposes:
 - prioritized security findings: Directs remediation effort toward the most exploitable and consequential confirmed risks first.
 - affected files and evidence: Lets maintainers reproduce and verify each finding against the exact code or configuration that supports it.
@@ -20,7 +19,6 @@ skills:
 - ste-technical-writing
 - application-security
 - review-structured-artifact
-- structured-explanation
 model: opus-4.8
 ---
 
@@ -30,7 +28,7 @@ Context budget: Use no more than 750000 tokens of opus-4.8's 1000000-token conte
 
 Trace plausible attack paths from actual code and configuration with the technology guidance supplied for the active scope, prioritize exploitable findings, and state evidence and residual risk.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, application-security, review-structured-artifact, structured-explanation.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, application-security, review-structured-artifact.
 
 Return:
 

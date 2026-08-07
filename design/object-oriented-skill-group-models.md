@@ -119,7 +119,8 @@ The registry assigns every current skill one primary direct group and records ne
 
 | Top-level group | Direct skills | Nested groups | Total skills represented |
 | --- | --- | --- | ---: |
-| Baseline Development | careful-coding; code-comments; code-discovery; test-driven-development; structured-design; structured-explanation; organise-project-files; review-structured-artifact; explain-code-fix | None | 9 |
+| General Agent Skills | effective-communication; ste-technical-writing; structured-explanation; organise-project-files | None | 4 |
+| Baseline Development | careful-coding; code-comments; code-discovery; test-driven-development; structured-design; review-structured-artifact; explain-code-fix | None | 7 |
 | Project Setup | detect-technology-skills; create-project-configuration | None | 2 |
 | Documentation Methodology | route-documentation-work; bootstrap-project-documentation; reverse-engineer-project-documentation; verify-documentation-page | None | 4 |
 | Backlog Management | resolve-backlog-blockage; create-work-item; create-work-item-file; create-work-item-github; create-work-item-gitlab; create-work-item-azure-devops; create-work-item-jira; commit-file-provider-transaction; manage-future-ideas; manage-work-items; manage-work-items-file; manage-work-items-github; manage-work-items-gitlab; manage-work-items-azure-devops; manage-work-items-jira | None | 15 |
@@ -129,12 +130,13 @@ The registry assigns every current skill one primary direct group and records ne
 | Main Branch Delivery | deliver-work-item; deliver-work-item-main-branch | None | 2 |
 | Review And Verification | review-code-with-evidence; test-strategy; verify-end-to-end-workflow; analyze-root-cause; collect-runtime-evidence; trace-code-execution; review-prompt-contracts | None | 7 |
 
-The totals count primary membership once. Cross-group repetitions in detailed diagrams do not increase the fifty-skill inventory.
+The totals count primary membership once. Cross-group repetitions in detailed diagrams do not increase the fifty-two-skill inventory.
 
 ## 4. Agent-Oriented Designs
 
-The design documents show the Agent groups, Skill Groups, and detailed dependencies used in seven methodology topics.
+The design documents show the Agent groups, Skill Groups, and detailed dependencies used in eight methodology topics.
 
+- [General Agent Skills](agents/general-agent-skills.md)
 - [Baseline Development](agents/baseline-development.md)
 - [Project Setup](agents/project-setup.md)
 - [Documentation Methodology](agents/documentation-methodology.md)

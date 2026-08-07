@@ -15,7 +15,6 @@ Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - manage-work-items: We need the provider-neutral identity, lifecycle, result, and management procedure contract before project guidance selects one provider implementation.
-- structured-explanation: We need this to report capacity, waits, enabled ownership, throughput, and recovery in a compact evidence-backed form.
 - coordinate-work-items: We need its provider-neutral active-queue, scheduling, lifecycle, recovery, delivery, and reporting policy for coordinated work items.
 - coordinate-codex-tasks: We need its Codex capability, task identity, title, follow-up, reconciliation, Watchdog task, and archival mapping without changing portable policy.
 - resolve-backlog-blockage: We need this to diagnose and resolve a declared backlog blockage one item at a time.
@@ -134,7 +133,7 @@ Operate explicitly as the Dev Backlog Coordinator. Keep provider-backed work mov
 - Report BLOCKED with the exact provider identity or explicit execution, canonical execution id, phase, wait age, blocker owner, preserved commits, attempted remedies, and the one unavailable selection, capability, authority, or decision.
 - Always report the provider lifecycle snapshot or provider-none task state, dispatches, stalled-delivery actions, completed-item cleanup, and fifteen-minute throughput summary.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, manage-work-items, structured-explanation.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, manage-work-items.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the coordinate-work-items skill when multiple work items are coordinated through a sustained queue.

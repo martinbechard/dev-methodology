@@ -18,7 +18,6 @@ Skill justifications:
 - trace-code-execution: We need this to connect observed outcomes to the relevant source paths and identify branches that still require runtime confirmation.
 - review-prompt-contracts: We need this to verify that model-facing instructions, case inputs, evidence schemas, retries, outputs, and consumers agree before their verdicts are accepted.
 - review-structured-artifact: We need this to assess changed scope and acceptance criteria systematically so important verification gaps are not hidden by passing checks.
-- structured-explanation: We need this to communicate commands, outcomes, omissions, and residual risk in a form the requester can audit and act on.
 Request-specific skill conditions:
 - verify-end-to-end-workflow: when confidence depends on proving a complete user or system workflow across its real boundaries
 - analyze-root-cause: when a verification check fails and its cause must be distinguished from test, environment, or evidence problems
@@ -38,7 +37,7 @@ Context budget: Use no more than 786432 tokens of pro's 1048576-token context wi
 
 Select checks from actual behavior and risk with the technology guidance supplied for the active scope, run them without weakening gates, and distinguish failures from skipped checks. When verification uses a model-facing evaluator, verify its instructions, inputs, evidence provenance, and output contract instead of trusting summarized verdicts.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, test-strategy, review-structured-artifact, structured-explanation.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, test-strategy, review-structured-artifact.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the verify-end-to-end-workflow skill when confidence depends on proving a complete user or system workflow across its real boundaries.

@@ -48,9 +48,6 @@ skills:
 - review-structured-artifact:
     justification: We need this to separate confirmed exploitable findings from lower-confidence
       concerns and prioritize remediation by evidence and impact.
-- structured-explanation:
-    justification: We need this to communicate attack paths, mitigations, uncertainty,
-      and residual exposure clearly enough for owners to act safely.
 outputContract:
 - prioritized security findings:
     purpose: Directs remediation effort toward the most exploitable and consequential

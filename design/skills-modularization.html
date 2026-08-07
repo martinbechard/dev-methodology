@@ -535,7 +535,7 @@
   <section class="section" aria-labelledby="agent-skills-title">
     <h2 id="agent-skills-title">Core Skill Categories and Ownership</h2>
     <p class="lede">An agent definition may directly reference both required and optional core skills. A required skill has no condition and is selected for every invocation of that agent. An optional skill has a human-readable condition and is selected only when the request and available evidence make it applicable.</p>
-    <p class="lede">The role schema supplies effective-communication and ste-technical-writing to every conceptual agent. Effective communication governs user and agent messages. STE governs technical-document prose only when an agent writes, rewrites, or reviews that prose.</p>
+    <p class="lede">The role schema supplies effective-communication and ste-technical-writing to every conceptual agent. PROJECT.yaml separately records conditional skills whose applicability rule is shared by every agent. <a href="agents/general-agent-skills.md">General Agent Skills</a> explains both loading mechanisms and their narrower operating boundaries.</p>
     <p class="lede">Selection does not by itself say whether a harness preloads, dynamically reads, or applies the skill; the <a href="#skill-lifecycle-title">cross-harness lifecycle</a> makes those states explicit.</p>
     <p class="lede">Both kinds of directly referenced skills must be technology-agnostic so the generic agent definition can be reused across programming languages, frameworks, project types, and agentic coding vendors. View their complete definitions in the <a href="agent-and-skill-definitions.html#skills-title">Skill Catalog on the Core Agent and Skills page</a>. The <a href="wiki-skills-and-project-context.html">Wiki Skills And Project Context page</a> explains the operating relationships within the wiki skill family without duplicating that catalog.</p>
     <div class="matrix">
@@ -559,7 +559,7 @@
             <td><span class="name">Optional core skill</span></td>
             <td>A skill entry in the agent definition with a human-readable condition.</td>
             <td>The request and available evidence satisfy the rule; the agent applies judgment rather than matching prompt words.</td>
-            <td>Dev Coder uses test-driven-development when behavior can be expressed through executable tests and organise-project-files when it creates a project path. Feature-branch completion loads create-pull-request only when its provider-accurate GitHub publication boundary requires it.</td>
+            <td>Dev Coder uses test-driven-development when behavior can be expressed through executable tests. Feature-branch completion loads create-pull-request only when its provider-accurate GitHub publication boundary requires it.</td>
           </tr>
         </tbody>
       </table>
@@ -1002,7 +1002,8 @@
         </tbody>
       </table>
     </div>
-    <h3 class="section-subheading">Core Skills in Current Agent Definitions</h3>
+    <h3 class="section-subheading">Role-Specific Core Skills in Current Agent Definitions</h3>
+    <p>These rows show only dependencies that distinguish an Agent role. The universal and project-wide conditional dependencies omitted from the rows are defined in <a href="agents/general-agent-skills.md">General Agent Skills</a>.</p>
     <div class="matrix">
       <table>
         <thead>
@@ -1016,26 +1017,26 @@
           <tr>
             <td><span class="name">Dev Coder</span></td>
             <td>careful-coding, code-comments, code-discovery, explain-code-fix; project guidance supplies resource coordination separately</td>
-            <td>organise-project-files when creating a file or directory; test-driven-development when tests can guide the behavior. Dev Coder returns a candidate and does not apply the effective Commit-selected skill.</td>
+            <td>test-driven-development when tests can guide the behavior. Dev Coder returns a candidate and does not apply the effective Commit-selected skill.</td>
           </tr>
           <tr>
             <td><span class="name">Dev Artifact Reviewer</span></td>
             <td>review-structured-artifact, verify-documentation-page</td>
-            <td>The matching review skill for a functional specification, architecture, high-level design, module design, or unit test plan; organise-project-files only when the review writes an artifact; project guidance supplies resource coordination separately</td>
+            <td>The matching review skill for a functional specification, architecture, high-level design, module design, or unit test plan; project guidance supplies resource coordination separately</td>
           </tr>
           <tr>
             <td><span class="name">Project Configurator</span></td>
             <td>detect-technology-skills, create-project-configuration, route-documentation-work, verify-documentation-page; PROJECT.yaml selects none or resource-claim and conditionally selects how the claim helper is invoked</td>
-            <td>organise-project-files when adding a path not fixed by the configuration contract; bootstrap-project-documentation when the project lacks the required documentation structure</td>
+            <td>bootstrap-project-documentation when the project lacks the required documentation structure</td>
           </tr>
           <tr>
             <td><span class="name">Dev Backlog Steward</span></td>
-            <td>structured-explanation; project guidance supplies resource coordination separately when enabled</td>
-            <td>organise-project-files only when the selected persistence operation creates a repository path whose destination is not fixed. The effective Persistence-selected create or manage skill comes from applicable AGENTS.md guidance.</td>
+            <td>manage-work-items; project guidance supplies resource coordination separately when enabled</td>
+            <td>coordinate-work-items when provider-wide maintenance touches coordinated state; coordinate-codex-tasks when reconciliation inspects Codex task evidence; manage-future-ideas when the request explicitly selects that workflow. The effective Persistence-selected manager comes from applicable AGENTS.md guidance.</td>
           </tr>
           <tr>
             <td><span class="name">Dev Backlog Coordinator</span></td>
-            <td>structured-explanation</td>
+            <td>manage-work-items</td>
             <td>coordinate-work-items when a sustained queue coordinates multiple provider-selected work items; coordinate-codex-tasks only when those executions use Codex tasks. Project guidance supplies resource coordination separately when enabled. Inventory and lifecycle use the effective Persistence manager, and delivery uses the effective Commit skill without copying either procedure.</td>
           </tr>
         </tbody>

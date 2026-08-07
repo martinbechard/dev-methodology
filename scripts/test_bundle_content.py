@@ -6303,7 +6303,8 @@ class BundleContentTests(unittest.TestCase):
             for entry in role["outputContract"]
         }
 
-        self.assertIn("organise-project-files", role_skill_names)
+        self.assertNotIn("organise-project-files", role_skill_names)
+        self.assertIn("structured-design", role_skill_names)
         decision_output_name = "approved path or placement blocker"
         self.assertIn(decision_output_name, role_output_names)
         self.assertNotIn("approved path", role_output_names)
@@ -6900,7 +6901,7 @@ class BundleContentTests(unittest.TestCase):
         for adapter, adapter_path in adapter_paths.items():
             adapter_text = adapter_path.read_text(encoding="utf-8")
             with self.subTest(adapter=adapter):
-                self.assertIn("organise-project-files", adapter_text)
+                self.assertNotIn("organise-project-files", adapter_text)
                 self.assertIn("structured-design", adapter_text)
                 self.assertNotIn("BEGIN INLINED CORE SKILL", adapter_text)
                 self.assertIn(classification_instruction, adapter_text)
@@ -10583,7 +10584,6 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertEqual(
             {
-                "organise-project-files",
                 "review-architecture",
                 "review-functional-spec",
                 "review-high-level-design",
@@ -10609,7 +10609,7 @@ class BundleContentTests(unittest.TestCase):
             set(build_skill_docs.fixed_role_skills(role))
             - {"effective-communication", "ste-technical-writing"},
         )
-        self.assertEqual({"structured-explanation"}, set(role.skill_conditions))
+        self.assertEqual(set(), set(role.skill_conditions))
         self.assertNotIn("resource-claim", role.skill_conditions)
         self.assertIn("Report only critical skill issues", role.instructions)
         self.assertIn("Do not report minor grammar", role.instructions)

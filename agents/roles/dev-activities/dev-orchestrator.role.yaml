@@ -409,9 +409,6 @@ skills:
 - structured-design:
     justification: We need this to divide complex work into bounded responsibilities
       and dependencies that can be assigned without losing the intended system outcome.
-- structured-explanation:
-    justification: We need this so assignments, decisions, handoffs, and outcomes remain
-      understandable across contributors with separate working contexts.
 outputContract:
 - status:
     purpose: States READY, AWAITING_REVIEW, or BLOCKED and identifies the evidence or

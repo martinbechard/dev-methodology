@@ -73,9 +73,6 @@ skills:
 - review-structured-artifact:
     justification: We need this to assess changed scope and acceptance criteria systematically
       so important verification gaps are not hidden by passing checks.
-- structured-explanation:
-    justification: We need this to communicate commands, outcomes, omissions, and residual
-      risk in a form the requester can audit and act on.
 outputContract:
 - command results:
     purpose: Preserves the exact checks and observed outcomes so verification can be

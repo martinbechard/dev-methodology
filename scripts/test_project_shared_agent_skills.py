@@ -21,15 +21,19 @@ SPEC.loader.exec_module(RENDERER)
 class ProjectSharedAgentSkillsTests(unittest.TestCase):
     """Verify shared conditional skills remain project-owned and non-duplicated."""
 
-    def test_shared_skill_is_rendered_once_with_its_condition(self) -> None:
-        """Render one shared skill once while preserving its PROJECT.yaml condition."""
+    def test_shared_skills_are_rendered_once_with_their_conditions(self) -> None:
+        """Render shared skills once while preserving PROJECT.yaml order and conditions."""
 
         project = {
             "shared_agent_skills": [
                 {
+                    "skill": "structured-explanation",
+                    "condition": "when an Agent must expose classified technical reasoning",
+                },
+                {
                     "skill": "organise-project-files",
                     "condition": "when an Agent must choose or audit a project path",
-                }
+                },
             ],
             "role_agent_set": [],
         }
@@ -40,6 +44,7 @@ class ProjectSharedAgentSkillsTests(unittest.TestCase):
                 "",
                 "These project-wide references apply to every Agent. Load a listed skill only when its condition applies; the skill definitions remain in the bundled catalog and are not copied here.",
                 "",
+                "- structured-explanation: load when an Agent must expose classified technical reasoning.",
                 "- organise-project-files: load when an Agent must choose or audit a project path.",
                 "",
             ],
@@ -163,9 +168,13 @@ class ProjectSharedAgentSkillsTests(unittest.TestCase):
             },
             "shared_agent_skills": [
                 {
+                    "skill": "structured-explanation",
+                    "condition": "when an Agent must expose classified technical reasoning",
+                },
+                {
                     "skill": "organise-project-files",
                     "condition": "when an Agent must choose a project path",
-                }
+                },
             ],
             "project_skill_extensions": ["python"],
             "role_agent_set": [],
@@ -180,6 +189,55 @@ class ProjectSharedAgentSkillsTests(unittest.TestCase):
         )
         self.assertNotIn(RENDERER.SHARED_AGENT_SKILLS_HEADING, nested)
         self.assertNotIn(RENDERER.PROJECT_SKILL_EXTENSIONS_HEADING, nested)
+
+    def test_current_project_routes_general_conditional_skills_once(self) -> None:
+        """Keep general conditional skills project-wide and out of selected role skillsets."""
+
+        project = RENDERER.load_yaml(REPOSITORY_ROOT / "PROJECT.yaml")
+        shared_skills = RENDERER._shared_agent_skills(project)
+        selected_role_skills = {
+            skill
+            for role in project["role_agent_set"]
+            for skill in role.get("skills", [])
+        }
+
+        self.assertEqual(
+            ["structured-explanation", "organise-project-files"],
+            [skill for skill, _condition in shared_skills],
+        )
+        self.assertTrue(
+            {"structured-explanation", "organise-project-files"}.isdisjoint(
+                selected_role_skills
+            )
+        )
+
+    def test_general_conditional_skills_are_not_owned_by_any_role(self) -> None:
+        """Keep Agent-wide conditional dependencies out of every role definition."""
+
+        general_conditional_skills = {
+            "structured-explanation",
+            "organise-project-files",
+        }
+
+        for role_path in sorted((REPOSITORY_ROOT / "agents" / "roles").rglob("*.role.yaml")):
+            role = RENDERER.load_yaml(role_path)
+            role_skills = {next(iter(entry)) for entry in role["skills"]}
+            with self.subTest(role=role_path.stem):
+                self.assertTrue(general_conditional_skills.isdisjoint(role_skills))
+
+    def test_role_schema_supplies_universal_general_skills(self) -> None:
+        """Keep universal communication and technical-prose skills in the role schema."""
+
+        schema = RENDERER.load_yaml(REPOSITORY_ROOT / "agents" / "role-schema.yaml")
+        shared_skills = [
+            next(iter(entry))
+            for entry in schema["fixedBehavior"]["sharedSkills"]
+        ]
+
+        self.assertEqual(
+            ["effective-communication", "ste-technical-writing"],
+            shared_skills,
+        )
 
 
 if __name__ == "__main__":

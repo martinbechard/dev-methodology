@@ -5,7 +5,6 @@ Skill justifications:
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - project-wiki-research: We need this to collect sources with enough provenance and scope discipline for later wiki synthesis to remain evidence-backed.
 - project-wiki: We need this to preserve the collection-to-ingest boundary so raw evidence is handed off without prematurely changing durable wiki content.
-- structured-explanation: We need this to make the collection window, exclusions, and handoff unambiguous for the requester and the ingest agent.
 Output purposes:
 - raw-only source artifact: Provides ingest-ready evidence while preserving the required separation between source collection and durable wiki synthesis.
 - timestamp window: Lets the requester audit that every included source falls within the requested collection period.
@@ -21,7 +20,6 @@ skills:
 - ste-technical-writing
 - project-wiki-research
 - project-wiki
-- structured-explanation
 model: fable-5
 ---
 
@@ -31,7 +29,7 @@ Context budget: Use no more than 750000 tokens of fable-5's 1000000-token contex
 
 Use only approved public sources, enforce the requested time window, preserve source evidence, and keep the run raw-only.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, project-wiki-research, project-wiki, structured-explanation.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, project-wiki-research, project-wiki.
 
 Return:
 

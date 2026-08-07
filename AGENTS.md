@@ -218,6 +218,7 @@ When configured folder patterns overlap, the most-specific matching pattern wins
 
 These project-wide references apply to every Agent. Load a listed skill only when its condition applies; the skill definitions remain in the bundled catalog and are not copied here.
 
+- structured-explanation: load when an Agent must present technical reasoning as explicit queries, facts, hypotheses, unknowns, and answers.
 - organise-project-files: load when an Agent must choose or audit the location of a project file or directory.
 
 ## Project Skill Extensions

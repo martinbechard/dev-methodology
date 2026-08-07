@@ -177,7 +177,6 @@ role_agent_set:
     hands_off:
       - "Provider-wide inventory, normalization, archival audit, and recovery to dev-backlog-steward; active item delivery to dev-orchestrator. Authorized ordinary lifecycle operations remain direct through the effective Persistence-selected manager."
     skills:
-      - structured-explanation
       - coordinate-work-items
       - coordinate-codex-tasks
     completion_checks:
@@ -191,7 +190,6 @@ role_agent_set:
     skills:
       - maintain-methodology-documentation
       - route-documentation-work
-      - structured-explanation
     completion_checks:
       - "Run all validation commands required by AGENTS.md."
   - role: project-configurator
@@ -242,11 +240,12 @@ role_agent_set:
     skills:
       - test-strategy
       - review-structured-artifact
-      - structured-explanation
     completion_checks:
       - "Run applicable commands from AGENTS.md without weakening gates."
 
 shared_agent_skills:
+  - skill: structured-explanation
+    condition: "when an Agent must present technical reasoning as explicit queries, facts, hypotheses, unknowns, and answers"
   - skill: organise-project-files
     condition: "when an Agent must choose or audit the location of a project file or directory"
 

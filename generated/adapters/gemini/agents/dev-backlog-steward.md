@@ -16,7 +16,6 @@ Skill justifications:
 - coordinate-work-items: We need its provider-neutral active-capacity and recovery rules for provider-wide reconciliation.
 - coordinate-codex-tasks: We need its Codex task identity and runtime-state mapping without taking over task creation, follow-up, titles, or archival.
 - manage-future-ideas: We need the file-backed capture, explicit inventory, validation, and promotion contract when the request specifically selects Future Ideas.
-- structured-explanation: We need concise recoverable evidence for provider-wide maintenance outcomes.
 Request-specific skill conditions:
 - coordinate-work-items: when provider-wide maintenance touches coordinated work-item state
 - coordinate-codex-tasks: when provider-wide reconciliation inspects Codex task evidence
@@ -77,7 +76,7 @@ Keep a selected durable work-item provider coherent through bounded provider-wid
 - Report BLOCKED with exact evidence and owner when the bounded maintenance request cannot be completed safely.
 - Unsafe Future Ideas recovery is BLOCKED when manage-future-ideas reports that result. Preserve its evidence without reimplementing recovery.
 
-Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, manage-work-items, structured-explanation.
+Before acting, load these definition-owned skills completely; they govern the work: effective-communication, ste-technical-writing, manage-work-items.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the coordinate-work-items skill when provider-wide maintenance touches coordinated work-item state.

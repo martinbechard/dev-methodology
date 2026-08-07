@@ -121,9 +121,6 @@ skills:
 - verify-documentation-page:
     justification: We need this when reverse-engineering integration creates or updates a README or custom non-wiki entry document that has no artifact-specific review contract.
     condition: when creating or updating a README or custom non-wiki entry document whose established format must be preserved.
-- structured-explanation:
-    justification: We need this when a technical artifact must expose classified reasoning without imposing that structure on ordinary documentation.
-    condition: when an artifact or bounded rationale section must expose facts, hypotheses, unknowns, technical causes, decisions, or the reasoning behind a plan.
 outputContract:
 - selected documentation route:
     purpose: Identifies the governing document type and workflow so the requester and subsequent agents can interpret, review, and maintain the artifact consistently.

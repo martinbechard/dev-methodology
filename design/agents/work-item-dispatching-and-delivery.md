@@ -6,6 +6,8 @@ Work Item Dispatching And Delivery is an agent-oriented design topic. It explain
 
 Work Item Dispatching contains coordinate-work-items, coordinate-codex-tasks, set-solo-mode, and set-multitask-mode. Resource Coordination and Feature Branch And Worktrees remain independent Skill Groups rather than nested members of Work Item Dispatching. Persistence remains an independently injected provider.
 
+Skills whose applicability rule is shared by every Agent are modeled separately in [General Agent Skills](general-agent-skills.md).
+
 The applied-model conventions are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md#2-applied-model-legend).
 
 ## Design
@@ -162,14 +164,7 @@ classDiagram
         }
     }
 
-    namespace BaselineDevelopmentSkills["Baseline Development skills"] {
-        class structured-explanation {
-            <<SKILL.md>>
-        }
-    }
-
     DevBacklogCoordinator o--> ManageWorkItems
-    DevBacklogCoordinator o--> structured-explanation
     DevBacklogCoordinator o..> coordinate-work-items : when coordinating a sustained queue
     DevBacklogCoordinator o..> coordinate-codex-tasks : when executions use Codex tasks
     DevBacklogCoordinator o..> resolve-backlog-blockage : during declared blockage recovery
@@ -177,7 +172,6 @@ classDiagram
     DevBacklogCoordinator o..> set-multitask-mode : when secondary dispatch may resume
 
     DevBacklogSteward o--> ManageWorkItems
-    DevBacklogSteward o--> structured-explanation
     DevBacklogSteward o..> coordinate-work-items : when maintenance touches coordinated state
     DevBacklogSteward o..> coordinate-codex-tasks : when inspecting Codex task evidence
     DevBacklogSteward o..> manage-future-ideas : when Future Ideas work is requested
@@ -257,9 +251,6 @@ classDiagram
         class structured-design {
             <<SKILL.md>>
         }
-        class structured-explanation {
-            <<SKILL.md>>
-        }
         class review-structured-artifact {
             <<SKILL.md>>
         }
@@ -298,7 +289,6 @@ classDiagram
     DevOrchestrator o--> ManageWorkItems
     DevOrchestrator o--> DeliverWorkItem
     DevOrchestrator o--> structured-design
-    DevOrchestrator o--> structured-explanation
     DevOrchestrator o..> CreateWorkItem : when an excluded issue needs a work item
     DevOrchestrator o..> coordinate-work-items : when multiple agents work concurrently
     DevOrchestrator o..> coordinate-codex-tasks : when the execution uses a Codex task
@@ -316,7 +306,6 @@ classDiagram
 
     DevVerifier o--> test-strategy
     DevVerifier o--> review-structured-artifact
-    DevVerifier o--> structured-explanation
     DevVerifier o..> verify-end-to-end-workflow : when an end-to-end workflow must be proven
     DevVerifier o..> analyze-root-cause : when a check fails
     DevVerifier o..> collect-runtime-evidence : when static evidence is insufficient
@@ -328,7 +317,7 @@ classDiagram
     DevMergeCoordinator o--> explain-code-fix
 ```
 
-The role schema supplies effective-communication and ste-technical-writing to every conceptual Agent. PROJECT.yaml records organise-project-files once in shared_agent_skills, and generated AGENTS.md tells every Agent to load it when the Agent must choose or audit the location of a project file or directory. The diagrams omit that project-wide route instead of repeating it as role-specific arrows.
+[General Agent Skills](general-agent-skills.md) defines the universal and project-wide conditional dependencies shared by all of these Agents. The expanded group diagrams omit those general dependencies so they can focus on the skills that distinguish backlog management and work-item delivery.
 
 ### Scenario: Creating A Work Item For An Excluded Issue
 
@@ -706,13 +695,10 @@ The Agent-group views classify roles by task-management responsibility: backlog 
 
 ### Core And Optional Agent Skills
 
-The Core and Optional inventory uses the role schema and the complete skill lists in the Agent definitions above, supported by these skill sources.
+The Core and Optional inventory uses the complete role-specific skill lists in the Agent definitions above. General dependencies are defined in [General Agent Skills](general-agent-skills.md); the remaining dependencies are supported by these skill sources.
 
-- [Effective Communication](../../skills/effective-communication/SKILL.md)
-- [STE Technical Writing](../../skills/ste-technical-writing/SKILL.md)
-- [Structured Explanation](../../skills/structured-explanation/SKILL.md)
+- [General Agent Skills](general-agent-skills.md)
 - [Structured Design](../../skills/structured-design/SKILL.md)
-- [Organise Project Files](../../skills/organise-project-files/SKILL.md)
 - [Review Structured Artifact](../../skills/review-structured-artifact/SKILL.md)
 - [Explain Code Fix](../../skills/explain-code-fix/SKILL.md)
 - [Coordinate Work Items](../../skills/coordinate-work-items/SKILL.md)

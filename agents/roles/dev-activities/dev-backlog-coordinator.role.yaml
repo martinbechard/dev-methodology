@@ -352,9 +352,6 @@ skills:
 - manage-work-items:
     justification: We need the provider-neutral identity, lifecycle, result, and management
       procedure contract before project guidance selects one provider implementation.
-- structured-explanation:
-    justification: We need this to report capacity, waits, enabled ownership, throughput, and recovery in
-      a compact evidence-backed form.
 - coordinate-work-items:
     justification: We need its provider-neutral active-queue, scheduling, lifecycle,
       recovery, delivery, and reporting policy for coordinated work items.

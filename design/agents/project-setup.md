@@ -4,6 +4,8 @@
 
 Project Setup owns technology detection and project configuration. It uses documentation and placement skills from their primary groups rather than making those skills part of setup.
 
+Skills whose applicability rule is shared by every Agent are modeled separately in [General Agent Skills](general-agent-skills.md).
+
 The applied-model conventions are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md#2-applied-model-legend).
 
 ## Design
@@ -121,7 +123,7 @@ classDiagram
     ProjectBootstrapper o--> bootstrap-project-documentation
 ```
 
-PROJECT.yaml records organise-project-files once in shared_agent_skills, and generated AGENTS.md tells every Agent to load it when the Agent must choose or audit the location of a project file or directory. Project setup uses that project-wide route instead of assigning file placement separately to Project Configurator and Project Bootstrapper.
+[General Agent Skills](general-agent-skills.md) defines the project-wide file-placement route used by Project Setup Agents and every other Agent. This design omits that general dependency so the scenario can focus on setup-specific skills.
 
 ## Skill Responsibilities
 
@@ -142,5 +144,5 @@ The relationships and procedure boundaries are grounded in these Agent and skill
 - [Create Project Configuration](../../skills/create-project-configuration/SKILL.md)
 - [Bootstrap Project Documentation](../../skills/bootstrap-project-documentation/SKILL.md)
 - [Verify Documentation Page](../../skills/verify-documentation-page/SKILL.md)
-- [Organise Project Files](../../skills/organise-project-files/SKILL.md)
+- [General Agent Skills](general-agent-skills.md)
 - [Route Documentation Work](../../skills/route-documentation-work/SKILL.md)

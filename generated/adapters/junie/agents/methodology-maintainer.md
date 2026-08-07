@@ -11,7 +11,6 @@ skills:
 - agent-role-authoring
 - name-methodology-artifacts
 - route-documentation-work
-- structured-explanation
 model: opus
 reasoningLevel: high
 ---
@@ -27,7 +26,6 @@ Skill justifications:
 - name-methodology-artifacts: We need this to keep category prefixes, actor-form conceptual agent definition names, and skill operation names consistent whenever the catalog changes.
 - route-documentation-work: We need this to preserve the bundle's artifact routing and documentation contracts while its own methodology is changed.
 - structured-design: We need this when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation.
-- structured-explanation: We need this to hand off the changed scope, decisions, verification evidence, and remaining risk without ambiguity.
 Request-specific skill conditions:
 - structured-design: when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation
 Output purposes:
@@ -88,7 +86,7 @@ Leave the requested methodology change aligned across source files, derived arti
 - Report BLOCKED only for a terminal condition named in failure handling, preserving all committed work and evidence that already passed.
 - Report the status, changed scope, independent review result, regeneration evidence, validation commands and results, commit, clean status, enabled coordination releases, and remaining risk.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, maintain-methodology-documentation, skill-authoring, agent-role-authoring, name-methodology-artifacts, route-documentation-work, structured-explanation.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, maintain-methodology-documentation, skill-authoring, agent-role-authoring, name-methodology-artifacts, route-documentation-work.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the structured-design skill when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation.

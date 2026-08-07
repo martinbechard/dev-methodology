@@ -135,8 +135,6 @@ skills:
     justification: We need this when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation.
     condition: when catalog, conceptual agent definition, or operating-model changes require explicit boundaries
       and relationships before implementation
-- structured-explanation:
-    justification: We need this to hand off the changed scope, decisions, verification evidence, and remaining risk without ambiguity.
 outputContract:
 - status:
     purpose: States READY or BLOCKED and ties the terminal result to review, validation,

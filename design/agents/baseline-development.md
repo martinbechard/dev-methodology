@@ -2,7 +2,9 @@
 
 ## Scope
 
-Baseline Development contains practices that Agent definitions load by exact skill name across implementation, design, review, placement, and explanation work.
+Baseline Development contains practices that Agent definitions load by exact skill name across implementation, design, and review work.
+
+Skills whose applicability rule is shared by every Agent are modeled separately in [General Agent Skills](general-agent-skills.md).
 
 The applied-model conventions are defined in [Object-Oriented Skill Group Models](../object-oriented-skill-group-models.md#2-applied-model-legend).
 
@@ -12,7 +14,7 @@ Baseline Development supplies practices used across coding, project organization
 
 ### Overall Agent And Skill Group Dependencies
 
-The overall view identifies the Agents that rely on Baseline Development without expanding the nine skills inside the group.
+The overall view identifies the Agents that rely on Baseline Development without expanding the seven skills inside the group.
 
 ```mermaid
 classDiagram
@@ -114,25 +116,13 @@ classDiagram
     DevCoder o..> test-driven-development : when the user requests TDD
 ```
 
-### Scenario: Organizing Project Artifacts
+### Scenario: Designing Project Structure
 
-This scenario shows how Project Organiser combines the shared placement procedure with design and explanation skills when it classifies or audits project artifacts.
+This scenario shows the Baseline Development skill that Project Organiser uses to keep placement decisions consistent with the project’s overall structure. General file-placement and explanation dependencies are defined once in [General Agent Skills](general-agent-skills.md).
 
 ```mermaid
 classDiagram
     direction LR
-
-    class project-specific-directives["Project-specific directives"] {
-        <<AGENTS.md>>
-        <<routing>>
-        +route organise-project-files when placement must be chosen or audited
-    }
-
-    class organise-project-files {
-        <<SKILL.md>>
-        <<Agent Skill>>
-        +choose-project-file-placement()
-    }
 
     class structured-design {
         <<SKILL.md>>
@@ -141,22 +131,12 @@ classDiagram
         +self-review-structured-design()
     }
 
-    class structured-explanation {
-        <<SKILL.md>>
-        <<Agent Skill>>
-        +create-structured-explanation()
-    }
-
     class ProjectOrganiser {
         <<Agent>>
     }
 
-    project-specific-directives o..> organise-project-files : when an Agent must choose or audit an artifact location
     ProjectOrganiser o--> structured-design
-    ProjectOrganiser o--> structured-explanation
 ```
-
-PROJECT.yaml records organise-project-files once in shared_agent_skills. Generated AGENTS.md exposes the condition to every Agent, so the Project-specific directives node avoids repeating the same dependency for each Agent. Project Organiser loads it when its placement responsibility applies, while other Agents load it before choosing or auditing an artifact location.
 
 ### Scenario: Reviewing A Structured Artifact
 
@@ -220,6 +200,7 @@ classDiagram
     }
     class structured-explanation {
         <<SKILL.md>>
+        <<Cross-group>>
     }
     class structured-design {
         <<SKILL.md>>
@@ -240,7 +221,7 @@ classDiagram
     test-driven-development o..> analyze-root-cause : when a test fails unexpectedly
 ```
 
-The scenario views include the complete Baseline Development membership across their skill nodes. Multi-operation skills expose the procedure headings relevant to their consumers, while a single-operation skill can use its skill identity as the operation.
+The scenario views include the complete Baseline Development membership across their skill nodes. `structured-explanation` appears only as a cross-group dependency of Baseline skills; it belongs to General Agent Skills. Multi-operation skills expose the procedure headings relevant to their consumers, while a single-operation skill can use its skill identity as the operation.
 
 ## Skill Responsibilities
 
@@ -253,8 +234,6 @@ The group combines exact-name Agent Skills with explicit procedure boundaries fo
 | code-discovery | Discover Code Context; Determine Change Scope | Gathers repository evidence and turns it into the smallest justified change or review boundary. Contract Authority and Boundaries remain shared data for both procedures. |
 | test-driven-development | Run Red-Green-Refactor Loop | Guides implementation through executable failing and passing behavior. |
 | structured-design | Create Structured Design; Self-Review Structured Design | Creates structured design artifacts and checks them against the same design contract. |
-| structured-explanation | Create Structured Explanation | Organizes technical reasoning into evidence-backed explanations. |
-| organise-project-files | Choose Project File Placement | Chooses and audits repository destinations from project guidance and taxonomy. |
 | review-structured-artifact | Review Structured Artifact | Reviews structured artifacts through checklist-backed evidence and findings. |
 | explain-code-fix | Explain Code Fix | Explains a completed code change and classifies the nature of the fix. |
 
@@ -274,8 +253,7 @@ The relationships and procedure boundaries are grounded in these Agent and skill
 - [Code Discovery](../../skills/code-discovery/SKILL.md)
 - [Test-Driven Development](../../skills/test-driven-development/SKILL.md)
 - [Structured Design](../../skills/structured-design/SKILL.md)
-- [Structured Explanation](../../skills/structured-explanation/SKILL.md)
-- [Organise Project Files](../../skills/organise-project-files/SKILL.md)
+- [General Agent Skills](general-agent-skills.md)
 - [Review Structured Artifact](../../skills/review-structured-artifact/SKILL.md)
 - [Explain Code Fix](../../skills/explain-code-fix/SKILL.md)
 - [Verify Documentation Page](../../skills/verify-documentation-page/SKILL.md)

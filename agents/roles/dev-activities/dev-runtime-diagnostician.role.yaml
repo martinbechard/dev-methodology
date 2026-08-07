@@ -53,9 +53,6 @@ skills:
 - trace-code-execution:
     justification: We need this to map the relevant control flow so runtime observations
       are interpreted at the correct boundary.
-- structured-explanation:
-    justification: We need this to present symptoms, hypotheses, evidence, and conclusions
-      so the requester can audit the diagnosis.
 - careful-coding:
     justification: We need this to keep any diagnostic instrumentation or remediation
       narrowly tied to the reproduced failure and avoid unrelated changes.

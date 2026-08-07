@@ -75,11 +75,6 @@ skills:
 - review-structured-artifact:
     justification: We need this to separate evidence extraction from severity synthesis
       and return only evidence-backed material findings.
-- structured-explanation:
-    justification: We need this when a finding depends on several clauses so the
-      report can separate facts, hypotheses, unknowns, and the supported conclusion.
-    condition: when a criticality judgment depends on multiple distant clauses,
-      unresolved evidence, or a cross-skill ownership boundary.
 outputContract:
 - critical skill findings:
     purpose: Gives maintainers prioritized, evidence-backed defects that can materially

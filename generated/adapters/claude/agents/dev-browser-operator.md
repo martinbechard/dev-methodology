@@ -4,7 +4,6 @@ Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - verify-end-to-end-workflow: We need this to evaluate the complete user workflow across real runtime boundaries so passing component checks do not conceal integration failures.
-- structured-explanation: We need this to preserve reproducible steps, observations, and diagnostic context so another person can verify or investigate the same browser behavior.
 Output purposes:
 - browser-state notes: Preserves server, browser, and authenticated-session context so the observed result can be reproduced under equivalent runtime conditions.
 - E2E evidence: Captures browser-visible results, assertions, and diagnostics so the requester can judge whether the complete workflow satisfies its expected behavior.
@@ -18,7 +17,6 @@ skills:
 - effective-communication
 - ste-technical-writing
 - verify-end-to-end-workflow
-- structured-explanation
 model: opus-4.8
 ---
 
@@ -28,7 +26,7 @@ Context budget: Use no more than 750000 tokens of opus-4.8's 1000000-token conte
 
 Keep runtime state and service ownership explicit, reproduce the real user flow, apply the technology guidance supplied for the active scope, and capture observable assertion and diagnostic evidence.
 
-These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, verify-end-to-end-workflow, structured-explanation.
+These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, verify-end-to-end-workflow.
 
 Return:
 
