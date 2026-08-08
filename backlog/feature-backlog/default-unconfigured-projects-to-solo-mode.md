@@ -140,17 +140,17 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Clean immutable candidate 16a189b9c6cde179c039bd6357af574848246459 is atop 55b8c805fd8b06fb5687bfaa126cdc577c703a77, e67fa4ac1b2b872ba97a3b4b4b18912975065cbb, and c80a8a3802fb806bc16d5a73b1a48aa581b5688d against baseline f147eca9fe03683b362a58481cd0d1a5e473a483. The full range is exactly eight paths, and the latest correction changed only the role YAML plus the accepted scripted snapshot source digest path. Slot 2 is separately resumed READY multi-contribution after primary Configurator handoff with accepted commits, merge, named fresh-context reviewers, final verification, and final integration commit evidence. Slot 5 preserves missing-config terminal BLOCKED with PRIMARY_PROJECT_CONFIGURATOR_HANDOFF_REQUIRED, no secondary dispatch, and no claim. Green evidence includes BundleContent consumers 3/3, role mutation 17/17, Bootstrapper evaluation 29/29, adjacent selector/provider 4/4, default and legacy disabled/enabled CLIs, skill/provenance/YAML/Python/diff checks. Exactly seven stale generated projections remain deferred. Candidate worktree is clean. Fresh reviewer /root/review_role_matrix_solo_fallback is active read-only on the immutable candidate and full contract. No blocker is recorded. No ninth path is authorized. No terminology claim is relied on. Integration and verification remain deferred. Title is Reviewing.
+Evidence: Fourth fresh reviewer /root/review_role_matrix_solo_fallback confirms the immutable HEAD 16a189b9c6cde179c039bd6357af574848246459, exact eight-path range, and role-matrix source semantics. Slot 2 is separately resumed READY multi-contribution after primary Configurator handoff with accepted commits, merge, three named fresh-context reviewers, dev-verifier final verification, and final integration commit. Slot 5 is terminal BLOCKED with PRIMARY_PROJECT_CONFIGURATOR_HANDOFF_REQUIRED, no secondary dispatch, and no claim-helper state. No material finding is recorded. Green reviewer checks so far are BundleContent 3/3, role mutation 17/17, and full Bootstrapper 29/29. Remaining checks are the three CLI flows, provenance, skill, YAML, compile, diff, the expected seven-stale projection check, and final synthesis. ETA is about 10 minutes. No blocker is recorded. No ninth path is authorized. No terminology claim is relied on. Integration and verification remain deferred. Candidate worktree is clean. Title is Reviewing.
 
-Observed At: 2026-08-08T22:14:19Z.
+Observed At: 2026-08-08T22:21:45Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-08T22:45:00Z.
 
-Next Action: Receive the reviewer verdict. If correction is required, return exact findings to the fixed coder; otherwise dispatch a fresh verifier.
+Next Action: Receive the final reviewer verdict. If correction is required, return exact findings to the fixed coder; otherwise dispatch a fresh verifier.
 
-Next Reconciliation At: 2026-08-08T22:24:19Z.
+Next Reconciliation At: 2026-08-08T22:31:45Z.
 
 ## User Action Required Transition Evidence
 
