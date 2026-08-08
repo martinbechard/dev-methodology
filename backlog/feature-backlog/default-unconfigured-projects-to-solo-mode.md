@@ -140,17 +140,17 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Clean immutable candidate 55b8c805fd8b06fb5687bfaa126cdc577c703a77 is atop e67fa4ac1b2b872ba97a3b4b4b18912975065cbb and c80a8a3802fb806bc16d5a73b1a48aa581b5688d against baseline f147eca9fe03683b362a58481cd0d1a5e473a483. The full range is exactly the eight authorized paths; the final correction commit changed exactly the three evaluation paths. Corrections remove generated Codex adapter and digest dependencies and emit explicit fresh-main regeneration, freshness, and scripted-suite commands; preserve explicit legacy runtime disabled/enabled states and raise when unresolved; and derive deliver-work-item-main-branch from authoritative COMPLETION_SKILLS while asserting it with file Persistence and no claim provider under coordination none. Green evidence includes full Bootstrapper 29/29, focused 3/3, provider/resource 4/4, combined role-mutation/scripted tests, default and legacy disabled/enabled CLIs, compile, YAML, skill, provenance, and diff checks. Exactly seven stale generated projections remain deferred, and the candidate has no digest dependency. Candidate worktree is clean. Fresh reviewer /root/review_final_solo_fallback is active read-only on the immutable candidate. No blocker is recorded. No ninth path is authorized. No terminology claim is relied on. Integration and verification remain deferred. Title is Reviewing.
+Evidence: Fresh reviewer /root/review_final_solo_fallback verifies the latest three corrections: no generated adapter pins and explicit fresh-main generate -> check -> suite order; explicit boolean legacy false/true values are preserved and unresolved state raises; and Commit mapping derives deliver-work-item-main-branch from COMPLETION_SKILLS with file Persistence and no claim provider under coordination none. Two pre-existing bundle tests fail at candidate HEAD, not excluded documentation-inventory debt: scripts/test_bundle_content.py around line 10529 expects the removed multi-contribution plausible response, and around line 10883 expects a no-PROJECT example STATUS READY while the corrected contract requires terminal BLOCKED. The reviewer is completing authority and scope analysis and final verdict synthesis. No ninth path is authorized or mutated. No final blocker is recorded. No terminology claim is relied on. No integration or verification is underway. Candidate 55b8c805fd8b06fb5687bfaa126cdc577c703a77 remains clean with exact eight-path scope and isolated branch/worktree. Title is Reviewing.
 
-Observed At: 2026-08-08T21:49:32Z.
+Observed At: 2026-08-08T21:57:39Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
-Deadline or Expires At: 2026-08-08T22:10:00Z.
+Deadline or Expires At: 2026-08-08T22:45:00Z. Extended because fresh review and bounded consumer reconciliation may be required.
 
-Next Action: Receive the fresh reviewer verdict. If correction is required, return exact findings to the fixed coder; otherwise dispatch a fresh verifier.
+Next Action: Receive the reviewer verdict and determine whether correction can remain within the candidate scope or requires explicit reconciliation before any extra path.
 
-Next Reconciliation At: 2026-08-08T21:59:32Z.
+Next Reconciliation At: 2026-08-08T22:07:39Z.
 
 ## User Action Required Transition Evidence
 
