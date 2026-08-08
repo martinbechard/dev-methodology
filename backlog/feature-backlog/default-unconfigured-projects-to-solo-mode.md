@@ -140,17 +140,17 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Corrected integration HEAD ade2839c5497f4e6a51c62d4bf840e91fdfce837 (parent 504d5d85) is clean in the isolated integration worktree. Exactly five correction paths are reconciled: README.md handoff sequence, two mode skills’ inline spans, generated skill-definitions regeneration, and scripted_orchestration.py digest pins. Gates PASS: freshness, skills 3, provenance 3, compilation, BundleContent 3, role 17, Bootstrapper 29, README/no-inline, and diff. Integration correction claim heartbeat event 9aff8578-eb29-4b8e-a7bb-ccaa4e03a976 at 2026-08-08T23:28:36Z remains live. Fresh Methodology Artifact Reviewer /root/rereview_corrected_solo_artifacts and independent Dev Verifier /root/verify_integrated_solo_fallback are active read-only. Primary main is currently dirty only with unrelated untracked evals/projects/terminology-standard-effect/; delivery is paused pending external reconciliation, with no polling, overwrite, or absorb action. This is not a current review blocker. Title is Reviewing.
+Evidence: Methodology artifact re-review resolved the prior README and inline-format findings with no new material issue. Build check, skills 3, role 17, provenance 4, adapter hashes 4, and scripted digests 5 pass; remaining Bootstrapper suite, CLI, and diff/clean checks are in progress with ETA 4–6 minutes. Integrated verifier /root/verify_integrated_solo_fallback has PASS so far for exact 16 delivery paths, correction 5, freshness, BundleContent 3, role 17, adjacent 3, skills 3, provenance 3, YAML 2, Python 3, diff, and claim status; Bootstrapper exact rerun resumed after output-session loss, with CLI 5, adapters, README mapping, and cleanliness remaining ETA 5–8 minutes. Integration correction claim heartbeat event 7cebf000-699f-480f-9600-54c39dc65dfd at 2026-08-08T23:35:09Z remains live. Primary main’s unrelated untracked terminology files remain the delivery boundary and are untouched; no review blocker is recorded. Title is Reviewing.
 
-Observed At: 2026-08-08T23:30:18Z.
+Observed At: 2026-08-08T23:37:21Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-09T00:00:00Z.
 
-Next Action: Receive both fresh PASS verdicts, then reconcile the unrelated main worktree state externally before any delivery mutation; deliver only after main is clean. The deadline covers review, verification, and delivery reconciliation.
+Next Action: Receive both final PASS verdicts, then reconcile the unrelated main worktree state externally before any delivery mutation; deliver only after main is clean. The deadline covers final review, verification, and delivery reconciliation.
 
-Next Reconciliation At: 2026-08-08T23:38:18Z.
+Next Reconciliation At: 2026-08-08T23:43:21Z.
 
 ## User Action Required Transition Evidence
 
