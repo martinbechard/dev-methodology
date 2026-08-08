@@ -140,17 +140,17 @@ Condition Type: delegated-work.
 
 Owner: Fixed Dev Coder /root/implement_solo_fallback under canonical Root Dev Orchestrator task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Six paths are currently modified within the exact eight-path scope: skills/set-solo-mode/SKILL.md, skills/set-multitask-mode/SKILL.md, skills/resource-claim/SKILL.md, scripts/test_role_mutation_policy.py, evals/agent-tests/project-bootstrapper/scripted_orchestration.py, and evals/agent-tests/project-bootstrapper/test_scripted_orchestration.py. The scenario and role source remain planned within the eight before commit; no ninth path is authorized. Finding 1 selector semantics and real-validator tests for false/none and true/resource-claim are substantially encoded. Finding 4 resource-helper wording is narrowed and an unrelated file Persistence routing regression is added. Finding 2 separate terminal BLOCKED/resumed execution refactor is in progress. Finding 3 provenance blocks are added to exactly three skill documents; historical validation is pending. Remaining work is the subprocess refactor, scenario/role consistency, target digest refreshes within accepted paths, focused provenance/package/build/tests, immutable commit, and clean handoff. The estimate is 35–50 minutes from 2026-08-08T21:13:34Z. Generated, integration, review, and verification work remains deferred. No blocker is recorded. No terminology claim is relied on. The reviewed candidate ancestry is c80a8a3802fb806bc16d5a73b1a48aa581b5688d; the isolated worktree is /Users/martinbechard/.codex/worktrees/75e6/dev-methodology on branch codex/default-unconfigured-projects-to-solo-mode. Title is Implementing.
+Evidence: All and only the exact eight authorized paths are modified: agents/roles/project-setup/project-bootstrapper.role.yaml; skills/set-solo-mode/SKILL.md; skills/set-multitask-mode/SKILL.md; skills/resource-claim/SKILL.md; scripts/test_role_mutation_policy.py; evals/agent-tests/project-bootstrapper/scenarios.yaml; evals/agent-tests/project-bootstrapper/scripted_orchestration.py; evals/agent-tests/project-bootstrapper/test_scripted_orchestration.py. Green gates are combined mutation-policy plus scripted suite exit 0, full project-bootstrapper unittest discovery exit 0, Python 3.11 scripted scenario PASS with initial BLOCKED, configuration PASS, separately resumed PASS, validator gate, and clean claim closeout; three skill packages validate; historical provenance validator validates three documents; py_compile passes; and git diff --check passes. The expected non-passing build check is exactly seven stale generated projections; generation is deferred and forbidden in candidate scope. Generic Provider Skill wording is tightened and its pinned digest is refreshed. Remaining work is only the small affected test/validator rerun, final diff/status audit, immutable correction commit, and clean handoff. ETA is 15–25 minutes. No blocker is recorded. No ninth path is authorized. No terminology claim is relied on. Generated, integration, review, and verification work remains deferred. The reviewed candidate ancestry is c80a8a3802fb806bc16d5a73b1a48aa581b5688d; the isolated worktree is /Users/martinbechard/.codex/worktrees/75e6/dev-methodology on branch codex/default-unconfigured-projects-to-solo-mode. Title is Implementing.
 
-Observed At: 2026-08-08T21:14:21Z.
+Observed At: 2026-08-08T21:22:55Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
-Deadline or Expires At: 2026-08-08T22:10:00Z. Extended because bounded reviewer correction and focused gates remain.
+Deadline or Expires At: 2026-08-08T22:10:00Z.
 
-Next Action: Receive the clean corrected immutable candidate. Then set the title to Reviewing and dispatch a fresh replacement review.
+Next Action: Complete the small affected rerun, final diff/status audit, immutable correction commit, and clean handoff. Then set the title to Reviewing and dispatch a fresh replacement review.
 
-Next Reconciliation At: 2026-08-08T21:24:21Z.
+Next Reconciliation At: 2026-08-08T21:32:55Z.
 
 ## User Action Required Transition Evidence
 
