@@ -1,12 +1,12 @@
 # Reconcile Bundle Content Suite Drift
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Owner: Root Dev Orchestrator task `019fda10-8f12-7ae0-8d71-9b8678c17451`
+Owner: Unowned
 
 Work Item ID: reconcile-bundle-content-suite-drift
 
@@ -86,7 +86,7 @@ Intended Root Role: Dev Orchestrator
 
 Scheduling Evidence: The user answered the recorded question in the preserved canonical conversation. UAR -> Ready is durable at `b94cdfc39af8001600357ff412293dde920c3997`; the same canonical task remains active with the preserved six-path partial worktree, and no duplicate launch is authorized.
 
-## Active Execution Evidence
+## Last Active Execution Evidence
 
 Condition Type: delegated-work
 
@@ -119,6 +119,36 @@ Worktree: /Users/martinbechard/.codex/worktrees/6e5c/dev-methodology.
 Phase: First bounded producer correction attempt for two independent-review findings.
 
 Conversation Title Evidence: `Correcting — Reconcile Bundle Content Suite Drift` will be synchronized after this provider evidence commit.
+
+## Completion Evidence
+
+Completed At: 2026-08-08T18:28:00Z
+
+Completion Disposition: READY through configured direct-main delivery.
+
+Accepted Candidate: `d4a97090c4cf6b205d248854aba06092d86dac8b`, with reviewed foundation commit `c6413aa8a5ef978c81f6bf9e1dc99f38642d7bec` and original base `9bbbb27692d4e1f73b8434fc85cfcd1bb0cd64cc`.
+
+Changed Paths: Exactly the approved 13 evaluation and test paths. No distributed skill, conceptual Agent source, generated user-facing adapter, canonical production source, simulator, framework, or unrelated path changed.
+
+Independent Review: Fresh Dev Code Reviewer `/root/bundle_content_review` first returned CORRECTIONS_REQUIRED for two weakened regression boundaries, then returned ACCEPT on replacement candidate `d4a97090c4cf6b205d248854aba06092d86dac8b` after confirming both corrections, the exact 13-path scope, preserved allowed examples, explicit `code-comments` review-fixture coverage, and no new material findings.
+
+Independent Verification: Dev Verifier `/root/bundle_content_verify` returned PASS on replacement candidate `d4a97090c4cf6b205d248854aba06092d86dac8b` using Python 3.11. The invalidated focused tests passed, Python compilation and diff checks passed, the base-to-tip path union remained exact, and the final candidate aggregate ran 168 tests with outcome OK.
+
+Direct-Main Integration: Source commit `c6413aa8a5ef978c81f6bf9e1dc99f38642d7bec` replayed as integration commit `ceb171d9ea53071e9429ef0ca7b012697d1a546c`; both have stable patch ID `f99e1e4b74f7e2058bff855761f5eddf2abb7b50`. Source correction `d4a97090c4cf6b205d248854aba06092d86dac8b` replayed as integration commit `2dedbfa4061cd5fa128dd429de00e1d55bb1f7e9`; both have stable patch ID `649f14a0554c55c599b3939042c04a91e4096ec4`.
+
+Main Observation: Configured branch `main` was observed at `6ed6acf04b356ac7fce7c6c43a1deea47da93175`. Both integration commits are ancestors of that tip. The only later concurrent advance modified `backlog/feature-backlog/add-document-provenance-skill.md`, outside the accepted path set.
+
+Post-Integration Checks: `PYTHONDONTWRITEBYTECODE=1 /opt/homebrew/bin/python3.11 -m unittest scripts.test_bundle_content` ran 168 tests with outcome OK. Integration diff checks passed, the primary main worktree was clean, and no integration residue remained.
+
+Remote Observation: Not required by the configured local main-branch completion contract for this work item.
+
+Residuals: The pre-existing fixed-Steward wording in `evals/agent-tests/runner.py` and the unrelated Methodology Maintainer generated-adapter mismatch remain outside this candidate. Neither invalidated a required focused, aggregate, review, verification, or integrated check. They were not changed or claimed as repaired.
+
+Claim Evidence: Exact 13-path integration claim `reconcile-bundle-content-main-integration-019fda10` was acquired with event `4d2b7eb2-2eb2-46ac-9b00-2333a656b77a` and released after verification with event `7464cd4f-afdd-4920-aa7d-6be6b564d783`. Terminal update claim `reconcile-bundle-content-complete-update-019fda10` was acquired with event `cdddef3b-7cc5-454a-a358-703b16d209be`; exact source-and-archive path claim `reconcile-bundle-content-complete-paths-019fda10` was acquired with event `12edef29-295c-4bd6-84fc-ed21b7395a6a`.
+
+Archive Path: `backlog/completed-backlog/defects/reconcile-bundle-content-suite-drift.md`.
+
+Terminal Provider Commit: Reported from immutable Git proof after this exact archive transaction.
 
 ## Prior Active Execution Evidence
 
