@@ -136,21 +136,21 @@ Next Reconciliation At: 2026-08-08T20:14:35Z.
 
 ## Active Execution Evidence
 
-Condition Type: root-execution.
+Condition Type: delegated-work.
 
-Owner: Dev Orchestrator (agent root; canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7).
+Owner: Fixed Dev Coder child /root/implement_solo_fallback under canonical Root Dev Orchestrator task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Starting -> Running is accepted after the approved User Action Required resumption for canonical Root Dev Orchestrator task 019fe2f2-f195-7670-8367-15d9e5c79de7 under parent Coordinator 019fb057-1767-7ef2-b5fa-41f4417b20b3. The canonical branch is codex/default-unconfigured-projects-to-solo-mode and the private worktree is /Users/martinbechard/.codex/worktrees/75e6/dev-methodology. Current phase is governed authorization checks then bounded private implementation. Exact terminology task 019fe2b3-4bcd-7f00-88aa-90e281b8f8bf manifest, dirty paths, review, and integration events remain deferred while its exact claim is live. The exact Work Item ID activity=work claim is live for default-unconfigured-projects-to-solo-mode.
+Evidence: All four exact governed pre-mutation receipts independently returned ALLOWED_APPROVED_DEFINITION_CHANGE for skills/set-solo-mode/SKILL.md, skills/set-multitask-mode/SKILL.md, skills/resource-claim/SKILL.md, and agents/roles/project-setup/project-bootstrapper.role.yaml. The child returned clean/no-change handoff evidence before source mutation. Current bounded phase is source-to-focused-test mapping and implementation for the explicit primary Project Configurator handoff/resume. No secondary dispatch or claim/helper/registry activity occurs before a valid PROJECT.yaml; configured behavior resumes after. No terminology claim is active. The isolated worktree is /Users/martinbechard/.codex/worktrees/75e6/dev-methodology on branch codex/default-unconfigured-projects-to-solo-mode. Reviewer and integration have not started.
 
-Observed At: 2026-08-08T20:20:06Z.
+Observed At: 2026-08-08T20:37:06Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-08T21:20:06Z.
 
-Next Action: Complete governed authorization checks, then begin bounded private implementation in the canonical branch and worktree. Defer terminology manifest, dirty-path, review, and integration events until the terminology claim is released.
+Next Action: Fixed Dev Coder completes a clean verified candidate commit. Root Orchestrator then dispatches fresh independent source review and verification. Generated and documentation integration remains fresh-main only.
 
-Next Reconciliation At: 2026-08-08T20:30:06Z.
+Next Reconciliation At: 2026-08-08T20:47:06Z.
 
 ## User Action Required Transition Evidence
 
