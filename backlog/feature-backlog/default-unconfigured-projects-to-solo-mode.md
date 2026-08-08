@@ -140,17 +140,17 @@ Condition Type: delegated-work.
 
 Owner: Fixed Dev Coder /root/implement_solo_fallback under canonical Root Dev Orchestrator task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Replacement reviewer /root/review_corrected_solo_fallback returned NEEDS_CORRECTION on e67fa4ac1b2b872ba97a3b4b4b18912975065cbb with exactly three bounded findings. First, stale generated Codex adapter digest 41f70b is pinned while corrected source would generate 0a1b92, so fresh-main generation would break the snapshot suite. Second, legacy secondaryDispatchEnabled None is converted to enabled instead of preserving explicit enabled or disabled legacy runtime settings. Third, the none-coordination regression asserts the Commit selector main-branch but not the deliver-work-item-main-branch provider mapping. The same fixed coder is active correcting only within the exact eight paths; no generated path is allowed in the candidate. Previous green evidence is retained, but new gates are pending. No blocker is recorded. No terminology claim is relied on. No integration, review, or verification is underway. Candidate ancestry is f147eca9 -> c80a8a3802fb806bc16d5a73b1a48aa581b5688d -> e67fa4ac1b2b872ba97a3b4b4b18912975065cbb. The isolated worktree is /Users/martinbechard/.codex/worktrees/75e6/dev-methodology on branch codex/default-unconfigured-projects-to-solo-mode. Title is Implementing.
+Evidence: Exactly three paths are currently modified for this correction, all within the eight-path maximum: evals/agent-tests/project-bootstrapper/scenarios.yaml, evals/agent-tests/project-bootstrapper/scripted_orchestration.py, and evals/agent-tests/project-bootstrapper/test_scripted_orchestration.py. Finding 1 is corrected: generated Codex adapters are removed from snapshot copies and digest pins; the contract declares authoritative-source-only candidate evidence plus mandatory fresh-main generation, freshness checking, then the scripted suite. Finding 2 is corrected: legacy behavior requires explicit existing runtime dispatch state, preserves disabled and enabled values unchanged, and raises when unresolved instead of default-enabling. Finding 3 is corrected: none-coordination regression derives deliver-work-item-main-branch from the Commit selector through renderer COMPLETION_SKILLS and asserts it with file Persistence while the claim provider list is empty. Green evidence includes focused regressions, combined role-policy/scripted tests, full Bootstrapper discovery, Python 3.11 default and legacy disabled/enabled CLIs, targeted provider tests, py_compile, YAML, diff check, skill validation, and three-document historical provenance validation. Exactly seven stale generated projections remain expected; no candidate digest dependency remains. Remaining work is the final combined rerun after small CLI cleanup, exact diff/staging audit, immutable commit, and clean handoff. ETA is 10–15 minutes. No blocker is recorded. No ninth path is authorized. No terminology claim is relied on. Integration, review, and verification remain deferred. Candidate ancestry is f147eca9 -> c80a8a3802fb806bc16d5a73b1a48aa581b5688d -> e67fa4ac1b2b872ba97a3b4b4b18912975065cbb. The isolated worktree is /Users/martinbechard/.codex/worktrees/75e6/dev-methodology on branch codex/default-unconfigured-projects-to-solo-mode. Title is Implementing.
 
-Observed At: 2026-08-08T21:37:43Z.
+Observed At: 2026-08-08T21:45:22Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-08T22:10:00Z.
 
-Next Action: Receive the clean new immutable correction candidate. Then switch the title to Reviewing and run a fresh replacement review.
+Next Action: Receive the clean new immutable correction commit. Then switch the title to Reviewing and run a fresh replacement review.
 
-Next Reconciliation At: 2026-08-08T21:47:43Z.
+Next Reconciliation At: 2026-08-08T21:55:22Z.
 
 ## User Action Required Transition Evidence
 
