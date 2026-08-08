@@ -10,7 +10,7 @@ target:
   conditionalSkills:
     organise-project-files: Orchestration creates a project file or directory.
     resource-claim: Resource coordination selects resource-claim.
-  allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator, dev-backlog-steward]
+  allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator]
   taskSelectableAgentDependencies: [dev-documentation-writer, dev-artifact-reviewer]
   requiredOutputs: [status, task breakdown, resolved definition-owned skillsets, assigned agents, handoff plan, integrated verification, committed integration, work-item delivery]
 projectAgents:

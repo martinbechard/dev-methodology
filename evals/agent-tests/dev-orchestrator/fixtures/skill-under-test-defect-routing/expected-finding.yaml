@@ -1,7 +1,7 @@
 provider: file
 providerPath: backlog/defect-backlog
 providerItem: synthetic-target-skill-missing-finding-receipt.md
-routeTo: Dev Backlog Steward
+routeTo: Dev Orchestrator
 missingBehavior: Preserve one durable finding receipt.
 confirmationOwner: dev-verifier
 confirmationReceiptLane: confirmation

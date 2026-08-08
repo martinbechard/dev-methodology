@@ -14,7 +14,7 @@ target:
     resolve-backlog-blockage: A user or Watchdog declaration begins or continues backlog-blockage recovery.
     set-solo-mode: A secondary-thread dispatch mechanism exists when sequential blockage recovery begins.
     set-multitask-mode: A secondary-thread dispatch mechanism exists when every blockage-recovery exit condition is satisfied.
-  allowedAgentDependencies: [dev-orchestrator]
+  allowedAgentDependencies: [dev-orchestrator, dev-backlog-steward]
   requiredOutputs: [status, provider lifecycle snapshot, dispatch and capacity outcome, stalled delivery actions, completed item cleanup, fifteen-minute throughput summary]
 projectAgents:
   supervisor: agents/supervisor.toml

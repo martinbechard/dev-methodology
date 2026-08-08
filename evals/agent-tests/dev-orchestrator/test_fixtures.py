@@ -61,6 +61,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         self.assertEqual("confirmation", expected["confirmationReceiptLane"])
         self.assertEqual("deliberately-excluded", expected["currentDeliveryDisposition"])
         self.assertEqual("create-work-item-file", expected["creationProcedure"])
+        self.assertEqual("Dev Orchestrator", expected["routeTo"])
 
         protection = scenario["protectedTarget"]
         allowed_mutations = scenario["allowedMutationPaths"]
@@ -161,11 +162,11 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         self.assertNotIn("requiresWorkspaceInventory", scenario)
         self.assertNotIn("requiresNoDetectedMutation", scenario)
         self.assertEqual(
-            ["dev-verifier", "dev-backlog-steward"],
+            ["dev-verifier"],
             scenario["allowedAgentDependencies"],
         )
         self.assertEqual(
-            ["dev-verifier", "dev-backlog-steward"],
+            ["dev-verifier"],
             scenario["requiredDependencyOrder"],
         )
         self.assertEqual(
@@ -196,6 +197,10 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         self.assertEqual("project-files", resource_claim["integrationScope"])
         self.assertNotIn("integrationResource", resource_claim)
         self.assertNotIn("claimRelease", resource_claim["requiredHandoffReceiptFields"])
+        self.assertEqual(
+            "dev-orchestrator",
+            contract["orchestration"]["closeout"]["owner"],
+        )
 
     def test_none_coordination_report_omits_claim_release_evidence(self) -> None:
         """Provider-none receipts remain structured without claim release objects."""

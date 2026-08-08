@@ -18,6 +18,7 @@ target:
     organise-project-files: The maintenance creates a new project file or directory.
     structured-design: Catalog, conceptual role, or operating-model changes require explicit boundaries and relationships.
   allowedAgentDependencies:
+    - dev-skill-lint-reviewer
     - methodology-artifact-reviewer
     - dev-verifier
   requiredOutputs:

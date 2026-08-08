@@ -59,7 +59,6 @@ orchestration:
     - {step: 7, role: dev-code-reviewer, lane: post-integration-source-review, fresh: true}
     - {step: 8, role: dev-artifact-reviewer, lane: post-integration-documentation-review, fresh: true}
     - {step: 9, role: dev-verifier, lane: final-verification, fresh: true}
-    - {step: 10, role: dev-backlog-steward, lane: closeout, fresh: true}
   integration:
     owner: dev-merge-coordinator
     requiresAcceptedSource: true
@@ -76,7 +75,7 @@ orchestration:
     completedStatus: COMPLETED
     before: closeout
   closeout:
-    owner: dev-backlog-steward
+    owner: dev-orchestrator
     item: backlog/feature-backlog/update-dependency-health-summary.md
     terminalState: Complete
     requiresDeliveryStatus: COMPLETED

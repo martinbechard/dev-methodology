@@ -35,18 +35,16 @@ REPOSITORY_MAINTENANCE_SKILL_PATH = (
     / "dev-methodology-repository-maintenance"
     / "SKILL.md"
 )
-CREATE_OUTLINE_SKILL_PATH = (
+ANALYZE_DOCUMENT_TOPICS_SKILL_PATH = (
     REPOSITORY_ROOT
-    / ".agents"
     / "skills"
-    / "create-document-outline"
+    / "analyze-document-topics"
     / "SKILL.md"
 )
-IMPROVE_OUTLINE_SKILL_PATH = (
+REVISE_DOCUMENT_TOPICS_SKILL_PATH = (
     REPOSITORY_ROOT
-    / ".agents"
     / "skills"
-    / "improve-document-outline"
+    / "revise-document-topics"
     / "SKILL.md"
 )
 SKILLS_ROOT = REPOSITORY_ROOT / "skills"
@@ -2348,10 +2346,14 @@ class BundleContentTests(unittest.TestCase):
     def test_skills_and_roles_do_not_reissue_harness_instruction_loading(self) -> None:
         instruction_target = r"(?:AGENTS\.md|CLAUDE\.md|project instructions|repository coordination instructions)"
         manual_target = rf"(?:{instruction_target}|agent instructions)"
-        manual_action = r"(?:read(?:s|ing)?|re[- ]?read(?:s|ing)?|open(?:s|ed|ing)?|locat(?:e|es|ed|ing)|follow(?:s|ed|ing)?|inspect(?:s|ed|ing)?|discover(?:s|ed|ing)?|scan(?:s|ned|ning)?)"
+        manual_action = r"(?:read(?:s|ing)?|re[- ]?read(?:s|ing)?|open(?:s|ed|ing)?(?!-)|locat(?:e|es|ed|ing)|follow(?:s|ed|ing)?|inspect(?:s|ed|ing)?|discover(?:s|ed|ing)?|scan(?:s|ned|ning)?)"
         load_action = r"load(?:s|ed|ing)?"
+        all_actions = rf"(?:{manual_action}|{load_action})"
+        agent_subject = r"(?:agents?|reviewers?|writers?|coders?|orchestrators?)"
+        target_prefix = r"(?:the\s+)?(?:all\s+)?(?:(?:root|nearest|applicable|nested)(?:\s+and\s+(?:root|nearest|applicable|nested))?\s+)?"
+        direct_loading = rf"\b{all_actions}\b(?:\s+and\s+\b{all_actions}\b)?\s+{target_prefix}\b{manual_target}\b"
         manual_loading = re.compile(
-            rf"(?:\b{manual_action}\b[^.;!?]{{0,100}}\b{manual_target}\b|\b{load_action}\b\s+(?:the\s+)?(?:(?:root|nearest|applicable|nested)\s+)?\b{instruction_target}\b|\b{instruction_target}\b[^.;!?]{{0,120}}\b(?:agents?|reviewers?|writers?|coders?|orchestrators?)\b[^.;!?]{{0,60}}\b(?:{manual_action}|{load_action})\b|\b{instruction_target}\b[^.;!?]{{0,50}}\b(?:is|are|was|were|gets?|got)\s*(?:{manual_action}|{load_action})\b)",
+            rf"(?:^(?:<[^>]+>\s*|[-*#]+\s*)*(?:(?:before|after)\b[^,.;!?]{{0,80}},\s*)?{direct_loading}|\b{agent_subject}\b(?:(?:\s+(?:must|should|shall|will|can|needs?\s+to|has\s+to|first|manually)){{0,2}}\s+){direct_loading}|\b{instruction_target}\b(?:\s+(?:file|files|instructions?))?\s+(?:is|are|was|were|gets?|got)\s*\b{all_actions}\b|\b{instruction_target}\b[^.;!?]{{0,80}}\b{agent_subject}\b[^.;!?]{{0,40}}\b{all_actions}\b\s+(?:it|them|that\s+(?:file|artifact)|the\s+(?:file|instructions?))\b)",
             re.IGNORECASE,
         )
         prohibition = re.compile(
@@ -2404,6 +2406,9 @@ class BundleContentTests(unittest.TestCase):
             "Before creating files, read AGENTS.md.",
             "The coder reads AGENTS.md before writing source files.",
             "The harness supplies tools, but the coder reads AGENTS.md before acting.",
+            "Load the applicable project instructions before coding.",
+            "The orchestrator loads the project instructions before delivery.",
+            "After AGENTS.md is available, the reviewer reads it before review.",
         )
         allowed_examples = (
             "Do not tell ordinary agents to read AGENTS.md.",
@@ -2411,6 +2416,10 @@ class BundleContentTests(unittest.TestCase):
             "Review the existing AGENTS.md artifact.",
             "Investigate whether the harness loads AGENTS.md.",
             "The harness supplies applicable AGENTS.md instructions automatically.",
+            "Each runtime has its own files and rules for discovering skills, agent definitions, project instructions, and optional MCP configuration.",
+            "The open-diamond arrow shows that AGENTS.md names the skill selected for the project.",
+            "After AGENTS.md selects manage-work-items-gitlab, the agent reads that SKILL.md.",
+            "A reader can follow the request through AGENTS.md injection to the selected procedure.",
         )
         for example in prohibited_examples:
             with self.subTest(prohibited_example=example):
@@ -8902,8 +8911,12 @@ class BundleContentTests(unittest.TestCase):
             exclusion["forbiddenBehaviors"],
         )
         self.assertEqual(
-            ["dev-verifier", "dev-backlog-steward"],
+            ["dev-verifier"],
             exclusion["requiredDependencyOrder"],
+        )
+        self.assertNotIn(
+            "dev-backlog-steward",
+            exclusion["allowedAgentDependencies"],
         )
         self.assertEqual(
             ["confirmation", "finding"],
@@ -9283,7 +9296,6 @@ class BundleContentTests(unittest.TestCase):
                 "dev-code-reviewer",
                 "dev-verifier",
                 "dev-merge-coordinator",
-                "dev-backlog-steward",
             ),
             role.agent_dependencies,
         )
@@ -9951,7 +9963,7 @@ class BundleContentTests(unittest.TestCase):
         readme_text = README_PATH.read_text(encoding="utf-8")
 
         for phrase in (
-            "After a new work-item file is committed",
+            "After a new work item is persisted",
             "It does not reserve capacity, change lifecycle state, create a delivery execution, or start implementation.",
             "Resolve Backlog Blockage owns diagnosis and one-item-at-a-time recovery",
             "Set Solo Mode disables only new secondary-thread dispatch",
@@ -11253,6 +11265,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertEqual(
             {
                 "dev-artifact-reviewer",
+                "dev-document-topic-editor",
                 "dev-documentation-writer",
                 "wiki-architect",
                 "wiki-ingester",
@@ -11353,14 +11366,30 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertIn("typescript-order-pricing", by_id)
         self.assertIn("spring-boot-order-cancellation", by_id)
-        code_delivery_cases = [
+        code_implementation_cases = [
             case
             for case in by_id.values()
-            if case.get("workflowPack") in {None, "code-delivery"}
+            if case.get("requiredAgents") == ["dev-coder"]
         ]
-        for case in code_delivery_cases:
+        for case in code_implementation_cases:
             with self.subTest(code_comments_case=case["id"]):
                 self.assertIn("code-comments", case["requiredSkills"])
+
+        delivery_case = by_id["main-branch-unrelated-dirty-contract"]
+        self.assertEqual(["dev-orchestrator"], delivery_case["requiredAgents"])
+        self.assertEqual(
+            {
+                "manage-work-items",
+                "structured-design",
+                "structured-explanation",
+                "deliver-work-item",
+                "deliver-work-item-main-branch",
+                "resource-claim",
+            },
+            set(delivery_case["requiredSkills"]),
+        )
+        self.assertNotIn("code-comments", delivery_case["requiredSkills"])
+
         review_case = by_id["typescript-code-review"]
         self.assertTrue(review_case["expectVerifyFailure"])
         self.assertIn("review-code-with-evidence", review_case["requiredSkills"])
@@ -11374,7 +11403,11 @@ class BundleContentTests(unittest.TestCase):
         self.assertEqual([], file_boundary_case["fixtureBackedProbeClaims"])
         self.assertEqual(["eval-result.md"], file_boundary_case["allowedWritePaths"])
         self.assertEqual(
-            {"create-work-item-file", "manage-work-items-file"},
+            {
+                "manage-work-items",
+                "create-work-item-file",
+                "manage-work-items-file",
+            },
             set(file_boundary_case["requiredSkills"]) - {"structured-explanation"},
         )
 
@@ -11431,10 +11464,12 @@ class BundleContentTests(unittest.TestCase):
             "methodology-artifact-reviewer",
             "dev-backlog-coordinator",
             "dev-backlog-watchdog",
+            "dev-document-topic-editor",
+            "dev-skill-lint-reviewer",
         ]
         suite_entries = index["suites"]
         self.assertEqual(expected_suites, [entry["id"] for entry in suite_entries])
-        self.assertEqual(list(range(1, 29)), [entry["priority"] for entry in suite_entries])
+        self.assertEqual(list(range(1, 31)), [entry["priority"] for entry in suite_entries])
         suite_directories = {
             path.name
             for path in AGENT_TEST_SUITES_ROOT.iterdir()
@@ -11536,6 +11571,10 @@ class BundleContentTests(unittest.TestCase):
             scenarios = load_yaml_object(suite_root / "scenarios.yaml")
             target = suite["target"]
             role = load_yaml_object(REPOSITORY_ROOT / target["conceptualRole"])
+            scenario_statuses = {
+                scenario["status"] for scenario in scenarios["scenarios"]
+            }
+            declared_only = scenario_statuses == {"declared"}
 
             with self.subTest(suite=entry["id"]):
                 self.assertEqual(entry["id"], suite["id"])
@@ -11543,6 +11582,10 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue((REPOSITORY_ROOT / target["nativeAgent"]).is_file())
                 self.assertEqual(1, suite["execution"]["maximumActiveChildren"])
                 self.assertTrue(suite["execution"]["requireCodexIdentityEvidence"])
+                self.assertEqual(
+                    {"supervisor", "judge"},
+                    set(suite["projectAgents"]),
+                )
                 if entry["id"] == "dev-backlog-coordinator":
                     self.assertEqual(
                         ["dev-orchestrator", "dev-backlog-steward"],
@@ -11562,7 +11605,9 @@ class BundleContentTests(unittest.TestCase):
                         target["allowedAgentDependencies"],
                     )
                 self.assertEqual(entry["id"], scenarios["suite"])
-                if entry["id"] == "dev-code-reviewer":
+                if declared_only:
+                    self.assertEqual(1, len(scenarios["scenarios"]))
+                elif entry["id"] == "dev-code-reviewer":
                     self.assertEqual(4, len(scenarios["scenarios"]))
                     self.assertEqual(
                         {
@@ -11623,7 +11668,7 @@ class BundleContentTests(unittest.TestCase):
                 elif entry["id"] == "dev-backlog-coordinator":
                     self.assertEqual(9, len(scenarios["scenarios"]))
                 elif entry["id"] == "dev-backlog-watchdog":
-                    self.assertEqual(6, len(scenarios["scenarios"]))
+                    self.assertEqual(14, len(scenarios["scenarios"]))
                 elif entry["id"] == "dev-orchestrator":
                     self.assertEqual(5, len(scenarios["scenarios"]))
                 else:
@@ -11635,13 +11680,22 @@ class BundleContentTests(unittest.TestCase):
                     suite=entry["id"],
                     executable_scenario=scenario["id"],
                 ):
-                    self.assertIn(scenario["status"], {"executable", "fixture-backed"})
-                    self.assertIsInstance(executable_case, str)
-                    self.assertTrue(
-                        (suite_root / executable_case).exists() or executable_case in legacy_case_ids
-                    )
+                    if declared_only:
+                        self.assertEqual("declared", scenario["status"])
+                        self.assertIsNone(executable_case)
+                    else:
+                        self.assertIn(
+                            scenario["status"],
+                            {"executable", "fixture-backed"},
+                        )
+                        self.assertIsInstance(executable_case, str)
+                        self.assertTrue(
+                            (suite_root / executable_case).exists()
+                            or executable_case in legacy_case_ids
+                        )
 
-            for agent_kind, relative_path in suite["projectAgents"].items():
+            project_agents = () if declared_only else suite["projectAgents"].items()
+            for agent_kind, relative_path in project_agents:
                 agent_path = suite_root / relative_path
                 with self.subTest(suite=entry["id"], agent=agent_kind):
                     agent = tomllib.loads(agent_path.read_text(encoding="utf-8"))
@@ -11734,7 +11788,7 @@ class BundleContentTests(unittest.TestCase):
         for clause in (
             "Count only lifecycle STARTING and RUNNING items returned by the "
             "effective Persistence-selected management skill.",
-            "Use one canonical Dev Orchestrator task for each Starting or "
+            "Use one canonical Dev Orchestrator execution for each Starting or "
             "Running work item.",
             "Recount and refill Starting-plus-Running capacity toward ten "
             "after every terminal cleanup.",
@@ -11856,17 +11910,18 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(phrase, maintenance_skill_text)
                 self.assertNotIn(phrase, agents_text)
 
-    def test_repository_local_outline_improvement_preserves_honest_scores(self) -> None:
-        skill_text = IMPROVE_OUTLINE_SKILL_PATH.read_text(encoding="utf-8")
+    def test_revise_document_topics_preserves_honest_scores(self) -> None:
+        skill_text = REVISE_DOCUMENT_TOPICS_SKILL_PATH.read_text(encoding="utf-8")
+        normalized_skill_text = " ".join(skill_text.split())
         skill_metadata = load_yaml_object_from_frontmatter(
-            IMPROVE_OUTLINE_SKILL_PATH
+            REVISE_DOCUMENT_TOPICS_SKILL_PATH
         )
 
-        self.assertEqual("improve-document-outline", skill_metadata["name"])
-        self.assertIn("partial scores", skill_metadata["description"])
+        self.assertEqual("revise-document-topics", skill_metadata["name"])
+        self.assertIn("without gaming alignment scores", skill_metadata["description"])
 
         for phrase in (
-            "[Create Document Outline](../create-document-outline/SKILL.md)",
+            "[Analyze Document Topics](../analyze-document-topics/SKILL.md)",
             "Prefer a more truthful structure over a higher percentage.",
             "Recalculate the moved topic and every sibling whose predecessor changes.",
             "Reject a reorder that merely transfers a partial score",
@@ -11876,15 +11931,15 @@ class BundleContentTests(unittest.TestCase):
             "probable wrong-document topics",
         ):
             with self.subTest(phrase=phrase):
-                self.assertIn(phrase, skill_text)
+                self.assertIn(phrase, normalized_skill_text)
 
-    def test_repository_local_outline_justifications_are_source_grounded(self) -> None:
-        skill_text = CREATE_OUTLINE_SKILL_PATH.read_text(encoding="utf-8")
+    def test_analyze_document_topics_justifications_are_source_grounded(self) -> None:
+        skill_text = ANALYZE_DOCUMENT_TOPICS_SKILL_PATH.read_text(encoding="utf-8")
         skill_metadata = load_yaml_object_from_frontmatter(
-            CREATE_OUTLINE_SKILL_PATH
+            ANALYZE_DOCUMENT_TOPICS_SKILL_PATH
         )
 
-        self.assertEqual("create-document-outline", skill_metadata["name"])
+        self.assertEqual("analyze-document-topics", skill_metadata["name"])
         for phrase in (
             "Treat every why clause as an evidence claim",
             "the source blocks represented by those topics",
@@ -13057,7 +13112,7 @@ class BundleContentTests(unittest.TestCase):
             lifecycle_text,
         )
         self.assertIn(
-            "conversation-title synchronization",
+            "The stable task and conversation identities remain distinct from display text.",
             lifecycle_text,
         )
         self.assertIn(
