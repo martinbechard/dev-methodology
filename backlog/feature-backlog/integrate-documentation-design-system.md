@@ -1,0 +1,194 @@
+# Integrate The Documentation Design System
+
+Status: Ready
+
+Type: Feature
+
+Provider: file
+
+Work Item ID: integrate-documentation-design-system
+
+Completion: main-branch
+
+## Summary
+
+Introduce one versioned, reusable design system for the dev-methodology HTML documentation and a portable, evidence-based conformance-review workflow. Adapt the approved prototype from docs-design-system into authoritative methodology sources, conceptual roles, runtime adapters, documentation, evaluation coverage, and regression checks without migrating existing HTML pages or publishing to user-level locations.
+
+## Context
+
+The HTML documentation contains shared visual and interaction patterns alongside inconsistent variations that reduce quality and make conformance difficult to assess. The local docs-design-system project was derived from current dev-methodology pages and contains the design candidate, page-type checklists, two read-only conceptual-role prototypes, a portable review proposal, and model tournament evidence.
+
+The prototype is candidate input, not an authoritative methodology source. Adapt it to this repository's schemas, category naming, semantic model profiles, generators, catalogs, tests, and source-first ownership boundaries.
+
+```text
+/Users/martinbechard/dev/docs-design-system/
+├── docs/design-system/
+├── skills/review-documentation-design-system/
+├── agents/
+│   ├── documentation-design-system-checklist-runner.role.yaml
+│   └── documentation-design-system-review-coordinator.role.yaml
+├── docs/portable-review-system-proposal.md
+└── evals/results/
+    ├── tournament-report.md
+    └── coordinator-tournament-report.md
+```
+
+This item covers repository-local source integration and verification only. Existing dev-methodology HTML pages remain unchanged unless a separate migration is authorized. User-level installation and publication require originating-task confirmation after implementation and a later explicit user instruction.
+
+## Source Evidence
+
+Direct user request in the current Codex task on 2026-08-08: "We want to create a work item to introduce a design system for the html documentation, because there are inconsistencies that reduce the quality. The new design system is in ~/dev/docs-design-system and was based on the work done in dev-methdology. Here is a request from the owner."
+
+The attached Prompt for the dev-methodology Owner authorizes source implementation of the approved Documentation Design System and portable conformance-review workflow. It requires preservation of the prototype's design coverage, accessible SVG rules, checklist contract, runner and coordinator boundaries, tournament-backed model settings, catalogs, generators, multi-runtime adapters, evaluation coverage, browser verification, and confirmation-before-publication boundary.
+
+## Requirements
+
+- Add a versioned, single-entry HTML design system under the repository's hand-authored design sources.
+- Preserve the prototype version and require conforming pages to declare their target design-system version.
+- Document the normal page shell, official brand and logo, badges, document-sequence navigation, section navigation, page-top link, regular default hero, optional two-column hero, responsive behavior, and accessibility.
+- Cover foundations, content, data display, forms and actions, diagrams, source inventory, and variation auditing.
+- Give every variation an inline visual example, source-page attribution, advantages, disadvantages, and standardization status. Keep source-observed variations distinct from adopted standards.
+- Document reusable accessible SVG connector and short-stem block-entry-arrow patterns for ordinary and stronger combined flows, fan-out, and fan-in.
+- End connectors at the arrow stem; do not carry marker-end into destination blocks. Make stem length equal arrowhead depth, align connector, stem, arrowhead, and block entrance, and place the tip on the block boundary.
+- Include reusable symbol and use examples, explained Do and Don't examples, curve routing, convergence, line weight, whitespace, label clearance, clipping, overflow, narrow rendering, title, and description guidance.
+- Add review-documentation-design-system with one shared checklist and one checklist per page type. Give every item a stable unique ID and an evidence-backed PASS, FAIL, or NOT TESTED result.
+- Add a small read-only Methodology checklist runner that receives exactly one page and checklist, loads only the review skill, records each assigned item exactly once, cannot mutate or delegate, and makes no integrated acceptance decision.
+- Add a read-only Methodology review coordinator that depends on the runner, dispatches one page-checklist assignment per invocation, validates completeness, de-duplicates evidence, preserves contradictions, and alone returns ACCEPTED, REJECTED, or BLOCKED.
+- Keep checklist procedure in the skill and coordination procedure in the coordinator; do not duplicate checklist methodology in the runner.
+- Rank candidates by accuracy first, estimated cost only within equal accuracy with plus-or-minus 15 percent treated as equivalent, then wall-clock speed. Never invent a price for an unpriced candidate.
+- Express the tested Luna-medium runner and Terra-low Codex coordinator through semantic model-profile sources and runtime mappings, never provider IDs in conceptual definitions. Add the smallest new semantic profile only if required.
+- Update the required authoritative skills, roles, profile sources and mappings, catalogs, suites, scenarios, hand-authored documentation, schemas, inventories, generators, installers, and regression tests.
+- Regenerate repository-owned Codex, Claude Code, Gemini CLI, and Junie CLI adapters, generated documentation data, and generation manifests. Verify authority, dependencies, skill assignment, output contracts, and semantic mappings.
+- Keep all implementation and verification repository-local. Do not write user-home skill or role locations.
+- After source verification, send the originating docs-design-system task a dossier containing commit and worktree, authoritative and generated paths, regeneration commands, semantic profiles and mappings, test totals, edge-case evidence, browser evidence, deviations, limitations, and failed gates.
+- Request originating-task confirmation and stop. Publication requires that confirmation and a subsequent explicit user instruction.
+
+## Acceptance Criteria
+
+- The design-system index discovers every page, and the review skill discovers every page-type checklist.
+- Pages preserve versioning, shell, navigation, hero patterns, foundations, content, data display, forms, accessibility, responsive behavior, diagrams, source inventory, and variation auditing.
+- Variations have visual examples, attribution, advantages, disadvantages, and status, with observed and adopted patterns clearly separated.
+- SVG examples have accessible titles and descriptions and satisfy connector, stem, arrowhead, block-boundary, fan-out, fan-in, routing, clearance, clipping, overflow, and narrow-width checks.
+- Every checklist ID is unique and resolves exactly once.
+- The runner loads only the review skill, receives one page and checklist, is read-only and non-delegating, records every item once, and returns only PASS, FAIL, or NOT TESTED evidence.
+- The coordinator never substitutes its own checklist review and alone owns ACCEPTED, REJECTED, or BLOCKED.
+- Focused cases prove complete pass, confirmed failure, missing report, malformed report, unavailable runner, duplicate finding, and irreconcilable conflict behavior.
+- Ranking tests prove accuracy precedence, the 15 percent cost boundary, speed tie-breaking, cached-input accounting, and unpriced handling.
+- Conceptual definitions contain semantic profiles only, and runtime mappings reproduce the tested Codex settings.
+- All four generated adapter families preserve mutation authority, dependencies, skill assignments, output contracts, and model mappings.
+- Pages render without broken navigation, clipping, or horizontal overflow at desktop and narrow widths.
+- Generated freshness, Markdown, links, Agent Skill validation, focused evaluations, dependency-directed regression tests, and git diff --check pass.
+- No existing HTML source page is migrated and no user-home installation or publication occurs.
+- The originating task receives the complete dossier and confirmation request before closure.
+
+## Dependencies
+
+None.
+
+## Verification
+
+- Validate the skill, every checklist, unique checklist IDs, and checklist resolution.
+- Add focused runner and coordinator contract tests for every required success and failure boundary.
+- Add ranking tests for accuracy, both 15 percent edges, cost outside the band, speed, cached input, and unpriced candidates.
+- Regenerate and freshness-check all four adapters and generated documentation data.
+- Compare adapters with conceptual sources for authority, dependencies, skills, output fields, and semantic mappings.
+- Run implicated schema, inventory, generator, installer, catalog, suite, scenario, and regression tests.
+- Run markup, navigation, link, accessibility, and overflow checks for every design-system page.
+- Browser-verify representative desktop and narrow widths, navigation, examples, SVG geometry, clipping, overflow, titles, and descriptions.
+- Run git diff --check and produce the required implementation dossier with exact commands and totals.
+
+## Open Questions
+
+- Determine the smallest semantic profile name and cross-runtime meaning for the tested Terra-low coordinator without changing unrelated roles.
+- Determine whether the current role schema and installer already express every runner and coordinator boundary.
+- Determine the exact hand-authored design-system entry link while preserving current page sequence and generator ownership.
+
+## Governed Definition Approval
+
+### Governed Canonical Sources
+
+```text
+skills/review-documentation-design-system/
+├── SKILL.md
+└── references/
+    ├── review-checklist-documentation-design-system-accessibility.md
+    ├── review-checklist-documentation-design-system-content.md
+    ├── review-checklist-documentation-design-system-data-display.md
+    ├── review-checklist-documentation-design-system-diagrams.md
+    ├── review-checklist-documentation-design-system-forms-and-actions.md
+    ├── review-checklist-documentation-design-system-foundations.md
+    ├── review-checklist-documentation-design-system-index.md
+    ├── review-checklist-documentation-design-system-page-shell.md
+    ├── review-checklist-documentation-design-system-shared.md
+    ├── review-checklist-documentation-design-system-source-inventory.md
+    └── review-checklist-documentation-design-system-variations.md
+agents/
+├── model-profiles.yaml
+└── roles/methodology-maintenance/
+    ├── methodology-design-system-checklist-runner.role.yaml
+    └── methodology-design-system-review-coordinator.role.yaml
+```
+
+The Methodology-prefixed role names adapt the prototype to the repository naming contract. A replacement governed role path requires new exact-path approval before mutation.
+
+### Allowed Dependent Artifacts
+
+The approved definition work may update these exact dependent paths when required:
+
+```text
+skills/review-documentation-design-system/agents/openai.yaml
+agents/role-schema.yaml
+adapters/codex/model-profiles.yaml
+adapters/claude/model-profiles.yaml
+adapters/gemini/model-profiles.yaml
+adapters/junie/model-profiles.yaml
+design/skill-categories.yaml
+design/role-catalog-groups.yaml
+design/documentation-design-system/VERSION
+design/documentation-design-system/index.html
+design/documentation-design-system/page-shell.html
+design/documentation-design-system/foundations.html
+design/documentation-design-system/content.html
+design/documentation-design-system/data-display.html
+design/documentation-design-system/forms-and-actions.html
+design/documentation-design-system/accessibility.html
+design/documentation-design-system/diagrams.html
+design/documentation-design-system/source-inventory.html
+design/documentation-design-system/variations.html
+design/documentation-design-system/assets/design-system.css
+design/documentation-design-system/assets/design-system.js
+design/documentation-design-system/assets/dev-methodology-logo.png
+evals/agent-scenarios.yaml
+evals/cases.yaml
+evals/skill-probes.yaml
+evals/workflow-packs.yaml
+README.md
+scripts/build-skill-docs.py
+scripts/install-skills.py
+scripts/test_bundle_content.py
+design/generated/skill-definitions.js
+design/generated/role-definitions.js
+generated/adapters/agent-generation-manifest.json
+generated/adapters/codex/agents/methodology-design-system-checklist-runner.toml
+generated/adapters/codex/agents/methodology-design-system-review-coordinator.toml
+generated/adapters/claude/agents/methodology-design-system-checklist-runner.md
+generated/adapters/claude/agents/methodology-design-system-review-coordinator.md
+generated/adapters/gemini/agents/methodology-design-system-checklist-runner.md
+generated/adapters/gemini/agents/methodology-design-system-review-coordinator.md
+generated/adapters/junie/agents/methodology-design-system-checklist-runner.md
+generated/adapters/junie/agents/methodology-design-system-review-coordinator.md
+```
+
+Focused test and evaluation fixture files may be added in established locations when directly traceable to acceptance criteria. Generated files remain generator-owned. Any additional governed skill or conceptual-role definition path requires separate approval.
+
+### Approval Resolution
+
+Approved at creation on 2026-08-08 by the current user request and attached owner prompt. The owner directs dev-methodology to "Implement the approved Documentation Design System and its portable conformance-review workflow" and specifically requires review-documentation-design-system, a checklist runner, a review coordinator, and necessary semantic model-profile sources or mappings. Approval is limited to the exact governed sources and dependent artifacts above. It does not authorize migration of existing HTML pages or user-level deployment, installation, or publication.
+
+## Notes
+
+- The prototype remains candidate evidence; dev-methodology sources and schemas are authoritative.
+- No docs/project-taxonomy.md exists. Placement follows repository maintenance guidance and adjacent conventions.
+- Preserve unrelated working-tree changes and exclude them from creation and implementation commits unless separately in scope.
+- Originating-task confirmation is a post-implementation acceptance and publication boundary, not a hard dependency for starting this Ready item.
+- Existing HTML documentation migration requires a separate work item.
