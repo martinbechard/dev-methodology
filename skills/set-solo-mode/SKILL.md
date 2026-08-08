@@ -34,12 +34,12 @@ Persistence and Commit selectors remain independent of the coordination mode. Th
 
 When PROJECT.yaml is absent from the repository root, the effective coordination mode is SOLO. Do not inspect or change a secondary-thread dispatch mechanism for this fallback. The current Agent continues the work itself.
 
-A valid repository-root PROJECT.yaml replaces this fallback. When `project_setup` is present, use its validated `project_setup.concurrent_tasking` value:
+A valid repository-root PROJECT.yaml replaces this fallback. When project_setup is present, use its validated project_setup.concurrent_tasking value:
 
 - When project_setup.concurrent_tasking is false, keep secondary-thread dispatch disabled. If a configured mechanism has drifted to enabled, disable it and verify the correction.
 - When project_setup.concurrent_tasking is true, temporarily disable the configured mechanism for the current coordination context.
 
-A valid legacy configuration that passes the repository validation gate but has no `project_setup` remains supported. Preserve its configured runtime or coordination mechanism and apply the existing disable procedure; do not reinterpret the missing setup metadata as an unconfigured-project fallback.
+A valid legacy configuration that passes the repository validation gate but has no project_setup remains supported. Preserve its configured runtime or coordination mechanism and apply the existing disable procedure; do not reinterpret the missing setup metadata as an unconfigured-project fallback.
 
 If the root file exists but fails its applicable validation gate, do not infer a coordination mode or change dispatch. Return the validation failure to the owning workflow.
 
@@ -48,7 +48,7 @@ If the root file exists but fails its applicable validation gate, do not infer a
 1. Check for PROJECT.yaml at the repository root.
 2. When the file is absent, use the effective SOLO fallback and return NOT_APPLICABLE without mutation.
 3. Require the root file to pass its applicable validation gate.
-4. If validated `project_setup.concurrent_tasking` is false, treat disabled dispatch as the configured target. If it is true, treat this request as a temporary override to SOLO. If valid legacy configuration omits `project_setup`, preserve its existing configured mechanism.
+4. If validated project_setup.concurrent_tasking is false, treat disabled dispatch as the configured target. If it is true, treat this request as a temporary override to SOLO. If valid legacy configuration omits project_setup, preserve its existing configured mechanism.
 5. Determine whether the applicable runtime or coordination context has a secondary-thread dispatch mechanism.
 6. When no secondary-thread dispatch mechanism is configured, return NOT_APPLICABLE without mutation.
 7. Read the current dispatch setting before changing it.

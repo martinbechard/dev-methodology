@@ -67,10 +67,10 @@ _PRODUCERS = {
 }
 _TARGET_DIGESTS = {
     "skills/set-solo-mode/SKILL.md": (
-        "b6e42ec9af9396234c2301bc81fe63207d102527fe80d19c9d172cf0ef476d00"
+        "c167eb32a7e58a220430bb9bbb4ec1b07dfd69f022440213dff2835785ff1311"
     ),
     "skills/set-multitask-mode/SKILL.md": (
-        "680ffc34f51f8e87b44ba8067e6734567cf5fa9ea8628e54438c255ba3159b25"
+        "8792181e5eb0644f06e3e867c2862bb8aaeb3a2833dac28938d2d94935657d19"
     ),
     "skills/resource-claim/SKILL.md": (
         "bb8a4f5d6074128e20c595cc197a8a45b9a352e78de82df214901d484df91c49"
