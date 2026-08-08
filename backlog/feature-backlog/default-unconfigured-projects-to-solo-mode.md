@@ -63,3 +63,29 @@ None.
 
 - This item changes the default only while PROJECT.yaml is absent; it does not remove resource coordination from configured projects.
 - SOLO is a coordination mode, not a Persistence or Commit selection. This fallback must not infer durable work-item storage or delivery behavior when those selectors are otherwise unresolved.
+
+## Current Starting Handoff Evidence
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Launch Reservation: One Root Dev Orchestrator task for this exact work item.
+
+Normalized Objective: Implement the safe unconfigured-project SOLO-mode fallback.
+
+Dispatch Time: 2026-08-08T19:54:46Z.
+
+Intended Root Role: Dev Orchestrator.
+
+Launch Result: Not attempted.
+
+Canonical Execution: None.
+
+Owner: Unowned pending the task's Starting -> Running transition.
+
+Last Contact At: 2026-08-08T19:54:46Z; parent Coordinator recorded the reservation.
+
+Next Reconciliation At: 2026-08-08T20:08:46Z.
+
+Required Next Lifecycle Transition: The new task must directly record Starting -> Running, establish its exact Work Item ID activity=work claim, and then begin the approved scoped implementation.
