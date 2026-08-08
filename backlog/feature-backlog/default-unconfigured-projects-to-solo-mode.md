@@ -1,6 +1,6 @@
 # Default Unconfigured Projects to Solo Mode
 
-Status: Ready
+Status: Starting
 
 Owner: Unowned
 
@@ -88,4 +88,30 @@ Source Mutation: None. The canonical branch and worktree remain clean and resuma
 
 Owner: Unowned.
 
-Active Execution Evidence: None. The item is Ready and has no active execution ownership.
+Active Execution Evidence at recovery: None. The item was Ready and had no active execution ownership before this new Starting reservation.
+
+## Current Starting Handoff Evidence
+
+Transition: Ready -> Starting.
+
+Parent Coordination Thread: 019fb057-1767-7ef2-b5fa-41f4417b20b3.
+
+Launch Reservation: 2026-08-08T20:00:59Z.
+
+Normalized Objective: Implement the safe unconfigured-project SOLO-mode fallback.
+
+Dispatch Time: 2026-08-08T20:00:59Z.
+
+Intended Root Role: Dev Orchestrator.
+
+Launch Result: Started.
+
+Canonical Execution: 019fe2f2-f195-7670-8367-15d9e5c79de7.
+
+Owner: Unowned pending Starting -> Running.
+
+Last Contact At: 2026-08-08T20:00:59Z.
+
+Next Reconciliation At: 2026-08-08T20:14:59Z.
+
+Required Next Lifecycle Transition: Starting -> Running for the same canonical task after accepted execution ownership is established.
