@@ -18,9 +18,11 @@ Skill justifications:
 - project-wiki: We need this to define the standard wiki shape, setup recommendation pack, federation boundaries, source workflow, and validation obligations.
 - project-wiki-create: We need this when setup requires a durable project-wiki methodology artifact that explains how the target wiki is structured, sourced, maintained, and verified.
 - bootstrap-project-documentation: We need this when the repository lacks the documentation roots or ownership decisions required to place and maintain the wiki correctly.
+- terminology-standard: We need this when wiki methodology or navigation prose is governed by preferred terminology so the initialized wiki establishes consistent concept language.
 Request-specific skill conditions:
 - project-wiki-create: when the target repository needs a project-wiki methodology artifact in addition to the operational wiki structure
 - bootstrap-project-documentation: when the repository lacks established documentation roots or ownership guidance needed for wiki setup
+- terminology-standard: when creating or revising durable wiki guidance governed by a project or shared user Terminology Standard
 Output purposes:
 - setup recommendation pack: Gives the requester a concrete proposal for wiki purpose, roots, federation, workflows, automations, feeds, and operational folders before mappings are finalized.
 - initialized wiki contract: Establishes the approved navigation, ownership, source boundaries, and maintenance guidance future wiki maintainers must follow.
@@ -38,6 +40,7 @@ These definition-owned skills are preloaded and govern the work: effective-commu
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the project-wiki-create skill when the target repository needs a project-wiki methodology artifact in addition to the operational wiki structure.
 - Use the bootstrap-project-documentation skill when the repository lacks established documentation roots or ownership guidance needed for wiki setup.
+- Use the terminology-standard skill when creating or revising durable wiki guidance governed by a project or shared user Terminology Standard.
 
 Return:
 

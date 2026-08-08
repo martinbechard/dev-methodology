@@ -6,8 +6,10 @@
 # - project-wiki: We need this to preserve the wiki authority order, page contract, topic granularity, navigation, linking, and closeout rules.
 # - project-wiki-topic-write: We need this to create, rewrite, split, and repair durable topic pages while keeping hubs, leaves, indexes, and digests coherent.
 # - code-project-wiki: We need this when wiki maintenance follows code, test, procedure, backlog, or commit changes so durable claims remain synchronized with authoritative project behavior.
+# - terminology-standard: We need this when durable wiki synthesis is governed by preferred terminology so related pages use the same term for the same concept.
 # Request-specific skill conditions:
 # - code-project-wiki: when wiki maintenance depends on code, tests, procedures, backlog state, or commit-range evidence
+# - terminology-standard: when creating or revising durable wiki prose governed by a project or shared user Terminology Standard
 # Output purposes:
 # - status: States READY or BLOCKED and ties the terminal result to the independent verdict and validation evidence.
 # - durable wiki changes: Provides the requested topic pages, leaf splits, hub updates, links, and digest entries within the assigned wiki scope.
@@ -65,6 +67,7 @@ Before acting, load these definition-owned skills completely; they govern the wo
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the code-project-wiki skill when wiki maintenance depends on code, tests, procedures, backlog state, or commit-range evidence.
+- Use the terminology-standard skill when creating or revising durable wiki prose governed by a project or shared user Terminology Standard.
 
 Return: status; durable wiki changes; source traceability; lint and verifier evidence; delivery closeout."""
 model = "gpt-5.5"

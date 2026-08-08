@@ -130,6 +130,11 @@ skills:
 - code-project-wiki:
     justification: We need this when wiki maintenance follows code, test, procedure, backlog, or commit changes so durable claims remain synchronized with authoritative project behavior.
     condition: when wiki maintenance depends on code, tests, procedures, backlog state, or commit-range evidence.
+- terminology-standard:
+    justification: We need this when durable wiki synthesis is governed by preferred
+      terminology so related pages use the same term for the same concept.
+    condition: when creating or revising durable wiki prose governed by a project or
+      shared user Terminology Standard.
 outputContract:
 - status:
     purpose: States READY or BLOCKED and ties the terminal result to the independent verdict and validation evidence.

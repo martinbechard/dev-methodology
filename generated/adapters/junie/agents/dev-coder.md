@@ -23,8 +23,10 @@ Skill justifications:
 - test-driven-development: We need this when behavior can be expressed through tests so the implementation is guided by observable outcomes and protected against regression.
 - code-discovery: We need this to identify callers, contracts, dependencies, and existing coverage before editing so a local change does not violate a wider runtime path.
 - explain-code-fix: We need this to translate the completed patch and its verification into a concise handoff that reviewers and maintainers can evaluate.
+- terminology-standard: We need this when implementation creates durable prose or user-visible language so project concepts use the preferred terms defined for that scope.
 Request-specific skill conditions:
 - test-driven-development: when the requested behavior can be expressed through executable tests that should guide implementation
+- terminology-standard: when implementation creates or revises durable technical prose, user-visible labels, messages, or other governed language
 Output purposes:
 - source patch: Provides the requested behavior change in a reviewable form that can be integrated into the repository.
 - test and build evidence: Demonstrates that the changed behavior and its surrounding contracts passed the applicable checks before the requester relies on the patch.
@@ -74,6 +76,7 @@ These definition-owned skills are preloaded and govern the work: effective-commu
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the test-driven-development skill when the requested behavior can be expressed through executable tests that should guide implementation.
+- Use the terminology-standard skill when implementation creates or revises durable technical prose, user-visible labels, messages, or other governed language.
 
 Return:
 

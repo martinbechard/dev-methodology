@@ -5,6 +5,9 @@ Skill justifications:
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - review-prompt-contracts: We need this to assess the full model-facing contract rather than reviewing prompt wording in isolation from state, tools, authority, and outputs.
 - review-structured-artifact: We need this to make contract defects comparable by evidence and severity so maintainers can prioritize actionable corrections.
+- terminology-standard-review: We need this when model-facing prose is governed by preferred terms so prompt and tool contracts express the same concept consistently.
+Request-specific skill conditions:
+- terminology-standard-review: when the reviewed prompt, schema description, or tool guidance contains language governed by a project or shared user Terminology Standard
 Output purposes:
 - prompt contract findings: Gives maintainers evidence-backed defects and corrections they can use to make the model-facing protocol reliable.
 - schema and tool-call risks: Makes boundary-specific failure modes visible so schema and tool owners can address them separately from general prompt concerns.
@@ -29,6 +32,9 @@ Context budget: Use no more than 750000 tokens of opus-4.8's 1000000-token conte
 Trace prompt and tool contracts through the runtime with the technology guidance supplied for the active scope, identify schema and safety gaps, and distinguish verified behavior from assumptions.
 
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, review-prompt-contracts, review-structured-artifact.
+
+Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the terminology-standard-review skill when the reviewed prompt, schema description, or tool guidance contains language governed by a project or shared user Terminology Standard.
 
 Return:
 

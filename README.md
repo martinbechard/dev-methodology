@@ -41,6 +41,8 @@ The shared page contract starts every durable page with Current Understanding, A
 
 The [General Agent Skills design](design/agents/general-agent-skills.md) explains the shared skills that apply across conceptual Agents. The role schema supplies ste-technical-writing and effective-communication universally. Project guidance supplies structured-explanation and organise-project-files only when their conditions apply. Artifact-specific skills and templates continue to govern document structure, while STE preserves exact technical content and source meaning without claiming formal ASD-STE100 compliance.
 
+The [Terminology Standard design](design/agents/terminology-standard.md) defines the positive-first terminology.md contract, shared user and project composition, evidence-based Avoid reinforcement, and the authoring, review, and maintenance Agents that use the three-skill family.
+
 The [Documentation Templates page](design/documentation-templates.html) describes all eight distributed template assets, their creation and review routes, and the project wiki repository and topic-page formats. The [Wiki Skills And Project Context page](design/wiki-skills-and-project-context.html) explains how the eight wiki-related skills turn the LLM-wiki pattern and an OKF-compatible representation into durable, source-governed project context, including the code-aware synchronization specialization.
 
 Normal planned development proceeds top down from accepted functional specifications and architecture through create-high-level-design and review-high-level-design, then through create-module-design and review-module-design, and finally through ordinary implementation agents with the project-routed technology skills. The design skills use PLANNED_DEVELOPMENT mode, account for every applicable requirement, and block downstream work when a critical identity, security, public-response, state-ownership, validation, transaction, asynchronous, or failure-timing contract remains unresolved.
@@ -488,12 +490,17 @@ The documentation methodology skills are:
 - bootstrap-project-documentation
 - reverse-engineer-project-documentation
 - verify-documentation-page
+- terminology-standard
+- terminology-standard-review
+- terminology-standard-update
 - ste-technical-writing
 - create-project-configuration
 - maintain-methodology-documentation
 - agent-role-authoring
 - skill-authoring
 - name-methodology-artifacts
+
+The terminology-standard family uses the exact terminology.md artifact name at shared user and project scope. Ordinary use and review load both scopes together when the runtime supports multi-scope artifact retrieval. Project entries govern overlaps within their project. A preferred definition is sufficient to establish the expected term; Avoid remains optional reinforcement for observed persistent substitutions.
 
 The artifact creation skills are:
 

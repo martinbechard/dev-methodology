@@ -46,6 +46,11 @@ examples:
 skills:
 - project-wiki-topic-verify:
     justification: We need this to apply the dedicated read-only acceptance contract for topic pages, leaf granularity, source links, digests, federation, lint, and OKF validation.
+- terminology-standard-review:
+    justification: We need this when durable topic prose is governed by preferred
+      terminology so the acceptance verdict includes concept-level language deviations.
+    condition: when the verified topic pages are governed by a project or shared user
+      Terminology Standard.
 isolation: read-only
 outputContract:
 - verification verdict:

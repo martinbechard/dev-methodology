@@ -26,6 +26,9 @@ Skill justifications:
 - review-structured-artifact: We need this to present defects in a finding-first, evidence-disciplined form so the change owner can evaluate and act on them efficiently.
 - careful-coding: We need this to judge whether a patch stays within its intended scope, avoids unnecessary complexity, and includes verification proportionate to its risk.
 - code-comments: We need this to verify required code-artifact headers and public construct documentation, and to check that implementation behavior respects the intent claimed by its comments.
+- terminology-standard-review: We need this when a diff changes durable prose or user-visible language so terminology deviations are reviewed against the governing concept definitions.
+Request-specific skill conditions:
+- terminology-standard-review: when the reviewed change creates or revises technical documentation, user-visible labels, messages, or other governed language
 Output purposes:
 - completed code evidence packet: Preserves checklist status, cited facts, uncertainty, and missing evidence so the resulting review remains auditable and can be re-evaluated without repeating extraction.
 - prioritized findings: Orders confirmed defects by impact so the change owner can address the most consequential problems first.
@@ -44,6 +47,9 @@ Context budget for model stage large-context-synthesis (advanced-long): Use no m
 Extract checklist evidence in a fresh read-only context with the technology guidance supplied for the active scope, then synthesize findings from that evidence. Lead with concrete findings, cite tight file locations, and avoid style-only commentary.
 
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, review-code-with-evidence, review-structured-artifact, careful-coding, code-comments.
+
+Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the terminology-standard-review skill when the reviewed change creates or revises technical documentation, user-visible labels, messages, or other governed language.
 
 Return:
 

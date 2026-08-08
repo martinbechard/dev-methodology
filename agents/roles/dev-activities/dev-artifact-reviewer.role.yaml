@@ -98,6 +98,11 @@ skills:
 - verify-documentation-page:
     justification: We need this to apply a shared independent quality gate after the
       artifact-specific review so acceptance does not depend solely on the focused reviewer.
+- terminology-standard-review:
+    justification: We need this when project or shared terminology governs the reviewed
+      prose so concept-level deviations become evidence-backed findings rather than style preferences.
+    condition: when reviewing durable technical prose governed by a project or shared
+      user Terminology Standard.
 outputContract:
 - completed review checklist:
     purpose: Preserves the artifact-specific evidence behind the assessment so reviewers

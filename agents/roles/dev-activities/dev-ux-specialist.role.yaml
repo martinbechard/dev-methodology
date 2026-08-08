@@ -48,6 +48,11 @@ skills:
 - review-structured-artifact:
     justification: We need this to distinguish evidence-backed usability and accessibility
       issues from preferences and prioritize actionable findings.
+- terminology-standard-review:
+    justification: We need this when an interface is governed by preferred terminology
+      so labels, messages, and actions express familiar concepts consistently.
+    condition: when the reviewed interface contains user-visible language governed by
+      a project or shared user Terminology Standard.
 outputContract:
 - design recommendation:
     purpose: Gives product and implementation owners an actionable direction while

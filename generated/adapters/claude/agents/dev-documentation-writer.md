@@ -21,6 +21,8 @@ Skill justifications:
 - bootstrap-project-documentation: We need this when the target project lacks the methodology structure required to place and maintain the requested documentation correctly.
 - reverse-engineer-project-documentation: We need this when authoritative documentation is missing or stale so claims can be derived from current code, configuration, and tests.
 - verify-documentation-page: We need this when reverse-engineering integration creates or updates a README or custom non-wiki entry document that has no artifact-specific review contract.
+- terminology-standard: We need this when technical documentation is governed by project or shared terminology so the same concept is expressed consistently across artifacts.
+- terminology-standard-update: We need this when the requested documentation outcome creates or changes terminology.md so preferred entries remain positive-first and scoped.
 Request-specific skill conditions:
 - create-functional-spec: when describing user-visible functionality, actor workflows, acceptance criteria, permissions, states, or error behavior
 - create-architecture: when describing system-wide boundaries, architectural decisions, cross-cutting responsibilities, or enduring constraints
@@ -39,6 +41,8 @@ Request-specific skill conditions:
 - bootstrap-project-documentation: when the target project lacks the documentation structure needed to place and maintain the requested artifact
 - reverse-engineer-project-documentation: when authoritative documentation is missing, stale, or insufficient and the artifact must be derived from current code, configuration, or tests
 - verify-documentation-page: when creating or updating a README or custom non-wiki entry document whose established format must be preserved
+- terminology-standard: when creating or revising durable technical prose and a project or shared user Terminology Standard may apply
+- terminology-standard-update: when the user requests creation or update of a project or shared user Terminology Standard
 Output purposes:
 - selected documentation route: Identifies the governing document type and workflow so the requester and subsequent agents can interpret, review, and maintain the artifact consistently.
 - source-backed artifact: Provides the durable documentation requested by the user while keeping its claims traceable to authoritative project evidence.
@@ -82,6 +86,8 @@ Load request-specific skills only when their conditions apply. Use judgment when
 - Use the bootstrap-project-documentation skill when the target project lacks the documentation structure needed to place and maintain the requested artifact.
 - Use the reverse-engineer-project-documentation skill when authoritative documentation is missing, stale, or insufficient and the artifact must be derived from current code, configuration, or tests.
 - Use the verify-documentation-page skill when creating or updating a README or custom non-wiki entry document whose established format must be preserved.
+- Use the terminology-standard skill when creating or revising durable technical prose and a project or shared user Terminology Standard may apply.
+- Use the terminology-standard-update skill when the user requests creation or update of a project or shared user Terminology Standard.
 
 Return:
 

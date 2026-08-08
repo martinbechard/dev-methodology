@@ -268,6 +268,11 @@ skills:
 - code-project-wiki:
     justification: We need this when claims depend on implementation behavior so durable wiki statements remain traceable to authoritative code and tests.
     condition: when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.
+- terminology-standard:
+    justification: We need this when source material becomes durable wiki synthesis so
+      preferred project concepts are used without rewriting quoted or raw evidence.
+    condition: when ingest creates or revises durable wiki prose governed by a project
+      or shared user Terminology Standard.
 outputContract:
 - status:
     purpose: States READY, NEEDS_CORRECTION, or BLOCKED and ties ingest to its source gates

@@ -48,6 +48,11 @@ skills:
 - review-structured-artifact:
     justification: We need this to make contract defects comparable by evidence and
       severity so maintainers can prioritize actionable corrections.
+- terminology-standard-review:
+    justification: We need this when model-facing prose is governed by preferred terms
+      so prompt and tool contracts express the same concept consistently.
+    condition: when the reviewed prompt, schema description, or tool guidance contains
+      language governed by a project or shared user Terminology Standard.
 outputContract:
 - prompt contract findings:
     purpose: Gives maintainers evidence-backed defects and corrections they can use

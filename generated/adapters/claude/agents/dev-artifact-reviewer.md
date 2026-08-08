@@ -19,6 +19,7 @@ Skill justifications:
 - interpreter-pattern: We need this when reviewing a small domain language so grammar, parsing, evaluation, diagnostics, resource limits, and parser-tooling thresholds are supported by evidence.
 - review-unit-test-plan: We need this when reviewing a unit test plan so scenarios, boundaries, traceability, and coverage evidence are sufficient to protect the intended behavior.
 - verify-documentation-page: We need this to apply a shared independent quality gate after the artifact-specific review so acceptance does not depend solely on the focused reviewer.
+- terminology-standard-review: We need this when project or shared terminology governs the reviewed prose so concept-level deviations become evidence-backed findings rather than style preferences.
 Request-specific skill conditions:
 - review-functional-spec: when reviewing a functional specification for its actors, workflows, states, acceptance criteria, or verification obligations
 - review-architecture: when reviewing system-wide boundaries, runtime assumptions, architectural decisions, or their supporting evidence
@@ -34,6 +35,7 @@ Request-specific skill conditions:
 - traversal-patterns: when reviewing an architecture, high-level design, or module design that uses or compares Iterator or Visitor
 - interpreter-pattern: when reviewing an architecture, high-level design, or module design that uses or evaluates Interpreter
 - review-unit-test-plan: when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence
+- terminology-standard-review: when reviewing durable technical prose governed by a project or shared user Terminology Standard
 Output purposes:
 - completed review checklist: Preserves the artifact-specific evidence behind the assessment so reviewers can audit which requirements were checked and how each conclusion was reached.
 - verifier assessment: Communicates the independent quality-gate result so the requester knows whether the artifact is ready to rely on after the focused review.
@@ -74,6 +76,7 @@ Load request-specific skills only when their conditions apply. Use judgment when
 - Use the traversal-patterns skill when reviewing an architecture, high-level design, or module design that uses or compares Iterator or Visitor.
 - Use the interpreter-pattern skill when reviewing an architecture, high-level design, or module design that uses or evaluates Interpreter.
 - Use the review-unit-test-plan skill when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence.
+- Use the terminology-standard-review skill when reviewing durable technical prose governed by a project or shared user Terminology Standard.
 
 Return:
 

@@ -7,6 +7,9 @@ Skill justifications:
 - effective-communication: Every agent communicates decisions, evidence, blockers, outcomes, or handoffs to a user or another agent.
 - ste-technical-writing: Every agent needs the same semantic-preservation contract when its work writes, rewrites, or reviews technical-document prose.
 - project-wiki-topic-verify: We need this to apply the dedicated read-only acceptance contract for topic pages, leaf granularity, source links, digests, federation, lint, and OKF validation.
+- terminology-standard-review: We need this when durable topic prose is governed by preferred terminology so the acceptance verdict includes concept-level language deviations.
+Request-specific skill conditions:
+- terminology-standard-review: when the verified topic pages are governed by a project or shared user Terminology Standard
 Output purposes:
 - verification verdict: Returns the required GOOD or NEEDS_CORRECTION decision for the supplied topic pages so writers and ingesters have an independent acceptance gate.
 - reviewed-page inventory: Identifies exactly which topic pages and evidence sources were evaluated so the verdict is bounded and auditable.
@@ -33,6 +36,9 @@ Context budget for model stage synthesis (advanced): Use no more than 750000 tok
 Work in a fresh read-only context, review only the supplied topic pages against the shared checklist and evidence, run available wiki checks, and return the required verdict without editing files.
 
 These definition-owned skills are preloaded and govern the work: effective-communication, ste-technical-writing, project-wiki-topic-verify.
+
+Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the terminology-standard-review skill when the verified topic pages are governed by a project or shared user Terminology Standard.
 
 Return:
 

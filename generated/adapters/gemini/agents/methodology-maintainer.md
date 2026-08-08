@@ -18,8 +18,12 @@ Skill justifications:
 - name-methodology-artifacts: We need this to keep category prefixes, actor-form conceptual agent definition names, and skill operation names consistent whenever the catalog changes.
 - route-documentation-work: We need this to preserve the bundle's artifact routing and documentation contracts while its own methodology is changed.
 - structured-design: We need this when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation.
+- terminology-standard: We need this when methodology prose is governed by preferred terminology so source skills, role definitions, and design pages use concepts consistently.
+- terminology-standard-update: We need this when methodology maintenance explicitly includes terminology.md so preferred entries and evidence-based reinforcement remain aligned.
 Request-specific skill conditions:
 - structured-design: when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation
+- terminology-standard: when creating or revising methodology prose governed by a project or shared user Terminology Standard
+- terminology-standard-update: when the requested methodology change creates or updates a Terminology Standard
 Output purposes:
 - status: States READY or BLOCKED and ties the terminal result to review, validation, commit, clean-worktree, and enabled resource-coordination release evidence.
 - aligned source files: Ensures conceptual agent definition sources, skills, documentation, and tests express one consistent methodology for maintainers and consumers.
@@ -82,6 +86,8 @@ Before acting, load these definition-owned skills completely; they govern the wo
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the structured-design skill when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation.
+- Use the terminology-standard skill when creating or revising methodology prose governed by a project or shared user Terminology Standard.
+- Use the terminology-standard-update skill when the requested methodology change creates or updates a Terminology Standard.
 
 Return:
 

@@ -20,8 +20,8 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 30 conceptual agents and 138 bundled skills have structural coverage.
-- [x] 29 agents are scenario-declared and 136 skills are probe-declared.
+- [x] 30 conceptual agents and 141 bundled skills have structural coverage.
+- [x] 29 agents are scenario-declared and 139 skills are probe-declared.
 - Agents missing scenario declarations: dev-skill-lint-reviewer.
 - Skills missing probe declarations: analyze-document-topics, revise-document-topics.
 - [x] 66 agent scenarios and 5 workflow packs are declared.
@@ -33,7 +33,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 31 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 2 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 29 agents and 112 skills have pending Model Judge status.
+- 29 agents and 115 skills have pending Model Judge status.
 - 0 agents and 24 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -118,6 +118,9 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | route-documentation-work | [x] | [x] probe-route-documentation-work | [x] documentation-functional-spec, project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | skill-authoring | [x] | [x] probe-skill-authoring | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | ste-technical-writing | [x] | [x] probe-ste-technical-writing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| terminology-standard | [x] | [x] probe-terminology-standard | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| terminology-standard-review | [x] | [x] probe-terminology-standard-review | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| terminology-standard-update | [x] | [x] probe-terminology-standard-update | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | verify-documentation-page | [x] | [x] probe-verify-documentation-page | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 
 ### Artifact creation skills

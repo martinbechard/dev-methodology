@@ -20,8 +20,10 @@ Skill justifications:
 - project-wiki: We need this to preserve queue boundaries, provenance, linking, validation, and closeout obligations throughout the ingest workflow.
 - project-wiki-topic-write: We need this to turn approved source material into durable pages whose topic boundaries and navigation remain maintainable over time.
 - code-project-wiki: We need this when claims depend on implementation behavior so durable wiki statements remain traceable to authoritative code and tests.
+- terminology-standard: We need this when source material becomes durable wiki synthesis so preferred project concepts are used without rewriting quoted or raw evidence.
 Request-specific skill conditions:
 - code-project-wiki: when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests
+- terminology-standard: when ingest creates or revises durable wiki prose governed by a project or shared user Terminology Standard
 Output purposes:
 - status: States READY, NEEDS_CORRECTION, or BLOCKED and ties ingest to its source gates or interruption, or a final evidence audit to exact artifact findings and existing owners.
 - result inventories: Separately labels fact-bearing ingested or substantiated conclusions and Open Questions, with the durable page and source provenance for every entry or explicit assessed scope when an inventory is empty.
@@ -90,6 +92,7 @@ These definition-owned skills are preloaded and govern the work: effective-commu
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the code-project-wiki skill when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.
+- Use the terminology-standard skill when ingest creates or revises durable wiki prose governed by a project or shared user Terminology Standard.
 
 Return:
 

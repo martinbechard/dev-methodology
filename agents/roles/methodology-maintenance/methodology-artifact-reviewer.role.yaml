@@ -46,6 +46,11 @@ skills:
     justification: We need this to judge methodology documentation against its authoritative sources and required page contracts instead of reviewing prose in isolation.
 - route-documentation-work:
     justification: We need this to evaluate artifacts against the bundle's documented routes, templates, and maintenance rules rather than personal preference.
+- terminology-standard-review:
+    justification: We need this when methodology artifacts are governed by preferred
+      terminology so catalog language and examples are reviewed against the same concepts.
+    condition: when reviewing methodology prose governed by a project or shared user
+      Terminology Standard.
 outputContract:
 - finding-first review:
     purpose: Gives the artifact owner an evidence-backed, severity-aware account of issues that can be acted on directly.

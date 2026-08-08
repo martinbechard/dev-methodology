@@ -52,6 +52,11 @@ skills:
     justification: We need this to verify required code-artifact headers and public construct
       documentation, and to check that implementation behavior respects the intent claimed
       by its comments.
+- terminology-standard-review:
+    justification: We need this when a diff changes durable prose or user-visible language
+      so terminology deviations are reviewed against the governing concept definitions.
+    condition: when the reviewed change creates or revises technical documentation,
+      user-visible labels, messages, or other governed language.
 outputContract:
 - completed code evidence packet:
     purpose: Preserves checklist status, cited facts, uncertainty, and missing evidence

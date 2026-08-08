@@ -87,6 +87,9 @@ NEW_WORKFLOW_SKILLS = (
     "reverse-engineer-project-documentation",
     "code-project-wiki",
     "verify-documentation-page",
+    "terminology-standard",
+    "terminology-standard-review",
+    "terminology-standard-update",
     "create-project-configuration",
     "maintain-methodology-documentation",
     "skill-authoring",
@@ -347,6 +350,10 @@ README_REQUIRED_PHRASES = (
     "jhipster-domain-modeling",
     "[Agent Skill Architecture](design/skills-modularization.html) explains always-used and rule-selected agent skills",
     "[Wiki Skills And Project Context page](design/wiki-skills-and-project-context.html)",
+    "[Terminology Standard design](design/agents/terminology-standard.md)",
+    "- terminology-standard",
+    "- terminology-standard-review",
+    "- terminology-standard-update",
     "The generic Gang of Four pattern skills are request-specific assignments for design authoring and design review.",
     "project-wiki-create",
     "create-functional-spec",
@@ -6282,6 +6289,102 @@ class BundleContentTests(unittest.TestCase):
         for guidance in required_guidance:
             with self.subTest(guidance=guidance):
                 self.assertIn(guidance, skill_text)
+
+    def test_terminology_standard_family_is_positive_first_and_role_routed(self) -> None:
+        skill_names = (
+            "terminology-standard",
+            "terminology-standard-review",
+            "terminology-standard-update",
+        )
+        skill_texts = {
+            skill_name: (SKILLS_ROOT / skill_name / "SKILL.md").read_text(
+                encoding="utf-8"
+            )
+            for skill_name in skill_names
+        }
+
+        for skill_name, skill_text in skill_texts.items():
+            with self.subTest(skill=skill_name):
+                metadata = yaml.safe_load(skill_text.split("---", maxsplit=2)[1])
+                self.assertEqual(skill_name, metadata["name"])
+                self.assertEqual(
+                    "documentation-methodology",
+                    metadata["metadata"]["category"],
+                )
+                self.assertTrue(skill_name.startswith("terminology-standard"))
+
+        base_text = skill_texts["terminology-standard"]
+        self.assertIn("exact filename terminology.md", base_text)
+        self.assertIn("one multi-scope artifact operation", base_text)
+        self.assertIn("Apply the shared user entries first", base_text)
+        self.assertIn("A project entry governs within its project", base_text)
+        self.assertIn("The Avoid section is optional", base_text)
+        self.assertIn("Do not populate Avoid as a speculative synonym list", base_text)
+
+        review_text = skill_texts["terminology-standard-review"]
+        self.assertIn("Apply terminology-standard", review_text)
+        self.assertIn("even when that term is not yet listed under Avoid", review_text)
+        self.assertIn("A review never adds a preferred or avoided term", review_text)
+
+        update_text = skill_texts["terminology-standard-update"]
+        self.assertIn("project terminology.md by default", update_text)
+        self.assertIn("shared user standard only when the user explicitly selects", update_text)
+        self.assertIn("Omit Avoid for the initial entry", update_text)
+        self.assertIn("retained evidence", update_text)
+
+        routed_agents = {skill_name: set() for skill_name in skill_names}
+        for role_path in sorted(ROLES_ROOT.glob("*/*.role.yaml")):
+            role = load_yaml_object(role_path)
+            for entry in role["skills"]:
+                skill_name = next(iter(entry))
+                if skill_name in routed_agents:
+                    self.assertIn("condition", entry[skill_name])
+                    routed_agents[skill_name].add(role["name"])
+
+        self.assertEqual(
+            {
+                "dev-coder",
+                "dev-documentation-writer",
+                "methodology-maintainer",
+                "wiki-architect",
+                "wiki-ingester",
+                "wiki-writer",
+            },
+            routed_agents["terminology-standard"],
+        )
+        self.assertEqual(
+            {
+                "dev-artifact-reviewer",
+                "dev-code-reviewer",
+                "dev-prompt-reviewer",
+                "dev-skill-lint-reviewer",
+                "dev-ux-specialist",
+                "methodology-artifact-reviewer",
+                "wiki-artifact-reviewer",
+                "wiki-topic-verifier",
+            },
+            routed_agents["terminology-standard-review"],
+        )
+        self.assertEqual(
+            {"dev-documentation-writer", "methodology-maintainer"},
+            routed_agents["terminology-standard-update"],
+        )
+
+        group_design = (
+            REPOSITORY_ROOT / "design" / "agents" / "terminology-standard.md"
+        ).read_text(encoding="utf-8")
+        for skill_name in skill_names:
+            self.assertIn(skill_name, group_design)
+        self.assertIn("The exact artifact name is terminology.md", group_design)
+
+        group_registry = (
+            REPOSITORY_ROOT / "design" / "object-oriented-skill-group-models.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "| Terminology Standard | terminology-standard; terminology-standard-review; terminology-standard-update | None | 3 |",
+            group_registry,
+        )
+        self.assertIn("complete fifty-five-skill inventory", group_registry)
 
     def test_project_file_organisation_defines_taxonomy_contract(self) -> None:
         skill_text = (

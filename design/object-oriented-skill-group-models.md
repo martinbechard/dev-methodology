@@ -4,7 +4,7 @@ This document applies the reusable [Skill Organization](object-oriented-agent-an
 
 ## 1. Application Scope
 
-The application covers nine top-level Skill Groups plus one cross-cutting Agent-wide applicability view. Together, these ten organizational views represent fifty-two current skill packages across eight Agent-oriented designs.
+The application covers ten top-level Skill Groups plus one cross-cutting Agent-wide applicability view. Together, these eleven organizational views represent fifty-five current skill packages across nine Agent-oriented designs.
 
 Every agent-oriented design document contains:
 
@@ -134,6 +134,7 @@ The registry assigns every current capability-group skill one primary direct gro
 | Baseline Development | careful-coding; code-comments; code-discovery; test-driven-development; structured-design; review-structured-artifact; explain-code-fix | None | 7 |
 | Project Setup | detect-technology-skills; create-project-configuration | None | 2 |
 | Documentation Methodology | route-documentation-work; bootstrap-project-documentation; reverse-engineer-project-documentation; verify-documentation-page | None | 4 |
+| Terminology Standard | terminology-standard; terminology-standard-review; terminology-standard-update | None | 3 |
 | Backlog Management | resolve-backlog-blockage; create-work-item; create-work-item-file; create-work-item-github; create-work-item-gitlab; create-work-item-azure-devops; create-work-item-jira; commit-file-provider-transaction; manage-future-ideas; manage-work-items; manage-work-items-file; manage-work-items-github; manage-work-items-gitlab; manage-work-items-azure-devops; manage-work-items-jira | None | 15 |
 | Work Item Dispatching | coordinate-work-items; coordinate-codex-tasks; set-solo-mode; set-multitask-mode | None | 4 |
 | Resource Coordination | resource-claim; resource-claim-helper; resource-claim-helper-command; resource-claim-helper-mcp | None | 4 |
@@ -141,7 +142,7 @@ The registry assigns every current capability-group skill one primary direct gro
 | Main Branch Delivery | deliver-work-item; deliver-work-item-main-branch | None | 2 |
 | Review And Verification | review-code-with-evidence; test-strategy; verify-end-to-end-workflow; analyze-root-cause; collect-runtime-evidence; trace-code-execution; review-prompt-contracts | None | 7 |
 
-The nine Skill Groups contain forty-eight skills. Adding the four skills in the cross-cutting Agent-wide applicability view yields the complete fifty-two-skill inventory. Cross-group repetitions in detailed diagrams do not increase either count.
+The ten Skill Groups contain fifty-one skills. Adding the four skills in the cross-cutting Agent-wide applicability view yields the complete fifty-five-skill inventory. Cross-group repetitions in detailed diagrams do not increase either count.
 
 ## 4. Agent-Oriented Designs
 
@@ -151,6 +152,7 @@ The design documents show the Agent groups, Skill Groups, and detailed dependenc
 - [Baseline Development](agents/baseline-development.md)
 - [Project Setup](agents/project-setup.md)
 - [Documentation Methodology](agents/documentation-methodology.md)
+- [Terminology Standard](agents/terminology-standard.md)
 - [Backlog Management](agents/backlog-management.md)
 - [Work Item Dispatching And Delivery](agents/work-item-dispatching-and-delivery.md)
 - [Main Branch Delivery](agents/main-branch-delivery.md)
@@ -196,7 +198,7 @@ The applied model is complete when it describes the maintained skill inventory a
 
 The applied model is grounded in the repository sources below.
 
-- The fifty-two SKILL.md files and conceptual Agent definitions linked from the eight Agent-oriented design documents.
+- The fifty-five SKILL.md files and conceptual Agent definitions linked from the nine Agent-oriented design documents.
 - [Object-Oriented Analysis Of Agents And Skills](object-oriented-agent-and-skill-model.md)
 - [Bundled Skill Inventory](../README.md)
 - [Agentic Configuration](agentic-configuration.html)

@@ -46,6 +46,11 @@ skills:
 - bootstrap-project-documentation:
     justification: We need this when the repository lacks the documentation roots or ownership decisions required to place and maintain the wiki correctly.
     condition: when the repository lacks established documentation roots or ownership guidance needed for wiki setup.
+- terminology-standard:
+    justification: We need this when wiki methodology or navigation prose is governed by
+      preferred terminology so the initialized wiki establishes consistent concept language.
+    condition: when creating or revising durable wiki guidance governed by a project or
+      shared user Terminology Standard.
 outputContract:
 - setup recommendation pack:
     purpose: Gives the requester a concrete proposal for wiki purpose, roots, federation, workflows, automations, feeds, and operational folders before mappings are finalized.
