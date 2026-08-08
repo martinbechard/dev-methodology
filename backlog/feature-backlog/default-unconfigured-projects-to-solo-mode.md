@@ -140,17 +140,17 @@ Condition Type: root-execution.
 
 Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: Previous main-integration claim was safely released after heartbeat, event 3629b1c1-2876-407e-ae11-267c240645a1. Fresh claim default-unconfigured-projects-to-solo-mode-main-integration-correction-019fe2f2 was acquired SHARED_CHECKOUT_ACQUIRED, event 31dd24bc-5e44-48ac-8bcc-9f051b23552d, at 2026-08-08T23:20:35.435133Z for Dev Merge Coordinator on main, parented to the current root Work claim, baseline 74e2da0c; expected release 23:40:35Z, hard stop 23:50:35Z, cleanup 00:00:35Z. The coordinator resumed on the preserved isolated integration worktree and is correcting exactly README.md, two mode skills, and generated skill-definitions, with required gates and commit pending. No blocker, extra path, or terminology issue is recorded. Primary main has no mutation beyond provider updates. Title is Implementing.
+Evidence: Fresh integration correction is green so far: freshness, skills 3, provenance 3, BundleContent 3, and role/source-to-adapter 17 pass. Broader Bootstrapper discovery identified stale SHA-256 fixture pins for the two changed mode skills in evals/agent-tests/project-bootstrapper/scripted_orchestration.py. Updating those pins is authorized within the original exact eight candidate paths; the correction commit therefore covers exactly five paths (README.md, two mode skills, generated skill-definitions, and the existing scripted fixture), with no delivery-scope widening. Dev Merge Coordinator is updating only those two pins, then rerunning discovery and full gates. Fresh main-integration claim remains live with heartbeat ca905272 and hard stop 23:50:35Z. No blocker, extra path, or terminology issue is recorded. Primary main has no mutation beyond provider updates. Title is Implementing.
 
-Observed At: 2026-08-08T23:21:18Z.
+Observed At: 2026-08-08T23:25:32Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-09T00:00:00Z.
 
-Next Action: Receive the bounded correction commit, rerun required gates, and obtain fresh artifact review and integrated verification before delivery. The deadline is extended because re-review, verifier, and delivery remain after correction.
+Next Action: Receive the clean five-path correction commit, rerun discovery and full gates, then obtain fresh artifact review and integrated verification before delivery. The deadline covers the in-scope fixture-pin correction and subsequent review/verifier work.
 
-Next Reconciliation At: 2026-08-08T23:29:18Z.
+Next Reconciliation At: 2026-08-08T23:33:32Z.
 
 ## User Action Required Transition Evidence
 
