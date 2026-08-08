@@ -14,7 +14,7 @@ The General Agent Skills design separates two loading mechanisms that reach ever
 
 ### Agent-Wide Applicability View
 
-The view contains four independent skills whose common property is Agent-wide applicability. The box itemizes that applicability set without treating it as a cohesive capability or implying that one skill depends on another.
+The view contains five independent skills whose common property is Agent-wide applicability. The box itemizes that applicability set without treating it as a cohesive capability or implying that one skill depends on another.
 
 ```mermaid
 classDiagram
@@ -31,6 +31,9 @@ classDiagram
             <<SKILL.md>>
         }
         class organise-project-files {
+            <<SKILL.md>>
+        }
+        class document-provenance {
             <<SKILL.md>>
         }
     }
@@ -76,6 +79,7 @@ classDiagram
         <<routing>>
         +route structured-explanation when classified technical reasoning is required
         +route organise-project-files when placement must be chosen or audited
+        +route document-provenance when a governed maintained document is created, generated, migrated, or accepted
     }
     class structured-explanation {
         <<SKILL.md>>
@@ -85,24 +89,31 @@ classDiagram
         <<SKILL.md>>
         +choose-project-file-placement()
     }
+    class document-provenance {
+        <<SKILL.md>>
+        +apply-document-provenance()
+    }
 
     ProjectSpecificDirectives o..> structured-explanation : when classified technical reasoning is required
     ProjectSpecificDirectives o..> organise-project-files : when a file location must be chosen or audited
+    ProjectSpecificDirectives o..> document-provenance : when a governed maintained document enters the project
 ```
 
 `structured-explanation` is loaded when the work must expose classified technical reasoning through QUERY, SUB-QUERY, FACT, HYPOTHESIS, UNKNOWN, and ANSWER items. Ordinary communication continues to use `effective-communication`; ordinary technical-document prose continues to use `ste-technical-writing`. The structured form is not required merely because an Agent explains something.
 
 `organise-project-files` is loaded before an Agent chooses or audits a project file or directory location. When an authoritative configuration, generator, template, or explicit user instruction already fixes the exact destination, the Agent confirms that binding without reopening a redundant placement decision.
 
+`document-provenance` is loaded when an Agent creates, generates, migrates, or accepts a maintained document governed by the centralized project configuration. The configuration owns the exact copyright, governed Markdown and HTML paths, exclusions, generated-artifact boundary, and root guidance. The skill owns provenance placement, runtime-envelope truthfulness, historical migration, and validation. Artifact-specific creation and review skills continue to own document meaning, structure, and format-specific front matter. Excluded operational, imported, configuration, data, binary, cache, and generated projection paths do not activate the skill unless an owning source explicitly integrates provenance.
+
 ### How Agent-Group Designs Use This Design
 
-Agent-group designs focus on dependencies that distinguish their Agents and activities. They link to this design instead of repeating the four general skills in every overall or scenario diagram. A scenario may still show one of these skills when that general dependency is the subject of the scenario itself.
+Agent-group designs focus on dependencies that distinguish their Agents and activities. They link to this design instead of repeating the five general skills in every overall or scenario diagram. A scenario may still show one of these skills when that general dependency is the subject of the scenario itself.
 
 This omission is a diagramming simplification, not a loss of dependency information. Universal skills remain present through the role schema, and project-wide conditional skills remain available through the rendered project directives.
 
 ## Skill Responsibilities
 
-The four skills have separate responsibilities even though their loading scope is shared.
+The five skills have separate responsibilities even though their loading scope is shared.
 
 | Skill | Loading mechanism | Responsibility |
 | --- | --- | --- |
@@ -110,6 +121,7 @@ The four skills have separate responsibilities even though their loading scope i
 | ste-technical-writing | Universal role-schema skill | Preserves meaning and uses controlled technical prose when an Agent creates, revises, or reviews technical documentation. |
 | structured-explanation | Project-wide conditional skill | Presents explicit technical reasoning using classified reasoning items when that structure is required. |
 | organise-project-files | Project-wide conditional skill | Chooses or audits repository locations using project guidance, taxonomy, ownership, and lifecycle evidence. |
+| document-provenance | Project-wide conditional skill | Applies exact project-authorized provenance, runtime-supplied execution evidence, format-specific placement, historical-migration rules, and validation to governed maintained documents. |
 
 ## Authoritative Inputs
 
@@ -122,3 +134,4 @@ The membership, loading mechanisms, and procedure boundaries are grounded in the
 - [STE Technical Writing](../../skills/ste-technical-writing/SKILL.md)
 - [Structured Explanation](../../skills/structured-explanation/SKILL.md)
 - [Organise Project Files](../../skills/organise-project-files/SKILL.md)
+- [Document Provenance](../../skills/document-provenance/SKILL.md)

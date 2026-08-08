@@ -1,8 +1,19 @@
 <!--
-Copyright (c) 2025 Martin Bechard [martin.bechard@DevConsult.ca]
-This software is licensed under the MIT License.
-File path: skills/route-documentation-work/assets/templates/functional-spec-template.md
-1-line summary: Template for user-visible workflow and acceptance documentation.
+{{COPYRIGHT}}
+Artifact-ID: {{ARTIFACT_ID}}
+Created-UTC: {{CREATED_UTC}}
+Creating-Agent: {{CREATING_AGENT}}
+Runtime: {{RUNTIME}}
+Dispatched-Model: {{DISPATCHED_MODEL}}
+Reasoning-Effort: {{REASONING_EFFORT}}
+Task-ID: {{TASK_ID}}
+Artifact-ID-Evidence: runtime-supplied
+Created-UTC-Evidence: runtime-supplied
+Creating-Agent-Evidence: runtime-supplied
+Runtime-Evidence: runtime-supplied
+Dispatched-Model-Evidence: runtime-supplied
+Reasoning-Effort-Evidence: runtime-supplied
+Task-ID-Evidence: runtime-supplied
 -->
 
 # TODO Functional Specification Name

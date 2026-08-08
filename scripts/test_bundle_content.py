@@ -1215,6 +1215,168 @@ def _scan_stale_identities(
 
 
 class BundleContentTests(unittest.TestCase):
+    def test_document_provenance_package_templates_and_probe_are_aligned(self) -> None:
+        """Keep provenance sources, templates, routing, and declared evaluation aligned."""
+
+        skill_root = SKILLS_ROOT / "document-provenance"
+        skill_path = skill_root / "SKILL.md"
+        metadata_path = skill_root / "agents" / "openai.yaml"
+        format_contract_path = skill_root / "references" / "format-contract.md"
+        migration_path = skill_root / "references" / "historical-migration.md"
+        validator_path = skill_root / "scripts" / "validate_document_provenance.py"
+        validator_test_path = (
+            skill_root / "scripts" / "test_validate_document_provenance.py"
+        )
+        envelope_path = skill_root / "fixtures" / "runtime-envelope.json"
+        schema_path = skill_root / "assets" / "provenance-envelope.schema.json"
+
+        for path in (
+            skill_path,
+            metadata_path,
+            format_contract_path,
+            migration_path,
+            validator_path,
+            validator_test_path,
+            envelope_path,
+            schema_path,
+        ):
+            with self.subTest(path=path.relative_to(REPOSITORY_ROOT)):
+                self.assertTrue(path.is_file())
+
+        frontmatter = load_yaml_object_from_frontmatter(skill_path)
+        metadata = load_yaml_object(metadata_path)
+        skill_text = skill_path.read_text(encoding="utf-8")
+        self.assertEqual("document-provenance", frontmatter["name"])
+        self.assertEqual("documentation-methodology", frontmatter["metadata"]["category"])
+        self.assertEqual("Document Provenance", metadata["interface"]["display_name"])
+        self.assertIn("$document-provenance", metadata["interface"]["default_prompt"])
+        for heading in (
+            "## Authority Boundary",
+            "## Runtime Provenance Envelope",
+            "## Placement Rules",
+            "## Historical Documents",
+            "## Deterministic Validation",
+        ):
+            self.assertIn(heading, skill_text)
+        json.loads(schema_path.read_text(encoding="utf-8"))
+
+        expected_creation_records = [
+            {
+                "Artifact-ID": "f633e99c-ffc4-4bc9-9c11-75e8dc070914",
+                "Created-UTC": "2026-08-08T18:22:49Z",
+                "Creating-Agent": "Dev Coder",
+                "Runtime": "Codex",
+                "Dispatched-Model": "gpt-5.6-sol",
+                "Reasoning-Effort": "high",
+                "Task-ID": "019fe291-1ba8-7a43-8d21-391a04dfa9a9",
+            },
+            {
+                "Artifact-ID": "0b7a6eef-de34-488e-957d-11788f18314d",
+                "Created-UTC": "2026-08-08T18:22:49Z",
+                "Creating-Agent": "Dev Coder",
+                "Runtime": "Codex",
+                "Dispatched-Model": "gpt-5.6-sol",
+                "Reasoning-Effort": "high",
+                "Task-ID": "019fe291-1ba8-7a43-8d21-391a04dfa9a9",
+            },
+            {
+                "Artifact-ID": "52badfc3-ee93-4a3c-8aa8-b4195cacb745",
+                "Created-UTC": "2026-08-08T18:22:49Z",
+                "Creating-Agent": "Dev Coder",
+                "Runtime": "Codex",
+                "Dispatched-Model": "gpt-5.6-sol",
+                "Reasoning-Effort": "high",
+                "Task-ID": "019fe291-1ba8-7a43-8d21-391a04dfa9a9",
+            },
+        ]
+        envelope = json.loads(envelope_path.read_text(encoding="utf-8"))
+        self.assertEqual(expected_creation_records, envelope["records"][:3])
+        for path, record in zip(
+            (skill_path, format_contract_path, migration_path),
+            expected_creation_records,
+            strict=True,
+        ):
+            text = path.read_text(encoding="utf-8")
+            for field, expected in record.items():
+                self.assertIn(f"{field}: {expected}", text)
+                self.assertIn(f"{field}-Evidence: runtime-supplied", text)
+
+        template_root = (
+            SKILLS_ROOT / "route-documentation-work" / "assets" / "templates"
+        )
+        governed_templates = (
+            "architecture-template.md",
+            "functional-spec-template.md",
+            "high-level-design-template.md",
+            "module-design-template.md",
+            "project-wiki-template.md",
+            "unit-test-plan-template.md",
+        )
+        placeholder_fields = (
+            "COPYRIGHT",
+            "ARTIFACT_ID",
+            "CREATED_UTC",
+            "CREATING_AGENT",
+            "RUNTIME",
+            "DISPATCHED_MODEL",
+            "REASONING_EFFORT",
+            "TASK_ID",
+        )
+        evidence_labels = (
+            "Artifact-ID",
+            "Created-UTC",
+            "Creating-Agent",
+            "Runtime",
+            "Dispatched-Model",
+            "Reasoning-Effort",
+            "Task-ID",
+        )
+        for template_name in governed_templates:
+            template_text = (template_root / template_name).read_text(encoding="utf-8")
+            with self.subTest(template=template_name):
+                for field in placeholder_fields:
+                    self.assertIn(f"{{{{{field}}}}}", template_text)
+                for label in evidence_labels:
+                    self.assertIn(f"{label}-Evidence: runtime-supplied", template_text)
+                self.assertNotIn("Copyright (c) 2025", template_text)
+                self.assertNotIn("MIT License", template_text)
+                self.assertNotIn("File path:", template_text)
+                self.assertNotIn("1-line summary:", template_text)
+        file_work_item = (template_root / "file-work-item-template.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertNotIn("{{ARTIFACT_ID}}", file_work_item)
+        project_template = load_yaml_object(template_root / "project-template.yaml")
+        self.assertEqual({"enabled": False}, project_template["document_provenance"])
+        self.assertNotIn(
+            "document-provenance",
+            [entry["skill"] for entry in project_template["shared_agent_skills"]],
+        )
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probe = next(
+            entry
+            for entry in probes["probes"]
+            if entry["id"] == "probe-document-provenance"
+        )
+        self.assertEqual("document-provenance", probe["skill"])
+        self.assertEqual("declared", probe["coverageStatus"])
+        self.assertEqual([], probe["executableCases"])
+        self.assertIn("do not activate", probe["negativeCondition"])
+        self.assertIn("runtime", probe["expectedBehavior"])
+
+        project = load_yaml_object(REPOSITORY_ROOT / "PROJECT.yaml")
+        shared_skills = [entry["skill"] for entry in project["shared_agent_skills"]]
+        self.assertIn("document-provenance", shared_skills)
+        self.assertEqual(True, project["document_provenance"]["enabled"])
+        self.assertEqual(
+            "Copyright (c) 2026 Martin.Bechard@DevConsult.ca",
+            project["document_provenance"]["copyright"],
+        )
+        agents_text = AGENTS_PATH.read_text(encoding="utf-8")
+        self.assertEqual(1, agents_text.count("## Document Provenance"))
+        self.assertIn("document-provenance", README_PATH.read_text(encoding="utf-8"))
+
     def test_baseline_development_skills_expose_approved_operations_and_rename(
         self,
     ) -> None:

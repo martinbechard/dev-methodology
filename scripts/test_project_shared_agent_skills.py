@@ -34,6 +34,10 @@ class ProjectSharedAgentSkillsTests(unittest.TestCase):
                     "skill": "organise-project-files",
                     "condition": "when an Agent must choose or audit a project path",
                 },
+                {
+                    "skill": "document-provenance",
+                    "condition": "when an Agent creates a governed maintained document",
+                },
             ],
             "role_agent_set": [],
         }
@@ -46,6 +50,7 @@ class ProjectSharedAgentSkillsTests(unittest.TestCase):
                 "",
                 "- structured-explanation: load when an Agent must expose classified technical reasoning.",
                 "- organise-project-files: load when an Agent must choose or audit a project path.",
+                "- document-provenance: load when an Agent creates a governed maintained document.",
                 "",
             ],
             RENDERER._shared_agent_skill_lines(project),
@@ -202,13 +207,19 @@ class ProjectSharedAgentSkillsTests(unittest.TestCase):
         }
 
         self.assertEqual(
-            ["structured-explanation", "organise-project-files"],
+            [
+                "structured-explanation",
+                "organise-project-files",
+                "document-provenance",
+            ],
             [skill for skill, _condition in shared_skills],
         )
         self.assertTrue(
-            {"structured-explanation", "organise-project-files"}.isdisjoint(
-                selected_role_skills
-            )
+            {
+                "structured-explanation",
+                "organise-project-files",
+                "document-provenance",
+            }.isdisjoint(selected_role_skills)
         )
 
     def test_general_conditional_skills_are_not_owned_by_any_role(self) -> None:
@@ -217,6 +228,7 @@ class ProjectSharedAgentSkillsTests(unittest.TestCase):
         general_conditional_skills = {
             "structured-explanation",
             "organise-project-files",
+            "document-provenance",
         }
 
         for role_path in sorted((REPOSITORY_ROOT / "agents" / "roles").rglob("*.role.yaml")):

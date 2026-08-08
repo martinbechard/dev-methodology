@@ -611,6 +611,20 @@ probes:
     executableCases: [documentation-functional-spec, project-configuration-routing]
     coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-document-provenance
+    skill: document-provenance
+    source: skills/document-provenance/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: artifact-contract
+    activationCondition: An Agent creates, generates, migrates, or accepts a maintained document governed by the project document-provenance configuration.
+    negativeCondition: Executable code remains governed by code-comments; imported, vendor, configuration, data, operational, excluded generated, and other excluded artifacts do not activate this skill; and historical records do not permit inference of a current runtime profile.
+    expectedBehavior: Use the exact project-authorized copyright; obtain the complete execution envelope from the coordinator, orchestrator, or harness; render canonical fields and runtime-supplied evidence in the format-specific position; label unavailable historical values without inference; integrate generated artifacts through their owning source; and validate the result without rewriting invalid input.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, allowed-paths-only], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-documentation-writer-happy, dev-artifact-reviewer-happy]
+    workflowAssociations: [documentation-methodology]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
   - id: probe-bootstrap-project-documentation
     skill: bootstrap-project-documentation
     source: skills/bootstrap-project-documentation/SKILL.md

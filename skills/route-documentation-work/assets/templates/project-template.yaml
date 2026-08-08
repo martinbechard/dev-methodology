@@ -190,6 +190,11 @@ shared_agent_skills:
   - skill: organise-project-files
     condition: "when an Agent must choose or audit the location of a project file or directory"
 
+document_provenance:
+  enabled: false
+  # To enable, add document-provenance to shared_agent_skills and replace this disabled
+  # example with exact project-authorized copyright, governed_paths, and excluded_paths.
+
 project_skill_extensions: []
 
 technology_skill_loadouts:
