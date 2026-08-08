@@ -1,6 +1,6 @@
 # Integrate The Documentation Design System
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
@@ -192,3 +192,23 @@ Approved at creation on 2026-08-08 by the current user request and attached owne
 - Preserve unrelated working-tree changes and exclude them from creation and implementation commits unless separately in scope.
 - Originating-task confirmation is a post-implementation acceptance and publication boundary, not a hard dependency for starting this Ready item.
 - Existing HTML documentation migration requires a separate work item.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-08T23:54:28Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Normalized Objective: Integrate the approved versioned Documentation Design System and portable read-only conformance-review workflow into authoritative methodology sources, semantic profiles, generated adapters, focused evaluations, and repository-local documentation without migrating existing HTML pages or publishing to user-level locations.
+
+Launch Result: Not attempted
+
+Canonical Execution: None
+
+Last Contact At: None
+
+Next Reconciliation At: 2026-08-09T00:09:28Z
+
+Intended Root Role: Dev Orchestrator
+
+Scheduling Evidence: The older `default-unconfigured-projects-to-solo-mode` finish lane is Completed at provider commit `51aaf33d7122e8e70d2ff5ab4a3bbc23c35d7d58`; its claims are released, clean source and integration worktrees are removed, and its canonical task is archived. Primary main is clean and the resource-claim registry is empty. Begin with private-worktree prototype analysis and exact governed-path prechecks; defer any later shared installation or unrelated publication beyond the work item's explicit boundaries.
