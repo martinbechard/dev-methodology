@@ -22,7 +22,7 @@ Branch: codex/add-document-provenance-skill
 
 Worktree: /Users/martinbechard/.codex/worktrees/6cb2/dev-methodology
 
-Phase: Delegated completion of the single candidate across the released exact shared catalog, project-guidance, template, generated-output, and focused-test manifest
+Phase: Test-driven delegated implementation of project-configured provenance guidance before the remaining claimed template, catalog, and generated-output surfaces
 
 Started At: 2026-08-08T18:11:22Z
 
@@ -151,17 +151,17 @@ Condition Type: delegated-work
 
 Owner: Dev Coder task /root/implement_document_provenance under Root Dev Orchestrator task 019fe291-1ba8-7a43-8d21-391a04dfa9a9
 
-Evidence: The same Dev Coder completed the 26-file package phase with 11/11 focused tests and all package metadata, validation, CLI, JSON, and whitespace gates green. After the one-time finish-lane release and one current-main read, the canonical branch fast-forwarded to 8d0354a930462c97984ee549230cb434411e53b9 without changing package bytes. Child claim add-document-provenance-package-tree-019fe291 was extended through events 8560047e-418b-4250-8fb3-4f6932916995 and a16f8ca7-d46a-4177-a560-fb685a594e94 to the exact dependent manifest, and the same producer is completing one immutable candidate.
+Evidence: The same Dev Coder completed the unchanged 26-file package gates, retained the Root Dev Orchestrator-supplied creation envelopes, and is actively applying the claimed renderer/configuration test matrix. New focused project-provenance tests and shared-skill expectation updates reached the intended RED state, and implementation is now present in scripts/render-agents-technology-skills.py. Child claim add-document-provenance-package-tree-019fe291 remains live across the exact dependent manifest.
 
-Observed At: 2026-08-08T18:40:32Z
+Observed At: 2026-08-08T18:48:52Z
 
 Started At: 2026-08-08T18:11:22Z
 
 Deadline or Expires At: 2026-08-08T22:11:13Z
 
-Next Action: Complete only the claimed shared sources, focused tests, project guidance, templates, and supported generated outputs; run integration-sensitive focused checks without repeating unchanged package gates; then commit the single immutable candidate for independent review and verification.
+Next Action: Make the focused renderer/configuration tests green, update the remaining claimed templates, catalogs, and documentation, regenerate only the four claimed stale outputs plus AGENTS.md, run focused integration-sensitive checks, and commit the single immutable candidate.
 
-Next Reconciliation At: 2026-08-08T18:54:32Z
+Next Reconciliation At: 2026-08-08T19:02:52Z
 
 ## Resource Ownership Reconciliation Evidence
 
