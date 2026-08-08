@@ -24,7 +24,7 @@ The Terminology Standard Skill Group keeps preferred concept language consistent
 
 The exact artifact name is terminology.md. A shared user artifact applies across projects. A project artifact narrows or extends that shared standard for one project.
 
-The provider-neutral Load Terminology Standards operation is realized by one mcp-agent-ops reference_load call for terminology.md. The installer configures the active project first and then the shared user reference roots. A successful aggregate or reference_not_found result is conclusive only for the provider's active configured snapshot; it does not prove that an unlisted physical root exists or was eligible. A provider error is UNAVAILABLE. An absent artifact is valid and does not trigger creation. Unavailable loading blocks conformance PASS and every standard mutation; ordinary project writing may report an explicit project-only PARTIAL result. Update decisions and COMPLETE results are bound to the returned catalog revision and source labels; a mutation that requires proof about an unlisted physical scope is BLOCKED. The first matching project entry governs when the project source is present, and shared entries remain available for other concepts.
+The provider-neutral Load Terminology Standards operation is realized by mcp-agent-ops reference_load for terminology.md. The installer configures the active project first and then the shared user reference roots. The process-local reference snapshot is immutable until the provider-neutral Refresh Terminology Standards operation invokes reference_refresh. A successful aggregate or reference_not_found result is conclusive only for the provider's active configured snapshot; it does not prove that an unlisted physical root exists or was eligible. A provider error is UNAVAILABLE. An absent artifact is valid and does not trigger creation. Unavailable loading blocks conformance PASS and every standard mutation; ordinary project writing may report an explicit project-only PARTIAL result. An update refreshes and loads before mutation so its decision uses current disk state. COMPLETE requires a second successful refresh followed by a load whose revision matches and whose source digests include the validated target digest. A post-mutation refresh or verification failure returns PUBLICATION INCOMPLETE while preserving the valid file. A mutation that requires proof about an unlisted physical scope is BLOCKED. The first matching project entry governs when the project source is present, and shared entries remain available for other concepts.
 
 Each entry starts with a preferred term and definition. Use for and Examples are optional clarifications. Avoid is optional reinforcement added only after retained evidence shows repeated substitution, a misleading metaphor, or another persistent bias toward a nonpreferred term.
 
@@ -158,7 +158,7 @@ classDiagram
 
 ### Scenario: Update The Standard
 
-Dev Documentation Writer owns ordinary terminology.md authoring. Methodology Maintainer uses the same update skill when a methodology maintenance request includes the standard. Project scope is the default for project-specific concepts. Shared user scope requires explicit selection and a caller-supplied authorized mutation target because reference_load deliberately returns path-free data. Either update blocks without mutation when one requested scope or its mutation authority is unavailable.
+Dev Documentation Writer owns ordinary terminology.md authoring. Methodology Maintainer uses the same update skill when a methodology maintenance request includes the standard. Project scope is the default for project-specific concepts. Shared user scope requires explicit selection and a caller-supplied authorized mutation target because reference_load deliberately returns path-free data. Either update refreshes and loads before mutation, then blocks without mutation when one requested scope, refresh capability, or mutation authority is unavailable. After a valid file change, a second reference_refresh and a digest-confirming reload publish and verify the new snapshot; failure at that boundary returns PUBLICATION INCOMPLETE without reverting the file.
 
 ```mermaid
 classDiagram
@@ -184,7 +184,7 @@ classDiagram
 
 | Skill | Responsibility |
 | --- | --- |
-| terminology-standard | Defines the reference_load provider contract, terminology.md scope precedence, positive-first entry structure, exclusions, and ordinary preferred-term application. |
+| terminology-standard | Defines the reference_load and reference_refresh provider contracts, terminology.md scope precedence, snapshot publication verification, positive-first entry structure, exclusions, and ordinary preferred-term application. |
 | terminology-standard-review | Performs read-only concept-level conformance review and separates target corrections from reinforcement recommendations. |
 | terminology-standard-update | Creates or revises one selected standard and adds Avoid only when retained evidence justifies reinforcement. |
 

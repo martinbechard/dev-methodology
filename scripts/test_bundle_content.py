@@ -6488,6 +6488,14 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("cannot support TERMINOLOGY REVIEW: PASS", base_text)
         self.assertIn("TERMINOLOGY APPLICATION: PARTIAL", base_text)
         self.assertIn("TERMINOLOGY APPLICATION: BLOCKED", base_text)
+        self.assertIn("process-local and immutable", base_text)
+        self.assertIn("provider-neutral operation is Refresh Terminology Standards", base_text)
+        self.assertIn("mcp-agent-ops reference_refresh with no arguments", base_text)
+        self.assertIn("rebuilds every allowlisted reference", base_text)
+        self.assertIn("TERMINOLOGY REFERENCE SNAPSHOT REFRESHED", base_text)
+        self.assertIn("TERMINOLOGY STANDARD PUBLICATION INCOMPLETE", base_text)
+        self.assertIn("catalog_revision to equal the refresh revision", base_text)
+        self.assertIn("validated SHA-256 digest of the selected target file", base_text)
         self.assertIn(
             "Load the active configured reference snapshot through Load Terminology Standards",
             base_text,
@@ -6509,11 +6517,22 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Omit Avoid for the initial entry", update_text)
         self.assertIn("retained evidence", update_text)
         self.assertIn("TERMINOLOGY STANDARD UPDATE: BLOCKED", update_text)
+        self.assertIn(
+            "Refresh Terminology Standards operation once before the initial load",
+            update_text,
+        )
+        self.assertIn("Invoke Refresh Terminology Standards a second time", update_text)
+        self.assertIn(
+            "Invoke Load Terminology Standards once against the refreshed snapshot",
+            update_text,
+        )
+        self.assertIn("TERMINOLOGY STANDARD UPDATE: PUBLICATION INCOMPLETE", update_text)
         self.assertIn("make no mutation", update_text)
         self.assertIn("caller-supplied authorized target path", update_text)
-        self.assertIn("returned catalog revision and source labels", update_text)
+        self.assertIn("pre-mutation and published revisions", update_text)
         self.assertIn("does not assert coverage of an unlisted physical root", update_text)
         self.assertIn("required physical-scope coverage evidence is absent", update_text)
+        self.assertIn("Do not report zero mutation or revert a valid file", update_text)
         self.assertEqual(1, update_text.count("Load Terminology Standards result"))
 
         for skill_name in skill_names:
@@ -6524,6 +6543,16 @@ class BundleContentTests(unittest.TestCase):
                 tool_dependencies = openai_metadata["dependencies"]["tools"]
                 self.assertEqual("mcp-agent-ops", tool_dependencies[0]["value"])
                 self.assertIn("reference_load", tool_dependencies[0]["description"])
+
+        for skill_name in ("terminology-standard", "terminology-standard-update"):
+            with self.subTest(refresh_dependency=skill_name):
+                openai_metadata = load_yaml_object(
+                    SKILLS_ROOT / skill_name / "agents" / "openai.yaml"
+                )
+                self.assertIn(
+                    "reference_refresh",
+                    openai_metadata["dependencies"]["tools"][0]["description"],
+                )
 
         routed_agents = {skill_name: set() for skill_name in skill_names}
         for role_path in sorted(ROLES_ROOT.glob("*/*.role.yaml")):

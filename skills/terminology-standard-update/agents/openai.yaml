@@ -17,5 +17,5 @@ dependencies:
   tools:
     - type: mcp
       value: mcp-agent-ops
-      description: Loads allowlisted terminology.md reference data across the active configured
-        reference snapshot through reference_load.
+      description: Loads allowlisted terminology.md data through reference_load and publishes
+        changed immutable snapshots through reference_refresh.

@@ -37,7 +37,7 @@ Load the active configured reference snapshot before covered writing, review, or
 
 ## Load Terminology Standards
 
-The provider-neutral operation is Load Terminology Standards. Its configured MCP realization is mcp-agent-ops reference_load. Invoke reference_load exactly once with names set to a one-item list containing terminology.md. The intended server configuration is:
+The provider-neutral operation is Load Terminology Standards. Its configured MCP realization is mcp-agent-ops reference_load. Ordinary application and review invoke reference_load exactly once with names set to a one-item list containing terminology.md. An update workflow refreshes and loads once before mutation, then refreshes and loads once after mutation. The intended server configuration is:
 
 - the active project beneath MCP_AGENT_OPS_WORKSPACE_ROOTS;
 - the shared user reference directories in MCP_AGENT_OPS_REFERENCE_ROOTS; and
@@ -51,11 +51,23 @@ Map its structured result into exactly one consumer outcome:
 
 This base skill owns the provider-neutral operation and entry-format contract. mcp-agent-ops owns scope discovery, aggregation, ordering, skipped-root behavior, and the structured reference_load result. The runtime configuration owns the authorized project and shared user roots. A successful result does not prove that an unlisted physical root exists or was eligible; report conformance relative to the returned catalog revision and source labels. Do not emulate the provider by searching paths.
 
+The provider snapshot is process-local and immutable. It is built lazily on first use and remains unchanged when a reference file changes. The provider checks only the active project's direct terminology.md when the working directory is within an allowed workspace, followed by direct files in configured user roots. It does not search subdirectories. It deduplicates scopes that resolve to the same file and returns path-free scope labels.
+
 An ABSENT standard is valid. Continue the requested work without creating terminology.md unless the user asks to create or update it.
 
 When reference_load returns TERMINOLOGY STANDARD SCOPE UNAVAILABLE, an ordinary project-scoped writing task may use direct project-file access to read the project-root terminology.md. Return TERMINOLOGY APPLICATION: PARTIAL, apply only that project standard, and name shared user scope as unavailable. If the project artifact also cannot be read conclusively, return TERMINOLOGY APPLICATION: BLOCKED and do not claim terminology conformance. This fallback cannot support TERMINOLOGY REVIEW: PASS or any terminology.md mutation. Do not use direct user-home searching as a substitute for reference_load.
 
 Apply the project-first provider aggregate so the first matching project entry governs within its project and shared entries remain available for concepts the project does not redefine. Report an unresolved semantic conflict when the narrower entry does not make the intended distinction clear.
+
+## Refresh Terminology Standards
+
+The provider-neutral operation is Refresh Terminology Standards. Its configured MCP realization is mcp-agent-ops reference_refresh with no arguments. An update invokes it before the initial load and again after an authorized terminology.md mutation. Ordinary application and review do not refresh the snapshot.
+
+reference_refresh rebuilds every allowlisted reference from all configured scopes and atomically publishes the replacement snapshot. Map a successful result to TERMINOLOGY REFERENCE SNAPSHOT REFRESHED with its revision and available names. Treat a missing capability or provider error before mutation as TERMINOLOGY STANDARD SCOPE UNAVAILABLE. After mutation, additionally require the refreshed names to include terminology.md; otherwise return TERMINOLOGY STANDARD PUBLICATION INCOMPLETE with the exact failure and owner remediation.
+
+After each TERMINOLOGY REFERENCE SNAPSHOT REFRESHED result, invoke reference_load once for terminology.md and require its catalog_revision to equal the refresh revision. Before mutation, use that load for the scope decision. After mutation, additionally require one returned source digest to equal the validated SHA-256 digest of the selected target file. This comparison proves that the active snapshot contains the changed target without exposing or inferring a host path. A pre-mutation revision mismatch or load failure blocks with zero mutation. A post-mutation revision mismatch, load failure, or missing target digest is TERMINOLOGY STANDARD PUBLICATION INCOMPLETE.
+
+This base skill owns the refresh and publication-verification contract. terminology-standard-update owns mutation sequencing and its terminal update outcomes.
 
 ## Entry Format
 
