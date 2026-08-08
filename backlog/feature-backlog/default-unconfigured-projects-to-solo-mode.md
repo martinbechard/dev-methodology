@@ -136,21 +136,21 @@ Next Reconciliation At: 2026-08-08T20:14:35Z.
 
 ## Active Execution Evidence
 
-Condition Type: delegated-work.
+Condition Type: root-execution.
 
-Owner: Fixed Dev Coder /root/implement_solo_fallback under canonical Root Dev Orchestrator task 019fe2f2-f195-7670-8367-15d9e5c79de7.
+Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: The role matrix is corrected. Slot 2 is now a separately resumed READY whole-project and multi-contribution execution after primary Configurator handoff, with explicit multiple accepted commits, dev-merge-coordinator merge, named fresh-context dev-artifact-reviewer, wiki-artifact-reviewer, and wiki-topic-verifier post-integration reviews, dev-verifier final verification, and final integration commit evidence. Missing-PROJECT remains terminal BLOCKED with PRIMARY_PROJECT_CONFIGURATOR_HANDOFF_REQUIRED, no secondary dispatch, and no claim in slot 5. Directly affected BundleContent consumers are green 3/3; role mutation is green 17/17; Bootstrapper evaluation is green 29/29; and adjacent selector/provider tests are green 4/4. Exactly two approved paths are currently modified: the role YAML and the existing accepted scripted snapshot source digest path; the full range remains exactly the eight authorized paths. Remaining work is the final CLI and gate wording, commit, clean range evidence, and handoff. ETA is 6–9 minutes. No blocker is recorded. No ninth path is authorized. No terminology claim is relied on. Integration, review, and verification remain deferred. Candidate ancestry through 55b8c805fd8b06fb5687bfaa126cdc577c703a77 and the isolated branch/worktree remain unchanged. Title is Implementing.
+Evidence: Clean immutable candidate 16a189b9c6cde179c039bd6357af574848246459 is atop 55b8c805fd8b06fb5687bfaa126cdc577c703a77, e67fa4ac1b2b872ba97a3b4b4b18912975065cbb, and c80a8a3802fb806bc16d5a73b1a48aa581b5688d against baseline f147eca9fe03683b362a58481cd0d1a5e473a483. The full range is exactly eight paths, and the latest correction changed only the role YAML plus the accepted scripted snapshot source digest path. Slot 2 is separately resumed READY multi-contribution after primary Configurator handoff with accepted commits, merge, named fresh-context reviewers, final verification, and final integration commit evidence. Slot 5 preserves missing-config terminal BLOCKED with PRIMARY_PROJECT_CONFIGURATOR_HANDOFF_REQUIRED, no secondary dispatch, and no claim. Green evidence includes BundleContent consumers 3/3, role mutation 17/17, Bootstrapper evaluation 29/29, adjacent selector/provider 4/4, default and legacy disabled/enabled CLIs, skill/provenance/YAML/Python/diff checks. Exactly seven stale generated projections remain deferred. Candidate worktree is clean. Fresh reviewer /root/review_role_matrix_solo_fallback is active read-only on the immutable candidate and full contract. No blocker is recorded. No ninth path is authorized. No terminology claim is relied on. Integration and verification remain deferred. Title is Reviewing.
 
-Observed At: 2026-08-08T22:12:25Z.
+Observed At: 2026-08-08T22:14:19Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-08T22:45:00Z.
 
-Next Action: Receive the clean immutable correction commit. Then switch the title to Reviewing and run a fresh replacement review.
+Next Action: Receive the reviewer verdict. If correction is required, return exact findings to the fixed coder; otherwise dispatch a fresh verifier.
 
-Next Reconciliation At: 2026-08-08T22:22:25Z.
+Next Reconciliation At: 2026-08-08T22:24:19Z.
 
 ## User Action Required Transition Evidence
 
