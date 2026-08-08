@@ -128,6 +128,10 @@ Definition: One execution of selected Test cases or Test suites in a defined env
 
 Definition: A named, stable collection of related Test cases that are selected and executed together.
 
+Avoid:
+
+- Campaign: Do not use for the stable collection of Test cases. A Campaign is the coordinated set of Evaluation runs performed for one objective or release baseline.
+
 ### Use case
 
 Definition: A specification of system behavior through interactions with actors that achieve a goal.

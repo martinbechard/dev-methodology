@@ -94,10 +94,17 @@ def _run_verifier(artifact_text: str) -> subprocess.CompletedProcess[str]:
 class TerminologyEffectVerifierTests(unittest.TestCase):
     """Keep the experimental red/green contract positive-first and auditable."""
 
-    def test_standard_contains_every_preferred_term_and_no_avoid_rules(self) -> None:
+    def test_standard_contains_every_preferred_term_and_only_evidenced_avoid_rule(self) -> None:
         standard = _STANDARD.read_text(encoding="utf-8")
 
-        self.assertNotIn("\nAvoid:", standard)
+        self.assertEqual(1, standard.count("\nAvoid:"))
+        test_suite_entry = standard.split("### Test suite", 1)[1].split(
+            "### Use case", 1
+        )[0]
+        self.assertIn("Campaign:", test_suite_entry)
+        self.assertIn("coordinated set of Evaluation runs", test_suite_entry)
+        self.assertNotIn("- Receipt:", standard)
+        self.assertNotIn("- Rollout:", standard)
         for sentence in _CONFORMING_SENTENCES.values():
             preferred_term = sentence.split(" ", 2)[1] if sentence.startswith("The ") else sentence.split(" ", 1)[0]
             self.assertTrue(preferred_term)
