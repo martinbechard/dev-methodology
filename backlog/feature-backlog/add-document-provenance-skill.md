@@ -4,11 +4,13 @@ Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 
 # Add Document Provenance Skill
 
-Status: Ready
+Status: Starting
 
 Type: Feature
 
 Provider: file
+
+Owner: Unowned
 
 Work Item ID: add-document-provenance-skill
 
@@ -112,6 +114,24 @@ Existing documentation templates contain older header forms that do not match th
 ## Dependencies
 
 None.
+
+## Starting Handoff Evidence
+
+Starting Recorded At: 2026-08-08T18:08:55Z
+
+Coordinator: Dev Backlog Coordinator task `019fb057-1767-7ef2-b5fa-41f4417b20b3`
+
+Normalized Objective: Add the approved portable `document-provenance` skill and its directly owned package, deterministic validation, focused fixtures, documentation, routing, generated outputs, and installation verification while preserving runtime-supplied evidence truthfulness and existing Markdown front-matter ownership.
+
+Launch Result: Not attempted
+
+Canonical Execution: None
+
+Last Contact At: None
+
+Next Reconciliation At: 2026-08-08T18:23:00Z
+
+Coordination Boundary: Private-worktree discovery and the new skill package may proceed independently. Defer any exact overlapping bundle-content catalog, generated-output, shared review, or main-integration event until `reconcile-bundle-content-suite-drift` clears its active finish lane. Preserve the separately owned untracked `design/agent-owned-evaluation-suites.html` file.
 
 ## Verification
 
