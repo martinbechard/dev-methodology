@@ -1,3 +1,7 @@
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Migrates and validates Open Knowledge Format metadata and reserved project-wiki pages.
+
 """Open Knowledge Format migration and validation helpers."""
 
 from __future__ import annotations
@@ -26,6 +30,8 @@ from .models import LintResult
 
 MARKDOWN_LINK_TEXT_PATTERN = re.compile(r"\[([^\]]+)\]\([^)]+\)")
 HTML_TAG_PATTERN = re.compile(r"<[^>]+>")
+HTML_COMMENT_OPEN = "<!--"
+HTML_COMMENT_CLOSE = "-->"
 
 
 @dataclass(frozen=True)
@@ -41,6 +47,18 @@ def is_okf_reserved_file(path: Path) -> bool:
 def has_frontmatter(text: str) -> bool:
     lines = text.splitlines()
     return bool(lines) and lines[0] == OKF_FRONTMATTER_DELIMITER
+
+
+def _reserved_page_content(text: str) -> tuple[str, bool]:
+    """Return content after one canonical leading comment and a malformed flag."""
+
+    lines = text.splitlines(keepends=True)
+    if not lines or lines[0].rstrip("\r\n") != HTML_COMMENT_OPEN:
+        return text, False
+    for index, line in enumerate(lines[1:], start=1):
+        if line.rstrip("\r\n") == HTML_COMMENT_CLOSE:
+            return "".join(lines[index + 1 :]).lstrip("\r\n"), False
+    return text, True
 
 
 def split_frontmatter(text: str) -> tuple[dict[str, object], str, bool]:
@@ -239,9 +257,13 @@ def validate_okf_page(path: Path) -> list[LintResult]:
     text = read_text(path)
     findings: list[LintResult] = []
     if is_okf_reserved_file(path):
-        if has_frontmatter(text) and not (path.parent == WIKI_DIR and path.name == INDEX_PAGE_NAME):
+        content, malformed_comment = _reserved_page_content(text)
+        if malformed_comment:
+            findings.append(LintResult(path, "OKF reserved file has a malformed leading HTML comment"))
+            return findings
+        if has_frontmatter(content) and not (path.parent == WIKI_DIR and path.name == INDEX_PAGE_NAME):
             findings.append(LintResult(path, "OKF reserved file must not use frontmatter"))
-        if not text.startswith("# "):
+        if not content.startswith("# "):
             findings.append(LintResult(path, "OKF reserved file must start with a level one heading"))
         return findings
 

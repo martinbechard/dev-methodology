@@ -13,6 +13,7 @@ import unittest
 from pathlib import Path
 
 from validate_document_provenance import (
+    ValidationFinding,
     load_runtime_envelope,
     main,
     validate_document,
@@ -105,6 +106,7 @@ class DocumentProvenanceValidatorTest(unittest.TestCase):
                 "Dispatched-Model-Evidence",
                 "Reasoning-Effort-Evidence",
             },
+            "indented-provenance.md": {"Placement"},
         }
 
         for fixture_name, expected_fields in expected_findings.items():
@@ -117,6 +119,95 @@ class DocumentProvenanceValidatorTest(unittest.TestCase):
                 )
 
                 self.assertTrue(expected_fields.issubset({finding.field for finding in findings}))
+
+    def test_rejects_space_and_tab_indented_provenance_openers(self) -> None:
+        source = (_FIXTURES / "invalid/indented-provenance.md").read_text(
+            encoding="utf-8"
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            tab_indented = Path(directory) / "tab-indented.md"
+            tab_indented.write_text(
+                source.replace("    <!--", "\t<!--", 1),
+                encoding="utf-8",
+            )
+            html_source = (_FIXTURES / "valid/maintained.html").read_text(
+                encoding="utf-8"
+            )
+            space_indented_html = Path(directory) / "space-indented.html"
+            space_indented_html.write_text(
+                html_source.replace("\n<!--", "\n    <!--", 1),
+                encoding="utf-8",
+            )
+            tab_indented_html = Path(directory) / "tab-indented.html"
+            tab_indented_html.write_text(
+                html_source.replace("\n<!--", "\n\t<!--", 1),
+                encoding="utf-8",
+            )
+
+            space_findings = validate_document(
+                _FIXTURES / "invalid/indented-provenance.md",
+                state="new",
+                copyright_statement=_COPYRIGHT,
+                runtime_envelope=self.runtime_envelope,
+            )
+            tab_findings = validate_document(
+                tab_indented,
+                state="new",
+                copyright_statement=_COPYRIGHT,
+                runtime_envelope=self.runtime_envelope,
+            )
+            html_findings = [
+                validate_document(
+                    path,
+                    state="new",
+                    copyright_statement=_COPYRIGHT,
+                    runtime_envelope=self.runtime_envelope,
+                )
+                for path in (space_indented_html, tab_indented_html)
+            ]
+
+        self.assertIn("Placement", {finding.field for finding in space_findings})
+        self.assertIn("Placement", {finding.field for finding in tab_findings})
+        for findings in html_findings:
+            self.assertIn("Placement", {finding.field for finding in findings})
+
+    def test_accepts_blank_line_separation_without_opener_indentation(self) -> None:
+        cases = (
+            (
+                "valid/markdown-with-okf-front-matter.md",
+                "---\n<!--",
+                "---\n\n<!--",
+            ),
+            (
+                "valid/maintained.html",
+                "<!doctype html>\n<!--",
+                "<!doctype html>\n\n<!--",
+            ),
+        )
+
+        with tempfile.TemporaryDirectory() as directory:
+            findings_by_name: dict[str, list[ValidationFinding]] = {}
+            for relative_path, marker, replacement in cases:
+                source_path = _FIXTURES / relative_path
+                separated = Path(directory) / source_path.name
+                separated.write_text(
+                    source_path.read_text(encoding="utf-8").replace(
+                        marker,
+                        replacement,
+                        1,
+                    ),
+                    encoding="utf-8",
+                )
+                findings_by_name[relative_path] = validate_document(
+                    separated,
+                    state="new",
+                    copyright_statement=_COPYRIGHT,
+                    runtime_envelope=self.runtime_envelope,
+                )
+
+        for relative_path, findings in findings_by_name.items():
+            with self.subTest(relative_path=relative_path):
+                self.assertEqual([], findings)
 
     def test_requires_runtime_envelope_for_new_documents(self) -> None:
         findings = validate_document(
@@ -204,6 +295,25 @@ class DocumentProvenanceValidatorTest(unittest.TestCase):
 
         self.assertEqual(1, result)
         self.assertIn(f"{path}: Created-UTC:", output.getvalue())
+
+    def test_cli_rejects_indented_provenance_opener(self) -> None:
+        path = _FIXTURES / "invalid/indented-provenance.md"
+        output = io.StringIO()
+
+        with contextlib.redirect_stdout(output):
+            result = main(
+                [
+                    "--copyright",
+                    _COPYRIGHT,
+                    "--envelope",
+                    str(_FIXTURES / "runtime-envelope.json"),
+                    "--new",
+                    str(path),
+                ]
+            )
+
+        self.assertEqual(1, result)
+        self.assertIn(f"{path}: Placement:", output.getvalue())
 
     def test_runtime_envelope_rejects_current_profile_inference(self) -> None:
         record = {

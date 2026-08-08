@@ -84,6 +84,7 @@ _FIELD_PATTERN = re.compile(r"^(?P<label>[A-Za-z][A-Za-z0-9-]*):[ \t]*(?P<value>
 _DOCTYPE_PATTERN = re.compile(r"\A\ufeff?\s*(?P<doctype><!doctype\s+html\s*>)", re.IGNORECASE)
 _FRONTMATTER_OPEN_PATTERN = re.compile(r"\A---[ \t]*(?:\r?\n|\Z)")
 _FRONTMATTER_DELIMITER_PATTERN = re.compile(r"^---[ \t]*\r?$", re.MULTILINE)
+_BLANK_LINES_PATTERN = re.compile(r"(?:[ \t]*(?:\r\n|\n|\r))*")
 _UTC_TIMESTAMP_PATTERN = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|\+00:00)$"
 )
@@ -326,7 +327,10 @@ def _inside_markdown_fence(text: str, offset: int) -> bool:
 def _validate_markdown_placement(path: Path, text: str, provenance: re.Match[str]) -> list[ValidationFinding]:
     findings: list[ValidationFinding] = []
     frontmatter_end = _markdown_frontmatter_end(text)
-    expected_start = _skip_whitespace(text, frontmatter_end if frontmatter_end is not None else 0)
+    expected_start = _skip_blank_lines(
+        text,
+        frontmatter_end if frontmatter_end is not None else 0,
+    )
     if provenance.start() != expected_start:
         findings.append(
             _finding(
@@ -344,7 +348,7 @@ def _validate_html_placement(path: Path, text: str, provenance: re.Match[str]) -
     doctype = _DOCTYPE_PATTERN.match(text)
     if doctype is None:
         return [_finding(path, "Placement", "maintained HTML must start with an HTML doctype before provenance")]
-    expected_start = _skip_whitespace(text, doctype.end("doctype"))
+    expected_start = _skip_blank_lines(text, doctype.end("doctype"))
     if provenance.start() != expected_start:
         return [_finding(path, "Placement", "HTML provenance must be the first construct after the doctype")]
     return []
@@ -363,10 +367,13 @@ def _starts_with_frontmatter(text: str) -> bool:
     return _FRONTMATTER_OPEN_PATTERN.match(text) is not None
 
 
-def _skip_whitespace(text: str, start: int) -> int:
-    while start < len(text) and text[start].isspace():
-        start += 1
-    return start
+def _skip_blank_lines(text: str, start: int) -> int:
+    """Skip line breaks and whitespace-only lines without consuming opener indentation."""
+
+    match = _BLANK_LINES_PATTERN.match(text, start)
+    if match is None:
+        return start
+    return match.end()
 
 
 def _parse_provenance_block(

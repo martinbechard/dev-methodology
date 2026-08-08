@@ -54,6 +54,7 @@ SHORT_DESCRIPTION_FIELD_NAME = "short_description"
 NAME_FIELD_NAME = "name"
 DESCRIPTION_FIELD_NAME = "description"
 CODE_FENCE_MARKER = "```"
+RAW_HTML_COMMENT_PATTERN = re.compile(r"<!--.*?-->", re.DOTALL)
 HEADING_LEVEL_OFFSET = 1
 MAX_HEADING_LEVEL = 6
 EMPTY_INDEX = 0
@@ -512,8 +513,36 @@ def format_inline(text: str, skill_directory: Path) -> str:
     return EMPHASIS_PATTERN.sub(r"<em>\1</em>", escaped)
 
 
+def _without_complete_html_comments_outside_code_fences(markdown: str) -> str:
+    """Remove complete raw comments only from Markdown regions outside code fences."""
+
+    rendered_parts: list[str] = []
+    outside_fence_lines: list[str] = []
+    in_code_fence = False
+
+    def flush_outside_fence_lines() -> None:
+        if outside_fence_lines:
+            rendered_parts.append(
+                RAW_HTML_COMMENT_PATTERN.sub("", "".join(outside_fence_lines))
+            )
+            outside_fence_lines.clear()
+
+    for line in markdown.splitlines(keepends=True):
+        if line.strip().startswith(CODE_FENCE_MARKER):
+            if not in_code_fence:
+                flush_outside_fence_lines()
+            rendered_parts.append(line)
+            in_code_fence = not in_code_fence
+        elif in_code_fence:
+            rendered_parts.append(line)
+        else:
+            outside_fence_lines.append(line)
+    flush_outside_fence_lines()
+    return "".join(rendered_parts)
+
+
 def render_markdown(markdown: str, skill_directory: Path) -> str:
-    lines = markdown.splitlines()
+    lines = _without_complete_html_comments_outside_code_fences(markdown).splitlines()
     parts: list[str] = []
     paragraph_lines: list[str] = []
     list_items: list[str] = []

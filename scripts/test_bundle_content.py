@@ -7626,6 +7626,49 @@ class BundleContentTests(unittest.TestCase):
             SKILL_DEFINITIONS_PATH.read_text(encoding="utf-8"),
         )
 
+    def test_skill_html_hides_complete_comments_only_outside_code_fences(self) -> None:
+        """Hide source comments from browser HTML without changing fenced examples or raw tags."""
+
+        build_skill_docs = load_build_skill_docs_module()
+        rendered = build_skill_docs.render_markdown(
+            """Visible before.
+
+<!--
+hidden provenance
+-->
+
+<section>raw HTML remains ordinary escaped text</section>
+
+```markdown
+<!-- fenced comment example -->
+```
+
+Visible after.
+""",
+            SKILLS_ROOT / "document-provenance",
+        )
+        document_provenance_html = build_skill_docs.build_payload()["skills"][
+            "document-provenance"
+        ]["html"]
+        incomplete_comment = build_skill_docs.render_markdown(
+            "<!-- incomplete comment",
+            SKILLS_ROOT / "document-provenance",
+        )
+
+        self.assertIn("Visible before.", rendered)
+        self.assertIn("Visible after.", rendered)
+        self.assertNotIn("hidden provenance", rendered)
+        self.assertIn(
+            "&lt;section&gt;raw HTML remains ordinary escaped text&lt;/section&gt;",
+            rendered,
+        )
+        self.assertIn("&lt;!-- fenced comment example --&gt;", rendered)
+        self.assertIn("&lt;!-- incomplete comment", incomplete_comment)
+        self.assertNotIn(
+            "Artifact-ID: f633e99c-ffc4-4bc9-9c11-75e8dc070914",
+            document_provenance_html,
+        )
+
     def test_generated_template_definition_data_is_current(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         payload = build_skill_docs.build_template_payload()
