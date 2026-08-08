@@ -1,6 +1,6 @@
 # Centralize General Agent Skill Routing
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -20,7 +20,15 @@ Branch: main
 
 Worktree: /Users/martinbechard/dev/dev-methodology
 
-Phase: Verifying replacement candidate
+Phase: Complete
+
+Accepted Candidate Commit: 8eea3bce203ecfa67a52cddd14ac774f31ab3fe3
+
+Independent Review: ACCEPTED; the fresh correction reviewer confirmed all three prior findings were resolved with no new contradiction or required correction.
+
+Independent Verification: VERIFIED; the fresh verifier confirmed the exact five-file candidate, preserved candidate ancestry, current-main reachability, accepted evidence, and clean worktree.
+
+Completed At: 2026-08-08T16:55:07Z
 
 ## Summary
 
@@ -177,3 +185,45 @@ Canonical Execution: 019faeed-f816-7d43-819d-814bad4e309c
 Last Contact: 2026-08-08T16:23:23Z; existing canonical task confirmed by parent Coordinator.
 
 Next Reconciliation At: 2026-08-08T16:38:23Z
+
+## Terminal Delivery Evidence
+
+Completion Disposition: READY
+
+Requested Lifecycle: COMPLETED
+
+Provider: file
+
+Completion Selector: main-branch
+
+Accepted Source Commit: 8eea3bce203ecfa67a52cddd14ac774f31ab3fe3
+
+Integration Commit: 8eea3bce203ecfa67a52cddd14ac774f31ab3fe3
+
+Observed Main Branch: main
+
+Observed Main Tip: 3722885b634948784abc23ad3250ce120927ae6f
+
+Source-to-Integration Mapping: Replacement candidate `8eea3bce` was committed directly on configured main and was already an ancestor of observed main tip `3722885b`. No topology-only merge or replay was created.
+
+Changed Paths: `design/agents/backlog-management.md`; `design/agents/documentation-methodology.md`; `design/agents/general-agent-skills.md`; `design/agents/main-branch-delivery.md`; `design/object-oriented-skill-group-models.md`.
+
+Independent Review Result: ACCEPTED with no findings. The reviewer confirmed that General Agent Skills is a cross-cutting applicability view outside the cohesive Skill Group registry, that nine Skill Groups plus one cross-cutting view represent fifty-two skills across eight Agent-oriented designs, and that all three promised links are present.
+
+Independent Verification Result: VERIFIED. The verifier proved the exact five-file commit scope, resolution of all three findings, ancestry from preserved candidate `555764d4`, authoritative-main reachability, and a clean worktree without rerunning accepted gates.
+
+Accepted Source Checks: Candidate `555764d4` retains 29 focused tests plus freshness, YAML, and diff evidence. Replacement candidate `8eea3bce` passed zero-finding Markdown link verification for all five changed pages and `git diff --check`. The fresh review and verifier accepted this evidence without rerun.
+
+Post-Integration Verification: No additional test run was required because the documentation-only replacement candidate was already on main, its focused link and diff checks were accepted, and the fresh verifier confirmed the exact integrated bytes and clean state.
+
+Main Observation: The primary checkout was clean on configured branch main at `3722885b634948784abc23ad3250ce120927ae6f`. Both accepted replacement candidate `8eea3bce` and preserved candidate `555764d4` were ancestors of the observed tip.
+
+Remote Observation: Remote publication was not configured as a required completion gate and was not authorized; no push was performed.
+
+Correction Path Claim Evidence: Exact five-path claim `centralize-general-agent-skill-routing-correction-paths-019faeed` was released in event `9f07fdce-cead-4fdb-81c2-b93ab7884516` after replacement candidate `8eea3bce` became immutable.
+
+Work Claim Handoff: Exact activity=work claim `centralize-general-agent-skill-routing-delivery-work-019faeed` was released with handoff in event `6910c711-51d1-4cef-a273-9b1405668402` before this terminal provider transaction.
+
+Confirmed Issue Dispositions: All three independent-review findings were corrected and accepted. No unresolved issue remains within the work-item scope.
+
+Residual Risk: None identified for the accepted documentation and shared routing scope.
