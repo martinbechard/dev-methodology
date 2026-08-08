@@ -1,8 +1,8 @@
 # Default Unconfigured Projects to Solo Mode
 
-Status: Running
+Status: User Action Required
 
-Owner: Dev Orchestrator (agent root; canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7)
+Owner: Unowned
 
 Type: Feature
 
@@ -116,7 +116,7 @@ Next Reconciliation At: 2026-08-08T20:14:59Z.
 
 Required Next Lifecycle Transition: Starting -> Running is recorded below for the same canonical task after accepted execution ownership was established.
 
-## Active Execution Evidence
+## Prior Active Execution Evidence
 
 Condition Type: root-execution.
 
@@ -133,3 +133,46 @@ Deadline or Expires At: 2026-08-08T21:04:35Z.
 Next Action: Continue independent discovery and private implementation in the canonical branch and worktree. Defer overlapping terminology manifest, reviewer, and integration events until the terminology claim is released.
 
 Next Reconciliation At: 2026-08-08T20:14:35Z.
+
+## User Action Required Transition Evidence
+
+Transition: Running -> User Action Required.
+
+Recorded At: 2026-08-08T20:10:21Z.
+
+Canonical Task: 019fe2f2-f195-7670-8367-15d9e5c79de7.
+
+Branch: codex/default-unconfigured-projects-to-solo-mode.
+
+Worktree: /Users/martinbechard/.codex/worktrees/75e6/dev-methodology.
+
+Execution State: Stopped and waiting. No source changes or Dev Coder dispatch occurred. The canonical branch and private worktree remain clean at f147eca9.
+
+Work Claim: Released with disposition blocked, blocker reference governed-definition-approval-required, event e268be77-dfcb-45d6-9b18-ae399e964eed. No task-owned claim remains live.
+
+Blocker: The approved outcome did not name exact governed definition paths. The methodology requires exact-path approval and a successful per-path pre-mutation result before any governed definition mutation.
+
+Discovery Evidence: The minimum canonical sources requiring approval are skills/set-solo-mode/SKILL.md, skills/set-multitask-mode/SKILL.md, skills/resource-claim/SKILL.md, and agents/roles/project-setup/project-bootstrapper.role.yaml. The expected noncanonical dependents are generated project-bootstrapper adapters, role definitions and manifest, focused claim/mode/bootstrapper tests, maintained documentation, and generator freshness. Exact terminology overlaps remain deferred.
+
+## User Action Required
+
+### Question for the User
+
+Do you approve this work item modifying exactly skills/set-solo-mode/SKILL.md, skills/set-multitask-mode/SKILL.md, skills/resource-claim/SKILL.md, and agents/roles/project-setup/project-bootstrapper.role.yaml to implement the unconfigured-project SOLO fallback?
+
+### Why User Input Is Required
+
+The current approved outcome does not name exact governed definition paths. Exact-path approval and a successful per-path pre-mutation result are required before those definitions may change.
+
+### Options and Tradeoffs
+
+- Yes approves only the four exact canonical definition paths listed in the question, subject to ALLOWED_APPROVED_DEFINITION_CHANGE on each path. The same canonical task may resume after the answer is recorded and the provider routes User Action Required -> Ready -> Starting -> Running.
+- No leaves implementation stopped and requires a different disposition. No governed definition or dependent artifact mutation may proceed under this item.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+No source mutation, coder dispatch, review, verification, generated artifact update, integration, or delivery may proceed until the answer is recorded with its provenance and the same canonical task resumes through User Action Required -> Ready -> Starting -> Running. Read-only evidence preservation may continue. Expected noncanonical dependents and exact terminology overlaps remain deferred until their applicable release and reconciliation evidence exists.
