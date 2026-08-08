@@ -1,6 +1,6 @@
-# Holding — Centralize General Agent Skill Routing
+# Centralize General Agent Skill Routing
 
-Status: Holding
+Status: Ready
 
 Type: Defect
 
@@ -116,7 +116,7 @@ Preserved Candidate: 555764d4
 
 Preserved Evidence: 29 focused tests plus freshness, YAML, and diff checks
 
-Canonical Task: 019faeef-f816-7d43-819d-814bad4e309c
+Canonical Task: 019faeed-f816-7d43-819d-814bad4e309c
 
 Branch: main
 
@@ -129,3 +129,15 @@ Implementation Path Release Event: d61a5c54-2cc7-488d-8901-543a63933489
 Work Handoff Release Event: 2b56c35b-08a6-44e1-a993-8a39ed7139bd
 
 Resumption Condition: The parent Coordinator must move this item from Holding to Ready, then from Ready to Starting for this same canonical task. The root task must then move it from Starting to Running before any review or further work.
+
+## Ready Resumption Evidence
+
+Transition: Holding -> Ready
+
+Resumption Authority: Explicit user directive received by parent Coordinator on 2026-08-08.
+
+Owner: Unowned
+
+Canonical Task: 019faeed-f816-7d43-819d-814bad4e309c
+
+Next Action: Parent Coordinator records Ready -> Starting for the preserved canonical task; no implementation, review, verification, or integration work is authorized by this transition.
