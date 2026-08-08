@@ -136,21 +136,21 @@ Next Reconciliation At: 2026-08-08T20:14:35Z.
 
 ## Active Execution Evidence
 
-Condition Type: delegated-work.
+Condition Type: root-execution.
 
-Owner: Fixed Dev Coder /root/implement_solo_fallback under canonical Root Dev Orchestrator task 019fe2f2-f195-7670-8367-15d9e5c79de7.
+Owner: Root Dev Orchestrator canonical task 019fe2f2-f195-7670-8367-15d9e5c79de7.
 
-Evidence: All and only the exact eight authorized paths are modified: agents/roles/project-setup/project-bootstrapper.role.yaml; skills/set-solo-mode/SKILL.md; skills/set-multitask-mode/SKILL.md; skills/resource-claim/SKILL.md; scripts/test_role_mutation_policy.py; evals/agent-tests/project-bootstrapper/scenarios.yaml; evals/agent-tests/project-bootstrapper/scripted_orchestration.py; evals/agent-tests/project-bootstrapper/test_scripted_orchestration.py. Green gates are combined mutation-policy plus scripted suite exit 0, full project-bootstrapper unittest discovery exit 0, Python 3.11 scripted scenario PASS with initial BLOCKED, configuration PASS, separately resumed PASS, validator gate, and clean claim closeout; three skill packages validate; historical provenance validator validates three documents; py_compile passes; and git diff --check passes. The expected non-passing build check is exactly seven stale generated projections; generation is deferred and forbidden in candidate scope. Generic Provider Skill wording is tightened and its pinned digest is refreshed. Remaining work is only the small affected test/validator rerun, final diff/status audit, immutable correction commit, and clean handoff. ETA is 15–25 minutes. No blocker is recorded. No ninth path is authorized. No terminology claim is relied on. Generated, integration, review, and verification work remains deferred. The reviewed candidate ancestry is c80a8a3802fb806bc16d5a73b1a48aa581b5688d; the isolated worktree is /Users/martinbechard/.codex/worktrees/75e6/dev-methodology on branch codex/default-unconfigured-projects-to-solo-mode. Title is Implementing.
+Evidence: Corrected immutable candidate e67fa4ac1b2b872ba97a3b4b4b18912975065cbb is layered on c80a8a3802fb806bc16d5a73b1a48aa581b5688d against baseline f147eca9fe03683b362a58481cd0d1a5e473a483. Its worktree is clean, and its exact range is all and only the eight authorized paths. All four prior findings are corrected: selector-backed valid false/none, true/resource-claim, and legacy coverage; terminal initial BLOCKED plus independent Configurator and separately resumed Bootstrapper processes; exact historical provenance on three skill documents; and narrowed helper wording with file Persistence retained. Green coder evidence includes combined mutation-policy/scripted tests, full Bootstrapper unittest discovery, the Python 3.11 scripted CLI initial BLOCKED/configuration PASS/resumed PASS/claims closed/temp removed, skill validation, historical provenance validation for three documents, targeted resource-provider tests, py_compile, and diff check. Exactly seven stale generated projections remain deferred. Fresh replacement reviewer /root/review_corrected_solo_fallback is active read-only on the corrected immutable candidate. No blocker is recorded. No ninth path is authorized. No terminology claim is relied on. No integration or verification is underway. Title is Reviewing.
 
-Observed At: 2026-08-08T21:22:55Z.
+Observed At: 2026-08-08T21:26:39Z.
 
 Started At: 2026-08-08T20:20:06Z.
 
 Deadline or Expires At: 2026-08-08T22:10:00Z.
 
-Next Action: Complete the small affected rerun, final diff/status audit, immutable correction commit, and clean handoff. Then set the title to Reviewing and dispatch a fresh replacement review.
+Next Action: Receive the replacement review verdict. If correction is required, return exact findings to the fixed coder; otherwise dispatch a fresh verifier.
 
-Next Reconciliation At: 2026-08-08T21:32:55Z.
+Next Reconciliation At: 2026-08-08T21:36:39Z.
 
 ## User Action Required Transition Evidence
 
