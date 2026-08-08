@@ -4,6 +4,23 @@ description: Use when creating or revising software project documentation, choos
 metadata:
   category: documentation-methodology
 ---
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: c642e4b8-9f9c-4c7b-8030-665a9143ba4b
+Created-UTC: 2026-07-08T02:35:04Z
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: git-derived
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->
 
 # Route Documentation Work
 
@@ -56,7 +73,7 @@ The returned catalog revision and content digests identify the bytes supplied by
 
 ## Shared Page Contract
 
-The shared page contract applies to docs/wiki topic pages and methodology artifacts created from this bundle's templates. It does not apply to terminology.md, whose compact structure is owned by terminology-standard-update.
+The shared page contract applies to docs/wiki topic pages and methodology artifacts created from this bundle's templates. It does not apply to terminology.md. The base terminology-standard skill owns its compact entry format; terminology-standard-update owns its creation and mutation workflow.
 
 When the user, target file type, runtime schema, existing document, or surrounding documentation indicates a specific structure or format, preserve that structure. Verify source support, links, steady-state prose, and completeness inside the indicated format instead of adding shared page sections. Do not impose the shared page contract on design HTML pages, README files, runtime adapter profiles, generated data files, or native agent definition files unless the user asks to convert them into a methodology artifact or wiki-compatible page.
 

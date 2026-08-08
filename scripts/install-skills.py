@@ -93,6 +93,12 @@ MCP_TOOL_TIMEOUT_SECONDS = 60.0
 MCP_DETECTION_REGISTRY_RELATIVE_PATH = Path(
     "detect-technology-skills/references/technology-skill-detection-registry.yaml"
 )
+MCP_REFERENCE_SKILL_NAME = "terminology-standard"
+MCP_REFERENCE_NAMES = ("terminology.md",)
+MCP_USER_REFERENCE_RELATIVE_PATHS = (
+    Path(".agents/references"),
+    Path(".codex/references"),
+)
 GENERATION_AGENT_REFERENCED_FIXED_SKILLS_KEY = "referencedFixedSkills"
 
 
@@ -518,14 +524,34 @@ def _mcp_environment(
     skills_destination: Path,
     detection_registry: Path,
     workspace_roots: Sequence[Path],
+    reference_roots: Sequence[Path] = (),
+    reference_names: Sequence[str] = (),
 ) -> dict[str, str]:
-    return {
+    environment = {
         "MCP_AGENT_OPS_SKILL_ROOTS": str(skills_destination.resolve()),
         "MCP_AGENT_OPS_DETECTION_REGISTRY": str(detection_registry),
         "MCP_AGENT_OPS_WORKSPACE_ROOTS": os.pathsep.join(
             str(path) for path in workspace_roots
         ),
     }
+    if reference_names:
+        environment["MCP_AGENT_OPS_REFERENCE_ROOTS"] = os.pathsep.join(
+            str(path) for path in reference_roots
+        )
+        environment["MCP_AGENT_OPS_REFERENCE_NAMES"] = os.pathsep.join(reference_names)
+    return environment
+
+
+def _mcp_reference_configuration(
+    skill_plan: _SkillInstallPlan,
+) -> tuple[tuple[Path, ...], tuple[str, ...]]:
+    if MCP_REFERENCE_SKILL_NAME not in skill_plan.current_skill_names:
+        return (), ()
+    reference_roots = tuple(
+        (Path.home() / relative_path).resolve()
+        for relative_path in MCP_USER_REFERENCE_RELATIVE_PATHS
+    )
+    return reference_roots, MCP_REFERENCE_NAMES
 
 
 def _codex_mcp_server_block(
@@ -533,11 +559,15 @@ def _codex_mcp_server_block(
     skills_destination: Path,
     detection_registry: Path,
     workspace_roots: Sequence[Path],
+    reference_roots: Sequence[Path] = (),
+    reference_names: Sequence[str] = (),
 ) -> str:
     environment = _mcp_environment(
         skills_destination,
         detection_registry,
         workspace_roots,
+        reference_roots,
+        reference_names,
     )
     lines = [
         f"[mcp_servers.{MCP_AGENT_OPS_SERVER_NAME}]",
@@ -637,6 +667,8 @@ def _codex_mcp_agent_ops_settings(content: str) -> tuple[str | None, dict[str, s
         elif kind == "env":
             for key in (
                 "MCP_AGENT_OPS_SKILL_ROOTS",
+                "MCP_AGENT_OPS_REFERENCE_ROOTS",
+                "MCP_AGENT_OPS_REFERENCE_NAMES",
                 "MCP_AGENT_OPS_DETECTION_REGISTRY",
                 "MCP_AGENT_OPS_WORKSPACE_ROOTS",
             ):
@@ -666,6 +698,20 @@ def _codex_mcp_agent_ops_matches(
             tuple(
                 Path(path)
                 for path in environment["MCP_AGENT_OPS_WORKSPACE_ROOTS"].split(os.pathsep)
+            ),
+            tuple(
+                Path(path)
+                for path in environment.get("MCP_AGENT_OPS_REFERENCE_ROOTS", "").split(
+                    os.pathsep
+                )
+                if path
+            ),
+            tuple(
+                name
+                for name in environment.get("MCP_AGENT_OPS_REFERENCE_NAMES", "").split(
+                    os.pathsep
+                )
+                if name
             ),
         ).strip()
         return rendered_target == expected_target
@@ -702,6 +748,8 @@ def _render_codex_mcp_config(
     skills_destination: Path,
     detection_registry: Path,
     workspace_roots: Sequence[Path],
+    reference_roots: Sequence[Path] = (),
+    reference_names: Sequence[str] = (),
 ) -> tuple[str, set[str]]:
     server_names = _codex_server_names(active_content)
     remaining_content = _remove_codex_mcp_agent_ops_tables(active_content)
@@ -714,6 +762,8 @@ def _render_codex_mcp_config(
             skills_destination,
             detection_registry,
             workspace_roots,
+            reference_roots,
+            reference_names,
         ),
         server_names,
     )
@@ -725,6 +775,8 @@ def _render_junie_mcp_config(
     skills_destination: Path,
     detection_registry: Path,
     workspace_roots: Sequence[Path],
+    reference_roots: Sequence[Path] = (),
+    reference_names: Sequence[str] = (),
 ) -> tuple[str, set[str]]:
     if active_content:
         try:
@@ -746,6 +798,8 @@ def _render_junie_mcp_config(
             skills_destination,
             detection_registry,
             workspace_roots,
+            reference_roots,
+            reference_names,
         ),
     }
     return json.dumps(configuration, indent=2, ensure_ascii=False) + "\n", server_names
@@ -861,10 +915,13 @@ def _prepare_mcp_config(
         skill_plan,
         replace,
     )
+    reference_roots, reference_names = _mcp_reference_configuration(skill_plan)
     expected_environment = _mcp_environment(
         skills_destination,
         detection_registry,
         workspace_roots,
+        reference_roots,
+        reference_names,
     )
     if adapter.name == CODEX_ADAPTER_NAME:
         current_command, _ = _codex_mcp_agent_ops_settings(active_content)
@@ -905,6 +962,8 @@ def _prepare_mcp_config(
             skills_destination,
             detection_registry,
             workspace_roots,
+            reference_roots,
+            reference_names,
         )
     else:
         rendered, server_names = _render_junie_mcp_config(
@@ -913,6 +972,8 @@ def _prepare_mcp_config(
             skills_destination,
             detection_registry,
             workspace_roots,
+            reference_roots,
+            reference_names,
         )
     return _McpConfigPlan(
         active_path=active_path,

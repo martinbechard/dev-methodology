@@ -1,3 +1,21 @@
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 077d4210-f068-4838-a230-d37a1ec14204
+Created-UTC: 2026-08-08T19:24:44Z
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: git-derived
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->
+
 # Terminology Standard
 
 The Terminology Standard Skill Group keeps preferred concept language consistent across durable technical prose and user-visible language. It separates ordinary use, read-only review, and evidence-based standard updates so an author does not silently expand the standard while writing.
@@ -6,7 +24,7 @@ The Terminology Standard Skill Group keeps preferred concept language consistent
 
 The exact artifact name is terminology.md. A shared user artifact applies across projects. A project artifact narrows or extends that shared standard for one project.
 
-The runtime loads both scopes through one provider-neutral multi-scope artifact operation. Each scope is PRESENT with content, conclusively ABSENT, or UNAVAILABLE. An absent artifact is valid and does not trigger creation. An unavailable scope blocks conformance PASS and every standard mutation; it is never inferred to be absent. Shared entries apply first. A project entry governs when the scopes overlap within that project.
+The provider-neutral Load Terminology Standards operation is realized by one mcp-agent-ops reference_load call for terminology.md. The configured snapshot checks the active project first and then the shared user reference roots. A successful aggregate or reference_not_found result is conclusive for that snapshot; a missing tool, boundary, allowlist, root configuration, or any other provider error is UNAVAILABLE. An absent artifact is valid and does not trigger creation. An unavailable scope blocks conformance PASS and every standard mutation; ordinary project writing may report an explicit project-only PARTIAL result. The first matching project entry governs and shared entries remain available for other concepts.
 
 Each entry starts with a preferred term and definition. Use for and Examples are optional clarifications. Avoid is optional reinforcement added only after retained evidence shows repeated substitution, a misleading metaphor, or another persistent bias toward a nonpreferred term.
 
@@ -140,7 +158,7 @@ classDiagram
 
 ### Scenario: Update The Standard
 
-Dev Documentation Writer owns ordinary terminology.md authoring. Methodology Maintainer uses the same update skill when a methodology maintenance request includes the standard. Project scope is the default for project-specific concepts. Shared user scope requires explicit selection because it affects more than one project. Either update blocks without mutation when one requested scope is unavailable.
+Dev Documentation Writer owns ordinary terminology.md authoring. Methodology Maintainer uses the same update skill when a methodology maintenance request includes the standard. Project scope is the default for project-specific concepts. Shared user scope requires explicit selection and a caller-supplied authorized mutation target because reference_load deliberately returns path-free data. Either update blocks without mutation when one requested scope or its mutation authority is unavailable.
 
 ```mermaid
 classDiagram
@@ -166,7 +184,7 @@ classDiagram
 
 | Skill | Responsibility |
 | --- | --- |
-| terminology-standard | Defines terminology.md discovery, scope precedence, positive-first entry structure, exclusions, and ordinary preferred-term application. |
+| terminology-standard | Defines the reference_load provider contract, terminology.md scope precedence, positive-first entry structure, exclusions, and ordinary preferred-term application. |
 | terminology-standard-review | Performs read-only concept-level conformance review and separates target corrections from reinforcement recommendations. |
 | terminology-standard-update | Creates or revises one selected standard and adds Avoid only when retained evidence justifies reinforcement. |
 

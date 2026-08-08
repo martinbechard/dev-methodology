@@ -6477,13 +6477,18 @@ class BundleContentTests(unittest.TestCase):
 
         base_text = skill_texts["terminology-standard"]
         self.assertIn("exact filename terminology.md", base_text)
-        self.assertIn("one provider-neutral multi-scope artifact operation", base_text)
+        self.assertIn("provider-neutral operation is Load Terminology Standards", base_text)
+        self.assertIn("mcp-agent-ops reference_load", base_text)
+        self.assertIn("names set to a one-item list containing terminology.md", base_text)
+        self.assertIn("MCP_AGENT_OPS_REFERENCE_ROOTS", base_text)
+        self.assertIn("MCP_AGENT_OPS_REFERENCE_NAMES", base_text)
         self.assertIn("TERMINOLOGY STANDARDS LOADED", base_text)
         self.assertIn("TERMINOLOGY STANDARD SCOPE UNAVAILABLE", base_text)
         self.assertIn("Do not reinterpret UNAVAILABLE as ABSENT", base_text)
         self.assertIn("cannot support TERMINOLOGY REVIEW: PASS", base_text)
-        self.assertIn("Apply the shared user entries first", base_text)
-        self.assertIn("A project entry governs within its project", base_text)
+        self.assertIn("TERMINOLOGY APPLICATION: PARTIAL", base_text)
+        self.assertIn("TERMINOLOGY APPLICATION: BLOCKED", base_text)
+        self.assertIn("first matching project entry governs", base_text)
         self.assertIn("The Avoid section is optional", base_text)
         self.assertIn("Do not populate Avoid as a speculative synonym list", base_text)
 
@@ -6501,6 +6506,15 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("retained evidence", update_text)
         self.assertIn("TERMINOLOGY STANDARD UPDATE: BLOCKED", update_text)
         self.assertIn("make no mutation", update_text)
+        self.assertIn("caller-supplied authorized target path", update_text)
+        self.assertEqual(1, update_text.count("Load Terminology Standards result"))
+
+        openai_metadata = load_yaml_object(
+            SKILLS_ROOT / "terminology-standard" / "agents" / "openai.yaml"
+        )
+        tool_dependencies = openai_metadata["dependencies"]["tools"]
+        self.assertEqual("mcp-agent-ops", tool_dependencies[0]["value"])
+        self.assertIn("reference_load", tool_dependencies[0]["description"])
 
         routed_agents = {skill_name: set() for skill_name in skill_names}
         for role_path in sorted(ROLES_ROOT.glob("*/*.role.yaml")):
@@ -6566,6 +6580,8 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Terminology Standard artifact:", documentation_router)
         self.assertIn("It has no reusable template", documentation_router)
         self.assertIn("does not apply to terminology.md", documentation_router)
+        self.assertIn("base terminology-standard skill owns", documentation_router)
+        self.assertIn("terminology-standard-update owns", documentation_router)
 
     def test_project_file_organisation_defines_taxonomy_contract(self) -> None:
         skill_text = (

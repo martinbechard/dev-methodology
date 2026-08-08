@@ -4,6 +4,23 @@ description: Review durable technical prose or user-visible language against pro
 metadata:
   category: documentation-methodology
 ---
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 0f952e38-003d-47bf-8f1a-c7facaaabf97
+Created-UTC: 2026-08-08T19:24:44Z
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: git-derived
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->
 
 # Terminology Standard Review
 
@@ -13,13 +30,13 @@ Review whether covered language expresses each defined concept with its preferre
 
 - The exact review target.
 - The project identity when project terminology can apply.
-- The shared user and project scope results returned by terminology-standard's Load Terminology Standards operation.
+- The one structured aggregate result returned by terminology-standard's Load Terminology Standards operation.
 
 ## Review Workflow
 
 1. Load terminology-standard and invoke Load Terminology Standards for both terminology.md scopes.
 2. When the result is TERMINOLOGY STANDARD SCOPE UNAVAILABLE, stop with TERMINOLOGY REVIEW: BLOCKED, name each unavailable scope and its remediation, and make no mutation. Do not return PASS from incomplete scope coverage.
-3. Treat a conclusively ABSENT scope as valid and continue with every PRESENT scope.
+3. Treat TERMINOLOGY STANDARDS LOADED as conclusive for the configured provider snapshot, including its no-content ABSENT form, and continue with its aggregate.
 4. Identify material concept expressions in the target before comparing individual words.
 5. Match each expression to the governing preferred-term definition.
 6. Record a finding when a different term expresses a governed concept, even when that term is not yet listed under Avoid.
@@ -31,7 +48,7 @@ Do not flag exact identifiers, code, schemas, commands, quotations, external pro
 
 ## Review Result
 
-Return TERMINOLOGY REVIEW: PASS only when both requested scopes were conclusively PRESENT or ABSENT and every governed concept uses its preferred term. Return TERMINOLOGY REVIEW: BLOCKED when a required scope is UNAVAILABLE. Otherwise return TERMINOLOGY REVIEW: NEEDS CORRECTION with:
+Return TERMINOLOGY REVIEW: PASS only when the configured project-and-user snapshot returned TERMINOLOGY STANDARDS LOADED and every governed concept uses its preferred term. Return TERMINOLOGY REVIEW: BLOCKED when Load Terminology Standards returned UNAVAILABLE. Otherwise return TERMINOLOGY REVIEW: NEEDS CORRECTION with:
 
 - the target location;
 - the expressed concept;

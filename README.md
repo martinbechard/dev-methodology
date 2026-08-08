@@ -1,10 +1,19 @@
 <!--
-Copyright (c) 2025 Martin Bechard [martin.bechard@DevConsult.ca]
-This software is licensed under the MIT License.
-File path: README.md
-Credit: Human/AI methodology
-1-line summary: Entry point for the reusable development documentation and project wiki skill bundle.
-Witty remark: A map is better when it knows where the roads actually are.
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: c2294763-15e0-4b6e-abf7-6f9719d88258
+Created-UTC: 2026-06-24T01:49:14Z
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: git-derived
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
 -->
 
 # Development Methodology Bundle
@@ -218,7 +227,7 @@ The report is read-only. It does not approve user-action items, mutate backlog f
 
 The build and maintenance workflow does not install skills or agents automatically. The installer acts only when explicitly invoked. Use --scope user to select the adapter's standard user directories or --scope project to select its standard directories under the current project. The --project-root option requires --scope project and selects another existing project directory without changing the invocation directory. Relative project roots are resolved from the invocation directory. If the resolved project root is missing or is not a directory, the installer stops before mutation; it does not fall back to the invocation directory, another current project, or user destinations. Explicit --dest and --agents-dest values override the corresponding scoped defaults while the selected project remains the identity for other project-scoped defaults.
 
-Scoped Codex and Junie deployments configure mcp-agent-ops by default. The installer locates the installed executable, binds the server to the deployed skill catalog and technology registry, and uses the selected project or current working directory as the least-privilege workspace root. One or more explicit --mcp-workspace-root values replace that default workspace-root set, so repeat the option for every root that the server should accept. Use --mcp-agent-ops-executable when the executable is not discoverable on PATH. Deployments that use only explicit destinations must also supply --mcp-config because a custom skill destination does not identify the host configuration location. With project scope, an explicit --mcp-config overrides the project configuration path without changing the selected project used by the remaining defaults. Use --configure-mcp false when the host should remain unchanged.
+Scoped Codex and Junie deployments configure mcp-agent-ops by default. The installer locates the installed executable, binds the server to the deployed skill catalog and technology registry, and uses the selected project or current working directory as the least-privilege workspace root. When the terminology-standard skill is present, it also allowlists terminology.md and configures the shared user reference roots .agents/references and .codex/references; reference_load then aggregates the active project artifact and both shared roots in one call. This reference operation requires mcp-agent-ops 0.7.0 or newer. One or more explicit --mcp-workspace-root values replace that default workspace-root set, so repeat the option for every root that the server should accept. Use --mcp-agent-ops-executable when the executable is not discoverable on PATH. Deployments that use only explicit destinations must also supply --mcp-config because a custom skill destination does not identify the host configuration location. With project scope, an explicit --mcp-config overrides the project configuration path without changing the selected project used by the remaining defaults. Use --configure-mcp false when the host should remain unchanged.
 
 When the active host configuration is absent, the installer creates it. When the file exists but has no configured MCP servers, the installer adds mcp-agent-ops and saves the previous file with a .bak extension. When other MCP servers are already configured, the installer writes config.mcp-agent-ops.toml for Codex or mcp-agent-ops.json for Junie and asks whether to activate the candidate. Acceptance moves the previous active file to its .bak path; rejection leaves the active file unchanged and preserves the candidate for review. A noninteractive deployment never replaces an active configuration that already contains other servers.
 
@@ -291,7 +300,7 @@ python3 scripts/install-skills.py \
 
 ### Preferred MCP Operations Layer
 
-Codex and Junie can use mcp-agent-ops for skill catalog reads, technology detection, skill validation, YAML verification, and Markdown link checks. Project Configurator may select it as the claim helper only after verifying every operation and result field required by [Resource Claim Helper MCP](skills/resource-claim-helper-mcp/SKILL.md) and [Resource Claim Helper](skills/resource-claim-helper/SKILL.md). The current provider omits `claim_extend_deadline` and `claim_reset`, so this repository uses the command-line claim helper.
+Codex and Junie can use mcp-agent-ops for aggregated project and shared user reference reads, skill catalog reads, technology detection, skill validation, YAML verification, and Markdown link checks. Project Configurator may select it as the claim helper only after verifying every operation and result field required by [Resource Claim Helper MCP](skills/resource-claim-helper-mcp/SKILL.md) and [Resource Claim Helper](skills/resource-claim-helper/SKILL.md). The current provider omits `claim_extend_deadline` and `claim_reset`, so this repository uses the command-line claim helper.
 
 Install and verify mcp-agent-ops before selecting it as the claim helper. Published release 0.4.0 does not support the required claim results and must not be selected for claims. Follow the companion project's [verified release installation procedure](https://github.com/martinbechard/mcp-agent-ops#install-the-latest-release), including checksum and installed-file verification. The bundle installer configures an existing server; it does not install the executable.
 
@@ -309,6 +318,8 @@ tool_timeout_sec = 60.0
 
 [mcp_servers.mcp-agent-ops.env]
 MCP_AGENT_OPS_SKILL_ROOTS = "/absolute/path/to/user-home/.agents/skills"
+MCP_AGENT_OPS_REFERENCE_ROOTS = "/absolute/path/to/user-home/.agents/references:/absolute/path/to/user-home/.codex/references"
+MCP_AGENT_OPS_REFERENCE_NAMES = "terminology.md"
 MCP_AGENT_OPS_DETECTION_REGISTRY = "/absolute/path/to/user-home/.agents/skills/detect-technology-skills/references/technology-skill-detection-registry.yaml"
 MCP_AGENT_OPS_WORKSPACE_ROOTS = "/absolute/path/to/allowed/projects"
 ```
@@ -334,6 +345,8 @@ The installer configures Junie in the user or project mcp.json file. A generated
       "args": [],
       "env": {
         "MCP_AGENT_OPS_SKILL_ROOTS": "/absolute/path/to/user-home/.junie/skills",
+        "MCP_AGENT_OPS_REFERENCE_ROOTS": "/absolute/path/to/user-home/.agents/references:/absolute/path/to/user-home/.codex/references",
+        "MCP_AGENT_OPS_REFERENCE_NAMES": "terminology.md",
         "MCP_AGENT_OPS_DETECTION_REGISTRY": "/absolute/path/to/user-home/.junie/skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
         "MCP_AGENT_OPS_WORKSPACE_ROOTS": "/absolute/path/to/allowed/projects"
       }
@@ -501,7 +514,7 @@ The documentation methodology skills are:
 - skill-authoring
 - name-methodology-artifacts
 
-The terminology-standard family uses the exact terminology.md artifact name at shared user and project scope. One provider-neutral operation loads both scopes and distinguishes a conclusively absent artifact from an unavailable scope. Review cannot pass and updates cannot mutate while a requested scope is unavailable. Project entries govern overlaps within their project. A preferred definition is sufficient to establish the expected term; Avoid remains optional reinforcement for observed persistent substitutions.
+The terminology-standard family uses the exact terminology.md artifact name at shared user and project scope. Load Terminology Standards is realized by one mcp-agent-ops reference_load call against the active project and configured shared roots. A loaded aggregate or reference_not_found result is conclusive for that snapshot; other provider failures are unavailable. Review cannot pass and updates cannot mutate while access is unavailable. Project entries govern overlaps within their project. A preferred definition is sufficient to establish the expected term; Avoid remains optional reinforcement for observed persistent substitutions.
 
 The artifact creation skills are:
 

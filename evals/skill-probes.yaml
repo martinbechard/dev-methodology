@@ -1150,7 +1150,7 @@ probes:
     evaluationKind: workflow-invariant
     activationCondition: Durable technical prose or user-visible language may be governed by a project or shared user terminology.md.
     negativeCondition: Raw evidence, exact identifiers, code, schemas, commands, quotations, and external product names are not rewritten through terminology preference.
-    expectedBehavior: Invoke Load Terminology Standards once for project and shared user scope, report each as PRESENT or conclusively ABSENT through TERMINOLOGY STANDARDS LOADED, distinguish UNAVAILABLE through TERMINOLOGY STANDARD SCOPE UNAVAILABLE, apply shared entries before narrower project entries, match concepts before words, preserve exact content, and never search user-home paths as a fallback.
+    expectedBehavior: Invoke mcp-agent-ops reference_load exactly once with terminology.md, map a loaded aggregate or reference_not_found to TERMINOLOGY STANDARDS LOADED, map missing capability or any other error to TERMINOLOGY STANDARD SCOPE UNAVAILABLE, apply the project-first aggregate, return explicit PARTIAL or BLOCKED ordinary-use behavior, and never search user-home paths as a fallback.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, operation-coverage], modelRubric: workflow-quality}
     scenarioAssociations: [dev-coder-happy, dev-documentation-writer-happy, wiki-writer-happy]
     workflowAssociations: [code-delivery, documentation-methodology, wiki-lifecycle]
@@ -1178,7 +1178,7 @@ probes:
     evaluationKind: artifact-contract
     activationCondition: The user requests creation or update of a project or shared user terminology.md.
     negativeCondition: An initial preferred definition does not receive a speculative Avoid list, and shared user scope is not mutated without explicit scope selection.
-    expectedBehavior: Load both scopes once, distinguish ABSENT from UNAVAILABLE, return TERMINOLOGY STANDARD UPDATE BLOCKED with zero mutation and named remediation for any unavailable scope, default project-specific concepts to project scope, update one positive preferred entry, and add Avoid only from retained persistent-use evidence.
+    expectedBehavior: Consume exactly one Load Terminology Standards result, distinguish ABSENT from UNAVAILABLE, require an authorized target for shared mutation, return TERMINOLOGY STANDARD UPDATE BLOCKED with zero mutation and named remediation for any unavailable scope or target, default project-specific concepts to project scope, update one positive preferred entry, and add Avoid only from retained persistent-use evidence.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, allowed-paths-only, required-command-outcome], modelRubric: workflow-quality}
     scenarioAssociations: [dev-documentation-writer-happy, methodology-maintainer-happy]
     workflowAssociations: [documentation-methodology]

@@ -44,6 +44,23 @@ CAMPAIGN_EVIDENCE_LEVEL = "Governed agent-suite campaign"
 VERDICTS = ("PASS", "BLOCKED", "FAIL")
 SUCCESS_EXIT_CODE = 0
 ERROR_EXIT_CODE = 1
+EVALUATION_PAGE_PROVENANCE = """<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 5a1eb6bc-bd8c-4dc4-bb88-62d9064841ed
+Created-UTC: 2026-07-22T18:57:11Z
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: git-derived
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->"""
 
 
 def load_yaml(path: Path) -> dict[str, object]:
@@ -1033,6 +1050,7 @@ def render_page(model: dict[str, object]) -> str:
         for item in campaign["followUps"]
     )
     page = f"""<!doctype html>
+{EVALUATION_PAGE_PROVENANCE}
 <html lang="en">
 <head>
   <meta charset="utf-8">

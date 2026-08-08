@@ -4,6 +4,23 @@ description: Apply preferred project and shared user terminology from terminolog
 metadata:
   category: documentation-methodology
 ---
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+Artifact-ID: 7faae0fc-6944-4574-bea6-874c2bfe6376
+Created-UTC: 2026-08-08T19:24:44Z
+Creating-Agent: historical-unknown
+Runtime: historical-unknown
+Dispatched-Model: historical-unknown
+Reasoning-Effort: historical-unknown
+Task-ID: historical-unknown
+Artifact-ID-Evidence: migration-assigned
+Created-UTC-Evidence: git-derived
+Creating-Agent-Evidence: historical-unknown
+Runtime-Evidence: historical-unknown
+Dispatched-Model-Evidence: historical-unknown
+Reasoning-Effort-Evidence: historical-unknown
+Task-ID-Evidence: historical-unknown
+-->
 
 # Terminology Standard
 
@@ -20,22 +37,25 @@ Load both scopes before covered writing, review, or update. Do not search arbitr
 
 ## Load Terminology Standards
 
-Use one provider-neutral multi-scope artifact operation with these logical inputs:
+The provider-neutral operation is Load Terminology Standards. Its configured MCP realization is mcp-agent-ops reference_load. Invoke reference_load exactly once with names set to a one-item list containing terminology.md. The server must run with:
 
-- exact artifact name: terminology.md;
-- requested scopes: shared user and project; and
-- project identity for the project-scoped lookup.
+- the active project beneath MCP_AGENT_OPS_WORKSPACE_ROOTS;
+- the shared user reference directories in MCP_AGENT_OPS_REFERENCE_ROOTS; and
+- terminology.md in MCP_AGENT_OPS_REFERENCE_NAMES.
 
-The operation returns exactly one of these outcomes:
+Map its structured result into exactly one consumer outcome:
 
-- TERMINOLOGY STANDARDS LOADED: reports each requested scope as PRESENT with its content or ABSENT when the provider conclusively found no artifact at that scope.
-- TERMINOLOGY STANDARD SCOPE UNAVAILABLE: names every scope the provider could not read conclusively and gives the required capability or owner remediation. Do not reinterpret UNAVAILABLE as ABSENT.
+- When ok is true, return TERMINOLOGY STANDARDS LOADED with catalog_revision, the aggregated content, aggregate digest, source_count, and every ordered source scope, digest, and byte_count. Project content is first and configured user content follows. Within the aggregate, the first matching preferred-term definition governs, so a project definition takes precedence without losing shared entries for other concepts.
+- When the only error code is reference_not_found, return TERMINOLOGY STANDARDS LOADED with no content and conclusive ABSENT status across the configured project and user scopes.
+- When reference_load is absent, the server or configured project boundary cannot be used, required reference configuration is missing, or any other error is returned, return TERMINOLOGY STANDARD SCOPE UNAVAILABLE with the failed capability and owner remediation. Do not reinterpret UNAVAILABLE as ABSENT.
+
+This base skill owns the provider-neutral operation and entry-format contract. mcp-agent-ops owns scope discovery, aggregation, ordering, and the structured reference_load result. The runtime configuration owns the authorized project and shared user roots. Do not emulate the provider by searching paths.
 
 An ABSENT standard is valid. Continue the requested work without creating terminology.md unless the user asks to create or update it.
 
-When only direct project-file access is available, an ordinary project-scoped writing task may read the project-root terminology.md and report shared user scope as UNAVAILABLE. This fallback cannot support TERMINOLOGY REVIEW: PASS or any terminology.md mutation. Do not use direct user-home searching as a substitute for the multi-scope operation.
+When reference_load returns TERMINOLOGY STANDARD SCOPE UNAVAILABLE, an ordinary project-scoped writing task may use direct project-file access to read the project-root terminology.md. Return TERMINOLOGY APPLICATION: PARTIAL, apply only that project standard, and name shared user scope as unavailable. If the project artifact also cannot be read conclusively, return TERMINOLOGY APPLICATION: BLOCKED and do not claim terminology conformance. This fallback cannot support TERMINOLOGY REVIEW: PASS or any terminology.md mutation. Do not use direct user-home searching as a substitute for reference_load.
 
-Apply the shared user entries first. A project entry governs within its project when the two standards overlap. Report an unresolved semantic conflict when the narrower entry does not make the intended distinction clear.
+Apply the project-first provider aggregate so the first matching project entry governs within its project and shared entries remain available for concepts the project does not redefine. Report an unresolved semantic conflict when the narrower entry does not make the intended distinction clear.
 
 ## Entry Format
 
@@ -66,11 +86,12 @@ The Avoid section is optional. The example shows its shape, not a requirement to
 ## Apply Preferred Terminology
 
 1. Load the shared user and project standards through Load Terminology Standards.
-2. Identify the concept expressed by each material term in the covered text.
-3. Use the preferred term whose definition matches that concept.
-4. Apply an avoided-term rule only within the concept and scope stated by its entry.
-5. Preserve the artifact's technical meaning, normative force, and established structure.
-6. Report conflicts or uncovered concepts instead of inventing a new standard entry.
+2. Branch on the load outcome before inspecting the covered text; use the explicit PARTIAL fallback or stop on BLOCKED.
+3. Identify the concept expressed by each material term in the covered text.
+4. Use the first preferred term in provider order whose definition matches that concept.
+5. Apply an avoided-term rule only within the concept and scope stated by its entry.
+6. Preserve the artifact's technical meaning, normative force, and established structure.
+7. Report conflicts or uncovered concepts instead of inventing a new standard entry.
 
 Do not perform blind substring replacement. Preserve exact identifiers, code, schemas, commands, quoted text, external product names, and source-native wording retained as evidence unless the requested work explicitly changes them.
 
